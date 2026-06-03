@@ -1,0 +1,246 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+#
+# 1ES PIPELINE TEMPLATES (1ES PT) MIGRATION — POC
+# -----------------------------------------------
+# Parallel migration of `.pipelines/templates/compliance/apiscan.yml`.
+# OneBranch original is unchanged; this copy is consumed only by the 1ES
+# entry pipeline at `.pipelines/1ES/apiscan-gen-notice.yml`.
+#
+# Translation summary applied to this file:
+#   - pool: { type: windows }
+#       -> pool: { name: PowerShell1ES, image: PSMMS2019-Secure, os: windows }
+#     (job-level override; redundant with the entry pipeline default but kept
+#      for clarity. Drop later if we centralize the pool definition.)
+#   - container: VS 2022 toolchain container moved to a job-level `container:`
+#     declaration. NEEDS VERIFICATION that PSMMS2019-Secure agents support
+#     hosting Windows containers.
+#   - per-job `ob_sdl_*` variables moved into `templateContext.sdl` block.
+#   - `ob_outputDirectory` variable preserved (build steps reference it) and
+#     the folder is also published as a pipeline artifact via
+#     `templateContext.outputs`. OneBranch did this implicitly; 1ES PT requires
+#     it explicitly.
+#   - Helper template references switched from relative (`../...`) to absolute
+#     `@self` paths so this file can live in a different directory without
+#     duplicating the helpers. The helpers themselves are 1ES-safe (they only
+#     reference `ob_restore_phase` as a no-op env var).
+#   - `ob_restore_phase: true` env var on `checkout: self` dropped — 1ES PT
+#     runs checkout first by default and the variable has no meaning here.
+
+parameters:
+  # The OneBranch original has no `parameters:` block but the entry pipeline
+  # still passes `parentJobs: []` to it. Azure Pipelines silently accepts
+  # unknown parameters, but declaring it explicitly is cleaner and matches
+  # the sibling `generateNotice.yml` template.
+  - name: parentJobs
+    type: jobList
+    default: []
+
+jobs:
+  - job: APIScan
+    dependsOn:
+      ${{ parameters.parentJobs }}
+    variables:
+      - name: NugetSecurityAnalysisWarningLevel
+        value: none
+      - name: ReleaseTagVar
+        value: fromBranch
+      # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
+      - group: PS-PS-APIScan
+      - name: branchCounterKey
+        value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
+      - name: branchCounter
+        value: $[counter(variables['branchCounterKey'], 1)]
+      - group: DotNetPrivateBuildAccess
+      - group: ReleasePipelineSecrets
+      - group: mscodehub-feed-read-general
+      - group: mscodehub-feed-read-akv
+      - name: ob_outputDirectory
+        value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+      # PATH NOTE (1ES PT migration):
+      # In OneBranch, `checkout: self` placed the repo at
+      # `$(Build.SourcesDirectory)\PowerShell`. In 1ES PT, the default
+      # checkout lands directly at `$(Build.SourcesDirectory)`. We adjust
+      # `repoRoot` accordingly. `set-reporoot.yml` will respect this because
+      # the env var `REPOROOT` is already set from this YAML variable.
+      - name: repoRoot
+        value: '$(Build.SourcesDirectory)'
+      - name: Codeql.SourceRoot
+        value: $(repoRoot)
+
+    pool:
+      name: PowerShell1ES
+      image: PSMMS2019-Secure
+      os: windows
+
+    # CONTAINER NOTE (1ES PT migration):
+    # OneBranch ran this job inside `onebranch.azurecr.io/windows/ltsc2022/vse2022:latest`
+    # to provide the VS 2022 toolchain that `Start-PSBuild` needs. We do NOT
+    # reuse that container here because:
+    #   (a) `PSMMS2019-Secure` is a Windows Server 2019 host, which cannot run
+    #       LTSC 2022 Windows containers (host/container Windows versions must match).
+    #   (b) Secure 1ES pools typically don't have Windows container hosting enabled.
+    # TODO (verify with team): either
+    #   (a) ensure `PSMMS2019-Secure` already has the VS 2022 build toolchain installed, or
+    #   (b) register a Windows Server 2022 image in the `PowerShell1ES` pool and swap
+    #       the `image:` value above to it, then re-add `container:` here.
+    # If `Start-PSBuild` fails with "msbuild not found" or similar on the first POC run,
+    # option (b) is the fix.
+
+    # APIScan can take a long time
+    timeoutInMinutes: 180
+
+    templateContext:
+      # Per-job SDL configuration — replaces OneBranch's `ob_sdl_*` variables.
+      # Paths use `$(Build.SourcesDirectory)` (no `\PowerShell` suffix) because
+      # 1ES PT's default checkout lands the repo directly at SourcesDirectory.
+      sdl:
+        tsa:
+          configFile: $(Build.SourcesDirectory)\.config\tsaoptions.json
+        credscan:
+          suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      # 1ES PT requires explicit artifact declarations. The OneBranch pipeline
+      # implicitly published `$(ob_outputDirectory)` as an artifact named
+      # `drop_<stage>_<job>`; we replicate that convention here.
+      outputs:
+        - output: pipelineArtifact
+          displayName: 'Publish APIScan output'
+          targetPath: $(ob_outputDirectory)
+          artifactName: drop_APIScan_APIScan
+          condition: succeededOrFailed()
+
+    steps:
+    - checkout: self
+      clean: true
+      fetchTags: true
+      fetchDepth: 1000
+      displayName: Checkout PowerShell
+      retryCountOnTaskFailure: 1
+
+    # `ob_restore_phase` is a no-op in 1ES PT (no restore-phase concept).
+    # Pass `false` explicitly so the helpers don't emit confusing env vars.
+    - template: /.pipelines/templates/SetVersionVariables.yml@self
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+        CreateJson: no
+        ob_restore_phase: false
+
+    - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+      parameters:
+        repoRoot: '$(repoRoot)'
+        ob_restore_phase: false
+
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk'
+      inputs:
+        useGlobalJson: true
+        packageType: 'sdk'
+        workingDirectory: $(Build.SourcesDirectory)"
+
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Find-DotNet
+        dotnet tool install dotnet-symbol --tool-path $(Agent.ToolsDirectory)\tools\dotnet-symbol
+        $symbolToolPath = Get-ChildItem -Path $(Agent.ToolsDirectory)\tools\dotnet-symbol\dotnet-symbol.exe | Select-Object -First 1 -ExpandProperty FullName
+        Write-Host "##vso[task.setvariable variable=symbolToolPath]$symbolToolPath"
+      displayName: Install dotnet-symbol
+      workingDirectory: '$(repoRoot)'
+      retryCountOnTaskFailure: 2
+
+    - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
+      displayName: 🔏 CodeQL 3000 Init
+      condition: eq(variables['CODEQL_ENABLED'], 'true')
+      inputs:
+        Language: csharp
+
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Find-DotNet
+        Start-PSBuild -Configuration StaticAnalysis -PSModuleRestore -Clean -Runtime fxdependent-win-desktop
+
+        $OutputFolder = Split-Path (Get-PSOutput)
+
+        Write-Verbose -Verbose -Message "Deleting ref folder from output folder"
+        if (Test-Path $OutputFolder/ref) {
+          Remove-Item -Recurse -Force $OutputFolder/ref
+        }
+
+        $Destination = '$(ob_outputDirectory)'
+        if (-not (Test-Path $Destination)) {
+          Write-Verbose -Verbose -Message "Creating destination folder '$Destination'"
+          $null = mkdir $Destination
+        }
+
+        Copy-Item -Path "$OutputFolder\*" -Destination $Destination -Recurse -Verbose
+      workingDirectory: '$(repoRoot)'
+      displayName: 'Build PowerShell Source'
+
+    - pwsh: |
+        # Only keep windows runtimes
+        Write-Verbose -Verbose -Message "Deleting non-win-x64 runtimes ..."
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtimes\*' | Where-Object {$_.FullName -notmatch '.*\\runtimes\\win'} | Foreach-Object {
+          Write-Verbose -Verbose -Message "Deleting $($_.FullName)"
+          Remove-Item -Path $_.FullName -Recurse -Force
+        }
+
+        # Remove win-x86/arm/arm64 runtimes due to issues with those runtimes
+        Write-Verbose -Verbose -Message "Temporarily deleting win-x86/arm/arm64 runtimes ..."
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtimes\*' | Where-Object {$_.FullName -match '.*\\runtimes\\win-(x86|arm)'} | Foreach-Object {
+          Write-Verbose -Verbose -Message "Deleting $($_.FullName)"
+          Remove-Item -Path $_.FullName -Recurse -Force
+        }
+
+        Write-Host
+        Write-Verbose -Verbose -Message "Show content in 'runtimes' folder:"
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtimes'
+        Write-Host
+      workingDirectory: '$(repoRoot)'
+      displayName: 'Remove unused runtimes'
+
+    - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
+      displayName: 🔏 CodeQL 3000 Finalize
+      condition: eq(variables['CODEQL_ENABLED'], 'true')
+
+    - pwsh: |
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      workingDirectory: '$(repoRoot)'
+      displayName: Capture Environment
+      condition: succeededOrFailed()
+
+    # Explicitly download symbols for the drop since the SDL image doesn't have http://SymWeb access and APIScan cannot handle https yet.
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Find-DotNet
+        $pat = '$(SymbolServerPAT)'
+        if ($pat -like '*PAT*' -or $pat -eq '')
+        {
+          throw 'No PAT defined'
+        }
+        $url = 'https://microsoft.artifacts.visualstudio.com/defaultcollection/_apis/symbol/symsrv'
+        $(symbolToolPath) --authenticated-server-path $(SymbolServerPAT) $url --symbols -d "$env:ob_outputDirectory\*" --recurse-subdirectories
+      displayName: 'Download Symbols for binaries'
+      retryCountOnTaskFailure: 2
+      workingDirectory: '$(repoRoot)'
+
+    - pwsh: |
+        Get-ChildItem '$(ob_outputDirectory)' -File -Recurse |
+        Foreach-Object {
+          [pscustomobject]@{
+            Path = $_.FullName
+            Version = $_.VersionInfo.FileVersion
+            Md5Hash = (Get-FileHash -Algorithm MD5 -Path $_.FullName).Hash
+            Sha512Hash = (Get-FileHash -Algorithm SHA512 -Path $_.FullName).Hash
+          }
+        } | Export-Csv -Path '$(Build.SourcesDirectory)/ReleaseFileHash.csv'
+      workingDirectory: '$(repoRoot)'
+      displayName: 'Create release file hash artifact'
+
+    - pwsh: |
+        Copy-Item -Path '$(Build.SourcesDirectory)/ReleaseFileHash.csv' -Destination '$(ob_outputDirectory)' -Verbose
+      displayName: 'Publish Build File Hash artifact'
+
+    - pwsh: |
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      displayName: Capture Environment
+      condition: succeededOrFailed()
+      workingDirectory: '$(repoRoot)'
