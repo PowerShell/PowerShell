@@ -1,0 +1,144 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+#
+# 1ES PIPELINE TEMPLATES (1ES PT) MIGRATION — POC
+# -----------------------------------------------
+# This is a parallel migration of `.pipelines/apiscan-gen-notice.yml`
+# from OneBranch templates to 1ES Pipeline Templates. The OneBranch
+# original is intentionally left untouched so the two pipelines can run
+# side-by-side in ADO for validation.
+#
+# Translation summary (full notes captured in stored memories):
+#   - resources.repositories: OneBranch.Pipelines/GovernedTemplates @ refs/heads/main
+#                          -> 1ESPipelineTemplates/1ESPipelineTemplates @ refs/tags/release
+#   - extends.template:     v2/OneBranch.NonOfficial.CrossPlat.yml@templates
+#                          -> v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+#   - featureFlags:         removed (Windows host version now comes from the pool image)
+#   - globalSdl:            renamed to sdl (sub-keys nearly identical)
+#   - tsaOptionsFile:       moved under sdl.tsa.configFile
+#   - pool:                 declared at the extends level (PowerShell1ES + PSMMS2019-Secure),
+#                           inherited by jobs unless overridden
+#   - stages/templates:     unchanged paths (helpers still live under /.pipelines/templates/...)
+#
+# Open verification items (track during POC run):
+#   - `PowerShell1ES` + `PSMMS2019-Secure` is Windows Server 2019, not 2022.
+#     If the build truly needs Win 2022, ask the pool admins to register a
+#     2022 image and swap the `image:` field below.
+#   - Confirm `Unofficial` is the right template (vs `Official`). TSA bug
+#     filing is gated on CODEQL_ENABLED (master-only) so Unofficial is fine
+#     for non-release branches.
+
+name: apiscan-genNotice-1ES-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+trigger: none
+
+parameters:
+  - name: FORCE_CODEQL
+    displayName: Debugging - Enable CodeQL and set cadence to 1 hour
+    type: boolean
+    default: false
+
+variables:
+  # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
+  # A PAT in the wrong org will give a single Error 203. No PAT will give a single Error 401, and individual pdbs may be missing even if permissions are correct.
+  - group: symbols
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)]
+  # Defines the variables AzureFileCopySubscription, StorageAccount, StorageAccountKey, StorageResourceGroup, StorageSubscriptionName
+  - group: 'Azure Blob variable group'
+  # Defines the variables CgPat, CgOrganization, and CgProject
+  - group: 'ComponentGovernance'
+  - group: 'PoolNames'
+  - name: LinuxContainerImage
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
+  - name: WindowsContainerImage
+    value: onebranch.azurecr.io/windows/ltsc2022/vse2022:latest
+  - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
+    # Cadence is hours before CodeQL will allow a re-upload of the database
+    - name: CodeQL.Cadence
+      value: 0
+  - name: CODEQL_ENABLED
+    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
+      value: true
+    ${{ else }}:
+      value: false
+  - name: Codeql.TSAEnabled
+    value: $(CODEQL_ENABLED)
+  # AnalyzeInPipeline: false = upload results
+  # AnalyzeInPipeline: true = do not upload results
+  - name: Codeql.AnalyzeInPipeline
+    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
+      value: false
+    ${{ else }}:
+      value: true
+
+resources:
+  repositories:
+    - repository: 1ESPipelineTemplates
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    # Pool default for all jobs in this pipeline. Mirrors the pattern used by
+    # `release-MakeBlobPublic.yml` and `release-upload-buildinfo.yml` already
+    # in this repo. Jobs may override this per-job if a different image is needed.
+    pool:
+      name: PowerShell1ES
+      image: PSMMS2019-Secure
+      os: windows
+
+    sdl:
+      codeql:
+        compiled:
+          enabled: $(CODEQL_ENABLED)
+        tsaEnabled: $(CODEQL_ENABLED) # This enables TSA bug filing only for CodeQL 3000
+      # `armory` was OneBranch-only and is not part of the 1ES PT SDL schema —
+      # removed during migration to avoid template validation errors.
+      sbom:
+        enabled: false
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+      tsa:
+        enabled: true  # 1ES publishes all SDL results to TSA. If TSA is disabled all SDL tools will be forced into 'break' build mode.
+        configFile: .config\tsaoptions.json  # Was `tsaOptionsFile` (top-level) in OneBranch.
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        break: true  # always break the build on binskim issues in addition to TSA upload
+      policheck:
+        break: true  # always break the build on policheck issues. You can disable it by setting to 'false'
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: true
+        softwareName: "PowerShell" # Default is repo name
+        versionNumber: "7.6" # Default is build number
+        isLargeApp: false # Default: false.
+        symbolsFolder: $(SymbolsServerUrl);$(ob_outputDirectory)
+#softwareFolder - relative path to a folder to be scanned. Default value is root of artifacts folder
+      psscriptanalyzer:
+          enabled: true
+          policyName: Microsoft
+          break: false
+
+    stages:
+      - stage: APIScan
+        displayName: 'ApiScan'
+        dependsOn: []
+        jobs:
+          - template: /.pipelines/1ES/templates/compliance/apiscan.yml@self
+            parameters:
+              parentJobs: []
+      - stage: notice
+        displayName: Generate Notice File
+        dependsOn: []
+        jobs:
+          - template: /.pipelines/1ES/templates/compliance/generateNotice.yml@self
+            parameters:
+              parentJobs: []
