@@ -154,17 +154,18 @@ Describe "Set-Location" -Tags "CI" {
             $otherPath = Join-Path $TestDrive 'other'
             $null = New-Item -ItemType Directory -Path $testPath
             $null = New-Item -ItemType Directory -Path $otherPath
+            $resolvedTestPath = (Resolve-Path -LiteralPath $testPath).Path
 
             Set-Location $TestDrive
-            $testDrivePath = (Get-Location).Path
+            $testDrivePath = (Resolve-Path -LiteralPath $TestDrive).Path
             Set-Location -LiteralPath $testPath
             Set-Location -LiteralPath $otherPath
             Set-Location -
-            (Get-Location).Path | Should -BeExactly $testPath
+            (Get-Location).Path | Should -Be $resolvedTestPath
             Set-Location -
-            (Get-Location).Path | Should -BeExactly $testDrivePath
+            (Get-Location).Path | Should -Be $testDrivePath
             Set-Location +
-            (Get-Location).Path | Should -BeExactly $testPath
+            (Get-Location).Path | Should -Be $resolvedTestPath
         }
 
         It 'Should go back to previous locations when specifying minus twice' {
