@@ -64,6 +64,13 @@ variables:
   # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
   # A PAT in the wrong org will give a single Error 203. No PAT will give a single Error 401, and individual pdbs may be missing even if permissions are correct.
   - group: symbols
+  # NB (1ES PT migration): variable name kept as `ob_outputDirectory` because
+  # `build.psm1` reads the env var `$env:OB_OUTPUTDIRECTORY` literally (see
+  # lines ~1085 of build.psm1). Renaming requires a coordinated PR across
+  # build.psm1 + every YAML reference + the OneBranch originals that are
+  # still alive during parallel validation. Defer until OneBranch retirement.
+  # The `/ONEBRANCH_ARTIFACT` suffix in the path is just a folder name and is
+  # safe to rename at any time, but is kept for parity with the OneBranch original.
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -72,11 +79,14 @@ variables:
   - group: 'Azure Blob variable group'
   # Defines the variables CgPat, CgOrganization, and CgProject
   - group: 'ComponentGovernance'
-  - group: 'PoolNames'
-  - name: LinuxContainerImage
-    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
-  - name: WindowsContainerImage
-    value: onebranch.azurecr.io/windows/ltsc2022/vse2022:latest
+  # NB (1ES PT migration): the `PoolNames` variable group and the
+  # `LinuxContainerImage` / `WindowsContainerImage` variables were dropped here.
+  # The OneBranch original declared them but never referenced them in its
+  # `extends.parameters` block (the pool was hard-coded in the OneBranch
+  # template, and there was no container reference). In 1ES PT we declare
+  # pool + image inline on `extends.parameters.pool` and we don't use a job
+  # container, so all three are unreferenced. Removed to reduce noise and to
+  # avoid the pipeline-authorization prompt for `PoolNames`.
   - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
     # Cadence is hours before CodeQL will allow a re-upload of the database
     - name: CodeQL.Cadence
@@ -95,6 +105,19 @@ variables:
       value: false
     ${{ else }}:
       value: true
+  # APIScan version label — derived from the release/rebuild branch name so that
+  # TSA bug filing groups results under the correct PowerShell version bucket.
+  # Hardcoding (the prior `"7.6"`) caused 7.9 branch builds to file bugs under
+  # the 7.6 bucket. Evaluated at template-expansion time so the value is baked
+  # into the `sdl.apiscan.versionNumber` field below.
+  #   refs/heads/release/v7.6.0            -> Build.SourceBranchName='v7.6.0'              -> '7.6.0'
+  #   refs/heads/rebuild/v7.9.99-rebuild.9 -> Build.SourceBranchName='v7.9.99-rebuild.9'   -> '7.9.99' (split on '-', take [0], strip 'v')
+  #   refs/heads/master                    -> fallback '7.9'                                (update at PowerShell major.minor bump)
+  - name: APIScanVersionNumber
+    ${{ if startsWith(variables['Build.SourceBranchName'], 'v') }}:
+      value: ${{ replace(split(variables['Build.SourceBranchName'], '-')[0], 'v', '') }}
+    ${{ else }}:
+      value: '7.9'
 
 resources:
   repositories:
@@ -150,7 +173,7 @@ extends:
       apiscan:
         enabled: true
         softwareName: "PowerShell" # Default is repo name
-        versionNumber: "7.6" # Default is build number
+        versionNumber: ${{ variables.APIScanVersionNumber }} # Derived from branch — see APIScanVersionNumber definition above
         isLargeApp: false # Default: false.
         symbolsFolder: $(SymbolsServerUrl);$(ob_outputDirectory)
 #softwareFolder - relative path to a folder to be scanned. Default value is root of artifacts folder
