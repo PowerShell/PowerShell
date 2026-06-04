@@ -16,16 +16,32 @@
 #   - featureFlags:         removed (Windows host version now comes from the pool image)
 #   - globalSdl:            renamed to sdl (sub-keys nearly identical)
 #   - tsaOptionsFile:       moved under sdl.tsa.configFile
-#   - pool:                 declared at the extends level (PowerShell1ES + MMSWindows2022-g2-Secure),
-#                           inherited by jobs unless overridden
+#   - pool:                 declared at the extends level (Azure-Pipelines-1ESPT-ExDShared
+#                           + windows-latest), inherited by jobs unless overridden
 #   - stages/templates:     unchanged paths (helpers still live under /.pipelines/templates/...)
 #
+# POOL/IMAGE DECISION (POC SCOPE):
+#   The original OneBranch pipeline runs on `PowerShell1ES` (team-owned curated
+#   pool). For the POC we deliberately switched to the Microsoft-managed
+#   `Azure-Pipelines-1ESPT-ExDShared` pool because:
+#     1. PowerShell1ES has NO 1ES PT-compliant images registered (build 684120
+#        failed with "1ES PT Error: image lacks 1es-pt-prerequisites-v2 artifact").
+#     2. Switching to a 1ES PT-compliant CloudTest image (`MMSWindows2022-g2-Secure`)
+#        failed in build 684335 with "Image ... doesn't exist in pool PowerShell1ES"
+#        — pool admin must explicitly register images; the image gallery isn't
+#        searched implicitly.
+#     3. `Azure-Pipelines-1ESPT-ExDShared` is the standard Microsoft-managed
+#        1ES PT pool (24 Win Server 2022 agents, image alias `windows-latest`,
+#        compliant out of the box, no team admin required).
+#   For production rollout, the PowerShell1ES pool admin should register a
+#   1ES PT-compliant Win 2022 image (e.g., `MMSWindows2022-g2-Secure` from
+#   CloudTestImages/CloudTestGallery, sub 723b64f0-884d-4994-b6de-8960d049cb7e)
+#   so the POC can be retargeted at PowerShell1ES for full network/credential parity.
+#
 # Open verification items (track during POC run):
-#   - Image was switched from `PSMMS2019-Secure` (Win 2019, not 1ES PT-compliant)
-#     to `MMSWindows2022-g2-Secure` (Win 2022, 1ES PT-compliant) after build 684120
-#     hit `1ES PT Error: Using an image without 1es-pt-prerequisites artifact is not
-#     allowed`. Confirm Win 2022 toolchain on this image satisfies Start-PSBuild
-#     (may need a `container:` for VS 2022 toolchain — re-add at job level if needed).
+#   - Confirm `windows-latest` on ExDShared has the VS 2022 build toolchain
+#     `Start-PSBuild` needs. If not, either re-add a `container: vse2022`
+#     at job level OR install the toolchain inline.
 #   - Confirm `Unofficial` is the right template (vs `Official`). TSA bug
 #     filing is gated on CODEQL_ENABLED (master-only) so Unofficial is fine
 #     for non-release branches.
@@ -89,14 +105,10 @@ extends:
     # `release-MakeBlobPublic.yml` and `release-upload-buildinfo.yml` already
     # in this repo. Jobs may override this per-job if a different image is needed.
     pool:
-      name: PowerShell1ES
-      # 1ES PT requires images that include the `windows-1es-pt-prerequisites-v2`
-      # artifact. `PSMMS2019-Secure` (used by OneBranch jobs in this repo) does
-      # NOT include it and causes `1ES PT Pre-Job` to hard-fail. We use
-      # `MMSWindows2022-g2-Secure` from the same CloudTestImages/CloudTestGallery —
-      # it is 1ES PT compliant and also matches the original pipeline's
-      # `WindowsHostVersion: 2022` intent.
-      image: MMSWindows2022-g2-Secure
+      # See "POOL/IMAGE DECISION" in the header comment for why this POC runs on
+      # the Microsoft-managed ExDShared pool instead of team-owned PowerShell1ES.
+      name: Azure-Pipelines-1ESPT-ExDShared
+      image: windows-latest
       os: windows
 
     sdl:

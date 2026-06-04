@@ -9,7 +9,8 @@
 #
 # Translation summary applied to this file:
 #   - pool: { type: windows }
-#       -> pool: { name: PowerShell1ES, image: MMSWindows2022-g2-Secure, os: windows }
+#       -> pool: { name: Azure-Pipelines-1ESPT-ExDShared, image: windows-latest, os: windows }
+#     (POC uses Microsoft-managed 1ES PT pool — see entry pipeline header for rationale.)
 #   - per-job `ob_sdl_*` variables moved into `templateContext.sdl` block.
 #     `ob_sdl_apiscan_enabled: false` becomes `templateContext.sdl.apiscan.enabled: false`.
 #   - `ob_outputDirectory` preserved (build steps reference it); also published
@@ -36,9 +37,9 @@ jobs:
         value: '$(Build.SourcesDirectory)'
 
     pool:
-      name: PowerShell1ES
-      # 1ES PT compliant image (see entry pipeline for rationale).
-      image: MMSWindows2022-g2-Secure
+      # Microsoft-managed 1ES PT pool — see entry pipeline header for rationale.
+      name: Azure-Pipelines-1ESPT-ExDShared
+      image: windows-latest
       os: windows
 
     timeoutInMinutes: 15
