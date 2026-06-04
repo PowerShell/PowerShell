@@ -9,8 +9,8 @@
 #
 # Translation summary applied to this file:
 #   - pool: { type: windows }
-#       -> pool: { name: Azure-Pipelines-1ESPT-ExDShared, image: windows-latest, os: windows }
-#     (POC uses Microsoft-managed 1ES PT pool — see entry pipeline header for
+#       -> pool: { name: PowerShell1ES, image: MMS2022, os: windows }
+#     (Team-owned pool + 1ES-maintained image — see entry pipeline header for
 #      rationale. Job-level override is redundant with the entry pipeline default
 #      but kept for clarity. Drop later if we centralize the pool definition.)
 #   - container: VS 2022 toolchain container removed in initial POC. Re-add if
@@ -69,24 +69,21 @@ jobs:
         value: $(repoRoot)
 
     pool:
-      # Microsoft-managed 1ES PT pool — see entry pipeline header for rationale.
-      # `windows-latest` is the Microsoft-managed alias for a 1ES PT-compliant
-      # Win Server 2022 image (currently build 20348).
-      name: Azure-Pipelines-1ESPT-ExDShared
-      image: windows-latest
+      # Team-owned PowerShell1ES pool with the 1ES-maintained `MMS2022` image
+      # (full name `MMSWindows2022-1ESPT-v2`). See entry pipeline header for
+      # rationale and history.
+      name: PowerShell1ES
+      image: MMS2022
       os: windows
 
     # CONTAINER NOTE (1ES PT migration):
     # OneBranch ran this job inside `onebranch.azurecr.io/windows/ltsc2022/vse2022:latest`
     # to provide the VS 2022 toolchain that `Start-PSBuild` needs. We do NOT
-    # reuse that container in the initial POC because:
-    #   (a) Microsoft-managed 1ES PT pool images are intended to be used directly;
-    #       container nesting adds complexity and may not be supported.
-    #   (b) The `windows-latest` image typically includes a modern VS Build Tools
-    #       toolchain sufficient for Start-PSBuild.
-    # TODO (verify with team after first green POC run): if `Start-PSBuild` fails
-    # with "msbuild not found" or similar, either install the toolchain via an
-    # inline step or re-add `container: vse2022` here.
+    # reuse that container in the initial POC because the `MMS2022` image already
+    # ships with a modern VS Build Tools toolchain. TODO (verify with team after
+    # first green POC run): if `Start-PSBuild` fails with "msbuild not found" or
+    # similar, either install the toolchain via an inline step or re-add
+    # `container: vse2022` here.
 
     # APIScan can take a long time
     timeoutInMinutes: 180
