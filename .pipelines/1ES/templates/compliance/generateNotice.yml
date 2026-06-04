@@ -9,7 +9,7 @@
 #
 # Translation summary applied to this file:
 #   - pool: { type: windows }
-#       -> pool: { name: PowerShell1ES, image: PSMMS2019-Secure, os: windows }
+#       -> pool: { name: PowerShell1ES, image: MMSWindows2022-g2-Secure, os: windows }
 #   - per-job `ob_sdl_*` variables moved into `templateContext.sdl` block.
 #     `ob_sdl_apiscan_enabled: false` becomes `templateContext.sdl.apiscan.enabled: false`.
 #   - `ob_outputDirectory` preserved (build steps reference it); also published
@@ -37,7 +37,8 @@ jobs:
 
     pool:
       name: PowerShell1ES
-      image: PSMMS2019-Secure
+      # 1ES PT compliant image (see entry pipeline for rationale).
+      image: MMSWindows2022-g2-Secure
       os: windows
 
     timeoutInMinutes: 15
