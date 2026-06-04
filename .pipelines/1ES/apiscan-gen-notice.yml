@@ -131,7 +131,13 @@ extends:
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
       tsa:
         enabled: true  # 1ES publishes all SDL results to TSA. If TSA is disabled all SDL tools will be forced into 'break' build mode.
-        configFile: .config\tsaoptions.json  # Was `tsaOptionsFile` (top-level) in OneBranch.
+        # 1ES PT requires an absolute path for `sdl.tsa.configFile` — the Guardian CLI's
+        # working dir for the auto-injected SDL Sources Analysis job is NOT $(Build.SourcesDirectory),
+        # so a relative path like `.config\tsaoptions.json` resolves to the wrong location and
+        # fails with `GuardianFileNotFoundException`. (OneBranch's `globalSdl.tsaOptionsFile`
+        # auto-resolved relative paths against the sources dir; 1ES PT does not.)
+        # Pattern confirmed in microsoft/PowerToys, microsoft/vscode, dotnet/macios, and others.
+        configFile: $(Build.SourcesDirectory)\.config\tsaoptions.json
       credscan:
         enabled: true
         scanFolder:  $(Build.SourcesDirectory)
