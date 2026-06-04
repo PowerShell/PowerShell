@@ -16,30 +16,35 @@
 #   - featureFlags:         removed (Windows host version now comes from the pool image)
 #   - globalSdl:            renamed to sdl (sub-keys nearly identical)
 #   - tsaOptionsFile:       moved under sdl.tsa.configFile
-#   - pool:                 declared at the extends level (Azure-Pipelines-1ESPT-ExDShared
-#                           + windows-latest), inherited by jobs unless overridden
+#   - pool:                 declared at the extends level (PowerShell1ES
+#                           + MMS2022), inherited by jobs unless overridden
 #   - stages/templates:     unchanged paths (helpers still live under /.pipelines/templates/...)
 #
 # POOL/IMAGE DECISION (POC SCOPE):
-#   The original OneBranch pipeline runs on `PowerShell1ES` (team-owned curated
-#   pool). For the POC we deliberately switched to the Microsoft-managed
-#   `Azure-Pipelines-1ESPT-ExDShared` pool because:
-#     1. PowerShell1ES has NO 1ES PT-compliant images registered (build 684120
-#        failed with "1ES PT Error: image lacks 1es-pt-prerequisites-v2 artifact").
-#     2. Switching to a 1ES PT-compliant CloudTest image (`MMSWindows2022-g2-Secure`)
-#        failed in build 684335 with "Image ... doesn't exist in pool PowerShell1ES"
-#        — pool admin must explicitly register images; the image gallery isn't
-#        searched implicitly.
-#     3. `Azure-Pipelines-1ESPT-ExDShared` is the standard Microsoft-managed
-#        1ES PT pool (24 Win Server 2022 agents, image alias `windows-latest`,
-#        compliant out of the box, no team admin required).
-#   For production rollout, the PowerShell1ES pool admin should register a
-#   1ES PT-compliant Win 2022 image (e.g., `MMSWindows2022-g2-Secure` from
-#   CloudTestImages/CloudTestGallery, sub 723b64f0-884d-4994-b6de-8960d049cb7e)
-#   so the POC can be retargeted at PowerShell1ES for full network/credential parity.
+#   Targets team-owned `PowerShell1ES` pool with the 1ES-maintained image `MMS2022`
+#   (full name `MMSWindows2022-1ESPT-v2`, an `existing` resource managed by the 1ES
+#   team and registered in our CloudTest RG). It is 1ES PT-compliant out of the
+#   box (the `-1ESPT-v2` suffix denotes the required prerequisite artifact is baked
+#   in). Use is proven in production by the team's GitHub-mirror runner, which
+#   uses the same pool + image combination.
+#
+#   History (kept for context):
+#     - Build 684120 against `PowerShell1ES + PSMMS2019-Secure` failed because that
+#       image lacks the 1ES PT prereq artifact.
+#     - Build 684335 against `PowerShell1ES + MMSWindows2022-g2-Secure` failed
+#       because the gallery image name does not match the name registered in the
+#       pool. The pool uses the local alias `MMS2022` for that image family.
+#     - Build 684337 ran on the Microsoft-managed `Azure-Pipelines-1ESPT-ExDShared`
+#       pool as a temporary workaround while the team-pool image situation was
+#       being sorted out. That fallback is no longer needed.
+#
+#   NB: `main` of the team's PsImageFactory repo still shows `PowerShell1ES` mapping
+#   to `PSMMS2022-AzDO`. The deployed pool actually maps to `MMS2022`, set by
+#   PR #38413 (`addAzureCLI` branch) which was deployed but never merged. Until
+#   that PR is merged, `main` will misrepresent the deployed pool state.
 #
 # Open verification items (track during POC run):
-#   - Confirm `windows-latest` on ExDShared has the VS 2022 build toolchain
+#   - Confirm `MMS2022` (PowerShell1ES) ships with a VS 2022 build toolchain
 #     `Start-PSBuild` needs. If not, either re-add a `container: vse2022`
 #     at job level OR install the toolchain inline.
 #   - Confirm `Unofficial` is the right template (vs `Official`). TSA bug
@@ -105,10 +110,11 @@ extends:
     # `release-MakeBlobPublic.yml` and `release-upload-buildinfo.yml` already
     # in this repo. Jobs may override this per-job if a different image is needed.
     pool:
-      # See "POOL/IMAGE DECISION" in the header comment for why this POC runs on
-      # the Microsoft-managed ExDShared pool instead of team-owned PowerShell1ES.
-      name: Azure-Pipelines-1ESPT-ExDShared
-      image: windows-latest
+      # See "POOL/IMAGE DECISION" in the header comment for rationale.
+      # `MMS2022` is the 1ES-maintained `MMSWindows2022-1ESPT-v2` image, registered
+      # at 100% buffer in the PowerShell1ES pool (per PsImageFactory PR #38413).
+      name: PowerShell1ES
+      image: MMS2022
       os: windows
 
     sdl:
