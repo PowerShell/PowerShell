@@ -176,11 +176,13 @@ function Exit-Script {
 Exit-Script
 "@ | Set-Content -Path $scriptFilePath
 
-        & "$PSHOME/pwsh" -NoProfile -File $scriptFilePath *> $null
+        $pwshName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
+        $pwsh = Join-Path $PSHOME $pwshName
+        & $pwsh -NoProfile -File $scriptFilePath *> $null
 
         $LASTEXITCODE | Should -Be 255
         $exitTranscriptFilePath | Should -Exist
-        Get-Content -Path $exitTranscriptFilePath -Raw | Should -Not -Match 'TerminatingError\(\): "System error\."'
+        Get-Content -Path $exitTranscriptFilePath -Raw | Should -Not -Match 'TerminatingError\(\)'
     }
 
     It "Transcription should record native command output" {
