@@ -9,12 +9,11 @@
 #
 # Translation summary applied to this file:
 #   - pool: { type: windows }
-#       -> pool: { name: PowerShell1ES, image: PSMMS2019-Secure, os: windows }
+#       -> pool: { name: PowerShell1ES, image: MMSWindows2022-g2-Secure, os: windows }
 #     (job-level override; redundant with the entry pipeline default but kept
 #      for clarity. Drop later if we centralize the pool definition.)
-#   - container: VS 2022 toolchain container moved to a job-level `container:`
-#     declaration. NEEDS VERIFICATION that PSMMS2019-Secure agents support
-#     hosting Windows containers.
+#   - container: VS 2022 toolchain container removed in initial POC. Re-add if
+#     Start-PSBuild fails with "msbuild not found" (now safe — host is Win 2022).
 #   - per-job `ob_sdl_*` variables moved into `templateContext.sdl` block.
 #   - `ob_outputDirectory` variable preserved (build steps reference it) and
 #     the folder is also published as a pipeline artifact via
@@ -70,22 +69,21 @@ jobs:
 
     pool:
       name: PowerShell1ES
-      image: PSMMS2019-Secure
+      # 1ES PT compliant image (see entry pipeline for rationale). Must match
+      # the host OS of any container declared below.
+      image: MMSWindows2022-g2-Secure
       os: windows
 
     # CONTAINER NOTE (1ES PT migration):
     # OneBranch ran this job inside `onebranch.azurecr.io/windows/ltsc2022/vse2022:latest`
     # to provide the VS 2022 toolchain that `Start-PSBuild` needs. We do NOT
-    # reuse that container here because:
-    #   (a) `PSMMS2019-Secure` is a Windows Server 2019 host, which cannot run
-    #       LTSC 2022 Windows containers (host/container Windows versions must match).
-    #   (b) Secure 1ES pools typically don't have Windows container hosting enabled.
-    # TODO (verify with team): either
-    #   (a) ensure `PSMMS2019-Secure` already has the VS 2022 build toolchain installed, or
-    #   (b) register a Windows Server 2022 image in the `PowerShell1ES` pool and swap
-    #       the `image:` value above to it, then re-add `container:` here.
-    # If `Start-PSBuild` fails with "msbuild not found" or similar on the first POC run,
-    # option (b) is the fix.
+    # reuse that container in the initial POC because:
+    #   (a) Secure 1ES pools typically don't have Windows container hosting enabled.
+    #   (b) The new image `MMSWindows2022-g2-Secure` may already include the
+    #       VS 2022 build toolchain (Windows Server 2022 MMS images commonly do).
+    # TODO (verify with team after first green POC run): if `Start-PSBuild` fails
+    # with "msbuild not found" or similar, either install the toolchain via an
+    # image artifact or re-add `container: vse2022` here (now safe — host is Win 2022).
 
     # APIScan can take a long time
     timeoutInMinutes: 180

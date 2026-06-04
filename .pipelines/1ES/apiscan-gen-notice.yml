@@ -16,14 +16,16 @@
 #   - featureFlags:         removed (Windows host version now comes from the pool image)
 #   - globalSdl:            renamed to sdl (sub-keys nearly identical)
 #   - tsaOptionsFile:       moved under sdl.tsa.configFile
-#   - pool:                 declared at the extends level (PowerShell1ES + PSMMS2019-Secure),
+#   - pool:                 declared at the extends level (PowerShell1ES + MMSWindows2022-g2-Secure),
 #                           inherited by jobs unless overridden
 #   - stages/templates:     unchanged paths (helpers still live under /.pipelines/templates/...)
 #
 # Open verification items (track during POC run):
-#   - `PowerShell1ES` + `PSMMS2019-Secure` is Windows Server 2019, not 2022.
-#     If the build truly needs Win 2022, ask the pool admins to register a
-#     2022 image and swap the `image:` field below.
+#   - Image was switched from `PSMMS2019-Secure` (Win 2019, not 1ES PT-compliant)
+#     to `MMSWindows2022-g2-Secure` (Win 2022, 1ES PT-compliant) after build 684120
+#     hit `1ES PT Error: Using an image without 1es-pt-prerequisites artifact is not
+#     allowed`. Confirm Win 2022 toolchain on this image satisfies Start-PSBuild
+#     (may need a `container:` for VS 2022 toolchain — re-add at job level if needed).
 #   - Confirm `Unofficial` is the right template (vs `Official`). TSA bug
 #     filing is gated on CODEQL_ENABLED (master-only) so Unofficial is fine
 #     for non-release branches.
@@ -88,7 +90,13 @@ extends:
     # in this repo. Jobs may override this per-job if a different image is needed.
     pool:
       name: PowerShell1ES
-      image: PSMMS2019-Secure
+      # 1ES PT requires images that include the `windows-1es-pt-prerequisites-v2`
+      # artifact. `PSMMS2019-Secure` (used by OneBranch jobs in this repo) does
+      # NOT include it and causes `1ES PT Pre-Job` to hard-fail. We use
+      # `MMSWindows2022-g2-Secure` from the same CloudTestImages/CloudTestGallery —
+      # it is 1ES PT compliant and also matches the original pipeline's
+      # `WindowsHostVersion: 2022` intent.
+      image: MMSWindows2022-g2-Secure
       os: windows
 
     sdl:
