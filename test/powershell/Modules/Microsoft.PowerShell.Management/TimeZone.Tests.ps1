@@ -109,6 +109,11 @@ Describe "Get-Timezone test cases" -Tags "CI" {
             Where-Object Count -EQ 1 |
             Select-Object -First 1 -ExpandProperty Group
 
+        if ($null -eq $timezone) {
+            Set-ItResult -Skipped -Because "No available time zone has a unique StandardName on this platform."
+            return
+        }
+
         $observed = Get-TimeZone -Name $timezone.StandardName
         $observed.Id | Should -Be $timezone.Id
         $observed.StandardName | Should -Be $timezone.StandardName
