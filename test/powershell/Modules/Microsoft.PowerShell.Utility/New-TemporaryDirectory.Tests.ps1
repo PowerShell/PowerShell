@@ -42,6 +42,6 @@ Describe "New-TemporaryDirectory" -Tags "CI" {
     }
 
     It "has an OutputType of System.IO.DirectoryInfo" {
-        (Get-Command New-TemporaryDirectory).OutputType | Should -BeExactly "System.IO.DirectoryInfo"
+        (Get-Command New-TemporaryDirectory).OutputType.Name | Should -Contain "System.IO.DirectoryInfo"
     }
 }

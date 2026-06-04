@@ -18,24 +18,40 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            string tempPath = Path.GetTempPath();
-            if (ShouldProcess(tempPath))
+            DirectoryInfo targetDirectory = PathUtils.GetTemporaryDirectory();
+            if (ShouldProcess(targetDirectory.FullName))
             {
                 try
                 {
-                    DirectoryInfo directory = PathUtils.CreateTemporaryDirectory();
-                    WriteObject(directory);
+                    DirectoryInfo createdDirectory = Directory.CreateDirectory(targetDirectory.FullName);
+                    WriteObject(createdDirectory);
                 }
                 catch (IOException ioException)
                 {
                     ThrowTerminatingError(
-                        new ErrorRecord(
+                        CreateErrorRecord(
                             ioException,
-                            "NewTemporaryDirectoryWriteError",
                             ErrorCategory.WriteError,
-                            tempPath));
+                            targetDirectory.FullName));
+                }
+                catch (System.UnauthorizedAccessException unauthorizedAccessException)
+                {
+                    ThrowTerminatingError(
+                        CreateErrorRecord(
+                            unauthorizedAccessException,
+                            ErrorCategory.PermissionDenied,
+                            targetDirectory.FullName));
                 }
             }
+        }
+
+        private static ErrorRecord CreateErrorRecord(System.Exception exception, ErrorCategory category, string targetPath)
+        {
+            return new ErrorRecord(
+                exception,
+                "NewTemporaryDirectoryWriteError",
+                category,
+                targetPath);
         }
     }
 }
