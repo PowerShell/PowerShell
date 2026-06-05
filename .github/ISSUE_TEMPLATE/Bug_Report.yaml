@@ -61,9 +61,9 @@ body:
 - type: textarea
   attributes:
     label: Environment data
-    description: Paste verbatim output from `$PSVersionTable` below.
+    description: Paste verbatim output from `$PSVersionTable | Out-String | Set-Clipboard` below.
     render: powershell
-    placeholder: PS> $PSVersionTable
+    placeholder: PS> $PSVersionTable | Out-String | Set-Clipboard
   validations:
     required: true
 - type: textarea
