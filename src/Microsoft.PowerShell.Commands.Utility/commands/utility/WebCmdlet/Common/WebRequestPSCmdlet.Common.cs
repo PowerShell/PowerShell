@@ -582,11 +582,12 @@ namespace Microsoft.PowerShell.Commands
                             if (IsResumeRangeAlreadyComplete(response, out bool isMissingContentRange))
                             {
                                 _isSuccess = true;
+                                string skippedMessageFormat = isMissingContentRange
+                                    ? WebCmdletStrings.OutFileWritingSkippedWithoutContentRange
+                                    : WebCmdletStrings.OutFileWritingSkipped;
                                 string skippedMessage = string.Format(
                                     CultureInfo.CurrentCulture,
-                                    isMissingContentRange
-                                        ? WebCmdletStrings.OutFileWritingSkippedWithoutContentRange
-                                        : WebCmdletStrings.OutFileWritingSkipped,
+                                    skippedMessageFormat,
                                     OutFile);
                                 WriteVerbose(skippedMessage);
 
@@ -1741,6 +1742,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             ContentRangeHeaderValue contentRange = response.Content.Headers.ContentRange;
+
             // RFC 9110 only says 416 responses SHOULD include Content-Range. Treat a missing
             // header as an already-complete resume instead of failing with a null reference.
             if (contentRange is null)
