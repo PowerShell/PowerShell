@@ -66,6 +66,28 @@ body:
     placeholder: PS> $PSVersionTable | Out-String | Set-Clipboard
   validations:
     required: true
+- type: checkboxes
+  attributes:
+    label: Installation Method on Windows
+    options:
+    - label: MSI
+      required: false
+    - label: MSIX
+      required: false
+    - label: zip
+      required: false
+    - label: winget
+      required: false
+    - label: Microsoft Store
+      required: false
+    - label: other
+      required: false
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: If other please detail how you installed PowerShell
+    description: There are many different ways that PowerShell can be installed and to help us best repro your issue we would need to understand how it was installed in your environment
 - type: textarea
   attributes:
     label: Visuals
