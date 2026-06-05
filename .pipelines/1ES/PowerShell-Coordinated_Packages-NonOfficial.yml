@@ -1,0 +1,214 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+#
+# 1ES PIPELINE TEMPLATES (1ES PT) MIGRATION — UNOFFICIAL
+# ------------------------------------------------------
+# This is a parallel migration of `.pipelines/NonOfficial/PowerShell-Coordinated_Packages-NonOfficial.yml`
+# from OneBranch templates to 1ES Pipeline Templates. The OneBranch original
+# is intentionally left untouched so the two pipelines can run side-by-side
+# in ADO for validation.
+#
+# WHY UNOFFICIAL FIRST:
+# Migrating to Unofficial first lets us validate the YAML structure, pool
+# selection, SDL injection, and artifact production WITHOUT needing the
+# production ESRP service connections (which are still being onboarded).
+# Once this Unofficial pipeline is green end-to-end, we fork it to an
+# Official sibling that swaps in real ESRP signing.
+#
+# Translation summary (full notes in `files/onebranch-to-1es-migration.md`):
+#   - resources.repositories: OneBranch.Pipelines/GovernedTemplates @ refs/heads/main
+#                          -> 1ESPipelineTemplates/1ESPipelineTemplates @ refs/tags/release
+#   - extends.template:     v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates
+#                          -> v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+#   - featureFlags:         removed (Windows/Linux host version come from the pool image)
+#   - globalSdl:            renamed to sdl (sub-keys nearly identical)
+#   - tsaOptionsFile:       moved under sdl.tsa.configFile, made ABSOLUTE
+#                           ($(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json)
+#                           See migration playbook gotcha #3a for why.
+#   - armory:               removed (OneBranch-only; not part of 1ES PT SDL schema).
+#   - pool:                 declared at the extends level (Windows: PowerShell1ES
+#                           + MMS2022). Per-job overrides for Linux/macOS jobs.
+#   - stages/templates:     point at `.pipelines/1ES/templates/...` siblings, NOT
+#                           the OneBranch originals (because per-job templates
+#                           need their own pool/templateContext translations).
+#
+# POOL/IMAGE STRATEGY:
+#   - Windows jobs    -> PowerShell1ES + MMS2022 (1ES-maintained, proven in apiscan POC)
+#   - Linux jobs      -> PowerShell1ES + PSMMSAzureLinux3.0-Secure (closest match to
+#                        the OneBranch container `mcr.microsoft.com/onebranch/azurelinux/build:3.0`).
+#                        ⚠ Verify with team that PowerShell1ES pool carries this image.
+#                        If not, fall back to `1ES-Linux-Ubuntu-2204` Microsoft-hosted pool.
+#   - macOS jobs      -> Azure Pipelines + vmImage macOS-latest (no team-owned macOS image
+#                        exists in the CloudTest inventory; macOS jobs MUST use the
+#                        Microsoft-hosted Azure Pipelines shared pool).
+#
+# CODEQL POLICY:
+#   - 1ES PT auto-runs CodeQL3000 on the ADO repo default branch only by default.
+#   - PowerShell's ADO default is `internal-master`, NOT release branches, so without
+#     intervention CodeQL would never run on the branches that ship to customers.
+#   - Shipping branches are `release/v7.x.y` AND `rebuild/v7.x.y-rebuild.N` — both
+#     ship code to customers, neither is the default branch.
+#   - We set `sdl.codeql.enabled: true` + `enabledOnNonDefaultBranches: true`
+#     UNCONDITIONALLY so every branch (default, release, rebuild, PR, dev, test)
+#     gets CodeQL coverage. Running on every branch also lets us validate the
+#     SDL injection plumbing without waiting to cut a release.
+#   - The per-job CodeQL3000Init/Finalize tasks are dropped (1ES PT injects them
+#     automatically when `sdl.codeql` is enabled).
+#   - `FORCE_CODEQL=true` is still useful for debugging: it switches
+#     CodeQL.Cadence from 24h to 1h so back-to-back uploads don't get throttled.
+#
+# STILL TODO (will be addressed in subsequent commits / Official sibling):
+#   - Stub signing: every onebranch.pipeline.signing@1 call replaced with a
+#     `pwsh: Write-Host "TODO: ESRP sign ..."` placeholder. Pipeline runs end-to-end
+#     but produces UNSIGNED artifacts — strictly for validating the migration scaffold.
+#   - Confirm Linux pool/image mapping (PowerShell1ES + PSMMSAzureLinux3.0-Secure).
+#   - Once Unofficial green, build Official sibling with real ESRP signing.
+
+trigger: none
+
+parameters:
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    displayName: Debugging - Skip Signing
+    type: string
+    default: 'NO'
+  - name: RUN_TEST_AND_RELEASE
+    displayName: Debugging - Run Test and Release Artifacts Stage
+    type: boolean
+    default: true
+  - name: RUN_WINDOWS
+    displayName: Debugging - Enable Windows Stage
+    type: boolean
+    default: true
+  - name: ENABLE_MSBUILD_BINLOGS
+    displayName: Debugging - Enable MSBuild Binary Logs
+    type: boolean
+    default: false
+  - name: FORCE_CODEQL
+    displayName: Debugging - Enable CodeQL and set cadence to 1 hour
+    type: boolean
+    default: false
+
+name: bins-$(BUILD.SOURCEBRANCHNAME)-1ES-nonofficial-$(Build.BuildId)
+
+variables:
+  # Inherit the same variable scaffold as the OneBranch original. The shared
+  # variables file is 1ES-safe (it only declares string variables + groups —
+  # no ob_* SDL knobs at the global level except `ob_sdl_binskim_enabled`,
+  # which 1ES PT will silently ignore at the variables block scope).
+  - template: /.pipelines/templates/variables/PowerShell-Coordinated_Packages-Variables.yml@self
+    parameters:
+      InternalSDKBlobURL: ${{ parameters.InternalSDKBlobURL }}
+      ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
+      SKIP_SIGNING: ${{ parameters.SKIP_SIGNING }}
+      ENABLE_MSBUILD_BINLOGS: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
+      FORCE_CODEQL: ${{ parameters.FORCE_CODEQL }}
+
+resources:
+  repositories:
+    # ComplianceRepo is preserved verbatim (used by helper templates that
+    # invoke PoliCheck / CredScan via the GH-hosted PowerShell/compliance repo).
+    - repository: ComplianceRepo
+      type: github
+      endpoint: ComplianceGHRepo
+      name: PowerShell/compliance
+      ref: master
+    # NEW: 1ES Pipeline Templates resource (replaces `onebranchTemplates`).
+    - repository: 1ESPipelineTemplates
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    # Pool default for all jobs. Windows jobs inherit; macOS/Linux jobs override
+    # at the per-job level inside the templates.
+    pool:
+      name: PowerShell1ES
+      image: MMS2022
+      os: windows
+
+    sdl:
+      # CodeQL: enabled unconditionally on ALL branches.
+      #
+      # Rationale:
+      #   - 1ES PT's default behaviour runs CodeQL only on the ADO repo's
+      #     `default` branch. PowerShell's ADO default branch is `internal-master`,
+      #     which is NEVER used for releases. Shipping branches are:
+      #       * `release/v7.x.y`         — standard releases
+      #       * `rebuild/v7.x.y-rebuild.N` — rebuild releases (see rebuild-branch-check.yml)
+      #     Both ship to customers; neither is the default branch. Default
+      #     behaviour would therefore skip CodeQL on EVERY shipping branch.
+      #
+      #   - Forcing CodeQL on every branch (including PR / dev / test branches)
+      #     also lets us validate the migration scaffold itself — TSA bug
+      #     filing, SDL injection, CodeQL database upload cadence — without
+      #     waiting to cut a release.
+      #
+      #   - The `$(CODEQL_ENABLED)` variable from upstream Variables.yml
+      #     remains defined (still consumed by the apiscan-gen-notice POC) but
+      #     is intentionally NOT referenced here. The FORCE_CODEQL parameter
+      #     still does useful work: it pushes CodeQL.Cadence from 24h → 1h for
+      #     debugging, so back-to-back uploads don't get throttled.
+      codeql:
+        compiled:
+          enabled: true
+        enabledOnNonDefaultBranches: true
+        tsaEnabled: true  # File CodeQL findings to TSA on every run; TSA dedupes
+
+      # `armory` was OneBranch-only. Removed.
+
+      sbom:
+        enabled: true
+
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+
+      tsa:
+        enabled: true  # 1ES publishes all SDL results to TSA. Disabling forces all SDL tools into 'break' mode.
+        # 1ES PT requires an absolute path for `sdl.tsa.configFile` (validated via
+        # apiscan-gen-notice POC — relative paths fail with `GuardianFileNotFoundException`).
+        #
+        # IMPORTANT: this path is consumed by the auto-injected SDL Sources Analysis
+        # job, which runs WITHOUT the `stage-repo-under-PowerShell.yml` helper. That
+        # job sees the repo at $(Build.SourcesDirectory) directly. DO NOT add a
+        # `\PowerShell\` segment here — only the per-job `templateContext.sdl.tsa`
+        # overrides (inside user jobs that DO run the staging helper) use the
+        # `\PowerShell\.config\...` form.
+        configFile: $(Build.SourcesDirectory)\.config\tsaoptions.json
+
+      credscan:
+        enabled: true
+        scanFolder: $(Build.SourcesDirectory)
+        # Same rationale as tsa.configFile above — global SDL paths must NOT include
+        # `\PowerShell\` because the SDL Sources Analysis job does not stage the repo.
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+
+      # BinSkim runs at the user-job level in 1ES PT. Disabled at the global
+      # level to mirror the OneBranch original's behaviour. Re-enabled per-job
+      # for binary-producing jobs in the job templates (windows/linux build).
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+
+      # APIScan: not part of the build pipeline. Lives in
+      # `.pipelines/1ES/apiscan-gen-notice.yml`. Explicit off here matches
+      # the OneBranch original.
+      apiscan:
+        enabled: false
+
+    stages:
+      - template: /.pipelines/1ES/templates/stages/PowerShell-Coordinated_Packages-Stages.yml@self
+        parameters:
+          RUN_WINDOWS: ${{ parameters.RUN_WINDOWS }}
+          RUN_TEST_AND_RELEASE: ${{ parameters.RUN_TEST_AND_RELEASE }}
+          OfficialBuild: false

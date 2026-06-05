@@ -1,0 +1,333 @@
+parameters:
+  Architecture: 'x64'
+  BuildConfiguration: 'release'
+  JobName: 'build_windows'
+
+# 1ES PT translation of /.pipelines/templates/windows-hosted-build.yml.
+# Single Windows job that BOTH builds and signs (the OneBranch original is the same shape).
+# Three signing tasks STUBBED:
+#   1. obp-file-signing.yml call for the main bin folder (Authenticode).
+#   2. obp-file-signing.yml call for the global tool publish folder (fxdependent only).
+#   3. Inline `Sign obj files` (external_distribution) and `Sign nupkg files` (nuget_cert_id).
+# CodeQL3000Init/Finalize tasks DROPPED (1ES PT auto-injects via sdl.codeql config).
+# cloneToOfficialPath.yml replaced with stage-repo-under-PowerShell.yml.
+
+jobs:
+- job: build_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+  displayName: Build_Windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+  condition: succeeded()
+  pool:
+    name: PowerShell1ES
+    image: MMS2022
+    os: windows
+  variables:
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: DOTNET_NOLOGO
+    value: 1
+  - group: DotNetPrivateBuildAccess
+  - group: certificate_logical_to_actual
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: Architecture
+    value: ${{ parameters.Architecture }}
+  - name: BuildConfiguration
+    value: ${{ parameters.BuildConfiguration }}
+  - name: PowerShellRoot
+    value: '$(Build.SourcesDirectory)\PowerShell'
+
+  templateContext:
+    sdl:
+      codeSignValidation:
+        enabled: false
+      binskim:
+        enabled: true
+      tsa:
+        configFile: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+      sbom:
+        packageName: 'Microsoft.Powershell.Windows.${{ parameters.Architecture }}'
+      codeql:
+        compiled:
+          enabled: false
+    outputs:
+    - output: pipelineArtifact
+      targetPath: $(ob_outputDirectory)
+      artifactName: drop_windows_${{ parameters.JobName }}
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      ob_restore_phase: false
+
+  - template: /.pipelines/1ES/templates/stage-repo-under-PowerShell.yml@self
+
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
+  - pwsh: |
+      $runtime = switch ($env:Architecture)
+        {
+          "x64" { "win7-x64" }
+          "x86" { "win7-x86" }
+          "arm64" { "win-arm64" }
+          "fxdependent" { "fxdependent" }
+          "fxdependentWinDesktop" { "fxdependent-win-desktop" }
+        }
+
+      $params = @{}
+      if ($env:BuildConfiguration -eq 'minSize') {
+        $params['ForMinimalSize'] = $true
+      }
+
+      $vstsCommandString = "vso[task.setvariable variable=Runtime]$runtime"
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+
+      Write-Verbose -Message "Building PowerShell with Runtime: $runtime for '$env:BuildConfiguration' configuration"
+      Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+      $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(Pipeline.Workspace)/Symbols_$(Architecture) -Force
+
+      Start-PSBootstrap -Scenario Package
+      $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
+
+      $ReleaseTagParam = @{}
+
+      if ($env:RELEASETAGVAR) {
+        $ReleaseTagParam['ReleaseTag'] = $env:RELEASETAGVAR
+      }
+
+      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath -Clean -PSModuleRestore @params @ReleaseTagParam
+
+      $refFolderPath = Join-Path $buildWithSymbolsPath 'ref'
+      Write-Verbose -Verbose "refFolderPath: $refFolderPath"
+      $outputPath = Join-Path '$(ob_outputDirectory)' 'psoptions'
+      $null = New-Item -ItemType Directory -Path $outputPath -Force
+      $psOptPath = "$outputPath/psoptions.json"
+      Save-PSOptions -PSOptionsPath $psOptPath
+
+      Write-Verbose -Verbose "Verifying pdbs exist in build folder"
+      $pdbs = Get-ChildItem -Path $buildWithSymbolsPath -Recurse -Filter *.pdb
+      if ($pdbs.Count -eq 0) {
+        Write-Error -Message "No pdbs found in build folder"
+      }
+      else {
+        Write-Verbose -Verbose "Found $($pdbs.Count) pdbs in build folder"
+        $pdbs | ForEach-Object {
+          Write-Verbose -Verbose "Pdb: $($_.FullName)"
+        }
+
+        $pdbs | Compress-Archive -DestinationPath "$(ob_outputDirectory)/symbols.zip" -Update
+      }
+
+      Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
+    displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols folder'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  - pwsh: |
+      $runtime = switch ($env:Architecture)
+        {
+          "x64" { "win7-x64" }
+          "x86" { "win7-x86" }
+          "arm64" { "win-arm64" }
+          "fxdependent" { "fxdependent" }
+          "fxdependentWinDesktop" { "fxdependent-win-desktop" }
+        }
+
+      Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+      Find-Dotnet
+
+      ## Build global tool
+      Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
+      $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
+      Push-Location -Path $globalToolCsProjDir -Verbose
+
+      $globalToolArtifactPath = Join-Path $(Build.SourcesDirectory) 'GlobalTool'
+      $vstsCommandString = "vso[task.setvariable variable=GlobalToolArtifactPath]${globalToolArtifactPath}"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+
+      if ($env:RELEASETAGVAR) {
+        $ReleaseTagToUse = $env:RELEASETAGVAR -Replace '^v'
+      }
+
+      Write-Verbose -Verbose "Building PowerShell global tool for Windows.x64 with cmdline: dotnet publish --no-self-contained --artifacts-path $globalToolArtifactPath /property:PackageVersion=$(Version) --configuration 'Release' /property:ReleaseTag=$ReleaseTagToUse"
+      dotnet publish --no-self-contained --artifacts-path $globalToolArtifactPath /property:PackageVersion=$(Version) --configuration 'Release' /property:ReleaseTag=$ReleaseTagToUse
+      $globalToolBuildModulePath = Join-Path $globalToolArtifactPath 'publish' 'PowerShell.Windows.x64' 'release'
+      Pop-Location
+      # do this to ensure everything gets signed.
+      Restore-PSModuleToBuild -PublishPath $globalToolBuildModulePath
+
+      $buildWithSymbolsPath = Get-Item -Path "$(Pipeline.Workspace)/Symbols_$(Architecture)"
+      $refFolderPath = Join-Path $buildWithSymbolsPath 'ref'
+      Write-Verbose -Verbose "refFolderPath: $refFolderPath"
+
+      # Copy reference assemblies
+      Copy-Item -Path $refFolderPath -Destination $globalToolBuildModulePath -Recurse -Force
+
+      Write-Verbose -Verbose "clean unnecessary files in obj directory"
+      $objDir = Join-Path $globalToolArtifactPath 'obj' 'PowerShell.Windows.x64' 'release'
+
+      $filesToKeep = @("apphost.exe", "PowerShell.Windows.x64.pdb", "PowerShell.Windows.x64.dll", "project.assets.json")
+
+      # only four files are needed in obj folder for global tool packaging
+      Get-ChildItem -Path $objDir -File -Recurse |
+        Where-Object { -not $_.PSIsContainer } |
+        Where-Object { $_.name -notin $filesToKeep } |
+        Remove-Item -Verbose
+
+
+    displayName: 'Build Winx64 Global tool'
+    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  - pwsh: |
+      $platform = 'windows'
+      $vstsCommandString = "vso[task.setvariable variable=ArtifactPlatform]$platform"
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+    displayName: Set artifact platform
+
+  - template: /.pipelines/1ES/templates/obp-file-signing.yml@self
+    parameters:
+      binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
+      OfficialBuild: $(ps_official_build)
+
+  ## first we sign all the files in the bin folder
+  - ${{ if eq(variables['Architecture'], 'fxdependent') }}:
+    - template: /.pipelines/1ES/templates/obp-file-signing.yml@self
+      parameters:
+        binPath: '$(GlobalToolArtifactPath)/publish/PowerShell.Windows.x64/release'
+        globalTool: 'true'
+        OfficialBuild: $(ps_official_build)
+
+  - pwsh: |
+      Get-ChildItem '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
+    displayName: Capture obj files
+    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
+
+  ## STUB: original was `task: onebranch.pipeline.signing@1` with `signing_profile: external_distribution`
+  ## (KeyCode CP-230012). Sign obj files needed for the global tool packaging.
+  - pwsh: |
+      Write-Host '##[warning]STUB: would invoke ESRP signing with profile "external_distribution" (KeyCode CP-230012)'
+      Write-Host '  files_to_sign: **\*.dll;**\*.exe'
+      Write-Host '  search_root: $(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
+      if (Test-Path '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release') {
+        Get-ChildItem -Path '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release' -Recurse -Include '*.dll','*.exe' |
+          Select-Object -ExpandProperty FullName |
+          ForEach-Object { Write-Host "  Would sign: $_" }
+      }
+    displayName: 'Sign obj files (STUB — ESRP onboarding pending)'
+    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
+
+  - pwsh: |
+      <#  The way the packaging works is a bit tricky as when it is built, we cannot add the modules that come from gallery.
+          We have to use dotnet pack to build the nupkg and then expand it as a zip.
+          After expanding we restore the signed files for the modules from the gallery.
+          We also delete pdbs, content and contentFiles folder which are not necessary.
+          After that, we repack using Compress-Archive and rename it back to a nupkg.
+        #>
+
+      Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+      Find-Dotnet
+
+      $packagingStrings = Import-PowerShellDataFile "$(PowerShellRoot)\tools\packaging\packaging.strings.psd1"
+
+      $outputPath = Join-Path '$(ob_outputDirectory)' 'globaltool'
+      $null = New-Item -ItemType Directory -Path $outputPath -Force
+      $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
+      Push-Location -Path $globalToolCsProjDir -Verbose
+
+      if ($env:RELASETAGVAR) {
+        $ReleaseTagToUse = $env:RELASETAGVAR -Replace '^v'
+      }
+
+      Write-Verbose -Verbose "Packing PowerShell global tool for Windows.x64 with cmdline: dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png /property:Version=$(Version) /property:ReleaseTag=$ReleaseTagToUse"
+
+      dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png /property:Version=$(Version) /property:ReleaseTag=$ReleaseTagToUse
+
+      Write-Verbose -Verbose "Deleting content and contentFiles folders from the nupkg"
+
+      $nupkgs = Get-ChildItem -Path $outputPath -Filter powershell*.nupkg
+
+      $nupkgName = $nupkgs.Name
+      $newName = $nupkgName -replace '(\.nupkg)$', '.zip'
+      Rename-Item -Path $nupkgs.FullName -NewName $newName
+
+      $zipPath = Get-ChildItem -Path $outputPath -Filter powershell*.zip
+
+      # Expand zip and remove content and contentFiles folders
+      Expand-Archive -Path $zipPath -DestinationPath "$outputPath\temp" -Force
+
+      $modulesToCopy = @(
+        'PowerShellGet'
+        'PackageManagement'
+        'Microsoft.PowerShell.PSResourceGet'
+        'Microsoft.PowerShell.Archive'
+        'PSReadLine'
+        'Microsoft.PowerShell.ThreadJob'
+      )
+
+      $sourceModulePath = Join-Path '$(GlobalToolArtifactPath)' 'publish' 'PowerShell.Windows.x64' 'release' 'Modules'
+      $destModulesPath = Join-Path "$outputPath" 'temp' 'tools' 'net11.0' 'any' 'modules'
+
+      $modulesToCopy | ForEach-Object {
+        $modulePath = Join-Path $sourceModulePath $_
+        Copy-Item -Path $modulePath -Destination $destModulesPath -Recurse -Force
+      }
+
+      # Copy ref assemblies
+      Copy-Item '$(Pipeline.Workspace)/Symbols_$(Architecture)/ref' "$outputPath\temp\tools\net11.0\any\ref" -Recurse -Force
+
+      $contentPath = Join-Path "$outputPath\temp" 'content'
+      $contentFilesPath = Join-Path "$outputPath\temp" 'contentFiles'
+
+      Remove-Item -Path $contentPath,$contentFilesPath -Recurse -Force
+
+      # remove PDBs to reduce the size of the nupkg
+      Remove-Item -Path "$outputPath\temp\tools\net11.0\any\*.pdb" -Recurse -Force
+
+      # create powershell.config.json
+      $config = [ordered]@{}
+      $config.Add("Microsoft.PowerShell:ExecutionPolicy", "RemoteSigned")
+      $config.Add("WindowsPowerShellCompatibilityModuleDenyList", @("PSScheduledJob", "BestPractices", "UpdateServices"))
+
+      $configPublishPath = Join-Path "$outputPath" 'temp' 'tools' 'net11.0' 'any' "powershell.config.json"
+      Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
+
+      Compress-Archive -Path "$outputPath\temp\*" -DestinationPath "$outputPath\$nupkgName" -Force
+
+      Remove-Item -Path "$outputPath\temp" -Recurse -Force
+      Remove-Item -Path $zipPath -Force
+
+      if (-not (Test-Path "$outputPath\powershell.windows.x64.*.nupkg")) {
+        throw "Global tool package not found at $outputPath"
+      }
+    displayName: 'Pack Windows.x64 global tool'
+    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
+
+  ## STUB: original was `task: onebranch.pipeline.signing@1` with `cp_code: $(nuget_cert_id)`
+  ## (KeyCode CP-401405, NuGet package signing).
+  - pwsh: |
+      Write-Host '##[warning]STUB: would invoke ESRP signing with cp_code "$(nuget_cert_id)" (KeyCode CP-401405, NuGet)'
+      Write-Host '  files_to_sign: **\*.nupkg'
+      Write-Host '  search_root: $(ob_outputDirectory)\globaltool'
+      if (Test-Path '$(ob_outputDirectory)\globaltool') {
+        Get-ChildItem -Path '$(ob_outputDirectory)\globaltool' -Recurse -Filter '*.nupkg' |
+          Select-Object -ExpandProperty FullName |
+          ForEach-Object { Write-Host "  Would sign: $_" }
+      }
+    displayName: 'Sign nupkg files (STUB — ESRP onboarding pending)'
+    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
+
+  - template: /.pipelines/templates/step/finalize.yml@self
