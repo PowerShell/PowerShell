@@ -1,0 +1,71 @@
+parameters:
+  - name: cleanFirst
+    type: boolean
+    default: true
+
+# Stages the checked-out repository contents into a `PowerShell\` subfolder so that
+# all script paths inherited from the OneBranch templates (which reference
+# `$(Build.SourcesDirectory)\PowerShell\...` and `$env:REPOROOT/PowerShell/...`) keep
+# resolving correctly without rewriting every callsite.
+#
+# Why this helper exists
+# ----------------------
+# OneBranch's default checkout puts the repo at `<sources>\PowerShell` and exposes the
+# parent as `$(Build.SourcesDirectory)`. 1ES PT's default checkout puts the repo at
+# `$(Build.SourcesDirectory)` directly. Two ways to bridge the gap:
+#   (a) Rewrite every `\PowerShell\` path in every script (large surface).
+#   (b) Materialise a `\PowerShell\` subfolder at job start (small surface).
+# We pick (b) for the initial migration to keep the diff reviewable. A follow-up cleanup
+# pass can collapse the indirection once Official is also green.
+#
+# Why Copy-Item, not `git clone <parent> <child>`
+# ----------------------------------------------
+# The OneBranch helper `cloneToOfficialPath.yml` does a real `git clone $env:REPOROOT
+# $nativePath`. In OneBranch, source and dest are SIBLING folders so it works fine.
+# In 1ES PT, source ($(Build.SourcesDirectory)) is the PARENT of dest. A
+# `git clone <parent> <parent>\PowerShell` would try to copy the source repo INCLUDING the
+# destination subfolder we're trying to create — fragile and likely to fail on Windows
+# file-locking. A plain Copy-Item with a single-folder exclude is simpler and reliable.
+#
+# Also sets $env:REPOROOT for downstream consumers (SetVersionVariables.yml /
+# set-reporoot.yml / insert-nuget-config-azfeed.yml all probe $env:REPOROOT or fall back
+# to `./PowerShell/build.psm1`).
+
+steps:
+- pwsh: |
+    $ErrorActionPreference = 'Stop'
+    $src = '$(Build.SourcesDirectory)'
+    $dst = Join-Path $src 'PowerShell'
+
+    if (${{ parameters.cleanFirst }} -and (Test-Path $dst)) {
+      Remove-Item -Path $dst -Recurse -Force
+    }
+    New-Item -ItemType Directory -Path $dst -Force | Out-Null
+
+    # Copy everything except:
+    #  - the destination folder itself (would self-recurse)
+    #  - the `.git` folder (large, locked .pack files often fail to copy on Windows,
+    #    and the staged copy is only used for path-parity script consumption — Git
+    #    operations stay against $(Build.SourcesDirectory) where checkout: self put them)
+    Get-ChildItem -Path $src -Force -Exclude 'PowerShell', '.git' | ForEach-Object {
+      Copy-Item -Path $_.FullName -Destination $dst -Recurse -Force
+    }
+
+    # Verify critical files made it across — surface partial-copy failures NOW
+    # rather than letting downstream scripts fail with confusing "file not found"
+    # errors at build time.
+    $required = @(
+      Join-Path $dst 'build.psm1'
+      Join-Path $dst '.config/tsaoptions.json'
+      Join-Path $dst '.config/suppress.json'
+    )
+    foreach ($p in $required) {
+      if (-not (Test-Path $p)) {
+        throw "Staged repo is missing required file: $p"
+      }
+    }
+
+    # Expose REPOROOT for downstream helper templates (SetVersionVariables, etc.).
+    Write-Host "##vso[task.setvariable variable=REPOROOT]$dst"
+    Write-Verbose -Verbose "Repository staged at $dst"
+  displayName: 'Stage repo into $(Build.SourcesDirectory)\PowerShell (OneBranch path parity)'

@@ -1,0 +1,235 @@
+parameters:
+  buildArchitecture: 'x64'
+
+# 1ES PT translation of /.pipelines/templates/mac.yml.
+# Two jobs:
+#   1. build_macOS_<arch> — runs on Microsoft-hosted macOS pool (1ES PT custom pool).
+#   2. sign_<arch>        — runs on PowerShell1ES Windows pool; STUBBED Apple signing.
+#
+# Open questions / risks
+# ----------------------
+#  - macOS pool: there is no 1ES-managed macOS image in the CloudTest inventory. We fall
+#    back to Microsoft-hosted `Azure Pipelines` + `vmImage: macOS-latest` with the
+#    `isCustom: true` escape hatch. This works in 1ES PT extends scenarios but skips most
+#    SDL injection (codeql etc. don't run on custom pools). For Unofficial that's fine; for
+#    Official we'd need to either keep this approach with explicit SDL waivers or pursue a
+#    managed macOS image.
+#  - Apple ESRP signing (apple_cert_id KeyCode CP-401337-Apple) is stubbed. The verification
+#    step is also gated off because there's no real Developer ID signature to verify.
+
+jobs:
+- job: build_macOS_${{ parameters.buildArchitecture }}
+  displayName: Build macOS ${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  pool:
+    name: Azure Pipelines
+    vmImage: 'macOS-latest'
+    os: macOS
+    isCustom: true  # 1ES PT escape hatch for Microsoft-hosted shared pools
+
+  variables:
+  - name: HOMEBREW_NO_ANALYTICS
+    value: 1
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory  # kept verbatim: build.psm1 reads $env:OB_OUTPUTDIRECTORY literally
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: PowerShellRoot
+    value: $(Build.SourcesDirectory)
+
+  templateContext:
+    sdl:
+      codeSignValidation:
+        enabled: false
+    outputs:
+    - output: pipelineArtifact
+      targetPath: $(ob_outputDirectory)
+      artifactName: macosBinResults-${{ parameters.buildArchitecture }}
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      ob_restore_phase: false
+
+  - pwsh: |
+      # create folder
+      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
+      # make the current user the owner
+      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
+
+    ## We cross compile for arm64, so the arch is always x64
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
+  - pwsh: |
+      Import-Module $(PowerShellRoot)/build.psm1 -Force
+      Start-PSBootstrap -Scenario Package
+    displayName: 'Bootstrap VM'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+  - pwsh: |
+      $env:AzDevOpsFeedPAT2 = '$(powershellPackageReadPat)'
+      # Add -SkipReleaseChecks as a mitigation to unblock release.
+      # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
+
+      Import-Module ./build.psm1 -Force
+
+      $ReleaseTagParam = @{}
+
+      if ($env:RELEASETAGVAR) {
+        $ReleaseTagParam['ReleaseTag'] = $env:RELEASETAGVAR
+      }
+
+      Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -Output $(OB_OUTPUTDIRECTORY) @ReleaseTagParam
+
+      $psOptPath = "$(OB_OUTPUTDIRECTORY)/psoptions.json"
+      Save-PSOptions -PSOptionsPath $psOptPath
+
+      $entitlements = "$(PowerShellRoot)/assets/macos-entitlements.plist"
+      $pwshBin = "$(OB_OUTPUTDIRECTORY)/pwsh"
+      Write-Verbose -Verbose "Applying entitlements to $pwshBin"
+      codesign --sign - --force --options runtime --entitlements $entitlements $pwshBin
+      if ($LASTEXITCODE -ne 0) {
+        throw "codesign failed with exit code $LASTEXITCODE"
+      }
+
+      $env:AzDevOpsFeedPAT2 = $null
+    displayName: 'Build'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  # Belt-and-suspenders artifact publish for the macOS custom pool.
+  # `templateContext.outputs` SHOULD publish via PublishPipelineArtifact@1, but on
+  # `isCustom: true` (Microsoft-hosted) pools this path is not as well-trodden as on
+  # 1ES-managed pools. The original OneBranch mac.yml relied on an explicit
+  # `##vso[artifact.upload]` here, so we keep that as a fallback. If the
+  # templateContext.outputs publish succeeds, this is a no-op duplicate (ADO
+  # tolerates this); if it fails silently, the sign job's DownloadPipelineArtifact
+  # call still has an artifact to fetch.
+  - pwsh: |
+      Write-Host "##vso[artifact.upload containerfolder=macosBinResults-$(BuildArchitecture);artifactname=macosBinResults-$(BuildArchitecture)]$(OB_OUTPUTDIRECTORY)"
+    displayName: 'Upload macOS build artifact (fallback for custom pool)'
+
+  - template: /.pipelines/templates/step/finalize.yml@self
+
+- job: sign_${{ parameters.buildArchitecture }}
+  displayName: Sign_macOS_${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  dependsOn: build_macOS_${{ parameters.buildArchitecture }}
+  pool:
+    name: PowerShell1ES
+    image: MMS2022
+    os: windows
+  variables:
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: DotNetPrivateBuildAccess
+  - group: certificate_logical_to_actual
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: BuildArchitecture
+    value: ${{ parameters.buildArchitecture }}
+  - name: PowerShellRoot
+    value: '$(Build.SourcesDirectory)\PowerShell'
+
+  templateContext:
+    sdl:
+      # Stub signing in effect — Apple signatures are NOT applied. Disable
+      # codeSignValidation while stubbed; re-enable when ESRP Apple signing
+      # (CP-401337-Apple) is wired up in the Official sibling pipeline.
+      codeSignValidation:
+        enabled: false
+      tsa:
+        configFile: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+      codeql:
+        compiled:
+          enabled: false
+      sbom:
+        packageName: 'Microsoft.Powershell.MacOS.${{ parameters.buildArchitecture }}'
+    outputs:
+    - output: pipelineArtifact
+      targetPath: $(ob_outputDirectory)
+      artifactName: drop_macos_sign_${{ parameters.buildArchitecture }}
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      ob_restore_phase: false
+
+  - template: /.pipelines/1ES/templates/stage-repo-under-PowerShell.yml@self
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: 'macosBinResults-$(BuildArchitecture)'
+      path: '$(Pipeline.Workspace)\Symbols'
+    displayName: Download build
+
+  - pwsh: |
+        Get-ChildItem "$(Pipeline.Workspace)\*" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+
+  - pwsh: |
+      $runtime = '$(BuildArchitecture)'
+      Write-Host "sending.. vso[task.setvariable variable=Runtime]$runtime"
+      Write-Host "##vso[task.setvariable variable=Runtime]$runtime"
+
+      $rootPath = "$(Pipeline.Workspace)\Symbols"
+      Write-Verbose -Verbose "Setting vso[task.setvariable variable=DropRootPath]$rootPath"
+      Write-Host "##vso[task.setvariable variable=DropRootPath]$rootPath"
+    displayName: Expand symbols zip
+
+  - template: /.pipelines/1ES/templates/obp-file-signing.yml@self
+    parameters:
+      binPath: $(DropRootPath)
+      OfficialBuild: $(ps_official_build)
+
+  # STUB SECTION — Apple Developer ID codesign of Mach-O binaries.
+  # Once ESRP onboarding is complete and apple_cert_id (KeyCode CP-401337-Apple,
+  # MacAppDeveloperSign) is wired up, replace the stub below with an EsrpCodeSigning@5
+  # task call. The Compress/Expand framing stays the same.
+  - pwsh: |
+      $signedDir = "$(ob_outputDirectory)/Signed-$(Runtime)"
+      $zipFile = "$(Pipeline.Workspace)/macho-$(BuildArchitecture).zip"
+      Compress-Archive -Path "$signedDir/*" -DestinationPath $zipFile -Force
+    displayName: Compress signed folder for Apple signing
+
+  - pwsh: |
+      Write-Host '##[warning]STUB: would invoke ESRP Apple CodeSign Mach-O binaries with KeyCode "$(apple_cert_id)" (MacAppDeveloperSign, Hardening=--options=runtime)'
+      Write-Host '  files_to_sign: macho-$(BuildArchitecture).zip'
+      Write-Host '  search_root: $(Pipeline.Workspace)'
+    displayName: 'Apple CodeSign Mach-O binaries (STUB — ESRP onboarding pending)'
+
+  - pwsh: |
+      $signedDir = "$(ob_outputDirectory)/Signed-$(Runtime)"
+      $zipFile = "$(Pipeline.Workspace)/macho-$(BuildArchitecture).zip"
+      Expand-Archive -Path $zipFile -DestinationPath $signedDir -Force -Verbose
+    displayName: Expand Apple-signed Mach-O binaries into signed output
+
+  # STUB: verification gated off because real signatures are not applied.
+  # Re-enable when real ESRP Apple signing is wired up.
+  - pwsh: |
+      Write-Host '##[warning]STUB: Developer ID signature verification skipped (real Apple signing not yet enabled)'
+      $signedDir = "$(ob_outputDirectory)/Signed-$(Runtime)"
+      Get-ChildItem $signedDir -Recurse -Include 'pwsh', '*.dylib' | ForEach-Object {
+        Write-Host "Would verify: $($_.FullName)"
+      }
+    displayName: 'Verify Developer ID signature on Mach-O binaries (STUB)'
+
+  - template: /.pipelines/templates/step/finalize.yml@self

@@ -1,0 +1,221 @@
+parameters:
+  - name: RUN_WINDOWS
+    type: boolean
+    default: true
+  - name: RUN_TEST_AND_RELEASE
+    type: boolean
+    default: true
+  - name: OfficialBuild
+    type: boolean
+
+# 1ES PT translation of /.pipelines/templates/stages/PowerShell-Coordinated_Packages-Stages.yml.
+# Stage structure mirrors the OneBranch original verbatim; only the per-job pool blocks and
+# template paths are rewritten. The 5 stages are: prep, macos, linux, windows, test_and_release_artifacts.
+
+stages:
+- stage: prep
+  jobs:
+  - job: SetVars
+    displayName: Set Variables
+    # OneBranch: pool: { type: linux } (alias for an internal Linux container pool).
+    # 1ES PT requires explicit name/image/os. We use PowerShell1ES + PSMMSAzureLinux3.0-Secure
+    # because the original SetVars only needs a shell — no special Linux tooling.
+    pool:
+      name: PowerShell1ES
+      image: PSMMSAzureLinux3.0-Secure
+      os: linux
+
+    variables:
+      - name: ob_outputDirectory  # kept verbatim: build.psm1 reads $env:OB_OUTPUTDIRECTORY literally
+        value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/BuildJson'
+      - name: repoRoot
+        value: '$(Build.SourcesDirectory)'
+
+    templateContext:
+      sdl:
+        codeSignValidation:
+          enabled: false
+      outputs:
+        - output: pipelineArtifact
+          targetPath: $(ob_outputDirectory)
+          artifactName: drop_prep_SetVars
+
+    steps:
+    - checkout: self
+      clean: true
+
+    - pwsh: |
+        Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      displayName: Capture environment variables
+
+    - template: /.pipelines/templates/SetVersionVariables.yml@self
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+        CreateJson: yes
+        ob_restore_phase: false  # `ob_restore_phase` is a no-op env var in 1ES PT — set to false to suppress
+
+- stage: macos
+  displayName: macOS - build and sign
+  dependsOn: ['prep']
+  variables:
+    - name: ps_official_build
+      value: ${{ parameters.OfficialBuild }}
+  jobs:
+  - template: /.pipelines/1ES/templates/mac.yml@self
+    parameters:
+      buildArchitecture: x64
+  - template: /.pipelines/1ES/templates/mac.yml@self
+    parameters:
+      buildArchitecture: arm64
+
+- stage: linux
+  displayName: linux - build and sign
+  dependsOn: ['prep']
+  variables:
+    - name: ps_official_build
+      value: ${{ parameters.OfficialBuild }}
+  jobs:
+  - template: /.pipelines/1ES/templates/linux.yml@self
+    parameters:
+      Runtime: 'linux-x64'
+      JobName: 'linux_x64'
+
+  - template: /.pipelines/1ES/templates/linux.yml@self
+    parameters:
+      Runtime: 'linux-x64'
+      JobName: 'linux_x64_minSize'
+      BuildConfiguration: 'minSize'
+
+  - template: /.pipelines/1ES/templates/linux.yml@self
+    parameters:
+      Runtime: 'linux-arm'
+      JobName: 'linux_arm'
+
+  - template: /.pipelines/1ES/templates/linux.yml@self
+    parameters:
+      Runtime: 'linux-arm64'
+      JobName: 'linux_arm64'
+
+  - template: /.pipelines/1ES/templates/linux.yml@self
+    parameters:
+      Runtime: 'fxdependent-linux-x64'
+      JobName: 'linux_fxd_x64_mariner'
+
+  - template: /.pipelines/1ES/templates/linux.yml@self
+    parameters:
+      Runtime: 'fxdependent-linux-arm64'
+      JobName: 'linux_fxd_arm64_mariner'
+
+  - template: /.pipelines/1ES/templates/linux.yml@self
+    parameters:
+      Runtime: 'fxdependent-noopt-linux-musl-x64'
+      JobName: 'linux_fxd_x64_alpine'
+
+  - template: /.pipelines/1ES/templates/linux.yml@self
+    parameters:
+      Runtime: 'fxdependent'
+      JobName: 'linux_fxd'
+
+  - template: /.pipelines/1ES/templates/linux.yml@self
+    parameters:
+      Runtime: 'linux-musl-x64'
+      JobName: 'linux_x64_alpine'
+
+- stage: windows
+  displayName: windows - build and sign
+  dependsOn: ['prep']
+  condition: and(succeeded(),eq('${{ parameters.RUN_WINDOWS }}','true'))
+  variables:
+    - name: ps_official_build
+      value: ${{ parameters.OfficialBuild }}
+  jobs:
+  - template: /.pipelines/1ES/templates/windows-hosted-build.yml@self
+    parameters:
+      Architecture: x64
+      BuildConfiguration: release
+      JobName: build_windows_x64_release
+  - template: /.pipelines/1ES/templates/windows-hosted-build.yml@self
+    parameters:
+      Architecture: x64
+      BuildConfiguration: minSize
+      JobName: build_windows_x64_minSize_release
+  - template: /.pipelines/1ES/templates/windows-hosted-build.yml@self
+    parameters:
+      Architecture: x86
+      JobName: build_windows_x86_release
+  - template: /.pipelines/1ES/templates/windows-hosted-build.yml@self
+    parameters:
+      Architecture: arm64
+      JobName: build_windows_arm64_release
+  - template: /.pipelines/1ES/templates/windows-hosted-build.yml@self
+    parameters:
+      Architecture: fxdependent
+      JobName: build_windows_fxdependent_release
+  - template: /.pipelines/1ES/templates/windows-hosted-build.yml@self
+    parameters:
+      Architecture: fxdependentWinDesktop
+      JobName: build_windows_fxdependentWinDesktop_release
+
+- stage: test_and_release_artifacts
+  displayName: Test and Release Artifacts
+  dependsOn: ['prep']
+  condition: and(succeeded(),eq('${{ parameters.RUN_TEST_AND_RELEASE }}','true'))
+  jobs:
+  - template: /.pipelines/1ES/templates/testartifacts.yml@self
+
+  - job: release_json
+    displayName: Create and Upload release.json
+    pool:
+      name: PowerShell1ES
+      image: MMS2022
+      os: windows
+    variables:
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: repoRoot
+      value: '$(Build.SourcesDirectory)'
+    - name: PowerShellRoot
+      value: '$(Build.SourcesDirectory)\PowerShell'
+    templateContext:
+      sdl:
+        codeSignValidation:
+          enabled: false
+      outputs:
+        - output: pipelineArtifact
+          targetPath: $(ob_outputDirectory)
+          artifactName: drop_test_and_release_artifacts_release_json
+    steps:
+    - checkout: self
+      clean: true
+    # Replicate OneBranch's $(Build.SourcesDirectory)\PowerShell convention so all the
+    # script paths below remain unchanged. See per-job templates for full explanation.
+    - template: /.pipelines/1ES/templates/stage-repo-under-PowerShell.yml@self
+    - template: /.pipelines/templates/SetVersionVariables.yml@self
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+        ob_restore_phase: false
+    - template: /.pipelines/templates/rebuild-branch-check.yml@self
+    - powershell: |
+        $metadata = Get-Content '$(Build.SourcesDirectory)/PowerShell/tools/metadata.json' -Raw | ConvertFrom-Json
+
+        # Use the rebuild branch check from the template
+        $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
+
+        # Don't mark as LTS release for rebuild branches
+        $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+
+        if ($isRebuildBranch) {
+          Write-Verbose -Message "Rebuild branch detected, not marking as LTS release" -Verbose
+        }
+
+        @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
+        Get-Content "$(Build.StagingDirectory)\release.json"
+
+        if (-not (Test-Path "$(ob_outputDirectory)\metadata")) {
+          New-Item -ItemType Directory -Path "$(ob_outputDirectory)\metadata"
+        }
+
+        Copy-Item -Path "$(Build.StagingDirectory)\release.json" -Destination "$(ob_outputDirectory)\metadata" -Force
+      displayName: Create and upload release.json file to build artifact
+      retryCountOnTaskFailure: 2
+    - template: /.pipelines/templates/step/finalize.yml@self

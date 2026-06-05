@@ -1,0 +1,163 @@
+jobs:
+# 1ES PT translation of /.pipelines/templates/testartifacts.yml.
+# Two jobs (win + nonwin). No signing required so this is a near-mechanical translation.
+
+- job: build_testartifacts_win
+  variables:
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: PowerShellRoot
+    value: '$(Build.SourcesDirectory)\PowerShell'
+
+  displayName: Build windows test artifacts
+  condition: succeeded()
+  pool:
+    name: PowerShell1ES
+    image: MMS2022
+    os: windows
+
+  templateContext:
+    sdl:
+      tsa:
+        configFile: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+      codeSignValidation:
+        # Preserve OneBranch exclusions exactly; broad exclude pattern stays the same.
+        excludes: '-|**\*.ps1;-|**\*.psm1;-|**\*.ps1xml;-|**\*.psd1;-|**\*.exe;-|**\*.dll;-|**\*.cdxml'
+    outputs:
+    - output: pipelineArtifact
+      targetPath: $(ob_outputDirectory)
+      artifactName: drop_test_and_release_artifacts_build_testartifacts_win
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      ob_restore_phase: false
+
+  - template: /.pipelines/1ES/templates/stage-repo-under-PowerShell.yml@self
+
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      # IMPORTANT: must be $(PowerShellRoot) (staged repo), NOT $(RepoRoot) (set
+      # earlier by set-reporoot.yml to `.` before staging ran). Writing
+      # nuget.config into the un-staged root would leave the staged repo's
+      # restore unauthorised against the private feed.
+      repoRoot: $(PowerShellRoot)
+      ob_restore_phase: false
+
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
+  - pwsh: |
+      New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force
+      Import-Module $(Build.SourcesDirectory)/PowerShell/build.psm1
+      function BuildTestPackage([string] $runtime)
+      {
+        Write-Verbose -Verbose "Starting to build package for $runtime"
+        New-TestPackage -Destination $(System.ArtifactsDirectory) -Runtime $runtime
+        if (-not (Test-Path $(System.ArtifactsDirectory)/TestPackage.zip))
+        {
+          throw "Test Package was not found at: $(System.ArtifactsDirectory)"
+        }
+        switch ($runtime)
+        {
+          win7-x64 { $packageName = "TestPackage-win-x64.zip" }
+          win7-x86 { $packageName = "TestPackage-win-x86.zip" }
+          win-arm64 { $packageName = "TestPackage-win-arm64.zip" }
+        }
+        Rename-Item $(System.ArtifactsDirectory)/TestPackage.zip $packageName
+        Copy-Item -Path $(System.ArtifactsDirectory)/$packageName -Destination $(ob_outputDirectory) -Force -Verbose
+      }
+      BuildTestPackage -runtime win7-x64
+      BuildTestPackage -runtime win7-x86
+      BuildTestPackage -runtime win-arm64
+    displayName: Build test package and upload
+    retryCountOnTaskFailure: 1
+
+  - pwsh: |
+      Write-Host "This doesn't do anything but make the build phase run."
+    displayName: Dummy build task
+
+- job: build_testartifacts_nonwin
+  variables:
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: PowerShellRoot
+    value: '$(Build.SourcesDirectory)/PowerShell'
+  displayName: Build non-windows test artifacts
+  condition: succeeded()
+  pool:
+    name: PowerShell1ES
+    image: PSMMSAzureLinux3.0-Secure
+    os: linux
+
+  templateContext:
+    sdl:
+      codeSignValidation:
+        enabled: false
+    outputs:
+    - output: pipelineArtifact
+      targetPath: $(ob_outputDirectory)
+      artifactName: drop_test_and_release_artifacts_build_testartifacts_nonwin
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      ob_restore_phase: false
+
+  - template: /.pipelines/1ES/templates/stage-repo-under-PowerShell.yml@self
+
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(Build.SourcesDirectory)/PowerShell
+      ob_restore_phase: false
+
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
+  - pwsh: |
+      New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force
+      Import-Module $(Build.SourcesDirectory)/PowerShell/build.psm1
+      function BuildTestPackage([string] $runtime)
+      {
+        Write-Verbose -Verbose "Starting to build package for $runtime"
+        New-TestPackage -Destination $(System.ArtifactsDirectory) -Runtime $runtime
+        if (-not (Test-Path $(System.ArtifactsDirectory)/TestPackage.zip))
+        {
+          throw "Test Package was not found at: $(System.ArtifactsDirectory)"
+        }
+        switch ($runtime)
+        {
+          linux-x64 { $packageName = "TestPackage-linux-x64.zip" }
+          linux-arm { $packageName = "TestPackage-linux-arm.zip" }
+          linux-arm64 { $packageName = "TestPackage-linux-arm64.zip" }
+          osx-x64 { $packageName = "TestPackage-macOS.zip" }
+          linux-musl-x64 { $packageName = "TestPackage-alpine-x64.zip"}
+        }
+        Rename-Item $(System.ArtifactsDirectory)/TestPackage.zip $packageName
+        Copy-Item -Path $(System.ArtifactsDirectory)/$packageName -Destination $(ob_outputDirectory) -Force -Verbose
+      }
+      BuildTestPackage -runtime linux-x64
+      BuildTestPackage -runtime linux-arm
+      BuildTestPackage -runtime linux-arm64
+      BuildTestPackage -runtime osx-x64
+      BuildTestPackage -runtime linux-musl-x64
+    displayName: Build test package and upload
+    retryCountOnTaskFailure: 1
+
+  - pwsh: |
+      Write-Host "This doesn't do anything but make the build phase run."
+    displayName: Dummy build task
