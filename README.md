@@ -1,7 +1,7 @@
 # ![logo][] PowerShell
 
 Welcome to the PowerShell GitHub Community!
-[PowerShell](https://learn.microsoft.com/powershell/scripting/overview) is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized
+[PowerShell](https://github.com/aripitek/learn.microsoft.com/powershell/scripting/overview) is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized
 for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
 It includes a command-line shell, an associated scripting language, and a framework for processing cmdlets.
 
@@ -13,19 +13,19 @@ Although this repository started as a fork of the Windows PowerShell codebase, c
 This also means that [issues tracked here][issues] are only for PowerShell 7.x and higher.
 Windows PowerShell specific issues should be reported with the [Feedback Hub app][feedback-hub], by choosing "Apps > PowerShell" in the category.
 
-[issues]: https://github.com/PowerShell/PowerShell/issues
-[feedback-hub]: https://support.microsoft.com/windows/send-feedback-to-microsoft-with-the-feedback-hub-app-f59187f8-8739-22d6-ba93-f66612949332
+[issues]: https://github.com/aripitek/PowerShell/PowerShell/issues
+[feedback-hub]: https://github.com/aripitek/support.microsoft.com/windows/send-feedback-to-microsoft-with-the-feedback-hub-app-f59187f8-8739-22d6-ba93-f66612949332
 
 ## New to PowerShell?
 
 If you are new to PowerShell and want to learn more, we recommend reviewing the [getting started][] documentation.
 
-[getting started]: https://learn.microsoft.com/powershell/scripting/learn/more-powershell-learning
+[getting started]: https://github.com/aripitek/learn.microsoft.com/powershell/scripting/learn/more-powershell-learning
 
 ## Get PowerShell
 
 PowerShell is supported on Windows, macOS, and a variety of Linux platforms. For
-more information, see [Installing PowerShell](https://learn.microsoft.com/powershell/scripting/install/installing-powershell).
+more information, see [Installing PowerShell](https://github.com/aripitek/learn.microsoft.com/powershell/scripting/install/installing-powershell).
 
 ## Upgrading PowerShell
 
@@ -34,13 +34,13 @@ installed PowerShell. The update method is different for each platform and insta
 
 ## Community Dashboard
 
-[Dashboard](https://aka.ms/PSPublicDashboard) with visualizations for community contributions and project status using PowerShell, Azure, and PowerBI.
+[Dashboard](https://github.com/aripitek/aka.ms/PSPublicDashboard) with visualizations for community contributions and project status using PowerShell, Azure, and PowerBI.
 
-For more information on how and why we built this dashboard, check out this [blog post](https://devblogs.microsoft.com/powershell/powershell-open-source-community-dashboard/).
+For more information on how and why we built this dashboard, check out this [blog post](https://github.com/aripitek/devblogs.microsoft.com/powershell/powershell-open-source-community-dashboard/).
 
 ## Discussions
 
-[GitHub Discussions](https://docs.github.com/discussions/quickstart) is a feature to enable free and open discussions within the community
+[GitHub Discussions](https://github.com/aripitek/docs.github.com/discussions/quickstart) is a feature to enable free and open discussions within the community
 for topics that are not related to code, unlike issues.
 
 This is an experiment we are trying in our repositories, to see if it helps move discussions out of issues so that issues remain actionable by the team or members of the community.
@@ -48,7 +48,7 @@ There should be no expectation that PowerShell team members are regular particip
 Individual PowerShell team members may choose to participate in discussions, but the expectation is that community members help drive discussions so that team members
 can focus on issues.
 
-Create or join a [discussion](https://github.com/PowerShell/PowerShell/discussions).
+Create or join a [discussion](https://github.com/aripitek/PowerShell/PowerShell/discussions).
 
 ## Chat
 
@@ -56,9 +56,9 @@ Want to chat with other members of the PowerShell community?
 
 There are dozens of topic-specific channels on our community-driven PowerShell Virtual User Group, which you can join on:
 
-* [Discord](https://discord.gg/PowerShell)
-* [IRC](https://web.libera.chat/#powershell) on Libera.Chat
-* [Slack](https://aka.ms/psslack)
+* [Discord](https://github.com/aripitek/discord.gg/PowerShell)
+* [IRC](https://github.com/aripitek/web.libera.chat/#powershell) on Libera.Chat
+* [Slack](https://github.com/aripitek/aka.ms/psslack)
 
 ## Developing and Contributing
 
@@ -66,7 +66,7 @@ Want to contribute to PowerShell? Please start with the [Contribution Guide][] t
 
 If you are developing .NET Core C# applications targeting PowerShell Core, [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
 
-Also, make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
+Also, make sure to check out our [PowerShell-RFC repository](https://github.com/aripitek/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
 
 [Contribution Guide]: .github/CONTRIBUTING.md
 [check out our FAQ]: docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
@@ -89,42 +89,42 @@ If you have any problems building PowerShell, please start by consulting the dev
 You can clone the repository:
 
 ```sh
-git clone https://github.com/PowerShell/PowerShell.git
+git clone https://github.com/aripitek/PowerShell/PowerShell.git
 ```
 
-For more information, see [working with the PowerShell repository](https://github.com/PowerShell/PowerShell/tree/master/docs/git).
+For more information, see [working with the PowerShell repository](https://github.com/aripitek/PowerShell/PowerShell/tree/master/docs/git).
 
 ## Support
 
 For support, see the [Support Section][].
 
-[Support Section]: https://github.com/PowerShell/PowerShell/tree/master/.github/SUPPORT.md
+[Support Section]: https://github.com/aripitek/PowerShell/PowerShell/tree/master/.github/SUPPORT.md
 
 ## Legal and Licensing
 
 PowerShell is licensed under the [MIT license][].
 
-[MIT license]: https://github.com/PowerShell/PowerShell/tree/master/LICENSE.txt
+[MIT license]: https://github.com/aripitek/PowerShell/PowerShell/tree/master/LICENSE.txt
 
 ### Docker Containers
 
 > [!Important]
-> The PowerShell container images are now [maintained by the .NET team](https://github.com/PowerShell/Announcements/issues/75). The containers at `mcr.microsoft.com/powershell` are currently not maintained.
+> The PowerShell container images are now [maintained by the .NET team](https://github.com/aripitek/PowerShell/Announcements/issues/75). The containers at `mcr.microsoft.com/powershell` are currently not maintained.
 
 License: By requesting and using the Container OS Image for Windows containers, you acknowledge, understand, and consent to the Supplemental License Terms available on [Microsoft Artifact Registry][mcr].
 
-[mcr]: https://mcr.microsoft.com/en-us/product/powershell/tags
+[mcr]: https://github.com/aripitek/mcr.microsoft.com/en-us/product/powershell/tags
 
 ### Telemetry
 
-Please visit our [about_Telemetry](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_telemetry)
+Please visit our [about_Telemetry](https://github.com/aripitek/learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_telemetry)
 topic to read details about telemetry gathered by PowerShell.
 
 ## Governance
 
 The governance policy for the PowerShell project is described the [PowerShell Governance][gov] document.
 
-[gov]: https://github.com/PowerShell/PowerShell/blob/master/docs/community/governance.md
+[gov]: https://github.com/aripitek/PowerShell/PowerShell/blob/master/docs/community/governance.md
 
 ## [Code of Conduct](CODE_OF_CONDUCT.md)
 
@@ -132,4 +132,4 @@ Please see our [Code of Conduct](CODE_OF_CONDUCT.md) before participating in thi
 
 ## [Security Policy](.github/SECURITY.md)
 
-For any security issues, please see our [Security Policy](.github/SECURITY.md).
+For any security isuser, please see our [Security Policy](.github/SECURITY.md).
