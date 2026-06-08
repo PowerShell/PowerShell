@@ -36,12 +36,15 @@
 #   - Windows jobs    -> PowerShell1ES + MMS2022 (team-owned 1ES managed pool;
 #                        confirmed working in apiscan-gen-notice POC and SDL
 #                        Sources Analysis job on build #684757).
-#   - Linux jobs      -> Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest
-#                        (E+D shared 1ES PT-managed pool, Ubuntu 22.04 with
-#                        Microsoft-hosted standard tooling). Build #684757
-#                        proved PowerShell1ES does NOT carry a Linux image —
-#                        `PSMMSAzureLinux3.0-Secure` is not deployed there.
-#                        Swap to a team-owned Linux pool if/when one lands.
+#   - Linux jobs      -> PowerShell1ES + PSMMSUbuntu22.04-Secure (team-owned 1ES
+#                        managed pool). PowerShell1ES.bicep in the PsImageFactory
+#                        repo declares PSMMSUbuntu22.04-Secure in its images[]
+#                        array. Build #684757 confirmed `PSMMSAzureLinux3.0-Secure`
+#                        is NOT plumbed into PowerShell1ES (separate image bicep
+#                        exists but no entry in the pool resource), so we pick
+#                        Ubuntu 22 instead. Fallback if Ubuntu 22 isn't actually
+#                        deployed yet: Azure-Pipelines-1ESPT-ExDShared +
+#                        ubuntu-latest + os: linux.
 #   - macOS jobs      -> Azure Pipelines + vmImage macOS-latest (no team-owned
 #                        macOS image exists; macOS jobs MUST use the
 #                        Microsoft-hosted Azure Pipelines shared pool).
