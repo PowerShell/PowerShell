@@ -96,12 +96,14 @@ jobs:
     value: '$(Build.SourcesDirectory)/PowerShell'
   displayName: Build non-windows test artifacts
   condition: succeeded()
-  # POOL CHOICE: Azure-Pipelines-1ESPT-ExDShared is the E+D shared 1ES PT
-  # Linux pool (Ubuntu 22.04). PowerShell1ES has no Linux image deployed (see
-  # linux.yml header). Swap to a team-owned Linux pool here if one lands.
+  # POOL CHOICE: PowerShell1ES + PSMMSUbuntu22.04-Secure (team-owned 1ES managed
+  # pool with Ubuntu 22 declared in PowerShell1ES.bicep). If the image isn't
+  # actually deployed in CloudTest, fall back to
+  # `Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest + os: linux`. See linux.yml
+  # header comment for the full pool-choice rationale.
   pool:
-    name: Azure-Pipelines-1ESPT-ExDShared
-    image: ubuntu-latest
+    name: PowerShell1ES
+    image: PSMMSUbuntu22.04-Secure
     os: linux
 
   templateContext:
