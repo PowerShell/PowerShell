@@ -33,13 +33,17 @@
 #                           need their own pool/templateContext translations).
 #
 # POOL/IMAGE STRATEGY:
-#   - Windows jobs    -> PowerShell1ES + MMS2022 (1ES-maintained, proven in apiscan POC)
-#   - Linux jobs      -> PowerShell1ES + PSMMSAzureLinux3.0-Secure (closest match to
-#                        the OneBranch container `mcr.microsoft.com/onebranch/azurelinux/build:3.0`).
-#                        ⚠ Verify with team that PowerShell1ES pool carries this image.
-#                        If not, fall back to `1ES-Linux-Ubuntu-2204` Microsoft-hosted pool.
-#   - macOS jobs      -> Azure Pipelines + vmImage macOS-latest (no team-owned macOS image
-#                        exists in the CloudTest inventory; macOS jobs MUST use the
+#   - Windows jobs    -> PowerShell1ES + MMS2022 (team-owned 1ES managed pool;
+#                        confirmed working in apiscan-gen-notice POC and SDL
+#                        Sources Analysis job on build #684757).
+#   - Linux jobs      -> Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest
+#                        (E+D shared 1ES PT-managed pool, Ubuntu 22.04 with
+#                        Microsoft-hosted standard tooling). Build #684757
+#                        proved PowerShell1ES does NOT carry a Linux image —
+#                        `PSMMSAzureLinux3.0-Secure` is not deployed there.
+#                        Swap to a team-owned Linux pool if/when one lands.
+#   - macOS jobs      -> Azure Pipelines + vmImage macOS-latest (no team-owned
+#                        macOS image exists; macOS jobs MUST use the
 #                        Microsoft-hosted Azure Pipelines shared pool).
 #
 # CODEQL POLICY:
@@ -61,7 +65,6 @@
 #   - Stub signing: every onebranch.pipeline.signing@1 call replaced with a
 #     `pwsh: Write-Host "TODO: ESRP sign ..."` placeholder. Pipeline runs end-to-end
 #     but produces UNSIGNED artifacts — strictly for validating the migration scaffold.
-#   - Confirm Linux pool/image mapping (PowerShell1ES + PSMMSAzureLinux3.0-Secure).
 #   - Once Unofficial green, build Official sibling with real ESRP signing.
 
 trigger: none
