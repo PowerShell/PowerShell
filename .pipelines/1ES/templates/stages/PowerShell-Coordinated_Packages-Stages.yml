@@ -18,12 +18,14 @@ stages:
   - job: SetVars
     displayName: Set Variables
     # OneBranch: pool: { type: linux } (alias for an internal Linux container pool).
-    # 1ES PT requires explicit name/image/os. We use PowerShell1ES + PSMMSAzureLinux3.0-Secure
-    # because the original SetVars only needs a shell — no special Linux tooling.
+    # 1ES PT requires explicit name/image/os. SetVars only runs pwsh to compute
+    # version variables — no Linux-specific tooling required — so we use the
+    # proven Windows pairing (PowerShell1ES + MMS2022) from the apiscan POC.
+    # This also avoids gating prep on a second pool authorization on first run.
     pool:
       name: PowerShell1ES
-      image: PSMMSAzureLinux3.0-Secure
-      os: linux
+      image: MMS2022
+      os: windows
 
     variables:
       - name: ob_outputDirectory  # kept verbatim: build.psm1 reads $env:OB_OUTPUTDIRECTORY literally
