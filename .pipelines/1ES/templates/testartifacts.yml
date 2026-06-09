@@ -111,6 +111,19 @@ jobs:
     sdl:
       codeSignValidation:
         enabled: false
+      # Per-job SDL path overrides REQUIRED on Linux jobs. The pipeline-level
+      # `sdl` block in the entry pipeline uses Windows backslash paths (those
+      # work for the auto-injected SDL Sources Analysis (self) job which runs
+      # on Windows-default). On Linux .NET, '\' is a literal char, not a path
+      # separator, so '$(Build.SourcesDirectory)\.config\suppress.json' resolves
+      # to '/mnt/vss/_work/1/s\.config\suppress.json' which the CredScan tool
+      # cannot find. See build #686056 'Guardian: CredScan (Binary)' failure
+      # (https://aka.ms/credscan, GuardianErrorExitCodeException exit code 24).
+      # Mirror linux.yml build job's per-job override pattern with /-paths.
+      tsa:
+        configFile: $(Build.SourcesDirectory)/PowerShell/.config/tsaoptions.json
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
     outputs:
     - output: pipelineArtifact
       targetPath: $(ob_outputDirectory)
