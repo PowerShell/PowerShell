@@ -104,10 +104,88 @@ steps:
       Join-Path $dst '.config/tsaoptions.json'
       Join-Path $dst '.config/suppress.json'
       Join-Path $dst 'tools/wix/nuget.config'
+      Join-Path $dst '.globalconfig'
     )
     foreach ($p in $required) {
       if (-not (Test-Path $p)) {
         throw "Staged repo is missing required file: $p"
+      }
+    }
+
+    # Neutralise the PARENT `.globalconfig` to prevent a Roslyn
+    # `MultipleGlobalAnalyzerKeys` conflict with the WORKTREE `.globalconfig`.
+    #
+    # Why
+    # ---
+    # In OneBranch, the repo is at <sources>/<source-folder>/PowerShell — the parent
+    # `<sources>/<source-folder>` does NOT contain a copy of the repo, so only ONE
+    # `.globalconfig` ever exists in the ancestor chain of a project file.
+    #
+    # In 1ES PT, `checkout: self` puts the repo at $(Build.SourcesDirectory) directly.
+    # The `git worktree add` above then materialises a SECOND working copy at
+    # $(Build.SourcesDirectory)/PowerShell. Both now contain `.globalconfig` at their
+    # root. When Roslyn auto-discovers config files for a project at
+    # `$(Build.SourcesDirectory)/PowerShell/src/<project>/<project>.csproj`, it walks
+    # UP the directory tree and picks up BOTH files. Per Roslyn's
+    # `EditorConfigParser` rules, when two global-analyzer-config files set the
+    # SAME key for a project, Roslyn UNSETS that key and emits a
+    # `MultipleGlobalAnalyzerKeys` warning. With every `dotnet_diagnostic.SA*.severity = none`
+    # suppression unset, every StyleCop rule fires at default severity (warning),
+    # and `TreatWarningsAsErrors=true` in PowerShell.Common.props escalates them
+    # to errors. Build #686027 saw ~100K SA* errors across Linux, Windows symbols,
+    # and TestArtifacts jobs as a direct result.
+    #
+    # Why rename instead of delete
+    # ----------------------------
+    # `.globalconfig.disabled-by-stage-repo` is not auto-discovered (Roslyn only
+    # matches the literal name `.globalconfig`), but it remains on disk for any
+    # post-mortem inspection. Renaming is reversible; deletion is not.
+    #
+    # `.editorconfig` is NOT renamed — the worktree copy has `root = true` (see
+    # `.editorconfig:10`), so the ancestor walk stops at the worktree root and the
+    # parent copy is never read.
+    #
+    # `nuget.config` is NOT renamed. NuGet does layer/merge package-source
+    # config from machine -> user -> root-to-leaf project configs, but the
+    # repo's `nuget.config` at the worktree root has `<clear />` inside
+    # `<packageSources>` and `<disabledPackageSources>`, which neutralises any
+    # inherited sources (including the parent checkout's identical copy). So
+    # the merge is harmless in practice.
+    $parentGlobalConfig = Join-Path $src '.globalconfig'
+    if (Test-Path $parentGlobalConfig) {
+      $disabledName = '.globalconfig.disabled-by-stage-repo'
+      $disabledPath = Join-Path $src $disabledName
+      if (Test-Path $disabledPath) {
+        Remove-Item -Path $disabledPath -Force
+      }
+      Rename-Item -Path $parentGlobalConfig -NewName $disabledName -Force
+      Write-Verbose -Verbose "Renamed parent .globalconfig -> $disabledName to prevent Roslyn MultipleGlobalAnalyzerKeys conflict with worktree copy at $dst/.globalconfig"
+    } else {
+      Write-Verbose -Verbose "Parent $src/.globalconfig not present — nothing to neutralise (unexpected, since `checkout: self` should have produced it; continuing anyway)."
+    }
+
+    # Defensive sanity check: confirm exactly ONE .globalconfig is now visible to
+    # the worktree's project ancestors AND it is the worktree copy at $dst/.globalconfig.
+    # Walks up from a sample project directory; all projects under $dst/src share the
+    # same upper ancestor chain, so a single project is representative.
+    $sampleProjectDir = Join-Path $dst 'src/System.Management.Automation'
+    if (Test-Path $sampleProjectDir) {
+      $found = @()
+      $cur = (Get-Item $sampleProjectDir).FullName
+      while ($cur) {
+        $candidate = Join-Path $cur '.globalconfig'
+        if (Test-Path $candidate) { $found += $candidate }
+        $parent = Split-Path -Path $cur -Parent
+        if (-not $parent -or $parent -eq $cur) { break }
+        $cur = $parent
+      }
+      Write-Verbose -Verbose ("Ancestor .globalconfig walk from {0} found {1} file(s): {2}" -f $sampleProjectDir, $found.Count, ($found -join '; '))
+      $expectedGlobalConfig = (Get-Item (Join-Path $dst '.globalconfig')).FullName
+      if ($found.Count -ne 1) {
+        throw ("MultipleGlobalAnalyzerKeys risk: expected exactly 1 .globalconfig in worktree project ancestors, found {0}: {1}" -f $found.Count, ($found -join '; '))
+      }
+      if ($found[0] -ne $expectedGlobalConfig) {
+        throw ("Unexpected .globalconfig location: expected '{0}', found '{1}'" -f $expectedGlobalConfig, $found[0])
       }
     }
 
