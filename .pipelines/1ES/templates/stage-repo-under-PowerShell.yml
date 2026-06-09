@@ -18,14 +18,41 @@ parameters:
 # We pick (b) for the initial migration to keep the diff reviewable. A follow-up cleanup
 # pass can collapse the indirection once Official is also green.
 #
-# Why Copy-Item, not `git clone <parent> <child>`
-# ----------------------------------------------
-# The OneBranch helper `cloneToOfficialPath.yml` does a real `git clone $env:REPOROOT
-# $nativePath`. In OneBranch, source and dest are SIBLING folders so it works fine.
-# In 1ES PT, source ($(Build.SourcesDirectory)) is the PARENT of dest. A
-# `git clone <parent> <parent>\PowerShell` would try to copy the source repo INCLUDING the
-# destination subfolder we're trying to create — fragile and likely to fail on Windows
-# file-locking. A plain Copy-Item with a single-folder exclude is simpler and reliable.
+# Why `git worktree add`, not Copy-Item or `git clone`
+# ---------------------------------------------------
+# OneBranch's `cloneToOfficialPath.yml` does a real `git clone $env:REPOROOT $nativePath`
+# because source and dest are SIBLING folders there. In 1ES PT, source
+# ($(Build.SourcesDirectory)) is the PARENT of dest — `git clone <parent> <parent>/PowerShell`
+# would try to copy the source repo INCLUDING the destination subfolder we're creating.
+#
+# Our v1 used Copy-Item with `-Exclude '.git'`, but that left the staged path WITHOUT a
+# .git directory. Two real problems came from that (build #686007):
+#
+#   1. `Start-PSBuild` runs `git clean -fdX --exclude src/Modules/nuget.config --exclude
+#      nuget.config` in the staged path. `git clean` walks up to find the nearest .git
+#      (which becomes `$(Build.SourcesDirectory)/.git` — a DIFFERENT repo's index that
+#      knows nothing about files under `PowerShell/`). Every staged file therefore looks
+#      "untracked" to git, and `git clean -fdX` removes anything matching .gitignore.
+#      The killer case: `tools/wix/nuget.config` is TRACKED in HEAD but ALSO matches the
+#      `nuget.config` pattern in .gitignore (line 110). In a real git workspace, tracked
+#      files are NEVER removed by `git clean -fdX`. In our staged-without-.git copy,
+#      they WERE — wiping the `dotnet-eng` feed declaration that `Microsoft.Signed.Wix`
+#      restore depends on. (Failure was: `error NU1101: Unable to find package
+#      Microsoft.Signed.Wix. No packages exist with this id in source(s): powershell`.)
+#
+#   2. `Switch-PSNugetConfig` -> `New-NugetConfigFile` runs `git update-index
+#      --skip-worktree` against regenerated nuget.config files. Without .git in the
+#      staged path, git fails benignly and we had to add a `$global:LASTEXITCODE = 0`
+#      workaround in `insert-nuget-config-azfeed.yml`. With a real worktree, that
+#      workaround becomes unnecessary.
+#
+# `git worktree add --detach $dst HEAD` solves both:
+#   - Creates $dst as a REAL git workspace sharing the parent's .git database
+#     (via a tiny `.git` POINTER file, not a copy of the object store — very fast).
+#   - `--detach` avoids the "branch already checked out in parent worktree" error
+#     that would otherwise occur because $src is on the same branch.
+#   - Downstream `git` commands (clean, update-index, describe, rev-parse) all behave
+#     identically to OneBranch's real-clone semantics.
 #
 # Also sets $env:REPOROOT for downstream consumers (SetVersionVariables.yml /
 # set-reporoot.yml / insert-nuget-config-azfeed.yml all probe $env:REPOROOT or fall back
@@ -37,27 +64,46 @@ steps:
     $src = '$(Build.SourcesDirectory)'
     $dst = Join-Path $src 'PowerShell'
 
-    if (${{ parameters.cleanFirst }} -and (Test-Path $dst)) {
-      Remove-Item -Path $dst -Recurse -Force
+    # Compile-time template expansion: `${{ parameters.cleanFirst }}` renders the
+    # YAML boolean as the literal string `True` or `False` (capitalised, no sigil).
+    # Wrapping in single quotes turns it into a comparable string — DO NOT leave
+    # it bare (`if (${{ parameters.cleanFirst }} ...)` would try to invoke a
+    # cmdlet named `True` and fail with "term not recognized"; this was the
+    # cause of every Linux Stage-repo failure in build #686007).
+    if ('${{ parameters.cleanFirst }}' -ieq 'True') {
+      if (Test-Path $dst) {
+        # If $dst is a registered worktree, unregister it cleanly first; otherwise
+        # `git worktree add` below will refuse to recreate it.
+        & git -C $src worktree remove --force $dst 2>$null
+        if (Test-Path $dst) {
+          Remove-Item -Path $dst -Recurse -Force
+        }
+      }
+      # Always prune (even when $dst was already gone) — an orphaned
+      # $src/.git/worktrees/PowerShell registration from a prior aborted run
+      # would otherwise block `git worktree add`.
+      & git -C $src worktree prune 2>$null
     }
-    New-Item -ItemType Directory -Path $dst -Force | Out-Null
 
-    # Copy everything except:
-    #  - the destination folder itself (would self-recurse)
-    #  - the `.git` folder (large, locked .pack files often fail to copy on Windows,
-    #    and the staged copy is only used for path-parity script consumption — Git
-    #    operations stay against $(Build.SourcesDirectory) where checkout: self put them)
-    Get-ChildItem -Path $src -Force -Exclude 'PowerShell', '.git' | ForEach-Object {
-      Copy-Item -Path $_.FullName -Destination $dst -Recurse -Force
+    # Materialise <sources>/PowerShell as a REAL git worktree sharing the parent's
+    # .git database. See the file header comment for the full rationale; the short
+    # version is: downstream scripts (Start-PSBuild's `git clean -fdX`,
+    # Switch-PSNugetConfig's `git update-index --skip-worktree`) assume the staged
+    # path is a git workspace, and silently corrupt the build when it isn't.
+    & git -C $src worktree add --detach $dst HEAD
+    if ($LASTEXITCODE -ne 0) {
+      throw "git worktree add failed with exit code $LASTEXITCODE"
     }
 
-    # Verify critical files made it across — surface partial-copy failures NOW
+    # Verify critical files made it across — surface partial-checkout failures NOW
     # rather than letting downstream scripts fail with confusing "file not found"
-    # errors at build time.
+    # errors at build time. `tools/wix/nuget.config` is explicitly guarded because
+    # it's the canary for the "staged repo isn't a git workspace" regression.
     $required = @(
       Join-Path $dst 'build.psm1'
       Join-Path $dst '.config/tsaoptions.json'
       Join-Path $dst '.config/suppress.json'
+      Join-Path $dst 'tools/wix/nuget.config'
     )
     foreach ($p in $required) {
       if (-not (Test-Path $p)) {
@@ -67,5 +113,5 @@ steps:
 
     # Expose REPOROOT for downstream helper templates (SetVersionVariables, etc.).
     Write-Host "##vso[task.setvariable variable=REPOROOT]$dst"
-    Write-Verbose -Verbose "Repository staged at $dst"
-  displayName: 'Stage repo into $(Build.SourcesDirectory)\PowerShell (OneBranch path parity)'
+    Write-Verbose -Verbose "Repository staged at $dst (git worktree from $src)"
+  displayName: 'Stage repo into $(Build.SourcesDirectory)\PowerShell (git worktree, OneBranch path parity)'
