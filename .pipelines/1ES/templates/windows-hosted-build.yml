@@ -67,7 +67,7 @@ jobs:
 
   - template: /.pipelines/1ES/templates/stage-repo-under-PowerShell.yml@self
 
-  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+  - template: /.pipelines/1ES/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
 

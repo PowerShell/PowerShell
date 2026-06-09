@@ -1,0 +1,86 @@
+# 1ES-specific translation of /.pipelines/templates/insert-nuget-config-azfeed.yml.
+#
+# WHY A 1ES-LOCAL COPY EXISTS:
+# The shared template calls `Switch-PSNugetConfig` (from build.psm1), which calls
+# `New-NugetConfigFile`, which calls `git update-index --skip-worktree` against
+# each regenerated nuget.config to prevent accidental commits of feed credentials.
+#
+# In OneBranch the staged repo IS a git workspace (cloneToOfficialPath.yml does a
+# real `git clone`), so skip-worktree succeeds. In our 1ES translation,
+# `stage-repo-under-PowerShell.yml` deliberately Copy-Items the tree WITHOUT `.git`
+# (the staged copy is throwaway, no risk of accidental commit). git then walks
+# upward to `$(Build.SourcesDirectory)\.git`, sees `PowerShell/nuget.config` as
+# the relative path, and exits non-zero with `fatal: Unable to mark file
+# PowerShell/nuget.config` because that path isn't in the original index.
+#
+# The git failure is semantically a no-op for our staging design: there's no git
+# workspace to mark, and no risk of accidental commit from a Copy-Item'd folder.
+# But pwsh 7.4+ propagates `$LASTEXITCODE` to the process exit code, so the ADO
+# pwsh task fails. This wrapper resets `$LASTEXITCODE = 0` immediately after
+# `Switch-PSNugetConfig` so the benign git failure doesn't fail the build.
+#
+# Stays out of build.psm1 (shared with OneBranch) — the fix is local to the 1ES
+# scaffold. If/when build.psm1 is hardened to tolerate non-git destinations
+# itself, this wrapper can be replaced with a direct reference to the shared
+# template.
+
+parameters:
+- name: "repoRoot"
+  default: $(REPOROOT)
+- name: "ob_restore_phase"
+  type: boolean
+  default: true
+
+steps:
+- task: NuGetAuthenticate@1
+  displayName: Install Azure Artifacts Credential Provider
+  inputs:
+    forceReinstallCredentialProvider: true
+
+- pwsh: |
+    try {
+      $configPath = "${env:NugetConfigDir}/nuget.config"
+      Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
+
+      Write-Verbose -Verbose "Running: Switch-PSNugetConfig -Source Private -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '<redacted>'"
+      Switch-PSNugetConfig -Source Private -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '$(powershellPackageReadPat)'
+
+      # New-NugetConfigFile (inside Switch-PSNugetConfig) runs `git update-index
+      # --skip-worktree` against the regenerated nuget.config. The staged repo
+      # is not a git workspace (Copy-Item without .git), so git fails benignly
+      # and leaves $LASTEXITCODE non-zero. Reset so pwsh exits 0 when the rest
+      # of the script (Test-Path check below) succeeds.
+      $global:LASTEXITCODE = 0
+
+      if(-not (Test-Path $configPath))
+      {
+          throw "nuget.config is not created"
+      }
+    }
+    catch {
+      Get-Error
+      throw
+    }
+  displayName: 'Switch to production Azure DevOps feed for all nuget.configs'
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
+  env:
+    NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
+
+- pwsh: |
+    Get-ChildItem ${{ parameters.repoRoot }}/nuget.config -Recurse | Foreach-Object {
+      Write-Verbose -Verbose "--- START $($_.fullname) ---"
+      get-content $_.fullname  | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      Write-Verbose -Verbose "--- END $($_.fullname) ---"
+    }
+  displayName: 'Capture all nuget.config files'
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
+  env:
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
+
+- pwsh: |
+    Get-ChildItem -Path env:VSS* | Out-String -width 9999 -Stream | write-Verbose -Verbose
+  displayName: Capture VSS* Environment
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
+  env:
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
