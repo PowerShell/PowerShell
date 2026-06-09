@@ -5,25 +5,22 @@ parameters:
 
 # 1ES PT translation of /.pipelines/templates/linux.yml.
 # Two jobs:
-#   1. build_<JobName> — Linux pool (Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest)
+#   1. build_<JobName> — Linux pool (PowerShell1ES + PSMMSUbuntu22.04-Secure)
 #   2. sign_<JobName>  — Windows pool (PowerShell1ES + MMS2022), STUBBED ESRP signing.
 #
-# POOL CHOICE (Linux): Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest + os: linux
-# is the E+D shared 1ES managed pool whose images are guaranteed to ship with the
-# `1es-pt-prerequisites` artifact (the tooling 1ES PT injects into every job).
+# POOL CHOICE (Linux): PowerShell1ES + PSMMSUbuntu22.04-Secure + os: linux.
+# PowerShell is in the C+AI org; we use ONLY team-owned pools. We do NOT use
+# shared pools from other orgs (e.g., E+D's Azure-Pipelines-1ESPT-ExDShared)
+# even when they're convenient — that's a governance violation.
 #
-# We initially tried `PowerShell1ES + PSMMSUbuntu22.04-Secure` (v3 swap, commit
-# 1b9775add). PSMMSUbuntu22.04-Secure IS declared in PowerShell1ES.bicep AND was
-# deployed (build #685762's pre-job log confirmed imageVersion=23.0.0). But the
-# 1ES PT validator rejected it with:
-#   1ES PT Error: Using an image without 1es-pt-prerequisites artifact is not allowed
-# See https://aka.ms/1espt/image-prerequisites — a team-owned image bicep that
-# DECLARES an image is necessary but not sufficient; the image build itself must
-# bake in the `1es-pt-prerequisites` artifact (which the team-owned PSMMS* images
-# currently don't).
-# Long-term: open a PsImageFactory PR to add the artifact to PSMMSUbuntu22.04-Secure
-# so we can move Linux back to the team-owned pool. In the meantime, E+D shared
-# is the path of least resistance.
+# KNOWN BLOCKER: PSMMSUbuntu22.04-Secure as currently built lacks the
+# `1es-pt-prerequisites` artifact. The bicep declaration and image deployment
+# succeed, but the 1ES PT pre-job validator rejects every job that lands on it
+# with: "Using an image without 1es-pt-prerequisites artifact is not allowed"
+# (https://aka.ms/1espt/image-prerequisites). Build #685762 hit this.
+# RESOLUTION: PsImageFactory PR is required to bake the `1es-pt-prerequisites`
+# artifact into the PSMMSUbuntu22.04-Secure image build, then redeploy to
+# PowerShell1ES. This file should not be merged/run until that's done.
 #
 # Notes
 # -----
@@ -39,8 +36,8 @@ jobs:
   displayName: Build_Linux_${{ parameters.Runtime }}_${{ parameters.BuildConfiguration }}
   condition: succeeded()
   pool:
-    name: Azure-Pipelines-1ESPT-ExDShared
-    image: ubuntu-latest
+    name: PowerShell1ES
+    image: PSMMSUbuntu22.04-Secure
     os: linux
   variables:
   - name: NugetSecurityAnalysisWarningLevel

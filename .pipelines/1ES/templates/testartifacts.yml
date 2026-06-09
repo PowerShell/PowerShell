@@ -96,13 +96,15 @@ jobs:
     value: '$(Build.SourcesDirectory)/PowerShell'
   displayName: Build non-windows test artifacts
   condition: succeeded()
-  # POOL CHOICE: Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest. Team-owned
-  # PSMMS* images don't ship with the `1es-pt-prerequisites` artifact baked in
-  # (build #685762 was rejected by the 1ES PT validator on this exact basis).
-  # See linux.yml header for the full rationale.
+  # POOL CHOICE: PowerShell1ES + PSMMSUbuntu22.04-Secure. We are C+AI org and
+  # use only team-owned pools (never E+D's or other orgs' shared pools).
+  # BLOCKER: the image build currently lacks the `1es-pt-prerequisites`
+  # artifact (build #685762 was rejected by the 1ES PT validator on this exact
+  # basis). PsImageFactory PR required to bake in the artifact before this
+  # job will pass pre-job validation. See linux.yml header for full rationale.
   pool:
-    name: Azure-Pipelines-1ESPT-ExDShared
-    image: ubuntu-latest
+    name: PowerShell1ES
+    image: PSMMSUbuntu22.04-Secure
     os: linux
 
   templateContext:
