@@ -73,7 +73,7 @@ jobs:
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
-  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+  - template: /.pipelines/1ES/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
   - pwsh: |
@@ -116,7 +116,7 @@ jobs:
   # tolerates this); if it fails silently, the sign job's DownloadPipelineArtifact
   # call still has an artifact to fetch.
   - pwsh: |
-      Write-Host "##vso[artifact.upload containerfolder=macosBinResults-$(BuildArchitecture);artifactname=macosBinResults-$(BuildArchitecture)]$(OB_OUTPUTDIRECTORY)"
+      Write-Host "##vso[artifact.upload containerfolder=macosBinResults-${{ parameters.buildArchitecture }};artifactname=macosBinResults-${{ parameters.buildArchitecture }}]$(OB_OUTPUTDIRECTORY)"
     displayName: 'Upload macOS build artifact (fallback for custom pool)'
 
   - template: /.pipelines/templates/step/finalize.yml@self

@@ -44,7 +44,7 @@ jobs:
 
   - template: /.pipelines/1ES/templates/stage-repo-under-PowerShell.yml@self
 
-  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+  - template: /.pipelines/1ES/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       # IMPORTANT: must be $(PowerShellRoot) (staged repo), NOT $(RepoRoot) (set
       # earlier by set-reporoot.yml to `.` before staging ran). Writing
@@ -96,14 +96,13 @@ jobs:
     value: '$(Build.SourcesDirectory)/PowerShell'
   displayName: Build non-windows test artifacts
   condition: succeeded()
-  # POOL CHOICE: PowerShell1ES + PSMMSUbuntu22.04-Secure (team-owned 1ES managed
-  # pool with Ubuntu 22 declared in PowerShell1ES.bicep). If the image isn't
-  # actually deployed in CloudTest, fall back to
-  # `Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest + os: linux`. See linux.yml
-  # header comment for the full pool-choice rationale.
+  # POOL CHOICE: Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest. Team-owned
+  # PSMMS* images don't ship with the `1es-pt-prerequisites` artifact baked in
+  # (build #685762 was rejected by the 1ES PT validator on this exact basis).
+  # See linux.yml header for the full rationale.
   pool:
-    name: PowerShell1ES
-    image: PSMMSUbuntu22.04-Secure
+    name: Azure-Pipelines-1ESPT-ExDShared
+    image: ubuntu-latest
     os: linux
 
   templateContext:
@@ -126,7 +125,7 @@ jobs:
 
   - template: /.pipelines/1ES/templates/stage-repo-under-PowerShell.yml@self
 
-  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+  - template: /.pipelines/1ES/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(Build.SourcesDirectory)/PowerShell
       ob_restore_phase: false

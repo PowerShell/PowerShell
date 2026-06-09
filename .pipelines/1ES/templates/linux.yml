@@ -5,17 +5,25 @@ parameters:
 
 # 1ES PT translation of /.pipelines/templates/linux.yml.
 # Two jobs:
-#   1. build_<JobName> — Linux pool (PowerShell1ES + PSMMSUbuntu22.04-Secure)
+#   1. build_<JobName> — Linux pool (Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest)
 #   2. sign_<JobName>  — Windows pool (PowerShell1ES + MMS2022), STUBBED ESRP signing.
 #
-# POOL CHOICE (Linux): PowerShell1ES.bicep in the PsImageFactory repo declares
-# `PSMMSUbuntu22.04-Secure` in its images[] array, so the team-owned 1ES managed
-# pool can serve Linux jobs without an external pool dependency. (The earlier
-# build #684757 failure was for `PSMMSAzureLinux3.0-Secure` specifically, which
-# has its own image bicep but was never plumbed into PowerShell1ES.bicep.)
-# If Ubuntu 22 isn't actually deployed to the pool (PsImageFactory has no
-# auto-deploy pipeline; deploy.ps1 is run manually), fall back to
-# `Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest + os: linux`.
+# POOL CHOICE (Linux): Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest + os: linux
+# is the E+D shared 1ES managed pool whose images are guaranteed to ship with the
+# `1es-pt-prerequisites` artifact (the tooling 1ES PT injects into every job).
+#
+# We initially tried `PowerShell1ES + PSMMSUbuntu22.04-Secure` (v3 swap, commit
+# 1b9775add). PSMMSUbuntu22.04-Secure IS declared in PowerShell1ES.bicep AND was
+# deployed (build #685762's pre-job log confirmed imageVersion=23.0.0). But the
+# 1ES PT validator rejected it with:
+#   1ES PT Error: Using an image without 1es-pt-prerequisites artifact is not allowed
+# See https://aka.ms/1espt/image-prerequisites — a team-owned image bicep that
+# DECLARES an image is necessary but not sufficient; the image build itself must
+# bake in the `1es-pt-prerequisites` artifact (which the team-owned PSMMS* images
+# currently don't).
+# Long-term: open a PsImageFactory PR to add the artifact to PSMMSUbuntu22.04-Secure
+# so we can move Linux back to the team-owned pool. In the meantime, E+D shared
+# is the path of least resistance.
 #
 # Notes
 # -----
@@ -31,8 +39,8 @@ jobs:
   displayName: Build_Linux_${{ parameters.Runtime }}_${{ parameters.BuildConfiguration }}
   condition: succeeded()
   pool:
-    name: PowerShell1ES
-    image: PSMMSUbuntu22.04-Secure
+    name: Azure-Pipelines-1ESPT-ExDShared
+    image: ubuntu-latest
     os: linux
   variables:
   - name: NugetSecurityAnalysisWarningLevel
@@ -80,7 +88,7 @@ jobs:
 
   - template: /.pipelines/1ES/templates/stage-repo-under-PowerShell.yml@self
 
-  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+  - template: /.pipelines/1ES/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
 

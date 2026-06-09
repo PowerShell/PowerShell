@@ -36,15 +36,20 @@
 #   - Windows jobs    -> PowerShell1ES + MMS2022 (team-owned 1ES managed pool;
 #                        confirmed working in apiscan-gen-notice POC and SDL
 #                        Sources Analysis job on build #684757).
-#   - Linux jobs      -> PowerShell1ES + PSMMSUbuntu22.04-Secure (team-owned 1ES
-#                        managed pool). PowerShell1ES.bicep in the PsImageFactory
-#                        repo declares PSMMSUbuntu22.04-Secure in its images[]
-#                        array. Build #684757 confirmed `PSMMSAzureLinux3.0-Secure`
-#                        is NOT plumbed into PowerShell1ES (separate image bicep
-#                        exists but no entry in the pool resource), so we pick
-#                        Ubuntu 22 instead. Fallback if Ubuntu 22 isn't actually
-#                        deployed yet: Azure-Pipelines-1ESPT-ExDShared +
-#                        ubuntu-latest + os: linux.
+#   - Linux jobs      -> Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest. E+D
+#                        shared images are guaranteed to carry the
+#                        `1es-pt-prerequisites` artifact required by 1ES PT.
+#                        We tried `PowerShell1ES + PSMMSUbuntu22.04-Secure` in
+#                        build #685762 — the image IS declared in
+#                        PowerShell1ES.bicep AND was deployed (pre-job log
+#                        confirmed imageVersion=23.0.0), but the 1ES PT validator
+#                        rejected it with "Using an image without
+#                        1es-pt-prerequisites artifact is not allowed"
+#                        (https://aka.ms/1espt/image-prerequisites). Declaring
+#                        an image in a team-owned pool is necessary but not
+#                        sufficient — the image build itself must bake in the
+#                        `1es-pt-prerequisites` artifact. Long-term we need a
+#                        PsImageFactory PR to add that artifact to PSMMS* images.
 #   - macOS jobs      -> Azure Pipelines + vmImage macOS-latest (no team-owned
 #                        macOS image exists; macOS jobs MUST use the
 #                        Microsoft-hosted Azure Pipelines shared pool).
