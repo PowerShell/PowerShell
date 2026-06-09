@@ -182,9 +182,9 @@ jobs:
       binskim:
         enabled: false
       tsa:
-        configFile: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+        configFile: $(Build.SourcesDirectory)/PowerShell/.config/tsaoptions.json
       credscan:
-        suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+        suppressionsFile: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
       codeql:
         compiled:
           enabled: false
