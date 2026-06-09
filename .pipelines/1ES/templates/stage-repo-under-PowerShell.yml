@@ -180,7 +180,13 @@ steps:
         $cur = $parent
       }
       Write-Verbose -Verbose ("Ancestor .globalconfig walk from {0} found {1} file(s): {2}" -f $sampleProjectDir, $found.Count, ($found -join '; '))
-      $expectedGlobalConfig = (Get-Item (Join-Path $dst '.globalconfig')).FullName
+      # Use -LiteralPath + -Force so .NET on Linux (which marks dotfiles as
+      # Hidden in FileSystemInfo.Attributes by POSIX convention) still resolves
+      # the worktree's `.globalconfig`. Without -Force, `Get-Item` returns
+      # "Could not find item" on Linux even when Test-Path returns True for the
+      # same path. Empirically: build #686043's Linux jobs all failed here, while
+      # macOS jobs (where .NET does NOT flag dotfiles as Hidden) succeeded.
+      $expectedGlobalConfig = (Get-Item -LiteralPath (Join-Path $dst '.globalconfig') -Force).FullName
       if ($found.Count -ne 1) {
         throw ("MultipleGlobalAnalyzerKeys risk: expected exactly 1 .globalconfig in worktree project ancestors, found {0}: {1}" -f $found.Count, ($found -join '; '))
       }
@@ -192,4 +198,4 @@ steps:
     # Expose REPOROOT for downstream helper templates (SetVersionVariables, etc.).
     Write-Host "##vso[task.setvariable variable=REPOROOT]$dst"
     Write-Verbose -Verbose "Repository staged at $dst (git worktree from $src)"
-  displayName: 'Stage repo into $(Build.SourcesDirectory)\PowerShell (git worktree, OneBranch path parity)'
+  displayName: 'Stage repo into $(Build.SourcesDirectory)/PowerShell (git worktree, OneBranch path parity)'
