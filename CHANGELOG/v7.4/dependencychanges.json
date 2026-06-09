@@ -23,6 +23,19 @@
     "VulnerableRanges": [],
     "AdvisoryUrls": [],
     "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
-    "TimestampUtc": "2026-05-18T22:44:49.1925230Z"
+    "TimestampUtc": "2026-05-18T22:44:49.192523Z"
+  },
+  {
+    "ChangeType": "NonSecurity",
+    "Branch": "release/v7.4.17",
+    "PackageId": ".NET SDK",
+    "FromVersion": "8.0.421",
+    "ToVersion": "8.0.422",
+    "VulnerabilityId": [],
+    "Severity": [],
+    "VulnerableRanges": [],
+    "AdvisoryUrls": [],
+    "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
+    "TimestampUtc": "2026-06-09T19:43:57.2589963Z"
   }
 ]
