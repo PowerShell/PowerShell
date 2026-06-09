@@ -40,18 +40,15 @@
 #                        confirmed working in apiscan-gen-notice POC and SDL
 #                        Sources Analysis job on build #684757).
 #   - Linux jobs      -> PowerShell1ES + PSMMSUbuntu22.04-Secure.
-#                        BLOCKER: the image build lacks the
-#                        `1es-pt-prerequisites` artifact required by 1ES PT
-#                        (https://aka.ms/1espt/image-prerequisites). Build
-#                        #685762 was rejected with "Using an image without
-#                        1es-pt-prerequisites artifact is not allowed".
-#                        Declaring the image in PowerShell1ES.bicep and
-#                        deploying it is necessary but not sufficient — the
-#                        image build itself must bake in the artifact.
-#                        PsImageFactory PR is required to add the artifact to
-#                        the PSMMSUbuntu22.04-Secure image build, then
-#                        redeploy. This pipeline cannot pass end-to-end on
-#                        Linux until that's done.
+#                        Image was rebuilt 2026-06-09 with the
+#                        `linux-1es-pt-prerequisites-v2` artifact baked in
+#                        (PsImageFactory) to satisfy the 1ES PT image-prereq
+#                        gate (https://aka.ms/1espt/image-prerequisites).
+#                        History: build #685762 was rejected with "Using an
+#                        image without 1es-pt-prerequisites artifact is not
+#                        allowed". Note: v2 is the current artifact; never
+#                        mix with v1 (`linux-1es-gpt-prerequisites`) in the
+#                        same image build.
 #   - macOS jobs      -> Azure Pipelines + vmImage macOS-latest. No team-owned
 #                        macOS image exists; macOS jobs MUST use the
 #                        Microsoft-hosted Azure Pipelines pool (this is the
