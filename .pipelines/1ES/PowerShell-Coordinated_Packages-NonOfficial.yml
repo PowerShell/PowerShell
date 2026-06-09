@@ -33,26 +33,30 @@
 #                           need their own pool/templateContext translations).
 #
 # POOL/IMAGE STRATEGY:
+#   PowerShell is in the C+AI org. We use ONLY team-owned pools — never
+#   pools owned by other orgs (e.g., E+D's Azure-Pipelines-1ESPT-ExDShared).
+#
 #   - Windows jobs    -> PowerShell1ES + MMS2022 (team-owned 1ES managed pool;
 #                        confirmed working in apiscan-gen-notice POC and SDL
 #                        Sources Analysis job on build #684757).
-#   - Linux jobs      -> Azure-Pipelines-1ESPT-ExDShared + ubuntu-latest. E+D
-#                        shared images are guaranteed to carry the
-#                        `1es-pt-prerequisites` artifact required by 1ES PT.
-#                        We tried `PowerShell1ES + PSMMSUbuntu22.04-Secure` in
-#                        build #685762 — the image IS declared in
-#                        PowerShell1ES.bicep AND was deployed (pre-job log
-#                        confirmed imageVersion=23.0.0), but the 1ES PT validator
-#                        rejected it with "Using an image without
-#                        1es-pt-prerequisites artifact is not allowed"
-#                        (https://aka.ms/1espt/image-prerequisites). Declaring
-#                        an image in a team-owned pool is necessary but not
-#                        sufficient — the image build itself must bake in the
-#                        `1es-pt-prerequisites` artifact. Long-term we need a
-#                        PsImageFactory PR to add that artifact to PSMMS* images.
-#   - macOS jobs      -> Azure Pipelines + vmImage macOS-latest (no team-owned
+#   - Linux jobs      -> PowerShell1ES + PSMMSUbuntu22.04-Secure.
+#                        BLOCKER: the image build lacks the
+#                        `1es-pt-prerequisites` artifact required by 1ES PT
+#                        (https://aka.ms/1espt/image-prerequisites). Build
+#                        #685762 was rejected with "Using an image without
+#                        1es-pt-prerequisites artifact is not allowed".
+#                        Declaring the image in PowerShell1ES.bicep and
+#                        deploying it is necessary but not sufficient — the
+#                        image build itself must bake in the artifact.
+#                        PsImageFactory PR is required to add the artifact to
+#                        the PSMMSUbuntu22.04-Secure image build, then
+#                        redeploy. This pipeline cannot pass end-to-end on
+#                        Linux until that's done.
+#   - macOS jobs      -> Azure Pipelines + vmImage macOS-latest. No team-owned
 #                        macOS image exists; macOS jobs MUST use the
-#                        Microsoft-hosted Azure Pipelines shared pool).
+#                        Microsoft-hosted Azure Pipelines pool (this is the
+#                        default 1ES PT-allowed Microsoft pool, not an
+#                        external org's shared pool).
 #
 # CODEQL POLICY:
 #   - 1ES PT auto-runs CodeQL3000 on the ADO repo default branch only by default.
