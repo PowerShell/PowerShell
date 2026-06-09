@@ -107,17 +107,18 @@ jobs:
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
-  # Belt-and-suspenders artifact publish for the macOS custom pool.
-  # `templateContext.outputs` SHOULD publish via PublishPipelineArtifact@1, but on
-  # `isCustom: true` (Microsoft-hosted) pools this path is not as well-trodden as on
-  # 1ES-managed pools. The original OneBranch mac.yml relied on an explicit
-  # `##vso[artifact.upload]` here, so we keep that as a fallback. If the
-  # templateContext.outputs publish succeeds, this is a no-op duplicate (ADO
-  # tolerates this); if it fails silently, the sign job's DownloadPipelineArtifact
-  # call still has an artifact to fetch.
-  - pwsh: |
-      Write-Host "##vso[artifact.upload containerfolder=macosBinResults-${{ parameters.buildArchitecture }};artifactname=macosBinResults-${{ parameters.buildArchitecture }}]$(OB_OUTPUTDIRECTORY)"
-    displayName: 'Upload macOS build artifact (fallback for custom pool)'
+  # Note: artifact publish is handled by `templateContext.outputs.pipelineArtifact`
+  # at the top of this job (lines ~46-48). An earlier version of this template kept
+  # an explicit `##vso[artifact.upload]` here as a belt-and-suspenders fallback,
+  # under the (incorrect) assumption that ADO tolerates two registrations of the
+  # same artifact name. Build #686027 disproved that: the mid-job `##vso` upload
+  # registered `macosBinResults-x64` first, then the end-of-job
+  # PublishPipelineArtifact@1 (auto-injected by 1ES PT from `templateContext.outputs`)
+  # failed with `Artifact macosBinResults-x64 already exists for build 686027`.
+  # Removed in favour of the single 1ES PT mechanism. If the 1ES PT publish ever
+  # turns out to be unreliable on this `isCustom: true` macOS pool, reinstate a
+  # SINGLE mechanism (either the templateContext.outputs OR an explicit
+  # PublishPipelineArtifact@1, never both).
 
   - template: /.pipelines/templates/step/finalize.yml@self
 
