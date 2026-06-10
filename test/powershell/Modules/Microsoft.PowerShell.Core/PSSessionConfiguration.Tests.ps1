@@ -177,7 +177,14 @@ AfterAll {
                         [string] $TestDescription,
                         [bool] $EnablePSSessionConfig)
 
-                    It "$TestDescription" {
+                    It "$TestDescription" -TestCases @{
+                        SessionConfigName = $SessionConfigName
+                        ConfigFilePath = $ConfigFilePath
+                        InitialSessionStateEnabled = $InitialSessionStateEnabled
+                        FinalSessionStateEnabled = $FinalSessionStateEnabled
+                        EnablePSSessionConfig = $EnablePSSessionConfig
+                    } {
+                        param ($SessionConfigName, $ConfigFilePath, $InitialSessionStateEnabled, $FinalSessionStateEnabled, $EnablePSSessionConfig)
 
                         RegisterNewConfiguration -Name $SessionConfigName -ConfigFilePath $ConfigFilePath -Enabled:$InitialSessionStateEnabled
 
@@ -247,7 +254,12 @@ AfterAll {
 
                     param ($Description, $SessionConfigName, $ExpectedOutput, $ExpectedError)
 
-                    It "$Description" {
+                    It "$Description" -TestCases @{
+                        SessionConfigName = $SessionConfigName
+                        ExpectedOutput = $ExpectedOutput
+                        ExpectedError = $ExpectedError
+                    } {
+                        param ($SessionConfigName, $ExpectedOutput, $ExpectedError)
 
                         $Result = [PSObject] @{Output = $true ; Error = $null}
                         $error.Clear()
