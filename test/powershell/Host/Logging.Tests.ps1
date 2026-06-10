@@ -445,16 +445,8 @@ $PID
 Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') {
     BeforeDiscovery {
         $scriptBlockLoggingCases = @(
-            @{
-                name = 'normal script block'
-                script = "Write-Verbose 'testheader123' ;Write-verbose 'after'"
-                expectedText="Write-Verbose 'testheader123' ;Write-verbose 'after'`r`n"
-            }
-            @{
-                name = 'script block with Null'
-                script = "Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"
-                expectedText="Write-Verbose 'testheader123␀' ;Write-verbose 'after'`r`n"
-            }
+            @{ name = 'normal script block' }
+            @{ name = 'script block with Null' }
         )
     }
 
@@ -468,6 +460,22 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
         if ($IsSupportedEnvironment)
         {
             & "$PSHOME\RegisterManifest.ps1"
+        }
+
+        # Keep the raw scripts (which may contain control characters like NUL) out of
+        # the Pester -TestCases data. Pester 5 emits all -TestCases values into the
+        # NUnit XML <test-case name="..."> attribute, and an embedded NUL aborts the
+        # XML serializer mid-write, truncating the entire results file. Look the
+        # script and expected text up by name at runtime instead.
+        $scriptBlockLoggingData = @{
+            'normal script block' = @{
+                script       = "Write-Verbose 'testheader123' ;Write-verbose 'after'"
+                expectedText = "Write-Verbose 'testheader123' ;Write-verbose 'after'`r`n"
+            }
+            'script block with Null' = @{
+                script       = "Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"
+                expectedText = "Write-Verbose 'testheader123␀' ;Write-verbose 'after'`r`n"
+            }
         }
     }
 
@@ -491,10 +499,10 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
 
     It 'Verifies scriptblock logging: <name>' -Skip:(!$IsSupportedEnvironment) -TestCases $scriptBlockLoggingCases {
         param(
-            [string] $script,
-            [string] $expectedText,
             [string] $name
         )
+        $script = $scriptBlockLoggingData[$name].script
+        $expectedText = $scriptBlockLoggingData[$name].expectedText
         $configFile = WriteLogSettings -ScriptBlockLogging -LogId $logId
         $testFileName = 'test01.ps1'
         $testScriptPath = Join-Path -Path $TestDrive -ChildPath $testFileName

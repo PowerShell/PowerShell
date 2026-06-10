@@ -155,7 +155,7 @@ $modulesInBox = @("Microsoft.PowerShell.Core"
                   Get-Module -ListAvailable | ForEach-Object{$_.Name}
 )
 
-function GetFiles
+function script:GetFiles
 {
     param (
         [string]$fileType = "*help.xml",
@@ -263,27 +263,19 @@ function RunSaveHelpTests
     {
         if ($powershellCoreModules -contains $moduleName)
         {
-            try
-            {
-                $saveHelpFolder = if ($TestDrive) {
-                    Join-Path $TestDrive (Get-Random).ToString()
-                } else {
-                    $null
-                }
-                
-                if ($saveHelpFolder) {
-                    New-Item  $saveHelpFolder -Force -ItemType Directory > $null
-                }
+            ## Save help has intermittent connectivity issues for downloading PackageManagement help content.
+            ## Hence the test has been marked as Pending.
+            $pending = ($moduleName -eq 'PackageManagement')
 
-                ## Save help has intermittent connectivity issues for downloading PackageManagement help content.
-                ## Hence the test has been marked as Pending.
-                if($moduleName -eq 'PackageManagement')
-                {
-                    $pending = $true
-                }
-
-                It "Validate Save-Help for the '$moduleName' module" -Pending:$pending {
-
+            It "Validate Save-Help for the '$moduleName' module" -Pending:$pending -ForEach @(@{
+                moduleName  = $moduleName
+                myUICulture = $myUICulture
+                testCases   = $testCases
+                extension   = $extension
+            }) {
+                $saveHelpFolder = Join-Path $TestDrive (Get-Random).ToString()
+                New-Item $saveHelpFolder -Force -ItemType Directory > $null
+                try {
                     if ((Get-UICulture).Name -ne $myUICulture)
                     {
                         Save-Help -Module $moduleName -Force -UICulture $myUICulture -DestinationPath $saveHelpFolder
@@ -293,46 +285,41 @@ function RunSaveHelpTests
                         Save-Help -Module $moduleName -Force -DestinationPath $saveHelpFolder
                     }
 
-                    ValidateSaveHelp -moduleName $moduleName -path $saveHelpFolder
+                    ValidateSaveHelp -moduleName $moduleName -path $saveHelpFolder -testCases $testCases -extension $extension
                 }
-
-                ## Reset pending state.
-                if($pending)
-                {
-                    $pending = $false
-                }
-
-                if ($tag -eq "CI")
-                {
-                    break
-                }
-            }
-            finally
-            {
-                if ($saveHelpFolder) {
+                finally {
                     Remove-Item $saveHelpFolder -Force -ErrorAction SilentlyContinue -Recurse
                 }
+            }
+
+            if ($tag -eq "CI")
+            {
+                break
             }
         }
     }
 }
 
-function ValidateSaveHelp
+function script:ValidateSaveHelp
 {
     param (
         [string]$moduleName,
-        [string]$path
+        [string]$path,
+        [Parameter(Mandatory)]
+        [hashtable]$testCases,
+        [Parameter(Mandatory)]
+        [string]$extension
     )
 
     $compressedFile = GetFiles -fileType "*$extension" -path $path | ForEach-Object {Split-Path $_ -Leaf}
     $expectedCompressedFile = $testCases[$moduleName].CompressedFiles
     $expectedCompressedFile | Should -Not -BeNullOrEmpty -Because "Test data (expectedCompressedFile) should never be null"
-    $compressedFile | Should -Be $expectedCompressedFile -Because "Save-Help for $module should download '$expectedCompressedFile'"
+    $compressedFile | Should -Be $expectedCompressedFile -Because "Save-Help for $moduleName should download '$expectedCompressedFile'"
 
     $helpInfoFile = GetFiles -fileType "*HelpInfo.xml" -path $path | ForEach-Object {Split-Path $_ -Leaf}
     $expectedHelpInfoFile = $testCases[$moduleName].HelpInfoFiles
     $expectedHelpInfoFile | Should -Not -BeNullOrEmpty -Because "Test data (expectedHelpInfoFile) should never be null"
-    $helpInfoFile | Should -Be $expectedHelpInfoFile -Because "Save-Help for $module should download '$expectedHelpInfoFile'"
+    $helpInfoFile | Should -Be $expectedHelpInfoFile -Because "Save-Help for $moduleName should download '$expectedHelpInfoFile'"
 }
 
 Describe "Validate Update-Help from the Web for one PowerShell module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
