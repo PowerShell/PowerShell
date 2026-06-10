@@ -166,11 +166,13 @@ function GetFiles
     Get-ChildItem $path -Include $fileType -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
 }
 
-function ValidateInstalledHelpContent
+function script:ValidateInstalledHelpContent
 {
     param (
         [ValidateNotNullOrEmpty()]
         [string]$moduleName,
+        [Parameter(Mandatory)]
+        [hashtable]$testCases,
         [switch]$UserScope
     )
 
@@ -213,7 +215,16 @@ function RunUpdateHelpTests
                 $updateScope = 'AllUsers'
             }
 
-            It ('Validate Update-Help for module ''{0}'' in {1}' -F $moduleName, [PSCustomObject] $updateScope) -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
+            It ('Validate Update-Help for module ''{0}'' in {1}' -F $moduleName, [PSCustomObject] $updateScope) -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) -ForEach @(@{
+                moduleName     = $moduleName
+                moduleHelpPath = $moduleHelpPath
+                updateScope    = $updateScope
+                userscope      = [bool] $userscope
+                useSourcePath  = [bool] $useSourcePath
+                markAsPending  = [bool] $markAsPending
+                myUICulture    = $myUICulture
+                testCases      = $testCases
+            }) {
 
                 if ($markAsPending -or ($IsLinux -and $moduleName -eq "PackageManagement")) {
                     Set-ItResult -Pending -Because "Update-Help from the web has intermittent connectivity issues. See issues #2807 and #6541."
@@ -230,7 +241,7 @@ function RunUpdateHelpTests
                 Update-Help -Module:$moduleName -Force @UICultureParam @sourcePathParam -Scope:$updateScope -ErrorAction Stop
 
                 [hashtable] $userScopeParam = $(if ($userscope) { @{ UserScope = $true } } else { @{} })
-                ValidateInstalledHelpContent -moduleName:$moduleName @userScopeParam
+                ValidateInstalledHelpContent -moduleName:$moduleName -testCases:$testCases @userScopeParam
 
             }
 
