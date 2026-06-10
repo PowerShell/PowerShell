@@ -1,5 +1,9 @@
 # Preview Changelog
 
+## [7.7.0-preview.3]
+
+[7.7.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.7.0-preview.2...v7.7.0-preview.3
+
 ## [7.7.0-preview.2]
 
 ### Engine Updates and Fixes
