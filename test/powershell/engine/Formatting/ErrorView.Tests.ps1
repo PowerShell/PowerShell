@@ -227,6 +227,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
+                "     |                  ~~~~~~~~~~~~~~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -257,6 +258,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
+                "     |                  ~~~~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -288,6 +290,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
+                "     |                               ~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -319,6 +322,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
+                "     |                               ~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -379,6 +383,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
+                "     |                  ~~~~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -440,6 +445,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
+                "     |                  ~~~~~~~~~~~~~~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -514,6 +520,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   1 | This is the line with the error"
+                "     |                  ~~~~~~~~~~~~~~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
