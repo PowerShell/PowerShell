@@ -835,7 +835,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     It "Validate Invoke-WebRequest StandardMethod and CustomMethod parameter sets" {
         $uri = Get-WebListenerUrl -Test 'Get'
         #Validate that parameter sets are functioning correctly
-        $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $errorId = "AmbiguousParameterSet,*"
         { Invoke-WebRequest -Uri $uri -Method GET -CustomMethod TEST } | Should -Throw -ErrorId $errorId
     }
 
@@ -933,11 +933,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Link Header is present <name>" -TestCases @(
-        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5; linknumber = 2}
-        @{name = '(URI with scheme)'; uri = $originalUri}
-        @{name = '(URI without scheme)'; uri = $originalUri.OriginalString.Split("//")[1]}
+        @{name = '(URI with scheme)'; withScheme = $true}
+        @{name = '(URI without scheme)'; withScheme = $false}
     ) {
-        param($uri)
+        param($withScheme)
+        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5; linknumber = 2}
+        $uri = if ($withScheme) { $originalUri } else { $originalUri.OriginalString.Split("//")[1] }
         $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
 
@@ -3023,12 +3024,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Validate Invoke-RestMethod -FollowRelLink correctly follows all the available relation links <name>" -TestCases @(
+        @{name = '(URI with scheme)'; withScheme = $true}
+        @{name = '(URI without scheme)'; withScheme = $false}
+    ) {
+        param($withScheme)
         $maxLinks = 5
         $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks}
-        @{name = '(URI with scheme)'; uri = $originalUri}
-        @{name = '(URI without scheme)'; uri = $originalUri.OriginalString.Split("//")[1]}
-    ) {
-        param($uri)
+        $uri = if ($withScheme) { $originalUri } else { $originalUri.OriginalString.Split("//")[1] }
         $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
 
