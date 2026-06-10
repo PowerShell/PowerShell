@@ -5,29 +5,54 @@ parameters:
   OfficialBuild: true
   vPackScenario: false
 
-# 1ES PT translation of /.pipelines/templates/obp-file-signing.yml — STUBBED VERSION.
+# 1ES PT translation of /.pipelines/templates/obp-file-signing.yml — HYBRID STUB/TEST-SIGNING.
 #
-# Why stubs?
-# ----------
-# The OneBranch original calls `task: onebranch.pipeline.signing@1` against ESRP
-# KeyCodes that PowerShell is still in the process of onboarding for the new 1ES service
-# connection (external_distribution / msft_3rd_party_cert_id / nuget_cert_id / apple_cert_id).
-# Until that onboarding is complete, the Unofficial 1ES pipeline cannot do real signing.
+# TWO RUN MODES, selected at queue time by whether the runtime variable
+# `EsrpTestConnectionName` is defined (typically via attaching the
+# `EsrpSigningTest-PowerShell` variable group at the pipeline level):
 #
-# This stub keeps the SAME FILE LAYOUT WORK as the original (copy files to be signed
-# into staging folders, prepare third-party folder, run Update-PSSignedBuildFolder) so the
-# pipeline still produces a recognisable artifact tree. The actual `signing@1` task calls
-# are replaced with `pwsh: Write-Host "TODO: ESRP sign ..."` placeholders so the pipeline
-# runs end-to-end and emits UNSIGNED artifacts.
+#   * STUB MODE (default — variable undefined): the original
+#     `task: onebranch.pipeline.signing@1` calls are replaced with
+#     `pwsh: Write-Host` placeholders. Pipeline runs end-to-end and emits
+#     UNSIGNED artifacts. This is the safe default for the rebuild branch
+#     and for any contributor without ESRP onboarding.
 #
-# Migration path back to real signing (in the Official 1ES sibling, post-ESRP onboarding):
-#   Replace each "TODO: ESRP sign" pwsh step with the appropriate 1ES PT signing pattern,
-#   e.g. EsrpCodeSigning@5 with the new 1ES service connection, mapping:
-#     SigningProfile        -> KeyCode CP-230012 (external_distribution)
-#     $(msft_3rd_party_cert_id) -> KeyCode CP-231522 (3rd party Authenticode)
-#     $(nuget_cert_id)      -> KeyCode CP-401405 (NuGet package signing)
-#     $(apple_cert_id)      -> KeyCode CP-401337-Apple (MacAppDeveloperSign)
-# See files/onebranch-to-1es-migration.md "ESRP KeyCode mapping" section for the full table.
+#   * TEST SIGNING MODE (variable group attached): real `EsrpCodeSigning@5`
+#     tasks fire against the MS-Sign Test KeyCodes (https://aka.ms/keycodes —
+#     auth-gated). Auth is via federated managed identity (no PFX cert in
+#     pipeline). Requires the linked AAD app registration to be onboarded to
+#     the ESRP TEST ring AND authorised for these specific KeyCodes.
+#
+# Variable group `EsrpSigningTest-PowerShell` (to be created by repo admin and
+# linked to the pipeline definition before queueing in TEST SIGNING MODE):
+#   EsrpTestConnectionName     - ADO federated MI service-connection name
+#   EsrpTestAppRegClientId     - AAD app reg client ID for the connection
+#   EsrpTestAppRegTenantId     - AAD tenant ID
+#   EsrpTestAuthAkvName        - KeyVault holding auth cert
+#   EsrpTestAuthCertName       - Auth cert name in KeyVault
+#   EsrpTestAuthSignCertName   - Signing cert name in KeyVault
+#
+# Test KeyCode mapping (this file):
+#   1st-party Authenticode (was external_distribution / PROD CP-230012)
+#     -> TEST CP-466277  (RSA 2048 SHA256 Test 2; same across regions; Lifetime EKU)
+#   3rd-party Authenticode (was $(msft_3rd_party_cert_id) / PROD CP-231522)
+#     -> TEST CP-466279  (RSA 3072 SHA256 Test 2; same across regions; Lifetime EKU)
+#
+# Final PROD swap when AME onboarding completes (will be Phase B):
+#   1. Grep "CP-466277" -> replace with "CP-230012"
+#   2. Grep "CP-466279" -> replace with "CP-231522"
+#   3. Switch variable group from EsrpSigningTest-PowerShell to the prod equivalent
+#   4. Delete the STUB branches if you want to require real signing for every run
+#
+# NuGet (CP-401405) and Apple (CP-401337-Apple) signing remain STUB-ONLY — no
+# confirmed NuGet/Apple test KeyCodes available in the test inventory. See
+# windows-hosted-build.yml and mac.yml for those sites.
+#
+# Predicate note: the 3rd-party detection block below (~line 142) uses regex
+# patterns tuned for Microsoft PROD issuers. Test signatures from
+# "Microsoft RSA Testing PCA 2020" still satisfy the `testCert` regex so the
+# round-trip will exercise both 1st- and 3rd-party signing paths in TEST mode.
+# See files/onebranch-to-1es-migration.md Gotcha #15 for full details.
 
 steps:
 - pwsh: |
@@ -103,8 +128,9 @@ steps:
     Get-ChildItem -Recurse -File $filesToSignDirectory | Select-Object -Property FullName
   displayName: 'Prepare files to be signed'
 
-# STUB: Original was `task: onebranch.pipeline.signing@1` with `signing_profile: ${{ parameters.SigningProfile }}`
-# (default `external_distribution`, KeyCode CP-230012). Replace this stub once ESRP onboarding is complete.
+# STUB (1st-party): runs when no ESRP test variable group is attached.
+# Mirrors original `task: onebranch.pipeline.signing@1` with profile
+# `${{ parameters.SigningProfile }}` (default `external_distribution`, PROD CP-230012).
 - pwsh: |
     Write-Host '##[warning]STUB: would invoke ESRP signing with profile "${{ parameters.SigningProfile }}"'
     Write-Host '  files_to_sign: **\*.psd1;**\*.psm1;**\*.ps1xml;**\*.ps1;**\*.dll;**\*.exe;**\pwsh'
@@ -119,6 +145,51 @@ steps:
       Write-Host '  (toBeSigned folder does not exist)'
     }
   displayName: 'Sign 1st party files (STUB — ESRP onboarding pending)'
+  condition: and(succeeded(), eq(variables['EsrpTestConnectionName'], ''))
+
+# REAL TEST SIGNING (1st-party): runs only when EsrpSigningTest-PowerShell
+# variable group is attached. Uses MS-Sign Test KeyCode CP-466277.
+- task: EsrpCodeSigning@5
+  displayName: 'Sign 1st party files (ESRP test signing)'
+  condition: and(succeeded(), ne(variables['EsrpTestConnectionName'], ''))
+  inputs:
+    ConnectedServiceName: $(EsrpTestConnectionName)
+    AppRegistrationClientId: $(EsrpTestAppRegClientId)
+    AppRegistrationTenantId: $(EsrpTestAppRegTenantId)
+    AuthAKVName: $(EsrpTestAuthAkvName)
+    AuthCertName: $(EsrpTestAuthCertName)
+    AuthSignCertName: $(EsrpTestAuthSignCertName)
+    FolderPath: $(Pipeline.Workspace)/toBeSigned
+    Pattern: '**/*.psd1,**/*.psm1,**/*.ps1xml,**/*.ps1,**/*.dll,**/*.exe,**/pwsh'
+    UseMinimatch: true
+    signConfigType: inlineSignParams
+    inlineOperation: |
+      [
+        {
+          "keyCode": "CP-466277",
+          "operationSetCode": "SigntoolSign",
+          "parameters": [
+            { "parameterName": "OpusName", "parameterValue": "Microsoft" },
+            { "parameterName": "OpusInfo", "parameterValue": "http://www.microsoft.com" },
+            { "parameterName": "PageHash", "parameterValue": "/NPH" },
+            { "parameterName": "FileDigest", "parameterValue": "/fd \"SHA256\"" },
+            { "parameterName": "TimeStamp", "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256" }
+          ],
+          "toolName": "sign",
+          "toolVersion": "1.0"
+        },
+        {
+          "keyCode": "CP-466277",
+          "operationSetCode": "SigntoolVerify",
+          "parameters": [],
+          "toolName": "sign",
+          "toolVersion": "1.0"
+        }
+      ]
+    SessionTimeout: 60
+    MaxConcurrency: 50
+    MaxRetryAttempts: 5
+    PendingAnalysisWaitTimeoutMinutes: 5
 
 - pwsh : |
     Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
@@ -163,8 +234,9 @@ steps:
     }
   displayName: Create ThirdParty Signing Folder
 
-# STUB: Original was `task: onebranch.pipeline.signing@1` with `signing_profile: $(msft_3rd_party_cert_id)`
-# (KeyCode CP-231522, 3rd-party Authenticode). Replace this stub once ESRP onboarding is complete.
+# STUB (3rd-party): runs when no ESRP test variable group is attached.
+# Mirrors original `task: onebranch.pipeline.signing@1` with profile
+# `$(msft_3rd_party_cert_id)` (PROD CP-231522, 3rd-party Authenticode).
 - pwsh: |
     Write-Host '##[warning]STUB: would invoke ESRP signing with profile "$(msft_3rd_party_cert_id)" (3rd-party Authenticode)'
     Write-Host '  files_to_sign: **\*.dll;**\*.exe'
@@ -179,6 +251,52 @@ steps:
       Write-Host '  (thirdPartyToBeSigned folder does not exist)'
     }
   displayName: 'Sign 3rd Party files (STUB — ESRP onboarding pending)'
+  condition: and(succeeded(), eq(variables['EsrpTestConnectionName'], ''))
+
+# REAL TEST SIGNING (3rd-party): runs only when EsrpSigningTest-PowerShell
+# variable group is attached. Uses MS-Sign Test KeyCode CP-466279 (different
+# cert chain from 1P so we exercise both signing paths in TEST mode).
+- task: EsrpCodeSigning@5
+  displayName: 'Sign 3rd Party files (ESRP test signing)'
+  condition: and(succeeded(), ne(variables['EsrpTestConnectionName'], ''))
+  inputs:
+    ConnectedServiceName: $(EsrpTestConnectionName)
+    AppRegistrationClientId: $(EsrpTestAppRegClientId)
+    AppRegistrationTenantId: $(EsrpTestAppRegTenantId)
+    AuthAKVName: $(EsrpTestAuthAkvName)
+    AuthCertName: $(EsrpTestAuthCertName)
+    AuthSignCertName: $(EsrpTestAuthSignCertName)
+    FolderPath: $(Pipeline.Workspace)/thirdPartyToBeSigned
+    Pattern: '**/*.dll,**/*.exe'
+    UseMinimatch: true
+    signConfigType: inlineSignParams
+    inlineOperation: |
+      [
+        {
+          "keyCode": "CP-466279",
+          "operationSetCode": "SigntoolSign",
+          "parameters": [
+            { "parameterName": "OpusName", "parameterValue": "Microsoft" },
+            { "parameterName": "OpusInfo", "parameterValue": "http://www.microsoft.com" },
+            { "parameterName": "PageHash", "parameterValue": "/NPH" },
+            { "parameterName": "FileDigest", "parameterValue": "/fd \"SHA256\"" },
+            { "parameterName": "TimeStamp", "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256" }
+          ],
+          "toolName": "sign",
+          "toolVersion": "1.0"
+        },
+        {
+          "keyCode": "CP-466279",
+          "operationSetCode": "SigntoolVerify",
+          "parameters": [],
+          "toolName": "sign",
+          "toolVersion": "1.0"
+        }
+      ]
+    SessionTimeout: 60
+    MaxConcurrency: 50
+    MaxRetryAttempts: 5
+    PendingAnalysisWaitTimeoutMinutes: 5
 
 - pwsh: |
     Get-ChildItem '$(Pipeline.Workspace)/thirdPartyToBeSigned/*'

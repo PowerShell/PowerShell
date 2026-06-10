@@ -75,6 +75,57 @@
 #     `pwsh: Write-Host "TODO: ESRP sign ..."` placeholder. Pipeline runs end-to-end
 #     but produces UNSIGNED artifacts — strictly for validating the migration scaffold.
 #   - Once Unofficial green, build Official sibling with real ESRP signing.
+#
+# ESRP TEST SIGNING (Phase B preview — opt-in, runtime-gated):
+#   Three of the five signing sites have a hybrid stub/real-task implementation
+#   gated by the runtime variable `EsrpTestConnectionName`. When this variable
+#   is empty (default), every signing site runs the original Write-Host stub
+#   and the pipeline stays UNSIGNED — preserving the green baseline. When the
+#   variable is non-empty, three sites switch to real `EsrpCodeSigning@5` tasks
+#   that exercise the ESRP signing path against MS-Sign Test KeyCodes.
+#
+#   TO ENABLE TEST SIGNING:
+#     1. Create a variable group named `EsrpSigningTest-PowerShell` in this
+#        ADO project with the following 6 variables (values come from the
+#        ESRP onboarding ticket):
+#          - EsrpTestConnectionName        (federated MI service connection)
+#          - EsrpTestAppRegClientId        (AAD app registration client ID)
+#          - EsrpTestAppRegTenantId        (AAD tenant ID)
+#          - EsrpTestAuthAkvName           (Azure Key Vault name)
+#          - EsrpTestAuthCertName          (auth cert name in the KV)
+#          - EsrpTestAuthSignCertName      (signing cert name in the KV)
+#     2. Confirm the AAD app registration is onboarded to the ESRP test ring
+#        AND authorised for KeyCodes CP-466277 (1P) and CP-466279 (3P).
+#     3. Attach the variable group to pipeline 4229 at queue time.
+#
+#   SIGNING-SITE MAPPING (when test signing enabled):
+#     ─────────────────────────────────────────────────────────────────────────
+#     Site                                         | TEST KeyCode  | Mode
+#     ─────────────────────────────────────────────────────────────────────────
+#     obp-file-signing.yml — 1P Authenticode       | CP-466277     | HYBRID
+#     obp-file-signing.yml — 3P Authenticode       | CP-466279     | HYBRID
+#     windows-hosted-build.yml — Sign obj files    | CP-466277     | HYBRID
+#     windows-hosted-build.yml — Sign nupkg files  | (none)        | STUB ONLY
+#     mac.yml — Apple CodeSign Mach-O binaries     | (none)        | STUB ONLY
+#     ─────────────────────────────────────────────────────────────────────────
+#     "STUB ONLY" sites stay as Write-Host placeholders even when test signing
+#     is enabled — no compatible test KeyCode currently exists for NuGet or
+#     Apple operations.
+#
+#   PROD KeyCode swap path (Official sibling, post-AME-onboarding):
+#     CP-466277 -> CP-230012  (1P Authenticode prod)
+#     CP-466279 -> CP-231522  (3P Authenticode prod)
+#     CP-466277 -> CP-230012  (obj files / 1P prod)
+#     (nupkg)   -> CP-401405  (NuGet prod, needs new EsrpCodeSigning@5 task)
+#     (Apple)   -> CP-401337-Apple (MacAppDeveloperSign prod)
+#
+#   PREDICATE CAVEAT (test signing mode):
+#     In `obp-file-signing.yml`, the post-1P-signing predicate that flags
+#     files for 3P re-signing matches test cert issuers as "needs 3P signing".
+#     This means test-signed files will round-trip through BOTH the 1P and 3P
+#     paths — by design, exercising both code paths. Not a bug; documented in
+#     the playbook (`<session>/files/onebranch-to-1es-migration.md` gotcha
+#     #15) so future readers don't try to "fix" it.
 
 trigger: none
 
