@@ -601,7 +601,10 @@ namespace System.Management.Automation
                     completionContext.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                 }
 
-                return GetResultHelper(completionContext, out replacementIndex, out replacementLength);
+                List<CompletionResult> results = GetResultHelper(completionContext, out replacementIndex, out replacementLength);
+                CompletionCompleters.RemoveLastNullCompletionResult(results);
+
+                return results;
             }
             finally
             {
