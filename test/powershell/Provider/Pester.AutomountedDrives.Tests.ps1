@@ -11,10 +11,10 @@ Describe "Test suite for validating automounted PowerShell drives" -Tags @('Feat
     BeforeAll {
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
 
-        $AutomountVHDDriveScriptPath = Join-Path $script:TestSourceRoot 'AutomountVHDDrive.ps1'
+        $AutomountVHDDriveScriptPath = Join-Path $PSScriptRoot 'AutomountVHDDrive.ps1'
         $vhdPath = Join-Path $TestDrive 'TestAutomountVHD.vhd'
 
-        $AutomountSubstDriveScriptPath = Join-Path $script:TestSourceRoot 'AutomountSubstDrive.ps1'
+        $AutomountSubstDriveScriptPath = Join-Path $PSScriptRoot 'AutomountSubstDrive.ps1'
         $substDir = Join-Path (Join-Path $TestDrive 'TestAutomountSubstDrive') 'TestDriveRoot'
         New-Item $substDir -ItemType Directory -Force | Out-Null
 

@@ -5,7 +5,7 @@
 ##
 
 if ($IsWindows) {
-    $typeDef = @'
+    $script:typeDef = @'
     using System;
     using System.Globalization;
     using System.Management.Automation;
@@ -115,23 +115,15 @@ if ($IsWindows) {
 '@
 }
 
-Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOnWindows' {
+$script:skipInvokeRemoteDebug = (-not $IsWindows) -or (Test-IsWindowsArm64) -or (Test-IsWinWow64)
+
+Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOnWindows' -Skip:$script:skipInvokeRemoteDebug {
 
     BeforeAll {
 
-        $isArm64orWow64 = (Test-IsWindowsArm64) -or (Test-IsWinWow64)
-        $skipTest = ! $IsWindows -or $isArm64orWow64
-        if ($skipTest) {
-            if ($isArm64orWow64) {
-                Write-Verbose "remoting is not setup on ARM64 or x86, skipping tests" -Verbose
-            }
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            return
-        }
-
         $sb = [scriptblock]::Create('"Hello!"')
 
-        Add-Type -TypeDefinition $typeDef
+        Add-Type -TypeDefinition $script:typeDef
 
         $dummyHost = [TestRunner.DummyHost]::new()
         [runspace] $rs = [runspacefactory]::CreateRunspace($dummyHost)
@@ -151,12 +143,6 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOn
     }
 
     AfterAll {
-
-        if ($skipTest) {
-            Pop-DefaultParameterValueStack
-            return
-        }
-
         if ($null -ne $testDebugger) { $testDebugger.Release() }
         if ($null -ne $ps) { $ps.Dispose() }
         if ($null -ne $ps2) { $ps2.Dispose() }
@@ -166,16 +152,10 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOn
     }
 
     BeforeEach {
-        if (!$skipTest) {
-            $remoteSession = New-RemoteSession
-        }
+        $remoteSession = New-RemoteSession
     }
 
     AfterEach {
-        if ($skipTest) {
-            return
-        }
-
         $ps.Commands.Clear()
         $ps2.Commands.Clear()
 
