@@ -5,10 +5,22 @@ parameters:
 
 # 1ES PT translation of /.pipelines/templates/windows-hosted-build.yml.
 # Single Windows job that BOTH builds and signs (the OneBranch original is the same shape).
-# Three signing tasks STUBBED:
-#   1. obp-file-signing.yml call for the main bin folder (Authenticode).
-#   2. obp-file-signing.yml call for the global tool publish folder (fxdependent only).
-#   3. Inline `Sign obj files` (external_distribution) and `Sign nupkg files` (nuget_cert_id).
+# Three signing sites, two execution modes per site (selected at queue time by whether
+# the runtime variable `EsrpTestConnectionName` is defined — see obp-file-signing.yml
+# header for the full variable group story):
+#   1. obp-file-signing.yml call for the main bin folder (1P Authenticode)
+#      - STUB MODE: Write-Host placeholder
+#      - TEST MODE: EsrpCodeSigning@5 against test code CP-466277
+#   2. obp-file-signing.yml call for the global tool publish folder (fxdependent only)
+#      - same modes as #1
+#   3. Inline `Sign obj files` (1P Authenticode)
+#      - STUB MODE: Write-Host placeholder
+#      - TEST MODE: EsrpCodeSigning@5 against test code CP-466277
+#   4. Inline `Sign nupkg files` ($(nuget_cert_id), PROD CP-401405)
+#      - STUB MODE ONLY: no NuGet test KeyCode is available in the MS test inventory,
+#        so this site stays as a Write-Host placeholder even in TEST MODE. Future
+#        work: identify a NuGet-compatible test code and wire EsrpCodeSigning@5 with
+#        operationSetCode "NuGetSign" / "NuGetVerify".
 # CodeQL3000Init/Finalize tasks DROPPED (1ES PT auto-injects via sdl.codeql config).
 # cloneToOfficialPath.yml replaced with stage-repo-under-PowerShell.yml.
 
@@ -216,8 +228,10 @@ jobs:
     displayName: Capture obj files
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
-  ## STUB: original was `task: onebranch.pipeline.signing@1` with `signing_profile: external_distribution`
-  ## (KeyCode CP-230012). Sign obj files needed for the global tool packaging.
+  ## STUB (obj files): runs when no ESRP test variable group is attached.
+  ## Mirrors original `task: onebranch.pipeline.signing@1` with profile
+  ## `external_distribution` (PROD CP-230012). Signs obj files needed for the
+  ## global tool packaging step.
   - pwsh: |
       Write-Host '##[warning]STUB: would invoke ESRP signing with profile "external_distribution" (KeyCode CP-230012)'
       Write-Host '  files_to_sign: **\*.dll;**\*.exe'
@@ -228,7 +242,52 @@ jobs:
           ForEach-Object { Write-Host "  Would sign: $_" }
       }
     displayName: 'Sign obj files (STUB — ESRP onboarding pending)'
-    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
+    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'), eq(variables['EsrpTestConnectionName'], ''))
+
+  ## REAL TEST SIGNING (obj files): runs only when EsrpSigningTest-PowerShell
+  ## variable group is attached. Uses MS-Sign Test KeyCode CP-466277 (same as
+  ## 1st-party path in obp-file-signing.yml — both are 1P Authenticode).
+  - task: EsrpCodeSigning@5
+    displayName: 'Sign obj files (ESRP test signing)'
+    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'), ne(variables['EsrpTestConnectionName'], ''))
+    inputs:
+      ConnectedServiceName: $(EsrpTestConnectionName)
+      AppRegistrationClientId: $(EsrpTestAppRegClientId)
+      AppRegistrationTenantId: $(EsrpTestAppRegTenantId)
+      AuthAKVName: $(EsrpTestAuthAkvName)
+      AuthCertName: $(EsrpTestAuthCertName)
+      AuthSignCertName: $(EsrpTestAuthSignCertName)
+      FolderPath: $(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release
+      Pattern: '**/*.dll,**/*.exe'
+      UseMinimatch: true
+      signConfigType: inlineSignParams
+      inlineOperation: |
+        [
+          {
+            "keyCode": "CP-466277",
+            "operationSetCode": "SigntoolSign",
+            "parameters": [
+              { "parameterName": "OpusName", "parameterValue": "Microsoft" },
+              { "parameterName": "OpusInfo", "parameterValue": "http://www.microsoft.com" },
+              { "parameterName": "PageHash", "parameterValue": "/NPH" },
+              { "parameterName": "FileDigest", "parameterValue": "/fd \"SHA256\"" },
+              { "parameterName": "TimeStamp", "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256" }
+            ],
+            "toolName": "sign",
+            "toolVersion": "1.0"
+          },
+          {
+            "keyCode": "CP-466277",
+            "operationSetCode": "SigntoolVerify",
+            "parameters": [],
+            "toolName": "sign",
+            "toolVersion": "1.0"
+          }
+        ]
+      SessionTimeout: 60
+      MaxConcurrency: 50
+      MaxRetryAttempts: 5
+      PendingAnalysisWaitTimeoutMinutes: 5
 
   - pwsh: |
       <#  The way the packaging works is a bit tricky as when it is built, we cannot add the modules that come from gallery.
@@ -316,8 +375,16 @@ jobs:
     displayName: 'Pack Windows.x64 global tool'
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
-  ## STUB: original was `task: onebranch.pipeline.signing@1` with `cp_code: $(nuget_cert_id)`
-  ## (KeyCode CP-401405, NuGet package signing).
+  ## STUB-ONLY (nupkg): original was `task: onebranch.pipeline.signing@1` with
+  ## `cp_code: $(nuget_cert_id)` (PROD CP-401405, NuGet package signing).
+  ## This site stays STUB even in TEST MODE — no NuGet-compatible test KeyCode
+  ## is currently available in the MS test inventory. NuGet signing requires a
+  ## NuGet-specific cert (operationSetCode "NuGetSign"), and reusing the
+  ## Authenticode test codes (CP-466277 / CP-466279) would be rejected by ESRP
+  ## as "KeyCode not authorised for this operation".
+  ## To unblock: ask ESRP team for a NuGet test code, then add a sibling
+  ## EsrpCodeSigning@5 task here with `condition: ne(variables['EsrpTestConnectionName'], '')`
+  ## using operationSetCode "NuGetSign" / "NuGetVerify".
   - pwsh: |
       Write-Host '##[warning]STUB: would invoke ESRP signing with cp_code "$(nuget_cert_id)" (KeyCode CP-401405, NuGet)'
       Write-Host '  files_to_sign: **\*.nupkg'
@@ -327,7 +394,7 @@ jobs:
           Select-Object -ExpandProperty FullName |
           ForEach-Object { Write-Host "  Would sign: $_" }
       }
-    displayName: 'Sign nupkg files (STUB — ESRP onboarding pending)'
+    displayName: 'Sign nupkg files (STUB — no NuGet test KeyCode available)'
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
   - template: /.pipelines/templates/step/finalize.yml@self
