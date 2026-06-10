@@ -116,6 +116,8 @@ open {0}
     </array>
     <key>CFBundleVersion</key>
     <string>{1}</string>
+    <key>LSRequiresNativeExecution</key>
+    <true/>
 </dict>
 </plist>
 '@
