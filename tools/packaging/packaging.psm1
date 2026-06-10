@@ -1242,7 +1242,7 @@ function New-UnixPackage {
             if ($PSCmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
-                $AppsFolder = New-MacOSLauncher -Version $Version
+                $AppsFolder = New-MacOSLauncher -Version $Version -HostArchitecture $HostArchitecture
             }
         }
 
@@ -2369,7 +2369,13 @@ function New-MacOSLauncher
         [Parameter(Mandatory)]
         [String]$Version,
 
-        [switch]$LTS
+        [switch]$LTS,
+
+        # When "arm64", emits LSRequiresNativeExecution in the app's Info.plist so
+        # Apple Silicon Launch Services does not offer Rosetta when launching
+        # /Applications/PowerShell.app. Leave empty / non-arm64 to preserve the
+        # ability to launch x86_64 builds under Rosetta on Apple Silicon.
+        [string]$HostArchitecture
     )
 
     $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
@@ -2398,9 +2404,18 @@ function New-MacOSLauncher
     # Copy icns file.
     Copy-Item -Force -Path $iconfile -Destination "$macosapp/Contents/Resources"
 
+    # On arm64 builds, declare native execution so Launch Services does not
+    # offer Rosetta for the bundle. Omitted on x86_64 so that build remains
+    # launchable under Rosetta if installed on Apple Silicon.
+    $nativeExecutionKey = if ($HostArchitecture -eq "arm64") {
+        "    <key>LSRequiresNativeExecution</key>`n    <true/>`n"
+    } else {
+        ""
+    }
+
     # Create plist file.
     $plist = "$macosapp/Contents/Info.plist"
-    $plistcontent = $packagingStrings.MacOSLauncherPlistTemplate -f $packageId, $Version, $iconfilebase
+    $plistcontent = $packagingStrings.MacOSLauncherPlistTemplate -f $packageId, $Version, $iconfilebase, $nativeExecutionKey
     $plistcontent | Out-File -Force -Path $plist -Encoding utf8
 
     # Create shell script.
