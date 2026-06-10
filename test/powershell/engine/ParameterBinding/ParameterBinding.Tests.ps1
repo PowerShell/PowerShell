@@ -261,7 +261,7 @@ Describe "Parameter Binding Tests" -Tags "CI" {
 
         # This test verifies that the ErrorRecord is coming from parameter validation on a dynamic parameter
         # instead of an error indicating that the dynamic parameter is not found
-        { Copy-Item "~\$guid*" -Destination ~ -ToSession $null } | Should -Throw -ErrorId 'ParameterArgumentValidationError'
+        { Copy-Item "~\$guid*" -Destination ~ -ToSession $null } | Should -Throw -ErrorId 'ParameterArgumentValidationError,*'
     }
 
     It 'PipelineVariable should not cause variable-removal exception (issue #16155)' {

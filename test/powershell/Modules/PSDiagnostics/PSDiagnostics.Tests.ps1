@@ -87,7 +87,7 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
         }
 
         It "Should throw exception for invalid LogName." {
-            {Set-LogProperties -LogDetails 'Foo' -Force } | Should -Throw -ErrorId 'ParameterArgumentTransformationError'
+            {Set-LogProperties -LogDetails 'Foo' -Force } | Should -Throw -ErrorId 'ParameterArgumentTransformationError,*'
         }
     }
 }

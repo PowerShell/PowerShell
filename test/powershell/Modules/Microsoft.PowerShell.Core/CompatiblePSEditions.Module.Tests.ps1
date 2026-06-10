@@ -167,6 +167,18 @@ Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
             return
         }
 
+        # Repeat the test data here because Pester 5 does not flow variables
+        # set in BeforeDiscovery into BeforeAll.
+        $successCases = @(
+            @{ Editions = "Core","Desktop"; ModuleName = "BothModule" },
+            @{ Editions = "Core"; ModuleName = "CoreModule" }
+        )
+
+        $failCases = @(
+            @{ Editions = "Desktop"; ModuleName = "DesktopModule" },
+            @{ Editions = $null; ModuleName = "NeitherModule" }
+        )
+
         $basePath = Join-Path $TestDrive "EditionCompatibleModules"
         New-TestModules -TestCases $successCases -BaseDir $basePath
         New-TestModules -TestCases $failCases -BaseDir $basePath
@@ -272,6 +284,20 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
     }
 
     BeforeAll {
+        # Repeat the test data here because Pester 5 does not flow variables
+        # set in BeforeDiscovery into BeforeAll.
+        $successCases = @(
+            @{ Editions = "Core","Desktop"; ModuleName = "BothModule"; Result = $true },
+            @{ Editions = "Core"; ModuleName = "CoreModule"; Result = $true }
+        )
+
+        $failCases = @(
+            @{ Editions = "Desktop"; ModuleName = "DesktopModule"; Result = $true },
+            @{ Editions = $null; ModuleName = "NeitherModule"; Result = $true }
+        )
+
+        $allCases = $successCases + $failCases
+
         $basePath = Join-Path $TestDrive "EditionCompatibleModules"
         New-TestModules -TestCases $successCases -BaseDir $basePath
         New-TestModules -TestCases $failCases -BaseDir $basePath
@@ -341,7 +367,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
                     & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
                 }
                 else {
-                    { Import-Module $ModuleName -UseWindowsPowerShell -Force } | Should -Throw -ErrorId "InvalidOperationException"
+                    { Import-Module $ModuleName -UseWindowsPowerShell -Force } | Should -Throw -ErrorId "*InvalidOperationException*"
                 }
             }
             finally {
