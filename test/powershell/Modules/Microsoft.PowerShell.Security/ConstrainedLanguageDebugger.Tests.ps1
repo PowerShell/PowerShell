@@ -21,6 +21,7 @@ try
     Describe "Local script debugger is disabled in system lock down mode" -Tags 'CI','RequireAdminOnWindows' {
 
         BeforeDiscovery {
+            $scriptFilePath = Join-Path $TestDrive TScript.ps1
             $TestCasesDisableDebugger = @(
                 @{
                     testName = 'Verifies that Set-PSBreakpoint Line is disabled on locked down system'
