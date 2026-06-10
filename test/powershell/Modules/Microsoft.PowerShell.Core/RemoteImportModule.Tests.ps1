@@ -1,33 +1,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
+
+$script:skipRemoteImport = (-not $IsWindows) -or (Test-IsWinWow64)
+
+Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' -Skip:$script:skipRemoteImport {
 
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $modulePath = "$testdrive\Modules\TestImport"
 
-        $pendingTest = (Test-IsWinWow64)
-        $skipTest = !$IsWindows
-
-        if ($skipTest) {
-            $PSDefaultParameterValues["it:skip"] = $true
-        } elseif ($pendingTest) {
-            $PSDefaultParameterValues["it:pending"] = $true
-        } else {
-            $pssession = New-RemoteSession
-            Invoke-Command -Session $pssession -Scriptblock { $env:PSModulePath += ";${using:testdrive}" }
-            # pending https://github.com/PowerShell/PowerShell/issues/4819
-            # $cimsession = New-RemoteSession -CimSession
-            $null = New-Item -ItemType Directory -Path $modulePath
-            Set-Content -Path $modulePath\testimport.psm1 -Value "function test-hello { 'world' }"
-            New-ModuleManifest -Path $modulePath\testimport.psd1 -ModuleVersion 1.2.3 -RootModule testimport.psm1 -FunctionsToExport "test-hello" `
-                -HelpInfoUri "https://help" -Guid (New-Guid)
-        }
+        $pssession = New-RemoteSession
+        Invoke-Command -Session $pssession -Scriptblock { $env:PSModulePath += ";${using:testdrive}" }
+        # pending https://github.com/PowerShell/PowerShell/issues/4819
+        # $cimsession = New-RemoteSession -CimSession
+        $null = New-Item -ItemType Directory -Path $modulePath
+        Set-Content -Path $modulePath\testimport.psm1 -Value "function test-hello { 'world' }"
+        New-ModuleManifest -Path $modulePath\testimport.psd1 -ModuleVersion 1.2.3 -RootModule testimport.psm1 -FunctionsToExport "test-hello" `
+            -HelpInfoUri "https://help" -Guid (New-Guid)
     }
 
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        if ($IsWindows -and !$pendingTest -and !$skipTest) {
+        if (-not $script:skipRemoteImport -and $null -ne $pssession) {
             $pssession | Remove-PSSession -ErrorAction SilentlyContinue
         }
 
@@ -65,14 +59,17 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
         @{parameter = "NoClobber"          ; value = $false},
         @{parameter = "Scope"              ; value = "Local"},
         @{parameter = "Scope"              ; value = "Global"},
-        @{parameter = "PSSession"          ; value = $pssession},
+        @{parameter = "PSSession"          ; usePSSession = $true},
         # @{parameter = "CimSession"         ; value = $cimsession},
         @{parameter = "CimResourceUri"     ; value = "http://foo/"},
         @{parameter = "CimNamespace"       ; value = "foo"}
         ) {
-        param($parameter, $value, $script)
+        param($parameter, $value, $script, $usePSSession)
 
         $importModuleCommand = [Microsoft.PowerShell.Commands.ImportModuleCommand]::new()
+        if ($usePSSession) {
+            $value = $pssession
+        }
         if ($script -ne $null) {
             $value = & $script
         }
@@ -90,18 +87,24 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
     }
 
     It "Import-Module can import over remote session: <test>" -TestCases @(
-        @{ test = "pssession"              ; parameters = @{Name="TestImport";PSSession=$pssession}},
+        @{ test = "pssession"              ; extra = @{} },
 #        @{ test = "cimsession"             ; parameters = @{Name="TestImport";CimSession=$cimsession}},
-        @{ test = "minimumversion"         ; parameters = @{Name="TestImport";PSSession=$pssession;MinimumVersion="1.0";Force=$true}},
-        @{ test = "requiredversion"        ; parameters = @{Name="TestImport";PSSession=$pssession;RequiredVersion="1.2.3"}},
-        @{ test = "maxiumversion"          ; parameters = @{Name="TestImport";PSSession=$pssession;MaximumVersion="2.0"}},
-        @{ test = "invalid miniumversion"  ; parameters = @{Name="TestImport";PSSession=$pssession;MinimumVersion="2.0"};
+        @{ test = "minimumversion"         ; extra = @{MinimumVersion="1.0";Force=$true} },
+        @{ test = "requiredversion"        ; extra = @{RequiredVersion="1.2.3"} },
+        @{ test = "maxiumversion"          ; extra = @{MaximumVersion="2.0"} },
+        @{ test = "invalid miniumversion"  ; extra = @{MinimumVersion="2.0"};
             errorid = "Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand,Microsoft.PowerShell.Commands.ImportModuleCommand"},
-        @{ test = "invalid maximumversion" ; parameters = @{Name="TestImport";PSSession=$pssession;MaximumVersion="1.0"};
+        @{ test = "invalid maximumversion" ; extra = @{MaximumVersion="1.0"};
             errorid = "Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand,Microsoft.PowerShell.Commands.ImportModuleCommand"},
-        @{ test = "fullyqualifiedname"     ; parameters = @{FullyQualifiedName=@{Modulename="TestImport"; RequiredVersion="1.2.3"};PSSession=$pssession}}
+        @{ test = "fullyqualifiedname"     ; useFqn = $true; extra = @{} }
         ) {
-        param ($test, $parameters, $errorid)
+        param ($test, $extra, $errorid, $useFqn)
+
+        if ($useFqn) {
+            $parameters = @{FullyQualifiedName=@{Modulename="TestImport"; RequiredVersion="1.2.3"};PSSession=$pssession}
+        } else {
+            $parameters = @{Name="TestImport";PSSession=$pssession} + $extra
+        }
 
         Invoke-Command -Session $pssession -ScriptBlock { $env:PSModulePath += ";$(Split-Path $using:modulePath)"}
         Get-Module TestImport | Should -BeNullOrEmpty

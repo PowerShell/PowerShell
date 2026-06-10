@@ -3,6 +3,9 @@
 
 # note these will manipulate private data in the PowerShell engine which will
 # enable us to not actually stop the system, but return right before we do
+
+$script:skipNonAdminOnUnix = $IsWindows -or [environment]::IsPrivilegedProcess -or ($null -eq (Get-Command shutdown -CommandType Application -ErrorAction Ignore))
+
 Describe "Stop-Computer" -Tag Feature {
     BeforeAll {
         $stopTesthook = "TestStopComputer"
@@ -63,7 +66,7 @@ Describe 'Non-admin on Unix' {
         }
     }
 
-    It 'Reports error if not run under sudo' -Skip:($skip) {
+    It 'Reports error if not run under sudo' -Skip:($script:skipNonAdminOnUnix) {
         { Stop-Computer -ErrorAction Stop } | Should -Throw -ErrorId "StopComputerException,Microsoft.PowerShell.Commands.StopComputerCommand"
     }
 }

@@ -2,16 +2,14 @@
 # Licensed under the MIT License.
 # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
 
+$script:skipTest = (-not ($IsWindows -and $IsCoreCLR -and (Test-IsElevated))) -or (Test-IsWinWow64)
+
 BeforeAll {
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
     $originalWarningPreference = $WarningPreference
     $WarningPreference = "SilentlyContinue"
-    $skipTest = ! ($IsWindows -and $IsCoreCLR -and (Test-IsElevated)) -or (Test-IsWinWow64)
-    $PSDefaultParameterValues["it:skip"] = $skipTest
 }
 
 AfterAll {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
     $WarningPreference = $originalWarningPreference
 }
 
@@ -82,7 +80,8 @@ AfterAll {
         # TEST - Verifying that Import-PSSession signs the files
         #
 
-        It "Verifies that Import-PSSession works in AllSigned if Certificate is used" -Skip:($skipTest -or $skipThisTest) {
+        It "Verifies that Import-PSSession works in AllSigned if Certificate is used" -Skip:($script:skipTest) {
+            if ($skipThisTest) { Set-ItResult -Skipped -Because "No code signing certificate available"; return }
             try {
                 $importedModule = Import-PSSession $session Get-Variable -Prefix Remote -Certificate $cert -AllowClobber
     	        $importedModule | Should -Not -BeNullOrEmpty
@@ -91,7 +90,8 @@ AfterAll {
             }
         }
 
-        It "Verifies security error when Certificate parameter is not used" -Skip:($skipTest -or $skipThisTest) {
+        It "Verifies security error when Certificate parameter is not used" -Skip:($script:skipTest) {
+            if ($skipThisTest) { Set-ItResult -Skipped -Because "No code signing certificate available"; return }
             { $importedModule = Import-PSSession $session Get-Variable -Prefix Remote -AllowClobber } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ImportPSSessionCommand"
         }
     }
@@ -1549,7 +1549,7 @@ AfterAll {
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
 
-        Context "Get-Command <Imported-Module> and <Imported-Module.Name> work (Windows 7: #334112)" {
+        Context "Get-Command `$Imported-Module and `$Imported-Module.Name work (Windows 7: #334112)" {
             BeforeAll {
                 if ($skipTest) { return }
                 $module = Import-PSSession $session Get-Variable -Prefix My -AllowClobber
@@ -2017,7 +2017,7 @@ AfterAll {
             Unregister-PSSessionConfiguration -Name $configName -Force -ErrorAction SilentlyContinue
         }
 
-        It "Verifies that Export-PSSession with PS 2.0 session and format type names succeeds" -Skip:$skipThisTest {
+        It "Verifies that Export-PSSession with PS 2.0 session and format type names succeeds" -Skip:($script:skipTest -or $IsCoreCLR -or (-not (Test-Path 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727')) -or (-not (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine'))) {
             try {
                 $results = Export-PSSession -Session $session -OutputModule tempTest -CommandName Get-Process `
                                             -AllowClobber -FormatTypeName * -Force -ErrorAction Stop

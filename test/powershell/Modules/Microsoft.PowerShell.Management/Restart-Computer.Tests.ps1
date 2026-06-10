@@ -2,6 +2,9 @@
 # Licensed under the MIT License.
 
 # the testhook for restart-computer is the same as for stop-computer
+
+$script:skipRestartNonAdminOnUnix = $IsWindows -or [environment]::IsPrivilegedProcess -or ($null -eq (Get-Command shutdown -CommandType Application -ErrorAction Ignore))
+
 Describe "Restart-Computer" -Tag Feature,RequireAdminOnWindows {
     BeforeAll {
         $restartTesthookName = "TestStopComputer"
@@ -112,7 +115,7 @@ Describe 'Non-admin on Unix' {
         }
     }
 
-    It 'Reports error if not run under sudo' -Skip:($skip) {
+    It 'Reports error if not run under sudo' -Skip:($script:skipRestartNonAdminOnUnix) {
         { Restart-Computer -ErrorAction Stop } | Should -Throw -ErrorId "RestartcomputerFailed,Microsoft.PowerShell.Commands.RestartComputerCommand"
     }
 }
