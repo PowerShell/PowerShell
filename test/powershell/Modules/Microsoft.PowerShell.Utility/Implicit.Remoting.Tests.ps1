@@ -1,8 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
-
-$script:skipTest = (-not ($IsWindows -and $IsCoreCLR -and (Test-IsElevated))) -or (Test-IsWinWow64)
+# Also skip when WinRM is not configured for remoting (e.g. GitHub Actions Windows runners by default),
+# since BeforeAll's New-RemoteSession would return null and tests would fail with parameter-binding errors.
+$script:skipTest = (-not ($IsWindows -and $IsCoreCLR -and (Test-IsElevated))) -or (Test-IsWinWow64) -or (-not (Test-WSMan -ErrorAction SilentlyContinue))
 
 BeforeAll {
     $originalWarningPreference = $WarningPreference
