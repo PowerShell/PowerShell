@@ -41,7 +41,7 @@ $corruptBlgPath = Join-Path $PSScriptRoot "assets" "CorruptBlg.blg"
 $notFoundPath = Join-Path $PSScriptRoot "DAD288C0-72F8-47D3-8C54-C69481B528DF.blg"
 
 # Set script-scope variable values used by multiple Describes
-function SetScriptVars([string]$rootPath, [int]$maxSamples, [bool]$export)
+function script:SetScriptVars([string]$rootPath, [int]$maxSamples, [bool]$export)
 {
     $rootFilename = "exportedCounters"
 
@@ -64,7 +64,7 @@ function SetScriptVars([string]$rootPath, [int]$maxSamples, [bool]$export)
 }
 
 # Build up a command to execute
-function ConstructCommand($testCase)
+function script:ConstructCommand($testCase)
 {
     $filePath = ""
     $pathParam = ""
@@ -101,7 +101,7 @@ function ConstructCommand($testCase)
 }
 
 # Run a test that is expected to succeed
-function RunTest($testCase)
+function script:RunTest($testCase)
 {
     $skipTest = $testCase.SkipTest -or (SkipCounterTests)
 
@@ -162,7 +162,7 @@ function RunTest($testCase)
 }
 
 # Run a test for each file format
-function RunPerFileTypeTests($testCase)
+function script:RunPerFileTypeTests($testCase)
 {
     if ($testCase.UseKnownSamples)
     {
@@ -193,7 +193,7 @@ function RunPerFileTypeTests($testCase)
 }
 
 # Run a test case that is expected to fail
-function RunExpectedFailureTest($testCase)
+function script:RunExpectedFailureTest($testCase)
 {
     It "$($testCase.Name)" -Skip:$(SkipCounterTests) {
         $cmd = ConstructCommand $testCase

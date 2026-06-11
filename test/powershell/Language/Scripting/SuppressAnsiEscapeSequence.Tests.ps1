@@ -1,23 +1,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
+Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI -Skip:(-not $host.ui.SupportsVirtualTerminal) {
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-
-        if (-not $host.ui.SupportsVirtualTerminal) {
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-
         $originalSuppressPref = $env:__SuppressAnsiEscapeSequences
         $originalRendering = $PSStyle.OutputRendering
         $PSStyle.OutputRendering = 'Ansi'
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        $env:__SuppressAnsiEscapeSequences = $originalSuppressPref
-        $PSStyle.OutputRendering = $originalRendering
+        if ($null -ne $originalRendering) {
+            $env:__SuppressAnsiEscapeSequences = $originalSuppressPref
+            $PSStyle.OutputRendering = $originalRendering
+        }
     }
 
 
