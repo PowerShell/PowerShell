@@ -5,7 +5,7 @@
 ##
 
 if ($IsWindows) {
-    $script:typeDef = @'
+    $global:InvokeCommandRemoteDebug_TypeDef = @'
     using System;
     using System.Globalization;
     using System.Management.Automation;
@@ -123,7 +123,7 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOn
 
         $sb = [scriptblock]::Create('"Hello!"')
 
-        Add-Type -TypeDefinition $script:typeDef
+        Add-Type -TypeDefinition $global:InvokeCommandRemoteDebug_TypeDef
 
         $dummyHost = [TestRunner.DummyHost]::new()
         [runspace] $rs = [runspacefactory]::CreateRunspace($dummyHost)
