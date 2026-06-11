@@ -9,8 +9,23 @@ Describe "Rename-Item tests" -Tag "CI" {
         $sourceSp = "$TestDrive/``[orig-file``].txt"
         $targetSpName = "ItemWhichHasBeen[Renamed].txt"
         $targetSp = "$TestDrive/ItemWhichHasBeen``[Renamed``].txt"
-        New-Item -Path (Join-Path $TestDrive '`[test-dir`]') -ItemType Directory -Force > $null
+        New-Item -Path $TestDrive -Name '[test-dir]' -ItemType Directory -Force > $null
         $wdSp = "$TestDrive/``[test-dir``]"
+    }
+
+    AfterAll {
+        # Remove items whose names contain wildcard chars before Pester's TestDrive
+        # cleanup, which uses Remove-Item with wildcards and fails on bracket names.
+        $bracketItems = @(
+            (Join-Path $TestDrive '[orig-file].txt'),
+            (Join-Path $TestDrive 'ItemWhichHasBeen[Renamed].txt'),
+            (Join-Path $TestDrive '[test-dir]')
+        )
+        foreach ($p in $bracketItems) {
+            if (Test-Path -LiteralPath $p) {
+                Remove-Item -LiteralPath $p -Recurse -Force -ErrorAction SilentlyContinue
+            }
+        }
     }
     It "Rename-Item will rename a file" {
         Rename-Item $source $target
