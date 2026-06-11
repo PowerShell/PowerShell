@@ -1,16 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-$script:RenameTesthook = "TestRenameComputer"
-$script:RenameResultName = "TestRenameComputerResults"
-$script:DefaultResultValue = 0
-$script:skipRenameComputer = ! $IsWindows
-
-Describe "Rename-Computer" -Tag Feature,RequireAdminOnWindows -Skip:$script:skipRenameComputer {
+Describe "Rename-Computer" -Tag Feature,RequireAdminOnWindows -Skip:(! $IsWindows) {
     BeforeAll {
-        $RenameTesthook = $script:RenameTesthook
-        $RenameResultName = $script:RenameResultName
-        $DefaultResultValue = $script:DefaultResultValue
+        $RenameTesthook = "TestRenameComputer"
+        $RenameResultName = "TestRenameComputerResults"
+        $DefaultResultValue = 0
         if (Get-Command Enable-Testhook -ErrorAction SilentlyContinue) {
             Enable-Testhook -testhookName $RenameTesthook
             # we also set TestStopComputer
@@ -20,11 +15,11 @@ Describe "Rename-Computer" -Tag Feature,RequireAdminOnWindows -Skip:$script:skip
 
     AfterAll {
         if (Get-Command Disable-Testhook -ErrorAction SilentlyContinue) {
-            Disable-Testhook -testhookName $script:RenameTesthook
+            Disable-Testhook -testhookName $RenameTesthook
             Disable-Testhook -testhookName TestStopComputer
         }
         if (Get-Command Set-TesthookResult -ErrorAction SilentlyContinue) {
-            Set-TesthookResult -testhookName $script:RenameResultName -value 0
+            Set-TesthookResult -testhookName $RenameResultName -value 0
         }
     }
 
