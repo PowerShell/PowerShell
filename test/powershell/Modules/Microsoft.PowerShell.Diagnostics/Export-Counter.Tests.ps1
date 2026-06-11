@@ -181,7 +181,8 @@ Describe "Feature tests for Export-Counter cmdlet" -Tags "Feature" {
                 @{
                     Name = "Fails when -Path specified but no path given"
                     Path = ""
-                    ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ExportCounterCommand"
+                    # Wildcard suffix tolerates implicit-remoting proxy (Export-Counter) vs direct cmdlet (Microsoft.PowerShell.Commands.ExportCounterCommand) ErrorId
+                    ExpectedErrorId = "MissingArgument,*"
                 }
                 @{
                     Name = "Fails when given -Circular without -MaxSize"

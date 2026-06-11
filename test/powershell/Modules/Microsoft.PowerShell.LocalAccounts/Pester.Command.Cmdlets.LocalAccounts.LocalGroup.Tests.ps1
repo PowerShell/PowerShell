@@ -11,7 +11,6 @@ BeforeDiscovery {
         $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     }
     $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
-    $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 }
 
 BeforeAll {
@@ -48,7 +47,6 @@ BeforeAll {
     }
 
     #skip all tests on non-windows platform
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
     $isAdmin = $false
     if ($IsWindows) {
         $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -56,11 +54,7 @@ BeforeAll {
     $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
 }
 
-AfterAll {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
-}
-
-    Describe "Verify Expected LocalGroup Cmdlets are present" -Tags "CI" {
+    Describe "Verify Expected LocalGroup Cmdlets are present" -Tags "CI" -Skip:(!$IsNotSkipped) {
 
         It "Test command presence" {
             $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
@@ -73,7 +67,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate simple New-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple New-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         AfterEach {
             if ($IsNotSkipped) {
@@ -89,7 +83,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate New-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate New-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         AfterEach {
             if ($IsNotSkipped) {
@@ -244,7 +238,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate simple Get-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Get-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -267,7 +261,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate Get-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Get-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -385,7 +379,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate simple Set-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Set-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -414,7 +408,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate Set-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Set-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -488,7 +482,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate simple Rename-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Rename-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -525,7 +519,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate Rename-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Rename-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -698,7 +692,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate simple Remove-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Remove-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -736,7 +730,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate Remove-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Remove-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
