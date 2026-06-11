@@ -6,31 +6,25 @@ param()
 
 Import-Module (Join-Path -Path $PSScriptRoot '..\Microsoft.PowerShell.Security\certificateCommon.psm1')
 
-Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
+Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" -Skip:(-not $IsWindows) {
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ( -not $IsWindows ) {
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-        if ($IsWindows) {
-            $userName = "testuserservices"
-            $testPass = [Net.NetworkCredential]::new("", (New-ComplexPassword)).SecurePassword
-            $creds    = [pscredential]::new(".\$userName", $testPass)
-            $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
-            $WrongSecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BB)(A;;CCLCSWLOCRRC;;;SU)'
-            net user $userName $creds.GetNetworkCredential().Password /add > $null
+        $userName = "testuserservices"
+        $testPass = [Net.NetworkCredential]::new("", (New-ComplexPassword)).SecurePassword
+        $creds    = [pscredential]::new(".\$userName", $testPass)
+        $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
+        $WrongSecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BB)(A;;CCLCSWLOCRRC;;;SU)'
+        net user $userName $creds.GetNetworkCredential().Password /add > $null
 
-            $testservicename1 = "testservice1"
-            $testservicename2 = "testservice2"
-            $svcbinaryname    = "TestService"
-            $svccmd = Get-Command $svcbinaryname
-            $svccmd | Should -Not -BeNullOrEmpty
-            $svcfullpath = $svccmd.Path
-            $testservice1 = New-Service -BinaryPathName $svcfullpath -Name $testservicename1
-            $testservice1 | Should -Not -BeNullOrEmpty
-            $testservice2 = New-Service -BinaryPathName $svcfullpath -Name $testservicename2 -DependsOn $testservicename1
-            $testservice2 | Should -Not -BeNullOrEmpty
-        }
+        $testservicename1 = "testservice1"
+        $testservicename2 = "testservice2"
+        $svcbinaryname    = "TestService"
+        $svccmd = Get-Command $svcbinaryname
+        $svccmd | Should -Not -BeNullOrEmpty
+        $svcfullpath = $svccmd.Path
+        $testservice1 = New-Service -BinaryPathName $svcfullpath -Name $testservicename1
+        $testservice1 | Should -Not -BeNullOrEmpty
+        $testservice2 = New-Service -BinaryPathName $svcfullpath -Name $testservicename2 -DependsOn $testservicename1
+        $testservice2 | Should -Not -BeNullOrEmpty
 
         Function CheckSecurityDescriptorSddl {
             Param(
@@ -56,15 +50,12 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
     }
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        if ($IsWindows) {
-            net user $userName /delete > $null
+        net user $userName /delete > $null
 
-            Stop-Service $testservicename2
-            Stop-Service $testservicename1
-            Remove-Service $testservicename2
-            Remove-Service $testservicename1
-        }
+        Stop-Service $testservicename2
+        Stop-Service $testservicename1
+        Remove-Service $testservicename2
+        Remove-Service $testservicename1
     }
 
     It "SetServiceCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(
