@@ -1,17 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-Table" -Tags "CI" {
-    BeforeAll {
-        if ($null -ne $PSStyle) {
-            $outputRendering = $PSStyle.OutputRendering
-            $PSStyle.OutputRendering = 'plaintext'
-        }
+    BeforeDiscovery {
         $noConsole = $true
         try {
             if ([Console]::WindowHeight -ne 0) {
                 $noConsole = $false
             }
         } catch {
+        }
+    }
+
+    BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
         }
     }
 

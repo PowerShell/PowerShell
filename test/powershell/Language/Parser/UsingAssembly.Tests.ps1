@@ -1,13 +1,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# Compute test GUID at file scope so it is visible in both Pester 5 discovery
+# (-TestCases) and runtime (BeforeAll/It). $guid set inside BeforeDiscovery
+# does not reliably reach runtime hooks.
+$script:UsingAssemblyTestGuid = [Guid]::NewGuid()
+
 Describe "Using assembly" -Tags "CI" {
 
     BeforeDiscovery {
-        $guid = [Guid]::NewGuid()
+        $guid = $script:UsingAssemblyTestGuid
     }
 
     BeforeAll {
+        $guid = $script:UsingAssemblyTestGuid
         Push-Location $PSScriptRoot
 
         Add-Type -OutputAssembly $PSScriptRoot\UsingAssemblyTest$guid.dll -TypeDefinition @"
@@ -16,6 +22,7 @@ public class ABC {}
     }
 
     AfterAll {
+        $guid = $script:UsingAssemblyTestGuid
         Remove-Item -ErrorAction Ignore .\UsingAssemblyTest$guid.dll
         Pop-Location
     }
@@ -56,15 +63,25 @@ public class ABC {}
                                                       @{ Script = "using assembly '$(Join-Path -Path $PSScriptRoot -ChildPath UsingAssemblyTest$guid.dll)'"; Expected = $false },
                                                       @{ Script = "using assembly `"$(Join-Path -Path $PSScriptRoot -ChildPath UsingAssemblyTest$guid.dll)`""; Expected = $false } {
             param ($script)
-            $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-            $assemblies -contains "UsingAssemblyTest$guid" | Should -BeFalse
+            $guid = $script:UsingAssemblyTestGuid
+            # Push-Location from BeforeAll does not always persist into the It's location
+            # context under Pester 5, so re-pin CWD here so the relative-path assembly
+            # reference resolves to the DLL produced by BeforeAll.
+            Push-Location $PSScriptRoot
+            try {
+                $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
+                $assemblies -contains "UsingAssemblyTest$guid" | Should -BeFalse
 
-            $err = $null
-            $ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$err)
+                $err = $null
+                $ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$err)
 
-            $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-            $assemblies -contains "UsingAssemblyTest$guid" | Should -BeFalse
-            $err.Count | Should -Be 0
+                $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
+                $assemblies -contains "UsingAssemblyTest$guid" | Should -BeFalse
+                $err.Count | Should -Be 0
+            }
+            finally {
+                Pop-Location
+            }
         }
 
         It "reports runtime error about non-existing assembly with relative path" {
@@ -75,6 +92,7 @@ public class ABC {}
 #>
         Context "Runtime loading of assemblies" {
             BeforeAll {
+                $guid = $script:UsingAssemblyTestGuid
                 copy-item "UsingAssemblyTest$guid.dll" $TestDrive
                 $assemblyPath = Join-Path $TestDrive "UsingAssemblyTest$guid.dll"
 
@@ -85,6 +103,7 @@ public class ABC {}
             }
 
             It "Assembly loaded at runtime" {
+                $guid = $script:UsingAssemblyTestGuid
                 $testFile = Join-Path $TestDrive "TestFile1.ps1"
                 $script = "using assembly UsingAssemblyTest$guid.dll`n[ABC].Assembly.Location"
                 Set-Content -Path $testFile -Value $script

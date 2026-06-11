@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Set-Content cmdlet tests" -Tags "CI" {
+    BeforeDiscovery {
+        # if the registry doesn't exist, don't run those tests
+        $skipRegistry = ! (Test-Path hklm:/)
+    }
     BeforeAll {
         $file1 = "file1.txt"
         $filePath1 = Join-Path $testdrive $file1

@@ -530,6 +530,12 @@ $script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "Tru
 
 Describe "Verify aliases and cmdlets" -Tags "CI" {
     BeforeAll {
+        # Rebind script-scope test data because file-scope $script: variables
+        # are NOT visible inside Pester 5 BeforeAll/It runtime blocks on all platforms.
+        $script:commandList = $commandString | ConvertFrom-Csv -Delimiter ","
+        $script:commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
+        $script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias" }
+
         # If psversion can be converted to [version], then it is not a preview version.
         # We can't just use '$psversiontable.psversion -as [version]' because pwsh
         # will succeed with the conversion and add note properties to the version object.

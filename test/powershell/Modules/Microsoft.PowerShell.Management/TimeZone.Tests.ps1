@@ -13,19 +13,19 @@
            [snippet] Both StandardName and DaylightName are localized according to the current user default UI language.
 #>
 
-function Assert-ListsSame {
-    param([object[]] $expected, [object[]] $observed )
-    $compResult = Compare-Object $observed $expected | Select-Object -ExpandProperty InputObject
-    if ($compResult) {
-        $observedList = ([string]::Join("|", $observed))
-        $expectedList = ([string]::Join("|", $expected))
-        $observedList | Should -Be $expectedList
-    }
-}
-
 Describe "Get-Timezone test cases" -Tags "CI" {
 
     BeforeAll {
+        function Assert-ListsSame {
+            param([object[]] $expected, [object[]] $observed )
+            $compResult = Compare-Object $observed $expected | Select-Object -ExpandProperty InputObject
+            if ($compResult) {
+                $observedList = ([string]::Join("|", $observed))
+                $expectedList = ([string]::Join("|", $expected))
+                $observedList | Should -Be $expectedList
+            }
+        }
+
         $TimeZonesAvailable = [System.TimeZoneInfo]::GetSystemTimeZones()
         $script:timezoneSkip = $TimeZonesAvailable.Count -eq 0
     }

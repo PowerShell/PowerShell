@@ -3,20 +3,23 @@
 Describe "Import-Module" -Tags "CI" {
     BeforeDiscovery {
         $moduleName = "Microsoft.PowerShell.Security"
-        $testDrivePath = if ($TestDrive) { $TestDrive } else { Join-Path ([System.IO.Path]::GetTempPath()) 'PesterTestDrive' }
+        $testDrivePath = Join-Path ([System.IO.Path]::GetTempPath()) 'PesterImportModuleTrailingSep'
+        if (-not (Test-Path -LiteralPath "$testDrivePath/Modules/TestModule/1.1")) {
+            New-Item -ItemType Directory -Path "$testDrivePath/Modules/TestModule/1.1" -Force > $null
+            New-Item -ItemType Directory -Path "$testDrivePath/Modules/TestModule/2.0" -Force > $null
+            New-ModuleManifest -Path "$testDrivePath/Modules/TestModule/1.1/TestModule.psd1" -ModuleVersion 1.1
+            New-ModuleManifest -Path "$testDrivePath/Modules/TestModule/2.0/TestModule.psd1" -ModuleVersion 2.0
+        }
         $trailingSepTestCases = @(
             @{ modulePath = (Get-Module -ListAvailable $moduleName)[0].ModuleBase + [System.IO.Path]::DirectorySeparatorChar; expectedName = $moduleName }
-            @{ modulePath = Join-Path -Path $testDrivePath -ChildPath "Modules\TestModule\"; expectedName = "TestModule" }
+            @{ modulePath = (Join-Path -Path $testDrivePath -ChildPath "Modules/TestModule") + [System.IO.Path]::DirectorySeparatorChar; expectedName = "TestModule" }
         )
     }
     BeforeAll {
         $moduleName = "Microsoft.PowerShell.Security"
         $originalPSModulePath = $env:PSModulePath
-        New-Item -ItemType Directory -Path "$testdrive\Modules\TestModule\1.1" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\TestModule\2.0" -Force > $null
-        $env:PSModulePath += [System.IO.Path]::PathSeparator + "$testdrive\Modules"
-        New-ModuleManifest -Path "$testdrive\Modules\TestModule\1.1\TestModule.psd1" -ModuleVersion 1.1
-        New-ModuleManifest -Path "$testdrive\Modules\TestModule\2.0\TestModule.psd1" -ModuleVersion 2.0
+        $sharedTestDrivePath = Join-Path ([System.IO.Path]::GetTempPath()) 'PesterImportModuleTrailingSep'
+        $env:PSModulePath += [System.IO.Path]::PathSeparator + "$sharedTestDrivePath/Modules"
     }
 
     AfterAll {
