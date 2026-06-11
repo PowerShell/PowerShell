@@ -7,7 +7,7 @@ Describe 'Native Windows tilde expansion tests' -tags "CI" -Skip:(-not $IsWindow
         cmd /c echo ~ | Should -BeExactly ($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)
     }
     # Test ~ expansion with a path fragment (e.g. ~/foo)
-    It '~/foo should be replaced by the <filesystem provider home directory>/foo' {
+    It '~/foo should be replaced by the filesystem provider home directory then /foo' {
         cmd /c echo ~/foo | Should -BeExactly "$($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)/foo"
         cmd /c echo ~\foo | Should -BeExactly "$($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)\foo"
     }

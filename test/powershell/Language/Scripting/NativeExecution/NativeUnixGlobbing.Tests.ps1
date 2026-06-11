@@ -115,7 +115,7 @@ Describe 'Native UNIX globbing tests' -tags "CI" -Skip:$IsWindows {
         /bin/echo ~ | Should -BeExactly ($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)
     }
     # Test ~ expansion with a path fragment (e.g. ~/foo)
-    It '~/foo should be replaced by the <filesystem provider home directory>/foo' {
+    It '~/foo should be replaced by the filesystem provider home directory then /foo' {
         /bin/echo ~/foo | Should -BeExactly "$($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)/foo"
     }
 	It '~ should not be replaced when quoted' {
