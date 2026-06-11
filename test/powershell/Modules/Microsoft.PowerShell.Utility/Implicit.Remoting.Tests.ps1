@@ -1,9 +1,28 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
-# Also skip when WinRM is not configured for remoting (e.g. GitHub Actions Windows runners by default),
-# since BeforeAll's New-RemoteSession would return null and tests would fail with parameter-binding errors.
-$script:skipTest = (-not ($IsWindows -and $IsCoreCLR -and (Test-IsElevated))) -or (Test-IsWinWow64) -or (-not (Test-WSMan -ErrorAction SilentlyContinue))
+# Also skip when WinRM remoting is not actually functional on this machine. The CI runner may have
+# the WinRM service running (so Test-WSMan succeeds) but PSRemoting endpoints unconfigured, so
+# probing with an actual New-RemoteSession is the only reliable gate. Without this, every Describe
+# that creates $session = New-RemoteSession ends up with $session = null and downstream Its fail
+# with parameter-binding errors on Import-PSSession.
+$script:skipTest = (-not ($IsWindows -and $IsCoreCLR -and (Test-IsElevated))) -or (Test-IsWinWow64)
+if (-not $script:skipTest) {
+    Import-Module HelpersRemoting -ErrorAction SilentlyContinue
+    $script:_probeSession = $null
+    try {
+        $script:_probeSession = New-RemoteSession -ErrorAction Stop
+        if ($null -eq $script:_probeSession) {
+            $script:skipTest = $true
+        }
+    } catch {
+        $script:skipTest = $true
+    } finally {
+        if ($script:_probeSession) {
+            Remove-PSSession $script:_probeSession -ErrorAction SilentlyContinue
+        }
+    }
+}
 
 BeforeAll {
     $originalWarningPreference = $WarningPreference
