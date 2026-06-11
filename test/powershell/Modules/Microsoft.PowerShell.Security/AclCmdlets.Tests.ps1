@@ -1,12 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Acl cmdlets are available and operate properly" -Tag CI {
-    Context "Windows ACL test" {
-        BeforeAll {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["It:Skip"] = -not $IsWindows
-        }
-
+    Context "Windows ACL test" -Skip:(-not $IsWindows) {
         It "Get-Acl returns an ACL DirectorySecurity object"  {
             $ACL = Get-Acl $TESTDRIVE
             $ACL | Should -BeOfType System.Security.AccessControl.DirectorySecurity
@@ -101,10 +96,6 @@ Describe "Acl cmdlets are available and operate properly" -Tag CI {
             $actual = Get-Acl -Path $testFile
             $actualGroup = $actual.GetGroup([System.Security.Principal.SecurityIdentifier])
             $actualGroup | Should -Be $currentUserSid
-        }
-
-        AfterAll {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
         }
     }
 }

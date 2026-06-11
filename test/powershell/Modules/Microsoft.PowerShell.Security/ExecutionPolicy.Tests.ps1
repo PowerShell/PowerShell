@@ -95,7 +95,7 @@ Describe "ExecutionPolicy" -Tags "CI" {
         }
     }
 
-    Describe "Validate ExecutionPolicy cmdlets in PowerShell" -Tags "CI" {
+    Describe "Validate ExecutionPolicy cmdlets in PowerShell" -Tags "CI" -Skip:(-not $IsWindows) {
 
         BeforeAll {
             if ($IsWindows) {
@@ -960,7 +960,7 @@ ZoneId=$FileType
         }
     }
 
-    Describe "Validate Set-ExecutionPolicy -Scope" -Tags "CI" {
+    Describe "Validate Set-ExecutionPolicy -Scope" -Tags "CI" -Skip:(-not $IsWindows) {
 
         BeforeAll {
             if ($IsWindows) {

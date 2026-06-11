@@ -80,37 +80,21 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     }
 }
 
-Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
+Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" -Skip:(-not $IsWindows) {
 
     BeforeAll{
-        if($IsWindows)
-        {
-            if (-not (Install-TestCertificates) ) {
-                $SetupFailure = $true
-            } else {
-                Push-Location Cert:\
-                $SetupFailure = $false
-            }
-        }
-        else
-        {
-            # Skip for non-Windows platforms
-            $defaultParamValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues = @{ "it:skip" = $true }
+        if (-not (Install-TestCertificates) ) {
+            $SetupFailure = $true
+        } else {
+            Push-Location Cert:\
+            $SetupFailure = $false
         }
     }
 
     AfterAll {
-        if($IsWindows -and -not $SetupFailure)
+        if(-not $SetupFailure)
         {
             Remove-TestCertificates
-        }
-        else
-        {
-            if ($defaultParamValues -ne $null) {
-                $global:PSDefaultParameterValues = $defaultParamValues
-            }
-
         }
     }
 
