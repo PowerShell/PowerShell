@@ -296,6 +296,7 @@ function script:ExecuteRestMethod {
         [switch]
         $UseBasicParsing
     )
+    $debugEncodingPrefix = 'WebResponse content encoding: '
     $result = @{Output = $null; Error = $null; Encoding = $null; Content = $null}
     $debugPreferenceSave = $DebugPreference
     $DebugPreference = 'Continue'
@@ -311,7 +312,7 @@ function script:ExecuteRestMethod {
             foreach ($item in $result.Debug) {
                 $line = $item.Trim()
                 if ($line.StartsWith($debugEncodingPrefix)) {
-                    $encodingName = [int]::Parse($item.SubString($EncodingPrefix.Length).Split('CodePage: ')[1].Trim())
+                    $encodingName = [int]::Parse($item.SubString($debugEncodingPrefix.Length).Split('CodePage: ')[1].Trim())
                     $result.Encoding = [System.Text.Encoding]::GetEncoding($encodingName)
                     break
                 }
@@ -2309,7 +2310,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             )
         }
 
-        It 'correctly parses input tag(s) for `<markup>`' -TestCases @(
+        It 'correctly parses input tag(s) for <markup>' -TestCases @(
             @{
                 Markup = "<input name='foo' value='bar'>";
                 ExpectedFields = $singleInputExpected
