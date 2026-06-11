@@ -55,7 +55,7 @@ Describe "Test-Push-Location" -Tags "CI" {
     }
 
     # final cleanup
-    BeforeAll {
+    AfterAll {
         Set-Location $startDirectory
     }
 }

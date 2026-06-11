@@ -251,9 +251,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             Write-Verbose -Verbose "It Complete"
         }
         #>
-    }
 
-    BeforeAll {
         function TryCreateRunspace
         {
             param (

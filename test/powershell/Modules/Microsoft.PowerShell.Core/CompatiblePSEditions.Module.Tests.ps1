@@ -1240,7 +1240,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
 
                 if ($SkipEditionCheck -and $UseWindowsPowerShell)
                 {
-                    { Import-Module $moduleBase -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet"
+                    { Import-Module $moduleBase -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet,*"
                     return
                 }
                 elseif ($SkipEditionCheck)
@@ -1289,7 +1289,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
 
             if ($SkipEditionCheck -and $UseWindowsPowerShell)
             {
-                 { Import-Module $moduleName -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet"
+                 { Import-Module $moduleName -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet,*"
                 return
             }
             elseif ($SkipEditionCheck)
@@ -1366,7 +1366,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             {
                 if ($SkipEditionCheck -and $UseWindowsPowerShell)
                 {
-                    { Import-Module $moduleBase -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet"
+                    { Import-Module $moduleBase -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet,*"
                     return
                 }
                 elseif ($SkipEditionCheck)
@@ -1384,7 +1384,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             }
             elseif ($SkipEditionCheck -and $UseWindowsPowerShell)
             {
-                { Import-Module $moduleName -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet"
+                { Import-Module $moduleName -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet,*"
                 return
             }
             elseif ($SkipEditionCheck)

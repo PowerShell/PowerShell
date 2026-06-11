@@ -405,15 +405,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             body = 'oops'
             headers = "{}"
         }
-    }
 
-    AfterAll {
-        $ProgressPreference = $oldProgress
-    }
-
-    # Validate the output of Invoke-WebRequest
-    #
-    BeforeAll {
+        # Validate the output of Invoke-WebRequest
         function ValidateResponse {
             param ($response)
 
@@ -430,6 +423,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Output.RawContentLength | Should -Not -Be $null
             $response.Output.Content | Should -Not -Be $null
         }
+    }
+
+    AfterAll {
+        $ProgressPreference = $oldProgress
     }
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
@@ -4477,13 +4474,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
         $oldProgress = $ProgressPreference
         $ProgressPreference = 'SilentlyContinue'
         $WebListener = Start-WebListener
-    }
 
-    AfterAll {
-        $ProgressPreference = $oldProgress
-    }
-
-    BeforeAll {
         function RunWithCancellation {
             param(
                 [string]$Command = 'Invoke-WebRequest',
@@ -4511,6 +4502,10 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
             $pwsh.Dispose()
             return $result
         }
+    }
+
+    AfterAll {
+        $ProgressPreference = $oldProgress
     }
 
     It 'Invoke-WebRequest: CTRL-C Cancels request before request headers received' {

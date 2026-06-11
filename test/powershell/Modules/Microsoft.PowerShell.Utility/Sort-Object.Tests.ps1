@@ -371,39 +371,6 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
     	)
 	}
 
-	BeforeAll {
-    	function Compare-SortEntry
-    	{
-    		param($nSortEntry, $fullSortEntry)
-    		if ($nSortEntry -is [System.Array]) {
-    			[object]::ReferenceEquals($nSortEntry, $fullSortEntry) | Should -BeTrue
-    		} else {
-    			$nSortEntry | Should -Be $fullSortEntry
-    		}
-    	}
-
-    	function Test-SortObject {
-    		param([array]$unsortedData, [hashtable]$baseSortParameters, [string]$nSortType, [int]$nValue)
-    		$nSortParameters = @{
-    			$nSortType = $nValue
-    		}
-    		$fullSortResults = $unsortedData | Sort-Object @baseSortParameters
-    		$nSortResults = $unsortedData | Sort-Object @baseSortParameters @nSortParameters
-    		if (-not $baseSortParameters.ContainsKey('Unique')) {
-    			$nSortResults.Count | Should -Be $(if ($nSortParameters[$nSortType] -gt $unsortedData.Length) {$unsortedData.Length} else {$nSortParameters[$nSortType]})
-    			$fullSortResults.Count | Should -Be $unsortedData.Length
-    		}
-    		if ($nSortType -eq 'Top') {
-    			$range = 0..$($nSortResults.Count - 1)
-    		} else {
-    			$range = -$nSortResults.Count..-1
-    		}
-    		foreach ($i in $range) {
-    			Compare-SortEntry $nSortResults[$i] $fullSortResults[$i]
-    		}
-    	}
-	}
-
 	Context 'Integer n-sort' {
 
 		BeforeAll {

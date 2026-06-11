@@ -862,6 +862,7 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
     }
 
     BeforeAll {
+        $moduleName = 'TestModule'
         $modulePath = Join-Path $TestDrive $moduleName
         New-Item -Path $modulePath -ItemType Directory
         $manifestPath = Join-Path $modulePath "$moduleName.psd1"
