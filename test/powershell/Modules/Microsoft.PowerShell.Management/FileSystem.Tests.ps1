@@ -378,22 +378,24 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     }
 
     Context "Validate behavior when access is denied" {
-        BeforeAll {
-            $powershell = Join-Path $PSHOME "pwsh"
+        BeforeDiscovery {
             if ($IsWindows)
             {
                 $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
                 $protectedPath2 = Join-Path $protectedPath "Install"
                 $newItemPath = Join-Path $protectedPath "foo"
                 $shouldSkip = -not (Test-Path $protectedPath)
-            }
-
-            if ($IsWindows) {
                 $fqaccessdenied = "MoveDirectoryItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.MoveItemCommand"
             }
             else {
+                $shouldSkip = $true
+                $protectedPath = $null
                 $fqaccessdenied = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
             }
+        }
+
+        BeforeAll {
+            $powershell = Join-Path $PSHOME "pwsh"
         }
 
         It "Access-denied test for <cmdline>" -Skip:(-not $IsWindows -or $shouldSkip) -TestCases @(
@@ -417,11 +419,17 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     }
 
     Context "Appx path" {
-        BeforeAll {
+        BeforeDiscovery {
             $skipTest = $true
-            if ($IsWindows -and (Get-Command -Name Get-AppxPackage) ) {
+            if ($IsWindows -and (Get-Command -Name Get-AppxPackage -ErrorAction SilentlyContinue) ) {
                 $pkgDir = (Get-AppxPackage Microsoft.WindowsCalculator -ErrorAction SilentlyContinue).InstallLocation
-                $skipTest = $pkgDir -eq $null
+                $skipTest = $null -eq $pkgDir
+            }
+        }
+
+        BeforeAll {
+            if ($IsWindows -and (Get-Command -Name Get-AppxPackage -ErrorAction SilentlyContinue) ) {
+                $pkgDir = (Get-AppxPackage Microsoft.WindowsCalculator -ErrorAction SilentlyContinue).InstallLocation
             }
         }
 

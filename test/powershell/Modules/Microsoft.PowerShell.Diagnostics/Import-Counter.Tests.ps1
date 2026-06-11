@@ -40,6 +40,49 @@ $badSamplesBlgPath = Join-Path $PSScriptRoot "assets" "BadCounterSamples.blg"
 $corruptBlgPath = Join-Path $PSScriptRoot "assets" "CorruptBlg.blg"
 $notFoundPath = Join-Path $PSScriptRoot "DAD288C0-72F8-47D3-8C54-C69481B528DF.blg"
 
+# Rebind file-scope variables into the run container's $script: scope.
+# Pester 5 isolates the discovery container from the run container, so
+# top-of-file variable assignments are NOT visible to BeforeAll / It
+# bodies or to script-scope functions invoked from them. Each Describe
+# calls this from BeforeAll to make the runtime data available.
+function script:InitRuntimeVars
+{
+    # The dot-sourced helper file defines functions without a script: prefix,
+    # so they live in the scope where dot-sourcing happened. Pester 5 runs
+    # BeforeAll / It in a separate container from discovery, so we re-source
+    # the helpers here to make them available at run time too.
+    . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
+
+    $script:cmdletName = "Import-Counter"
+    $script:SkipTests = SkipCounterTests
+
+    if ( ! $script:SkipTests )
+    {
+        $script:counterPaths = @(
+            (TranslateCounterPath "\Memory\Available Bytes")
+            (TranslateCounterPath "\processor(*)\% Processor time")
+            (TranslateCounterPath "\Processor(_Total)\% Processor Time")
+            (TranslateCounterPath "\PhysicalDisk(_Total)\Current Disk Queue Length")
+            (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Bytes/sec")
+            (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec")
+            )
+        $script:setNames = @{
+            Memory = (TranslateCounterName "memory")
+            PhysicalDisk = (TranslateCounterName "physicaldisk")
+            Processor = (TranslateCounterName "processor")
+            }
+    }
+    else
+    {
+        $script:counterPaths = @()
+        $script:setNames = @{}
+    }
+
+    $script:badSamplesBlgPath = Join-Path $PSScriptRoot "assets" "BadCounterSamples.blg"
+    $script:corruptBlgPath = Join-Path $PSScriptRoot "assets" "CorruptBlg.blg"
+    $script:notFoundPath = Join-Path $PSScriptRoot "DAD288C0-72F8-47D3-8C54-C69481B528DF.blg"
+}
+
 # Set script-scope variable values used by multiple Describes
 function script:SetScriptVars([string]$rootPath, [int]$maxSamples, [bool]$export)
 {
@@ -50,12 +93,12 @@ function script:SetScriptVars([string]$rootPath, [int]$maxSamples, [bool]$export
     $script:tsvPath = Join-Path $rootPath "$rootFilename.tsv"
 
     $script:counterSamples = $null
-    if ($maxSamples -and ! $SkipTests )
+    if ($maxSamples -and ! $script:SkipTests )
     {
-        $script:counterSamples = Get-Counter -Counter $counterPaths -MaxSamples $maxSamples
+        $script:counterSamples = Get-Counter -Counter $script:counterPaths -MaxSamples $maxSamples
     }
 
-    if ($export -and ! $SkipTests )
+    if ($export -and ! $script:SkipTests )
     {
         Export-Counter -Force -FileFormat "blg" -Path $script:blgPath -InputObject $script:counterSamples
         Export-Counter -Force -FileFormat "csv" -Path $script:csvPath -InputObject $script:counterSamples
@@ -97,7 +140,7 @@ function script:ConstructCommand($testCase)
         $endTimeParam = "-EndTime `$(`$testCase.EndTime)"
     }
 
-    return "$cmdletName $pathParam $startTimeParam $endTimeParam $($testCase.Parameters)"
+    return "$($script:cmdletName) $pathParam $startTimeParam $endTimeParam $($testCase.Parameters)"
 }
 
 # Run a test that is expected to succeed
@@ -105,7 +148,8 @@ function script:RunTest($testCase)
 {
     $skipTest = $testCase.SkipTest -or (SkipCounterTests)
 
-    It "$($testCase.Name)" -Skip:$skipTest {
+    It "$($testCase.Name)" -Skip:$skipTest -TestCases @{ testCase = $testCase } {
+        param($testCase)
 
         if ($testCase.TimestampIndexes)
         {
@@ -195,7 +239,8 @@ function script:RunPerFileTypeTests($testCase)
 # Run a test case that is expected to fail
 function script:RunExpectedFailureTest($testCase)
 {
-    It "$($testCase.Name)" -Skip:$(SkipCounterTests) {
+    It "$($testCase.Name)" -Skip:$(SkipCounterTests) -TestCases @{ testCase = $testCase } {
+        param($testCase)
         $cmd = ConstructCommand $testCase
         # Use $cmd to debug a test failure
         # Write-Host "Command to run: $cmd"
@@ -224,6 +269,7 @@ function script:RunExpectedFailureTest($testCase)
 Describe "CI tests for Import-Counter cmdlet" -Tags "CI" {
 
     BeforeAll {
+        InitRuntimeVars
         SetScriptVars $testDrive 0 $false
     }
 
@@ -258,6 +304,7 @@ Describe "CI tests for Import-Counter cmdlet" -Tags "CI" {
 Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
 
     BeforeAll {
+        InitRuntimeVars
         SetScriptVars $testDrive 25 $true
     }
 
@@ -356,7 +403,7 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
 
         It "Multiple errors when BLG file contains bad sample data" -Skip:$(SkipCounterTests) {
             $errVar = $null
-            $result = Import-Counter $badSamplesBlgPath -ErrorVariable errVar -ErrorAction SilentlyContinue
+            $result = Import-Counter $script:badSamplesBlgPath -ErrorVariable errVar -ErrorAction SilentlyContinue
             $result.Length | Should -Be 275
             $errVar.Count | Should -Be 5
             foreach ($err in $errVar)
@@ -398,7 +445,7 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
                     Parameters = "-ListSet $($setNames.Memory)"
                     Script = {
                         $result.Length | Should -Be 1
-                        $result[0].CounterSetName | Should -BeExactly $setNames.Memory
+                        $result[0].CounterSetName | Should -BeExactly $script:setNames.Memory
                     }
                 }
                 @{
@@ -412,8 +459,8 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
                         {
                             $names = $names + $set.CounterSetName
                         }
-                        $names -Contains $setNames.Memory | Should -BeTrue
-                        $names -Contains $setNames.Processor | Should -BeTrue
+                        $names -Contains $script:setNames.Memory | Should -BeTrue
+                        $names -Contains $script:setNames.Processor | Should -BeTrue
                     }
                 }
                 @{

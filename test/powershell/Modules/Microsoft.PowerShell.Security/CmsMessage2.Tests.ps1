@@ -31,7 +31,7 @@ Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" -Skip:(-not $IsWindows)
         New-Item -Path (Join-Path $TestDrive 'vc1.pfx') -ItemType File -Force > $null
         New-Item -Path (Join-Path $TestDrive 'vc2.pfx') -ItemType File -Force > $null
         New-Item -Path (Join-Path $TestDrive 'certDir/vc3.pfx') -ItemType File -Force > $null
-        Set-Content -Path (Join-Path $TestDrive 'message.txt') -Value "test"
+        Set-Content -Path (Join-Path $TestDrive 'message.txt') -Value "test" -NoNewline
         $file1 = "TestDrive:\vc1.pfx"
         $file2 = "TestDrive:\vc2.pfx"
         $messageFile = "TestDrive:\message.txt"
@@ -82,7 +82,7 @@ Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" -Skip:(-not $IsWindows)
     }
 
     It "Cert Store: Subject with wrong wildcard (returns multiple certs)" {
-        { "test" | Protect-CmsMessage -To "*ValidCms*" -ErrorAction Stop } | Should -Throw -ErrorId 'IdentifierMustReferenceSingleCertificate'
+        { "test" | Protect-CmsMessage -To "*ValidCms*" -ErrorAction Stop } | Should -Throw -ErrorId 'IdentifierMustReferenceSingleCertificate*'
     }
 
     It "Cert Store: Encrypt/Decrypt using Thumbprint" {
@@ -129,11 +129,11 @@ Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" -Skip:(-not $IsWindows)
     }
 
     It "Encrypt with invalid cert" {
-        { "test" | Protect-CmsMessage -To $ic -ErrorAction Stop } | Should -Throw -ErrorId 'CertificateCannotBeUsedForEncryption'
+        { "test" | Protect-CmsMessage -To $ic -ErrorAction Stop } | Should -Throw -ErrorId 'CertificateCannotBeUsedForEncryption*'
     }
 
     It "Encrypt with valid and invalid" {
-        { "test" | Protect-CmsMessage -To $vc1, $vc2, $ic -ErrorAction Stop } | Should -Throw -ErrorId 'CertificateCannotBeUsedForEncryption'
+        { "test" | Protect-CmsMessage -To $vc1, $vc2, $ic -ErrorAction Stop } | Should -Throw -ErrorId 'CertificateCannotBeUsedForEncryption*'
     }
 
     It "Encrypt/Decrypt from file" {

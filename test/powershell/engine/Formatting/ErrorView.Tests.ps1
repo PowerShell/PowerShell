@@ -3,6 +3,19 @@
 
 Describe 'Tests for $ErrorView' -Tag CI {
 
+    BeforeAll {
+        # Defensive: another test file in the same Pester run may have set
+        # $ErrorView to NormalView / DetailedView at global scope; force back
+        # to the default so the ConciseView assertions below see the format
+        # they expect. Restore in AfterAll so we don't leak our own state.
+        $script:savedGlobalErrorView = $global:ErrorView
+        $global:ErrorView = 'ConciseView'
+    }
+
+    AfterAll {
+        $global:ErrorView = $script:savedGlobalErrorView
+    }
+
     It '$ErrorView is an enum' {
         $ErrorView | Should -BeOfType System.Management.Automation.ErrorView
     }

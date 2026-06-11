@@ -68,7 +68,7 @@ Describe "Get-HotFix Tests" -Tag CI -Skip:(-not $IsWindows) {
 
     It "Get-Hotfix can accept ComputerName via pipeline" -Skip:$hotfixSkip {
         if ($script:hotfixRuntimeSkip) { Set-ItResult -Skipped -Because 'no hotfixes returned by provider' }
-        { [PSCustomObject]@{ComputerName = 'UnavailableComputer'} | Get-HotFix } | Should -Throw -ErrorId 'Microsoft.PowerShell.Commands.GetHotFixCommand'
+        { [PSCustomObject]@{ComputerName = 'UnavailableComputer'} | Get-HotFix } | Should -Throw -ErrorId '*,Microsoft.PowerShell.Commands.GetHotFixCommand'
         [PSCustomObject]@{ComputerName = 'localhost'} | Get-HotFix | Should -Not -BeNullOrEmpty
     }
 }
