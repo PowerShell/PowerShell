@@ -576,7 +576,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" -Skip:$skipRemoting {
         }
 
         BeforeDiscovery {
-            $testFilePath = Join-Path "TestDrive:" "testfile.txt"
+            $testFilePath = "TestDrive:/testfile.txt"
             $invalidSourcePathtestCases = @(
                 @{
                     Path = "HKLM:\SOFTWARE"
