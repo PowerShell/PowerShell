@@ -140,7 +140,8 @@ Describe "Default enablement of Experimental Features" -Tags CI {
             Param(
                 $ActualValue,
                 $Name,
-                [switch]$Negate
+                [switch]$Negate,
+                $CallerSessionState
             )
 
             $failure = if ($Negate) {

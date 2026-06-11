@@ -524,7 +524,7 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
 "@
 
         $script:commandList = $commandString | ConvertFrom-Csv -Delimiter ","
-        $commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
+        $script:commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
         $script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias" }
     }
 
@@ -609,32 +609,32 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
 
     It "All approved aliases present (no new aliases added, no aliases removed)" {
         $observedAliases = $currentAliasList.ForEach({"{0}:{1}" -f $_.Name,$_.Definition}) | Sort-Object
-        $expectedAliases = $aliasFullList.ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
+        $expectedAliases = $script:aliasFullList.ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
         $observedAliases | Should -Be $expectedAliases
     }
 
     It "All approved aliases have the correct 'AllScope' option" {
-        $expectedAllScopeAliases = $aliasFullList.Where({$_.AllScopeOption -eq "AllScope"}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
+        $expectedAllScopeAliases = $script:aliasFullList.Where({$_.AllScopeOption -eq "AllScope"}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
         $observedAllScopeAliases = $currentAliasList.Where({($_.Options -as [System.Management.Automation.ScopedItemOptions]) -band $AllScopeOption}).Foreach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
         $observedAllScopeAliases | Should -Be $expectedAllScopeAliases
     }
 
     It "All approved aliases have the correct 'ReadOnly' option" {
-        $expectedReadOnlyAliases = $aliasFullList.Where({$_.ReadOnlyOption -eq "ReadOnly"}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
+        $expectedReadOnlyAliases = $script:aliasFullList.Where({$_.ReadOnlyOption -eq "ReadOnly"}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
         $observedReadOnlyAliases = $currentAliasList.Where({($_.Options -as [System.Management.Automation.ScopedItemOptions]) -band $ReadOnlyOption}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
         $observedReadOnlyAliases | Should -Be $expectedReadOnlyAliases
     }
 
     It "All approved Cmdlets present (no new Cmdlets added, no Cmdlets removed)" {
         $observedCmdletNames = $currentCmdletList.ForEach({"{0}" -f $_.Name})
-        $expectedCmdletNames = $commandHashTableList.ForEach({"{0}" -f $_.Name})
+        $expectedCmdletNames = $script:commandHashTableList.ForEach({"{0}" -f $_.Name})
         $extraCmds = $observedCmdletNames.Where({$expectedCmdletNames -notcontains $_})
         $missedCmds = $expectedCmdletNames.Where({$observedCmdletNames -notcontains $_})
         $extraCmds | Should -HaveCount 0 -Because "Extra cmdlets $($extraCmds -join ',')"
         $missedCmds | Should -HaveCount 0 -Because "Missed cmdlets $($missedCmds -join ',')"
     }
 
-    It "'<Name>' Cmdlet should have the correct ConfirmImpact '<ConfirmImpact>'" -TestCases $commandHashtableList {
+    It "'<Name>' Cmdlet should have the correct ConfirmImpact '<ConfirmImpact>'" -TestCases $script:commandHashtableList {
         param ( $Name, $ConfirmImpact )
         # retrieve again because we may have serialized the commandinfo
         $cmdlet = Get-Command $Name
