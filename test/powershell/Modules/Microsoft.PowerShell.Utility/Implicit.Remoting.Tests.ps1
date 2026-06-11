@@ -25,6 +25,7 @@ if (-not $script:skipTest) {
 }
 
 BeforeAll {
+    Import-Module HelpersRemoting -Force -ErrorAction SilentlyContinue
     $originalWarningPreference = $WarningPreference
     $WarningPreference = "SilentlyContinue"
 }
