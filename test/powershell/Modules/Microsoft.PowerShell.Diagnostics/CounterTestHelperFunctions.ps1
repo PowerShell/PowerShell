@@ -144,7 +144,7 @@ using System.Text;
     }
 "@
 
-if ( $IsWindows )
+if ( $IsWindows -and -not ('TestCounterHelper' -as [type]) )
 {
     Add-Type -TypeDefinition $helperSource
 }

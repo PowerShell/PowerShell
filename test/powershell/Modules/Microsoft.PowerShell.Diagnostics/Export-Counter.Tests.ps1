@@ -34,10 +34,30 @@ function CheckExportResults
     CompareCounterSets $counterValues $importedCounterValues
 }
 
+# Re-expose helpers and state needed at runtime by `It` blocks (Pester 5 isolates
+# file-scope variables and functions from the runtime test scope).
+BeforeAll {
+    . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
+
+    function CheckExportResults
+    {
+        Test-Path $filePath | Should -BeTrue
+        $importedCounterValues = Import-Counter $filePath
+
+        CompareCounterSets $counterValues $importedCounterValues
+    }
+}
+
 # Run a test case
 function RunTest($testCase)
 {
-    It "$($testCase.Name)" -Skip:$(SkipCounterTests) {
+    It "$($testCase.Name)" -TestCases @{
+        testCase = $testCase
+        cmdletName = $cmdletName
+        rootFilename = $rootFilename
+        counterNames = $counterNames
+    } -Skip:$(SkipCounterTests) {
+        param($testCase, $cmdletName, $rootFilename, $counterNames)
         $getCounterParams = ""
         if ($testCase.ContainsKey("GetCounterParams"))
         {
@@ -58,11 +78,11 @@ function RunTest($testCase)
             if ($testCase.ContainsKey("FileFormat"))
             {
                 $formatParam = "-FileFormat $($testCase.FileFormat)"
-                $filePath = Join-Path $script:outputDirectory "$rootFilename.$($testCase.FileFormat)"
+                $filePath = Join-Path $TestDrive "$rootFilename.$($testCase.FileFormat)"
             }
             else
             {
-                $filePath = Join-Path $script:outputDirectory "$rootFilename.blg"
+                $filePath = Join-Path $TestDrive "$rootFilename.blg"
             }
         }
         if ($testCase.NoDashPath)
@@ -92,7 +112,7 @@ function RunTest($testCase)
                 # Here we want to run the command then do our own post-run checks
                 $sb = [ScriptBlock]::Create($cmd)
                 &$sb
-                &$testCase.Script
+                & $testCase.Script
             }
             else
             {

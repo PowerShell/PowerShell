@@ -3,39 +3,25 @@
 
 Import-Module HelpersCommon
 
-Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
+Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' -Skip:(-not $IsWindows) {
+
+    BeforeDiscovery {
+        $IsToBeSkipped = !$IsWindows
+        $NotEnglish = $false
+        if (-not $IsToBeSkipped -and [System.Globalization.CultureInfo]::CurrentCulture.Name -ne "en-US") {
+            $NotEnglish = $true
+        }
+    }
 
     BeforeAll {
         $powershell = Join-Path $PSHOME "pwsh"
-        $notEnglish = $false
-        $IsToBeSkipped = !$IsWindows;
-
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ( $IsToBeSkipped )
-        {
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-        else
-        {
-            if ([System.Globalization.CultureInfo]::CurrentCulture.Name -ne "en-US")
-            {
-                $notEnglish = $true
-            }
-        }
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     BeforeEach {
-        if ( ! $IsToBeSkipped )
-        {
-            $errtxt = "$testdrive/error.txt"
-            Remove-Item $errtxt -Force -ErrorAction SilentlyContinue
-            $donefile = "$testdrive/done"
-            Remove-Item $donefile -Force -ErrorAction SilentlyContinue
-        }
+        $errtxt = "$testdrive/error.txt"
+        Remove-Item $errtxt -Force -ErrorAction SilentlyContinue
+        $donefile = "$testdrive/done"
+        Remove-Item $donefile -Force -ErrorAction SilentlyContinue
     }
 
     It "Error returned if invalid parameters: <description>" -TestCases @(
