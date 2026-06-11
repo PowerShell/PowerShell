@@ -30,6 +30,11 @@ Describe "New-PSSessionOption parameters for non-Windows platforms" -Tag "CI" -S
 Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSSession on non-Windows platforms" -Tag "CI" -Skip:($IsWindows -or $IsMacOS) {
 
     BeforeAll {
+        function GetRandomString()
+        {
+            return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
+        }
+
         $userName = "User_$(Get-Random -Maximum 99999)"
         $userPassword = GetRandomString
         $cred = [pscredential]::new($userName, (ConvertTo-SecureString -String $userPassword -AsPlainText -Force))

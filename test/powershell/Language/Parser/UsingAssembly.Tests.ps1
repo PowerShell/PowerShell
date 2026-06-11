@@ -3,9 +3,12 @@
 
 Describe "Using assembly" -Tags "CI" {
 
+    BeforeDiscovery {
+        $guid = [Guid]::NewGuid()
+    }
+
     BeforeAll {
         Push-Location $PSScriptRoot
-        $guid = [Guid]::NewGuid()
 
         Add-Type -OutputAssembly $PSScriptRoot\UsingAssemblyTest$guid.dll -TypeDefinition @"
 public class ABC {}

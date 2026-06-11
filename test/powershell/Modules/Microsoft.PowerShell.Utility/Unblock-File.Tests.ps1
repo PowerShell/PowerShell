@@ -89,25 +89,11 @@ Describe "Unblock-File" -Tags "CI" {
         }
     }
 
-    Context "Linux" {
+    Context "Linux" -Skip:(-not $IsLinux) {
         BeforeAll {
-            if ( ! $IsLinux )
-            {
-                $origDefaults = $PSDefaultParameterValues.Clone()
-                $PSDefaultParameterValues['it:skip'] = $true
-
-            } else {
-                $testfilepath = Join-Path -Path $TestDrive -ChildPath testunblockfile.ttt
-                $null = New-Item -Path $testfilepath -ItemType File
-            }
+            $testfilepath = Join-Path -Path $TestDrive -ChildPath testunblockfile.ttt
+            $null = New-Item -Path $testfilepath -ItemType File
         }
-
-        AfterAll {
-            if ( ! $IsLinux ){
-                $global:PSDefaultParameterValues = $origDefaults
-            }
-        }
-
 
         It "With '-Path': no file exist" {
             { Unblock-File -Path nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"

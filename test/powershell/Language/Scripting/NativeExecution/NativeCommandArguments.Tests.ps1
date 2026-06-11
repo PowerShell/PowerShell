@@ -23,11 +23,8 @@ Describe "Behavior is specific for each platform" -tags "CI" {
 
 }
 
-Describe "tests for multiple languages and extensions" -tags "CI" {
+Describe "tests for multiple languages and extensions" -tags "CI" -Skip:(-not $IsWindows) {
     AfterAll {
-        if (-not $IsWindows) {
-            return
-        }
         $PSNativeCommandArgumentPassing = $passingStyle
     }
     BeforeDiscovery {
@@ -122,20 +119,13 @@ echo Argument 4 is: ^<%4^>
     }
 
     BeforeAll {
-        # determine whether we should skip the tests we just defined
-        # doing it in this order ensures that the test output will show each skipped test
-        $skipTests = -not $IsWindows
-        if ($skipTests) {
-            return
-        }
-
         # save the passing style
         $passingStyle = $PSNativeCommandArgumentPassing
         # explicitely set the passing style to Windows
         $PSNativeCommandArgumentPassing = "Windows"
     }
 
-    It "Invoking '<Filename>' is compatible with PowerShell 5" -TestCases $testCases -Skip:$($skipTests) {
+    It "Invoking '<Filename>' is compatible with PowerShell 5" -TestCases $testCases {
         param ( $Command, $Arguments, $Filename, $Script, $ExpectedResults )
         cscript  //h:cscript //nologo //s
         $a = 'a"b c"d'

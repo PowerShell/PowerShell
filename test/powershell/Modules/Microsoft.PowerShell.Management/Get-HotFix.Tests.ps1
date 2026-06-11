@@ -1,19 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "Get-HotFix Tests" -Tag CI {
-    BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-
-        $skip = $false
-        if (!$IsWindows) {
-            $skip = $true
-        }
-        elseif (Test-IsWindowsArm64) {
+Describe "Get-HotFix Tests" -Tag CI -Skip:(-not $IsWindows) {
+    BeforeDiscovery {
+        $hotfixSkip = $false
+        if ($IsWindows -and (Test-IsWindowsArm64)) {
             # Win32Exception: Failed to load required native library 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\wminet_utils.dll'.
             Write-Verbose "needed provider not on ARM64, skipping tests" -Verbose
-            $PSDefaultParameterValues["it:skip"] = $true
-            return
+            $hotfixSkip = $true
+        }
+    }
+
+    BeforeAll {
+        $skip = $false
+        if (Test-IsWindowsArm64) {
+            $skip = $true
         }
         else {
             # skip the tests if there are no hotfixes returned
@@ -22,35 +23,34 @@ Describe "Get-HotFix Tests" -Tag CI {
                 $skip = $true
             }
         }
-
-        $PSDefaultParameterValues["it:skip"] = $skip
+        $script:qfe = $qfe
+        $script:hotfixRuntimeSkip = $skip
     }
 
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-    }
-
-    It "Get-HotFix will enumerate all QFEs" {
+    It "Get-HotFix will enumerate all QFEs" -Skip:$hotfixSkip {
+        if ($script:hotfixRuntimeSkip) { Set-ItResult -Skipped -Because 'no hotfixes returned by provider' }
         $hotfix = Get-HotFix
-        $hotfix.Count | Should -Be $qfe.Count
+        $hotfix.Count | Should -Be $script:qfe.Count
     }
 
-    It "Get-HotFix can filter on -Id" {
-        $testQfe = $qfe[0]
+    It "Get-HotFix can filter on -Id" -Skip:$hotfixSkip {
+        if ($script:hotfixRuntimeSkip) { Set-ItResult -Skipped -Because 'no hotfixes returned by provider' }
+        $testQfe = $script:qfe[0]
 
         $hotfix = Get-HotFix -Id $testQfe.HotFixID
         $hotfix.HotFixID | Should -BeExactly $testQfe.HotFixID
         $hotfix.Description | Should -BeExactly $testQfe.Description
     }
 
-    It "Get-HotFix can filter on -Description" {
-        $testQfes = $qfe | Where-Object { $_.Description -eq 'Update' }
+    It "Get-HotFix can filter on -Description" -Skip:$hotfixSkip {
+        if ($script:hotfixRuntimeSkip) { Set-ItResult -Skipped -Because 'no hotfixes returned by provider' }
+        $testQfes = $script:qfe | Where-Object { $_.Description -eq 'Update' }
         if ($testQfes.Count -gt 0) {
             $hotfixes = Get-HotFix -Description 'Update'
         }
-        elseif ($qfe.Count -gt 0) {
-            $description = $qfe[0].Description
-            $testQfes = $qfe | Where-Object { $_.Description -eq $description }
+        elseif ($script:qfe.Count -gt 0) {
+            $description = $script:qfe[0].Description
+            $testQfes = $script:qfe | Where-Object { $_.Description -eq $description }
             $hotfixes = Get-HotFix -Desscription $description
         }
 
@@ -60,12 +60,14 @@ Describe "Get-HotFix Tests" -Tag CI {
         $hotfixes.Count | Should -Be $testQfes.Count
     }
 
-    It "Get-HotFix can use -ComputerName" {
+    It "Get-HotFix can use -ComputerName" -Skip:$hotfixSkip {
+        if ($script:hotfixRuntimeSkip) { Set-ItResult -Skipped -Because 'no hotfixes returned by provider' }
         $hotfixes = Get-HotFix -ComputerName localhost
-        $hotfixes.Count | Should -Be $qfe.Count
+        $hotfixes.Count | Should -Be $script:qfe.Count
     }
 
-    It "Get-Hotfix can accept ComputerName via pipeline" {
+    It "Get-Hotfix can accept ComputerName via pipeline" -Skip:$hotfixSkip {
+        if ($script:hotfixRuntimeSkip) { Set-ItResult -Skipped -Because 'no hotfixes returned by provider' }
         { [PSCustomObject]@{ComputerName = 'UnavailableComputer'} | Get-HotFix } | Should -Throw -ErrorId 'Microsoft.PowerShell.Commands.GetHotFixCommand'
         [PSCustomObject]@{ComputerName = 'localhost'} | Get-HotFix | Should -Not -BeNullOrEmpty
     }

@@ -14,7 +14,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         # If Out-File -Encoding happens to have a default, be sure to
         # save it away
         $SavedValue = $null
-        $oldDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $oldDefaultParameterValues = if ($null -ne $PSDefaultParameterValues) { $PSDefaultParameterValues.Clone() } else { @{} }
         $PSDefaultParameterValues = @{}
     }
     AfterAll {

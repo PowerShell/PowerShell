@@ -258,14 +258,9 @@ Describe 'Generic Method invocation' -Tags 'CI' {
     }
 }
 
-Describe "Interface inheritance with remoting proxies" -Tags "CI" {
+Describe "Interface inheritance with remoting proxies" -Tags "CI" -Skip:$IsCoreCLR {
 
     BeforeAll {
-        if ( $IsCoreCLR ) {
-            Write-Verbose -Verbose "Skip this test because it's .NET Framework dependency."
-            return
-        }
-
         $src = @"
 using System;
 using System.ServiceModel;

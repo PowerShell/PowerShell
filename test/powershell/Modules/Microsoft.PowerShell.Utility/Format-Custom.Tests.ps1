@@ -31,15 +31,7 @@ Describe "Format-Custom DRT basic functionality" -Tags "CI" {
             $outputRendering = $PSStyle.OutputRendering
             $PSStyle.OutputRendering = 'plaintext'
         }
-    }
 
-    AfterAll {
-        if ($null -ne $PSStyle) {
-            $PSStyle.OutputRendering = $outputRendering
-        }
-    }
-
-    BeforeAll {
         Add-Type -TypeDefinition @"
     public abstract class NamedItem
     {

@@ -3,10 +3,8 @@
 
 Import-Module HelpersCommon -ErrorAction SilentlyContinue
 
-BeforeAll {
+BeforeDiscovery {
     # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
-    $originalWarningPreference = $WarningPreference
-    $WarningPreference = "SilentlyContinue"
     # Skip all tests if can't write to $PSHOME as Register-PSSessionConfiguration writes to $PSHOME
     # or if the processor architecture is Arm64
     $IsNotSkipped = (
@@ -18,10 +16,22 @@ BeforeAll {
         -not (Test-IsWindowsArm64) -and
         -not (Test-IsWinWow64)
     )
+    $SkipPSSessionConfigTests = -not $IsNotSkipped
+}
 
-    if (Get-Command Push-DefaultParameterValueStack -ErrorAction SilentlyContinue) {
-        Push-DefaultParameterValueStack @{ "it:skip" = ! $IsNotSkipped }
-    }
+BeforeAll {
+    $originalWarningPreference = $WarningPreference
+    $WarningPreference = "SilentlyContinue"
+    $IsNotSkipped = (
+        $IsWindows -and
+        $IsCoreCLR -and
+        (Get-Command Test-IsElevated -ErrorAction SilentlyContinue) -and
+        (Test-IsElevated) -and
+        (Test-CanWriteToPsHome) -and
+        -not (Test-IsWindowsArm64) -and
+        -not (Test-IsWinWow64)
+    )
+
     #
     # TODO: Enable-PSRemoting should be performed at a higher set up for all tests.
     # Tests whether PowerShell remoting is enabled for this instance of PowerShell.
@@ -50,13 +60,10 @@ AfterAll {
     if ($endpointCreated) {
         Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue | Unregister-PSSessionConfiguration
     }
-    if (Get-Command Pop-DefaultParameterValueStack -ErrorAction SilentlyContinue) {
-        Pop-DefaultParameterValueStack
-    }
     $WarningPreference = $originalWarningPreference
 }
 
-        Describe "Validate Register-PSSessionConfiguration" -Tags @("CI", 'RequireAdminOnWindows') {
+        Describe "Validate Register-PSSessionConfiguration" -Tags @("CI", 'RequireAdminOnWindows') -Skip:$SkipPSSessionConfigTests {
 
             AfterAll {
                 if ($IsNotSkipped)
@@ -78,7 +85,7 @@ AfterAll {
                 $result.UseSharedProcess | Should -Be 'False'
             }
         }
-        Describe "Validate Get-PSSessionConfiguration, Enable-PSSessionConfiguration, Disable-PSSessionConfiguration, Unregister-PSSessionConfiguration cmdlets" -Tags @("CI", 'RequireAdminOnWindows') {
+        Describe "Validate Get-PSSessionConfiguration, Enable-PSSessionConfiguration, Disable-PSSessionConfiguration, Unregister-PSSessionConfiguration cmdlets" -Tags @("CI", 'RequireAdminOnWindows') -Skip:$SkipPSSessionConfigTests {
 
             BeforeAll {
                 if ($IsNotSkipped)
@@ -321,7 +328,7 @@ AfterAll {
             }
         }
 
-        Describe "Validate Register-PSSessionConfiguration, Set-PSSessionConfiguration cmdlets" -Tags @("Feature", 'RequireAdminOnWindows') {
+        Describe "Validate Register-PSSessionConfiguration, Set-PSSessionConfiguration cmdlets" -Tags @("Feature", 'RequireAdminOnWindows') -Skip:$SkipPSSessionConfigTests {
 
             BeforeAll {
                 if ($IsNotSkipped)
@@ -600,7 +607,7 @@ namespace PowershellTestConfigNamespace
             }
         }
 
-    Describe "Basic tests for New-PSSessionConfigurationFile Cmdlet" -Tags @("CI", 'RequireAdminOnWindows') {
+    Describe "Basic tests for New-PSSessionConfigurationFile Cmdlet" -Tags @("CI", 'RequireAdminOnWindows') -Skip:$SkipPSSessionConfigTests {
 
         It "Validate New-PSSessionConfigurationFile can successfully create a valid PSSessionConfigurationFile" {
 
@@ -624,7 +631,7 @@ namespace PowershellTestConfigNamespace
         }
     }
 
-    Describe "Feature tests for New-PSSessionConfigurationFile Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
+    Describe "Feature tests for New-PSSessionConfigurationFile Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') -Skip:$SkipPSSessionConfigTests {
 
         It "Validate FullyQualifiedErrorId from New-PSSessionConfigurationFile when invalid path is provided as input" {
             { New-PSSessionConfigurationFile "cert:\foo.pssc" } |
@@ -632,7 +639,7 @@ namespace PowershellTestConfigNamespace
         }
     }
 
-    Describe "Test suite for Test-PSSessionConfigurationFile Cmdlet" -Tags @("CI", 'RequireAdminOnWindows') {
+    Describe "Test suite for Test-PSSessionConfigurationFile Cmdlet" -Tags @("CI", 'RequireAdminOnWindows') -Skip:$SkipPSSessionConfigTests {
 
         BeforeAll {
             if ($IsNotSkipped)
@@ -822,22 +829,15 @@ namespace PowershellTestConfigNamespace
         }
     }
 
-    Describe "Validate Enable-PSSession Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
+    Describe "Validate Enable-PSSession Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') -Skip:$SkipPSSessionConfigTests {
         BeforeAll {
             if (Test-IsWindowsArm64) {
                 Write-Verbose "remoting is not setup on ARM64, skipping tests" -Verbose
-                Push-DefaultParameterValueStack @{ "it:skip" = $true }
                 return
             }
 
             if ($IsNotSkipped) {
                 Enable-PSRemoting -SkipNetworkProfileCheck -Force
-            }
-        }
-
-        AfterAll {
-            if (Test-IsWindowsArm64) {
-                Pop-DefaultParameterValueStack
             }
         }
 

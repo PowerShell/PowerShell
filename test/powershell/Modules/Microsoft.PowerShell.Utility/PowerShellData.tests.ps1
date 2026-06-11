@@ -53,7 +53,8 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
     }
 
     It 'Fails if psd1 file is insecure while -SkipLimitCheck is used' {
-        $path = Setup -f insecure2.psd1 -Content '@{ Foo = [object] (calc.exe) }' -pass
+        $path = Join-Path $TestDrive 'insecure2.psd1'
+        Set-Content -Path $path -Value '@{ Foo = [object] (calc.exe) }'
         { Import-PowerShellDataFile $path -SkipLimitCheck -ErrorAction Stop } |
             Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
     }
