@@ -3,7 +3,7 @@
 
 Describe "Unblock-File" -Tags "CI" {
 
-    Context "Windows and macOS" {
+    Context "Windows and macOS" -Skip:$IsLinux {
         BeforeAll {
 
             if ($IsWindows) {
@@ -31,20 +31,7 @@ Describe "Unblock-File" -Tags "CI" {
                 }
             }
 
-            if ( $IsLinux )
-            {
-                $origDefaults = $PSDefaultParameterValues.Clone()
-                $PSDefaultParameterValues['it:skip'] = $true
-
-            } else {
-                $testfilepath = Join-Path -Path $TestDrive -ChildPath testunblockfile.ttt
-            }
-        }
-
-        AfterAll {
-            if ( $IsLinux ){
-                $global:PSDefaultParameterValues = $origDefaults
-            }
+            $testfilepath = Join-Path -Path $TestDrive -ChildPath testunblockfile.ttt
         }
 
         BeforeEach {
