@@ -532,6 +532,21 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
     BeforeAll {
         # Rebind script-scope test data because file-scope $script: variables
         # are NOT visible inside Pester 5 BeforeAll/It runtime blocks on all platforms.
+        # Same goes for file-scope functions like ConvertTo-Hashtable -- redefine it
+        # here so the pipeline below resolves at runtime.
+        function ConvertTo-Hashtable {
+            [CmdletBinding()]
+            param ([Parameter(ValueFromPipeline=$true)][psobject]$o)
+            PROCESS {
+                $pNames = $o.psobject.properties.name
+                $ht = @{}
+                foreach($pName in $pNames) {
+                    $ht[$pName] = $o.$pName
+                }
+                $ht
+            }
+        }
+
         $script:commandList = $commandString | ConvertFrom-Csv -Delimiter ","
         $script:commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
         $script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias" }
