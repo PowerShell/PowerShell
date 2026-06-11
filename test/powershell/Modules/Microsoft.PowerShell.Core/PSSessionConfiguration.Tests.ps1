@@ -134,7 +134,7 @@ AfterAll {
                         return $TestConfigFile
                     }
 
-                    $LocalConfigFilePath = CreateTestConfigFile
+                    $script:LocalConfigFilePath = CreateTestConfigFile
 
                     $expectedPSVersion = "$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor)"
                 }
@@ -178,7 +178,6 @@ AfterAll {
                 function VerifyEnableAndDisablePSSessionConfig {
                     param (
                         [string] $SessionConfigName,
-                        [string] $ConfigFilePath,
                         [Bool] $InitialSessionStateEnabled,
                         [Bool] $FinalSessionStateEnabled,
                         [string] $TestDescription,
@@ -186,14 +185,13 @@ AfterAll {
 
                     It "$TestDescription" -TestCases @{
                         SessionConfigName = $SessionConfigName
-                        ConfigFilePath = $ConfigFilePath
                         InitialSessionStateEnabled = $InitialSessionStateEnabled
                         FinalSessionStateEnabled = $FinalSessionStateEnabled
                         EnablePSSessionConfig = $EnablePSSessionConfig
                     } {
-                        param ($SessionConfigName, $ConfigFilePath, $InitialSessionStateEnabled, $FinalSessionStateEnabled, $EnablePSSessionConfig)
+                        param ($SessionConfigName, $InitialSessionStateEnabled, $FinalSessionStateEnabled, $EnablePSSessionConfig)
 
-                        RegisterNewConfiguration -Name $SessionConfigName -ConfigFilePath $ConfigFilePath -Enabled:$InitialSessionStateEnabled
+                        RegisterNewConfiguration -Name $SessionConfigName -ConfigFilePath $script:LocalConfigFilePath -Enabled:$InitialSessionStateEnabled
 
                         $TestConfigStateBeforeChange = (Get-PSSessionConfiguration -Name $SessionConfigName).Enabled
 
@@ -220,7 +218,6 @@ AfterAll {
                     $TestData = @(
                         @{
                             SessionConfigName = "TestDisablePSSessionConfig"
-                            ConfigFilePath = $LocalConfigFilePath
                             InitialSessionStateEnabled = $true
                             FinalSessionStateEnabled = $false
                             TestDescription = "Validate Disable-Configuration cmdlet"
@@ -229,7 +226,6 @@ AfterAll {
 
                         @{
                             SessionConfigName = "TestEnablePSSessionConfig"
-                            ConfigFilePath = $LocalConfigFilePath
                             InitialSessionStateEnabled = $false
                             FinalSessionStateEnabled = $true
                             TestDescription = "Validate Enable-Configuration cmdlet"
