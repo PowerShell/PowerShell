@@ -1,16 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Basic COM Tests' -Tags "CI" {
-    BeforeAll {
-        $defaultParamValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:skip"] = ![System.Management.Automation.Platform]::IsWindowsDesktop
-    }
+$script:comBasicSkip = -not [System.Management.Automation.Platform]::IsWindowsDesktop
 
-    AfterAll {
-        $global:PSDefaultParameterValues = $defaultParamValues
-    }
-
+Describe 'Basic COM Tests' -Tags "CI" -Skip:$script:comBasicSkip {
     BeforeAll {
         $null = New-Item -Path $TESTDRIVE/file1 -ItemType File
         $null = New-Item -Path $TESTDRIVE/file2 -ItemType File

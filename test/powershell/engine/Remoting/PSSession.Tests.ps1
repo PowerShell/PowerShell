@@ -13,19 +13,7 @@ function GetRandomString()
     return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
 }
 
-Describe "New-PSSessionOption parameters for non-Windows platforms" -Tag "CI" {
-
-    BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-
-        if ($IsWindows)  {
-            $PSDefaultParameterValues['it:skip'] = $true
-        }
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-    }
+Describe "New-PSSessionOption parameters for non-Windows platforms" -Tag "CI" -Skip:$IsWindows {
 
     It "Verifies New-PSSessionOption parameters" {
 
@@ -39,26 +27,14 @@ Describe "New-PSSessionOption parameters for non-Windows platforms" -Tag "CI" {
     }
 }
 
-Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSSession on non-Windows platforms" -Tag "CI" {
+Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSSession on non-Windows platforms" -Tag "CI" -Skip:($IsWindows -or $IsMacOS) {
 
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-
-        # Skip this test for macOS because the latest OS release is incompatible with our shipped libmi for WinRM/OMI.
-        if ($IsWindows -or $IsMacOS)  {
-            $PSDefaultParameterValues['it:skip'] = $true
-        }
-        else {
-            $userName = "User_$(Get-Random -Maximum 99999)"
-            $userPassword = GetRandomString
-            $cred = [pscredential]::new($userName, (ConvertTo-SecureString -String $userPassword -AsPlainText -Force))
-            $soSkipCA = New-PSSessionOption -SkipCACheck
-            $soSkipCN = New-PSSessionOption -SkipCNCheck
-        }
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        $userName = "User_$(Get-Random -Maximum 99999)"
+        $userPassword = GetRandomString
+        $cred = [pscredential]::new($userName, (ConvertTo-SecureString -String $userPassword -AsPlainText -Force))
+        $soSkipCA = New-PSSessionOption -SkipCACheck
+        $soSkipCN = New-PSSessionOption -SkipCNCheck
     }
 
     BeforeDiscovery {
@@ -94,19 +70,7 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
     }
 }
 
-Describe "New-PSSession -UseWindowsPowerShell switch parameter" -Tag "CI" {
-
-    BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-
-        if (-not $IsWindows) {
-            $PSDefaultParameterValues['it:skip'] = $true
-        }
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-    }
+Describe "New-PSSession -UseWindowsPowerShell switch parameter" -Tag "CI" -Skip:(-not $IsWindows) {
 
     It "Should respect explicit -UseWindowsPowerShell:`$false parameter value" {
         # Test 1: -UseWindowsPowerShell:$true should create a Windows PowerShell 5.1 session

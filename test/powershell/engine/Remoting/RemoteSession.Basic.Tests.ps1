@@ -60,30 +60,23 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
     }
 }
 
-Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnWindows') {
-    BeforeAll {
+$script:remoteSessionSkip = (! $IsWindows) -or !(Test-CanWriteToPsHome)
 
-        $skipTest = ! $IsWindows -or !(Test-CanWriteToPsHome)
-        if ($skipTest) {
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            return
-        }
+Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnWindows') -Skip:$script:remoteSessionSkip {
+    BeforeAll {
 
         try {
             Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
+            $script:remoteSessionEnabled = $true
         }
         catch {
             Write-Verbose -Verbose "exception: $_"
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            $skipTest = $true
+            $script:remoteSessionEnabled = $false
             return
         }
     }
 
     AfterAll {
-        if ($skipTest) {
-            Pop-DefaultParameterValueStack
-        }
     }
 
     It "Configuration name should be in the transcript header" {
@@ -109,31 +102,19 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
     }
 }
 
-Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
+Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') -Skip:$script:remoteSessionSkip {
     BeforeAll {
-
-        $skipTest = ! $IsWindows -or !(Test-CanWriteToPsHome)
-        if ($skipTest) {
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            return
-        }
 
         try {
             Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
         }
         catch {
             Write-Verbose -Verbose "Enable-PSRemoting failed: $($_.Message)"
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            $skipTest = $true
             return
         }
     }
 
     AfterAll {
-        if ($skipTest) {
-            Pop-DefaultParameterValueStack
-            return
-        }
     }
 
     It "Get-Help should work in JEA sessions" {
@@ -185,7 +166,7 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
     }
 }
 
-Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(-not $IsWindows) {
     BeforeDiscovery {
         $ParameterError = @(
             @{
@@ -213,27 +194,17 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
     BeforeAll {
 
-        $skipTest = ! $IsWindows
-        if ($skipTest) {
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            return
-        }
-
         try {
             Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
         }
         catch {
             Write-Verbose -Verbose "Enable-PSRemoting failed: $($_.Message)"
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            $skipTest = $true
             return
         }
 
         $configName = "PowerShell." + $PSVersionTable.GitCommitId
         $configuration = Get-PSSessionConfiguration -Name $configName -ErrorAction Ignore
         if ($null -eq $configuration) {
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            $skipTest = $true
             return
         }
 
@@ -252,11 +223,6 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     AfterAll {
-        If ($skipTest) {
-            Pop-DefaultParameterValueStack
-            return
-        }
-
         if($IsWindows)
         {
             Remove-PSSession $disconnectedSession,$closedSession,$openSession -ErrorAction SilentlyContinue
