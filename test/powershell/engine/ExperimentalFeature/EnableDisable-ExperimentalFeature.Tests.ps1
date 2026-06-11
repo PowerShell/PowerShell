@@ -15,6 +15,17 @@ else {
 Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
+        # Pester 5 does not propagate file-scope $script: variables into the
+        # container's runtime scope; rebind them here so AfterEach/It can read them.
+        $script:eedfPwsh = "$PSHOME/pwsh"
+        $script:eedfSystemConfigPath = "$PSHOME/powershell.config.json"
+        if ($IsWindows) {
+            $script:eedfUserConfigPath = "~/Documents/powershell/powershell.config.json"
+        }
+        else {
+            $script:eedfUserConfigPath = "~/.config/powershell/powershell.config.json"
+        }
+
         $pwsh = $script:eedfPwsh
         $systemConfigPath = $script:eedfSystemConfigPath
         $userConfigPath = $script:eedfUserConfigPath

@@ -8,7 +8,7 @@
 
 # Invokes the given command via script block invocation.
 #
-function ExecuteWebCommand {
+function script:ExecuteWebCommand {
     param (
         [ValidateNotNullOrEmpty()]
         [string]
@@ -30,7 +30,7 @@ function ExecuteWebCommand {
 # This function calls either Invoke-WebRequest or Invoke-RestMethod using the OutFile parameter
 # Then, the file content is read and return in a $result object.
 #
-function ExecuteRequestWithOutFile {
+function script:ExecuteRequestWithOutFile {
     param (
         [ValidateSet("Invoke-RestMethod", "Invoke-WebRequest" )]
         [string]
@@ -63,7 +63,7 @@ function ExecuteRequestWithOutFile {
 # This function calls either Invoke-WebRequest or Invoke-RestMethod with the given uri
 # using the Headers parameter to disable keep-alive.
 #
-function ExecuteRequestWithHeaders {
+function script:ExecuteRequestWithHeaders {
     param (
         [ValidateSet("Invoke-RestMethod", "Invoke-WebRequest" )]
         [string]
@@ -89,7 +89,7 @@ function ExecuteRequestWithHeaders {
 
 # Returns test data for the given content type.
 #
-function GetTestData {
+function script:GetTestData {
     param (
         [ValidateSet("text/plain", "application/xml", "application/json")]
         [String]
@@ -118,7 +118,7 @@ function GetTestData {
     return $body
 }
 
-function ExecuteRedirectRequest {
+function script:ExecuteRedirectRequest {
     param (
         [Parameter(Mandatory)]
         [string]
@@ -180,7 +180,7 @@ function ExecuteRedirectRequest {
 
 # This function calls either Invoke-WebRequest or Invoke-RestMethod with the given uri
 # using the custum headers and the optional SkipHeaderValidation switch.
-function ExecuteRequestWithCustomHeaders {
+function script:ExecuteRequestWithCustomHeaders {
     param (
         [Parameter(Mandatory)]
         [string]
@@ -219,7 +219,7 @@ function ExecuteRequestWithCustomHeaders {
 
 # This function calls either Invoke-WebRequest or Invoke-RestMethod with the given uri
 # using the custom UserAgent and the optional SkipHeaderValidation switch.
-function ExecuteRequestWithCustomUserAgent {
+function script:ExecuteRequestWithCustomUserAgent {
     param (
         [Parameter(Mandatory)]
         [string]
@@ -263,7 +263,7 @@ function ExecuteRequestWithCustomUserAgent {
 }
 
 # This function calls Invoke-WebRequest with the given uri
-function ExecuteWebRequest {
+function script:ExecuteWebRequest {
     param (
         [Parameter(Mandatory)]
         [string]
@@ -287,7 +287,7 @@ function ExecuteWebRequest {
 [string] $debugEncodingPrefix = 'WebResponse content encoding: '
 # This function calls Invoke-WebRequest with the given uri and
 # parses the verbose output to determine the encoding used for the content.
-function ExecuteRestMethod {
+function script:ExecuteRestMethod {
     param (
         [Parameter(Mandatory)]
         [string]
@@ -336,7 +336,7 @@ function ExecuteRestMethod {
     return $result
 }
 
-function GetMultipartBody {
+function script:GetMultipartBody {
     param (
         [Switch]
         $String,
