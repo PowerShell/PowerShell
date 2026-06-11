@@ -17,7 +17,8 @@ $nonEnglishCulture = (-not (Get-Culture).Name.StartsWith("en-", [StringCompariso
 
 function ValidateParameters($testCase)
 {
-    It "$($testCase.Name)" -Skip:$(SkipCounterTests) {
+    It "$($testCase.Name)" -TestCases @{ testCase = $testCase; cmdletName = $cmdletName } -Skip:$(SkipCounterTests) {
+        param($testCase, $cmdletName)
 
         # build up a command
         $counterParam = ""
@@ -36,6 +37,14 @@ function ValidateParameters($testCase)
 
 Describe "CI Tests for Get-Counter cmdlet" -Tags "CI" {
 
+    BeforeAll {
+        . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
+        $counterPaths = @{
+            MemoryBytes = TranslateCounterPath "\Memory\Available Bytes"
+            TotalDiskRead = TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec"
+        }
+    }
+
     It "Get-Counter with no parameters returns data for a default set of counters" -Skip:$(SkipCounterTests) {
         $counterData = Get-Counter
         # At the very least we should get processor and memory
@@ -52,6 +61,13 @@ Describe "CI Tests for Get-Counter cmdlet" -Tags "CI" {
 }
 
 Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
+
+    BeforeAll {
+        . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
+        $counterPaths = @{
+            MemoryBytes = TranslateCounterPath "\Memory\Available Bytes"
+        }
+    }
 
     Context "Validate incorrect parameter usage" {
         BeforeDiscovery {
