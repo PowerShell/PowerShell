@@ -1,13 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI" {
+Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI" -Skip:$IsLinux {
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ($IsLinux) {
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-
         $restoreLocation = Get-Location
 
         $DirSep = [IO.Path]::DirectorySeparatorChar
@@ -41,8 +36,6 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-
         #restore the previous location
         Set-Location -Path $restoreLocation
     }

@@ -1,15 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "UnixFileSystem additions" -Tag "CI" {
+Describe "UnixFileSystem additions" -Tag "CI" -Skip:$IsWindows {
     Context "Basic Validation" {
-        BeforeAll {
-            $PSDefaultParameterValues.Add('It:Skip', $IsWindows)
-        }
-
-        AfterAll {
-            $PSDefaultParameterValues.Remove('It:Skip')
-        }
-
         It "Should include a UnixStat property" {
             $i = Get-Item ${TestDrive}
             $i.UnixStat | Should -Not -BeNullOrEmpty
@@ -42,14 +34,8 @@ Describe "UnixFileSystem additions" -Tag "CI" {
         }
 
         BeforeAll {
-            $PSDefaultParameterValues.Add('It:Skip', $IsWindows)
-
             $testDir  = "${TestDrive}/TestDir"
             $testFile = "${testDir}/TestFile"
-        }
-
-        AfterAll {
-            $PSDefaultParameterValues.Remove('It:Skip')
         }
 
         BeforeEach {
@@ -91,11 +77,6 @@ Describe "UnixFileSystem additions" -Tag "CI" {
 
     Context "Other properties of UnixStat object" {
         BeforeAll {
-            $PSDefaultParameterValues.Add('It:Skip', $IsWindows)
-            if ($IsWindows) {
-                return
-            }
-
             $testDir  = "${TestDrive}/TestDir"
             $testFile = "${testDir}/TestFile"
 
@@ -118,10 +99,6 @@ Describe "UnixFileSystem additions" -Tag "CI" {
                 @{ Expected = $expectedDirInode; Observed = $Dir.UnixStat.Inode; Title = "DirInode" },
                 @{ Expected = $expectedDirLinkCount; Observed = $Dir.UnixStat.HardlinkCount; Title = "DirHardlinkCount" },
                 @{ Expected = $expectedDirSize; Observed = $Dir.UnixStat.Size; Title = "DirSize" }
-        }
-
-        AfterAll {
-            $PSDefaultParameterValues.Remove('It:Skip')
         }
 
         It "Should have correct values in UnixStat property" {

@@ -1,9 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM host process" -Tags "CI" {
+Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM host process" -Tags "CI" -Skip {
 
-    It -Skip "Disabled test because it is fragile and does not consistently succeed on test VMs" { }
+    It "Disabled test because it is fragile and does not consistently succeed on test VMs" { }
     BeforeAll {
         return
     }

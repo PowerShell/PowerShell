@@ -16,6 +16,10 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         BeforeAll {
+            # BeforeDiscovery's $searchRoot is a placeholder for -TestCases; replicate
+            # it here using the real TestDrive for use by It bodies in this Context.
+            $searchRoot = Join-Path $TestDrive -ChildPath "TestPS"
+
             # Create Test data
             $max_Path = 260
             $item_a = "a3fe710a-31af-4834-bc29-d0b584589838"
@@ -26,7 +30,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $item_F = ".F81D8514-8862-4227-B041-0529B1656A43"
             $item_G = "5560A62F-74F1-4FAE-9A23-F4EBD90D2676"
             $item_H = "5f05ebca-4859-11ec-81d3-0242ac130003"
-            $item_I = "z" * ($max_Path - $TestDrive.FullName.Length - $item_H.Length - 2)
+            $item_I = "z" * ($max_Path - $TestDrive.Length - $item_H.Length - 2)
             $item_J = "32d74aae-9054-4fa7-be97-8c806d10e8b9"
             $null = New-Item -Path $TestDrive -Name $item_a -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_B -ItemType "File" -Force

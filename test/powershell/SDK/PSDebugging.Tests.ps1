@@ -7,9 +7,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
-    }
 
-    BeforeAll {
         function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
         {
             return [ProcessStartInfo]@{

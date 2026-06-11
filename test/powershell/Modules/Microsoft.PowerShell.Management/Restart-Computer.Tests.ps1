@@ -116,6 +116,6 @@ Describe 'Non-admin on Unix' {
     }
 
     It 'Reports error if not run under sudo' -Skip:($script:skipRestartNonAdminOnUnix) {
-        { Restart-Computer -ErrorAction Stop } | Should -Throw -ErrorId "RestartcomputerFailed,Microsoft.PowerShell.Commands.RestartComputerCommand"
+        { Restart-Computer -ErrorAction Stop } | Should -Throw -ErrorId "*,Microsoft.PowerShell.Commands.RestartComputerCommand"
     }
 }

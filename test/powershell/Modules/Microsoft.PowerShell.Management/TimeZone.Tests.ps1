@@ -27,22 +27,18 @@ Describe "Get-Timezone test cases" -Tags "CI" {
 
     BeforeAll {
         $TimeZonesAvailable = [System.TimeZoneInfo]::GetSystemTimeZones()
-
-        $defaultParamValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:skip"] = ($TimeZonesAvailable.Count -eq 0)
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $defaultParamValues
+        $script:timezoneSkip = $TimeZonesAvailable.Count -eq 0
     }
 
     It "Call without ListAvailable switch returns current TimeZoneInfo" {
+        if ($script:timezoneSkip) { Set-ItResult -Skipped -Because 'no system timezones available' }
         $observed = (Get-TimeZone).Id
         $expected = ([System.TimeZoneInfo]::Local).Id
         $observed | Should -Be $expected
     }
 
     It "Call without ListAvailable switch returns an object of type TimeZoneInfo" {
+        if ($script:timezoneSkip) { Set-ItResult -Skipped -Because 'no system timezones available' }
         $result = Get-TimeZone
         $result | Should -BeOfType TimeZoneInfo
     }
@@ -131,29 +127,25 @@ Describe "Get-Timezone test cases" -Tags "CI" {
 }
 
 
-Describe "Set-Timezone test case: call by single Id" -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Set-Timezone test case: call by single Id" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(-not $IsWindows) {
     BeforeAll {
-
-        $defaultParamValues = $PSdefaultParameterValues.Clone()
-
-        if (-not $IsWindows -or (Test-IsWinServer2012R2)) {
+        if (Test-IsWinServer2012R2) {
             # Set-TimeZone fails due to missing ApiSet dependency on Windows Server 2012 R2.
-            $PSDefaultParameterValues["it:skip"] = $true
-            return
+            $script:setTimezoneSkip = $true
         }
-
-        $originalTimeZoneId = (Get-TimeZone).Id
+        else {
+            $script:setTimezoneSkip = $false
+            $originalTimeZoneId = (Get-TimeZone).Id
+        }
     }
     AfterAll {
-        if (-not $IsWindows -or (Test-IsWinServer2012R2)) {
-            $global:PSDefaultParameterValues = $defaultParamValues
-            return
+        if (-not $script:setTimezoneSkip) {
+            Set-TimeZone -Id $originalTimeZoneId
         }
-
-        Set-TimeZone -Id $originalTimeZoneId
     }
 
     It "Call Set-TimeZone by Id" {
+        if ($script:setTimezoneSkip) { Set-ItResult -Skipped -Because 'Set-TimeZone unsupported here' }
         $origTimeZoneID = (Get-TimeZone).Id
         $timezoneList = Get-TimeZone -ListAvailable
         $testTimezone = $null
@@ -169,32 +161,30 @@ Describe "Set-Timezone test case: call by single Id" -Tags @('CI', 'RequireAdmin
     }
 }
 
-Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
+Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(-not $IsWindows) {
     BeforeAll {
-        $defaultParamValues = $PSdefaultParameterValues.Clone()
-
-        if (-not $IsWindows -or (Test-IsWinServer2012R2)) {
+        if (Test-IsWinServer2012R2) {
             # Set-TimeZone fails due to missing ApiSet dependency on Windows Server 2012 R2.
-            $PSDefaultParameterValues["it:skip"] = $true
-            return
+            $script:setTimezoneFeatureSkip = $true
         }
-
-        $originalTimeZoneId = (Get-TimeZone).Id
+        else {
+            $script:setTimezoneFeatureSkip = $false
+            $originalTimeZoneId = (Get-TimeZone).Id
+        }
     }
     AfterAll {
-        if (-not $IsWindows -or (Test-IsWinServer2012R2)) {
-            $global:PSDefaultParameterValues = $defaultParamValues
-            return
+        if (-not $script:setTimezoneFeatureSkip) {
+            Set-TimeZone -Id $originalTimeZoneId
         }
-
-        Set-TimeZone -Id $originalTimeZoneId
     }
 
     It "Call Set-TimeZone with invalid Id" {
+        if ($script:setTimezoneFeatureSkip) { Set-ItResult -Skipped -Because 'Set-TimeZone unsupported here' }
         { Set-TimeZone -Id "zzInvalidID" } | Should -Throw -ErrorId "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
     }
 
     It "Call Set-TimeZone by Name" {
+        if ($script:setTimezoneFeatureSkip) { Set-ItResult -Skipped -Because 'Set-TimeZone unsupported here' }
         $origTimeZoneName = (Get-TimeZone).StandardName
         $timezoneList = Get-TimeZone -ListAvailable
         $testTimezone = $null
@@ -210,10 +200,12 @@ Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
     }
 
     It "Call Set-TimeZone with invalid Name" {
+        if ($script:setTimezoneFeatureSkip) { Set-ItResult -Skipped -Because 'Set-TimeZone unsupported here' }
         { Set-TimeZone -Name "zzINVALID_Name" } | Should -Throw -ErrorId "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
     }
 
     It "Call Set-TimeZone from pipeline input object of type TimeZoneInfo" {
+        if ($script:setTimezoneFeatureSkip) { Set-ItResult -Skipped -Because 'Set-TimeZone unsupported here' }
         $origTimeZoneID = (Get-TimeZone).Id
         $timezoneList = Get-TimeZone -ListAvailable
         $testTimezone = $null
@@ -230,6 +222,7 @@ Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
     }
 
     It "Call Set-TimeZone from pipeline input object of type TimeZoneInfo, verify supports whatif" {
+        if ($script:setTimezoneFeatureSkip) { Set-ItResult -Skipped -Because 'Set-TimeZone unsupported here' }
         $origTimeZoneID = (Get-TimeZone).Id
         $timezoneList = Get-TimeZone -ListAvailable
         $testTimezone = $null

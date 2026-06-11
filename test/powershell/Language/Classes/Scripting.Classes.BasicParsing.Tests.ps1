@@ -713,6 +713,19 @@ Describe 'Hidden Members Test ' -Tags "CI" {
             $outputRendering = $PSStyle.OutputRendering
             $PSStyle.OutputRendering = 'plaintext'
         }
+
+        class C1
+        {
+            [int]$visibleX
+            [int]$visibleY
+            hidden [int]$hiddenZ
+        }
+
+        $instance = [C1]@{ visibleX = 10; visibleY = 12; hiddenZ = 42 }
+        $memberWithoutForce = $instance | Get-Member hiddenZ
+        $memberWithForce = $instance | Get-Member hiddenZ -Force
+        $line = 'class C2 { hidden [int]$hiddenZ } [C2]::new().h'
+        $completions = [System.Management.Automation.CommandCompletion]::CompleteInput($line, $line.Length, $null)
     }
 
     AfterAll {
@@ -720,21 +733,6 @@ Describe 'Hidden Members Test ' -Tags "CI" {
             $PSStyle.OutputRendering = $outputRendering
         }
     }
-
-        BeforeAll {
-            class C1
-            {
-                [int]$visibleX
-                [int]$visibleY
-                hidden [int]$hiddenZ
-            }
-
-            $instance = [C1]@{ visibleX = 10; visibleY = 12; hiddenZ = 42 }
-            $memberWithoutForce = $instance | Get-Member hiddenZ
-            $memberWithForce = $instance | Get-Member hiddenZ -Force
-            $line = 'class C2 { hidden [int]$hiddenZ } [C2]::new().h'
-            $completions = [System.Management.Automation.CommandCompletion]::CompleteInput($line, $line.Length, $null)
-        }
 
         It "Access hidden property should still work" { $instance.hiddenZ | Should -Be 42 }
 

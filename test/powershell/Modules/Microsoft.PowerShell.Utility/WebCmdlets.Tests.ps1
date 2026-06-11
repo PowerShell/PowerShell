@@ -4664,13 +4664,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support OperationTimeoutSecond
         $oldProgress = $ProgressPreference
         $ProgressPreference = 'SilentlyContinue'
         $WebListener = Start-WebListener
-    }
 
-    AfterAll {
-        $ProgressPreference = $oldProgress
-    }
-
-    BeforeAll {
         function RunWithNetworkTimeout {
             param(
                 [ValidateSet('Invoke-WebRequest', 'Invoke-RestMethod')]
@@ -4686,7 +4680,14 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support OperationTimeoutSecond
                 $invoke = "$invoke -OperationTimeoutSeconds $OperationTimeoutSeconds"
             }
 
-            $result = ExecuteWebCommand -command $invoke
+            $result = [PSObject]@{ Output = $null; Error = $null }
+            try {
+                $scriptBlock = [scriptblock]::Create($invoke)
+                $result.Output = & $scriptBlock
+            } catch {
+                $result.Error = $_
+            }
+
             if ($WillTimeout) {
                 $result.Error | Should -Not -BeNullOrEmpty
                 $fqErrorClass = if ($Command -eq 'Invoke-WebRequest') { 'InvokeWebRequestCommand'} else { 'InvokeRestMethodCommand'}
@@ -4697,6 +4698,10 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support OperationTimeoutSecond
                 $result.Output | Should -Not -BeNullOrEmpty
             }
         }
+    }
+
+    AfterAll {
+        $ProgressPreference = $oldProgress
     }
 
     It 'Invoke-WebRequest: OperationTimeoutSeconds does not cancel if stalls shorter than timeout but download takes longer than timeout' {

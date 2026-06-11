@@ -31,9 +31,13 @@ Describe "Rename-Item tests" -Tag "CI" {
         $oldSp = "$wdSp/$oldSpBName"
         $newSpName = "[renamed]file.txt"
         $newSp = "$wdSp/``[renamed``]file.txt"
-        In $wdSp -execute {
+        Push-Location -LiteralPath (Join-Path $TestDrive '[test-dir]')
+        try {
             $null = New-Item -Name $oldSpName -ItemType File -Value $content -Force
             Rename-Item -Path $oldSpBName $newSpName
+        }
+        finally {
+            Pop-Location
         }
         $oldSp | Should -Not -Exist
         $newSp | Should -Exist
@@ -46,9 +50,13 @@ Describe "Rename-Item tests" -Tag "CI" {
         $oldSp = "$wdSp/$oldSpBName"
         $newSpName = "[renamed]file2.txt"
         $newSp = "$wdSp/``[renamed``]file2.txt"
-        In $wdSp -execute {
+        Push-Location -LiteralPath (Join-Path $TestDrive '[test-dir]')
+        try {
             $null = New-Item -Name $oldSpName -ItemType File -Value $content -Force
             Rename-Item -LiteralPath $oldSpName $newSpName
+        }
+        finally {
+            Pop-Location
         }
         $oldSp | Should -Not -Exist
         $newSp | Should -Exist

@@ -1,19 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Get-Service cmdlet tests" -Tags "CI" {
-  # Service cmdlet is currently working on windows only
-  # So skip the tests on non-Windows
-  BeforeAll {
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    if ( -not $IsWindows ) {
-        $PSDefaultParameterValues["it:skip"] = $true
-    }
-  }
-  # Restore the defaults
-  AfterAll {
-      $global:PSDefaultParameterValues = $originalDefaultParameterValues
-  }
-
+Describe "Get-Service cmdlet tests" -Tags "CI" -Skip:(-not $IsWindows) {
   BeforeDiscovery {
       $testCases =
         @{ data = $null          ; value = 'null' },
@@ -85,17 +72,7 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
   }
 }
 
-Describe 'Get-Service Admin tests' -Tag CI,RequireAdminOnWindows {
-  BeforeAll {
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    if ( -not $IsWindows ) {
-        $PSDefaultParameterValues["it:skip"] = $true
-    }
-  }
-  AfterAll {
-      $global:PSDefaultParameterValues = $originalDefaultParameterValues
-  }
-
+Describe 'Get-Service Admin tests' -Tag CI,RequireAdminOnWindows -Skip:(-not $IsWindows) {
   BeforeEach {
     $serviceParams = @{
       Name = "PowerShellTest-$([Guid]::NewGuid().Guid)"

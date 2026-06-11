@@ -1,22 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Native UNIX globbing tests' -tags "CI" {
+Describe 'Native UNIX globbing tests' -tags "CI" -Skip:$IsWindows {
 
     BeforeAll {
-        if (-Not $IsWindows )
-        {
-            "" > "$TESTDRIVE/abc.txt"
-            "" > "$TESTDRIVE/bbb.txt"
-            "" > "$TESTDRIVE/cbb.txt"
-        }
-
-        $defaultParamValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:skip"] = $IsWindows
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $defaultParamValues
+        "" > "$TESTDRIVE/abc.txt"
+        "" > "$TESTDRIVE/bbb.txt"
+        "" > "$TESTDRIVE/cbb.txt"
     }
 
     # Test * expansion

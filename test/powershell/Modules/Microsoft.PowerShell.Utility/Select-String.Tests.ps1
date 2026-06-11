@@ -213,8 +213,9 @@ Describe "Select-String" -Tags "CI" {
         It "Should return the third line in testfile1 when a relative path is used" {
             $expected  = "testfile1.txt:3:This is the third line"
 
+            $testDirObj = Get-Item -LiteralPath $testDirectory
             $relativePath = Join-Path -Path $testDirectory -ChildPath ".."
-            $relativePath = Join-Path -Path $relativePath -ChildPath $TestDirectory.Name
+            $relativePath = Join-Path -Path $relativePath -ChildPath $testDirObj.Name
             $relativePath = Join-Path -Path $relativePath -ChildPath testfile1.txt
             Select-String third $relativePath  | Should -Match $expected
         }

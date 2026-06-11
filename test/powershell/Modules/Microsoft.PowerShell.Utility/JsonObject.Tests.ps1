@@ -17,6 +17,9 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
     }
 
     BeforeAll {
+        $jsonWithEmptyKey = '{"": "Value"}'
+        $jsonContainingKeysWithDifferentCasing = '{"key1": "Value1", "Key1": "Value2"}'
+
         function New-NestedJson {
             Param(
                 [ValidateRange(1, 2048)]

@@ -1,27 +1,28 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Verify aliases and cmdlets" -Tags "CI" {
-    BeforeDiscovery {
-        # Pester 5 evaluates -TestCases at discovery time.
-        # Build test-case data here so the parameterised It block discovers all cmdlets.
-        function ConvertTo-Hashtable {
-            [CmdletBinding()]
-            param ([Parameter(ValueFromPipeline=$true)][psobject]$o)
-            PROCESS {
-                $pNames = $o.psobject.properties.name
-                $ht = @{}
-                foreach($pName in $pNames) {
-                    $ht[$pName] = $o.$pName
-                }
-                $ht
-            }
+
+# Hoist test data to file scope so it is visible in both Pester 5 Discovery
+# (-TestCases) and Run (BeforeAll/It) phases. Variables set inside a
+# BeforeDiscovery block do not reliably persist into the runtime container
+# scope in Pester 5.
+function ConvertTo-Hashtable {
+    [CmdletBinding()]
+    param ([Parameter(ValueFromPipeline=$true)][psobject]$o)
+    PROCESS {
+        $pNames = $o.psobject.properties.name
+        $ht = @{}
+        foreach($pName in $pNames) {
+            $ht[$pName] = $o.$pName
         }
+        $ht
+    }
+}
 
-        $FullCLR = !$IsCoreCLR
-        $CoreWindows = $IsCoreCLR -and $IsWindows
-        $CoreUnix = $IsCoreCLR -and !$IsWindows
+$FullCLR = !$IsCoreCLR
+$CoreWindows = $IsCoreCLR -and $IsWindows
+$CoreUnix = $IsCoreCLR -and !$IsWindows
 
-        $commandString = @"
+$commandString = @"
 "CommandType",  "Name",                             "Definition",                       "Present",                                      "ReadOnlyOption",       "AllScopeOption",       "ConfirmImpact"
 "Alias",        "%",                                "ForEach-Object",                   $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "AllScope",             ""
 "Alias",        "?",                                "Where-Object",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "AllScope",             ""
@@ -523,11 +524,11 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
 "Cmdlet",       "Write-Warning",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "@
 
-        $script:commandList = $commandString | ConvertFrom-Csv -Delimiter ","
-        $script:commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
-        $script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias" }
-    }
+$script:commandList = $commandString | ConvertFrom-Csv -Delimiter ","
+$script:commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
+$script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias" }
 
+Describe "Verify aliases and cmdlets" -Tags "CI" {
     BeforeAll {
         # If psversion can be converted to [version], then it is not a preview version.
         # We can't just use '$psversiontable.psversion -as [version]' because pwsh

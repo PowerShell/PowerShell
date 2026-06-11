@@ -479,14 +479,9 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
     }
 }
 
-Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
+Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" -Skip:(-not $IsWindows) {
 
     BeforeAll {
-        if ( ! $IsWindows ) {
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            return
-        }
-
         $ModuleName = "DesktopModule"
         $ModuleName2 = "DesktopModule2"
         $basePath = Join-Path $TestDrive "WinCompatModules"
@@ -496,13 +491,6 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
         # create an incompatible module
         New-EditionCompatibleModule -ModuleName $ModuleName2 -CompatiblePSEditions "Desktop" -Dir $basePath
-    }
-
-    AfterAll {
-        if ( ! $IsWindows ) {
-            Pop-DefaultParameterValueStack
-            return
-        }
     }
 
     Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
@@ -797,19 +785,9 @@ Remove-Module $script:desktopModuleToUse
     }
 }
 
-Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
+Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" -Skip:(-not $IsWindows) {
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
-        if ( ! $IsWindows ) {
-            Push-DefaultParameterValueStack @{  "it:skip" = $true }
-            return
-        }
-    }
-
-    AfterAll {
-        if ( ! $IsWindows ) {
-            Pop-DefaultParameterValueStack
-        }
     }
 
     Context "System32 module path prepended to PSModulePath" {
@@ -1445,13 +1423,8 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
     }
 }
 
-Describe "WinCompat importing should check availablity of built-in modules" -Tag "CI" {
+Describe "WinCompat importing should check availablity of built-in modules" -Tag "CI" -Skip:(-not $IsWindows) {
     BeforeAll {
-        if (-not $IsWindows ) {
-            Push-DefaultParameterValueStack @{  "it:skip" = $true }
-            return
-        }
-
         ## Copy the current PowerShell instance to a temp location
         $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) "WinCompat"
         $pwshDir = Join-Path $tempDir "pwsh"
@@ -1470,7 +1443,6 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
 
     AfterAll {
         if (-not $IsWindows) {
-            Pop-DefaultParameterValueStack
             return
         }
 

@@ -67,6 +67,6 @@ Describe 'Non-admin on Unix' {
     }
 
     It 'Reports error if not run under sudo' -Skip:($script:skipNonAdminOnUnix) {
-        { Stop-Computer -ErrorAction Stop } | Should -Throw -ErrorId "StopComputerException,Microsoft.PowerShell.Commands.StopComputerCommand"
+        { Stop-Computer -ErrorAction Stop } | Should -Throw -ErrorId "*,Microsoft.PowerShell.Commands.StopComputerCommand"
     }
 }

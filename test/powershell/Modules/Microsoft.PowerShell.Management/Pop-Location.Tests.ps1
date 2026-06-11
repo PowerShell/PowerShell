@@ -28,7 +28,7 @@ Describe "Pop-Location" -Tags "CI" {
 
     }
 
-    BeforeAll {
+    AfterAll {
         Set-Location $startDirectory
     }
 }
