@@ -12,8 +12,8 @@ $script:catalogPath = ""
 
 Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
 
-    #compare two hashtables
     BeforeAll {
+        # compare two hashtables
         function CompareHashTables
         {
             param
@@ -36,9 +36,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
                 }
             }
         }
-    }
 
-    BeforeAll {
         $testDataPath = "$PSScriptRoot\TestData\CatalogTestData"
     }
 

@@ -78,9 +78,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" -Skip:$skipRemoting {
             $actualStreamContent = Get-Content -Path $copiedFilePath -Stream $streamName -ErrorAction SilentlyContinue
             $actualStreamContent | Should -Match $expectedStreamContent
         }
-    }
 
-    BeforeAll {
         $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
         if (-not $s)
         {
