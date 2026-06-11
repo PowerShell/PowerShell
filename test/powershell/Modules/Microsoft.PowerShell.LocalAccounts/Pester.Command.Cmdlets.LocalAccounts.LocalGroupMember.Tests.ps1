@@ -11,7 +11,6 @@ BeforeDiscovery {
         $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     }
     $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
-    $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 }
 
 BeforeAll {
@@ -65,7 +64,6 @@ BeforeAll {
     }
 
     #skip all tests on non-windows platform
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
     $isAdmin = $false
     if ($IsWindows) {
         $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -74,11 +72,7 @@ BeforeAll {
     $OptDomainPrefix="(.+\\)?"
 }
 
-AfterAll {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
-}
-
-    Describe "Verify Expected LocalGroupMember Cmdlets are present" -Tags "CI" {
+    Describe "Verify Expected LocalGroupMember Cmdlets are present" -Tags "CI" -Skip:(!$IsNotSkipped) {
 
         It "Test command presence" {
             $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
@@ -89,7 +83,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate simple Add-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Add-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeEach {
             if ($IsNotSkipped) {
@@ -114,7 +108,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate Add-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Add-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             $OptDomainPrefix="(.+\\)?"
@@ -262,7 +256,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate simple Get-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Get-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeEach {
             if ($IsNotSkipped) {
@@ -294,7 +288,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate Get-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Get-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             $OptDomainPrefix="(.+\\)?"
@@ -428,7 +422,7 @@ AfterAll {
         #TODO: 10.A valid user attempts to get membership from a group to which they don't have access
     }
 
-    Describe "Validate simple Remove-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Remove-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeEach {
             if ($IsNotSkipped) {
@@ -455,7 +449,7 @@ AfterAll {
         }
     }
 
-    Describe "Validate Remove-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Remove-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeEach {
             if ($IsNotSkipped) {
