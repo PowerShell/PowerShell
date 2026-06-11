@@ -1,15 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "NativeLinuxCommands" -tags "CI" {
+Describe "NativeLinuxCommands" -tags "CI" -Skip:$IsWindows {
     BeforeAll {
-        $originalDefaultParams = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["It:Skip"] = $IsWindows
         $originalPath = $env:PATH
         $env:PATH += [IO.Path]::PathSeparator + $TestDrive
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParams
         $env:PATH = $originalPath
     }
 

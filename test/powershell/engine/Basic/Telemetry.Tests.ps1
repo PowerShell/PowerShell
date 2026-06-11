@@ -36,22 +36,14 @@ function Get-OSTelemetryLevel {
     return 1
 }
 
-Describe "Telemetry for shell startup" -Tag CI {
+# Compute skip at file scope so Pester 5 Describe -Skip works at discovery time.
+$skipTelemetryTests = $false
+if ($IsWindows) {
+    $skipTelemetryTests = (Get-OSTelemetryLevel) -lt 2
+}
+
+Describe "Telemetry for shell startup" -Tag CI -Skip:$skipTelemetryTests {
     BeforeAll {
-        $skipTelemetryTests = $false
-
-        if ($IsWindows) {
-            ## Skip telemetry tests if the OS telemetry level is less than 2 (Enhanced) -- PS telemetry is disabled in this case.
-            $osTelemetryLevel = Get-OSTelemetryLevel
-            $skipTelemetryTests = $osTelemetryLevel -lt 2
-        }
-
-        if ($skipTelemetryTests) {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-            return
-        }
-
         # if the telemetry file exists, move it out of the way
         # the member is internal, but we can retrieve it via reflection
         $cacheDir = [System.Management.Automation.Platform].GetField("CacheDirectory","NonPublic,Static").GetValue($null)
@@ -68,11 +60,6 @@ Describe "Telemetry for shell startup" -Tag CI {
     }
 
     AfterAll {
-        if ($skipTelemetryTests) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
-            return
-        }
-
         # check and reset the telemetry.uuid file
         if ( $uuidFileExists ) {
             if ( Test-Path -Path "${uuidPath}.original" ) {
