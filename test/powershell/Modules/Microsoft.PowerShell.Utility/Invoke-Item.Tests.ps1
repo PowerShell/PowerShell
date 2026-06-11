@@ -195,6 +195,10 @@ Categories=Application;
                 Remove-Item $appFolder/InvokeItemTest.desktop -Force -ErrorAction SilentlyContinue
                 Remove-Item $HOME/InvokeItemTest.Success -Force -ErrorAction SilentlyContinue
             }
+            if($IsMacOS)
+            {
+                Stop-ProcessMacOs -Name Finder
+            }
         }
 
         BeforeEach {
@@ -202,13 +206,6 @@ Categories=Application;
             if($IsMacOS)
             {
                 Get-Process -Name Finder | Stop-Process -Force
-            }
-        }
-
-        AfterAll{
-            if($IsMacOS)
-            {
-                Stop-ProcessMacOs -Name Finder
             }
         }
 

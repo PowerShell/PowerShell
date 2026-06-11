@@ -12,39 +12,25 @@ function Test-ResourceStrings
     $resourceFiles = Get-ChildItem $resourceDir -Filter *.resx -ErrorAction stop |
         Where-Object { $excludeList -notcontains $_.Name }
 
-    # Build test cases for -ForEach (Pester 5 doesn't capture foreach loop variables in It blocks)
+    # Build test cases for -ForEach. Each case carries everything the It needs,
+    # because Pester 5 doesn't propagate file/function-scope variables into
+    # runtime blocks (BeforeAll/It). Setting $script:foo in this function does
+    # NOT make it visible inside BeforeAll either.
     $testCases = $resourceFiles | ForEach-Object {
-        @{ ClassName = ($_.Name -replace "\.resx$"); FilePath = $_.FullName }
+        @{
+            ClassName    = ($_.Name -replace "\.resx$")
+            FilePath     = $_.FullName
+            AssemblyName = $AssemblyName
+        }
     }
-
-    # Store in script scope so BeforeAll (which runs in an isolated scope) can access it
-    $script:_TestResourceAssemblyName = $AssemblyName
 
     Describe "Resources strings in $AssemblyName (was -ResGen used with Start-PSBuild)" -Tag Feature {
 
-        BeforeAll {
-            $bindingFlags = [reflection.bindingflags]"NonPublic,Static"
-            $ASSEMBLY = [appdomain]::CurrentDomain.GetAssemblies()|
-                Where-Object { $_.GetName().Name -eq $script:_TestResourceAssemblyName }
-            $repoBase = (Resolve-Path (Join-Path $PSScriptRoot ../../../..)).Path
-            $asmBase = Join-Path $repoBase "src/$script:_TestResourceAssemblyName"
-            $resourceDir = Join-Path $asmBase resources
-
-            function NormalizeLineEnd
-            {
-                param (
-                    [string] $string
-                )
-
-                $string -replace "`r`n", "`n"
-            }
-        }
-
-        AfterAll {
-            Remove-Variable -Name '_TestResourceAssemblyName' -Scope Script -ErrorAction SilentlyContinue
-        }
-
         It "'<ClassName>' should be an available type and the strings should be correct" -Skip:(!$IsWindows) -ForEach $testCases {
+            $bindingFlags = [reflection.bindingflags]"NonPublic,Static"
+            $ASSEMBLY = [appdomain]::CurrentDomain.GetAssemblies() |
+                Where-Object { $_.GetName().Name -eq $AssemblyName }
+
             # get the type from the assembly
             $resourceType = $ASSEMBLY.GetType($ClassName, $false, $true)
             $resourceType | Should -Not -BeNullOrEmpty
@@ -53,7 +39,7 @@ function Test-ResourceStrings
             $xmlData = [xml](Get-Content $FilePath)
             foreach ( $inResource in $xmlData.root.data ) {
                 $resourceStringToCheck = $resourceType.GetProperty($inResource.name,$bindingFlags).GetValue(0)
-                NormalizeLineEnd($resourceStringToCheck) | Should -Be (NormalizeLineEnd($inresource.value))
+                ($resourceStringToCheck -replace "`r`n", "`n") | Should -Be ($inresource.value -replace "`r`n", "`n")
             }
         }
     }

@@ -3914,7 +3914,7 @@ Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows {
     }
 }
 
-Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
+Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows -Skip:(-not $IsWindows) {
     BeforeDiscovery {
         $testCases = @(
             @{ inputStr = 'Get-Proc'; expected = 'Get-Process' }
@@ -3930,25 +3930,19 @@ Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminO
     }
 
     BeforeAll {
-        $skipTest = -not $IsWindows
-        $pendingTest = $IsWindows -and (Test-IsWinWow64)
+        $pendingTest = Test-IsWinWow64
 
-        if (-not $skipTest -and -not $pendingTest) {
+        if (-not $pendingTest) {
             $session = New-RemoteSession
             $powershell = [powershell]::Create()
             $powershell.Runspace = $session.Runspace
         } else {
             $defaultParameterValues = $PSDefaultParameterValues.Clone()
-
-            if ($skipTest) {
-                $PSDefaultParameterValues["It:Skip"] = $true
-            } elseif ($pendingTest) {
-                $PSDefaultParameterValues["It:Pending"] = $true
-            }
+            $PSDefaultParameterValues["It:Pending"] = $true
         }
     }
     AfterAll {
-        if (-not $skipTest -and -not $pendingTest) {
+        if (-not $pendingTest) {
             Remove-PSSession $session
             $powershell.Dispose()
         } else {
@@ -3979,16 +3973,7 @@ Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminO
     }
 }
 
-Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOnWindows {
-
-    BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:skip"] = !$IsWindows
-    }
-
-    AfterAll {
-        $Global:PSDefaultParameterValues = $originalDefaultParameterValues
-    }
+Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOnWindows -Skip:(-not $IsWindows) {
 
     It "Tab completion works correctly for Listeners" {
         $path = "wsman:\localhost\listener\listener"
