@@ -58,18 +58,26 @@ Describe "Select-Xml Feature Tests" -Tags "Feature" {
 		Set-Content -Path $fileName -Value $xmlContent
 
 		$fileNameWithDots = $fileName.FullName.Replace("\", "\.\")
+		$relativeName = $fileName.Name
 
-		$driveLetter = [string]($fileName.FullName)[0]
-		$fileNameAsNetworkPath = "\\localhost\$driveLetter`$" + $fileName.FullName.SubString(2)
-
-		if ( ! $IsCoreCLR ) {
-			$testcases += @{testName = 'Literalpath with network paths'; testParameter = @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'}}
-			$testcases += @{testName = 'Path with network paths'; testParameter = @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'}}
+		# Build lookup map so It blocks can access runtime-resolved test parameters by name.
+		# Pester 5 evaluates -TestCases at discovery time, before BeforeAll, so testParameter
+		# values that depend on runtime data (TestDrive paths) must be looked up at run time.
+		$testParameterMap = @{
+			'Literalpath with relative paths'  = @{LiteralPath = $relativeName;             XPath = 'Root'}
+			'Literalpath with absolute paths'  = @{LiteralPath = $fileName.FullName;        XPath = 'Root'}
+			'Literalpath with path with dots'  = @{LiteralPath = $fileNameWithDots;         XPath = 'Root'}
+			'Path with relative paths'         = @{Path        = $relativeName;             XPath = 'Root'}
+			'Path with absolute paths'         = @{Path        = $fileName.FullName;        XPath = 'Root'}
+			'Path with path with dots'         = @{Path        = $fileNameWithDots;         XPath = 'Root'}
 		}
 
-		# Build lookup map so It block can access runtime-resolved test parameters by name
-		$testParameterMap = @{}
-		foreach ($tc in $testCases) { $testParameterMap[$tc.testName] = $tc.testParameter }
+		if ( ! $IsCoreCLR ) {
+			$driveLetter = [string]($fileName.FullName)[0]
+			$fileNameAsNetworkPath = "\\localhost\$driveLetter`$" + $fileName.FullName.SubString(2)
+			$testParameterMap['Literalpath with network paths'] = @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'}
+			$testParameterMap['Path with network paths']        = @{Path        = $fileNameAsNetworkPath; XPath = 'Root'}
+		}
 
 		Push-Location -Path $fileName.Directory
 	}
