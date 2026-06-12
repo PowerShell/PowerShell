@@ -1007,15 +1007,12 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     }
 }
 
-Describe "WindowStyle argument" -Tag Feature {
+Describe "WindowStyle argument" -Tag Feature -Skip:(-not $IsWindows) {
     BeforeAll {
-        $defaultParamValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:skip"] = !$IsWindows
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        $ExitCodeBadCommandLineParameter = 64
 
-        if ($IsWindows)
-        {
-            $ExitCodeBadCommandLineParameter = 64
-            Add-Type -Name User32 -Namespace Test -MemberDefinition @"
+        Add-Type -Name User32 -Namespace Test -MemberDefinition @"
 public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
 {
     WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
@@ -1054,11 +1051,6 @@ public enum ShowWindowCommands : int
     Maximized = 3,
 }
 "@
-        }
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $defaultParamValues
     }
 
     It "-WindowStyle <WindowStyle> should work on Windows" -Pending -TestCases @(

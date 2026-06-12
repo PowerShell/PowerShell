@@ -7,6 +7,11 @@ param()
 Import-Module (Join-Path -Path $PSScriptRoot '..\Microsoft.PowerShell.Security\certificateCommon.psm1')
 
 Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" -Skip:(-not $IsWindows) {
+
+    BeforeDiscovery {
+        $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
+    }
+
     BeforeAll {
         $userName = "testuserservices"
         $testPass = [Net.NetworkCredential]::new("", (New-ComplexPassword)).SecurePassword

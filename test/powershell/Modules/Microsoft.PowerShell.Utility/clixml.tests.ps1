@@ -265,14 +265,11 @@ Describe "CliXml test" -Tags "CI" {
 ##
 ## CIM deserialization security vulnerability
 ##
-Describe "Deserializing corrupted Cim classes should not instantiate non-Cim types" -Tags "Feature","Slow" {
+Describe "Deserializing corrupted Cim classes should not instantiate non-Cim types" -Tags "Feature","Slow" -Skip:(-not $IsWindows) {
 
     BeforeAll {
-
-        # Only run on Windows platform.
         # Ensure calc.exe is available for test.
-        $shouldRunTest = $IsWindows -and ((Get-Command calc.exe -ErrorAction SilentlyContinue) -ne $null)
-        $skipNotWindows = ! $shouldRunTest
+        $shouldRunTest = (Get-Command calc.exe -ErrorAction SilentlyContinue) -ne $null
         if ( $shouldRunTest )
         {
             (Get-Process -Name 'win32calc','calculator' 2> $null) | Stop-Process -Force -ErrorAction SilentlyContinue
@@ -286,7 +283,10 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
         }
     }
 
-    It "Verifies that importing the corrupted Cim class does not launch calc.exe" -Skip:$skipNotWindows {
+    It "Verifies that importing the corrupted Cim class does not launch calc.exe" {
+        if (-not $shouldRunTest) {
+            Set-ItResult -Skipped -Because "calc.exe is not available on this Windows image"
+        }
 
         Import-Clixml -Path (Join-Path $PSScriptRoot "assets\CorruptedCim.clixml")
 
