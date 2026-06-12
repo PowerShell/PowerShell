@@ -116,8 +116,15 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
     Context "for module : $moduleName" -Skip:$IsMacOS {
 
         BeforeAll {
+            $userHelpRoot = GetCurrentUserHelpRoot
             UpdateHelpFromLocalContentPath $moduleName -Scope 'CurrentUser'
             $cmdlets = Get-Command -Module $moduleName
+        }
+
+        AfterAll {
+            # Pester 5 shares state across files; revert user-help installation so subsequent
+            # Get-Help-based tests see stock help content.
+            Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
         }
 
         BeforeDiscovery {
@@ -237,6 +244,7 @@ Describe "Validate that get-help works for provider specific help" -Tags @('CI')
     }
 
     BeforeAll {
+        $userHelpRoot = GetCurrentUserHelpRoot
         $namespaces = @{
             command = 'http://schemas.microsoft.com/maml/dev/command/2004/10'
             dev     = 'http://schemas.microsoft.com/maml/dev/2004/10'
@@ -250,6 +258,12 @@ Describe "Validate that get-help works for provider specific help" -Tags @('CI')
         }
 
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'CurrentUser'
+    }
+
+    AfterAll {
+        # Pester 5 shares state across files; revert user-help installation so subsequent
+        # Get-Help-based tests see stock help content.
+        Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
     }
 
     ## The tests are marked as pending since provider specific help content in not available in PS v6.*
@@ -501,6 +515,14 @@ Describe 'help can be found for CurrentUser Scope' -Tags 'CI' {
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Management' -Scope 'CurrentUser'
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Archive' -Scope 'CurrentUser' -Force
         UpdateHelpFromLocalContentPath -ModuleName 'PackageManagement' -Scope CurrentUser -Force
+    }
+
+    AfterAll {
+        # Pester 5 runs all test files in one process, so any user-scope help installed here
+        # would persist for subsequent test files and change Get-Help output for cmdlets in the
+        # updated modules (e.g. ProxyCommand.Tests.ps1, ScriptHelp.Tests.ps1). Clean up after
+        # ourselves to keep the rest of the run on stock help.
+        Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
     }
 
     It 'help in user scope be found for <TestName>' -TestCases $TestCases {
