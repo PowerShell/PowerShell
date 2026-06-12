@@ -25,7 +25,7 @@ if (-not $script:skipTest) {
 }
 
 BeforeAll {
-    Import-Module HelpersRemoting -Force -ErrorAction SilentlyContinue
+    Import-Module HelpersRemoting -Force
     $originalWarningPreference = $WarningPreference
     $WarningPreference = "SilentlyContinue"
 }
@@ -37,8 +37,6 @@ AfterAll {
     Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature","RequireAdminOnWindows" -Skip:$skipTest {
 
         BeforeAll {
-
-            if ($skipTest) { return }
 
             #
             # GET CERTIFICATE
@@ -90,7 +88,6 @@ AfterAll {
         }
 
         AfterAll {
-            if ($skipTest) { return }
 
             if ($null -ne $tempName) { Remove-Item -Path $tempName -Force -ErrorAction SilentlyContinue }
             if ($null -ne $oldExecutionPolicy) { Set-ExecutionPolicy $oldExecutionPolicy -Scope Process }
@@ -121,8 +118,6 @@ AfterAll {
 
         BeforeAll {
 
-            if ($skipTest) { return }
-
             $typeDefinition = @"
                 namespace MyTest
                 {
@@ -144,7 +139,6 @@ AfterAll {
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
 
@@ -166,12 +160,10 @@ AfterAll {
 
         BeforeAll {
 
-            if ($skipTest) { return }
             $session = New-RemoteSession
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
 
@@ -192,12 +184,10 @@ AfterAll {
 
         BeforeAll {
 
-            if ($skipTest) { return }
             $session = New-RemoteSession
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
 
@@ -217,14 +207,12 @@ AfterAll {
         Context "Test content and format of proxied error message (Windows 7: #319080)" {
 
             BeforeAll {
-                if ($skipTest) { return }
                 $module = Import-PSSession -Session $session -Name Get-Variable -Prefix My -AllowClobber
                 $oldErrorView = $ErrorView
                 $ErrorView = "NormalView"
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 $ErrorView = $oldErrorView
             }
@@ -251,7 +239,6 @@ AfterAll {
         Context "Ordering of a sequence of error and output messages (Windows 7: #405065)" {
 
             BeforeAll {
-                if ($skipTest) { return }
 
                 Invoke-Command $session { function foo1{1; Write-Error 2; 3; Write-Error 4; 5; Write-Error 6} }
                 $module = Import-PSSession $session -CommandName foo1 -AllowClobber
@@ -268,7 +255,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -295,12 +281,10 @@ AfterAll {
         Context "WarningVariable parameter works with implicit remoting (Windows 8: #44861)" {
 
             BeforeAll {
-                if ($skipTest) { return }
                 $module = Import-PSSession $session -CommandName Write-Warning -Prefix Remote -AllowClobber
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -316,8 +300,6 @@ AfterAll {
 
         BeforeAll {
 
-            if ($skipTest) { return }
-
             $sessionOption = New-PSSessionOption -ApplicationArguments @{myTest="MyValue"}
             $session = New-RemoteSession -SessionOption $sessionOption
 
@@ -327,7 +309,6 @@ AfterAll {
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $file) { Remove-Item $file -Force -Recurse -ErrorAction SilentlyContinue }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
@@ -370,12 +351,10 @@ AfterAll {
         Context "The module is usable when the original runspace is still around" {
 
             BeforeAll {
-                if ($skipTest) { return }
                 $module = Import-Module $file -PassThru
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -392,7 +371,6 @@ AfterAll {
 
     Describe "Proxy module is usable when the original runspace is no longer around" -tags "Feature","RequireAdminOnWindows" -Skip:$skipTest {
         BeforeAll {
-            if ($skipTest) { return }
 
             $sessionOption = New-PSSessionOption -ApplicationArguments @{myTest="MyValue"}
             $session = New-RemoteSession -SessionOption $sessionOption
@@ -405,7 +383,6 @@ AfterAll {
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $file) { Remove-Item $file -Force -Recurse -ErrorAction SilentlyContinue }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
@@ -415,12 +392,10 @@ AfterAll {
 
         Context "Proxy module should create a new session" {
             BeforeAll {
-                if ($skipTest) { return }
                 $module = Import-Module $file -PassThru -Force
                 $internalSession = & $module { $script:PSSession }
             }
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -444,13 +419,11 @@ AfterAll {
 
         Context "Runspace created by the module with explicit session options" {
             BeforeAll {
-                if ($skipTest) { return }
                 $explicitSessionOption = New-PSSessionOption -Culture fr-FR -UICulture de-DE
                 $module = Import-Module $file -PassThru -Force -ArgumentList $null, $explicitSessionOption
                 $internalSession = & $module { $script:PSSession }
             }
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -478,14 +451,12 @@ AfterAll {
 
         Context "Passing a runspace into proxy module" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 $newSession = New-RemoteSession
                 $module = Import-Module $file -PassThru -Force -ArgumentList $newSession
                 $internalSession = & $module { $script:PSSession }
             }
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 if ($null -ne $newSession) { Remove-PSSession $newSession -ErrorAction SilentlyContinue }
             }
@@ -512,7 +483,6 @@ AfterAll {
     Describe "Import-PSSession with FormatAndTypes" -tags "Feature","RequireAdminOnWindows" -Skip:$skipTest {
 
         BeforeAll {
-            if ($skipTest) { return }
             # remote into same powershell instance
             $samesession = New-RemoteSession -ConfigurationName $endpointName
             $session = New-RemoteSession
@@ -628,7 +598,6 @@ AfterAll {
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
             if ($null -ne $samesession) { Remove-PSSession $samesession -ErrorAction SilentlyContinue }
             if ($null -ne $formatFile) { Remove-Item $formatFile -Force -ErrorAction SilentlyContinue }
@@ -637,7 +606,6 @@ AfterAll {
 
         Context "Importing format file works" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 $formattingScript = { New-Object System.Management.Automation.Host.Size | ForEach-Object { $_.Width = 123; $_.Height = 456; $_ } | Out-String }
                 $originalLocalFormatting = & $formattingScript
@@ -656,7 +624,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -691,7 +658,6 @@ AfterAll {
 
         Context "Implicit remoting works even when types.ps1xml is missing on the client" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 $typeDefinition = @"
                     namespace MyTest
@@ -722,7 +688,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -746,7 +711,6 @@ AfterAll {
     Describe "Import-PSSession functional tests" -tags "Feature","RequireAdminOnWindows" -Skip:$skipTest {
 
         BeforeAll {
-            if ($skipTest) { return }
             $session = New-RemoteSession
 
             # Define a remote function
@@ -766,7 +730,6 @@ AfterAll {
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
@@ -806,7 +769,6 @@ AfterAll {
 
         Context "Test what happens after the runspace is closed" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 Remove-PSSession $session
 
@@ -847,12 +809,10 @@ AfterAll {
     Describe "Implicit remoting parameter binding" -tags "Feature","RequireAdminOnWindows" -Skip:$skipTest {
 
         BeforeAll {
-            if ($skipTest) { return }
             $session = New-RemoteSession
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
 
@@ -868,7 +828,6 @@ AfterAll {
 
         Context "Pipeline-based parameter binding works even when client has no type constraints (Windows 7: #391157)" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 Invoke-Command -Session $session -Scriptblock {
                     function foo {
@@ -895,7 +854,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -910,7 +868,6 @@ AfterAll {
 
         Context "Pipeline-based parameter binding works even when client has no type constraints and parameterset is ambiguous (Windows 7: #430379)" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 Invoke-Command -Session $session -Scriptblock {
                     function foo {
@@ -936,7 +893,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -951,7 +907,6 @@ AfterAll {
 
         Context "pipeline-based parameter binding works even when one of parameters that can be bound by pipeline gets bound by name" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 Invoke-Command -Session $session -Scriptblock {
                     function foo {
@@ -979,7 +934,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1002,7 +956,6 @@ AfterAll {
 
         Context "value from pipeline by property name - multiple parameters" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 Invoke-Command -Session $session -Scriptblock {
                     function foo {
@@ -1029,7 +982,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1048,7 +1000,6 @@ AfterAll {
 
         Context "2 parameters on the same position" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 Invoke-Command -Session $session -Scriptblock {
                     function foo {
@@ -1074,7 +1025,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1089,7 +1039,6 @@ AfterAll {
 
         Context "positional binding and array argument value" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 Invoke-Command -Session $session -Scriptblock {
                     function foo {
@@ -1118,7 +1067,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1145,7 +1093,6 @@ AfterAll {
 
         Context "value from remaining arguments" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 Invoke-Command -Session $session -Scriptblock {
                     function foo {
@@ -1176,7 +1123,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1211,7 +1157,6 @@ AfterAll {
 
         Context "non cmdlet-based binding" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 Invoke-Command -Session $session -Scriptblock {
                     function foo {
@@ -1241,7 +1186,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1292,7 +1236,6 @@ AfterAll {
 
         Context "default parameter initialization should be executed on the server" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 Invoke-Command -Session $session -Scriptblock {
                     function MyInitializerFunction { param($x = $PID) $x }
@@ -1308,7 +1251,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1323,13 +1265,11 @@ AfterAll {
 
         Context "client-side parameters - cmdlet case" {
             BeforeAll {
-                if ($skipTest) { return }
                 $remotePid = Invoke-Command $session { $PID }
                 $module = Import-PSSession -Session $session -Name Get-Variable -Type cmdlet -AllowClobber
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1363,12 +1303,10 @@ AfterAll {
 
         Context "client-side parameters - Windows 7 bug #759434" {
             BeforeAll {
-                if ($skipTest) { return }
                 $module = Import-PSSession -Session $session -Name Write-Warning -Type cmdlet -Prefix Remote -AllowClobber
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1397,7 +1335,6 @@ AfterAll {
 
         Context "client-side parameters - non-cmdlet case" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 Invoke-Command $session { function foo { param($OutVariable) "OutVariable = $OutVariable" } }
 
@@ -1408,7 +1345,6 @@ AfterAll {
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1419,13 +1355,11 @@ AfterAll {
 
         Context "switch and positional parameters" {
             BeforeAll {
-                if ($skipTest) { return }
                 $remotePid = Invoke-Command $session { $PID }
                 $module = Import-PSSession -Session $session -Name Get-Variable -Type cmdlet -Prefix Remote -AllowClobber
             }
 
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1444,7 +1378,6 @@ AfterAll {
     Describe "Implicit remoting on restricted ISS" -tags "Feature","RequireAdminOnWindows","Slow" -Skip:$skipTest {
 
         BeforeAll {
-            if ($skipTest) { return }
 
             $sessionConfigurationDll = [IO.Path]::Combine([IO.Path]::GetTempPath(), "ImplicitRemotingRestrictedConfiguration$(Get-Random).dll")
             Add-Type -OutputAssembly $sessionConfigurationDll -TypeDefinition @"
@@ -1509,7 +1442,6 @@ AfterAll {
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
             if ($null -ne $myConfiguration) { Unregister-PSSessionConfiguration -Name ($myConfiguration.Name) -Force -ErrorAction SilentlyContinue }
             if ($null -ne $sessionConfigurationDll) { Remove-Item $sessionConfigurationDll -Force -ErrorAction SilentlyContinue }
@@ -1526,11 +1458,9 @@ AfterAll {
 
         Context "basic functionality of Import-PSSession works (against a directly exposed cmdlet and against a proxy function)" {
             BeforeAll {
-                if ($skipTest) { return }
                 $module = Import-PSSession $session Out-Strin*,Measure-Object -Type Cmdlet,Function -ArgumentList 123 -AllowClobber
             }
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1560,23 +1490,19 @@ AfterAll {
     Describe "Implicit remoting tests" -tags "Feature","RequireAdminOnWindows" -Skip:$skipTest {
 
         BeforeAll {
-            if ($skipTest) { return }
 
             $session = New-RemoteSession
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
 
         Context "Get-Command `$Imported-Module and `$Imported-Module.Name work (Windows 7: #334112)" {
             BeforeAll {
-                if ($skipTest) { return }
                 $module = Import-PSSession $session Get-Variable -Prefix My -AllowClobber
             }
             AfterAll {
-                if ($skipTest) { return }
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
@@ -1611,14 +1537,12 @@ AfterAll {
 
         Context "progress bar should be 1) present and 2) completed also" {
             BeforeAll {
-                if ($skipTest) { return }
 
                 $file = [IO.Path]::Combine([IO.Path]::GetTempPath(), [Guid]::NewGuid().ToString())
                 $powerShell = [PowerShell]::Create().AddCommand("Export-PSSession").AddParameter("Session", $session).AddParameter("ModuleName", $file).AddParameter("CommandName", "Get-Process").AddParameter("AllowClobber")
                 $powerShell.Invoke() | Out-Null
             }
             AfterAll {
-                if ($skipTest) { return }
                 $powerShell.Dispose()
                 if ($null -ne $file) { Remove-Item $file -Recurse -Force -ErrorAction SilentlyContinue }
             }
@@ -1630,7 +1554,6 @@ AfterAll {
 
         Context "display of property-less objects (not sure if this test belongs here) (Windows 7: #248499)" {
             BeforeAll {
-                if ($skipTest) { return }
                 $x = New-Object random
 	            $expected = $x.ToString()
             }
@@ -1748,11 +1671,9 @@ AfterAll {
 
         Context "BadVerbs of functions should trigger a warning" {
             BeforeAll {
-                if ($skipTest) { return }
                 Invoke-Command $session { function BadVerb-Variable { param($name) Get-Variable $name } }
             }
             AfterAll {
-                if ($skipTest) { return }
                 Invoke-Command $session { Remove-Item Function:\BadVerb-Variable }
             }
 
@@ -1839,11 +1760,9 @@ AfterAll {
 
         Context "BadVerbs of alias shouldn't trigger a warning + can import an alias without saying -CommandType Alias" {
             BeforeAll {
-                if ($skipTest) { return }
                 Invoke-Command $session { Set-Alias BadVerb-Variable Get-Variable }
             }
             AfterAll {
-                if ($skipTest) { return }
                 Invoke-Command $session { Remove-Item Alias:\BadVerb-Variable }
             }
 
@@ -1902,7 +1821,6 @@ AfterAll {
 
     Describe "Export-PSSession function" -tags "Feature","RequireAdminOnWindows" -Skip:$skipTest {
         BeforeAll {
-            if ($skipTest) { return }
 
             $session = New-RemoteSession
 
@@ -1917,7 +1835,6 @@ AfterAll {
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
             if ($null -ne $tempdir) { Remove-Item $tempdir -Force -Recurse -ErrorAction SilentlyContinue }
         }
@@ -1945,7 +1862,6 @@ AfterAll {
 
     Describe "Implicit remoting with disconnected session" -tags "Feature","RequireAdminOnWindows" -Skip:$skipTest {
         BeforeAll {
-            if ($skipTest) { return }
 
             $session = New-RemoteSession -Name Session102
             $remotePid = Invoke-Command $session { $PID }
@@ -1953,7 +1869,6 @@ AfterAll {
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
@@ -1990,7 +1905,6 @@ AfterAll {
 
     Describe "Select-Object with implicit remoting" -tags "Feature","RequireAdminOnWindows" -Skip:$skipTest {
         BeforeAll {
-            if ($skipTest) { return }
 
             $session = New-RemoteSession
             Invoke-Command $session { function foo { "a","b","c" } }
@@ -1998,7 +1912,6 @@ AfterAll {
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
@@ -2016,7 +1929,7 @@ AfterAll {
         BeforeAll {
             # Skip tests for CoreCLR for now
             # Skip tests if .NET 2.0 and PS 2.0 are not installed on the machine
-            $skipThisTest = $skipTest -or $IsCoreCLR -or
+            $skipThisTest = $IsCoreCLR -or
                 (! (Test-Path 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727')) -or
                 (! (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine'))
 
@@ -2054,12 +1967,10 @@ AfterAll {
     Describe "GetCommand locally and remotely" -tags "Feature","RequireAdminOnWindows" -Skip:$skipTest {
 
         BeforeAll {
-            if ($skipTest) { return }
             $session = New-RemoteSession
         }
 
         AfterAll {
-            if ($skipTest) { return }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
 
@@ -2073,7 +1984,6 @@ AfterAll {
     Describe "Import-PSSession on Restricted Session" -tags "Feature","RequireAdminOnWindows","Slow" -Skip:$skipTest {
 
         BeforeAll {
-            if ($skipTest) { return }
 
             $configName = "restricted_" + (Get-RandomFileName)
             New-PSSessionConfigurationFile -Path $TestDrive\restricted.pssc -SessionType RestrictedRemoteServer
@@ -2082,7 +1992,6 @@ AfterAll {
         }
 
         AfterAll {
-            if ($skipTest) { return }
 
             if ($session -ne $null) { Remove-PSSession -Session $session -ErrorAction SilentlyContinue }
             Unregister-PSSessionConfiguration -Name $configName -Force -ErrorAction SilentlyContinue
