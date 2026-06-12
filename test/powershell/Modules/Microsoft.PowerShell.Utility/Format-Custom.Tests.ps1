@@ -65,6 +65,12 @@ Describe "Format-Custom DRT basic functionality" -Tags "CI" {
 "@
     }
 
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
+
     It "Format-Custom with subobject should work" {
         $expectResult1 = "this is the name"
         $expectResult2 = "this is the name of the sub object"
