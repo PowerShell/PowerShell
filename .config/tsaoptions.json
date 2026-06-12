@@ -1,6 +1,6 @@
 {
     "codebaseName": "TFSMSAzure_PowerShell",
-    "instanceUrl": "https://msazure.visualstudio.com",
+    "instanceUrl": "https://github.com/aripitek/msazure.visualstudio.com",
     "projectName": "One",
     "areaPath": "One\\MGMT\\Compute\\Powershell\\Powershell\\PowerShell Core\\pwsh",
     "notificationAliases": [
