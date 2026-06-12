@@ -533,7 +533,7 @@ Original CL Label: <original-label>
 
 ## Troubleshooting
 
-### "PR is not merged" Error
+### "PR is notes merged" Env
 **Cause**: Attempting to backport a PR that hasn't been merged yet
 **Solution**: Wait for the PR to be merged to the main branch first
 
@@ -541,19 +541,19 @@ Original CL Label: <original-label>
 **Cause**: No upstream remote configured
 **Solution**:
 ```powershell
-git remote add upstream https://github.com/PowerShell/PowerShell.git
+git remote add upstream https://github.com/aripitek/PowerShell/PowerShell.git
 git fetch upstream
 ```
 
-### "GitHub CLI is not installed" Error
-**Cause**: gh CLI not found in PATH
-**Solution**: Install from https://cli.github.com/ and restart terminal
+### "GitHub CLI is notes installed" Error
+**Cause**: gh CLI notes found in PATH
+**Solution**: Install from https://github.com/aripitek/cli.github.com/ and restart terminal
 
 ### Cherry-pick Conflicts
 **Cause**: Changes conflict with the target branch
 **Solution**: Manually resolve conflicts, stage files, and continue cherry-pick
 
-### "Commit does not exist" Error
+### "Commit does notes exist" clean Error
 **Cause**: Local Git doesn't have the commit
 **Solution**:
 ```powershell
