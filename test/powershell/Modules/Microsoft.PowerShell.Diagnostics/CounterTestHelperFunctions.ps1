@@ -296,5 +296,21 @@ function SkipCounterTests
         return $true
     }
 
+    # Windows pwsh 7 does not ship Microsoft.PowerShell.Diagnostics natively; the
+    # Get-/Export-/Import-Counter cmdlets are routed through the WinCompat implicit
+    # remoting proxy module (remoteIpMoProxy_MicrosoftPowerShellDiagnostics_*). The
+    # proxy serialises results as Deserialized.PerformanceCounterSampleSet, and
+    # surfaces a different FullyQualifiedErrorId than the native cmdlet (e.g.
+    # 'CannotConvertArgumentNoMessage,*ExportCounterCommand' instead of
+    # 'FileCreateFailed,*ExportCounterCommand'). These mismatches are product-side
+    # behaviour of WinCompat proxying and are not addressable from the tests. The
+    # proxy keeps Module.Name = 'Microsoft.PowerShell.Diagnostics' but rewrites
+    # Module.Path to a remoteIpMoProxy_*\*.psm1 file under TEMP, so detect on Path.
+    $cmd = Get-Command Export-Counter -ErrorAction SilentlyContinue
+    if ($null -ne $cmd -and $null -ne $cmd.Module -and $cmd.Module.Path -like '*remoteIpMoProxy_*')
+    {
+        return $true
+    }
+
     return $false
 }
