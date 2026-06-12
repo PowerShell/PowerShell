@@ -491,6 +491,16 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" -Ski
         New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
         # create an incompatible module
         New-EditionCompatibleModule -ModuleName $ModuleName2 -CompatiblePSEditions "Desktop" -Dir $basePath
+
+        # Pester 5: file-scope $script: vars don't survive into runtime - reinitialize here.
+        $system32Path = "$env:windir\system32\WindowsPowerShell\v1.0\Modules"
+        if (Test-Path -PathType Container "$system32Path\PersistentMemory") {
+            $script:desktopModuleToUse = 'PersistentMemory'
+        } elseif (Test-Path -PathType Container "$system32Path\RemoteDesktop") {
+            $script:desktopModuleToUse = 'RemoteDesktop'
+        } else {
+            $script:desktopModuleToUse = $null
+        }
     }
 
     Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
@@ -1439,6 +1449,16 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
         Copy-Item $PSHOME $pwshDir -Recurse -Force
         Move-Item $pwshDir\Modules $moduleDir -Force
         Write-Host "-- Done copying!" -ForegroundColor Yellow
+
+        # Pester 5: file-scope $script: vars don't survive into runtime - reinitialize here.
+        $system32Path = "$env:windir\system32\WindowsPowerShell\v1.0\Modules"
+        if (Test-Path -PathType Container "$system32Path\PersistentMemory") {
+            $script:desktopModuleToUse = 'PersistentMemory'
+        } elseif (Test-Path -PathType Container "$system32Path\RemoteDesktop") {
+            $script:desktopModuleToUse = 'RemoteDesktop'
+        } else {
+            $script:desktopModuleToUse = $null
+        }
     }
 
     AfterAll {
