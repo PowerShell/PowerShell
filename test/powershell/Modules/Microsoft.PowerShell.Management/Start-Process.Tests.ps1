@@ -3,6 +3,12 @@
 
 Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
+    BeforeDiscovery {
+        $isNanoServer = [System.Management.Automation.Platform]::IsNanoServer
+        $isIot = [System.Management.Automation.Platform]::IsIoT
+        $isFullWin = $IsWindows -and !$isNanoServer -and !$isIot
+    }
+
     BeforeAll {
         $isNanoServer = [System.Management.Automation.Platform]::IsNanoServer
         $isIot = [System.Management.Automation.Platform]::IsIoT
