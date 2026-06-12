@@ -4,6 +4,8 @@
 # Module removed due to #4272
 # disabling tests
 
+return
+
 BeforeDiscovery {
     #skip all tests on non-windows platform or when not running as admin
     $isAdmin = $false

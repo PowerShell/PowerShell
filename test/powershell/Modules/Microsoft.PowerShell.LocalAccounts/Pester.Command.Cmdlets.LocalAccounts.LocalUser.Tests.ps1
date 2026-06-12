@@ -7,6 +7,8 @@
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param()
 
+return
+
 BeforeDiscovery {
     #skip all tests on non-windows platform or when not running as admin
     $isAdmin = $false
