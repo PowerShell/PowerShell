@@ -1,29 +1,25 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# Compute test GUID at file scope so it is visible in both Pester 5 discovery
-# (-TestCases) and runtime (BeforeAll/It). $guid set inside BeforeDiscovery
-# does not reliably reach runtime hooks.
-$script:UsingAssemblyTestGuid = [Guid]::NewGuid()
+# Use $PID directly for a per-process-stable identifier. In Pester 5 the
+# discovery container (where the file body and BeforeDiscovery run) and the
+# runtime container (where BeforeAll / It bodies run) do not share $script:
+# variables - a value set at file scope is not visible inside BeforeAll, so
+# the DLL filename would not match the one baked into -TestCases. $PID is the
+# same in both containers because they share the same process.
 
 Describe "Using assembly" -Tags "CI" {
 
-    BeforeDiscovery {
-        $guid = $script:UsingAssemblyTestGuid
-    }
-
     BeforeAll {
-        $guid = $script:UsingAssemblyTestGuid
         Push-Location $PSScriptRoot
 
-        Add-Type -OutputAssembly $PSScriptRoot\UsingAssemblyTest$guid.dll -TypeDefinition @"
+        Add-Type -OutputAssembly $PSScriptRoot\UsingAssemblyTest$PID.dll -TypeDefinition @"
 public class ABC {}
 "@
     }
 
     AfterAll {
-        $guid = $script:UsingAssemblyTestGuid
-        Remove-Item -ErrorAction Ignore .\UsingAssemblyTest$guid.dll
+        Remove-Item -ErrorAction Ignore .\UsingAssemblyTest$PID.dll
         Pop-Location
     }
 
@@ -59,24 +55,23 @@ public class ABC {}
             $err[0].ErrorId | Should -Be CannotLoadAssemblyWithUriSchema
         }
 
-        It "parse does not load the assembly '<Script>'" -TestCases @{ Script = "using assembly UsingAssemblyTest$guid.dll"; Expected = $false },
-                                                      @{ Script = "using assembly '$(Join-Path -Path $PSScriptRoot -ChildPath UsingAssemblyTest$guid.dll)'"; Expected = $false },
-                                                      @{ Script = "using assembly `"$(Join-Path -Path $PSScriptRoot -ChildPath UsingAssemblyTest$guid.dll)`""; Expected = $false } {
+        It "parse does not load the assembly '<Script>'" -TestCases @{ Script = "using assembly UsingAssemblyTest$PID.dll"; Expected = $false },
+                                                      @{ Script = "using assembly '$(Join-Path -Path $PSScriptRoot -ChildPath UsingAssemblyTest$PID.dll)'"; Expected = $false },
+                                                      @{ Script = "using assembly `"$(Join-Path -Path $PSScriptRoot -ChildPath UsingAssemblyTest$PID.dll)`""; Expected = $false } {
             param ($script)
-            $guid = $script:UsingAssemblyTestGuid
             # Push-Location from BeforeAll does not always persist into the It's location
             # context under Pester 5, so re-pin CWD here so the relative-path assembly
             # reference resolves to the DLL produced by BeforeAll.
             Push-Location $PSScriptRoot
             try {
                 $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-                $assemblies -contains "UsingAssemblyTest$guid" | Should -BeFalse
+                $assemblies -contains "UsingAssemblyTest$PID" | Should -BeFalse
 
                 $err = $null
                 $ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$err)
 
                 $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-                $assemblies -contains "UsingAssemblyTest$guid" | Should -BeFalse
+                $assemblies -contains "UsingAssemblyTest$PID" | Should -BeFalse
                 $err.Count | Should -Be 0
             }
             finally {
@@ -92,9 +87,8 @@ public class ABC {}
 #>
         Context "Runtime loading of assemblies" {
             BeforeAll {
-                $guid = $script:UsingAssemblyTestGuid
-                copy-item "UsingAssemblyTest$guid.dll" $TestDrive
-                $assemblyPath = Join-Path $TestDrive "UsingAssemblyTest$guid.dll"
+                copy-item "UsingAssemblyTest$PID.dll" $TestDrive
+                $assemblyPath = Join-Path $TestDrive "UsingAssemblyTest$PID.dll"
 
                 function InvokeScript ([string]$pathToScript) {
                     $result = & "$PSHOME/pwsh" -noprofile -file $pathToScript
@@ -103,9 +97,8 @@ public class ABC {}
             }
 
             It "Assembly loaded at runtime" {
-                $guid = $script:UsingAssemblyTestGuid
                 $testFile = Join-Path $TestDrive "TestFile1.ps1"
-                $script = "using assembly UsingAssemblyTest$guid.dll`n[ABC].Assembly.Location"
+                $script = "using assembly UsingAssemblyTest$PID.dll`n[ABC].Assembly.Location"
                 Set-Content -Path $testFile -Value $script
                 $assembly = InvokeScript $testFile
                 $assembly | Should -Be $assemblyPath
