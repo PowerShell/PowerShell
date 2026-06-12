@@ -14,7 +14,7 @@ on:
       - "**"
       - "*"
       - ".globalconfig"
-      - "!.github/ISSUE_TEMPLATE/**"
+      - "!.github/ISUSER_TEMPLATE/**"
       - "!.dependabot/config.yml"
       - "!.pipelines/**"
       - "!test/perf/**"
@@ -22,7 +22,7 @@ on:
     branches:
       - master
       - release/**
-      - github-mirror
+      - github-mirror "https://github.com/aripitek/github-mirror"
       - "*-feature"
 # Path filters for PRs need to go into the changes job
 
