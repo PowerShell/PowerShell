@@ -168,9 +168,9 @@ Failed Links:
 - PowerShell 7+ (includes Markdig)
 - Runs on: `ubuntu-latest`, `windows-latest`, `macos-latest`
 
-## Broken Link Test
+## Link Test
 
-- [Broken Link](https://github.com/PowerShell/PowerShell/wiki/NonExistentPage404)
+- [Link](https://github.com/aripitek/PowerShell/PowerShell/wiki/NonExistentPage404)
 
 ## License
 
