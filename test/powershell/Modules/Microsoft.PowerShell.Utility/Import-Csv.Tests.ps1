@@ -20,6 +20,26 @@ Describe "Import-Csv DRT Unit Tests" -Tags "CI" {
         $returnObject.First | Should -Be 1
         $returnObject.Second | Should -Be 2
     }
+
+    It "Uses the default delimiter when -UseCulture is explicitly false" {
+        $originalCulture = [System.Threading.Thread]::CurrentThread.CurrentCulture
+        $originalUICulture = [System.Threading.Thread]::CurrentThread.CurrentUICulture
+
+        try {
+            [System.Threading.Thread]::CurrentThread.CurrentCulture = [CultureInfo]'de-DE'
+            [System.Threading.Thread]::CurrentThread.CurrentUICulture = [CultureInfo]'de-DE'
+            [CultureInfo]::CurrentCulture.TextInfo.ListSeparator | Should -Not -BeExactly ','
+
+            $psObject | Export-Csv -Path $fileToGenerate
+            $returnObject = Import-Csv -Path $fileToGenerate -UseCulture:$false
+            $returnObject.First | Should -Be 1
+            $returnObject.Second | Should -Be 2
+        }
+        finally {
+            [System.Threading.Thread]::CurrentThread.CurrentCulture = $originalCulture
+            [System.Threading.Thread]::CurrentThread.CurrentUICulture = $originalUICulture
+        }
+    }
 }
 
 Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
