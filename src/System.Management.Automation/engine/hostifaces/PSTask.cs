@@ -999,7 +999,6 @@ namespace System.Management.Automation.PSTasks
 
         private readonly PSTaskPool _taskPool;
         private readonly object _syncObject = new();
-        private readonly List<PSTaskChildJob> _taskChildJobs = new();
         private bool _isOpen;
         private bool _stopSignaled;
 
@@ -1060,7 +1059,7 @@ namespace System.Management.Automation.PSTasks
             {
                 lock (_syncObject)
                 {
-                    foreach (PSTaskChildJob childJob in _taskChildJobs)
+                    foreach (Job childJob in ChildJobs)
                     {
                         if (childJob.HasMoreData)
                         {
@@ -1126,7 +1125,6 @@ namespace System.Management.Automation.PSTasks
                 }
 
                 ChildJobs.Add(childJob);
-                _taskChildJobs.Add(childJob);
                 return true;
             }
         }
@@ -1141,7 +1139,11 @@ namespace System.Management.Automation.PSTasks
             lock (_syncObject)
             {
                 _isOpen = false;
-                childJobs = _taskChildJobs.ToArray();
+                childJobs = new PSTaskChildJob[ChildJobs.Count];
+                for (int i = 0; i < ChildJobs.Count; i++)
+                {
+                    childJobs[i] = (PSTaskChildJob)ChildJobs[i];
+                }
             }
 
             SetJobState(JobState.Running);
@@ -1179,7 +1181,7 @@ namespace System.Management.Automation.PSTasks
                 JobState finalState = JobState.Completed;
                 lock (_syncObject)
                 {
-                    foreach (PSTaskChildJob childJob in _taskChildJobs)
+                    foreach (Job childJob in ChildJobs)
                     {
                         if (childJob.JobStateInfo.State != JobState.Completed)
                         {
