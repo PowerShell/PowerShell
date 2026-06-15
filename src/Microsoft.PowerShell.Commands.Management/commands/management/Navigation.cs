@@ -3000,8 +3000,24 @@ namespace Microsoft.PowerShell.Commands
                     out destinationProvider,
                     out destinationDrive);
             }
-            catch (Exception e) when (WritePathResolutionError(e))
+            catch (PSNotSupportedException notSupported)
             {
+                WritePathResolutionError(notSupported);
+                return false;
+            }
+            catch (DriveNotFoundException driveNotFound)
+            {
+                WritePathResolutionError(driveNotFound);
+                return false;
+            }
+            catch (ProviderNotFoundException providerNotFound)
+            {
+                WritePathResolutionError(providerNotFound);
+                return false;
+            }
+            catch (ItemNotFoundException pathNotFound)
+            {
+                WritePathResolutionError(pathNotFound);
                 return false;
             }
 
@@ -3246,24 +3262,22 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Command code
 
-        private bool WritePathResolutionError(Exception exception)
+        private void WritePathResolutionError(Exception exception)
         {
             switch (exception)
             {
                 case PSNotSupportedException notSupported:
                     WriteError(new ErrorRecord(notSupported.ErrorRecord, notSupported));
-                    return true;
+                    break;
                 case DriveNotFoundException driveNotFound:
                     WriteError(new ErrorRecord(driveNotFound.ErrorRecord, driveNotFound));
-                    return true;
+                    break;
                 case ProviderNotFoundException providerNotFound:
                     WriteError(new ErrorRecord(providerNotFound.ErrorRecord, providerNotFound));
-                    return true;
+                    break;
                 case ItemNotFoundException pathNotFound:
                     WriteError(new ErrorRecord(pathNotFound.ErrorRecord, pathNotFound));
-                    return true;
-                default:
-                    return false;
+                    break;
             }
         }
 
