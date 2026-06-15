@@ -2936,6 +2936,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private bool _passThrough;
 
+        private bool _destinationContainerCreated;
+
         #endregion Command data
 
         #region Command code
@@ -3243,8 +3245,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         #endregion Command code
-
-        private bool _destinationContainerCreated;
 
         private bool WritePathResolutionError(Exception exception)
         {
