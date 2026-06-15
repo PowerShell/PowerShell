@@ -2998,24 +2998,8 @@ namespace Microsoft.PowerShell.Commands
                     out destinationProvider,
                     out destinationDrive);
             }
-            catch (PSNotSupportedException notSupported)
+            catch (Exception e) when (WritePathResolutionError(e))
             {
-                WriteError(new ErrorRecord(notSupported.ErrorRecord, notSupported));
-                return false;
-            }
-            catch (DriveNotFoundException driveNotFound)
-            {
-                WriteError(new ErrorRecord(driveNotFound.ErrorRecord, driveNotFound));
-                return false;
-            }
-            catch (ProviderNotFoundException providerNotFound)
-            {
-                WriteError(new ErrorRecord(providerNotFound.ErrorRecord, providerNotFound));
-                return false;
-            }
-            catch (ItemNotFoundException pathNotFound)
-            {
-                WriteError(new ErrorRecord(pathNotFound.ErrorRecord, pathNotFound));
                 return false;
             }
 
@@ -3261,6 +3245,27 @@ namespace Microsoft.PowerShell.Commands
         #endregion Command code
 
         private bool _destinationContainerCreated;
+
+        private bool WritePathResolutionError(Exception exception)
+        {
+            switch (exception)
+            {
+                case PSNotSupportedException notSupported:
+                    WriteError(new ErrorRecord(notSupported.ErrorRecord, notSupported));
+                    return true;
+                case DriveNotFoundException driveNotFound:
+                    WriteError(new ErrorRecord(driveNotFound.ErrorRecord, driveNotFound));
+                    return true;
+                case ProviderNotFoundException providerNotFound:
+                    WriteError(new ErrorRecord(providerNotFound.ErrorRecord, providerNotFound));
+                    return true;
+                case ItemNotFoundException pathNotFound:
+                    WriteError(new ErrorRecord(pathNotFound.ErrorRecord, pathNotFound));
+                    return true;
+                default:
+                    return false;
+            }
+        }
 
     }
 
