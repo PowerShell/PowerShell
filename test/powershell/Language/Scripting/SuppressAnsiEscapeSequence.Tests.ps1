@@ -5,20 +5,18 @@ Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI -Skip:(-not $host.ui
     BeforeAll {
         $originalSuppressPref = $env:__SuppressAnsiEscapeSequences
         $originalRendering = $PSStyle.OutputRendering
-        $PSStyle.OutputRendering = 'Ansi'
     }
 
     AfterAll {
-        if ($null -ne $originalRendering) {
-            $env:__SuppressAnsiEscapeSequences = $originalSuppressPref
-            $PSStyle.OutputRendering = $originalRendering
-        }
+        $env:__SuppressAnsiEscapeSequences = $originalSuppressPref
+        $PSStyle.OutputRendering = $originalRendering
     }
 
 
     Context 'Allow Escape Sequences' {
         BeforeAll {
             Remove-Item env:__SuppressAnsiEscapeSequences -ErrorAction Ignore
+            $PSStyle.OutputRendering = 'Ansi'
         }
 
         It 'Select-String emits VT' {

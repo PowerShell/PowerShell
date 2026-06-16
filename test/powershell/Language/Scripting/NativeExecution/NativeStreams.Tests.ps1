@@ -10,6 +10,12 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         # we can create a behavior we want on the fly and test complex scenarios.
 
         BeforeAll {
+            # Out-String renders ErrorRecords differently depending on OutputRendering:
+            # 'Host' produces plain message text, 'Ansi' adds escape codes. Pin to Host
+            # so the test doesn't depend on the process-wide PSStyle state.
+            $savedRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'Host'
+
             $error.Clear()
 
             $command = [string]::Join('', @(
@@ -19,6 +25,10 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
             ))
 
             $out = & $powershell -noprofile -command $command 2>&1
+        }
+
+        AfterAll {
+            $PSStyle.OutputRendering = $savedRendering
         }
 
         # this check should be the first one, because $error is a global shared variable
