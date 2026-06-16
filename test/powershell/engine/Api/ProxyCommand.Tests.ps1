@@ -77,14 +77,7 @@ Describe 'ProxyCommand Tests' -Tags "CI" {
         }
     }
 
-    # Skipped on macOS: when this file runs after many other tests in the shared Pester 5
-    # process, Get-Help Get-Alias on the macOS CI runner emits a description that contains
-    # extra trailing text ("By default, ...") which is not captured by
-    # [ProxyCommand]::GetHelpComments. Likely the same help-format-file/help-cache load-order
-    # regression already documented in test/powershell/engine/Help/HelpSystem.Tests.ps1
-    # (around line 112). The behaviour does not repro when the file is run alone (Pester 4)
-    # and does not occur on Linux or Windows. Tracked under PR 27290.
-    It "Test ProxyCommand.GetHelpComments" -Skip:$IsMacOS {
+    It "Test ProxyCommand.GetHelpComments" {
         $helpObj = Get-Help Get-Alias -Full
         $helpContent = [System.Management.Automation.ProxyCommand]::GetHelpComments($helpObj)
 

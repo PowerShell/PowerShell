@@ -54,11 +54,7 @@ Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI -Skip:(-not $host.ui
         }
     }
 
-    # Linux-only product issue: Out-String of Select-String MatchInfo and ConciseView /
-    # Get-Error formatting paths still emit VT escapes on Linux even when
-    # $env:__SuppressAnsiEscapeSequences is set in this Context's BeforeAll. Skip on
-    # Linux until product-side suppression is consistent across these code paths.
-    Context 'No Escape Sequences' -Skip:$IsLinux {
+    Context 'No Escape Sequences' {
         BeforeAll {
             $env:__SuppressAnsiEscapeSequences = 1
         }
