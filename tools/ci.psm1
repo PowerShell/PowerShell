@@ -633,7 +633,6 @@ function Invoke-CIFinish
                 }
             }
 
-
         }
     } catch {
         Get-Error -InputObject $_

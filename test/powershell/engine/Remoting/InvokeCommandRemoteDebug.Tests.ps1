@@ -4,8 +4,15 @@
 ## PowerShell Invoke-Command -RemoteDebug Tests
 ##
 
-if ($IsWindows) {
-    $global:InvokeCommandRemoteDebug_TypeDef = @'
+$script:skipInvokeRemoteDebug = (-not $IsWindows) -or (Test-IsWindowsArm64) -or (Test-IsWinWow64)
+
+Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOnWindows' -Skip:$script:skipInvokeRemoteDebug {
+
+    BeforeAll {
+
+        $sb = [scriptblock]::Create('"Hello!"')
+
+        Add-Type -TypeDefinition @'
     using System;
     using System.Globalization;
     using System.Management.Automation;
@@ -113,17 +120,6 @@ if ($IsWindows) {
         }
     }
 '@
-}
-
-$script:skipInvokeRemoteDebug = (-not $IsWindows) -or (Test-IsWindowsArm64) -or (Test-IsWinWow64)
-
-Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOnWindows' -Skip:$script:skipInvokeRemoteDebug {
-
-    BeforeAll {
-
-        $sb = [scriptblock]::Create('"Hello!"')
-
-        Add-Type -TypeDefinition $global:InvokeCommandRemoteDebug_TypeDef
 
         $dummyHost = [TestRunner.DummyHost]::new()
         [runspace] $rs = [runspacefactory]::CreateRunspace($dummyHost)
