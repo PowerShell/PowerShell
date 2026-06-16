@@ -632,6 +632,7 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
         if (Test-Path "$configPath/powershell.config.json.backup") {
             Move-Item -Path "$configPath/powershell.config.json.backup"  -Destination "$configPath/powershell.config.json"
         }
+        Remove-Variable -Name DefaultCommandsTestData_CommandString -Scope Global -ErrorAction SilentlyContinue
     }
 
     It "All approved aliases present (no new aliases added, no aliases removed)" {
