@@ -14,31 +14,66 @@ inputs:
     required: false
     default: ctrf
     type: string
+  GITHUB_TOKEN:
+    description: 'GitHub token for API authentication'
+    required: true
 
 runs:
   using: composite
   steps:
   - name: Capture Environment
     if: success() || failure()
-    run: 'Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose'
-    shell: pwsh
-  - name: Download Build Artifacts
-    uses: actions/download-artifact@v4
-    with:
-      path: "${{ github.workspace }}"
-  - name: Capture Artifacts Directory
-    continue-on-error: true
-    run: Get-ChildItem "${{ github.workspace }}\build\*" -Recurse
+    run: |-
+      Import-Module ./tools/ci.psm1
+      Show-Environment
     shell: pwsh
 
-  - uses: actions/setup-dotnet@v4
+  - name: Download Build Artifacts
+    uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+    with:
+      path: "${{ github.workspace }}"
+
+  - name: Capture Artifacts Directory
+    continue-on-error: true
+    run: |-
+      Import-Module ./build.psm1
+      Write-LogGroupStart -Title 'Artifacts Directory'
+      Get-ChildItem "${{ github.workspace }}/build/*" -Recurse
+      Write-LogGroupEnd -Title 'Artifacts Directory'
+    shell: pwsh
+
+  - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
     with:
       global-json-file: .\global.json
+
+  - name: Get Latest DSC Package Version
+    shell: pwsh
+    run: |-
+      Import-Module .\.github\workflows\GHWorkflowHelper\GHWorkflowHelper.psm1
+      $headers = @{
+        Authorization = "Bearer ${{ inputs.GITHUB_TOKEN }}"
+      }
+      $releases = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/Dsc/releases" -Headers $headers
+      $latestRelease = $releases | Where-Object { $v = $_.name.trim("v"); $semVer = [System.Management.Automation.SemanticVersion]::new($v); if ($semVer.Major -eq 3 -and $semVer.Minor -ge 2) { $_ } } | Select-Object -First 1
+      $latestVersion = $latestRelease.tag_name.TrimStart("v")
+      Write-Host "Latest DSC Version: $latestVersion"
+
+      $downloadUrl = $latestRelease.assets | Where-Object { $_.name -like "DSC-*-x86_64-pc-windows-msvc.zip" } | Select-Object -First 1 | Select-Object -ExpandProperty browser_download_url
+      Write-Host "Download URL: $downloadUrl"
+      $tempPath = Get-GWTempPath
+      Invoke-RestMethod -Uri $downloadUrl -OutFile "$tempPath\DSC.zip" -Headers $headers
+
+      $null = New-Item -ItemType Directory -Path "$tempPath\DSC" -Force
+      Expand-Archive -Path "$tempPath\DSC.zip" -DestinationPath "$tempPath\DSC" -Force
+      $dscRoot = "$tempPath\DSC"
+      Write-Host "DSC Root: $dscRoot"
+      Set-GWVariable -Name "DSC_ROOT" -Value $dscRoot
 
   - name: Bootstrap
     shell: powershell
     run: |-
-      # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
+      Import-Module ./build.psm1
+      Write-LogGroupStart -Title 'Bootstrap'
       Write-Host "Old Path:"
       Write-Host $env:Path
       $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
@@ -49,6 +84,7 @@ runs:
       # Bootstrap
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall
+      Write-LogGroupEnd -Title 'Bootstrap'
 
   - name: Test
     if: success()
@@ -60,7 +96,7 @@ runs:
       $path = split-path -path $options.Output
       $rootPath = split-Path -path $path
       Expand-Archive -Path '${{ github.workspace }}\build\build.zip' -DestinationPath $rootPath -Force
-      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat JUnitXml
+      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat NUnitXml
     shell: pwsh
 
   - name: Convert, Publish, and Upload Pester Test Results

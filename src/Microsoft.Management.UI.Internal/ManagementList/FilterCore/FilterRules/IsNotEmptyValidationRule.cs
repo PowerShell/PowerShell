@@ -9,7 +9,6 @@ namespace Microsoft.Management.UI.Internal
     /// The IsNotEmptyValidationRule checks a value to see if a value is not empty.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class IsNotEmptyValidationRule : DataErrorInfoValidationRule
     {
         #region Properties
@@ -49,6 +48,14 @@ namespace Microsoft.Management.UI.Internal
             {
                 return DataErrorInfoValidationResult.ValidResult;
             }
+        }
+
+        /// <inheritdoc cref="IDeepCloneable.DeepClone()" />
+        public override object DeepClone()
+        {
+            // Instance is stateless.
+            // return this;
+            return new IsNotEmptyValidationRule();
         }
 
         #endregion Public Methods

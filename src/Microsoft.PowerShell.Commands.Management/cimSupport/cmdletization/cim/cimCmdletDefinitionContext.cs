@@ -10,7 +10,7 @@ using Microsoft.Management.Infrastructure.Options;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
-    internal class CimCmdletDefinitionContext
+    internal sealed class CimCmdletDefinitionContext
     {
         internal CimCmdletDefinitionContext(
             string cmdletizationClassName,

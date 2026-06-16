@@ -297,7 +297,7 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ParameterBindingException(
             SerializationInfo info,
             StreamingContext context)
@@ -486,7 +486,7 @@ namespace System.Management.Automation
 
         #endregion Private
     }
-    
+
     internal class ParameterBindingValidationException : ParameterBindingException
     {
         #region Preferred constructors
@@ -654,7 +654,7 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ParameterBindingValidationException(
             SerializationInfo info,
             StreamingContext context)
@@ -844,7 +844,7 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ParameterBindingArgumentTransformationException(
             SerializationInfo info,
             StreamingContext context)
@@ -854,7 +854,7 @@ namespace System.Management.Automation
 
         #endregion serialization
     }
-    
+
     internal class ParameterBindingParameterDefaultValueException : ParameterBindingException
     {
         #region Preferred constructors
@@ -1018,7 +1018,7 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ParameterBindingParameterDefaultValueException(
             SerializationInfo info,
             StreamingContext context)

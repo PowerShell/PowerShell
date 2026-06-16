@@ -163,7 +163,7 @@
       however that is used for ApplicationFailedExceptions thrown when the NativeCommandProcessor fails in an unexpected way.
       In this case, we have a more specific error for the native command scenario, so the two are not conflated.
     -->
-    <value>Program "{0}" ended with non-zero exit code: {1}.</value>
+    <value>Program "{0}" ended with non-zero exit code: {1} ({2}).</value>
   </data>
   <data name="ShouldProcessMessage" xml:space="preserve">
     <value>Performing the operation "{0}" on target "{1}".</value>

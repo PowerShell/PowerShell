@@ -21,6 +21,12 @@
     <PackageReference Include="Xunit.SkippableFact" Version="1.3.6" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.3" NoWarn="NU1605" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.10.3" NoWarn="NU1605" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.3" NoWarn="NU1605" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.3" NoWarn="NU1605" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.10.3" NoWarn="NU1605" />
+    <PackageReference Include="System.Private.ServiceModel" Version="4.10.3" NoWarn="NU1605" />
   </ItemGroup>
 
 </Project>

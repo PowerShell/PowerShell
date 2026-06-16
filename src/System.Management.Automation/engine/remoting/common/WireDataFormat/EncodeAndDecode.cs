@@ -76,10 +76,11 @@ namespace System.Management.Automation
     {
         internal static readonly Version HostVersion = PSVersionInfo.PSVersion;
 
-        internal static readonly Version ProtocolVersionWin7RC = new Version(2, 0);
-        internal static readonly Version ProtocolVersionWin7RTM = new Version(2, 1);
-        internal static readonly Version ProtocolVersionWin8RTM = new Version(2, 2);
-        internal static readonly Version ProtocolVersionWin10RTM = new Version(2, 3);
+        internal static readonly Version ProtocolVersion_2_0 = new(2, 0); // Window 7 RC
+        internal static readonly Version ProtocolVersion_2_1 = new(2, 1); // Window 7 RTM
+        internal static readonly Version ProtocolVersion_2_2 = new(2, 2); // Window 8 RTM
+        internal static readonly Version ProtocolVersion_2_3 = new(2, 3); // Window 10 RTM
+        internal static readonly Version ProtocolVersion_2_4 = new(2, 4); // PowerShell 7.6
 
         // Minor will be incremented for each change in PSRP client/server stack and new versions will be
         // forked on early major release/drop changes history.
@@ -87,7 +88,15 @@ namespace System.Management.Automation
         //      2.102 to 2.103 - Key exchange protocol changes in M3
         //      2.103 to 2.2   - Final ship protocol version value, no change to protocol
         //      2.2 to 2.3     - Enabling informational stream
-        internal static readonly Version ProtocolVersionCurrent = new Version(2, 3);
+        //      2.3 to 2.4     - Deprecate the 'Session_Key' exchange. The following messages are obsolete when both server and client are v2.4+:
+        //                        - PUBLIC_KEY
+        //                        - PUBLIC_KEY_REQUEST
+        //                        - ENCRYPTED_SESSION_KEY
+        //                       The padding algorithm 'RSAEncryptionPadding.Pkcs1' used in the 'Session_Key' exchange is NOT secure, and therefore,
+        //                       PSRP needs to be used on top of a secure transport and the 'Session_Key' doesn't add any extra security.
+        //                       So, we decided to deprecate the 'Session_Key' exchange in PSRP and skip encryption and decryption for 'SecureString'
+        //                       objects. Instead, we require the transport to be secure for secure data transfer between PSRP clients and servers.
+        internal static readonly Version ProtocolVersionCurrent = new(2, 4);
         internal static readonly Version ProtocolVersion = ProtocolVersionCurrent;
         // Used by remoting commands to add remoting specific note properties.
         internal static readonly string ComputerNameNoteProperty = "PSComputerName";
@@ -1860,7 +1869,7 @@ namespace System.Management.Automation
         /// <returns>PSInvocationInfo.</returns>
         internal static PSInvocationStateInfo GetPowerShellStateInfo(object data)
         {
-            if (!(data is PSObject dataAsPSObject))
+            if (data is not PSObject dataAsPSObject)
             {
                 throw new PSRemotingDataStructureException(
                     RemotingErrorIdStrings.DecodingErrorForPowerShellStateInfo);
@@ -2128,7 +2137,7 @@ namespace System.Management.Automation
         /// <returns>RemoteSessionCapability object.</returns>
         internal static RemoteSessionCapability GetSessionCapability(object data)
         {
-            if (!(data is PSObject dataAsPSObject))
+            if (data is not PSObject dataAsPSObject)
             {
                 throw new PSRemotingDataStructureException(
                     RemotingErrorIdStrings.CantCastRemotingDataToPSObject, data.GetType().FullName);
@@ -2158,7 +2167,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            return (runspace.GetRemoteProtocolVersion() >= RemotingConstants.ProtocolVersionWin8RTM);
+            return (runspace.GetRemoteProtocolVersion() >= RemotingConstants.ProtocolVersion_2_2);
         }
     }
 }

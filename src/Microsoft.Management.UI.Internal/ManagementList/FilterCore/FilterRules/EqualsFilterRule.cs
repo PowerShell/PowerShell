@@ -14,15 +14,23 @@ namespace Microsoft.Management.UI.Internal
     /// The generic parameter.
     /// </typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class EqualsFilterRule<T> : SingleValueComparableValueFilterRule<T> where T : IComparable
     {
         /// <summary>
-        /// Initializes a new instance of the EqualsFilterRule class.
+        /// Initializes a new instance of the <see cref="EqualsFilterRule{T}"/> class.
         /// </summary>
         public EqualsFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_Equals;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EqualsFilterRule{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public EqualsFilterRule(EqualsFilterRule<T> source)
+            : base(source)
+        {
         }
 
         /// <summary>

@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="script">The string to compile.</param>
         public static ScriptBlock Create(string script) => Create(
-            parser: new Language.Parser(),
+            parser: new Parser(),
             fileName: null,
             fileContents: script);
 

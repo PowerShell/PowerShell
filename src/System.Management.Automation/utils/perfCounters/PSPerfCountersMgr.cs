@@ -162,7 +162,6 @@ namespace System.Management.Automation.PerformanceData
         /// by 'stepAmount'.
         /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public bool UpdateCounterByValue(
             Guid counterSetId,
             int counterId,
@@ -193,7 +192,6 @@ namespace System.Management.Automation.PerformanceData
         /// by 'stepAmount'.
         /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public bool UpdateCounterByValue(
             Guid counterSetId,
             string counterName,
@@ -224,7 +222,6 @@ namespace System.Management.Automation.PerformanceData
         /// by 'stepAmount'.
         /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public bool UpdateCounterByValue(
             string counterSetName,
             int counterId,
@@ -264,7 +261,6 @@ namespace System.Management.Automation.PerformanceData
         /// by 'stepAmount'.
         /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public bool UpdateCounterByValue(
             string counterSetName,
             string counterName,
@@ -303,7 +299,6 @@ namespace System.Management.Automation.PerformanceData
         /// to 'counterValue'.
         /// Otherwise, updates the denominator component to 'counterValue'.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public bool SetCounterValue(
             Guid counterSetId,
             int counterId,
@@ -334,7 +329,6 @@ namespace System.Management.Automation.PerformanceData
         /// to 'counterValue'.
         /// Otherwise, updates the denominator component to 'counterValue'.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public bool SetCounterValue(
             Guid counterSetId,
             string counterName,
@@ -365,7 +359,6 @@ namespace System.Management.Automation.PerformanceData
         /// to 'counterValue'.
         /// Otherwise, updates the denominator component to 'counterValue'.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public bool SetCounterValue(
             string counterSetName,
             int counterId,
@@ -404,7 +397,6 @@ namespace System.Management.Automation.PerformanceData
         /// to 'counterValue'.
         /// Otherwise, updates the denominator component to 'counterValue'.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public bool SetCounterValue(
             string counterSetName,
             string counterName,

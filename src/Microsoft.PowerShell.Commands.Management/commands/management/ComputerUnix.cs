@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Run shutdown command.
         /// </summary>
-        protected void RunShutdown(String args)
+        protected void RunShutdown(string args)
         {
             if (shutdownPath is null)
             {

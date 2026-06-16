@@ -3,13 +3,15 @@
   <Import Project="..\..\..\Test.Common.props" />
 
   <PropertyGroup>
+    <!-- Suppress language folders -->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+
     <!-- Disable PDB generation -->
     <DebugSymbols>false</DebugSymbols>
     <DebugType>None</DebugType>
 
     <!-- Disable deps.json generation -->
     <GenerateDependencyFile>false</GenerateDependencyFile>
-    <NoWarn>NU1901;NU1902;NU1903;NU1904</NoWarn>
 
     <!-- Deploy the produced assembly -->
     <PublishDir>..\..\Modules\IsolatedModule\Dependencies</PublishDir>
@@ -17,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.1" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0" />
   </ItemGroup>
 
 </Project>

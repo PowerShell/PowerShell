@@ -48,7 +48,7 @@ Describe 'Native command error handling tests' -Tags 'CI' {
 
             $error[0].FullyQualifiedErrorId | Should -BeExactly 'ProgramExitedWithNonZeroCode'
             $error[0].TargetObject | Should -BeExactly $exePath
-            $stderr[1].Exception.Message | Should -BeExactly "Program `"$exeName`" ended with non-zero exit code: 1."
+            $stderr[1].Exception.Message | Should -BeExactly ("Program `"$exeName`" ended with non-zero exit code: 1 ({0})." -f ($IsWindows ? '0x00000001' : '0x01'))
         }
 
         It "Non-boolean value should not cause type casting error when the native command exited with non-zero code" {
@@ -61,7 +61,7 @@ Describe 'Native command error handling tests' -Tags 'CI' {
 
             $error[0].FullyQualifiedErrorId | Should -BeExactly 'ProgramExitedWithNonZeroCode'
             $error[0].TargetObject | Should -BeExactly $exePath
-            $stderr[1].Exception.Message | Should -BeExactly "Program `"$exeName`" ended with non-zero exit code: 1."
+            $stderr[1].Exception.Message | Should -BeExactly ("Program `"$exeName`" ended with non-zero exit code: 1 ({0})." -f ($IsWindows ? '0x00000001' : '0x01'))
         }
 
         It 'Non-zero exit code generates a non-teminating error for $ErrorActionPreference = ''SilentlyContinue''' {

@@ -1385,6 +1385,7 @@ namespace System.Management.Automation
             {
                 try
                 {
+                    // codeql[cs/dll-injection-remote] - The dll is loaded during the initial state setup, which is expected behavior. This allows users hosting PowerShell to load additional C# types to enable their specific scenarios.
                     loadedAssembly = Assembly.LoadFrom(filePath);
                     return loadedAssembly;
                 }

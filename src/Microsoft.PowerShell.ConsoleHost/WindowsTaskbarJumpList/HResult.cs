@@ -4,18 +4,18 @@
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// HRESULT Wrapper    
-    /// </summary>    
+    /// HRESULT Wrapper
+    /// </summary>
     internal enum HResult
     {
-        /// <summary>     
-        /// S_OK          
-        /// </summary>    
+        /// <summary>
+        /// S_OK
+        /// </summary>
         Ok = 0x0000,
 
         /// <summary>
         /// S_FALSE.
-        /// </summary>        
+        /// </summary>
         False = 0x0001,
 
         /// <summary>
