@@ -51,15 +51,11 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
             $out[8].Exception.Message | Should -BeExactly 'baz'
         }
 
-        # Linux-only product issue: Out-String of native stderr ErrorRecord stream now
-        # renders with a trailing newline that differs from the literal expectation,
-        # and `2>&1 > file` truncates / splits very long lines on Linux. Both are real
-        # behavioural regressions that need a product fix; skip on Linux for now.
-        It 'preserves error stream as is with Out-String' -Skip:$IsLinux {
+        It 'preserves error stream as is with Out-String' {
             ($out | Out-String).Replace("`r", '') | Should -BeExactly "foo`n`nbar`n`nbazmiddlefoo`n`nbar`n`nbaz`n"
         }
 
-        It 'Does not get truncated or split when redirected' -Skip:$IsLinux {
+        It 'Does not get truncated or split when redirected' {
             if (Test-IsWindowsArm64) {
                 Set-ItResult -Pending -Because "IOException: The handle is invalid."
             }
