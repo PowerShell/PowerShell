@@ -61,7 +61,7 @@ Describe "PSVersionTable" -Tags "CI" {
 
     It "GitCommitId property" {
        $PSVersionTable.GitCommitId | Should -BeOfType System.String
-       $expectedGitCommitIds.Contains($PSVersionTable.GitCommitId) | Should -BeTrue
+       $PSVersionTable.GitCommitId | Should -BeIn $expectedGitCommitIds
     }
 
     It "GitCommitId property accepts tag builds with zero commits" {
