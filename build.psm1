@@ -3003,11 +3003,6 @@ function Start-PSBootstrap {
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
             }
-            if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
-                Import-Module "$PSScriptRoot\tools\wix\wix.psm1"
-                $isArm64 = "$env:RUNTIME" -eq 'arm64'
-                Install-Wix -arm64:$isArm64
-            }
             Write-LogGroupEnd -Title "Install Windows Dependencies"
         }
 
