@@ -80,11 +80,12 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
             while ($longtext.Length -lt [console]::WindowWidth) {
                 $longtext += $longtext
             }
-            # Capture stderr via 2> (direct file redirection) to avoid the
-            # PowerShell formatter which can corrupt ErrorRecord output in a
-            # shared Pester 5 process.
-            & $powershell -c "& { [Console]::Error.WriteLine('$longtext') }" 2> $testdrive\error.txt
-            $e = Get-Content -Path $testdrive\error.txt
+            # Use Start-Process to capture stderr without going through
+            # PowerShell's ErrorRecord formatting pipeline, which can produce
+            # expanded error views in a shared Pester 5 process.
+            $errFile = Join-Path $testdrive 'error.txt'
+            Start-Process -FilePath $powershell -ArgumentList '-noprofile','-c',"& { [Console]::Error.WriteLine('$longtext') }" -RedirectStandardError $errFile -NoNewWindow -Wait
+            $e = Get-Content -Path $errFile
             $e.Count | Should -Be 1
             $e | Should -BeExactly $longtext
         }
