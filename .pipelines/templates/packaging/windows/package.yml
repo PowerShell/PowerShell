@@ -161,9 +161,9 @@ jobs:
       }
 
       $packageTypes = switch ($runtime) {
-        'x64' { @('msi', 'zip', 'msix') }
-        'x86' { @('msi', 'zip', 'msix') }
-        'arm64' { @('msi', 'zip', 'msix') }
+        'x64' { @('zip', 'msix') }
+        'x86' { @('zip', 'msix') }
+        'arm64' { @('zip', 'msix') }
         'fxdependent' { 'fxdependent' }
         'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
         'minsize' { 'min-size' }
@@ -193,9 +193,9 @@ jobs:
       Write-Verbose -Verbose "runtime = '$(Runtime)'"
 
       $packageTypes = switch ($runtime) {
-        'x64' { @('msi', 'zip', 'msix') }
-        'x86' { @('msi', 'zip', 'msix') }
-        'arm64' { @('msi', 'zip', 'msix') }
+        'x64' { @('zip', 'msix') }
+        'x86' { @('zip', 'msix') }
+        'arm64' { @('zip', 'msix') }
         'fxdependent' { 'fxdependent' }
         'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
         'minsize' { 'min-size' }
@@ -203,13 +203,6 @@ jobs:
 
       if (-not (Test-Path $(ob_outputDirectory))) {
         New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
-      }
-
-      if ($packageTypes -contains 'msi') {
-        $msiPkgNameFilter = "powershell-*.msi"
-        $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-        Write-Verbose -Verbose "unsigned msiPkgPath: $msiPkgPath"
-        Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
       }
 
       if ($packageTypes -contains 'zip' -or $packageTypes -contains 'fxdependent' -or $packageTypes -contains 'min-size' -or $packageTypes -contains 'fxdependent-win-desktop') {
