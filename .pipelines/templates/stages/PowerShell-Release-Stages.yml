@@ -102,13 +102,6 @@ stages:
   jobs:
   - template: /.pipelines/templates/approvalJob.yml@self
     parameters:
-      displayName: Validate Windows Packages
-      jobName: ValidateWinPkg
-      instructions: |
-        Validate zip package on windows
-
-  - template: /.pipelines/templates/approvalJob.yml@self
-    parameters:
       displayName: Validate OSX Packages
       jobName: ValidateOsxPkg
       instructions: |
