@@ -19,6 +19,10 @@ Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI -Skip:(-not $host.ui
             $PSStyle.OutputRendering = 'Ansi'
         }
 
+        AfterAll {
+            $PSStyle.OutputRendering = $originalRendering
+        }
+
         It 'Select-String emits VT' {
             "select this string" | Select-String 'this' | Out-String | Should -BeLikeExactly "*`e*"
         }
