@@ -14,10 +14,48 @@ namespace Microsoft.PowerShell.Commands
     public class NewTemporaryDirectoryCommand : Cmdlet
     {
         /// <summary>
+        /// Gets or sets an optional prefix for the temporary directory name.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string Prefix { get; set; }
+
+        /// <summary>
         /// Returns a temporary directory.
         /// </summary>
         protected override void EndProcessing()
         {
+            if (!string.IsNullOrEmpty(Prefix))
+            {
+                string targetDescription = Path.Combine(Path.GetTempPath(), Prefix);
+                if (ShouldProcess(targetDescription))
+                {
+                    try
+                    {
+                        DirectoryInfo createdDirectory = Directory.CreateTempSubdirectory(Prefix);
+                        WriteObject(createdDirectory);
+                    }
+                    catch (IOException ioException)
+                    {
+                        ThrowTerminatingError(
+                            CreateErrorRecord(
+                                ioException,
+                                ErrorCategory.WriteError,
+                                targetDescription));
+                    }
+                    catch (System.UnauthorizedAccessException unauthorizedAccessException)
+                    {
+                        ThrowTerminatingError(
+                            CreateErrorRecord(
+                                unauthorizedAccessException,
+                                ErrorCategory.PermissionDenied,
+                                targetDescription));
+                    }
+                }
+
+                return;
+            }
+
             DirectoryInfo targetDirectory = PathUtils.GetTemporaryDirectory();
             if (ShouldProcess(targetDirectory.FullName))
             {
