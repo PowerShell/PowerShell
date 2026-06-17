@@ -528,17 +528,13 @@ $script:commandList = $commandString | ConvertFrom-Csv -Delimiter ","
 $script:commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
 $script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias" }
 
-# Bridge file-scope data into runtime BeforeAll/It scope (which cannot see file
-# $script: vars in Pester 5). Global is visible across both. Use a unique name
-# to avoid collisions if multiple test files do the same.
-$global:DefaultCommandsTestData_CommandString = $commandString
-
-Describe "Verify aliases and cmdlets" -Tags "CI" {
+Describe "Verify aliases and cmdlets" -Tags "CI" -ForEach @(@{ commandString = $commandString }) {
     BeforeAll {
         # Rebind script-scope test data because file-scope $script: variables
         # are NOT visible inside Pester 5 BeforeAll/It runtime blocks on all platforms.
         # Same goes for file-scope functions like ConvertTo-Hashtable -- redefine it
         # here so the pipeline below resolves at runtime.
+        # The $commandString variable is passed in via -ForEach on the Describe.
         function ConvertTo-Hashtable {
             [CmdletBinding()]
             param ([Parameter(ValueFromPipeline=$true)][psobject]$o)
@@ -552,7 +548,7 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
             }
         }
 
-        $script:commandList = $global:DefaultCommandsTestData_CommandString | ConvertFrom-Csv -Delimiter ","
+        $script:commandList = $commandString | ConvertFrom-Csv -Delimiter ","
         $script:commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
         $script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias" }
 
@@ -632,7 +628,6 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
         if (Test-Path "$configPath/powershell.config.json.backup") {
             Move-Item -Path "$configPath/powershell.config.json.backup"  -Destination "$configPath/powershell.config.json"
         }
-        Remove-Variable -Name DefaultCommandsTestData_CommandString -Scope Global -ErrorAction SilentlyContinue
     }
 
     It "All approved aliases present (no new aliases added, no aliases removed)" {
