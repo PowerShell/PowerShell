@@ -6,6 +6,7 @@ on:
       - master
       - release/**
       - github-mirror
+      - "servicing-*"
     paths:
       - "**"
       - "*"
@@ -20,6 +21,7 @@ on:
       - master
       - release/**
       - github-mirror
+      - "servicing-*"
       - "*-feature"
 
 # Path filters for PRs need to go into the changes job
