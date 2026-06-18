@@ -17,7 +17,7 @@ jobs:
   variables:
   - template: ./variables/release-shared.yml@self
     parameters:
-      VERSION: $[ stageDependencies.setReleaseTagAndChangelog.SetTagAndChangelog.outputs['OutputVersion.Version'] ]
+      VERSION: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputVersion.Version'] ]
 
   steps:
   - task: PowerShell@2
