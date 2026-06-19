@@ -1,5 +1,88 @@
 # Preview Changelog
 
+## [7.7.0-preview.2]
+
+### Engine Updates and Fixes
+
+- Update `MaxVisitCount` and `MaxHashtableKeyCount` if `VisitorSafeValueContext` indicates `SkipLimitCheck` is true (#27306)
+- Enable usage in AppContainers (#27266)
+
+### General Cmdlet Updates and Fixes
+
+- Handle empty-string and null-value results returned from custom argument completer more properly (#27398)
+- Add missing resource strings for `Get-WinEvent` (#27397) (Thanks @MartinGC94!)
+- Improve `Get-WinEvent -ListLog` exception handling (#27395) (Thanks @MartinGC94!)
+- Update PowerShell telemetry to respect the diagnostics and feedback setting on Windows (#27328)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Remove eager initialization of <code>_startupScripts</code> to enable lazy thread-safe initialization (#25767) (Thanks @xtqqczze!)</li>
+<li>Fix <code>IDE0049</code> in <code>System.Management.Automation</code> [Part 4] (#27380) (Thanks @xtqqczze!)</li>
+<li>Fix <code>IDE0049</code> in <code>System.Management.Automation</code> [Part 3] (#27379) (Thanks @xtqqczze!)</li>
+<li>Fix <code>IDE0049</code> in <code>System.Management.Automation</code> [Part 2] (#27378) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Add an instruction file to ensure the Copyright header is present at the start of script and module files (#27408)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>Update to .NET SDK 11.0.100-preview.4</p>
+
+</summary>
+
+<ul>
+<li>Update branch to use the .NET 11 SDK 11.0.100-preview.4 (#27504)</li>
+<li>Update <code>metadata.json</code> for the servicing releases (#27488)</li>
+<li>Update CHANGELOG for v7.4.16, v7.5.7, and v7.6.2 releases (#27494)</li>
+<li>Remove unused step that clones <code>Internal-PowerShellTeam-Tools</code> repo in PMC publish pipeline (#27495)</li>
+<li>Update Microsoft.PowerShell.PSResourceGet version to 1.3.0-preview1 (#27487)</li>
+<li>Verify Apple codesign immediately after ESRP signing (#27486) (Thanks @andyleejordan!)</li>
+<li>Add <code>appLicensing</code> capability to Appx manifest to allow it to run without acquiring a Store license (#27412)</li>
+<li>Bump actions/dependency-review-action from 4.9.0 to 5.0.0 (#27411)</li>
+<li>Bump github/codeql-action from 4.35.3 to 4.35.4 (#27404)</li>
+<li>Specify <code>linux-arm64</code> runtime if package type is <code>deb-arm64</code> in <code>packaging.psm1</code> (#27401)</li>
+<li>Bump github/codeql-action from 4.35.1 to 4.35.3 (#27394)</li>
+<li>Update <code>Microsoft.PowerShell.Native</code> to the latest GA version (#27400)</li>
+<li>Update the <code>MSIXBundle-VPack</code> pipeline to create VPack for both LTS and Stable channel packages (#27384)</li>
+<li>Create PowerShell package for arm debian distribution (#26925)</li>
+<li>Merge release/v7.7.0-preview.1 into master (#27374)</li>
+<li>Update <code>metadata.json</code> for the new servicing and preview releases (#27307)</li>
+<li>Fix changelog grab failure when only one header exists. (#27371)</li>
+<li>Remove mariner2.0 from PMC mapping (#27068)</li>
+<li>Download PMC Packages through <code>TemplateContext</code> (#27326)</li>
+<li>Correct Variable Template Reference in NonOfficial Pipeline Templates (#27275)</li>
+<li>PMC release: Use slash instead of back-slash for Linux container (#27315)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update `README.md` to call out `PowerShell.Core.Instrumentation` needs to be in sync between `PowerShell` and `PowerShell-Native` repos (#27399)
+- Update changelog for the v7.5.6 release (#27320)
+- Update CHANGELOG for v7.4.15 (#27314)
+- Update Changelog for release v7.6.1 (#27304)
+
+[7.7.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.7.0-preview.1...v7.7.0-preview.2
+
 ## [7.7.0-preview.1]
 
 ### Breaking Changes
