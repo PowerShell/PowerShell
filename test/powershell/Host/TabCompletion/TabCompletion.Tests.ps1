@@ -3893,6 +3893,10 @@ function MyFunction ($param1, $param2)
             }
         }
 
+        AfterAll {
+            Remove-Item function:BrokenFunctionTest -ErrorAction SilentlyContinue
+        }
+
         It 'Should complete parameters of a function with missing types' {
             $res = TabExpansion2 -inputScript @'
 function BrokenFunctionTest
@@ -3908,7 +3912,7 @@ function BrokenFunctionTest
 
 BrokenFunctionTest -Param
 '@
-            $res.CompletionMatches[0].CompletionText | Should -Be '-Param1'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Param1'
         }
 
         It 'Should complete output members from a function with missing types' {
@@ -3926,7 +3930,7 @@ function BrokenFunctionTest
 
 (BrokenFunctionTest).Lengt
 '@
-            $res.CompletionMatches[0].CompletionText | Should -Be 'Length'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Length'
         }
     }
 }
