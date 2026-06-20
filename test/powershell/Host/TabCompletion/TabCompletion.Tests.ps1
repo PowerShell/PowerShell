@@ -3877,6 +3877,58 @@ function MyFunction ($param1, $param2)
         $res = TabExpansion2 -inputScript $Text -cursorColumn ($Text.Length - 1)
         $res.CompletionMatches | Should -HaveCount 0
     }
+
+    Context "Tab completion with broken function definition" {
+        BeforeAll {
+            # First define and load a working version of the function
+            function BrokenFunctionTest
+            {
+                [OutputType([string])]
+                param
+                (
+                    [Parameter()]
+                    [string]
+                    $Param1
+                )
+            }
+        }
+
+        It 'Should complete parameters of a function with missing types' {
+            $res = TabExpansion2 -inputScript @'
+function BrokenFunctionTest
+{
+    [OutputType([THISTYPEDOESNOTEXIST])]
+    param
+    (
+        [Parameter()]
+        [THISTYPEDOESNOTEXIST]
+        $Param1
+    )
+}
+
+BrokenFunctionTest -Param
+'@
+            $res.CompletionMatches[0].CompletionText | Should -Be '-Param1'
+        }
+
+        It 'Should complete output members from a function with missing types' {
+            $res = TabExpansion2 -inputScript @'
+function BrokenFunctionTest
+{
+    [OutputType([THISTYPEDOESNOTEXIST])]
+    param
+    (
+        [Parameter()]
+        [THISTYPEDOESNOTEXIST]
+        $Param1
+    )
+}
+
+(BrokenFunctionTest).Lengt
+'@
+            $res.CompletionMatches[0].CompletionText | Should -Be 'Length'
+        }
+    }
 }
 
 Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows {
