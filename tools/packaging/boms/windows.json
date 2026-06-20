@@ -4617,11 +4617,6 @@
     "Architecture": null
   },
   {
-    "Pattern": "RegisterMicrosoftUpdate.ps1",
-    "FileType": "Product",
-    "Architecture": null
-  },
-  {
     "Pattern": "System.Management.Automation.dll",
     "FileType": "Product",
     "Architecture": null

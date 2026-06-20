@@ -121,6 +121,18 @@
               value="0x3002"
               version="1"
               />
+          <!--Telemetry events-->
+          <event
+              channel="C_OPERATIONAL"
+              level="win:Error"
+              message="$(string.PS_PROVIDER.event.E_O_TelemetrySettingError.message)"
+              opcode="Exception"
+              symbol="TelemetrySettingError"
+              task="Telemetry"
+              template="T_TelemetrySettingError"
+              value="0x3011"
+              version="1"
+              />
           <!--M3P events-->
           <event
               channel="C_ANALYTIC"
@@ -2208,17 +2220,41 @@
               value="0x6017"
               version="1"
               />
-            <event
-                channel="C_ANALYTIC"
-                keywords="AmsiState"
-                level="win:Verbose"
-                message="$(string.PS_PROVIDER.event.E_A_AmsiState.message)"
-                opcode="Method"
-                symbol="AmsiState"
-                task="Amsi"
-                template="T_AmsiState"
-                value="0x4001"
-                version="1"
+          <event
+              channel="C_ANALYTIC"
+              keywords="AmsiState"
+              level="win:Verbose"
+              message="$(string.PS_PROVIDER.event.E_A_AmsiState.message)"
+              opcode="Method"
+              symbol="AmsiState"
+              task="Amsi"
+              template="T_AmsiState"
+              value="0x4001"
+              version="1"
+              />
+          <event
+              channel="C_ANALYTIC"
+              keywords="WDACQuery"
+              level="win:Verbose"
+              message="$(string.PS_PROVIDER.event.E_A_WDACQuery.message)"
+              opcode="Method"
+              symbol="WDACQuery"
+              task="WDAC"
+              template="T_WDACQuery"
+              value="0x4002"
+              version="1"
+              />
+          <event
+              channel="C_ANALYTIC"
+              keywords="WDACAudit"
+              level="win:Verbose"
+              message = "$(string.PS_PROVIDER.event.E_A_WDACAudit.message)"
+              opcode="Method"
+              symbol="WDACAudit"
+              task="WDACAudit"
+              template="T_WDACAudit"
+              value="0x4003"
+              version="1"
               />
         </events>
         <channels>
@@ -2410,6 +2446,12 @@
               value="107"
               />
           <task
+              message="$(string.PS_PROVIDER.task.T_Telemetry.message)"
+              name="Telemetry"
+              symbol="T_TELEMETRY"
+              value="108"
+              />
+          <task
               message="$(string.PS_PROVIDER.task.T_ScheduledJob.message)"
               name="ScheduledJob"
               symbol="T_SCHEDULEDJOB"
@@ -2427,11 +2469,23 @@
               symbol="T_ISEOperation"
               value="120"
               />
-            <task
-                message="$(string.PS_PROVIDER.task.T_AmsiState.message)"
-                name="Amsi"
-                symbol="T_Amsi"
-                value="130"
+          <task
+              message="$(string.PS_PROVIDER.task.T_AmsiState.message)"
+              name="Amsi"
+              symbol="T_Amsi"
+              value="130"
+              />
+          <task
+              message="$(string.PS_PROVIDER.task.T_WDACQuery.message)"
+              name="WDAC"
+              symbol="T_WDAC"
+              value="131"
+              />
+          <task
+              message="$(string.PS_PROVIDER.task.T_WDACAudit.message)"
+              name="WDACAudit"
+              symbol="T_WDACAudit"
+              value="132"
               />
         </tasks>
         <opcodes>
@@ -2593,11 +2647,23 @@
               name="PSWorkflow"
               symbol="K_PSWORKFLOW"
               />
-            <keyword
-                mask="0x400"
-                message="$(string.PS_PROVIDER.keyword.K_AmsiState.message)"
-                name="AmsiState"
-                symbol="K_AmsiState"
+          <keyword
+              mask="0x400"
+              message="$(string.PS_PROVIDER.keyword.K_AmsiState.message)"
+              name="AmsiState"
+              symbol="K_AmsiState"
+              />
+          <keyword
+              mask="0x800"
+              message="$(string.PS_PROVIDER.keyword.K_WDACQuery.message)"
+              name="WDACQuery"
+              symbol="K_WDACQuery"
+              />
+          <keyword
+              mask="0x1000"
+              message="$(string.PS_PROVIDER.keyword.K_WDACAudit.message)"
+              name="WDACAudit"
+              symbol="K_WDACAudit"
               />
         </keywords>
         <maps>
@@ -4004,6 +4070,20 @@
                 name="StackTrace"
                 />
           </template>
+          <template tid="T_TelemetrySettingError">
+            <data
+                inType="win:UnicodeString"
+                name="Name"
+                />
+            <data
+                inType="win:UnicodeString"
+                name="Message"
+                />
+            <data
+                inType="win:UnicodeString"
+                name="StackTrace"
+                />
+          </template>
           <template tid="T_TrackingGuid">
             <data
                 inType="win:GUID"
@@ -4080,16 +4160,48 @@
                 name="FileName"
                 />
           </template>
-            <template tid="T_AmsiState">
-                <data
-                    inType="win:UnicodeString"
-                    name="Action"
+          <template tid="T_AmsiState">
+            <data
+                inType="win:UnicodeString"
+                name="Action"
                 />
-                <data
-                    inType="win:UnicodeString"
-                    name="AmsiContext"
+            <data
+                inType="win:UnicodeString"
+                name="AmsiContext"
                 />
-            </template>
+          </template>
+          <template tid="T_WDACQuery">
+              <data
+                  inType="win:UnicodeString"
+                  name="QueryName"
+                  />
+              <data
+                  inType="win:UnicodeString"
+                  name="FileName"
+                  />
+              <data
+                  inType="win:Int32"
+                  name="QuerySuccess"
+                  />
+              <data
+                  inType="win:Int32"
+                  name="QuerySResult"
+                  />
+          </template>
+          <template tid="T_WDACAudit">
+              <data
+                  inType="win:UnicodeString"
+                  name="Title"
+                  />
+              <data
+                  inType="win:UnicodeString"
+                  name="Message"
+                  />
+              <data
+                  inType="win:UnicodeString"
+                  name="FullyQualifiedId"
+                  />
+          </template>
         </templates>
       </provider>
     </events>
@@ -5536,6 +5648,14 @@
             value="PowerShell Experimental Features"
             />
         <string
+            id="PS_PROVIDER.event.E_O_TelemetrySettingError.message"
+            value="Failed to retrieve diagnostics and feedback setting from Windows.%n Exception: %1 %n Message: %2 %n StackTrace: %3 %n"
+            />
+        <string
+            id="PS_PROVIDER.task.T_Telemetry.message"
+            value="PowerShell Telemetry"
+            />
+        <string
             id="PS_PROVIDER.task.T_NamedPipe.message"
             value="PowerShell Named Pipe IPC"
             />
@@ -5718,6 +5838,30 @@
         <string
             id="PS_PROVIDER.event.E_O_REMOTE_NAMEDPIPE_DISCONNECT.message"
             value="PowerShell IPC disconnect on process: %1 in AppDomain: %2 for User: %3."
+            />
+        <string
+            id="PS_PROVIDER.event.E_A_WDACQuery.message"
+            value="WDAC Query. %n %t Query: %1 %n %t File: %2 %n %t SuccessCode: %3 %n %t ResultCode: %4"
+            />
+        <string
+            id="PS_PROVIDER.keyword.K_WDACQuery.message"
+            value="WDAC Query"
+            />
+        <string
+            id="PS_PROVIDER.task.T_WDACQuery.message"
+            value="WDAC Query"
+            />
+        <string
+            id="PS_PROVIDER.event.E_A_WDACAudit.message"
+            value="WDAC Audit. %n %t Title: %1 %n %t Message: %2 %n %t FullyQualifiedId: %3"
+            />
+        <string
+            id="PS_PROVIDER.keyword.K_WDACAudit.message"
+            value="WDAC Audit"
+            />
+        <string
+            id="PS_PROVIDER.task.T_WDACAudit.message"
+            value="WDAC Audit"
             />
       </stringTable>
     </resources>

@@ -33,7 +33,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 name: vPack_$(Build.SourceBranchName)_NonOfficial_Create.${{ parameters.createVPack }}_Name.${{ parameters.vPackName}}_$(date:yyyyMMdd).$(rev:rr)
 
 variables:
-  - template: ./pipelines/templates/variables/PowerShell-vPack-Variables.yml@self
+  - template: /.pipelines/templates/variables/PowerShell-vPack-Variables.yml@self
     parameters:
       debug: ${{ parameters.debug }}
       ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
@@ -82,7 +82,7 @@ extends:
         enabled: false
       tsaOptionsFile: .config/tsaoptions.json
     stages:
-    - template: ./pipelines/templates/stages/PowerShell-vPack-Stages.yml@self
+    - template: /.pipelines/templates/stages/PowerShell-vPack-Stages.yml@self
       parameters:
         createVPack: ${{ parameters.createVPack }}
         vPackName: ${{ parameters.vPackName }}
