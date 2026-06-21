@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("TimeoutSec")]
-        [ValidateRange(-1, Int32.MaxValue)]
+        [ValidateRange(-1, int.MaxValue)]
         public int Timeout
         {
             get
