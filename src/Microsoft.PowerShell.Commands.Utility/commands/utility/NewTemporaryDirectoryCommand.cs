@@ -9,7 +9,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "New-TemporaryDirectory" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.New,
+    [Cmdlet(
+        VerbsCommon.New,
         "TemporaryDirectory",
         SupportsShouldProcess = true,
         ConfirmImpact = ConfirmImpact.Low,
