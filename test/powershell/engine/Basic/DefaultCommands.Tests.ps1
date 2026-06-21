@@ -402,6 +402,7 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
 "Cmdlet",       "New-PSTransportOption",            "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "New-Service",                      "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
 "Cmdlet",       "New-TemporaryFile",                "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "Low"
+"Cmdlet",       "New-TemporaryDirectory",           "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "Low"
 "Cmdlet",       "New-TimeSpan",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "New-Variable",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Low"
 "Cmdlet",       "New-WebServiceProxy",              "",                                 $($FullCLR                               ),     "",                     "",                     ""

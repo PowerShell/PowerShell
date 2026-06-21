@@ -9,7 +9,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "New-TemporaryDirectory" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TemporaryDirectory", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=xxxxx")]
+    [Cmdlet(VerbsCommon.New, "TemporaryDirectory", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097032")]
     [OutputType(typeof(System.IO.DirectoryInfo))]
     public class NewTemporaryDirectoryCommand : Cmdlet
     {
@@ -18,14 +19,24 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            string tempDirPath = null;
             string tempPath = Path.GetTempPath();
             if (ShouldProcess(tempPath))
             {
+                DirectoryInfo directory;
                 try
                 {
-                    tempDirPath = Path.Combine(tempPath, Path.GetRandomFileName());
-                    Directory.CreateDirectory(tempDirPath);
+                    // Loop until we find a non-existent directory name to avoid collisions,
+                    // matching the pattern used by PathUtils.CreateTemporaryDirectory().
+                    DirectoryInfo tempDir;
+                    do
+                    {
+                        tempDir = new DirectoryInfo(
+                            Path.Combine(tempPath, Path.GetRandomFileName()));
+                    }
+                    while (tempDir.Exists);
+
+                    Directory.CreateDirectory(tempDir.FullName);
+                    directory = new DirectoryInfo(tempDir.FullName);
                 }
                 catch (IOException ioException)
                 {
@@ -38,11 +49,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (!string.IsNullOrEmpty(tempDirPath))
-                {
-                    DirectoryInfo directory = new(tempDirPath);
-                    WriteObject(directory);
-                }
+                WriteObject(directory);
             }
         }
     }
