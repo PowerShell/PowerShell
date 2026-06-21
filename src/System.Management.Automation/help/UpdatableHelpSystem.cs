@@ -785,36 +785,35 @@ namespace System.Management.Automation.Help
                 {
                     client.Timeout = _defaultTimeout;
                     // codeql[cs/ssrf] - This is expected Poweshell behavior and the user assumes trust for the module they download and any URIs it references. The URIs are also not executables or scripts that would be invoked by this method.
-                    HttpResponseMessage response;
                     try
                     {
-                        response = client.GetAsync(new Uri(uri), _cancelTokenSource.Token).GetAwaiter().GetResult();
+                        using HttpResponseMessage response = client.GetAsync(new Uri(uri), _cancelTokenSource.Token).GetAwaiter().GetResult();
+
+                        if (_stopping)
+                        {
+                            return true;
+                        }
+
+                        lock (_syncObject)
+                        {
+                            _progressEvents.Add(new UpdatableHelpProgressEventArgs(CurrentModule, StringUtil.Format(
+                                HelpDisplayStrings.UpdateProgressDownloading), 100));
+                        }
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            WriteResponseToFile(response, fileName);
+                        }
+                        else
+                        {
+                            Errors.Add(new UpdatableHelpSystemException("HelpContentNotFound",
+                                StringUtil.Format(HelpDisplayStrings.HelpContentNotFound),
+                                ErrorCategory.ResourceUnavailable, null, null));
+                        }
                     }
                     catch (OperationCanceledException)
                     {
-                        return _stopping;
-                    }
-
-                    if (_stopping)
-                    {
-                        return true;
-                    }
-
-                    lock (_syncObject)
-                    {
-                        _progressEvents.Add(new UpdatableHelpProgressEventArgs(CurrentModule, StringUtil.Format(
-                            HelpDisplayStrings.UpdateProgressDownloading), 100));
-                    }
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        WriteResponseToFile(response, fileName);
-                    }
-                    else
-                    {
-                        Errors.Add(new UpdatableHelpSystemException("HelpContentNotFound",
-                            StringUtil.Format(HelpDisplayStrings.HelpContentNotFound),
-                            ErrorCategory.ResourceUnavailable, null, null));
+                        return false;
                     }
 
                     SendProgressEvents(commandType);
