@@ -688,8 +688,9 @@ namespace System.Management.Automation
 
                     discoveryTracer.WriteLine("PreCommandLookupAction returned: {0}", eventArgs.Command);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    discoveryTracer.TraceError("PreCommandLookupAction threw: {0}", e.Message);
                 }
                 finally { context.CommandDiscovery.UnregisterLookupCommandInfoAction("ActivePreLookup", commandName); }
             }
@@ -1041,8 +1042,9 @@ namespace System.Management.Automation
                 }
             }
             catch (CommandNotFoundException) { throw; }
-            catch (Exception)
+            catch (Exception e)
             {
+                discoveryTracer.TraceError("Module auto-discovery threw: {0}", e.Message);
             }
             finally
             {
