@@ -2675,14 +2675,17 @@ namespace System.Management.Automation
                 scriptBlock,
                 new object[] { commandName, parameterName, wordToComplete, commandAst, GetBoundArgumentsAsHashtable(context) },
                 resultList);
-            if (result)
-            {
-                resultList.Add(CompletionResult.Null);
-            }
 
             return result;
         }
 
+        /// <summary>
+        /// Invoke the custom argument completer and process its return values.
+        /// If we consider the completion successful, we add a null instance of the type 'CompletionResult'
+        /// to the end of the 'result' list to indicate that the argument completion has been processed, so we
+        /// will not go through the default argument completion even if the 'result' list is still empty.
+        /// </summary>
+        /// <returns>'true' if the argument completion was successful. 'false' otherwise.</returns>
         private static bool InvokeScriptArgumentCompleter(
             ScriptBlock scriptBlock,
             object[] argumentsToCompleter,
@@ -2702,20 +2705,44 @@ namespace System.Management.Automation
                 return false;
             }
 
+            if (customResults.Count is 1 && customResults[0] is { BaseObject: "" } or null)
+            {
+                // If the script block returns a single empty string or a null value, we will treat it as if it has
+                // completed successfully but has no results to return.
+                // This allows a custom completer to suppress the default completions that we may fall back otherwise.
+                result.Add(CompletionResult.Null);
+                return true;
+            }
+
+            int initialCount = result.Count;
+
             foreach (var customResult in customResults)
             {
-                var resultAsCompletion = customResult.BaseObject as CompletionResult;
-                if (resultAsCompletion != null)
+                if (customResult is null)
+                {
+                    continue;
+                }
+
+                if (customResult.BaseObject is CompletionResult resultAsCompletion)
                 {
                     result.Add(resultAsCompletion);
                     continue;
                 }
 
                 var resultAsString = customResult.ToString();
-                result.Add(new CompletionResult(resultAsString));
+                if (!string.IsNullOrEmpty(resultAsString))
+                {
+                    result.Add(new CompletionResult(resultAsString));
+                }
             }
 
-            return true;
+            bool success = result.Count > initialCount;
+            if (success)
+            {
+                result.Add(CompletionResult.Null);
+            }
+
+            return success;
         }
 
         // All the methods for native command argument completion will add a null instance of the type CompletionResult to the end of the
@@ -2723,9 +2750,9 @@ namespace System.Management.Automation
         // and has been processed already. So if the "result" list is still empty afterward, we will not go through the default argument completion anymore.
         #region Native Command Argument Completion
 
-        private static void RemoveLastNullCompletionResult(List<CompletionResult> result)
+        internal static void RemoveLastNullCompletionResult(List<CompletionResult> result)
         {
-            if (result.Count > 0 && result[result.Count - 1].Equals(CompletionResult.Null))
+            if (result?.Count > 0 && result[^1].Equals(CompletionResult.Null))
             {
                 result.RemoveAt(result.Count - 1);
             }

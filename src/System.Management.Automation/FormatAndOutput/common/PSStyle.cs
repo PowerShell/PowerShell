@@ -892,7 +892,7 @@ namespace System.Management.Automation
                 throw new ArgumentOutOfRangeException(paramName: nameof(foregroundColor));
             }
 
-            if (backIndex < 0 || backIndex >= ForegroundColorMap.Length)
+            if (backIndex < 0 || backIndex >= BackgroundColorMap.Length)
             {
                 throw new ArgumentOutOfRangeException(paramName: nameof(backgroundColor));
             }

@@ -1,9 +1,8 @@
 parameters:
   unsignedDrop: 'drop_linux_build_linux_x64'
-  signedeDrop: 'drop_linux_sign_linux_x64'
+  signedDrop: 'drop_linux_sign_linux_x64'
   packageType: deb
   jobName: 'deb'
-  signingProfile: 'CP-450779-pgpdetached'
 
 jobs:
 - job: ${{ parameters.jobName }}
@@ -20,6 +19,7 @@ jobs:
     - name: skipNugetSecurityAnalysis
       value: true
     - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
     - name: ob_sdl_binskim_enabled
@@ -34,8 +34,16 @@ jobs:
       value: $(Build.SourcesDirectory)/PowerShell/.config/tsaoptions.json
     - name: ob_sdl_credscan_suppressionsFile
       value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
-    - name: SigningProfile
-      value: ${{ parameters.signingProfile }}
+    # PGP signing profile selection: Mariner (Azure Linux) packages ship through
+    # a different distribution channel and must be signed with the Mariner release
+    # key; all other Linux packages use the standard PowerShell Linux key. Both
+    # key codes come from the `certificate_logical_to_actual` variable group.
+    - ${{ if startsWith(parameters.jobName, 'mariner') }}:
+      - name: SigningProfile
+        value: $(pgp_release_cert_id)
+    - ${{ else }}:
+      - name: SigningProfile
+        value: $(pgp_linux_cert_id)
 
   steps:
   - checkout: self
@@ -124,6 +132,7 @@ jobs:
         'tar' { 'Signed-linux-x64', 'powershell*.tar.gz' }
         'tar-alpine-fxdependent' { 'Signed-fxdependent-noopt-linux-musl-x64', 'powershell*.tar.gz' }
         'deb' { 'Signed-linux-x64', 'powershell*.deb' }
+        'deb-arm64' { 'Signed-linux-arm64', 'powershell*.deb' }
         'rpm-fxdependent' { 'Signed-fxdependent-linux-x64', 'powershell*.rpm' }
         'rpm-fxdependent-arm64' { 'Signed-fxdependent-linux-arm64', 'powershell*.rpm' }
         'rpm' { 'Signed-linux-x64', 'powershell*.rpm' }
@@ -192,6 +201,13 @@ jobs:
       $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgFilter -Recurse -File | Select-Object -ExpandProperty FullName
       Write-Verbose -Verbose "pkgPath: $pkgPath"
       Copy-Item -Path $pkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+
+      if ($pkgPath -like '*.tar.gz') {
+          $entry = & tar -tzvf $pkgPath | Where-Object { $_ -match '\spwsh$' } | Select-Object -First 1
+          if ($entry -notmatch '^-..x') {
+              throw "pwsh is not executable in $pkgPath : $entry"
+          }
+      }
     displayName: 'Copy artifacts to output directory'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)

@@ -1,0 +1,67 @@
+parameters:
+  - name: InternalSDKBlobURL
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    type: string
+    default: 'NO'
+  - name: ENABLE_MSBUILD_BINLOGS
+    type: boolean
+    default: false
+  - name: FORCE_CODEQL
+    type: boolean
+    default: false
+
+variables:
+  - name: PS_RELEASE_BUILD
+    value: 1
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+  - name: nugetMultiFeedWarnLevel
+    value: none
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: skipNugetSecurityAnalysis
+    value: true
+  - name: branchCounterKey
+    value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
+  - name: branchCounter
+    value: $[counter(variables['branchCounterKey'], 1)]
+  - name: BUILDSECMON_OPT_IN
+    value: true
+  - name: __DOTNET_RUNTIME_FEED
+    value: ${{ parameters.InternalSDKBlobURL }}
+  - name: LinuxContainerImage
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
+  - name: WindowsContainerImage
+    value: onebranch.azurecr.io/windows/ltsc2022/vse2022:latest
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)]
+  - name: ReleaseTagVar
+    value: ${{ parameters.ReleaseTagVar }}
+  - name: SKIP_SIGNING
+    value: ${{ parameters.SKIP_SIGNING }}
+  - group: mscodehub-feed-read-general
+  - group: mscodehub-feed-read-akv
+  - name: ENABLE_MSBUILD_BINLOGS
+    value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
+  - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
+    # Cadence is hours before CodeQL will allow a re-upload of the database
+    - name: CodeQL.Cadence
+      value: 1
+  - name: CODEQL_ENABLED
+    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
+      value: true
+    ${{ else }}:
+      value: false
+  # Fix for BinSkim ICU package error in Linux containers
+  - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+    value: true
+  # Disable BinSkim at job level to override NonOfficial template defaults
+  - name: ob_sdl_binskim_enabled
+    value: false

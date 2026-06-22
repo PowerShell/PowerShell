@@ -83,7 +83,7 @@ PowerShell code in GitHub Actions YAML files should be kept minimal. Move code t
 
 **Examples**:
 - `Start-PSPackage` - Create packages
-- `New-MSIPackage` - Create Windows MSI
+- `New-MSIXPackage` - Create Windows MSIX
 - `New-DotnetSdkContainerFxdPackage` - Create container packages
 
 **When NOT to use**:

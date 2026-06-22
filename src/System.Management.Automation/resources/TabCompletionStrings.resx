@@ -457,10 +457,10 @@ This must be the last parameter on the #requires statement line.</value>
 Specifies the minimum version of PowerShell that the script requires.</value>
   </data>
   <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
-    <value>Specifies that the script requires PowerShell Core to run.</value>
+    <value>Specifies that the script requires PowerShell 7+ to run.</value>
   </data>
   <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
-    <value>Specifies that the script requires Windows PowerShell to run.</value>
+    <value>Specifies that the script requires Windows PowerShell 5.1 to run.</value>
   </data>
   <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
     <value>[string]

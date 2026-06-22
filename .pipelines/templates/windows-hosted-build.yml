@@ -315,7 +315,7 @@ jobs:
     displayName: Sign nupkg files
     inputs:
       command: 'sign'
-      cp_code: 'CP-401405'
+      cp_code: '$(nuget_cert_id)'
       files_to_sign: '**\*.nupkg'
       search_root: '$(ob_outputDirectory)\globaltool'
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))

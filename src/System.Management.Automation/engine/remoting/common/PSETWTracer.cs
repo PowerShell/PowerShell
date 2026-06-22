@@ -166,6 +166,9 @@ namespace System.Management.Automation.Internal
         ExperimentalFeature_InvalidName = 0x3001,
         ExperimentalFeature_ReadConfig_Error = 0x3002,
 
+        // Windows Diagnostics And Usage Data Settings
+        Telemetry_Setting_Error = 0x3011,
+
         // Scheduled Jobs
         ScheduledJob_Start = 0xD001,
         ScheduledJob_Complete = 0xD002,
@@ -240,6 +243,7 @@ namespace System.Management.Automation.Internal
         ProviderStop = 0x69,
         ExecutePipeline = 0x6A,
         ExperimentalFeature = 0x6B,
+        Telemetry = 0x6C,
         ScheduledJob = 0x6E,
         NamedPipe = 0x6F,
         ISEOperation = 0x78,

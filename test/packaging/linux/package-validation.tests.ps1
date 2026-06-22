@@ -9,20 +9,20 @@ Describe "Linux Package Name Validation" {
         } else {
             $env:SYSTEM_ARTIFACTSDIRECTORY
         }
-        
+
         if (-not $artifactsDir) {
             throw "Artifacts directory not found. GITHUB_WORKSPACE or SYSTEM_ARTIFACTSDIRECTORY must be set."
         }
-        
+
         Write-Verbose "Artifacts directory: $artifactsDir" -Verbose
     }
-    
+
     Context "RPM Package Names" {
         It "Should have valid RPM package names" {
             $rpmPackages = Get-ChildItem -Path $artifactsDir -Recurse -Filter *.rpm -ErrorAction SilentlyContinue
-            
+
             $rpmPackages.Count | Should -BeGreaterThan 0 -Because "At least one RPM package should exist in the artifacts directory"
-            
+
             $invalidPackages = @()
             # Regex pattern for valid RPM package names.
             # Breakdown:
@@ -42,25 +42,26 @@ Describe "Linux Package Name Validation" {
                     Write-Warning "$($package.Name) is not a valid RPM package name"
                 }
             }
-            
+
             if ($invalidPackages.Count -gt 0) {
                 throw ($invalidPackages | Out-String)
             }
         }
     }
-    
+
     Context "DEB Package Names" {
         It "Should have valid DEB package names" {
             $debPackages = Get-ChildItem -Path $artifactsDir -Recurse -Filter *.deb -ErrorAction SilentlyContinue
-            
+
             $debPackages.Count | Should -BeGreaterThan 0 -Because "At least one DEB package should exist in the artifacts directory"
-            
+
             $invalidPackages = @()
             # Regex pattern for valid DEB package names.
             # Valid examples:
             # - powershell-preview_7.6.0-preview.6-1.deb_amd64.deb
             # - powershell-lts_7.4.13-1.deb_amd64.deb
             # - powershell_7.4.13-1.deb_amd64.deb
+            # - powershell_7.6.0-1.deb_arm64.deb
             # Breakdown:
             # ^powershell            : Starts with 'powershell'
             # (-preview|-lts)?       : Optionally '-preview' or '-lts'
@@ -78,19 +79,19 @@ Describe "Linux Package Name Validation" {
                     Write-Warning "$($package.Name) is not a valid DEB package name"
                 }
             }
-            
+
             if ($invalidPackages.Count -gt 0) {
                 throw ($invalidPackages | Out-String)
             }
         }
     }
-    
+
     Context "Tar.Gz Package Names" {
         It "Should have valid tar.gz package names" {
             $tarPackages = Get-ChildItem -Path $artifactsDir -Recurse -Filter *.tar.gz -ErrorAction SilentlyContinue
-            
+
             $tarPackages.Count | Should -BeGreaterThan 0 -Because "At least one tar.gz package should exist in the artifacts directory"
-            
+
             $invalidPackages = @()
             foreach ($package in $tarPackages) {
                 # Pattern matches: powershell-7.6.0-preview.6-linux-x64.tar.gz or powershell-7.6.0-linux-x64.tar.gz
@@ -100,17 +101,17 @@ Describe "Linux Package Name Validation" {
                     Write-Warning "$($package.Name) is not a valid tar.gz package name"
                 }
             }
-            
+
             if ($invalidPackages.Count -gt 0) {
                 throw ($invalidPackages | Out-String)
             }
         }
     }
-    
+
     Context "Package Existence" {
         It "Should find at least one package in artifacts directory" {
             $allPackages = Get-ChildItem -Path $artifactsDir -Recurse -Include *.rpm, *.tar.gz, *.deb -ErrorAction SilentlyContinue
-            
+
             $allPackages.Count | Should -BeGreaterThan 0 -Because "At least one package should exist in the artifacts directory"
         }
     }

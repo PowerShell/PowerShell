@@ -255,6 +255,12 @@ The defined template is following:
   <data name="LogInfoUnavailable" xml:space="preserve">
     <value>To access the '{0}' log start PowerShell with elevated user rights.  Error: {1}</value>
   </data>
+  <data name="LogInfoNoAccess" xml:space="preserve">
+    <value>Access denied for log: '{0}'.</value>
+  </data>
+  <data name="SuggestElevation" xml:space="preserve">
+    <value>Launch PowerShell with elevated user rights.</value>
+  </data>
   <data name="NoEventMessage" xml:space="preserve">
     <value>Cannot retrieve event message text.</value>
   </data>
@@ -284,5 +290,26 @@ The defined template is following:
   </data>
   <data name="LogCountLimitExceeded" xml:space="preserve">
     <value>Log count ({0}) is exceeded Windows Event Log API limit ({1}). Adjust filter to return less log names.</value>
+  </data>
+  <data name="ListLogParamHelp" xml:space="preserve">
+    <value>Specifies the event logs. Wildcards are permitted.</value>
+  </data>
+  <data name="GetLogParamHelp" xml:space="preserve">
+    <value>Specifies the event logs that this cmdlet gets events from. Wildcards are permitted.</value>
+  </data>
+  <data name="ListProviderParamHelp" xml:space="preserve">
+    <value>Specifies the event log providers that this cmdlet gets.</value>
+  </data>
+  <data name="GetProviderParamHelp" xml:space="preserve">
+    <value>Specifies the event log providers from which this cmdlet gets events.</value>
+  </data>
+  <data name="PathParamHelp" xml:space="preserve">
+    <value>Specifies the path to the event log files that this cmdlet gets events from.</value>
+  </data>
+  <data name="MaxEventsParamHelp" xml:space="preserve">
+    <value>Specifies the maximum number of events that are returned.</value>
+  </data>
+  <data name="ComputerNameParamHelp" xml:space="preserve">
+    <value>Specifies the name of the computer from which this cmdlet gets data.</value>
   </data>
 </root>

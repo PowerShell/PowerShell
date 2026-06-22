@@ -17,8 +17,6 @@ using Microsoft.Win32;
 
 namespace Microsoft.PowerShell.Commands
 {
-    using Extensions;
-
     #region GetComputerInfoCommand cmdlet implementation
     /// <summary>
     /// The Get-ComputerInfo cmdlet gathers and reports information

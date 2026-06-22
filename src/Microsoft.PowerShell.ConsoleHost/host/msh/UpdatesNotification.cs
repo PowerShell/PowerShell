@@ -28,6 +28,9 @@ namespace Microsoft.PowerShell
         private const string StableBuildInfoURL = "https://aka.ms/pwsh-buildinfo-stable";
         private const string PreviewBuildInfoURL = "https://aka.ms/pwsh-buildinfo-preview";
 
+        private const int NotificationDelayDays = 7;
+        private const int UpdateCheckBackoffDays = 7;
+
         /// <summary>
         /// The version of new update is persisted using a file, not as the file content, but instead baked in the file name in the following template:
         ///  `update{notification-type}_{version}_{publish-date}` -- held by 's_updateFileNameTemplate',
@@ -89,9 +92,18 @@ namespace Microsoft.PowerShell
             if (TryParseUpdateFile(
                     updateFilePath: out _,
                     out SemanticVersion lastUpdateVersion,
-                    lastUpdateDate: out _)
+                    out DateTime lastUpdateDate)
                && lastUpdateVersion != null)
             {
+                DateTime today = DateTime.UtcNow;
+                if ((today - lastUpdateDate).TotalDays < NotificationDelayDays)
+                {
+                    // The update was out less than 1 week ago and it's possible the packages are still rolling out.
+                    // We only show the notification when the update is at least 1 week old, to reduce the chance that
+                    // users see the notification but cannot get the new update when they try to install it.
+                    return;
+                }
+
                 string releaseTag = lastUpdateVersion.ToString();
                 string notificationMsgTemplate = s_notificationType == NotificationType.LTS
                     ? ManagedEntranceStrings.LTSUpdateNotificationMessage
@@ -169,7 +181,7 @@ namespace Microsoft.PowerShell
                 out DateTime lastUpdateDate);
 
             DateTime today = DateTime.UtcNow;
-            if (parseSuccess && updateFilePath != null && (today - lastUpdateDate).TotalDays < 7)
+            if (parseSuccess && updateFilePath != null && (today - lastUpdateDate).TotalDays < UpdateCheckBackoffDays)
             {
                 // There is an existing update file, and the last update was less than 1 week ago.
                 // It's unlikely a new version is released within 1 week, so we can skip this check.
