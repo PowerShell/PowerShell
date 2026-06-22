@@ -150,6 +150,12 @@ Describe "Get-SecureRandom" -Tags "CI" {
         $randomNumber | Should -BeIn 1, 2, 3, 5, 8, 13
     }
 
+    It "Should return a single random item when -Shuffle:`$false is used" {
+        $randomNumber = Get-SecureRandom -InputObject 1, 2, 3, 5, 8, 13 -Shuffle:$false
+        $randomNumber.Count | Should -Be 1
+        $randomNumber | Should -BeIn 1, 2, 3, 5, 8, 13
+    }
+
     It "Should return for a string collection " {
         $randomNumber = Get-SecureRandom -InputObject "red", "yellow", "blue"
         $randomNumber | Should -Be ("red" -or "yellow" -or "blue")

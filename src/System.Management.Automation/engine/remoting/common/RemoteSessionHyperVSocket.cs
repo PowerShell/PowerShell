@@ -434,7 +434,10 @@ namespace System.Management.Automation.Remoting
             // Final check if we got the token before the timeout
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (string.IsNullOrEmpty(responseString) || !responseString.StartsWith("TOKEN ", StringComparison.Ordinal))
+            ReadOnlySpan<byte> responseBytes = Encoding.UTF8.GetBytes(responseString);
+            string responseToken = RemoteSessionHyperVSocketClient.ExtractToken(responseBytes);
+
+            if (responseToken == null)
             {
                 socket.Send("FAIL"u8);
                 // If the response is not in the expected format, we throw an exception.
@@ -443,9 +446,6 @@ namespace System.Management.Automation.Remoting
                 throw new PSDirectException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.HyperVInvalidResponse, "Client", "Token Response"));
             }
-
-            // Extract the token from the response.
-            string responseToken = responseString.Substring(6).Trim();
 
             if (!string.Equals(responseToken, token, StringComparison.Ordinal))
             {
@@ -1059,14 +1059,18 @@ namespace System.Management.Automation.Remoting
                 // allowing a significant larger size, allows the broker to make almost arbitrary changes,
                 // without breaking the client.
                 string token = ReceiveResponse(HyperVSocket, 1024); // either "PASS" or "FAIL"
-                if (token == null || !token.StartsWith("TOKEN ", StringComparison.Ordinal))
+
+                ReadOnlySpan<byte> tokenResponseBytes = Encoding.UTF8.GetBytes(token);
+                string extractedToken = ExtractToken(tokenResponseBytes);
+
+                if (extractedToken == null)
                 {
                     s_tracer.WriteLine("ExchangeCredentialsAndConfiguration: Server did not respond with a valid token. Response: {0}", token);
                     throw new PSDirectException(
                         PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.HyperVInvalidResponse, "Broker", "Token " + token));
                 }
 
-                token = token.Substring(6); // remove "TOKEN " prefix
+                token = extractedToken;
 
                 HyperVSocket.Send("PASS"u8); // acknowledge the token
                 return (true, token);
@@ -1120,6 +1124,25 @@ namespace System.Management.Automation.Remoting
             {
                 pool.Return(responseBuffer);
             }
+        }
+
+        internal static string ExtractToken(ReadOnlySpan<byte> tokenResponse)
+        {
+            string token = Encoding.UTF8.GetString(tokenResponse);
+
+            if (token == null || !token.StartsWith("TOKEN ", StringComparison.Ordinal))
+            {
+                return null; // caller method will write trace (and determine when to expose token info as appropriate)
+            }
+
+            token = token.Substring(6).Trim(); // remove "TOKEN " prefix
+
+            if (token.Length == 0)
+            {
+                return null;
+            }
+
+            return token;
         }
 
         /// <summary>

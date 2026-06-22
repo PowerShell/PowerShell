@@ -300,7 +300,7 @@ $result
             foreach (ShellFolderItem category in catItems)
             {
                 string path = category.Path;
-                string catNum = path.Substring(path.LastIndexOf("\\", StringComparison.OrdinalIgnoreCase) + 1);
+                string catNum = path.Substring(path.LastIndexOf('\\') + 1);
 
                 CategoryMap.Add(catNum, category.Name);
             }

@@ -13,6 +13,9 @@ env:
   SYSTEM_ARTIFACTSDIRECTORY: ${{ github.workspace }}/artifacts
   BUILD_ARTIFACTSTAGINGDIRECTORY: ${{ github.workspace }}/artifacts
 
+permissions:
+  contents: read
+
 jobs:
   package:
     name: ${{ matrix.architecture }} - ${{ matrix.channel }}
@@ -36,14 +39,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
 
       - name: Capture Environment
         if: success() || failure()
         run: |
-          Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+          Import-Module .\tools\ci.psm1
+          Show-Environment
         shell: pwsh
 
       - name: Capture PowerShell Version Table
@@ -60,7 +64,7 @@ jobs:
         shell: pwsh
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:
           global-json-file: ./global.json
 
@@ -80,7 +84,7 @@ jobs:
 
       - name: Upload Build Artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: windows-packaging-${{ matrix.architecture }}-${{ matrix.channel }}
           path: |
