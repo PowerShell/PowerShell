@@ -3602,42 +3602,6 @@ function New-NugetPackage
     Pop-Location
 }
 
-<#
-.SYNOPSIS
-Publish the specified Nuget Package to MyGet feed.
-
-.DESCRIPTION
-The specified nuget package is published to the powershell.myget.org/powershell-core feed.
-
-.PARAMETER PackagePath
-Path to the NuGet Package.
-
-.PARAMETER ApiKey
-API key for powershell.myget.org
-#>
-function Publish-NugetToMyGet
-{
-    param(
-        [Parameter(Mandatory = $true)]
-        [string] $PackagePath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $ApiKey
-    )
-
-    $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
-
-    if ($null -eq $nuget)
-    {
-        throw 'nuget application is not available in PATH'
-    }
-
-    Get-ChildItem $PackagePath | ForEach-Object {
-        Write-Log "Pushing $_ to PowerShell Myget"
-        Start-NativeExecution { nuget push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey } > $null
-    }
-}
-
 function New-SubFolder
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
