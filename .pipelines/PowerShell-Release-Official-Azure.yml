@@ -67,7 +67,7 @@ extends:
         exactToolVersion: 4.4.2
       policheck:
         break: true # always break the build on policheck issues. You can disable it by setting to 'false'
-      tsaOptionsFile: .config\tsaoptions.json
+      tsaOptionsFile: $(Build.SourcesDirectory)\.config\tsaoptions.json
     stages:
       - template: /.pipelines/templates/release-prep-for-ev2.yml@self
         parameters:
