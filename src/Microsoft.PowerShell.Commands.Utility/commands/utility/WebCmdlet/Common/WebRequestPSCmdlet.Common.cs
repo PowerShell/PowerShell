@@ -1295,6 +1295,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteWebRequestDebugInfo(currentRequest);
                     }
 
+                    // codeql[cs/ssrf] - This is expected Poweshell behavior where user inputted Uri is supported for the context of this method. The user assumes trust for the Uri and invocation is done on the user's machine, not a web application. If there is concern for remoting, they should use restricted remoting.
                     response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
                     if (IsWriteVerboseEnabled())
@@ -1994,7 +1995,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="file">The file to use for the <see cref="StreamContent"/></param>
         private static StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
         {
-            StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
+            StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
 
             result.Headers.ContentDisposition.FileName = file.Name;
             result.Headers.ContentDisposition.FileNameStar = file.Name;

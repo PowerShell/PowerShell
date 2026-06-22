@@ -6536,6 +6536,13 @@ namespace System.Management.Automation.Language
 
     internal sealed class PSInvokeMemberBinder : InvokeMemberBinder
     {
+        [TraceSource("MethodInvocation", "Traces the invocation of .NET methods.")]
+        internal static readonly PSTraceSource MethodInvocationTracer =
+            PSTraceSource.GetTracer(
+                "MethodInvocation",
+                "Traces the invocation of .NET methods.",
+                false);
+
         private static readonly SearchValues<string> s_whereSearchValues = SearchValues.Create(
             ["Where", "PSWhere"],
             StringComparison.OrdinalIgnoreCase);
@@ -6956,6 +6963,17 @@ namespace System.Management.Automation.Language
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
                 }
 
+                if (MethodInvocationTracer.IsEnabled)
+                {
+                    expr = Expression.Block(
+                        Expression.Call(
+                            Expression.Constant(MethodInvocationTracer),
+                            CachedReflectionInfo.PSTraceSource_WriteLine,
+                            Expression.Constant("Invoking method: {0}"),
+                            Expression.Constant(result.methodDefinition)),
+                        expr);
+                }
+
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
                 // propagation and ensure errors are attributed to the correct code (the
@@ -7183,6 +7201,13 @@ namespace System.Management.Automation.Language
                     var argValue = parameters[i].DefaultValue;
                     if (argValue == null)
                     {
+                        if (parameterType.IsByRef)
+                        {
+                            // When the default value is null for a ByRef parameter (e.g. an optional `in` parameter
+                            // using `default`), expression trees cannot create Expression.Default for the T& type.
+                            // In that case we switch to the element type and use Default(TElement) instead.
+                            parameterType = parameterType.GetElementType();
+                        }
                         argExprs[i] = Expression.Default(parameterType);
                     }
                     else if (!parameters[i].HasDefaultValue && parameterType != typeof(object) && argValue == Type.Missing)

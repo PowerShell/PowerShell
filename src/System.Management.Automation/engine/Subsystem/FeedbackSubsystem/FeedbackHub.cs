@@ -52,7 +52,7 @@ namespace System.Management.Automation.Subsystem.Feedback
         /// </summary>
         public static List<FeedbackResult>? GetFeedback(Runspace runspace)
         {
-            return GetFeedback(runspace, millisecondsTimeout: 300);
+            return GetFeedback(runspace, millisecondsTimeout: 1000);
         }
 
         /// <summary>

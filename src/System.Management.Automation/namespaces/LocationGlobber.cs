@@ -4539,7 +4539,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (path.IndexOf(StringLiterals.HomePath, StringComparison.Ordinal) == 0)
+            if (path.StartsWith(StringLiterals.HomePath, StringComparison.Ordinal))
             {
                 // Support the single "~"
                 if (path.Length == 1)
@@ -4638,7 +4638,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (path.IndexOf(StringLiterals.HomePath, StringComparison.Ordinal) == 0)
+                if (path.StartsWith(StringLiterals.HomePath, StringComparison.Ordinal))
                 {
                     // Strip of the ~ and the \ or / if present
 

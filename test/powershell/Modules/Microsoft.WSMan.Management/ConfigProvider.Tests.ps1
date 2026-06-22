@@ -1,6 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
     BeforeAll {
         #skip all tests on non-windows platform

@@ -42,7 +42,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// subkeys, there must be a Transaction.Current and the resulting TransactedRegistryKey from those operations ARE associated with
         /// the transaction.</para>
         /// </summary>
-        [ResourceExposure(ResourceScope.Machine)]
         // The TransactedRegistryKey's members cannot be changed.
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         internal static readonly TransactedRegistryKey CurrentUser = TransactedRegistryKey.GetBaseKey(BaseRegistryKeys.HKEY_CURRENT_USER);
@@ -61,7 +60,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// subkeys, there must be a Transaction.Current and the resulting TransactedRegistryKey from those operations ARE associated with
         /// the transaction.</para>
         /// </summary>
-        [ResourceExposure(ResourceScope.Machine)]
         // The TransactedRegistryKey's members cannot be changed.
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         internal static readonly TransactedRegistryKey LocalMachine = TransactedRegistryKey.GetBaseKey(BaseRegistryKeys.HKEY_LOCAL_MACHINE);
@@ -80,7 +78,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// subkeys, there must be a Transaction.Current and the resulting TransactedRegistryKey from those operations ARE associated with
         /// the transaction.</para>
         /// </summary>
-        [ResourceExposure(ResourceScope.Machine)]
         // The TransactedRegistryKey's members cannot be changed.
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         internal static readonly TransactedRegistryKey ClassesRoot = TransactedRegistryKey.GetBaseKey(BaseRegistryKeys.HKEY_CLASSES_ROOT);
@@ -99,7 +96,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// subkeys, there must be a Transaction.Current and the resulting TransactedRegistryKey from those operations ARE associated with
         /// the transaction.</para>
         /// </summary>
-        [ResourceExposure(ResourceScope.Machine)]
         // The TransactedRegistryKey's members cannot be changed.
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         internal static readonly TransactedRegistryKey Users = TransactedRegistryKey.GetBaseKey(BaseRegistryKeys.HKEY_USERS);
@@ -118,7 +114,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// subkeys, there must be a Transaction.Current and the resulting TransactedRegistryKey from those operations ARE associated with
         /// the transaction.</para>
         /// </summary>
-        [ResourceExposure(ResourceScope.Machine)]
         // The TransactedRegistryKey's members cannot be changed.
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         internal static readonly TransactedRegistryKey CurrentConfig = TransactedRegistryKey.GetBaseKey(BaseRegistryKeys.HKEY_CURRENT_CONFIG);

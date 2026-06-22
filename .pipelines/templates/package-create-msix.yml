@@ -1,3 +1,8 @@
+parameters:
+  - name: OfficialBuild
+    type: boolean
+    default: false
+
 jobs:
 - job: CreateMSIXBundle
   displayName: Create .msixbundle file
@@ -7,16 +12,25 @@ jobs:
   variables:
     - group: msixTools
     - group: 'Azure Blob variable group'
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
 
   steps:
+    - checkout: self
+      clean: true
+      env:
+        ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
     - template: release-SetReleaseTagandContainerName.yml@self
 
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
-        artifact: drop_windows_package_package_win_arm64
+        artifact: drop_windows_package_arm64
         itemPattern: |
           **/*.msix
         targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
@@ -25,7 +39,7 @@ jobs:
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
-        artifact: drop_windows_package_package_win_x64
+        artifact: drop_windows_package_x64
         itemPattern: |
           **/*.msix
         targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
@@ -34,12 +48,12 @@ jobs:
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
-        artifact: drop_windows_package_package_win_x86
+        artifact: drop_windows_package_x86
         itemPattern: |
           **/*.msix
         targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
       displayName: Download windows x86 packages
-    
+
     # Finds the makeappx tool on the machine with image: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
     - pwsh: |
         $cmd = Get-Command makeappx.exe -ErrorAction Ignore
@@ -70,17 +84,44 @@ jobs:
             $null = Copy-Item -Path $msixFile.FullName -Destination $sourceDir -Force -Verbose
         }
 
-        $file = Get-ChildItem $sourceDir | Select-Object -First 1
-        $prefix = ($file.BaseName -split "-win")[0]
-        $pkgName = "$prefix.msixbundle"
-        Write-Verbose -Verbose "Creating $pkgName"
-
         $makeappx = '$(MakeAppxPath)'
         $outputDir = "$sourceDir\output"
         New-Item $outputDir -Type Directory -Force > $null
-        & $makeappx bundle /d $sourceDir /p "$outputDir\$pkgName"
 
-        Get-ChildItem -Path $sourceDir -Recurse
+        # Separate LTS and Stable/Preview MSIX files by filename convention
+        $ltsMsix = @(Get-ChildItem $sourceDir -Filter '*.msix' | Where-Object { $_.BaseName -match '-LTS-' })
+        $stableMsix = @(Get-ChildItem $sourceDir -Filter '*.msix' | Where-Object { $_.BaseName -notmatch '-LTS-' })
+
+        Write-Verbose -Verbose "Stable/Preview MSIX files: $($stableMsix.Name -join ', ')"
+        Write-Verbose -Verbose "LTS MSIX files: $($ltsMsix.Name -join ', ')"
+
+        # Create Stable/Preview bundle
+        if ($stableMsix.Count -gt 0) {
+            $stableDir = "$sourceDir\stable"
+            New-Item $stableDir -Type Directory -Force > $null
+            $stableMsix | Copy-Item -Destination $stableDir -Force
+            $file = $stableMsix | Select-Object -First 1
+            $prefix = ($file.BaseName -split "-win")[0]
+            $stableBundleName = "$prefix.msixbundle"
+            Write-Verbose -Verbose "Creating Stable/Preview bundle: $stableBundleName"
+            & $makeappx bundle /d $stableDir /p "$outputDir\$stableBundleName"
+        }
+
+        # Create LTS bundle
+        if ($ltsMsix.Count -gt 0) {
+            $ltsDir = "$sourceDir\lts"
+            New-Item $ltsDir -Type Directory -Force > $null
+            $ltsMsix | Copy-Item -Destination $ltsDir -Force
+            $file = $ltsMsix | Select-Object -First 1
+            $prefix = ($file.BaseName -split "-win")[0]
+            $ltsBundleName = "$prefix.msixbundle"
+            Write-Verbose -Verbose "Creating LTS bundle: $ltsBundleName"
+            & $makeappx bundle /d $ltsDir /p "$outputDir\$ltsBundleName"
+        }
+
+        Write-Verbose -Verbose "Created bundles:"
+        Get-ChildItem -Path $outputDir -Recurse
+
         $vstsCommandString = "vso[task.setvariable variable=BundleDir]$outputDir"
         Write-Host "sending " + $vstsCommandString
         Write-Host "##$vstsCommandString"
@@ -89,22 +130,25 @@ jobs:
 
     - task: onebranch.pipeline.signing@1
       displayName: Sign MsixBundle
+      condition: eq('${{ parameters.OfficialBuild }}', 'true')
       inputs:
         command: 'sign'
         signing_profile: $(MSIXProfile)
         files_to_sign: '**/*.msixbundle'
         search_root: '$(BundleDir)'
-    
+
     - pwsh: |
-        $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
-        Write-Verbose -Verbose "Signed bundle: $signedBundle"
+        $signedBundles = @(Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File)
+        Write-Verbose -Verbose "Signed bundles: $($signedBundles.Name -join ', ')"
 
         if (-not (Test-Path $(ob_outputDirectory))) {
           New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
         }
 
-        Copy-Item -Path $signedBundle.FullName -Destination "$(ob_outputDirectory)" -Verbose
+        foreach ($bundle in $signedBundles) {
+          Copy-Item -Path $bundle.FullName -Destination "$(ob_outputDirectory)" -Verbose
+        }
 
-        Write-Verbose -Verbose "Uploaded Bundle:"
+        Write-Verbose -Verbose "Uploaded Bundles:"
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
       displayName: Upload msixbundle to Artifacts

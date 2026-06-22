@@ -417,7 +417,7 @@ function foo()
 '@
             # resolve name to absolute path
             $scriptToProcessPath = (Get-ChildItem $scriptToProcessPath).FullName
-            $iss = [System.Management.Automation.Runspaces.initialsessionstate]::CreateDefault()
+            $iss = [initialsessionstate]::CreateDefault()
             $iss.StartupScripts.Add($scriptToProcessPath)
 
             $ps = [powershell]::Create($iss)

@@ -1,11 +1,16 @@
+parameters:
+- name: ob_restore_phase
+  type: boolean
+  default: true
+
 steps:
 - powershell: |
     $shouldSign = $true
-    $authenticodeCert = 'CP-230012'
-    $msixCert = 'CP-230012'
+    $authenticodeCert = '$(authenticode_cert_id)'
+    $msixCert = '$(authenticode_cert_id)'
     if($env:IS_DAILY -eq 'true')
     {
-      $authenticodeCert = 'CP-460906'
+      $authenticodeCert = '$(authenticode_test_cert_id)'
     }
     if($env:SKIP_SIGNING -eq 'Yes')
     {
@@ -22,4 +27,4 @@ steps:
     Write-Host "##$vstsCommandString"
   displayName: 'Set SHOULD_SIGN Variable'
   env:
-      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}

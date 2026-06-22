@@ -951,7 +951,7 @@ namespace System.Management.Automation
 
             if (result != null)
             {
-                var formatString = result switch 
+                var formatString = result switch
                 {
                     FilterInfo => "Filter found: {0}",
                     ConfigurationInfo => "Configuration found: {0}",

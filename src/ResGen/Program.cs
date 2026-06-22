@@ -52,7 +52,7 @@ namespace ConsoleApplication
                         if (className.StartsWith("public.", StringComparison.InvariantCultureIgnoreCase))
                         {
                             accessModifier = "public";
-                            className = className.Substring(className.IndexOf(".") + 1);
+                            className = className.Substring(className.IndexOf('.') + 1);
                         }
 
                         string sourceCode = GetStronglyTypeCsFileForResx(resxPath, moduleName, className, accessModifier);

@@ -65,7 +65,7 @@ namespace System.Management.Automation
                             else
                                 temp = result;
 
-                            if (!(temp is PSReference reference))
+                            if (temp is not PSReference reference)
                             {
                                 throw new PSInvalidCastException("InvalidCastExceptionReferenceTypeExpected", null,
                                                                    ExtendedTypeSystem.ReferenceTypeExpected);

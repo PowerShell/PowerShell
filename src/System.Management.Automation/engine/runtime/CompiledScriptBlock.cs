@@ -196,7 +196,7 @@ namespace System.Management.Automation
 
         private void PerformSecurityChecks()
         {
-            if (!(Ast is ScriptBlockAst scriptBlockAst))
+            if (Ast is not ScriptBlockAst scriptBlockAst)
             {
                 // Checks are only needed at the top level.
                 return;
@@ -266,12 +266,12 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                if (!(endBlock.Statements[0] is PipelineAst pipelineAst))
+                if (endBlock.Statements[0] is not PipelineAst pipelineAst)
                 {
                     return false;
                 }
 
-                if (!(pipelineAst.GetPureExpression() is HashtableAst hashtableAst))
+                if (pipelineAst.GetPureExpression() is not HashtableAst hashtableAst)
                 {
                     return false;
                 }
@@ -769,7 +769,7 @@ namespace System.Management.Automation
                 return errorHandler(AutomationExceptions.CantConvertScriptBlockWithTrap);
             }
 
-            if (!(statements[0] is PipelineAst pipeAst))
+            if (statements[0] is not PipelineAst pipeAst)
             {
                 return errorHandler(AutomationExceptions.CanOnlyConvertOnePipeline);
             }

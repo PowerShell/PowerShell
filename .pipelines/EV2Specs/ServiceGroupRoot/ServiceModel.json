@@ -17,8 +17,8 @@
                 {
                   "type": "Run",
                   "properties": {
-                    "imageName": "adm-mariner-20-l",
-                    "imageVersion": "v11"
+                    "imageName": "adm-azurelinux-30-l",
+                    "imageVersion": "v2"
                   }
                 }
               ]

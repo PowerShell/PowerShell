@@ -56,25 +56,9 @@ Want to chat with other members of the PowerShell community?
 
 There are dozens of topic-specific channels on our community-driven PowerShell Virtual User Group, which you can join on:
 
-* [Gitter](https://gitter.im/PowerShell/PowerShell)
 * [Discord](https://discord.gg/PowerShell)
 * [IRC](https://web.libera.chat/#powershell) on Libera.Chat
 * [Slack](https://aka.ms/psslack)
-
-### Build status of nightly builds
-
-| Azure CI (Windows)                       | Azure CI (Linux)                               | Azure CI (macOS)                               | CodeFactor Grade         |
-|:-----------------------------------------|:-----------------------------------------------|:-----------------------------------------------|:-------------------------|
-| [![windows-nightly-image][]][windows-nightly-site] | [![linux-nightly-image][]][linux-nightly-site] | [![macOS-nightly-image][]][macos-nightly-site] | [![cf-image][]][cf-site] |
-
-[windows-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=32
-[linux-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=23
-[macos-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=24
-[windows-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-Windows-daily
-[linux-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux-daily?branchName=master
-[macOS-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos-daily?branchName=master
-[cf-site]: https://www.codefactor.io/repository/github/powershell/powershell
-[cf-image]: https://www.codefactor.io/repository/github/powershell/powershell/badge
 
 ## Developing and Contributing
 

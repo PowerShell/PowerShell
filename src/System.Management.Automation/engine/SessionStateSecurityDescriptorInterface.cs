@@ -35,7 +35,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
-            if (!(providerInstance is ISecurityDescriptorCmdletProvider permissionCmdletProvider))
+            if (providerInstance is not ISecurityDescriptorCmdletProvider permissionCmdletProvider)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(

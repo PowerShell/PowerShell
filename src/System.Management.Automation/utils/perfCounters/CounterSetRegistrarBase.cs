@@ -95,7 +95,6 @@ namespace System.Management.Automation.PerformanceData
         /// based on Provider Id, counterSetId, counterSetInstanceType, a collection
         /// with counters information and an optional counterSetName.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         protected CounterSetRegistrarBase(
             Guid providerId,
             Guid counterSetId,
@@ -220,7 +219,6 @@ namespace System.Management.Automation.PerformanceData
         /// <summary>
         /// Constructor that creates an instance of PSCounterSetRegistrar.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public PSCounterSetRegistrar(
             Guid providerId,
             Guid counterSetId,

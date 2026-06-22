@@ -10,11 +10,9 @@ jobs:
   pool:
     type: linux
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  - name: DOTNET_NOLOGO
     value: 1
   - group: DotNetPrivateBuildAccess
   - name: ob_outputDirectory
@@ -64,12 +62,7 @@ jobs:
       AnalyzeInPipeline: false
       Language: csharp
 
-  - task: UseDotNet@2
-    inputs:
-      useGlobalJson: true
-      workingDirectory: $(PowerShellRoot)
-    env:
-      ob_restore_phase: true
+  - template: /.pipelines/templates/install-dotnet.yml@self
 
   - pwsh: |
       $runtime = $env:RUNTIME
@@ -144,11 +137,9 @@ jobs:
   pool:
     type: windows
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  - name: DOTNET_NOLOGO
     value: 1
   - group: DotNetPrivateBuildAccess
   - group: certificate_logical_to_actual
@@ -201,5 +192,6 @@ jobs:
   - template: /.pipelines/templates/obp-file-signing.yml@self
     parameters:
       binPath: $(DropRootPath)
+      OfficialBuild: $(ps_official_build)
 
   - template: /.pipelines/templates/step/finalize.yml@self

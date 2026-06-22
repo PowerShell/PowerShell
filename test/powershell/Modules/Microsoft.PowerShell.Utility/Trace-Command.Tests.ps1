@@ -84,6 +84,171 @@ Describe "Trace-Command" -tags "CI" {
         }
     }
 
+    Context "MethodInvocation traces" {
+
+        BeforeAll {
+            $filePath = Join-Path $TestDrive 'testtracefile.txt'
+
+            class MyClass {
+                MyClass() {}
+                MyClass([int]$arg) {}
+
+                [void]Method() { return }
+                [void]Method([string]$arg) { return }
+                [void]Method([int]$arg) { return }
+
+                [string]ReturnMethod() { return "foo" }
+
+                static [void]StaticMethod() { return }
+                static [void]StaticMethod([string]$arg) { return }
+            }
+
+            # C# classes support more features than pwsh classes
+            Add-Type -TypeDefinition @'
+namespace TraceCommandTests;
+
+public sealed class OverloadTests
+{
+    public int PropertySetter { get; set; }
+
+    public OverloadTests() {}
+    public OverloadTests(int value)
+    {
+        PropertySetter = value;
+    }
+
+    public void GenericMethod<T>()
+    {}
+
+    public T GenericMethodWithArg<T>(T obj) => obj;
+
+    public void MethodWithDefault(string arg1, int optional = 1)
+    {}
+
+    public void MethodWithOut(out int val)
+    {
+        val = 1;
+    }
+
+    public void MethodWithRef(ref int val)
+    {
+        val = 1;
+    }
+}
+'@
+        }
+
+        AfterEach {
+            Remove-Item $filePath -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Traces instance method" {
+            $myClass = [MyClass]::new()
+            Trace-Command -Name MethodInvocation -Expression {
+                $myClass.Method(1)
+            } -FilePath $filePath
+            Get-Content $filePath | Should -BeLike "*Invoking method: void Method(int arg)"
+        }
+
+        It "Traces static method" {
+            Trace-Command -Name MethodInvocation -Expression {
+                [MyClass]::StaticMethod(1)
+            } -FilePath $filePath
+            Get-Content $filePath | Should -BeLike "*Invoking method: static void StaticMethod(string arg)"
+        }
+
+        It "Traces method with return type" {
+            $myClass = [MyClass]::new()
+            Trace-Command -Name MethodInvocation -Expression {
+                $myClass.ReturnMethod()
+            } -FilePath $filePath
+            Get-Content $filePath | Should -BeLike "*Invoking method: string ReturnMethod()"
+        }
+
+        It "Traces constructor" {
+            Trace-Command -Name MethodInvocation -Expression {
+                [TraceCommandTests.OverloadTests]::new("1234")
+            } -FilePath $filePath
+            Get-Content $filePath | Should -BeLike "*Invoking method: TraceCommandTests.OverloadTests new(int value)"
+        }
+
+        It "Traces Property setter invoked as a method" {
+            $obj = [TraceCommandTests.OverloadTests]::new()
+            Trace-Command -Name MethodInvocation -Expression {
+                $obj.set_PropertySetter(1234)
+            } -FilePath $filePath
+            Get-Content $filePath | Should -BeLike "*Invoking method: void set_PropertySetter(int value)"
+        }
+
+        It "Traces generic method" {
+            $obj = [TraceCommandTests.OverloadTests]::new()
+            Trace-Command -Name MethodInvocation -Expression {
+                $obj.GenericMethod[int]()
+            } -FilePath $filePath
+            Get-Content $filePath | Should -BeLike "*Invoking method: void GenericMethod``[int``]()"
+        }
+
+        It "Traces generic method with argument" {
+            $obj = [TraceCommandTests.OverloadTests]::new()
+            Trace-Command -Name MethodInvocation -Expression {
+                $obj.GenericMethodWithArg("foo")
+            } -FilePath $filePath
+            Get-Content $filePath | Should -BeLike "*Invoking method: string GenericMethodWithArg``[string``](string obj)"
+        }
+
+        It "Traces .NET call with default value" {
+            $obj = [TraceCommandTests.OverloadTests]::new()
+            Trace-Command -Name MethodInvocation -Expression {
+                $obj.MethodWithDefault("foo")
+            } -FilePath $filePath
+            Get-Content $filePath | Should -BeLike "*Invoking method: void MethodWithDefault(string arg1, int optional = 1)"
+        }
+
+        It "Traces method with ref argument" {
+            $obj = [TraceCommandTests.OverloadTests]::new()
+            $v = 1
+
+            Trace-Command -Name MethodInvocation -Expression {
+                $obj.MethodWithRef([ref]$v)
+            } -FilePath $filePath
+            # [ref] goes through the binder so will trigger the first trace
+            Get-Content $filePath | Select-Object -Skip 1 | Should -BeLike "*Invoking method: void MethodWithRef(``[ref``] int val)"
+        }
+
+        It "Traces method with out argument" {
+            $obj = [TraceCommandTests.OverloadTests]::new()
+            $v = 1
+
+            Trace-Command -Name MethodInvocation -Expression {
+                $obj.MethodWithOut([ref]$v)
+            } -FilePath $filePath
+            # [ref] goes through the binder so will trigger the first trace
+            Get-Content $filePath | Select-Object -Skip 1 | Should -BeLike "*Invoking method: void MethodWithOut(``[ref``] int val)"
+        }
+
+        It "Traces a binding error" {
+            Trace-Command -Name MethodInvocation -Expression {
+                # try/catch is used as error formatter will hit the trace as well
+                try {
+                    [System.Runtime.InteropServices.Marshal]::SizeOf([int])
+                }
+                catch {
+                    # Satisfy codefactor
+                    $_ | Out-Null
+                }
+            } -FilePath $filePath
+            # type fqn is used, the wildcard avoids hardcoding that
+            Get-Content $filePath | Should -BeLike "*Invoking method: static int SizeOf``[System.RuntimeType, *``](System.RuntimeType, * structure)"
+        }
+
+        It "Traces LINQ call" {
+            Trace-Command -Name MethodInvocation -Expression {
+                [System.Linq.Enumerable]::Union([int[]]@(1, 2), [int[]]@(3, 4))
+            } -FilePath $filePath
+            Get-Content $filePath | Should -BeLike "*Invoking method: static System.Collections.Generic.IEnumerable``[int``] Union``[int``](System.Collections.Generic.IEnumerable``[int``] first, System.Collections.Generic.IEnumerable``[int``] second)"
+        }
+    }
+
     Context "Trace-Command tests for code coverage" {
 
         BeforeAll {

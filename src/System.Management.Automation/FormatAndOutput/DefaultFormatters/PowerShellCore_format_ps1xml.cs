@@ -1190,8 +1190,37 @@ namespace System.Management.Automation.Runspaces
                                             $highlightLine = ''
                                             if ($useTargetObject) {
                                                 $line = $_.TargetObject.LineText.Trim()
+
                                                 $offsetLength = 0
                                                 $offsetInLine = 0
+                                                $startColumn = 0
+                                                if (
+                                                    ([System.Collections.IDictionary]$_.TargetObject).Contains('StartColumn') -and
+                                                    [System.Management.Automation.LanguagePrimitives]::TryConvertTo[int]($_.TargetObject.StartColumn, [ref]$startColumn) -and
+                                                    $null -ne $startColumn -and
+                                                    $startColumn -gt 0 -and
+                                                    $startColumn -le $line.Length
+                                                ) {
+                                                    $endColumn = 0
+                                                    if (-not (
+                                                        ([System.Collections.IDictionary]$_.TargetObject).Contains('EndColumn') -and
+                                                        [System.Management.Automation.LanguagePrimitives]::TryConvertTo[int]($_.TargetObject.EndColumn, [ref]$endColumn) -and
+                                                        $null -ne $endColumn -and
+                                                        $endColumn -gt $startColumn -and
+                                                        $endColumn -le ($line.Length + 1)
+                                                    )) {
+                                                        $endColumn = $line.Length + 1
+                                                    }
+
+                                                    # Input is expected to be 1-based index to match the extent positioning
+                                                    # but we use 0-based indexing below.
+                                                    $startColumn -= 1
+                                                    $endColumn -= 1
+
+                                                    $highlightLine = "$(" " * $startColumn)$("~" * ($endColumn - $startColumn))"
+                                                    $offsetLength = $endColumn - $startColumn
+                                                    $offsetInLine = $startColumn
+                                                }
                                             }
                                             else {
                                                 $positionMessage = $myinv.PositionMessage.Split($newline)

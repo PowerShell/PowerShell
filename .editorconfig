@@ -126,6 +126,10 @@ dotnet_code_quality_unused_parameters = non_public:suggestion
 # https://learn.microsoft.com/en-gb/dotnet/fundamentals/code-analysis/quality-rules/ca1859
 dotnet_diagnostic.CA1859.severity = suggestion
 
+# Disable SA1600 (ElementsMustBeDocumented) for test directory only
+[test/**/*.cs]
+dotnet_diagnostic.SA1600.severity = none
+
 # CSharp code style settings:
 [*.cs]
 

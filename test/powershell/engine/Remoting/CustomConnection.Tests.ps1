@@ -27,14 +27,14 @@ function Start-PwshProcess
 
 Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdminOnWindows' {
 
-    BeforeAll {
+    BeforeEach {
         Import-Module -Name Microsoft.PowerShell.NamedPipeConnection -ErrorAction Stop
 
         $script:PwshProcId = Start-PwshProcess
         $script:session = $null
     }
 
-    AfterAll {
+    AfterEach {
         if ($null -ne $script:session)
         {
             Remove-PSSession -Session $script:session
@@ -57,6 +57,10 @@ Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdmi
     # Skip this timeout test for non-Windows platforms, because dotNet named pipes do not honor the 'NumberOfServerInstances'
     # property and allows connection to a currently connected server.
     It 'Verifies timeout error when trying to connect to pwsh process with current connection' -Skip:(!$IsWindows) {
+        # We start an active connection to have it block the second connection attempt.
+        $script:session = New-NamedPipeSession -ProcessId $script:PwshProcId -ConnectingTimeout 10 -Name CustomNPConnection -ErrorAction Stop
+        
+        # The above connection means the named pipe server is busy and won't allow this second connection.
         $brokenSession = New-NamedPipeSession -ProcessId $script:PwshProcId -ConnectingTimeout 2 -Name CustomNPConnection -ErrorAction Stop
 
         # Verify expected broken session
@@ -65,5 +69,30 @@ Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdmi
         $brokenSession.Runspace.RunspaceStateInfo.Reason.InnerException.GetType().Name | Should -BeExactly 'TimeoutException'
 
         $brokenSession | Remove-PSSession
+    }
+
+    It 'Passes $using: with PSv5 compatibility in Invoke-Command' {
+        $script:session = New-NamedPipeSession -ProcessId $script:PwshProcId -ConnectingTimeout 10 -Name CustomNPConnection -ErrorAction Stop
+
+        Function Test-Function {
+            'foo'
+        }
+
+        # The v2 engine will choke on a var with '-' in the name and the v3/v4
+        # using logic will revert to the v2 branch if $using is in a new scope.
+        # By using a function and a new scope we can verify the v5 logic is
+        # used and not the v2-4 one.
+        $result = Invoke-Command -Session $script:session -ScriptBlock {
+            ${function:Test-Function} = ${using:function:Test-Function}
+
+            Test-Function
+
+            # Running in a new scope triggers the v2 logic if the v3/v4 branch
+            # was used.
+            & { (${using:function:Test-Function}).Trim() }
+        }
+        $result.Count | Should -Be 2
+        $result[0] | Should -BeExactly foo
+        $result[1] | Should -BeExactly "'foo'"
     }
 }

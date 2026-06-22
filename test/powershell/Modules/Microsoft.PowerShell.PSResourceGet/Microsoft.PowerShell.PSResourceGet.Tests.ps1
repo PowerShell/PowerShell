@@ -239,7 +239,7 @@ Describe "PSResourceGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a module correctly to the required location with AllUsers scope" {
-        Install-PSResource -Name $TestModule -Repository $RepositoryName -Scope AllUsers
+        Install-PSResource -Name $TestModule -Repository $RepositoryName -Scope AllUsers -ErrorAction Stop
 
         $module = Get-Module $TestModule -ListAvailable
         $module.Name | Should -Be $TestModule
@@ -323,7 +323,7 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a script correctly to the required location with AllUsers scope" {
-        Install-PSResource -Name $TestScript -Repository $RepositoryName -Scope AllUsers
+        Install-PSResource -Name $TestScript -Repository $RepositoryName -Scope AllUsers -ErrorAction Stop
     }
 
     AfterAll {

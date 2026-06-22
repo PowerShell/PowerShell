@@ -15,6 +15,8 @@ function New-LocalUser
     .OUTPUTS
     .NOTES
   #>
+  [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingUsernameAndPasswordParams', '')]
+  [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
   param(
     [Parameter(Mandatory=$true)]
     [string] $username,
