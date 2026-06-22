@@ -55,33 +55,8 @@ PowerShell is Open Source.  See https://github.com/powershell/powershell </Descr
   <ScreenshotCaptions>
     <!-- Valid length: 200 character limit, up to 9 elements per platform -->
     <!-- Valid attributes: any of DesktopImage, MobileImage, XboxImage, SurfaceHubImage, and HoloLensImage -->
-    <Caption DesktopImage="Prompt.png" _locID="App_caption1">
-      <!-- _locComment_text="{MaxLength=200} Screenshot caption 1" -->
-      Prompt
-    </Caption>
-    <Caption DesktopImage="Predictor_Inline.png" _locID="App_caption2">
-      <!-- _locComment_text="{MaxLength=200} Screenshot caption 2" -->
-      Inline Prediction
-    </Caption>
-    <Caption DesktopImage="Predictor_ListView.png" _locID="App_caption3">
-      <!-- _locComment_text="{MaxLength=200} Screenshot caption 3" -->
-      Prediction List View
-    </Caption>
-    <Caption DesktopImage="Error.png" _locID="App_caption4">
-      <!-- _locComment_text="{MaxLength=200} Screenshot caption 4" -->
-      Error Feedback Provider
-    </Caption>
-    <Caption DesktopImage="Feedback_Provider.png" _locID="App_caption5">
-      <!-- _locComment_text="{MaxLength=200} Screenshot caption 5" -->
-      Feedback Provider
-    </Caption>
-    <Caption DesktopImage="Experimental_Features.png" _locID="App_caption6">
-      <!-- _locComment_text="{MaxLength=200} Screenshot caption 6" -->
-      Experimental Features
-    </Caption>
   </ScreenshotCaptions>
   <AdditionalAssets>
-    <Icon FileName="pwshLogo.png" />
     <!-- Valid elements:-->
     <!--   HeroImage414x180, HeroImage846x468, HeroImage558x756, HeroImage414x468, HeroImage558x558, HeroImage2400x1200,-->
     <!--   ScreenshotWXGA, ScreenshotHD720, ScreenshotWVGA, Doublewide, Panoramic, Square,-->
