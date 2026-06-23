@@ -15,24 +15,14 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsLifecycle.Start, "Sleep", DefaultParameterSetName = "Seconds", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097041")]
     public sealed class StartSleepCommand : PSCmdlet, IDisposable
     {
-        private bool _disposed = false;
-
         #region IDisposable
+        
         /// <summary>
-        /// Dispose method of IDisposable interface.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            if (!_disposed)
-            {
-                if (_waitHandle != null)
-                {
-                    _waitHandle.Dispose();
-                    _waitHandle = null;
-                }
-
-                _disposed = true;
-            }
+            Interlocked.Exchange(ref _wakeEvent, null)?.Dispose();
         }
 
         #endregion
@@ -68,30 +58,15 @@ namespace Microsoft.PowerShell.Commands
 
         #region methods
 
-        // Wait handle which is used by thread to sleep.
-        private ManualResetEvent _waitHandle;
-
-        // object used for synchronizes pipeline thread and stop thread
-        // access to waitHandle
-        private readonly object _syncObject = new();
-
-        // this is set to true by stopProcessing
-        private bool _stopping = false;
+        // Event used to wake up early from sleep when StopProcessing is called.
+        private ManualResetEventSlim _wakeEvent = new(false);
 
         /// <summary>
         /// This method causes calling thread to sleep for specified milliseconds.
         /// </summary>
         private void Sleep(int milliSecondsToSleep)
         {
-            lock (_syncObject)
-            {
-                if (!_stopping)
-                {
-                    _waitHandle = new ManualResetEvent(false);
-                }
-            }
-
-            _waitHandle?.WaitOne(milliSecondsToSleep, true);
+            _wakeEvent?.Wait(milliSecondsToSleep);
         }
 
         /// <summary>
@@ -144,11 +119,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            lock (_syncObject)
-            {
-                _stopping = true;
-                _waitHandle?.Set();
-            }
+            _wakeEvent?.Set();
         }
 
         #endregion
