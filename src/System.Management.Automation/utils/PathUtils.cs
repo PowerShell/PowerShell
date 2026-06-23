@@ -281,18 +281,26 @@ namespace System.Management.Automation
                 mode = FileMode.CreateNew;
             }
 
-            if (Force && (Append || !NoClobber))
+#if UNIX
+            bool isNamedPipe = false;
+#else
+            // File.Exists and new FileInfo() will open 2 HANDLES to the file which causes problems for named pipes
+            // as it may only allow 1 client at a time. We don't need to worry about whether it exists and has the
+            // read-only attribute so just skip it altogether.
+            bool isNamedPipe = resolvedPath.StartsWith(@"\\.\pipe\", StringComparison.OrdinalIgnoreCase) ||
+                resolvedPath.StartsWith(@"\\.\mailslot\", StringComparison.OrdinalIgnoreCase);
+#endif
+
+            if (Force && (Append || !NoClobber) && !isNamedPipe)
             {
-                if (File.Exists(resolvedPath))
+                // The constructor does not fail if it does not exist, the Attributes property will just return -1.
+                FileInfo fInfo = new FileInfo(resolvedPath);
+                if ((int)fInfo.Attributes != -1 && fInfo.Attributes.HasFlag(FileAttributes.ReadOnly))
                 {
-                    FileInfo fInfo = new FileInfo(resolvedPath);
-                    if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                    {
-                        // remember to reset the read-only attribute later
-                        readOnlyFileInfo = fInfo;
-                        // Clear the read-only attribute
-                        fInfo.Attributes &= ~(FileAttributes.ReadOnly);
-                    }
+                    // remember to reset the read-only attribute later
+                    readOnlyFileInfo = fInfo;
+                    // Clear the read-only attribute
+                    fInfo.Attributes &= ~FileAttributes.ReadOnly;
                 }
             }
 
