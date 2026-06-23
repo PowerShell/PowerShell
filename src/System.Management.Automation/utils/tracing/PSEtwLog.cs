@@ -249,11 +249,11 @@ namespace System.Management.Automation.Tracing
         /// <param name="fragmentLength"></param>
         /// <param name="fragmentData"></param>
         internal static void LogAnalyticVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword,
-            Int64 objectId,
-            Int64 fragmentId,
+            long objectId,
+            long fragmentId,
             int isStartFragment,
             int isEndFragment,
-            UInt32 fragmentLength,
+            uint fragmentLength,
             PSETWBinaryBlob fragmentData)
         {
             if (provider.IsEnabled(PSLevel.Verbose, keyword))

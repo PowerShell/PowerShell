@@ -415,7 +415,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the line in the script at which the error occurred.
         /// </summary>
-        public Int64 Line
+        public long Line
         {
             get
             {
@@ -423,12 +423,12 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly Int64 _line = Int64.MinValue;
+        private readonly long _line = long.MinValue;
 
         /// <summary>
         /// Gets the offset on the line in the script at which the error occurred.
         /// </summary>
-        public Int64 Offset
+        public long Offset
         {
             get
             {
@@ -436,7 +436,7 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly Int64 _offset = Int64.MinValue;
+        private readonly long _offset = long.MinValue;
 
         /// <summary>
         /// Gets the invocation information about the command.
