@@ -184,14 +184,12 @@ namespace Microsoft.PowerShell.Commands
                 do // false loop
                 {
                     // Unwrap the PSObject before binding it as a scriptblock...
-                    PSObject pso = value as PSObject;
-                    if (pso != null)
+                    if (value is PSObject pso)
                     {
                         value = pso.BaseObject;
                     }
 
-                    ScriptBlock scriptBlockValue = value as ScriptBlock;
-                    if (scriptBlockValue != null)
+                    if (value is ScriptBlock scriptBlockValue)
                     {
                         if (dynamicParametersSpecified)
                         {
@@ -206,8 +204,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    FunctionInfo function = value as FunctionInfo;
-                    if (function != null)
+                    if (value is FunctionInfo function)
                     {
                         ScopedItemOptions options = function.Options;
 
@@ -220,8 +217,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    string stringValue = value as string;
-                    if (stringValue != null)
+                    if (value is string stringValue)
                     {
                         ScriptBlock scriptBlock = ScriptBlock.Create(Context.ExecutionContext, stringValue);
 
@@ -290,8 +286,7 @@ namespace Microsoft.PowerShell.Commands
 
             object value = item;
 
-            FunctionInfo function = item as FunctionInfo;
-            if (function != null)
+            if (item is FunctionInfo function)
             {
                 value = function.ScriptBlock;
             }
@@ -325,8 +320,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            FunctionInfo functionInfo = item as FunctionInfo;
-            if (functionInfo != null)
+            if (item is FunctionInfo functionInfo)
             {
                 if ((functionInfo.Options & ScopedItemOptions.Constant) != 0 ||
                     ((functionInfo.Options & ScopedItemOptions.ReadOnly) != 0 && !Force))

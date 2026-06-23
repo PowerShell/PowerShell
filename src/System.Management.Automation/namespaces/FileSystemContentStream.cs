@@ -1069,8 +1069,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (object line in content)
             {
-                object[] contentArray = line as object[];
-                if (contentArray != null)
+                if (line is object[] contentArray)
                 {
                     foreach (object obj in contentArray)
                     {
