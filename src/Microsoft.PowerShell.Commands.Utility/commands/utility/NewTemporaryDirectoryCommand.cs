@@ -30,44 +30,59 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            string tempPath = Path.GetTempPath();
-            string targetDescription = string.IsNullOrEmpty(Prefix)
-                ? tempPath
-                : Path.Combine(tempPath, Prefix);
-
-            if (ShouldProcess(targetDescription))
+            if (!string.IsNullOrEmpty(Prefix))
             {
-                DirectoryInfo directory;
+                string targetDescription = Path.Combine(Path.GetTempPath(), Prefix);
+                if (ShouldProcess(targetDescription))
+                {
+                    try
+                    {
+                        DirectoryInfo createdDirectory = Directory.CreateTempSubdirectory(Prefix);
+                        WriteObject(createdDirectory);
+                    }
+                    catch (IOException ioException)
+                    {
+                        ThrowTerminatingError(
+                            CreateErrorRecord(ioException, ErrorCategory.WriteError, targetDescription));
+                    }
+                    catch (System.UnauthorizedAccessException unauthorizedAccessException)
+                    {
+                        ThrowTerminatingError(
+                            CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, targetDescription));
+                    }
+                }
+
+                return;
+            }
+
+            DirectoryInfo targetDirectory = PathUtils.GetTemporaryDirectory();
+            if (ShouldProcess(targetDirectory.FullName))
+            {
                 try
                 {
-                    // Loop until we find a non-existent directory name to avoid collisions,
-                    // matching the pattern used by PathUtils.CreateTemporaryDirectory().
-                    DirectoryInfo tempDir;
-                    do
-                    {
-                        string name = string.IsNullOrEmpty(Prefix)
-                            ? Path.GetRandomFileName()
-                            : string.Concat(Prefix, Path.GetRandomFileName());
-                        tempDir = new DirectoryInfo(Path.Combine(tempPath, name));
-                    }
-                    while (tempDir.Exists);
-
-                    Directory.CreateDirectory(tempDir.FullName);
-                    directory = new DirectoryInfo(tempDir.FullName);
+                    Directory.CreateDirectory(targetDirectory.FullName);
+                    WriteObject(new DirectoryInfo(targetDirectory.FullName));
                 }
                 catch (IOException ioException)
                 {
                     ThrowTerminatingError(
-                        new ErrorRecord(
-                            ioException,
-                            "NewTemporaryDirectoryError",
-                            ErrorCategory.WriteError,
-                            tempPath));
-                    return;
+                        CreateErrorRecord(ioException, ErrorCategory.WriteError, targetDirectory.FullName));
                 }
-
-                WriteObject(directory);
+                catch (System.UnauthorizedAccessException unauthorizedAccessException)
+                {
+                    ThrowTerminatingError(
+                        CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, targetDirectory.FullName));
+                }
             }
+        }
+
+        private static ErrorRecord CreateErrorRecord(System.Exception exception, ErrorCategory category, string targetPath)
+        {
+            return new ErrorRecord(
+                exception,
+                "NewTemporaryDirectoryWriteError",
+                category,
+                targetPath);
         }
     }
 }

@@ -692,6 +692,13 @@ namespace System.Management.Automation
 
         internal static DirectoryInfo CreateTemporaryDirectory()
         {
+            DirectoryInfo moduleDirectory = GetTemporaryDirectory();
+            Directory.CreateDirectory(moduleDirectory.FullName);
+            return new DirectoryInfo(moduleDirectory.FullName);
+        }
+
+        internal static DirectoryInfo GetTemporaryDirectory()
+        {
             DirectoryInfo temporaryDirectory = new DirectoryInfo(Path.GetTempPath());
             DirectoryInfo moduleDirectory;
             do
@@ -705,8 +712,7 @@ namespace System.Management.Automation
                             Path.GetRandomFileName())));
             } while (moduleDirectory.Exists);
 
-            Directory.CreateDirectory(moduleDirectory.FullName);
-            return new DirectoryInfo(moduleDirectory.FullName);
+            return moduleDirectory;
         }
 
         internal static bool TryDeleteFile(string filepath)
