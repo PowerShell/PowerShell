@@ -1,727 +1,1430 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-$ProgressPreference = "SilentlyContinue"
 
-Describe 'get-help HelpFunc1' -Tags "Feature" {
-    BeforeAll {
-    function TestHelpError {
-        [CmdletBinding()]
-        param(
-        $x,
-        [System.Management.Automation.ErrorRecord[]]$e,
-        [string] $expectedError
-        )
-        It 'Help result should be $null' { $x | Should -BeNullOrEmpty }
-        It '$e.Count' { $e.Count | Should -BeGreaterThan 0 }
-        It 'FullyQualifiedErrorId' { $e[0].FullyQualifiedErrorId | Should -BeExactly $expectedError }
-    }
+New-Module PesterInterop {
+    $script:isPester4 = (Get-Module Pester).Version -lt '5.0'
 
-    function TestHelpFunc1 {
-        [CmdletBinding()]
-        param( $x )
-        It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "A relatively useless function." }
-        It '$x.Description' { $x.Description[0].Text | Should -BeExactly "A description`n`n    with indented text and a blank line." }
-        It '$x.alertSet.alert' { $x.alertSet.alert[0].Text | Should -BeExactly "This function is mostly harmless." }
-        It '$x.relatedLinks.navigationLink[0].uri' {  $x.relatedLinks.navigationLink[0].uri | Should -BeExactly "https://blogs.msdn.com/powershell" }
-        It '$x.relatedLinks.navigationLink[1].linkText' { $x.relatedLinks.navigationLink[1].linkText | Should -BeExactly "other commands" }
-        It '$x.examples.example.code' { $x.examples.example.code | Should -BeExactly "If you need an example, you're hopeless." }
-        It '$x.inputTypes.inputType.type.name' { $x.inputTypes.inputType.type.name | Should -BeExactly "Anything you like." }
-        It '$x.returnValues.returnValue.type.name' { $x.returnValues.returnValue.type.name | Should -BeExactly "Nothing." }
-        It '$x.Component' { $x.Component | Should -BeExactly "Something" }
-        It '$x.Role' { $x.Role | Should -BeExactly "CrazyUser" }
-        It '$x.Functionality' { $x.Functionality | Should -BeExactly "Useless" }
+    if ($script:isPester4) {
+        function BeforeDiscovery {
+            param (
+                [ScriptBlock]$ScriptBlock
+            )
+
+            . $ScriptBlock
         }
-
-        # .SYNOPSIS
-        #
-        #    A relatively useless function.
-        #
-        # .DESCRIPTION
-        #
-        #    A description
-        #
-        #        with indented text and a blank line.
-        #
-        # .NOTES
-        #
-        #    This function is mostly harmless.
-        #
-        # .LINK
-        #
-        #    https://blogs.msdn.com/powershell
-        #
-        # .LINK
-        #
-        #    other commands
-        #
-        # .EXAMPLE
-        #
-        #    If you need an example, you're hopeless.
-        #
-        # .INPUTS
-        #
-        #    Anything you like.
-        #
-        # .OUTPUTS
-        #
-        #    Nothing.
-        #
-        # .COMPONENT
-        #
-        #    Something
-        #
-        # .ROLE
-        #
-        #    CrazyUser
-        #
-        # .FUNCTIONALITY
-        #
-        #    Useless
-        #
-        function helpFunc1 {}
-
-        Set-Item function:dynamicHelpFunc1 -Value {
-            # .SYNOPSIS
-            #
-            #    A relatively useless function.
-            #
-            # .DESCRIPTION
-            #
-            #    A description
-            #
-            #        with indented text and a blank line.
-            #
-            # .NOTES
-            #
-            #    This function is mostly harmless.
-            #
-            # .LINK
-            #
-            #    https://blogs.msdn.com/powershell
-            #
-            # .LINK
-            #
-            #    other commands
-            #
-            # .EXAMPLE
-            #
-            #    If you need an example, you're hopeless.
-            #
-            # .INPUTS
-            #
-            #    Anything you like.
-            #
-            # .OUTPUTS
-            #
-            #    Nothing.
-            #
-            # .COMPONENT
-            #
-            #    Something
-            #
-            # .ROLE
-            #
-            #    CrazyUser
-            #
-            # .FUNCTIONALITY
-            #
-            #    Useless
-            #
-
-            process { }
-        }
-    }
-
-    Context 'Get-Help helpFunc1' {
-        $x = Get-Help helpFunc1
-        TestHelpFunc1 $x
-    }
-
-    Context 'Get-Help dynamicHelpFunc1' {
-        $x = Get-Help dynamicHelpFunc1
-        TestHelpFunc1 $x
-    }
-
-    Context 'get-help helpFunc1 -component blah' {
-        $x = Get-Help helpFunc1 -Component blah -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
-    }
-
-    Context 'get-help helpFunc1 -component Something' {
-        $x = Get-Help helpFunc1 -Component Something -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should -Be 0 }
-    }
-
-    Context 'get-help helpFunc1 -role blah' {
-        $x = Get-Help helpFunc1 -Component blah -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
-    }
-
-    Context 'get-help helpFunc1 -role CrazyUser' {
-        $x = Get-Help helpFunc1 -Role CrazyUser -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should -Be 0 }
-    }
-
-    Context '$x = get-help helpFunc1 -functionality blah' {
-        $x = Get-Help helpFunc1 -Functionality blah -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
-    }
-
-    Context '$x = get-help helpFunc1 -functionality Useless' {
-        $x = Get-Help helpFunc1 -Functionality Useless -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should -Be 0 }
     }
 }
 
-Describe 'get-help file' -Tags "CI" {
+Describe 'Comment Based Help' {
     BeforeAll {
-        try {
-            if ($IsWindows) {
-                $tmpfile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
-            }
-            else {
-                $tmpfile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), "ps1"))
-            }
-        } catch {
-            return
-        }
-    }
+        $ProgressPreference = 'SilentlyContinue'
 
-    AfterAll {
-        Remove-Item $tmpfile -Force -ErrorAction silentlycontinue
-    }
-
-    Context 'get-help file1' {
-
-        @'
-    # .SYNOPSIS
-    #    Function help, not script help
-    function foo
-    {
-    }
-
-    get-help foo
-'@ > $tmpfile
-
-        $x = Get-Help $tmpfile
-        It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-        $x = & $tmpfile
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly 'Function help, not script help' }
-    }
-
-    Context 'get-help file2' {
-
-	    # Note - 2 blank lines below are intentional, do not delete
-        @'
-        # .SYNOPSIS
-        #    Script help, not function help
-
-
-        function foo
-        {
-        }
-
-        get-help foo
-'@ > $tmpfile
-
-        $x = Get-Help $tmpfile
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly 'Script help, not function help' }
-        $x = & $tmpfile
-        It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-    }
-}
-
-Describe 'get-help other tests' -Tags "CI" {
-    BeforeAll {
-        try {
-            if ($IsWindows) {
-                $tempFile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
-            }
-            else {
-                $tempFile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), "ps1"))
-            }
-        } catch {
-            return
-        }
-    }
-
-    AfterAll {
-        Remove-Item $tempFile -Force -ErrorAction silentlycontinue
-    }
-
-    Context 'get-help missingHelp' {
-        # Blank lines here are important, do not adjust the formatting, remove blank lines, etc.
-
-        <#
-        .SYNOPSIS
-        This help block doesn't belong to any function because it is more than 1 line away from the function.
-        #>
-
-
-        function missingHelp { param($abc) }
-            $x = Get-Help missingHelp
-            It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-            It '$x.Synopsis' { $x.Synopsis.Trim() | Should -BeExactly 'missingHelp [[-abc] <Object>]' }
-        }
-
-    Context 'get-help helpFunc2' {
-
-    <#
-    .SYNOPSIS
-        This help block goes on helpFunc2
-    #>
-
-    function helpFunc2 { param($abc) }
-
-        $x = Get-Help helpFunc2
-        It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-        It '$x.Synopsis' { $x.Synopsis.Trim() | Should -BeExactly 'This help block goes on helpFunc2' }
-    }
-
-    Context 'get-help file and get-help helpFunc2' {
-        $script = @"
+        function Get-HelpField {
             <#
             .SYNOPSIS
-                This is script help
+                A utility function to get a the content of a specific field from help.
             #>
+            [CmdletBinding(DefaultParameterSetName = 'ByCommandName')]
+            param (
+                [Parameter(Mandatory, Position = 1, ParameterSetName = 'ByCommandName')]
+                [string]
+                $CommandName,
 
-            <#
-            .SYNOPSIS
-                This is function help for helpFunc2
-            #>
-            function helpFunc2 {}
+                [Parameter(Mandatory, ParameterSetName = 'FromHelpInfo')]
+                [PSTypeName('HelpInfo')]
+                $HelpInfo,
 
-            get-help helpFunc2
-"@
+                [Parameter(Mandatory)]
+                [string]
+                $Name
+            )
 
-        Set-Content $tempFile $script
-        $x = Get-Help $tempFile
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "This is script help" }
+            if ($CommandName) {
+                $HelpInfo = Get-Help $CommandName -ErrorAction Ignore
+            }
 
-        $x = & $tempFile
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "This is function help for helpFunc2" }
+            $output = switch ($Name) {
+                'DESCRIPTION'           { $HelpInfo.Description.Text }
+                'NOTES'                 { $HelpInfo.alertSet.alert.Text }
+                'LINKS'                 { $HelpInfo.relatedLinks.navigationLink }
+                'LINKS,URI'             { $HelpInfo.relatedLinks.navigationLink.uri }
+                'LINKS,TEXT'            { $HelpInfo.relatedLinks.navigationLink.linkText }
+                'EXAMPLE'               { $HelpInfo.examples.example }
+                'EXAMPLE,CODE'          { $HelpInfo.examples.example.code }
+                'EXAMPLE,STRING'        {
+                    foreach ($example in $HelpInfo.examples.example) {
+                        $example | Out-String -Width 250
+                    }
+                }
+                'INPUTS'                { $HelpInfo.inputTypes.inputType.type.name }
+                'OUTPUTS'               { $HelpInfo.returnValues.returnValue.type.name }
+                'PARAMETER'             { $HelpInfo.parameters.parameter }
+                'PARAMETER,DESCRIPTION' { $HelpInfo.parameters.parameter.description.Text }
+                'SYNTAX,ITEM'           { $HelpInfo.syntax.syntaxItem }
+                'SYNTAX,PARAMETER'      { $HelpInfo.syntax.syntaxItem.parameter }
+                'SYNTAX,STRING'         { $HelpInfo.syntax | Out-String -Width 250 }
+                default                 { $HelpInfo.$Name }
+            }
+
+            foreach ($value in $output) {
+                if ($value -is [string]) {
+                    $value.Trim()
+                } else {
+                    $value
+                }
+            }
+        }
     }
 
-    Context 'get-help file and get-help helpFunc2' {
-    $script = @"
-        #
-        # .SYNOPSIS
-        #    This is script help
-        #
+    Context 'Content discovery' {
+        Context 'Function help' {
+            Context 'Before function' {
+                It 'Should find help content immediately above a function' {
+                    . {
+                        <#
+                        .SYNOPSIS
+                            An example function.
+                        #>
+                        function ExampleBeforeFunction { }
+                    }
 
-        #
-        # .SYNOPSIS
-        #    This is function help for helpFunc2
-        #
-        function helpFunc2 {}
+                    Get-HelpField 'ExampleBeforeFunction' -Name 'SYNOPSIS' | Should -Be 'An example function.'
+                }
 
-        get-help helpFunc2
-"@
+                It 'Should find help content separated by one line from a function' {
+                    . {
+                        <#
+                        .SYNOPSIS
+                            An example function with one empty line after help.
+                        #>
 
-        Set-Content $tempFile $script
-        $x = Get-Help $tempFile
-        It $x.Synopsis { $x.Synopsis | Should -BeExactly "This is script help" }
+                        function ExampleBeforeFunction { }
+                    }
 
-        $x = & $tempFile
-        It $x.Synopsis { $x.Synopsis | Should -BeExactly "This is function help for helpFunc2" }
-    }
+                    Get-HelpField 'ExampleBeforeFunction' -Name 'SYNOPSIS' | Should -Be 'An example function with one empty line after help.'
+                }
 
-    Context 'get-help psuedo file' {
+                It 'Should not find help content separated by two or more lines from a function' {
+                    . {
+                        <#
+                        .SYNOPSIS
+                            An example function.
+                        #>
 
-    $script = @'
-        ###########################################
-        #
-        # Psuedo-Copyright header comment
-        #
-        ###########################################
 
-        #requires -version 2.0
+                        function ExampleBeforeFunction { }
+                    }
 
-        #
-        # .Synopsis
-        #	Changes Admin passwords across all KDE servers.
-        #
-        [CmdletBinding(DefaultParameterSetName="Live")]
-        param(
-        [Parameter(
-	        ParameterSetName="Live",
-	        Mandatory=$true)]
-        $live,
-        [Parameter(
-	        ParameterSetName="Test",
-	        Mandatory=$true)]
-        $test)
+                    Get-HelpField 'ExampleBeforeFunction' -Name 'SYNOPSIS' | Should -Be 'ExampleBeforeFunction'
+                }
+            }
+
+            Context 'Inside function' {
+                It 'Should find help content at the start of the function' {
+                    . {
+                        function ExampleInsideFunction {
+                            <#
+                            .SYNOPSIS
+                                An example function.
+                            #>
+                        }
+                    }
+
+                    Get-HelpField 'ExampleInsideFunction' -Name 'SYNOPSIS' | Should -Be 'An example function.'
+                }
+
+                It 'Should find help content anywhere before param' {
+                    . {
+                        function ExampleInsideFunction {
+
+
+                            <#
+                            .SYNOPSIS
+                                An example function.
+                            #>
+
+
+                            param ( )
+                        }
+                    }
+
+                    Get-HelpField 'ExampleInsideFunction' -Name 'SYNOPSIS' | Should -Be 'An example function.'
+                }
+
+                It 'Should find help content at the end of the function' {
+                    . {
+                        function ExampleInsideFunction {
+                            param ( )
+                            'Hello world'
+                            <#
+                            .SYNOPSIS
+                                An example function.
+                            #>
+                        }
+                    }
+
+                    Get-HelpField 'ExampleInsideFunction' -Name 'SYNOPSIS' | Should -Be 'An example function.'
+                }
+
+                It 'Should not find help content between statements in the function' {
+                    . {
+                        function ExampleInsideFunction {
+                            param ( )
+                            <#
+                            .SYNOPSIS
+                                An example function.
+                            #>
+                            'Hello world'
+                        }
+                    }
+
+                    Get-HelpField 'ExampleInsideFunction' -Name 'SYNOPSIS' | Should -Be 'ExampleInsideFunction'
+                }
+            }
+
+            Context 'Nested' {
+                It 'Allows help blocks in nested functions' {
+                    function ExampleFunction {
+                        <#
+                            .SYNOPSIS
+                                An example function.
+                        #>
+                        param ( )
+
+                        function NestedFunction {
+                            <#
+                                .SYNOPSIS
+                                    An example nested function.
+                            #>
+                        }
+
+                        Get-Help NestedFunction
+                    }
+
+                    $helpInfo = Get-Help ExampleFunction
+                    Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'ExampleFunction'
+                    Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'An example function.'
+
+                    $helpInfo = ExampleFunction
+                    Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'NestedFunction'
+                    Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'An example nested function.'
+                }
+
+                It 'Cannot distinguish between function help and nested function help when usage is ambiguous' {
+                    function ExampleFunction {
+                        <#
+                            .SYNOPSIS
+                                An example function.
+                        #>
+                        function NestedFunction { }
+
+                        Get-Help NestedFunction
+                    }
+
+                    $helpInfo = Get-Help ExampleFunction
+                    Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'ExampleFunction'
+                    Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'An example function.'
+
+                    $helpInfo = ExampleFunction
+                    Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'NestedFunction'
+                    Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'An example function.'
+                }
+            }
+        }
+
+        Context 'Script help' {
+            BeforeAll {
+                $script = Join-Path -Path $TestDrive -ChildPath 'script.ps1'
+            }
+
+            It 'Should find help content at the start of a script' {
+                Set-Content -Path $script -Value @'
+<#
+.SYNOPSIS
+Script help.
+#>
+
+'Hello world'
 '@
 
-        Set-Content $tempFile $script
-        $x = Get-Help $tempFile
+                Get-HelpField $script -Name 'SYNOPSIS' | Should -Be 'Script help.'
+            }
 
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "Changes Admin passwords across all KDE servers." }
-        It '$x.parameters.parameter[0].required' { $x.parameters.parameter[0].required | Should -BeTrue}
-        It '$x.syntax.syntaxItem[0].parameter.required' { $x.syntax.syntaxItem[0].parameter.required | Should -BeTrue}
-        It '$x.syntax.syntaxItem[0].parameter.parameterValue.required' { $x.syntax.syntaxItem[0].parameter.parameterValue.required | Should -BeTrue}
-        It 'Common parameters should not be appear in the syntax' { $x.Syntax -like "*verbose*" | Should -BeFalse }
-        It 'Common parameters should not be in syntax maml' {@($x.syntax.syntaxItem[0].parameter).Count | Should -Be 1}
-        It 'Common parameters should also not appear in parameters maml' { $x.parameters.parameter.Count | Should -Be 2}
-    }
+            It 'Should find help content at the end of a script' {
+                Set-Content -Path $script -Value @'
+'Hello world'
 
-    It 'helpFunc3 -?' {
+<#
+.SYNOPSIS
+Script help.
+#>
+'@
 
-        ##############################################
+                Get-HelpField $script -Name 'SYNOPSIS' | Should -Be 'Script help.'
+            }
 
-        function helpFunc3()
-        {
-        #
-        #
-        #.Synopsis
-        #
-        #   A synopsis of helpFunc3.
-        #
-        #
-        }
+            It 'Should find help content anywhere before param' {
+                Set-Content -Path $script -Value @'
 
-        $x = helpFunc3 -?
-        $x.Synopsis | Should -BeExactly "A synopsis of helpFunc3."
-    }
 
-    It 'get-help helpFunc4' {
 
-        <#
-        .Description
-          description
+                <#
+.SYNOPSIS
+Script help.
+#>
 
-        .Synopsis
 
-        .Component
-          component
-        #>
-        function helpFunc4()
-        {
-        }
+param ( )
+'@
 
-        $x = Get-Help helpFunc4
-        $x.Synopsis | Should -BeExactly ""
-    }
 
-    Context 'get-help helpFunc5' {
+                Get-HelpField $script -Name 'SYNOPSIS' | Should -Be 'Script help.'
+            }
 
-        function helpFunc5
-        {
-            # .EXTERNALHELP scriptHelp.Tests.xml
-        }
-        $x = Get-Help helpFunc5
-        It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "A useless function, really." }
-    }
+            It 'Should find help after a #Requires statement in a script' {
+                Set-Content -Path $script -Value @'
+#Requires -PSEdition Core
 
-    Context 'get-help helpFunc6 script help xml' {
-        function helpFunc6
-        {
-            # .EXTERNALHELP scriptHelp1.xml
-        }
-        if ($PSUICulture -ieq "en-us")
-        {
-            $x = Get-Help helpFunc6
-            It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-            It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "Useless.  Really, trust me on this one." }
-        }
-    }
+<#
+.SYNOPSIS
+Script help.
+#>
 
-    Context 'get-help helpFunc6 script help xml' {
-        function helpFunc6
-        {
-            # .EXTERNALHELP newbase/scriptHelp1.xml
-        }
-        if ($PSUICulture -ieq "en-us")
-        {
-            $x = Get-Help helpFunc6
-            It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-            It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "Useless in newbase.  Really, trust me on this one." }
-        }
-    }
+'Hello world'
+'@
 
-    Context 'get-help helpFunc7' {
+                Get-HelpField $script -Name 'SYNOPSIS' | Should -Be 'Script help.'
+            }
 
-        function helpFunc7
-        {
-            # .FORWARDHELPTARGETNAME Get-Help
-            # .FORWARDHELPCATEGORY Cmdlet
-        }
-        $x = Get-Help helpFunc7
-        It '$x.Name' { $x.Name | Should -BeExactly 'Get-Help' }
-        It '$x.Category' { $x.Category | Should -BeExactly 'Cmdlet' }
+            It 'Should find help content after other comments at the start of a script' {
+                Set-Content -Path $script -Value @'
+# Arbitrary leading comments
 
-        # Make sure help is a function, or the test would fail
-        if ($null -ne (Get-Command -type Function help))
-        {
-            if ((Get-Content function:help) -Match "FORWARDHELP")
-            {
-                $x = Get-Help help
-                It '$x.Name' { $x.Name | Should -BeExactly 'Get-Help' }
-                It '$x.Category' { $x.Category | Should -BeExactly 'Cmdlet' }
+<#
+.SYNOPSIS
+Script help.
+#>
+
+'Hello world'
+'@
+
+                Get-HelpField $script -Name 'SYNOPSIS' | Should -Be 'Script help.'
+            }
+
+            It 'Should find help content for a script which includes a function' {
+                Set-Content -Path $script -Value @'
+<#
+.SYNOPSIS
+Script help.
+#>
+
+<#
+.SYNOPSIS
+Function help.
+#>
+function NestedFunction { }
+'@
+
+                Get-HelpField $script -Name 'SYNOPSIS' | Should -Be 'Script help.'
+            }
+
+            It 'Should not find help content between statements in a script' {
+                Set-Content -Path $script -Value @'
+'Start'
+
+<#
+.SYNOPSIS
+Script help.
+#>
+
+'End'
+'@
+
+                Get-Help $script | ForEach-Object Trim | Should -Be 'script.ps1'
+            }
+
+            It 'Should not find help content if there is no line break between #Requires and help content' {
+                Set-Content -Path $script -Value @'
+#Requires -PSEdition Core
+<#
+.SYNOPSIS
+Script help.
+#>
+
+'Hello world'
+'@
+
+                Get-Help $script | ForEach-Object Trim | Should -Be 'script.ps1'
+            }
+
+            It 'Should not find help content after a using statement in a script' {
+                Set-Content -Path $script -Value @'
+using namespace System.Management.Automation
+
+<#
+.SYNOPSIS
+Script help.
+#>
+
+'Hello world'
+'@
+
+                Get-Help $script | ForEach-Object Trim | Should -Be 'script.ps1'
+            }
+
+            It 'Should not consider function help within a sript as script help' {
+                Set-Content -Path $script -Value @'
+<#
+.SYNOPSIS
+Function help.
+#>
+function NestedFunction { }
+'@
+
+                Get-Help $script | ForEach-Object Trim | Should -Be 'script.ps1'
             }
         }
     }
 
-    Context 'get-help helpFunc8' {
-
-        function func8
-        {
-            # .SYNOPSIS
-            #    Help on helpFunc8, not func8
-            function helpFunc8
-            {
+    Context '-? parameter' {
+        It 'Can get help using the "-?" parameter' {
+            function ExampleFunction {
+                <#
+                .SYNOPSIS
+                    An example function.
+                #>
             }
-            Get-Help helpFunc8
+
+            $helpInfo = ExampleFunction -?
+
+            $helpInfo | Should -Not -BeNullOrEmpty
+            Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'An example function.'
         }
-
-        $x = Get-Help func8
-        It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-
-        $x = func8
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly 'Help on helpFunc8, not func8' }
     }
 
-    Context 'get-help helpFunc9' {
-        function helpFunc9
-        {
-            # .SYNOPSIS
-            #    Help on helpFunc9, not func9
-            param($x)
+    Context 'Comment style' {
+        BeforeDiscovery {
+            $testCases = @(
+                @{ Name = 'SYNOPSIS';      Expected = 'An example function\.' }
+                @{ Name = 'DESCRIPTIOn';   Expected = 'A description(\r?\n){2}    with indented text and a blank line\.' }
+                @{ Name = 'NOTES';         Expected = 'This is an example function\.' }
+                @{ Name = 'LINKS,URI';     Expected = 'https://blogs.msdn.com/powershell' }
+                @{ Name = 'LINKS,TEXT';    Expected = 'Other commands\.' }
+                @{ Name = 'EXAMPLE,CODE';  Expected = 'ExampleFunction Arguments' }
+                @{ Name = 'INPUTS';        Expected = 'Accepts anything you like\.' }
+                @{ Name = 'OUTPUTS';       Expected = 'Returns anything you like\.' }
+                @{ Name = 'COMPONENT';     Expected = 'ComponentName' }
+                @{ Name = 'ROLE';          Expected = 'RoleName' }
+                @{ Name = 'FUNCTIONALITY'; Expected = 'FunctionalityName' }
+            )
+        }
 
-            function func9
-            {
+        Context 'Block comment' {
+            BeforeAll {
+                function ExampleFunction {
+                    <#
+                    .SYNOPSIS
+                        An example function.
+                    .DESCRIPTION
+                        A description
+
+                            with indented text and a blank line.
+                    .NOTES
+                        This is an example function.
+                    .LINK
+                        https://blogs.msdn.com/powershell
+                    .LINK
+                        Other commands.
+                    .EXAMPLE
+                        ExampleFunction Arguments
+                    .INPUTS
+                        Accepts anything you like.
+                    .OUTPUTS
+                        Returns anything you like.
+                    .COMPONENT
+                        ComponentName
+                    .ROLE
+                        RoleName
+                    .FUNCTIONALITY
+                        FunctionalityName
+                    #>
+                }
+
+                $helpInfo = $helpErrors = $null
+                $helpInfo = Get-Help ExampleFunction -ErrorAction SilentlyContinue -ErrorVariable helpErrors
             }
-            Get-Help func9
-        }
-        $x = Get-Help helpFunc9
-        It 'help is on the outer functon' { $x.Synopsis | Should -BeExactly 'Help on helpFunc9, not func9' }
-        $x = helpFunc9
-        It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-    }
 
-    It 'get-help helpFunc10' {
-        #######################################################
-        # .SYNOPSIS
-        #    Help on helpFunc10
-        #######################################################
-        function helpFunc10
-        {
+            It 'Should successfully get help for ExampleFunction' {
+                $helpInfo | Should -Not -BeNullOrEmpty
+                $helpInfo.Name | Should -Be 'ExampleFunction'
+                $helpErrors | Should -BeNullOrEmpty
+            }
+
+            It 'Should get the value of <Name> from the help block' -TestCases $testCases {
+                param ($Name, $Expected)
+
+                Get-HelpField -HelpInfo $helpInfo -Name $Name | Where-Object { $_ } | Should -Match $Expected
+            }
         }
 
-        $x = Get-Help helpFunc10
-        $x.Synopsis | Should -BeExactly 'Help on helpFunc10'
+        Context 'Line comment' {
+            BeforeAll {
+                function ExampleFunction {
+                    # .SYNOPSIS
+                    #     An example function.
+                    # .DESCRIPTION
+                    #     A description
+                    #
+                    #         with indented text and a blank line.
+                    # .NOTES
+                    #     This is an example function.
+                    # .LINK
+                    #     https://blogs.msdn.com/powershell
+                    # .LINK
+                    #     Other commands.
+                    # .EXAMPLE
+                    #     ExampleFunction Arguments
+                    # .INPUTS
+                    #     Accepts anything you like.
+                    # .OUTPUTS
+                    #     Returns anything you like.
+                    # .COMPONENT
+                    #     ComponentName
+                    # .ROLE
+                    #     RoleName
+                    # .FUNCTIONALITY
+                    #     FunctionalityName
+                }
+
+                $helpInfo = $helpErrors = $null
+                $helpInfo = Get-Help ExampleFunction -ErrorAction SilentlyContinue -ErrorVariable helpErrors
+            }
+
+            It 'Should successfully get help for ExampleFunction' {
+                $helpInfo | Should -Not -BeNullOrEmpty
+                $helpInfo.Name | Should -Be 'ExampleFunction'
+                $helpErrors | Should -BeNullOrEmpty
+            }
+
+            It 'Should get the value of <Name> from the help block' -TestCases $testCases {
+                param ($Name, $Expected)
+
+                Get-HelpField -HelpInfo $helpInfo -Name $Name | Where-Object { $_ } | Should -Match $Expected
+            }
+        }
+
+        Context 'Partial content' {
+            It 'Allows explicitly empty values' {
+                function ExampleFunction {
+                    <#
+                    .SYNOPSIS
+                        An example function.
+                    .DESCRIPTION
+
+                    .NOTES
+                        This function has an empty description.
+                    #>
+                }
+
+                $helpInfo = Get-Help ExampleFunction
+
+                Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'An example function.'
+                Get-HelpField -HelpInfo $helpInfo -Name 'DESCRIPTION' | Should -BeNullOrEmpty
+                Get-HelpField -HelpInfo $helpInfo -Name 'NOTES' | Should -Be 'This function has an empty description.'
+            }
+        }
     }
 
-    Context 'get-help helpFunc11' {
-        function helpFunc11
-        {
-        # .Synopsis
-        #
-        #   useless, sorry
-
-            param(
-
-                # not in help
-
-                <# abc #><# help #> [parameter()]    [string]
-                $abc,
-
-                [string]
-                # def help
-                $def,
-
-                [parameter()]
-                # ghi help
-                $ghi,
-
-                # jkl help
-
-                $jkl,
-
-                <#mno help#>$mno,
-                <#pqr help#>[int]$pqr
-
+    Context 'Parameters' {
+        It 'Should support parameter help in the CBH block' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                    .PARAMETER Name
+                        A parameter.
+                #>
+                param (
+                    $Name
                 )
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'PARAMETER,DESCRIPTION' | Should -Be 'A parameter.'
         }
 
-        $x = Get-Help helpFunc11 -det
-        $x.Parameters.parameter | ForEach-Object {
-            $dText = $_.description[0].text
-            It ('$_.description ({0})' -f $title) { $dText | Should -Match "^$($_.Name)\s+help" }
-        }
-    }
+        It 'Should support parameter help within the param block as a block comment' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    <#
+                        A parameter.
+                    #>
+                    $Name
+                )
+            }
 
-    Context 'get-help helpFunc12' {
-        # Test case w/ cmdlet binding, but no parameter sets.
-        function helpFunc12 {
-            Param ([Parameter(Mandatory=$true)][String]$Name,
-                   [string]$Extension = "txt",
-                   $NoType,
-                   [switch]$ASwitch,
-                   [System.Management.Automation.CommandTypes]$AnEnum)
-            $name = $name + "." + $extension
-            $name
-
-        <#
-        .SYNOPSIS
-        Adds a file name extension to a supplied name.
-
-        .EXAMPLE
-
-            PS>helpFunc12 -Name foo
-
-            Adds .txt to foo
-
-        .EXAMPLE
-
-            C:\PS>helpFunc12 bar txt
-
-            Adds .txt to bar
-         #>
-        }
-        $x = Get-Help helpFunc12
-        It '$x.syntax' { ($x.syntax | Out-String -Width 250) | Should -Match "helpFunc12 \[-Name] <String> \[\[-Extension] <String>] \[\[-NoType] <Object>] \[-ASwitch] \[\[-AnEnum] \{Alias.*All}] \[<CommonParameters>]" }
-        It '$x.syntax.syntaxItem.parameter[3].position' { $x.syntax.syntaxItem.parameter[3].position | Should -BeExactly 'named' }
-        It '$x.syntax.syntaxItem.parameter[3].parameterValue' { $x.syntax.syntaxItem.parameter[3].parameterValue | Should -BeNullOrEmpty }
-        It '$x.parameters.parameter[3].parameterValue' { $x.parameters.parameter[3].parameterValue | Should -Not -BeNullOrEmpty }
-        It '$x.syntax.syntaxItem.parameter[4].parameterValueGroup' { $x.syntax.syntaxItem.parameter[4].parameterValueGroup | Should -Not -BeNullOrEmpty }
-        It '$x.parameters.parameter[4].parameterValueGroup' { $x.parameters.parameter[4].parameterValueGroup | Should -Not -BeNullOrEmpty }
-        It '$x.examples.example[0].introduction[0].text' { $x.examples.example[0].introduction[0].text | Should -BeExactly 'PS>' }
-        It '$x.examples.example[0].code' { $x.examples.example[0].code | Should -BeExactly 'helpFunc12 -Name foo' }
-        It '$x.examples.example[0].remarks[0].text' { $x.examples.example[0].remarks[0].text | Should -BeExactly 'Adds .txt to foo' }
-        It '$x.examples.example[0].remarks.length' { $x.examples.example[0].remarks.length | Should -Be 5 }
-        It '$x.examples.example[1].introduction[0].text' { $x.examples.example[1].introduction[0].text | Should -BeExactly 'C:\PS>' }
-        It '$x.examples.example[1].code' { $x.examples.example[1].code | Should -BeExactly 'helpFunc12 bar txt' }
-        It '$x.examples.example[1].remarks[0].text' { $x.examples.example[1].remarks[0].text | Should -BeExactly 'Adds .txt to bar' }
-        It '$x.examples.example[1].remarks.length' { $x.examples.example[1].remarks.length | Should -Be 5 }
-    }
-
-    Context 'get-help helpFunc12' {
-        function helpFunc13
-        {
-        <#
-            .Synopsis
-
-            empty synopsis
-        #>
-            param(
-                [SupportsWildcards()]
-                $p1,
-                $p2 = 42,
-                [PSDefaultValue(Help="parameter is mandatory")]
-                $p3 = $(throw "parameter p3 is not specified")
-            )
+            Get-HelpField -CommandName 'ExampleFunction' -Name 'PARAMETER,DESCRIPTION' | Should -Be 'A parameter.'
         }
 
-        $x = Get-Help helpFunc13
+        It 'Should support parameter help within the param block as a line comment' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # A parameter.
+                    $Name
+                )
+            }
 
-        It '$x.Parameters.parameter[0].globbing' { $x.Parameters.parameter[0].globbing | Should -BeExactly 'true' }
-        It '$x.Parameters.parameter[1].defaultValue' { $x.Parameters.parameter[1].defaultValue | Should -BeExactly '42' }
-        It '$x.Parameters.parameter[2].defaultValue' { $x.Parameters.parameter[2].defaultValue | Should -BeExactly 'parameter is mandatory' }
-    }
-
-    Context 'get-help helpFunc14' {
-        function helpFunc14
-        {
-            param(
-                [SupportsWildcards()]
-                $p1
-            )
+            Get-HelpField 'ExampleFunction' -Name 'PARAMETER,DESCRIPTION' | Should -Be 'A parameter.'
         }
 
-        $x = Get-Help helpFunc14
+        It 'Should only consider the most proximate comment in the param block' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    <#
+                        Unrelated comment.
+                    #>
 
-        It '$x.Parameters.parameter[0].globbing' { $x.Parameters.parameter[0].globbing | Should -BeExactly 'true' }
-    }
+                    <#
+                        A parameter.
+                    #>
+                    $Name
+                )
+            }
 
-    Context 'get-help helpFunc15' {
-        function helpFunc15
-        {
-            param(
-                $p1
-            )
+            Get-HelpField 'ExampleFunction' -Name 'PARAMETER,DESCRIPTION' | Should -Be 'A parameter.'
         }
 
-        $x = Get-Help helpFunc15
+        It 'Should set <Name> to the default value of <Expected> when no attributes are defined' -TestCases @(
+            @{ Name = 'required';      Expected = 'false' }
+            @{ Name = 'globbing';      Expected = 'false' }
+            @{ Name = 'pipelineInput'; Expected = 'false' }
+            @{ Name = 'position';      Expected = '1' }
+            @{ Name = 'defaultValue';  Expected = '' }
+        ) {
+            param ($Name, $Expected)
 
-        It '$x.Parameters.parameter[0].globbing' { $x.Parameters.parameter[0].globbing | Should -BeExactly 'false' }
-    }
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    $Name
+                )
+            }
 
-    Context 'get-help -Examples prompt string should have trailing space' {
-        function foo {
+            $helpInfo = Get-Help ExampleFunction
+            $helpInfo | Should -Not -BeNullOrEmpty
+
+            $parameterHelp = Get-HelpField -HelpInfo $helpInfo -Name 'PARAMETER'
+            $parameterHelp | Should -Not -BeNullOrEmpty
+
+            $parameterHelp.$Name | Should -Be $Expected
+        }
+
+        It 'Should set type based on the supplied parameter type' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    [string]
+                    $Name
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.type.name | Should -Be 'string'
+        }
+
+        It 'Should set required based on the Parameter attribute' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    [Parameter(Mandatory)]
+                    $Name
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.required | Should -Be 'true'
+        }
+
+        It 'Should set position based on the Parameter attribute' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    [Parameter(Position = 42)]
+                    $Name
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
             <#
-              .EXAMPLE
-              foo bar
+                Looks like a bug.
+
+                HelpSystem adds one to the declared value.
+
+                If you declare position as [int]::MaxValue it loops around and defines it as -2147483648.
+
+                Probably harmless considering usage, but still a bug.
+
+                $parameterHelp.position | Should -Be 42
             #>
-              param()
+            Set-ItResult -Inconclusive -Because 'HelpSystem is automatically adding 1 to the position value.'
         }
 
-        It 'prompt should be exactly "PS > " with trailing space' {
-            (Get-Help foo -Examples).examples.example.introduction.Text | Should -BeExactly "PS > "
+        It 'Should set pipelineInput to "ByValue" based on the Parameter attribute' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    [Parameter(ValueFromPipeline)]
+                    $Name
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.pipelineInput | Should -Be 'true (ByValue)'
+        }
+
+        It 'Should set pipelineInput to "ByPropertyName" based on the Parameter attribute' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    [Parameter(ValueFromPipelineByPropertyName)]
+                    $Name
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.pipelineInput | Should -Be 'true (ByPropertyName)'
+        }
+
+        It 'Should set pipelineInput to "ByValue, ByPropertyName" based on the Parameter attribute' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
+                    $Name
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.pipelineInput | Should -Be 'true (ByValue, ByPropertyName)'
+        }
+
+        It 'Should set globbing based on the SupportsWildcards attribute' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    [SupportsWildcards()]
+                    $Name
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.globbing | Should -Be 'true'
+        }
+
+        It 'Should set defaultValue based on an assigned value' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    $Name = 'A default value.'
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.defaultValue | Should -Be 'A default value.'
+        }
+
+        It 'Should set defaultValue based on a PSDefaultValue attribute' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    [PSDefaultValue(Value = 'A default value.')]
+                    $Name
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.defaultValue | Should -Be 'A default value.'
+        }
+
+        It 'Should set defaultValue to an a variable name if the default is a variable' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    $Name = $value
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.defaultValue | Should -Be '$value'
+        }
+
+        It 'Should set defaultValue to an expression if the default is an expression' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                param (
+                    # Parameter help.
+                    $Name = (Get-Process -ID $PID)
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.defaultValue | Should -Be '(Get-Process -ID $PID)'
+        }
+
+        It 'Shoudl include the language feature specific parameter <Name>' -TestCases @(
+            @(
+                [System.Management.Automation.Internal.ShouldProcessParameters].GetProperties().Name
+                [System.Management.Automation.PagingParameters].GetProperties().Name
+            ) | ForEach-Object {
+                @{ Name = $_ }
+            }
+        ) {
+            param ($Name)
+
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding(SupportsShouldProcess, SupportsPaging)]
+                param (
+                    # Parameter help.
+                    $Name
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.name | Should -Contain $Name
+        }
+
+        It 'Should not include the common parameter <Name>' -TestCases @(
+            @(
+                [System.Management.Automation.Internal.CommonParameters].GetProperties().Name
+            ) | ForEach-Object {
+                @{ Name = $_ }
+            }
+        ) {
+            param ($Name)
+
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding()]
+                param (
+                    # Parameter help.
+                    $Name
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.name | Should -Not -Contain $Name
         }
     }
 
-    Context 'get-help -Examples multi-line code block should be handled' {
-        function foo {
-            <#
-              .EXAMPLE
-              $a = Get-Service
-              $a | group Status
+    Context 'Syntax' {
+        It 'Should represent mandatory optional parameters' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding()]
+                param (
+                    [string]
+                    $Name
+                )
+            }
 
-              .EXAMPLE
-              PS> $a = Get-Service
-              PS> $a | group Status
 
-              Explanation.
-
-              .EXAMPLE
-
-              PS> Get-Service
-              Output
-
-              .EXAMPLE
-              PS> Get-Service
-              Output
-
-              Explanation.
-              Second line.
-
-              .EXAMPLE
-              PS> Get-Service
-              Output
-
-              Explanation.
-
-              Next section.
-            #>
-              param()
         }
 
-        $x = Get-Help foo
-        It '$x.examples.example[0].introduction[0].text' { $x.examples.example[0].introduction[0].text | Should -BeExactly "PS > " }
-        It '$x.examples.example[0].code' { $x.examples.example[0].code | Should -BeExactly "`$a = Get-Service`n`$a | group Status" }
-        It '$x.examples.example[0].remarks[0].text' { $x.examples.example[0].remarks[0].text | Should -BeNullOrEmpty }
-        It '$x.examples.example[0].remarks.length' { $x.examples.example[0].remarks.length | Should -Be 5 }
-        It '$x.examples.example[1].introduction[0].text' { $x.examples.example[1].introduction[0].text | Should -BeExactly "PS>" }
-        It '$x.examples.example[1].code' { $x.examples.example[1].code | Should -BeExactly "`$a = Get-Service`nPS> `$a | group Status" }
-        It '$x.examples.example[1].remarks[0].text' { $x.examples.example[1].remarks[0].text | Should -BeExactly "Explanation." }
-        It '$x.examples.example[1].remarks.length' { $x.examples.example[1].remarks.length | Should -Be 5 }
-        It '$x.examples.example[2].introduction[0].text' { $x.examples.example[2].introduction[0].text | Should -BeExactly "PS>" }
-        It '$x.examples.example[2].code' { $x.examples.example[2].code | Should -BeExactly "Get-Service`nOutput" }
-        It '$x.examples.example[2].remarks[0].text' { $x.examples.example[2].remarks[0].text | Should -BeNullOrEmpty }
-        It '$x.examples.example[2].remarks.length' { $x.examples.example[2].remarks.length | Should -Be 5 }
-        It '$x.examples.example[3].introduction[0].text' { $x.examples.example[3].introduction[0].text | Should -BeExactly "PS>" }
-        It '$x.examples.example[3].code' { $x.examples.example[3].code | Should -BeExactly "Get-Service`nOutput" }
-        It '$x.examples.example[3].remarks[0].text' { $x.examples.example[3].remarks[0].text | Should -BeExactly "Explanation.`nSecond line." }
-        It '$x.examples.example[3].remarks.length' { $x.examples.example[3].remarks.length | Should -Be 5 }
-        It '$x.examples.example[4].introduction[0].text' { $x.examples.example[4].introduction[0].text | Should -BeExactly "PS>" }
-        It '$x.examples.example[4].code' { $x.examples.example[4].code | Should -BeExactly "Get-Service`nOutput" }
-        It '$x.examples.example[4].remarks[0].text' { $x.examples.example[4].remarks[0].text | Should -BeExactly "Explanation.`n`nNext section." }
-        It '$x.examples.example[4].remarks.length' { $x.examples.example[4].remarks.length | Should -Be 5 }
+        It 'Should represent mandatory parameters' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding(PositionalBinding = $false)]
+                param (
+                    [Parameter(Mandatory)]
+                    $Name
+                )
+            }
+
+            $helpInfo = Get-Help 'ExampleFunction'
+
+            $parameter = Get-HelpField -HelpInfo $helpInfo -Name 'SYNTAX,PARAMETER'
+            $parameter.required | Should -Be 'true'
+            $parameter.parameterValue.required | Should -Be 'true'
+
+            Get-HelpField -HelpInfo $helpInfo -Name 'SYNTAX,STRING' | Should -Match '(?m)^ExampleFunction -Name <Object>'
+        }
+
+        It 'Should represent positional parameters' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding()]
+                param (
+                    [Parameter(Position = 42)]
+                    $Name
+                )
+            }
+
+            $helpInfo = Get-Help 'ExampleFunction'
+
+            <#
+                See "Should set position based on the Parameter attribute"
+
+                $parameter = Get-HelpField -HelpInfo $helpInfo -Name 'SYNTAX,PARAMETER'
+                $parameter.position | Should -Be 42
+            #>
+
+            Get-HelpField -HelpInfo $helpInfo -Name 'SYNTAX,STRING' | Should -Match '(?m)^ExampleFunction \[\[-Name\] <Object>\]'
+        }
+
+        It 'Should represent mandatory positional parameters' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding()]
+                param (
+                    [Parameter(Mandatory, Position = 42)]
+                    $Name
+                )
+            }
+
+            $helpInfo = Get-Help 'ExampleFunction'
+
+            <#
+                See "Should set position based on the Parameter attribute"
+
+                $parameter = Get-HelpField -HelpInfo $helpInfo -Name 'SYNTAX,PARAMETER'
+                $parameter.position | Should -Be 42
+            #>
+
+            Get-HelpField -HelpInfo $helpInfo -Name 'SYNTAX,STRING' | Should -Match '(?m)^ExampleFunction \[-Name\] <Object>'
+        }
+
+        It 'Should represent enums parameters' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding()]
+                param (
+                    [Parameter()]
+                    [DayOfWeek]
+                    $Name
+                )
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'SYNTAX,STRING' | Should -Match '(?m)^ExampleFunction \[\[-Name\] {Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday}]'
+        }
+
+        It 'Should represent Switch parameters' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding()]
+                param (
+                    [Parameter()]
+                    [Switch]
+                    $Name
+                )
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'SYNTAX,STRING' | Should -Match '(?m)^ExampleFunction \[-Name\]'
+        }
+
+        It 'Should include the language feature specific parameter <Name>' -TestCases @(
+            @(
+                [System.Management.Automation.Internal.ShouldProcessParameters].GetProperties().Name
+                [System.Management.Automation.PagingParameters].GetProperties().Name
+            ) | ForEach-Object {
+                @{ Name = $_ }
+            }
+        ) {
+            param ($Name)
+
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding(SupportsShouldProcess, SupportsPaging)]
+                param (
+                    # Parameter help.
+                    $Name
+                )
+            }
+
+            $parameters = Get-HelpField 'ExampleFunction' -Name 'SYNTAX,PARAMETER'
+            $parameters.name | Should -Contain $Name
+        }
+
+        It 'Should not include the common parameter <Name>' -TestCases @(
+            @(
+                [System.Management.Automation.Internal.CommonParameters].GetProperties().Name
+            ) | ForEach-Object {
+                @{ Name = $_ }
+            }
+        ) {
+            param ($Name)
+
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding()]
+                param (
+                    # Parameter help.
+                    $Name
+                )
+            }
+
+            $parameters = Get-HelpField 'ExampleFunction' -Name 'SYNTAX,PARAMETER'
+            $parameters.name | Should -Not -Contain $Name
+        }
+
+        Context 'Parameter sets' {
+            It 'Should create a syntaxItem for each parameter set' {
+                function ExampleFunction {
+                    <#
+                        .SYNOPSIS
+                            An example function.
+                    #>
+                    [CmdletBinding(DefaultParameterSetName = 'FirstParameterSet')]
+                    param (
+                        # Parameter help.
+                        [Parameter(ParameterSetName = 'FirstParameterSet')]
+                        $First,
+
+                        # Parameter help.
+                        [Parameter(ParameterSetName = 'SecondParameterSet')]
+                        $Second
+                    )
+                }
+
+                Get-HelpField 'ExampleFunction' -Name 'SYNTAX,ITEM' | Should -HaveCount 2
+            }
+
+            It 'Should correctly the syntax string for the parameter set' {
+                function ExampleFunction {
+                    <#
+                        .SYNOPSIS
+                            An example function.
+                    #>
+                    [CmdletBinding(DefaultParameterSetName = 'FirstParameterSet')]
+                    param (
+                        # Parameter help.
+                        [Parameter(Mandatory, ParameterSetName = 'FirstParameterSet')]
+                        $First,
+
+                        # Parameter help.
+                        [Parameter(Mandatory, ParameterSetName = 'SecondParameterSet')]
+                        $Second
+                    )
+                }
+
+                $syntax = Get-HelpField 'ExampleFunction' -Name 'SYNTAX,STRING'
+
+                $syntax | Should -Match '(?m)^ExampleFunction -First <Object> \[<CommonParameters>\]'
+                $syntax | Should -Match '(?m)^ExampleFunction -Second <Object> \[<CommonParameters>\]'
+            }
+
+            It 'Should should create a parameter syntax entry for each parameter set a parameter belongs to' {
+                function ExampleFunction {
+                    <#
+                        .SYNOPSIS
+                            An example function.
+                    #>
+                    [CmdletBinding(DefaultParameterSetName = 'FirstParameterSet')]
+                    param (
+                        # Parameter help.
+                        [Parameter(ParameterSetName = 'FirstParameterSet')]
+                        [Parameter(ParameterSetName = 'SecondParameterSet')]
+                        $Name
+                    )
+                }
+
+                $syntax = Get-HelpField 'ExampleFunction' -Name 'SYNTAX,ITEM'
+
+                $syntax.parameter | Should -HaveCount 2
+                $syntax.parameter.name | Sort-Object -Unique | Should -Be 'Name'
+            }
+
+            It 'Should create a parameter syntax entry for each named parameter set and the default parameter set' {
+                function ExampleFunction {
+                    <#
+                        .SYNOPSIS
+                            An example function.
+                    #>
+                    [CmdletBinding(DefaultParameterSetName = 'DefaultSet')]
+                    param (
+                        # Parameter help.
+                        [Parameter()]
+                        $Name,
+
+                        # Parameter help.
+                        [Parameter(ParameterSetName = 'FirstParameterSet')]
+                        $First,
+
+                        # Parameter help.
+                        [Parameter(ParameterSetName = 'SecondParameterSet')]
+                        $Second
+                    )
+                }
+
+                $syntax = Get-HelpField 'ExampleFunction' -Name 'SYNTAX,ITEM'
+
+                $syntax | Should -HaveCount 3
+                # Name * 3 + First * 1 + Second * 1
+                $syntax.parameter | Should -HaveCount 5
+                $syntax.parameter.name | Sort-Object -Unique | Should -Be 'First', 'Name', 'Second'
+            }
+        }
+    }
+
+    Context 'Examples' {
+        It 'Should have empty examples if none are present' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'EXAMPLE' | Should -BeNullOrEmpty
+        }
+
+        It 'Should find a single example' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                    .EXAMPLE
+                        ExampleFunction
+
+                        Comment
+                #>
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'EXAMPLE' | Should -HaveCount 1
+        }
+
+        It 'Should prefix the example in the command with "PS > "' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                    .EXAMPLE
+                        ExampleFunction
+
+                        Comment
+                #>
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'EXAMPLE,STRING' | Should -Match '(?m)^PS\s>\s'
+        }
+
+        It 'Should not prefix an example which already includes a prompt' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                    .EXAMPLE
+                        PROMPT> ExampleFunction
+
+                        Comment
+                #>
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'EXAMPLE,STRING' | Should -Match '(?m)^PROMPT>ExampleFunction'
+        }
+
+        It 'Should allow multiple examples' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                    .EXAMPLE
+                        ExampleFunction
+
+                        Comment1
+                    .EXAMPLE
+                        ExampleFunction
+
+                        Comment2
+                #>
+            }
+
+            $helpInfo = Get-Help 'ExampleFunction'
+
+            $examples = Get-HelpField -HelpInfo $helpInfo -Name 'EXAMPLE'
+            $examples | Should -HaveCount 2
+
+            $exampleStrings = Get-HelpField -HelpInfo $helpInfo -Name 'EXAMPLE,STRING'
+
+            $examples[0].code | Should -Be 'ExampleFunction'
+            $examples[0].remarks.Text | Should -Contain 'Comment1'
+            $exampleStrings[0] | Should -Match '(?sm)^PS\s>\sExampleFunction.+Comment1'
+
+            $examples[1].code | Should -Be 'ExampleFunction'
+            $examples[1].remarks.Text | Should -Contain 'Comment2'
+            $exampleStrings[1] | Should -Match '(?sm)PS\s>\sExampleFunction.+Comment2'
+        }
+
+        It 'Should support multi-line code examples' {
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                    .EXAMPLE
+                        $var = ExampleFunction
+                        $var | Select-Object *
+
+                        Comment
+                #>
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'EXAMPLE,CODE' | Should -Match '\$var = ExampleFunction\r?\n\$var | Select-Object \*'
+        }
+    }
+
+    Context 'Fowarded' {
+        AfterAll {
+            if (Test-Path function:Get-Process) {
+                Remove-Item function:Get-Process
+            }
+        }
+
+        It 'Can forward help without specifying a target category' {
+            function TargetFunction {
+                <#
+                    .SYNOPSIS
+                        A target function.
+                #>
+            }
+
+            function ExampleFunction {
+                <#
+                    .FORWARDHELPTARGETNAME TargetFunction
+                #>
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'SYNOPSIS' | Should -Be 'A target function.'
+        }
+
+        It 'Can forward help to a cmdlet' {
+            function ExampleFunction {
+                <#
+                    .FORWARDHELPTARGETNAME Get-Process
+                #>
+            }
+
+            $helpInfo = Get-Help ExampleFunction
+            Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'Get-Process'
+            Get-HelpField -HelpInfo $helpInfo -Name 'CATEGORY' | Should -Be 'Cmdlet'
+        }
+
+        It 'Can forward help to a command of a different category where a conflict exists' {
+            function Get-Process {
+                <#
+                    .SYNOPSIS
+                        A target function.
+                #>
+            }
+
+            function ExampleFunction {
+                <#
+                    .FORWARDHELPTARGETNAME Get-Process
+                    .FORWARDHELPCATEGORY Function
+                #>
+            }
+
+            $helpInfo = Get-Help ExampleFunction
+            Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'Get-Process'
+            Get-HelpField -HelpInfo $helpInfo -Name 'CATEGORY' | Should -Be 'Function'
+            Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'A target function.'
+        }
+
+        It 'Should return generated help for the existing command if the target is not valid' {
+            function ExampleFunction {
+                <#
+                    .FORWARDHELPTARGETNAME ScriptHelp-DoesNotExist
+                #>
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'NAME' | Should -Be 'ExampleFunction'
+        }
+    }
+
+    Context 'External' {
+        BeforeAll {
+            $currentCulture = $PSUICulture
+        }
+
+        AfterEach {
+            [System.Globalization.CultureInfo]::CurrentUICulture = $currentCulture
+        }
+
+        It 'Can use an external help file' {
+            function ExampleFunction {
+                <#
+                    .EXTERNALHELP ScriptHelp.Tests.NoCulture.xml
+                #>
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'SYNOPSIS' | Should -Be 'An example function with help from a fallback file.'
+        }
+
+        It 'Can use a culture specific help file for the culture <Culture>' -Skip:(-not $IsWindows) -TestCases @(
+            @{ Culture = 'en-US' }
+            @{ Culture = 'fr-FR' }
+        ) {
+            param ( $Culture )
+
+            function ExampleFunction {
+                <#
+                    .EXTERNALHELP ScriptHelp.Tests.xml
+                #>
+            }
+
+            [System.Globalization.CultureInfo]::CurrentUICulture = $Culture
+
+            Get-HelpField 'ExampleFunction' -Name 'SYNOPSIS' | Should -Be ('An example function with help from the {0} culture.' -f $Culture)
+        }
+
+        It 'Can use a culture specific help file under a child directory for the culture <Culture>' -Skip:(-not $IsWindows) -TestCases @(
+            @{ Culture = 'en-US' }
+        ) {
+            param ( $Culture )
+
+            function ExampleFunction {
+                <#
+                    .EXTERNALHELP newbase\ScriptHelp.Tests.xml
+                #>
+            }
+
+            [System.Globalization.CultureInfo]::CurrentUICulture = $Culture
+
+            Get-HelpField 'ExampleFunction' -Name 'SYNOPSIS' | Should -Be ('An example function with help from the newbase\{0} culture.' -f $Culture)
+        }
+    }
+
+    Context 'Filtering' {
+        BeforeDiscovery {
+            $testCases = @(
+                @{ Name = 'Component';     Value = 'ComponentName' }
+                @{ Name = 'Role';          Value = 'RoleName' }
+                @{ Name = 'Functionality'; Value= 'FunctionalityName' }
+            )
+        }
+
+        BeforeAll {
+            function ExampleFunction {
+                <#
+                .SYNOPSIS
+                    An example function.
+                .COMPONENT
+                    ComponentName
+                .ROLE
+                    RoleName
+                .FUNCTIONALITY
+                    FunctionalityName
+                #>
+            }
+        }
+
+        It 'Should find content when filtering by <Name>' -TestCases $testCases {
+            param ( $Name, $Value )
+
+            $params = @{
+                $Name       = $Value
+                Name        = 'ExampleFunction'
+                ErrorAction = 'Stop'
+            }
+            { Get-Help @params } | Should -Not -Throw
+        }
+
+        It 'Should throw if a help is not found when filtering by <Name>' -TestCases $testCases {
+            param ( $Name )
+
+            $params = @{
+                $Name       = 'DoesNotExist'
+                Name        = 'ExampleFunction'
+                ErrorAction = 'Stop'
+            }
+            { Get-Help @params } | Should -Throw -ErrorId 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
+        }
     }
 }
