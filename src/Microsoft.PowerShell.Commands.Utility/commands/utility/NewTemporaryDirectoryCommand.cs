@@ -19,12 +19,23 @@ namespace Microsoft.PowerShell.Commands
     public class NewTemporaryDirectoryCommand : Cmdlet
     {
         /// <summary>
+        /// Gets or sets an optional prefix for the temporary directory name.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string Prefix { get; set; }
+
+        /// <summary>
         /// Returns a TemporaryDirectory.
         /// </summary>
         protected override void EndProcessing()
         {
             string tempPath = Path.GetTempPath();
-            if (ShouldProcess(tempPath))
+            string targetDescription = string.IsNullOrEmpty(Prefix)
+                ? tempPath
+                : Path.Combine(tempPath, Prefix);
+
+            if (ShouldProcess(targetDescription))
             {
                 DirectoryInfo directory;
                 try
@@ -34,8 +45,10 @@ namespace Microsoft.PowerShell.Commands
                     DirectoryInfo tempDir;
                     do
                     {
-                        tempDir = new DirectoryInfo(
-                            Path.Combine(tempPath, Path.GetRandomFileName()));
+                        string name = string.IsNullOrEmpty(Prefix)
+                            ? Path.GetRandomFileName()
+                            : string.Concat(Prefix, Path.GetRandomFileName());
+                        tempDir = new DirectoryInfo(Path.Combine(tempPath, name));
                     }
                     while (tempDir.Exists);
 
