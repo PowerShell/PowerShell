@@ -13,7 +13,7 @@ Describe "Write-Output DRT Unit Tests" -Tags "CI" {
         $results[2] -is [System.Array] | Should -BeTrue
 
         $results[3] | Should -Be $objectWritten[3]
-        $results[3] -is [System.String] | Should -BeTrue
+        $results[3] -is [string] | Should -BeTrue
     }
 
     It "Works with NoEnumerate switch" {

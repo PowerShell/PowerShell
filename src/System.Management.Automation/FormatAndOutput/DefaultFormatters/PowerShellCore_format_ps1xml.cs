@@ -937,7 +937,7 @@ namespace System.Management.Automation.Runspaces
                                         }
                                         # if the object implements IEnumerable and not a string, we try to show each object
                                         # We ignore the `Data` property as it can contain lots of type information by the interpreter that isn't useful here
-                                        elseif (!($prop.Value -is [System.String]) -and $prop.Value.GetType().GetInterface('IEnumerable') -ne $null -and $prop.Name -ne 'Data') {
+                                        elseif (!($prop.Value -is [string]) -and $prop.Value.GetType().GetInterface('IEnumerable') -ne $null -and $prop.Name -ne 'Data') {
 
                                             if ($depth -ge $maxDepth) {
                                                 $null = $output.Append($ellipsis)
@@ -1379,7 +1379,7 @@ namespace System.Management.Automation.Runspaces
 
                                     if ($ErrorView -eq 'ConciseView') {
                                         $recommendedAction = $_.ErrorDetails.RecommendedAction
-                                        if (-not [String]::IsNullOrWhiteSpace($recommendedAction)) {
+                                        if (-not [string]::IsNullOrWhiteSpace($recommendedAction)) {
                                             $recommendedAction = $newline +
                                                 ${errorColor} +
                                                 '  Recommendation: ' +

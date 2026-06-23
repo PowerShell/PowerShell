@@ -76,8 +76,8 @@ try {
 
         BeforeEach {
             if ($IsNotSkipped) {
-                $user1sid = [String](New-LocalUser TestUser1 -NoPassword).SID
-                $group1sid = [String](New-LocalGroup TestGroup1).SID
+                $user1sid = [string](New-LocalUser TestUser1 -NoPassword).SID
+                $group1sid = [string](New-LocalGroup TestGroup1).SID
             }
         }
 
@@ -105,10 +105,10 @@ try {
 
         BeforeEach {
             if ($IsNotSkipped) {
-                $user1sid = [String](New-LocalUser TestUser1 -NoPassword).SID
-                $user2sid = [String](New-LocalUser TestUser2 -NoPassword).SID
-                $group1sid = [String](New-LocalGroup TestGroup1).SID
-                $group2sid = [String](New-LocalGroup TestGroup2).SID
+                $user1sid = [string](New-LocalUser TestUser1 -NoPassword).SID
+                $user2sid = [string](New-LocalUser TestUser2 -NoPassword).SID
+                $group1sid = [string](New-LocalGroup TestGroup1).SID
+                $group2sid = [string](New-LocalGroup TestGroup2).SID
             }
         }
 
@@ -252,8 +252,8 @@ try {
                 $user1 = New-LocalUser TestUserGet1 -NoPassword
                 $group1 = New-LocalGroup TestGroupGet1
                 Add-LocalGroupMember TestGroupGet1 -Member TestUserGet1
-                $user1sid = [String]($user1.SID)
-                $group1sid = [String]($group1.SID)
+                $user1sid = [string]($user1.SID)
+                $group1sid = [string]($group1.SID)
             }
         }
 
@@ -291,10 +291,10 @@ try {
                 $group2 = New-LocalGroup TestGroupGet2
                 Add-LocalGroupMember TestGroupGet1 -Member TestUserGet1
                 Add-LocalGroupMember TestGroupGet1 -Member TestUserGet2
-                $user1sid = [String]($user1.SID)
-                $user2sid = [String]($user2.SID)
-                $group1sid = [String]($group1.SID)
-                $group2sid = [String]($group2.SID)
+                $user1sid = [string]($user1.SID)
+                $user2sid = [string]($user2.SID)
+                $group1sid = [string]($group1.SID)
+                $group2sid = [string]($group2.SID)
             }
         }
 
@@ -418,8 +418,8 @@ try {
                 $user1 = New-LocalUser TestUserRemove1 -NoPassword
                 $group1 = New-LocalGroup TestGroupRemove1
                 Add-LocalGroupMember TestGroupRemove1 -Member TestUserRemove1
-                $user1sid = [String]($user1.SID)
-                $group1sid = [String]($group1.SID)
+                $user1sid = [string]($user1.SID)
+                $group1sid = [string]($group1.SID)
             }
         }
 
@@ -448,10 +448,10 @@ try {
                 $group2 = New-LocalGroup TestGroupRemove2
                 Add-LocalGroupMember TestGroupRemove1 -Member TestUserRemove1
                 Add-LocalGroupMember TestGroupRemove1 -Member TestUserRemove2
-                $user1sid = [String]($user1.SID)
-                $user2sid = [String]($user2.SID)
-                $group1sid = [String]($group1.SID)
-                $group2sid = [String]($group2.SID)
+                $user1sid = [string]($user1.SID)
+                $user2sid = [string]($user2.SID)
+                $group1sid = [string]($group1.SID)
+                $group2sid = [string]($group2.SID)
             }
         }
 

@@ -577,7 +577,7 @@ namespace System.Management.Automation
                 {
                     if (pattern.IsMatch(parameterName) && !parameterNames.Contains(parameterName, StringComparer.OrdinalIgnoreCase))
                     {
-                        string tooltip = "[String] " + parameterName;
+                        string tooltip = "[string] " + parameterName;
                         result.Add(new CompletionResult("-" + parameterName, parameterName, CompletionResultType.ParameterName, tooltip));
                     }
                 }

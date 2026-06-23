@@ -17,7 +17,7 @@ Describe "Hidden properties should not be returned by the 'FirstOrDefault' primi
 
     It "Formatting for an object with no property/field should use 'ToString'" {
         class Empty {
-            [String]ToString() { return 'MyString' }
+            [string]ToString() { return 'MyString' }
         }
 
         $outstring = [Empty]::new() | Out-String
@@ -32,7 +32,7 @@ Describe "Hidden properties should not be returned by the 'FirstOrDefault' primi
     It "Formatting for an object with only hidden property should use 'ToString'" {
         class Hidden {
             hidden $Param = 'Foo'
-            [String]ToString() { return 'MyString' }
+            [string]ToString() { return 'MyString' }
         }
 
         $outstring = [Hidden]::new() | Out-String
@@ -49,7 +49,7 @@ Describe "Hidden properties should not be returned by the 'FirstOrDefault' primi
     It 'Formatting for an object with no-hidden property should use the default view' {
         class Params {
             $Param = 'Foo'
-            [String]ToString() { return 'MyString' }
+            [string]ToString() { return 'MyString' }
         }
 
         $outstring = [Params]::new() | Out-String
