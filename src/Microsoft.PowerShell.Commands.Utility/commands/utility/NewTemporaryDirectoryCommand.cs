@@ -23,6 +23,15 @@ namespace Microsoft.PowerShell.Commands
     {
         private const string NewTemporaryDirectoryWriteError = "NewTemporaryDirectoryWriteError";
 
+        private static ErrorRecord CreateErrorRecord(Exception exception, ErrorCategory category, string targetPath)
+        {
+            return new ErrorRecord(
+                exception,
+                NewTemporaryDirectoryWriteError,
+                category,
+                targetPath);
+        }
+
         /// <summary>
         /// Gets or sets an optional prefix for the temporary directory name.
         /// The prefix is prepended to the randomly generated name.
@@ -92,15 +101,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, targetDirectory.FullName));
             }
-        }
-
-        private static ErrorRecord CreateErrorRecord(Exception exception, ErrorCategory category, string targetPath)
-        {
-            return new ErrorRecord(
-                exception,
-                NewTemporaryDirectoryWriteError,
-                category,
-                targetPath);
         }
     }
 }
