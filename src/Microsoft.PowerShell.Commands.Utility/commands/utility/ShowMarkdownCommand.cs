@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Text;
 
 using Microsoft.PowerShell.MarkdownRender;
 
@@ -61,6 +62,8 @@ namespace Microsoft.PowerShell.Commands
 
         private System.Management.Automation.PowerShell _powerShell;
 
+        private readonly StringBuilder _inputObjectBuffer = new();
+
         /// <summary>
         /// Override BeginProcessing.
         /// </summary>
@@ -80,6 +83,10 @@ namespace Microsoft.PowerShell.Commands
                     if (InputObject.BaseObject is MarkdownInfo markdownInfo)
                     {
                         ProcessMarkdownInfo(markdownInfo);
+                    }
+                    else if (InputObject.BaseObject is string objectString)
+                    {
+                        _inputObjectBuffer.AppendLine(objectString);
                     }
                     else
                     {
@@ -224,6 +231,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
+            if (_inputObjectBuffer.Length > 0)
+            {
+                ConvertFromMarkdown(ParameterSetName, _inputObjectBuffer.ToString());
+            }
+
             _powerShell?.Dispose();
         }
     }
