@@ -1,45 +1,49 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# This is a Pester test suite to validate the New-TemporaryDirectory cmdlet in the Microsoft.PowerShell.Utility module.
-
-<#
-    Purpose:
-        Verify that New-TemporaryDirectory creates a temporary directory.
-
-    Action:
-        Run New-TemporaryDirectory.
-
-    Expected Result:
-        A DirectoryInfo object for the temporary directory is returned.
-#>
-
 Describe "New-TemporaryDirectory" -Tags "CI" {
+    BeforeEach {
+        $tempDirectory = $null
+    }
 
-    It "creates a new temporary directory" {
-        $tempDir = New-TemporaryDirectory
-
-        $tempDir | Should -Exist
-        $tempDir | Should -BeOfType System.IO.DirectoryInfo
-        $tempDir | Should -BeLikeExactly "$([System.IO.Path]::GetTempPath())*"
-
-        if (Test-Path $tempDir) {
-            Remove-Item $tempDir -ErrorAction SilentlyContinue -Force
+    AfterEach {
+        if ($tempDirectory -and (Test-Path -LiteralPath $tempDirectory.FullName)) {
+            Remove-Item -LiteralPath $tempDirectory.FullName -Force -Recurse -ErrorAction SilentlyContinue
         }
     }
 
-    It "creates a unique directory each time" {
-        $tempDir1 = New-TemporaryDirectory
-        $tempDir2 = New-TemporaryDirectory
+    It "creates a new temporary directory" {
+        $tempDirectory = New-TemporaryDirectory
 
-        $tempDir1.FullName | Should -Not -Be $tempDir2.FullName
+        $tempDirectory | Should -Exist
+        $tempDirectory | Should -BeOfType System.IO.DirectoryInfo
+        $tempDirectory.FullName | Should -BeLikeExactly "$([System.IO.Path]::GetTempPath())*"
+        (Get-Item -LiteralPath $tempDirectory.FullName).PSIsContainer | Should -BeTrue
+    }
 
-        if (Test-Path $tempDir1) {
-            Remove-Item $tempDir1 -ErrorAction SilentlyContinue -Force
+    It "creates unique temporary directories" {
+        $tempDirectory = New-TemporaryDirectory
+        $secondTempDirectory = New-TemporaryDirectory
+
+        try {
+            $secondTempDirectory.FullName | Should -Not -BeExactly $tempDirectory.FullName
+            $secondTempDirectory | Should -Exist
+            $secondTempDirectory | Should -BeOfType System.IO.DirectoryInfo
         }
-        if (Test-Path $tempDir2) {
-            Remove-Item $tempDir2 -ErrorAction SilentlyContinue -Force
+        finally {
+            if ($secondTempDirectory -and (Test-Path -LiteralPath $secondTempDirectory.FullName)) {
+                Remove-Item -LiteralPath $secondTempDirectory.FullName -Force -Recurse -ErrorAction SilentlyContinue
+            }
         }
+    }
+
+    It "creates a directory with the specified prefix" {
+        $tempDirectory = New-TemporaryDirectory -Prefix "TestPrefix_"
+
+        $tempDirectory | Should -Exist
+        $tempDirectory | Should -BeOfType System.IO.DirectoryInfo
+        $tempDirectory.Name | Should -BeLike "TestPrefix_*"
+        $tempDirectory.FullName | Should -BeLikeExactly "$([System.IO.Path]::GetTempPath())*"
     }
 
     It "with WhatIf does not create a directory" {
