@@ -425,6 +425,8 @@ function Start-PSBuild {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "linux-loongarch64",
+                     "linux-musl-loongarch64",
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -1220,6 +1222,8 @@ function New-PSOptions {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "linux-loongarch64",
+                     "linux-musl-loongarch64",
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -4757,6 +4761,9 @@ function Clear-NativeDependencies
         }
         '.*-arm64' {
             $diasymFileName = $diasymFileNamePattern -f 'arm64'
+        }
+        '.*-loongarch64' {
+            $diasymFileName = $diasymFileNamePattern -f 'loongarch64'
         }
         'fxdependent.*' {
             Write-Verbose -Message "$($script:Options.Runtime) is a fxdependent runtime, no cleanup needed in pwsh.deps.json" -Verbose
