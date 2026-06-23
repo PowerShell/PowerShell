@@ -2649,10 +2649,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private Process StartWithShellExecute(ProcessStartInfo startInfo)
         {
-            Process result = null;
+            Process result = new() { StartInfo = startInfo };
             try
             {
-                result = Process.Start(startInfo);
+                if (!result.Start())
+                {
+                    string msg = StringUtil.Format(ProcessResources.FailedToCreateProcessObject, startInfo.FileName);
+                    WriteDebug(msg);
+                }
             }
             catch (Win32Exception ex)
             {
