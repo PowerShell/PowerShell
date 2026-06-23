@@ -1471,7 +1471,7 @@ $result
         /// Specify a delay before the reboot occurs.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, UInt32.MaxValue)]
+        [ValidateRange(ValidateRangeKind.Positive)]
         public UInt32 ShutdownDelay { get; set; }
     
         /// <summary>
