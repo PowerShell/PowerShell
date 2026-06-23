@@ -382,6 +382,31 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         $result | Should -Be 100
     }
 
+    It 'Invalid property on $using does not affect other $using variables' {
+        $Var1 = "Hello"
+        $Var2 = $null
+        $Var3 = "World"
+        $result = Invoke-Command -Session $openSession -ScriptBlock {
+            $Var1 = $using:Var1
+
+            # Even if this won't run, the client validates the property in
+            # strict mode and throws PropertyNotFoundException. This should
+            # not affect the other $using variables.
+            $Var2 = if ($false) { $using:Var2.InvalidProperty }
+            $Var3 = $using:Var3
+
+            [PSCustomObject]@{
+                Var1 = $Var1
+                Var2 = $Var2
+                Var3 = $Var3
+            }
+        }
+
+        $result.Var1 | Should -Be Hello
+        $result.Var2 | Should -BeNullOrEmpty
+        $result.Var3 | Should -Be World
+    }
+
     It '$Host.Version should be PSVersion' {
         $session = New-RemoteSession -ConfigurationName $endPoint
         try {
