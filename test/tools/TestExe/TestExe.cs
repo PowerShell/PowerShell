@@ -139,7 +139,7 @@ namespace TestExe
         private static void EchoCmdLine()
         {
             string rawCmdLine = "N/A";
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (OperatingSystem.IsWindows())
             {
                 nint cmdLinePtr = Interop.GetCommandLineW();
                 rawCmdLine = Marshal.PtrToStringUni(cmdLinePtr);
