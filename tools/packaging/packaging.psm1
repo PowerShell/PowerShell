@@ -1242,7 +1242,7 @@ function New-UnixPackage {
             if ($PSCmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
-                $AppsFolder = New-MacOSLauncher -Version $Version
+                $AppsFolder = New-MacOSLauncher -Version $Version -HostArchitecture $HostArchitecture
             }
         }
 
@@ -2369,7 +2369,15 @@ function New-MacOSLauncher
         [Parameter(Mandatory)]
         [String]$Version,
 
-        [switch]$LTS
+        [switch]$LTS,
+
+        # The CPU architecture of the target package ("arm64" or "x86_64").
+        # Because the bundle executable is a shell script rather than a Mach-O binary,
+        # Launch Services cannot infer the supported architecture and defaults to
+        # offering Rosetta translation. When "arm64", LSRequiresNativeExecution is
+        # added to Info.plist to suppress the Rosetta prompt on Apple Silicon. Omitted
+        # for x86_64 so that build remains launchable under Rosetta on Apple Silicon.
+        [string]$HostArchitecture
     )
 
     $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
@@ -2398,9 +2406,19 @@ function New-MacOSLauncher
     # Copy icns file.
     Copy-Item -Force -Path $iconfile -Destination "$macosapp/Contents/Resources"
 
+    # Launch Services cannot infer CPU architecture from a shell script launcher
+    # and defaults to offering Rosetta translation. LSRequiresNativeExecution
+    # suppresses that prompt for arm64 builds; the key is omitted for x86_64
+    # so that build remains launchable under Rosetta on Apple Silicon.
+    $nativeExecutionKey = if ($HostArchitecture -eq "arm64") {
+        "    <key>LSRequiresNativeExecution</key>`n    <true/>`n"
+    } else {
+        ""
+    }
+
     # Create plist file.
     $plist = "$macosapp/Contents/Info.plist"
-    $plistcontent = $packagingStrings.MacOSLauncherPlistTemplate -f $packageId, $Version, $iconfilebase
+    $plistcontent = $packagingStrings.MacOSLauncherPlistTemplate -f $packageId, $Version, $iconfilebase, $nativeExecutionKey
     $plistcontent | Out-File -Force -Path $plist -Encoding utf8
 
     # Create shell script.
