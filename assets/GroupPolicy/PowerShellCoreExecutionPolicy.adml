@@ -83,7 +83,27 @@ Note: This policy setting exists under both Computer Configuration and User Conf
       </string>
       <string id="ConsoleSessionConfiguration">Console session configuration</string>
       <string id="ConsoleSessionConfiguration_Explain">Specifies a configuration endpoint in which PowerShell is run. This can be any endpoint registered on the local machine including the default PowerShell remoting endpoints or a custom endpoint having specific user role capabilities.</string>
-      
+
+      <string id="TrustedHosts">Configure Trusted Hosts for Security Zone Evaluation</string>
+      <string id="TrustedHosts_Explain">This policy setting allows you to configure trusted UNC host patterns that will be treated as Intranet zone instead of Internet zone during execution policy checks.
+
+By default, PowerShell Core treats any UNC path with a period (.) in the hostname as originating from the Internet security zone. This causes security warnings when using Unrestricted or RemoteSigned execution policies with FQDN UNC paths (e.g., \\server.domain.com\share).
+
+If you enable this policy setting, you can specify wildcard patterns for hostnames and UNC paths that should be trusted. Files from matching paths will be treated as Intranet zone, preventing security warnings.
+
+Pattern examples:
+  - server.domain.com (matches specific hostname)
+  - *.corp.internal (matches any hostname in corp.internal domain)
+  - \\server.domain.com\Users\*\Documents\* (matches specific UNC path pattern)
+
+Wildcard syntax supports: * (zero or more chars), ? (one char), [abc] (character set), ` (escape char)
+
+If you disable or do not configure this policy setting, all UNC paths with periods in the hostname will be treated as Internet zone (default behavior).
+
+Security Note: Only configure trusted hosts from your organization's network. Adding untrusted patterns may reduce security by suppressing warnings for potentially malicious remote scripts.
+
+Note: This policy setting exists under both Computer Configuration and User Configuration in the Group Policy Editor. The Computer Configuration policy setting takes precedence over the User Configuration policy setting.</string>
+
       <!--<string id="PowerShell">PowerShell Core</string>-->
     </stringTable>
     <presentationTable>
@@ -118,6 +138,14 @@ Note: This policy setting exists under both Computer Configuration and User Conf
         <textBox refId="ConsoleSessionConfigurationName">
           <label>ConsoleSessionConfigurationName</label>
         </textBox>
+      </presentation>
+      <presentation id="TrustedHosts">
+        <text>To trust hosts for security zone evaluation, click Show and enter wildcard patterns:</text>
+        <listBox refId="Listbox_TrustedHostPatterns" required="false">Trusted Host Patterns</listBox>
+        <text>Examples:</text>
+        <text>  server.domain.com</text>
+        <text>  *.corp.internal</text>
+        <text>  \\server.domain.com\Users\*\Documents\*</text>
       </presentation>
     </presentationTable>    
   </resources>
