@@ -90,169 +90,134 @@ namespace Microsoft.PowerShell.Commands
     public enum Reasons : uint
     {
         /// <summary>
-        /// Planned activity.
+        /// ApplicationHung related shutdown/restart.
         /// </summary>
-        Planned = 0x80000000,
+        ApplicationHung = 0x00040000 | 0x00000005,
 
         /// <summary>
-        /// Any other activity.
+        /// ApplicationInstallationPlanned related shutdown/restart.
+        /// </summary>
+        ApplicationInstallationPlanned = 0x00040000 | 0x00000002 | 0x80000000,
+
+        /// <summary>
+        /// ApplicationMaintenance related shutdown/restart.
+        /// </summary>
+        ApplicationMaintenance = 0x00040000 | 0x00000001,
+
+        /// <summary>
+        /// ApplicationMaintenancePlanned related shutdown/restart.
+        /// </summary>
+        ApplicationMaintenancePlanned = 0x00040000 | 0x00000001 | 0x80000000,
+
+        /// <summary>
+        /// ApplicationUnstable related shutdown/restart.
+        /// </summary>
+        ApplicationUnstable = 0x00040000 | 0x00000006,
+
+        /// <summary>
+        /// HardwareInstallation related shutdown/restart.
+        /// </summary>
+        HardwareInstallation = 0x00010000 | 0x00000002,
+
+        /// <summary>
+        /// HardwareInstallationPlanned related shutdown/restart.
+        /// </summary>
+        HardwareInstallationPlanned = 0x00010000 | 0x00000002 | 0x80000000,
+
+        /// <summary>
+        /// HardwareMaintenance related shutdown/restart.
+        /// </summary>
+        HardwareMaintenance = 0x00010000 | 0x00000001,
+
+        /// <summary>
+        /// HardwareMaintenancePlanned related shutdown/restart.
+        /// </summary>
+        HardwareMaintenancePlanned = 0x00010000 | 0x00000001 | 0x80000000,
+
+        /// <summary>
+        /// LegacyApi related shutdown/restart.
+        /// </summary>
+        LegacyApi = 0x00070000,
+
+        /// <summary>
+        /// OperatingsystemHotfix related shutdown/restart.
+        /// </summary>
+        OperatingsystemHotfix = 0x00020000 | 0x00000011,
+
+        /// <summary>
+        /// OperatingsystemHotfixPlanned related shutdown/restart.
+        /// </summary>
+        OperatingsystemHotfixPlanned = 0x00020000 | 0x00000011 | 0x80000000,
+
+        /// <summary>
+        /// OperatingsystemReconfig related shutdown/restart.
+        /// </summary>
+        OperatingsystemReconfig = 0x00020000 | 0x00000004,
+
+        /// <summary>
+        /// OperatingsystemReconfigPlanned related shutdown/restart.
+        /// </summary>
+        OperatingsystemReconfigPlanned = 0x00020000 | 0x00000004 | 0x80000000,
+
+        /// <summary>
+        /// OperatingsystemSecurityfix related shutdown/restart.
+        /// </summary>
+        OperatingsystemSecurityfix = 0x00020000 | 0x00000012,
+
+        /// <summary>
+        /// OperatingsystemSecurityfixPlanned related shutdown/restart.
+        /// </summary>
+        OperatingsystemSecurityfixPlanned = 0x00020000 | 0x00000012 | 0x80000000,
+
+        /// <summary>
+        /// OperatingsystemServicepackPlanned related shutdown/restart.
+        /// </summary>
+        OperatingsystemServicepackPlanned = 0x00020000 | 0x00000010 | 0x80000000,
+
+        /// <summary>
+        /// OperatingsystemUpgradePlanned related shutdown/restart.
+        /// </summary>
+        OperatingsystemUpgradePlanned = 0x00020000 | 0x00000003 | 0x80000000,
+
+        /// <summary>
+        /// Other related shutdown/restart.
         /// </summary>
         Other = 0x00000000,
 
         /// <summary>
-        /// Application related shutdown/restart.
+        /// OtherPlanned related shutdown/restart.
         /// </summary>
-        Application = 0x00040000,
+        OtherPlanned = 0x00000000 | 0x80000000,
 
         /// <summary>
-        /// Hardware related shutdown/restart.
+        /// OtherHung related shutdown/restart.
         /// </summary>
-        Hardware = 0x80010000,
+        OtherHung = 0x00000000 | 0x00000005,
 
         /// <summary>
-        /// OperatingSystem related shutdown/restart.
+        /// PowerCordunplugged related shutdown/restart.
         /// </summary>
-        OperatingSystem = 0x80020000,
+        PowerCordunplugged = 0x00060000 | 0x0000000b,
 
         /// <summary>
-        /// Power related shutdown/restart.
+        /// PowerEnvironment related shutdown/restart.
         /// </summary>
-        Power = 0x80060000,
+        PowerEnvironment = 0x00060000 | 0x0000000c,
 
         /// <summary>
-        /// Software related shutdown/restart.
+        /// SystemBluescreen related shutdown/restart.
         /// </summary>
-        Software = 0x80030000,
+        SystemBluescreen = 0x00050000 | 0x0000000F,
 
         /// <summary>
-        /// System related shutdown/restart.
+        /// SystemNetworkConnectivity related shutdown/restart.
         /// </summary>
-        System = 0x80050000,
+        SystemNetworkConnectivity = 0x00050000 | 0x00000014,
 
         /// <summary>
-        /// Shutdown/Restart related to BlueScreen.
+        /// SystemSecurity related shutdown/restart.
         /// </summary>
-        BlueScreen = 0x0000000F,
-
-        /// <summary>
-        /// Disk related shutdown/restart.
-        /// </summary>
-        Disk = 0x00000007,
-
-        /// <summary>
-        /// Environment related shutdown/restart.
-        /// </summary>
-        Environment = 0x0000000c,
-
-        /// <summary>
-        /// Driver related shutdown/restart.
-        /// </summary>
-        Driver = 0x0000000d,
-
-        /// <summary>
-        /// Shutdown/Restart related to HotFix installation.
-        /// </summary>
-        HotFix = 0x00000011,
-
-        /// <summary>
-        /// Shutdown/Restart related to HotFix Uninstallation.
-        /// </summary>
-        HotFixUninstall = 0x00000017,
-
-        /// <summary>
-        /// Shutdown/Restart related to Unresponsiveness.
-        /// </summary>
-        Unresponsive = 0x00000005,
-
-        /// <summary>
-        /// Installation related shutdown/restart.
-        /// </summary>
-        Installation = 0x00000002,
-
-        /// <summary>
-        /// Shutdown/Restart related to Maintenance.
-        /// </summary>
-        Maintenance = 0x00000001,
-
-        /// <summary>
-        /// MMC related shutdown/restart.
-        /// </summary>
-        MMC = 0x00000019,
-
-        /// <summary>
-        /// NetworkConnectivity related shutdown/restart.
-        /// </summary>
-        NetworkConnectivity = 0x00000014,
-
-        /// <summary>
-        /// NetworkCard related shutdown/restart.
-        /// </summary>
-        NetworkCard = 0x00000009,
-
-        /// <summary>
-        /// OtherDriver related shutdown/restart.
-        /// </summary>
-        OtherDriver = 0x0000000e,
-
-        /// <summary>
-        /// PowerSupply related shutdown/restart.
-        /// </summary>
-        PowerSupply = 0x0000000a,
-
-        /// <summary>
-        /// Processor related shutdown/restart.
-        /// </summary>
-        Processor = 0x00000008,
-
-        /// <summary>
-        /// Reconfigure related shutdown/restart.
-        /// </summary>
-        Reconfigure = 0x00000004,
-
-        /// <summary>
-        /// Shutdown/Restart related to SecurityIssue.
-        /// </summary>
-        SecurityIssue = 0x00000013,
-
-        /// <summary>
-        /// Shutdown/Restart related to SecurityPatch installation.
-        /// </summary>
-        SecurityPatch = 0x00000012,
-
-        /// <summary>
-        /// Shutdown/Restart related to SecurityPatch uninstallation.
-        /// </summary>
-        SecurityPatchUninstallation = 0x00000018,
-
-        /// <summary>
-        /// Shutdown/Restart related to ServicePack installation.
-        /// </summary>
-        ServicePack = 0x00000010,
-
-        /// <summary>
-        /// Shutdown/Restart related to ServicePack uninstallation.
-        /// </summary>
-        ServicePackUninstallation = 0x00000016,
-
-        /// <summary>
-        /// TerminalServices related shutdown/restart.
-        /// </summary>
-        TerminalServices = 0x00000020,
-
-        /// <summary>
-        /// Shutdown/Restart when system is Unstable.
-        /// </summary>
-        Unstable = 0x00000006,
-
-        /// <summary>
-        /// Shutdown/Restart related to Upgrade.
-        /// </summary>
-        Upgrade = 0x00000003,
-
-        /// <summary>
-        /// WMI related shutdown/restart.
-        /// </summary>
-        WMI = 0x00000015,
+        SystemSecurity = 0x00050000 | 0x00000013,
     }
 
     /// <summary>
