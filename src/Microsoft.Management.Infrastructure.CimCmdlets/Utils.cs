@@ -143,7 +143,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Whether the log been initialized.
         /// </summary>
-        private static bool logInitialized = false;
+        private static volatile bool logInitialized = false;
 
         internal static bool GenerateVerboseMessage { get; set; } = true;
 
