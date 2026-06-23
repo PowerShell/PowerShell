@@ -616,6 +616,24 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output.Content | Should -Match '测试123'
     }
 
+    It "Invoke-WebRequest detects encoding from <name> BOM." -TestCases @(
+        @{ Name = "Utf8BOM"; CodePage = 65001 }
+        @{ Name = "Unicode"; CodePage = 1200 }
+        @{ Name = "BigEndianUnicode"; CodePage = 1201 }
+        @{ Name = "Utf32"; CodePage = 12000 }
+        @{ Name = "Utf32BE"; CodePage = 12001 }
+    ) {
+        param ($name, $codepage)
+        $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue $name
+        $command = "Invoke-WebRequest -Uri '$uri'"
+
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
+
+        $Result.Output.Encoding.CodePage | Should -Be $codepage
+        $Result.Output.Content | Should -Match 'hello'
+    }
+
     It "Invoke-WebRequest validate ConnectionTimeoutSeconds option" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
         $command = "Invoke-WebRequest -Uri '$uri' -ConnectionTimeoutSeconds 2"
@@ -2731,6 +2749,21 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         $result = ExecuteWebCommand -command $command
         $Result.Output | Should -Match '测试123'
+    }
+
+    It "Invoke-RestMethod detects encoding from <name> BOM." -TestCases @(
+        @{ Name = "Utf8BOM"; CodePage = 65001 }
+        @{ Name = "Unicode"; CodePage = 1200 }
+        @{ Name = "BigEndianUnicode"; CodePage = 1201 }
+        @{ Name = "Utf32"; CodePage = 12000 }
+        @{ Name = "Utf32BE"; CodePage = 12001 }
+    ) {
+        param ($name, $codepage)
+        $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue $name
+        $command = "Invoke-RestMethod -Uri '$uri'"
+
+        $result = ExecuteWebCommand -command $command
+        $Result.Output | Should -Match 'hello'
     }
 
     It "Invoke-RestMethod validate ConnectionTimeoutSeconds option" {
