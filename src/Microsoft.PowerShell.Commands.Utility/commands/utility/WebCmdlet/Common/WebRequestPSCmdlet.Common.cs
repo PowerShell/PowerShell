@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies exponential backoff strategy to determine the interval between retries.
         /// </summary>
-        Exponential
+        Exponential,
     }
 
     /// <summary>
@@ -113,6 +113,11 @@ namespace Microsoft.PowerShell.Commands
         /// Used to prefix the headers in debug and verbose messaging.
         /// </summary>
         internal const string DebugHeaderPrefix = "--- ";
+
+        /// <summary>
+        /// Maximum retry interval for exponential backoff strategy.
+        /// </summary>
+        private const int _maximumretryIntervalInMilliseconds = 600000;
 
         /// <summary>
         /// Cancellation token source.
@@ -143,11 +148,6 @@ namespace Microsoft.PowerShell.Commands
         /// Automatically follow Rel Links.
         /// </summary>
         internal Dictionary<string, string> _relationLink = null;
-
-        /// <summary>
-        /// Maximum retry interval for exponential backoff strategy.
-        /// </summary>
-        private const int _maximumretryIntervalInMilliseconds = 600000;
 
         /// <summary>
         /// The current size of the local file being resumed.
@@ -1305,6 +1305,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Add 1 to account for the first request.
             int totalRequests = WebSession.MaximumRetryCount + 1;
+
             // For exponential backoff, we start with half of the retry interval so that the first retry happens at the user specified retry interval.
             int retryIntervalInMilliSeconds = Math.Min(WebSession.RetryIntervalInSeconds, _maximumretryIntervalInMilliseconds / 1000) * 1000 / 2
             HttpRequestMessage currentRequest = request;
@@ -1418,7 +1419,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // For exponential backoff, we double the retry interval for each retry attempt up to the maximum retry interval.
                         WebRequestRetryMode.Exponential => Math.Min(retryIntervalInMilliSeconds * 2, _maximumretryIntervalInMilliseconds),
-                        WebRequestRetryMode.Fixed or _ => WebSession.RetryIntervalInSeconds * 1000
+                        WebRequestRetryMode.Fixed or _ => WebSession.RetryIntervalInSeconds * 1000,
                     };
 
                     int currentRetryIntervalInMilliSeconds = retryIntervalInMilliSeconds;
