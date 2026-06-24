@@ -412,28 +412,7 @@ namespace Microsoft.PowerShell
 
             // Build the status description part
             int maxStatusWidth = barWidth - secRemainLength;
-            string statusPart;
-            int statusPartDisplayWidth;
-            if (maxStatusWidth > 0)
-            {
-                int statusDisplayWidth = rawUI.LengthInBufferCells(StatusDescription);
-                if (statusDisplayWidth > maxStatusWidth)
-                {
-                    int ellipsisWidth = rawUI.LengthInBufferCells(PSObjectHelper.EllipsisStr);
-                    statusPart = StringUtil.TruncateToBufferCellWidth(rawUI, StatusDescription, maxStatusWidth - ellipsisWidth) + PSObjectHelper.EllipsisStr;
-                    statusPartDisplayWidth = rawUI.LengthInBufferCells(statusPart);
-                }
-                else
-                {
-                    statusPart = StatusDescription;
-                    statusPartDisplayWidth = statusDisplayWidth;
-                }
-            }
-            else
-            {
-                statusPart = StatusDescription;
-                statusPartDisplayWidth = rawUI.LengthInBufferCells(StatusDescription);
-            }
+            string statusPart = RenderAnsiStatusPart(rawUI, maxStatusWidth, out int statusPartDisplayWidth);
 
             sb.Append(statusPart);
 
@@ -447,42 +426,7 @@ namespace Microsoft.PowerShell
             sb.Append(secRemain);
 
             // Insert ReverseOff at the correct position for the progress bar
-            if (PercentComplete >= 0 && PercentComplete < 100 && barWidth > 0)
-            {
-                int barLength = PercentComplete * barWidth / 100;
-                if (barLength >= barWidth)
-                {
-                    barLength = barWidth - 1;
-                }
-
-                // Calculate the string position where we need to insert ReverseOff
-                // We need to find the character position that corresponds to barLength buffer cells
-                int stringPos = PSStyle.Instance.Reverse.Length;
-                int currentCellCount = 0;
-
-                for (int i = 0; i < statusPart.Length && currentCellCount < barLength; i++)
-                {
-                    currentCellCount += rawUI.LengthInBufferCells(statusPart[i]);
-                    stringPos++;
-                }
-
-                // Add any padding characters
-                int remainingCells = barLength - currentCellCount;
-                stringPos += Math.Max(0, remainingCells);
-
-                if (stringPos < sb.Length)
-                {
-                    sb.Insert(stringPos, PSStyle.Instance.ReverseOff);
-                }
-                else
-                {
-                    sb.Append(PSStyle.Instance.ReverseOff);
-                }
-            }
-            else
-            {
-                sb.Append(PSStyle.Instance.ReverseOff);
-            }
+            RenderAnsiReverseOff(sb, rawUI, statusPart, barWidth);
 
             strCollection.Add(
                 StringUtil.Format(
@@ -492,6 +436,85 @@ namespace Microsoft.PowerShell
                     activity,
                     sb.ToString(),
                     PSStyle.Instance.Reset));
+        }
+
+        /// <summary>
+        /// Builds the status-description portion of the Ansi progress bar, truncating it
+        /// with an ellipsis when it would exceed the available status width.
+        /// </summary>
+        /// <param name="rawUI">
+        /// The PSHostRawUserInterface used to gauge string widths.
+        /// </param>
+        /// <param name="maxStatusWidth">
+        /// The maximum number of buffer cells available for the status description.
+        /// </param>
+        /// <param name="statusPartDisplayWidth">
+        /// On return, the width in buffer cells of the produced status part.
+        /// </param>
+        /// <returns>The status description, possibly truncated with an ellipsis.</returns>
+        private string RenderAnsiStatusPart(PSHostRawUserInterface rawUI, int maxStatusWidth, out int statusPartDisplayWidth)
+        {
+            int statusDisplayWidth = rawUI.LengthInBufferCells(StatusDescription);
+
+            if (maxStatusWidth <= 0 || statusDisplayWidth <= maxStatusWidth)
+            {
+                statusPartDisplayWidth = statusDisplayWidth;
+                return StatusDescription;
+            }
+
+            int ellipsisWidth = rawUI.LengthInBufferCells(PSObjectHelper.EllipsisStr);
+            string statusPart = StringUtil.TruncateToBufferCellWidth(rawUI, StatusDescription, maxStatusWidth - ellipsisWidth) + PSObjectHelper.EllipsisStr;
+            statusPartDisplayWidth = rawUI.LengthInBufferCells(statusPart);
+            return statusPart;
+        }
+
+        /// <summary>
+        /// Appends the ReverseOff VT sequence to the rendered bar at the buffer-cell position
+        /// that corresponds to the filled portion of the progress bar, respecting character boundaries.
+        /// </summary>
+        /// <param name="sb">The StringBuilder holding the bar contents built so far.</param>
+        /// <param name="rawUI">
+        /// The PSHostRawUserInterface used to gauge string widths.
+        /// </param>
+        /// <param name="statusPart">The status text at the start of the bar.</param>
+        /// <param name="barWidth">The total width of the progress bar in buffer cells.</param>
+        private void RenderAnsiReverseOff(StringBuilder sb, PSHostRawUserInterface rawUI, string statusPart, int barWidth)
+        {
+            if (PercentComplete < 0 || PercentComplete >= 100 || barWidth <= 0)
+            {
+                sb.Append(PSStyle.Instance.ReverseOff);
+                return;
+            }
+
+            int barLength = PercentComplete * barWidth / 100;
+            if (barLength >= barWidth)
+            {
+                barLength = barWidth - 1;
+            }
+
+            // Calculate the string position where we need to insert ReverseOff.
+            // We need to find the character position that corresponds to barLength buffer cells.
+            int stringPos = PSStyle.Instance.Reverse.Length;
+            int currentCellCount = 0;
+
+            for (int i = 0; i < statusPart.Length && currentCellCount < barLength; i++)
+            {
+                currentCellCount += rawUI.LengthInBufferCells(statusPart[i]);
+                stringPos++;
+            }
+
+            // Add any padding characters.
+            int remainingCells = barLength - currentCellCount;
+            stringPos += Math.Max(0, remainingCells);
+
+            if (stringPos < sb.Length)
+            {
+                sb.Insert(stringPos, PSStyle.Instance.ReverseOff);
+            }
+            else
+            {
+                sb.Append(PSStyle.Instance.ReverseOff);
+            }
         }
 
         /// <summary>
