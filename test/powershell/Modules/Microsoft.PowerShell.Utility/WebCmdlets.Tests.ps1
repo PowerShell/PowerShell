@@ -2323,7 +2323,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             Select-String -Path $verboseFile -Pattern $expectedMessage -SimpleMatch | Should -HaveCount $expectRetryCount
         }
 
-        It "Invoke-WebRequest -RetryMode Exponential should use the exponential backoff stratefy for retrying." {
+        It "Invoke-WebRequest -RetryMode Exponential should use the exponential backoff strategy for retrying." {
 
             $Query = @{
                 statusCode     = 404
@@ -4394,7 +4394,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             Select-String -Path $verboseFile -Pattern $expectedMessage -SimpleMatch | Should -HaveCount $expectRetryCount
         }
 
-        It "Invoke-RestMethod -RetryMode Exponential should use the exponential backoff stratefy for retrying." {
+        It "Invoke-RestMethod -RetryMode Exponential should use the exponential backoff strategy for retrying." {
 
             $Query = @{
                 statusCode     = 404
