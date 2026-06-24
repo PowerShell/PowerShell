@@ -353,6 +353,13 @@ namespace System.Management.Automation
             // Add the CurrentUser help path.
             searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
 
+            // Add the AllUsers help path (per-machine data store) when running as a packaged app.
+            string allUsersHelpPath = HelpUtils.GetAllUsersHomeHelpSearchPath();
+            if (!string.IsNullOrEmpty(allUsersHelpPath))
+            {
+                searchPaths.Add(allUsersHelpPath);
+            }
+
             // Add modules that are not loaded. Since using 'get-module -listavailable' is very expensive,
             // we load all the directories (which are not empty) under the module path.
             foreach (string psModulePath in ModuleIntrinsics.GetModulePath(false, this.HelpSystem.ExecutionContext))

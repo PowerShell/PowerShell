@@ -177,7 +177,9 @@ namespace System.Management.Automation
             string folderPath = string.Empty;
             try
             {
-                folderPath = Utils.GetApplicationBase(shellId);
+                // When running as a packaged MSIX app with the per-machine data store provisioned, the
+                // AllUsers profiles live in that writable store; otherwise they live under $PSHOME.
+                folderPath = Utils.GetPackagedMachineDataStorePath() ?? Utils.GetApplicationBase(shellId);
             }
             catch (System.Security.SecurityException)
             {
