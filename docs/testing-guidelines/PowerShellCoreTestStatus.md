@@ -290,6 +290,7 @@ The follow table represents the test coverage of the PowerShell Core Cmdlets in 
 |Select-String|delivered|delivered|yes|
 |ConvertFrom-StringData|delivered|delivered|yes|
 |Format-Table|delivered|delivered|yes|
+|New-TemporaryDirectory|delivered|delivered|yes|
 |New-TemporaryFile|delivered|delivered|yes|
 |New-TimeSpan|delivered|delivered|yes|
 |Get-TimeZone||delivered|yes|
