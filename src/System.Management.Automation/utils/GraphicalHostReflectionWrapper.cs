@@ -55,7 +55,7 @@ namespace System.Management.Automation.Internal
         /// <exception cref="RuntimeException">When it was not possible to load Microsoft.PowerShell.GraphicalHost.dlly.</exception>
         internal static GraphicalHostReflectionWrapper GetGraphicalHostReflectionWrapper(PSCmdlet parentCmdlet, string graphicalHostHelperTypeName)
         {
-            return GraphicalHostReflectionWrapper.GetGraphicalHostReflectionWrapper(parentCmdlet, graphicalHostHelperTypeName, parentCmdlet.CommandInfo.Name);
+            return GetGraphicalHostReflectionWrapper(parentCmdlet, graphicalHostHelperTypeName, parentCmdlet.CommandInfo.Name);
         }
 
         /// <summary>
@@ -73,9 +73,9 @@ namespace System.Management.Automation.Internal
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Assembly.Load has been found to throw unadvertised exceptions")]
         internal static GraphicalHostReflectionWrapper GetGraphicalHostReflectionWrapper(PSCmdlet parentCmdlet, string graphicalHostHelperTypeName, string featureName)
         {
-            GraphicalHostReflectionWrapper returnValue = new GraphicalHostReflectionWrapper();
+            GraphicalHostReflectionWrapper returnValue = new();
 
-            if (GraphicalHostReflectionWrapper.IsInputFromRemoting(parentCmdlet))
+            if (IsInputFromRemoting(parentCmdlet))
             {
                 ErrorRecord error = new ErrorRecord(
                     new NotSupportedException(StringUtil.Format(HelpErrors.RemotingNotSupportedForFeature, featureName)),
@@ -87,9 +87,10 @@ namespace System.Management.Automation.Internal
             }
 
             // Prepare the full assembly name.
-            AssemblyName graphicalHostAssemblyName = new AssemblyName();
+            AssemblyName smaAssemblyName = typeof(PSObject).Assembly.GetName();
+            AssemblyName graphicalHostAssemblyName = new();
             graphicalHostAssemblyName.Name = "Microsoft.PowerShell.GraphicalHost";
-            graphicalHostAssemblyName.Version = new Version(3, 0, 0, 0);
+            graphicalHostAssemblyName.Version = smaAssemblyName.Version;
             graphicalHostAssemblyName.CultureInfo = new CultureInfo(string.Empty); // Neutral culture
             graphicalHostAssemblyName.SetPublicKeyToken(new byte[] { 0x31, 0xbf, 0x38, 0x56, 0xad, 0x36, 0x4e, 0x35 });
 
@@ -124,7 +125,7 @@ namespace System.Management.Automation.Internal
 
             returnValue._graphicalHostHelperType = returnValue._graphicalHostAssembly.GetType(graphicalHostHelperTypeName);
 
-            Diagnostics.Assert(returnValue._graphicalHostHelperType != null, "the type exists in Microsoft.PowerShell.GraphicalHost");
+            Diagnostics.Assert(returnValue._graphicalHostHelperType != null, "the type should exist in Microsoft.PowerShell.GraphicalHost");
             ConstructorInfo constructor = returnValue._graphicalHostHelperType.GetConstructor(
                 BindingFlags.NonPublic | BindingFlags.Instance,
                 null,

@@ -9,7 +9,6 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -317,6 +316,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal string Word;
         internal string Delim;
+        internal bool VtResetAdded;
     }
 
     /// <summary>
@@ -367,9 +367,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     var vtSpan = s.AsSpan(i, len);
                     sb.Append(vtSpan);
-                    vtSeqs.Append(vtSpan);
 
-                    wordHasVtSeqs = true;
+                    if (vtSpan.SequenceEqual(PSStyle.Instance.Reset))
+                    {
+                        // The Reset sequence will void all previous VT sequences.
+                        vtSeqs.Clear();
+                        wordHasVtSeqs = false;
+                    }
+                    else
+                    {
+                        vtSeqs.Append(vtSpan);
+                        wordHasVtSeqs = true;
+                    }
+
                     i += len - 1;
                     continue;
                 }
@@ -390,15 +400,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (delimiter is not null)
                 {
+                    bool vtResetAdded = false;
                     if (wordHasVtSeqs && !sb.EndsWith(PSStyle.Instance.Reset))
                     {
+                        vtResetAdded = true;
                         sb.Append(PSStyle.Instance.Reset);
                     }
 
                     var result = new GetWordsResult()
                     {
                         Word = sb.ToString(),
-                        Delim = delimiter
+                        Delim = delimiter,
+                        VtResetAdded = vtResetAdded
                     };
 
                     sb.Clear().Append(vtSeqs);
@@ -611,7 +624,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     if (suffix is not null)
                     {
-                        wordToAdd = wordToAdd.EndsWith(resetStr)
+                        wordToAdd = word.VtResetAdded
                             ? wordToAdd.Insert(wordToAdd.Length - resetStr.Length, suffix)
                             : wordToAdd + suffix;
                     }
@@ -760,9 +773,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     var vtSpan = s.AsSpan(i, len);
                     sb.Append(vtSpan);
-                    vtSeqs.Append(vtSpan);
 
-                    hasVtSeqs = true;
+                    if (vtSpan.SequenceEqual(PSStyle.Instance.Reset))
+                    {
+                        // The Reset sequence will void all previous VT sequences.
+                        vtSeqs.Clear();
+                        hasVtSeqs = false;
+                    }
+                    else
+                    {
+                        vtSeqs.Append(vtSpan);
+                        hasVtSeqs = true;
+                    }
+
                     i += len - 1;
                     continue;
                 }
