@@ -605,7 +605,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Array is zero based.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0051:Remove unused private members")]
         private static bool ArrayIsZeroBased(Array array)
         {
             int rank = array.Rank;

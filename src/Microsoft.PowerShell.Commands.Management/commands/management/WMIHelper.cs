@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks the status of remote command execution.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members")]
         private void SetStatusMessage()
         {
             _statusMessage = "test";
@@ -1845,7 +1845,7 @@ namespace Microsoft.PowerShell.Commands
         /// running and raise an event indicating to this
         /// parent job that this job is unblocked.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members")]
         internal void UnblockJob()
         {
             SetJobState(JobState.Running, null);
