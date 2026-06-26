@@ -376,6 +376,13 @@ namespace System.Management.Automation
                                ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                                RunspaceInit.EnabledExperimentalFeatures);
             this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
+
+            // $PSProcessPath
+            v = new PSVariable(SpecialVariables.PSProcessPath,
+                               Environment.ProcessPath,
+                               ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
+                               RunspaceInit.PSProcessPathDescription);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
         }
 
         /// <summary>

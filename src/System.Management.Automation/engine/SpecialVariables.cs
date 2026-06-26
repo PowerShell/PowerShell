@@ -306,6 +306,7 @@ namespace System.Management.Automation
         internal const string PSEdition = "PSEdition";
         internal const string ShellId = "ShellId";
         internal const string EnabledExperimentalFeatures = "EnabledExperimentalFeatures";
+        internal const string PSProcessPath = "PSProcessPath";
 
         #endregion AllScope variables created in every session
 
@@ -378,7 +379,8 @@ namespace System.Management.Automation
             { PSEdition, typeof(string) },
             { ShellId, typeof(string) },
             { True, typeof(bool) },
-            { EnabledExperimentalFeatures, typeof(ReadOnlyBag<string>) }
+            { EnabledExperimentalFeatures, typeof(ReadOnlyBag<string>) },
+            { PSProcessPath, typeof(string) }
         };
 
         private static readonly HashSet<string> s_classMethodsAccessibleVariables = new HashSet<string>
