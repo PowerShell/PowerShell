@@ -243,6 +243,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 moduleBase = HelpUtils.GetModuleBaseForUserHelp(moduleBase, module.ModuleName);
             }
+            else
+            {
+                // AllUsers: when running as a packaged app, redirect to the writable per-machine data
+                // store; otherwise this returns the module base (historical behavior).
+                moduleBase = HelpUtils.GetModuleBaseForAllUsersHelp(moduleBase, module.ModuleName);
+            }
 
             // reading the xml file even if force is specified
             // Reason: we need the current version for ShouldProcess
