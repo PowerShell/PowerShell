@@ -5610,7 +5610,9 @@ namespace System.Management.Automation.Language
         /// </returns>
         public override Ast Copy()
         {
-            return new PipelineChainAst(Extent, CopyElement(LhsPipelineChain), CopyElement(RhsPipeline), Operator, Background);
+            var copy = new PipelineChainAst(Extent, CopyElement(LhsPipelineChain), CopyElement(RhsPipeline), Operator, Background);
+            copy.BackgroundThreadJob = this.BackgroundThreadJob;
+            return copy;
         }
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -5675,6 +5677,11 @@ namespace System.Management.Automation.Language
         {
             return null;
         }
+
+        /// <summary>
+        /// Indicates that this pipeline should be run in the background as a ThreadJob.
+        /// </summary>
+        public bool BackgroundThreadJob { get; internal set; }
     }
 
     /// <summary>
@@ -5793,7 +5800,9 @@ namespace System.Management.Automation.Language
         public override Ast Copy()
         {
             var newPipelineElements = CopyElements(this.PipelineElements);
-            return new PipelineAst(this.Extent, newPipelineElements, this.Background);
+            var copy = new PipelineAst(this.Extent, newPipelineElements, this.Background);
+            copy.BackgroundThreadJob = this.BackgroundThreadJob;
+            return copy;
         }
 
         #region Visitors

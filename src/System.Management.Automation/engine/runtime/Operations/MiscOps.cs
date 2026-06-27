@@ -28,6 +28,13 @@ namespace System.Management.Automation
 {
     internal static class PipelineOps
     {
+        // PowerShell magic/automatic variable names that should not be auto-prefixed with $using:
+        // when constructing a background job script block for the &! operator.
+        private static readonly HashSet<string> s_backgroundJobMagicVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "PID", "PSVersionTable", "PSEdition", "PSHOME", "HOST", "TRUE", "FALSE", "NULL"
+        };
+
         private static CommandProcessorBase AddCommand(PipelineProcessor pipe,
                                                        CommandParameterInternal[] commandElements,
                                                        CommandBaseAst commandBaseAst,
@@ -550,51 +557,110 @@ namespace System.Management.Automation
                 CommandProcessorBase commandProcessor = null;
 
                 // For background jobs rewrite the pipeline as a Start-Job command
-                var scriptblockBodyString = pipelineAst.Extent.Text;
-                var pipelineOffset = pipelineAst.Extent.StartOffset;
-                var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
+                ScriptBlock sb;
+                
+                // Check if the pipeline is already a script block expression (e.g., {1+1} &!)
+                // In this case, we should use the script block directly instead of wrapping it
+                // Note: PipelineElements is only available on PipelineAst, not PipelineBaseAst
+                var scriptBlockExpr = pipelineAst is PipelineAst pipeline &&
+                                       pipeline.PipelineElements.Count == 1 &&
+                                       pipeline.PipelineElements[0] is CommandExpressionAst cmdExpr &&
+                                       cmdExpr.Expression is ScriptBlockExpressionAst sbExpr
+                                       ? sbExpr
+                                       : null;
 
-                // Minimize allocations by initializing the stringbuilder to the size of the source string + space for ${using:} * 2
-                System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(scriptblockBodyString.Length + 18);
-                int position = 0;
-
-                // Prefix variables in the scriptblock with $using:
-                foreach (var v in variables)
+                if (scriptBlockExpr != null)
                 {
-                    var variableName = ((VariableExpressionAst)v).VariablePath.UserPath;
+                    // The pipeline is already a script block - use the ScriptBlock from the AST directly.
+                    // Using ScriptBlock.Create("{ content }") would create a script that returns a ScriptBlock
+                    // object rather than executing the body. Getting the ScriptBlock from the ScriptBlockAst
+                    // avoids all text manipulation and correctly executes the body.
+                    // Users are expected to use explicit $using: scoping in their scriptblock to capture
+                    // outer variables (e.g., { $using:testVar } &!).
+                    sb = scriptBlockExpr.ScriptBlock.GetScriptBlock();
+                }
+                else
+                {
+                    // The pipeline is a regular command - wrap it in a script block.
+                    // Auto-inject $using: for variables that exist in the current scope.
+                    var scriptblockBodyString = pipelineAst.Extent.Text;
+                    var pipelineOffset = pipelineAst.Extent.StartOffset;
+                    var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
 
-                    // Skip variables that don't exist
-                    if (funcContext._executionContext.EngineSessionState.GetVariable(variableName) == null)
+                    // Minimize allocations by initializing the stringbuilder to the size of the source string + space for ${using:} * 2
+                    System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(scriptblockBodyString.Length + 18);
+                    int position = 0;
+
+                    // Prefix variables in the scriptblock with $using:
+                    foreach (var v in variables)
                     {
-                        continue;
+                        var variableName = ((VariableExpressionAst)v).VariablePath.UserPath;
+
+                        // Skip variables that don't exist
+                        if (funcContext._executionContext.EngineSessionState.GetVariable(variableName) == null)
+                        {
+                            continue;
+                        }
+
+                        // Strip global: prefix if present, then check against magic variable names
+                        var cleanVariableName = variableName.StartsWith("global:", StringComparison.OrdinalIgnoreCase)
+                            ? variableName.Substring(7)
+                            : variableName;
+
+                        if (!s_backgroundJobMagicVariables.Contains(cleanVariableName))
+                        {
+                            updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
+                            updatedScriptblock.Append("${using:");
+                            updatedScriptblock.Append(CodeGeneration.EscapeVariableName(variableName));
+                            updatedScriptblock.Append('}');
+                            position = v.Extent.EndOffset - pipelineOffset;
+                        }
                     }
 
-                    // Skip PowerShell magic variables
-                    if (!Regex.Match(
-                            variableName,
-                            "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
-                            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success)
+                    updatedScriptblock.Append(scriptblockBodyString.AsSpan(position));
+                    sb = ScriptBlock.Create(updatedScriptblock.ToString());
+                }
+                
+                // Use Start-ThreadJob if BackgroundThreadJob is set, otherwise use Start-Job
+                CmdletInfo commandInfo;
+                bool usingThreadJob = false;
+                if (pipelineAst.BackgroundThreadJob)
+                {
+                    // Use CommandTypes.Cmdlet only to avoid resolving a user-defined function that
+                    // shadows the real Start-ThreadJob cmdlet, which would cause &! to silently fall
+                    // back to Start-Job even when the ThreadJob module is installed.
+                    var threadJobCmdlet = context.SessionState.InvokeCommand.GetCommand("Start-ThreadJob", CommandTypes.Cmdlet) as CmdletInfo;
+                    if (threadJobCmdlet != null)
                     {
-                        updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
-                        updatedScriptblock.Append("${using:");
-                        updatedScriptblock.Append(CodeGeneration.EscapeVariableName(variableName));
-                        updatedScriptblock.Append('}');
-                        position = v.Extent.EndOffset - pipelineOffset;
+                        commandInfo = threadJobCmdlet;
+                        usingThreadJob = true;
+                    }
+                    else
+                    {
+                        // Fall back to Start-Job if Start-ThreadJob cmdlet is not available
+                        commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                     }
                 }
-
-                updatedScriptblock.Append(scriptblockBodyString.AsSpan(position));
-                var sb = ScriptBlock.Create(updatedScriptblock.ToString());
-                var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                else
+                {
+                    commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                }
+                
                 commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
 
-                var workingDirectoryParameter = CommandParameterInternal.CreateParameterWithArgument(
-                    parameterAst: pipelineAst,
-                    parameterName: "WorkingDirectory",
-                    parameterText: null,
-                    argumentAst: pipelineAst,
-                    value: context.SessionState.Path.CurrentLocation.Path,
-                    spaceAfterParameter: false);
+                // Only add WorkingDirectory parameter for Start-Job, not for Start-ThreadJob
+                // Start-ThreadJob doesn't support the WorkingDirectory parameter
+                if (!usingThreadJob)
+                {
+                    var workingDirectoryParameter = CommandParameterInternal.CreateParameterWithArgument(
+                        parameterAst: pipelineAst,
+                        parameterName: "WorkingDirectory",
+                        parameterText: null,
+                        argumentAst: pipelineAst,
+                        value: context.SessionState.Path.CurrentLocation.Path,
+                        spaceAfterParameter: false);
+                    commandProcessor.AddParameter(workingDirectoryParameter);
+                }
 
                 var scriptBlockParameter = CommandParameterInternal.CreateParameterWithArgument(
                     parameterAst: pipelineAst,
@@ -604,7 +670,6 @@ namespace System.Management.Automation
                     value: sb,
                     spaceAfterParameter: false);
 
-                commandProcessor.AddParameter(workingDirectoryParameter);
                 commandProcessor.AddParameter(scriptBlockParameter);
                 pipelineProcessor.Add(commandProcessor);
                 pipelineProcessor.LinkPipelineSuccessOutput(outputPipe ?? new Pipe(new List<object>()));
