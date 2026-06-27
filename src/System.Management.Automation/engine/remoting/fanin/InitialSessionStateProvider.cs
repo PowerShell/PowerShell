@@ -2554,9 +2554,15 @@ namespace System.Management.Automation.Remoting
                 if (string.IsNullOrEmpty(hashtableKey))
                 {
                     IEnumerator errorKey = commandModification.Keys.GetEnumerator();
-                    errorKey.MoveNext();
-
-                    hashtableKey = errorKey.Current.ToString();
+                    try
+                    {
+                        errorKey.MoveNext();
+                        hashtableKey = errorKey.Current.ToString();
+                    }
+                    finally
+                    {
+                        (errorKey as IDisposable)?.Dispose();
+                    }
                 }
 
                 string message = StringUtil.Format(RemotingErrorIdStrings.DISCCommandModificationSyntax, hashtableKey);
