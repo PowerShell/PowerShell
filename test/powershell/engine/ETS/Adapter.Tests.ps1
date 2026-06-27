@@ -266,8 +266,7 @@ Describe "Adapter Tests" -tags "CI" {
 }
 
 Describe "Adapter XML Tests" -tags "CI" {
-    BeforeAll {
-        [xml]$x  = "<root><data/></root>"
+    BeforeDiscovery {
         $testCases =
             @{ rval = @{testprop = 1}; value = 'a hash (psobject)' },
             @{ rval = $null;           value = 'a null (codemethod)' },
@@ -279,6 +278,10 @@ Describe "Adapter XML Tests" -tags "CI" {
             @{ rval = [PSObject]::AsPSObject("teststring"); value = 'a string (psobject wrapping)' },
             @{ rval = [PSObject]::AsPSObject([psobject]@("teststring1", "teststring2")); value = 'a string array (psobject wrapping)' },
             @{ rval = [PSObject]::AsPSObject(@(1,2)); value = 'int array (psobject wrapping)' }
+    }
+
+    BeforeAll {
+        [xml]$x  = "<root><data/></root>"
     }
 
     Context "Can set XML node property to non-string object" {

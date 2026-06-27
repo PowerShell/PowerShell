@@ -1,45 +1,28 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Verify aliases and cmdlets" -Tags "CI" {
-    BeforeAll {
-        function ConvertTo-Hashtable {
-            [CmdletBinding()]
-            param ([Parameter(ValueFromPipeline=$true)][psobject]$o)
-            PROCESS {
-                $pNames = $o.psobject.properties.name
-                $ht = @{}
-                foreach($pName in $pNames) {
-                    $ht[$pName] = $o.$pName
-                }
-                $ht
-            }
-        }
 
-        $FullCLR = !$IsCoreCLR
-        $CoreWindows = $IsCoreCLR -and $IsWindows
-        $CoreUnix = $IsCoreCLR -and !$IsWindows
-        # If psversion can be converted to [version], then it is not a preview version.
-        # We can't just use '$psversiontable.psversion -as [version]' because pwsh
-        # will succeed with the conversion and add note properties to the version object.
-        $psVersionAsVersion = $psversiontable.psversion.tostring() -as [version]
-        $isRC = $psversiontable.psversion.tostring() -match "rc"
-        $isPreview = -not ($isRC -or $psVersionAsVersion)
-        if ($IsWindows) {
-            $configPath = Join-Path -Path $env:USERPROFILE -ChildPath 'Documents' -AdditionalChildPath 'PowerShell'
+# Hoist test data to file scope so it is visible in both Pester 5 Discovery
+# (-TestCases) and Run (BeforeAll/It) phases. Variables set inside a
+# BeforeDiscovery block do not reliably persist into the runtime container
+# scope in Pester 5.
+function ConvertTo-Hashtable {
+    [CmdletBinding()]
+    param ([Parameter(ValueFromPipeline=$true)][psobject]$o)
+    PROCESS {
+        $pNames = $o.psobject.properties.name
+        $ht = @{}
+        foreach($pName in $pNames) {
+            $ht[$pName] = $o.$pName
         }
-        else {
-            $configPath = Join-Path -Path $env:HOME -ChildPath '.config' -AdditionalChildPath 'powershell'
-        }
+        $ht
+    }
+}
 
-        if (Test-Path "$configPath/powershell.config.json") {
-            Move-Item -Path "$configPath/powershell.config.json"  -Destination "$configPath/powershell.config.json.backup"
-        }
+$FullCLR = !$IsCoreCLR
+$CoreWindows = $IsCoreCLR -and $IsWindows
+$CoreUnix = $IsCoreCLR -and !$IsWindows
 
-        $AllScope = '[System.Management.Automation.ScopedItemOptions]::AllScope'
-        $ReadOnly = '[System.Management.Automation.ScopedItemOptions]::ReadOnly'
-        $None     = '[System.Management.Automation.ScopedItemOptions]::None'
-
-        $commandString = @"
+$commandString = @"
 "CommandType",  "Name",                             "Definition",                       "Present",                                      "ReadOnlyOption",       "AllScopeOption",       "ConfirmImpact"
 "Alias",        "%",                                "ForEach-Object",                   $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "AllScope",             ""
 "Alias",        "?",                                "Where-Object",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "AllScope",             ""
@@ -541,59 +524,104 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
 "Cmdlet",       "Write-Warning",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "@
 
-            # We control only default engine aliases (Source -eq "") and aliases from following default loaded modules "
-            # We control only default engine Cmdlets (Source -eq "") and Cmdlets from following default loaded modules
-            $moduleList = @(
-                    "Microsoft.PowerShell.Utility",
-                    "Microsoft.PowerShell.Management",
-                    "Microsoft.PowerShell.Security",
-                    "Microsoft.PowerShell.Host",
-                    "Microsoft.PowerShell.Diagnostics",
-                    "Microsoft.WSMan.Management",
-                    "Microsoft.PowerShell.Core",
-                    "CimCmdlets"
-                    )
-            $getAliases = {
-                param($moduleList)
+$script:commandList = $commandString | ConvertFrom-Csv -Delimiter ","
+$script:commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
+$script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias" }
 
-                if ($moduleList -is [string]) {
-                    $moduleList = $moduleList | ConvertFrom-Json
+Describe "Verify aliases and cmdlets" -Tags "CI" -ForEach @(@{ commandString = $commandString }) {
+    BeforeAll {
+        # Rebind script-scope test data because file-scope $script: variables
+        # are NOT visible inside Pester 5 BeforeAll/It runtime blocks on all platforms.
+        # Same goes for file-scope functions like ConvertTo-Hashtable -- redefine it
+        # here so the pipeline below resolves at runtime.
+        # The $commandString variable is passed in via -ForEach on the Describe.
+        function ConvertTo-Hashtable {
+            [CmdletBinding()]
+            param ([Parameter(ValueFromPipeline=$true)][psobject]$o)
+            PROCESS {
+                $pNames = $o.psobject.properties.name
+                $ht = @{}
+                foreach($pName in $pNames) {
+                    $ht[$pName] = $o.$pName
                 }
+                $ht
+            }
+        }
 
-                Import-Module -Name $moduleList -ErrorAction SilentlyContinue
-                Get-Alias | Where-Object { $_.Source -eq "" -or $moduleList -contains $_.Source }
+        $script:commandList = $commandString | ConvertFrom-Csv -Delimiter ","
+        $script:commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
+        $script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias" }
+
+        # If psversion can be converted to [version], then it is not a preview version.
+        # We can't just use '$psversiontable.psversion -as [version]' because pwsh
+        # will succeed with the conversion and add note properties to the version object.
+        $psVersionAsVersion = $psversiontable.psversion.tostring() -as [version]
+        $isRC = $psversiontable.psversion.tostring() -match "rc"
+        $isPreview = -not ($isRC -or $psVersionAsVersion)
+        if ($IsWindows) {
+            $configPath = Join-Path -Path $env:USERPROFILE -ChildPath 'Documents' -AdditionalChildPath 'PowerShell'
+        }
+        else {
+            $configPath = Join-Path -Path $env:HOME -ChildPath '.config' -AdditionalChildPath 'powershell'
+        }
+
+        if (Test-Path "$configPath/powershell.config.json") {
+            Move-Item -Path "$configPath/powershell.config.json"  -Destination "$configPath/powershell.config.json.backup"
+        }
+
+        $AllScope = '[System.Management.Automation.ScopedItemOptions]::AllScope'
+        $ReadOnly = '[System.Management.Automation.ScopedItemOptions]::ReadOnly'
+        $None     = '[System.Management.Automation.ScopedItemOptions]::None'
+
+
+        # We control only default engine aliases (Source -eq "") and aliases from following default loaded modules
+        # We control only default engine Cmdlets (Source -eq "") and Cmdlets from following default loaded modules
+        $moduleList = @(
+                "Microsoft.PowerShell.Utility",
+                "Microsoft.PowerShell.Management",
+                "Microsoft.PowerShell.Security",
+                "Microsoft.PowerShell.Host",
+                "Microsoft.PowerShell.Diagnostics",
+                "Microsoft.WSMan.Management",
+                "Microsoft.PowerShell.Core",
+                "CimCmdlets"
+                )
+        $getAliases = {
+            param($moduleList)
+
+            if ($moduleList -is [string]) {
+                $moduleList = $moduleList | ConvertFrom-Json
             }
 
-            $getCommands = {
-                param($moduleList)
+            Import-Module -Name $moduleList -ErrorAction SilentlyContinue
+            Get-Alias | Where-Object { $_.Source -eq "" -or $moduleList -contains $_.Source }
+        }
 
-                if ($moduleList -is [string]) {
-                    $moduleList = $moduleList | ConvertFrom-Json
-                }
+        $getCommands = {
+            param($moduleList)
 
-                Import-Module -Name $moduleList -ErrorAction SilentlyContinue
-                Get-Command -CommandType Cmdlet | Where-Object { $moduleList -contains $_.Source }
+            if ($moduleList -is [string]) {
+                $moduleList = $moduleList | ConvertFrom-Json
             }
 
-            # On Preview releases, Experimental Features may add new cmdlets/aliases, so we get cmdlets/aliases with features disabled
-            if ($isPreview) {
-                $emptyConfigPath = Join-Path -Path $TestDrive -ChildPath "test.config.json"
-                Set-Content -Path $emptyConfigPath -Value "" -Force -ErrorAction Stop
-                $currentAliasList = & "$PSHOME/pwsh" -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getAliases -args ($moduleList | ConvertTo-Json)
-                $currentCmdletList = & "$PSHOME/pwsh" -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getCommands -args ($moduleList | ConvertTo-Json)
-            }
-            else {
-                $currentAliasList = & $getAliases $moduleList
-                $currentCmdletList = & $getCommands $moduleList
-            }
+            Import-Module -Name $moduleList -ErrorAction SilentlyContinue
+            Get-Command -CommandType Cmdlet | Where-Object { $moduleList -contains $_.Source }
+        }
 
-            $commandList  = $commandString | ConvertFrom-Csv -Delimiter ","
-            $commandHashTableList = $commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
+        # On Preview releases, Experimental Features may add new cmdlets/aliases, so we get cmdlets/aliases with features disabled
+        if ($isPreview) {
+            $emptyConfigPath = Join-Path -Path $TestDrive -ChildPath "test.config.json"
+            Set-Content -Path $emptyConfigPath -Value "" -Force -ErrorAction Stop
+            $currentAliasList = & "$PSHOME/pwsh" -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getAliases -args ($moduleList | ConvertTo-Json)
+            $currentCmdletList = & "$PSHOME/pwsh" -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getCommands -args ($moduleList | ConvertTo-Json)
+        }
+        else {
+            $currentAliasList = & $getAliases $moduleList
+            $currentCmdletList = & $getCommands $moduleList
+        }
 
-            $aliasFullList  = $commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias"  }
-
-            $AllScopeOption = [System.Management.Automation.ScopedItemOptions]::AllScope
-            $ReadOnlyOption = [System.Management.Automation.ScopedItemOptions]::ReadOnly
+        $AllScopeOption = [System.Management.Automation.ScopedItemOptions]::AllScope
+        $ReadOnlyOption = [System.Management.Automation.ScopedItemOptions]::ReadOnly
     }
 
     AfterAll {
@@ -604,32 +632,32 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
 
     It "All approved aliases present (no new aliases added, no aliases removed)" {
         $observedAliases = $currentAliasList.ForEach({"{0}:{1}" -f $_.Name,$_.Definition}) | Sort-Object
-        $expectedAliases = $aliasFullList.ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
+        $expectedAliases = $script:aliasFullList.ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
         $observedAliases | Should -Be $expectedAliases
     }
 
     It "All approved aliases have the correct 'AllScope' option" {
-        $expectedAllScopeAliases = $aliasFullList.Where({$_.AllScopeOption -eq "AllScope"}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
+        $expectedAllScopeAliases = $script:aliasFullList.Where({$_.AllScopeOption -eq "AllScope"}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
         $observedAllScopeAliases = $currentAliasList.Where({($_.Options -as [System.Management.Automation.ScopedItemOptions]) -band $AllScopeOption}).Foreach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
         $observedAllScopeAliases | Should -Be $expectedAllScopeAliases
     }
 
     It "All approved aliases have the correct 'ReadOnly' option" {
-        $expectedReadOnlyAliases = $aliasFullList.Where({$_.ReadOnlyOption -eq "ReadOnly"}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
+        $expectedReadOnlyAliases = $script:aliasFullList.Where({$_.ReadOnlyOption -eq "ReadOnly"}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
         $observedReadOnlyAliases = $currentAliasList.Where({($_.Options -as [System.Management.Automation.ScopedItemOptions]) -band $ReadOnlyOption}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
         $observedReadOnlyAliases | Should -Be $expectedReadOnlyAliases
     }
 
     It "All approved Cmdlets present (no new Cmdlets added, no Cmdlets removed)" {
         $observedCmdletNames = $currentCmdletList.ForEach({"{0}" -f $_.Name})
-        $expectedCmdletNames = $commandHashTableList.ForEach({"{0}" -f $_.Name})
+        $expectedCmdletNames = $script:commandHashTableList.ForEach({"{0}" -f $_.Name})
         $extraCmds = $observedCmdletNames.Where({$expectedCmdletNames -notcontains $_})
         $missedCmds = $expectedCmdletNames.Where({$observedCmdletNames -notcontains $_})
         $extraCmds | Should -HaveCount 0 -Because "Extra cmdlets $($extraCmds -join ',')"
         $missedCmds | Should -HaveCount 0 -Because "Missed cmdlets $($missedCmds -join ',')"
     }
 
-    It "'<Name>' Cmdlet should have the correct ConfirmImpact '<ConfirmImpact>'" -TestCases $commandHashtableList {
+    It "'<Name>' Cmdlet should have the correct ConfirmImpact '<ConfirmImpact>'" -TestCases $script:commandHashtableList {
         param ( $Name, $ConfirmImpact )
         # retrieve again because we may have serialized the commandinfo
         $cmdlet = Get-Command $Name

@@ -3,15 +3,17 @@
 Describe "Requires tests" -Tags "CI" {
     Context "Parser error" {
 
-        $testcases = @(
-                        @{command = "#requiresappID`r`n`$foo = 1; `$foo" ; testname = "appId with newline"}
-                        @{command = "#requires -version A `r`n`$foo = 1; `$foo" ; testname = "version as character"}
-                        @{command = "#requires -version 2b `r`n`$foo = 1; `$foo" ; testname = "alphanumeric version"}
-                        @{command = "#requires -version 1. `r`n`$foo = 1; `$foo" ; testname = "version with dot"}
-                        @{command = "#requires -version '' `r`n`$foo = 1; `$foo" ; testname = "empty version"}
-                        @{command = "#requires -version 1.0. `r`n`$foo = 1; `$foo" ; testname = "version with two dots"}
-                        @{command = "#requires -version 1.A `r`n`$foo = 1; `$foo" ; testname = "alphanumeric version with dots"}
-                    )
+        BeforeDiscovery {
+            $testcases = @(
+                            @{command = "#requiresappID`r`n`$foo = 1; `$foo" ; testname = "appId with newline"}
+                            @{command = "#requires -version A `r`n`$foo = 1; `$foo" ; testname = "version as character"}
+                            @{command = "#requires -version 2b `r`n`$foo = 1; `$foo" ; testname = "alphanumeric version"}
+                            @{command = "#requires -version 1. `r`n`$foo = 1; `$foo" ; testname = "version with dot"}
+                            @{command = "#requires -version '' `r`n`$foo = 1; `$foo" ; testname = "empty version"}
+                            @{command = "#requires -version 1.0. `r`n`$foo = 1; `$foo" ; testname = "version with two dots"}
+                            @{command = "#requires -version 1.A `r`n`$foo = 1; `$foo" ; testname = "alphanumeric version with dots"}
+                        )
+        }
 
         It "throws ParserException - <testname>" -TestCases $testcases {
             param($command)
@@ -38,6 +40,30 @@ Describe "Requires tests" -Tags "CI" {
     }
 
     Context "Version checks" {
+        BeforeDiscovery {
+            $currentVersion = $PSVersionTable.PSVersion
+
+            $currentVersion = $PSVersionTable.PSVersion
+            $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0", "7.1", "7.2", "7.3", "7.4", "7.5", "7.6", "7.7"
+            $latestVersion = [version]($powerShellVersions | Sort-Object -Descending -Top 1)
+            $nonExistingMinor = "$($latestVersion.Major).$($latestVersion.Minor + 1)"
+            $nonExistingMajor = "$($latestVersion.Major + 1).0"
+
+            $filesSuccessTestCase = foreach ($version in $powerShellVersions) {
+                @{
+                    Name = "Check for version $version"
+                    Version = $version
+                }
+            }
+
+            $filesFailTestCase = foreach ($version in @($nonExistingMinor) + @($nonExistingMajor)) {
+                @{
+                    Name = "Check for version $version"
+                    Version = $version
+                }
+            }
+        }
+
         BeforeAll {
             $currentVersion = $PSVersionTable.PSVersion
 
@@ -70,9 +96,10 @@ Describe "Requires tests" -Tags "CI" {
         It "<Name>" -TestCase $filesSuccessTestCase {
             param(
                 $Name,
-                $File,
                 $Version
             )
+
+            $File = Join-Path -Path $TestDrive -ChildPath "$Version.ps1"
 
             if ($currentVersion -notmatch '^7' -and $Version -match '^7') {
                 Set-ItResult -Skipped -Because "Test not valid for current version - $currentVersion and test version = $Version"
@@ -84,8 +111,10 @@ Describe "Requires tests" -Tags "CI" {
         It "<Name>" -TestCase $filesFailTestCase {
             param(
                 $Name,
-                $File
+                $Version
             )
+
+            $File = Join-Path -Path $TestDrive -ChildPath "$Version.ps1"
 
             { . $File } | Should -Throw -ExceptionType ([System.Management.Automation.ScriptRequiresException])
         }
@@ -114,9 +143,11 @@ Describe "#requires -Modules" -Tags "CI" {
     }
 
     Context "Requiring non-existent modules" {
-        BeforeAll {
+        BeforeDiscovery {
+            # $TestDrive unavailable during Discovery; use placeholder resolved at runtime
+            $tdPlaceholder = 'TESTDRIVE_PLACEHOLDER'
             $badName = 'ModuleThatDoesNotExist'
-            $badPath = Join-Path $TestDrive 'ModuleThatDoesNotExist'
+            $badPath = Join-Path $tdPlaceholder 'ModuleThatDoesNotExist'
             $version = '1.0'
             $requiredVersion = '1.1'
             $maximumVersion = '1.2'
@@ -177,6 +208,10 @@ Describe "#requires -Modules" -Tags "CI" {
         It "Fails parsing a script that requires module by <Scenario>" -TestCases $testCases {
             param([string]$ModuleRequirement, [string]$Scenario, [string[]]$ExpectedMessageStrings)
 
+            # Resolve Discovery-time placeholder with actual $TestDrive
+            $ModuleRequirement = $ModuleRequirement.Replace('TESTDRIVE_PLACEHOLDER', $TestDrive)
+            $ExpectedMessageStrings = $ExpectedMessageStrings | ForEach-Object { $_.Replace('TESTDRIVE_PLACEHOLDER', $TestDrive) }
+
             $script = "#requires -Modules $ModuleRequirement`n`nWrite-Output 'failed'"
             $null = New-Item -Path $scriptPath -Value $script -Force
 
@@ -189,8 +224,16 @@ Describe "#requires -Modules" -Tags "CI" {
     }
 
     Context "Already loaded module" {
-        BeforeAll {
-            Import-Module $modulePath -ErrorAction Stop
+        BeforeDiscovery {
+            # Parent BeforeAll vars unavailable during Discovery; define locally with placeholder
+            $tdPlaceholder = 'TESTDRIVE_PLACEHOLDER'
+            $sep = [System.IO.Path]::DirectorySeparatorChar
+            $altSep = [System.IO.Path]::AltDirectorySeparatorChar
+            $moduleName = 'Banana'
+            $moduleVersion = '0.12.1'
+            $moduleDirPath = Join-Path $tdPlaceholder 'modules'
+            $modulePath = "$moduleDirPath${sep}$moduleName"
+            $manifestPath = "$modulePath${altSep}$moduleName.psd1"
             $testCases = @(
                 @{ ModuleRequirement = "'$moduleName'"; Scenario = 'name' }
                 @{ ModuleRequirement = "'$modulePath'"; Scenario = 'path' }
@@ -199,6 +242,10 @@ Describe "#requires -Modules" -Tags "CI" {
                 @{ ModuleRequirement = "@{ ModuleName='$modulePath'; ModuleVersion='$moduleVersion' }"; Scenario = 'fully qualified name with path' }
                 @{ ModuleRequirement = "@{ ModuleName='$manifestPath'; ModuleVersion='$moduleVersion' }"; Scenario = 'fully qualified name with manifest path' }
             )
+        }
+
+        BeforeAll {
+            Import-Module $modulePath -ErrorAction Stop
         }
 
         AfterAll {
@@ -208,16 +255,25 @@ Describe "#requires -Modules" -Tags "CI" {
         It "Successfully runs a script requiring a loaded module by <Scenario>" -TestCases $testCases {
             param([string]$ModuleRequirement, [string]$Scenario)
 
+            # Resolve Discovery-time placeholder with actual $TestDrive
+            $ModuleRequirement = $ModuleRequirement.Replace('TESTDRIVE_PLACEHOLDER', $TestDrive)
+
             $script = "#requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
             [scriptblock]::Create($script).Invoke() | Should -BeExactly $success
         }
     }
 
     Context "Loading by name" {
-        BeforeAll {
-            $oldModulePath = $env:PSModulePath
-            $env:PSModulePath = $moduleDirPath + [System.IO.Path]::PathSeparator + $env:PSModulePath
-
+        BeforeDiscovery {
+            # Parent BeforeAll vars unavailable during Discovery; define locally with placeholder
+            $tdPlaceholder = 'TESTDRIVE_PLACEHOLDER'
+            $sep = [System.IO.Path]::DirectorySeparatorChar
+            $altSep = [System.IO.Path]::AltDirectorySeparatorChar
+            $moduleName = 'Banana'
+            $moduleVersion = '0.12.1'
+            $moduleDirPath = Join-Path $tdPlaceholder 'modules'
+            $modulePath = "$moduleDirPath${sep}$moduleName"
+            $manifestPath = "$modulePath${altSep}$moduleName.psd1"
             $testCases = @(
                 @{ ModuleRequirement = "'$moduleName'"; Scenario = 'name' }
                 @{ ModuleRequirement = "'$modulePath'"; Scenario = 'path' }
@@ -228,12 +284,20 @@ Describe "#requires -Modules" -Tags "CI" {
             )
         }
 
+        BeforeAll {
+            $oldModulePath = $env:PSModulePath
+            $env:PSModulePath = $moduleDirPath + [System.IO.Path]::PathSeparator + $env:PSModulePath
+        }
+
         AfterAll {
             $env:PSModulePath = $oldModulePath
         }
 
         It "Successfully runs a script requiring a module on the module path by <Scenario>" -TestCases $testCases {
             param([string]$ModuleRequirement, [string]$Scenario)
+
+            # Resolve Discovery-time placeholder with actual $TestDrive
+            $ModuleRequirement = $ModuleRequirement.Replace('TESTDRIVE_PLACEHOLDER', $TestDrive)
 
             $script = "#requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
 
@@ -244,7 +308,16 @@ Describe "#requires -Modules" -Tags "CI" {
     }
 
     Context "Loading by absolute path" {
-        BeforeAll {
+        BeforeDiscovery {
+            # Parent BeforeAll vars unavailable during Discovery; define locally with placeholder
+            $tdPlaceholder = 'TESTDRIVE_PLACEHOLDER'
+            $sep = [System.IO.Path]::DirectorySeparatorChar
+            $altSep = [System.IO.Path]::AltDirectorySeparatorChar
+            $moduleName = 'Banana'
+            $moduleVersion = '0.12.1'
+            $moduleDirPath = Join-Path $tdPlaceholder 'modules'
+            $modulePath = "$moduleDirPath${sep}$moduleName"
+            $manifestPath = "$modulePath${altSep}$moduleName.psd1"
             $testCases = @(
                 @{ ModuleRequirement = "'$modulePath'"; Scenario = 'path' }
                 @{ ModuleRequirement = "'$manifestPath'"; Scenario = 'manifest path' }
@@ -255,6 +328,9 @@ Describe "#requires -Modules" -Tags "CI" {
 
         It "Successfully runs a script requiring a module by absolute path by <Scenario>" -TestCases $testCases {
             param([string]$ModuleRequirement, [string]$Scenario)
+
+            # Resolve Discovery-time placeholder with actual $TestDrive
+            $ModuleRequirement = $ModuleRequirement.Replace('TESTDRIVE_PLACEHOLDER', $TestDrive)
 
             $script = "#requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
 

@@ -12,31 +12,31 @@ $script:catalogPath = ""
 
 Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
 
-    #compare two hashtables
-    function CompareHashTables
-    {
-        param
-        (
-          $hashTable1,
-          $hashTable2
-        )
-
-        foreach ($key in $hashTable1.keys)
+    BeforeAll {
+        # compare two hashtables
+        function CompareHashTables
         {
-            $keyValue1 = $hashTable1["$key"]
-            if($hashTable2.ContainsKey($key))
+            param
+            (
+              $hashTable1,
+              $hashTable2
+            )
+
+            foreach ($key in $hashTable1.keys)
             {
-                $keyValue2 = $hashTable2["$key"]
-                $keyValue1 | Should -Be $keyValue2
-            }
-            else
-            {
-                throw "Failed to find the file $keyValue1 for $key in Hashtable"
+                $keyValue1 = $hashTable1["$key"]
+                if($hashTable2.ContainsKey($key))
+                {
+                    $keyValue2 = $hashTable2["$key"]
+                    $keyValue1 | Should -Be $keyValue2
+                }
+                else
+                {
+                    throw "Failed to find the file $keyValue1 for $key in Hashtable"
+                }
             }
         }
-    }
 
-    BeforeAll {
         $testDataPath = "$PSScriptRoot\TestData\CatalogTestData"
     }
 

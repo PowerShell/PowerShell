@@ -277,7 +277,7 @@ Categories=Application;
 
     It "Should open text file without error" -Skip:(!$supportedEnvironment) {
         if ($IsMacOS) {
-            Set-TestInconclusive -Message "AppleScript is not currently reliable on Az Pipelines"
+            Set-ItResult -Inconclusive -Because "AppleScript is not currently reliable on Az Pipelines"
             $expectedTitle = Split-Path $TestFile -Leaf
             open -F -a TextEdit
             $beforeCount = [int]('tell application "TextEdit" to count of windows' | osascript)

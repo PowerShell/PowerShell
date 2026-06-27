@@ -2,12 +2,14 @@
 # Licensed under the MIT License.
 Describe 'Exceptions flow for classes' -Tags "CI" {
 
-    $canaryHashtable = @{}
+    BeforeAll {
+        $canaryHashtable = @{}
 
-    $iss = [initialsessionstate]::CreateDefault()
-    $iss.Variables.Add([System.Management.Automation.Runspaces.SessionStateVariableEntry]::new('canaryHashtable', $canaryHashtable, $null))
-    $iss.Commands.Add([System.Management.Automation.Runspaces.SessionStateFunctionEntry]::new('Get-Canary', '$canaryHashtable'))
-    $ps = [powershell]::Create($iss)
+        $iss = [initialsessionstate]::CreateDefault()
+        $iss.Variables.Add([System.Management.Automation.Runspaces.SessionStateVariableEntry]::new('canaryHashtable', $canaryHashtable, $null))
+        $iss.Commands.Add([System.Management.Automation.Runspaces.SessionStateFunctionEntry]::new('Get-Canary', '$canaryHashtable'))
+        $ps = [powershell]::Create($iss)
+    }
 
     BeforeEach {
         $canaryHashtable.Clear()
@@ -133,7 +135,8 @@ class C
 
     Context 'Class method call PS function' {
 
-        $body = @'
+        BeforeAll {
+            $body = @'
 class C
 {
     [void] m1()
@@ -174,6 +177,7 @@ function ImThrow()
 }
 
 '@
+        }
 
         It 'does not execute statements after function with exception called from instance method' {
 
@@ -226,12 +230,14 @@ $canaryHashtable['canary'] += 100
 }
 
 Describe "Exception error position" -Tags "CI" {
-    class MSFT_3090412
-    {
-        static f1() { [MSFT_3090412]::bar = 42 }
-        static f2() { throw "an error in f2" }
-        static f3() { "".Substring(0, 10) }
-        static f4() { Get-ChildItem nosuchfile -ErrorAction Stop }
+    BeforeAll {
+        class MSFT_3090412
+        {
+            static f1() { [MSFT_3090412]::bar = 42 }
+            static f2() { throw "an error in f2" }
+            static f3() { "".Substring(0, 10) }
+            static f4() { Get-ChildItem nosuchfile -ErrorAction Stop }
+        }
     }
 
     It "Setting a property that doesn't exist" {

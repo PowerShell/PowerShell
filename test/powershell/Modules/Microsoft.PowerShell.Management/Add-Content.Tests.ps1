@@ -4,7 +4,7 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
 
   BeforeAll {
     $file1 = "file1.txt"
-    Setup -File "$file1"
+    New-Item -Path (Join-Path $TestDrive $file1) -ItemType File -Force > $null
     $streamContent = "ShouldWork"
   }
 
@@ -56,8 +56,8 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
         $ADSTestDir = "addcontentadstest"
         $ADSTestFile = "addcontentads.txt"
         $streamContent = "This is a test stream."
-        Setup -Directory "$ADSTestDir"
-        Setup -File "$ADSTestFile"
+        New-Item -Path (Join-Path $TestDrive $ADSTestDir) -ItemType Directory -Force > $null
+        New-Item -Path (Join-Path $TestDrive $ADSTestFile) -ItemType File -Force > $null
       }
 
       It "Should add an alternate data stream on a directory" -Skip:(!$IsWindows) {

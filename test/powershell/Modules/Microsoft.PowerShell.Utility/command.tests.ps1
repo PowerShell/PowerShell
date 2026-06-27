@@ -4,8 +4,8 @@ Describe "Trace-Command" -tags "Feature" {
 
     Context "Listener options" {
         BeforeAll {
-            $logFile = Setup -f traceCommandLog.txt -pass
-            $actualLogFile = Setup -f actualTraceCommandLog.txt -pass
+            $logFile = Join-Path $TestDrive "traceCommandLog.txt"
+            $actualLogFile = Join-Path $TestDrive "actualTraceCommandLog.txt"
         }
 
         AfterEach {

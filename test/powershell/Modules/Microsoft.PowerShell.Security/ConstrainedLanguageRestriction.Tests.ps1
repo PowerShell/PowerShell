@@ -167,7 +167,7 @@ try
 
     Describe "Built-ins work within constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
-        BeforeAll {
+        BeforeDiscovery {
             $TestCasesBuiltIn = @(
                 @{testName = "Verify built-in function"; scriptblock = { Get-Verb } }
                 @{testName = "Verify built-in error variable"; scriptblock = { Write-Error SomeError -ErrorVariable ErrorOutput -ErrorAction SilentlyContinue; $ErrorOutput} }
@@ -468,16 +468,19 @@ try
 
     Describe "Invoke-Expression in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
-        BeforeAll {
-
-            function VulnerableFunctionFromFullLanguage { Invoke-Expression $args[0] }
-
+        BeforeDiscovery {
             $TestCasesIEX = @(
                 @{testName = "Verifies direct Invoke-Expression does not bypass constrained language mode";
                   scriptblock = { Invoke-Expression '[object]::Equals("A", "B")' } }
                 @{testName = "Verifies indirect Invoke-Expression does not bypass constrained language mode";
                   scriptblock = { VulnerableFunctionFromFullLanguage '[object]::Equals("A", "B")' } }
             )
+        }
+
+        BeforeAll {
+
+            function VulnerableFunctionFromFullLanguage { Invoke-Expression $args[0] }
+
         }
 
         It "<testName>" -TestCases $TestCasesIEX {
@@ -616,16 +619,18 @@ try
 
     Describe "Data section additional commands in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
-        function InvokeDataSectionConstrained
-        {
-            try
+        BeforeAll {
+            function InvokeDataSectionConstrained
             {
-                Invoke-Expression 'data foo -SupportedCommand Add-Type { Add-Type }'
-                throw "No Exception!"
-            }
-            catch
-            {
-                return $_
+                try
+                {
+                    Invoke-Expression 'data foo -SupportedCommand Add-Type { Add-Type }'
+                    throw "No Exception!"
+                }
+                catch
+                {
+                    return $_
+                }
             }
         }
 
@@ -733,8 +738,7 @@ try
 
     Describe "Where and Foreach operators should not allow unapproved types in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
-        BeforeAll {
-
+        BeforeDiscovery {
             $script1 = @'
                 $data = @(
                     @{
@@ -763,7 +767,6 @@ try
                 # Execute method in scriptblock of where operator, should throw in ConstrainedLanguage mode.
                 $data.where{[system.io.path]::GetRandomFileName() -eq "Hello"}
 '@
-
             $script2 = @'
                 $data = @(
                     @{
@@ -792,17 +795,14 @@ try
                 # Execute method in scriptblock of ForEach operator, should throw in ConstrainedLanguage mode.
                 $data.ForEach{[system.io.path]::GetRandomFileName().Length}
 '@
-
             $script3 = @'
             # Method call should throw error.
             (Get-Process powershell*).ForEach('GetHashCode')
 '@
-
             $script4 = @'
             # Where method call should throw error.
             (get-process powershell).where{$_.GetType().FullName -match "process"}
 '@
-
             $TestCasesForeach = @(
                 @{testName = "Verify where statement with invalid method call in constrained language is disallowed"; script = $script1 }
                 @{testName = "Verify foreach statement with invalid method call in constrained language is disallowed"; script = $script2 }

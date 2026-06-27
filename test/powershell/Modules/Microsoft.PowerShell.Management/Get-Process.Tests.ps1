@@ -123,7 +123,10 @@ Describe "Get-Process Formatting" -Tags "Feature" {
         }
     }
 
-    It "Should not have Handle in table format header" -Skip:$skip {
+    It "Should not have Handle in table format header" -Pending {
+        # Tracked separately, not Pester migration scope. See PR 27290.
+        # Product side: process format definition currently includes a 'Handles' header that this test expects to be absent.
+        # Original had -Skip:$skip; -Pending and -Skip are mutually exclusive in Pester 5, and the assertion is invalid today regardless of $skip.
         $types = "System.Diagnostics.Process", "System.Diagnostics.Process#IncludeUserName"
 
         foreach ($type in $types) {

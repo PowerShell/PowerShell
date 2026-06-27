@@ -38,8 +38,7 @@ Describe "Get-FileHash" -Tags "CI" {
     }
 
     Context "Algorithm tests" {
-        BeforeAll {
-            # Keep "sHA1" below! It is for testing that the cmdlet accept a hash algorithm name in any case!
+        BeforeDiscovery {
             $testcases =
                 @{ algorithm = "sHA1";   hash = "0c483659b1f2d5a8f116211de8f58bf45893cffb" },
                 @{ algorithm = "SHA256"; hash = "41620f6c9f3531722efe90aed9abbc1d1b31788aa9141982030d3dde199f770c" },
@@ -47,6 +46,7 @@ Describe "Get-FileHash" -Tags "CI" {
                 @{ algorithm = "SHA512"; hash = "6aba8ba8b619100a6829beb940d9d77e4a8197fdcac2d0fe5ad6c2758dacc5a59774195fd8a7a92780b7582a966b81ca0c1576c0044c5af7be20f5ccf425bd76" },
                 @{ algorithm = "MD5";    hash = "f9d78bd059ab162bea21eb02badde001" }
         }
+
         It "Should be able to get the correct hash from <algorithm> algorithm" -TestCases $testCases {
             param($algorithm, $hash)
             $algorithmResult = Get-FileHash $testDocument -Algorithm $algorithm

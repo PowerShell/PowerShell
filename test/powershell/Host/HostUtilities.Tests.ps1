@@ -32,7 +32,7 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
     }
 }
 
-Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAdminOnWindows" {
+Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAdminOnWindows" -Skip:(!$IsWindows) {
 
     BeforeAll {
         $skipTest = (Test-IsWinWow64) -or !$IsWindows

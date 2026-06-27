@@ -1,65 +1,67 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-$powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+Describe "Enter-PSHostProcess tests" -Tag Feature {
+    BeforeAll {
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
 
-function Wait-JobPid {
-    param (
-        $Job
-    )
+        function Wait-JobPid {
+            param (
+                $Job
+            )
 
-    # This is to prevent hanging in the test.
-    # Some test environments (such as raspberry_pi) require more time for background job to run.
-    $startTime = [DateTime]::Now
-    $TimeoutInMilliseconds = 60000
+            # This is to prevent hanging in the test.
+            # Some test environments (such as raspberry_pi) require more time for background job to run.
+            $startTime = [DateTime]::Now
+            $TimeoutInMilliseconds = 60000
 
-    # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
-    do {
-        Start-Sleep -Seconds 1
-        $pwshId = Receive-Job $Job
+            # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
+            do {
+                Start-Sleep -Seconds 1
+                $pwshId = Receive-Job $Job
 
-        if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
-            throw "Unable to receive PowerShell process id."
+                if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
+                    throw "Unable to receive PowerShell process id."
+                }
+            } while (!$pwshId)
+
+            $pwshId
         }
-    } while (!$pwshId)
 
-    $pwshId
-}
+        # Executes the Enter/Exit PSHostProcess script that returns the pid of the process that's started.
+        function Invoke-PSHostProcessScript {
+            param (
+                [string] $ArgumentString,
+                [int] $Id,
+                [int] $Retry = 5 # Default retry of 5 times
+            )
 
-# Executes the Enter/Exit PSHostProcess script that returns the pid of the process that's started.
-function Invoke-PSHostProcessScript {
-    param (
-        [string] $ArgumentString,
-        [int] $Id,
-        [int] $Retry = 5 # Default retry of 5 times
-    )
-
-    $commandStr = @'
+            $commandStr = @'
 Enter-PSHostProcess {0} -ErrorAction Stop
 $PID
 Exit-PSHostProcess
 '@ -f $ArgumentString
 
-    $result = $false
-    foreach ($i in 1..$Retry) {
-        # use $i as an incrementally growing pause based on the attempt number
-        # so that it's more likely to succeed.
-        Start-Sleep -Seconds $i
+            $result = $false
+            foreach ($i in 1..$Retry) {
+                # use $i as an incrementally growing pause based on the attempt number
+                # so that it's more likely to succeed.
+                Start-Sleep -Seconds $i
 
-        $result = ($commandStr | & $powershell -noprofile -c -) -eq $Id
-        if ($result) {
-            break
+                $result = ($commandStr | & $powershell -noprofile -c -) -eq $Id
+                if ($result) {
+                    break
+                }
+            }
+
+            if ($i -gt 1) {
+                Write-Verbose -Verbose "Enter-PSHostProcess script failed $i out of $Retry times."
+            }
+
+            $result
         }
     }
 
-    if ($i -gt 1) {
-        Write-Verbose -Verbose "Enter-PSHostProcess script failed $i out of $Retry times."
-    }
-
-    $result
-}
-
-Describe "Enter-PSHostProcess tests" -Tag Feature {
     Context "By Process Id" {
 
         BeforeAll {

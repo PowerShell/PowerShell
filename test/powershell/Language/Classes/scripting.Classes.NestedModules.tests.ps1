@@ -102,9 +102,11 @@ using module WithRoot
     Context 'execute type creation in the module context' {
 
         # let's define types to make it more fun
-        class A { [string] foo() { return "local"} }
-        class B { [string] foo() { return "local"} }
-        class C { [string] foo() { return "local"} }
+        BeforeAll {
+            class A { [string] foo() { return "local"} }
+            class B { [string] foo() { return "local"} }
+            class C { [string] foo() { return "local"} }
+        }
 
         # We need to think about it: should it work or not.
         # Currently, types are resolved in compile-time to the 'local' versions

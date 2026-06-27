@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'ConvertTo-Json' -tags "CI" {
+    BeforeDiscovery {
+        $newline = [System.Environment]::NewLine
+    }
+
     BeforeAll {
         $newline = [System.Environment]::NewLine
     }

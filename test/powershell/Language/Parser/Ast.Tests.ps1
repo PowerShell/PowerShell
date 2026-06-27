@@ -19,7 +19,7 @@ Describe "The SafeGetValue method on AST returns safe values" -Tags "CI" {
         ,$ArrayAst.SafeGetValue() | Should -BeOfType Object[]
     }
     It "The proper error is returned when a variable is referenced" {
-        $ast = { $a }.Ast.Find({$args[0] -is "VariableExpressionAst"},$true)
+        $ast = { $a }.Ast.Find({$args[0] -is [VariableExpressionAst]},$true)
         { $ast.SafeGetValue() } | Should -Throw -ErrorId "InvalidOperationException"
     }
     It "A ScriptBlock AST fails with the proper error" {

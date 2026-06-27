@@ -92,7 +92,7 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
         }
     }
 
-    Context 'Managing breakpoints in a remote runspace via the SDK' {
+    Context 'Managing breakpoints in a remote runspace via the SDK' -Skip:(-not $IsWindows) {
 
         AfterAll {
             foreach ($bp in $jobRunspace.Debugger.GetBreakpoints()) {
@@ -180,7 +180,7 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
         }
     }
 
-    Context 'Handling errors while managing breakpoints in a remote runspace via the SDK' {
+    Context 'Handling errors while managing breakpoints in a remote runspace via the SDK' -Skip:(-not $IsWindows) {
 
         BeforeAll {
             $bp = $jobRunspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist', $null, $null)

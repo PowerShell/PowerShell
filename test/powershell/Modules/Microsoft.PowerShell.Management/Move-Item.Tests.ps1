@@ -3,10 +3,10 @@
 Describe "Move-Item tests" -Tag "CI" {
     BeforeAll {
         $content = "This is content"
-        Setup -f originalfile.txt -Content "This is content"
+        Set-Content -Path (Join-Path $TestDrive 'originalfile.txt') -Value "This is content"
         $source = "$TESTDRIVE/originalfile.txt"
         $target = "$TESTDRIVE/ItemWhichHasBeenMoved.txt"
-        Setup -f [orig-file].txt -Content "This is not content"
+        Set-Content -LiteralPath (Join-Path $TestDrive '[orig-file].txt') -Value "This is not content"
         $sourceSp = "$TestDrive/``[orig-file``].txt"
         $targetSpName = "$TestDrive/ItemWhichHasBeen[Moved].txt"
         $targetSp = "$TestDrive/ItemWhichHasBeen``[Moved``].txt"
