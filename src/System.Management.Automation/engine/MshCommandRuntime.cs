@@ -2372,7 +2372,7 @@ namespace System.Management.Automation
                 _pp._permittedToWriteToPipeline = permittedToWriteToPipeline;
                 _pp._permittedToWriteThread = Thread.CurrentThread;
             }
-            
+
             /// <summary>
             /// Release all resources.
             /// </summary>

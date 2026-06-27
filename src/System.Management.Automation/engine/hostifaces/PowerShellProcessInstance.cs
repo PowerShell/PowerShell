@@ -197,7 +197,7 @@ namespace System.Management.Automation.Runspaces
 
                 _isDisposed = true;
             }
-            
+
             try
             {
                 if (Process != null && !Process.HasExited)
