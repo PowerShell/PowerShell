@@ -1011,6 +1011,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="MissingNamespaceAlias" xml:space="preserve">
     <value>Missing namespace alias</value>
   </data>
+  <data name="MissingTypeAlias" xml:space="preserve">
+    <value>Missing type alias</value>
+  </data>
   <data name="MissingEqualsInUsingAlias" xml:space="preserve">
     <value>Missing '=' operator</value>
   </data>
@@ -1333,6 +1336,27 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="InvokingCleanBlockNotSupported" xml:space="preserve">
     <value>Directly invoking the 'clean' block of a script block is not supported.</value>
+  </data>
+  <data name="DuplicateNamespaceClause" xml:space="preserve">
+    <value>Namespace '{0}' has already been defined.</value>
+  </data>
+  <data name="DuplicateTypeAliasClause" xml:space="preserve">
+    <value>Type alias '{0}' has already been defined.</value>
+  </data>
+  <data name="TypeAliasContainsNamespace" xml:space="preserve">
+    <value>Type aliases cannot contain namespaces.</value>
+  </data>
+  <data name="NamespaceAliasContainsNamespace" xml:space="preserve">
+    <value>Namespace aliases cannot contain namespaces.</value>
+  </data>
+  <data name="TypeAliasConflictsTypeDefinition" xml:space="preserve">
+    <value>Type alias {0} conflicts with a script defined type.</value>
+  </data>
+  <data name="TypeAliasConflictsImportedTypeDefinition" xml:space="preserve">
+    <value>Type alias {0} conflicts with an imported type.</value>
+  </data>
+  <data name="NamespaceExpected" xml:space="preserve">
+    <value>Namespace expected.</value>
   </data>
   <data name="WDACParserConfigKeywordLogTitle" xml:space="preserve">
     <value>Parser Configuration Keyword</value>
