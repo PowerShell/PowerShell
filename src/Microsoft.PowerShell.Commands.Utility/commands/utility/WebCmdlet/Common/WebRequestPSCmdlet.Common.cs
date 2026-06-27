@@ -1307,7 +1307,7 @@ namespace Microsoft.PowerShell.Commands
             int totalRequests = WebSession.MaximumRetryCount + 1;
 
             // For exponential backoff, we start with half of the retry interval so that the first retry happens at the user specified retry interval.
-            int retryIntervalInMilliSeconds = Math.Min(WebSession.RetryIntervalInSeconds, _maximumretryIntervalInMilliseconds / 1000) * 1000 / 2
+            int retryIntervalInMilliSeconds = Math.Min(WebSession.RetryIntervalInSeconds, _maximumretryIntervalInMilliseconds / 1000) * 1000 / 2;
             HttpRequestMessage currentRequest = request;
             HttpResponseMessage response = null;
 
