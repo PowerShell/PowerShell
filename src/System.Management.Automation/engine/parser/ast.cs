@@ -2952,7 +2952,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the using statement including the using keyword.</param>
         /// <param name="kind">
-        /// The kind of using statement, cannot be <see cref="System.Management.Automation.Language.UsingStatementKind.Assembly"/>.
+        /// The kind of using statement, cannot be <see cref="UsingStatementKind.Assembly"/> or <see cref="UsingStatementKind.Type"/>.
         /// </param>
         /// <param name="aliasName">The name of the alias.</param>
         /// <param name="resolvedAliasAst">The item being aliased.</param>
@@ -2970,7 +2970,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException(nameof(resolvedAliasAst));
             }
 
-            if (kind == UsingStatementKind.Assembly)
+            if (kind is UsingStatementKind.Assembly or UsingStatementKind.Type)
             {
                 throw PSTraceSource.NewArgumentException(nameof(kind));
             }
@@ -2981,6 +2981,33 @@ namespace System.Management.Automation.Language
 
             SetParent(Name);
             SetParent(Alias);
+        }
+
+        /// <summary>
+        /// Construct a using statement that aliases a type.
+        /// </summary>
+        /// <param name="extent">The extent of the using statement including the using keyword.</param>
+        /// <param name="aliasName">The name of the alias.</param>
+        /// <param name="resolvedAliasAst">The item being aliased.</param>
+        public UsingStatementAst(IScriptExtent extent, StringConstantExpressionAst aliasName, TypeExpressionAst resolvedAliasAst)
+            : base(extent)
+        {
+            if (aliasName is null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(aliasName));
+            }
+
+            if (resolvedAliasAst is null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(resolvedAliasAst));
+            }
+
+            UsingStatementKind = UsingStatementKind.Type;
+            Name = aliasName;
+            TypeAlias = resolvedAliasAst;
+
+            SetParent(Name);
+            SetParent(TypeAlias);
         }
 
         /// <summary>
@@ -3010,19 +3037,25 @@ namespace System.Management.Automation.Language
         public UsingStatementKind UsingStatementKind { get; }
 
         /// <summary>
-        /// When <see cref="Alias"/> is null or <see cref="ModuleSpecification"/> is null, the item being used, otherwise the alias name.
+        /// When <see cref="Alias"/>, <see cref="ModuleSpecification"/>, and <see cref="TypeAlias"/> is null, the item being used, otherwise the alias name.
         /// </summary>
         public StringConstantExpressionAst Name { get; }
 
         /// <summary>
         /// The name of the item being aliased.
-        /// This property is mutually exclusive with <see cref="ModuleSpecification"/> property.
+        /// This property is mutually exclusive with the <see cref="ModuleSpecification"/> and <see cref="TypeAlias"/> properties.
         /// </summary>
         public StringConstantExpressionAst Alias { get; }
 
         /// <summary>
+        /// The type of the item being aliased. Only for 'using type X = Y' case, otherwise null.
+        /// This property is mutually exclusive with the <see cref="ModuleSpecification"/> and <see cref="Alias"/> properties.
+        /// </summary>
+        public TypeExpressionAst TypeAlias { get; }
+
+        /// <summary>
         /// Hashtable that can be converted to <see cref="Microsoft.PowerShell.Commands.ModuleSpecification"/>. Only for 'using module' case, otherwise null.
-        /// This property is mutually exclusive with <see cref="Alias"/> property.
+        /// This property is mutually exclusive with the <see cref="Alias"/> and <see cref="TypeAlias"/> properties.
         /// </summary>
         public HashtableAst ModuleSpecification { get; }
 
@@ -3036,9 +3069,23 @@ namespace System.Management.Automation.Language
         /// </summary>
         public override Ast Copy()
         {
-            var copy = Alias != null
-                ? new UsingStatementAst(Extent, UsingStatementKind, Name, Alias)
-                : new UsingStatementAst(Extent, UsingStatementKind, Name);
+            UsingStatementAst copy;
+            if (Alias is null)
+            {
+                if (TypeAlias is null)
+                {
+                    copy = new UsingStatementAst(Extent, UsingStatementKind, Name);
+                }
+                else
+                {
+                    copy = new UsingStatementAst(Extent, Name, TypeAlias);
+                }
+            }
+            else
+            {
+                copy = new UsingStatementAst(Extent, UsingStatementKind, Name, Alias);
+            }
+
             copy.ModuleInfo = ModuleInfo;
 
             return copy;
@@ -3076,6 +3123,12 @@ namespace System.Management.Automation.Language
 
             if (Alias != null)
                 action = Alias.InternalVisit(visitor);
+
+            if (action != AstVisitAction.Continue)
+                return visitor.CheckForPostAction(this, action);
+
+            if (TypeAlias is not null)
+                action = TypeAlias.InternalVisit(visitor);
 
             return visitor.CheckForPostAction(this, action);
         }
