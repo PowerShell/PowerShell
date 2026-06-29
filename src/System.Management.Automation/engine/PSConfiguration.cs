@@ -61,6 +61,11 @@ namespace System.Management.Automation.Configuration
         private string systemWideConfigFile;
         private string systemWideConfigDirectory;
 
+        // When the system-wide configuration is redirected to the per-machine data store (packaged MSIX),
+        // this holds the shipped $PSHOME config, used to seed the store on first write and as a read
+        // fallback until the store copy exists. Null when not redirected.
+        private string systemWideConfigReadFallbackFile;
+
         // The json file containing the per-user configuration settings.
         private readonly string perUserConfigFile;
         private readonly string perUserConfigDirectory;
@@ -85,6 +90,18 @@ namespace System.Management.Automation.Configuration
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
 
+            // When running as a packaged MSIX app that opts into the per-machine data store, redirect the
+            // system-wide configuration to that writable location so settings such as ExecutionPolicy and
+            // experimental features can be changed after install. The shipped $PSHOME config is preserved:
+            // it seeds the store on first write and is used as a read fallback until the store copy exists.
+            string machineStore = Utils.GetPackagedMachineDataStorePath();
+            if (!string.IsNullOrEmpty(machineStore))
+            {
+                systemWideConfigReadFallbackFile = systemWideConfigFile;
+                systemWideConfigDirectory = machineStore;
+                systemWideConfigFile = Path.Combine(machineStore, ConfigFileName);
+            }
+
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the execution scenario.
             // Writes will attempt to create the directory if it does not already exist.
@@ -101,9 +118,53 @@ namespace System.Management.Automation.Configuration
             fileLock = new ReaderWriterLockSlim();
         }
 
-        private string GetConfigFilePath(ConfigScope scope)
+        private string GetConfigFilePath(ConfigScope scope, bool forWrite = false)
         {
-            return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
+            if (scope == ConfigScope.CurrentUser)
+            {
+                return perUserConfigFile;
+            }
+
+            // AllUsers (system-wide). When the config has been redirected to the per-machine data store,
+            // reads fall back to the shipped $PSHOME config until the store copy exists, so the shipped
+            // defaults (e.g. ExecutionPolicy, experimental features) are honored. Writes always target the
+            // store copy (seeded from the shipped config by EnsureSystemConfigSeeded).
+            if (!forWrite
+                && systemWideConfigReadFallbackFile != null
+                && !File.Exists(systemWideConfigFile)
+                && File.Exists(systemWideConfigReadFallbackFile))
+            {
+                return systemWideConfigReadFallbackFile;
+            }
+
+            return systemWideConfigFile;
+        }
+
+        /// <summary>
+        /// When the system-wide configuration has been redirected to the per-machine data store, seed
+        /// that store with the shipped $PSHOME configuration the first time it is written so the shipped
+        /// defaults are preserved. Best-effort: requires write access to the store (e.g. an elevated process).
+        /// </summary>
+        private void EnsureSystemConfigSeeded(ConfigScope scope, string targetFile)
+        {
+            if (scope != ConfigScope.AllUsers
+                || systemWideConfigReadFallbackFile == null
+                || File.Exists(targetFile)
+                || !File.Exists(systemWideConfigReadFallbackFile))
+            {
+                return;
+            }
+
+            try
+            {
+                Directory.CreateDirectory(systemWideConfigDirectory);
+                File.Copy(systemWideConfigReadFallbackFile, targetFile);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+            {
+                // Best-effort: if we lack permission to write to the store (e.g. non-elevated), the write
+                // below surfaces the access error to the caller, matching the pre-existing $PSHOME behavior.
+            }
         }
 
         /// <summary>
@@ -124,6 +185,9 @@ namespace System.Management.Automation.Configuration
             FileInfo info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
+
+            // An explicit settings file overrides any per-machine data store redirection.
+            systemWideConfigReadFallbackFile = null;
         }
 
         /// <summary>
@@ -476,8 +540,11 @@ namespace System.Management.Automation.Configuration
         {
             try
             {
-                string fileName = GetConfigFilePath(scope);
+                string fileName = GetConfigFilePath(scope, forWrite: true);
                 fileLock.EnterWriteLock();
+
+                // Preserve shipped defaults by seeding the per-machine store from $PSHOME on first write.
+                EnsureSystemConfigSeeded(scope, fileName);
 
                 // Since multiple properties can be in a single file, replacement is required instead of overwrite if a file already exists.
                 // Handling the read and write operations within a single FileStream prevents other processes from reading or writing the file while

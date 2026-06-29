@@ -475,6 +475,28 @@ namespace System.Management.Automation
 
             return string.Empty;
         }
+
+        private const int AppModelErrorNoPackage = 15700;
+
+        [DllImport("kernel32.dll", EntryPoint = "GetCurrentPackageFamilyName", CharSet = CharSet.Unicode)]
+        private static extern int GetCurrentPackageFamilyNameNative(ref uint packageFamilyNameLength, [Out] StringBuilder packageFamilyName);
+
+        /// <summary>
+        /// Returns the package family name of the current process when it has package (MSIX) identity; otherwise null.
+        /// </summary>
+        private static string TryGetCurrentPackageFamilyName()
+        {
+            uint length = 0;
+            int rc = GetCurrentPackageFamilyNameNative(ref length, packageFamilyName: null);
+            if (rc == AppModelErrorNoPackage || length == 0)
+            {
+                return null;
+            }
+
+            var buffer = new StringBuilder((int)length);
+            rc = GetCurrentPackageFamilyNameNative(ref length, buffer);
+            return rc == 0 ? buffer.ToString() : null;
+        }
 #endif
 
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
@@ -491,6 +513,60 @@ namespace System.Management.Automation
             }
 
             return baseDirectory;
+        }
+
+#if !UNIX
+        private static string s_packagedMachineDataStorePath;
+        private static bool s_packagedMachineDataStorePathInitialized;
+#endif
+
+        /// <summary>
+        /// When running as a packaged MSIX app that opts into the per-machine ApplicationData store
+        /// (via the 'appdata:MachineFolder' manifest extension), returns the path to that writable
+        /// per-machine folder. Returns null when the process has no package identity, when the store
+        /// has not been provisioned by the OS, or on non-Windows platforms. The result is cached so the
+        /// probe happens at most once per process.
+        /// </summary>
+        internal static string GetPackagedMachineDataStorePath()
+        {
+#if UNIX
+            return null;
+#else
+            if (s_packagedMachineDataStorePathInitialized)
+            {
+                return s_packagedMachineDataStorePath;
+            }
+
+            string result = null;
+            try
+            {
+                string packageFamilyName = TryGetCurrentPackageFamilyName();
+                if (!string.IsNullOrEmpty(packageFamilyName))
+                {
+                    using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Appx");
+                    if (key?.GetValue("PackageRepositoryRoot") is string repositoryRoot && !string.IsNullOrEmpty(repositoryRoot))
+                    {
+                        // Mirrors how the Windows App SDK locates the per-machine data store.
+                        string path = Path.Combine(repositoryRoot, "Families", "ApplicationData", packageFamilyName, "Machine");
+
+                        // The folder only exists if the OS provisioned the per-machine data store for this package family.
+                        if (Directory.Exists(path))
+                        {
+                            result = path;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) when (ex is SecurityException or UnauthorizedAccessException or IOException)
+            {
+                // Any failure to read the registry means the store is unavailable; callers fall back to $PSHOME.
+                result = null;
+            }
+
+            s_packagedMachineDataStorePath = result;
+            s_packagedMachineDataStorePathInitialized = true;
+            return result;
+#endif
         }
 
         private static string[] s_productFolderDirectories;
