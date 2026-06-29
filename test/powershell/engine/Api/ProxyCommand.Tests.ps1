@@ -115,14 +115,12 @@ Describe 'ProxyCommand Tests' -Tags "CI" {
         $newHelpObjText = NormalizeCRLF -helpObj $newHelpObj
         $helpObjText | Should -Be $newHelpObjText
 
-        # Description: compare against what GetHelpComments actually captured
-        # (the proxy), not the original — the original may have extra content
-        # from installed help that GetHelpComments intentionally doesn't emit.
+        # Installed help can give the original Get-Alias description extra trailing
+        # text that GetHelpComments intentionally omits, so the round-tripped proxy
+        # description is a subset of the original. Require containment, not equality.
         $oldDespText = GetSectionText $helpObj.description
         $newDespText = GetSectionText $newHelpObj.description
-        if ($oldDespText) {
-            $newDespText | Should -Not -BeNullOrEmpty
-        }
+        $oldDespText.Contains($newDespText) | Should -BeTrue
 
         $oldParameters = @($helpObj.parameters.parameter)
         $newParameters = @($newHelpObj.parameters.parameter)

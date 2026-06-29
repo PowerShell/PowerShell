@@ -3,20 +3,9 @@
 using namespace System.Management.Automation
 using namespace System.Collections.Generic
 
-# Reflection setup and class at file scope so [AstTypeInference] type literal
-# resolves in all It blocks (PS classes must be defined at file/module scope).
-$script:ati = [Cmdlet].Assembly.GetType("System.Management.Automation.AstTypeInference")
-$script:inferType = $script:ati.GetMethods().Where{$_.Name -ceq "InferTypeOf"}
-$m1 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast)'
-$m2 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.TypeInferenceRuntimePermissions)'
-$m3 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.PowerShell)'
-$m4 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.PowerShell, System.Management.Automation.TypeInferenceRuntimePermissions)'
-
-$script:inferTypeOf1 = $script:inferType.Where{$m1 -eq $_}[0]
-$script:inferTypeOf2 = $script:inferType.Where{$m2 -eq $_}[0]
-$script:inferTypeOf3 = $script:inferType.Where{$m3 -eq $_}[0]
-$script:inferTypeOf4 = $script:inferType.Where{$m4 -eq $_}[0]
-
+# [AstTypeInference] is a PowerShell class, which must be defined at file scope so
+# the type literal resolves in all It blocks. The reflection it relies on is set up
+# in BeforeAll (below) on $script: so the class methods pick it up at run time.
 class AstTypeInference {
     static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast) {
         return  $script:inferTypeOf1.Invoke($null, $ast)

@@ -128,23 +128,17 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
                 @{ lhs = $v2_1_0; rhs = "3.0"}
                 @{ lhs = "1.5"; rhs = $v2_1_0}
             )
+
+            $metaCases = @(
+                @{ beta = $v1_0_0_beta; betaBuild = $v1_0_0_betaBuild }
+            )
         }
 
-        BeforeAll {
-            $v1_0_0 = [SemanticVersion]::new(1, 0, 0)
-            $v1_1_0 = [SemanticVersion]::new(1, 1, 0)
-            $v1_1_1 = [SemanticVersion]::new(1, 1, 1)
-            $v2_1_0 = [SemanticVersion]::new(2, 1, 0)
-            $v1_0_0_alpha = [SemanticVersion]::new(1, 0, 0, "alpha.1.1")
-            $v1_0_0_alpha2 = [SemanticVersion]::new(1, 0, 0, "alpha.1.2")
-            $v1_0_0_beta = [SemanticVersion]::new(1, 0, 0, "beta")
-            $v1_0_0_betaBuild = [SemanticVersion]::new(1, 0, 0, "beta", "BUILD")
-        }
-
-        It "Build meta should be ignored" {
-            $v1_0_0_beta -eq $v1_0_0_betaBuild | Should -BeTrue
-            $v1_0_0_betaBuild -lt $v1_0_0_beta | Should -BeFalse
-            $v1_0_0_beta -lt $v1_0_0_betaBuild | Should -BeFalse
+        It "Build meta should be ignored" -TestCases $metaCases {
+            param($beta, $betaBuild)
+            $beta -eq $betaBuild | Should -BeTrue
+            $betaBuild -lt $beta | Should -BeFalse
+            $beta -lt $betaBuild | Should -BeFalse
         }
 
         It "<lhs> less than <rhs>" -TestCases $testCases {
@@ -322,6 +316,8 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             }
 
             $invalid = @'
+1
+1.2
 1.2.3-0123
 1.2.3-0123.0123
 1.1.2+.123
@@ -347,8 +343,14 @@ beta
 1.0.0-alpha.....1
 1.0.0-alpha......1
 1.0.0-alpha.......1
+01.1.1
+1.01.1
+1.1.01
+1.2
 1.2.3.DEV
+1.2-SNAPSHOT
 1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788
+1.2-RC-SNAPSHOT
 -1.0.3-gamma+b7718
 +justmeta
 9.8.7+meta+meta
