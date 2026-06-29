@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -16,9 +17,16 @@ namespace Microsoft.PowerShell.Commands.Internal
         // This is useful for testing in CI as well.
         private static string _internalClipboard;
 
+        // DONT KEEP THIS MERGE LATER
+        // TODO: maybe convert to take scriptblock ???? that could be cool!!
+        // TODO: ref https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.scriptblock?view=powershellsdk-7.4.0
+        //           https://stackoverflow.com/questions/75260697/how-does-get-set-in-a-scriptblock
+        //           https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.scriptblock.invoke?view=powershellsdk-7.4.0
+        //           [ScriptBlock]::Create('write-host "qqq $_ bbb"').InvokeWithContext($null, [PSVariable]::new('_', 'aaa'))
+
         private static string StartProcess(
             string tool,
-            string args,
+            Object[] args,
             string stdin = "",
             bool readStdout = true)
         {
@@ -28,7 +36,15 @@ namespace Microsoft.PowerShell.Commands.Internal
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
             startInfo.FileName = tool;
-            startInfo.Arguments = args;
+
+            if (args != null)
+            {
+                foreach (Object arg in args)
+                {
+                    startInfo.ArgumentList.Add(Convert.ToString(arg));
+                }
+            }
+
             string stdout = string.Empty;
 
             using (Process process = new())
@@ -59,79 +75,68 @@ namespace Microsoft.PowerShell.Commands.Internal
             return stdout;
         }
 
-        public static string GetText()
+        public static string GetText(Hashtable clipboardActions)
         {
-            if (_clipboardSupported == false)
-            {
-                return _internalClipboard ?? string.Empty;
-            }
+            // need errors for null clipboardActions
+            // need errors for null clipboardActions["Paste"]
+            
+            Hashtable pasteAction = (Hashtable)clipboardActions["Paste"];
 
-            string tool = string.Empty;
-            string args = string.Empty;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (pasteAction.ContainsKey("UseWindowsClipboard") && ((bool)pasteAction["UseWindowsClipboard"]))
             {
-                string clipboardText = string.Empty;
-                ExecuteOnStaThread(() => GetTextImpl(out clipboardText));
-                return clipboardText;
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                tool = "xclip";
-                args = "-selection clipboard -out";
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                tool = "pbpaste";
-            }
-            else
-            {
-                _clipboardSupported = false;
-                return string.Empty;
-            }
-
-            return StartProcess(tool, args);
-        }
-
-        public static void SetText(string text)
-        {
-            if (_clipboardSupported == false)
-            {
-                _internalClipboard = text;
-                return;
-            }
-
-            string tool = string.Empty;
-            string args = string.Empty;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                ExecuteOnStaThread(() => SetClipboardData(Tuple.Create(text, CF_UNICODETEXT)));
-                return;
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                tool = "xclip";
-                if (string.IsNullOrEmpty(text))
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    args = "-selection clipboard /dev/null";
+                    throw new PlatformNotSupportedException("1REPLACEME Can't run Windows clipboard methods on non-Windows platforms!");
                 }
                 else
                 {
-                    args = "-selection clipboard -in";
+                    string clipboardText = string.Empty;
+                    ExecuteOnStaThread(() => GetTextImpl(out clipboardText));
+                    return clipboardText;
                 }
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            else if (pasteAction.ContainsKey("Command"))
             {
-                tool = "pbcopy";
+                string tool = (string)pasteAction["Command"];
+                Object[] args = (Object[])pasteAction["Arguments"];
+
+                return StartProcess(tool, args);
             }
             else
             {
-                _clipboardSupported = false;
-                return;
+                // write-warning "PSClipboardActions.Paste.Command is not set" ???
+                return _internalClipboard ?? string.Empty;
             }
+        }
 
-            StartProcess(tool, args, text, readStdout: false);
-            if (_clipboardSupported == false)
+        public static void SetText(Hashtable clipboardActions, string text)
+        {
+            // need error for null clipboardActions
+            // need error for null clipboardActions["Clip"]
+
+            Hashtable clipAction = (Hashtable)clipboardActions["Clip"];
+
+            if (clipAction.ContainsKey("UseWindowsClipboard") && (bool)clipAction["UseWindowsClipboard"])
             {
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    throw new PlatformNotSupportedException("1REPLACEME Can't run Windows clipboard methods on non-Windows platforms!");
+                }
+                else
+                {
+                    ExecuteOnStaThread(() => SetClipboardData(Tuple.Create(text, CF_UNICODETEXT)));
+                }
+            }
+            else if (clipAction.ContainsKey("Command"))
+            {
+                string tool = (string)clipAction["Command"];
+                Object[] args = (Object[])clipAction["Arguments"];
+
+                StartProcess(tool, args, text, readStdout: false);
+            }
+            else
+            {
+                // write-warning "PSClipboardActions.Clip.Command is not set" ???
                 _internalClipboard = text;
             }
         }
