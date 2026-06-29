@@ -3184,7 +3184,7 @@ namespace System.Management.Automation
                 var o = getMemberBinderSite.Target.Invoke(getMemberBinderSite, current);
                 if (o != AutomationNull.Value)
                 {
-                    FlattenResults(o, result);
+                    result.Add(o);
                 }
                 else
                 {
@@ -3206,11 +3206,6 @@ namespace System.Management.Automation
 
             PropertyGetterWorker(getMemberBinderSite, enumerator, context, result);
 
-            if (result.Count == 1)
-            {
-                return result[0];
-            }
-
             if (result.Count == 0)
             {
                 if (context.IsStrictVersion(2))
@@ -3222,7 +3217,18 @@ namespace System.Management.Automation
                 return null;
             }
 
-            return result.ToArray();
+            var flattened = new List<object>();
+            foreach (object obj in result)
+            {
+                FlattenResults(obj, flattened);
+            }
+
+            if (flattened.Count == 1)
+            {
+                return flattened[0];
+            }
+
+            return flattened.ToArray();
         }
 
         private static void MethodInvokerWorker(CallSite invokeMemberSite,
