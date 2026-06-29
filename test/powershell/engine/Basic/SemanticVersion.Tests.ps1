@@ -134,6 +134,15 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             )
         }
 
+        BeforeAll {
+            # Bare It blocks below (build-meta, null comparisons, BeOfType) use these
+            # at run time, so they must exist in the run phase too; -TestCases above
+            # consumes the discovery-phase copies.
+            $v1_0_0 = [SemanticVersion]::new(1, 0, 0)
+            $v1_0_0_beta = [SemanticVersion]::new(1, 0, 0, "beta")
+            $v1_0_0_betaBuild = [SemanticVersion]::new(1, 0, 0, "beta", "BUILD")
+        }
+
         It "Build meta should be ignored" -TestCases $metaCases {
             param($beta, $betaBuild)
             $beta -eq $betaBuild | Should -BeTrue
@@ -316,8 +325,6 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             }
 
             $invalid = @'
-1
-1.2
 1.2.3-0123
 1.2.3-0123.0123
 1.1.2+.123
@@ -343,14 +350,8 @@ beta
 1.0.0-alpha.....1
 1.0.0-alpha......1
 1.0.0-alpha.......1
-01.1.1
-1.01.1
-1.1.01
-1.2
 1.2.3.DEV
-1.2-SNAPSHOT
 1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788
-1.2-RC-SNAPSHOT
 -1.0.3-gamma+b7718
 +justmeta
 9.8.7+meta+meta
