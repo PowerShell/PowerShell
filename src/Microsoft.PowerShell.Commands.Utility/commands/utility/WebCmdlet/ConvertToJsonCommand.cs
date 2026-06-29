@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// The ConvertTo-Json command.
     /// This command converts an object to a Json string representation.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Default")]
     [OutputType(typeof(string))]
     public class ConvertToJsonCommand : PSCmdlet, IDisposable
     {
@@ -65,8 +65,16 @@ namespace Microsoft.PowerShell.Commands
         /// be returned with surrounding '[', ']' chars. Otherwise,
         /// the array symbols will occur only if there is more than one input object.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "Array")]
         public SwitchParameter AsArray { get; set; }
+
+        /// <summary>
+        /// Gets or sets the AsStream property.
+        /// If the AsStream property is set to be true, the input objects are converted
+        /// to JSON individually. There will be one output string for each input object.
+        /// </summary>
+        [Parameter(ParameterSetName = "Stream")]
+        public SwitchParameter AsStream { get; set; }
 
         /// <summary>
         /// Specifies how strings are escaped when writing JSON text.
@@ -100,13 +108,40 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private readonly List<object> _inputObjects = new();
+        private JsonObject.ConvertToJsonContext _context;
 
         /// <summary>
-        /// Caching the input objects for the command.
+        /// Initialize the _context for converting objects to Json.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            _context = new JsonObject.ConvertToJsonContext(
+                Depth,
+                EnumsAsStrings.IsPresent,
+                Compress.IsPresent,
+                EscapeHandling,
+                targetCmdlet: this,
+                _cancellationSource.Token);
+        }
+
+        /// <summary>
+        /// In AsStream mode, convert and output the input object.
+        /// Otherwise cache the input objects for the command.
         /// </summary>
         protected override void ProcessRecord()
         {
-            _inputObjects.Add(InputObject);
+            if (AsStream)
+            {
+                string output = JsonObject.ConvertToJson(InputObject, in _context);
+                if (output != null)
+                {
+                    WriteObject(output);
+                }
+            }
+            else
+            {
+                _inputObjects.Add(InputObject);
+            }
         }
 
         /// <summary>
@@ -118,17 +153,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 object objectToProcess = (_inputObjects.Count > 1 || AsArray) ? (_inputObjects.ToArray() as object) : _inputObjects[0];
 
-                var context = new JsonObject.ConvertToJsonContext(
-                    Depth,
-                    EnumsAsStrings.IsPresent,
-                    Compress.IsPresent,
-                    EscapeHandling,
-                    targetCmdlet: this,
-                    _cancellationSource.Token);
-
                 // null is returned only if the pipeline is stopping (e.g. ctrl+c is signaled).
                 // in that case, we shouldn't write the null to the output pipe.
-                string output = JsonObject.ConvertToJson(objectToProcess, in context);
+                string output = JsonObject.ConvertToJson(objectToProcess, in _context);
                 if (output != null)
                 {
                     WriteObject(output);
