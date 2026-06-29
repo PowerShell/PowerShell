@@ -52,7 +52,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Int16)frame.Pop()) == ((Int16)frame.Pop()));
+                frame.Push(((short)frame.Pop()) == ((short)frame.Pop()));
                 return +1;
             }
         }
@@ -70,7 +70,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Int32)frame.Pop()) == ((Int32)frame.Pop()));
+                frame.Push(((int)frame.Pop()) == ((int)frame.Pop()));
                 return +1;
             }
         }
@@ -79,7 +79,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Int64)frame.Pop()) == ((Int64)frame.Pop()));
+                frame.Push(((long)frame.Pop()) == ((long)frame.Pop()));
                 return +1;
             }
         }
@@ -97,7 +97,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((UInt16)frame.Pop()) == ((UInt16)frame.Pop()));
+                frame.Push(((ushort)frame.Pop()) == ((ushort)frame.Pop()));
                 return +1;
             }
         }
@@ -106,7 +106,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((UInt32)frame.Pop()) == ((UInt32)frame.Pop()));
+                frame.Push(((uint)frame.Pop()) == ((uint)frame.Pop()));
                 return +1;
             }
         }
@@ -115,7 +115,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((UInt64)frame.Pop()) == ((UInt64)frame.Pop()));
+                frame.Push(((ulong)frame.Pop()) == ((ulong)frame.Pop()));
                 return +1;
             }
         }
@@ -124,7 +124,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Single)frame.Pop()) == ((Single)frame.Pop()));
+                frame.Push(((float)frame.Pop()) == ((float)frame.Pop()));
                 return +1;
             }
         }

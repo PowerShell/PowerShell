@@ -493,7 +493,7 @@ namespace System.Management.Automation.Internal
         /// Note that this is not permitted to be more than Int32.MaxValue,
         /// since the underlying list has this limitation.
         /// </summary>
-        private readonly int _capacity = Int32.MaxValue;
+        private readonly int _capacity = int.MaxValue;
 
         /// <summary>
         /// This object is used to acquire an exclusive lock on the stream.
@@ -521,7 +521,7 @@ namespace System.Management.Automation.Internal
         /// Constructs a stream with a maximum size of Int32.Max
         /// </remarks>
         internal ObjectStream()
-            : this(Int32.MaxValue)
+            : this(int.MaxValue)
         {
         }
 
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal ObjectStream(int capacity)
         {
-            if (capacity <= 0 || capacity > Int32.MaxValue)
+            if (capacity <= 0 || capacity > int.MaxValue)
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException(nameof(capacity), capacity);
             }
@@ -1186,7 +1186,7 @@ namespace System.Management.Automation.Internal
         internal override Collection<object> ReadToEnd()
         {
             // NTRAID#Windows Out Of Band Releases-925566-2005/12/07-JonN
-            return Read(Int32.MaxValue);
+            return Read(int.MaxValue);
         }
 
         /// <summary>
