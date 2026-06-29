@@ -515,8 +515,10 @@ namespace System.Management.Automation
             return baseDirectory;
         }
 
+#if !UNIX
         private static string s_packagedMachineDataStorePath;
         private static bool s_packagedMachineDataStorePathInitialized;
+#endif
 
         /// <summary>
         /// When running as a packaged MSIX app that opts into the per-machine ApplicationData store
