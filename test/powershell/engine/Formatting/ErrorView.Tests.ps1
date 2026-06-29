@@ -35,7 +35,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
     # loaded under the macOS pwsh 7.6.2 test runner; the ErrorRecord renders as a
     # Format-List dump of all properties instead of the ConciseView output expected here.
     # Cannot reproduce locally and R26's Describe-level $global:ErrorView reset had zero
-    # effect. Skip on macOS until the formatter regression is addressed in product.
+    # effect. Skip on macOS until the formatter regression is addressed in product. See #27642.
     Context 'ConciseView tests' -Skip:$IsMacOS {
         BeforeEach {
             $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
@@ -598,7 +598,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
     }
 
     # macOS-only product issue: same formatter database regression as ConciseView
-    # above. DetailedView renders as raw Format-List instead of the expected output.
+    # above. DetailedView renders as raw Format-List instead of the expected output. See #27642.
     Context 'DetailedView tests' -Skip:$IsMacOS {
 
         It 'Detailed error is rendered' {

@@ -121,7 +121,7 @@ Describe "File encoding tests" -Tag CI {
 
     # macOS-only product issue: WarningRecord captured via 3>file gets rendered as a
     # Format-List dump of all properties instead of just the message text, so the
-    # Should -BeExactly $expectedString never matches. Tracked separately; skip on macOS.
+    # Should -BeExactly $expectedString never matches. Tracked in #27642; skip on macOS.
     Context "Using encoding utf7 results in a warning" -Skip:$IsMacOS {
         BeforeDiscovery {
             $testCases = @(
