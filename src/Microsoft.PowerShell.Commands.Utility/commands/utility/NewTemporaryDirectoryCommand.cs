@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         ConfirmImpact = ConfirmImpact.Low,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097032")]
     [OutputType(typeof(DirectoryInfo))]
-    public class NewTemporaryDirectoryCommand : PSCmdlet
+    public class NewTemporaryDirectoryCommand : Cmdlet
     {
         private const string NewTemporaryDirectoryWriteError = "NewTemporaryDirectoryWriteError";
 
