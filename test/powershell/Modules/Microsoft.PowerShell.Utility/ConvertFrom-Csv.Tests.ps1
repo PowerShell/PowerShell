@@ -80,3 +80,336 @@ Describe "ConvertFrom-Csv DRT Unit Tests" -Tags "CI" {
         $result[1].Header2 | Should -BeExactly "2"
     }
 }
+
+Describe "ConvertFrom-Csv with empty and null values" {
+
+    Context 'Empty CSV Fields' {
+        $testCases = @(
+            @{
+                Test     = '1a'
+                Expected = [pscustomobject] @{ P1 = '' }
+                InputCsv = @'
+"P1"
+""
+'@
+            }
+            @{
+                Test     = '1b'
+                Expected = [pscustomobject] @{ P1 = '' }, [pscustomobject] @{ P1 = '' }, [pscustomobject] @{ P1 = '' }
+                InputCsv = @'
+"P1"
+""
+""
+""
+'@
+            }
+            @{
+                Test     = '2a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = $null }
+                InputCsv = @'
+"P1","P2"
+"",
+'@
+            }
+            @{
+                Test     = '2b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = $null }
+                InputCsv = @'
+"P1","P2"
+"",
+"",
+'@
+            }
+            @{
+                Test     = '3a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = $null }
+                InputCsv = @'
+"P1","P2"
+,
+'@
+            }
+            @{
+                Test     = '3b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = $null }
+                InputCsv = @'
+"P1","P2"
+,
+,
+'@
+            }
+            @{
+                Test     = '4a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+,""
+'@
+            }
+            @{
+                Test     = '4b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+,""
+,""
+'@
+            }
+            @{
+                Test     = '5a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+"",""
+'@
+            }
+            @{
+                Test     = '5b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+"",""
+"",""
+'@
+            }
+            @{
+                Test     = '6a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = ''; P3 = $null }
+                InputCsv = @'
+"P1","P2","P3"
+,,
+'@
+            }
+            @{
+                Test     = '6b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = ''; P3 = '' }, [pscustomobject] @{ P1 = ''; P2 = ''; P3 = $null }
+                InputCsv = @'
+"P1","P2","P3"
+,,
+,,
+'@
+            }
+            @{
+                Test     = '7a'
+                Expected = [pscustomobject] @{ P1 = '' }, [pscustomobject] @{ P1 = '' }
+                InputCsv = @'
+"P1"
+""
+""
+
+'@
+            }
+            @{
+                Test     = '7b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = 'A1'; P2 = 'A2' }, [pscustomobject] @{ P1 = 'B1'; P2 = 'B2' }, [pscustomobject] @{ P1 = ''; P2 = $null }
+                InputCsv = @'
+"P1","P2"
+,
+A1,A2
+B1,B2
+,
+'@
+            }
+        )
+
+        It 'ConvertFrom-Csv correctly deserializes input CSV' {
+            foreach ($testCase in $testCases) {
+                $expectedResult = $testCase.Expected | ConvertTo-Csv
+                $actualResult   = $testCase.InputCsv | ConvertFrom-Csv | ConvertTo-Csv
+
+                $actualResult | Should -BeExactly $expectedResult
+            }
+        }
+    }
+
+    Context 'Header Only Scenarios' {
+        It 'Should handle header only without newline' {
+            $result = 'P1,P2' | ConvertFrom-Csv
+            $result | Should -BeExactly $null
+        }
+
+        It 'Should handle header with one empty newline' {
+            $result = @'
+P1,P2
+
+'@ | ConvertFrom-Csv
+            $result | Should -BeExactly $null
+        }
+
+        It 'Should handle header followed by multiple empty lines' {
+            $result = @'
+P1,P2
+
+
+
+'@ | ConvertFrom-Csv
+            $result | Should -BeExactly $null
+        }
+    }
+
+    Context 'Empty Input with -Header Parameter' {
+        It 'Should handle empty input with -Header specified' {
+            $result = '' | ConvertFrom-Csv -Header P1, P2
+            $result | Should -BeExactly $null
+        }
+
+        It 'Should handle one empty line with -Header specified' {
+            $result = @'
+
+'@ | ConvertFrom-Csv -Header P1, P2
+            $result | Should -BeExactly $null
+        }
+
+        It 'Should handle multiple empty lines with -Header specified' {
+            $result = @'
+
+
+
+'@ | ConvertFrom-Csv -Header P1, P2
+            $result | Should -BeExactly $null
+        }
+
+        It 'Should handle mixed content with -Header parameter' {
+            $result = @'
+,
+A1,A2
+B1,B2
+,
+'@ | ConvertFrom-Csv -Header P1, P2
+
+            $result.Count | Should -BeExactly 4
+            $result[0].P1 | Should -BeExactly ''
+            $result[0].P2 | Should -BeExactly ''
+            $result[1].P1 | Should -BeExactly 'A1'
+            $result[1].P2 | Should -BeExactly 'A2'
+            $result[2].P1 | Should -BeExactly 'B1'
+            $result[2].P2 | Should -BeExactly 'B2'
+            $result[3].P1 | Should -BeExactly ''
+            $result[3].P2 | Should -BeExactly $null
+        }
+
+        It 'Should handle whitespace-only fields' {
+            $result = @'
+P1,P2,P3
+" ","  ","   "
+,,
+"","",""
+'@ | ConvertFrom-Csv
+
+            $result.Count | Should -BeExactly 3
+            $result[0].P1 | Should -BeExactly ' '
+            $result[0].P2 | Should -BeExactly '  '
+            $result[0].P3 | Should -BeExactly '   '
+            $result[1].P1 | Should -BeExactly ''
+            $result[1].P2 | Should -BeExactly ''
+            $result[1].P3 | Should -BeExactly ''
+            $result[2].P1 | Should -BeExactly ''
+            $result[2].P2 | Should -BeExactly ''
+            $result[2].P3 | Should -BeExactly ''
+        }
+
+        It 'Should handle newlines within quoted fields' {
+            $result = @'
+P1,P2
+"Line1
+Line2","Value2"
+"Value3","Line1
+Line2"
+'@ | ConvertFrom-Csv
+
+            $expectedValue = "Line1$([Environment]::NewLine)Line2"
+            $result.Count | Should -BeExactly 2
+            $result[0].P1 | Should -BeExactly $expectedValue
+            $result[0].P2 | Should -BeExactly 'Value2'
+            $result[1].P1 | Should -BeExactly 'Value3'
+            $result[1].P2 | Should -BeExactly $expectedValue
+        }
+
+        It 'Should handle escaped quotes within fields' {
+            $result = @'
+P1,P2
+"Value with ""quotes""","Normal value"
+"Another ""quoted"" value",""
+'@ | ConvertFrom-Csv
+
+            $result.Count | Should -BeExactly 2
+            $result[0].P1 | Should -BeExactly 'Value with "quotes"'
+            $result[0].P2 | Should -BeExactly 'Normal value'
+            $result[1].P1 | Should -BeExactly 'Another "quoted" value'
+            $result[1].P2 | Should -BeExactly ''
+        }
+
+        It 'Should handle tab delimiter with empty fields' {
+            $result = @"
+P1	P2	P3
+A1
+B1
+C1
+"@ | ConvertFrom-Csv -Delimiter "`t"
+
+            $result.Count | Should -BeExactly 3
+            $result[0].P1 | Should -BeExactly 'A1'
+            $result[0].P2 | Should -BeExactly $null
+            $result[0].P3 | Should -BeExactly $null
+            $result[2].P1 | Should -BeExactly 'C1'
+            $result[2].P2 | Should -BeExactly $null
+            $result[2].P3 | Should -BeExactly $null
+        }
+
+        It 'Should handle comma delimiter with empty fields' {
+            $result = @'
+P1,P2,P3
+A1,,
+B1,,
+C1,,
+'@ | ConvertFrom-Csv -Delimiter ','
+
+            $result.Count | Should -BeExactly 3
+            $result[0].P1 | Should -BeExactly 'A1'
+            $result[0].P2 | Should -BeExactly ''
+            $result[0].P3 | Should -BeExactly ''
+            $result[2].P1 | Should -BeExactly 'C1'
+            $result[2].P2 | Should -BeExactly ''
+            $result[2].P3 | Should -BeExactly $null
+        }
+
+        It 'Should handle custom delimiter that appears in data' {
+            $result = @'
+P1;P2;P3
+A1
+B1
+C1
+'@ | ConvertFrom-Csv -Delimiter ';'
+
+            $result.Count | Should -BeExactly 3
+            $result[0].P1 | Should -BeExactly 'A1'
+            $result[0].P2 | Should -BeExactly $null
+            $result[0].P3 | Should -BeExactly $null
+            $result[1].P1 | Should -BeExactly 'B1'
+            $result[1].P2 | Should -BeExactly $null
+            $result[1].P3 | Should -BeExactly $null
+            $result[2].P1 | Should -BeExactly 'C1'
+            $result[2].P2 | Should -BeExactly $null
+            $result[2].P3 | Should -BeExactly $null
+        }
+
+        It 'Should handle no delimiter with empty fields' {
+            $result = @'
+P1,P2,P3
+A1
+B1
+C1
+'@ | ConvertFrom-Csv
+
+            $result.Count | Should -BeExactly 3
+            $result[0].P1 | Should -BeExactly 'A1'
+            $result[0].P2 | Should -BeExactly $null
+            $result[0].P3 | Should -BeExactly $null
+            $result[1].P1 | Should -BeExactly 'B1'
+            $result[1].P2 | Should -BeExactly $null
+            $result[1].P3 | Should -BeExactly $null
+            $result[2].P1 | Should -BeExactly 'C1'
+            $result[2].P2 | Should -BeExactly $null
+            $result[2].P3 | Should -BeExactly $null
+        }
+    }
+}
