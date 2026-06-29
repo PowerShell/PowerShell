@@ -266,7 +266,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             /// <summary>
             /// Gets a string containing the type of operation under way.
             /// </summary>
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+            [SuppressMessage("Style", "IDE0051:Remove unused private members")]
             public string OperationName
             {
                 get { return operation.ToString(); }
@@ -276,7 +276,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             /// Gets a string containing the type of object ("User" or "Group")
             /// being used.
             /// </summary>
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+            [SuppressMessage("Style", "IDE0051:Remove unused private members")]
             public string TypeNamne
             {
                 get { return type.ToString(); }

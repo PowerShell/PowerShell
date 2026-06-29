@@ -1842,7 +1842,7 @@ namespace System.Management.Automation.Language
 
         private bool FoundError
         {
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+            [SuppressMessage("Style", "IDE0051:Remove unused private members")]
             get;
             set;
         }
