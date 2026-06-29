@@ -5,7 +5,7 @@ Describe "Simple ItemProperty Tests" -Tag "CI" {
         Get-ItemPropertyValue -Path $TESTDRIVE -Name Attributes | Should -Be "Directory"
     }
     It "Can clear the PropertyValue with Clear-ItemProperty" {
-        Setup -f file1.txt
+        New-Item -Path (Join-Path $TestDrive 'file1.txt') -ItemType File -Force > $null
         Set-ItemProperty $TESTDRIVE/file1.txt -Name Attributes -Value ReadOnly
         Get-ItemPropertyValue -Path $TESTDRIVE/file1.txt -Name Attributes | Should -Match "ReadOnly"
         Clear-ItemProperty $TESTDRIVE/file1.txt -Name Attributes

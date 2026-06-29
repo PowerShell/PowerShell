@@ -3,7 +3,7 @@
 
 Describe "Error position Tests" -Tags "CI" {
 
-    BeforeAll {
+    BeforeDiscovery {
         $switch_condition_script = @'
 $test = 1
 switch ($null[0]) {
@@ -50,7 +50,6 @@ $test = 1
 do {}
 until (Test-Path $null -ErrorAction Stop)
 '@
-
         $testCases = @(
             @{ Name = "switch condition";                        FileName = "SwitchError2.ps1";  Script = $switch_condition_script;              MatchText = "SwitchError2.ps1: line 2" }
             @{ Name = "for statement expression initializer";    FileName = "ForError1.ps1";     Script = $for_expression_initializer_script;    MatchText = "ForError1.ps1: line 2" }

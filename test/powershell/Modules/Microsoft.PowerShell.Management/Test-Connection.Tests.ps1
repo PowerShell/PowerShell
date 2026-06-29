@@ -3,7 +3,7 @@
 
 Import-Module HelpersCommon
 
-function GetGatewayAddress
+function script:GetGatewayAddress
 {
     return [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() |
         Where-Object { $_.OperationalStatus -eq 'Up' -and $_.NetworkInterfaceType -ne 'Loopback' } |
@@ -12,7 +12,7 @@ function GetGatewayAddress
         ForEach-Object { $_.Address.IPAddressToString }
 }
 
-function GetExternalHostAddress([string]$HostName)
+function script:GetExternalHostAddress([string]$HostName)
 {
     if (-not $HostName)
     {

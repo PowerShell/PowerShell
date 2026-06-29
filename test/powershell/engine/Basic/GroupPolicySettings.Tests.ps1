@@ -1,7 +1,29 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Group policy settings tests' -Tags @('CI', 'RequireAdminOnWindows') {
+BeforeDiscovery {
+    $skipGroupPolicy = !$IsWindows
+    if ($IsWindows) {
+        try {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $true)
+            $testKey = 'HKCU:\Software\Policies\Microsoft\PowerShellCore'
+            $existed = Test-Path $testKey
+            if (-not $existed) { $null = New-Item $testKey -Force }
+            Set-ItemProperty -Path $testKey -Name EnableScripts -Value 1 -Force
+            Set-ItemProperty -Path $testKey -Name ExecutionPolicy -Value 'AllSigned' -Force
+            $result = Get-ExecutionPolicy
+            Remove-ItemProperty -Path $testKey -Name EnableScripts -Force -ErrorAction SilentlyContinue
+            Remove-ItemProperty -Path $testKey -Name ExecutionPolicy -Force -ErrorAction SilentlyContinue
+            if (-not $existed) { Remove-Item $testKey -Force -ErrorAction SilentlyContinue }
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $false)
+            $skipGroupPolicy = ($result -ne 'AllSigned')
+        } catch {
+            $skipGroupPolicy = $true
+        }
+    }
+}
+
+Describe 'Group policy settings tests' -Tags @('CI', 'RequireAdminOnWindows') -Skip:$skipGroupPolicy {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( ! $IsWindows ) {

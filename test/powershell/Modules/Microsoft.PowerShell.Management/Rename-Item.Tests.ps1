@@ -2,15 +2,30 @@
 # Licensed under the MIT License.
 Describe "Rename-Item tests" -Tag "CI" {
     BeforeAll {
-        Setup -f originalFile.txt -Content "This is content"
+        Set-Content -Path (Join-Path $TestDrive 'originalFile.txt') -Value "This is content"
         $source = "$TESTDRIVE/originalFile.txt"
         $target = "$TESTDRIVE/ItemWhichHasBeenRenamed.txt"
-        Setup -f [orig-file].txt -Content "This is not content"
+        Set-Content -LiteralPath (Join-Path $TestDrive '[orig-file].txt') -Value "This is not content"
         $sourceSp = "$TestDrive/``[orig-file``].txt"
         $targetSpName = "ItemWhichHasBeen[Renamed].txt"
         $targetSp = "$TestDrive/ItemWhichHasBeen``[Renamed``].txt"
-        Setup -Dir [test-dir]
+        New-Item -Path $TestDrive -Name '[test-dir]' -ItemType Directory -Force > $null
         $wdSp = "$TestDrive/``[test-dir``]"
+    }
+
+    AfterAll {
+        # Remove items whose names contain wildcard chars before Pester's TestDrive
+        # cleanup, which uses Remove-Item with wildcards and fails on bracket names.
+        $bracketItems = @(
+            (Join-Path $TestDrive '[orig-file].txt'),
+            (Join-Path $TestDrive 'ItemWhichHasBeen[Renamed].txt'),
+            (Join-Path $TestDrive '[test-dir]')
+        )
+        foreach ($p in $bracketItems) {
+            if (Test-Path -LiteralPath $p) {
+                Remove-Item -LiteralPath $p -Recurse -Force -ErrorAction SilentlyContinue
+            }
+        }
     }
     It "Rename-Item will rename a file" {
         Rename-Item $source $target
@@ -31,9 +46,13 @@ Describe "Rename-Item tests" -Tag "CI" {
         $oldSp = "$wdSp/$oldSpBName"
         $newSpName = "[renamed]file.txt"
         $newSp = "$wdSp/``[renamed``]file.txt"
-        In $wdSp -execute {
+        Push-Location -LiteralPath (Join-Path $TestDrive '[test-dir]')
+        try {
             $null = New-Item -Name $oldSpName -ItemType File -Value $content -Force
             Rename-Item -Path $oldSpBName $newSpName
+        }
+        finally {
+            Pop-Location
         }
         $oldSp | Should -Not -Exist
         $newSp | Should -Exist
@@ -46,9 +65,13 @@ Describe "Rename-Item tests" -Tag "CI" {
         $oldSp = "$wdSp/$oldSpBName"
         $newSpName = "[renamed]file2.txt"
         $newSp = "$wdSp/``[renamed``]file2.txt"
-        In $wdSp -execute {
+        Push-Location -LiteralPath (Join-Path $TestDrive '[test-dir]')
+        try {
             $null = New-Item -Name $oldSpName -ItemType File -Value $content -Force
             Rename-Item -LiteralPath $oldSpName $newSpName
+        }
+        finally {
+            Pop-Location
         }
         $oldSp | Should -Not -Exist
         $newSp | Should -Exist

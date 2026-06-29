@@ -1,6 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tags "Feature" {
+    BeforeDiscovery {
+        $delimiters = "/", " ", "@", "#", "$", "\", "&", "(", ")",
+              "{", "}", "|", "<", ">", ";", "'",
+              '"', "~", "!", "%", "^", "*", "_", "+", ":",
+              "?", "-", "=", "[", "]", "."
+        $d = Get-Date
+        $testCases = @(
+            foreach($del in $delimiters)
+            {
+                @{ Delimiter = $del; Data = $d; ExpectedResult = $d.Ticks }
+            }
+            )
+    }
+
     BeforeAll {
         # note, we will not use "," as that's the default for CSV
         $delimiters = "/", " ", "@", "#", "$", "\", "&", "(", ")",
@@ -12,12 +26,6 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
         # we need to use an entirely new CultureInfo which we can modify
         $enCulture = [System.Globalization.CultureInfo]::new("en-us")
         $d = Get-Date
-        $testCases = @(
-            foreach($del in $delimiters)
-            {
-                @{ Delimiter = $del; Data = $d; ExpectedResult = $d.Ticks }
-            }
-            )
         function Set-delimiter {
             param ( $delimiter )
             if ( $IsCoreCLR ) {
@@ -42,12 +50,12 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
 
     It "Disallow use of null delimiter" {
         $d | Export-Csv TESTDRIVE:/file.csv
-        { Import-Csv -Path TESTDRIVE:/file.csv -Delimiter $null } | Should -Throw "Delimiter"
+        { Import-Csv -Path TESTDRIVE:/file.csv -Delimiter $null } | Should -Throw -ExpectedMessage "*Delimiter*"
     }
 
     It "Disallow use of delimiter with useCulture parameter" {
         $d | Export-Csv TESTDRIVE:/file.csv
-        { Import-Csv -Path TESTDRIVE:/file.csv -UseCulture "," } | Should -Throw "','"
+        { Import-Csv -Path TESTDRIVE:/file.csv -UseCulture "," } | Should -Throw -ExpectedMessage "*','*"
     }
 
     It "Imports the same properties as exported" {

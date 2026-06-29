@@ -1,41 +1,38 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-$script:CimClassName = "PSCore_CimTest1"
-$script:CimNamespace = "root/default"
-$script:moduleDir = Join-Path -Path $PSScriptRoot -ChildPath assets -AdditionalChildPath CimTest
-$script:deleteMof = Join-Path -Path $moduleDir -ChildPath DeleteCimTest.mof
-$script:createMof = Join-Path -Path $moduleDir -ChildPath CreateCimTest.mof
-
-$CimCmdletArgs = @{
-    Namespace = ${script:CimNamespace}
-    ClassName = ${script:CimClassName}
-    ErrorAction = "SilentlyContinue"
+Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
+    BeforeDiscovery {
+        $skipCdxml = ! $IsWindows -or $null -eq (Get-Command -ErrorAction SilentlyContinue Mofcomp.exe)
     }
 
-$script:ItSkipOrPending = @{}
-
-function Test-CimTestClass {
-    $null -eq (Get-CimClass @CimCmdletArgs)
-}
-
-function Test-CimTestInstance {
-    $null -eq (Get-CimInstance @CimCmdletArgs)
-}
-
-Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
     BeforeAll {
+        $script:CimClassName = "PSCore_CimTest1"
+        $script:CimNamespace = "root/default"
+        $script:moduleDir = Join-Path -Path $PSScriptRoot -ChildPath assets -AdditionalChildPath CimTest
+        $script:deleteMof = Join-Path -Path $moduleDir -ChildPath DeleteCimTest.mof
+        $script:createMof = Join-Path -Path $moduleDir -ChildPath CreateCimTest.mof
+
+        $CimCmdletArgs = @{
+            Namespace = ${script:CimNamespace}
+            ClassName = ${script:CimClassName}
+            ErrorAction = "SilentlyContinue"
+        }
+
+        function Test-CimTestClass {
+            $null -eq (Get-CimClass @CimCmdletArgs)
+        }
+
+        function Test-CimTestInstance {
+            $null -eq (Get-CimInstance @CimCmdletArgs)
+        }
+
         $skipNotWindows = ! $IsWindows
         if ( $skipNotWindows ) {
-            $script:ItSkipOrPending = @{ Skip = $true }
             return
         }
 
         # if MofComp does not exist, we shouldn't bother moving forward
-        # there is a possibility that we could be on Windows, but MofComp
-        # isn't present, in any event we will mark these tests as skipped
-        # since the environment won't support loading the test classes
         if ( (Get-Command -ErrorAction SilentlyContinue Mofcomp.exe) -eq $null ) {
-            $script:ItSkipOrPending = @{ Skip = $true }
             return
         }
 
@@ -95,17 +92,17 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
 
     BeforeEach {
         If ( $script:MofCompReturnCode -ne 0 ) {
-            throw "MofComp.exe failed with exit code $MofCompReturnCode"
+            Set-ItResult -Skipped -Because "MofComp.exe failed with exit code $($script:MofCompReturnCode)"
         }
     }
 
     Context "Module level tests" {
-        It "The CimTest module should have been loaded" @ItSkipOrPending {
+        It "The CimTest module should have been loaded" -Skip:$skipCdxml {
             $result = Get-Module CimTest
             $result.ModuleBase | Should -Be ${script:ModuleDir}
         }
 
-        It "The CimTest module should have the proper cmdlets" @ItSkipOrPending {
+        It "The CimTest module should have the proper cmdlets" -Skip:$skipCdxml {
             $result = Get-Command -Module CimTest
             $result.Count | Should -Be 4
             ($result.Name | Sort-Object ) -join "," | Should -Be "Get-CimTest,New-CimTest,Remove-CimTest,Set-CimTest"
@@ -113,35 +110,35 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
     }
 
     Context "Get-CimTest cmdlet" {
-        It "The Get-CimTest cmdlet should return 4 objects" @ItSkipOrPending {
+        It "The Get-CimTest cmdlet should return 4 objects" -Skip:$skipCdxml {
             $result = Get-CimTest
             $result.Count | Should -Be 4
             ($result.id |Sort-Object) -join ","  | Should -Be "1,2,3,4"
         }
 
-        It "The Get-CimTest cmdlet should retrieve an object via id" @ItSkipOrPending {
+        It "The Get-CimTest cmdlet should retrieve an object via id" -Skip:$skipCdxml {
             $result = Get-CimTest -id 1
             @($result).Count | Should -Be 1
             $result.field1 | Should -Be "instance 1"
         }
 
-        It "The Get-CimTest cmdlet should retrieve an object by piped id" @ItSkipOrPending {
+        It "The Get-CimTest cmdlet should retrieve an object by piped id" -Skip:$skipCdxml {
             $result = 1,2,4 | ForEach-Object { [pscustomobject]@{ id = $_ } } | Get-CimTest
             @($result).Count | Should -Be 3
             ( $result.id | Sort-Object ) -join "," | Should -Be "1,2,4"
         }
 
-        It "The Get-CimTest cmdlet should retrieve an object by datetime" @ItSkipOrPending {
+        It "The Get-CimTest cmdlet should retrieve an object by datetime" -Skip:$skipCdxml {
             $result = Get-CimTest -DateTime ([datetime]::new(2008,01,01,0,0,0))
             @($result).Count | Should -Be 1
             $result.field1 | Should -Be "instance 1"
         }
 
-        It "The Get-CimTest cmdlet should return the proper error if the instance does not exist" @ItSkipOrPending {
+        It "The Get-CimTest cmdlet should return the proper error if the instance does not exist" -Skip:$skipCdxml {
             { Get-CimTest -ErrorAction Stop -id "ThisIdDoesNotExist" } | Should -Throw -ErrorId "CmdletizationQuery_NotFound_Id,Get-CimTest"
         }
 
-        It "The Get-CimTest cmdlet should work as a job" @ItSkipOrPending {
+        It "The Get-CimTest cmdlet should work as a job" -Skip:$skipCdxml {
             try {
                 $job = Get-CimTest -AsJob
                 $result = $null
@@ -160,7 +157,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             }
         }
 
-        It "Should be possible to invoke a method on an object returned by Get-CimTest" @ItSkipOrPending {
+        It "Should be possible to invoke a method on an object returned by Get-CimTest" -Skip:$skipCdxml {
             $result = Get-CimTest | Select-Object -First 1
             $result.GetCimSessionInstanceId() | Should -BeOfType guid
         }
@@ -177,21 +174,21 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             }
         }
 
-        It "The Remote-CimTest cmdlet should remove objects by id" @ItSkipOrPending {
+        It "The Remote-CimTest cmdlet should remove objects by id" -Skip:$skipCdxml {
             Remove-CimTest -id 1
             $result = Get-CimTest
             $result.Count | Should -Be 3
             ($result.id |Sort-Object) -join ","  | Should -Be "2,3,4"
         }
 
-        It "The Remove-CimTest cmdlet should remove piped objects" @ItSkipOrPending {
+        It "The Remove-CimTest cmdlet should remove piped objects" -Skip:$skipCdxml {
             Get-CimTest -id 2 | Remove-CimTest
             $result  = Get-CimTest
             @($result).Count | Should -Be 3
             ($result.id |Sort-Object) -join ","  | Should -Be "1,3,4"
         }
 
-        It "The Remove-CimTest cmdlet should work as a job" @ItSkipOrPending {
+        It "The Remove-CimTest cmdlet should work as a job" -Skip:$skipCdxml {
             try {
                 $job = Get-CimTest -id 3 | Remove-CimTest -asjob
                 $result = $null
@@ -212,7 +209,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
     }
 
     Context "New-CimTest operations" {
-        It "Should create a new instance" @ItSkipOrPending {
+        It "Should create a new instance" -Skip:$skipCdxml {
             $instanceArgs = @{
                 id = "telephone"
                 field1 = "television"
@@ -224,7 +221,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             $result.field1 | Should -Be $instanceArgs.field1
         }
 
-        It "Should return the proper error if called with an improper value" @ItSkipOrPending {
+        It "Should return the proper error if called with an improper value" -Skip:$skipCdxml {
             $instanceArgs = @{
                 Id = "error validation"
                 field1 = "a string"
@@ -235,7 +232,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             Get-CimTest -id $instanceArgs.Id -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
         }
 
-        It "Should support -whatif" @ItSkipOrPending {
+        It "Should support -whatif" -Skip:$skipCdxml {
             $instanceArgs = @{
                 Id = "1000"
                 field1 = "a string"
@@ -248,7 +245,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
     }
 
     Context "Set-CimTest operations" {
-        It "Should set properties on an instance" @ItSkipOrPending {
+        It "Should set properties on an instance" -Skip:$skipCdxml {
             $instanceArgs = @{
                 id = "updateTest1"
                 field1 = "updatevalue"
@@ -269,7 +266,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             $result.field2 | Should -Be $newValues.field2
         }
 
-        It "Should set properties on an instance via pipeline" @ItSkipOrPending {
+        It "Should set properties on an instance via pipeline" -Skip:$skipCdxml {
             $instanceArgs = @{
                 id = "updateTest2"
                 field1 = "updatevalue"
@@ -289,3 +286,4 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
     }
 
 }
+

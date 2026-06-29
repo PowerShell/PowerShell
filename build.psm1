@@ -1149,7 +1149,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -MaximumVersion 4.99
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion 5.7.1
 }
 
 function Compress-TestContent {
@@ -1737,7 +1737,7 @@ function Start-PSPester {
         Switch-PSNugetConfig -Source Public
     }
 
-    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
+    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "5.0" } ))
     {
         Restore-PSPester
     }
@@ -1838,25 +1838,33 @@ function Start-PSPester {
         }
     }
 
-    $command += "Invoke-Pester "
+    $runProps = "Path = @('" + ($Path -join "','") + "')"
+    if ( $PassThru ) {
+        $runProps += "; PassThru = `$true"
+    }
 
-    $command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
+    $command += "`$pesterConfig = [PesterConfiguration]@{"
+    $command += " Run = @{ ${runProps} }"
+    $command += "; TestResult = @{ Enabled = `$true; OutputPath = '${OutputFile}'; OutputFormat = '${OutputFormat}' }"
+
     if ($ExcludeTag -and ($ExcludeTag -ne "")) {
-        $command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
+        $command += "; Filter = @{ ExcludeTag = @('" + (${ExcludeTag} -join "','") + "')"
+        if ($Tag) {
+            $command += "; Tag = @('" + (${Tag} -join "','") + "')"
+        }
+        $command += " }"
     }
-    if ($Tag) {
-        $command += "-Tag @('" + (${Tag} -join "','") + "') "
+    elseif ($Tag) {
+        $command += "; Filter = @{ Tag = @('" + (${Tag} -join "','") + "') }"
     }
+
     # sometimes we need to eliminate Pester output, especially when we're
     # doing a daily build as the log file is too large
     if ( $Quiet ) {
-        $command += "-Quiet "
-    }
-    if ( $PassThru ) {
-        $command += "-PassThru "
+        $command += "; Output = @{ Verbosity = 'None' }"
     }
 
-    $command += "'" + ($Path -join "','") + "'"
+    $command += " }; Invoke-Pester -Configuration `$pesterConfig"
     if ($Unelevate)
     {
         $command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
@@ -2012,7 +2020,43 @@ function Start-PSPester {
 
                 try
                 {
-                    $command += "| Export-Clixml -Path '$passThruFile' -Force"
+                    # Project the Pester PassThru object down to a shallow PSCustomObject before
+                    # Export-Clixml. Pester 5's Run object has a deeply nested tree of containers,
+                    # blocks, tests and ScriptBlock references; serializing it produces a CliXml
+                    # graph that exceeds the deserializer's hard MaxDepthBelowTopLevel of 50
+                    # (see src/System.Management.Automation/engine/serialization.cs) and crashes
+                    # Import-Clixml with "Serialized XML is nested too deeply." The downstream
+                    # consumer (Test-PSPesterResults) only reads TotalCount, FailedCount and
+                    # iterates TestResult; the full per-test details are already printed to the
+                    # console by Pester and captured in the NUnit XML, so projecting them away
+                    # here is safe. Failed test details are preserved in TestResult so that
+                    # Show-PSPesterError -testFailureObject continues to print a useful summary.
+                    $projection = '| ForEach-Object { ' + `
+                        '$run = $_; ' + `
+                        '$failed = @(); ' + `
+                        'if ($null -ne $run.Tests) { ' + `
+                            '$failed = @($run.Tests | Where-Object { -not $_.Passed } | ForEach-Object { ' + `
+                                '[pscustomobject]@{ ' + `
+                                    'Passed = $false; ' + `
+                                    'Describe = $(if ($_.Block -and $_.Block.Path) { ($_.Block.Path -join ''/'') } else { '''' }); ' + `
+                                    'Context = ''''; ' + `
+                                    'Name = [string]$_.Name; ' + `
+                                    'FailureMessage = $(if ($_.ErrorRecord) { (($_.ErrorRecord | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine) } else { '''' }); ' + `
+                                    'StackTrace = $(if ($_.ErrorRecord -and $_.ErrorRecord.Count -gt 0 -and $_.ErrorRecord[0].ScriptStackTrace) { [string]$_.ErrorRecord[0].ScriptStackTrace } else { '''' }) ' + `
+                                '} ' + `
+                            '}) ' + `
+                        '}; ' + `
+                        '[pscustomobject]@{ ' + `
+                            'TotalCount = [int]$run.TotalCount; ' + `
+                            'FailedCount = [int]$run.FailedCount; ' + `
+                            'PassedCount = [int]$run.PassedCount; ' + `
+                            'SkippedCount = [int]$run.SkippedCount; ' + `
+                            'NotRunCount = [int]$run.NotRunCount; ' + `
+                            'InconclusiveCount = [int]$run.InconclusiveCount; ' + `
+                            'TestResult = $failed ' + `
+                        '} ' + `
+                    '}'
+                    $command += "$projection | Export-Clixml -Path '$passThruFile' -Force"
 
                     $passThruCommand = { & $powershell $PSFlags -c $command }
                     if ($Sudo.IsPresent) {

@@ -137,18 +137,20 @@ try
     $PSDefaultParameterValues["it:skip"] = ![System.Management.Automation.Platform]::IsWindowsDesktop
 
     Describe "New-Object COM functionality" -Tags "CI" {
-        $testCases = @(
-            @{
-                Name   = 'Microsoft.Update.AutoUpdate'
-                Property = 'Settings'
-                Type = 'Object'
-            }
-            @{
-                Name   = 'Microsoft.Update.SystemInfo'
-                Property = 'RebootRequired'
-                Type = 'Bool'
-            }
-        )
+        BeforeDiscovery {
+            $testCases = @(
+                @{
+                    Name   = 'Microsoft.Update.AutoUpdate'
+                    Property = 'Settings'
+                    Type = 'Object'
+                }
+                @{
+                    Name   = 'Microsoft.Update.SystemInfo'
+                    Property = 'RebootRequired'
+                    Type = 'Bool'
+                }
+            )
+        }
 
         It "Should be able to create <Name> with property <Property> of Type <Type>" -TestCases $testCases {
             param($Name, $Property, $Type)

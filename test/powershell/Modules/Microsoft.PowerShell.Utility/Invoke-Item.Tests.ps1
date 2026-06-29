@@ -74,13 +74,15 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
         New-Item -Path $testFolder -ItemType Directory -Force > $null
         $testFile2 = Join-Path -Path $testFolder -ChildPath "text2.txt"
         New-Item -Path $testFile2 -ItemType File -Force > $null
-
-        $textFileTestCases = @(
-            @{ TestFile = $testFile1; Name='file in root' },
-            @{ TestFile = $testFile2; Name='file in subDirectory' })
     }
 
     Context "Invoke a text file on Unix" {
+        BeforeDiscovery {
+            $textFileTestCases = @(
+                @{ TestFile = 'placeholder1'; Name='file in root' },
+                @{ TestFile = 'placeholder2'; Name='file in subDirectory' })
+        }
+
         BeforeEach {
             $redirectErr = Join-Path -Path $TestDrive -ChildPath "error.txt"
 
@@ -193,6 +195,10 @@ Categories=Application;
                 Remove-Item $appFolder/InvokeItemTest.desktop -Force -ErrorAction SilentlyContinue
                 Remove-Item $HOME/InvokeItemTest.Success -Force -ErrorAction SilentlyContinue
             }
+            if($IsMacOS)
+            {
+                Stop-ProcessMacOs -Name Finder
+            }
         }
 
         BeforeEach {
@@ -200,13 +206,6 @@ Categories=Application;
             if($IsMacOS)
             {
                 Get-Process -Name Finder | Stop-Process -Force
-            }
-        }
-
-        AfterAll{
-            if($IsMacOS)
-            {
-                Stop-ProcessMacOs -Name Finder
             }
         }
 
@@ -243,7 +242,7 @@ Categories=Application;
             }
             else
             {
-                Set-TestInconclusive -Message "AppleScript is not currently reliable on Az Pipelines"
+                Set-ItResult -Inconclusive -Because "AppleScript is not currently reliable on Az Pipelines"
                 # validate on MacOS by using AppleScript
                 $beforeCount = Get-WindowCountMacOS -Name Finder
                 Invoke-Item -Path $PSHOME

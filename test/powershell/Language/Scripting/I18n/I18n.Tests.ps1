@@ -1,12 +1,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Testing of script internationalization' -Tags 'CI' {
-    BeforeAll {
+    BeforeDiscovery {
         $testCultures = @(
             @{ UICulture = 'en-US' }
             @{ UICulture = 'fr-FR' }
         )
+    }
 
+    BeforeAll {
         $currentCulture = $PSUICulture
         [System.Globalization.CultureInfo]::CurrentUICulture = 'en-US'
 

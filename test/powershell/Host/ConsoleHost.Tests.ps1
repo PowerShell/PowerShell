@@ -125,10 +125,18 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             & $powershell -noprofile { $args[0] } -args 1,(2,3) | Should -Be 1
             (& $powershell -noprofile { $args[1] } -args 1,(2,3))[1]  | Should -Be 3
         }
-        foreach ($x in "--help", "-help", "-h", "-?", "--he", "-hel", "--HELP", "-hEl") {
-            It "Accepts '$x' as a parameter for help" {
-                & $powershell -noprofile $x | Where-Object { $_ -match "pwsh[.exe] -Help | -? | /?" } | Should -Not -BeNullOrEmpty
-            }
+        It "Accepts '<x>' as a parameter for help" -TestCases @(
+            @{ x = "--help" },
+            @{ x = "-help" },
+            @{ x = "-h" },
+            @{ x = "-?" },
+            @{ x = "--he" },
+            @{ x = "-hel" },
+            @{ x = "--HELP" },
+            @{ x = "-hEl" }
+        ) {
+            param($x)
+            & $powershell -noprofile $x | Where-Object { $_ -match "pwsh[.exe] -Help | -? | /?" } | Should -Not -BeNullOrEmpty
         }
 
         It "Should accept a Base64 encoded command" {
@@ -1001,15 +1009,12 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     }
 }
 
-Describe "WindowStyle argument" -Tag Feature {
+Describe "WindowStyle argument" -Tag Feature -Skip:(-not $IsWindows) {
     BeforeAll {
-        $defaultParamValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:skip"] = !$IsWindows
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        $ExitCodeBadCommandLineParameter = 64
 
-        if ($IsWindows)
-        {
-            $ExitCodeBadCommandLineParameter = 64
-            Add-Type -Name User32 -Namespace Test -MemberDefinition @"
+        Add-Type -Name User32 -Namespace Test -MemberDefinition @"
 public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
 {
     WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
@@ -1048,11 +1053,6 @@ public enum ShowWindowCommands : int
     Maximized = 3,
 }
 "@
-        }
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $defaultParamValues
     }
 
     It "-WindowStyle <WindowStyle> should work on Windows" -Pending -TestCases @(
@@ -1097,7 +1097,8 @@ Describe "Console host api tests" -Tag CI {
             @{InputObject = "${esc}abc"; Length = 4; Name = "Malformed escape - no csi"},
             @{InputObject = "[31mabc"; Length = 7; Name = "Malformed escape - no escape"}
 
-        $testCases += if ($Host.UI.SupportsVirtualTerminal)
+        $supportsVT = try { $Host.UI.SupportsVirtualTerminal } catch { $false }
+        $testCases += if ($supportsVT)
         {
             @{InputObject = "$esc[31mabc"; Length = 3; Name = "Escape at start"}
             @{InputObject = "$esc[31mabc$esc[0m"; Length = 3; Name = "Escape at start and end"}
