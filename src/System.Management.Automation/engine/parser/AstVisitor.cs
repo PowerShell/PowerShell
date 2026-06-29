@@ -232,6 +232,9 @@ namespace System.Management.Automation.Language
 
         /// <summary/>
         object? VisitPipelineChain(PipelineChainAst statementChainAst) => DefaultVisit(statementChainAst);
+
+        /// <summary/>
+        object? VisitNamedMethodArgumentExpression(NamedMethodArgumentAst namedMethodArgExpression) => DefaultVisit(namedMethodArgExpression);
     }
 #nullable restore
 
@@ -378,6 +381,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) => CheckParent(ast);
 
         public override AstVisitAction VisitPipelineChain(PipelineChainAst ast) => CheckParent(ast);
+
+        public override AstVisitAction VisitNamedMethodArgumentExpression(NamedMethodArgumentAst ast) => CheckParent(ast);
     }
 
     /// <summary>
@@ -614,6 +619,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) { return Check(ast); }
 
         public override AstVisitAction VisitPipelineChain(PipelineChainAst ast) { return Check(ast); }
+
+        public override AstVisitAction VisitNamedMethodArgumentExpression(NamedMethodArgumentAst ast) { return Check(ast); }
     }
 
     /// <summary>
@@ -818,5 +825,8 @@ namespace System.Management.Automation.Language
 
         /// <summary/>
         public virtual object VisitPipelineChain(PipelineChainAst statementChainAst) => DefaultVisit(statementChainAst);
+
+        /// <summary/>
+        public virtual object VisitNamedMethodArgumentExpression(NamedMethodArgumentAst argumentWithLabelAst) => DefaultVisit(argumentWithLabelAst);
     }
 }
