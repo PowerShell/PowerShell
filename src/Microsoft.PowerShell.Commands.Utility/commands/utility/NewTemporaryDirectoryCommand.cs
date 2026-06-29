@@ -25,14 +25,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
+            string tempPath = Path.GetTempPath();
+
             if (!string.IsNullOrEmpty(Prefix))
             {
-                string targetDescription = Path.Combine(Path.GetTempPath(), Prefix);
-                if (ShouldProcess(targetDescription))
+                DirectoryInfo targetDirectory = GetTemporaryDirectoryWithPrefix(tempPath, Prefix);
+                if (ShouldProcess(targetDirectory.FullName))
                 {
                     try
                     {
-                        DirectoryInfo createdDirectory = Directory.CreateTempSubdirectory(Prefix);
+                        DirectoryInfo createdDirectory = CreateTemporaryDirectory(targetDirectory.FullName);
                         WriteObject(createdDirectory);
                     }
                     catch (IOException ioException)
@@ -41,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
                             CreateErrorRecord(
                                 ioException,
                                 ErrorCategory.WriteError,
-                                targetDescription));
+                                targetDirectory.FullName));
                     }
                     catch (System.UnauthorizedAccessException unauthorizedAccessException)
                     {
@@ -49,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
                             CreateErrorRecord(
                                 unauthorizedAccessException,
                                 ErrorCategory.PermissionDenied,
-                                targetDescription));
+                                targetDirectory.FullName));
                     }
                 }
 
@@ -81,6 +83,40 @@ namespace Microsoft.PowerShell.Commands
                             targetDirectory.FullName));
                 }
             }
+        }
+
+        private static DirectoryInfo GetTemporaryDirectoryWithPrefix(string tempPath, string prefix)
+        {
+            if (prefix.Contains(Path.DirectorySeparatorChar) || prefix.Contains(Path.AltDirectorySeparatorChar))
+            {
+                throw new System.ArgumentException(
+                    "The prefix cannot contain directory separator characters.",
+                    nameof(prefix));
+            }
+
+            DirectoryInfo temporaryDirectory = new(tempPath);
+            DirectoryInfo targetDirectory;
+            do
+            {
+                targetDirectory = new DirectoryInfo(
+                    Path.Combine(
+                        temporaryDirectory.FullName,
+                        prefix + Path.GetRandomFileName()));
+            } while (targetDirectory.Exists);
+
+            return targetDirectory;
+        }
+
+        private static DirectoryInfo CreateTemporaryDirectory(string path)
+        {
+            if (System.OperatingSystem.IsWindows())
+            {
+                return Directory.CreateDirectory(path);
+            }
+
+            return Directory.CreateDirectory(
+                path,
+                UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         }
 
         private static ErrorRecord CreateErrorRecord(System.Exception exception, ErrorCategory category, string targetPath)
