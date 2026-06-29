@@ -16,8 +16,7 @@ namespace Microsoft.PowerShell.Commands
         VerbsCommon.New,
         "TemporaryDirectory",
         SupportsShouldProcess = true,
-        ConfirmImpact = ConfirmImpact.Low,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097032")]
+        ConfirmImpact = ConfirmImpact.Low)]
     [OutputType(typeof(DirectoryInfo))]
     public class NewTemporaryDirectoryCommand : Cmdlet
     {
@@ -29,6 +28,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
+        [ValidatePattern(@"^[^\\/:*?""<>|]+$")]
         public string Prefix { get; set; }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateWithPrefix(string tempPath)
         {
-            string targetDescription = Path.Combine(tempPath, Prefix);
+            string targetDescription = $"Temp directory with prefix '{Prefix}' under '{tempPath}'";
             if (!ShouldProcess(targetDescription))
             {
                 return;
@@ -82,24 +82,34 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateWithoutPrefix(string tempPath)
         {
-            DirectoryInfo targetDirectory = PathUtils.GetTemporaryDirectory();
-            if (!ShouldProcess(targetDirectory.FullName))
+            string targetDescription = $"Temp directory under '{tempPath}'";
+            if (!ShouldProcess(targetDescription))
             {
                 return;
             }
 
             try
             {
-                Directory.CreateDirectory(targetDirectory.FullName);
-                WriteObject(new DirectoryInfo(targetDirectory.FullName));
+                // Loop until we find a non-existent directory name to avoid race conditions,
+                // matching the pattern used by PathUtils.CreateTemporaryDirectory().
+                DirectoryInfo targetDirectory;
+                do
+                {
+                    targetDirectory = new DirectoryInfo(
+                        Path.Combine(tempPath, Path.GetRandomFileName()));
+                }
+                while (targetDirectory.Exists);
+
+                DirectoryInfo created = Directory.CreateDirectory(targetDirectory.FullName);
+                WriteObject(created);
             }
             catch (IOException ioException)
             {
-                ThrowTerminatingError(CreateErrorRecord(ioException, ErrorCategory.WriteError, targetDirectory.FullName));
+                ThrowTerminatingError(CreateErrorRecord(ioException, ErrorCategory.WriteError, tempPath));
             }
             catch (UnauthorizedAccessException unauthorizedAccessException)
             {
-                ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, targetDirectory.FullName));
+                ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, tempPath));
             }
         }
     }
