@@ -1,22 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# Hoist test data to file scope so it is visible in both Pester 5 Discovery
-# (-TestCases) and Run (BeforeAll/It) phases. Variables set inside a
-# BeforeDiscovery block do not reliably persist into the runtime container
-# scope in Pester 5.
-function ConvertTo-Hashtable {
-    [CmdletBinding()]
-    param ([Parameter(ValueFromPipeline=$true)][psobject]$o)
-    PROCESS {
-        $pNames = $o.psobject.properties.name
-        $ht = @{}
-        foreach($pName in $pNames) {
-            $ht[$pName] = $o.$pName
-        }
-        $ht
-    }
-}
+# Pester 5 evaluates -TestCases during Discovery, before BeforeAll runs, so the
+# ConfirmImpact cases must exist at file scope. Build them straight from the CSV
+# here (no ConvertTo-Hashtable needed). The full expected tables and the
+# ConvertTo-Hashtable helper live once in BeforeAll, because file-scope variables
+# are not visible inside the Run-phase It blocks.
 
 $FullCLR = !$IsCoreCLR
 $CoreWindows = $IsCoreCLR -and $IsWindows
@@ -524,17 +513,12 @@ $commandString = @"
 "Cmdlet",       "Write-Warning",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "@
 
-$script:commandList = $commandString | ConvertFrom-Csv -Delimiter ","
-$script:commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
-$script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias" }
+$script:confirmImpactCases = $commandString | ConvertFrom-Csv -Delimiter "," |
+    Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Cmdlet" } |
+    ForEach-Object { @{ Name = $_.Name; ConfirmImpact = $_.ConfirmImpact } }
 
 Describe "Verify aliases and cmdlets" -Tags "CI" -ForEach @(@{ commandString = $commandString }) {
     BeforeAll {
-        # Rebind script-scope test data because file-scope $script: variables
-        # are NOT visible inside Pester 5 BeforeAll/It runtime blocks on all platforms.
-        # Same goes for file-scope functions like ConvertTo-Hashtable -- redefine it
-        # here so the pipeline below resolves at runtime.
-        # The $commandString variable is passed in via -ForEach on the Describe.
         function ConvertTo-Hashtable {
             [CmdletBinding()]
             param ([Parameter(ValueFromPipeline=$true)][psobject]$o)
@@ -548,6 +532,8 @@ Describe "Verify aliases and cmdlets" -Tags "CI" -ForEach @(@{ commandString = $
             }
         }
 
+        # $commandString is passed in via -ForEach so it is available in the Run phase
+        # (file-scope variables are not visible inside BeforeAll/It).
         $script:commandList = $commandString | ConvertFrom-Csv -Delimiter ","
         $script:commandHashTableList = $script:commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
         $script:aliasFullList = $script:commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias" }
@@ -657,7 +643,7 @@ Describe "Verify aliases and cmdlets" -Tags "CI" -ForEach @(@{ commandString = $
         $missedCmds | Should -HaveCount 0 -Because "Missed cmdlets $($missedCmds -join ',')"
     }
 
-    It "'<Name>' Cmdlet should have the correct ConfirmImpact '<ConfirmImpact>'" -TestCases $script:commandHashtableList {
+    It "'<Name>' Cmdlet should have the correct ConfirmImpact '<ConfirmImpact>'" -TestCases $script:confirmImpactCases {
         param ( $Name, $ConfirmImpact )
         # retrieve again because we may have serialized the commandinfo
         $cmdlet = Get-Command $Name
