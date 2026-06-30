@@ -497,7 +497,6 @@ namespace Microsoft.PowerShell
             {
                 ConsoleOutWriteHelper(printToken, false);
             }
-
         }
 
         /// <summary>
