@@ -492,7 +492,12 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            WriteToConsole(printToken, false);
+            ConsoleOutWriteHelper(printToken, false);
+            if (_isInteractiveTestToolListening && Console.IsOutputRedirected)
+            {
+                ConsoleOutWriteHelper(printToken, false);
+            }
+
         }
 
         /// <summary>
