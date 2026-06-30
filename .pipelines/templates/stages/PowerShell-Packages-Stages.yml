@@ -46,7 +46,11 @@ stages:
 
   - template: /.pipelines/templates/packaging/windows/package.yml@self
     parameters:
-      runtime: minsize
+      runtime: x64_minsize
+
+  - template: /.pipelines/templates/packaging/windows/package.yml@self
+    parameters:
+      runtime: arm64_minsize
 
 - stage: windows_package_sign
   displayName: 'Win Pkg Sign'
@@ -74,7 +78,11 @@ stages:
 
   - template: /.pipelines/templates/packaging/windows/sign.yml@self
     parameters:
-      runtime: minsize
+      runtime: x64_minsize
+
+  - template: /.pipelines/templates/packaging/windows/sign.yml@self
+    parameters:
+      runtime: arm64_minsize
 
 - stage: linux_package
   displayName: 'Linux Pkg+Sign'
@@ -161,8 +169,15 @@ stages:
     parameters:
       unsignedDrop: 'drop_linux_build_linux_x64_minSize'
       signedDrop: 'drop_linux_sign_linux_x64_minSize'
-      packageType: min-size
-      jobName: minSize
+      packageType: min-size-x64
+      jobName: minSize_x64
+
+  - template: /.pipelines/templates/linux-package-build.yml@self
+    parameters:
+      unsignedDrop: 'drop_linux_build_linux_arm64_minSize'
+      signedDrop: 'drop_linux_sign_linux_arm64_minSize'
+      packageType: min-size-arm64
+      jobName: minSize_arm64
 
 - stage: nupkg
   displayName: 'NuGet Pkg+Sign'
