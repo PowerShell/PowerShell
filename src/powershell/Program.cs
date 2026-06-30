@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell
                 // Read the symlink to the startup executable
                 IntPtr linkPathPtr = Marshal.AllocHGlobal(LINUX_PATH_MAX);
                 IntPtr bufSize = ReadLink("/proc/self/exe", linkPathPtr, (UIntPtr)LINUX_PATH_MAX);
-                pwshPath = Marshal.PtrToStringAnsi(linkPathPtr, (int)bufSize);
+                pwshPath = Marshal.PtrToStringAnsi(linkPathPtr, checked((int)bufSize));
                 Marshal.FreeHGlobal(linkPathPtr);
 
                 ArgumentNullException.ThrowIfNull(pwshPath);
