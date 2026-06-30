@@ -2166,6 +2166,10 @@ namespace System.Management.Automation
                     dictionary.GetType().AssemblyQualifiedName,
                     exception.ToString());
             }
+            finally
+            {
+                (dictionaryEnum as IDisposable)?.Dispose();
+            }
 
             if (dictionaryEnum != null)
             {

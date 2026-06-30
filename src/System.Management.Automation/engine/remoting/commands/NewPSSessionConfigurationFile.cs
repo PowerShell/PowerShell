@@ -2002,10 +2002,19 @@ namespace Microsoft.PowerShell.Commands
             }
 
             StringBuilder sb = new StringBuilder();
-
+            
             var keyEnumerator = table.Keys.GetEnumerator();
-            keyEnumerator.MoveNext();
-            string key = keyEnumerator.Current as string;
+            string key;
+            try
+            {
+                keyEnumerator.MoveNext();
+                key = keyEnumerator.Current as string;
+            }
+            finally
+            {
+                (keyEnumerator as IDisposable)?.Dispose();
+            }
+
             object keyObject = table[key];
             sb.Append("@{ ");
             sb.Append(QuoteName(key));
