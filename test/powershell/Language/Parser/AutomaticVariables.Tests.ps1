@@ -20,3 +20,30 @@ Describe 'Automatic variable $input' -Tags "CI" {
         & { [cmdletbinding()]param() end { @($input).Count } } | Should -Be 0
     }
 }
+
+Describe 'Automatic variable $PSProcessPath' -Tags "CI" {
+    It '$PSProcessPath should return a non-empty string' {
+        $PSProcessPath | Should -Not -BeNullOrEmpty
+    }
+
+    It '$PSProcessPath should be a string' {
+        $PSProcessPath | Should -BeOfType [string]
+    }
+
+    It '$PSProcessPath should point to an existing file' {
+        Test-Path -LiteralPath $PSProcessPath -PathType Leaf | Should -BeTrue
+    }
+
+    It '$PSProcessPath should be a constant variable' {
+        $var = Get-Variable -Name PSProcessPath
+        $var.Options | Should -Match 'Constant'
+    }
+
+    It '$PSProcessPath should be read-only (cannot be overwritten)' {
+        { $PSProcessPath = 'something' } | Should -Throw
+    }
+
+    It '$PSProcessPath should match the current process path' {
+        $PSProcessPath | Should -Be ([System.Environment]::ProcessPath)
+    }
+}

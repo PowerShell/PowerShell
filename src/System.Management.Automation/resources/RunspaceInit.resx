@@ -228,4 +228,7 @@
   <data name="PSEditionDescription" xml:space="preserve">
     <value>Edition information for the current PowerShell session</value>
   </data>
+  <data name="PSProcessPathDescription" xml:space="preserve">
+    <value>Full path to the current PowerShell process executable</value>
+  </data>
 </root>
