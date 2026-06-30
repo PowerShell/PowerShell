@@ -29,12 +29,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (!string.IsNullOrEmpty(Prefix))
             {
-                DirectoryInfo targetDirectory = GetTemporaryDirectoryWithPrefix(tempPath, Prefix);
-                if (ShouldProcess(targetDirectory.FullName))
+                DirectoryInfo prefixedTargetDirectory = GetTemporaryDirectoryWithPrefix(tempPath, Prefix);
+                if (ShouldProcess(prefixedTargetDirectory.FullName))
                 {
                     try
                     {
-                        DirectoryInfo createdDirectory = CreateTemporaryDirectory(targetDirectory.FullName);
+                        DirectoryInfo createdDirectory = CreateTemporaryDirectory(prefixedTargetDirectory.FullName);
                         WriteObject(createdDirectory);
                     }
                     catch (IOException ioException)
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
                             CreateErrorRecord(
                                 ioException,
                                 ErrorCategory.WriteError,
-                                targetDirectory.FullName));
+                                prefixedTargetDirectory.FullName));
                     }
                     catch (System.UnauthorizedAccessException unauthorizedAccessException)
                     {
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
                             CreateErrorRecord(
                                 unauthorizedAccessException,
                                 ErrorCategory.PermissionDenied,
-                                targetDirectory.FullName));
+                                prefixedTargetDirectory.FullName));
                     }
                 }
 

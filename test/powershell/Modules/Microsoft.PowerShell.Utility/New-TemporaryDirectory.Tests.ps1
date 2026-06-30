@@ -41,6 +41,10 @@ Describe "New-TemporaryDirectory" -Tags "CI" {
         New-TemporaryDirectory -WhatIf | Should -BeNullOrEmpty
     }
 
+    It "with WhatIf and Prefix does not create a directory" {
+        New-TemporaryDirectory -Prefix "Test_" -WhatIf | Should -BeNullOrEmpty
+    }
+
     It "has an OutputType of System.IO.DirectoryInfo" {
         (Get-Command New-TemporaryDirectory).OutputType.Name | Should -Contain "System.IO.DirectoryInfo"
     }
