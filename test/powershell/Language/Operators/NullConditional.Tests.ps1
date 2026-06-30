@@ -97,7 +97,13 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
         }
 
         It 'Lhs is $?' {
-            { $???=$false}
+            function Get-TestCase
+            {
+                [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidAssignmentToAutomaticVariable', '')]
+                param()
+                { $???=$false}
+            }
+            Get-TestCase
             $? | Should -BeTrue
         }
     }
