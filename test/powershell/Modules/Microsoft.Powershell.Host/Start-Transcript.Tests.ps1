@@ -176,7 +176,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should record Write-Information output when InformationAction is set to Continue" {
-        [String]$message = New-Guid
+        [string]$message = New-Guid
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Write-Information -Message $message -InformationAction Continue
@@ -191,7 +191,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should not record Write-Information output when InformationAction is set to SilentlyContinue" {
-        [String]$message = New-Guid
+        [string]$message = New-Guid
         $traceData = Join-Path $TESTDRIVE tracedata.txt
         $script = {
             Start-Transcript -Path $transcriptFilePath
@@ -207,7 +207,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should not record Write-Information output when InformationAction is set to Ignore" {
-        [String]$message = New-Guid
+        [string]$message = New-Guid
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Write-Information -Message $message -InformationAction Ignore
@@ -222,7 +222,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should record Write-Information output in correct order when InformationAction is set to Inquire" {
-        [String]$message = New-Guid
+        [string]$message = New-Guid
         $newLine = [System.Environment]::NewLine
         $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
         $script = {
@@ -240,7 +240,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should record Write-Host output when InformationAction is set to Continue" {
-        [String]$message = New-Guid
+        [string]$message = New-Guid
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Write-Host -Message $message -InformationAction Continue
@@ -254,7 +254,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should record Write-Host output when InformationAction is set to SilentlyContinue" {
-        [String]$message = New-Guid
+        [string]$message = New-Guid
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Write-Host -Message $message -InformationAction SilentlyContinue
@@ -268,7 +268,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should not record Write-Host output when InformationAction is set to Ignore" {
-        [String]$message = New-Guid
+        [string]$message = New-Guid
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Write-Host -Message $message -InformationAction Ignore
@@ -282,7 +282,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should record Write-Host output in correct order when InformationAction is set to Inquire" {
-        [String]$message = New-Guid
+        [string]$message = New-Guid
         $newLine = [System.Environment]::NewLine
         $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
         $script = {

@@ -1600,42 +1600,42 @@ function New-RpmSpec
 {
     param(
         [Parameter(Mandatory,HelpMessage='Package Name')]
-        [String]$Name,
+        [string]$Name,
 
         [Parameter(Mandatory,HelpMessage='Package Version')]
-        [String]$Version,
+        [string]$Version,
 
         [Parameter(Mandatory)]
-        [String]$Iteration,
+        [string]$Iteration,
 
         [Parameter(Mandatory,HelpMessage='Package description')]
-        [String]$Description,
+        [string]$Description,
 
         [Parameter(Mandatory,HelpMessage='Staging folder for installation files')]
-        [String]$Staging,
+        [string]$Staging,
 
         [Parameter(Mandatory,HelpMessage='Install path on target machine')]
-        [String]$Destination,
+        [string]$Destination,
 
         [Parameter(Mandatory,HelpMessage='The built and gzipped man file.')]
-        [String]$ManGzipFile,
+        [string]$ManGzipFile,
 
         [Parameter(Mandatory,HelpMessage='The destination of the man file')]
-        [String]$ManDestination,
+        [string]$ManDestination,
 
         [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
         [LinkInfo[]]$LinkInfo,
 
         [Parameter(Mandatory,HelpMessage='Packages required to install this package')]
-        [String[]]$Dependencies,
+        [string[]]$Dependencies,
 
         [Parameter(Mandatory,HelpMessage='Script to run after the package installation.')]
-        [String]$AfterInstallScript,
+        [string]$AfterInstallScript,
 
         [Parameter(Mandatory,HelpMessage='Script to run after the package removal.')]
-        [String]$AfterRemoveScript,
+        [string]$AfterRemoveScript,
 
-        [String]$Distribution = 'rhel.7',
+        [string]$Distribution = 'rhel.7',
         [string]$HostArchitecture
     )
 
@@ -1759,40 +1759,40 @@ function New-NativeDeb
 {
     param(
         [Parameter(Mandatory, HelpMessage='Package Name')]
-        [String]$Name,
+        [string]$Name,
 
         [Parameter(Mandatory, HelpMessage='Package Version')]
-        [String]$Version,
+        [string]$Version,
 
         [Parameter(Mandatory)]
-        [String]$Iteration,
+        [string]$Iteration,
 
         [Parameter(Mandatory, HelpMessage='Package description')]
-        [String]$Description,
+        [string]$Description,
 
         [Parameter(Mandatory, HelpMessage='Staging folder for installation files')]
-        [String]$Staging,
+        [string]$Staging,
 
         [Parameter(Mandatory, HelpMessage='Install path on target machine')]
-        [String]$Destination,
+        [string]$Destination,
 
         [Parameter(Mandatory, HelpMessage='The built and gzipped man file.')]
-        [String]$ManGzipFile,
+        [string]$ManGzipFile,
 
         [Parameter(Mandatory, HelpMessage='The destination of the man file')]
-        [String]$ManDestination,
+        [string]$ManDestination,
 
         [Parameter(Mandatory, HelpMessage='Symlink to powershell executable')]
         [LinkInfo[]]$LinkInfo,
 
         [Parameter(HelpMessage='Packages required to install this package.')]
-        [String[]]$Dependencies,
+        [string[]]$Dependencies,
 
         [Parameter(HelpMessage='Script to run after the package installation.')]
-        [String]$AfterInstallScript,
+        [string]$AfterInstallScript,
 
         [Parameter(HelpMessage='Script to run after the package removal.')]
-        [String]$AfterRemoveScript,
+        [string]$AfterRemoveScript,
 
         [string]$HostArchitecture,
 
@@ -2367,7 +2367,7 @@ function New-MacOSLauncher
 {
     param(
         [Parameter(Mandatory)]
-        [String]$Version,
+        [string]$Version,
 
         [switch]$LTS
     )
@@ -3609,7 +3609,7 @@ function New-SubFolder
         [string]
         $Path,
 
-        [String]
+        [string]
         $ChildPath,
 
         [switch]
@@ -4550,7 +4550,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
 
         [Parameter(Mandatory)]
         [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
-        [String]$BuildType
+        [string]$BuildType
     )
 
     if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
@@ -4666,7 +4666,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
 
         [Parameter(Mandatory)]
         [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
-        [String]$BuildType
+        [string]$BuildType
     )
 
     if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
