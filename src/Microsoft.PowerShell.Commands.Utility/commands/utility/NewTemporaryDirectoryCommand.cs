@@ -95,16 +95,18 @@ namespace Microsoft.PowerShell.Commands
             }
 
             DirectoryInfo temporaryDirectory = new(tempPath);
-            DirectoryInfo targetDirectory;
-            do
+            while (true)
             {
-                targetDirectory = new DirectoryInfo(
+                DirectoryInfo targetDirectory = new(
                     Path.Combine(
                         temporaryDirectory.FullName,
                         prefix + Path.GetRandomFileName()));
-            } while (targetDirectory.Exists);
 
-            return targetDirectory;
+                if (!targetDirectory.Exists)
+                {
+                    return targetDirectory;
+                }
+            }
         }
 
         private static DirectoryInfo CreateTemporaryDirectory(string path)
