@@ -229,4 +229,3 @@ Install-PluginEndpoint -Force $Force -VersionIndependent
 
 Write-Host "Restarting WinRM to ensure that the plugin configuration change takes effect.`nThis is required for WinRM running on Windows SKUs prior to Windows 10." -ForegroundColor Magenta
 Restart-Service winrm
-
