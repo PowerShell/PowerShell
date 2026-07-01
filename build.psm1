@@ -463,8 +463,8 @@ function Start-PSBuild {
     }
 
     if ($ForMinimalSize) {
-        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
-            throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
+        if ($Runtime -and "linux-x64", "linux-arm64", "win7-x64", "win-arm64", "osx-x64", "osx-arm64" -notcontains $Runtime) {
+            throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'linux-arm64', 'win7-x64', 'win-arm64', 'osx-x64', 'osx-arm64'"
         }
     }
 
@@ -3192,7 +3192,7 @@ function Start-TypeGen
 
     Push-Location "$PSScriptRoot/src/TypeCatalogGen"
     try {
-        Start-NativeExecution { dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs $IncFileName }
+        Start-NativeExecution { dotnet run -- ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs $IncFileName }
     } finally {
         Pop-Location
     }
