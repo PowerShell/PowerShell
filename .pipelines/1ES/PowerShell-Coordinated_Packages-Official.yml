@@ -1,0 +1,175 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+#
+# 1ES PIPELINE TEMPLATES (1ES PT) MIGRATION — OFFICIAL
+# ----------------------------------------------------
+# Official sibling of `.pipelines/1ES/PowerShell-Coordinated_Packages-NonOfficial.yml`.
+# Same stages/templates, but it extends the 1ES PT *Official* template and runs REAL
+# production ESRP signing (OfficialBuild: true). The OneBranch original
+# (`.pipelines/PowerShell-Coordinated_Packages-Official.yml`) is left untouched so the
+# two can run side-by-side during migration validation.
+#
+# WHY A SEPARATE OFFICIAL PIPELINE:
+#   Only an Official (1ES.Official) pipeline can consume the production ESRP service
+#   connection `PowerShell-ESRP-Release`: that connection is gated by a 1ES
+#   "Production Readiness Check" that a 1ES.Unofficial pipeline can never satisfy
+#   (the check stays pending and blocks the run). Real ESRP signing must therefore be
+#   validated here, not in the NonOfficial pipeline.
+#
+# HOW OFFICIAL vs NONOFFICIAL SIGNING IS SELECTED:
+#   The shared signing templates fork at COMPILE TIME on the `OfficialBuild` parameter
+#   threaded from the stages template:
+#     * OfficialBuild: true  (this pipeline)  -> real `EsrpCodeSigning@5` tasks against
+#       PROD KeyCodes using `PowerShell-ESRP-Release`. The stub/test tasks are compile-
+#       time excluded, so `$(EsrpTestConnectionName)` is never referenced here.
+#     * OfficialBuild: false (NonOfficial)    -> the existing stub / ESRP-test hybrid.
+#       The prod connection is compile-time excluded there, so the NonOfficial pipeline
+#       never triggers the Production Readiness Check.
+#
+# PROD SIGNING-SITE MAPPING (this pipeline, OfficialBuild: true):
+#   ─────────────────────────────────────────────────────────────────────────────
+#   Site                                          | PROD KeyCode     | Operation
+#   ─────────────────────────────────────────────────────────────────────────────
+#   obp-file-signing.yml — 1P Authenticode        | CP-230012        | SigntoolSign
+#   obp-file-signing.yml — 3P Authenticode        | CP-231522        | SigntoolSign
+#   windows-hosted-build.yml — Sign obj files (1P)| CP-230012        | SigntoolSign
+#   windows-hosted-build.yml — Sign nupkg files   | CP-401405        | NuGetSign
+#   mac.yml — Apple CodeSign Mach-O binaries       | CP-401337-Apple  | MacAppDeveloperSign
+#   ─────────────────────────────────────────────────────────────────────────────
+#   All use ConnectedServiceName: PowerShell-ESRP-Release (hardcoded — ADO validates
+#   service-connection references at compile time, so it cannot come from a variable).
+#
+# REQUIRED VARIABLE GROUP — `EsrpSigning-PowerShell`:
+#   Create this variable group in mscodehub/PowerShellCore and link it to this pipeline
+#   definition. It supplies the ESRP request-signing auth inputs (non-secret identifiers)
+#   consumed by every prod EsrpCodeSigning@5 task:
+#     - EsrpProdAppRegClientId    (client ID of the ESRP-Signing-Identity managed identity)
+#     - EsrpProdAppRegTenantId    (AME tenant ID the MI lives in)
+#     - EsrpProdAuthAkvName       (Key Vault holding the ESRP request-signing cert, e.g. pscoresignprod-kv)
+#     - EsrpProdAuthCertName      (auth cert name in that Key Vault)
+#     - EsrpProdAuthSignCertName  (request-signing cert name in that Key Vault)
+#   The MI must have `Key Vault Certificate User` on the vault and be onboarded to ESRP
+#   with the KeyCodes above authorised.
+
+trigger: none
+
+parameters:
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    displayName: Debugging - Skip Signing
+    type: string
+    default: 'NO'
+  - name: RUN_TEST_AND_RELEASE
+    displayName: Debugging - Run Test and Release Artifacts Stage
+    type: boolean
+    default: true
+  - name: RUN_WINDOWS
+    displayName: Debugging - Enable Windows Stage
+    type: boolean
+    default: true
+  - name: ENABLE_MSBUILD_BINLOGS
+    displayName: Debugging - Enable MSBuild Binary Logs
+    type: boolean
+    default: false
+  - name: FORCE_CODEQL
+    displayName: Debugging - Enable CodeQL and set cadence to 1 hour
+    type: boolean
+    default: false
+
+name: bins-$(BUILD.SOURCEBRANCHNAME)-1ES-official-$(Build.BuildId)
+
+variables:
+  # Inherit the same variable scaffold as the NonOfficial pipeline / OneBranch original.
+  - template: /.pipelines/templates/variables/PowerShell-Coordinated_Packages-Variables.yml@self
+    parameters:
+      InternalSDKBlobURL: ${{ parameters.InternalSDKBlobURL }}
+      ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
+      SKIP_SIGNING: ${{ parameters.SKIP_SIGNING }}
+      ENABLE_MSBUILD_BINLOGS: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
+      FORCE_CODEQL: ${{ parameters.FORCE_CODEQL }}
+  # PROD ESRP request-signing auth inputs (see header). Only the Official pipeline
+  # references these — they are consumed exclusively inside the compile-time
+  # OfficialBuild: true branches of the shared signing templates.
+  - group: EsrpSigning-PowerShell
+
+resources:
+  repositories:
+    # ComplianceRepo is preserved verbatim (used by helper templates that
+    # invoke PoliCheck / CredScan via the GH-hosted PowerShell/compliance repo).
+    - repository: ComplianceRepo
+      type: github
+      endpoint: ComplianceGHRepo
+      name: PowerShell/compliance
+      ref: master
+    # 1ES Pipeline Templates resource (replaces `onebranchTemplates`).
+    - repository: 1ESPipelineTemplates
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    # Pool default for all jobs. Windows jobs inherit; macOS/Linux jobs override
+    # at the per-job level inside the templates.
+    pool:
+      name: PowerShell1ES
+      image: MMS2022
+      os: windows
+
+    sdl:
+      # CodeQL: enabled unconditionally on ALL branches (same rationale as the
+      # NonOfficial pipeline — PowerShell's ADO default branch is `internal-master`,
+      # never used for releases; shipping branches are release/* and rebuild/*).
+      codeql:
+        compiled:
+          enabled: true
+        enabledOnNonDefaultBranches: true
+        tsaEnabled: true  # File CodeQL findings to TSA on every run; TSA dedupes
+
+      # `armory` was OneBranch-only. Removed.
+
+      sbom:
+        enabled: true
+
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+
+      tsa:
+        enabled: true  # 1ES publishes all SDL results to TSA. Disabling forces all SDL tools into 'break' mode.
+        # 1ES PT requires an absolute path for `sdl.tsa.configFile`. This path is
+        # consumed by the auto-injected SDL Sources Analysis job, which runs WITHOUT
+        # the `stage-repo-under-PowerShell.yml` helper (repo at $(Build.SourcesDirectory)).
+        # DO NOT add a `\PowerShell\` segment here.
+        configFile: $(Build.SourcesDirectory)\.config\tsaoptions.json
+
+      credscan:
+        enabled: true
+        scanFolder: $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+
+      # BinSkim runs at the user-job level in 1ES PT. Disabled at the global level
+      # to mirror the OneBranch original; re-enabled per-job for binary-producing jobs.
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+
+      # APIScan: not part of the build pipeline. Lives in
+      # `.pipelines/1ES/apiscan-gen-notice.yml`.
+      apiscan:
+        enabled: false
+
+    stages:
+      - template: /.pipelines/1ES/templates/stages/PowerShell-Coordinated_Packages-Stages.yml@self
+        parameters:
+          RUN_WINDOWS: ${{ parameters.RUN_WINDOWS }}
+          RUN_TEST_AND_RELEASE: ${{ parameters.RUN_TEST_AND_RELEASE }}
+          OfficialBuild: true

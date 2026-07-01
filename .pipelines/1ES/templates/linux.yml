@@ -2,6 +2,7 @@ parameters:
   Runtime: 'linux-x64'
   BuildConfiguration: 'release'
   JobName: 'build_linux'
+  OfficialBuild: false
 
 # 1ES PT translation of /.pipelines/templates/linux.yml.
 # Two jobs:
@@ -224,6 +225,6 @@ jobs:
   - template: /.pipelines/1ES/templates/obp-file-signing.yml@self
     parameters:
       binPath: $(DropRootPath)
-      OfficialBuild: $(ps_official_build)
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - template: /.pipelines/templates/step/finalize.yml@self
