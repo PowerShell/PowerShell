@@ -52,7 +52,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "deb-arm64", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
+        [ValidateSet("msix", "deb", "deb-arm64", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size-x64", "min-size-arm64", "tar-alpine-fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -77,7 +77,7 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ($Type -in ('zip', 'min-size') -or $Type -like 'fxdependent*') {
+        if ($Type -eq 'zip' -or $Type -like 'min-size*' -or $Type -like 'fxdependent*') {
             # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
@@ -102,16 +102,16 @@ function Start-PSPackage {
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
         } elseif ($MacOSRuntime) {
-           $MacOSRuntime, "Release"
+            $MacOSRuntime, "Release"
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "linux-musl-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm") {
-            New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            New-PSOptions -Configuration "Release" -Runtime "linux-arm" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm64") {
             if ($IsMacOS) {
                 New-PSOptions -Configuration "Release" -Runtime "osx-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             } else {
-                New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+                New-PSOptions -Configuration "Release" -Runtime "linux-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -123,6 +123,10 @@ function Start-PSPackage {
         }
         elseif ($Type.Count -eq 1 -and $Type[0] -eq "deb-arm64") {
             New-PSOptions -Configuration "Release" -Runtime 'linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
+        elseif ($Type.Count -eq 1 -and $Type[0] -eq "min-size-arm64") {
+            $runtimeToUse = if ($IsMacOS) { "osx-arm64" } elseif ($IsLinux) { "linux-arm64" } else { "win-arm64" }
+            New-PSOptions -Configuration "Release" -Runtime $runtimeToUse -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
         else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -409,7 +413,7 @@ function Start-PSPackage {
                     New-PdbZipPackage @Arguments
                 }
             }
-            "min-size" {
+            { $_ -like "min-size*" } {
                 # Add suffix '-gc' because this package is for the Guest Config team.
                 if ($Environment.IsWindows) {
                     $Arguments = @{
@@ -419,12 +423,10 @@ function Start-PSPackage {
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
                             R2RState = 'SdkOnly'
-                            OperatingSystem = "Windows"
-                            Architecture = "amd64"
                         }
                     }
 
-                    if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
+                    if ($PSCmdlet.ShouldProcess("Create min-size Zip Package")) {
                         New-ZipPackage @Arguments
                     }
                 }
@@ -433,6 +435,7 @@ function Start-PSPackage {
                         PackageSourcePath = $Source
                         Name = $Name
                         PackageNameSuffix = 'gc'
+                        Architecture = $Runtime.Split('-')[1]
                         Version = $Version
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
@@ -440,12 +443,12 @@ function Start-PSPackage {
                         }
                     }
 
-                    if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                    if ($PSCmdlet.ShouldProcess("Create min-size tar.gz Package")) {
                         New-TarballPackage @Arguments
                     }
                 }
             }
-            { $_ -like "fxdependent*"} {
+            { $_ -like "fxdependent*" } {
                 if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
@@ -4525,272 +4528,6 @@ function New-GlobalToolNupkgFromSource
         return
     }
     Remove-Item -Path $CGManifestPath -Recurse -Force -ErrorAction SilentlyContinue
-}
-
-${mainLinuxBuildFolder} = 'pwshLinuxBuild'
-${minSizeLinuxBuildFolder} = 'pwshLinuxBuildMinSize'
-${arm32LinuxBuildFolder} = 'pwshLinuxBuildArm32'
-${arm64LinuxBuildFolder} = 'pwshLinuxBuildArm64'
-${amd64MarinerBuildFolder} = 'pwshMarinerBuildAmd64'
-${amd64AlpineFxdBuildFolder} = 'pwshAlpineFxdBuildAmd64'
-${arm64MarinerBuildFolder} = 'pwshMarinerBuildArm64'
-
-<#
-    Used in Azure DevOps Yaml to package all the linux packages for a channel.
-#>
-function Invoke-AzDevOpsLinuxPackageCreation {
-    param(
-        [switch]
-        $LTS,
-
-        [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
-        [ValidateNotNullOrEmpty()]
-        [string]$ReleaseTag,
-
-        [Parameter(Mandatory)]
-        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
-        [String]$BuildType
-    )
-
-    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
-        throw "Must be run in Azure DevOps"
-    }
-
-    try {
-        Write-Verbose "Packaging '$BuildType'; LTS:$LTS for $ReleaseTag ..." -Verbose
-
-        Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\psoptions.json"
-
-        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
-
-        switch ($BuildType) {
-            'fxdependent' {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
-            }
-            'alpine' {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
-            }
-            'rpm' {
-                Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
-            }
-            default {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage @releaseTagParam -LTS:$LTS -Type 'deb', 'tar'
-            }
-        }
-
-        if ($BuildType -eq 'deb') {
-            Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
-
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\psoptions.json"
-
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}"
-
-            Write-Verbose -Verbose "---- Min-Size ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
-
-            ## Create 'linux-arm' 'tar.gz' package.
-            ## Note that 'linux-arm' can only be built on Ubuntu environment.
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}"
-            Start-PSPackage -Type tar-arm @releaseTagParam -LTS:$LTS
-
-            ## Create 'linux-arm64' 'tar.gz' package.
-            ## Note that 'linux-arm64' can only be built on Ubuntu environment.
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}"
-            Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
-        } elseif ($BuildType -eq 'rpm') {
-            # Generate mariner amd64 package
-            Write-Verbose -Verbose "Generating mariner amd64 package"
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}"
-
-            Write-Verbose -Verbose "---- rpm-fxdependent ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type rpm-fxdependent @releaseTagParam -LTS:$LTS
-
-            # Generate mariner arm64 package
-            Write-Verbose -Verbose "Generating mariner arm64 package"
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}"
-
-            Write-Verbose -Verbose "---- rpm-fxdependent-arm64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type rpm-fxdependent-arm64 @releaseTagParam -LTS:$LTS
-        } elseif ($BuildType -eq 'alpine') {
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}"
-
-            Write-Verbose -Verbose "---- tar-alpine-fxdependent ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type tar-alpine-fxdependent @releaseTagParam -LTS:$LTS
-        }
-    }
-    catch {
-        Get-Error -InputObject $_
-        throw
-    }
-}
-
-<#
-    Used in Azure DevOps Yaml to do all the builds needed for all Linux packages for a channel.
-#>
-function Invoke-AzDevOpsLinuxPackageBuild {
-    param (
-        [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
-        [ValidateNotNullOrEmpty()]
-        [string]$ReleaseTag,
-
-        [Parameter(Mandatory)]
-        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
-        [String]$BuildType
-    )
-
-    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
-        throw "Must be run in Azure DevOps"
-    }
-
-    try {
-
-        Write-Verbose "Building '$BuildType' for $ReleaseTag ..." -Verbose
-
-        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
-
-        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true }
-
-        switch ($BuildType) {
-            'fxdependent' {
-                $buildParams.Add("Runtime", "fxdependent")
-            }
-            'alpine' {
-                $buildParams.Add("Runtime", 'linux-musl-x64')
-            }
-        }
-
-        $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
-        Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-        Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-        # Remove symbol files.
-        Remove-Item "${buildFolder}\*.pdb" -Force
-
-        if ($BuildType -eq 'deb') {
-            ## Build 'min-size'
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Min-Size ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['ForMinimalSize'] = $true
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${minSizeLinuxBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            ## Build 'linux-arm' and create 'tar.gz' package for it.
-            ## Note that 'linux-arm' can only be built on Ubuntu environment.
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files.
-            Remove-Item "${buildFolder}\*.pdb" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files.
-            Remove-Item "${buildFolder}\*.pdb" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        } elseif ($BuildType -eq 'rpm') {
-            ## Build for Mariner amd64
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Mariner x64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner x64 package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-linux-x64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64MarinerBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            ## Build for Mariner arm64
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Mariner arm64 ----"
-
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner arm64 package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-linux-arm64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64MarinerBuildFolder}"
-
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        } elseif ($BuildType -eq 'alpine') {
-            ## Build for alpine fxdependent
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- fxdependent alpine x64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-noopt-linux-musl-x64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64AlpineFxdBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        }
-    }
-    catch {
-        Get-Error -InputObject $_
-        throw
-    }
 }
 
 <#
