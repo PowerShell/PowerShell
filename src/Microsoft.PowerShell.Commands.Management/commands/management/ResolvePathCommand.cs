@@ -129,7 +129,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    _relativeBasePath = SessionState.Internal.Globber.GetProviderPath(RelativeBasePath, CmdletProviderContext, out _, out _relativeDrive);
+                    // Since there is only one base path, it should be parsed literally.
+                    _relativeBasePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(RelativeBasePath, CmdletProviderContext, out _, out _relativeDrive);
                 }
                 catch (ProviderNotFoundException providerNotFound)
                 {
@@ -190,8 +191,16 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             SessionState.Path.PushCurrentLocation(string.Empty);
-                            _ = SessionState.Path.SetLocation(_relativeBasePath);
-                            result = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
+                            var cmdpvdContext = CmdletProviderContext;
+
+                            // Specify that the base path should be treated literally.
+                            cmdpvdContext.SuppressWildcardExpansion = true;
+
+                            // A potential bug is that using the `SetLocation` method modifies the history stack,
+                            // which can unexpectedly affect the results of commands that rely on the history stack, such as `Set-Location +`.
+                            _ = SessionState.Path.SetLocation(_relativeBasePath, cmdpvdContext, true);
+                            cmdpvdContext.SuppressWildcardExpansion = SuppressWildcardExpansion;
+                            result = SessionState.Path.GetResolvedPSPathFromPSPath(path, cmdpvdContext);
                         }
                         finally
                         {
