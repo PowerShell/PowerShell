@@ -347,23 +347,28 @@ namespace System.Management.Automation
                     usingAst = (UsingExpressionAst)usingAsts[i];
                     if (IsInForeachParallelCallingScope(scriptBlock.Ast, usingAst))
                     {
-                        var value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
+                        object value = null;
+                        try
+                        {
+                            value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
+                        }
+                        catch (RuntimeException rte)
+                        {
+                            if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("VariableIsUndefined", StringComparison.Ordinal))
+                            {
+                                throw InterpreterError.NewInterpreterException(
+                                    targetObject: null,
+                                    exceptionType: typeof(RuntimeException),
+                                    errorPosition: usingAst.Extent,
+                                    resourceIdAndErrorId: "UsingVariableIsUndefined",
+                                    resourceString: AutomationExceptions.UsingVariableIsUndefined,
+                                    args: rte.ErrorRecord.TargetObject);
+                            }
+                        }
+
                         string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
                         usingValueMap.TryAdd(usingAstKey, value);
                     }
-                }
-            }
-            catch (RuntimeException rte)
-            {
-                if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("VariableIsUndefined", StringComparison.Ordinal))
-                {
-                    throw InterpreterError.NewInterpreterException(
-                        targetObject: null,
-                        exceptionType: typeof(RuntimeException),
-                        errorPosition: usingAst.Extent,
-                        resourceIdAndErrorId: "UsingVariableIsUndefined",
-                        resourceString: AutomationExceptions.UsingVariableIsUndefined,
-                        args: rte.ErrorRecord.TargetObject);
                 }
             }
             finally
@@ -556,7 +561,18 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
+                        try
+                        {
+                            value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
+                        }
+                        catch (RuntimeException rte)
+                        {
+                            if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("VariableIsUndefined", StringComparison.Ordinal))
+                            {
+                                throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
+                                    usingAst.Extent, "UsingVariableIsUndefined", AutomationExceptions.UsingVariableIsUndefined, rte.ErrorRecord.TargetObject);
+                            }
+                        }
                     }
 
                     // Collect UsingExpression value as an array
@@ -565,18 +581,6 @@ namespace System.Management.Automation
                     // Collect UsingExpression value as a dictionary
                     string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
                     usingValueMap.TryAdd(usingAstKey, value);
-                }
-            }
-            catch (RuntimeException rte)
-            {
-                if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("VariableIsUndefined", StringComparison.Ordinal))
-                {
-                    throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
-                        usingAst.Extent, "UsingVariableIsUndefined", AutomationExceptions.UsingVariableIsUndefined, rte.ErrorRecord.TargetObject);
-                }
-                else if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("CantGetUsingExpressionValueWithSpecifiedVariableDictionary", StringComparison.Ordinal))
-                {
-                    throw;
                 }
             }
             finally
