@@ -66,9 +66,11 @@ stages:
   - template: /.pipelines/1ES/templates/mac.yml@self
     parameters:
       buildArchitecture: x64
+      OfficialBuild: ${{ parameters.OfficialBuild }}
   - template: /.pipelines/1ES/templates/mac.yml@self
     parameters:
       buildArchitecture: arm64
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
 - stage: linux
   displayName: linux - build and sign
@@ -81,47 +83,56 @@ stages:
     parameters:
       Runtime: 'linux-x64'
       JobName: 'linux_x64'
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - template: /.pipelines/1ES/templates/linux.yml@self
     parameters:
       Runtime: 'linux-x64'
       JobName: 'linux_x64_minSize'
       BuildConfiguration: 'minSize'
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - template: /.pipelines/1ES/templates/linux.yml@self
     parameters:
       Runtime: 'linux-arm'
       JobName: 'linux_arm'
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - template: /.pipelines/1ES/templates/linux.yml@self
     parameters:
       Runtime: 'linux-arm64'
       JobName: 'linux_arm64'
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - template: /.pipelines/1ES/templates/linux.yml@self
     parameters:
       Runtime: 'fxdependent-linux-x64'
       JobName: 'linux_fxd_x64_mariner'
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - template: /.pipelines/1ES/templates/linux.yml@self
     parameters:
       Runtime: 'fxdependent-linux-arm64'
       JobName: 'linux_fxd_arm64_mariner'
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - template: /.pipelines/1ES/templates/linux.yml@self
     parameters:
       Runtime: 'fxdependent-noopt-linux-musl-x64'
       JobName: 'linux_fxd_x64_alpine'
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - template: /.pipelines/1ES/templates/linux.yml@self
     parameters:
       Runtime: 'fxdependent'
       JobName: 'linux_fxd'
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - template: /.pipelines/1ES/templates/linux.yml@self
     parameters:
       Runtime: 'linux-musl-x64'
       JobName: 'linux_x64_alpine'
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
 - stage: windows
   displayName: windows - build and sign
@@ -136,27 +147,33 @@ stages:
       Architecture: x64
       BuildConfiguration: release
       JobName: build_windows_x64_release
+      OfficialBuild: ${{ parameters.OfficialBuild }}
   - template: /.pipelines/1ES/templates/windows-hosted-build.yml@self
     parameters:
       Architecture: x64
       BuildConfiguration: minSize
       JobName: build_windows_x64_minSize_release
+      OfficialBuild: ${{ parameters.OfficialBuild }}
   - template: /.pipelines/1ES/templates/windows-hosted-build.yml@self
     parameters:
       Architecture: x86
       JobName: build_windows_x86_release
+      OfficialBuild: ${{ parameters.OfficialBuild }}
   - template: /.pipelines/1ES/templates/windows-hosted-build.yml@self
     parameters:
       Architecture: arm64
       JobName: build_windows_arm64_release
+      OfficialBuild: ${{ parameters.OfficialBuild }}
   - template: /.pipelines/1ES/templates/windows-hosted-build.yml@self
     parameters:
       Architecture: fxdependent
       JobName: build_windows_fxdependent_release
+      OfficialBuild: ${{ parameters.OfficialBuild }}
   - template: /.pipelines/1ES/templates/windows-hosted-build.yml@self
     parameters:
       Architecture: fxdependentWinDesktop
       JobName: build_windows_fxdependentWinDesktop_release
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
 - stage: test_and_release_artifacts
   displayName: Test and Release Artifacts

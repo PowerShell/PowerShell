@@ -2,6 +2,7 @@ parameters:
   Architecture: 'x64'
   BuildConfiguration: 'release'
   JobName: 'build_windows'
+  OfficialBuild: false
 
 # 1ES PT translation of /.pipelines/templates/windows-hosted-build.yml.
 # Single Windows job that BOTH builds and signs (the OneBranch original is the same shape).
@@ -213,7 +214,7 @@ jobs:
   - template: /.pipelines/1ES/templates/obp-file-signing.yml@self
     parameters:
       binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
-      OfficialBuild: $(ps_official_build)
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   ## first we sign all the files in the bin folder
   - ${{ if eq(variables['Architecture'], 'fxdependent') }}:
@@ -221,73 +222,122 @@ jobs:
       parameters:
         binPath: '$(GlobalToolArtifactPath)/publish/PowerShell.Windows.x64/release'
         globalTool: 'true'
-        OfficialBuild: $(ps_official_build)
+        OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - pwsh: |
       Get-ChildItem '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
     displayName: Capture obj files
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
-  ## STUB (obj files): runs when no ESRP test variable group is attached.
-  ## Mirrors original `task: onebranch.pipeline.signing@1` with profile
-  ## `external_distribution` (PROD CP-230012). Signs obj files needed for the
-  ## global tool packaging step.
-  - pwsh: |
-      Write-Host '##[warning]STUB: would invoke ESRP signing with profile "external_distribution" (KeyCode CP-230012)'
-      Write-Host '  files_to_sign: **\*.dll;**\*.exe'
-      Write-Host '  search_root: $(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
-      if (Test-Path '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release') {
-        Get-ChildItem -Path '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release' -Recurse -Include '*.dll','*.exe' |
-          Select-Object -ExpandProperty FullName |
-          ForEach-Object { Write-Host "  Would sign: $_" }
-      }
-    displayName: 'Sign obj files (STUB — ESRP onboarding pending)'
-    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'), eq(variables['EsrpTestConnectionName'], ''))
+  ## PROD SIGNING (obj files): emitted ONLY for the Official pipeline
+  ## (OfficialBuild: true). Real ESRP 1P Authenticode of the global-tool obj
+  ## files via PowerShell-ESRP-Release against PROD KeyCode CP-230012.
+  - ${{ if eq(parameters.OfficialBuild, true) }}:
+    - task: EsrpCodeSigning@5
+      displayName: 'Sign obj files (ESRP prod signing)'
+      condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
+      inputs:
+        ConnectedServiceName: PowerShell-ESRP-Release
+        AppRegistrationClientId: $(EsrpProdAppRegClientId)
+        AppRegistrationTenantId: $(EsrpProdAppRegTenantId)
+        AuthAKVName: $(EsrpProdAuthAkvName)
+        AuthCertName: $(EsrpProdAuthCertName)
+        AuthSignCertName: $(EsrpProdAuthSignCertName)
+        FolderPath: $(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release
+        Pattern: '**/*.dll,**/*.exe'
+        UseMinimatch: true
+        signConfigType: inlineSignParams
+        inlineOperation: |
+          [
+            {
+              "keyCode": "CP-230012",
+              "operationSetCode": "SigntoolSign",
+              "parameters": [
+                { "parameterName": "OpusName", "parameterValue": "Microsoft" },
+                { "parameterName": "OpusInfo", "parameterValue": "http://www.microsoft.com" },
+                { "parameterName": "PageHash", "parameterValue": "/NPH" },
+                { "parameterName": "FileDigest", "parameterValue": "/fd \"SHA256\"" },
+                { "parameterName": "TimeStamp", "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256" }
+              ],
+              "toolName": "sign",
+              "toolVersion": "1.0"
+            },
+            {
+              "keyCode": "CP-230012",
+              "operationSetCode": "SigntoolVerify",
+              "parameters": [],
+              "toolName": "sign",
+              "toolVersion": "1.0"
+            }
+          ]
+        SessionTimeout: 60
+        MaxConcurrency: 50
+        MaxRetryAttempts: 5
+        PendingAnalysisWaitTimeoutMinutes: 5
 
-  ## REAL TEST SIGNING (obj files): runs only when EsrpSigningTest-PowerShell
-  ## variable group is attached. Uses MS-Sign Test KeyCode CP-466277 (same as
-  ## 1st-party path in obp-file-signing.yml — both are 1P Authenticode).
-  - task: EsrpCodeSigning@5
-    displayName: 'Sign obj files (ESRP test signing)'
-    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'), ne(variables['EsrpTestConnectionName'], ''))
-    inputs:
-      ConnectedServiceName: $(EsrpTestConnectionName)
-      AppRegistrationClientId: $(EsrpTestAppRegClientId)
-      AppRegistrationTenantId: $(EsrpTestAppRegTenantId)
-      AuthAKVName: $(EsrpTestAuthAkvName)
-      AuthCertName: $(EsrpTestAuthCertName)
-      AuthSignCertName: $(EsrpTestAuthSignCertName)
-      FolderPath: $(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release
-      Pattern: '**/*.dll,**/*.exe'
-      UseMinimatch: true
-      signConfigType: inlineSignParams
-      inlineOperation: |
-        [
-          {
-            "keyCode": "CP-466277",
-            "operationSetCode": "SigntoolSign",
-            "parameters": [
-              { "parameterName": "OpusName", "parameterValue": "Microsoft" },
-              { "parameterName": "OpusInfo", "parameterValue": "http://www.microsoft.com" },
-              { "parameterName": "PageHash", "parameterValue": "/NPH" },
-              { "parameterName": "FileDigest", "parameterValue": "/fd \"SHA256\"" },
-              { "parameterName": "TimeStamp", "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256" }
-            ],
-            "toolName": "sign",
-            "toolVersion": "1.0"
-          },
-          {
-            "keyCode": "CP-466277",
-            "operationSetCode": "SigntoolVerify",
-            "parameters": [],
-            "toolName": "sign",
-            "toolVersion": "1.0"
-          }
-        ]
-      SessionTimeout: 60
-      MaxConcurrency: 50
-      MaxRetryAttempts: 5
-      PendingAnalysisWaitTimeoutMinutes: 5
+  ## STUB / TEST SIGNING (obj files): emitted ONLY for the NonOfficial pipeline
+  ## (OfficialBuild: false). Preserves the existing hybrid unchanged.
+  - ${{ if ne(parameters.OfficialBuild, true) }}:
+    ## STUB (obj files): runs when no ESRP test variable group is attached.
+    ## Mirrors original `task: onebranch.pipeline.signing@1` with profile
+    ## `external_distribution` (PROD CP-230012). Signs obj files needed for the
+    ## global tool packaging step.
+    - pwsh: |
+        Write-Host '##[warning]STUB: would invoke ESRP signing with profile "external_distribution" (KeyCode CP-230012)'
+        Write-Host '  files_to_sign: **\*.dll;**\*.exe'
+        Write-Host '  search_root: $(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
+        if (Test-Path '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release') {
+          Get-ChildItem -Path '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release' -Recurse -Include '*.dll','*.exe' |
+            Select-Object -ExpandProperty FullName |
+            ForEach-Object { Write-Host "  Would sign: $_" }
+        }
+      displayName: 'Sign obj files (STUB — ESRP onboarding pending)'
+      condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'), eq(variables['EsrpTestConnectionName'], ''))
+
+    ## REAL TEST SIGNING (obj files): runs only when EsrpSigningTest-PowerShell
+    ## variable group is attached. Uses MS-Sign Test KeyCode CP-466277 (same as
+    ## 1st-party path in obp-file-signing.yml — both are 1P Authenticode).
+    - task: EsrpCodeSigning@5
+      displayName: 'Sign obj files (ESRP test signing)'
+      condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'), ne(variables['EsrpTestConnectionName'], ''))
+      inputs:
+        ConnectedServiceName: $(EsrpTestConnectionName)
+        AppRegistrationClientId: $(EsrpTestAppRegClientId)
+        AppRegistrationTenantId: $(EsrpTestAppRegTenantId)
+        AuthAKVName: $(EsrpTestAuthAkvName)
+        AuthCertName: $(EsrpTestAuthCertName)
+        AuthSignCertName: $(EsrpTestAuthSignCertName)
+        FolderPath: $(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release
+        Pattern: '**/*.dll,**/*.exe'
+        UseMinimatch: true
+        signConfigType: inlineSignParams
+        inlineOperation: |
+          [
+            {
+              "keyCode": "CP-466277",
+              "operationSetCode": "SigntoolSign",
+              "parameters": [
+                { "parameterName": "OpusName", "parameterValue": "Microsoft" },
+                { "parameterName": "OpusInfo", "parameterValue": "http://www.microsoft.com" },
+                { "parameterName": "PageHash", "parameterValue": "/NPH" },
+                { "parameterName": "FileDigest", "parameterValue": "/fd \"SHA256\"" },
+                { "parameterName": "TimeStamp", "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256" }
+              ],
+              "toolName": "sign",
+              "toolVersion": "1.0"
+            },
+            {
+              "keyCode": "CP-466277",
+              "operationSetCode": "SigntoolVerify",
+              "parameters": [],
+              "toolName": "sign",
+              "toolVersion": "1.0"
+            }
+          ]
+        SessionTimeout: 60
+        MaxConcurrency: 50
+        MaxRetryAttempts: 5
+        PendingAnalysisWaitTimeoutMinutes: 5
 
   - pwsh: |
       <#  The way the packaging works is a bit tricky as when it is built, we cannot add the modules that come from gallery.
@@ -375,26 +425,61 @@ jobs:
     displayName: 'Pack Windows.x64 global tool'
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
-  ## STUB-ONLY (nupkg): original was `task: onebranch.pipeline.signing@1` with
-  ## `cp_code: $(nuget_cert_id)` (PROD CP-401405, NuGet package signing).
-  ## This site stays STUB even in TEST MODE — no NuGet-compatible test KeyCode
-  ## is currently available in the MS test inventory. NuGet signing requires a
-  ## NuGet-specific cert (operationSetCode "NuGetSign"), and reusing the
-  ## Authenticode test codes (CP-466277 / CP-466279) would be rejected by ESRP
-  ## as "KeyCode not authorised for this operation".
-  ## To unblock: ask ESRP team for a NuGet test code, then add a sibling
-  ## EsrpCodeSigning@5 task here with `condition: ne(variables['EsrpTestConnectionName'], '')`
-  ## using operationSetCode "NuGetSign" / "NuGetVerify".
-  - pwsh: |
-      Write-Host '##[warning]STUB: would invoke ESRP signing with cp_code "$(nuget_cert_id)" (KeyCode CP-401405, NuGet)'
-      Write-Host '  files_to_sign: **\*.nupkg'
-      Write-Host '  search_root: $(ob_outputDirectory)\globaltool'
-      if (Test-Path '$(ob_outputDirectory)\globaltool') {
-        Get-ChildItem -Path '$(ob_outputDirectory)\globaltool' -Recurse -Filter '*.nupkg' |
-          Select-Object -ExpandProperty FullName |
-          ForEach-Object { Write-Host "  Would sign: $_" }
-      }
-    displayName: 'Sign nupkg files (STUB — no NuGet test KeyCode available)'
-    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
+  ## PROD SIGNING (nupkg): emitted ONLY for the Official pipeline
+  ## (OfficialBuild: true). Real ESRP NuGet signing via PowerShell-ESRP-Release
+  ## against PROD KeyCode CP-401405 (operationSetCode NuGetSign/NuGetVerify).
+  - ${{ if eq(parameters.OfficialBuild, true) }}:
+    - task: EsrpCodeSigning@5
+      displayName: 'Sign nupkg files (ESRP prod signing)'
+      condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
+      inputs:
+        ConnectedServiceName: PowerShell-ESRP-Release
+        AppRegistrationClientId: $(EsrpProdAppRegClientId)
+        AppRegistrationTenantId: $(EsrpProdAppRegTenantId)
+        AuthAKVName: $(EsrpProdAuthAkvName)
+        AuthCertName: $(EsrpProdAuthCertName)
+        AuthSignCertName: $(EsrpProdAuthSignCertName)
+        FolderPath: $(ob_outputDirectory)\globaltool
+        Pattern: '**/*.nupkg'
+        UseMinimatch: true
+        signConfigType: inlineSignParams
+        inlineOperation: |
+          [
+            {
+              "keyCode": "CP-401405",
+              "operationSetCode": "NuGetSign",
+              "parameters": [],
+              "toolName": "sign",
+              "toolVersion": "1.0"
+            },
+            {
+              "keyCode": "CP-401405",
+              "operationSetCode": "NuGetVerify",
+              "parameters": [],
+              "toolName": "sign",
+              "toolVersion": "1.0"
+            }
+          ]
+        SessionTimeout: 60
+        MaxConcurrency: 50
+        MaxRetryAttempts: 5
+        PendingAnalysisWaitTimeoutMinutes: 5
+
+  ## STUB (nupkg): emitted ONLY for the NonOfficial pipeline (OfficialBuild:
+  ## false). NuGet signing has no test KeyCode in the MS test inventory (the
+  ## Authenticode test codes CP-466277/CP-466279 would be rejected for the
+  ## NuGetSign operation), so this stays a Write-Host placeholder in NonOfficial.
+  - ${{ if ne(parameters.OfficialBuild, true) }}:
+    - pwsh: |
+        Write-Host '##[warning]STUB: would invoke ESRP signing with cp_code "$(nuget_cert_id)" (KeyCode CP-401405, NuGet)'
+        Write-Host '  files_to_sign: **\*.nupkg'
+        Write-Host '  search_root: $(ob_outputDirectory)\globaltool'
+        if (Test-Path '$(ob_outputDirectory)\globaltool') {
+          Get-ChildItem -Path '$(ob_outputDirectory)\globaltool' -Recurse -Filter '*.nupkg' |
+            Select-Object -ExpandProperty FullName |
+            ForEach-Object { Write-Host "  Would sign: $_" }
+        }
+      displayName: 'Sign nupkg files (STUB — no NuGet test KeyCode available)'
+      condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
   - template: /.pipelines/templates/step/finalize.yml@self
