@@ -435,6 +435,7 @@ function Start-PSPackage {
                         PackageSourcePath = $Source
                         Name = $Name
                         PackageNameSuffix = 'gc'
+                        Architecture = $Runtime.Split('-')[1]
                         Version = $Version
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
