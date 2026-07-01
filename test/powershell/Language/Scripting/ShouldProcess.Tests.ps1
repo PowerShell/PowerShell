@@ -69,4 +69,18 @@ Describe "ShouldProcess respects VerbosePreference" -Tags "CI","Feature" {
             }
         }
     }
+
+    Context "Debug switch" {
+        It "Does not emit verbose output when only -Debug is specified" {
+            # -Debug must not imply verbose for ShouldProcess: the effect of -Debug
+            # on the VerbosePreference property getter is intentionally excluded.
+            # -Confirm:$false keeps ShouldProcess on the auto-confirm path (which is
+            # where the verbose decision is made) and avoids an interactive prompt.
+            $output = Test-ShouldProcess -Debug -Confirm:$false 4>&1 5>&1
+
+            $output | Where-Object { $_ -eq "OK" } | Should -Not -BeNullOrEmpty
+            $verboseOutput = $output | Where-Object { $_ -is [System.Management.Automation.VerboseRecord] }
+            $verboseOutput | Should -BeNullOrEmpty
+        }
+    }
 }
