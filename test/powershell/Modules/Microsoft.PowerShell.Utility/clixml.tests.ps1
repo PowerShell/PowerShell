@@ -35,6 +35,26 @@ Describe "CliXml test" -Tags "CI" {
                 $this.testFile = $file
             }
         }
+
+        function Get-ExtendedMemberNames {
+            param([object] $InputObject)
+
+            @($InputObject | Get-Member -View Extended | Select-Object -ExpandProperty Name)
+        }
+
+        function New-TestErrorRecord {
+            try {
+                Write-Error foo -ErrorAction Stop
+            }
+            catch {
+                $_
+            }
+        }
+
+        function New-TestInformationRecord {
+            Write-Information foo -Tags test -InformationAction Continue -InformationVariable informationRecord 6>$null
+            $informationRecord[0]
+        }
     }
 
     AfterAll {
@@ -184,6 +204,28 @@ Describe "CliXml test" -Tags "CI" {
             $cred.UserName | Should -BeExactly "Foo"
             $cred.Password | Should -BeOfType System.Security.SecureString
         }
+
+        It "does not add remoting serialization members to ErrorRecord input" {
+            $filePath = Join-Path $subFilePath 'error.xml'
+            $errorRecord = New-TestErrorRecord
+            $before = Get-ExtendedMemberNames $errorRecord
+
+            $errorRecord | Export-Clixml -Path $filePath
+
+            $after = Get-ExtendedMemberNames $errorRecord
+            @($after | Where-Object { $_ -notin $before }) | Should -BeNullOrEmpty
+        }
+
+        It "does not add remoting serialization members to InformationRecord input" {
+            $filePath = Join-Path $subFilePath 'information.xml'
+            $informationRecord = New-TestInformationRecord
+            $before = Get-ExtendedMemberNames $informationRecord
+
+            $informationRecord | Export-Clixml -Path $filePath
+
+            $after = Get-ExtendedMemberNames $informationRecord
+            @($after | Where-Object { $_ -notin $before }) | Should -BeNullOrEmpty
+        }
     }
 
     Context "ConvertTo-CliXml"{
@@ -231,6 +273,26 @@ Describe "CliXml test" -Tags "CI" {
             }
 
             $isExisted | Should -BeTrue
+        }
+
+        It "does not add remoting serialization members to ErrorRecord input" {
+            $errorRecord = New-TestErrorRecord
+            $before = Get-ExtendedMemberNames $errorRecord
+
+            $null = $errorRecord | ConvertTo-CliXml
+
+            $after = Get-ExtendedMemberNames $errorRecord
+            @($after | Where-Object { $_ -notin $before }) | Should -BeNullOrEmpty
+        }
+
+        It "does not add remoting serialization members to InformationRecord input" {
+            $informationRecord = New-TestInformationRecord
+            $before = Get-ExtendedMemberNames $informationRecord
+
+            $null = $informationRecord | ConvertTo-CliXml
+
+            $after = Get-ExtendedMemberNames $informationRecord
+            @($after | Where-Object { $_ -notin $before }) | Should -BeNullOrEmpty
         }
     }
 
