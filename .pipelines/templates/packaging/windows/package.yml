@@ -105,7 +105,7 @@ jobs:
 
       Find-Dotnet
 
-      $signedFilesPath, $psoptionsFilePath = if ($env:RUNTIME.Contains('minsize')) {
+      $signedFilesPath, $psoptionsFilePath = if ($runtime.Contains('minsize')) {
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}\$signedFolder"
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}\psoptions\psoptions.json"
         }

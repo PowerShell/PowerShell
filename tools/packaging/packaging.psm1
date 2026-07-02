@@ -77,8 +77,8 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ($Type -eq 'zip' -or $Type -like 'min-size*' -or $Type -like 'fxdependent*') {
-            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
+        if ($Type -contains 'zip' -or $Type -like 'min-size*' -or $Type -like 'fxdependent*') {
+            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is essentially a 'zip' package.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
@@ -446,6 +446,9 @@ function Start-PSPackage {
                     if ($PSCmdlet.ShouldProcess("Create min-size tar.gz Package")) {
                         New-TarballPackage @Arguments
                     }
+                }
+                else {
+                    throw "The 'min-size*' package types are supported only on Windows and Linux."
                 }
             }
             { $_ -like "fxdependent*" } {
