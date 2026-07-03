@@ -16,7 +16,8 @@ namespace Microsoft.PowerShell.Commands
         VerbsCommon.New,
         "TemporaryDirectory",
         SupportsShouldProcess = true,
-        ConfirmImpact = ConfirmImpact.Low)]
+        ConfirmImpact = ConfirmImpact.Low,
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097032")]
     [OutputType(typeof(DirectoryInfo))]
     public class NewTemporaryDirectoryCommand : Cmdlet
     {
