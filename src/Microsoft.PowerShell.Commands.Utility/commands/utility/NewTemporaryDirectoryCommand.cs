@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                CreateWithoutPrefix(tempPath);
+                CreateWithoutPrefix();
             }
         }
 
@@ -60,58 +60,89 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateWithPrefix(string tempPath)
         {
-            string targetDescription = $"Temp directory with prefix '{Prefix}' under '{tempPath}'";
-            if (!ShouldProcess(targetDescription))
+            DirectoryInfo prefixedTargetDirectory = GetTemporaryDirectoryWithPrefix(tempPath, Prefix);
+            if (!ShouldProcess(prefixedTargetDirectory.FullName))
             {
                 return;
             }
 
             try
             {
-                DirectoryInfo createdDirectory = Directory.CreateTempSubdirectory(Prefix);
+                DirectoryInfo createdDirectory = CreateTemporaryDirectory(prefixedTargetDirectory.FullName);
                 WriteObject(createdDirectory);
             }
             catch (IOException ioException)
             {
-                ThrowTerminatingError(CreateErrorRecord(ioException, ErrorCategory.WriteError, targetDescription));
+                ThrowTerminatingError(CreateErrorRecord(ioException, ErrorCategory.WriteError, prefixedTargetDirectory.FullName));
             }
             catch (UnauthorizedAccessException unauthorizedAccessException)
             {
-                ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, targetDescription));
+                ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, prefixedTargetDirectory.FullName));
             }
         }
 
-        private void CreateWithoutPrefix(string tempPath)
+        private void CreateWithoutPrefix()
         {
-            string targetDescription = $"Temp directory under '{tempPath}'";
-            if (!ShouldProcess(targetDescription))
+            // Reuse the shared helper introduced alongside this cmdlet so the
+            // directory generation logic stays in one place.
+            DirectoryInfo targetDirectory = PathUtils.GetTemporaryDirectory();
+            if (!ShouldProcess(targetDirectory.FullName))
             {
                 return;
             }
 
             try
             {
-                // Loop until we find a non-existent directory name to avoid race conditions,
-                // matching the pattern used by PathUtils.CreateTemporaryDirectory().
-                DirectoryInfo targetDirectory;
-                do
-                {
-                    targetDirectory = new DirectoryInfo(
-                        Path.Combine(tempPath, Path.GetRandomFileName()));
-                }
-                while (targetDirectory.Exists);
-
-                DirectoryInfo created = Directory.CreateDirectory(targetDirectory.FullName);
-                WriteObject(created);
+                DirectoryInfo createdDirectory = CreateTemporaryDirectory(targetDirectory.FullName);
+                WriteObject(createdDirectory);
             }
             catch (IOException ioException)
             {
-                ThrowTerminatingError(CreateErrorRecord(ioException, ErrorCategory.WriteError, tempPath));
+                ThrowTerminatingError(CreateErrorRecord(ioException, ErrorCategory.WriteError, targetDirectory.FullName));
             }
             catch (UnauthorizedAccessException unauthorizedAccessException)
             {
-                ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, tempPath));
+                ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, targetDirectory.FullName));
             }
+        }
+
+        private static DirectoryInfo GetTemporaryDirectoryWithPrefix(string tempPath, string prefix)
+        {
+            // The [ValidatePattern] attribute already rejects path separator
+            // characters, but guard here too so the invariant holds even if
+            // the parameter binding ever changes.
+            if (prefix.Contains(Path.DirectorySeparatorChar) || prefix.Contains(Path.AltDirectorySeparatorChar))
+            {
+                throw new ArgumentException(
+                    "The prefix cannot contain directory separator characters.",
+                    nameof(prefix));
+            }
+
+            DirectoryInfo temporaryDirectory = new(tempPath);
+            while (true)
+            {
+                DirectoryInfo targetDirectory = new(
+                    Path.Combine(
+                        temporaryDirectory.FullName,
+                        prefix + Path.GetRandomFileName()));
+
+                if (!targetDirectory.Exists)
+                {
+                    return targetDirectory;
+                }
+            }
+        }
+
+        private static DirectoryInfo CreateTemporaryDirectory(string path)
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                return Directory.CreateDirectory(path);
+            }
+
+            return Directory.CreateDirectory(
+                path,
+                UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         }
     }
 }
