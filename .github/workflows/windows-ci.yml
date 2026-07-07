@@ -6,6 +6,7 @@ on:
       - master
       - release/**
       - github-mirror
+      - "servicing-*"
     paths:
       - "**"
       - "!.vsts-ci/misc-analysis.yml"
@@ -18,6 +19,7 @@ on:
       - master
       - release/**
       - github-mirror
+      - "servicing-*"
       - "*-feature"
 
 # Path filters for PRs need to go into the changes job
