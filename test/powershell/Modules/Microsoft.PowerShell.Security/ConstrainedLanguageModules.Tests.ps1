@@ -623,7 +623,7 @@ try
 
         It "Verifies that an untrusted manifest with a trusted module will not load under system lockdown" {
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                Set-ItResult -Inconclusive -Because "https://github.com/PowerShell/PowerShell/issues/20169"
                 return
             }
 
@@ -709,7 +709,7 @@ try
 
         It "Verifies that an untrusted module with nested trusted modules cannot load in a locked down system" {
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                Set-ItResult -Inconclusive -Because "https://github.com/PowerShell/PowerShell/issues/20169"
                 return
             }
 
@@ -751,7 +751,7 @@ try
 
         It "Verifies that an untrusted manifest containing all trusted modules does not load under system lock down" {
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                Set-ItResult -Inconclusive -Because "https://github.com/PowerShell/PowerShell/issues/20169"
                 return
             }
 
@@ -1332,7 +1332,7 @@ try
 
         It "Verifies that importing untrusted manifest in lock down mode exports all functions by default" {
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                Set-ItResult -Inconclusive -Because "https://github.com/PowerShell/PowerShell/issues/20169"
                 return
             }
 
@@ -1399,7 +1399,7 @@ try
 
         It "Verifies that importing untrusted module file in lock down mode exports all functions by default" {
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                Set-ItResult -Inconclusive -Because "https://github.com/PowerShell/PowerShell/issues/20169"
                 return
             }
 
@@ -1561,7 +1561,7 @@ try
 
         It "New-Module succeeds in creating module with untrusted scriptblock in ConstrainedLanguage" {
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                Set-ItResult -Inconclusive -Because "https://github.com/PowerShell/PowerShell/issues/20169"
                 return
             }
 

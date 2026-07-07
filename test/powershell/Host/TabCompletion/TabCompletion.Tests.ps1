@@ -3498,7 +3498,7 @@ dir -Recurse `
             param($inputStr, $expected)
 
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "TBD"
+                Set-ItResult -Inconclusive -Because "TBD"
             }
 
 

@@ -85,7 +85,7 @@ Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') 
 
     It "Help doesn't fail when strict mode is on" {
         if ((Test-IsWindowsArm64) -or [Console]::IsOutputRedirected) {
-            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+            Set-ItResult -Inconclusive -Because "IOException: The handle is invalid."
         }
 
 
@@ -470,7 +470,7 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
 Describe "help function uses full view by default" -Tags "CI" {
     It "help should return full view without -Full switch" {
         if ((Test-IsWindowsArm64) -or [Console]::IsOutputRedirected) {
-            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+            Set-ItResult -Inconclusive -Because "IOException: The handle is invalid."
         }
 
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
@@ -479,7 +479,7 @@ Describe "help function uses full view by default" -Tags "CI" {
 
     It "help should return full view even with -Full switch" {
         if ((Test-IsWindowsArm64) -or [Console]::IsOutputRedirected) {
-            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+            Set-ItResult -Inconclusive -Because "IOException: The handle is invalid."
         }
 
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
@@ -488,7 +488,7 @@ Describe "help function uses full view by default" -Tags "CI" {
 
     It "help should not append -Full when not using AllUsersView parameter set" {
         if ((Test-IsWindowsArm64) -or [Console]::IsOutputRedirected) {
-            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+            Set-ItResult -Inconclusive -Because "IOException: The handle is invalid."
         }
 
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)

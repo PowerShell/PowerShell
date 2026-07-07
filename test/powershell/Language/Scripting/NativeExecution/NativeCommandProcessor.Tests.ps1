@@ -146,7 +146,7 @@ Describe "Native Command Processor" -tags "Feature" {
 
     It "Should not block running Windows executables" -Skip:(!$IsWindows -or !(Get-Command notepad.exe)) {
         if (Test-IsWindowsArm64) {
-            Set-ItResult -Pending -Because "Needs investigation"
+            Set-ItResult -Inconclusive -Because "Needs investigation"
         }
 
         function FindNewNotepad
@@ -368,7 +368,7 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
 
     It "Should run 'whoami.exe' from FAT file system without error" -Skip:(!$IsWindows) {
         if ((Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
-            Set-ItResult -Pending -Because "Marking as pending since whomai.exe is not found on T:\ on 2012R2 and 2016 after copying to VHD"
+            Set-ItResult -Inconclusive -Because "Marking as pending since whomai.exe is not found on T:\ on 2012R2 and 2016 after copying to VHD"
             return
         }
 
@@ -393,7 +393,7 @@ Describe "Native application invocation and getting cursor position" -Tags 'CI' 
         }
         if ($missing.count -ne 0) {
             $message = "missing command(s) {0}" -f ($missing -join ", ")
-            Set-ItResult -Pending -Because $message
+            Set-ItResult -Inconclusive -Because $message
         }
 
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"

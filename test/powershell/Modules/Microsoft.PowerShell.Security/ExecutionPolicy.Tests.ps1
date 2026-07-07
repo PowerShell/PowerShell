@@ -669,7 +669,7 @@ ZoneId=$FileType
 
                 if ($shouldMarkAsPending)
                 {
-                    Set-ItResult -Pending -Because "Test is unreliable"
+                    Set-ItResult -Inconclusive -Because "Test is unreliable"
                 }
 
                 $execPolicy = Get-ExecutionPolicy -List | Out-String

@@ -967,7 +967,7 @@ try
 
         It "Verifies a scriptblock from a trusted script file does not run as trusted" {
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                Set-ItResult -Inconclusive -Because "https://github.com/PowerShell/PowerShell/issues/20169"
                 return
             }
 

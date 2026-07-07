@@ -227,7 +227,7 @@ function RunUpdateHelpTests
             }) {
 
                 if ($markAsPending -or ($IsLinux -and $moduleName -eq "PackageManagement")) {
-                    Set-ItResult -Pending -Because "Update-Help from the web has intermittent connectivity issues. See issues #2807 and #6541."
+                    Set-ItResult -Inconclusive -Because "Update-Help from the web has intermittent connectivity issues. See issues #2807 and #6541."
                     return
                 }
 

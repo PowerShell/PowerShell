@@ -73,7 +73,7 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
 
         It 'Does not get truncated or split when redirected' {
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "IOException: The handle is invalid."
+                Set-ItResult -Inconclusive -Because "IOException: The handle is invalid."
             }
 
             $longtext = "0123456789"

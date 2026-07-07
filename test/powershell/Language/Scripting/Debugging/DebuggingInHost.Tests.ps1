@@ -4,11 +4,10 @@
 Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM host process" -Tags "CI" -Skip {
 
     It "Disabled test because it is fragile and does not consistently succeed on test VMs" { }
-    BeforeAll {
-        return
-    }
 
     BeforeAll {
+        return
+
         # Create PSSession
         $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
         $rs = [runspacefactory]::CreateRunspace($Host, $wc)

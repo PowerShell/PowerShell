@@ -80,7 +80,7 @@ Describe 'Group policy settings tests' -Tags @('CI', 'RequireAdminOnWindows') -S
 
         It 'Module logging policy test' {
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "There is no PowerShellCore event provider on ARM64 until we have an MSI"
+                Set-ItResult -Inconclusive -Because "There is no PowerShellCore event provider on ARM64 until we have an MSI"
             }
 
             function TestFeature
@@ -130,7 +130,7 @@ Describe 'Group policy settings tests' -Tags @('CI', 'RequireAdminOnWindows') -S
 
         It 'ScriptBlock logging policy test' {
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "There is no PowerShellCore event provider on ARM64 until we have an MSI"
+                Set-ItResult -Inconclusive -Because "There is no PowerShellCore event provider on ARM64 until we have an MSI"
             }
 
             function TestFeature

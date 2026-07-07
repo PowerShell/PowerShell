@@ -94,7 +94,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     It "Clear-Host does not injects data into PowerShell output stream" {
         if (Test-IsWindowsArm64) {
-            Set-ItResult -Pending -Because "ARM64 runs in non-interactively mode and Clear-Host does not work."
+            Set-ItResult -Inconclusive -Because "ARM64 runs in non-interactively mode and Clear-Host does not work."
         }
 
         & { Clear-Host; 'hi' } | Should -BeExactly 'hi'
@@ -868,7 +868,7 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     Context "ApartmentState WPF tests" -Tag Slow {
 
         It "WPF requires STA and will work" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
-            Set-ItResult -Pending -Because "Disabled due to issue - https://github.com/dotnet/wpf/issues/11651 in .NET 11 Preview 5"
+            Set-ItResult -Inconclusive -Because "Disabled due to issue - https://github.com/dotnet/wpf/issues/11651 in .NET 11 Preview 5"
 
             Add-Type -AssemblyName presentationframework
 
@@ -1063,7 +1063,7 @@ public enum ShowWindowCommands : int
         param ($WindowStyle)
 
         if (Test-IsWindowsArm64) {
-            Set-ItResult -Pending -Because "All windows are showing up as hidden or ARM64"
+            Set-ItResult -Inconclusive -Because "All windows are showing up as hidden or ARM64"
         }
 
         try {

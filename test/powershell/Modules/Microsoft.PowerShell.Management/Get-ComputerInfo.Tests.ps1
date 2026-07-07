@@ -1244,7 +1244,7 @@ Describe "Tests for Get-ComputerInfo" -tags "Feature", "RequireAdminOnWindows" -
             param ( $property )
 
             if ($excludedProperties -contains $property) {
-                Set-ItResult -Pending -Because "'$property' is not available in nightly builds"
+                Set-ItResult -Inconclusive -Because "'$property' is not available in nightly builds"
             }
 
             $specialProperties = "CsNetworkAdapters","CsProcessors","OsHotFixes"

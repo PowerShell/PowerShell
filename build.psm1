@@ -1139,9 +1139,9 @@ function Restore-PSPester
 {
     <#
     .SYNOPSIS
-        Downloads and saves the Pester module (v4.x) from the PowerShell Gallery.
+        Downloads and saves the Pester module (v6.x) from the PowerShell Gallery.
     .DESCRIPTION
-        Uses Save-Module to install Pester up to version 4.99 into the target directory.
+        Uses Save-Module to install Pester version 6.0.0 into the target directory.
     .PARAMETER Destination
         Directory to save Pester into. Defaults to the Modules folder of the current build output.
     #>
@@ -1149,7 +1149,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion 5.7.1
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion 6.0.0
 }
 
 function Compress-TestContent {
@@ -1842,6 +1842,9 @@ function Start-PSPester {
     if ( $PassThru ) {
         $runProps += "; PassThru = `$true"
     }
+    # Pester 6 fails discovery on an empty/`$null -ForEach or -TestCases by default.
+    # Keep the Pester 5 behavior (empty set = zero tests, no error) for this suite.
+    $runProps += "; FailOnNullOrEmptyForEach = `$false"
 
     $command += "`$pesterConfig = [PesterConfiguration]@{"
     $command += " Run = @{ ${runProps} }"

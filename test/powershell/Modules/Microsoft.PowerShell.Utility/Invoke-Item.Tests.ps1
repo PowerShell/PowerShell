@@ -214,7 +214,7 @@ Categories=Application;
             if ($IsWindows)
             {
                 if (Test-IsWindowsArm64) {
-                    Set-ItResult -Pending -Because "Shell.Application errors with COMException: The server process could not be started because the configured identity is incorrect. Check the username and password."
+                    Set-ItResult -Inconclusive -Because "Shell.Application errors with COMException: The server process could not be started because the configured identity is incorrect. Check the username and password."
                 }
 
                 $shell = New-Object -ComObject "Shell.Application"
