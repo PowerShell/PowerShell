@@ -894,7 +894,7 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
             -RequiredVersion $RequiredVersion
     }
 
-    It "Gets the module when a relative path is used in a module specification: <ModPath>" -TestCases $relativePathCases -Pending {
+    It "Gets the module when a relative path is used in a module specification: <ModPath>" -TestCases $relativePathCases -Skip {
         param([string]$Location, [string]$ModPath)
 
         # Resolve Discovery-time placeholder with actual $TestDrive

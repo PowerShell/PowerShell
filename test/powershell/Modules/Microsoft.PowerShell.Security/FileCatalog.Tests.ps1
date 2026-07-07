@@ -150,7 +150,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             CompareHashTables $result.CatalogItems $expectedPathsAndHashes
         }
 
-        It "NewFileCatalogWithMultipleFoldersAndFiles" -Pending {
+        It "NewFileCatalogWithMultipleFoldersAndFiles" -Skip {
 
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "748E5486814051DA3DFB79FE8964152727213248" ;
@@ -188,7 +188,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             CompareHashTables $result.CatalogItems $expectedPathsAndHashes
         }
 
-        It "NewFileCatalogVersion2WithMultipleFoldersAndFiles" -Pending {
+        It "NewFileCatalogVersion2WithMultipleFoldersAndFiles" -Skip {
 
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "9FFE4CA2873CD91CDC9D71362526446ECACDA64D26DEA768E6CE489B84D888E4" ;
@@ -227,7 +227,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
         }
 
         # This is failing saying the exact thing that it says is supposed to work does not
-        It "Test-FileCatalog should pass when catalog is in the same folder as files being tested" -Pending {
+        It "Test-FileCatalog should pass when catalog is in the same folder as files being tested" -Skip {
 
             $catalogPath = "$env:TEMP\UserConfigProv\catalog.cat"
             try
@@ -255,7 +255,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $result | Should -Be "Valid"
         }
 
-        It "NewFileCatalogWithUnicodeCharactersInFileNames" -Pending {
+        It "NewFileCatalogWithUnicodeCharactersInFileNames" -Skip {
 
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "9FFE4CA2873CD91CDC9D71362526446ECACDA64D26DEA768E6CE489B84D888E4" ;

@@ -819,7 +819,7 @@ Describe 'Type building' -Tags "CI" {
         }
     }
 
-    It 'should create a new type every time scriptblock executed?' -Pending {
+    It 'should create a new type every time scriptblock executed?' -Skip {
         $sb = [scriptblock]::Create('class A {static [int] $a }; [A]::new()')
         1..2 | ForEach-Object {
         $a = $sb.Invoke()[0]
@@ -839,7 +839,7 @@ Describe 'Type building' -Tags "CI" {
 
 Describe 'RuntimeType created for TypeDefinitionAst' -Tags "CI" {
 
-    It 'can make cast to the right RuntimeType in two different contexts' -Pending {
+    It 'can make cast to the right RuntimeType in two different contexts' -Skip {
 
         $ssfe = [System.Management.Automation.Runspaces.SessionStateFunctionEntry]::new("foo", @'
 class Base

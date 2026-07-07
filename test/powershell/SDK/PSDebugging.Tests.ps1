@@ -74,7 +74,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process.ExitCode | Should -Be 0
     }
 
-    It -Pending "Should be able to list help for debugging" {
+    It -Skip "Should be able to list help for debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n")
@@ -140,7 +140,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process.ExitCode | Should -Be 0
     }
 
-    It -Pending "Should be able to list source code in debugging" {
+    It -Skip "Should be able to list source code in debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n") | Write-Host
@@ -162,7 +162,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
 
     }
 
-    It -Pending "Should be able to get the call stack in debugging" {
+    It -Skip "Should be able to get the call stack in debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n") | Write-Host

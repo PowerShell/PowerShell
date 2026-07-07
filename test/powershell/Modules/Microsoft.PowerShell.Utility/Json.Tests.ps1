@@ -103,7 +103,7 @@ Describe "Json Tests" -Tags "Feature" {
             $response.d.Name.First | Should -Match "Joel"
         }
 
-        It "Convert to Json using PSObject" -Pending:($IsCoreCLR) {
+        It "Convert to Json using PSObject" -Skip:($IsCoreCLR) {
 
             $response = ConvertFrom-Json '{"d":{"__type":"SimpleJsonObject","Name":{"First":"Joel","Last":"Wood"},"Greeting":"Hello"}}'
 
@@ -163,7 +163,7 @@ Describe "Json Tests" -Tags "Feature" {
             $response2 | Should -Be $result3
         }
 
-        It "Convert to Json using hashtable" -Pending:($IsCoreCLR) {
+        It "Convert to Json using hashtable" -Skip:($IsCoreCLR) {
 
             $nameHash = @{First="Joe1";Last="Wood"}
             $dHash = @{Name=$nameHash; Greeting="Hello"}

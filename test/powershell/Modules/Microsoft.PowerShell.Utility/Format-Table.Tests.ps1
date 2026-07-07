@@ -65,7 +65,7 @@ Describe "Format-Table" -Tags "CI" {
         }
 
         # Pending on issue#888
-        It "Format-Table with Zero Count should work" -Pending {
+        It "Format-Table with Zero Count should work" -Skip {
                 $FormatEnumerationLimit = 0
                 $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result | Out-String
@@ -94,7 +94,7 @@ Describe "Format-Table" -Tags "CI" {
         }
 
         # Pending on issue#888
-        It "Format-Table with Bogus Count should throw Exception" -Pending {
+        It "Format-Table with Bogus Count should throw Exception" -Skip {
                 $FormatEnumerationLimit = "abc"
                 $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result|Out-String
@@ -102,7 +102,7 @@ Describe "Format-Table" -Tags "CI" {
         }
 
         # Pending on issue#888
-        It "Format-Table with Var Deleted should throw Exception" -Pending {
+        It "Format-Table with Var Deleted should throw Exception" -Skip {
                 $FormatEnumerationLimit = 2
                 Remove-Variable FormatEnumerationLimit
                 $result = Format-Table -InputObject @{'test'= 1, 2}

@@ -566,7 +566,7 @@ export $envVarName='$guid'
         # All of the following tests replace the prompt (either via an initial command or interactively)
         # so that we can read StandardOutput and reliably know exactly what the prompt is.
 
-        It "Interactive redirected input: <InteractiveSwitch>" -Pending:($IsWindows) -TestCases @(
+        It "Interactive redirected input: <InteractiveSwitch>" -Skip:($IsWindows) -TestCases @(
             @{InteractiveSwitch = ""}
             @{InteractiveSwitch = " -IntERactive"}
             @{InteractiveSwitch = " -i"}
@@ -593,7 +593,7 @@ export $envVarName='$guid'
             EnsureChildHasExited $process
         }
 
-        It "Interactive redirected input w/ initial command" -Pending:($IsWindows) {
+        It "Interactive redirected input w/ initial command" -Skip:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS> ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
@@ -607,7 +607,7 @@ export $envVarName='$guid'
             EnsureChildHasExited $process
         }
 
-        It "Redirected input explicit prompting (-File -)" -Pending:($IsWindows) {
+        It "Redirected input explicit prompting (-File -)" -Skip:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$function:prompt = { 'PS> ' }`n")
@@ -620,7 +620,7 @@ export $envVarName='$guid'
             EnsureChildHasExited $process
         }
 
-        It "Redirected input no prompting (-Command -)" -Pending:($IsWindows) {
+        It "Redirected input no prompting (-Command -)" -Skip:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -Command -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
@@ -653,7 +653,7 @@ foo
             EnsureChildHasExited $process
         }
 
-        It "Redirected input w/ nested prompt" -Pending:($IsWindows) {
+        It "Redirected input w/ nested prompt" -Skip:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$NestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$PSStyle.OutputRendering='plaintext'`n")
@@ -1055,7 +1055,7 @@ public enum ShowWindowCommands : int
 "@
     }
 
-    It "-WindowStyle <WindowStyle> should work on Windows" -Pending -TestCases @(
+    It "-WindowStyle <WindowStyle> should work on Windows" -Skip -TestCases @(
             @{WindowStyle="Normal"},
             @{WindowStyle="Minimized"},
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core

@@ -82,7 +82,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' -Skip:$sc
         Compare-Object $module ($module | Get-Module) | Should -BeNullOrEmpty
     }
 
-    It "New-CimSession works" -Pending {
+    It "New-CimSession works" -Skip {
         # enable all CimSession tests once https://github.com/PowerShell/PowerShell/issues/4819 is fixed
     }
 }

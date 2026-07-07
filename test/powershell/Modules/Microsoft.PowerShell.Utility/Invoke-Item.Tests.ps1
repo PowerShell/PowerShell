@@ -106,7 +106,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
 
         ## Run this test only on macOS because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
         ## causing this test to fail or the build to not respond.
-        It "Should invoke text file '<Name>' without error on Mac" -Pending -TestCases $textFileTestCases {
+        It "Should invoke text file '<Name>' without error on Mac" -Skip -TestCases $textFileTestCases {
             param($TestFile)
 
             $expectedTitle = Split-Path $TestFile -Leaf

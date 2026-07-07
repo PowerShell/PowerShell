@@ -19,12 +19,12 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       $result | Should -BeExactly "ExpectedContent"
     }
 
-    It "should Add-Content to TestDrive:\dynamicfile.txt with dynamic parameters" -Pending:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
+    It "should Add-Content to TestDrive:\dynamicfile.txt with dynamic parameters" -Skip:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
       $result = Add-Content -Path TestDrive:\dynamicfile.txt -Value "ExpectedContent" -PassThru
       $result | Should -BeExactly "ExpectedContent"
     }
 
-    It "should return expected string from TestDrive:\dynamicfile.txt" -Pending:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
+    It "should return expected string from TestDrive:\dynamicfile.txt" -Skip:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
       $result = Get-Content -Path TestDrive:\dynamicfile.txt
       $result | Should -BeExactly "ExpectedContent"
     }
@@ -77,7 +77,7 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
     }
 
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 9058182)]
-    It "should be able to pass multiple [string]`$objects to Add-Content through the pipeline to output a dynamic Path file" -Pending:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
+    It "should be able to pass multiple [string]`$objects to Add-Content through the pipeline to output a dynamic Path file" -Skip:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
       "hello","world" | Add-Content -Path TestDrive:\dynamicfile2.txt
       $result = Get-Content -Path TestDrive:\dynamicfile2.txt
       $result.length | Should -Be 2

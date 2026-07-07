@@ -120,7 +120,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
 
         # In VSTS, address is 0.0.0.0
         # This test is marked as PENDING as .NET Core does not return correct PingOptions from ping request
-        It "Force IPv4 with explicit PingOptions" -Pending {
+        It "Force IPv4 with explicit PingOptions" -Skip {
             $result1 = Test-Connection $testAddress -Count 1 -IPv4 -MaxHops 10 -DontFragment
 
             # explicitly go to google dns. this test will pass even if the destination is unreachable
@@ -148,7 +148,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
             # IPv6 tests are marked pending because while the functionality is present
             # and works in local testing, it is not functional in CI. There appears to
             # be a lack of or inconsistent support for IPv6 in CI environments.
-            It "Allows us to Force IPv6" -Pending {
+            It "Allows us to Force IPv6" -Skip {
                 $result = Test-Connection $targetName -IPv6 -Count 4 |
                     Where-Object Status -EQ Success |
                     Select-Object -First 1
@@ -157,7 +157,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
                 $result.Reply.Options | Should -Not -BeNullOrEmpty
             }
 
-            It 'can convert IPv6 addresses to IPv4 with -IPv4 parameter' -Pending {
+            It 'can convert IPv6 addresses to IPv4 with -IPv4 parameter' -Skip {
                 $result = Test-Connection '2001:4860:4860::8888' -IPv4 -Count 4 |
                     Where-Object Status -EQ Success |
                     Select-Object -First 1
@@ -166,7 +166,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
                 $result.Address.AddressFamily | Should -BeExactly 'InterNetwork'
             }
 
-            It 'can convert IPv4 addresses to IPv6 with -IPv6 parameter' -Pending {
+            It 'can convert IPv4 addresses to IPv6 with -IPv6 parameter' -Skip {
                 $result = Test-Connection '8.8.8.8' -IPv6 -Count 4 |
                     Where-Object Status -EQ Success |
                     Select-Object -First 1
@@ -313,7 +313,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
     }
 
     Context "TraceRoute" {
-        It "TraceRoute works" -Pending {
+        It "TraceRoute works" -Skip {
             # real address is an ipv4 address, so force IPv4
             $result = Test-Connection $testAddress -TraceRoute -IPv4
 

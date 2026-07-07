@@ -13,9 +13,9 @@ Describe "Simple ItemProperty Tests" -Tag "CI" {
     }
     # these cmdlets are targeted at the windows registry, and don't have an linux equivalent
     Context "Registry targeted cmdlets" {
-        It "Copy ItemProperty" -Pending { }
-        It "Move ItemProperty" -Pending { }
-        It "New ItemProperty" -Pending { }
-        It "Rename ItemProperty" -Pending { }
+        It "Copy ItemProperty" -Skip { }
+        It "Move ItemProperty" -Skip { }
+        It "New ItemProperty" -Skip { }
+        It "Rename ItemProperty" -Skip { }
     }
 }

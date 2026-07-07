@@ -883,7 +883,7 @@ ZoneId=$FileType
                 }
             }
 
-            It "Test 'AllSigned' execution policy. Running <testScript> Script should throw '<errorId>'" -TestCases $pendingTestData -Pending  {}
+            It "Test 'AllSigned' execution policy. Running <testScript> Script should throw '<errorId>'" -TestCases $pendingTestData -Skip  {}
 
             It "Test 'AllSigned' execution policy. Running <testScript> Script should throw '<errorId>'" -TestCases $scriptTestData  {
                 param ([string]$testScript, [string]$errorId)

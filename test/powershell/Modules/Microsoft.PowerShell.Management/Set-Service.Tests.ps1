@@ -175,7 +175,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         $newServiceCommand.$parameter | Should -Be $value
     }
 
-    It "Set-Service can change credentials of a service" -Pending {
+    It "Set-Service can change credentials of a service" -Skip {
         try {
             $startUsername = "user1"
             $endUsername = "user2"
@@ -305,7 +305,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | Should -Throw -ErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
     }
 
-    It "Get-Service can get the '<property>' of a service" -Pending -TestCases @(
+    It "Get-Service can get the '<property>' of a service" -Skip -TestCases @(
         @{property = "Description";    value = "This is a test description"}
         @{property = "BinaryPathName"; value = "$PSHOME\powershell.exe";},
         @{property = "UserName";       value = $creds.UserName; parameters = @{ Credential = $creds }},

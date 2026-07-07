@@ -44,7 +44,7 @@ Describe "Set-Location" -Tags "CI" {
     }
 
     # https://github.com/PowerShell/PowerShell/issues/5752
-    It "Should accept path containing wildcard characters" -Pending {
+    It "Should accept path containing wildcard characters" -Skip {
         $null = New-Item -ItemType Directory -Path "$TestDrive\aa"
         $null = New-Item -ItemType Directory -Path "$TestDrive\ba"
         $testPath = New-Item -ItemType Directory -Path "$TestDrive\[ab]a"

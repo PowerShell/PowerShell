@@ -447,7 +447,7 @@ Describe "Remove-Module custom module with FullyQualifiedName" -Tags "Feature" {
         New-ModuleManifest -Path $manifestPath -ModuleVersion $moduleVersion
     }
 
-    It "Removes a module with fully qualified name with path <ModPath>" -TestCases $testCases -Pending {
+    It "Removes a module with fully qualified name with path <ModPath>" -TestCases $testCases -Skip {
         param([string]$ModPath)
 
         Get-Module $moduleName | Remove-Module

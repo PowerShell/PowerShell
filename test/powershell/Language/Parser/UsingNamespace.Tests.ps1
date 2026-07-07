@@ -51,7 +51,7 @@ Describe "Using Namespace" -Tags "CI" {
         # [C1].GetProperty("EventHandler").PropertyType.FullName | Should -Be System.Timers.ElapsedEventHandler
     }
 
-    It "Covert string to Type w/ using namespace" -Pending {
+    It "Covert string to Type w/ using namespace" -Skip {
         # Pester 5 limitation: `using namespace` from file scope does not propagate
         # into the It scriptblock's runtime parse context, so runtime string-to-Type
         # resolution (`-as [Type]`) cannot find unqualified names. Type literals like
@@ -64,7 +64,7 @@ Describe "Using Namespace" -Tags "CI" {
         New-Object CompilerGeneratedAttribute | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
     }
 
-    It "Attributes w/ using namespace" -Pending {
+    It "Attributes w/ using namespace" -Skip {
         function foo
         {
             [DebuggerStepThrough()]
@@ -99,7 +99,7 @@ Describe "Using Namespace" -Tags "CI" {
         [E1].GetCustomAttributesData()[0].AttributeType.FullName | Should -Be System.FlagsAttribute
     }
 
-    It "Ambiguous type reference" -Pending {
+    It "Ambiguous type reference" -Skip {
         # Pester 5 limitation: `using namespace` from file scope does not propagate
         # into the It scriptblock parse context, so the dynamic `{ [ThreadState] }`
         # block sees the unqualified name as TypeNotFound rather than ambiguous.

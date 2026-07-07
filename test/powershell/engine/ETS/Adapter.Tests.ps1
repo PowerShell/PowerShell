@@ -159,7 +159,7 @@ Describe "Adapter Tests" -tags "CI" {
     }
 
     Context "ForEach Magic Method Adapter Tests" {
-        It "Common ForEach magic method tests" -Pending:$true {
+        It "Common ForEach magic method tests" -Skip:$true {
         }
 
         It "ForEach magic method works for singletons" {
@@ -189,7 +189,7 @@ Describe "Adapter Tests" -tags "CI" {
         }
 
         # Pending: https://github.com/PowerShell/PowerShell/issues/6567
-        It "ForEach magic method works for dynamic (DLR) things" -Pending:$true {
+        It "ForEach magic method works for dynamic (DLR) things" -Skip:$true {
             Add-TestDynamicType
 
             $dynObj = [TestDynamic]::new()
@@ -214,7 +214,7 @@ Describe "Adapter Tests" -tags "CI" {
     }
 
     Context "Where Magic Method Adapter Tests" {
-        It "Common Where magic method tests" -Pending:$true {
+        It "Common Where magic method tests" -Skip:$true {
         }
 
         It "Where magic method works for singletons" {

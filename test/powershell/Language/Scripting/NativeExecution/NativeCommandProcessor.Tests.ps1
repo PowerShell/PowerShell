@@ -105,7 +105,7 @@ Describe "Native Command Processor" -tags "Feature" {
 
     # If powershell receives a StopProcessing, it should kill the native process and all child processes
     # this test should pass and no longer Pending when #2561 is fixed
-    It "Should kill native process tree" -Pending {
+    It "Should kill native process tree" -Skip {
 
         # make sure no test processes are running
         Get-Process testexe -ErrorAction SilentlyContinue | Stop-Process

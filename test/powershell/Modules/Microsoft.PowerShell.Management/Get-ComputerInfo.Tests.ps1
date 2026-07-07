@@ -1487,7 +1487,7 @@ Describe "Special Case Tests for Get-ComputerInfo" -tags "Feature", "RequireAdmi
         }
     }
 
-    It "Test for DeviceGuard properties" -Pending {
+    It "Test for DeviceGuard properties" -Skip {
         if (-not (HasDeviceGuardLicense))
         {
             $observed.DeviceGuardSmartStatus | Should -Be 0

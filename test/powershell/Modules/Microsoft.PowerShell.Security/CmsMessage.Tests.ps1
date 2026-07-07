@@ -336,7 +336,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" -Skip:(-not $IsWind
     }
 
     # Pending due to #3847
-    It "Verify -DocumentEncryptionCert parameter works" -Pending {
+    It "Verify -DocumentEncryptionCert parameter works" -Skip {
         $foundCerts = Get-ChildItem Cert:\CurrentUser -Recurse -DocumentEncryptionCert
 
         # Validate they all match the EKU

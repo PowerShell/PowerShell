@@ -399,20 +399,20 @@ AfterAll {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
-            It "Verifies proxy should return remote pid" -Pending {
+            It "Verifies proxy should return remote pid" -Skip {
                 (Get-Variable -Name PID).Value | Should -Not -Be $PID
             }
 
-            It "Verifies ApplicationArguments got preserved correctly" -Pending {
+            It "Verifies ApplicationArguments got preserved correctly" -Skip {
                 $(Invoke-Command $internalSession { $PSSenderInfo.ApplicationArguments.MyTest }) | Should -BeExactly "MyValue"
             }
 
-            It "Verifies Remove-Module removed the runspace that was automatically created" -Pending {
+            It "Verifies Remove-Module removed the runspace that was automatically created" -Skip {
                 Remove-Module $module -Force
                 (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should -BeNullOrEmpty
             }
 
-            It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
+            It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Skip {
                 ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -BeExactly "Closed"
             }
         }
@@ -427,24 +427,24 @@ AfterAll {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
-            It "Verifies proxy should return remote pid" -Pending {
+            It "Verifies proxy should return remote pid" -Skip {
                 (Get-Variable -Name PID).Value | Should -Not -Be $PID
             }
 
             # culture settings should be taken from the explicitly passed session options
-            It "Verifies proxy returns modified culture" -Pending {
+            It "Verifies proxy returns modified culture" -Skip {
                 (Get-Variable -Name PSCulture).Value | Should -BeExactly "fr-FR"
             }
-            It "Verifies proxy returns modified culture" -Pending {
+            It "Verifies proxy returns modified culture" -Skip {
                 (Get-Variable -Name PSUICulture).Value | Should -BeExactly "de-DE"
             }
 
             # removing the module should remove the implicitly/magically created runspace
-            It "Verifies Remove-Module removes automatically created runspace" -Pending {
+            It "Verifies Remove-Module removes automatically created runspace" -Skip {
                 Remove-Module $module -Force
                 (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should -BeNullOrEmpty
             }
-            It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
+            It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Skip {
                 ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -BeExactly "Closed"
             }
         }
@@ -1520,7 +1520,7 @@ AfterAll {
 
             # Test temporarily disabled because of conflict with DG UMCI tests.
             # Re-enable after DG UMCI tests moved to a separate test process.
-            It "Get-Command returns only 1 public command from implicit remoting module (1)" -Pending {
+            It "Get-Command returns only 1 public command from implicit remoting module (1)" -Skip {
                 $c = @(Get-Command -Module $module)
                 $c.Count | Should -Be 1
                 $c[0].Name | Should -BeExactly "Get-MyVariable"
@@ -1528,7 +1528,7 @@ AfterAll {
 
             # Test temporarily disabled because of conflict with DG UMCI tests.
             # Re-enable after DG UMCI tests moved to a separate test process.
-            It "Get-Command returns only 1 public command from implicit remoting module (2)" -Pending {
+            It "Get-Command returns only 1 public command from implicit remoting module (2)" -Skip {
                 $c = @(Get-Command -Module $module.Name)
                 $c.Count | Should -Be 1
                 $c[0].Name | Should -BeExactly "Get-MyVariable"
@@ -1890,7 +1890,7 @@ AfterAll {
         ## It requires 'New-PSSession' to work with implicit credential to allow proxied command to create new session.
         ## Implicit credential doesn't work in the Windows Azure DevOps builder, so mark this test '-pending'.
         ## Also, this feature doesn't work on macOS or Linux
-        It "Should have a new session when the disconnected session cannot be re-connected" -Pending {
+        It "Should have a new session when the disconnected session cannot be re-connected" -Skip {
             ## Disconnect session and make it un-connectable.
             Disconnect-PSSession $session
             Start-Process powershell -arg 'Get-PSSession -cn localhost -name Session102 | Connect-PSSession' -Wait

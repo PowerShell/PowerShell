@@ -117,7 +117,7 @@ function ShouldBeParseError
             $actualErrorId | Should -Be $expectedErrorId
         }
 
-        It "Error position (iteration:<i>)" -Pending:([bool]$SkipAndCheckRuntimeError) -TestCases $iterCases {
+        It "Error position (iteration:<i>)" -Skip:([bool]$SkipAndCheckRuntimeError) -TestCases $iterCases {
             param($i, $expectedOff, $actualPos)
             $actualPos | Should -Be $expectedOff
         }

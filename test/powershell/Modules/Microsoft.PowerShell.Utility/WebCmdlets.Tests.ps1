@@ -2075,7 +2075,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
 
         foreach ($entry in $testCases1) {
-            It "Verifies Invoke-WebRequest -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases ($entry.Test) -Pending:($entry.Pending) {
+            It "Verifies Invoke-WebRequest -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases ($entry.Test) -Skip:($entry.Pending) {
                 param($SslProtocol, $ActualProtocol)
                 $params = @{
                     Uri                  = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
@@ -2090,7 +2090,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
 
         foreach ($entry in $testCases2) {
-            It "Verifies Invoke-WebRequest -SslProtocol -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases ($entry.Test) -Pending:($entry.Pending) {
+            It "Verifies Invoke-WebRequest -SslProtocol -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases ($entry.Test) -Skip:($entry.Pending) {
                 param( $IntendedProtocol, $ActualProtocol)
                 $params = @{
                     Uri                  = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
@@ -4095,7 +4095,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
 
         foreach ($entry in $testCases1) {
-            It "Verifies Invoke-RestMethod -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases ($entry.Test) -Pending:($entry.Pending) {
+            It "Verifies Invoke-RestMethod -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases ($entry.Test) -Skip:($entry.Pending) {
                 param($SslProtocol, $ActualProtocol)
                 $params = @{
                     Uri                  = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
@@ -4109,7 +4109,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
 
         foreach ($entry in $testCases2) {
-            It "Verifies Invoke-RestMethod -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases ($entry.Test) -Pending:($entry.Pending) {
+            It "Verifies Invoke-RestMethod -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases ($entry.Test) -Skip:($entry.Pending) {
                 param( $IntendedProtocol, $ActualProtocol)
                 $params = @{
                     Uri                  = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol

@@ -14,7 +14,7 @@ Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
     }
 
-    It "write-Host works with '<Name>' switch" -TestCases:$testData -Pending:$IsMacOS {
+    It "write-Host works with '<Name>' switch" -TestCases:$testData -Skip:$IsMacOS {
         param($Command, $returnCount, $returnValue)
 
         [array]$result = & $powershell -noprofile -c $Command
@@ -80,7 +80,7 @@ Describe "Write-Host with TestHostCS" -Tags "CI" {
         $th.ui.Streams.Clear()
     }
 
-    It "Write-Host works with <Name>" -TestCases:$testHostCSData -Pending {
+    It "Write-Host works with <Name>" -TestCases:$testHostCSData -Skip {
         # Tracked separately, not Pester migration scope. See PR 27290.
         # The TestHostCS runspace's ConsoleOutput stream content does not match the expected
         # format on the current pwsh build; cross-OS reproducible (Linux + macOS + Win Unelev CI).

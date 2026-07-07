@@ -833,7 +833,7 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
     }
 
     # Remove Pending status and update test after issue #11575 is fixed
-    It "Does not duplicate the System32 module path in subprocesses" -Pending:$true {
+    It "Does not duplicate the System32 module path in subprocesses" -Skip:$true {
         $sys32ModPathCount = & $pwsh -C {
             & "$PSHOME/pwsh" -C '$null = $env:PSModulePath -match ([regex]::Escape((Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"))); $Matches.Count'
         }

@@ -267,7 +267,7 @@ function RunSaveHelpTests
             ## Hence the test has been marked as Pending.
             $pending = ($moduleName -eq 'PackageManagement')
 
-            It "Validate Save-Help for the '$moduleName' module" -Pending:$pending -ForEach @(@{
+            It "Validate Save-Help for the '$moduleName' module" -Skip:$pending -ForEach @(@{
                 moduleName  = $moduleName
                 myUICulture = $myUICulture
                 testCases   = $testCases

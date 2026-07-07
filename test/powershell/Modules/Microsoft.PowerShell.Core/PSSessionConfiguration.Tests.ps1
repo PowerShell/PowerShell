@@ -501,7 +501,7 @@ namespace PowershellTestConfigNamespace
                     { Register-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1 } | Should -Throw -ErrorId 'ParameterBindingFailed,Microsoft.PowerShell.Commands.RegisterPSSessionConfigurationCommand'
                 }
 
-                It "Validate Register-PSSessionConfiguration -startupscript parameter" -Pending {
+                It "Validate Register-PSSessionConfiguration -startupscript parameter" -Skip {
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -path $LocalConfigFilePath -StartupScript $LocalStartupScriptPath -Force
 
@@ -515,14 +515,14 @@ namespace PowershellTestConfigNamespace
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $null -ExpectedError "RemoteConnectionDisallowed,PSSessionOpenFailed"
                 }
 
-                It "Validate Register-PSSessionConfiguration -ModulesToImport parameter" -Pending {
+                It "Validate Register-PSSessionConfiguration -ModulesToImport parameter" -Skip {
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -ModulesToImport $LocalTestModulePath -Force
 
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return IsTestModuleImported" -ExpectedOutput $true -ExpectedError $null
                 }
 
-                It "Validate Register-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" -Pending {
+                It "Validate Register-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" -Skip {
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $script:TestAssemblyDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
 
@@ -573,7 +573,7 @@ namespace PowershellTestConfigNamespace
                     { Set-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1 } | Should -Throw -ErrorId 'ParameterBindingFailed,Microsoft.PowerShell.Commands.SetPSSessionConfigurationCommand'
                 }
 
-                It "Validate Set-PSSessionConfiguration -startupscript parameter" -Pending {
+                It "Validate Set-PSSessionConfiguration -startupscript parameter" -Skip {
 
                     $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -StartupScript $LocalStartupScriptPath
 
@@ -587,14 +587,14 @@ namespace PowershellTestConfigNamespace
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $null -ExpectedError "RemoteConnectionDisallowed,PSSessionOpenFailed"
                 }
 
-                It "Validate Set-PSSessionConfiguration -ModulesToImport parameter" -Pending {
+                It "Validate Set-PSSessionConfiguration -ModulesToImport parameter" -Skip {
 
                     $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -ModulesToImport $LocalTestModulePath -Force
 
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return IsTestModuleImported" -ExpectedOutput $true -ExpectedError $null
                 }
 
-                It "Validate Set-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" -Pending {
+                It "Validate Set-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" -Skip {
 
                     $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $script:TestAssemblyDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
 

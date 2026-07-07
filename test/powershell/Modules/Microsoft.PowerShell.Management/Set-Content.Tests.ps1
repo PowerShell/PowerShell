@@ -120,7 +120,7 @@ Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI
         $null = New-Item -Path $randomFolderPath -ItemType Directory -ErrorAction SilentlyContinue
     }
     # test is Pending due to https://github.com/PowerShell/PowerShell/issues/3883
-    It "should create a file in a psdrive with UNC path as root" -Pending {
+    It "should create a file in a psdrive with UNC path as root" -Skip {
         try
         {
             # create share

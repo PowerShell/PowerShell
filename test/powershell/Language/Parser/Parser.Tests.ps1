@@ -1237,7 +1237,7 @@ foo``u{2195}abc
     }
 
     #Issue#1430
-    It "Tests function scopes in a script. (line 2800)" -Pending {
+    It "Tests function scopes in a script. (line 2800)" -Skip {
         " function global:func { 'global' }; " +
         " function func { 'default' }; " +
         " local:func; " +

@@ -2045,7 +2045,7 @@ param([ValidatePattern(
         }
     }
 
-    It 'Should complete "Export-Counter -FileFormat" with available output formats' -Pending {
+    It 'Should complete "Export-Counter -FileFormat" with available output formats' -Skip {
         $res = TabExpansion2 -inputScript 'Export-Counter -FileFormat ' -cursorColumn 'Export-Counter -FileFormat '.Length
         $res.CompletionMatches | Should -HaveCount 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
@@ -4021,7 +4021,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         $completionOptions | Should -BeExactly ([string]::Join("", $expected))
     }
 
-    It "Tab completion get dynamic parameters for initialization parameters" -Pending -TestCases @(
+    It "Tab completion get dynamic parameters for initialization parameters" -Skip -TestCases @(
         @{path = "localhost\Plugin\microsoft.powershell\InitializationParameters\"; parameter = "-pa"; expected = @("ParamName", "ParamValue")}
     ) {
         # https://github.com/PowerShell/PowerShell/issues/4744

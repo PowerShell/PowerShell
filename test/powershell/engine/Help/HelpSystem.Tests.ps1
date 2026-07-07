@@ -267,7 +267,7 @@ Describe "Validate that get-help works for provider specific help" -Tags @('CI')
     }
 
     ## The tests are marked as pending since provider specific help content in not available in PS v6.*
-    It "Shows contextual help when Get-Help is invoked for provider-specific path (Get-Help -Name <verb>-<noun> -Path <path>)" -TestCases $testCases -Pending {
+    It "Shows contextual help when Get-Help is invoked for provider-specific path (Get-Help -Name <verb>-<noun> -Path <path>)" -TestCases $testCases -Skip {
 
         param(
             $helpFile,

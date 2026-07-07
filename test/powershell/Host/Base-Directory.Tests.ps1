@@ -132,7 +132,7 @@ Describe "Working directory on startup" -Tag "CI" {
     }
 
     # https://github.com/PowerShell/PowerShell/issues/5752
-    It "Can start in directory where name contains wildcard characters" -Pending {
+    It "Can start in directory where name contains wildcard characters" -Skip {
         Set-Location -LiteralPath $testPath.FullName
         if ($IsMacOS) {
             # on macOS, /tmp is a symlink to /private so the real path is under /private/tmp

@@ -845,7 +845,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $ci = Get-ChildItem $alphaLink -Recurse
             $ci.Count | Should -BeExactly 7
         }
-        It "Get-ChildItem -Name does not recurse into symbolic links not explicitly given on the command line" -Pending {
+        It "Get-ChildItem -Name does not recurse into symbolic links not explicitly given on the command line" -Skip {
             # The test depends on the files created in previous test:
             #New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir
             $ci = Get-ChildItem $alphaLink -Recurse -Name
@@ -860,7 +860,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $ci.Count | Should -BeExactly 13
             $w.Count | Should -BeExactly 3
         }
-        It "Get-ChildItem -Name will recurse into symlinks given -FollowSymlink, avoiding link loops" -Pending {
+        It "Get-ChildItem -Name will recurse into symlinks given -FollowSymlink, avoiding link loops" -Skip {
             # The test depends on the files created in previous test:
             # New-Item -ItemType Directory -Path $gammaDir
             # New-Item -ItemType SymbolicLink -Path $uponeLink -Value $betaDir
