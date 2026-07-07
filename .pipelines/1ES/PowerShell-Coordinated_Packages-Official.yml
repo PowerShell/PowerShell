@@ -41,13 +41,15 @@
 #
 # REQUIRED VARIABLE GROUP — `EsrpSigning-PowerShell`:
 #   Create this variable group in mscodehub/PowerShellCore and link it to this pipeline
-#   definition. It supplies the ESRP request-signing auth inputs (non-secret identifiers)
-#   consumed by every prod EsrpCodeSigning@5 task:
+#   definition. It supplies the ESRP auth inputs (non-secret identifiers) consumed by every
+#   prod EsrpCodeSigning@5 task. Auth is via the ESRP-Signing-Identity managed identity over
+#   the PowerShell-ESRP-Release WIF connection (UseMSIAuthentication: true) — the MI's AAD
+#   token proves identity to ESRP, so NO separate authentication cert is needed; only the
+#   request-signing cert (AuthSignCertName) is required:
 #     - EsrpProdAppRegClientId    (client ID of the ESRP-Signing-Identity managed identity)
 #     - EsrpProdAppRegTenantId    (AME tenant ID the MI lives in)
-#     - EsrpProdAuthAkvName       (Key Vault holding the ESRP request-signing cert, e.g. pscoresignprod-kv)
-#     - EsrpProdAuthCertName      (auth cert name in that Key Vault)
-#     - EsrpProdAuthSignCertName  (request-signing cert name in that Key Vault)
+#     - EsrpProdAuthAkvName       (Key Vault holding the request-signing cert: pscoresignprod-kv)
+#     - EsrpProdAuthSignCertName  (request-signing cert name in that Key Vault: esrp-auth-sign)
 #   The MI must have `Key Vault Certificate User` on the vault and be onboarded to ESRP
 #   with the KeyCodes above authorised.
 

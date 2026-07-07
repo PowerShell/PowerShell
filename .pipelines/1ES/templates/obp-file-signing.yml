@@ -144,8 +144,8 @@ steps:
       AppRegistrationClientId: $(EsrpProdAppRegClientId)
       AppRegistrationTenantId: $(EsrpProdAppRegTenantId)
       AuthAKVName: $(EsrpProdAuthAkvName)
-      AuthCertName: $(EsrpProdAuthCertName)
       AuthSignCertName: $(EsrpProdAuthSignCertName)
+      UseMSIAuthentication: true
       FolderPath: $(Pipeline.Workspace)/toBeSigned
       Pattern: '**/*.psd1,**/*.psm1,**/*.ps1xml,**/*.ps1,**/*.dll,**/*.exe,**/pwsh'
       UseMinimatch: true
@@ -301,8 +301,8 @@ steps:
       AppRegistrationClientId: $(EsrpProdAppRegClientId)
       AppRegistrationTenantId: $(EsrpProdAppRegTenantId)
       AuthAKVName: $(EsrpProdAuthAkvName)
-      AuthCertName: $(EsrpProdAuthCertName)
       AuthSignCertName: $(EsrpProdAuthSignCertName)
+      UseMSIAuthentication: true
       FolderPath: $(Pipeline.Workspace)/thirdPartyToBeSigned
       Pattern: '**/*.dll,**/*.exe'
       UseMinimatch: true

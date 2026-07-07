@@ -224,8 +224,8 @@ jobs:
         AppRegistrationClientId: $(EsrpProdAppRegClientId)
         AppRegistrationTenantId: $(EsrpProdAppRegTenantId)
         AuthAKVName: $(EsrpProdAuthAkvName)
-        AuthCertName: $(EsrpProdAuthCertName)
         AuthSignCertName: $(EsrpProdAuthSignCertName)
+        UseMSIAuthentication: true
         FolderPath: $(Pipeline.Workspace)
         Pattern: 'macho-$(BuildArchitecture).zip'
         UseMinimatch: true

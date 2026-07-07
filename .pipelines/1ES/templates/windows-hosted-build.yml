@@ -241,8 +241,8 @@ jobs:
         AppRegistrationClientId: $(EsrpProdAppRegClientId)
         AppRegistrationTenantId: $(EsrpProdAppRegTenantId)
         AuthAKVName: $(EsrpProdAuthAkvName)
-        AuthCertName: $(EsrpProdAuthCertName)
         AuthSignCertName: $(EsrpProdAuthSignCertName)
+        UseMSIAuthentication: true
         FolderPath: $(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release
         Pattern: '**/*.dll,**/*.exe'
         UseMinimatch: true
@@ -437,8 +437,8 @@ jobs:
         AppRegistrationClientId: $(EsrpProdAppRegClientId)
         AppRegistrationTenantId: $(EsrpProdAppRegTenantId)
         AuthAKVName: $(EsrpProdAuthAkvName)
-        AuthCertName: $(EsrpProdAuthCertName)
         AuthSignCertName: $(EsrpProdAuthSignCertName)
+        UseMSIAuthentication: true
         FolderPath: $(ob_outputDirectory)\globaltool
         Pattern: '**/*.nupkg'
         UseMinimatch: true
