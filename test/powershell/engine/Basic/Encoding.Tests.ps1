@@ -6,12 +6,12 @@ Describe "File encoding tests" -Tag CI {
         BeforeDiscovery {
             $testCases = Get-Command -Module Microsoft.PowerShell.* |
                 Where-Object { $_.Parameters -and $_.Parameters['Encoding'] } |
-                ForEach-Object { @{ Command = $_ } }
+                ForEach-Object { @{ Command = $_.Name } }
         }
 
         It "Encoding parameter of command '<Command>' is type 'Encoding'" -Testcase $testCases {
             param ( $command )
-            $command.Parameters['Encoding'].ParameterType.FullName | Should -BeExactly "System.Text.Encoding"
+            (Get-Command $command).Parameters['Encoding'].ParameterType.FullName | Should -BeExactly "System.Text.Encoding"
         }
     }
 
