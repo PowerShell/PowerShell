@@ -642,14 +642,22 @@ ZoneId=$FileType
                     }
                 )
 
+                # Importing the untrusted module is unreliable - it can intermittently fail with
+                # "Collection was modified" during module analysis. Under Pester 4/5 it was marked
+                # at runtime with Set-ItResult -Pending. Pester 6 removed -Pending, and its
+                # -TestCases binding does not reliably reach the runtime guard in CI, so the case
+                # is skipped at discovery instead (see the -Skip It below).
+                $pendingModuleTestData = @()
+
                 $canWritePsHome = try { Test-CanWriteToPsHome } catch { $false }
                 if ($canWritePsHome) {
-                    $moduleTestData += @(
+                    $pendingModuleTestData += @(
                         @{
-                            shouldMarkAsPending = $true
                             module = $PSHomeUntrustedModule
                             expectedError = $expectedError
                         }
+                    )
+                    $moduleTestData += @(
                         @{
                             module = $PSHomeUnsignedModule
                             error = $null
@@ -665,12 +673,7 @@ ZoneId=$FileType
             }
 
             It "Test 'Unrestricted' execution policy. Importing <module> Module should throw '<error>'" -TestCases $moduleTestData  {
-                param([string]$module, [string]$expectedError, [bool]$shouldMarkAsPending)
-
-                if ($shouldMarkAsPending)
-                {
-                    Set-ItResult -Inconclusive -Because "Test is unreliable"
-                }
+                param([string]$module, [string]$expectedError)
 
                 $execPolicy = Get-ExecutionPolicy -List | Out-String
 
@@ -684,6 +687,9 @@ ZoneId=$FileType
                     $testScript | Should -Not -Throw -Because "Execution Policy is set as: $execPolicy"
                 }
             }
+
+            # Unreliable to import (see $pendingModuleTestData above) - skipped at discovery.
+            It "Test 'Unrestricted' execution policy. Importing <module> Module should throw '<error>'" -TestCases $pendingModuleTestData -Skip  {}
         }
 
         Context "Validate that 'ByPass' execution policy works on OneCore powershell" {
