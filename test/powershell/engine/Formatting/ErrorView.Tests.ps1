@@ -90,7 +90,10 @@ Describe 'Tests for $ErrorView' -Tag CI {
             Set-Content -Path $testScriptPath -Value $testScript
             $e = { & $testScriptPath } | Should -Throw -ErrorId 'PesterAssertionFailed' -PassThru | Out-String
             $e | Should -BeLike "*$testScriptPath*"
-            $e | Should -Not -BeLike '*pester*'
+            # Pester 6 puts TestDrive under a 'Pester_*' temp dir, so the script path asserted
+            # above legitimately contains 'pester'. Strip it before checking that no Pester
+            # *framework* internals leaked into the ConciseView error.
+            ($e -replace [regex]::Escape($TestDrive), '') | Should -Not -BeLike '*pester*'
         }
 
         It 'Long lines should be rendered correctly with indentation' {
