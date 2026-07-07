@@ -15,13 +15,6 @@
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="GetEventSnapin.cs" />
-    <Compile Remove="ExportCounterCommand.cs" />
-    <Compile Remove="ImportCounterCommand.cs" />
-    <Compile Remove="CounterFileInfo.cs" />
-  </ItemGroup>
-
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
     <Compile Remove="GetCounterCommand.cs" />
     <Compile Remove="CounterSample.cs" />
