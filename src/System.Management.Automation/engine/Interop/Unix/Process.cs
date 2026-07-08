@@ -42,50 +42,5 @@ internal static partial class Interop
         /// <returns>0 on success.</returns>
         [LibraryImport("libc", EntryPoint = "pthread_threadid_np")]
         internal static partial int PthreadThreadIdNp(IntPtr thread, out ulong threadId);
-
-        // macOS process information via libproc's proc_pidinfo(PROC_PIDTBSDINFO), which returns a
-        // struct proc_bsdinfo. Rather than model that whole structure, only the two 32-bit fields
-        // that are needed are read from stable offsets in the returned buffer.
-        private const int PROC_PIDTBSDINFO = 3;
-        private const int PbiPpidOffset = 16;   // offset of pbi_ppid in struct proc_bsdinfo
-        private const int PbiUidOffset = 20;    // offset of pbi_uid in struct proc_bsdinfo
-        private const int ProcBsdInfoSize = 160; // >= sizeof(struct proc_bsdinfo)
-
-        [LibraryImport("libproc", EntryPoint = "proc_pidinfo", SetLastError = true)]
-        private static partial int ProcPidInfo(int pid, int flavor, ulong arg, byte[] buffer, int bufferSize);
-
-        private static bool TryGetProcBsdInfo(int pid, out uint parentPid, out uint userId)
-        {
-            parentPid = 0;
-            userId = 0;
-
-            byte[] buffer = new byte[ProcBsdInfoSize];
-            int written = ProcPidInfo(pid, PROC_PIDTBSDINFO, 0, buffer, buffer.Length);
-            if (written <= PbiUidOffset + sizeof(uint))
-            {
-                return false;
-            }
-
-            parentPid = BitConverter.ToUInt32(buffer, PbiPpidOffset);
-            userId = BitConverter.ToUInt32(buffer, PbiUidOffset);
-            return true;
-        }
-
-        /// <summary>macOS: get the parent process id for an arbitrary <paramref name="pid"/>.</summary>
-        /// <param name="pid">The process id to query.</param>
-        /// <returns>The parent process id, or -1 if it could not be determined.</returns>
-        internal static int GetParentPid(int pid)
-        {
-            return TryGetProcBsdInfo(pid, out uint parentPid, out _) ? (int)parentPid : -1;
-        }
-
-        /// <summary>macOS: get the (effective) owner user id for an arbitrary <paramref name="pid"/>.</summary>
-        /// <param name="pid">The process id to query.</param>
-        /// <param name="userId">Receives the owning user id on success.</param>
-        /// <returns><see langword="true"/> on success; otherwise <see langword="false"/>.</returns>
-        internal static bool TryGetProcessUserId(int pid, out uint userId)
-        {
-            return TryGetProcBsdInfo(pid, out _, out userId);
-        }
     }
 }
