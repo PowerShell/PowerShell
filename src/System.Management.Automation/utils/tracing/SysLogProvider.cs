@@ -369,7 +369,22 @@ namespace System.Management.Automation.Tracing
 
     internal static class NativeMethods
     {
-        private const string libpslnative = "libpsl-native";
+        private const string libc = "libc";
+
+        // openlog options: log the pid with each message and open the connection immediately.
+        // These values are identical on Linux and macOS.
+        private const int LOG_PID = 0x01;
+        private const int LOG_NDELAY = 0x08;
+
+        [DllImport(libc, CharSet = CharSet.Ansi, EntryPoint = "openlog")]
+        private static extern void OpenLogNative(IntPtr ident, int option, int facility);
+
+        [DllImport(libc, CharSet = CharSet.Ansi, EntryPoint = "syslog")]
+        private static extern void SysLogNative(int priority, string format, string message);
+
+        [DllImport(libc, EntryPoint = "closelog")]
+        internal static extern void CloseLog();
+
         /// <summary>
         /// Write a message to the system logger, which in turn writes the message to the system console, log files, etc.
         /// See man 3 syslog for more info.
@@ -378,14 +393,25 @@ namespace System.Management.Automation.Tracing
         /// The OR of a priority and facility in the SysLogPriority enum indicating the priority and facility of the log entry.
         /// </param>
         /// <param name="message">The message to put in the log entry.</param>
-        [DllImport(libpslnative, CharSet = CharSet.Ansi, EntryPoint = "Native_SysLog")]
-        internal static extern void SysLog(SysLogPriority priority, string message);
+        internal static void SysLog(SysLogPriority priority, string message)
+        {
+            // Pass the message as a "%s" argument so any '%' characters in the message
+            // are not interpreted as format specifiers.
+            SysLogNative((int)priority, "%s", message);
+        }
 
-        [DllImport(libpslnative, CharSet = CharSet.Ansi, EntryPoint = "Native_OpenLog")]
-        internal static extern void OpenLog(IntPtr ident, SysLogPriority facility);
-
-        [DllImport(libpslnative, EntryPoint = "Native_CloseLog")]
-        internal static extern void CloseLog();
+        /// <summary>
+        /// Opens a connection to the system logger for the calling process.
+        /// </summary>
+        /// <param name="ident">
+        /// A pointer to a null-terminated string that is prepended to every message.
+        /// The pointer must remain valid for the lifetime of the log session; syslog does not copy the string.
+        /// </param>
+        /// <param name="facility">The default facility for subsequent calls to syslog.</param>
+        internal static void OpenLog(IntPtr ident, SysLogPriority facility)
+        {
+            OpenLogNative(ident, LOG_NDELAY | LOG_PID, (int)facility);
+        }
 
         [Flags]
         internal enum SysLogPriority : uint
