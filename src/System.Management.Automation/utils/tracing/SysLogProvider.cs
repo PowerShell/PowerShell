@@ -371,17 +371,6 @@ namespace System.Management.Automation.Tracing
     {
         private const string libc = "libc";
 
-        // On macOS, PowerShell logs through the unified logging system (os_log) so that entries
-        // are grouped under a subsystem/category and are discoverable via 'log show'. os_log is a
-        // compiler-macro API whose format string must be compiled into a Mach-O binary's
-        // __TEXT,__os_log section, so it cannot be reimplemented in pure managed P/Invoke; the
-        // format string of a runtime-marshalled buffer is not resolvable by logd and 'log show'
-        // renders a compose failure. Until a dedicated native os_log shim exists (tracked as a
-        // future migration phase), the macOS path continues to call libpsl-native. POSIX syslog()
-        // is NOT a substitute on macOS: it does not set the os_log category the diagnostics/tests
-        // rely on. Linux uses libc syslog directly.
-        private const string libpslnative = "libpsl-native";
-
         // openlog options: log the pid with each message and open the connection immediately.
         // These values are identical on Linux and macOS.
         private const int LOG_PID = 0x01;
@@ -394,16 +383,7 @@ namespace System.Management.Automation.Tracing
         private static extern void SysLogNative(int priority, string format, string message);
 
         [DllImport(libc, EntryPoint = "closelog")]
-        private static extern void CloseLogNative();
-
-        [DllImport(libpslnative, CharSet = CharSet.Ansi, EntryPoint = "Native_SysLog")]
-        private static extern void NativeSysLog(SysLogPriority priority, string message);
-
-        [DllImport(libpslnative, CharSet = CharSet.Ansi, EntryPoint = "Native_OpenLog")]
-        private static extern void NativeOpenLog(IntPtr ident, SysLogPriority facility);
-
-        [DllImport(libpslnative, EntryPoint = "Native_CloseLog")]
-        private static extern void NativeCloseLog();
+        internal static extern void CloseLog();
 
         /// <summary>
         /// Write a message to the system logger, which in turn writes the message to the system console, log files, etc.
@@ -415,12 +395,6 @@ namespace System.Management.Automation.Tracing
         /// <param name="message">The message to put in the log entry.</param>
         internal static void SysLog(SysLogPriority priority, string message)
         {
-            if (OperatingSystem.IsMacOS())
-            {
-                NativeSysLog(priority, message);
-                return;
-            }
-
             // Pass the message as a "%s" argument so any '%' characters in the message
             // are not interpreted as format specifiers.
             SysLogNative((int)priority, "%s", message);
@@ -436,27 +410,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="facility">The default facility for subsequent calls to syslog.</param>
         internal static void OpenLog(IntPtr ident, SysLogPriority facility)
         {
-            if (OperatingSystem.IsMacOS())
-            {
-                NativeOpenLog(ident, facility);
-                return;
-            }
-
             OpenLogNative(ident, LOG_NDELAY | LOG_PID, (int)facility);
-        }
-
-        /// <summary>
-        /// Closes the connection to the system logger.
-        /// </summary>
-        internal static void CloseLog()
-        {
-            if (OperatingSystem.IsMacOS())
-            {
-                NativeCloseLog();
-                return;
-            }
-
-            CloseLogNative();
         }
 
         [Flags]
