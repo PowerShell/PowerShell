@@ -1,0 +1,65 @@
+{
+  "Projects": [
+    {
+      "LanguageSet": "VS_Main_Languages",
+      "LocItems": [
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\*.resx",
+          "OutputPath": "src\\System.Management.Automation\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
+          "CopyOption": "UsePlaceholders"
+        },
+        {
+          "SourceFile": "src\\Microsoft.Management.Infrastructure.CimCmdlets\\resources\\*.resx",
+          "OutputPath": "src\\Microsoft.Management.Infrastructure.CimCmdlets\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
+          "CopyOption": "UsePlaceholders"
+        },
+        {
+          "SourceFile": "src\\Microsoft.Management.UI.Internal\\resources\\*.resx",
+          "OutputPath": "src\\Microsoft.Management.UI.Internal\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
+          "CopyOption": "UsePlaceholders"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Diagnostics\\resources\\*.resx",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Diagnostics\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
+          "CopyOption": "UsePlaceholders"
+        },
+
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\*.resx",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
+          "CopyOption": "UsePlaceholders"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\*.resx",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
+          "CopyOption": "UsePlaceholders"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\*.resx",
+          "OutputPath": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
+          "CopyOption": "UsePlaceholders"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.CoreCLR.Eventing\\resources\\*.resx",
+          "OutputPath": "src\\Microsoft.PowerShell.CoreCLR.Eventing\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
+          "CopyOption": "UsePlaceholders"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.LocalAccounts\\resources\\*.resx",
+          "OutputPath": "src\\Microsoft.PowerShell.LocalAccounts\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
+          "CopyOption": "UsePlaceholders"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Security\\resources\\*.resx",
+          "OutputPath": "src\\Microsoft.PowerShell.Security\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
+          "CopyOption": "UsePlaceholders"
+        },
+        {
+          "SourceFile": "src\\Microsoft.WSMan.Management\\resources\\*.resx",
+          "OutputPath": "src\\Microsoft.WSMan.Management\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
+          "CopyOption": "UsePlaceholders"
+        }
+      ]
+    }
+  ]
+}
