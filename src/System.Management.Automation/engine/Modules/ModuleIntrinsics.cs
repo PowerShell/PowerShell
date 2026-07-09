@@ -1030,16 +1030,6 @@ namespace System.Management.Automation
 #endif
         }
 
-        /// <summary>
-        /// When running as a packaged MSIX app with the per-machine data store provisioned, gets the
-        /// writable AllUsers module path located in that store; otherwise null.
-        /// </summary>
-        internal static string GetMachineStoreModulePath()
-        {
-            string store = Utils.GetPackagedMachineDataStorePath();
-            return string.IsNullOrEmpty(store) ? null : Path.Combine(store, "Modules");
-        }
-
 #if !UNIX
         /// <summary>
         /// Get the path to the Windows PowerShell module directory under the
@@ -1064,17 +1054,23 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static string CombineSystemModulePaths()
         {
-            string machineStoreModulePath = GetMachineStoreModulePath();
             string psHomeModulePath = GetPSHomeModulePath();
             string sharedModulePath = GetSharedModulePath();
 
-            // Order (lowest precedence last): shared (Program Files), per-machine data store, $PSHOME (in-box).
-            var paths = new List<string>(3);
-            if (!string.IsNullOrEmpty(sharedModulePath)) { paths.Add(sharedModulePath); }
-            if (!string.IsNullOrEmpty(machineStoreModulePath)) { paths.Add(machineStoreModulePath); }
-            if (!string.IsNullOrEmpty(psHomeModulePath)) { paths.Add(psHomeModulePath); }
+            bool isPSHomePathNullOrEmpty = string.IsNullOrEmpty(psHomeModulePath);
+            bool isSharedPathNullOrEmpty = string.IsNullOrEmpty(sharedModulePath);
 
-            return paths.Count == 0 ? null : string.Join(Path.PathSeparator, paths);
+            if (!isPSHomePathNullOrEmpty && !isSharedPathNullOrEmpty)
+            {
+                return (sharedModulePath + Path.PathSeparator + psHomeModulePath);
+            }
+
+            if (!isPSHomePathNullOrEmpty || !isSharedPathNullOrEmpty)
+            {
+                return isPSHomePathNullOrEmpty ? sharedModulePath : psHomeModulePath;
+            }
+
+            return null;
         }
 
         internal static string GetExpandedEnvironmentVariable(string name, EnvironmentVariableTarget target)
@@ -1259,7 +1255,6 @@ namespace System.Management.Automation
 
                 currentProcessModulePath = UpdatePath(currentProcessModulePath, personalModulePathToUse, ref insertIndex);
                 currentProcessModulePath = UpdatePath(currentProcessModulePath, sharedModulePath, ref insertIndex);
-                currentProcessModulePath = UpdatePath(currentProcessModulePath, GetMachineStoreModulePath() ?? string.Empty, ref insertIndex);
                 currentProcessModulePath = UpdatePath(currentProcessModulePath, systemModulePathToUse, ref insertIndex);
             }
 
@@ -1299,7 +1294,6 @@ namespace System.Management.Automation
                 GetPersonalModulePath(),
                 GetSharedModulePath(),
                 GetPSHomeModulePath(),
-                GetMachineStoreModulePath(),
                 PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers),
                 PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser)
             };
