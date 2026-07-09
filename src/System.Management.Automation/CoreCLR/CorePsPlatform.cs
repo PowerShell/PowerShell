@@ -937,11 +937,6 @@ namespace System.Management.Automation
             /// <summary>The native methods class.</summary>
             internal static partial class NativeMethods
             {
-                private const string psLib = "libpsl-native";
-
-                // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
-                // C bools are 1 byte and so must be marshalled as I1
-
                 // errno values below are the standard POSIX numbers, identical on Linux and macOS.
                 private const int EPERM = 1;
                 private const int ENOENT = 2;
@@ -970,12 +965,6 @@ namespace System.Management.Automation
                             return (int)ErrorCategory.NotSpecified;
                     }
                 }
-
-                [LibraryImport(psLib)]
-                internal static partial int GetPPid(int pid);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-                internal static partial int GetLinkCount(string filePath, out int linkCount);
 
                 // The methods below replace former libpsl-native P/Invokes with direct calls to
                 // libc (see engine/Interop/Unix/*). The Interop.Unix declarations are compiled only
@@ -1031,6 +1020,134 @@ namespace System.Management.Automation
                     // libpsl-native mapped CreateHardLink(newlink, target) to link(target, newlink).
                     return Interop.Unix.Link(target, filePath);
                 }
+
+                // File type bits (S_IFMT family) and set-user/group/sticky bits. These constants
+                // are identical on Linux and macOS.
+                private const int S_IFMT = 0xF000;
+                private const int S_IFDIR = 0x4000;
+                private const int S_IFCHR = 0x2000;
+                private const int S_IFBLK = 0x6000;
+                private const int S_IFREG = 0x8000;
+                private const int S_IFIFO = 0x1000;
+                private const int S_IFLNK = 0xA000;
+                private const int S_IFSOCK = 0xC000;
+                private const int S_ISUID = 0x800;
+                private const int S_ISGID = 0x400;
+                private const int S_ISVTX = 0x200;
+
+                internal static int GetCommonStat(string filePath, out CommonStatStruct cs)
+                {
+                    return GetCommonStatImpl(filePath, followSymlink: true, out cs);
+                }
+
+                internal static int GetCommonLStat(string filePath, out CommonStatStruct cs)
+                {
+                    return GetCommonStatImpl(filePath, followSymlink: false, out cs);
+                }
+
+                private static int GetCommonStatImpl(string filePath, bool followSymlink, out CommonStatStruct cs)
+                {
+                    cs = default;
+                    int ret = Interop.Unix.Stat(filePath, followSymlink, out Interop.Unix.StatInfo info);
+                    if (ret != 0)
+                    {
+                        return ret;
+                    }
+
+                    cs.Inode = info.Inode;
+                    cs.Mode = info.Mode;
+                    cs.UserId = info.UserId;
+                    cs.GroupId = info.GroupId;
+                    cs.HardlinkCount = info.HardlinkCount;
+                    cs.Size = info.Size;
+                    cs.AccessTime = info.AccessTime;
+                    cs.ModifiedTime = info.ModifiedTime;
+                    cs.StatusChangeTime = info.StatusChangeTime;
+                    cs.BlockSize = info.BlockSize;
+                    cs.DeviceId = (int)info.Device;
+                    cs.NumberOfBlocks = (int)info.NumberOfBlocks;
+
+                    int fmt = info.Mode & S_IFMT;
+                    cs.IsDirectory = fmt == S_IFDIR ? 1 : 0;
+                    cs.IsFile = fmt == S_IFREG ? 1 : 0;
+                    cs.IsSymbolicLink = fmt == S_IFLNK ? 1 : 0;
+                    cs.IsBlockDevice = fmt == S_IFBLK ? 1 : 0;
+                    cs.IsCharacterDevice = fmt == S_IFCHR ? 1 : 0;
+                    cs.IsNamedPipe = fmt == S_IFIFO ? 1 : 0;
+                    cs.IsSocket = fmt == S_IFSOCK ? 1 : 0;
+
+                    // Matches libpsl-native: only the corresponding bit among the three special bits is set.
+                    cs.IsSetUid = (info.Mode & 0xE00) == S_ISUID ? 1 : 0;
+                    cs.IsSetGid = (info.Mode & 0xE00) == S_ISGID ? 1 : 0;
+                    cs.IsSticky = (info.Mode & 0xE00) == S_ISVTX ? 1 : 0;
+                    return 0;
+                }
+
+                // Uses lstat semantics, matching libpsl-native's GetLinkCount.
+                internal static int GetLinkCount(string filePath, out int linkCount)
+                {
+                    int ret = Interop.Unix.Stat(filePath, followSymlink: false, out Interop.Unix.StatInfo info);
+                    linkCount = info.HardlinkCount;
+                    return ret;
+                }
+
+                // Uses stat semantics (follows symlinks), matching libpsl-native's GetInodeData.
+                internal static int GetInodeData(string path, out ulong device, out ulong inode)
+                {
+                    int ret = Interop.Unix.Stat(path, followSymlink: true, out Interop.Unix.StatInfo info);
+                    device = (ulong)info.Device;
+                    inode = (ulong)info.Inode;
+                    return ret;
+                }
+
+                internal static bool IsSameFileSystemItem(string filePathOne, string filePathTwo)
+                {
+                    if (Interop.Unix.Stat(filePathOne, followSymlink: true, out Interop.Unix.StatInfo one) == 0
+                        && Interop.Unix.Stat(filePathTwo, followSymlink: true, out Interop.Unix.StatInfo two) == 0)
+                    {
+                        return one.Device == two.Device && one.Inode == two.Inode;
+                    }
+
+                    return false;
+                }
+
+                // macOS: getppid() only returns the *current* process's parent, so the parent of an
+                // arbitrary pid is obtained via proc_pidinfo. On Linux the caller uses /proc instead.
+                internal static int GetPPid(int pid)
+                {
+                    return Interop.Unix.GetParentPid(pid);
+                }
+
+                internal static string GetUserFromPid(int pid)
+                {
+                    if (Platform.IsMacOS)
+                    {
+                        if (Interop.Unix.TryGetProcessUserId(pid, out uint uid))
+                        {
+                            return GetPwUid(unchecked((int)uid));
+                        }
+
+                        return null;
+                    }
+
+                    // Linux: the owner of /proc/<pid> is the process's real user id.
+                    if (Interop.Unix.Stat($"/proc/{pid}", followSymlink: true, out Interop.Unix.StatInfo info) == 0)
+                    {
+                        return GetPwUid(info.UserId);
+                    }
+
+                    return null;
+                }
+
+                internal static string GetPwUid(int id)
+                {
+                    return Interop.Unix.GetPwUid(id);
+                }
+
+                internal static string GetGrGid(int id)
+                {
+                    return Interop.Unix.GetGrGid(id);
+                }
 #else
                 // Windows builds exclude engine/Interop/Unix. These Unix-only helpers are never
                 // called on Windows but must be present so the platform-neutral wrappers compile.
@@ -1054,18 +1171,34 @@ namespace System.Management.Automation
 
                 internal static int CreateHardLink(string filePath, string target)
                     => throw new PlatformNotSupportedException();
+
+                internal static int GetCommonStat(string filePath, out CommonStatStruct cs)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int GetCommonLStat(string filePath, out CommonStatStruct cs)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int GetLinkCount(string filePath, out int linkCount)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int GetInodeData(string path, out ulong device, out ulong inode)
+                    => throw new PlatformNotSupportedException();
+
+                internal static bool IsSameFileSystemItem(string filePathOne, string filePathTwo)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int GetPPid(int pid)
+                    => throw new PlatformNotSupportedException();
+
+                internal static string GetUserFromPid(int pid)
+                    => throw new PlatformNotSupportedException();
+
+                internal static string GetPwUid(int id)
+                    => throw new PlatformNotSupportedException();
+
+                internal static string GetGrGid(int id)
+                    => throw new PlatformNotSupportedException();
 #endif
-
-                [LibraryImport(psLib)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static partial string GetUserFromPid(int pid);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                [return: MarshalAs(UnmanagedType.I1)]
-                internal static partial bool IsSameFileSystemItem(string filePathOne, string filePathTwo);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial int GetInodeData(string path, out ulong device, out ulong inode);
 
                 /// <summary>
                 /// This is a struct from getcommonstat.h in the native library.
@@ -1142,18 +1275,6 @@ namespace System.Management.Automation
                     /// <summary>Whether the sticky bit is set on the filesystem item.</summary>
                     internal int IsSticky;
                 }
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-                internal static unsafe partial int GetCommonLStat(string filePath, out CommonStatStruct cs);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-                internal static unsafe partial int GetCommonStat(string filePath, out CommonStatStruct cs);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial string GetPwUid(int id);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial string GetGrGid(int id);
             }
         }
     }
