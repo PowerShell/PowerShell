@@ -945,17 +945,6 @@ namespace System.Management.Automation
                 private const int EACCES = 13;
                 private const int EINVAL = 22;
 
-                // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
-                // C bools are 1 byte and so must be marshalled as I1
-
-                // errno values below are the standard POSIX numbers, identical on Linux and macOS.
-                private const int EPERM = 1;
-                private const int ENOENT = 2;
-                private const int ESRCH = 3;
-                private const int EINTR = 4;
-                private const int EACCES = 13;
-                private const int EINVAL = 22;
-
                 // Maps a Unix errno to the integer value of a PowerShell ErrorCategory.
                 // Mirrors the mapping previously provided by libpsl-native's GetErrorCategory.
                 internal static int GetErrorCategory(int errno)
@@ -976,12 +965,6 @@ namespace System.Management.Automation
                             return (int)ErrorCategory.NotSpecified;
                     }
                 }
-
-                [LibraryImport(psLib)]
-                internal static partial int GetPPid(int pid);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-                internal static partial int GetLinkCount(string filePath, out int linkCount);
 
                 // The methods below replace former libpsl-native P/Invokes with direct calls to
                 // libc (see engine/Interop/Unix/*). The Interop.Unix declarations are compiled only
@@ -1009,58 +992,6 @@ namespace System.Management.Automation
                 {
                     return Interop.Unix.Kill(pid, Interop.Unix.SIGKILL) == 0;
                 }
-
-                internal static int WaitPid(int pid, bool nohang)
-                {
-                    return Interop.Unix.WaitPid(pid, IntPtr.Zero, nohang ? Interop.Unix.WNOHANG : 0);
-                }
-
-                // Set the system clock. Mirrors libpsl-native's SetDate, which converted a
-                // broken-down local time via mktime() and called settimeofday(). DateTimeOffset
-                // performs the equivalent local-time-to-Unix-seconds conversion in managed code.
-                internal static int SetDate(DateTime date)
-                {
-                    Interop.Unix.Timeval tv;
-                    tv.Seconds = new DateTimeOffset(date).ToUnixTimeSeconds();
-                    tv.Microseconds = 0;
-                    return Interop.Unix.SetTimeOfDay(ref tv, IntPtr.Zero);
-                }
-
-                internal static int CreateSymLink(string filePath, string target)
-                {
-                    // libpsl-native mapped CreateSymLink(link, target) to symlink(target, link).
-                    return Interop.Unix.Symlink(target, filePath);
-                }
-
-                internal static int CreateHardLink(string filePath, string target)
-                {
-                    // libpsl-native mapped CreateHardLink(newlink, target) to link(target, newlink).
-                    return Interop.Unix.Link(target, filePath);
-                }
-#else
-                // Windows builds exclude engine/Interop/Unix. These Unix-only helpers are never
-                // called on Windows but must be present so the platform-neutral wrappers compile.
-                internal static bool IsExecutable(string filePath)
-                    => throw new PlatformNotSupportedException();
-
-                internal static uint GetCurrentThreadId()
-                    => throw new PlatformNotSupportedException();
-
-                internal static bool KillProcess(int pid)
-                    => throw new PlatformNotSupportedException();
-
-                internal static int WaitPid(int pid, bool nohang)
-                    => throw new PlatformNotSupportedException();
-
-                internal static int SetDate(DateTime date)
-                    => throw new PlatformNotSupportedException();
-
-                internal static int CreateSymLink(string filePath, string target)
-                    => throw new PlatformNotSupportedException();
-
-                internal static int CreateHardLink(string filePath, string target)
-                    => throw new PlatformNotSupportedException();
-#endif
 
                 internal static int WaitPid(int pid, bool nohang)
                 {
