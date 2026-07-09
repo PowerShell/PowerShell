@@ -376,11 +376,43 @@ namespace System.Management.Automation.Tracing
         private const int LOG_PID = 0x01;
         private const int LOG_NDELAY = 0x08;
 
+        // On macOS the native library logged through the unified logging system (os_log) rather
+        // than POSIX syslog. This is required so entries are grouped under a subsystem/category
+        // and are discoverable via 'log show'; POSIX syslog() does not set the os_log category.
+        // The subsystem matches the value previously hard-coded in libpsl-native (nativesyslog.cpp).
+        private const string OsLogSubsystem = "com.microsoft.powershell";
+
+        // os_log_type_t values from <os/log.h>. Identical across supported macOS versions.
+        private const byte OS_LOG_TYPE_DEFAULT = 0x00;
+        private const byte OS_LOG_TYPE_DEBUG = 0x02;
+        private const byte OS_LOG_TYPE_ERROR = 0x10;
+        private const byte OS_LOG_TYPE_FAULT = 0x11;
+
+        // The os_log handle, the DSO handle, and the pinned native strings used on macOS.
+        // The subsystem and format strings must remain valid for the lifetime of the process
+        // because os_log retains references to them.
+        private static IntPtr s_osLog = IntPtr.Zero;
+        private static IntPtr s_osLogDso = IntPtr.Zero;
+        private static IntPtr s_osLogFormat = IntPtr.Zero;
+        private static IntPtr s_osLogSubsystem = IntPtr.Zero;
+
         [DllImport(libc, CharSet = CharSet.Ansi, EntryPoint = "openlog")]
         private static extern void OpenLogNative(IntPtr ident, int option, int facility);
 
         [DllImport(libc, CharSet = CharSet.Ansi, EntryPoint = "syslog")]
         private static extern void SysLogNative(int priority, string format, string message);
+
+        // os_log_t os_log_create(const char *subsystem, const char *category);
+        [DllImport(libc, EntryPoint = "os_log_create")]
+        private static extern IntPtr OsLogCreate(IntPtr subsystem, IntPtr category);
+
+        // void _os_log_impl(void *dso, os_log_t log, os_log_type_t type, const char *format, uint8_t *buf, uint32_t size);
+        [DllImport(libc, EntryPoint = "_os_log_impl")]
+        private static extern void OsLogImpl(IntPtr dso, IntPtr log, byte type, IntPtr format, byte[] buf, uint size);
+
+        // const struct mach_header *_dyld_get_image_header(uint32_t image_index);
+        [DllImport(libc, EntryPoint = "_dyld_get_image_header")]
+        private static extern IntPtr DyldGetImageHeader(uint imageIndex);
 
         [DllImport(libc, EntryPoint = "closelog")]
         internal static extern void CloseLog();
@@ -395,6 +427,12 @@ namespace System.Management.Automation.Tracing
         /// <param name="message">The message to put in the log entry.</param>
         internal static void SysLog(SysLogPriority priority, string message)
         {
+            if (OperatingSystem.IsMacOS())
+            {
+                OsLog(priority, message);
+                return;
+            }
+
             // Pass the message as a "%s" argument so any '%' characters in the message
             // are not interpreted as format specifiers.
             SysLogNative((int)priority, "%s", message);
@@ -410,7 +448,68 @@ namespace System.Management.Automation.Tracing
         /// <param name="facility">The default facility for subsequent calls to syslog.</param>
         internal static void OpenLog(IntPtr ident, SysLogPriority facility)
         {
+            if (OperatingSystem.IsMacOS())
+            {
+                // On macOS 'ident' is used as the os_log category, matching libpsl-native's behavior.
+                s_osLogSubsystem = Marshal.StringToCoTaskMemUTF8(OsLogSubsystem);
+                s_osLog = OsLogCreate(s_osLogSubsystem, ident);
+                s_osLogDso = DyldGetImageHeader(0);
+                s_osLogFormat = Marshal.StringToCoTaskMemUTF8("%{public}s");
+                return;
+            }
+
             OpenLogNative(ident, LOG_NDELAY | LOG_PID, (int)facility);
+        }
+
+        /// <summary>
+        /// Logs a message through the macOS unified logging system (os_log).
+        /// </summary>
+        /// <remarks>
+        /// os_log is a compiler-macro API; this reconstructs the small argument buffer the compiler
+        /// would normally emit for a single public string argument ("%{public}s"). The buffer layout is:
+        ///   byte 0: header flags (0x02 = contains a non-scalar/string argument)
+        ///   byte 1: argument count (0x01)
+        ///   byte 2: command descriptor (0x22 = type STRING (0x2) in the high nibble, flag PUBLIC (0x2) in the low nibble)
+        ///   byte 3: argument size in bytes (0x08 = size of a pointer)
+        ///   bytes 4-11: pointer to the null-terminated message.
+        /// </remarks>
+        private static void OsLog(SysLogPriority priority, string message)
+        {
+            if (s_osLog == IntPtr.Zero)
+            {
+                return;
+            }
+
+            // Map the syslog severity to an os_log type, mirroring libpsl-native's nativesyslog.cpp switch.
+            byte type = ((int)priority & 0x7) switch
+            {
+                (int)SysLogPriority.Emergency or (int)SysLogPriority.Alert or (int)SysLogPriority.Critical => OS_LOG_TYPE_FAULT,
+                (int)SysLogPriority.Error => OS_LOG_TYPE_ERROR,
+                (int)SysLogPriority.Debug => OS_LOG_TYPE_DEBUG,
+                _ => OS_LOG_TYPE_DEFAULT,
+            };
+
+            IntPtr messagePtr = Marshal.StringToCoTaskMemUTF8(message);
+            try
+            {
+                byte[] buf = new byte[12];
+                buf[0] = 0x02;
+                buf[1] = 0x01;
+                buf[2] = 0x22;
+                buf[3] = 0x08;
+
+                long ptr = messagePtr.ToInt64();
+                for (int i = 0; i < 8; i++)
+                {
+                    buf[4 + i] = (byte)(ptr >> (i * 8));
+                }
+
+                OsLogImpl(s_osLogDso, s_osLog, type, s_osLogFormat, buf, (uint)buf.Length);
+            }
+            finally
+            {
+                Marshal.FreeCoTaskMem(messagePtr);
+            }
         }
 
         [Flags]
