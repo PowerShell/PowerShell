@@ -524,14 +524,6 @@ namespace System.Management.Automation
                 else if (cmdletInfo.Module != null && !string.IsNullOrEmpty(cmdletInfo.Module.Path) && !string.IsNullOrEmpty(cmdletInfo.Module.ModuleBase))
                 {
                     searchPaths.Add(HelpUtils.GetModuleBaseForUserHelp(cmdletInfo.Module.ModuleBase, cmdletInfo.Module.Name));
-
-                    // When running as a packaged app, also search the writable AllUsers help location in the per-machine data store.
-                    string allUsersHelpPath = HelpUtils.GetModuleBaseForAllUsersHelp(cmdletInfo.Module.ModuleBase, cmdletInfo.Module.Name);
-                    if (!string.IsNullOrEmpty(allUsersHelpPath) && !string.Equals(allUsersHelpPath, cmdletInfo.Module.ModuleBase, StringComparison.OrdinalIgnoreCase))
-                    {
-                        searchPaths.Add(allUsersHelpPath);
-                    }
-
                     searchPaths.Add(cmdletInfo.Module.ModuleBase);
                 }
                 else
