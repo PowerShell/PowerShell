@@ -524,6 +524,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private SwitchParameter _current;   
+
         /// <summary>
         /// Gets the Current Process.
         /// </summary>
@@ -542,8 +544,6 @@ namespace Microsoft.PowerShell.Commands
                 myMode = MatchMode.ByCurrent;
             }
         }
-
-        private SwitchParameter _current;
 
         /// <summary>
         /// Include the UserName.
