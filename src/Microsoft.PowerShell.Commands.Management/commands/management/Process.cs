@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Retrieve the list of all processes matching the Name, Id
         /// and InputObject parameters, sorted by Id.
-        /// If the Current parameter is used only the current 
+        /// If the Current parameter is used only the current
         /// process is returned.
         /// </summary>
         /// <returns></returns>
