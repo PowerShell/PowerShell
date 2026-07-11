@@ -118,7 +118,7 @@ Describe "File encoding tests" -Tag CI {
             )
         }
         BeforeEach {
-            Remove-Item TESTDRIVE:/* -force -ErrorAction Ignore
+            Remove-Item TESTDRIVE:/* -Force -ErrorAction Ignore
         }
         It "'<command> has a warning when '-Encoding utf7' is used" -TestCases $testCases {
             param ($command, $script)
