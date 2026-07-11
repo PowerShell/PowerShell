@@ -524,7 +524,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private SwitchParameter _current;   
+        private SwitchParameter _current;
 
         /// <summary>
         /// Gets the Current Process.
