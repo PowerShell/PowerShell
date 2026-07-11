@@ -2212,6 +2212,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+        
         /// <summary>
         /// Implements ^c, after creating a process.
         /// </summary>
