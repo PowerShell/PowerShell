@@ -527,7 +527,10 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
 
-                commandProcessorBase = executionContext.CommandDiscovery.LookupCommandProcessor(CommandText, origin, _useLocalScope);
+                // Favour a ComamndInfo object if one is available.
+                commandProcessorBase = CommandInfo is CommandInfo commandInfo
+                    ? executionContext.CommandDiscovery.LookupCommandProcessor(commandInfo, origin, _useLocalScope, null)
+                    : executionContext.CommandDiscovery.LookupCommandProcessor(CommandText, origin, _useLocalScope);
             }
 
             CommandParameterCollection parameters = Parameters;
