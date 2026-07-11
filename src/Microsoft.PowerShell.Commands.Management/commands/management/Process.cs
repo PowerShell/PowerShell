@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get the Current Process.
+        /// Gets the Current Process.
         /// </summary>
         [Parameter(ParameterSetName = CurrentParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = CurrentWithUserNameParameterSet, Mandatory = true)]
