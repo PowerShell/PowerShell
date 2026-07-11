@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Selects the current process.
             /// </summary>
-            ByCurrent
+            ByCurrent,
         }
         /// <summary>
         /// The current process selection mode.
