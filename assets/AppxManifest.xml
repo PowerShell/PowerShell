@@ -19,7 +19,7 @@
     <desktop6:RegistryWriteVirtualization>disabled</desktop6:RegistryWriteVirtualization>
     <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>
     <appdata:ApplicationData>
-      <appdata:MachineFolder Sddl="(A;OICI;GA;;;BA)" />
+      <appdata:MachineFolder Sddl="(A;OICI;GA;;;BA)(A;OICI;GR;;;BU)" />
     </appdata:ApplicationData>
   </Properties>
 
