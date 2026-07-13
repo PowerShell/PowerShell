@@ -56,6 +56,8 @@ namespace System.Management.Automation.Configuration
     {
         private const string ConfigFileName = "powershell.config.json";
         private const string ExecutionPolicyDefaultShellKey = "Microsoft.PowerShell:ExecutionPolicy";
+        private const string ExperimentalFeaturesKey = "ExperimentalFeatures";
+        private const string DisabledExperimentalFeaturesKey = "DisabledExperimentalFeatures";
         private const string DisableImplicitWinCompatKey = "DisableImplicitWinCompat";
         private const string WindowsPowerShellCompatibilityModuleDenyListKey = "WindowsPowerShellCompatibilityModuleDenyList";
         private const string WindowsPowerShellCompatibilityNoClobberModuleListKey = "WindowsPowerShellCompatibilityNoClobberModuleList";
@@ -241,41 +243,92 @@ namespace System.Management.Automation.Configuration
         /// </summary>
         internal string[] GetExperimentalFeatures()
         {
-            // Preference precedence: CurrentUser > MachineFolder (admin) > AllUsers ($PSHOME product).
-            string[] features = ReadValueFromFile(ConfigScope.CurrentUser, "ExperimentalFeatures", Array.Empty<string>());
+            // Resolve each experimental feature's state across the config scopes using explicit per-feature
+            // overrides, so that:
+            //  - disables accumulate and never re-enable an earlier one,
+            //  - a newly-shipped ($PSHOME) feature stays at its product default until explicitly overridden, and
+            //  - an all-disabled state is not mistaken for "unset" (which previously fell back to $PSHOME).
+            // Explicit enable/disable precedence: CurrentUser > MachineFolder (admin) > AllUsers ($PSHOME product).
+            // A feature with no explicit setting defaults to the product ($PSHOME) enabled list (preview = on).
+            HashSet<string> userEnabled = ReadFeatureSet(ConfigScope.CurrentUser, ExperimentalFeaturesKey);
+            HashSet<string> userDisabled = ReadFeatureSet(ConfigScope.CurrentUser, DisabledExperimentalFeaturesKey);
+            HashSet<string> machineEnabled = ReadFeatureSet(ConfigScope.MachineFolder, ExperimentalFeaturesKey);
+            HashSet<string> machineDisabled = ReadFeatureSet(ConfigScope.MachineFolder, DisabledExperimentalFeaturesKey);
+            HashSet<string> productEnabled = ReadFeatureSet(ConfigScope.AllUsers, ExperimentalFeaturesKey);
 
-            if (features.Length == 0)
+            var universe = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            universe.UnionWith(userEnabled);
+            universe.UnionWith(userDisabled);
+            universe.UnionWith(machineEnabled);
+            universe.UnionWith(machineDisabled);
+            universe.UnionWith(productEnabled);
+
+            var effective = new List<string>(universe.Count);
+            foreach (string feature in universe)
             {
-                features = ReadValueFromFile(ConfigScope.MachineFolder, "ExperimentalFeatures", Array.Empty<string>());
+                bool enabled;
+                if (userEnabled.Contains(feature)) { enabled = true; }
+                else if (userDisabled.Contains(feature)) { enabled = false; }
+                else if (machineEnabled.Contains(feature)) { enabled = true; }
+                else if (machineDisabled.Contains(feature)) { enabled = false; }
+                else { enabled = productEnabled.Contains(feature); }
+
+                if (enabled) { effective.Add(feature); }
             }
 
-            if (features.Length == 0)
-            {
-                features = ReadValueFromFile(ConfigScope.AllUsers, "ExperimentalFeatures", Array.Empty<string>());
-            }
+            return effective.ToArray();
+        }
 
-            return features;
+        private HashSet<string> ReadFeatureSet(ConfigScope scope, string key)
+        {
+            return new HashSet<string>(
+                ReadValueFromFile(scope, key, Array.Empty<string>()),
+                StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
-        /// Set the enabled list of experimental features in the config file.
+        /// Record an explicit per-feature override (enable or disable) for an experimental feature.
         /// </summary>
         /// <param name="scope">The ConfigScope of the configuration file to update.</param>
         /// <param name="featureName">The name of the experimental feature to change in the configuration.</param>
-        /// <param name="setEnabled">If true, add to configuration; otherwise, remove from configuration.</param>
+        /// <param name="setEnabled">If true, explicitly enable the feature; otherwise explicitly disable it.</param>
         internal void SetExperimentalFeatures(ConfigScope scope, string featureName, bool setEnabled)
         {
-            var features = new List<string>(GetExperimentalFeatures());
-            bool containsFeature = features.Contains(featureName);
-            if (setEnabled && !containsFeature)
+            // Read and write the same (write-resolved) scope so overrides accumulate. On a packaged app,
+            // AllUsers writes and reads both resolve to the per-machine data store, so disabling several
+            // features in a row never re-enables an earlier one, and the shipped $PSHOME product config is
+            // never rewritten. Enabling a feature clears any disable override for it (and vice versa).
+            scope = ResolveWriteScope(scope);
+
+            var enabled = new List<string>(ReadValueFromFile(scope, ExperimentalFeaturesKey, Array.Empty<string>()));
+            var disabled = new List<string>(ReadValueFromFile(scope, DisabledExperimentalFeaturesKey, Array.Empty<string>()));
+
+            List<string> addTo = setEnabled ? enabled : disabled;
+            List<string> removeFrom = setEnabled ? disabled : enabled;
+
+            bool changed = removeFrom.RemoveAll(f => string.Equals(f, featureName, StringComparison.OrdinalIgnoreCase)) > 0;
+            if (!addTo.Exists(f => string.Equals(f, featureName, StringComparison.OrdinalIgnoreCase)))
             {
-                features.Add(featureName);
-                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+                addTo.Add(featureName);
+                changed = true;
             }
-            else if (!setEnabled && containsFeature)
+
+            if (changed)
             {
-                features.Remove(featureName);
-                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+                WriteOrRemoveFeatureSet(scope, ExperimentalFeaturesKey, enabled);
+                WriteOrRemoveFeatureSet(scope, DisabledExperimentalFeaturesKey, disabled);
+            }
+        }
+
+        private void WriteOrRemoveFeatureSet(ConfigScope scope, string key, List<string> features)
+        {
+            if (features.Count > 0)
+            {
+                WriteValueToFile<string[]>(scope, key, features.ToArray());
+            }
+            else
+            {
+                RemoveValueFromFile<string[]>(scope, key);
             }
         }
 
