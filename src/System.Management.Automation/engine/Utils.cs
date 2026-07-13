@@ -781,10 +781,16 @@ namespace System.Management.Automation
         /// </summary>
         internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
-        internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
+        // Merge orders across the configuration scopes. ConfigScope.MachineFolder is the writable per-machine
+        // (admin) store of a packaged (MSIX) install; it has no backing file otherwise, so including it here
+        // is a no-op for non-packaged installs and these orders then collapse to the legacy behavior.
+        // Policy settings: admin (MachineFolder) > product ($PSHOME / AllUsers) > user (CurrentUser).
+        // Preference settings: user (CurrentUser) > admin (MachineFolder) > product (AllUsers).
+        // Note: Group Policy (registry) still takes precedence over all of these; see GetPolicySettingFromGPO.
+        internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.MachineFolder, ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
-        internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };
-        internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.AllUsers };
+        internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.MachineFolder, ConfigScope.AllUsers, ConfigScope.CurrentUser };
+        internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.MachineFolder, ConfigScope.AllUsers };
 
         internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
@@ -1044,6 +1050,13 @@ namespace System.Management.Automation
 
             foreach (ConfigScope scope in preferenceOrder)
             {
+                // MachineFolder is a config-file-only scope (the packaged per-machine data store); it has no
+                // Group Policy / registry representation, so skip it here and let the config-file lookup handle it.
+                if (scope == ConfigScope.MachineFolder)
+                {
+                    continue;
+                }
+
                 if (InternalTestHooks.BypassGroupPolicyCaching)
                 {
                     policy = GetPolicySettingFromGPOImpl<T>(scope);

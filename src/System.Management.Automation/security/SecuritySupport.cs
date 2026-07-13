@@ -123,13 +123,27 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                return new ExecutionPolicyScope[] {
-                        ExecutionPolicyScope.MachinePolicy,
-                        ExecutionPolicyScope.UserPolicy,
-                        ExecutionPolicyScope.Process,
-                        ExecutionPolicyScope.CurrentUser,
-                        ExecutionPolicyScope.LocalMachine
-                    };
+                // When running as a packaged app with the writable per-machine data store, the system-wide
+                // execution policy (the machine-folder admin override, then the $PSHOME product default,
+                // both resolved by the LocalMachine scope) is treated as a policy and takes precedence over
+                // the current user's preference: MachineFolder > $PSHOME > user. Otherwise the legacy order
+                // is used, where the current user's preference wins over the system-wide default.
+                bool packaged = !string.IsNullOrEmpty(Utils.GetPackagedMachineDataStorePath());
+                return packaged
+                    ? new ExecutionPolicyScope[] {
+                            ExecutionPolicyScope.MachinePolicy,
+                            ExecutionPolicyScope.UserPolicy,
+                            ExecutionPolicyScope.Process,
+                            ExecutionPolicyScope.LocalMachine,
+                            ExecutionPolicyScope.CurrentUser
+                        }
+                    : new ExecutionPolicyScope[] {
+                            ExecutionPolicyScope.MachinePolicy,
+                            ExecutionPolicyScope.UserPolicy,
+                            ExecutionPolicyScope.Process,
+                            ExecutionPolicyScope.CurrentUser,
+                            ExecutionPolicyScope.LocalMachine
+                        };
             }
         }
 
@@ -478,9 +492,12 @@ namespace System.Management.Automation.Internal
                 case ExecutionPolicyScope.CurrentUser:
                     return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.CurrentUser, shellId);
 
-                // 2: Look up the system-wide preference
+                // 2: Look up the system-wide preference. When packaged, the admin machine-folder override
+                //    takes precedence over the $PSHOME product default. When not packaged, MachineFolder has
+                //    no backing file and this falls back to the AllUsers ($PSHOME) config.
                 case ExecutionPolicyScope.LocalMachine:
-                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.AllUsers, shellId);
+                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.MachineFolder, shellId)
+                        ?? PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.AllUsers, shellId);
             }
 
             return null;

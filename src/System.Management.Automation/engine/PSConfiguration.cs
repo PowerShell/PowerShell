@@ -26,7 +26,14 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// CurrentUser configuration applies to the current user.
         /// </summary>
-        CurrentUser = 1
+        CurrentUser = 1,
+
+        /// <summary>
+        /// MachineFolder configuration applies to all users and is stored in the writable per-machine
+        /// data store of a packaged (MSIX) install. It is only present when running as such a package;
+        /// otherwise this scope has no backing file.
+        /// </summary>
+        MachineFolder = 2
     }
 
     /// <summary>
@@ -61,10 +68,10 @@ namespace System.Management.Automation.Configuration
         private string systemWideConfigFile;
         private string systemWideConfigDirectory;
 
-        // When the system-wide configuration is redirected to the per-machine data store (packaged MSIX),
-        // this holds the shipped $PSHOME config, used to seed the store on first write and as a read
-        // fallback until the store copy exists. Null when not redirected.
-        private string systemWideConfigReadFallbackFile;
+        // When running as a packaged MSIX app with the per-machine data store provisioned, the path to the
+        // writable per-machine (admin) 'MachineFolder' config file. Null when not packaged, in which case
+        // the MachineFolder scope has no backing file and merge orders collapse to the legacy behavior.
+        private string machineFolderConfigFile;
 
         // The json file containing the per-user configuration settings.
         private readonly string perUserConfigFile;
@@ -90,16 +97,15 @@ namespace System.Management.Automation.Configuration
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
 
-            // When running as a packaged MSIX app that opts into the per-machine data store, redirect the
-            // system-wide configuration to that writable location so settings such as ExecutionPolicy and
-            // experimental features can be changed after install. The shipped $PSHOME config is preserved:
-            // it seeds the store on first write and is used as a read fallback until the store copy exists.
+            // When running as a packaged MSIX app that opts into the per-machine data store, expose that
+            // writable location as an additional 'MachineFolder' (admin) configuration scope. The shipped
+            // $PSHOME config remains the read-only product defaults; system-wide writes are redirected to
+            // the machine folder and only the changed keys are stored there (no full seed). Policy and
+            // preference settings merge these scopes with different precedence (see the Utils merge orders).
             string machineStore = Utils.GetPackagedMachineDataStorePath();
             if (!string.IsNullOrEmpty(machineStore))
             {
-                systemWideConfigReadFallbackFile = systemWideConfigFile;
-                systemWideConfigDirectory = machineStore;
-                systemWideConfigFile = Path.Combine(machineStore, ConfigFileName);
+                machineFolderConfigFile = Path.Combine(machineStore, ConfigFileName);
             }
 
             // Sets the per-user configuration directory
@@ -112,59 +118,41 @@ namespace System.Management.Automation.Configuration
             }
 
             emptyConfig = new JObject();
-            configRoots = new JObject[2];
+            configRoots = new JObject[3];
             serializer = JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 });
 
             fileLock = new ReaderWriterLockSlim();
         }
 
-        private string GetConfigFilePath(ConfigScope scope, bool forWrite = false)
+        private string GetConfigFilePath(ConfigScope scope)
         {
-            if (scope == ConfigScope.CurrentUser)
+            switch (scope)
             {
-                return perUserConfigFile;
+                case ConfigScope.CurrentUser:
+                    return perUserConfigFile;
+                case ConfigScope.MachineFolder:
+                    // Null when not running as a packaged app with the per-machine data store provisioned.
+                    return machineFolderConfigFile;
+                default:
+                    // AllUsers -> the read-only $PSHOME (product) config.
+                    return systemWideConfigFile;
             }
-
-            // AllUsers (system-wide). When the config has been redirected to the per-machine data store,
-            // reads fall back to the shipped $PSHOME config until the store copy exists, so the shipped
-            // defaults (e.g. ExecutionPolicy, experimental features) are honored. Writes always target the
-            // store copy (seeded from the shipped config by EnsureSystemConfigSeeded).
-            if (!forWrite
-                && systemWideConfigReadFallbackFile != null
-                && !File.Exists(systemWideConfigFile)
-                && File.Exists(systemWideConfigReadFallbackFile))
-            {
-                return systemWideConfigReadFallbackFile;
-            }
-
-            return systemWideConfigFile;
         }
 
         /// <summary>
-        /// When the system-wide configuration has been redirected to the per-machine data store, seed
-        /// that store with the shipped $PSHOME configuration the first time it is written so the shipped
-        /// defaults are preserved. Best-effort: requires write access to the store (e.g. an elevated process).
+        /// Maps a logical write scope to the physical config scope that receives the write. System-wide
+        /// (AllUsers) writes are redirected to the writable per-machine data store (MachineFolder) when
+        /// running as a packaged app, so only the changed keys are stored there and the read-only $PSHOME
+        /// product config is left untouched. All other scopes write in place.
         /// </summary>
-        private void EnsureSystemConfigSeeded(ConfigScope scope, string targetFile)
+        private ConfigScope ResolveWriteScope(ConfigScope scope)
         {
-            if (scope != ConfigScope.AllUsers
-                || systemWideConfigReadFallbackFile == null
-                || File.Exists(targetFile)
-                || !File.Exists(systemWideConfigReadFallbackFile))
+            if (scope == ConfigScope.AllUsers && !string.IsNullOrEmpty(machineFolderConfigFile))
             {
-                return;
+                return ConfigScope.MachineFolder;
             }
 
-            try
-            {
-                Directory.CreateDirectory(systemWideConfigDirectory);
-                File.Copy(systemWideConfigReadFallbackFile, targetFile);
-            }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
-            {
-                // Best-effort: if we lack permission to write to the store (e.g. non-elevated), the write
-                // below surfaces the access error to the caller, matching the pre-existing $PSHOME behavior.
-            }
+            return scope;
         }
 
         /// <summary>
@@ -186,8 +174,8 @@ namespace System.Management.Automation.Configuration
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
 
-            // An explicit settings file overrides any per-machine data store redirection.
-            systemWideConfigReadFallbackFile = null;
+            // An explicit settings file overrides the per-machine data store; disable the MachineFolder scope.
+            machineFolderConfigFile = null;
         }
 
         /// <summary>
@@ -253,7 +241,13 @@ namespace System.Management.Automation.Configuration
         /// </summary>
         internal string[] GetExperimentalFeatures()
         {
+            // Preference precedence: CurrentUser > MachineFolder (admin) > AllUsers ($PSHOME product).
             string[] features = ReadValueFromFile(ConfigScope.CurrentUser, "ExperimentalFeatures", Array.Empty<string>());
+
+            if (features.Length == 0)
+            {
+                features = ReadValueFromFile(ConfigScope.MachineFolder, "ExperimentalFeatures", Array.Empty<string>());
+            }
 
             if (features.Length == 0)
             {
@@ -288,6 +282,7 @@ namespace System.Management.Automation.Configuration
         internal bool IsImplicitWinCompatEnabled()
         {
             bool settingValue = ReadValueFromFile<bool?>(ConfigScope.CurrentUser, DisableImplicitWinCompatKey)
+                ?? ReadValueFromFile<bool?>(ConfigScope.MachineFolder, DisableImplicitWinCompatKey)
                 ?? ReadValueFromFile<bool?>(ConfigScope.AllUsers, DisableImplicitWinCompatKey)
                 ?? false;
 
@@ -297,12 +292,14 @@ namespace System.Management.Automation.Configuration
         internal string[] GetWindowsPowerShellCompatibilityModuleDenyList()
         {
             return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityModuleDenyListKey)
+                ?? ReadValueFromFile<string[]>(ConfigScope.MachineFolder, WindowsPowerShellCompatibilityModuleDenyListKey)
                 ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey);
         }
 
         internal string[] GetWindowsPowerShellCompatibilityNoClobberModuleList()
         {
             return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityNoClobberModuleListKey)
+                ?? ReadValueFromFile<string[]>(ConfigScope.MachineFolder, WindowsPowerShellCompatibilityNoClobberModuleListKey)
                 ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey);
         }
 
@@ -540,11 +537,11 @@ namespace System.Management.Automation.Configuration
         {
             try
             {
-                string fileName = GetConfigFilePath(scope, forWrite: true);
+                // Redirect system-wide writes to the writable per-machine data store when packaged, so only
+                // the changed keys are stored there and the read-only $PSHOME product config is untouched.
+                scope = ResolveWriteScope(scope);
+                string fileName = GetConfigFilePath(scope);
                 fileLock.EnterWriteLock();
-
-                // Preserve shipped defaults by seeding the per-machine store from $PSHOME on first write.
-                EnsureSystemConfigSeeded(scope, fileName);
 
                 // Since multiple properties can be in a single file, replacement is required instead of overwrite if a file already exists.
                 // Handling the read and write operations within a single FileStream prevents other processes from reading or writing the file while
