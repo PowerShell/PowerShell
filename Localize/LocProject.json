@@ -45,11 +45,6 @@
           "CopyOption": "UsePlaceholders"
         },
         {
-          "SourceFile": "src\\Microsoft.PowerShell.LocalAccounts\\resources\\*.resx",
-          "OutputPath": "src\\Microsoft.PowerShell.LocalAccounts\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
-          "CopyOption": "UsePlaceholders"
-        },
-        {
           "SourceFile": "src\\Microsoft.PowerShell.Security\\resources\\*.resx",
           "OutputPath": "src\\Microsoft.PowerShell.Security\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
           "CopyOption": "UsePlaceholders"
