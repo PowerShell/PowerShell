@@ -2041,7 +2041,7 @@ namespace Microsoft.PowerShell.Commands
         public string HotFixID
         {
             get;
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Class is instantiated directly from a CIM instance")]
+            [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Class is instantiated directly from a CIM instance")]
             internal set;
         }
 
@@ -2051,7 +2051,7 @@ namespace Microsoft.PowerShell.Commands
         public string Description
         {
             get;
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Class is instantiated directly from a CIM instance")]
+            [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Class is instantiated directly from a CIM instance")]
             internal set;
         }
 
@@ -2061,7 +2061,7 @@ namespace Microsoft.PowerShell.Commands
         public string InstalledOn
         {
             get;
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Class is instantiated directly from a CIM instance")]
+            [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Class is instantiated directly from a CIM instance")]
             internal set;
         }
 
@@ -2071,7 +2071,7 @@ namespace Microsoft.PowerShell.Commands
         public string FixComments
         {
             get;
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Class is instantiated directly from a CIM instance")]
+            [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Class is instantiated directly from a CIM instance")]
             internal set;
         }
     }

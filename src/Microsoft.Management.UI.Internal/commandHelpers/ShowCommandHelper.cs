@@ -301,7 +301,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the Screen Width.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private static double ScreenWidth
         {
             get
@@ -313,7 +313,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the Screen Height.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private static double ScreenHeight
         {
             get
@@ -325,7 +325,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the event set when the show-command window is closed.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private AutoResetEvent WindowClosed
         {
             get
@@ -337,7 +337,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the event set when help is needed for a command.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private AutoResetEvent HelpNeeded
         {
             get
@@ -349,7 +349,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the event set when it is necessary to import a module.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private AutoResetEvent ImportModuleNeeded
         {
             get
@@ -361,7 +361,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the event set when the window is loaded.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private AutoResetEvent WindowLoaded
         {
             get
@@ -373,7 +373,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the command needing help when HelpNeeded is set.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private string CommandNeedingHelp
         {
             get
@@ -385,7 +385,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets the module we want to import.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private string ParentModuleNeedingImportModule
         {
             get
@@ -397,7 +397,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets a value indicating whether there is a host window.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private bool HasHostWindow
         {
             get
@@ -709,7 +709,7 @@ Function PSGetSerializedShowCommandInfo
         /// <returns>
         /// Property value or null if it was not able to retrieve it. This method is not suitable to return a property value that might be null.
         /// </returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from a method called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called from a method called using reflection")]
         private static object GetPropertyValue(Type type, object obj, string propertyName, BindingFlags bindingFlags)
         {
             PropertyInfo property = type.GetProperty(propertyName, bindingFlags);
@@ -753,7 +753,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="value">Value to set the property with.</param>
         /// <param name="bindingFlags">Flags passed to reflection.</param>
         /// <returns>True if it was able to set.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from a method called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called from a method called using reflection")]
         private static bool SetPropertyValue(Type type, object obj, string propertyName, object value, BindingFlags bindingFlags)
         {
             PropertyInfo property = type.GetProperty(propertyName, bindingFlags);
@@ -808,7 +808,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="commandName">The particular command we are running show-command on.</param>
         /// <param name="includeAliasAndModules">True if we want to include aliases and retrieve modules.</param>
         /// <returns>The command to be run when calling show-command for a particular command.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private static string GetShowCommandCommand(string commandName, bool includeAliasAndModules)
         {
             string quotedCommandName = ShowCommandHelper.SingleQuote(commandName);
@@ -825,7 +825,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="importedModules">The loaded modules.</param>
         /// <param name="moduleQualify">True to qualify command with module name in GetScript.</param>
         /// <returns>A CommandViewModel of a CommandInfo.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private static object GetCommandViewModel(ShowCommandCommandInfo command, bool noCommonParameter, Dictionary<string, ShowCommandModuleInfo> importedModules, bool moduleQualify)
         {
             CommandViewModel returnValue = CommandViewModel.GetCommandViewModel(new ModuleViewModel(command.ModuleName, importedModules), command, noCommonParameter);
@@ -837,7 +837,7 @@ Function PSGetSerializedShowCommandInfo
         /// Dispatches a message to the window for it to activate.
         /// </summary>
         /// <param name="window">Window to be activated.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from ActivateWindow() which is called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called from ActivateWindow() which is called using reflection")]
         private static void ActivateWindow(Window window)
         {
             window.Dispatcher.Invoke(
@@ -856,7 +856,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="windowWidth">Window width.</param>
         /// <param name="windowHeight">Window height.</param>
         /// <param name="passThrough">True if the GUI should mention ok instead of run.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private void ShowAllModulesWindow(PSCmdlet cmdlet, Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands, bool noCommonParameter, double windowWidth, double windowHeight, bool passThrough)
         {
             this.methodThatReturnsDialog = new DispatcherOperationCallback((object ignored) =>
@@ -888,7 +888,7 @@ Function PSGetSerializedShowCommandInfo
         /// to the hostWindow thread if there is a hostWindow
         /// </summary>
         /// <param name="cmdlet">Cmdlet used to retrieve the host window.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from a method called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called from a method called using reflection")]
         private void CallShowDialog(PSCmdlet cmdlet)
         {
             this.hostWindow = ShowCommandHelper.GetHostWindow(cmdlet);
@@ -927,7 +927,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="windowWidth">Window width.</param>
         /// <param name="windowHeight">Window height.</param>
         /// <param name="passThrough">True if the GUI should mention ok instead of run.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private void ShowCommandWindow(PSCmdlet cmdlet, object commandViewModelObj, double windowWidth, double windowHeight, bool passThrough)
         {
             this.methodThatReturnsDialog = new DispatcherOperationCallback((object ignored) =>
@@ -962,7 +962,7 @@ Function PSGetSerializedShowCommandInfo
         /// </summary>
         /// <param name="importedModules">All modules currently imported.</param>
         /// <param name="commands">Commands to be displayed.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private void ImportModuleDone(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands)
         {
             this.allModulesViewModel.WaitMessageDisplayed = false;
@@ -989,7 +989,7 @@ Function PSGetSerializedShowCommandInfo
         /// Called when the module importation has failed.
         /// </summary>
         /// <param name="reason">Reason why the module importation failed.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private void ImportModuleFailed(Exception reason)
         {
             this.allModulesViewModel.WaitMessageDisplayed = false;
@@ -1013,7 +1013,7 @@ Function PSGetSerializedShowCommandInfo
         /// Called when the results or get-help are ready in order to display the help window for a command.
         /// </summary>
         /// <param name="getHelpResults">Results of a get-help call.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private void DisplayHelp(Collection<PSObject> getHelpResults)
         {
             if (this.window != null && getHelpResults != null && getHelpResults.Count > 0)
@@ -1033,7 +1033,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Activates this.window.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private void ActivateWindow()
         {
             if (this.window != null)
@@ -1046,7 +1046,7 @@ Function PSGetSerializedShowCommandInfo
         /// Returns the script to execute if dialog has not been canceled.
         /// </summary>
         /// <returns>The script to execute if dialog has not been canceled.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called using reflection")]
         private string GetScript()
         {
             if (this.dialogCanceled)
@@ -1063,7 +1063,7 @@ Function PSGetSerializedShowCommandInfo
         /// Sets up window settings common between the two flavors of show-command.
         /// </summary>
         /// <param name="commandWindow">The window being displayed.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from ShowAllModulesWindow and ShowCommandWindow which are called with reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called from ShowAllModulesWindow and ShowCommandWindow which are called with reflection")]
         private void SetupWindow(Window commandWindow)
         {
             this.window = commandWindow;
@@ -1130,7 +1130,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="copy">Button to copy command code.</param>
         /// <param name="cancel">Button to close window.</param>
         /// <param name="passThrough">True to change the text of Run to OK.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from methods called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called from methods called using reflection")]
         private void SetupButtonEvents(Button run, Button copy, Button cancel, bool passThrough)
         {
             if (passThrough)

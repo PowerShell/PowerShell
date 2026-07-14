@@ -123,7 +123,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="invocation">Commands of the PowerShell.</param>
         /// <param name="outputModeOptions">Selection mode of the list.</param>
         /// <param name="closedEvent">ClosedEvent.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "The method is called using reflection.")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "The method is called using reflection.")]
         private void StartWindow(string invocation, string outputModeOptions, AutoResetEvent closedEvent)
         {
             this.closedEvent = closedEvent;
@@ -397,7 +397,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="propertyNames">An array of property names to add.</param>
         /// <param name="displayNames">An array of display names to add.</param>
         /// <param name="types">An array of types to add.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "The method is called using reflection.")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "The method is called using reflection.")]
         private void AddColumns(string[] propertyNames, string[] displayNames, Type[] types)
         {
             // Wait for the gridViewWindow thread to signal that loading of Window is done
@@ -482,7 +482,7 @@ namespace Microsoft.Management.UI.Internal
         /// Add an item to ObservableCollection.
         /// </summary>
         /// <param name="value">PSObject of comlet data.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "The method is called using reflection.")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "The method is called using reflection.")]
         private void AddItem(PSObject value)
         {
             if (this.GetWindowClosedStatus())
@@ -528,7 +528,7 @@ namespace Microsoft.Management.UI.Internal
         /// Returns the state of GridView Window.
         /// </summary>
         /// <returns>The status of GridView Window close or not.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "The method is called using reflection.")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "The method is called using reflection.")]
         private bool GetWindowClosedStatus()
         {
             if (this.closedEvent == null)
@@ -543,7 +543,7 @@ namespace Microsoft.Management.UI.Internal
         /// Returns any exception that has been thrown by previous method calls.
         /// </summary>
         /// <returns>The thrown and caught exception. It returns null if no exceptions were thrown by any previous method calls.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "The method is called using reflection.")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "The method is called using reflection.")]
         private Exception GetLastException()
         {
             Exception local = this.exception;
