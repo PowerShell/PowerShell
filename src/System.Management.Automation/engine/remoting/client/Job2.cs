@@ -2150,7 +2150,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializationInfo">Serialization info.</param>
         /// <param name="streamingContext">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected JobFailedException(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
             throw new NotSupportedException();
