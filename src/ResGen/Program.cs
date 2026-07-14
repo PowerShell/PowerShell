@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace ConsoleApplication
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -174,7 +174,7 @@ using System.Reflection;
 }}
 ";
 
-    private static readonly string ENTRY = @"
+        private static readonly string ENTRY = @"
 
     /// <summary>
     ///   Looks up a localized string similar to {1}
