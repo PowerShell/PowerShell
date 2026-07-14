@@ -343,8 +343,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// otherwise an ArgumentException is thrown.</param>
         /// <returns>A TransactedRegistryKey object for the subkey, which is associated with Transaction.Current.
         /// returns null if the operation failed.</returns>
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public TransactedRegistryKey CreateSubKey(string subkey)
         {
             return CreateSubKey(subkey, _checkMode);
@@ -361,8 +359,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name='permissionCheck'>One of the Microsoft.Win32.RegistryKeyPermissionCheck values that
         /// specifies whether the key is opened for read or read/write access.</param>
         [ComVisible(false)]
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public TransactedRegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck)
         {
             return CreateSubKeyInternal(subkey, permissionCheck, (TransactedRegistrySecurity)null);
@@ -380,16 +376,12 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// specifies whether the key is opened for read or read/write access.</param>
         /// <param name='registrySecurity'>A TransactedRegistrySecurity object that specifies the access control security for the new key.</param>
         [ComVisible(false)]
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public unsafe TransactedRegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck, TransactedRegistrySecurity registrySecurity)
         {
             return CreateSubKeyInternal(subkey, permissionCheck, registrySecurity);
         }
 
         [ComVisible(false)]
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         private unsafe TransactedRegistryKey CreateSubKeyInternal(string subkey, RegistryKeyPermissionCheck permissionCheck, object registrySecurityObj)
         {
             ValidateKeyName(subkey);
@@ -478,8 +470,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <exception cref="InvalidOperationException">Thrown if the subkey as child subkeys.</exception>
         /// </summary>
         /// <param name='subkey'>The subkey to delete.</param>
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public void DeleteSubKey(string subkey)
         {
             DeleteSubKey(subkey, true);
@@ -497,8 +487,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name='throwOnMissingSubKey'>Specify true if an ArgumentException should be thrown if
         /// the specified subkey does not exist. If false is specified, a missing subkey does not throw
         /// an exception.</param>
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public void DeleteSubKey(string subkey, bool throwOnMissingSubKey)
         {
             ValidateKeyName(subkey);
@@ -554,8 +542,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// Utilizes Transaction.Current for its transaction.</para>
         /// </summary>
         /// <param name="subkey">The subkey to delete.</param>
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public void DeleteSubKeyTree(string subkey)
         {
             ValidateKeyName(subkey);
@@ -609,8 +595,6 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         // An internal version which does no security checks or argument checking.  Skipping the
         // security checks should give us a slight perf gain on large trees.
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         private void DeleteSubKeyTreeInternal(string subkey)
         {
             int ret = 0;
@@ -735,8 +719,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <returns>The subkey requested or null if the operation failed.</returns>
         /// <param name="name">Name or path of the subkey to open.</param>
         /// <param name="writable">Set to true of you only need readonly access.</param>
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public TransactedRegistryKey OpenSubKey(string name, bool writable)
         {
             ValidateKeyName(name);
@@ -778,8 +760,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="permissionCheck">One of the Microsoft.Win32.RegistryKeyPermissionCheck values that specifies
         /// whether the key is opened for read or read/write access.</param>
         [ComVisible(false)]
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public TransactedRegistryKey OpenSubKey(string name, RegistryKeyPermissionCheck permissionCheck)
         {
             ValidateKeyMode(permissionCheck);
@@ -796,15 +776,11 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// whether the key is opened for read or read/write access.</param>
         /// <param name="rights">A bitwise combination of Microsoft.Win32.RegistryRights values that specifies the desired security access.</param>
         [ComVisible(false)]
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public TransactedRegistryKey OpenSubKey(string name, RegistryKeyPermissionCheck permissionCheck, RegistryRights rights)
         {
             return InternalOpenSubKey(name, permissionCheck, (int)rights);
         }
 
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         private TransactedRegistryKey InternalOpenSubKey(string name, RegistryKeyPermissionCheck permissionCheck, int rights)
         {
             ValidateKeyName(name);
@@ -843,8 +819,6 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         // This required no security checks. This is to get around the Deleting SubKeys which only require
         // write permission. They call OpenSubKey which required read. Now instead call this function w/o security checks
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         internal TransactedRegistryKey InternalOpenSubKey(string name, bool writable)
         {
             ValidateKeyName(name);
@@ -873,8 +847,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// </summary>
         /// <returns>The subkey requested or null if the operation failed.</returns>
         /// <param name="name">Name or path of the subkey to open.</param>
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public TransactedRegistryKey OpenSubKey(string name)
         {
             return OpenSubKey(name, false);
@@ -885,8 +857,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// Utilizes Transaction.Current for its transaction.</para>
         /// </summary>
         /// <returns>The count of subkeys.</returns>
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public int SubKeyCount
         {
             get
@@ -896,8 +866,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         internal int InternalSubKeyCount()
         {
             EnsureNotDisposed();
@@ -928,16 +896,12 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// Utilizes Transaction.Current for its transaction.</para>
         /// </summary>
         /// <returns>A string array containing all the subkey names.</returns>
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public string[] GetSubKeyNames()
         {
             CheckKeyReadPermission();
             return InternalGetSubKeyNames();
         }
 
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         internal string[] InternalGetSubKeyNames()
         {
             EnsureNotDisposed();
@@ -1752,8 +1716,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         private void CheckOpenSubKeyPermission(string subkeyName, bool subKeyWritable)
         {
             // If the parent key is not opened under default mode, we have access already.
@@ -1769,8 +1731,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         private void CheckOpenSubKeyPermission(string subkeyName, RegistryKeyPermissionCheck subKeyCheck)
         {
             if (subKeyCheck == RegistryKeyPermissionCheck.Default)
@@ -1802,8 +1762,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         // Suppressed because keyName and subkeyName won't change.
         [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity")]
         private void CheckSubKeyWritePermission(string subkeyName)
@@ -1816,8 +1774,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         // Suppressed because keyName and subkeyName won't change.
         [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity")]
         private void CheckSubKeyReadPermission(string subkeyName)
@@ -1826,8 +1782,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             new RegistryPermission(RegistryPermissionAccess.Read, _keyName + "\\" + subkeyName + "\\.").Demand();
         }
 
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         // Suppressed because keyName and subkeyName won't change.
         [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity")]
         private void CheckSubKeyCreatePermission(string subkeyName)
@@ -1839,8 +1793,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         // Suppressed because keyName and subkeyName won't change.
         [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity")]
         private void CheckSubTreeReadPermission(string subkeyName)
@@ -1980,8 +1932,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             return winAccess;
         }
 
-        // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         private RegistryKeyPermissionCheck GetSubKeyPermissionCheck(bool subkeyWritable)
         {
             if (_checkMode == RegistryKeyPermissionCheck.Default)

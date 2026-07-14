@@ -150,8 +150,6 @@ namespace System.Management.Automation.Language
         object? VisitStringConstantExpression(StringConstantExpressionAst stringConstantExpressionAst) => DefaultVisit(stringConstantExpressionAst);
 
         /// <summary/>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "SubExpression")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "subExpression")]
         object? VisitSubExpression(SubExpressionAst subExpressionAst) => DefaultVisit(subExpressionAst);
 
         /// <summary/>
