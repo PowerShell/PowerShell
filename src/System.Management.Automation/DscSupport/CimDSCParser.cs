@@ -525,9 +525,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
     public static class DscClassCache
     {
         private const string InboxDscResourceModulePath = "WindowsPowershell\\v1.0\\Modules\\PsDesiredStateConfiguration";
-        private const string reservedDynamicKeywords = "^(Synchronization|Certificate|IIS|SQL)$";
-
-        private const string reservedProperties = "^(Require|Trigger|Notify|Before|After|Subscribe)$";
 
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
 
@@ -1264,13 +1261,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             parser.ValidateInstanceText(instanceText);
         }
 
-        private static bool IsMagicProperty(string propertyName)
-        {
-            return System.Text.RegularExpressions.Regex.Match(propertyName,
-                "^(ResourceId|SourceInfo|ModuleName|ModuleVersion|ConfigurationName)$",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success;
-        }
-
         private static string GetFriendlyName(CimClass cimClass)
         {
             try
@@ -1367,7 +1357,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             //
             // Skip all of the base, meta, registration and other classes that are not intended to be used directly by a script author
             //
-            if (System.Text.RegularExpressions.Regex.Match(keywordString, "^OMI_Base|^OMI_.*Registration", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
+            if (keywordString.StartsWith("OMI_Base", StringComparison.OrdinalIgnoreCase) ||
+                (keywordString.StartsWith("OMI_", StringComparison.OrdinalIgnoreCase) && keywordString.IndexOf("Registration", 4, StringComparison.OrdinalIgnoreCase) >= 0))
             {
                 return null;
             }
@@ -1383,7 +1374,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             };
 
             // If it's one of reserved dynamic keyword, mark it
-            if (System.Text.RegularExpressions.Regex.Match(keywordString, reservedDynamicKeywords, System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
+            if (IsReservedDynamicKeyword(keywordString))
             {
                 keyword.IsReservedKeyword = true;
             }
@@ -1441,7 +1432,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                 }
                 // If it's one of our reserved properties, save it for error reporting
-                if (System.Text.RegularExpressions.Regex.Match(prop.Name, reservedProperties, System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
+                if (IsReservedProperty(prop.Name))
                 {
                     keyword.HasReservedProperties = true;
                     continue;
@@ -1540,6 +1531,27 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             UpdateKnownRestriction(keyword);
 
             return keyword;
+
+            static bool IsMagicProperty(string propertyName) =>
+                string.Equals(propertyName, "ResourceId", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(propertyName, "SourceInfo", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(propertyName, "ModuleName", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(propertyName, "ModuleVersion", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(propertyName, "ConfigurationName", StringComparison.OrdinalIgnoreCase);
+
+            static bool IsReservedDynamicKeyword(string keyword) =>
+                string.Equals(keyword, "Synchronization", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(keyword, "Certificate", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(keyword, "IIS", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(keyword, "SQL", StringComparison.OrdinalIgnoreCase);
+
+            static bool IsReservedProperty(string name) =>
+                string.Equals(name, "Require", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "Trigger", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "Notify", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "Before", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "After", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "Subscribe", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -3252,7 +3264,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         string tempSchemaFilepath = schemaFiles.FirstOrDefault();
 
                         Debug.Assert(schemaFiles.Count() == 1, "A valid DSCResource module can have only one schema mof file");
-                        
+
                         if (tempSchemaFilepath is not null)
                         {
                             var classes = GetCachedClassByFileName(tempSchemaFilepath) ?? ImportClasses(tempSchemaFilepath, new Tuple<string, Version>(module.Name, module.Version), errors);

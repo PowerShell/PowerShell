@@ -2360,7 +2360,7 @@ namespace System.Management.Automation
             {
                 if (permittedToWrite == null)
                     throw PSTraceSource.NewArgumentNullException(nameof(permittedToWrite));
-                if (!(permittedToWrite.commandRuntime is MshCommandRuntime mcr))
+                if (permittedToWrite.commandRuntime is not MshCommandRuntime mcr)
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime");
                 _pp = mcr.PipelineProcessor;
                 if (_pp == null)
@@ -2372,19 +2372,18 @@ namespace System.Management.Automation
                 _pp._permittedToWriteToPipeline = permittedToWriteToPipeline;
                 _pp._permittedToWriteThread = Thread.CurrentThread;
             }
+            
             /// <summary>
-            /// End the scope where WriteObject/WriteError is permitted.
+            /// Release all resources.
             /// </summary>
-            /// <!--
-            /// Not a true public, since the class is internal.
-            /// This is public only due to C# interface rules.
-            /// -->
+            /// <remarks>
+            /// End the scope where WriteObject/WriteError is permitted.
+            /// </remarks>
             public void Dispose()
             {
                 _pp._permittedToWrite = _wasPermittedToWrite;
                 _pp._permittedToWriteToPipeline = _wasPermittedToWriteToPipeline;
                 _pp._permittedToWriteThread = _wasPermittedToWriteThread;
-                GC.SuppressFinalize(this);
             }
 
             // There is no finalizer, by design.  This class relies on always
@@ -2992,21 +2991,19 @@ namespace System.Management.Automation
             {
                 // WhatIf not relevant, it never gets this far in that case
                 if (Confirm)
-                    return ConfirmImpact.Low;
-                if (Debug)
                 {
-                    if (IsConfirmFlagSet) // -Debug -Confirm:$false
-                        return ConfirmImpact.None;
                     return ConfirmImpact.Low;
                 }
 
-                if (IsConfirmFlagSet) // -Confirm:$false
+                if (IsConfirmFlagSet)
+                {
+                    // -Confirm:$false
                     return ConfirmImpact.None;
+                }
 
                 if (!_isConfirmPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out defaultUsed);
+                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out _);
                     _isConfirmPreferenceCached = true;
                 }
 

@@ -14,7 +14,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This class provides functionality for serializing a PSObject.
     /// </summary>
-    internal class CustomSerialization
+    internal sealed class CustomSerialization
     {
         #region constructor
         /// <summary>
@@ -179,8 +179,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This internal helper class provides methods for serializing mshObject.
     /// </summary>
-    internal class
-    CustomInternalSerializer
+    internal sealed class CustomInternalSerializer
     {
         #region constructor
 
@@ -705,7 +704,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                if (!(info is PSPropertyInfo property))
+                if (info is not PSPropertyInfo property)
                 {
                     continue;
                 }

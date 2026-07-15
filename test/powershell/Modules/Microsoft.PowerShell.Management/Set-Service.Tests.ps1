@@ -1,5 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 Import-Module (Join-Path -Path $PSScriptRoot '..\Microsoft.PowerShell.Security\certificateCommon.psm1')
 
 Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {

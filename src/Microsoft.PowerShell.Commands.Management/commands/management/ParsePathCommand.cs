@@ -289,137 +289,125 @@ namespace Microsoft.PowerShell.Commands
             {
                 string result = null;
 
-                switch (ParameterSetName)
+                // Check switch parameters in order of specificity
+                if (IsAbsolute)
                 {
-                    case isAbsoluteSet:
-                        string ignored;
-                        bool isPathAbsolute =
-                            SessionState.Path.IsPSAbsolute(pathsToParse[index], out ignored);
+                    string ignored;
+                    bool isPathAbsolute =
+                        SessionState.Path.IsPSAbsolute(pathsToParse[index], out ignored);
 
-                        WriteObject(isPathAbsolute);
+                    WriteObject(isPathAbsolute);
+                    continue;
+                }
+                else if (Qualifier)
+                {
+                    int separatorIndex = pathsToParse[index].IndexOf(':');
+
+                    if (separatorIndex < 0)
+                    {
+                        FormatException e =
+                            new(
+                                StringUtil.Format(NavigationResources.ParsePathFormatError, pathsToParse[index]));
+                        WriteError(
+                            new ErrorRecord(
+                                e,
+                                "ParsePathFormatError", // RENAME
+                                ErrorCategory.InvalidArgument,
+                                pathsToParse[index]));
                         continue;
+                    }
+                    else
+                    {
+                        // Check to see if it is provider or drive qualified
 
-                    case qualifierSet:
-                        int separatorIndex = pathsToParse[index].IndexOf(':');
-
-                        if (separatorIndex < 0)
+                        if (SessionState.Path.IsProviderQualified(pathsToParse[index]))
                         {
-                            FormatException e =
-                                new(
-                                    StringUtil.Format(NavigationResources.ParsePathFormatError, pathsToParse[index]));
-                            WriteError(
-                                new ErrorRecord(
-                                    e,
-                                    "ParsePathFormatError", // RENAME
-                                    ErrorCategory.InvalidArgument,
-                                    pathsToParse[index]));
-                            continue;
+                            // The plus 2 is for the length of the provider separator
+                            // which is "::"
+
+                            result =
+                                pathsToParse[index].Substring(
+                                    0,
+                                    separatorIndex + 2);
                         }
                         else
                         {
-                            // Check to see if it is provider or drive qualified
-
-                            if (SessionState.Path.IsProviderQualified(pathsToParse[index]))
-                            {
-                                // The plus 2 is for the length of the provider separator
-                                // which is "::"
-
-                                result =
-                                    pathsToParse[index].Substring(
-                                        0,
-                                        separatorIndex + 2);
-                            }
-                            else
-                            {
-                                result =
-                                    pathsToParse[index].Substring(
-                                        0,
-                                        separatorIndex + 1);
-                            }
-                        }
-
-                        break;
-
-                    case parentSet:
-                    case literalPathSet:
-                        try
-                        {
                             result =
-                                SessionState.Path.ParseParent(
-                                    pathsToParse[index],
-                                    string.Empty,
-                                    CmdletProviderContext,
-                                    true);
+                                pathsToParse[index].Substring(
+                                    0,
+                                    separatorIndex + 1);
                         }
-                        catch (PSNotSupportedException)
+                    }
+                }
+                else if (Leaf || LeafBase || Extension)
+                {
+                    try
+                    {
+                        result =
+                            SessionState.Path.ParseChildName(
+                                pathsToParse[index],
+                                CmdletProviderContext,
+                                true);
+                        if (LeafBase)
                         {
-                            // Since getting the parent path is not supported,
-                            // the provider must be a container, item, or drive
-                            // provider.  Since the paths for these types of
-                            // providers can't be split, asking for the parent
-                            // is asking for an empty string.
-                            result = string.Empty;
+                            result = System.IO.Path.GetFileNameWithoutExtension(result);
                         }
-
-                        break;
-
-                    case leafSet:
-                    case leafBaseSet:
-                    case extensionSet:
-                        try
+                        else if (Extension)
                         {
-                            // default handles leafSet
-                            result =
-                                SessionState.Path.ParseChildName(
-                                    pathsToParse[index],
-                                    CmdletProviderContext,
-                                    true);
-                            if (LeafBase)
-                            {
-                                result = System.IO.Path.GetFileNameWithoutExtension(result);
-                            }
-                            else if (Extension)
-                            {
-                                result = System.IO.Path.GetExtension(result);
-                            }
+                            result = System.IO.Path.GetExtension(result);
                         }
-                        catch (PSNotSupportedException)
-                        {
-                            // Since getting the leaf part of a path is not supported,
-                            // the provider must be a container, item, or drive
-                            // provider.  Since the paths for these types of
-                            // providers can't be split, asking for the leaf
-                            // is asking for the specified path back.
-                            result = pathsToParse[index];
-                        }
-                        catch (DriveNotFoundException driveNotFound)
-                        {
-                            WriteError(
-                                new ErrorRecord(
-                                    driveNotFound.ErrorRecord,
-                                    driveNotFound));
-                            continue;
-                        }
-                        catch (ProviderNotFoundException providerNotFound)
-                        {
-                            WriteError(
-                                new ErrorRecord(
-                                    providerNotFound.ErrorRecord,
-                                    providerNotFound));
-                            continue;
-                        }
-
-                        break;
-
-                    case noQualifierSet:
-                        result = RemoveQualifier(pathsToParse[index]);
-                        break;
-
-                    default:
-                        Dbg.Diagnostics.Assert(
-                            false,
-                            "Only a known parameter set should be called");
-                        break;
+                    }
+                    catch (PSNotSupportedException)
+                    {
+                        // Since getting the leaf part of a path is not supported,
+                        // the provider must be a container, item, or drive
+                        // provider.  Since the paths for these types of
+                        // providers can't be split, asking for the leaf
+                        // is asking for the specified path back.
+                        result = pathsToParse[index];
+                    }
+                    catch (DriveNotFoundException driveNotFound)
+                    {
+                        WriteError(
+                            new ErrorRecord(
+                                driveNotFound.ErrorRecord,
+                                driveNotFound));
+                        continue;
+                    }
+                    catch (ProviderNotFoundException providerNotFound)
+                    {
+                        WriteError(
+                            new ErrorRecord(
+                                providerNotFound.ErrorRecord,
+                                providerNotFound));
+                        continue;
+                    }
+                }
+                else if (NoQualifier)
+                {
+                    result = RemoveQualifier(pathsToParse[index]);
+                }
+                else
+                {
+                    // None of the switch parameters are true: default to -Parent behavior
+                    try
+                    {
+                        result =
+                            SessionState.Path.ParseParent(
+                                pathsToParse[index],
+                                string.Empty,
+                                CmdletProviderContext,
+                                true);
+                    }
+                    catch (PSNotSupportedException)
+                    {
+                        // Since getting the parent path is not supported,
+                        // the provider must be a container, item, or drive
+                        // provider.  Since the paths for these types of
+                        // providers can't be split, asking for the parent
+                        // is asking for an empty string.
+                        result = string.Empty;
+                    }
                 }
 
                 if (result != null)

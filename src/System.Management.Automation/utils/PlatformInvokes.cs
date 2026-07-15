@@ -235,7 +235,6 @@ namespace System.Management.Automation
         /// </returns>
         [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        // [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         internal static extern bool CloseHandle(IntPtr handle);
 
         [DllImport(PinvokeDllNames.DosDateTimeToFileTimeDllName, SetLastError = false)]
@@ -412,7 +411,6 @@ namespace System.Management.Automation
         /// <param name="lpLuid"></param>
         /// <returns></returns>
         [DllImport(PinvokeDllNames.LookupPrivilegeValueDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LookupPrivilegeValue(string lpSystemName, string lpName, ref LUID lpLuid);
 
@@ -424,7 +422,6 @@ namespace System.Management.Automation
         /// <param name="pfResult"></param>
         /// <returns></returns>
         [DllImport(PinvokeDllNames.PrivilegeCheckDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool PrivilegeCheck(IntPtr tokenHandler, ref PRIVILEGE_SET requiredPrivileges, out bool pfResult);
 
@@ -441,35 +438,34 @@ namespace System.Management.Automation
         /// <param name="returnLength"></param>
         /// <returns></returns>
         [DllImport(PinvokeDllNames.AdjustTokenPrivilegesDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool AdjustTokenPrivileges(IntPtr tokenHandler, bool disableAllPrivilege,
                                                           ref TOKEN_PRIVILEGE newPrivilegeState, int bufferLength,
                                                           out TOKEN_PRIVILEGE previousPrivilegeState,
                                                           ref int returnLength);
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct TOKEN_PRIVILEGE
         {
             internal uint PrivilegeCount;
             internal LUID_AND_ATTRIBUTES Privilege;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct LUID
         {
             internal uint LowPart;
             internal uint HighPart;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct LUID_AND_ATTRIBUTES
         {
             internal LUID Luid;
             internal uint Attributes;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct PRIVILEGE_SET
         {
             internal uint PrivilegeCount;
@@ -482,7 +478,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns></returns>
         [DllImport(PinvokeDllNames.GetCurrentProcessDllName)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         internal static extern IntPtr GetCurrentProcess();
 
         /// <summary>
@@ -494,7 +489,6 @@ namespace System.Management.Automation
         /// <param name="tokenHandle">Process token.</param>
         /// <returns>The current process token.</returns>
         [DllImport(PinvokeDllNames.OpenProcessTokenDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool OpenProcessToken(IntPtr processHandle, uint desiredAccess, out IntPtr tokenHandle);
 

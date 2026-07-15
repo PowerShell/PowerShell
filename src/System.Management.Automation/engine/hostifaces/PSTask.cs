@@ -952,7 +952,7 @@ namespace System.Management.Automation.PSTasks
                     iss.LanguageMode = PSLanguageMode.FullLanguage;
                     break;
             }
-            
+
             runspace = RunspaceFactory.CreateRunspace(iss);
             runspace.Name = runspaceName;
             _activeRunspaces.TryAdd(runspace.Id, runspace);

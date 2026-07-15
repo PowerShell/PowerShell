@@ -10,11 +10,9 @@ jobs:
   pool:
     type: windows
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  - name: DOTNET_NOLOGO
     value: 1
   - group: DotNetPrivateBuildAccess
   - group: certificate_logical_to_actual
@@ -65,12 +63,7 @@ jobs:
       AnalyzeInPipeline: false
       Language: csharp
 
-  - task: UseDotNet@2
-    inputs:
-      useGlobalJson: true
-      workingDirectory: $(PowerShellRoot)
-    env:
-      ob_restore_phase: true
+  - template: /.pipelines/templates/install-dotnet.yml@self
 
   - pwsh: |
       $runtime = switch ($env:Architecture)
@@ -144,6 +137,7 @@ jobs:
         }
 
       Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+      Find-Dotnet
 
       ## Build global tool
       Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
@@ -206,6 +200,7 @@ jobs:
   - template: /.pipelines/templates/obp-file-signing.yml@self
     parameters:
       binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
+      OfficialBuild: $(ps_official_build)
 
   ## first we sign all the files in the bin folder
   - ${{ if eq(variables['Architecture'], 'fxdependent') }}:
@@ -213,6 +208,7 @@ jobs:
       parameters:
         binPath: '$(GlobalToolArtifactPath)/publish/PowerShell.Windows.x64/release'
         globalTool: 'true'
+        OfficialBuild: $(ps_official_build)
 
   - pwsh: |
       Get-ChildItem '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
@@ -236,6 +232,9 @@ jobs:
           We also delete pdbs, content and contentFiles folder which are not necessary.
           After that, we repack using Compress-Archive and rename it back to a nupkg.
         #>
+
+      Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+      Find-Dotnet
 
       $packagingStrings = Import-PowerShellDataFile "$(PowerShellRoot)\tools\packaging\packaging.strings.psd1"
 
@@ -271,11 +270,11 @@ jobs:
         'Microsoft.PowerShell.PSResourceGet'
         'Microsoft.PowerShell.Archive'
         'PSReadLine'
-        'ThreadJob'
+        'Microsoft.PowerShell.ThreadJob'
       )
 
       $sourceModulePath = Join-Path '$(GlobalToolArtifactPath)' 'publish' 'PowerShell.Windows.x64' 'release' 'Modules'
-      $destModulesPath = Join-Path "$outputPath" 'temp' 'tools' 'net10.0' 'any' 'modules'
+      $destModulesPath = Join-Path "$outputPath" 'temp' 'tools' 'net11.0' 'any' 'modules'
 
       $modulesToCopy | ForEach-Object {
         $modulePath = Join-Path $sourceModulePath $_
@@ -283,7 +282,7 @@ jobs:
       }
 
       # Copy ref assemblies
-      Copy-Item '$(Pipeline.Workspace)/Symbols_$(Architecture)/ref' "$outputPath\temp\tools\net10.0\any\ref" -Recurse -Force
+      Copy-Item '$(Pipeline.Workspace)/Symbols_$(Architecture)/ref' "$outputPath\temp\tools\net11.0\any\ref" -Recurse -Force
 
       $contentPath = Join-Path "$outputPath\temp" 'content'
       $contentFilesPath = Join-Path "$outputPath\temp" 'contentFiles'
@@ -291,14 +290,14 @@ jobs:
       Remove-Item -Path $contentPath,$contentFilesPath -Recurse -Force
 
       # remove PDBs to reduce the size of the nupkg
-      Remove-Item -Path "$outputPath\temp\tools\net10.0\any\*.pdb" -Recurse -Force
+      Remove-Item -Path "$outputPath\temp\tools\net11.0\any\*.pdb" -Recurse -Force
 
       # create powershell.config.json
       $config = [ordered]@{}
       $config.Add("Microsoft.PowerShell:ExecutionPolicy", "RemoteSigned")
       $config.Add("WindowsPowerShellCompatibilityModuleDenyList", @("PSScheduledJob", "BestPractices", "UpdateServices"))
 
-      $configPublishPath = Join-Path "$outputPath" 'temp' 'tools' 'net10.0' 'any' "powershell.config.json"
+      $configPublishPath = Join-Path "$outputPath" 'temp' 'tools' 'net11.0' 'any' "powershell.config.json"
       Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
 
       Compress-Archive -Path "$outputPath\temp\*" -DestinationPath "$outputPath\$nupkgName" -Force
@@ -316,7 +315,7 @@ jobs:
     displayName: Sign nupkg files
     inputs:
       command: 'sign'
-      cp_code: 'CP-401405'
+      cp_code: '$(nuget_cert_id)'
       files_to_sign: '**\*.nupkg'
       search_root: '$(ob_outputDirectory)\globaltool'
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))

@@ -7,11 +7,9 @@ jobs:
   variables:
   - name: ob_sdl_sbom_enabled
     value: true
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  - name: DOTNET_NOLOGO
     value: 1
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
@@ -36,8 +34,7 @@ jobs:
   - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-      CreateJson: yes
-      UseJson: no
+      CreateJson: no
 
   - template: /.pipelines/templates/release-SetReleaseTagandContainerName.yml@self
 
@@ -58,6 +55,14 @@ jobs:
       itemPattern: '**/*.deb'
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download deb package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_deb_arm64
+      itemPattern: '**/*.deb'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download deb arm64 package
 
   - task: DownloadPipelineArtifact@2
     inputs:
@@ -86,10 +91,18 @@ jobs:
   - task: DownloadPipelineArtifact@2
     inputs:
       buildType: 'current'
-      artifact: drop_linux_package_minSize
+      artifact: drop_linux_package_minSize_x64
       itemPattern: '**/*.tar.gz'
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
-    displayName: Download linux minSize package
+    displayName: Download linux minSize x64 package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_minSize_arm64
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux minSize arm64 package
 
   - task: DownloadPipelineArtifact@2
     inputs:
@@ -152,10 +165,8 @@ jobs:
       buildType: 'current'
       artifact: drop_windows_package_package_win_arm64
       itemPattern: |
-        **/*.msi
         **/*.msix
         **/*.zip
-        **/*.exe
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download windows arm64 packages
 
@@ -178,20 +189,26 @@ jobs:
   - task: DownloadPipelineArtifact@2
     inputs:
       buildType: 'current'
-      artifact: drop_windows_package_package_win_minsize
+      artifact: drop_windows_package_package_win_x64_minsize
       itemPattern: '**/*.zip'
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
-    displayName: Download windows minsize packages
+    displayName: Download windows x64 minsize packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_arm64_minsize
+      itemPattern: '**/*.zip'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download windows arm64 minsize packages
 
   - task: DownloadPipelineArtifact@2
     inputs:
       buildType: 'current'
       artifact: drop_windows_package_package_win_x64
       itemPattern: |
-        **/*.msi
         **/*.msix
         **/*.zip
-        **/*.exe
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download windows x64 packages
 
@@ -200,10 +217,8 @@ jobs:
       buildType: 'current'
       artifact: drop_windows_package_package_win_x86
       itemPattern: |
-        **/*.msi
         **/*.msix
         **/*.zip
-        **/*.exe
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download windows x86 packages
 
@@ -249,17 +264,17 @@ jobs:
 
   - pwsh: |
       Write-Verbose -Verbose "Copying Github Release files in $(Build.ArtifactStagingDirectory)/downloads to use in Release Pipeline"
-      
+
       Write-Verbose -Verbose "Creating output directory for GitHub Release files: $(ob_outputDirectory)/GitHubPackages"
       New-Item -Path $(ob_outputDirectory)/GitHubPackages -ItemType Directory -Force
-      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
-        Where-Object { $_.Extension -notin '.msix', '.nupkg' -and $_.Name -notmatch '-gc'} | 
+      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse |
+        Where-Object { $_.Extension -notin '.msix', '.nupkg' -and $_.Name -notmatch '-gc'} |
         Copy-Item -Destination $(ob_outputDirectory)/GitHubPackages -Recurse -Verbose
-      
+
       Write-Verbose -Verbose "Creating output directory for NuGet packages: $(ob_outputDirectory)/NuGetPackages"
       New-Item -Path $(ob_outputDirectory)/NuGetPackages -ItemType Directory -Force
-      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
-        Where-Object { $_.Extension -eq '.nupkg' } | 
+      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse |
+        Where-Object { $_.Extension -eq '.nupkg' } |
         Copy-Item -Destination $(ob_outputDirectory)/NuGetPackages -Recurse -Verbose
     displayName: Copy downloads to Artifacts
 
@@ -398,7 +413,7 @@ jobs:
         }
 
         # To use -Include parameter, we need to use \* to get all files
-        $files = Get-ChildItem -Path $downloadsDirectory\* -Include @("*.deb", "*.tar.gz", "*.rpm", "*.msi", "*.zip", "*.pkg")
+        $files = Get-ChildItem -Path $downloadsDirectory\* -Include @("*.deb", "*.tar.gz", "*.rpm", "*.zip", "*.pkg")
         Write-Verbose -Verbose "files to upload."
         $files | Write-Verbose -Verbose
 

@@ -8,7 +8,7 @@ using System.Net;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal class WebProxy : IWebProxy, IEquatable<WebProxy>
+    internal sealed class WebProxy : IWebProxy, IEquatable<WebProxy>
     {
         private ICredentials? _credentials;
         private readonly Uri _proxyAddress;
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            // _proxyAddress cannot be null as it is set in the constructor            
+            // _proxyAddress cannot be null as it is set in the constructor
             return other._credentials == _credentials
                 && _proxyAddress.Equals(other._proxyAddress)
                 && BypassProxyOnLocal == other.BypassProxyOnLocal;

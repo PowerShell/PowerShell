@@ -1694,7 +1694,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Provides argument completion for Noun parameter. 
+    /// Provides argument completion for Noun parameter.
     /// </summary>
     public class NounArgumentCompleter : IArgumentCompleter
     {

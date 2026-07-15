@@ -555,7 +555,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (!usernamematch) 
+                if (!usernamematch)
                 {
                     return usernamematch;
                 }
@@ -595,7 +595,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (!datematch) 
+                if (!datematch)
                 {
                     return datematch;
                 }
@@ -1465,4 +1465,3 @@ namespace Microsoft.PowerShell.Commands
 
     #endregion RemoveEventLogCommand
 }
-

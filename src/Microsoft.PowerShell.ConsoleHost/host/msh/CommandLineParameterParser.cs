@@ -196,6 +196,7 @@ namespace Microsoft.PowerShell
             "workingdirectory"
         };
 
+#pragma warning disable SA1025 // CodeMustNotContainMultipleWhitespaceInARow
         /// <summary>
         /// These represent the parameters that are used when starting pwsh.
         /// We can query in our telemetry to determine how pwsh was invoked.
@@ -203,35 +204,36 @@ namespace Microsoft.PowerShell
         [Flags]
         internal enum ParameterBitmap : long
         {
-            Command             = 0x00000001, // -Command | -c
-            ConfigurationName   = 0x00000002, // -ConfigurationName | -config
-            CustomPipeName      = 0x00000004, // -CustomPipeName
-            EncodedCommand      = 0x00000008, // -EncodedCommand | -e | -ec
-            EncodedArgument     = 0x00000010, // -EncodedArgument
-            ExecutionPolicy     = 0x00000020, // -ExecutionPolicy | -ex | -ep
-            File                = 0x00000040, // -File | -f
-            Help                = 0x00000080, // -Help, -?, /?
-            InputFormat         = 0x00000100, // -InputFormat | -inp | -if
-            Interactive         = 0x00000200, // -Interactive | -i
-            Login               = 0x00000400, // -Login | -l
-            MTA                 = 0x00000800, // -MTA
-            NoExit              = 0x00001000, // -NoExit | -noe
-            NoLogo              = 0x00002000, // -NoLogo | -nol
-            NonInteractive      = 0x00004000, // -NonInteractive | -noni
-            NoProfile           = 0x00008000, // -NoProfile | -nop
-            OutputFormat        = 0x00010000, // -OutputFormat | -o | -of
-            SettingsFile        = 0x00020000, // -SettingsFile | -settings
-            SSHServerMode       = 0x00040000, // -SSHServerMode | -sshs
-            SocketServerMode    = 0x00080000, // -SocketServerMode | -sockets
-            ServerMode          = 0x00100000, // -ServerMode | -server
-            NamedPipeServerMode = 0x00200000, // -NamedPipeServerMode | -namedpipes
-            STA                 = 0x00400000, // -STA
-            Version             = 0x00800000, // -Version | -v
-            WindowStyle         = 0x01000000, // -WindowStyle | -w
-            WorkingDirectory    = 0x02000000, // -WorkingDirectory | -wd
-            ConfigurationFile   = 0x04000000, // -ConfigurationFile
-            NoProfileLoadTime   = 0x08000000, // -NoProfileLoadTime
-            CommandWithArgs     = 0x10000000, // -CommandWithArgs | -cwa
+            Command             = 0x0000000000000001, // -Command | -c
+            ConfigurationName   = 0x0000000000000002, // -ConfigurationName | -config
+            CustomPipeName      = 0x0000000000000004, // -CustomPipeName
+            EncodedCommand      = 0x0000000000000008, // -EncodedCommand | -e | -ec
+            EncodedArgument     = 0x0000000000000010, // -EncodedArgument
+            ExecutionPolicy     = 0x0000000000000020, // -ExecutionPolicy | -ex | -ep
+            File                = 0x0000000000000040, // -File | -f
+            Help                = 0x0000000000000080, // -Help, -?, /?
+            InputFormat         = 0x0000000000000100, // -InputFormat | -inp | -if
+            Interactive         = 0x0000000000000200, // -Interactive | -i
+            Login               = 0x0000000000000400, // -Login | -l
+            MTA                 = 0x0000000000000800, // -MTA
+            NoExit              = 0x0000000000001000, // -NoExit | -noe
+            NoLogo              = 0x0000000000002000, // -NoLogo | -nol
+            NonInteractive      = 0x0000000000004000, // -NonInteractive | -noni
+            NoProfile           = 0x0000000000008000, // -NoProfile | -nop
+            OutputFormat        = 0x0000000000010000, // -OutputFormat | -o | -of
+            SettingsFile        = 0x0000000000020000, // -SettingsFile | -settings
+            SSHServerMode       = 0x0000000000040000, // -SSHServerMode | -sshs
+            SocketServerMode    = 0x0000000000080000, // -SocketServerMode | -sockets
+            ServerMode          = 0x0000000000100000, // -ServerMode | -server
+            NamedPipeServerMode = 0x0000000000200000, // -NamedPipeServerMode | -namedpipes
+            STA                 = 0x0000000000400000, // -STA
+            Version             = 0x0000000000800000, // -Version | -v
+            WindowStyle         = 0x0000000001000000, // -WindowStyle | -w
+            WorkingDirectory    = 0x0000000002000000, // -WorkingDirectory | -wd
+            ConfigurationFile   = 0x0000000004000000, // -ConfigurationFile
+            NoProfileLoadTime   = 0x0000000008000000, // -NoProfileLoadTime
+            CommandWithArgs     = 0x0000000010000000, // -CommandWithArgs | -cwa
+
             // Enum values for specified ExecutionPolicy
             EPUnrestricted      = 0x0000000100000000, // ExecutionPolicy unrestricted
             EPRemoteSigned      = 0x0000000200000000, // ExecutionPolicy remote signed
@@ -241,7 +243,11 @@ namespace Microsoft.PowerShell
             EPBypass            = 0x0000002000000000, // ExecutionPolicy bypass
             EPUndefined         = 0x0000004000000000, // ExecutionPolicy undefined
             EPIncorrect         = 0x0000008000000000, // ExecutionPolicy incorrect
+
+            // V2 Socket Server Mode
+            V2SocketServerMode  = 0x0000100000000000, // -V2SocketServerMode | -v2so
         }
+#pragma warning restore SA1025 // CodeMustNotContainMultipleWhitespaceInARow
 
         internal ParameterBitmap ParametersUsed = 0;
 
@@ -597,6 +603,33 @@ namespace Microsoft.PowerShell
                 return _removeWorkingDirectoryTrailingCharacter;
             }
         }
+
+        internal DateTimeOffset? UTCTimestamp
+        {
+            get
+            {
+                AssertArgumentsParsed();
+                return _utcTimestamp;
+            }
+        }
+
+        internal string? Token
+        {
+            get
+            {
+                AssertArgumentsParsed();
+                return _token;
+            }
+        }
+
+        internal bool V2SocketServerMode
+        {
+            get
+            {
+                AssertArgumentsParsed();
+                return _v2SocketServerMode;
+            }
+        }
 #endif
 
         #endregion Internal properties
@@ -916,6 +949,14 @@ namespace Microsoft.PowerShell
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.SocketServerMode;
                 }
+#if !UNIX
+                else if (MatchSwitch(switchKey, "v2socketservermode", "v2so"))
+                {
+                    _v2SocketServerMode = true;
+                    _showBanner = false;
+                    ParametersUsed |= ParameterBitmap.V2SocketServerMode;
+                }
+#endif
                 else if (MatchSwitch(switchKey, "servermode", "s"))
                 {
                     _serverMode = true;
@@ -1175,6 +1216,37 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "removeworkingdirectorytrailingcharacter", "removeworkingdirectorytrailingcharacter"))
                 {
                     _removeWorkingDirectoryTrailingCharacter = true;
+                }
+                else if (MatchSwitch(switchKey, "token", "to"))
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        SetCommandLineError(
+                            string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.MissingMandatoryArgument, "-Token"));
+                        break;
+                    }
+
+                    _token = args[i];
+
+                    // Not adding anything to ParametersUsed, because it is required with V2 socket server mode
+                    // So, we can assume it based on that bit
+                }
+                else if (MatchSwitch(switchKey, "utctimestamp", "utc"))
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        SetCommandLineError(
+                            string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.MissingMandatoryArgument, "-UTCTimestamp"));
+                        break;
+                    }
+
+                    // Parse as iso8601UtcString
+                    _utcTimestamp = DateTimeOffset.ParseExact(args[i], "yyyy-MM-dd'T'HH:mm:ssK", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+
+                    // Not adding anything to ParametersUsed, because it is required with V2 socket server mode
+                    // So, we can assume it based on that bit
                 }
 #endif
                 else
@@ -1530,6 +1602,9 @@ namespace Microsoft.PowerShell
         }
 
         private bool _socketServerMode;
+#if !UNIX
+        private bool _v2SocketServerMode;
+#endif
         private bool _serverMode;
         private bool _namedPipeServerMode;
         private bool _sshServerMode;
@@ -1562,6 +1637,10 @@ namespace Microsoft.PowerShell
         private string? _executionPolicy;
         private string? _settingsFile;
         private string? _workingDirectory;
+#if !UNIX
+        private string? _token;
+        private DateTimeOffset? _utcTimestamp;
+#endif
 
 #if !UNIX
         private ProcessWindowStyle? _windowStyle;

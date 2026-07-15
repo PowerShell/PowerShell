@@ -1436,7 +1436,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Read CommandLine property
-                if (!(GetPropertyValue(mshObject, "CommandLine") is string commandLine))
+                if (GetPropertyValue(mshObject, "CommandLine") is not string commandLine)
                 {
                     break;
                 }

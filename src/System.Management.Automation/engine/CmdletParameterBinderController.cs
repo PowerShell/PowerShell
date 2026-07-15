@@ -622,7 +622,7 @@ namespace System.Management.Automation
 
             foreach (DictionaryEntry entry in DefaultParameterValues)
             {
-                if (!(entry.Key is string key))
+                if (entry.Key is not string key)
                 {
                     continue;
                 }
@@ -4386,7 +4386,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
-            if (!(key is string strKey))
+            if (key is not string strKey)
             {
                 return false;
             }
@@ -4415,7 +4415,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
-            if (!(key is string strKey))
+            if (key is not string strKey)
             {
                 throw PSTraceSource.NewArgumentException(nameof(key), ParameterBinderStrings.StringValueKeyExpected, key, key.GetType().FullName);
             }
@@ -4463,7 +4463,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentNullException(nameof(key));
                 }
 
-                if (!(key is string strKey))
+                if (key is not string strKey)
                 {
                     return null;
                 }
@@ -4489,7 +4489,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
-            if (!(key is string strKey))
+            if (key is not string strKey)
             {
                 return;
             }

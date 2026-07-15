@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            if (!(GetProperty(so, FormatInfoData.classidProperty) is string classId))
+            if (GetProperty(so, FormatInfoData.classidProperty) is not string classId)
             {
                 // it's not one of the objects derived from FormatInfoData
                 return false;
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return so;
             }
 
-            if (!(GetProperty(so, FormatInfoData.classidProperty) is string classId))
+            if (GetProperty(so, FormatInfoData.classidProperty) is not string classId)
             {
                 // it's not one of the objects derived from FormatInfoData,
                 // just return it as is

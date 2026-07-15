@@ -42,9 +42,14 @@ namespace Microsoft.PowerShell.Commands
         private object _prop;
 
         /// <summary>
-        /// Optional, non positional parameter.
+        /// Gets or sets the properties to exclude from formatting.
         /// </summary>
-        /// <value></value>
+        [Parameter]
+        public string[] ExcludeProperty { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to autosize the output.
+        /// </summary>
         [Parameter]
         public SwitchParameter AutoSize
         {
@@ -74,6 +79,18 @@ namespace Microsoft.PowerShell.Commands
         {
             FormattingCommandLineParameters parameters = new();
 
+            // Check View conflicts first (before any auto-expansion)
+            if (!string.IsNullOrEmpty(this.View))
+            {
+                // View cannot be used with Property or ExcludeProperty
+                if (_prop is not null || (ExcludeProperty is not null && ExcludeProperty.Length != 0))
+                {
+                    ReportCannotSpecifyViewAndProperty();
+                }
+
+                parameters.viewName = this.View;
+            }
+
             if (_prop != null)
             {
                 ParameterProcessor processor = new(new FormatWideParameterDefinition());
@@ -81,15 +98,17 @@ namespace Microsoft.PowerShell.Commands
                 parameters.mshParameterList = processor.ProcessParameters(new object[] { _prop }, invocationContext);
             }
 
-            if (!string.IsNullOrEmpty(this.View))
+            if (ExcludeProperty is not null)
             {
-                // we have a view command line switch
-                if (parameters.mshParameterList.Count != 0)
-                {
-                    ReportCannotSpecifyViewAndProperty();
-                }
+                parameters.excludePropertyFilter = new PSPropertyExpressionFilter(ExcludeProperty);
 
-                parameters.viewName = this.View;
+                // ExcludeProperty implies -Property * for better UX
+                if (_prop is null)
+                {
+                    ParameterProcessor processor = new(new FormatWideParameterDefinition());
+                    TerminatingErrorContext invocationContext = new(this);
+                    parameters.mshParameterList = processor.ProcessParameters(new object[] { "*" }, invocationContext);
+                }
             }
 
             // we cannot specify -column and -autosize, they are mutually exclusive

@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+. "$PSScriptRoot\..\buildCommon\startNativeExecution.ps1"
+
 $Environment = Get-EnvironmentInformation
 $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 
@@ -16,7 +18,7 @@ $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
 $AllDistributions += 'macOs'
-$script:netCoreRuntime = 'net10.0'
+$script:netCoreRuntime = 'net11.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
@@ -50,7 +52,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "msi", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
+        [ValidateSet("msix", "deb", "deb-arm64", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size-x64", "min-size-arm64", "tar-alpine-fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -75,8 +77,8 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ($Type -in ('zip', 'min-size') -or $Type -like 'fxdependent*') {
-            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
+        if ($Type -contains 'zip' -or $Type -like 'min-size*' -or $Type -like 'fxdependent*') {
+            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is essentially a 'zip' package.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
@@ -100,16 +102,16 @@ function Start-PSPackage {
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
         } elseif ($MacOSRuntime) {
-           $MacOSRuntime, "Release"
+            $MacOSRuntime, "Release"
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "linux-musl-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm") {
-            New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            New-PSOptions -Configuration "Release" -Runtime "linux-arm" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm64") {
             if ($IsMacOS) {
                 New-PSOptions -Configuration "Release" -Runtime "osx-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             } else {
-                New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+                New-PSOptions -Configuration "Release" -Runtime "linux-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -118,6 +120,13 @@ function Start-PSPackage {
         }
         elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-noopt-linux-musl-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
+        elseif ($Type.Count -eq 1 -and $Type[0] -eq "deb-arm64") {
+            New-PSOptions -Configuration "Release" -Runtime 'linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
+        elseif ($Type.Count -eq 1 -and $Type[0] -eq "min-size-arm64") {
+            $runtimeToUse = if ($IsMacOS) { "osx-arm64" } elseif ($IsLinux) { "linux-arm64" } else { "win-arm64" }
+            New-PSOptions -Configuration "Release" -Runtime $runtimeToUse -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
         else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -282,6 +291,18 @@ function Start-PSPackage {
                 $createdSpdxPathSha = New-Item -Path $manifestSpdxPathSha -Force
                 Write-Verbose -Verbose "Created manifest.spdx.json.sha256 file: $createdSpdxPathSha"
             }
+
+            $bsiJsonPath = (Join-Path -Path $Source "_manifest\spdx_2.2\bsi.json")
+            if (-not (Test-Path -Path $bsiJsonPath)) {
+                $createdBsiJsonPath = New-Item -Path $bsiJsonPath -Force
+                Write-Verbose -Verbose "Created bsi.json file: $createdBsiJsonPath"
+            }
+
+            $manifestCatPath = (Join-Path -Path $Source "_manifest\spdx_2.2\manifest.cat")
+            if (-not (Test-Path -Path $manifestCatPath)) {
+                $createdCatPath = New-Item -Path $manifestCatPath -Force
+                Write-Verbose -Verbose "Created manifest.cat file: $createdCatPath"
+            }
         }
 
         # If building a symbols package, we add a zip of the parent to publish
@@ -332,7 +353,7 @@ function Start-PSPackage {
             } elseif ($Environment.IsMacOS) {
                 "osxpkg", "tar"
             } elseif ($Environment.IsWindows) {
-                "msi", "msix"
+                "zip", "msix"
             }
             Write-Warning "-Type was not specified, continuing with $Type!"
         }
@@ -392,7 +413,7 @@ function Start-PSPackage {
                     New-PdbZipPackage @Arguments
                 }
             }
-            "min-size" {
+            { $_ -like "min-size*" } {
                 # Add suffix '-gc' because this package is for the Guest Config team.
                 if ($Environment.IsWindows) {
                     $Arguments = @{
@@ -402,12 +423,10 @@ function Start-PSPackage {
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
                             R2RState = 'SdkOnly'
-                            OperatingSystem = "Windows"
-                            Architecture = "amd64"
                         }
                     }
 
-                    if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
+                    if ($PSCmdlet.ShouldProcess("Create min-size Zip Package")) {
                         New-ZipPackage @Arguments
                     }
                 }
@@ -416,6 +435,7 @@ function Start-PSPackage {
                         PackageSourcePath = $Source
                         Name = $Name
                         PackageNameSuffix = 'gc'
+                        Architecture = $Runtime.Split('-')[1]
                         Version = $Version
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
@@ -423,12 +443,15 @@ function Start-PSPackage {
                         }
                     }
 
-                    if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                    if ($PSCmdlet.ShouldProcess("Create min-size tar.gz Package")) {
                         New-TarballPackage @Arguments
                     }
                 }
+                else {
+                    throw "The 'min-size*' package types are supported only on Windows and Linux."
+                }
             }
-            { $_ -like "fxdependent*"} {
+            { $_ -like "fxdependent*" } {
                 if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
@@ -479,34 +502,6 @@ function Start-PSPackage {
                     }
                 }
             }
-            "msi" {
-                $TargetArchitecture = "x64"
-                $r2rArchitecture = "amd64"
-                if ($Runtime -match "-x86") {
-                    $TargetArchitecture = "x86"
-                    $r2rArchitecture = "i386"
-                }
-                elseif ($Runtime -match "-arm64")
-                {
-                    $TargetArchitecture = "arm64"
-                    $r2rArchitecture = "arm64"
-                }
-
-                Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
-
-                $Arguments = @{
-                    ProductNameSuffix = $NameSuffix
-                    ProductSourcePath = $Source
-                    ProductVersion = $Version
-                    AssetsPath = "$RepoRoot\assets"
-                    ProductTargetArchitecture = $TargetArchitecture
-                    Force = $Force
-            }
-
-                if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
-                    New-MSIPackage @Arguments
-                }
-            }
             "msix" {
                 $Arguments = @{
                     ProductNameSuffix = $NameSuffix
@@ -515,6 +510,7 @@ function Start-PSPackage {
                     Architecture = $WindowsRuntime.Split('-')[1]
                     Force = $Force
                     Private = $Private
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create MSIX Package")) {
@@ -618,6 +614,24 @@ function Start-PSPackage {
                     NoSudo = $NoSudo
                     LTS = $LTS
                     HostArchitecture = "amd64"
+                }
+                foreach ($Distro in $Script:DebianDistributions) {
+                    $Arguments["Distribution"] = $Distro
+                    if ($PSCmdlet.ShouldProcess("Create DEB Package for $Distro")) {
+                        New-UnixPackage @Arguments
+                    }
+                }
+            }
+            'deb-arm64' {
+                $Arguments = @{
+                    Type = 'deb'
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    NoSudo = $NoSudo
+                    LTS = $LTS
+                    HostArchitecture = "arm64"
                 }
                 foreach ($Distro in $Script:DebianDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -789,6 +803,18 @@ function New-TarballPackage {
     $Staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath -R2RVerification $R2RVerification
 
+    # Ensure PowerShell executable has correct permissions in tarball
+    $pwshInStaging = Join-Path $Staging 'pwsh'
+    if (Test-Path -LiteralPath $pwshInStaging) {
+        Start-NativeExecution { chmod 755 $pwshInStaging }
+    }
+
+    # Included .NET executable for producing crash dumps
+    $createdumpInStaging = Join-Path $Staging 'createdump'
+    if (Test-Path -LiteralPath $createdumpInStaging) {
+        Start-NativeExecution { chmod 755 $createdumpInStaging }
+    }
+
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
         if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
             $options = "-czf"
@@ -887,7 +913,8 @@ function Update-PSSignedBuildFolder
         [string]$BuildPath,
         [Parameter(Mandatory)]
         [string]$SignedFilesPath,
-        [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap')
+        [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap'),
+        [bool]$OfficialBuild = $true
     )
 
     $BuildPathNormalized = (Get-Item $BuildPath).FullName
@@ -943,8 +970,21 @@ function Update-PSSignedBuildFolder
         if ($IsWindows)
         {
             $signature = Get-AuthenticodeSignature -FilePath $signedFilePath
-            if ($signature.Status -ne 'Valid') {
+
+            if ($signature.Status -ne 'Valid' -and $OfficialBuild) {
+                Write-Host "Certificate Issuer: $($signature.SignerCertificate.Issuer)"
+                Write-Host "Certificate Subject: $($signature.SignerCertificate.Subject)"
                 Write-Error "Invalid signature for $signedFilePath"
+            } elseif ($OfficialBuild -eq $false) {
+                if ($signature.Status -eq 'NotSigned') {
+                    Write-Warning "File is not signed: $signedFilePath"
+                } elseif ($signature.SignerCertificate.Issuer -notmatch '^CN=(Microsoft|TestAzureEngBuildCodeSign|Windows Internal Build Tools).*') {
+                    Write-Warning "File signed with test certificate: $signedFilePath"
+                    Write-Host "Certificate Issuer: $($signature.SignerCertificate.Issuer)"
+                    Write-Host "Certificate Subject: $($signature.SignerCertificate.Subject)"
+                } else {
+                    Write-Verbose -Verbose "File properly signed: $signedFilePath"
+                }
             }
         }
         else
@@ -1031,7 +1071,7 @@ function New-UnixPackage {
         # This is a string because strings are appended to it
         [string]$Iteration = "1",
 
-        # Host architecture values allowed for deb type packages: amd64
+        # Host architecture values allowed for deb type packages: amd64, arm64
         # Host architecture values allowed for rpm type packages include: x86_64, aarch64, native, all, noarch, any
         # Host architecture values allowed for osxpkg type packages include: x86_64, arm64
         [string]
@@ -1054,7 +1094,7 @@ function New-UnixPackage {
     DynamicParam {
         if ($Type -eq "deb" -or $Type -like 'rpm*') {
             # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
-            # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
+            # The '-Distribution' parameter can be used to indicate which Debian distro this package is targeting.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
             if($type -eq 'deb')
             {
@@ -1132,11 +1172,12 @@ function New-UnixPackage {
         # Determine if the version is a preview version
         $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
 
-        # Preview versions have preview in the name
+        # For deb/rpm packages, use the '-lts' and '-preview' channel suffix variants to match existing names on packages.microsoft.com.
+        # For osxpkg package, only LTS packages get a channel suffix in the name.
         $Name = if($LTS) {
             "powershell-lts"
         }
-        elseif ($IsPreview) {
+        elseif ($IsPreview -and $Type -ne "osxpkg") {
             "powershell-preview"
         }
         else {
@@ -1182,20 +1223,6 @@ function New-UnixPackage {
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro -Destination $Destination
 
-            # there is a weird bug in fpm
-            # if the target of the powershell symlink exists, `fpm` aborts
-            # with a `utime` error on macOS.
-            # so we move it to make symlink broken
-            # refers to executable, does not vary by channel
-            $symlink_dest = "$Destination/pwsh"
-            $hack_dest = "./_fpm_symlink_hack_powershell"
-            if ($Environment.IsMacOS) {
-                if (Test-Path $symlink_dest) {
-                    Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
-                    Start-NativeExecution ([ScriptBlock]::Create("$sudo mv $symlink_dest $hack_dest"))
-                }
-            }
-
             # Generate gzip of man file
             $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview -IsLTS:$LTS
 
@@ -1206,7 +1233,11 @@ function New-UnixPackage {
                 find $Staging -type f | xargs chmod 644
                 chmod 644 $ManGzipInfo.GzipFile
                 # refers to executable, does not vary by channel
-                chmod 755 "$Staging/pwsh" #only the executable file should be granted the execution permission
+                chmod 755 "$Staging/pwsh" # only the executable file should be granted the execution permission
+                # Included .NET executable for producing crash dumps
+                if (Test-Path "$Staging/createdump") {
+                    chmod 755 "$Staging/createdump"
+                }
             }
         }
 
@@ -1230,41 +1261,151 @@ function New-UnixPackage {
         # Setup package dependencies
         $Dependencies = @(Get-PackageDependencies @packageDependenciesParams)
 
-        $Arguments = @()
-
-
-        $Arguments += Get-FpmArguments `
-            -Name $Name `
-            -Version $packageVersion `
-            -Iteration $Iteration `
-            -Description $Description `
-            -Type $Type `
-            -Dependencies $Dependencies `
-            -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
-            -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
-            -Staging $Staging `
-            -Destination $Destination `
-            -ManGzipFile $ManGzipInfo.GzipFile `
-            -ManDestination $ManGzipInfo.ManFile `
-            -LinkInfo $Links `
-            -AppsFolder $AppsFolder `
-            -Distribution $DebDistro `
-            -HostArchitecture $HostArchitecture `
-            -ErrorAction Stop
-
         # Build package
         try {
-            if ($PSCmdlet.ShouldProcess("Create $type package")) {
-                Write-Log "Creating package with fpm $Arguments..."
-                try {
-                    $Output = Start-NativeExecution { fpm $Arguments }
+            if ($Type -eq 'rpm') {
+                # Use rpmbuild directly for RPM packages
+                if ($PSCmdlet.ShouldProcess("Create RPM package with rpmbuild")) {
+                    Write-Log "Creating RPM package with rpmbuild..."
+
+                    # Create rpmbuild directory structure
+                    $rpmBuildRoot = Join-Path $env:HOME "rpmbuild"
+                    $specsDir = Join-Path $rpmBuildRoot "SPECS"
+                    $rpmsDir = Join-Path $rpmBuildRoot "RPMS"
+
+                    New-Item -ItemType Directory -Path $specsDir -Force | Out-Null
+                    New-Item -ItemType Directory -Path $rpmsDir -Force | Out-Null
+
+                    # Generate RPM spec file
+                    $specContent = New-RpmSpec `
+                        -Name $Name `
+                        -Version $packageVersion `
+                        -Iteration $Iteration `
+                        -Description $Description `
+                        -Dependencies $Dependencies `
+                        -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
+                        -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
+                        -Staging $Staging `
+                        -Destination $Destination `
+                        -ManGzipFile $ManGzipInfo.GzipFile `
+                        -ManDestination $ManGzipInfo.ManFile `
+                        -LinkInfo $Links `
+                        -Distribution $DebDistro `
+                        -HostArchitecture $HostArchitecture
+
+                    $specFile = Join-Path $specsDir "$Name.spec"
+                    $specContent | Out-File -FilePath $specFile -Encoding ascii
+                    Write-Verbose "Generated spec file: $specFile" -Verbose
+
+                    # Log the spec file content
+                    if ($env:GITHUB_ACTIONS -eq 'true') {
+                        Write-Host "::group::RPM Spec File Content"
+                        Write-Host $specContent
+                        Write-Host "::endgroup::"
+                    } else {
+                        Write-Verbose "RPM Spec File Content:`n$specContent" -Verbose
+                    }
+
+                    # Build RPM package
+                    try {
+                        # Use bash to properly handle rpmbuild arguments
+                        # Add --target for cross-architecture builds
+                        $targetArch = ""
+                        if ($HostArchitecture -ne "x86_64" -and $HostArchitecture -ne "noarch") {
+                            $targetArch = "--target $HostArchitecture"
+                        }
+                        $buildCmd = "rpmbuild -bb --quiet $targetArch --define '_topdir $rpmBuildRoot' --buildroot '$rpmBuildRoot/BUILDROOT' '$specFile'"
+                        Write-Verbose "Running: $buildCmd" -Verbose
+                        $Output = bash -c $buildCmd 2>&1
+                        $exitCode = $LASTEXITCODE
+
+                        if ($exitCode -ne 0) {
+                            throw "rpmbuild failed with exit code $exitCode"
+                        }
+
+                        # Find the generated RPM
+                        $rpmFile = Get-ChildItem -Path (Join-Path $rpmsDir $HostArchitecture) -Filter "*.rpm" -ErrorAction Stop |
+                            Sort-Object -Property LastWriteTime -Descending |
+                            Select-Object -First 1
+
+                        if ($rpmFile) {
+                            # Copy RPM to current location
+                            Copy-Item -Path $rpmFile.FullName -Destination $CurrentLocation -Force
+                            $Output = @("Created package {:path=>""$($rpmFile.Name)""}")
+                        } else {
+                            throw "RPM file not found after build"
+                        }
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in rpmbuild!!!" -Verbose -ErrorAction SilentlyContinue
+                        if ($Output) {
+                            Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
+                        }
+                        Get-Error -InputObject $_
+                        throw
+                    }
                 }
-                catch {
-                    Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
-                    Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
-                    Get-Error -InputObject $_
-                    throw
+            } elseif ($Type -eq 'deb') {
+                # Use native DEB package builder
+                if ($PSCmdlet.ShouldProcess("Create DEB package natively")) {
+                    Write-Log "Creating DEB package natively..."
+                    try {
+                        $result = New-NativeDeb `
+                            -Name $Name `
+                            -Version $packageVersion `
+                            -Iteration $Iteration `
+                            -Description $Description `
+                            -Staging $Staging `
+                            -Destination $Destination `
+                            -ManGzipFile $ManGzipInfo.GzipFile `
+                            -ManDestination $ManGzipInfo.ManFile `
+                            -LinkInfo $Links `
+                            -Dependencies $Dependencies `
+                            -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
+                            -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
+                            -HostArchitecture $HostArchitecture `
+                            -CurrentLocation $CurrentLocation
+
+                        $Output = @("Created package {:path=>""$($result.PackageName)""}")
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in native DEB creation!!!" -Verbose -ErrorAction SilentlyContinue
+                    }
                 }
+            } elseif ($Type -eq 'osxpkg') {
+                # Use native macOS packaging tools
+                if ($PSCmdlet.ShouldProcess("Create macOS package with pkgbuild/productbuild")) {
+                    Write-Log "Creating macOS package with native tools..."
+
+                    $macPkgArgs = @{
+                        Name = $Name
+                        Version = $packageVersion
+                        Iteration = $Iteration
+                        Staging = $Staging
+                        Destination = $Destination
+                        ManGzipFile = $ManGzipInfo.GzipFile
+                        ManDestination = $ManGzipInfo.ManFile
+                        LinkInfo = $Links
+                        AfterInstallScript = $AfterScriptInfo.AfterInstallScript
+                        AppsFolder = $AppsFolder
+                        HostArchitecture = $HostArchitecture
+                        CurrentLocation = $CurrentLocation
+                        LTS = $LTS
+                    }
+
+                    try {
+                        $packageFile = New-MacOSPackage @macPkgArgs
+                        $Output = @("Created package {:path=>""$($packageFile.Name)""}")
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in macOS packaging!!!" -Verbose -ErrorAction SilentlyContinue
+                        Get-Error -InputObject $_
+                        throw
+                    }
+                }
+            } else {
+                # Nothing should reach here
+                throw "Unknown package type: $Type"
             }
         } finally {
             if ($Environment.IsMacOS) {
@@ -1273,13 +1414,17 @@ function New-UnixPackage {
                 {
                     Clear-MacOSLauncher
                 }
+            }
 
-                # this is continuation of a fpm hack for a weird bug
-                if (Test-Path $hack_dest) {
-                    Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
-                    Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo mv $hack_dest $symlink_dest")) -VerboseOutputOnError
+            # Clean up rpmbuild directory if it was created
+            if ($Type -eq 'rpm') {
+                $rpmBuildRoot = Join-Path $env:HOME "rpmbuild"
+                if (Test-Path $rpmBuildRoot) {
+                    Write-Verbose "Cleaning up rpmbuild directory: $rpmBuildRoot" -Verbose
+                    Remove-Item -Path $rpmBuildRoot -Recurse -Force -ErrorAction SilentlyContinue
                 }
             }
+
             if ($AfterScriptInfo.AfterInstallScript) {
                 Remove-Item -ErrorAction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript -Force
             }
@@ -1292,12 +1437,8 @@ function New-UnixPackage {
         # Magic to get path output
         $createdPackage = Get-Item (Join-Path $CurrentLocation (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
-        if ($Environment.IsMacOS) {
-            if ($PSCmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
-            {
-                $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage -HostArchitecture $HostArchitecture -IsPreview:$IsPreview
-            }
-        }
+        # For macOS with native tools, the package is already in the correct format
+        # For other platforms, the package name from dpkg-deb/rpmbuild is sufficient
 
         if (Test-Path $createdPackage)
         {
@@ -1342,13 +1483,26 @@ Function New-LinkInfo
 
 function New-MacOsDistributionPackage
 {
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param(
-        [Parameter(Mandatory,HelpMessage='The FileInfo of the file created by FPM')]
-        [System.IO.FileInfo]$FpmPackage,
+        [Parameter(Mandatory,HelpMessage='The FileInfo of the component package')]
+        [System.IO.FileInfo]$ComponentPackage,
+
+        [Parameter(Mandatory,HelpMessage='Package name for the output file')]
+        [string]$PackageName,
+
+        [Parameter(Mandatory,HelpMessage='Package version')]
+        [string]$Version,
+
+        [Parameter(Mandatory,HelpMessage='Output directory for the final package')]
+        [string]$OutputDirectory,
 
         [Parameter(HelpMessage='x86_64 for Intel or arm64 for Apple Silicon')]
         [ValidateSet("x86_64", "arm64")]
         [string] $HostArchitecture = "x86_64",
+
+        [Parameter(HelpMessage='Package identifier')]
+        [string]$PackageIdentifier,
 
         [Switch] $IsPreview
     )
@@ -1358,64 +1512,88 @@ function New-MacOsDistributionPackage
         throw 'New-MacOsDistributionPackage is only supported on macOS!'
     }
 
-    $packageName = Split-Path -Leaf -Path $FpmPackage
-
     # Create a temp directory to store the needed files
     $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
     New-Item -ItemType Directory -Path $tempDir -Force > $null
 
     $resourcesDir = Join-Path -Path $tempDir -ChildPath 'resources'
     New-Item -ItemType Directory -Path $resourcesDir -Force > $null
-    #Copy background file to temp directory
+
+    # Copy background file to temp directory
     $backgroundFile = "$RepoRoot/assets/macDialog.png"
-    Copy-Item -Path $backgroundFile -Destination $resourcesDir
-    # Move the current package to the temp directory
-    $tempPackagePath = Join-Path -Path $tempDir -ChildPath $packageName
-    Move-Item -Path $FpmPackage -Destination $tempPackagePath -Force
-
-    # Add the OS information to the macOS package file name.
-    $packageExt = [System.IO.Path]::GetExtension($FpmPackage.Name)
-
-    # get the package name from fpm without the extension, but replace powershell-preview at the beginning of the name with powershell.
-    $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($FpmPackage.Name) -replace '^powershell\-preview' , 'powershell'
-
-    $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
-    $newPackagePath = Join-Path $FpmPackage.DirectoryName $newPackageName
-
-    # -Force is not deleting the NewName if it exists, so delete it if it does
-    if ($Force -and (Test-Path -Path $newPackagePath))
-    {
-        Remove-Item -Force $newPackagePath
+    if (Test-Path $backgroundFile) {
+        Copy-Item -Path $backgroundFile -Destination $resourcesDir -Force
     }
+
+    # Copy the component package to temp directory
+    $componentFileName = Split-Path -Leaf -Path $ComponentPackage
+    $tempComponentPath = Join-Path -Path $tempDir -ChildPath $componentFileName
+    Copy-Item -Path $ComponentPackage -Destination $tempComponentPath -Force
 
     # Create the distribution xml
     $distributionXmlPath = Join-Path -Path $tempDir -ChildPath 'powershellDistribution.xml'
 
-    $packageId = Get-MacOSPackageId -IsPreview:$IsPreview.IsPresent
+    # Get package ID if not provided
+    if (-not $PackageIdentifier) {
+        if ($IsPreview.IsPresent) {
+            $PackageIdentifier = 'com.microsoft.powershell-preview'
+        }
+        else {
+            $PackageIdentifier = 'com.microsoft.powershell'
+        }
+    }
+
+    # Minimum OS version
+    $minOSVersion = "11.0"  # macOS Big Sur minimum
 
     # format distribution template with:
     # 0 - title
     # 1 - version
-    # 2 - package path
+    # 2 - package path (component package filename)
     # 3 - minimum os version
     # 4 - Package Identifier
     # 5 - host architecture (x86_64 for Intel or arm64 for Apple Silicon)
-    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.14', $packageId, $HostArchitecture | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+    $PackagingStrings.OsxDistributionTemplate -f $PackageName, $Version, $componentFileName, $minOSVersion, $PackageIdentifier, $HostArchitecture | Out-File -Encoding utf8 -FilePath $distributionXmlPath -Force
 
-    Write-Log "Applying distribution.xml to package..."
-    Push-Location $tempDir
-    try
-    {
-        # productbuild is an xcode command line tool, and those tools are installed when you install brew
-        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath} -VerboseOutputOnError
-    }
-    finally
-    {
-        Pop-Location
-        Remove-Item -Path $tempDir -Recurse -Force
+    # Build final package path
+    # Rename x86_64 to x64 for compatibility
+    $packageArchName = if ($HostArchitecture -eq "x86_64") { "x64" } else { $HostArchitecture }
+    $finalPackagePath = Join-Path $OutputDirectory "$PackageName-$Version-osx-$packageArchName.pkg"
+
+    # Remove existing package if it exists
+    if (Test-Path $finalPackagePath) {
+        Write-Warning "Removing existing package: $finalPackagePath"
+        Remove-Item $finalPackagePath -Force
     }
 
-    return (Get-Item $newPackagePath)
+    if ($PSCmdlet.ShouldProcess("Build product package with productbuild")) {
+        Write-Log "Applying distribution.xml to package..."
+        Push-Location $tempDir
+        try
+        {
+            # productbuild is an xcode command line tool
+            Start-NativeExecution -VerboseOutputOnError {
+                productbuild --distribution $distributionXmlPath `
+                    --package-path $tempDir `
+                    --resources $resourcesDir `
+                    $finalPackagePath
+            }
+
+            if (Test-Path $finalPackagePath) {
+                Write-Log "Successfully created macOS package: $finalPackagePath"
+            }
+            else {
+                throw "Package was not created at expected location: $finalPackagePath"
+            }
+        }
+        finally
+        {
+            Pop-Location
+            Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    return (Get-Item $finalPackagePath)
 }
 
 Class LinkInfo
@@ -1424,7 +1602,7 @@ Class LinkInfo
     [string] $Destination
 }
 
-function Get-FpmArguments
+function New-RpmSpec
 {
     param(
         [Parameter(Mandatory,HelpMessage='Package Name')]
@@ -1438,11 +1616,6 @@ function Get-FpmArguments
 
         [Parameter(Mandatory,HelpMessage='Package description')]
         [String]$Description,
-
-        # From start-PSPackage without modification, already validated
-        # Values: deb, rpm, osxpkg
-        [Parameter(Mandatory,HelpMessage='Installer Type')]
-        [String]$Type,
 
         [Parameter(Mandatory,HelpMessage='Staging folder for installation files')]
         [String]$Staging,
@@ -1459,109 +1632,505 @@ function Get-FpmArguments
         [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
         [LinkInfo[]]$LinkInfo,
 
-        [Parameter(HelpMessage='Packages required to install this package.  Not applicable for MacOS.')]
-        [ValidateScript({
-            if (!$Environment.IsMacOS -and $_.Count -eq 0)
-            {
-                throw "Must not be null or empty on this environment."
-            }
-            return $true
-        })]
+        [Parameter(Mandatory,HelpMessage='Packages required to install this package')]
         [String[]]$Dependencies,
 
-        [Parameter(HelpMessage='Script to run after the package installation.')]
-        [AllowNull()]
-        [ValidateScript({
-            if (!$Environment.IsMacOS -and !$_)
-            {
-                throw "Must not be null on this environment."
-            }
-            return $true
-        })]
+        [Parameter(Mandatory,HelpMessage='Script to run after the package installation.')]
         [String]$AfterInstallScript,
 
-        [Parameter(HelpMessage='Script to run after the package removal.')]
-        [AllowNull()]
-        [ValidateScript({
-            if (!$Environment.IsMacOS -and !$_)
-            {
-                throw "Must not be null on this environment."
-            }
-            return $true
-        })]
+        [Parameter(Mandatory,HelpMessage='Script to run after the package removal.')]
         [String]$AfterRemoveScript,
 
-        [Parameter(HelpMessage='AppsFolder used to add macOS launcher')]
-        [AllowNull()]
-        [ValidateScript({
-            if ($Environment.IsMacOS -and !$_)
-            {
-                throw "Must not be null on this environment."
-            }
-            return $true
-        })]
-        [String]$AppsFolder,
         [String]$Distribution = 'rhel.7',
         [string]$HostArchitecture
     )
 
-    $Arguments = @(
-        "--force", "--verbose",
-        "--name", $Name,
-        "--version", $Version,
-        "--iteration", $Iteration,
-        "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
-        "--vendor", "Microsoft Corporation",
-        "--url", "https://microsoft.com/powershell",
-        "--description", $Description,
-        "--architecture", $HostArchitecture,
-        "--category", "shells",
-        "-t", $Type,
-        "-s", "dir"
-    )
-    if ($Distribution -in $script:RedHatDistributions) {
-        $Arguments += @("--rpm-digest", "sha256")
-        $Arguments += @("--rpm-dist", $Distribution)
-        $Arguments += @("--rpm-os", "linux")
-        $Arguments += @("--license", "MIT")
-        $Arguments += @("--rpm-rpmbuild-define", "_build_id_links none")
+    # RPM doesn't allow hyphens in version, so convert them to underscores
+    # e.g., "7.6.0-preview.6" becomes Version: 7.6.0_preview.6
+    $rpmVersion = $Version -replace '-', '_'
+
+    # Build Release field with distribution suffix (e.g., "1.cm" or "1.rh")
+    # Don't use RPM macros - build the full release string in PowerShell
+    $rpmRelease = "$Iteration.$Distribution"
+
+    $specContent = @"
+# RPM spec file for PowerShell
+# Generated by PowerShell build system
+
+Name:           $Name
+Version:        $rpmVersion
+Release:        $rpmRelease
+Summary:        PowerShell - Cross-platform automation and configuration tool/framework
+License:        MIT
+URL:            https://microsoft.com/powershell
+AutoReq:        no
+
+"@
+
+    # Only add BuildArch if not doing cross-architecture build
+    # For cross-arch builds, we'll rely on --target option
+    if ($HostArchitecture -eq "x86_64" -or $HostArchitecture -eq "noarch") {
+        $specContent += "BuildArch:      $HostArchitecture`n`n"
     } else {
-        $Arguments += @("--license", "MIT License")
+        # For cross-architecture builds, don't specify BuildArch in spec
+        # The --target option will handle the architecture
+
+        # Disable automatic binary stripping for cross-arch builds
+        # The native /bin/strip on x86_64 cannot process ARM64 binaries and would fail with:
+        # "Unable to recognise the format of the input file"
+        # See: https://rpm-software-management.github.io/rpm/manual/macros.html
+        # __strip: This macro controls the command used for stripping binaries during the build process.
+        # /bin/true: A command that does nothing and always exits successfully, effectively bypassing the stripping process.
+        $specContent += "%define __strip /bin/true`n"
+
+        # Disable debug package generation to prevent strip-related errors
+        # Debug packages require binary stripping which fails for cross-arch builds
+        # See: https://rpm-packaging-guide.github.io/#debugging
+        # See: https://docs.fedoraproject.org/en-US/packaging-guidelines/Debuginfo/#_useless_or_incomplete_debuginfo_packages_due_to_other_reasons
+        $specContent += "%global debug_package %{nil}`n`n"
     }
 
-    if ($Environment.IsMacOS) {
-        $Arguments += @("--osxpkg-identifier-prefix", "com.microsoft")
+    # Add dependencies
+    foreach ($dep in $Dependencies) {
+        $specContent += "Requires:       $dep`n"
     }
 
-    foreach ($Dependency in $Dependencies) {
-        $Arguments += @("--depends", $Dependency)
+    $specContent += @"
+
+%description
+$Description
+
+%prep
+# No prep needed - files are already staged
+
+%build
+# No build needed - binaries are pre-built
+
+%install
+rm -rf `$RPM_BUILD_ROOT
+mkdir -p `$RPM_BUILD_ROOT$Destination
+mkdir -p `$RPM_BUILD_ROOT$(Split-Path -Parent $ManDestination)
+
+# Copy all files from staging to destination
+cp -r $Staging/* `$RPM_BUILD_ROOT$Destination/
+
+# Copy man page
+cp $ManGzipFile `$RPM_BUILD_ROOT$ManDestination
+
+"@
+
+    # Add symlinks - we need to get the target of the temp symlink
+    foreach ($link in $LinkInfo) {
+        $linkDir = Split-Path -Parent $link.Destination
+        $specContent += "mkdir -p `$RPM_BUILD_ROOT$linkDir`n"
+        # For RPM, we copy the symlink itself.
+        # The symlink at $link.Source points to the actual target, so we'll copy it.
+        # The -P flag preserves symlinks rather than copying their targets, which is critical for this operation.
+        $specContent += "cp -P $($link.Source) `$RPM_BUILD_ROOT$($link.Destination)`n"
     }
 
-    if ($AfterInstallScript) {
-        $Arguments += @("--after-install", $AfterInstallScript)
+    # Post-install script
+    $postInstallContent = Get-Content -Path $AfterInstallScript -Raw
+    $specContent += "`n%post`n"
+    $specContent += $postInstallContent
+    $specContent += "`n"
+
+    # Post-uninstall script
+    $postUninstallContent = Get-Content -Path $AfterRemoveScript -Raw
+    $specContent += "%postun`n"
+    $specContent += $postUninstallContent
+    $specContent += "`n"
+
+    # Files section
+    $specContent += "%files`n"
+    $specContent += "%defattr(-,root,root,-)`n"
+    $specContent += "$Destination/*`n"
+    $specContent += "$ManDestination`n"
+
+    # Add symlinks to files
+    foreach ($link in $LinkInfo) {
+        $specContent += "$($link.Destination)`n"
     }
 
-    if ($AfterRemoveScript) {
-        $Arguments += @("--after-remove", $AfterRemoveScript)
-    }
+    # Changelog with correct date format for RPM
+    $changelogDate = Get-Date -Format "ddd MMM dd yyyy"
+    $specContent += "`n%changelog`n"
+    $specContent += "* $changelogDate PowerShell Team <PowerShellTeam@hotmail.com> - $rpmVersion-$rpmRelease`n"
+    $specContent += "- Automated build`n"
 
-    $Arguments += @(
-        "$Staging/=$Destination/",
-        "$ManGzipFile=$ManDestination"
+    return $specContent
+}
+
+function New-NativeDeb
+{
+    param(
+        [Parameter(Mandatory, HelpMessage='Package Name')]
+        [String]$Name,
+
+        [Parameter(Mandatory, HelpMessage='Package Version')]
+        [String]$Version,
+
+        [Parameter(Mandatory)]
+        [String]$Iteration,
+
+        [Parameter(Mandatory, HelpMessage='Package description')]
+        [String]$Description,
+
+        [Parameter(Mandatory, HelpMessage='Staging folder for installation files')]
+        [String]$Staging,
+
+        [Parameter(Mandatory, HelpMessage='Install path on target machine')]
+        [String]$Destination,
+
+        [Parameter(Mandatory, HelpMessage='The built and gzipped man file.')]
+        [String]$ManGzipFile,
+
+        [Parameter(Mandatory, HelpMessage='The destination of the man file')]
+        [String]$ManDestination,
+
+        [Parameter(Mandatory, HelpMessage='Symlink to powershell executable')]
+        [LinkInfo[]]$LinkInfo,
+
+        [Parameter(HelpMessage='Packages required to install this package.')]
+        [String[]]$Dependencies,
+
+        [Parameter(HelpMessage='Script to run after the package installation.')]
+        [String]$AfterInstallScript,
+
+        [Parameter(HelpMessage='Script to run after the package removal.')]
+        [String]$AfterRemoveScript,
+
+        [string]$HostArchitecture,
+
+        [string]$CurrentLocation
     )
 
-    foreach($link in $LinkInfo)
-    {
-        $linkArgument = "$($link.Source)=$($link.Destination)"
-        $Arguments += $linkArgument
-    }
+    Write-Log "Creating native DEB package..."
 
-    if ($AppsFolder)
-    {
-        $Arguments += "$AppsFolder=/"
-    }
+    # Create temporary build directory
+    $debBuildRoot = Join-Path $env:HOME "debbuild-$(Get-Random)"
+    $debianDir = Join-Path $debBuildRoot "DEBIAN"
+    $dataDir = Join-Path $debBuildRoot "data"
 
-    return $Arguments
+    try {
+        New-Item -ItemType Directory -Path $debianDir -Force | Out-Null
+        New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
+
+        # Calculate installed size (in KB)
+        $installedSize = 0
+        Get-ChildItem -Path $Staging -Recurse -File | ForEach-Object { $installedSize += $_.Length }
+        $installedSize += (Get-Item $ManGzipFile).Length
+        $installedSizeKB = [Math]::Ceiling($installedSize / 1024)
+
+        # Create control file with all fields in proper order
+        # Description must be single line (first line) followed by extended description with leading space
+        $descriptionLines = $Description -split "`n"
+        $shortDescription = $descriptionLines[0]
+        $extendedDescription = if ($descriptionLines.Count -gt 1) {
+            ($descriptionLines[1..($descriptionLines.Count-1)] | ForEach-Object { " $_" }) -join "`n"
+        }
+
+        $controlContent = @"
+Package: $Name
+Version: $Version-$Iteration
+Architecture: $HostArchitecture
+Maintainer: PowerShell Team <PowerShellTeam@hotmail.com>
+Installed-Size: $installedSizeKB
+Priority: optional
+Section: shells
+Homepage: https://microsoft.com/powershell
+Depends: $(if ($Dependencies) { $Dependencies -join ', ' })
+Description: $shortDescription
+$(if ($extendedDescription) { $extendedDescription + "`n" })
+"@
+
+        $controlFile = Join-Path $debianDir "control"
+        $controlContent | Out-File -FilePath $controlFile -Encoding ascii -NoNewline
+
+        Write-Verbose "Control file created: $controlFile" -Verbose
+        Write-LogGroup -Title "DEB Control File Content" -Message $controlContent
+
+        # Copy postinst script if provided
+        if ($AfterInstallScript -and (Test-Path $AfterInstallScript)) {
+            $postinstFile = Join-Path $debianDir "postinst"
+            Copy-Item -Path $AfterInstallScript -Destination $postinstFile -Force
+            Start-NativeExecution { chmod 755 $postinstFile }
+            Write-Verbose "Postinst script copied to: $postinstFile" -Verbose
+        }
+
+        # Copy postrm script if provided
+        if ($AfterRemoveScript -and (Test-Path $AfterRemoveScript)) {
+            $postrmFile = Join-Path $debianDir "postrm"
+            Copy-Item -Path $AfterRemoveScript -Destination $postrmFile -Force
+            Start-NativeExecution { chmod 755 $postrmFile }
+            Write-Verbose "Postrm script copied to: $postrmFile" -Verbose
+        }
+
+        # Copy staging files to data directory
+        $targetPath = Join-Path $dataDir $Destination.TrimStart('/')
+        New-Item -ItemType Directory -Path $targetPath -Force | Out-Null
+        Copy-Item -Path "$Staging/*" -Destination $targetPath -Recurse -Force
+        Write-Verbose "Copied staging files to: $targetPath" -Verbose
+
+        # Copy man page
+        $manDestPath = Join-Path $dataDir $ManDestination.TrimStart('/')
+        $manDestDir = Split-Path $manDestPath -Parent
+        New-Item -ItemType Directory -Path $manDestDir -Force | Out-Null
+        Copy-Item -Path $ManGzipFile -Destination $manDestPath -Force
+        Write-Verbose "Copied man page to: $manDestPath" -Verbose
+
+        # Copy symlinks from temporary locations
+        foreach ($link in $LinkInfo) {
+            $linkPath = Join-Path $dataDir $link.Destination.TrimStart('/')
+            $linkDir = Split-Path $linkPath -Parent
+            New-Item -ItemType Directory -Path $linkDir -Force | Out-Null
+
+            # Copy the temporary symlink file that was created by New-LinkInfo
+            # The Source contains a temporary symlink that points to the correct target
+            if (Test-Path $link.Source) {
+                # Use cp to preserve the symlink
+                Start-NativeExecution { cp -P $link.Source $linkPath }
+                Write-Verbose "Copied symlink: $linkPath (from $($link.Source))" -Verbose
+            } else {
+                Write-Warning "Symlink source not found: $($link.Source)"
+            }
+        }
+
+        # Set proper permissions
+        Write-Verbose "Setting file permissions..." -Verbose
+        # 755 = rwxr-xr-x (owner can read/write/execute, group and others can read/execute)
+        Get-ChildItem $dataDir -Directory -Recurse | ForEach-Object {
+            Start-NativeExecution { chmod 755 $_.FullName }
+        }
+        # 644 = rw-r--r-- (owner can read/write, group and others can read only)
+        # Exclude symlinks to avoid "cannot operate on dangling symlink" error
+        Get-ChildItem $dataDir -File -Recurse |
+            Where-Object { -not $_.Target } |
+            ForEach-Object {
+                Start-NativeExecution { chmod 644 $_.FullName }
+            }
+
+        # Set executable permission for pwsh if it exists
+        # 755 = rwxr-xr-x (executable permission)
+        $pwshPath = "$targetPath/pwsh"
+        if (Test-Path $pwshPath) {
+            Start-NativeExecution { chmod 755 $pwshPath }
+        }
+
+        # Included .NET executable for producing crash dumps
+        $createdumpPath = "$targetPath/createdump"
+        if (Test-Path $createdumpPath) {
+            Start-NativeExecution { chmod 755 $createdumpPath }
+        }
+
+        # Calculate md5sums for all files in data directory (excluding symlinks)
+        $md5sumsFile = Join-Path $debianDir "md5sums"
+        $md5Content = ""
+        Get-ChildItem -Path $dataDir -Recurse -File |
+            Where-Object { -not $_.Target } |
+            ForEach-Object {
+                $relativePath = $_.FullName.Substring($dataDir.Length + 1)
+                $md5Hash = (Get-FileHash -Path $_.FullName -Algorithm MD5).Hash.ToLower()
+                $md5Content += "$md5Hash  $relativePath`n"
+            }
+        $md5Content | Out-File -FilePath $md5sumsFile -Encoding ascii -NoNewline
+        Write-Verbose "MD5 sums file created: $md5sumsFile" -Verbose
+
+        # Build the package using dpkg-deb
+        $debFileName = "${Name}_${Version}-${Iteration}_${HostArchitecture}.deb"
+        $debFilePath = Join-Path $CurrentLocation $debFileName
+
+        Write-Verbose "Building DEB package: $debFileName" -Verbose
+
+        # Copy DEBIAN directory and data files to build root
+        $buildDir = Join-Path $debBuildRoot "build"
+        New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
+
+        Write-Verbose "debianDir: $debianDir" -Verbose
+        Write-Verbose "dataDir: $dataDir" -Verbose
+        Write-Verbose "buildDir: $buildDir" -Verbose
+
+        # Use cp to preserve symlinks
+        Start-NativeExecution { cp -a $debianDir "$buildDir/DEBIAN" }
+        Start-NativeExecution { cp -a $dataDir/* $buildDir }
+
+        # Build package with dpkg-deb
+        Start-NativeExecution -VerboseOutputOnError {
+            dpkg-deb --build $buildDir $debFilePath
+        }
+
+        if (Test-Path $debFilePath) {
+            Write-Log "Successfully created DEB package: $debFileName"
+            return @{
+                PackagePath = $debFilePath
+                PackageName = $debFileName
+            }
+        } else {
+            throw "DEB package file not found after build: $debFilePath"
+        }
+    }
+    finally {
+        # Cleanup temporary directory
+        if (Test-Path $debBuildRoot) {
+            Write-Verbose "Cleaning up temporary build directory: $debBuildRoot" -Verbose
+            Remove-Item -Path $debBuildRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+function New-MacOSPackage
+{
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param(
+        [Parameter(Mandatory)]
+        [string]$Name,
+
+        [Parameter(Mandatory)]
+        [string]$Version,
+
+        [Parameter(Mandatory)]
+        [string]$Iteration,
+
+        [Parameter(Mandatory)]
+        [string]$Staging,
+
+        [Parameter(Mandatory)]
+        [string]$Destination,
+
+        [Parameter(Mandatory)]
+        [string]$ManGzipFile,
+
+        [Parameter(Mandatory)]
+        [string]$ManDestination,
+
+        [Parameter(Mandatory)]
+        [LinkInfo[]]$LinkInfo,
+
+        [Parameter(Mandatory)]
+        [string]$AfterInstallScript,
+
+        [Parameter(Mandatory)]
+        [string]$AppsFolder,
+
+        [Parameter(Mandatory)]
+        [string]$HostArchitecture,
+
+        [string]$CurrentLocation = (Get-Location),
+
+        [switch]$LTS
+    )
+
+    Write-Log "Creating macOS package using pkgbuild and productbuild..."
+
+    # Create a temporary directory for package building
+    $tempRoot = New-TempFolder
+    $componentPkgPath = Join-Path $tempRoot "component.pkg"
+    $scriptsDir = Join-Path $tempRoot "scripts"
+    $resourcesDir = Join-Path $tempRoot "resources"
+    $distributionFile = Join-Path $tempRoot "distribution.xml"
+
+    try {
+        # Create scripts directory
+        New-Item -ItemType Directory -Path $scriptsDir -Force | Out-Null
+
+        # Copy and prepare the postinstall script
+        $postInstallPath = Join-Path $scriptsDir "postinstall"
+        Copy-Item -Path $AfterInstallScript -Destination $postInstallPath -Force
+        Start-NativeExecution {
+            chmod 755 $postInstallPath
+        }
+
+        # Create a temporary directory for the package root
+        $pkgRoot = Join-Path $tempRoot "pkgroot"
+        New-Item -ItemType Directory -Path $pkgRoot -Force | Out-Null
+
+        # Copy staging files to destination path in package root
+        $destInPkg = Join-Path $pkgRoot $Destination
+        New-Item -ItemType Directory -Path $destInPkg -Force | Out-Null
+        Write-Verbose "Copying staging files from $Staging to $destInPkg" -Verbose
+        Copy-Item -Path "$Staging/*" -Destination $destInPkg -Recurse -Force
+
+        # Create man page directory structure
+        $manDir = Join-Path $pkgRoot (Split-Path $ManDestination -Parent)
+        New-Item -ItemType Directory -Path $manDir -Force | Out-Null
+        Copy-Item -Path $ManGzipFile -Destination (Join-Path $pkgRoot $ManDestination) -Force
+
+        # Create symlinks in package root
+        # The LinkInfo contains Source (a temp file that IS a symlink) and Destination (where to install it)
+        foreach ($link in $LinkInfo) {
+            $linkDestDir = Join-Path $pkgRoot (Split-Path $link.Destination -Parent)
+            New-Item -ItemType Directory -Path $linkDestDir -Force | Out-Null
+            $finalLinkPath = Join-Path $pkgRoot $link.Destination
+
+            Write-Verbose "Creating symlink at $finalLinkPath" -Verbose
+
+            # Remove if exists
+            if (Test-Path $finalLinkPath) {
+                Remove-Item $finalLinkPath -Force
+            }
+
+            # Get the target of the original symlink and recreate it in the package root
+            if (Test-Path $link.Source) {
+                $linkTarget = (Get-Item $link.Source).Target
+                if ($linkTarget) {
+                    Write-Verbose "Creating symlink to target: $linkTarget" -Verbose
+                    New-Item -ItemType SymbolicLink -Path $finalLinkPath -Target $linkTarget -Force | Out-Null
+                } else {
+                    Write-Warning "Could not determine target for symlink at $($link.Source), copying file instead"
+                    Copy-Item -Path $link.Source -Destination $finalLinkPath -Force
+                }
+            } else {
+                Write-Warning "Source symlink $($link.Source) does not exist"
+            }
+        }
+
+        # Copy launcher app folder if provided
+        if ($AppsFolder) {
+            $appsInPkg = Join-Path $pkgRoot "Applications"
+            New-Item -ItemType Directory -Path $appsInPkg -Force | Out-Null
+            Write-Verbose "Copying launcher app from $AppsFolder to $appsInPkg" -Verbose
+            Copy-Item -Path "$AppsFolder/*" -Destination $appsInPkg -Recurse -Force
+        }
+
+        # Get package identifier info based on version and LTS flag
+        $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
+        $IsPreview = $packageInfo.IsPreview
+        $pkgIdentifier = $packageInfo.PackageIdentifier
+
+        if ($PSCmdlet.ShouldProcess("Build component package with pkgbuild")) {
+            Write-Log "Running pkgbuild to create component package..."
+
+            Start-NativeExecution -VerboseOutputOnError {
+                pkgbuild --root $pkgRoot `
+                    --identifier $pkgIdentifier `
+                    --version $Version `
+                    --scripts $scriptsDir `
+                    --install-location "/" `
+                    $componentPkgPath
+            }
+
+            Write-Verbose "Component package created: $componentPkgPath" -Verbose
+        }
+
+        # Create the final distribution package using the refactored function
+        $distributionPackage = New-MacOsDistributionPackage `
+            -ComponentPackage (Get-Item $componentPkgPath) `
+            -PackageName $Name `
+            -Version $Version `
+            -OutputDirectory $CurrentLocation `
+            -HostArchitecture $HostArchitecture `
+            -PackageIdentifier $pkgIdentifier `
+            -IsPreview:$IsPreview
+
+        return $distributionPackage
+    }
+    finally {
+        # Clean up temporary directory
+        if (Test-Path $tempRoot) {
+            Write-Verbose "Cleaning up temporary directory: $tempRoot" -Verbose
+            Remove-Item -Path $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
 }
 
 function Get-PackageDependencies
@@ -1570,7 +2139,7 @@ function Get-PackageDependencies
     param()
     DynamicParam {
         # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
-        # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
+        # The '-Distribution' parameter can be used to indicate which Debian distro this package is targeting.
         $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
         $ParameterAttr.Mandatory = $true
         $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:AllDistributions
@@ -1591,6 +2160,22 @@ function Get-PackageDependencies
 
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
+
+        # ICU version range follows .NET runtime policy.
+        # See: https://github.com/dotnet/runtime/blob/3fe8518d51bbcaa179bbe275b2597fbe1b88bc5a/src/native/libs/System.Globalization.Native/pal_icushim.c#L235-L243
+        #
+        # Version range rationale:
+        # - The runtime supports ICU versions >= the version it was built against
+        #   and <= that version + 30, to allow sufficient headroom for future releases.
+        # - ICU typically releases about twice per year, so +30 provides roughly
+        #   15 years of forward compatibility.
+        # - On some platforms, the minimum supported version may be lower
+        #   than the build version and we know that older versions just works.
+        #
+        $MinICUVersion = 60                    # runtime minimum supported
+        $BuildICUVersion = 76                  # current build version
+        $MaxICUVersion = $BuildICUVersion + 30 # headroom
+
         if ($Distribution -eq 'deb') {
             $Dependencies = @(
                 "libc6",
@@ -1598,10 +2183,9 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "libstdc++6",
                 "zlib1g",
-                "libicu74|libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
+                (($MaxICUVersion..$MinICUVersion).ForEach{ "libicu$_" } -join '|'),
                 "libssl3|libssl1.1|libssl1.0.2|libssl1.0.0"
             )
-
         } elseif ($Distribution -eq 'rh') {
             $Dependencies = @(
                 "openssl-libs",
@@ -1636,25 +2220,25 @@ function Get-PackageDependencies
 
 function Test-Dependencies
 {
-    foreach ($Dependency in "fpm") {
-        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
-            # These tools are not added to the path automatically on OpenSUSE 13.2
-            # try adding them to the path and re-tesing first
-            [string] $gemsPath = $null
-            [string] $depenencyPath = $null
-            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
-            if ($gemsPath) {
-                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
-                $originalPath = $env:PATH
-                $env:PATH = $ENV:PATH +":" + $depenencyPath
-                if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
-                    continue
-                }
-                else {
-                    $env:PATH = $originalPath
-                }
-            }
+    # RPM packages use rpmbuild directly.
+    # DEB packages use dpkg-deb directly.
+    # macOS packages use pkgbuild and productbuild from Xcode Command Line Tools.
+    $Dependencies = @()
 
+    # Check for 'rpmbuild' and 'dpkg-deb' on Azure Linux.
+    if ($Environment.IsMariner) {
+        $Dependencies += "dpkg-deb"
+        $Dependencies += "rpmbuild"
+    }
+
+    # Check for macOS packaging tools
+    if ($Environment.IsMacOS) {
+        $Dependencies += "pkgbuild"
+        $Dependencies += "productbuild"
+    }
+
+    foreach ($Dependency in $Dependencies) {
+        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
             throw "Dependency precheck failed!"
         }
     }
@@ -1743,20 +2327,44 @@ function New-ManGzip
     }
 }
 
-# Returns the macOS Package Identifier
-function Get-MacOSPackageId
+<#
+    .SYNOPSIS
+        Determines the package identifier and preview status for macOS packages.
+    .DESCRIPTION
+        This function determines if a package is a preview build based on the version string
+        and LTS flag, then returns the appropriate package identifier.
+    .PARAMETER Version
+        The version string (e.g., "7.6.0-preview.6" or "7.6.0")
+    .PARAMETER LTS
+        Whether this is an LTS build
+    .OUTPUTS
+        Hashtable with IsPreview (boolean) and PackageIdentifier (string) properties
+    .EXAMPLE
+        Get-MacOSPackageIdentifierInfo -Version "7.6.0-preview.6" -LTS:$false
+        Returns @{ IsPreview = $true; PackageIdentifier = "com.microsoft.powershell-preview" }
+#>
+function Get-MacOSPackageIdentifierInfo
 {
     param(
-        [switch]
-        $IsPreview
+        [Parameter(Mandatory)]
+        [string]$Version,
+
+        [switch]$LTS
     )
-    if ($IsPreview.IsPresent)
-    {
-        return 'com.microsoft.powershell-preview'
+
+    $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
+
+    # Determine package identifier based on preview status
+    if ($IsPreview) {
+        $PackageIdentifier = 'com.microsoft.powershell-preview'
     }
-    else
-    {
-        return 'com.microsoft.powershell'
+    else {
+        $PackageIdentifier = 'com.microsoft.powershell'
+    }
+
+    return @{
+        IsPreview = $IsPreview
+        PackageIdentifier = $PackageIdentifier
     }
 }
 
@@ -1770,8 +2378,9 @@ function New-MacOSLauncher
         [switch]$LTS
     )
 
-    $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
-    $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
+    $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
+    $IsPreview = $packageInfo.IsPreview
+    $packageId = $packageInfo.PackageIdentifier
 
     # Define folder for launcher application.
     $suffix = if ($IsPreview) { "-preview" } elseif ($LTS) { "-lts" }
@@ -1809,10 +2418,12 @@ function New-MacOSLauncher
     # Set permissions for plist and shell script.
     Start-NativeExecution {
         chmod 644 $plist
+    }
+    Start-NativeExecution {
         chmod 755 $shellscript
     }
 
-    # Add app folder to fpm paths.
+    # Return the app folder path for packaging
     $appsfolder = (Resolve-Path -Path "$macosapp/..").Path
 
     return $appsfolder
@@ -2997,42 +3608,6 @@ function New-NugetPackage
     Pop-Location
 }
 
-<#
-.SYNOPSIS
-Publish the specified Nuget Package to MyGet feed.
-
-.DESCRIPTION
-The specified nuget package is published to the powershell.myget.org/powershell-core feed.
-
-.PARAMETER PackagePath
-Path to the NuGet Package.
-
-.PARAMETER ApiKey
-API key for powershell.myget.org
-#>
-function Publish-NugetToMyGet
-{
-    param(
-        [Parameter(Mandatory = $true)]
-        [string] $PackagePath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $ApiKey
-    )
-
-    $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
-
-    if ($null -eq $nuget)
-    {
-        throw 'nuget application is not available in PATH'
-    }
-
-    Get-ChildItem $PackagePath | ForEach-Object {
-        Write-Log "Pushing $_ to PowerShell Myget"
-        Start-NativeExecution { nuget push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey } > $null
-    }
-}
-
 function New-SubFolder
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -3179,443 +3754,6 @@ function Get-NugetSemanticVersion
     $packageSemanticVersion
 }
 
-# Get the paths to various WiX tools
-function Get-WixPath
-{
-    [CmdletBinding()]
-    param (
-        [bool] $IsProductArchitectureArm = $false
-    )
-
-    $wixToolsetBinPath = $IsProductArchitectureArm ? "${env:ProgramFiles(x86)}\Arm Support WiX Toolset *\bin" : "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
-
-    Write-Verbose -Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
-    if (-not (Test-Path $wixToolsetBinPath))
-    {
-        if (!$IsProductArchitectureArm)
-        {
-            throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
-        }
-        else {
-            throw "The latest version of Wix Toolset 3.14 is required to create MSI package for arm. Please install it from https://aka.ms/ps-wix-3-14-zip"
-        }
-    }
-
-    ## Get the latest if multiple versions exist.
-    $wixToolsetBinPath = (Get-ChildItem $wixToolsetBinPath).FullName | Sort-Object -Descending | Select-Object -First 1
-
-    Write-Verbose "Initialize Wix executables..."
-    $wixHeatExePath = Join-Path $wixToolsetBinPath "heat.exe"
-    $wixMeltExePath = Join-Path $wixToolsetBinPath "melt.exe"
-    $wixTorchExePath = Join-Path $wixToolsetBinPath "torch.exe"
-    $wixPyroExePath = Join-Path $wixToolsetBinPath "pyro.exe"
-    $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
-    $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
-    $wixInsigniaExePath = Join-Path $wixToolsetBinPath "Insignia.exe"
-
-    return [PSCustomObject] @{
-        WixHeatExePath     = $wixHeatExePath
-        WixMeltExePath     = $wixMeltExePath
-        WixTorchExePath    = $wixTorchExePath
-        WixPyroExePath     = $wixPyroExePath
-        WixCandleExePath   = $wixCandleExePath
-        WixLightExePath    = $wixLightExePath
-        WixInsigniaExePath = $wixInsigniaExePath
-    }
-}
-
-<#
-    .Synopsis
-        Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
-        This only works on a Windows machine due to the usage of WiX.
-    .EXAMPLE
-        # This example shows how to produce a Debug-x64 installer for development purposes.
-        cd $RootPathOfPowerShellRepo
-        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
-#>
-function New-MSIPackage
-{
-    [CmdletBinding()]
-    param (
-
-        # Name of the Product
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell',
-
-        # Suffix of the Name
-        [string] $ProductNameSuffix,
-
-        # Version of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductVersion,
-
-        # Source Path to the Product Files - required to package the contents into an MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductSourcePath,
-
-        # File describing the MSI Package creation semantics
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $ProductWxsPath = "$RepoRoot\assets\wix\Product.wxs",
-
-        # File describing the MSI Package creation semantics
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript({Test-Path $_})]
-        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
-
-        # Path to Assets folder containing artifacts such as icons, images
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $AssetsPath = "$RepoRoot\assets",
-
-        # Architecture to use when creating the MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture,
-
-        # Force overwrite of package
-        [Switch] $Force,
-
-        [string] $CurrentLocation = (Get-Location)
-    )
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $ProductNameSuffix -ProductVersion $ProductVersion
-    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
-    $ProductSemanticVersion = $windowsNames.ProductSemanticVersion
-    $packageName = $windowsNames.PackageName
-    $ProductVersion = $windowsNames.ProductVersion
-    Write-Verbose "Create MSI for Product $productSemanticVersionWithName" -Verbose
-    Write-Verbose "ProductSemanticVersion =  $productSemanticVersion" -Verbose
-    Write-Verbose "packageName =  $packageName" -Verbose
-    Write-Verbose "ProductVersion =  $ProductVersion" -Verbose
-
-    $simpleProductVersion = [string]([Version]$ProductVersion).Major
-    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
-    if ($isPreview)
-    {
-        $simpleProductVersion += '-preview'
-    }
-
-    $staging = "$PSScriptRoot/staging"
-    New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
-
-    $assetsInSourcePath = Join-Path $staging 'assets'
-
-    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
-
-    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
-    Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
-
-
-
-    $fileArchitecture = 'amd64'
-    $ProductProgFilesDir = "ProgramFiles64Folder"
-    if ($ProductTargetArchitecture -eq "x86")
-    {
-        $fileArchitecture = 'x86'
-        $ProductProgFilesDir = "ProgramFilesFolder"
-    }
-    elseif ($ProductTargetArchitecture -eq "arm64")
-    {
-        $fileArchitecture = 'arm64'
-        $ProductProgFilesDir = "ProgramFiles64Folder"
-    }
-
-    $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
-
-    # cleanup any garbage on the system
-    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-
-    $msiLocationPath = Join-Path $CurrentLocation "$packageName.msi"
-    $msiPdbLocationPath = Join-Path $CurrentLocation "$packageName.wixpdb"
-
-    if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath)) {
-        Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
-    }
-
-    Write-Log "Generating wxs file manifest..."
-    $arguments = @{
-        IsPreview              = $isPreview
-        ProductSourcePath      = $staging
-        ProductName            = $ProductName
-        ProductVersion         = $ProductVersion
-        SimpleProductVersion   = $simpleProductVersion
-        ProductSemanticVersion = $ProductSemanticVersion
-        ProductVersionWithName = $productVersionWithName
-        ProductProgFilesDir    = $ProductProgFilesDir
-        FileArchitecture       = $fileArchitecture
-    }
-
-    $buildArguments = New-MsiArgsArray -Argument $arguments
-
-    Test-Bom -Path $staging -BomName windows -Architecture $ProductTargetArchitecture -Verbose
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
-
-    Send-AzdoFile -Path $wixFragmentPath
-
-    $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
-
-    # cleanup any garbage on the system
-    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
-
-    Start-MsiBuild -WxsFile $ProductWxsPath, $wixFragmentPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument $arguments -MsiLocationPath $msiLocationPath -MsiPdbLocationPath $msiPdbLocationPath
-
-    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-
-    if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
-    {
-        Write-Verbose "You can find the WixPdb @ $msiPdbLocationPath" -Verbose
-        Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
-        [pscustomobject]@{
-            msi=$msiLocationPath
-            wixpdb=$msiPdbLocationPath
-        }
-    }
-    else
-    {
-        $errorMessage = "Failed to create $msiLocationPath"
-        throw $errorMessage
-    }
-}
-
-function Get-WindowsNames {
-    param(
-        # Name of the Product
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell',
-
-        # Suffix of the Name
-        [string] $ProductNameSuffix,
-
-        # Version of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductVersion
-    )
-
-    Write-Verbose -Message "Getting Windows Names for ProductName: $ProductName; ProductNameSuffix: $ProductNameSuffix; ProductVersion: $ProductVersion" -Verbose
-
-    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion -IncrementBuildNumber
-
-    $productVersionWithName = $ProductName + '_' + $ProductVersion
-    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
-
-    $packageName = $productSemanticVersionWithName
-    if ($ProductNameSuffix) {
-        $packageName += "-$ProductNameSuffix"
-    }
-
-    return [PSCustomObject]@{
-        PackageName                    = $packageName
-        ProductVersionWithName         = $productVersionWithName
-        ProductSemanticVersion         = $ProductSemanticVersion
-        ProductSemanticVersionWithName = $productSemanticVersionWithName
-        ProductVersion                 = $ProductVersion
-    }
-}
-
-function New-ExePackage {
-    param(
-        # Name of the Product
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell',
-
-        # Version of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-
-        [string] $ProductVersion,
-
-        # File describing the MSI Package creation semantics
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript({Test-Path $_})]
-        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
-
-        # Architecture to use when creating the MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture,
-
-        # Location of the signed MSI
-        [Parameter(Mandatory = $true)]
-        [string]
-        $MsiLocationPath,
-
-        [string] $CurrentLocation = (Get-Location)
-    )
-
-    $productNameSuffix = "win-$ProductTargetArchitecture"
-
-    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $productNameSuffix -ProductVersion $ProductVersion
-    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
-    $packageName = $windowsNames.PackageName
-    $isPreview = Test-IsPreview -Version $windowsNames.ProductSemanticVersion
-
-    Write-Verbose "Create EXE for Product $productSemanticVersionWithName" -verbose
-    Write-Verbose "packageName =  $packageName" -Verbose
-
-    $exeLocationPath = Join-Path $CurrentLocation "$packageName.exe"
-    $exePdbLocationPath = Join-Path $CurrentLocation "$packageName.exe.wixpdb"
-    $windowsVersion = Get-WindowsVersion -packageName $packageName
-
-    Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
-        IsPreview      = $isPreview
-        TargetPath     = $MsiLocationPath
-        WindowsVersion = $windowsVersion
-    }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
-
-    return $exeLocationPath
-}
-
-<#
-Allows you to extract the engine of exe package, mainly for signing
-Any existing signature will be removed.
- #>
-function Expand-ExePackageEngine {
-    param(
-        # Location of the unsigned EXE
-        [Parameter(Mandatory = $true)]
-        [string]
-        $ExePath,
-
-        # Location to put the expanded engine.
-        [Parameter(Mandatory = $true)]
-        [string]
-        $EnginePath,
-
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture
-    )
-
-    <#
-    2. detach the engine from TestInstaller.exe:
-    insignia -ib TestInstaller.exe -o engine.exe
-    #>
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
-    $resolvedEnginePath = [System.IO.Path]::GetFullPath($EnginePath)
-
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ib $resolvedExePath -o $resolvedEnginePath}
-}
-
-<#
-Allows you to replace the engine (installer) in the exe package.
-Used to replace the engine with a signed version
-#>
-function Compress-ExePackageEngine {
-    param(
-        # Location of the unsigned EXE
-        [Parameter(Mandatory = $true)]
-        [string]
-        $ExePath,
-
-        # Location of the signed engine
-        [Parameter(Mandatory = $true)]
-        [string]
-        $EnginePath,
-
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture
-    )
-
-
-    <#
-    4. re-attach the signed engine.exe to the bundle:
-    insignia -ab engine.exe TestInstaller.exe -o TestInstaller.exe
-    #>
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $resolvedEnginePath = (Resolve-Path -Path $EnginePath).ProviderPath
-    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
-
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ab $resolvedEnginePath $resolvedExePath -o $resolvedExePath}
-}
-
-function New-MsiArgsArray {
-    param(
-        [Parameter(Mandatory)]
-        [Hashtable]$Argument
-    )
-
-    $buildArguments = @()
-    foreach ($key in $Argument.Keys) {
-        $buildArguments += "-d$key=$($Argument.$key)"
-    }
-
-    return $buildArguments
-}
-
-function Start-MsiBuild {
-    param(
-        [string[]] $WxsFile,
-        [string[]] $Extension = @('WixUIExtension', 'WixUtilExtension', 'WixBalExtension'),
-        [string] $ProductTargetArchitecture,
-        [Hashtable] $Argument,
-        [string] $MsiLocationPath,
-        [string] $MsiPdbLocationPath
-    )
-
-    $outDir = $env:Temp
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $extensionArgs = @()
-    foreach ($extensionName in $Extension) {
-        $extensionArgs += '-ext'
-        $extensionArgs += $extensionName
-    }
-
-    $buildArguments = New-MsiArgsArray -Argument $Argument
-
-    $objectPaths = @()
-    foreach ($file in $WxsFile) {
-        $fileName = [system.io.path]::GetFileNameWithoutExtension($file)
-        $objectPaths += Join-Path $outDir -ChildPath "${filename}.wixobj"
-    }
-
-    foreach ($file in $objectPaths) {
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-    }
-
-    $resolvedWxsFiles = @()
-    foreach ($file in $WxsFile) {
-        $resolvedWxsFiles += (Resolve-Path -Path $file).ProviderPath
-    }
-
-    Write-Verbose "$resolvedWxsFiles" -Verbose
-
-    Write-Log "running candle..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath $resolvedWxsFiles -out "$outDir\\" $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
-
-    Write-Log "running light..."
-    # suppress ICE61, because we allow same version upgrades
-    # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
-    # suppress ICE40, REINSTALLMODE is defined in the Property table.
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE40 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $objectPaths $extensionArgs }
-
-    foreach($file in $objectPaths)
-    {
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-    }
-}
-
 <#
     .Synopsis
         Creates a Windows AppX MSIX package and assumes that the binaries are already built using 'Start-PSBuild'.
@@ -3656,6 +3794,9 @@ function New-MSIXPackage
         # Produce private package for testing in Store
         [Switch] $Private,
 
+        # Produce LTS package
+        [Switch] $LTS,
+
         # Force overwrite of package
         [Switch] $Force,
 
@@ -3681,18 +3822,8 @@ function New-MSIXPackage
 
     $makepri = Get-Item (Join-Path $makeappx.Directory "makepri.exe") -ErrorAction Stop
 
+    $displayName = $ProductName
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
-    $packageName = $productSemanticVersionWithName
-    if ($Private) {
-        $ProductNameSuffix = 'Private'
-    }
-
-    if ($ProductNameSuffix) {
-        $packageName += "-$ProductNameSuffix"
-    }
-
-    $displayName = $productName
 
     if ($Private) {
         $ProductName = 'PowerShell-Private'
@@ -3700,10 +3831,20 @@ function New-MSIXPackage
     } elseif ($ProductSemanticVersion.Contains('-')) {
         $ProductName += 'Preview'
         $displayName += ' Preview'
+    } elseif ($LTS) {
+        $ProductName += '-LTS'
+        $displayName += ' LTS'
     }
 
     Write-Verbose -Verbose "ProductName: $productName"
     Write-Verbose -Verbose "DisplayName: $displayName"
+
+    $packageName = $ProductName + '-' + $ProductSemanticVersion
+
+    # Appends Architecture to the package name
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
 
     $ProductVersion = Get-WindowsVersion -PackageName $packageName
 
@@ -3719,10 +3860,13 @@ function New-MSIXPackage
         # This is the PhoneProductId for the "Microsoft.PowerShellPreview" package.
         $PhoneProductId = "67859fd2-b02a-45be-8fb5-62c569a3e8bf"
         Write-Verbose "Using Preview assets" -Verbose
+    } elseif ($LTS) {
+        # This is the PhoneProductId for the "Microsoft.PowerShell-LTS" package.
+        $PhoneProductId = "b7a4b003-3704-47a9-b018-cfcc9801f4fc"
+        Write-Verbose "Using LTS assets" -Verbose
     }
 
-    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
-    # cp-459155 is 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated.
     # authenticodeFormer is 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
     $releasePublisher = 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
 
@@ -3764,7 +3908,6 @@ function New-MSIXPackage
         else {
             Copy-Item -Path "$RepoRoot\assets\$_.png" -Destination "$ProductSourcePath\assets\"
         }
-
     }
 
     if ($PSCmdlet.ShouldProcess("Create .msix package?")) {
@@ -3777,6 +3920,7 @@ function New-MSIXPackage
         Write-Verbose "Creating msix package" -Verbose
         Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $CurrentLocation -ChildPath "$packageName.msix") }
         Write-Verbose "Created $packageName.msix" -Verbose
+        Join-Path -Path $CurrentLocation -ChildPath "$packageName.msix"
     }
 }
 
@@ -4320,7 +4464,7 @@ function New-GlobalToolNupkgSource
     }
 
     # Set VSTS environment variable for CGManifest file path.
-    $globalToolCGManifestPFilePath = Join-Path -Path "$env:REPOROOT" -ChildPath "tools\cgmanifest.json"
+    $globalToolCGManifestPFilePath = Join-Path -Path "$env:REPOROOT" -ChildPath "tools/cgmanifest/main/cgmanifest.json"
     $globalToolCGManifestFilePath = Resolve-Path -Path $globalToolCGManifestPFilePath -ErrorAction SilentlyContinue
     if (($null -eq $globalToolCGManifestFilePath) -or (! (Test-Path -Path $globalToolCGManifestFilePath)))
     {
@@ -4387,272 +4531,6 @@ function New-GlobalToolNupkgFromSource
         return
     }
     Remove-Item -Path $CGManifestPath -Recurse -Force -ErrorAction SilentlyContinue
-}
-
-${mainLinuxBuildFolder} = 'pwshLinuxBuild'
-${minSizeLinuxBuildFolder} = 'pwshLinuxBuildMinSize'
-${arm32LinuxBuildFolder} = 'pwshLinuxBuildArm32'
-${arm64LinuxBuildFolder} = 'pwshLinuxBuildArm64'
-${amd64MarinerBuildFolder} = 'pwshMarinerBuildAmd64'
-${amd64AlpineFxdBuildFolder} = 'pwshAlpineFxdBuildAmd64'
-${arm64MarinerBuildFolder} = 'pwshMarinerBuildArm64'
-
-<#
-    Used in Azure DevOps Yaml to package all the linux packages for a channel.
-#>
-function Invoke-AzDevOpsLinuxPackageCreation {
-    param(
-        [switch]
-        $LTS,
-
-        [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
-        [ValidateNotNullOrEmpty()]
-        [string]$ReleaseTag,
-
-        [Parameter(Mandatory)]
-        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
-        [String]$BuildType
-    )
-
-    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
-        throw "Must be run in Azure DevOps"
-    }
-
-    try {
-        Write-Verbose "Packaging '$BuildType'; LTS:$LTS for $ReleaseTag ..." -Verbose
-
-        Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\psoptions.json"
-
-        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
-
-        switch ($BuildType) {
-            'fxdependent' {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
-            }
-            'alpine' {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
-            }
-            'rpm' {
-                Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
-            }
-            default {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage @releaseTagParam -LTS:$LTS -Type 'deb', 'tar'
-            }
-        }
-
-        if ($BuildType -eq 'deb') {
-            Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
-
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\psoptions.json"
-
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}"
-
-            Write-Verbose -Verbose "---- Min-Size ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
-
-            ## Create 'linux-arm' 'tar.gz' package.
-            ## Note that 'linux-arm' can only be built on Ubuntu environment.
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}"
-            Start-PSPackage -Type tar-arm @releaseTagParam -LTS:$LTS
-
-            ## Create 'linux-arm64' 'tar.gz' package.
-            ## Note that 'linux-arm64' can only be built on Ubuntu environment.
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}"
-            Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
-        } elseif ($BuildType -eq 'rpm') {
-            # Generate mariner amd64 package
-            Write-Verbose -Verbose "Generating mariner amd64 package"
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}"
-
-            Write-Verbose -Verbose "---- rpm-fxdependent ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type rpm-fxdependent @releaseTagParam -LTS:$LTS
-
-            # Generate mariner arm64 package
-            Write-Verbose -Verbose "Generating mariner arm64 package"
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}"
-
-            Write-Verbose -Verbose "---- rpm-fxdependent-arm64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type rpm-fxdependent-arm64 @releaseTagParam -LTS:$LTS
-        } elseif ($BuildType -eq 'alpine') {
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}"
-
-            Write-Verbose -Verbose "---- tar-alpine-fxdependent ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type tar-alpine-fxdependent @releaseTagParam -LTS:$LTS
-        }
-    }
-    catch {
-        Get-Error -InputObject $_
-        throw
-    }
-}
-
-<#
-    Used in Azure DevOps Yaml to do all the builds needed for all Linux packages for a channel.
-#>
-function Invoke-AzDevOpsLinuxPackageBuild {
-    param (
-        [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
-        [ValidateNotNullOrEmpty()]
-        [string]$ReleaseTag,
-
-        [Parameter(Mandatory)]
-        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
-        [String]$BuildType
-    )
-
-    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
-        throw "Must be run in Azure DevOps"
-    }
-
-    try {
-
-        Write-Verbose "Building '$BuildType' for $ReleaseTag ..." -Verbose
-
-        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
-
-        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true }
-
-        switch ($BuildType) {
-            'fxdependent' {
-                $buildParams.Add("Runtime", "fxdependent")
-            }
-            'alpine' {
-                $buildParams.Add("Runtime", 'linux-musl-x64')
-            }
-        }
-
-        $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
-        Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-        Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-        # Remove symbol files.
-        Remove-Item "${buildFolder}\*.pdb" -Force
-
-        if ($BuildType -eq 'deb') {
-            ## Build 'min-size'
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Min-Size ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['ForMinimalSize'] = $true
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${minSizeLinuxBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            ## Build 'linux-arm' and create 'tar.gz' package for it.
-            ## Note that 'linux-arm' can only be built on Ubuntu environment.
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files.
-            Remove-Item "${buildFolder}\*.pdb" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files.
-            Remove-Item "${buildFolder}\*.pdb" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        } elseif ($BuildType -eq 'rpm') {
-            ## Build for Mariner amd64
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Mariner x64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner x64 package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-linux-x64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64MarinerBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            ## Build for Mariner arm64
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Mariner arm64 ----"
-
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner arm64 package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-linux-arm64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64MarinerBuildFolder}"
-
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        } elseif ($BuildType -eq 'alpine') {
-            ## Build for alpine fxdependent
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- fxdependent alpine x64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-noopt-linux-musl-x64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64AlpineFxdBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        }
-    }
-    catch {
-        Get-Error -InputObject $_
-        throw
-    }
 }
 
 <#
@@ -4984,8 +4862,24 @@ function Send-AzdoFile {
         Copy-Item -Path $Path -Destination $logFile
     }
 
-    Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
-    Write-Verbose "Log file captured as $newName" -Verbose
+    Write-Verbose "Capture the log file as '$newName'" -Verbose
+    if($env:TF_BUILD) {
+        ## In Azure DevOps
+        Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
+    } elseif ($env:GITHUB_WORKFLOW -and $env:SYSTEM_ARTIFACTSDIRECTORY) {
+        ## In GitHub Actions
+        $destinationPath = $env:SYSTEM_ARTIFACTSDIRECTORY
+        Write-Verbose "Upload '$logFile' to '$destinationPath' in GitHub Action" -Verbose
+
+        # Create the folder if it does not exist
+        if (!(Test-Path -Path $destinationPath)) {
+            $null = New-Item -ItemType Directory -Path $destinationPath -Force
+        }
+
+        Copy-Item -Path $logFile -Destination $destinationPath -Force -Verbose
+    } else {
+        Write-Warning "This environment is neither Azure Devops nor GitHub Actions. Cannot capture the log file in this environment."
+    }
 }
 
 # Class used for serializing and deserialing a BOM into Json

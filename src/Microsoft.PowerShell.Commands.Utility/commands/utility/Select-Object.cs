@@ -12,48 +12,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// <summary>
-    /// Helper class to do wildcard matching on PSPropertyExpressions.
-    /// </summary>
-    internal sealed class PSPropertyExpressionFilter
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PSPropertyExpressionFilter"/> class
-        /// with the specified array of patterns.
-        /// </summary>
-        /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>
-        internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
-        {
-            ArgumentNullException.ThrowIfNull(wildcardPatternsStrings);
-
-            _wildcardPatterns = new WildcardPattern[wildcardPatternsStrings.Length];
-            for (int k = 0; k < wildcardPatternsStrings.Length; k++)
-            {
-                _wildcardPatterns[k] = WildcardPattern.Get(wildcardPatternsStrings[k], WildcardOptions.IgnoreCase);
-            }
-        }
-
-        /// <summary>
-        /// Try to match the expression against the array of wildcard patterns.
-        /// The first match shortcircuits the search.
-        /// </summary>
-        /// <param name="expression">PSPropertyExpression to test against.</param>
-        /// <returns>True if there is a match, else false.</returns>
-        internal bool IsMatch(PSPropertyExpression expression)
-        {
-            for (int k = 0; k < _wildcardPatterns.Length; k++)
-            {
-                if (_wildcardPatterns[k].IsMatch(expression.ToString()))
-                    return true;
-            }
-
-            return false;
-        }
-
-        private readonly WildcardPattern[] _wildcardPatterns;
-    }
-
-    internal class SelectObjectExpressionParameterDefinition : CommandParameterDefinition
+    internal sealed class SelectObjectExpressionParameterDefinition : CommandParameterDefinition
     {
         protected override void SetEntries()
         {
@@ -866,7 +825,7 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable", Justification = "This exception is internal and never thrown by any public API")]
     [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception is internal and never thrown by any public API")]
     [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic", Justification = "This exception is internal and never thrown by any public API")]
-    internal class SelectObjectException : SystemException
+    internal sealed class SelectObjectException : SystemException
     {
         internal ErrorRecord ErrorRecord { get; }
 

@@ -4,6 +4,9 @@
 # Module removed due to #4272
 # disabling tests
 
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 return
 
 Set-Variable dateInFuture -Option Constant -Value "12/12/2036 09:00"
@@ -1557,4 +1560,3 @@ try {
 finally {
     $global:PSDefaultParameterValues = $originalDefaultParameterValues
 }
-

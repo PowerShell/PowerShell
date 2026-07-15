@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected CimJobException(
             SerializationInfo info,
             StreamingContext context)
