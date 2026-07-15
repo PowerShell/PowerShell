@@ -116,9 +116,15 @@ namespace Microsoft.PowerShell
                 {
                     // Read the symlink to the startup executable
                     byte* linkPathPtr = (byte*)NativeMemory.Alloc(LINUX_PATH_MAX);
-                    nint len = ReadLink("/proc/self/exe", linkPathPtr, LINUX_PATH_MAX);
-                    pwshPath = new string((sbyte*)linkPathPtr, 0, checked((int)len));
-                    NativeMemory.Free(linkPathPtr);
+                    try
+                    {
+                        nint len = ReadLink("/proc/self/exe", linkPathPtr, LINUX_PATH_MAX);
+                        pwshPath = new string((sbyte*)linkPathPtr, 0, checked((int)len));
+                    }
+                    finally
+                    {
+                        NativeMemory.Free(linkPathPtr);
+                    }
                 }
 
                 // exec pwsh
@@ -126,7 +132,7 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            Debug.Assert(Platform.IsMacOS);
+            // At this point, we are on macOS
 
             unsafe
             {
