@@ -1,5 +1,64 @@
 # Preview Changelog
 
+## [7.7.0-preview.3]
+
+### General Cmdlet Updates and Fixes
+
+- Change New-Guid to generate UUID v7 by default (#27033) (Thanks @SufficientDaikon!)
+- Fix progress bar rendering with double-width unicode characters (#26185) (Thanks @yotsuda!)
+
+### Code Cleanup
+
+<details>
+
+<ul>
+<li>Remove the unused <code>Publish-NugetToMyGet</code> command from packaging module (#27403)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Remove `-Daily` from `install-powershell.ps1` since it no longer exists (#25124)
+
+### Tests
+
+- Update CI workflow to also target servicing-* branches (#27612)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>Update to .NET SDK 11.0.100-preview.6</p>
+
+</summary>
+
+<ul>
+<li>Update <code>metadata.json</code> for v7.7.0-preview.2 release (#27537)</li>
+<li>[master] Update branch for release (#27683)</li>
+<li>Avoid calling credential provider for public feed for Wix (#27663)</li>
+<li>Produce min-size package for arm64 architecture (#27646)</li>
+<li>Separate NuGet publish into its own stage after pushing the git tag (#27611)</li>
+<li>PMC: Download deb_arm artifact to ensure package is available for PMC publish flow (#27635)</li>
+<li>[master] Update branch for release (#27582)</li>
+<li>Add PMC mappings for debian12 arm64 and debian13 arm64 (#27491)</li>
+<li>Skip Store Publish when No Channel Seleceted (#27334)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Add links to changelogs for versions 7.5 and 7.6 (#27080) (Thanks @behradbhrmi!)
+- Update metadata.json for servicing releases (#27609)
+- Bring Changelogs to Master Branch v7.4.17, v7.5.8, v7.6.3 (#27608)
+- Update PowerShell Universal information. (#27550) (Thanks @adamdriscoll!)
+
+[7.7.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.7.0-preview.2...v7.7.0-preview.3
+
+
 ## [7.7.0-preview.2]
 
 ### Engine Updates and Fixes
