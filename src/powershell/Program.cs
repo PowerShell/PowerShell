@@ -4,7 +4,6 @@
 #nullable enable
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
 using System.Reflection;
@@ -119,6 +118,7 @@ namespace Microsoft.PowerShell
                     try
                     {
                         nint len = ReadLink("/proc/self/exe", linkPathPtr, LINUX_PATH_MAX);
+                        ThrowOnFailure("readlink", (int)len);
                         pwshPath = new string((sbyte*)linkPathPtr, 0, checked((int)len));
                     }
                     finally
