@@ -126,7 +126,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "8.0.28"
+          "Version": "8.0.29"
         }
       },
       "DevelopmentDependency": false
@@ -186,7 +186,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.28"
+          "Version": "8.0.29"
         }
       },
       "DevelopmentDependency": false
@@ -466,7 +466,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.28"
+          "Version": "8.0.29"
         }
       },
       "DevelopmentDependency": false
@@ -626,7 +626,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Xml",
-          "Version": "8.0.3"
+          "Version": "8.0.4"
         }
       },
       "DevelopmentDependency": false
