@@ -4,18 +4,12 @@
 
 ### General Cmdlet Updates and Fixes
 
-- Change New-Guid to generate UUID v7 by default (#27033) (Thanks @SufficientDaikon!)
+- Change `New-Guid` to generate UUID v7 by default (#27033) (Thanks @SufficientDaikon!)
 - Fix progress bar rendering with double-width unicode characters (#26185) (Thanks @yotsuda!)
 
 ### Code Cleanup
 
-<details>
-
-<ul>
-<li>Remove the unused <code>Publish-NugetToMyGet</code> command from packaging module (#27403)</li>
-</ul>
-
-</details>
+- Remove the unused `Publish-NugetToMyGet` command from packaging module (#27403)
 
 ### Tools
 
@@ -44,7 +38,7 @@
 <li>PMC: Download deb_arm artifact to ensure package is available for PMC publish flow (#27635)</li>
 <li>[master] Update branch for release (#27582)</li>
 <li>Add PMC mappings for debian12 arm64 and debian13 arm64 (#27491)</li>
-<li>Skip Store Publish when No Channel Seleceted (#27334)</li>
+<li>Skip Store Publish when No Channel Selected (#27334)</li>
 </ul>
 
 </details>
