@@ -39,8 +39,13 @@ function Install-Wix
     $psresourceGet = Get-Module -ListAvailable -Name 'Microsoft.PowerShell.PSResourceGet' -ErrorAction SilentlyContinue | Select-Object -First 1
 
     if (-not $psresourceGet -or $psresourceGet.Version -lt [version]"1.2.0") {
-        ## 'powershell' feed is registered CFS feed for build scenarios.
-        Install-Module -Name 'Microsoft.PowerShell.PSResourceGet' -Force -AllowClobber -Scope CurrentUser -Repository 'powershell'
+        try {
+            Register-PSRepository -Name 'powershell-cfs' -SourceLocation 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v2' -InstallationPolicy Trusted
+            Install-Module -Name 'Microsoft.PowerShell.PSResourceGet' -Force -AllowClobber -Scope CurrentUser -Repository 'powershell-cfs'
+        }
+        finally {
+            Unregister-PSRepository -Name 'powershell-cfs'
+        }
     }
 
     $respository = Get-PSResourceRepository -Name 'dotnet-eng' -ErrorAction SilentlyContinue
