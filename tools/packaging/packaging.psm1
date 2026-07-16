@@ -2332,12 +2332,12 @@ function Get-MacOSPackageIdentifierInfo
     param(
         [Parameter(Mandatory)]
         [string]$Version,
-        
+
         [switch]$LTS
     )
-    
+
     $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
-    
+
     # Determine package identifier based on preview status
     if ($IsPreview) {
         $PackageIdentifier = 'com.microsoft.powershell-preview'
@@ -2345,7 +2345,7 @@ function Get-MacOSPackageIdentifierInfo
     else {
         $PackageIdentifier = 'com.microsoft.powershell'
     }
-    
+
     return @{
         IsPreview = $IsPreview
         PackageIdentifier = $PackageIdentifier
@@ -4166,7 +4166,7 @@ function Start-MsiBuild {
     # suppress ICE61, because we allow same version upgrades
     # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
     # suppress ICE40, REINSTALLMODE is defined in the Property table.
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE40 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $objectPaths $extensionArgs }
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sval -sice:ICE61 -sice:ICE40 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $objectPaths $extensionArgs }
 
     foreach($file in $objectPaths)
     {
