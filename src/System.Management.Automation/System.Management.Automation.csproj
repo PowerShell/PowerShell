@@ -51,7 +51,7 @@
 
   <ItemGroup>
     <!-- exclude code of source generators from compilation and IDEs (e.g. vscode and visual studio) -->
-    <Compile Remove="SourceGenerators\**\*.cs" />
+    <Compile Remove="gen\SourceGenerated\**\*.cs" />
 
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
