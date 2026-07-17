@@ -574,6 +574,9 @@ Describe 'Casting Behaviour of Boolean/Null to Numeral' -Tags CI {
             @{ Type = [float]; ExpectedResult = [float]0 }
             @{ Type = [double]; ExpectedResult = 0.0 }
             @{ Type = [bigint]; ExpectedResult = 0n }
+            @{ Type = [System.Int128]; ExpectedResult = [System.Int128]::Zero }
+            @{ Type = [System.UInt128]; ExpectedResult = [System.UInt128]::Zero }
+            @{ Type = [System.Half]; ExpectedResult = [System.Half]::Zero }
         )
 
         $BoolToNumeral = @(
@@ -601,6 +604,21 @@ Describe 'Casting Behaviour of Boolean/Null to Numeral' -Tags CI {
             @{ Type = [double]; Value = $false; ExpectedResult = 0.0 }
             @{ Type = [bigint]; Value = $true; ExpectedResult = 1n }
             @{ Type = [bigint]; Value = $false; ExpectedResult = 0n }
+            @{ Type = [System.Int128]; Value = $true; ExpectedResult = [System.Int128]::One }
+            @{ Type = [System.Int128]; Value = $false; ExpectedResult = [System.Int128]::Zero }
+            @{ Type = [System.UInt128]; Value = $true; ExpectedResult = [System.UInt128]::One }
+            @{ Type = [System.UInt128]; Value = $false; ExpectedResult = [System.UInt128]::Zero }
+            @{ Type = [System.Half]; Value = $true; ExpectedResult = [System.Half]::One }
+            @{ Type = [System.Half]; Value = $false; ExpectedResult = [System.Half]::Zero }
+        )
+
+        $NumeralToBool = @(
+            @{ Value = [System.Int128]::Zero; ExpectedResult = $false }
+            @{ Value = [System.Int128]::One; ExpectedResult = $true }
+            @{ Value = [System.UInt128]::Zero; ExpectedResult = $false }
+            @{ Value = [System.UInt128]::One; ExpectedResult = $true }
+            @{ Value = [System.Half]::Zero; ExpectedResult = $false }
+            @{ Value = [System.Half]::One; ExpectedResult = $true }
         )
     }
 
@@ -618,5 +636,11 @@ Describe 'Casting Behaviour of Boolean/Null to Numeral' -Tags CI {
         $result = $Value -as $Type
         $result | Should -Be $ExpectedResult
         $result | Should -BeOfType $Type
+    }
+
+    It 'should correctly convert <Value> to bool as <ExpectedResult>' -TestCases $NumeralToBool {
+        param($Value, $ExpectedResult)
+
+        [bool]$Value | Should -Be $ExpectedResult
     }
 }

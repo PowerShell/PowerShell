@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Language Primitive Tests" -Tags "CI" {
     It "Equality comparison with string and non-numeric type should not be culture sensitive" {
         $date = [datetime]'2005,3,10'
@@ -222,5 +223,41 @@ Describe "Language Primitive Tests" -Tags "CI" {
         $formattedNumber = "1.2"
         $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
         $convertedValue | Should -Be 1
+    }
+
+    It 'Converts strings to <Type>' -TestCases @(
+        @{
+            Type = [System.Int128]
+            Value = '170,141,183,460,469,231,731,687,303,715,884,105,727'
+            Expected = [System.Int128]::MaxValue
+        }
+        @{
+            Type = [System.UInt128]
+            Value = '340,282,366,920,938,463,463,374,607,431,768,211,455'
+            Expected = [System.UInt128]::MaxValue
+        }
+        @{
+            Type = [System.Half]
+            Value = '1,000.5'
+            Expected = [System.Half]::Parse('1000.5', [cultureinfo]::InvariantCulture)
+        }
+    ) {
+        param($Type, $Value, $Expected)
+
+        $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($Value, $Type)
+        $convertedValue | Should -BeOfType $Type
+        $convertedValue | Should -Be $Expected
+    }
+
+    It 'Preserves numeric conversion behavior for Int128 and Half' {
+        [System.Management.Automation.LanguagePrimitives]::ConvertTo([long]::MaxValue, [System.Int128]) |
+            Should -Be ([System.Int128]::CreateChecked([long]::MaxValue))
+        [System.Management.Automation.LanguagePrimitives]::ConvertTo(1.5, [System.Int128]) | Should -Be ([System.Int128]::One + 1)
+
+        $half = [System.Half]::Parse('1.5', [cultureinfo]::InvariantCulture)
+        [System.Management.Automation.LanguagePrimitives]::ConvertTo($half, [int]) | Should -Be 2
+
+        { [System.Management.Automation.LanguagePrimitives]::ConvertTo([System.Int128]::MaxValue, [long]) } |
+            Should -Throw
     }
 }
