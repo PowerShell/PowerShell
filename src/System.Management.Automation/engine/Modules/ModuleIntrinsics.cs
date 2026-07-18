@@ -729,7 +729,7 @@ namespace System.Management.Automation
         /// or a fully qualified, PowerShell-resolved path.
         /// </summary>
         /// <param name="moduleNameOrPath">The name or path of the module from the specification.</param>
-        /// <param name="basePath">The path to base relative paths off.</param>
+        /// <param name="relativeTo">The path to base relative paths off.</param>
         /// <param name="executionContext">The current execution context.</param>
         /// <returns>
         /// The simple module name if the given one was simple,
@@ -744,7 +744,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal static string NormalizeModuleName(
             string moduleNameOrPath,
-            string basePath,
+            string relativeTo,
             ExecutionContext executionContext)
         {
             if (moduleNameOrPath == null)
@@ -764,7 +764,7 @@ namespace System.Management.Automation
             // Note: Path.IsFullyQualified("\default\root") is false on Windows, but Path.IsPathRooted returns true
             if (!Path.IsPathRooted(moduleNameOrPath))
             {
-                moduleNameOrPath = Path.Join(basePath, moduleNameOrPath);
+                moduleNameOrPath = Path.Join(relativeTo, moduleNameOrPath);
             }
 
             // Use the PowerShell filesystem provider to fully resolve the path
