@@ -739,6 +739,12 @@ namespace System.Management.Automation
         ///             </item>
         ///         </list>
         ///     </para>
+        ///     <para>
+        ///         2018-11-09 rjmholt:
+        ///         There are several, possibly inconsistent, path handling mechanisms in the module cmdlets.
+        ///         After looking through all of them and seeing they all make some assumptions about their caller
+        ///         I wrote this method. Hopefully we can find a standard path resolution API to settle on.
+        ///     </para>
         /// </remarks>
         /// <param name="moduleNameOrPath">The name or path of the module from the specification.</param>
         /// <param name="relativeTo">The path to base relative paths off.</param>
@@ -747,13 +753,6 @@ namespace System.Management.Automation
         /// A simple module name if <paramref name="moduleNameOrPath"/> was a simple module
         /// name, otherwise a fully qualified path to the module.
         /// </returns>
-        /// <remarks>
-        /// 2018-11-09 rjmholt:
-        /// There are several, possibly inconsistent, path handling mechanisms
-        /// in the module cmdlets. After looking through all of them and seeing
-        /// they all make some assumptions about their caller I wrote this method.
-        /// Hopefully we can find a standard path resolution API to settle on.
-        /// </remarks>
         internal static string NormalizeModuleName(string moduleNameOrPath, string relativeTo, ExecutionContext executionContext)
         {
             ArgumentNullException.ThrowIfNull(moduleNameOrPath);
