@@ -260,4 +260,12 @@ Describe "Language Primitive Tests" -Tags "CI" {
         { [System.Management.Automation.LanguagePrimitives]::ConvertTo([System.Int128]::MaxValue, [long]) } |
             Should -Throw
     }
+
+    It 'Preserves invalid cast errors when a numeric conversion operator is unavailable' {
+        $bindingFlags = [System.Reflection.BindingFlags]'NonPublic, Static'
+        $method = [System.Management.Automation.LanguagePrimitives].GetMethod('GetNumericConverter', $bindingFlags)
+        $converter = $method.Invoke($null, @([System.Numerics.Complex], [char]))
+
+        $converter.Method.Name | Should -BeExactly 'ConvertNumeric'
+    }
 }

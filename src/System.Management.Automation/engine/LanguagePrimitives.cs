@@ -4558,7 +4558,11 @@ namespace System.Management.Automation
                 ?? FindCastOperator("op_Implicit", fromType, fromType, toType)
                 ?? FindCastOperator("op_Explicit", fromType, fromType, toType);
 
-            Diagnostics.Assert(castOperator != null, "Numeric types must define a conversion operator");
+            if (castOperator == null)
+            {
+                return ConvertNumeric;
+            }
+
             var castConverter = new ConvertViaCast { cast = castOperator };
 
             if (IsRealType(fromType) && IsIntegerType(toType))
