@@ -105,7 +105,8 @@ namespace Microsoft.PowerShell.Commands
                     else if (field.Equals("MaximumVersion", StringComparison.OrdinalIgnoreCase))
                     {
                         moduleSpecification.MaximumVersion = LanguagePrimitives.ConvertTo<string>(entry.Value);
-                        ModuleCmdletBase.GetMaximumVersion(moduleSpecification.MaximumVersion);
+                        // Ensure max version is correctly formatted.
+                        _ = ModuleCmdletBase.GetMaximumVersion(moduleSpecification.MaximumVersion);
                     }
                     else if (field.Equals("GUID", StringComparison.OrdinalIgnoreCase))
                     {
