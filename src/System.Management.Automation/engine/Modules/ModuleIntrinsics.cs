@@ -724,16 +724,28 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Takes the name of a module as used in a module specification
-        /// and either returns it as a simple name (if it was a simple name)
-        /// or a fully qualified, PowerShell-resolved path.
+        /// Takes a module name from a <strong>module specification</strong> and returns a
+        /// normalized module name.
         /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         A normalized module name is either:
+        ///         <list type="bullet">
+        ///             <item>A simple module name if <paramref name="moduleNameOrPath"/> was a simple name.</item>
+        ///             <item>A fully qualified, PowerShell-resolved path.</item>
+        ///             <item>
+        ///                 A fully qualified path by combination of <paramref name="relativeTo"/> and
+        ///                 <paramref name="moduleNameOrPath"/> if PowerShell could not resolve the path.
+        ///             </item>
+        ///         </list>
+        ///     </para>
+        /// </remarks>
         /// <param name="moduleNameOrPath">The name or path of the module from the specification.</param>
         /// <param name="relativeTo">The path to base relative paths off.</param>
         /// <param name="executionContext">The current execution context.</param>
         /// <returns>
-        /// The simple module name if the given one was simple,
-        /// otherwise a fully resolved, absolute path to the module.
+        /// A simple module name if <paramref name="moduleNameOrPath"/> was a simple module
+        /// name, otherwise a fully qualified path to the module.
         /// </returns>
         /// <remarks>
         /// 2018-11-09 rjmholt:
