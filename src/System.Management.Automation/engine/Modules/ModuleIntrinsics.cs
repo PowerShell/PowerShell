@@ -762,7 +762,6 @@ namespace System.Management.Automation
             ArgumentNullException.ThrowIfNull(moduleNameOrPath);
             ArgumentNullException.ThrowIfNull(relativeTo);
 
-            // Check whether the module is a path -- if not, it is a simple name and we just return it.
             if (!IsModuleNamePath(moduleNameOrPath))
             {
                 return moduleNameOrPath;
