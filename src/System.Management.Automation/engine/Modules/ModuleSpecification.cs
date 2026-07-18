@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands
                 && Guid.Equals(x.Guid, y.Guid)
                 && Version.Equals(x.RequiredVersion, y.RequiredVersion)
                 && Version.Equals(x.Version, y.Version)
-                && string.Equals(x.MaximumVersion, y.MaximumVersion);
+                && string.Equals(x.MaximumVersion, y.MaximumVersion, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
