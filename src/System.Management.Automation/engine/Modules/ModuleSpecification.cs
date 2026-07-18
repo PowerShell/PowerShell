@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if the specifications are equal, false otherwise.</returns>
         public bool Equals(ModuleSpecification x, ModuleSpecification y)
         {
-            if (x == y)
+            if (ReferenceEquals(x, y))
             {
                 return true;
             }
