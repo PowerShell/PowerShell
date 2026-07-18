@@ -754,10 +754,7 @@ namespace System.Management.Automation
         /// they all make some assumptions about their caller I wrote this method.
         /// Hopefully we can find a standard path resolution API to settle on.
         /// </remarks>
-        internal static string NormalizeModuleName(
-            string moduleNameOrPath,
-            string relativeTo,
-            ExecutionContext executionContext)
+        internal static string NormalizeModuleName(string moduleNameOrPath, string relativeTo, ExecutionContext executionContext)
         {
             ArgumentNullException.ThrowIfNull(moduleNameOrPath);
             ArgumentNullException.ThrowIfNull(relativeTo);
