@@ -780,12 +780,10 @@ namespace System.Management.Automation
                 moduleNameOrPath = Path.Join(relativeTo, moduleNameOrPath);
             }
 
-            // Use the PowerShell filesystem provider to fully resolve the path
-            // If there is a problem, null could be returned -- so default back to the pre-normalized path
+            // Resolving the path using ModuleCmdletBase.GetResolvedPath() may rarely return null.
             string normalizedPath = ModuleCmdletBase.GetResolvedPath(moduleNameOrPath, executionContext)?.TrimEnd(StringLiterals.DefaultPathSeparator);
 
-            // ModuleCmdletBase.GetResolvePath will return null in the unlikely event that it failed.
-            // If it does, we return the fully qualified path generated before.
+            // If the resolved path is null, just return the fully qualified path generated before.
             return normalizedPath ?? Path.GetFullPath(moduleNameOrPath);
         }
 
