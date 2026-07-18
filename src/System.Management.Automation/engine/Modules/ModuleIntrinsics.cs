@@ -772,7 +772,9 @@ namespace System.Management.Automation
             //      - Path.IsPathRooted("/some/path") return false on Windows.
             moduleNameOrPath = moduleNameOrPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
-            // Note: Path.IsFullyQualified("\default\root") is false on Windows, but Path.IsPathRooted returns true
+            // On Windows:
+            //      - Path.IsFullyQualified("\default\root") returns false, but
+            //      - Path.IsPathRooted("\default\root") returns true.
             if (!Path.IsPathRooted(moduleNameOrPath))
             {
                 moduleNameOrPath = Path.Join(relativeTo, moduleNameOrPath);
