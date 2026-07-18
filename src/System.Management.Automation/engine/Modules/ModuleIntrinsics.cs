@@ -728,7 +728,7 @@ namespace System.Management.Automation
         /// and either returns it as a simple name (if it was a simple name)
         /// or a fully qualified, PowerShell-resolved path.
         /// </summary>
-        /// <param name="moduleName">The name or path of the module from the specification.</param>
+        /// <param name="moduleNameOrPath">The name or path of the module from the specification.</param>
         /// <param name="basePath">The path to base relative paths off.</param>
         /// <param name="executionContext">The current execution context.</param>
         /// <returns>
@@ -743,37 +743,37 @@ namespace System.Management.Automation
         /// Hopefully we can find a standard path resolution API to settle on.
         /// </remarks>
         internal static string NormalizeModuleName(
-            string moduleName,
+            string moduleNameOrPath,
             string basePath,
             ExecutionContext executionContext)
         {
-            if (moduleName == null)
+            if (moduleNameOrPath == null)
             {
                 return null;
             }
 
             // Check whether the module is a path -- if not, it is a simple name and we just return it.
-            if (!IsModuleNamePath(moduleName))
+            if (!IsModuleNamePath(moduleNameOrPath))
             {
-                return moduleName;
+                return moduleNameOrPath;
             }
 
             // Standardize directory separators -- Path.IsPathRooted() will return false for "\path\here" on *nix and for "/path/there" on Windows
-            moduleName = moduleName.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+            moduleNameOrPath = moduleNameOrPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
             // Note: Path.IsFullyQualified("\default\root") is false on Windows, but Path.IsPathRooted returns true
-            if (!Path.IsPathRooted(moduleName))
+            if (!Path.IsPathRooted(moduleNameOrPath))
             {
-                moduleName = Path.Join(basePath, moduleName);
+                moduleNameOrPath = Path.Join(basePath, moduleNameOrPath);
             }
 
             // Use the PowerShell filesystem provider to fully resolve the path
             // If there is a problem, null could be returned -- so default back to the pre-normalized path
-            string normalizedPath = ModuleCmdletBase.GetResolvedPath(moduleName, executionContext)?.TrimEnd(StringLiterals.DefaultPathSeparator);
+            string normalizedPath = ModuleCmdletBase.GetResolvedPath(moduleNameOrPath, executionContext)?.TrimEnd(StringLiterals.DefaultPathSeparator);
 
             // ModuleCmdletBase.GetResolvePath will return null in the unlikely event that it failed.
             // If it does, we return the fully qualified path generated before.
-            return normalizedPath ?? Path.GetFullPath(moduleName);
+            return normalizedPath ?? Path.GetFullPath(moduleNameOrPath);
         }
 
         /// <summary>
