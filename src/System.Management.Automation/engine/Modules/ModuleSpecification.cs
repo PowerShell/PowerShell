@@ -90,25 +90,25 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string field = entry.Key.ToString();
 
-                    if (field.Equals("ModuleName", StringComparison.OrdinalIgnoreCase))
+                    if (field.EqualsOrdinalIgnoreCase("ModuleName"))
                     {
                         moduleSpecification.Name = LanguagePrimitives.ConvertTo<string>(entry.Value);
                     }
-                    else if (field.Equals("ModuleVersion", StringComparison.OrdinalIgnoreCase))
+                    else if (field.EqualsOrdinalIgnoreCase("ModuleVersion"))
                     {
                         moduleSpecification.Version = LanguagePrimitives.ConvertTo<Version>(entry.Value);
                     }
-                    else if (field.Equals("RequiredVersion", StringComparison.OrdinalIgnoreCase))
+                    else if (field.EqualsOrdinalIgnoreCase("RequiredVersion"))
                     {
                         moduleSpecification.RequiredVersion = LanguagePrimitives.ConvertTo<Version>(entry.Value);
                     }
-                    else if (field.Equals("MaximumVersion", StringComparison.OrdinalIgnoreCase))
+                    else if (field.EqualsOrdinalIgnoreCase("MaximumVersion"))
                     {
                         moduleSpecification.MaximumVersion = LanguagePrimitives.ConvertTo<string>(entry.Value);
                         // Ensure max version is correctly formatted.
                         _ = ModuleCmdletBase.GetMaximumVersion(moduleSpecification.MaximumVersion);
                     }
-                    else if (field.Equals("GUID", StringComparison.OrdinalIgnoreCase))
+                    else if (field.EqualsOrdinalIgnoreCase("GUID"))
                     {
                         moduleSpecification.Guid = LanguagePrimitives.ConvertTo<Guid?>(entry.Value);
                     }
