@@ -759,10 +759,7 @@ namespace System.Management.Automation
             string relativeTo,
             ExecutionContext executionContext)
         {
-            if (moduleNameOrPath == null)
-            {
-                return null;
-            }
+            ArgumentNullException.ThrowIfNull(moduleNameOrPath);
 
             // Check whether the module is a path -- if not, it is a simple name and we just return it.
             if (!IsModuleNamePath(moduleNameOrPath))
