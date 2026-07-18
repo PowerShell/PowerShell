@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Compares two ModuleSpecification objects for equality.
+    /// Compares two <see cref="ModuleSpecification"/> objects for structural equality.
     /// </summary>
     internal class ModuleSpecificationComparer : IEqualityComparer<ModuleSpecification>
     {
