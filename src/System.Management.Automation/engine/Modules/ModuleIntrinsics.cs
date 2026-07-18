@@ -767,7 +767,9 @@ namespace System.Management.Automation
                 return moduleNameOrPath;
             }
 
-            // Standardize directory separators -- Path.IsPathRooted() will return false for "\path\here" on *nix and for "/path/there" on Windows
+            // Ensure OS default directory separators because
+            //      - Path.IsPathRooted("\some\path") returns false on *nix, and
+            //      - Path.IsPathRooted("/some/path") return false on Windows.
             moduleNameOrPath = moduleNameOrPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
             // Note: Path.IsFullyQualified("\default\root") is false on Windows, but Path.IsPathRooted returns true
