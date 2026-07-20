@@ -52,30 +52,8 @@
   <ItemGroup>
     <!-- exclude code of source generators from compilation and IDEs (e.g. vscode and visual studio) -->
     <Compile Remove="SourceGenerators\**\*.cs" />
-
-    <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
-    <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
-    <Compile Remove="engine\TransactedString.cs" />
-    <Compile Remove="engine\TransactionManager.cs" />
-    <Compile Remove="engine\hostifaces\NativeCultureResolver.cs" />
-    <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
-    <Compile Remove="engine\remoting\commands\ResumeJob.cs" />
-    <Compile Remove="engine\remoting\commands\SuspendJob.cs" />
-    <Compile Remove="namespaces\SafeTransactionHandle.cs" />
-    <Compile Remove="namespaces\SafeRegistryHandle.cs" />
-    <Compile Remove="namespaces\TransactedRegistry.cs" />
-    <Compile Remove="namespaces\TransactedRegistryKey.cs" />
-    <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />
-    <Compile Remove="utils\BackgroundDispatcher.cs" />
-    <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
-    <Compile Remove="utils\perfCounters\CounterSetRegistrarBase.cs" />
-    <Compile Remove="utils\perfCounters\PSPerfCountersMgr.cs" />
-    <Compile Remove="gen\CoreMshSnapinResources.cs" />
-    <Compile Remove="gen\ErrorPackageRemoting.cs" />
+    <!-- exclude the generated code for EventResource.resx, which is not directly used -->
     <Compile Remove="gen\EventResource.cs" />
-
-    <EmbeddedResource Remove="resources\CoreMshSnapinResources.resx" />
-    <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
