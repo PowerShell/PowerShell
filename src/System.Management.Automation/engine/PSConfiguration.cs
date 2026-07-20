@@ -56,8 +56,6 @@ namespace System.Management.Automation.Configuration
     {
         private const string ConfigFileName = "powershell.config.json";
         private const string ExecutionPolicyDefaultShellKey = "Microsoft.PowerShell:ExecutionPolicy";
-        private const string ExperimentalFeaturesKey = "ExperimentalFeatures";
-        private const string DisabledExperimentalFeaturesKey = "DisabledExperimentalFeatures";
         private const string DisableImplicitWinCompatKey = "DisableImplicitWinCompat";
         private const string WindowsPowerShellCompatibilityModuleDenyListKey = "WindowsPowerShellCompatibilityModuleDenyList";
         private const string WindowsPowerShellCompatibilityNoClobberModuleListKey = "WindowsPowerShellCompatibilityNoClobberModuleList";
@@ -243,92 +241,40 @@ namespace System.Management.Automation.Configuration
         /// </summary>
         internal string[] GetExperimentalFeatures()
         {
-            // Resolve each experimental feature's state across the config scopes using explicit per-feature
-            // overrides, so that:
-            //  - disables accumulate and never re-enable an earlier one,
-            //  - a newly-shipped ($PSHOME) feature stays at its product default until explicitly overridden, and
-            //  - an all-disabled state is not mistaken for "unset" (which previously fell back to $PSHOME).
-            // Explicit enable/disable precedence: CurrentUser > MachineFolder (admin) > AllUsers ($PSHOME product).
-            // A feature with no explicit setting defaults to the product ($PSHOME) enabled list (preview = on).
-            HashSet<string> userEnabled = ReadFeatureSet(ConfigScope.CurrentUser, ExperimentalFeaturesKey);
-            HashSet<string> userDisabled = ReadFeatureSet(ConfigScope.CurrentUser, DisabledExperimentalFeaturesKey);
-            HashSet<string> machineEnabled = ReadFeatureSet(ConfigScope.MachineFolder, ExperimentalFeaturesKey);
-            HashSet<string> machineDisabled = ReadFeatureSet(ConfigScope.MachineFolder, DisabledExperimentalFeaturesKey);
-            HashSet<string> productEnabled = ReadFeatureSet(ConfigScope.AllUsers, ExperimentalFeaturesKey);
+            string[] features = ReadValueFromFile(ConfigScope.CurrentUser, "ExperimentalFeatures", Array.Empty<string>());
 
-            var universe = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            universe.UnionWith(userEnabled);
-            universe.UnionWith(userDisabled);
-            universe.UnionWith(machineEnabled);
-            universe.UnionWith(machineDisabled);
-            universe.UnionWith(productEnabled);
-
-            var effective = new List<string>(universe.Count);
-            foreach (string feature in universe)
+            if (features.Length == 0)
             {
-                bool enabled;
-                if (userEnabled.Contains(feature)) { enabled = true; }
-                else if (userDisabled.Contains(feature)) { enabled = false; }
-                else if (machineEnabled.Contains(feature)) { enabled = true; }
-                else if (machineDisabled.Contains(feature)) { enabled = false; }
-                else { enabled = productEnabled.Contains(feature); }
-
-                if (enabled) { effective.Add(feature); }
+                features = ReadValueFromFile(ConfigScope.AllUsers, "ExperimentalFeatures", Array.Empty<string>());
             }
 
-            return effective.ToArray();
-        }
-
-        private HashSet<string> ReadFeatureSet(ConfigScope scope, string key)
-        {
-            return new HashSet<string>(
-                ReadValueFromFile(scope, key, Array.Empty<string>()),
-                StringComparer.OrdinalIgnoreCase);
+            return features;
         }
 
         /// <summary>
-        /// Record an explicit per-feature override (enable or disable) for an experimental feature.
+        /// Set the enabled list of experimental features in the config file.
         /// </summary>
         /// <param name="scope">The ConfigScope of the configuration file to update.</param>
         /// <param name="featureName">The name of the experimental feature to change in the configuration.</param>
-        /// <param name="setEnabled">If true, explicitly enable the feature; otherwise explicitly disable it.</param>
+        /// <param name="setEnabled">If true, add to configuration; otherwise, remove from configuration.</param>
         internal void SetExperimentalFeatures(ConfigScope scope, string featureName, bool setEnabled)
         {
-            // Read and write the same (write-resolved) scope so overrides accumulate. On a packaged app,
-            // AllUsers writes and reads both resolve to the per-machine data store, so disabling several
-            // features in a row never re-enables an earlier one, and the shipped $PSHOME product config is
-            // never rewritten. Enabling a feature clears any disable override for it (and vice versa).
-            scope = ResolveWriteScope(scope);
-
-            var enabled = new List<string>(ReadValueFromFile(scope, ExperimentalFeaturesKey, Array.Empty<string>()));
-            var disabled = new List<string>(ReadValueFromFile(scope, DisabledExperimentalFeaturesKey, Array.Empty<string>()));
-
-            List<string> addTo = setEnabled ? enabled : disabled;
-            List<string> removeFrom = setEnabled ? disabled : enabled;
-
-            bool changed = removeFrom.RemoveAll(f => string.Equals(f, featureName, StringComparison.OrdinalIgnoreCase)) > 0;
-            if (!addTo.Exists(f => string.Equals(f, featureName, StringComparison.OrdinalIgnoreCase)))
+            // Experimental features intentionally stay on the legacy scopes ($PSHOME for AllUsers) and are not
+            // redirected to the packaged per-machine data store; MachineFolder support for experimental features
+            // is deferred to a separate change (see https://github.com/PowerShell/PowerShell/issues/27702).
+            // This keeps behavior identical to non-packaged installs, so an AllUsers write under MSIX fails
+            // against the read-only $PSHOME just as it does today.
+            var features = new List<string>(GetExperimentalFeatures());
+            bool containsFeature = features.Contains(featureName);
+            if (setEnabled && !containsFeature)
             {
-                addTo.Add(featureName);
-                changed = true;
+                features.Add(featureName);
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray(), allowMachineFolderRedirect: false);
             }
-
-            if (changed)
+            else if (!setEnabled && containsFeature)
             {
-                WriteOrRemoveFeatureSet(scope, ExperimentalFeaturesKey, enabled);
-                WriteOrRemoveFeatureSet(scope, DisabledExperimentalFeaturesKey, disabled);
-            }
-        }
-
-        private void WriteOrRemoveFeatureSet(ConfigScope scope, string key, List<string> features)
-        {
-            if (features.Count > 0)
-            {
-                WriteValueToFile<string[]>(scope, key, features.ToArray());
-            }
-            else
-            {
-                RemoveValueFromFile<string[]>(scope, key);
+                features.Remove(featureName);
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray(), allowMachineFolderRedirect: false);
             }
         }
 
@@ -586,13 +532,20 @@ namespace System.Management.Automation.Configuration
         /// <param name="key">The string key of the value.</param>
         /// <param name="value">The value to set.</param>
         /// <param name="addValue">Whether the key-value pair should be added to or removed from the file.</param>
-        private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue)
+        /// <param name="allowMachineFolderRedirect">When true (default), system-wide (AllUsers) writes are redirected to the writable per-machine data store on a packaged install; pass false to write to the literal scope.</param>
+        private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue, bool allowMachineFolderRedirect = true)
         {
             try
             {
                 // Redirect system-wide writes to the writable per-machine data store when packaged, so only
                 // the changed keys are stored there and the read-only $PSHOME product config is untouched.
-                scope = ResolveWriteScope(scope);
+                // Callers that must target the literal scope (e.g. experimental features, whose MachineFolder
+                // support is deferred) pass allowMachineFolderRedirect: false.
+                if (allowMachineFolderRedirect)
+                {
+                    scope = ResolveWriteScope(scope);
+                }
+
                 string fileName = GetConfigFilePath(scope);
                 fileLock.EnterWriteLock();
 
@@ -690,14 +643,15 @@ namespace System.Management.Automation.Configuration
         /// <param name="scope">The ConfigScope of the file to update.</param>
         /// <param name="key">The string key of the value.</param>
         /// <param name="value">The value to write.</param>
-        private void WriteValueToFile<T>(ConfigScope scope, string key, T value)
+        /// <param name="allowMachineFolderRedirect">When true (default), system-wide (AllUsers) writes are redirected to the writable per-machine data store on a packaged install; pass false to write to the literal scope.</param>
+        private void WriteValueToFile<T>(ConfigScope scope, string key, T value, bool allowMachineFolderRedirect = true)
         {
             if (scope == ConfigScope.CurrentUser && !Directory.Exists(perUserConfigDirectory))
             {
                 Directory.CreateDirectory(perUserConfigDirectory);
             }
 
-            UpdateValueInFile<T>(scope, key, value, true);
+            UpdateValueInFile<T>(scope, key, value, true, allowMachineFolderRedirect);
         }
 
         /// <summary>
