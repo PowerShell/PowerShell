@@ -711,7 +711,7 @@ namespace Microsoft.PowerShell.Commands
             string extension = Path.GetExtension(moduleSpecification.Name);
 
             // First check for fully-qualified paths - either absolute or relative
-            string rootedPath = ResolveRootedFilePath(moduleSpecification.Name, this.Context);
+            string rootedPath = ResolveToFileSystemPathIfRooted(moduleSpecification.Name, this.Context);
             if (string.IsNullOrEmpty(rootedPath))
             {
                 // Use the name of the parent module if it's specified, otherwise, use the current module name.
@@ -2287,7 +2287,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(loadMessage);
 
                         bool isAlreadyLoaded = false;
-                        string resolvedFileName = ResolveRootedFilePath(fileName, Context) ?? fileName;
+                        string resolvedFileName = ResolveToFileSystemPathIfRooted(fileName, Context) ?? fileName;
                         foreach (var entry in Context.InitialSessionState.Types)
                         {
                             if (entry.FileName == null)
@@ -2295,7 +2295,7 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
-                            string resolvedEntryFileName = ResolveRootedFilePath(entry.FileName, Context) ?? entry.FileName;
+                            string resolvedEntryFileName = ResolveToFileSystemPathIfRooted(entry.FileName, Context) ?? entry.FileName;
                             if (resolvedEntryFileName.Equals(resolvedFileName, StringComparison.OrdinalIgnoreCase))
                             {
                                 isAlreadyLoaded = true;
@@ -4673,8 +4673,8 @@ namespace Microsoft.PowerShell.Commands
             // but it's safer to keep the original behavior to avoid unexpected breaking changes.
             string combinedPath = Path.Combine(moduleBase, fileName);
             string resolvedPath = IsRooted(fileName)
-                ? ResolveRootedFilePath(fileName, Context) ?? ResolveRootedFilePath(combinedPath, Context)
-                : ResolveRootedFilePath(combinedPath, Context);
+                ? ResolveToFileSystemPathIfRooted(fileName, Context) ?? ResolveToFileSystemPathIfRooted(combinedPath, Context)
+                : ResolveToFileSystemPathIfRooted(combinedPath, Context);
 
             // Return the path if successfully resolved.
             if (resolvedPath is not null)
@@ -4758,7 +4758,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">The filename to resolve.</param>
         /// <param name="context">Execution context.</param>
         /// <returns>The resolved filename.</returns>
-        internal static string ResolveRootedFilePath(string filePath, ExecutionContext context)
+        internal static string ResolveToFileSystemPathIfRooted(string filePath, ExecutionContext context)
         {
             // If the path is not fully qualified or relative rooted, then
             // we need to do path-based resolution...
