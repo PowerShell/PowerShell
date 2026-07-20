@@ -23,32 +23,6 @@ namespace Microsoft.PowerShell.Commands
     {
         private const string NewTemporaryDirectoryWriteError = "NewTemporaryDirectoryWriteError";
 
-        /// <summary>
-        /// Gets or sets an optional prefix for the temporary directory name.
-        /// The prefix is prepended to the randomly generated name.
-        /// </summary>
-        [Parameter]
-        [ValidateNotNullOrEmpty]
-        [ValidatePattern(@"^[^\\/:*?""<>|]+$")]
-        public string Prefix { get; set; }
-
-        /// <summary>
-        /// Creates a temporary directory and writes it to the pipeline.
-        /// </summary>
-        protected override void EndProcessing()
-        {
-            string tempPath = Path.GetTempPath();
-
-            if (!string.IsNullOrEmpty(Prefix))
-            {
-                CreateWithPrefix(tempPath);
-            }
-            else
-            {
-                CreateWithoutPrefix();
-            }
-        }
-
         private static ErrorRecord CreateErrorRecord(Exception exception, ErrorCategory category, string targetPath)
         {
             return new ErrorRecord(
@@ -58,91 +32,57 @@ namespace Microsoft.PowerShell.Commands
                 targetPath);
         }
 
-        private void CreateWithPrefix(string tempPath)
+        /// <summary>
+        /// Gets or sets an optional prefix for the temporary directory name.
+        /// The prefix is prepended to the randomly generated name.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string Prefix { get; set; }
+
+        /// <summary>
+        /// Creates a temporary directory and writes it to the pipeline.
+        /// Uses <see cref="Directory.CreateTempSubdirectory()"/> for atomic creation,
+        /// which guarantees a fresh directory without check-to-create race conditions.
+        /// </summary>
+        protected override void EndProcessing()
         {
-            DirectoryInfo prefixedTargetDirectory = GetTemporaryDirectoryWithPrefix(tempPath, Prefix);
-            if (!ShouldProcess(prefixedTargetDirectory.FullName))
+            if (!string.IsNullOrEmpty(Prefix) && Prefix.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new ArgumentException($"The prefix '{Prefix}' contains invalid characters."),
+                        NewTemporaryDirectoryWriteError,
+                        ErrorCategory.InvalidArgument,
+                        Prefix));
+                return;
+            }
+
+            string targetDescription = string.IsNullOrEmpty(Prefix)
+                ? Path.GetTempPath()
+                : Path.Combine(Path.GetTempPath(), Prefix);
+
+            if (!ShouldProcess(targetDescription))
             {
                 return;
             }
 
             try
             {
-                DirectoryInfo createdDirectory = CreateTemporaryDirectory(prefixedTargetDirectory.FullName);
+                DirectoryInfo createdDirectory = string.IsNullOrEmpty(Prefix)
+                    ? Directory.CreateTempSubdirectory()
+                    : Directory.CreateTempSubdirectory(Prefix);
+
                 WriteObject(createdDirectory);
             }
             catch (IOException ioException)
             {
-                ThrowTerminatingError(CreateErrorRecord(ioException, ErrorCategory.WriteError, prefixedTargetDirectory.FullName));
+                ThrowTerminatingError(CreateErrorRecord(ioException, ErrorCategory.WriteError, targetDescription));
             }
             catch (UnauthorizedAccessException unauthorizedAccessException)
             {
-                ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, prefixedTargetDirectory.FullName));
+                ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, targetDescription));
             }
-        }
-
-        private void CreateWithoutPrefix()
-        {
-            // Reuse the shared helper introduced alongside this cmdlet so the
-            // directory generation logic stays in one place.
-            DirectoryInfo targetDirectory = PathUtils.GetTemporaryDirectory();
-            if (!ShouldProcess(targetDirectory.FullName))
-            {
-                return;
-            }
-
-            try
-            {
-                DirectoryInfo createdDirectory = CreateTemporaryDirectory(targetDirectory.FullName);
-                WriteObject(createdDirectory);
-            }
-            catch (IOException ioException)
-            {
-                ThrowTerminatingError(CreateErrorRecord(ioException, ErrorCategory.WriteError, targetDirectory.FullName));
-            }
-            catch (UnauthorizedAccessException unauthorizedAccessException)
-            {
-                ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, targetDirectory.FullName));
-            }
-        }
-
-        private static DirectoryInfo GetTemporaryDirectoryWithPrefix(string tempPath, string prefix)
-        {
-            // The [ValidatePattern] attribute already rejects path separator
-            // characters, but guard here too so the invariant holds even if
-            // the parameter binding ever changes.
-            if (prefix.Contains(Path.DirectorySeparatorChar) || prefix.Contains(Path.AltDirectorySeparatorChar))
-            {
-                throw new ArgumentException(
-                    "The prefix cannot contain directory separator characters.",
-                    nameof(prefix));
-            }
-
-            DirectoryInfo temporaryDirectory = new(tempPath);
-            while (true)
-            {
-                DirectoryInfo targetDirectory = new(
-                    Path.Combine(
-                        temporaryDirectory.FullName,
-                        prefix + Path.GetRandomFileName()));
-
-                if (!targetDirectory.Exists)
-                {
-                    return targetDirectory;
-                }
-            }
-        }
-
-        private static DirectoryInfo CreateTemporaryDirectory(string path)
-        {
-            if (OperatingSystem.IsWindows())
-            {
-                return Directory.CreateDirectory(path);
-            }
-
-            return Directory.CreateDirectory(
-                path,
-                UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         }
     }
 }
