@@ -67,6 +67,14 @@ Describe "New-TemporaryDirectory" -Tags "CI" {
                 }
             }
         }
+
+        It "rejects prefix with invalid characters" {
+            $invalidChars = [System.IO.Path]::GetInvalidFileNameChars()
+            if ($invalidChars.Count -gt 0) {
+                $badPrefix = "bad$($invalidChars[0])prefix"
+                { New-TemporaryDirectory -Prefix $badPrefix -ErrorAction Stop } | Should -Throw
+            }
+        }
     }
 
     Context "ShouldProcess support" {
