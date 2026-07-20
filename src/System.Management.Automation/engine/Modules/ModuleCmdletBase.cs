@@ -4891,6 +4891,88 @@ namespace Microsoft.PowerShell.Commands
             return filePaths;
         }
 
+        /// <summary>
+        /// Resolves <paramref name="path"/> using the file system provider, without error handling.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         This method does not normalize <paramref name="path"/>'s directory separators.
+        ///     </para>
+        /// </remarks>
+        /// <param name="path">The path to resolve.</param>
+        /// <param name="context">The execution context.</param>
+        /// <param name="allowNonExistingPaths">Whether non-existing paths should be resolved.</param>
+        /// <returns>
+        ///     <list type="bullet">
+        ///         <item><see langword="null"/> if the file system provider isn't available.</item>
+        ///         <item>All resolved paths if resolution of <paramref name="path"/> succeeded.</item>
+        ///     </list>
+        /// </returns>
+        /// <exception cref="RuntimeException">Thrown if path resolution is not performed by the file system provider.</exception>
+        internal static Collection<string> ResolveToFileSystemPathsThrowing(string path, ExecutionContext context, bool allowNonExistingPaths = false)
+        {
+            if (context?.EngineSessionState?.IsProviderLoaded(context.ProviderNames.FileSystem) != true)
+            {
+                // We're only interested in resolving file system paths.
+                return null;
+            }
+
+            // TODO: Can path resolution succeed and return null?
+            Collection<string> resolvedPaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(path,
+                                                                                                           allowNonExistingPaths,
+                                                                                                           out ProviderInfo provider);
+
+            // Ported from legacy code to preserve behavior.
+            if (!provider.NameEquals(context.ProviderNames.FileSystem))
+            {
+                throw InterpreterError.NewInterpreterException(
+                    path,
+                    typeof(RuntimeException),
+                    errorPosition: null,
+                    "FileOpenError",
+                    ParserStrings.FileOpenError,
+                    provider.FullName);
+            }
+
+            return resolvedPaths;
+        }
+
+        /// <summary>
+        /// Resolves <paramref name="path"/> using the file system provider.
+        /// </summary>
+        /// <remarks>
+        ///     <list type="bullet">
+        ///         <item>This method does not normalize <paramref name="path"/>'s directory separators.</item>
+        ///         <item>This method does not throw.</item>
+        ///     </list>
+        /// </remarks>
+        /// <param name="path">The path to resolve.</param>
+        /// <param name="context">Execution context.</param>
+        /// <param name="allowNonExistingPaths">Whether non-existing paths should be resolved.</param>
+        /// <param name="resolvedPaths">All resolved file system paths if the return value is <see langword="true"/>, otherwise <see langword="null"/>.</param>
+        /// <returns>
+        /// <see langword="true"/> if path resolution through the file system provider succeeded, otherwise <see langword="false"/>.
+        /// </returns>
+        internal static bool TryResolveToFileSystemPaths(
+            string path,
+            ExecutionContext context,
+            out Collection<string> resolvedPaths,
+            bool allowNonExistingPaths = false)
+        {
+            resolvedPaths = null;
+
+            try
+            {
+                resolvedPaths = ResolveToFileSystemPathsThrowing(path, context, allowNonExistingPaths);
+            }
+            catch (Exception)
+            {
+                // Ignore.
+            }
+
+            return resolvedPaths != null;
+        }
+
         internal static PSSession GetWindowsPowerShellCompatRemotingSession()
         {
             PSSession result = null;
