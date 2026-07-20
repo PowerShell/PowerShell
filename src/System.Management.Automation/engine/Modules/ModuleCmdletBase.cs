@@ -4840,33 +4840,21 @@ namespace Microsoft.PowerShell.Commands
 
         internal static Collection<string> GetResolvedPathCollection(string filePath, ExecutionContext context)
         {
-            ProviderInfo provider = null;
-
             Collection<string> filePaths;
 
-            if (context != null && context.EngineSessionState != null && context.EngineSessionState.IsProviderLoaded(context.ProviderNames.FileSystem))
+            if (!TryResolveToFileSystemPaths(filePath, context, out filePaths, allowNonExistingPaths: true))
             {
-                try
+                // Ported from legacy code to preserve behavior.
+                if (context?.EngineSessionState?.IsProviderLoaded(context.ProviderNames.FileSystem) == false)
                 {
-                    filePaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, true /* allowNonExistentPaths */, out provider);
+                    filePaths = [filePath];
                 }
-                catch (Exception)
+                else
                 {
                     return null;
                 }
-                // Make sure that the path is in the file system - that's all we can handle currently...
-                if ((provider == null) || !provider.NameEquals(context.ProviderNames.FileSystem))
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                filePaths = new Collection<string>();
-                filePaths.Add(filePath);
             }
 
-            // Make sure at least one file was found...
             if (filePaths == null || filePaths.Count < 1)
             {
                 return null;
