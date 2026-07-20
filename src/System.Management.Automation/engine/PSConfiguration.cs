@@ -288,19 +288,13 @@ namespace System.Management.Automation.Configuration
 
         internal string[] GetWindowsPowerShellCompatibilityModuleDenyList()
         {
-            // The compatibility module deny list is a *policy*: the effective list is the union of every
-            // scope's entries (the admin MachineFolder, the $PSHOME/AllUsers product defaults, and
-            // CurrentUser). Unioning - rather than letting the highest-precedence scope that defines the
-            // key win outright - ensures that a module added to the deny list by a product update in
-            // $PSHOME is still honored when a MachineFolder or user config also sets the key. A scope can
-            // only add to the deny list; a higher-precedence scope never removes a lower scope's deny.
+            // The compatibility module deny list is a policy: its entries are unioned across every scope.
             return MergePolicyList(WindowsPowerShellCompatibilityModuleDenyListKey);
         }
 
         internal string[] GetWindowsPowerShellCompatibilityNoClobberModuleList()
         {
-            // Unlike the deny list (a policy that unions every scope), the no-clobber list is a
-            // *preference*: the highest-precedence scope that defines it wins outright.
+            // The no-clobber list is a preference: the highest-precedence scope that defines it wins.
             return MergePreferenceValue<string[]>(WindowsPowerShellCompatibilityNoClobberModuleListKey);
         }
 
@@ -458,9 +452,12 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// Resolves a *preference* setting: returns the value from the highest-precedence scope that
         /// defines <paramref name="key"/> (see <see cref="s_configScopePreferenceOrder"/>), so that a
-        /// more specific scope overrides a broader one. Returns <paramref name="defaultValue"/> when no
-        /// scope defines the key. <typeparamref name="T"/> must be a reference type or a nullable value
-        /// type so that an unset scope is observable as null.
+        /// more specific scope overrides a broader one. Use this for settings that behave like a
+        /// preference - the current user's choice should take precedence over a system-wide value.
+        /// In contrast to <see cref="MergePolicyList"/> (which unions every scope), only the winning
+        /// scope's value is used; lower scopes are ignored once a higher one defines the key. Returns
+        /// <paramref name="defaultValue"/> when no scope defines the key. <typeparamref name="T"/> must
+        /// be a reference type or a nullable value type so that an unset scope is observable as null.
         /// </summary>
         /// <typeparam name="T">The type of the value.</typeparam>
         /// <param name="key">The configuration key to resolve.</param>
@@ -481,10 +478,12 @@ namespace System.Management.Automation.Configuration
 
         /// <summary>
         /// Resolves a *policy* list: returns the case-insensitive union of the string entries defined in
-        /// every configuration scope for <paramref name="key"/>. Use this for list settings that must
-        /// accumulate across scopes, so that an entry contributed by one scope (for example a product
-        /// update in $PSHOME) is never dropped because a higher-precedence scope also defines the key.
-        /// Returns null when no scope contributes an entry.
+        /// every configuration scope for <paramref name="key"/>. Use this for list settings that behave
+        /// like a policy and must accumulate across scopes, so that an entry contributed by one scope
+        /// (for example a module added to the list by a product update in $PSHOME) is never dropped
+        /// because a higher-precedence scope also defines the key. Every scope can only add entries; a
+        /// higher-precedence scope never removes an entry contributed by a lower scope. Returns null when
+        /// no scope contributes an entry.
         /// </summary>
         /// <param name="key">The configuration key to resolve.</param>
         private string[] MergePolicyList(string key)
