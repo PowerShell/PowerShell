@@ -1034,7 +1034,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Now we resolve the possible paths in case it is relative path/path contains wildcards
-                var modulePathCollection = GetResolvedPathCollection(modulePath, this.Context);
+                var modulePathCollection = ResolveToFileSystemPaths(modulePath, this.Context);
 
                 if (modulePathCollection != null)
                 {
@@ -4838,7 +4838,7 @@ namespace Microsoft.PowerShell.Commands
             return filePaths[0];
         }
 
-        internal static Collection<string> GetResolvedPathCollection(string filePath, ExecutionContext context)
+        internal static Collection<string> ResolveToFileSystemPaths(string filePath, ExecutionContext context)
         {
             Collection<string> filePaths;
 
