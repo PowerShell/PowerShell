@@ -280,50 +280,28 @@ namespace System.Management.Automation.Configuration
 
         internal bool IsImplicitWinCompatEnabled()
         {
-            bool settingValue = ReadValueFromFile<bool?>(ConfigScope.CurrentUser, DisableImplicitWinCompatKey)
-                ?? ReadValueFromFile<bool?>(ConfigScope.MachineFolder, DisableImplicitWinCompatKey)
-                ?? ReadValueFromFile<bool?>(ConfigScope.AllUsers, DisableImplicitWinCompatKey)
-                ?? false;
+            // DisableImplicitWinCompat is a preference: the highest-precedence scope that sets it wins.
+            bool settingValue = MergePreferenceValue<bool?>(DisableImplicitWinCompatKey) ?? false;
 
             return !settingValue;
         }
 
         internal string[] GetWindowsPowerShellCompatibilityModuleDenyList()
         {
-            // The compatibility module deny list is a *policy*: the effective list is the union of the
-            // entries from every scope (AllUsers/$PSHOME product defaults, the admin MachineFolder, and
+            // The compatibility module deny list is a *policy*: the effective list is the union of every
+            // scope's entries (the admin MachineFolder, the $PSHOME/AllUsers product defaults, and
             // CurrentUser). Unioning - rather than letting the highest-precedence scope that defines the
-            // key win outright - ensures that new modules added to the deny list by a product update in
-            // $PSHOME are still honored when a MachineFolder or user config also sets the key. Any scope
-            // can only add to the deny list; a higher-precedence scope never removes a lower scope's deny.
-            var denyList = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (ConfigScope scope in new[] { ConfigScope.CurrentUser, ConfigScope.MachineFolder, ConfigScope.AllUsers })
-            {
-                string[] values = ReadValueFromFile<string[]>(scope, WindowsPowerShellCompatibilityModuleDenyListKey);
-                if (values is not null)
-                {
-                    denyList.UnionWith(values);
-                }
-            }
-
-            if (denyList.Count == 0)
-            {
-                return null;
-            }
-
-            var result = new string[denyList.Count];
-            denyList.CopyTo(result);
-            return result;
+            // key win outright - ensures that a module added to the deny list by a product update in
+            // $PSHOME is still honored when a MachineFolder or user config also sets the key. A scope can
+            // only add to the deny list; a higher-precedence scope never removes a lower scope's deny.
+            return MergePolicyList(WindowsPowerShellCompatibilityModuleDenyListKey);
         }
 
         internal string[] GetWindowsPowerShellCompatibilityNoClobberModuleList()
         {
-            // Unlike the deny list (a policy that unions every scope), the no-clobber list is treated as a
-            // *preference*: the highest-precedence scope that defines it wins outright, following the
-            // preference merge order CurrentUser > MachineFolder > AllUsers ($PSHOME).
-            return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityNoClobberModuleListKey)
-                ?? ReadValueFromFile<string[]>(ConfigScope.MachineFolder, WindowsPowerShellCompatibilityNoClobberModuleListKey)
-                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey);
+            // Unlike the deny list (a policy that unions every scope), the no-clobber list is a
+            // *preference*: the highest-precedence scope that defines it wins outright.
+            return MergePreferenceValue<string[]>(WindowsPowerShellCompatibilityNoClobberModuleListKey);
         }
 
         /// <summary>
@@ -463,6 +441,73 @@ namespace System.Management.Automation.Configuration
             return result;
         }
 #endif // UNIX
+
+        /// <summary>
+        /// The order in which configuration scopes are consulted when resolving a *preference* setting:
+        /// the current user's value wins, then the admin-writable MachineFolder override, then the
+        /// $PSHOME (AllUsers) product default. Policy lists resolved by <see cref="MergePolicyList"/>
+        /// union every scope, so the iteration order does not affect them.
+        /// </summary>
+        private static readonly ConfigScope[] s_configScopePreferenceOrder = new[]
+        {
+            ConfigScope.CurrentUser,
+            ConfigScope.MachineFolder,
+            ConfigScope.AllUsers
+        };
+
+        /// <summary>
+        /// Resolves a *preference* setting: returns the value from the highest-precedence scope that
+        /// defines <paramref name="key"/> (see <see cref="s_configScopePreferenceOrder"/>), so that a
+        /// more specific scope overrides a broader one. Returns <paramref name="defaultValue"/> when no
+        /// scope defines the key. <typeparamref name="T"/> must be a reference type or a nullable value
+        /// type so that an unset scope is observable as null.
+        /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="key">The configuration key to resolve.</param>
+        /// <param name="defaultValue">The value to return when no scope defines the key.</param>
+        private T MergePreferenceValue<T>(string key, T defaultValue = default)
+        {
+            foreach (ConfigScope scope in s_configScopePreferenceOrder)
+            {
+                T value = ReadValueFromFile<T>(scope, key);
+                if (value is not null)
+                {
+                    return value;
+                }
+            }
+
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// Resolves a *policy* list: returns the case-insensitive union of the string entries defined in
+        /// every configuration scope for <paramref name="key"/>. Use this for list settings that must
+        /// accumulate across scopes, so that an entry contributed by one scope (for example a product
+        /// update in $PSHOME) is never dropped because a higher-precedence scope also defines the key.
+        /// Returns null when no scope contributes an entry.
+        /// </summary>
+        /// <param name="key">The configuration key to resolve.</param>
+        private string[] MergePolicyList(string key)
+        {
+            var merged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (ConfigScope scope in s_configScopePreferenceOrder)
+            {
+                string[] values = ReadValueFromFile<string[]>(scope, key);
+                if (values is not null)
+                {
+                    merged.UnionWith(values);
+                }
+            }
+
+            if (merged.Count == 0)
+            {
+                return null;
+            }
+
+            var result = new string[merged.Count];
+            merged.CopyTo(result);
+            return result;
+        }
 
         /// <summary>
         /// Read a value from the configuration file.
