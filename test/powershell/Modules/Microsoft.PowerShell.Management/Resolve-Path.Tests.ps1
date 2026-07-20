@@ -186,10 +186,10 @@ Describe "The parameter '-RelativeBasePath' should treat path as literal" -Tags 
     }
 
     It "Should succeed in resolving a path when the relative base path contains a wildcard character" {
-        Resolve-Path -LiteralPath . -RelativeBasePath .           | Should -BeTrue
-        Resolve-Path -LiteralPath . -RelativeBasePath . -Relative | Should -BeTrue
-        Resolve-Path -Path .        -RelativeBasePath .           | Should -BeTrue
-        Resolve-Path -Path .        -RelativeBasePath . -Relative | Should -BeTrue
+        (Resolve-Path -LiteralPath . -RelativeBasePath .).Path           | Should -Not -BeNullOrEmpty
+        (Resolve-Path -LiteralPath . -RelativeBasePath . -Relative).Path | Should -Not -BeNullOrEmpty
+        (Resolve-Path -Path .        -RelativeBasePath .).Path           | Should -Not -BeNullOrEmpty
+        (Resolve-Path -Path .        -RelativeBasePath . -Relative).Path | Should -Not -BeNullOrEmpty
     }
 
     It "Should fill path with literal in tab completion of parameter '-RelativeBasePath'" {
