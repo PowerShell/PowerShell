@@ -10,11 +10,4 @@
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="singleshell\installer\MshSecurityMshSnapin.cs" />
-    <Compile Remove="gen\SecurityMshSnapinResources.cs" />
-
-    <EmbeddedResource Remove="resources\SecurityMshSnapinResources.resx" />
-  </ItemGroup>
-
 </Project>
