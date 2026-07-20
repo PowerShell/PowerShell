@@ -124,16 +124,23 @@ namespace System.Management.Automation.Internal
             get
             {
                 // Scopes are evaluated in this order and the first one that resolves to a value other
-                // than Undefined wins. The list intentionally combines policy and preference scopes:
+                // than Undefined wins. The list intentionally combines policy and preference scopes.
+                //
+                // Important: despite the "ExecutionPolicy" name, an execution policy that comes from
+                // *configuration* (the Process, CurrentUser and LocalMachine scopes below - the
+                // PSExecutionPolicyPreference environment variable or a powershell.config.json file) is a
+                // PREFERENCE, not a policy. Only Group Policy (the MachinePolicy and UserPolicy scopes,
+                // backed by the registry) is a true policy. That distinction is why the policy scopes are
+                // evaluated first and the config-based preference scopes follow, with the current user's
+                // preference winning over the system-wide one.
                 //
                 //   Policy scopes (Group Policy, from the registry) are evaluated first so that an
                 //   administrator's Group Policy always takes precedence:
                 //     - MachinePolicy: machine-wide Group Policy.
                 //     - UserPolicy:    per-user Group Policy.
                 //
-                //   Preference scopes (the PSExecutionPolicyPreference environment variable and the
-                //   per-user / system-wide powershell.config.json files) are evaluated afterwards, and
-                //   the current user's preference intentionally wins over the system-wide preference:
+                //   Preference scopes are evaluated afterwards, and the current user's preference
+                //   intentionally wins over the system-wide preference:
                 //     - Process:      the PSExecutionPolicyPreference environment variable.
                 //     - CurrentUser:  the current user's config.
                 //     - LocalMachine: the system-wide config.
