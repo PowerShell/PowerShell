@@ -18,21 +18,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="singleshell\installer\MshUtilityMshSnapin.cs" />
-    <Compile Remove="gen\UtilityMshSnapinResources.cs" />
-    <Compile Remove="gen\ConvertFromStringResources.cs" />
-    <Compile Remove="gen\ConvertStringResources.cs" />
-    <Compile Remove="gen\FlashExtractStrings.cs" />
-    <Compile Remove="gen\ImmutableStrings.cs" />
-
-    <EmbeddedResource Remove="resources\UtilityMshSnapinResources.resx" />
-    <EmbeddedResource Remove="resources\ConvertFromStringResources.resx" />
-    <EmbeddedResource Remove="resources\ConvertStringResources.resx" />
-    <EmbeddedResource Remove="resources\FlashExtractStrings.resx" />
-    <EmbeddedResource Remove="resources\ImmutableStrings.resx" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.5" />
     <PackageReference Include="JsonSchema.Net" Version="7.4.0" />
