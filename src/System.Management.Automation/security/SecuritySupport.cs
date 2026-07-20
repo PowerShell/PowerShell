@@ -123,27 +123,33 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                // When running as a packaged app with the writable per-machine data store, the system-wide
-                // execution policy (the machine-folder admin override, then the $PSHOME product default,
-                // both resolved by the LocalMachine scope) is treated as a policy and takes precedence over
-                // the current user's preference: MachineFolder > $PSHOME > user. Otherwise the legacy order
-                // is used, where the current user's preference wins over the system-wide default.
-                bool packaged = !string.IsNullOrEmpty(Utils.GetPackagedMachineDataStorePath());
-                return packaged
-                    ? new ExecutionPolicyScope[] {
-                            ExecutionPolicyScope.MachinePolicy,
-                            ExecutionPolicyScope.UserPolicy,
-                            ExecutionPolicyScope.Process,
-                            ExecutionPolicyScope.LocalMachine,
-                            ExecutionPolicyScope.CurrentUser
-                        }
-                    : new ExecutionPolicyScope[] {
-                            ExecutionPolicyScope.MachinePolicy,
-                            ExecutionPolicyScope.UserPolicy,
-                            ExecutionPolicyScope.Process,
-                            ExecutionPolicyScope.CurrentUser,
-                            ExecutionPolicyScope.LocalMachine
-                        };
+                // Scopes are evaluated in this order and the first one that resolves to a value other
+                // than Undefined wins. The list intentionally combines policy and preference scopes:
+                //
+                //   Policy scopes (Group Policy, from the registry) are evaluated first so that an
+                //   administrator's Group Policy always takes precedence:
+                //     - MachinePolicy: machine-wide Group Policy.
+                //     - UserPolicy:    per-user Group Policy.
+                //
+                //   Preference scopes (the PSExecutionPolicyPreference environment variable and the
+                //   per-user / system-wide powershell.config.json files) are evaluated afterwards, and
+                //   the current user's preference intentionally wins over the system-wide preference:
+                //     - Process:      the PSExecutionPolicyPreference environment variable.
+                //     - CurrentUser:  the current user's config.
+                //     - LocalMachine: the system-wide config.
+                //
+                // This order is public behavior and must not change. For a packaged (MSIX) install the
+                // system-wide execution policy is still read through the LocalMachine scope - it resolves
+                // from the admin-writable machine-folder data store first and then the $PSHOME default -
+                // but it remains a preference, so the current user's preference continues to win, keeping
+                // legacy behavior unchanged.
+                return new ExecutionPolicyScope[] {
+                        ExecutionPolicyScope.MachinePolicy,
+                        ExecutionPolicyScope.UserPolicy,
+                        ExecutionPolicyScope.Process,
+                        ExecutionPolicyScope.CurrentUser,
+                        ExecutionPolicyScope.LocalMachine
+                    };
             }
         }
 
