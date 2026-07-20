@@ -290,13 +290,37 @@ namespace System.Management.Automation.Configuration
 
         internal string[] GetWindowsPowerShellCompatibilityModuleDenyList()
         {
-            return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityModuleDenyListKey)
-                ?? ReadValueFromFile<string[]>(ConfigScope.MachineFolder, WindowsPowerShellCompatibilityModuleDenyListKey)
-                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey);
+            // The compatibility module deny list is a *policy*: the effective list is the union of the
+            // entries from every scope (AllUsers/$PSHOME product defaults, the admin MachineFolder, and
+            // CurrentUser). Unioning - rather than letting the highest-precedence scope that defines the
+            // key win outright - ensures that new modules added to the deny list by a product update in
+            // $PSHOME are still honored when a MachineFolder or user config also sets the key. Any scope
+            // can only add to the deny list; a higher-precedence scope never removes a lower scope's deny.
+            var denyList = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (ConfigScope scope in new[] { ConfigScope.CurrentUser, ConfigScope.MachineFolder, ConfigScope.AllUsers })
+            {
+                string[] values = ReadValueFromFile<string[]>(scope, WindowsPowerShellCompatibilityModuleDenyListKey);
+                if (values is not null)
+                {
+                    denyList.UnionWith(values);
+                }
+            }
+
+            if (denyList.Count == 0)
+            {
+                return null;
+            }
+
+            var result = new string[denyList.Count];
+            denyList.CopyTo(result);
+            return result;
         }
 
         internal string[] GetWindowsPowerShellCompatibilityNoClobberModuleList()
         {
+            // Unlike the deny list (a policy that unions every scope), the no-clobber list is treated as a
+            // *preference*: the highest-precedence scope that defines it wins outright, following the
+            // preference merge order CurrentUser > MachineFolder > AllUsers ($PSHOME).
             return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityNoClobberModuleListKey)
                 ?? ReadValueFromFile<string[]>(ConfigScope.MachineFolder, WindowsPowerShellCompatibilityNoClobberModuleListKey)
                 ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey);
