@@ -23,6 +23,14 @@ namespace Microsoft.PowerShell.Commands
     {
         private const string NewTemporaryDirectoryWriteError = "NewTemporaryDirectoryWriteError";
 
+        /// <summary>
+        /// Gets or sets an optional prefix for the temporary directory name.
+        /// The prefix is prepended to the randomly generated name.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string Prefix { get; set; }
+
         private static ErrorRecord CreateErrorRecord(Exception exception, ErrorCategory category, string targetPath)
         {
             return new ErrorRecord(
@@ -31,14 +39,6 @@ namespace Microsoft.PowerShell.Commands
                 category,
                 targetPath);
         }
-
-        /// <summary>
-        /// Gets or sets an optional prefix for the temporary directory name.
-        /// The prefix is prepended to the randomly generated name.
-        /// </summary>
-        [Parameter]
-        [ValidateNotNullOrEmpty]
-        public string Prefix { get; set; }
 
         /// <summary>
         /// Creates a temporary directory and writes it to the pipeline.
