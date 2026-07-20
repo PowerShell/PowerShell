@@ -4767,45 +4767,23 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            ProviderInfo provider = null;
-
             Collection<string> filePaths = null;
 
-            if (context.EngineSessionState.IsProviderLoaded(context.ProviderNames.FileSystem))
+            try
             {
-                try
-                {
-                    filePaths =
-                        context.SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, out provider);
-                }
-                catch (ItemNotFoundException)
-                {
-                    return null;
-                }
-
-                // Make sure that the path is in the file system - that's all we can handle currently...
-                if (!provider.NameEquals(context.ProviderNames.FileSystem))
-                {
-                    // "The current provider ({0}) cannot open a file"
-                    throw InterpreterError.NewInterpreterException(
-                        filePath,
-                        typeof(RuntimeException),
-                        errorPosition: null,
-                        "FileOpenError",
-                        ParserStrings.FileOpenError,
-                        provider.FullName);
-                }
+                filePaths = ResolveToFileSystemPathsThrowing(filePath, context, allowNonExistingPaths: false);
+            }
+            catch (ItemNotFoundException)
+            {
+                // Ignore.
             }
 
-            // Make sure at least one file was found...
             if (filePaths == null || filePaths.Count < 1)
             {
                 return null;
             }
-
-            if (filePaths.Count > 1)
+            else if (filePaths.Count > 1)
             {
-                // "The path resolved to more than one file; can only process one file at a time."
                 throw InterpreterError.NewInterpreterException(
                     filePaths,
                     typeof(RuntimeException),
@@ -4813,8 +4791,10 @@ namespace Microsoft.PowerShell.Commands
                     "AmbiguousPath",
                     ParserStrings.AmbiguousPath);
             }
-
-            return filePaths[0];
+            else
+            {
+                return filePaths[0];
+            }
         }
 
         internal static string ResolveToSingleFileSystemPath(string filePath, ExecutionContext context)
