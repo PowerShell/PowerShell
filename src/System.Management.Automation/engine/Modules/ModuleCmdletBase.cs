@@ -4817,7 +4817,7 @@ namespace Microsoft.PowerShell.Commands
             return filePaths[0];
         }
 
-        internal static string GetResolvedPath(string filePath, ExecutionContext context)
+        internal static string ResolveToSingleFileSystemPath(string filePath, ExecutionContext context)
         {
             Collection<string> filePaths = null;
 
@@ -5505,7 +5505,7 @@ namespace Microsoft.PowerShell.Commands
                 string fileName = fileBaseName + ext;
 
                 // Get the resolved file name
-                fileName = GetResolvedPath(fileName, Context);
+                fileName = ResolveToSingleFileSystemPath(fileName, Context);
 
                 if (fileName == null)
                     continue;
