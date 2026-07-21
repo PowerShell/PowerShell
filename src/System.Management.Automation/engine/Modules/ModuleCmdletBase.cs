@@ -4797,6 +4797,18 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Resolves <paramref name="filePath"/> to a single file system path using the file system provider.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Path resolution is considered successful if <paramref name="path"/> resolves to exactly
+        ///         one file system path.
+        ///     </para>
+        /// </remarks>
+        /// <param name="filePath">The file path to resolve.</param>
+        /// <param name="context">The execution context.</param>
+        /// <returns>The resolved, fully qualified file system path if resolution succeeded; otherwise <see langword="null"/>.</returns>
         internal static string ResolveToSingleFileSystemPath(string filePath, ExecutionContext context)
         {
             Collection<string> filePaths = null;
