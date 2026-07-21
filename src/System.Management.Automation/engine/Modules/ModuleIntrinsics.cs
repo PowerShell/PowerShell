@@ -776,7 +776,6 @@ namespace System.Management.Automation
                 moduleNameOrPath = Path.Join(relativeTo, moduleNameOrPath);
             }
 
-            // Resolving the path using ModuleCmdletBase.GetResolvedPath() may rarely return null.
             string normalizedPath = ModuleCmdletBase.ResolveToSingleFileSystemPath(moduleNameOrPath, executionContext)?.TrimEnd(StringLiterals.DefaultPathSeparator);
 
             // If the resolved path is null, just return the fully qualified path generated before.
