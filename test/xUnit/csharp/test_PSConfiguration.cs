@@ -409,7 +409,10 @@ namespace PSTests.Sequential
         /// scope to leave it without a config file. The MachineFolder scope is disabled again whenever
         /// <paramref name="machineFolderConfig"/> is null so tests do not leak state to one another.
         /// </summary>
-        public void SetupWinCompatConfig(object allUsersConfig, object currentUserConfig, object machineFolderConfig = null)
+        /// <param name="allUsersConfig">Object serialized to the AllUsers ($PSHOME) config file, or null to leave that scope unconfigured.</param>
+        /// <param name="currentUserConfig">Object serialized to the CurrentUser config file, or null to leave that scope unconfigured.</param>
+        /// <param name="machineFolderConfig">Object serialized to a temp MachineFolder config file injected into the singleton, or null to leave the MachineFolder scope disabled.</param>
+        internal void SetupWinCompatConfig(object allUsersConfig, object currentUserConfig, object machineFolderConfig = null)
         {
             CleanupConfigFiles();
             CleanupMachineFolderConfig();
@@ -1051,13 +1054,11 @@ namespace PSTests.Sequential
             Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser));
         }
 
-        #region WindowsPowerShellCompatibility_Merge
-
         // The Windows PowerShell compatibility module deny list is a *policy*: its entries are unioned across
         // every config scope so a module added by a product update in $PSHOME (AllUsers) is never dropped
         // because a higher-precedence scope (MachineFolder or CurrentUser) also defines the key.
-
-        [Fact, Priority(12)]
+        [Fact]
+        [Priority(12)]
         public void PowerShellConfig_GetWinCompatModuleDenyList_UnionsAcrossScopes()
         {
             fixture.SetupWinCompatConfig(
@@ -1073,7 +1074,8 @@ namespace PSTests.Sequential
             Assert.Contains("UserModule", denyList);
         }
 
-        [Fact, Priority(13)]
+        [Fact]
+        [Priority(13)]
         public void PowerShellConfig_GetWinCompatModuleDenyList_DeduplicatesCaseInsensitively()
         {
             fixture.SetupWinCompatConfig(
@@ -1087,7 +1089,8 @@ namespace PSTests.Sequential
             Assert.Single(denyList);
         }
 
-        [Fact, Priority(14)]
+        [Fact]
+        [Priority(14)]
         public void PowerShellConfig_GetWinCompatModuleDenyList_IncludesMachineFolderScope()
         {
             fixture.SetupWinCompatConfig(
@@ -1105,7 +1108,8 @@ namespace PSTests.Sequential
             Assert.Contains("MachineModule", denyList);
         }
 
-        [Fact, Priority(15)]
+        [Fact]
+        [Priority(15)]
         public void PowerShellConfig_GetWinCompatModuleDenyList_ReturnsNullWhenUndefined()
         {
             fixture.SetupWinCompatConfig(
@@ -1120,8 +1124,8 @@ namespace PSTests.Sequential
 
         // The no-clobber module list is a *preference*: only the highest-precedence scope that defines it
         // wins (CurrentUser > MachineFolder > AllUsers); lower scopes are ignored once a higher one sets it.
-
-        [Fact, Priority(16)]
+        [Fact]
+        [Priority(16)]
         public void PowerShellConfig_GetWinCompatNoClobberList_CurrentUserWins()
         {
             fixture.SetupWinCompatConfig(
@@ -1136,7 +1140,8 @@ namespace PSTests.Sequential
             Assert.Equal("UserModule", noClobber[0]);
         }
 
-        [Fact, Priority(17)]
+        [Fact]
+        [Priority(17)]
         public void PowerShellConfig_GetWinCompatNoClobberList_FallsBackToAllUsers()
         {
             fixture.SetupWinCompatConfig(
@@ -1151,7 +1156,8 @@ namespace PSTests.Sequential
             Assert.Equal("SystemModule", noClobber[0]);
         }
 
-        [Fact, Priority(18)]
+        [Fact]
+        [Priority(18)]
         public void PowerShellConfig_GetWinCompatNoClobberList_MachineFolderOverridesAllUsers()
         {
             fixture.SetupWinCompatConfig(
@@ -1169,8 +1175,8 @@ namespace PSTests.Sequential
 
         // DisableImplicitWinCompat is a *preference* bool: IsImplicitWinCompatEnabled() returns the negation
         // of the value from the highest-precedence scope that sets it, defaulting to enabled when unset.
-
-        [Fact, Priority(19)]
+        [Fact]
+        [Priority(19)]
         public void PowerShellConfig_IsImplicitWinCompatEnabled_TrueWhenUndefined()
         {
             fixture.SetupWinCompatConfig(
@@ -1181,7 +1187,8 @@ namespace PSTests.Sequential
             Assert.True(PowerShellConfig.Instance.IsImplicitWinCompatEnabled());
         }
 
-        [Fact, Priority(20)]
+        [Fact]
+        [Priority(20)]
         public void PowerShellConfig_IsImplicitWinCompatEnabled_FalseWhenAllUsersDisables()
         {
             fixture.SetupWinCompatConfig(
@@ -1192,7 +1199,8 @@ namespace PSTests.Sequential
             Assert.False(PowerShellConfig.Instance.IsImplicitWinCompatEnabled());
         }
 
-        [Fact, Priority(21)]
+        [Fact]
+        [Priority(21)]
         public void PowerShellConfig_IsImplicitWinCompatEnabled_CurrentUserReEnables()
         {
             fixture.SetupWinCompatConfig(
@@ -1202,7 +1210,5 @@ namespace PSTests.Sequential
 
             Assert.True(PowerShellConfig.Instance.IsImplicitWinCompatEnabled());
         }
-
-        #endregion
     }
 }
