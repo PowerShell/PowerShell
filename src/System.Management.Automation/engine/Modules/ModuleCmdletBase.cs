@@ -4831,7 +4831,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Resolves <paramref name="filePath"/> to file system paths using the file system provider.
+        /// Resolves <paramref name="path"/> to file system paths using the file system provider.
         /// </summary>
         /// <remarks>
         ///     <para>
@@ -4839,19 +4839,19 @@ namespace Microsoft.PowerShell.Commands
         ///         at least one file system path.
         ///     </para>
         /// </remarks>
-        /// <param name="filePath">The path to resolve.</param>
+        /// <param name="path">The path to resolve.</param>
         /// <param name="context">The execution context.</param>
         /// <returns>The resolved file system paths if path resolution succeeded; otherwise <see langword="null"/>.</returns>
-        internal static Collection<string> ResolveToFileSystemPaths(string filePath, ExecutionContext context)
+        internal static Collection<string> ResolveToFileSystemPaths(string path, ExecutionContext context)
         {
             Collection<string> filePaths;
 
-            if (!TryResolveToFileSystemPaths(filePath, context, out filePaths, allowNonExistingPaths: true))
+            if (!TryResolveToFileSystemPaths(path, context, out filePaths, allowNonExistingPaths: true))
             {
                 // Ported from legacy code to preserve behavior.
                 if (context?.EngineSessionState?.IsProviderLoaded(context.ProviderNames.FileSystem) == false)
                 {
-                    filePaths = [filePath];
+                    filePaths = [path];
                 }
                 else
                 {
