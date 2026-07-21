@@ -402,6 +402,17 @@ namespace PSTests.Sequential
             File.WriteAllText(fileName, "[abbra");
         }
 
+        internal void ForceReadingFromFile()
+        {
+            // Reset the cached roots for every scope (AllUsers, CurrentUser, MachineFolder).
+            FieldInfo roots = typeof(PowerShellConfig).GetField("configRoots", BindingFlags.NonPublic | BindingFlags.Instance);
+            JObject[] value = (JObject[])roots.GetValue(PowerShellConfig.Instance);
+            for (int i = 0; i < value.Length; i++)
+            {
+                value[i] = null;
+            }
+        }
+
         /// <summary>
         /// Writes powershell.config.json content for the AllUsers ($PSHOME) and CurrentUser scopes and,
         /// optionally, provisions a MachineFolder scope backed by a temp file (as happens for MSIX installs
@@ -448,17 +459,6 @@ namespace PSTests.Sequential
             if (Directory.Exists(machineFolderTestConfigDirectory))
             {
                 Directory.Delete(machineFolderTestConfigDirectory, recursive: true);
-            }
-        }
-
-        internal void ForceReadingFromFile()
-        {
-            // Reset the cached roots for every scope (AllUsers, CurrentUser, MachineFolder).
-            FieldInfo roots = typeof(PowerShellConfig).GetField("configRoots", BindingFlags.NonPublic | BindingFlags.Instance);
-            JObject[] value = (JObject[])roots.GetValue(PowerShellConfig.Instance);
-            for (int i = 0; i < value.Length; i++)
-            {
-                value[i] = null;
             }
         }
 
