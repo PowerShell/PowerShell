@@ -256,6 +256,177 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// Supported reasons for restarting or shutting down.
+    /// </summary>
+    public enum ShutdownReasons: uint
+    {
+        /// <summary>
+        /// Planned activity.
+        /// </summary>
+        Planned = 0x80000000,
+
+        /// <summary>
+        /// Any other activity.
+        /// </summary>
+        Other = 0x00000000,
+
+        /// <summary>
+        /// Application related shutdown/restart.
+        /// </summary>
+        Application = 0x00040000,
+
+        /// <summary>
+        /// Hardware related shutdown/restart.
+        /// </summary>
+        Hardware = 0x80010000,
+
+        /// <summary>
+        /// OperatingSystem related shutdown/restart.
+        /// </summary>        
+        OperatingSystem = 0x80020000,
+
+        /// <summary>
+        /// Power related shutdown/restart.
+        /// </summary>        
+        Power = 0x80060000,
+
+        /// <summary>
+        /// Software related shutdown/restart.
+        /// </summary>        
+        Software = 0x80030000,
+
+        /// <summary>
+        /// System related shutdown/restart.
+        /// </summary>        
+        System = 0x80050000,
+
+        /// <summary>
+        /// Shutdown/Restart related to BlueScreen.
+        /// </summary>        
+        BlueScreen = 0x0000000F,
+
+        /// <summary>
+        /// Disk related shutdown/restart.
+        /// </summary>        
+        Disk = 0x00000007,
+
+        /// <summary>
+        /// Environment related shutdown/restart.
+        /// </summary>        
+        Environment = 0x0000000c,
+
+        /// <summary>
+        /// Driver related shutdown/restart.
+        /// </summary>        
+        Driver = 0x0000000d,
+
+        /// <summary>
+        /// Shutdown/Restart related to HotFix installation.
+        /// </summary>        
+        HotFix = 0x00000011,
+
+        /// <summary>
+        /// Shutdown/Restart related to HotFix Uninstallation.
+        /// </summary>        
+        HotFixUninstall = 0x00000017,
+
+        /// <summary>
+        /// Shutdown/Restart related to Unresponsiveness.
+        /// </summary>        
+        Unresponsive = 0x00000005,
+
+        /// <summary>
+        /// Installation related shutdown/restart.
+        /// </summary>        
+        Installation = 0x00000002,
+
+        /// <summary>
+        /// Shutdown/Restart related to Maintenance.
+        /// </summary>        
+        Maintenance = 0x00000001,
+
+        /// <summary>
+        /// MMC related shutdown/restart.
+        /// </summary>        
+        MMC = 0x00000019,
+
+        /// <summary>
+        /// NetworkConnectivity related shutdown/restart.
+        /// </summary>        
+        NetworkConnectivity = 0x00000014,
+
+        /// <summary>
+        /// NetworkCard related shutdown/restart.
+        /// </summary>        
+        NetworkCard = 0x00000009,
+
+        /// <summary>
+        /// OtherDriver related shutdown/restart.
+        /// </summary>        
+        OtherDriver = 0x0000000e,
+
+        /// <summary>
+        /// PowerSupply related shutdown/restart.
+        /// </summary>        
+        PowerSupply = 0x0000000a,
+
+        /// <summary>
+        /// Processor related shutdown/restart.
+        /// </summary>        
+        Processor = 0x00000008,
+
+        /// <summary>
+        /// Reconfigure related shutdown/restart.
+        /// </summary>        
+        Reconfigure = 0x00000004,
+
+        /// <summary>
+        /// Shutdown/Restart related to SecurityIssue.
+        /// </summary>        
+        SecurityIssue = 0x00000013,
+
+        /// <summary>
+        /// Shutdown/Restart related to SecurityPatch installation.
+        /// </summary>        
+        SecurityPatch = 0x00000012,
+
+        /// <summary>
+        /// Shutdown/Restart related to SecurityPatch uninstallation.
+        /// </summary>        
+        SecurityPatchUninstallation = 0x00000018,
+
+        /// <summary>
+        /// Shutdown/Restart related to ServicePack installation.
+        /// </summary>        
+        ServicePack = 0x00000010,
+
+        /// <summary>
+        /// Shutdown/Restart related to ServicePack uninstallation.
+        /// </summary>        
+        ServicePackUninstallation = 0x00000016,
+
+        /// <summary>
+        /// TerminalServices related shutdown/restart.
+        /// </summary>        
+        TerminalServices = 0x00000020,
+
+        /// <summary>
+        /// Shutdown/Restart when system is Unstable.
+        /// </summary>        
+        Unstable = 0x00000006,
+
+        /// <summary>
+        /// Shutdown/Restart related to Upgrade.
+        /// </summary>        
+        Upgrade = 0x00000003,
+
+        /// <summary>
+        /// WMI related shutdown/restart.
+        /// </summary>        
+        WMI = 0x00000015,        
+    }
+
+    /// <summary>
     /// Defines the services that Restart-Computer can wait on.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
@@ -2461,6 +2632,25 @@ $result
             }
 
             return hasAsciiLetterOrHyphen;
+        }
+
+        /// <summary>
+        /// System Restore APIs are not supported on the ARM platform. Skip the system restore operation is necessary.
+        /// </summary>
+        /// <param name="cmdlet"></param>
+        /// <returns></returns>
+        internal static bool SkipSystemRestoreOperationForARMPlatform(PSCmdlet cmdlet)
+        {
+            bool retValue = false;
+            if (PsUtils.IsRunningOnProcessorArchitectureARM())
+            {
+                var ex = new InvalidOperationException(ComputerResources.SystemRestoreNotSupported);
+                var er = new ErrorRecord(ex, "SystemRestoreNotSupported", ErrorCategory.InvalidOperation, null);
+                cmdlet.WriteError(er);
+                retValue = true;
+            }
+
+            return retValue;
         }
 
         /// <summary>
