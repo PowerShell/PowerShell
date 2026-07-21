@@ -4811,23 +4811,23 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The resolved, fully qualified file system path if resolution succeeded; otherwise <see langword="null"/>.</returns>
         internal static string ResolveToSingleFileSystemPath(string path, ExecutionContext context)
         {
-            Collection<string> filePaths = null;
+            Collection<string> paths = null;
 
-            if (!TryResolveToFileSystemPaths(path, context, out filePaths, allowNonExistingPaths: true))
+            if (!TryResolveToFileSystemPaths(path, context, out paths, allowNonExistingPaths: true))
             {
                 // Ported from legacy code to preserve behavior.
                 if (context?.EngineSessionState?.IsProviderLoaded(context.ProviderNames.FileSystem) != true)
                 {
-                    filePaths = [path];
+                    paths = [path];
                 }
             }
 
-            if (filePaths?.Count != 1)
+            if (paths?.Count != 1)
             {
                 return null;
             }
 
-            return filePaths[0];
+            return paths[0];
         }
 
         internal static Collection<string> ResolveToFileSystemPaths(string filePath, ExecutionContext context)
