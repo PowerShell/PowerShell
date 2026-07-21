@@ -4841,7 +4841,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         /// <param name="path">The path to resolve.</param>
         /// <param name="context">The execution context.</param>
-        /// <returns>The resolved file system paths if path resolution succeeded; otherwise <see langword="null"/>.</returns>
+        /// <returns>The resolved, fully qualified file system paths if path resolution succeeded; otherwise <see langword="null"/>.</returns>
         internal static Collection<string> ResolveToFileSystemPaths(string path, ExecutionContext context)
         {
             Collection<string> paths;
