@@ -116,7 +116,7 @@ open {0}
     </array>
     <key>CFBundleVersion</key>
     <string>{1}</string>
-</dict>
+{3}</dict>
 </plist>
 '@
 
