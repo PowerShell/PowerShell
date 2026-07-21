@@ -4844,14 +4844,14 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The resolved file system paths if path resolution succeeded; otherwise <see langword="null"/>.</returns>
         internal static Collection<string> ResolveToFileSystemPaths(string path, ExecutionContext context)
         {
-            Collection<string> filePaths;
+            Collection<string> paths;
 
-            if (!TryResolveToFileSystemPaths(path, context, out filePaths, allowNonExistingPaths: true))
+            if (!TryResolveToFileSystemPaths(path, context, out paths, allowNonExistingPaths: true))
             {
                 // Ported from legacy code to preserve behavior.
                 if (context?.EngineSessionState?.IsProviderLoaded(context.ProviderNames.FileSystem) == false)
                 {
-                    filePaths = [path];
+                    paths = [path];
                 }
                 else
                 {
@@ -4859,12 +4859,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (filePaths == null || filePaths.Count < 1)
+            if (paths == null || paths.Count < 1)
             {
                 return null;
             }
 
-            return filePaths;
+            return paths;
         }
 
         /// <summary>
