@@ -60,6 +60,27 @@ a,b,c
         $actualLength | Should -Be 3
     }
 
+    It "Uses the default delimiter when -UseCulture is explicitly false" {
+        $originalCulture = [System.Threading.Thread]::CurrentThread.CurrentCulture
+        $originalUICulture = [System.Threading.Thread]::CurrentThread.CurrentUICulture
+
+        try {
+            [System.Threading.Thread]::CurrentThread.CurrentCulture = [CultureInfo]'de-DE'
+            [System.Threading.Thread]::CurrentThread.CurrentUICulture = [CultureInfo]'de-DE'
+            [CultureInfo]::CurrentCulture.TextInfo.ListSeparator | Should -Not -BeExactly ','
+
+            $actualData = $testColumns | ConvertFrom-Csv -UseCulture:$false
+
+            $actualData.a | Should -Be 1
+            $actualData.b | Should -Be 2
+            $actualData.c | Should -Be 3
+        }
+        finally {
+            [System.Threading.Thread]::CurrentThread.CurrentCulture = $originalCulture
+            [System.Threading.Thread]::CurrentThread.CurrentUICulture = $originalUICulture
+        }
+    }
+
     It "Should Contain the Imported Type data" {
         $actualData = $testTypeData | ConvertFrom-Csv
         $actualData.PSObject.TypeNames.Count | Should -Be 2
