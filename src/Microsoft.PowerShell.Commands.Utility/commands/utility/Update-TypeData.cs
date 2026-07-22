@@ -978,8 +978,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (ShouldProcess("Inline XML", action))
                     {
-                        var doc = new System.Xml.XmlDocument();
-                        doc.LoadXml(PrependFormatData[i]);
+                        var doc = new System.Xml.XmlDocument() { XmlResolver = null };
+                        var settings = new System.Xml.XmlReaderSettings { DtdProcessing = System.Xml.DtdProcessing.Prohibit, XmlResolver = null };
+                        using (var reader = System.Xml.XmlReader.Create(new System.IO.StringReader(PrependFormatData[i]), settings))
+                        {
+                            doc.Load(reader);
+                        }
+
                         newFormats.Add(new SessionStateFormatEntry(doc));
                     }
                 }
@@ -1018,8 +1023,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (ShouldProcess("Inline XML", action))
                     {
-                        var doc = new System.Xml.XmlDocument();
-                        doc.LoadXml(appendFormatDataItem);
+                        var doc = new System.Xml.XmlDocument() { XmlResolver = null };
+                        var settings = new System.Xml.XmlReaderSettings { DtdProcessing = System.Xml.DtdProcessing.Prohibit, XmlResolver = null };
+                        using (var reader = System.Xml.XmlReader.Create(new System.IO.StringReader(appendFormatDataItem), settings))
+                        {
+                            doc.Load(reader);
+                        }
+
                         newFormats.Add(new SessionStateFormatEntry(doc));
                     }
                 }

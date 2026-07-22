@@ -84,7 +84,7 @@ Describe "Update-FormatData" -Tags "CI" {
 "@
 
         It "Should load inline XML using PrependFormatData" {
-            $null = $ps.AddScript("Update-FormatData -PrependFormatData `$xmlContent")
+            $null = $ps.AddScript('param($xml) Update-FormatData -PrependFormatData $xml').AddArgument($xmlContent)
             $ps.Invoke()
             $ps.HadErrors | Should -BeFalse
             $ps.Commands.Clear()
@@ -96,7 +96,7 @@ Describe "Update-FormatData" -Tags "CI" {
         }
 
         It "Should load inline XML using AppendFormatData" {
-            $null = $ps.AddScript("Update-FormatData -AppendFormatData `$xmlContent")
+            $null = $ps.AddScript('param($xml) Update-FormatData -AppendFormatData $xml').AddArgument($xmlContent)
             $ps.Invoke()
             $ps.HadErrors | Should -BeFalse
             $ps.Commands.Clear()

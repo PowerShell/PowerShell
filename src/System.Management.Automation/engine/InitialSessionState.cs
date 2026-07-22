@@ -368,8 +368,13 @@ namespace System.Management.Automation.Runspaces
             }
             else if (FormatDataXml != null)
             {
-                var doc = new XmlDocument();
-                doc.LoadXml(FormatDataXml);
+                var doc = new XmlDocument() { XmlResolver = null };
+                var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null };
+                using (var reader = XmlReader.Create(new System.IO.StringReader(FormatDataXml), settings))
+                {
+                    doc.Load(reader);
+                }
+
                 entry = new SessionStateFormatEntry(doc);
             }
             else
