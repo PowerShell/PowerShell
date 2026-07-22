@@ -8,19 +8,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="11.0.0-preview.1.26104.118" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="11.0.0-preview.6.26359.118" />
   </ItemGroup>
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="GetEventSnapin.cs" />
-    <Compile Remove="ExportCounterCommand.cs" />
-    <Compile Remove="ImportCounterCommand.cs" />
-    <Compile Remove="CounterFileInfo.cs" />
-  </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
     <Compile Remove="GetCounterCommand.cs" />
