@@ -58,4 +58,3 @@ finally
 {
     Remove-Module ResxGen -Force -ErrorAction Ignore
 }
-
