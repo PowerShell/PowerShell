@@ -237,11 +237,11 @@ function DateTimesAreEqualish
     param (
         [Parameter(Mandatory=$true)]
         [ValidateNotNull()]
-        [DateTime]
+        [datetime]
         $dtA,
         [Parameter(Mandatory)]
         [ValidateNotNull()]
-        [DateTime]
+        [datetime]
         $dtB
     )
 
