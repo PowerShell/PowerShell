@@ -11,7 +11,7 @@ runs:
       Show-Environment
     shell: pwsh
 
-  - uses: actions/setup-dotnet@v5
+  - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
     with:
       global-json-file: ./global.json
 
@@ -48,21 +48,21 @@ runs:
     shell: pwsh
 
   - name: Upload deb packages
-    uses: actions/upload-artifact@v4
+    uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
     with:
       name: packages-deb
       path: ${{ runner.workspace }}/packages/*.deb
       if-no-files-found: ignore
 
   - name: Upload rpm packages
-    uses: actions/upload-artifact@v4
+    uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
     with:
       name: packages-rpm
       path: ${{ runner.workspace }}/packages/*.rpm
       if-no-files-found: ignore
 
   - name: Upload tar.gz packages
-    uses: actions/upload-artifact@v4
+    uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
     with:
       name: packages-tar
       path: ${{ runner.workspace }}/packages/*.tar.gz

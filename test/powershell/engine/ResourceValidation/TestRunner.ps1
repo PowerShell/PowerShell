@@ -2,7 +2,12 @@
 # Licensed under the MIT License.
 function Test-ResourceStrings
 {
-    param ( $AssemblyName, $ExcludeList )
+    param (
+        [Parameter(Mandatory = $true)]
+        [string] $AssemblyName,
+
+        [string[]] $ExcludeList = @()
+    )
 
     # determine the needed resource directory. If these tests are moved
     # this logic will need to change
