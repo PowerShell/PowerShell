@@ -304,20 +304,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             this.SetDatabaseLoadingInfo(info);
             this.ReportTrace("loading xml string started");
 
-XmlDocument newDocument;
-try
-{
-    // Match the file-loading path: untrusted XML parsing with hardened defaults.
-    newDocument = InternalDeserializer.LoadUnsafeXmlDocument(
-        xmlData,
-        true, /* preserve whitespace, comments, etc. */
-        null); /* default maxCharacters */
-}
-catch (XmlException e)
-{
-    this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ErrorInFile, FilePath, e.Message));
-    return false;
-}
+            XmlDocument newDocument;
+            try
+            {
+                // Match the file-loading path: untrusted XML parsing with hardened defaults.
+                newDocument = InternalDeserializer.LoadUnsafeXmlDocument(
+                    xmlData,
+                    true, /* preserve whitespace, comments, etc. */
+                    null); /* default maxCharacters */
+            }
+            catch (XmlException e)
+            {
+                this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ErrorInFile, FilePath, e.Message));
+                return false;
+            }
 
             bool previousSuppressValidation = _suppressValidation;
             try
