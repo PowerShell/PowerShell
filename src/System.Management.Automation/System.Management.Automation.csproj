@@ -32,17 +32,17 @@
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="System.DirectoryServices" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="System.Management" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="System.Security.Permissions" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="System.DirectoryServices" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="System.Management" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="System.Security.Permissions" Version="11.0.0-preview.6.26359.118" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="700.0.0-rc.1" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="700.0.0" />
     <!-- Signing APIs -->
-  <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
+    <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -52,30 +52,8 @@
   <ItemGroup>
     <!-- exclude code of source generators from compilation and IDEs (e.g. vscode and visual studio) -->
     <Compile Remove="SourceGenerators\**\*.cs" />
-
-    <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
-    <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
-    <Compile Remove="engine\TransactedString.cs" />
-    <Compile Remove="engine\TransactionManager.cs" />
-    <Compile Remove="engine\hostifaces\NativeCultureResolver.cs" />
-    <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
-    <Compile Remove="engine\remoting\commands\ResumeJob.cs" />
-    <Compile Remove="engine\remoting\commands\SuspendJob.cs" />
-    <Compile Remove="namespaces\SafeTransactionHandle.cs" />
-    <Compile Remove="namespaces\SafeRegistryHandle.cs" />
-    <Compile Remove="namespaces\TransactedRegistry.cs" />
-    <Compile Remove="namespaces\TransactedRegistryKey.cs" />
-    <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />
-    <Compile Remove="utils\BackgroundDispatcher.cs" />
-    <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
-    <Compile Remove="utils\perfCounters\CounterSetRegistrarBase.cs" />
-    <Compile Remove="utils\perfCounters\PSPerfCountersMgr.cs" />
-    <Compile Remove="gen\CoreMshSnapinResources.cs" />
-    <Compile Remove="gen\ErrorPackageRemoting.cs" />
+    <!-- exclude the generated code for EventResource.resx, which is not directly used -->
     <Compile Remove="gen\EventResource.cs" />
-
-    <EmbeddedResource Remove="resources\CoreMshSnapinResources.resx" />
-    <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
