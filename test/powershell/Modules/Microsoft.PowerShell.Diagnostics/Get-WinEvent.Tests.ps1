@@ -43,8 +43,8 @@ Describe 'Get-WinEvent' -Tags "CI" {
         It 'Get-WinEvent can get events from a provider' {
             # we sample the first 20 results, as this could be very large
             $results = Get-WinEvent -provider $providerForTests.Name -max 20
-            foreach($event in $results ) {
-                $event.providername | Should -Be $providerForTests.name
+            foreach($result in $results ) {
+                $result.providername | Should -Be $providerForTests.name
             }
         }
         It 'Get-WinEvent can get events via logname' {
