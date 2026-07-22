@@ -25,5 +25,12 @@ Describe "The SafeGetValue method on AST returns safe values" -Tags "CI" {
     It "A ScriptBlock AST fails with the proper error" {
         { { 1 }.Ast.SafeGetValue() } | Should -Throw -ErrorId "InvalidOperationException"
     }
+    It "UsingStatementAst.Copy() should not throw" {
+        {
+            [scriptblock]::Create(
+                'using namespace System;'
+            ).Ast.UsingStatements[0].Copy()
+        } | Should -Not -Throw
+    }
 
 }
