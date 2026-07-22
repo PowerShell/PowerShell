@@ -889,6 +889,32 @@ namespace Microsoft.PowerShell.Commands
         DefaultParameterSetName = FileParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097135")]
     public class UpdateFormatDataCommand : UpdateData
     {
+        private string[] _prependFormatData = Array.Empty<string>();
+        /// <summary>
+        /// The format xml data to prepend.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public string[] PrependFormatData
+        {
+            get { return _prependFormatData; }
+            set { _prependFormatData = value ?? Array.Empty<string>(); }
+        }
+
+        private string[] _appendFormatData = Array.Empty<string>();
+        /// <summary>
+        /// The format xml data to append.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public string[] AppendFormatData
+        {
+            get { return _appendFormatData; }
+            set { _appendFormatData = value ?? Array.Empty<string>(); }
+        }
+
         /// <summary>
         /// This method verify if the Format database manager is shared and cannot be updated.
         /// </summary>
@@ -911,7 +937,7 @@ namespace Microsoft.PowerShell.Commands
 
             // There are file path input but they did not pass the validation in the method Glob
             if ((PrependPath.Length > 0 || AppendPath.Length > 0) &&
-                prependPathTotal.Count == 0 && appendPathTotal.Count == 0)
+                prependPathTotal.Count == 0 && appendPathTotal.Count == 0 && PrependFormatData.Length == 0 && AppendFormatData.Length == 0)
             { return; }
 
             string action = UpdateDataStrings.UpdateFormatDataAction;
@@ -945,6 +971,16 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
+                for (int i = PrependFormatData.Length - 1; i >= 0; i--)
+                {
+                    if (ShouldProcess("Inline XML", action))
+                    {
+                        var doc = new System.Xml.XmlDocument();
+                        doc.LoadXml(PrependFormatData[i]);
+                        newFormats.Add(new SessionStateFormatEntry(doc));
+                    }
+                }
+
                 // Always add InitialSessionState.Formats to the new list
                 foreach (SessionStateFormatEntry entry in Context.InitialSessionState.Formats)
                 {
@@ -975,6 +1011,16 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
+                foreach (string appendFormatDataItem in AppendFormatData)
+                {
+                    if (ShouldProcess("Inline XML", action))
+                    {
+                        var doc = new System.Xml.XmlDocument();
+                        doc.LoadXml(appendFormatDataItem);
+                        newFormats.Add(new SessionStateFormatEntry(doc));
+                    }
+                }
+
                 var originalFormats = Context.InitialSessionState.Formats;
                 try
                 {
@@ -1001,6 +1047,10 @@ namespace Microsoft.PowerShell.Commands
                         else if (ssfe.FormatData != null)
                         {
                             entries.Add(new PSSnapInTypeAndFormatErrors(name, ssfe.FormatData));
+                        }
+                        else if (ssfe.FormatDataXml != null)
+                        {
+                            entries.Add(new PSSnapInTypeAndFormatErrors(name ?? "Inline", ssfe.FormatDataXml, true));
                         }
                         else
                         {

@@ -19,6 +19,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 using Microsoft.PowerShell.Commands;
 
@@ -320,6 +321,21 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Loads all the format data specified in the xmlDocument.
+        /// </summary>
+        /// <param name="xmlDocument">The XmlDocument containing format data.</param>
+        public SessionStateFormatEntry(XmlDocument xmlDocument)
+            : base("*")
+        {
+            if (xmlDocument == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(xmlDocument));
+            }
+
+            FormatDataXml = xmlDocument.OuterXml;
+        }
+
+        /// <summary>
         /// Loads all the format data specified in the typeDefinition.
         /// </summary>
         /// <param name="typeDefinition"></param>
@@ -350,6 +366,12 @@ namespace System.Management.Automation.Runspaces
             {
                 entry = new SessionStateFormatEntry(Formattable);
             }
+            else if (FormatDataXml != null)
+            {
+                var doc = new XmlDocument();
+                doc.LoadXml(FormatDataXml);
+                entry = new SessionStateFormatEntry(doc);
+            }
             else
             {
                 entry = new SessionStateFormatEntry(FormatData);
@@ -376,6 +398,12 @@ namespace System.Management.Automation.Runspaces
         /// This can be null if the FileName or FormatTable constructors are used.
         /// </summary>
         public ExtendedTypeDefinition FormatData { get; }
+
+        /// <summary>
+        /// The FormatData XML string specified with constructor.
+        /// This can be null if other constructors are used.
+        /// </summary>
+        public string FormatDataXml { get; }
 
         // So that we can specify the format information on the fly,
         // without using Format.ps1xml file

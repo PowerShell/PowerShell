@@ -57,6 +57,56 @@ Describe "Update-FormatData" -Tags "CI" {
             $formatData.FormatViewDefinition.Name | Should -BeExactly "Test"
         }
     }
+
+    Context "Validate inline XML format data" {
+        $xmlContent = @"
+    <Configuration>
+        <ViewDefinitions>
+            <View>
+                <Name>InlineTest</Name>
+                <ViewSelectedBy>
+                    <TypeName>InlineTestType</TypeName>
+                </ViewSelectedBy>
+                <ListControl>
+                    <ListEntries>
+                        <ListEntry>
+                            <ListItems>
+                                <ListItem>
+                                    <PropertyName>TestProp</PropertyName>
+                                </ListItem>
+                            </ListItems>
+                        </ListEntry>
+                    </ListEntries>
+                </ListControl>
+            </View>
+        </ViewDefinitions>
+    </Configuration>
+"@
+
+        It "Should load inline XML using PrependFormatData" {
+            $null = $ps.AddScript("Update-FormatData -PrependFormatData `$xmlContent")
+            $ps.Invoke()
+            $ps.HadErrors | Should -BeFalse
+            $ps.Commands.Clear()
+            $null = $ps.AddScript("Get-FormatData InlineTestType")
+            $formatData = $ps.Invoke()
+            $formatData | Should -HaveCount 1
+            $formatData.TypeNames | Should -BeExactly "InlineTestType"
+            $formatData.FormatViewDefinition.Name | Should -BeExactly "InlineTest"
+        }
+
+        It "Should load inline XML using AppendFormatData" {
+            $null = $ps.AddScript("Update-FormatData -AppendFormatData `$xmlContent")
+            $ps.Invoke()
+            $ps.HadErrors | Should -BeFalse
+            $ps.Commands.Clear()
+            $null = $ps.AddScript("Get-FormatData InlineTestType")
+            $formatData = $ps.Invoke()
+            $formatData | Should -HaveCount 1
+            $formatData.TypeNames | Should -BeExactly "InlineTestType"
+            $formatData.FormatViewDefinition.Name | Should -BeExactly "InlineTest"
+        }
+    }
 }
 
 Describe "Update-FormatData basic functionality" -Tags "CI" {
