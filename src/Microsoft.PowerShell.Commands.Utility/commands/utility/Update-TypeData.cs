@@ -270,6 +270,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _force = false;
+
         /// <summary>
         /// True if we should overwrite a possibly existing member.
         /// </summary>
@@ -287,6 +288,7 @@ namespace Microsoft.PowerShell.Commands
         #region strong type data set
 
         private TypeData[] _typeData;
+
         /// <summary>
         /// The TypeData instances.
         /// </summary>
@@ -890,25 +892,26 @@ namespace Microsoft.PowerShell.Commands
     public class UpdateFormatDataCommand : UpdateData
     {
         private string[] _prependFormatData = Array.Empty<string>();
+        private string[] _appendFormatData = Array.Empty<string>();
+
         /// <summary>
-        /// The format xml data to prepend.
+        /// Gets or sets the format xml data to prepend.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] PrependFormatData
         {
             get { return _prependFormatData; }
             set { _prependFormatData = value ?? Array.Empty<string>(); }
         }
 
-        private string[] _appendFormatData = Array.Empty<string>();
         /// <summary>
-        /// The format xml data to append.
+        /// Gets or sets the format xml data to append.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] AppendFormatData
         {
             get { return _appendFormatData; }
