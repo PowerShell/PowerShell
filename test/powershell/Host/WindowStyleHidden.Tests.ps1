@@ -90,33 +90,6 @@ Describe "WindowStyle Hidden console flash fix (Issue #3028)" -Tag @('CI','Featu
         }
     }
 
-    Context "AllocConsoleWithOptions API probe" {
-        It "detects AllocConsoleWithOptions availability without error" -Skip:(!$IsWindows) {
-            $code = @"
-using System;
-using System.Runtime.InteropServices;
-public static class ConsoleApiProbe {
-    [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
-    [DllImport("kernel32.dll")]
-    public static extern IntPtr GetModuleHandle(string lpModuleName);
-    public static bool IsAllocConsoleWithOptionsAvailable() {
-        IntPtr k32 = GetModuleHandle("kernel32.dll");
-        if (k32 == IntPtr.Zero) return false;
-        IntPtr addr = GetProcAddress(k32, "AllocConsoleWithOptions");
-        return addr != IntPtr.Zero;
-    }
-}
-"@
-            Add-Type -TypeDefinition $code -ErrorAction Stop
-            $available = [ConsoleApiProbe]::IsAllocConsoleWithOptionsAvailable()
-
-            # Verify the probe returns a valid result; the actual availability
-            # depends on the Windows build running the test.
-            $available | Should -BeOfType [bool]
-        }
-    }
-
     Context "Normal startup is unaffected" {
         It "starts and runs a command without -WindowStyle" -Skip:(!$IsWindows) {
             $output = & $powershell -NoProfile -Command "`$PSVersionTable.PSEdition"

@@ -2500,6 +2500,9 @@ namespace System.Management.Automation
                 hwnd = Interop.Windows.GetConsoleWindow();
                 if (hwnd == nint.Zero)
                 {
+                    // AllocConsole() can still move focus even when no console window
+                    // handle comes back, so restore it before bailing out.
+                    RestoreForegroundWindow(savedForeground);
                     return false;
                 }
 
@@ -2508,13 +2511,18 @@ namespace System.Management.Automation
 
             AlwaysCaptureApplicationIO = true;
 
-            // Restore foreground window if focus changed during console allocation.
-            if (savedForeground != nint.Zero && Interop.Windows.GetForegroundWindow() != savedForeground)
-            {
-                Interop.Windows.SetForegroundWindow(savedForeground);
-            }
+            RestoreForegroundWindow(savedForeground);
 
             return true;
+
+            // Restore foreground window if focus changed during console allocation.
+            static void RestoreForegroundWindow(IntPtr previousForeground)
+            {
+                if (previousForeground != nint.Zero && Interop.Windows.GetForegroundWindow() != previousForeground)
+                {
+                    Interop.Windows.SetForegroundWindow(previousForeground);
+                }
+            }
 #endif
         }
     }

@@ -10,6 +10,10 @@ internal static partial class Interop
 {
     internal static unsafe partial class Windows
     {
+        // Set once the API is found to be missing (Windows builds before AllocConsoleWithOptions
+        // shipped) so subsequent calls skip the P/Invoke and the resulting exception.
+        private static bool s_allocConsoleWithOptionsNotAvailable;
+
         /// <summary>Console allocation mode for AllocConsoleWithOptions.</summary>
         internal enum AllocConsoleMode : int
         {
@@ -80,6 +84,11 @@ internal static partial class Interop
 
         private static bool TryAllocConsoleWithMode(AllocConsoleMode mode)
         {
+            if (s_allocConsoleWithOptionsNotAvailable)
+            {
+                return false;
+            }
+
             try
             {
                 var options = new AllocConsoleOptions
@@ -94,6 +103,7 @@ internal static partial class Interop
             }
             catch (EntryPointNotFoundException)
             {
+                s_allocConsoleWithOptionsNotAvailable = true;
                 return false;
             }
         }
