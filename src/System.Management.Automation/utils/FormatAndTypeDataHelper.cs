@@ -49,6 +49,7 @@ namespace System.Management.Automation.Runspaces
         {
             this.psSnapinName = psSnapinName;
             FormatDataXml = formatDataXml;
+            _ = isXml;
             Errors = new ConcurrentBag<string>();
         }
 
