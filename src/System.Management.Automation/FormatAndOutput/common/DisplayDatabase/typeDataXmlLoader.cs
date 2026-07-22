@@ -304,11 +304,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             this.SetDatabaseLoadingInfo(info);
             this.ReportTrace("loading xml string started");
 
-            XmlDocument newDocument = new XmlDocument();
+            var newDocument = new XmlDocument() { XmlResolver = null };
             try
             {
-                // To safely load from string without resolving external entities
-                using (var reader = XmlReader.Create(new System.IO.StringReader(xmlData), new XmlReaderSettings { XmlResolver = null }))
+                // Load from string without resolving external entities
+                var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null };
+                using (var reader = XmlReader.Create(new System.IO.StringReader(xmlData), settings))
                 {
                     newDocument.Load(reader);
                 }
