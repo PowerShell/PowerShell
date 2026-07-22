@@ -36,7 +36,7 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
 
     It "Can convert to XML as Stream" {
         $returnObject = $customPSObject | ConvertTo-Xml -As Stream
-        $returnObject -is [System.Array] | Should -BeTrue # Cannot use -BeOfType syntax due to issue https://github.com/pester/Pester/issues/386
+        $returnObject -is [array] | Should -BeTrue # Cannot use -BeOfType syntax due to issue https://github.com/pester/Pester/issues/386
         $stream1 = '<?xml version="1.0" encoding="utf-8"?>'
         $stream2 = '<Objects>'
         $stream3 = @"
