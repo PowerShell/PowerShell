@@ -21,17 +21,15 @@ treat the `.csproj` as the source of truth.
 |---|---|---|
 | `Newtonsoft.Json` | `13.0.4` | JSON serialization used by the engine. |
 | `Microsoft.ApplicationInsights` | `2.23.0` | Optional telemetry. |
+| `Microsoft.Win32.Registry.AccessControl` | `11.0.0-preview.6.26359.118` | Registry ACLs (Windows). |
+| `System.Configuration.ConfigurationManager` | `11.0.0-preview.6.26359.118` | Configuration. |
+| `System.DirectoryServices` | `11.0.0-preview.6.26359.118` | Directory access (Windows). |
+| `System.Management` | `11.0.0-preview.6.26359.118` | WMI (Windows). |
+| `System.Security.Cryptography.Pkcs` | `11.0.0-preview.6.26359.118` | CMS/crypto. |
+| `System.Security.Permissions` | `11.0.0-preview.6.26359.118` | Permission-related APIs (Windows). |
 | `Microsoft.Management.Infrastructure` | `3.0.0` | CIM/WMI (MI) interop. |
 | `Microsoft.PowerShell.Native` | `700.0.0` | Native helpers (`libpsl`/WinRM plugin surface). |
 | `Microsoft.Security.Extensions` | `1.4.0` | File provenance / trust checks. |
-| `System.Security.Cryptography.Pkcs` | `8.0.1` | CMS/crypto. |
-| `System.Configuration.ConfigurationManager` | `8.0.1` | Configuration. |
-| `System.Diagnostics.DiagnosticSource` | `8.0.1` | Activity/telemetry plumbing. |
-| `System.DirectoryServices` | `8.0.0` | Directory access (Windows). |
-| `System.Management` | `8.0.0` | WMI (Windows). |
-| `Microsoft.Win32.Registry.AccessControl` | `8.0.0` | Registry ACLs (Windows). |
-| `System.Text.Encoding.CodePages` | `8.0.0` | Legacy encodings. |
-| `System.Formats.Asn1` | `8.0.2` | ASN.1 parsing. |
 
 ## Notable Command-Module Packages
 
@@ -40,11 +38,11 @@ treat the `.csproj` as the source of truth.
 | `Markdig.Signed` | `1.3.2` | `Microsoft.PowerShell.Commands.Utility` (Markdown cmdlets) |
 | `Microsoft.PowerShell.MarkdownRender` | `7.2.1` | Utility (Markdown rendering) |
 | `Microsoft.CodeAnalysis.CSharp` | `5.6.0` | Utility (`Add-Type`) |
-| `Microsoft.Windows.Compatibility` | `8.0.28` | `Microsoft.PowerShell.SDK` (Windows compat shims) |
+| `Microsoft.Windows.Compatibility` | `11.0.0-preview.6.26359.118` | `Microsoft.PowerShell.SDK` (Windows compat shims) |
 | `System.Data.SqlClient` | `4.9.1` | SDK meta-package |
-| `System.ServiceModel.*` | `4.10.3` | SDK (WCF client stack) |
-| `System.Diagnostics.PerformanceCounter` | `8.0.1` | `Microsoft.PowerShell.Commands.Diagnostics` |
-| `System.Diagnostics.EventLog` | `8.0.2` | Multiple modules (Windows event log) |
+| `System.ServiceModel.*` | `10.0.652802` | SDK (WCF client stack) |
+| `System.Diagnostics.PerformanceCounter` | `11.0.0-preview.6.26359.118` | `Microsoft.PowerShell.Commands.Diagnostics` |
+| `System.Diagnostics.EventLog` | `11.0.0-preview.6.26359.118` | `Microsoft.PowerShell.CoreCLR.Eventing` |
 
 ## Native Components
 
