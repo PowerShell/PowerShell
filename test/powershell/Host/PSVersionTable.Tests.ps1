@@ -7,22 +7,32 @@ Describe "PSVersionTable" -Tags "CI" {
         $sma = Get-Item (Join-Path $PSHOME "System.Management.Automation.dll")
         $formattedVersion = $sma.VersionInfo.ProductVersion
 
-        $mainVersionPattern = "(\d+\.\d+\.\d+)(-.+)?"
-        $fullVersionPattern = "^(\d+\.\d+\.\d+)(-.+)?-(\d+)-g(.+)$"
+        function Get-ExpectedGitCommitIds
+        {
+            param([string]$ProductVersion)
 
+            $versionAndSha = $ProductVersion -split " SHA: ", 2
+            $version = $versionAndSha[0]
+            $sourceRevision = if ($versionAndSha.Count -eq 2) { ($versionAndSha[1] -split "\+", 2)[0] } else { $null }
+
+            if ($ProductVersion.Contains(" Commits: "))
+            {
+                return @($version.Replace(" Commits: ", "-") + "-g$sourceRevision")
+            }
+
+            $expectedGitCommitIds = @($version)
+            if ($null -ne $sourceRevision)
+            {
+                $expectedGitCommitIds += "$version-0-g$sourceRevision"
+            }
+
+            return $expectedGitCommitIds
+        }
+
+        $mainVersionPattern = "(\d+\.\d+\.\d+)(-.+)?"
         $expectedPSVersion = ($formattedVersion -split " ")[0]
         $expectedVersionPattern = "^$mainVersionPattern$"
-
-        if ($formattedVersion.Contains(" Commits: "))
-        {
-            $rawGitCommitId = $formattedVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
-            $expectedGitCommitIdPattern = $fullVersionPattern
-            $unexpectectGitCommitIdPattern = "qwerty"
-        } else {
-            $rawGitCommitId = ($formattedVersion -split " SHA: ")[0]
-            $expectedGitCommitIdPattern = "^$mainVersionPattern$"
-            $unexpectectGitCommitIdPattern = $fullVersionPattern
-        }
+        $expectedGitCommitIds = Get-ExpectedGitCommitIds -ProductVersion $formattedVersion
     }
 
     It "Should have version table entries" {
@@ -51,9 +61,16 @@ Describe "PSVersionTable" -Tags "CI" {
 
     It "GitCommitId property" {
        $PSVersionTable.GitCommitId | Should -BeOfType System.String
-       $PSVersionTable.GitCommitId | Should -Match $expectedGitCommitIdPattern
-       $PSVersionTable.GitCommitId | Should -Not -Match $unexpectectGitCommitIdPattern
-       $PSVersionTable.GitCommitId | Should -BeExactly $rawGitCommitId
+       $PSVersionTable.GitCommitId | Should -BeIn $expectedGitCommitIds
+    }
+
+    It "GitCommitId property accepts tag builds with zero commits" {
+       $expected = @(
+           "7.6.2"
+           "7.6.2-0-g0d3c290a8737d4252ee75c052d16190ffcdb7d19"
+       )
+       $actual = Get-ExpectedGitCommitIds -ProductVersion "7.6.2 SHA: 0d3c290a8737d4252ee75c052d16190ffcdb7d19"
+       Compare-Object -ReferenceObject $expected -DifferenceObject $actual | Should -Be $null
     }
 
     It "Should have the correct platform info" {
