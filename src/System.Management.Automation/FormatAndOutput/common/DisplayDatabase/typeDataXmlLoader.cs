@@ -334,7 +334,7 @@ catch (XmlException e)
                 }
                 catch (Exception e)
                 {
-                    this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ErrorInFile, "Inline XML", e.Message));
+                    this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ErrorInFile, FilePath, e.Message));
                     throw;
                 }
 
