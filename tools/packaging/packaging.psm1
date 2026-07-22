@@ -52,7 +52,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "msi", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
+        [ValidateSet("msix", "deb", "deb-arm64", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size-x64", "min-size-arm64", "tar-alpine-fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -77,8 +77,8 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ($Type -in ('zip', 'min-size') -or $Type -like 'fxdependent*') {
-            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
+        if ($Type -contains 'zip' -or $Type -like 'min-size*' -or $Type -like 'fxdependent*') {
+            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is essentially a 'zip' package.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
@@ -102,16 +102,16 @@ function Start-PSPackage {
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
         } elseif ($MacOSRuntime) {
-           $MacOSRuntime, "Release"
+            $MacOSRuntime, "Release"
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "linux-musl-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm") {
-            New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            New-PSOptions -Configuration "Release" -Runtime "linux-arm" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm64") {
             if ($IsMacOS) {
                 New-PSOptions -Configuration "Release" -Runtime "osx-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             } else {
-                New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+                New-PSOptions -Configuration "Release" -Runtime "linux-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -120,6 +120,13 @@ function Start-PSPackage {
         }
         elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-noopt-linux-musl-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
+        elseif ($Type.Count -eq 1 -and $Type[0] -eq "deb-arm64") {
+            New-PSOptions -Configuration "Release" -Runtime 'linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
+        elseif ($Type.Count -eq 1 -and $Type[0] -eq "min-size-arm64") {
+            $runtimeToUse = if ($IsMacOS) { "osx-arm64" } elseif ($IsLinux) { "linux-arm64" } else { "win-arm64" }
+            New-PSOptions -Configuration "Release" -Runtime $runtimeToUse -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
         else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -346,7 +353,7 @@ function Start-PSPackage {
             } elseif ($Environment.IsMacOS) {
                 "osxpkg", "tar"
             } elseif ($Environment.IsWindows) {
-                "msi", "msix"
+                "zip", "msix"
             }
             Write-Warning "-Type was not specified, continuing with $Type!"
         }
@@ -406,7 +413,7 @@ function Start-PSPackage {
                     New-PdbZipPackage @Arguments
                 }
             }
-            "min-size" {
+            { $_ -like "min-size*" } {
                 # Add suffix '-gc' because this package is for the Guest Config team.
                 if ($Environment.IsWindows) {
                     $Arguments = @{
@@ -416,12 +423,10 @@ function Start-PSPackage {
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
                             R2RState = 'SdkOnly'
-                            OperatingSystem = "Windows"
-                            Architecture = "amd64"
                         }
                     }
 
-                    if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
+                    if ($PSCmdlet.ShouldProcess("Create min-size Zip Package")) {
                         New-ZipPackage @Arguments
                     }
                 }
@@ -430,6 +435,7 @@ function Start-PSPackage {
                         PackageSourcePath = $Source
                         Name = $Name
                         PackageNameSuffix = 'gc'
+                        Architecture = $Runtime.Split('-')[1]
                         Version = $Version
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
@@ -437,12 +443,15 @@ function Start-PSPackage {
                         }
                     }
 
-                    if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                    if ($PSCmdlet.ShouldProcess("Create min-size tar.gz Package")) {
                         New-TarballPackage @Arguments
                     }
                 }
+                else {
+                    throw "The 'min-size*' package types are supported only on Windows and Linux."
+                }
             }
-            { $_ -like "fxdependent*"} {
+            { $_ -like "fxdependent*" } {
                 if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
@@ -491,34 +500,6 @@ function Start-PSPackage {
                     if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
                         New-TarballPackage @Arguments
                     }
-                }
-            }
-            "msi" {
-                $TargetArchitecture = "x64"
-                $r2rArchitecture = "amd64"
-                if ($Runtime -match "-x86") {
-                    $TargetArchitecture = "x86"
-                    $r2rArchitecture = "i386"
-                }
-                elseif ($Runtime -match "-arm64")
-                {
-                    $TargetArchitecture = "arm64"
-                    $r2rArchitecture = "arm64"
-                }
-
-                Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
-
-                $Arguments = @{
-                    ProductNameSuffix = $NameSuffix
-                    ProductSourcePath = $Source
-                    ProductVersion = $Version
-                    AssetsPath = "$RepoRoot\assets"
-                    ProductTargetArchitecture = $TargetArchitecture
-                    Force = $Force
-            }
-
-                if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
-                    New-MSIPackage @Arguments
                 }
             }
             "msix" {
@@ -633,6 +614,24 @@ function Start-PSPackage {
                     NoSudo = $NoSudo
                     LTS = $LTS
                     HostArchitecture = "amd64"
+                }
+                foreach ($Distro in $Script:DebianDistributions) {
+                    $Arguments["Distribution"] = $Distro
+                    if ($PSCmdlet.ShouldProcess("Create DEB Package for $Distro")) {
+                        New-UnixPackage @Arguments
+                    }
+                }
+            }
+            'deb-arm64' {
+                $Arguments = @{
+                    Type = 'deb'
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    NoSudo = $NoSudo
+                    LTS = $LTS
+                    HostArchitecture = "arm64"
                 }
                 foreach ($Distro in $Script:DebianDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -803,6 +802,18 @@ function New-TarballPackage {
 
     $Staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath -R2RVerification $R2RVerification
+
+    # Ensure PowerShell executable has correct permissions in tarball
+    $pwshInStaging = Join-Path $Staging 'pwsh'
+    if (Test-Path -LiteralPath $pwshInStaging) {
+        Start-NativeExecution { chmod 755 $pwshInStaging }
+    }
+
+    # Included .NET executable for producing crash dumps
+    $createdumpInStaging = Join-Path $Staging 'createdump'
+    if (Test-Path -LiteralPath $createdumpInStaging) {
+        Start-NativeExecution { chmod 755 $createdumpInStaging }
+    }
 
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
         if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
@@ -1060,7 +1071,7 @@ function New-UnixPackage {
         # This is a string because strings are appended to it
         [string]$Iteration = "1",
 
-        # Host architecture values allowed for deb type packages: amd64
+        # Host architecture values allowed for deb type packages: amd64, arm64
         # Host architecture values allowed for rpm type packages include: x86_64, aarch64, native, all, noarch, any
         # Host architecture values allowed for osxpkg type packages include: x86_64, arm64
         [string]
@@ -1222,7 +1233,11 @@ function New-UnixPackage {
                 find $Staging -type f | xargs chmod 644
                 chmod 644 $ManGzipInfo.GzipFile
                 # refers to executable, does not vary by channel
-                chmod 755 "$Staging/pwsh" #only the executable file should be granted the execution permission
+                chmod 755 "$Staging/pwsh" # only the executable file should be granted the execution permission
+                # Included .NET executable for producing crash dumps
+                if (Test-Path "$Staging/createdump") {
+                    chmod 755 "$Staging/createdump"
+                }
             }
         }
 
@@ -1902,6 +1917,12 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
             Start-NativeExecution { chmod 755 $pwshPath }
         }
 
+        # Included .NET executable for producing crash dumps
+        $createdumpPath = "$targetPath/createdump"
+        if (Test-Path $createdumpPath) {
+            Start-NativeExecution { chmod 755 $createdumpPath }
+        }
+
         # Calculate md5sums for all files in data directory (excluding symlinks)
         $md5sumsFile = Join-Path $debianDir "md5sums"
         $md5Content = ""
@@ -2152,7 +2173,7 @@ function Get-PackageDependencies
         #   than the build version and we know that older versions just works.
         #
         $MinICUVersion = 60                    # runtime minimum supported
-        $BuildICUVersion = Get-IcuLatestRelease
+        $BuildICUVersion = 76                  # current build version
         $MaxICUVersion = $BuildICUVersion + 30 # headroom
 
         if ($Distribution -eq 'deb') {
@@ -3587,42 +3608,6 @@ function New-NugetPackage
     Pop-Location
 }
 
-<#
-.SYNOPSIS
-Publish the specified Nuget Package to MyGet feed.
-
-.DESCRIPTION
-The specified nuget package is published to the powershell.myget.org/powershell-core feed.
-
-.PARAMETER PackagePath
-Path to the NuGet Package.
-
-.PARAMETER ApiKey
-API key for powershell.myget.org
-#>
-function Publish-NugetToMyGet
-{
-    param(
-        [Parameter(Mandatory = $true)]
-        [string] $PackagePath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $ApiKey
-    )
-
-    $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
-
-    if ($null -eq $nuget)
-    {
-        throw 'nuget application is not available in PATH'
-    }
-
-    Get-ChildItem $PackagePath | ForEach-Object {
-        Write-Log "Pushing $_ to PowerShell Myget"
-        Start-NativeExecution { nuget push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey } > $null
-    }
-}
-
 function New-SubFolder
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -3769,443 +3754,6 @@ function Get-NugetSemanticVersion
     $packageSemanticVersion
 }
 
-# Get the paths to various WiX tools
-function Get-WixPath
-{
-    [CmdletBinding()]
-    param (
-        [bool] $IsProductArchitectureArm = $false
-    )
-
-    $wixToolsetBinPath = $IsProductArchitectureArm ? "${env:ProgramFiles(x86)}\Arm Support WiX Toolset *\bin" : "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
-
-    Write-Verbose -Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
-    if (-not (Test-Path $wixToolsetBinPath))
-    {
-        if (!$IsProductArchitectureArm)
-        {
-            throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
-        }
-        else {
-            throw "The latest version of Wix Toolset 3.14 is required to create MSI package for arm. Please install it from https://aka.ms/ps-wix-3-14-zip"
-        }
-    }
-
-    ## Get the latest if multiple versions exist.
-    $wixToolsetBinPath = (Get-ChildItem $wixToolsetBinPath).FullName | Sort-Object -Descending | Select-Object -First 1
-
-    Write-Verbose "Initialize Wix executables..."
-    $wixHeatExePath = Join-Path $wixToolsetBinPath "heat.exe"
-    $wixMeltExePath = Join-Path $wixToolsetBinPath "melt.exe"
-    $wixTorchExePath = Join-Path $wixToolsetBinPath "torch.exe"
-    $wixPyroExePath = Join-Path $wixToolsetBinPath "pyro.exe"
-    $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
-    $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
-    $wixInsigniaExePath = Join-Path $wixToolsetBinPath "Insignia.exe"
-
-    return [PSCustomObject] @{
-        WixHeatExePath     = $wixHeatExePath
-        WixMeltExePath     = $wixMeltExePath
-        WixTorchExePath    = $wixTorchExePath
-        WixPyroExePath     = $wixPyroExePath
-        WixCandleExePath   = $wixCandleExePath
-        WixLightExePath    = $wixLightExePath
-        WixInsigniaExePath = $wixInsigniaExePath
-    }
-}
-
-<#
-    .Synopsis
-        Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
-        This only works on a Windows machine due to the usage of WiX.
-    .EXAMPLE
-        # This example shows how to produce a Debug-x64 installer for development purposes.
-        cd $RootPathOfPowerShellRepo
-        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
-#>
-function New-MSIPackage
-{
-    [CmdletBinding()]
-    param (
-
-        # Name of the Product
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell',
-
-        # Suffix of the Name
-        [string] $ProductNameSuffix,
-
-        # Version of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductVersion,
-
-        # Source Path to the Product Files - required to package the contents into an MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductSourcePath,
-
-        # File describing the MSI Package creation semantics
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $ProductWxsPath = "$RepoRoot\assets\wix\Product.wxs",
-
-        # File describing the MSI Package creation semantics
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript({Test-Path $_})]
-        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
-
-        # Path to Assets folder containing artifacts such as icons, images
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $AssetsPath = "$RepoRoot\assets",
-
-        # Architecture to use when creating the MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture,
-
-        # Force overwrite of package
-        [Switch] $Force,
-
-        [string] $CurrentLocation = (Get-Location)
-    )
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $ProductNameSuffix -ProductVersion $ProductVersion
-    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
-    $ProductSemanticVersion = $windowsNames.ProductSemanticVersion
-    $packageName = $windowsNames.PackageName
-    $ProductVersion = $windowsNames.ProductVersion
-    Write-Verbose "Create MSI for Product $productSemanticVersionWithName" -Verbose
-    Write-Verbose "ProductSemanticVersion =  $productSemanticVersion" -Verbose
-    Write-Verbose "packageName =  $packageName" -Verbose
-    Write-Verbose "ProductVersion =  $ProductVersion" -Verbose
-
-    $simpleProductVersion = [string]([Version]$ProductVersion).Major
-    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
-    if ($isPreview)
-    {
-        $simpleProductVersion += '-preview'
-    }
-
-    $staging = "$PSScriptRoot/staging"
-    New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
-
-    $assetsInSourcePath = Join-Path $staging 'assets'
-
-    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
-
-    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
-    Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
-
-
-
-    $fileArchitecture = 'amd64'
-    $ProductProgFilesDir = "ProgramFiles64Folder"
-    if ($ProductTargetArchitecture -eq "x86")
-    {
-        $fileArchitecture = 'x86'
-        $ProductProgFilesDir = "ProgramFilesFolder"
-    }
-    elseif ($ProductTargetArchitecture -eq "arm64")
-    {
-        $fileArchitecture = 'arm64'
-        $ProductProgFilesDir = "ProgramFiles64Folder"
-    }
-
-    $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
-
-    # cleanup any garbage on the system
-    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-
-    $msiLocationPath = Join-Path $CurrentLocation "$packageName.msi"
-    $msiPdbLocationPath = Join-Path $CurrentLocation "$packageName.wixpdb"
-
-    if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath)) {
-        Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
-    }
-
-    Write-Log "Generating wxs file manifest..."
-    $arguments = @{
-        IsPreview              = $isPreview
-        ProductSourcePath      = $staging
-        ProductName            = $ProductName
-        ProductVersion         = $ProductVersion
-        SimpleProductVersion   = $simpleProductVersion
-        ProductSemanticVersion = $ProductSemanticVersion
-        ProductVersionWithName = $productVersionWithName
-        ProductProgFilesDir    = $ProductProgFilesDir
-        FileArchitecture       = $fileArchitecture
-    }
-
-    $buildArguments = New-MsiArgsArray -Argument $arguments
-
-    Test-Bom -Path $staging -BomName windows -Architecture $ProductTargetArchitecture -Verbose
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
-
-    Send-AzdoFile -Path $wixFragmentPath
-
-    $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
-
-    # cleanup any garbage on the system
-    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
-
-    Start-MsiBuild -WxsFile $ProductWxsPath, $wixFragmentPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument $arguments -MsiLocationPath $msiLocationPath -MsiPdbLocationPath $msiPdbLocationPath
-
-    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-
-    if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
-    {
-        Write-Verbose "You can find the WixPdb @ $msiPdbLocationPath" -Verbose
-        Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
-        [pscustomobject]@{
-            msi=$msiLocationPath
-            wixpdb=$msiPdbLocationPath
-        }
-    }
-    else
-    {
-        $errorMessage = "Failed to create $msiLocationPath"
-        throw $errorMessage
-    }
-}
-
-function Get-WindowsNames {
-    param(
-        # Name of the Product
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell',
-
-        # Suffix of the Name
-        [string] $ProductNameSuffix,
-
-        # Version of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductVersion
-    )
-
-    Write-Verbose -Message "Getting Windows Names for ProductName: $ProductName; ProductNameSuffix: $ProductNameSuffix; ProductVersion: $ProductVersion" -Verbose
-
-    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion -IncrementBuildNumber
-
-    $productVersionWithName = $ProductName + '_' + $ProductVersion
-    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
-
-    $packageName = $productSemanticVersionWithName
-    if ($ProductNameSuffix) {
-        $packageName += "-$ProductNameSuffix"
-    }
-
-    return [PSCustomObject]@{
-        PackageName                    = $packageName
-        ProductVersionWithName         = $productVersionWithName
-        ProductSemanticVersion         = $ProductSemanticVersion
-        ProductSemanticVersionWithName = $productSemanticVersionWithName
-        ProductVersion                 = $ProductVersion
-    }
-}
-
-function New-ExePackage {
-    param(
-        # Name of the Product
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell',
-
-        # Version of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-
-        [string] $ProductVersion,
-
-        # File describing the MSI Package creation semantics
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript({Test-Path $_})]
-        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
-
-        # Architecture to use when creating the MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture,
-
-        # Location of the signed MSI
-        [Parameter(Mandatory = $true)]
-        [string]
-        $MsiLocationPath,
-
-        [string] $CurrentLocation = (Get-Location)
-    )
-
-    $productNameSuffix = "win-$ProductTargetArchitecture"
-
-    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $productNameSuffix -ProductVersion $ProductVersion
-    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
-    $packageName = $windowsNames.PackageName
-    $isPreview = Test-IsPreview -Version $windowsNames.ProductSemanticVersion
-
-    Write-Verbose "Create EXE for Product $productSemanticVersionWithName" -verbose
-    Write-Verbose "packageName =  $packageName" -Verbose
-
-    $exeLocationPath = Join-Path $CurrentLocation "$packageName.exe"
-    $exePdbLocationPath = Join-Path $CurrentLocation "$packageName.exe.wixpdb"
-    $windowsVersion = Get-WindowsVersion -packageName $packageName
-
-    Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
-        IsPreview      = $isPreview
-        TargetPath     = $MsiLocationPath
-        WindowsVersion = $windowsVersion
-    }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
-
-    return $exeLocationPath
-}
-
-<#
-Allows you to extract the engine of exe package, mainly for signing
-Any existing signature will be removed.
- #>
-function Expand-ExePackageEngine {
-    param(
-        # Location of the unsigned EXE
-        [Parameter(Mandatory = $true)]
-        [string]
-        $ExePath,
-
-        # Location to put the expanded engine.
-        [Parameter(Mandatory = $true)]
-        [string]
-        $EnginePath,
-
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture
-    )
-
-    <#
-    2. detach the engine from TestInstaller.exe:
-    insignia -ib TestInstaller.exe -o engine.exe
-    #>
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
-    $resolvedEnginePath = [System.IO.Path]::GetFullPath($EnginePath)
-
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ib $resolvedExePath -o $resolvedEnginePath}
-}
-
-<#
-Allows you to replace the engine (installer) in the exe package.
-Used to replace the engine with a signed version
-#>
-function Compress-ExePackageEngine {
-    param(
-        # Location of the unsigned EXE
-        [Parameter(Mandatory = $true)]
-        [string]
-        $ExePath,
-
-        # Location of the signed engine
-        [Parameter(Mandatory = $true)]
-        [string]
-        $EnginePath,
-
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture
-    )
-
-
-    <#
-    4. re-attach the signed engine.exe to the bundle:
-    insignia -ab engine.exe TestInstaller.exe -o TestInstaller.exe
-    #>
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $resolvedEnginePath = (Resolve-Path -Path $EnginePath).ProviderPath
-    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
-
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ab $resolvedEnginePath $resolvedExePath -o $resolvedExePath}
-}
-
-function New-MsiArgsArray {
-    param(
-        [Parameter(Mandatory)]
-        [Hashtable]$Argument
-    )
-
-    $buildArguments = @()
-    foreach ($key in $Argument.Keys) {
-        $buildArguments += "-d$key=$($Argument.$key)"
-    }
-
-    return $buildArguments
-}
-
-function Start-MsiBuild {
-    param(
-        [string[]] $WxsFile,
-        [string[]] $Extension = @('WixUIExtension', 'WixUtilExtension', 'WixBalExtension'),
-        [string] $ProductTargetArchitecture,
-        [Hashtable] $Argument,
-        [string] $MsiLocationPath,
-        [string] $MsiPdbLocationPath
-    )
-
-    $outDir = $env:Temp
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $extensionArgs = @()
-    foreach ($extensionName in $Extension) {
-        $extensionArgs += '-ext'
-        $extensionArgs += $extensionName
-    }
-
-    $buildArguments = New-MsiArgsArray -Argument $Argument
-
-    $objectPaths = @()
-    foreach ($file in $WxsFile) {
-        $fileName = [system.io.path]::GetFileNameWithoutExtension($file)
-        $objectPaths += Join-Path $outDir -ChildPath "${filename}.wixobj"
-    }
-
-    foreach ($file in $objectPaths) {
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-    }
-
-    $resolvedWxsFiles = @()
-    foreach ($file in $WxsFile) {
-        $resolvedWxsFiles += (Resolve-Path -Path $file).ProviderPath
-    }
-
-    Write-Verbose "$resolvedWxsFiles" -Verbose
-
-    Write-Log "running candle..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath $resolvedWxsFiles -out "$outDir\\" $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
-
-    Write-Log "running light..."
-    # suppress ICE61, because we allow same version upgrades
-    # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
-    # suppress ICE40, REINSTALLMODE is defined in the Property table.
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE40 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $objectPaths $extensionArgs }
-
-    foreach($file in $objectPaths)
-    {
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-    }
-}
-
 <#
     .Synopsis
         Creates a Windows AppX MSIX package and assumes that the binaries are already built using 'Start-PSBuild'.
@@ -4285,7 +3833,7 @@ function New-MSIXPackage
         $displayName += ' Preview'
     } elseif ($LTS) {
         $ProductName += '-LTS'
-        $displayName += '-LTS'
+        $displayName += ' LTS'
     }
 
     Write-Verbose -Verbose "ProductName: $productName"
@@ -4318,8 +3866,7 @@ function New-MSIXPackage
         Write-Verbose "Using LTS assets" -Verbose
     }
 
-    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
-    # cp-459155 is 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated.
     # authenticodeFormer is 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
     $releasePublisher = 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
 
@@ -4361,7 +3908,6 @@ function New-MSIXPackage
         else {
             Copy-Item -Path "$RepoRoot\assets\$_.png" -Destination "$ProductSourcePath\assets\"
         }
-
     }
 
     if ($PSCmdlet.ShouldProcess("Create .msix package?")) {
@@ -4374,6 +3920,7 @@ function New-MSIXPackage
         Write-Verbose "Creating msix package" -Verbose
         Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $CurrentLocation -ChildPath "$packageName.msix") }
         Write-Verbose "Created $packageName.msix" -Verbose
+        Join-Path -Path $CurrentLocation -ChildPath "$packageName.msix"
     }
 }
 
@@ -4986,272 +4533,6 @@ function New-GlobalToolNupkgFromSource
     Remove-Item -Path $CGManifestPath -Recurse -Force -ErrorAction SilentlyContinue
 }
 
-${mainLinuxBuildFolder} = 'pwshLinuxBuild'
-${minSizeLinuxBuildFolder} = 'pwshLinuxBuildMinSize'
-${arm32LinuxBuildFolder} = 'pwshLinuxBuildArm32'
-${arm64LinuxBuildFolder} = 'pwshLinuxBuildArm64'
-${amd64MarinerBuildFolder} = 'pwshMarinerBuildAmd64'
-${amd64AlpineFxdBuildFolder} = 'pwshAlpineFxdBuildAmd64'
-${arm64MarinerBuildFolder} = 'pwshMarinerBuildArm64'
-
-<#
-    Used in Azure DevOps Yaml to package all the linux packages for a channel.
-#>
-function Invoke-AzDevOpsLinuxPackageCreation {
-    param(
-        [switch]
-        $LTS,
-
-        [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
-        [ValidateNotNullOrEmpty()]
-        [string]$ReleaseTag,
-
-        [Parameter(Mandatory)]
-        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
-        [String]$BuildType
-    )
-
-    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
-        throw "Must be run in Azure DevOps"
-    }
-
-    try {
-        Write-Verbose "Packaging '$BuildType'; LTS:$LTS for $ReleaseTag ..." -Verbose
-
-        Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\psoptions.json"
-
-        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
-
-        switch ($BuildType) {
-            'fxdependent' {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
-            }
-            'alpine' {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
-            }
-            'rpm' {
-                Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
-            }
-            default {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage @releaseTagParam -LTS:$LTS -Type 'deb', 'tar'
-            }
-        }
-
-        if ($BuildType -eq 'deb') {
-            Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
-
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\psoptions.json"
-
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}"
-
-            Write-Verbose -Verbose "---- Min-Size ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
-
-            ## Create 'linux-arm' 'tar.gz' package.
-            ## Note that 'linux-arm' can only be built on Ubuntu environment.
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}"
-            Start-PSPackage -Type tar-arm @releaseTagParam -LTS:$LTS
-
-            ## Create 'linux-arm64' 'tar.gz' package.
-            ## Note that 'linux-arm64' can only be built on Ubuntu environment.
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}"
-            Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
-        } elseif ($BuildType -eq 'rpm') {
-            # Generate mariner amd64 package
-            Write-Verbose -Verbose "Generating mariner amd64 package"
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}"
-
-            Write-Verbose -Verbose "---- rpm-fxdependent ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type rpm-fxdependent @releaseTagParam -LTS:$LTS
-
-            # Generate mariner arm64 package
-            Write-Verbose -Verbose "Generating mariner arm64 package"
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}"
-
-            Write-Verbose -Verbose "---- rpm-fxdependent-arm64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type rpm-fxdependent-arm64 @releaseTagParam -LTS:$LTS
-        } elseif ($BuildType -eq 'alpine') {
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}"
-
-            Write-Verbose -Verbose "---- tar-alpine-fxdependent ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type tar-alpine-fxdependent @releaseTagParam -LTS:$LTS
-        }
-    }
-    catch {
-        Get-Error -InputObject $_
-        throw
-    }
-}
-
-<#
-    Used in Azure DevOps Yaml to do all the builds needed for all Linux packages for a channel.
-#>
-function Invoke-AzDevOpsLinuxPackageBuild {
-    param (
-        [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
-        [ValidateNotNullOrEmpty()]
-        [string]$ReleaseTag,
-
-        [Parameter(Mandatory)]
-        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
-        [String]$BuildType
-    )
-
-    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
-        throw "Must be run in Azure DevOps"
-    }
-
-    try {
-
-        Write-Verbose "Building '$BuildType' for $ReleaseTag ..." -Verbose
-
-        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
-
-        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true }
-
-        switch ($BuildType) {
-            'fxdependent' {
-                $buildParams.Add("Runtime", "fxdependent")
-            }
-            'alpine' {
-                $buildParams.Add("Runtime", 'linux-musl-x64')
-            }
-        }
-
-        $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
-        Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-        Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-        # Remove symbol files.
-        Remove-Item "${buildFolder}\*.pdb" -Force
-
-        if ($BuildType -eq 'deb') {
-            ## Build 'min-size'
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Min-Size ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['ForMinimalSize'] = $true
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${minSizeLinuxBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            ## Build 'linux-arm' and create 'tar.gz' package for it.
-            ## Note that 'linux-arm' can only be built on Ubuntu environment.
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files.
-            Remove-Item "${buildFolder}\*.pdb" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files.
-            Remove-Item "${buildFolder}\*.pdb" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        } elseif ($BuildType -eq 'rpm') {
-            ## Build for Mariner amd64
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Mariner x64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner x64 package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-linux-x64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64MarinerBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            ## Build for Mariner arm64
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Mariner arm64 ----"
-
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner arm64 package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-linux-arm64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64MarinerBuildFolder}"
-
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        } elseif ($BuildType -eq 'alpine') {
-            ## Build for alpine fxdependent
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- fxdependent alpine x64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-noopt-linux-musl-x64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64AlpineFxdBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        }
-    }
-    catch {
-        Get-Error -InputObject $_
-        throw
-    }
-}
-
 <#
     Apply the file permissions specified in the json file $FilePath to the files under $RootPath.
     The format of the json file is like:
@@ -5808,16 +5089,4 @@ function Test-IsProductFile {
     }
 
     return $false
-}
-
-# Get major version from latest ICU release (latest: stable version)
-function Get-IcuLatestRelease {
-    $response = Invoke-WebRequest -Uri "https://github.com/unicode-org/icu/releases/latest"
-    $tagUrl = ($response.Links | Where-Object href -like "*releases/tag/release-*")[0].href
-
-    if ($tagUrl -match 'release-(\d+)\.') {
-       return [int]$Matches[1]
-    }
-
-    throw "Unable to determine the latest ICU release version."
 }
