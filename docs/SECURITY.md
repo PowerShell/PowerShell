@@ -4,8 +4,8 @@
 
 PowerShell is a general-purpose automation engine that executes arbitrary code and interacts
 with the OS, the filesystem, the registry, credentials, and remote systems. Security is a
-first-class concern: per `.github/SECURITY.md`, security "takes precedence over other
-considerations including usability, performance" and PowerShell "must be secure by default."
+first-class concern; for reporting suspected vulnerabilities and coordinated disclosure,
+see `.github/SECURITY.md`.
 
 ## Data Sensitivity
 
