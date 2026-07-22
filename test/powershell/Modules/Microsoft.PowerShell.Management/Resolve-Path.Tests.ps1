@@ -176,3 +176,31 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         (Resolve-Path -Path $Path -RelativeBasePath $BasePath -Force:$Force).Path | Should -BeExactly $ExpectedResult
     }
 }
+
+
+Describe "The parameter '-RelativeBasePath' should treat path as literal" -Tags "CI" {
+    BeforeAll {
+        $testFolder = 'TestDrive:\[Folder]'
+        New-Item -ItemType Directory -Path $testFolder
+        Push-Location -LiteralPath $testFolder
+    }
+
+    It "Should succeed in resolving a path when the relative base path contains a wildcard character" {
+        (Resolve-Path -LiteralPath . -RelativeBasePath .).Path           | Should -Not -BeNullOrEmpty
+        (Resolve-Path -LiteralPath . -RelativeBasePath . -Relative).Path | Should -Not -BeNullOrEmpty
+        (Resolve-Path -Path .        -RelativeBasePath .).Path           | Should -Not -BeNullOrEmpty
+        (Resolve-Path -Path .        -RelativeBasePath . -Relative).Path | Should -Not -BeNullOrEmpty
+    }
+
+    It "Should fill path with literal in tab completion of parameter '-RelativeBasePath'" {
+        $wildcardNameFile = '[WildcardName].txt'
+        123 | Out-File -LiteralPath $wildcardNameFile
+        $completionInfo = TabExpansion2 'Resolve-Path -RelativeBasePath .\'
+        $completionInfo.CompletionMatches[0].ListItemText | Should -Be $wildcardNameFile
+    }
+
+    AfterAll {
+        Pop-Location
+    }
+}
+
