@@ -1321,6 +1321,7 @@ namespace Microsoft.PowerShell.Commands
         /// Equivalent to grep -v/findstr -v.
         /// </summary>
         [Parameter]
+        [Alias("v")]
         public SwitchParameter NotMatch { get; set; }
 
         /// <summary>

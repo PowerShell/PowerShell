@@ -2062,6 +2062,7 @@ namespace Microsoft.PowerShell.Commands
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
         [Parameter]
+        [Alias("p")]
         public override SwitchParameter Force
         {
             get => base.Force;
@@ -2435,6 +2436,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the recurse property.
         /// </summary>
         [Parameter]
+        [Alias("r")]
         public SwitchParameter Recurse
         {
             get => _recurse;
@@ -2454,6 +2456,7 @@ namespace Microsoft.PowerShell.Commands
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
         [Parameter]
+        [Alias("f")]
         public override SwitchParameter Force
         {
             get => base.Force;
@@ -2847,6 +2850,7 @@ namespace Microsoft.PowerShell.Commands
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
         [Parameter]
+        [Alias("f")]
         public override SwitchParameter Force
         {
             get => base.Force;
@@ -3574,6 +3578,7 @@ namespace Microsoft.PowerShell.Commands
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
         [Parameter]
+        [Alias("f")]
         public override SwitchParameter Force
         {
             get => base.Force;
@@ -3614,6 +3619,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the recurse property.
         /// </summary>
         [Parameter]
+        [Alias("r")]
         public SwitchParameter Recurse
         {
             get => _recurse;

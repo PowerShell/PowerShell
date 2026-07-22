@@ -170,6 +170,7 @@ namespace Microsoft.PowerShell.Commands
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
         [Parameter]
+        [Alias("a")]
         public override SwitchParameter Force
         {
             get

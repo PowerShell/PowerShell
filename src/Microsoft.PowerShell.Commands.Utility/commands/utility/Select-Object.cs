@@ -99,6 +99,7 @@ namespace Microsoft.PowerShell.Commands
         // NTRAID#Windows Out Of Band Releases-927878-2006/03/02
         // Allow zero
         [ValidateRange(0, int.MaxValue)]
+        [Alias("n")]
         public int First
         {
             get { return _first; }
