@@ -17,15 +17,23 @@ Describe "Configuration file locations" -tags "CI","Slow" {
                 {
                     $ProductName =  "PowerShell"
                 }
-                $expectedCache    = [IO.Path]::Combine($env:LOCALAPPDATA, "Microsoft", "Windows", "PowerShell", "StartupProfileData-NonInteractive")
-                $expectedModule   = [IO.Path]::Combine($env:USERPROFILE, "Documents", $ProductName, "Modules")
-                $expectedProfile  = [io.path]::Combine($env:USERPROFILE, "Documents", $ProductName, $profileName)
-                $expectedReadline = [IO.Path]::Combine($env:AppData, "Microsoft", "Windows", "PowerShell", "PSReadline", "ConsoleHost_history.txt")
+                $expectedCache              = [IO.Path]::Combine($env:LOCALAPPDATA, "Microsoft", "Windows", "PowerShell", "StartupProfileData-NonInteractive")
+                $expectedModule             = [IO.Path]::Combine($env:USERPROFILE, "Documents", $ProductName, "Modules")
+                $expectedAllUsersProfile    = [IO.Path]::Combine($PSHOME, $profileName)
+                $expectedCurrentUserProfile = [IO.Path]::Combine($env:USERPROFILE, "Documents", $ProductName, $profileName)
+                $expectedReadline           = [IO.Path]::Combine($env:AppData, "Microsoft", "Windows", "PowerShell", "PSReadline", "ConsoleHost_history.txt")
             } else {
-                $expectedCache    = [IO.Path]::Combine($env:HOME, ".cache", "powershell", "StartupProfileData-NonInteractive")
-                $expectedModule   = [IO.Path]::Combine($env:HOME, ".local", "share", "powershell", "Modules")
-                $expectedProfile  = [io.path]::Combine($env:HOME,".config","powershell",$profileName)
-                $expectedReadline = [IO.Path]::Combine($env:HOME, ".local", "share", "powershell", "PSReadLine", "ConsoleHost_history.txt")
+                if ($IsMacOS) {
+                    $PowershellConfigRoot = "/Library/Application Support/PowerShell"
+                } else {
+                    $PowershellConfigRoot = "/etc/opt/powershell"
+                }
+
+                $expectedCache              = [IO.Path]::Combine($env:HOME, ".cache", "powershell", "StartupProfileData-NonInteractive")
+                $expectedModule             = [IO.Path]::Combine($env:HOME, ".local", "share", "powershell", "Modules")
+                $expectedAllUsersProfile    = [IO.Path]::Combine($PowershellConfigRoot, $profileName)
+                $expectedCurrentUserProfile = [IO.Path]::Combine($env:HOME,".config","powershell", $profileName)
+                $expectedReadline           = [IO.Path]::Combine($env:HOME, ".local", "share", "powershell", "PSReadLine", "ConsoleHost_history.txt")
             }
 
             $ItArgs = @{}
@@ -39,8 +47,17 @@ Describe "Configuration file locations" -tags "CI","Slow" {
             $env:PSModulePath = $original_PSModulePath
         }
 
-        It @ItArgs "Profile location should be correct" {
-            & $powershell -noprofile -c `$PROFILE | Should -Be $expectedProfile
+        It @ItArgs "Current User Profile location should be correct" {
+            & $powershell -noprofile -c `$PROFILE | Should -Be $expectedCurrentUserProfile
+        }
+
+        It @ItArgs "All Users Profile location should be correct" {
+            & $powershell -noprofile -c `$PROFILE.AllUsersAllHosts | Should -Be $expectedAllUsersProfile
+        }
+
+        It @ItArgs "All Users Profile location should be correct" {
+            $env:POWERSHELL_COMMON_APPLICATION_DATA = Join-Path -Path $PSHOME -ChildPath $profileName
+            & $powershell -noprofile -c `$PROFILE.AllUsersAllHosts | Should -Be $env:POWERSHELL_COMMON_APPLICATION_DATA
         }
 
         It @ItArgs "PSModulePath should contain the correct path" {
