@@ -95,9 +95,9 @@ namespace Microsoft.PowerShell
             int exitCode = 0;
             try
             {
-                var banner = string.Format(
+                string banner = string.Format(
                     CultureInfo.InvariantCulture,
-                    ManagedEntranceStrings.ShellBannerNonWindowsPowerShell,
+                    ManagedEntranceStrings.ShellBannerPowerShell,
                     PSVersionInfo.GitCommitId);
 
                 ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();

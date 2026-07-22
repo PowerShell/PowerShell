@@ -39,7 +39,7 @@ variables:
   - name: LinuxContainerImage
     value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - name: WindowsContainerImage
-    value: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
+    value: onebranch.azurecr.io/windows/ltsc2022/vse2022:latest
   - name: CDP_DEFINITION_BUILD_COUNT
     value: $[counter('', 0)]
   - name: ReleaseTagVar

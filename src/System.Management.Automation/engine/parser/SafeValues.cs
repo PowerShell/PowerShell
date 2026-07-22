@@ -47,11 +47,15 @@ namespace System.Management.Automation.Language
         internal IsSafeValueVisitor(GetSafeValueVisitor.SafeValueContext safeValueContext)
         {
             _safeValueContext = safeValueContext;
+
+            bool skipSizeCheck = safeValueContext is GetSafeValueVisitor.SafeValueContext.SkipHashtableSizeCheck;
+            _maxVisitCount = skipSizeCheck ? uint.MaxValue : 5000;
+            _maxHashtableKeyCount = skipSizeCheck ? int.MaxValue : 500;
         }
 
         internal bool IsAstSafe(Ast ast)
         {
-            if ((bool)ast.Accept(this) && _visitCount < MaxVisitCount)
+            if ((bool)ast.Accept(this) && _visitCount < _maxVisitCount)
             {
                 return true;
             }
@@ -65,8 +69,8 @@ namespace System.Management.Automation.Language
         // This is a check of the number of visits
         private uint _visitCount = 0;
 
-        private const uint MaxVisitCount = 5000;
-        private const int MaxHashtableKeyCount = 500;
+        private readonly uint _maxVisitCount;
+        private readonly int _maxHashtableKeyCount;
 
         // Used to determine if we are being called within a GetPowerShell() context,
         // which does some additional security verification outside of the scope of
@@ -330,7 +334,7 @@ namespace System.Management.Automation.Language
 
         public object VisitHashtable(HashtableAst hashtableAst)
         {
-            if (hashtableAst.KeyValuePairs.Count > MaxHashtableKeyCount)
+            if (hashtableAst.KeyValuePairs.Count > _maxHashtableKeyCount)
             {
                 return false;
             }
@@ -373,7 +377,7 @@ namespace System.Management.Automation.Language
         {
             t_context = context;
 
-            if (safeValueContext == SafeValueContext.SkipHashtableSizeCheck || IsSafeValueVisitor.IsAstSafe(ast, safeValueContext))
+            if (IsSafeValueVisitor.IsAstSafe(ast, safeValueContext))
             {
                 return ast.Accept(new GetSafeValueVisitor());
             }
