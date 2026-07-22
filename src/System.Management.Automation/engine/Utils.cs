@@ -543,7 +543,13 @@ namespace System.Management.Automation
                 string packageFamilyName = TryGetCurrentPackageFamilyName();
                 if (!string.IsNullOrEmpty(packageFamilyName))
                 {
-                    using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Appx");
+                    // Use the 64-bit registry view on 64-bit systems so 'PackageRepositoryRoot' is found
+                    // regardless of process architecture; otherwise a 32-bit pwsh on 64-bit Windows would be
+                    // redirected by WOW64 to the WOW6432Node view where the OS does not write this value.
+                    using RegistryKey baseKey = RegistryKey.OpenBaseKey(
+                        RegistryHive.LocalMachine,
+                        Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Default);
+                    using RegistryKey key = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Appx");
                     if (key?.GetValue("PackageRepositoryRoot") is string repositoryRoot && !string.IsNullOrEmpty(repositoryRoot))
                     {
                         // Mirrors how the Windows App SDK locates the per-machine data store.
