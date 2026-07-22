@@ -437,6 +437,17 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         //
         public void Dispose()
         {
+            Dispose();
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             if (_hDataSource != null && !_hDataSource.IsInvalid)
             {
                 _hDataSource.Dispose();
@@ -451,8 +462,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 _hQuery.Dispose();
             }
-
-            GC.SuppressFinalize(this);
         }
 
         //
