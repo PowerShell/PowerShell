@@ -31,6 +31,267 @@ Describe "ExecutionPolicy" -Tags "CI" {
     }
 }
 
+Describe "Trusted Publisher Checks" -Tags 'CI', 'RequireAdminOnWindows' {
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if (-not $IsWindows) {
+            $PSDefaultParameterValues["It:Skip"] = $true
+            return
+        }
+
+        Function New-X509Certificate {
+            [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
+            [CmdletBinding()]
+            param (
+                [Parameter(Mandatory)]
+                [string]$Subject,
+
+                [Parameter()]
+                [ValidateSet('CA', 'CodeSigning')]
+                [string]
+                $Purpose,
+
+                [Parameter()]
+                [string[]]
+                $EkuOid = @(),
+
+                [Parameter()]
+                [System.Security.Cryptography.X509Certificates.X509Certificate2]
+                $Issuer
+            )
+
+            $key = [System.Security.Cryptography.RSA]::Create(2048)
+            $request = [System.Security.Cryptography.X509Certificates.CertificateRequest]::new(
+                $Subject,
+                $key,
+                "SHA256",
+                [System.Security.Cryptography.RSASignaturePadding]::Pkcs1)
+
+            if ($Purpose -eq 'CA') {
+                $request.CertificateExtensions.Add(
+                    [System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true, $false, 0, $true))
+            }
+            else {
+                $request.CertificateExtensions.Add(
+                    [System.Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new(
+                        [System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature,
+                        $true))
+
+                $enhancedKeyUsageOids = [System.Security.Cryptography.OidCollection]::new()
+                $null = $enhancedKeyUsageOids.Add(
+                    [System.Security.Cryptography.Oid]::FromFriendlyName('Code Signing', 'EnhancedKeyUsage'))
+                foreach ($oid in $EkuOid) {
+                    $null = $enhancedKeyUsageOids.Add([System.Security.Cryptography.Oid]::new($oid))
+                }
+
+                $request.CertificateExtensions.Add(
+                    [System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new(
+                        $enhancedKeyUsageOids, $true))
+            }
+
+            $request.CertificateExtensions.Add(
+                [System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension]::new(
+                    $request.PublicKey, $false))
+
+            if ($Issuer) {
+                $request.CertificateExtensions.Add(
+                    [System.Security.Cryptography.X509Certificates.X509AuthorityKeyIdentifierExtension]::CreateFromCertificate(
+                        $Issuer, $true, $false))
+
+                $notBefore = $Issuer.NotBefore
+                $notAfter = $Issuer.NotAfter
+                $serialNumber = [byte[]]::new(9)
+                [System.Random]::new().NextBytes($serialNumber)
+
+                $cert = $request.Create($Issuer, $notBefore, $notAfter, $serialNumber)
+
+                # Create does not create an X509Certificate2 object with the
+                # associated private key so we need to manually do it.
+                [System.Security.Cryptography.X509Certificates.RSACertificateExtensions]::CopyWithPrivateKey($cert, $key)
+            }
+            else {
+                $notBefore = [DateTimeOffset]::UtcNow.AddDays(-1)
+                $notAfter = [DateTimeOffset]::UtcNow.AddDays(30)
+                $request.CreateSelfSigned($notBefore, $notAfter)
+            }
+        }
+
+        Function Invoke-SignedScript {
+            [CmdletBinding()]
+            param (
+                [Parameter(Mandatory)]
+                [System.Security.Cryptography.X509Certificates.X509Certificate2]
+                $Certificate
+            )
+
+            $ErrorActionPreference = 'Stop'
+
+            $scriptPath = Join-Path -Path Temp: -ChildPath "pwsh-signed-test.ps1"
+            Set-Content -LiteralPath $scriptPath -Value '"ran"'
+            try {
+                $null = Set-AuthenticodeSignature -FilePath $scriptPath -Certificate $Certificate -HashAlgorithm SHA256
+
+                # We use a job to avoid polluting the current process execution policy.
+                Start-Job -ScriptBlock {
+                    Set-ExecutionPolicy -ExecutionPolicy AllSigned -Scope Process -Force
+
+                    # Use PowerShell to run without a PSHost so prompts fail.
+                    $ps = [PowerShell]::Create()
+                    $ps.AddCommand($args[0]).Invoke()
+                    foreach ($e in $ps.Streams.Error) {
+                        Write-Error $e
+                    }
+                } -ArgumentList $scriptPath | Receive-Job -Wait -AutoRemoveJob
+            }
+            finally {
+                Remove-Item -LiteralPath $scriptPath -ErrorAction SilentlyContinue
+            }
+        }
+
+        $azureIdMarker = '1.3.6.1.4.1.311.97.1.0'
+        $azureIdPrefix = '1.3.6.1.4.1.311.97.'
+        $publisherOneEku = @($azureIdMarker, "${azureIdPrefix}123.456.789")
+        $publisherTwoEku = @($azureIdMarker, "${azureIdPrefix}987.654.321")
+        $publisherNoMarker = @("${azureIdPrefix}123.456.789")
+
+        $ca = New-X509Certificate -Subject "CN=Pwsh Test Signing CA" -Purpose CA
+        $otherCa = New-X509Certificate -Subject "CN=Pwsh Test Signing CA 2" -Purpose CA
+        $signingParams = @{
+            Purpose = 'CodeSigning'
+            Issuer = $ca
+        }
+
+        $publisherOneCerts = @(
+            # 3 certs for publisher one to test matching by EKU OID
+            New-X509Certificate -Subject "CN=Pwsh Test Signing Certificate 1" -EkuOid $publisherOneEku @signingParams
+            New-X509Certificate -Subject "CN=Pwsh Test Signing Certificate 1" -EkuOid $publisherOneEku @signingParams
+            New-X509Certificate -Subject "CN=Pwsh Test Signing Certificate 1" -EkuOid $publisherOneEku @signingParams
+        )
+        $publisherTwoCerts = @(
+            # 1 cert for another publisher with a different EKU OID
+            New-X509Certificate -Subject "CN=Pwsh Test Signing Certificate 2" -EkuOid $publisherTwoEku @signingParams
+        )
+        $publisherNoMarkerCerts = @(
+            # 2 certs for verifying that EKU OID is only checked when the marker is present as well
+            New-X509Certificate -Subject "CN=Pwsh Test Signing Certificate No Marker" -EkuOid $publisherNoMarker @signingParams
+            New-X509Certificate -Subject "CN=Pwsh Test Signing Certificate No Marker" -EkuOid $publisherNoMarker @signingParams
+        )
+        $otherCaCerts = @(
+            # Used to verify that we can't spoof the EKU by issuing from another CA
+            New-X509Certificate -Subject "CN=Pwsh Test Signing Certificate 1" -EkuOid $publisherOneEku -Issuer $otherCa -Purpose CodeSigning
+        )
+
+        # We cannot use CurrentUser as always prompts with an interactive
+        # dialog Window. This is why the tests need to run as Administrator.
+        $rootStore = Get-Item Cert:\LocalMachine\Root
+        $rootStore.Open('ReadWrite')
+        $rootStore.Add($ca)
+        $rootStore.Add($otherCa)
+
+        $trustedStore = Get-Item Cert:\CurrentUser\TrustedPublisher
+        $trustedStore.Open('ReadWrite')
+
+        $disallowedStore = Get-Item Cert:\CurrentUser\Disallowed
+        $disallowedStore.Open('ReadWrite')
+    }
+
+    AfterEach {
+        if (-not $IsWindows) {
+            return
+        }
+
+        $certs = [System.Security.Cryptography.X509Certificates.X509Certificate2Collection]::new(
+            [System.Security.Cryptography.X509Certificates.X509Certificate2[]]@(
+                $publisherOneCerts; $publisherTwoCerts; $publisherNoMarkerCerts; $otherCaCerts))
+        $trustedStore.RemoveRange($certs)
+        $disallowedStore.RemoveRange($certs)
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        if (-not $IsWindows) {
+            return
+        }
+
+        $rootStore.Remove($ca)
+        $rootStore.Remove($otherCa)
+        $rootStore.Dispose()
+        $trustedStore.Dispose()
+        $disallowedStore.Dispose()
+    }
+
+    It "Trusts publisher by thumbprint match" {
+        $trustedStore.Add($publisherOneCerts[0])
+        Invoke-SignedScript -Certificate $publisherOneCerts[0] | Should -Be ran
+    }
+
+    It "Trusts publisher by EKU OID in another trusted cert" {
+        $trustedStore.Add($publisherOneCerts[0])
+        Invoke-SignedScript -Certificate $publisherOneCerts[1] | Should -Be ran
+    }
+
+    It "Ignores disallow cert with EKU OID match when CA root is different" {
+        $disallowedStore.Add($otherCaCerts[0])
+        $trustedStore.Add($publisherOneCerts[0])
+        Invoke-SignedScript -Certificate $publisherOneCerts[0] | Should -Be ran
+    }
+
+    It "Ignores disallow cert with EKU OID match but different thumbprint - allow <AllowType>" -TestCases @(
+        @{ AllowType = 'ByThumbprint'}
+        @{ AllowType = 'ByEku' }
+    ) {
+        param ($AllowType)
+
+        $trustedCert = $AllowType -eq 'ByThumbprint' ? $publisherOneCerts[0] : $publisherOneCerts[1]
+        $trustedStore.Add($trustedCert)
+        $disallowedStore.Add($publisherOneCerts[2])
+
+        Invoke-SignedScript -Certificate $publisherOneCerts[0] | Should -Be ran
+    }
+
+    It "Distrusts publisher not in TrustedPublisher store" {
+        {
+            Invoke-SignedScript -Certificate $publisherOneCerts[0]
+        } | Should -Throw
+    }
+
+    It "Distrusts publisher when EKU OID has no marker present" {
+        $trustedStore.Add($publisherNoMarkerCerts[0])
+        {
+            Invoke-SignedScript -Certificate $publisherNoMarkerCerts[1]
+        } | Should -Throw
+    }
+
+    It "Distrusts publisher when EKU OID matches but from another CA" {
+        $trustedStore.Add($publisherOneCerts[0])
+        {
+            Invoke-SignedScript -Certificate $otherCaCerts[0]
+        } | Should -Throw
+    }
+
+    It "Distrusts publisher when EKU OID is not the same but from same CA" {
+        $trustedStore.Add($publisherOneCerts[0])
+        {
+            Invoke-SignedScript -Certificate $publisherTwoCerts[0]
+        } | Should -Throw
+    }
+
+    It "Distrusts publisher when trusted but is disallowed - allow <AllowType>" -TestCases @(
+        @{ AllowType = 'ByThumbprint' }
+        @{ AllowType = 'ByEku' }
+    ) {
+        param ($AllowType)
+
+        $trustedCert = $AllowType -eq 'ByThumbprint' ? $publisherOneCerts[0] : $publisherOneCerts[1]
+        $trustedStore.Add($trustedCert)
+        $disallowedStore.Add($publisherOneCerts[1])
+
+        {
+            Invoke-SignedScript -Certificate $publisherOneCerts[1]
+        } | Should -Throw
+    }
+}
+
 #
 # Ported from MultiMachine Tests
 # Tests\Engine\HelpSystem\Pester.Engine.HelpSystem.BugFix.Tests.ps1
