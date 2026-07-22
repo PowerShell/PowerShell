@@ -28,5 +28,5 @@ jobs:
         id: verify
         uses: ./.github/actions/infrastructure/markdownlinks
         with:
-          timeout-sec: 30
-          maximum-retry-count: 2
+          timeout-sec: 20
+          maximum-retry-count: 3
