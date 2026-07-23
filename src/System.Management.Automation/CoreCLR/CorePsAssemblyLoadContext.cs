@@ -244,6 +244,11 @@ namespace System.Management.Automation
         {
             s_nativeDllSubFolder ??= GetNativeDllSubFolderName(out s_nativeDllExtension);
             string folder = Path.GetDirectoryName(assembly.Location);
+            if (string.IsNullOrEmpty(folder))
+            {
+                return IntPtr.Zero;
+            }
+
             string fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName) + s_nativeDllExtension;
 
             return NativeLibrary.TryLoad(fullName, out IntPtr pointer) ? pointer : IntPtr.Zero;
