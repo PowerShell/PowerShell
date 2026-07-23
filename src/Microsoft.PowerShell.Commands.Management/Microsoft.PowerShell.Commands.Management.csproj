@@ -15,39 +15,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="commands\management\ControlPanelItemCommand.cs" />
-    <Compile Remove="commands\management\CommitTransactionCommand.cs" />
-    <Compile Remove="commands\management\Eventlog.cs" />
-    <Compile Remove="commands\management\GetTransactionCommand.cs" />
-    <Compile Remove="commands\management\GetWMIObjectCommand.cs" />
-    <Compile Remove="commands\management\InvokeWMIMethodCommand.cs" />
-    <Compile Remove="commands\management\RegisterWMIEventCommand.cs" />
-    <Compile Remove="commands\management\RemoveWMIObjectCommand.cs" />
-    <Compile Remove="commands\management\RollbackTransactionCommand.cs" />
-    <Compile Remove="commands\management\SetWMIInstanceCommand.cs" />
-    <Compile Remove="commands\management\StartTransactionCommand.cs" />
-    <Compile Remove="commands\management\UseTransactionCommand.cs" />
-    <Compile Remove="commands\management\WMIHelper.cs" />
-    <Compile Remove="commands\management\WebServiceProxy.cs" />
-    <Compile Remove="singleshell\installer\MshManagementMshSnapin.cs" />
-    <Compile Remove="gen\EventlogResources.cs" />
-    <Compile Remove="gen\TransactionResources.cs" />
-    <Compile Remove="gen\WebServiceResources.cs" />
-    <Compile Remove="gen\ControlPanelResources.cs" />
-    <Compile Remove="gen\WmiResources.cs" />
-    <Compile Remove="gen\ManagementMshSnapInResources.cs" />
-
-    <EmbeddedResource Remove="resources\EventlogResources.resx" />
-    <EmbeddedResource Remove="resources\TransactionResources.resx" />
-    <EmbeddedResource Remove="resources\WebServiceResources.resx" />
-    <EmbeddedResource Remove="resources\ControlPanelResources.resx" />
-    <EmbeddedResource Remove="resources\WmiResources.resx" />
-    <EmbeddedResource Remove="resources\ManagementMshSnapInResources.resx" />
-  </ItemGroup>
-
-  <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="11.0.0-preview.5.26302.115" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="11.0.0-preview.6.26359.118" />
   </ItemGroup>
 
 </Project>
