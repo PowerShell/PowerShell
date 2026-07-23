@@ -4,7 +4,7 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
 
   BeforeAll {
     $file1 = "file1.txt"
-    Setup -File "$file1"
+    New-Item -Path (Join-Path $TestDrive $file1) -ItemType File -Force > $null
     $streamContent = "ShouldWork"
   }
 
@@ -19,12 +19,12 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       $result | Should -BeExactly "ExpectedContent"
     }
 
-    It "should Add-Content to TestDrive:\dynamicfile.txt with dynamic parameters" -Pending:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
+    It "should Add-Content to TestDrive:\dynamicfile.txt with dynamic parameters" -Skip:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
       $result = Add-Content -Path TestDrive:\dynamicfile.txt -Value "ExpectedContent" -PassThru
       $result | Should -BeExactly "ExpectedContent"
     }
 
-    It "should return expected string from TestDrive:\dynamicfile.txt" -Pending:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
+    It "should return expected string from TestDrive:\dynamicfile.txt" -Skip:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
       $result = Get-Content -Path TestDrive:\dynamicfile.txt
       $result | Should -BeExactly "ExpectedContent"
     }
@@ -56,8 +56,8 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
         $ADSTestDir = "addcontentadstest"
         $ADSTestFile = "addcontentads.txt"
         $streamContent = "This is a test stream."
-        Setup -Directory "$ADSTestDir"
-        Setup -File "$ADSTestFile"
+        New-Item -Path (Join-Path $TestDrive $ADSTestDir) -ItemType Directory -Force > $null
+        New-Item -Path (Join-Path $TestDrive $ADSTestFile) -ItemType File -Force > $null
       }
 
       It "Should add an alternate data stream on a directory" -Skip:(!$IsWindows) {
@@ -77,7 +77,7 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
     }
 
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 9058182)]
-    It "should be able to pass multiple [string]`$objects to Add-Content through the pipeline to output a dynamic Path file" -Pending:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
+    It "should be able to pass multiple [string]`$objects to Add-Content through the pipeline to output a dynamic Path file" -Skip:($IsLinux -Or $IsMacOS) {#https://github.com/PowerShell/PowerShell/issues/891
       "hello","world" | Add-Content -Path TestDrive:\dynamicfile2.txt
       $result = Get-Content -Path TestDrive:\dynamicfile2.txt
       $result.length | Should -Be 2

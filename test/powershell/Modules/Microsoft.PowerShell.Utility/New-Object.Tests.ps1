@@ -111,7 +111,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
     }
 
     #This case will throw "Execution OK" now, just mark as pending now
-    It "New-Object with not init class constructor should throw Exception" -Pending{
+    It "New-Object with not init class constructor should throw Exception" -Skip{
         if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
         {
            Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
@@ -137,18 +137,20 @@ try
     $PSDefaultParameterValues["it:skip"] = ![System.Management.Automation.Platform]::IsWindowsDesktop
 
     Describe "New-Object COM functionality" -Tags "CI" {
-        $testCases = @(
-            @{
-                Name   = 'Microsoft.Update.AutoUpdate'
-                Property = 'Settings'
-                Type = 'Object'
-            }
-            @{
-                Name   = 'Microsoft.Update.SystemInfo'
-                Property = 'RebootRequired'
-                Type = 'Bool'
-            }
-        )
+        BeforeDiscovery {
+            $testCases = @(
+                @{
+                    Name   = 'Microsoft.Update.AutoUpdate'
+                    Property = 'Settings'
+                    Type = 'Object'
+                }
+                @{
+                    Name   = 'Microsoft.Update.SystemInfo'
+                    Property = 'RebootRequired'
+                    Type = 'Bool'
+                }
+            )
+        }
 
         It "Should be able to create <Name> with property <Property> of Type <Type>" -TestCases $testCases {
             param($Name, $Property, $Type)

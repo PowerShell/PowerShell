@@ -1,13 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI" {
+Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI" -Skip:$IsLinux {
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ($IsLinux) {
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-
         $restoreLocation = Get-Location
 
         $DirSep = [IO.Path]::DirectorySeparatorChar
@@ -41,8 +36,6 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-
         #restore the previous location
         Set-Location -Path $restoreLocation
     }
@@ -458,7 +451,7 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
     }
 
     Context 'Validate Get-ChildItem -Path -Include' {
-        It 'Get-ChildItem -Path $-Include "*.txt"' -Pending:$true {    # Pending due to a bug
+        It 'Get-ChildItem -Path $-Include "*.txt"' -Skip:$true {    # Pending due to a bug
             $result = Get-ChildItem -Path $rootDir -Include "*.txt"
             $result.Count | Should -Be 1
             $result | Should -BeOfType System.IO.FileInfo
@@ -491,7 +484,7 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
     }
 
     Context 'Validate Get-ChildItem -Path -Include' {
-        It 'Get-ChildItem -Path -Include "*.txt" -Force' -Pending:$true {    # Pending due to a bug
+        It 'Get-ChildItem -Path -Include "*.txt" -Force' -Skip:$true {    # Pending due to a bug
             $result = Get-ChildItem -Path $rootDir -Include "*.txt" -Force
             $result.Count | Should -Be 1
             $result | Should -BeOfType System.IO.FileInfo

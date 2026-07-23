@@ -74,7 +74,9 @@ Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 }
 
 Describe "Set-Alias" -Tags "CI" {
-    Mock Get-Date { return "Friday, October 30, 2015 3:38:08 PM" }
+    BeforeAll {
+        Mock Get-Date { return "Friday, October 30, 2015 3:38:08 PM" }
+    }
     It "Should be able to set alias without error" {
 
 	{ Set-Alias -Name gd -Value Get-Date } | Should -Not -Throw

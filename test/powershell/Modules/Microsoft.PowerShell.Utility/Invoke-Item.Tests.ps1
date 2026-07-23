@@ -74,13 +74,15 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
         New-Item -Path $testFolder -ItemType Directory -Force > $null
         $testFile2 = Join-Path -Path $testFolder -ChildPath "text2.txt"
         New-Item -Path $testFile2 -ItemType File -Force > $null
-
-        $textFileTestCases = @(
-            @{ TestFile = $testFile1; Name='file in root' },
-            @{ TestFile = $testFile2; Name='file in subDirectory' })
     }
 
     Context "Invoke a text file on Unix" {
+        BeforeDiscovery {
+            $textFileTestCases = @(
+                @{ TestFile = 'placeholder1'; Name='file in root' },
+                @{ TestFile = 'placeholder2'; Name='file in subDirectory' })
+        }
+
         BeforeEach {
             $redirectErr = Join-Path -Path $TestDrive -ChildPath "error.txt"
 
@@ -104,7 +106,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
 
         ## Run this test only on macOS because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
         ## causing this test to fail or the build to not respond.
-        It "Should invoke text file '<Name>' without error on Mac" -Pending -TestCases $textFileTestCases {
+        It "Should invoke text file '<Name>' without error on Mac" -Skip -TestCases $textFileTestCases {
             param($TestFile)
 
             $expectedTitle = Split-Path $TestFile -Leaf
@@ -193,6 +195,10 @@ Categories=Application;
                 Remove-Item $appFolder/InvokeItemTest.desktop -Force -ErrorAction SilentlyContinue
                 Remove-Item $HOME/InvokeItemTest.Success -Force -ErrorAction SilentlyContinue
             }
+            if($IsMacOS)
+            {
+                Stop-ProcessMacOs -Name Finder
+            }
         }
 
         BeforeEach {
@@ -203,19 +209,12 @@ Categories=Application;
             }
         }
 
-        AfterAll{
-            if($IsMacOS)
-            {
-                Stop-ProcessMacOs -Name Finder
-            }
-        }
-
 
         It "Should invoke a folder without error" -Skip:(!$supportedEnvironment) {
             if ($IsWindows)
             {
                 if (Test-IsWindowsArm64) {
-                    Set-ItResult -Pending -Because "Shell.Application errors with COMException: The server process could not be started because the configured identity is incorrect. Check the username and password."
+                    Set-ItResult -Inconclusive -Because "Shell.Application errors with COMException: The server process could not be started because the configured identity is incorrect. Check the username and password."
                 }
 
                 $shell = New-Object -ComObject "Shell.Application"
@@ -243,7 +242,7 @@ Categories=Application;
             }
             else
             {
-                Set-TestInconclusive -Message "AppleScript is not currently reliable on Az Pipelines"
+                Set-ItResult -Inconclusive -Because "AppleScript is not currently reliable on Az Pipelines"
                 # validate on MacOS by using AppleScript
                 $beforeCount = Get-WindowCountMacOS -Name Finder
                 Invoke-Item -Path $PSHOME

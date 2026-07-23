@@ -26,7 +26,7 @@ Describe "Get-PSProvider" -Tags "CI" {
     }
 
     Context 'ItemSeparator properties' {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = if ($IsWindows) {
                             @(
                                 @{Provider = 'FileSystem'; ItemSeparator = '\'; AltItemSeparator = '/'}

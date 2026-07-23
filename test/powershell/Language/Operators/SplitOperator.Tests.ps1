@@ -174,7 +174,7 @@ Describe "Split Operator" -Tags CI {
     }
 
     Context "Binary split operator options" {
-        BeforeAll {
+        BeforeDiscovery {
             # Add '%' in testText2 in order to second line doesn't start with 'b'.
             $testCases = @(
                 @{ Name = '`n';   testText = "a12a`nb34b`nc56c`nd78d";       testText2 = "a12a`n%b34b`nc56c`nd78d";       newLine = "`n" }

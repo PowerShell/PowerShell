@@ -183,7 +183,7 @@ Describe "Test try/catch" -Tags "CI" {
         }
 
         # Disabled - Compiled script has differing (but better) behavior
-        It "return in try" -Pending {
+        It "return in try" -Skip {
             $a = . {
               function foo($i) {
                 try {
@@ -375,7 +375,7 @@ Describe "Test try/catch" -Tags "CI" {
         }
 
         # Disabled - Compiled script has differing (but better) behavior
-        It "return in catch without loop" -Pending {
+        It "return in catch without loop" -Skip {
             $a = . {
               function foo {
                 try {
@@ -398,7 +398,7 @@ Describe "Test try/catch" -Tags "CI" {
         }
 
         # Disabled - Compiled script has differing (but better) behavior
-        It "return in catch within foreach loop" -Pending {
+        It "return in catch within foreach loop" -Skip {
             $a = . {
               function foo {
                 foreach ($i in (1..3)) {

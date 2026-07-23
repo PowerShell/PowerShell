@@ -49,7 +49,7 @@ Describe "Serialization Tests" -tags "CI" {
     }
 
     #pending because of "System.Uri cannot be serialized because it does not have a parameterless constructor."
-    It 'Test system Uri objects serialize and deserialize work as expected.' -Pending:$true {
+    It 'Test system Uri objects serialize and deserialize work as expected.' -Skip:$true {
         $uristrings = "http://www.microsoft.com","http://www.microsoft.com:8000","http://www.microsoft.com/index.html","http://www.microsoft.com/default.asp","http://www.microsoft.com/Hello%20World.htm"
         foreach($uristring in $uristrings)
         {

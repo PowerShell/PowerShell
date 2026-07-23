@@ -2,11 +2,13 @@
 # Licensed under the MIT License.
 Describe 'Break statements with classes' -Tags "CI" {
 
-    function Get-Errors([string]$sourceCode) {
-        $tokens = $null
-        $errors = $null
-        $ast = [System.Management.Automation.Language.Parser]::ParseInput($sourceCode, [ref] $tokens, [ref] $errors)
-        return $errors
+    BeforeAll {
+        function Get-Errors([string]$sourceCode) {
+            $tokens = $null
+            $errors = $null
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput($sourceCode, [ref] $tokens, [ref] $errors)
+            return $errors
+        }
     }
 
     Context 'break is inside a class method' {

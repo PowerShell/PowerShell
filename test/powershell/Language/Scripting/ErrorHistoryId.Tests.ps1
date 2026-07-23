@@ -3,15 +3,7 @@
 
 Describe "Error HistoryId Tests" -Tags "CI" {
 
-    BeforeAll {
-        $setting = [System.Management.Automation.PSInvocationSettings]::New()
-        $setting.AddToHistory = $true
-
-        function RunCommand($ps, $command) {
-            $ps.Commands.Clear()
-            $ps.AddScript($command).Invoke($null, $setting)
-        }
-
+    BeforeDiscovery {
         $funcBarUseWriteErrorApi = @'
 function bar {
     [CmdletBinding()]
@@ -38,6 +30,17 @@ function bar {
     $PSCmdlet.ThrowTerminatingError($er)
 }
 '@
+    }
+
+    BeforeAll {
+        $setting = [System.Management.Automation.PSInvocationSettings]::New()
+        $setting.AddToHistory = $true
+
+        function RunCommand($ps, $command) {
+            $ps.Commands.Clear()
+            $ps.AddScript($command).Invoke($null, $setting)
+        }
+
     }
 
     BeforeEach {

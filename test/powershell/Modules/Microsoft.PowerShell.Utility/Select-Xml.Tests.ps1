@@ -31,6 +31,22 @@ Describe "Select-Xml DRT Unit Tests" -Tags "CI" {
 
 Describe "Select-Xml Feature Tests" -Tags "Feature" {
 
+	BeforeDiscovery {
+		$testCases = @(
+			@{testName = 'Literalpath with relative paths'}
+			@{testName = 'Literalpath with absolute paths'}
+			@{testName = 'Literalpath with path with dots'}
+			@{testName = 'Path with relative paths'}
+			@{testName = 'Path with absolute paths'}
+			@{testName = 'Path with path with dots'}
+		)
+
+		if ( ! $IsCoreCLR ) {
+			$testcases += @{testName = 'Literalpath with network paths'}
+			$testcases += @{testName = 'Path with network paths'}
+		}
+	}
+
 	BeforeAll {
 		$fileName = New-Item -Path "TestDrive:\testSelectXml.xml"
 		$xmlContent = @"
@@ -42,22 +58,25 @@ Describe "Select-Xml Feature Tests" -Tags "Feature" {
 		Set-Content -Path $fileName -Value $xmlContent
 
 		$fileNameWithDots = $fileName.FullName.Replace("\", "\.\")
+		$relativeName = $fileName.Name
 
-		$driveLetter = [string]($fileName.FullName)[0]
-		$fileNameAsNetworkPath = "\\localhost\$driveLetter`$" + $fileName.FullName.SubString(2)
-
-		$testCases = @(
-			@{testName = 'Literalpath with relative paths'; testParameter = @{LiteralPath = $fileName.Name; XPath = 'Root'}},
-			@{testName = 'Literalpath with absolute paths'; testParameter = @{LiteralPath = $fileName.FullName; XPath = 'Root'}},
-			@{testName = 'Literalpath with path with dots'; testParameter = @{LiteralPath = $fileNameWithDots; XPath = 'Root'}},
-			@{testName = 'Path with relative paths'; testParameter = @{Path = $fileName.Name; XPath = 'Root'}},
-			@{testName = 'Path with absolute paths'; testParameter = @{Path = $fileName.FullName; XPath = 'Root'}},
-			@{testName = 'Path with path with dots'; testParameter = @{Path = $fileNameWithDots; XPath = 'Root'}}
-		)
+		# Build lookup map so It blocks can access runtime-resolved test parameters by name.
+		# Pester 5 evaluates -TestCases at discovery time, before BeforeAll, so testParameter
+		# values that depend on runtime data (TestDrive paths) must be looked up at run time.
+		$testParameterMap = @{
+			'Literalpath with relative paths'  = @{LiteralPath = $relativeName;             XPath = 'Root'}
+			'Literalpath with absolute paths'  = @{LiteralPath = $fileName.FullName;        XPath = 'Root'}
+			'Literalpath with path with dots'  = @{LiteralPath = $fileNameWithDots;         XPath = 'Root'}
+			'Path with relative paths'         = @{Path        = $relativeName;             XPath = 'Root'}
+			'Path with absolute paths'         = @{Path        = $fileName.FullName;        XPath = 'Root'}
+			'Path with path with dots'         = @{Path        = $fileNameWithDots;         XPath = 'Root'}
+		}
 
 		if ( ! $IsCoreCLR ) {
-			$testcases += @{testName = 'Literalpath with network paths'; testParameter = @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'}}
-			$testcases += @{testName = 'Path with network paths'; testParameter = @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'}}
+			$driveLetter = [string]($fileName.FullName)[0]
+			$fileNameAsNetworkPath = "\\localhost\$driveLetter`$" + $fileName.FullName.SubString(2)
+			$testParameterMap['Literalpath with network paths'] = @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'}
+			$testParameterMap['Path with network paths']        = @{Path        = $fileNameAsNetworkPath; XPath = 'Root'}
 		}
 
 		Push-Location -Path $fileName.Directory
@@ -68,8 +87,9 @@ Describe "Select-Xml Feature Tests" -Tags "Feature" {
 	}
 
 	It "Can work with input files using <testName>" -TestCases $testCases {
-		param($testParameter)
+		param($testName)
 
+		$testParameter = $testParameterMap[$testName]
 		$node = Select-Xml @testParameter
 		$node | Should -HaveCount 1
 		$node.Path | Should -Be $fileName.FullName

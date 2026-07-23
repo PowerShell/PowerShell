@@ -102,14 +102,16 @@ using module WithRoot
     Context 'execute type creation in the module context' {
 
         # let's define types to make it more fun
-        class A { [string] foo() { return "local"} }
-        class B { [string] foo() { return "local"} }
-        class C { [string] foo() { return "local"} }
+        BeforeAll {
+            class A { [string] foo() { return "local"} }
+            class B { [string] foo() { return "local"} }
+            class C { [string] foo() { return "local"} }
+        }
 
         # We need to think about it: should it work or not.
         # Currently, types are resolved in compile-time to the 'local' versions
         # So at runtime we don't call the module versions.
-        It 'Can execute type creation in the module context with new()' -Pending {
+        It 'Can execute type creation in the module context with new()' -Skip {
             & (Get-Module ABC) { [C]::new().foo() } | Should -Be C
             & (Get-Module NoRoot) { [A]::new().foo() } | Should -Be A2
             & (Get-Module WithRoot) { [A]::new().foo() } | Should -Be A0
