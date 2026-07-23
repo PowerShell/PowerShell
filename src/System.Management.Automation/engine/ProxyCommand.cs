@@ -1,8 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace System.Management.Automation
 {
@@ -423,7 +425,13 @@ namespace System.Management.Automation
             }
 
             PSObject examples = GetProperty<PSObject>(help, "examples");
-            PSObject[] example = GetProperty<PSObject[]>(examples, "example");
+            // Get-Help returns a single example as PSObject and multiple as PSObject[].
+            // Normalize both to IEnumerable<PSObject> so the loop handles either case.
+            PSObject[] exampleArray = GetProperty<PSObject[]>(examples, "example");
+            IEnumerable<PSObject> example = exampleArray
+                ?? (GetProperty<PSObject>(examples, "example") is PSObject singleEx
+                    ? new[] { singleEx }
+                    : null);
             if (example != null)
             {
                 foreach (PSObject ex in example)
@@ -461,7 +469,20 @@ namespace System.Management.Automation
 
                     if (exsb.Length > 0)
                     {
-                        sb.Append("\n\n.EXAMPLE\n\n");
+                        // The title property value may be stored as a PSObject wrapping a string,
+                        // so use ToString() on the raw Value rather than 'Value as string'.
+                        string exampleTitle = ExtractExampleTitle(ex.Properties["title"]?.Value?.ToString());
+                        if (!string.IsNullOrEmpty(exampleTitle))
+                        {
+                            sb.Append("\n\n.EXAMPLE ");
+                            sb.Append(exampleTitle);
+                            sb.Append("\n\n");
+                        }
+                        else
+                        {
+                            sb.Append("\n\n.EXAMPLE\n\n");
+                        }
+
                         sb.Append(exsb);
                     }
                 }
@@ -496,6 +517,43 @@ namespace System.Management.Automation
             AppendContent(sb, ".FUNCTIONALITY", GetProperty<PSObject>(help, "Functionality"));
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Extracts the user-provided example title from the decorated MAML title string.
+        /// MAML titles have the format:
+        ///   "-------------------------- EXAMPLE N --------------------------" (untitled)
+        ///   "-------------------------- EXAMPLE N: Title --------------------------" (titled)
+        /// On localized builds, "EXAMPLE" is replaced by the localized
+        /// <see cref="HelpDisplayStrings.ExampleUpperCase"/> string. To stay culture-agnostic,
+        /// this method anchors on the surrounding dashes and the ":" separator rather than
+        /// the literal word "EXAMPLE".
+        /// Returns the trimmed user title, or null if the title is missing or untitled.
+        /// </summary>
+        private static string ExtractExampleTitle(string decoratedTitle)
+        {
+            if (string.IsNullOrEmpty(decoratedTitle))
+            {
+                return null;
+            }
+
+            // Strip the leading and trailing dashes (and any surrounding whitespace) that
+            // BuildXmlFromComments adds around the title. The inner text is of the form
+            // "<localized-EXAMPLE> N" or "<localized-EXAMPLE> N: <user-title>".
+            Match match = Regex.Match(decoratedTitle, @"^\s*-+\s*(?<inner>.*?)\s*-+\s*$");
+            string inner = match.Success ? match.Groups["inner"].Value : decoratedTitle.Trim();
+
+            // The user title (if any) is everything after the first ":" in the inner text.
+            // Given "EXAMPLE N: My Title", colonIndex points to ':', and the substring
+            // after it is " My Title" which is then trimmed.
+            int colonIndex = inner.IndexOf(':');
+            if (colonIndex < 0)
+            {
+                return null;
+            }
+
+            string title = inner.Substring(colonIndex + 1).Trim();
+            return string.IsNullOrEmpty(title) ? null : title;
         }
 
         #endregion
