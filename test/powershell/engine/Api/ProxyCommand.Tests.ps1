@@ -287,11 +287,44 @@ End {{
     }
 
     Context 'GetHelpComments handles edge cases in example titles' {
+        It 'should emit a single titled example (regression: single PSObject, not array)' {
+            function HelpFuncSingleTitled {
+                <#
+                  .SYNOPSIS
+                  Single titled example.
+
+                  .EXAMPLE Only titled example
+                  Get-Process
+
+                  Gets all processes
+                #>
+                param()
+            }
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncSingleTitled))
+            $helpComments | Should -BeLike '*.EXAMPLE Only titled example*'
+        }
+
+        It 'should emit a single untitled example (regression: single PSObject, not array)' {
+            function HelpFuncSingleUntitled {
+                <#
+                  .SYNOPSIS
+                  Single untitled example.
+
+                  .EXAMPLE
+                  Get-Service
+
+                  Gets all services
+                #>
+                param()
+            }
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncSingleUntitled))
+            $helpComments | Should -BeLike '*.EXAMPLE*Get-Service*'
+            $helpComments | Should -Not -BeLike '*.EXAMPLE:*'
+        }
+
         It 'should handle title containing a colon' {
-            # NOTE: a second example is included to work around a pre-existing
-            # behavior where Get-Help returns a single example as a PSObject
-            # rather than PSObject[], which causes ProxyCommand.GetHelpComments
-            # to skip the example loop entirely.
             function HelpFuncColonTitle {
                 <#
                   .SYNOPSIS
@@ -315,8 +348,6 @@ End {{
         }
 
         It 'should handle title containing dashes' {
-            # See note in 'should handle title containing a colon' about the
-            # second example.
             function HelpFuncDashTitle {
                 <#
                   .SYNOPSIS
@@ -340,9 +371,6 @@ End {{
         }
 
         It 'should handle a titled example alongside an untitled one' {
-            # See note in 'should handle title containing a colon' about why two
-            # examples are required for ProxyCommand.GetHelpComments to emit any
-            # example at all.
             function HelpFuncTitledPair {
                 <#
                   .SYNOPSIS

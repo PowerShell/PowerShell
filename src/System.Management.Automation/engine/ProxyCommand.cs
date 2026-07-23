@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -424,7 +425,13 @@ namespace System.Management.Automation
             }
 
             PSObject examples = GetProperty<PSObject>(help, "examples");
-            PSObject[] example = GetProperty<PSObject[]>(examples, "example");
+            // Get-Help returns a single example as PSObject and multiple as PSObject[].
+            // Normalize both to IEnumerable<PSObject> so the loop handles either case.
+            PSObject[] exampleArray = GetProperty<PSObject[]>(examples, "example");
+            IEnumerable<PSObject> example = exampleArray
+                ?? (GetProperty<PSObject>(examples, "example") is PSObject singleEx
+                    ? new[] { singleEx }
+                    : null);
             if (example != null)
             {
                 foreach (PSObject ex in example)
