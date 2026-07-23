@@ -603,6 +603,37 @@ namespace PowershellTestConfigNamespace
             # following keys which we are validating below.
             $resultContent.ContainsKey("SessionType") -and $resultContent.ContainsKey("SchemaVersion") -and $resultContent.ContainsKey("Guid") -and $resultContent.ContainsKey("Author") | Should -BeTrue
         }
+
+        It "Handles PSObject wrapped strings inside hashtable or string parameter value" {
+            New-PSSessionConfigurationFile -Path TestDrive:/test.pssc -VisibleCmdlets @(('Get-Help' | Write-Output))
+            $content = Get-Content -Path TestDrive:/test.pssc -Raw
+            $content | Should -Match "VisibleCmdlets = 'Get-Help'"
+        }
+
+        It "Handles dictionary types in hashtable or string parameter value" {
+            $dict = [Ordered]@{
+                Name = 'Get-Service'
+                Parameters = @(
+                    @{ Name = 'Name'; ValidateSet = @('WinRM', 'Netlogon') }
+                    @{ Name = 'DependentServices' }
+                )
+            }
+
+            New-PSSessionConfigurationFile -Path TestDrive:/test.pssc -VisibleCmdlets @('Get-Help', $dict)
+            $config = Import-PowerShellDataFile -Path TestDrive:/test.pssc
+            $config.VisibleCmdlets.Count | Should -Be 2
+            $config.VisibleCmdlets[0] | Should -Be Get-Help
+            $config.VisibleCmdlets[1].Name | Should -Be 'Get-Service'
+            $config.VisibleCmdlets[1].Parameters.Count | Should -Be 2
+            $config.VisibleCmdlets[1].Parameters[0].Name | Should -Be 'Name'
+            $config.VisibleCmdlets[1].Parameters[0].ValidateSet | Should -Be @('WinRM', 'Netlogon')
+            $config.VisibleCmdlets[1].Parameters[1].Name | Should -Be 'DependentServices'
+        }
+
+        It "Emits error with correct member names when invalid parameters are provided to New-PSSessionConfigurationFile" {
+             $err = { New-PSSessionConfigurationFile -Path TestDrive:/test.pssc -VisibleCmdlets @(1) -ErrorAction Stop } | Should -Throw -PassThru
+             ([string]$err) | Should -Be "The member 'VisibleCmdlets' must be an array consisting of either string or hashtable elements."
+        }
     }
 
     Describe "Feature tests for New-PSSessionConfigurationFile Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
