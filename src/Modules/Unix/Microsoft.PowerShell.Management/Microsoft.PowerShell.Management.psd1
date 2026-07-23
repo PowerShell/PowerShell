@@ -56,5 +56,6 @@ CmdletsToExport=@("Add-Content",
     "Set-ItemProperty",
     "Get-TimeZone",
     "Stop-Computer",
-    "Restart-Computer")
+    "Restart-Computer",
+    "Test-Elevated")
 }
