@@ -45,7 +45,17 @@ namespace System.Management.Automation.Runspaces
             Errors = new ConcurrentBag<string>();
         }
 
+        internal PSSnapInTypeAndFormatErrors(string psSnapinName, string formatDataXml, bool isXml)
+        {
+            this.psSnapinName = psSnapinName;
+            FormatDataXml = formatDataXml;
+            _ = isXml;
+            Errors = new ConcurrentBag<string>();
+        }
+
         internal ExtendedTypeDefinition FormatData { get; }
+
+        internal string FormatDataXml { get; }
 
         internal TypeData TypeData { get; }
 
