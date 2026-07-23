@@ -96,3 +96,13 @@ Describe 'PushRunspaceLocalFailure' -Tags 'CI' {
         }
     }
 }
+
+Describe 'Host.Rectangle.GetHashCode' -Tags 'CI' {
+    It 'Folds negative (Left XOR Right) using lower, not upper, bits' {
+        # Regression: the branch for lower < 0 (and not Int32.MinValue) incorrectly did
+        # i64 += (UInt64)(-upper) instead of (UInt64)(-lower).
+        # left=-1, right=0 -> lower = -1; top=bottom=0 -> upper = 0. Correct i64 low part is 1; buggy was 0.
+        $rect = [System.Management.Automation.Host.Rectangle]::new(-1, 0, 0, 0)
+        $rect.GetHashCode() | Should -Be 1
+    }
+}
