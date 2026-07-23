@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Globalization;
+using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation.Help
 {
@@ -28,6 +29,11 @@ namespace System.Management.Automation.Help
         internal UpdatableHelpModuleInfo(string name, Guid guid, string path, string uri)
         {
             Debug.Assert(!string.IsNullOrEmpty(name));
+            // Condition is required, `GetModuleInfo()` may call this function with empty GUID.
+            if (!name.Equals(InitialSessionState.CoreSnapin, StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.Assert(guid != Guid.Empty);
+            }
             Debug.Assert(!string.IsNullOrEmpty(path));
             Debug.Assert(!string.IsNullOrEmpty(uri));
 

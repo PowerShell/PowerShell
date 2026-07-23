@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Globalization;
+using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation.Help
 {
@@ -21,6 +22,11 @@ namespace System.Management.Automation.Help
         internal UpdatableHelpUri(string moduleName, Guid moduleGuid, CultureInfo culture, string resolvedUri)
         {
             Debug.Assert(!string.IsNullOrEmpty(moduleName));
+            // Condition is required, `GetHelpInfoUri()` may call this function with empty GUID.
+            if (!moduleName.Equals(InitialSessionState.CoreSnapin, StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.Assert(moduleGuid != Guid.Empty);
+            }
             Debug.Assert(!string.IsNullOrEmpty(resolvedUri));
 
             ModuleName = moduleName;
