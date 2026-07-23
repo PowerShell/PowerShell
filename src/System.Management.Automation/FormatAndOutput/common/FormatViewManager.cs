@@ -470,7 +470,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             var isRemotingPropertyName = name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
                    || name.Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
                    || name.Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase)
-                   || name.Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase);
+                   || name.Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase)
+                   || name.Equals(RemotingConstants.EventObject, StringComparison.OrdinalIgnoreCase)
+                   || name.Equals(PSObject.PSTypeNames, StringComparison.OrdinalIgnoreCase);
             return !isRemotingPropertyName;
         }
 
