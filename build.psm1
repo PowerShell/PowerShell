@@ -361,6 +361,8 @@ function Start-PSBuild {
         Indicates a CI build; restores the Pester module to the output directory.
     .PARAMETER ForMinimalSize
         Produces a build optimized for minimal binary size (linux-x64, win7-x64, or osx-x64 only).
+    .PARAMETER ForceProduceLocalizedResources
+        Forces the build to produce satellite assemblies for all cultures, even when not required.
     .PARAMETER SkipExperimentalFeatureGeneration
         Skips the step that runs the built pwsh to produce the experimental-features list.
     .PARAMETER SMAOnly

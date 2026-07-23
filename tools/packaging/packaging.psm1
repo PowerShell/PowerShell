@@ -167,7 +167,7 @@ function Start-PSPackage {
 
         Write-Warning -Message "Start-PSPackage: The build PreCheck has failed."
         if (-not $Script:Options) {
-            Write-Warning -Message "Start-PSPackage: builid options variable is null indicating Start-PSBuild hasn't been run yet."
+            Write-Warning -Message "Start-PSPackage: build options variable is null indicating Start-PSBuild hasn't been run yet."
         }
         if (-not $PSModuleRestoreCorrect) {
             Write-Warning -Message "Start-PSPackage: PSModuleRestoreCorrect variable is null indicating build -PSModuleRestore was not performed."
