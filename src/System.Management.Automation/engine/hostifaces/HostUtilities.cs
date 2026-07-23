@@ -28,7 +28,7 @@ namespace System.Management.Automation
         private static bool HostSupportUnicode()
         {
             // Reference: https://github.com/zkat/supports-unicode/blob/main/src/lib.rs
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (OperatingSystem.IsWindows())
             {
                 return Environment.GetEnvironmentVariable("WT_SESSION") is not null ||
                     Environment.GetEnvironmentVariable("TERM_PROGRAM") is "vscode" ||
