@@ -453,10 +453,9 @@ namespace System.Management.Automation
             return Unix.NativeMethods.CreateHardLink(path, strTargetPath) == 0;
         }
 
-        internal static unsafe bool NonWindowsSetDate(DateTime dateToUse)
+        internal static bool NonWindowsSetDate(DateTime dateToUse)
         {
-            Unix.NativeMethods.UnixTm tm = Unix.NativeMethods.DateTimeToUnixTm(dateToUse);
-            return Unix.NativeMethods.SetDate(&tm) == 0;
+            return Unix.NativeMethods.SetDate(dateToUse) == 0;
         }
 
         internal static bool NonWindowsIsSameFileSystemItem(string pathOne, string pathTwo)
@@ -938,103 +937,268 @@ namespace System.Management.Automation
             /// <summary>The native methods class.</summary>
             internal static partial class NativeMethods
             {
-                private const string psLib = "libpsl-native";
+                // errno values below are the standard POSIX numbers, identical on Linux and macOS.
+                private const int EPERM = 1;
+                private const int ENOENT = 2;
+                private const int ESRCH = 3;
+                private const int EINTR = 4;
+                private const int EACCES = 13;
+                private const int EINVAL = 22;
 
-                // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
-                // C bools are 1 byte and so must be marshalled as I1
-
-                [LibraryImport(psLib)]
-                internal static partial int GetErrorCategory(int errno);
-
-                [LibraryImport(psLib)]
-                internal static partial int GetPPid(int pid);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-                internal static partial int GetLinkCount(string filePath, out int linkCount);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                [return: MarshalAs(UnmanagedType.I1)]
-                internal static partial bool IsExecutable(string filePath);
-
-                [LibraryImport(psLib)]
-                internal static partial uint GetCurrentThreadId();
-
-                [LibraryImport(psLib)]
-                [return: MarshalAs(UnmanagedType.Bool)]
-                internal static partial bool KillProcess(int pid);
-
-                [LibraryImport(psLib)]
-                internal static partial int WaitPid(int pid, [MarshalAs(UnmanagedType.Bool)] bool nohang);
-
-                // This is the struct `private_tm` from setdate.h in libpsl-native.
-                // Packing is set to 4 to match the unmanaged declaration.
-                // https://github.com/PowerShell/PowerShell-Native/blob/c5575ceb064e60355b9fee33eabae6c6d2708d14/src/libpsl-native/src/setdate.h#L23
-                [StructLayout(LayoutKind.Sequential, Pack = 4)]
-                internal unsafe struct UnixTm
+                // Maps a Unix errno to the integer value of a PowerShell ErrorCategory.
+                // Mirrors the mapping previously provided by libpsl-native's GetErrorCategory.
+                internal static int GetErrorCategory(int errno)
                 {
-                    /// <summary>Seconds (0-60).</summary>
-                    internal int tm_sec;
-
-                    /// <summary>Minutes (0-59).</summary>
-                    internal int tm_min;
-
-                    /// <summary>Hours (0-23).</summary>
-                    internal int tm_hour;
-
-                    /// <summary>Day of the month (1-31).</summary>
-                    internal int tm_mday;
-
-                    /// <summary>Month (0-11).</summary>
-                    internal int tm_mon;
-
-                    /// <summary>The year - 1900.</summary>
-                    internal int tm_year;
-
-                    /// <summary>Day of the week (0-6, Sunday = 0).</summary>
-                    internal int tm_wday;
-
-                    /// <summary>Day in the year (0-365, 1 Jan = 0).</summary>
-                    internal int tm_yday;
-
-                    /// <summary>Daylight saving time.</summary>
-                    internal int tm_isdst;
+                    switch (errno)
+                    {
+                        case EINVAL:
+                            return (int)ErrorCategory.InvalidArgument;
+                        case ENOENT:
+                        case ESRCH:
+                            return (int)ErrorCategory.ObjectNotFound;
+                        case EINTR:
+                            return (int)ErrorCategory.OperationStopped;
+                        case EACCES:
+                        case EPERM:
+                            return (int)ErrorCategory.PermissionDenied;
+                        default:
+                            return (int)ErrorCategory.NotSpecified;
+                    }
                 }
 
-                // We need a way to convert a DateTime to a unix date.
-                internal static UnixTm DateTimeToUnixTm(DateTime date)
+                // The methods below replace former libpsl-native P/Invokes with direct calls to
+                // libc (see engine/Interop/Unix/*). The Interop.Unix declarations are compiled only
+                // for non-Windows builds, so the bodies are guarded with #if UNIX. These methods are
+                // never invoked on Windows.
+#if UNIX
+                // access(path, X_OK) returns 0 when the file is executable, -1 otherwise.
+                internal static bool IsExecutable(string filePath)
                 {
-                    UnixTm tm;
-                    tm.tm_sec = date.Second;
-                    tm.tm_min = date.Minute;
-                    tm.tm_hour = date.Hour;
-                    tm.tm_mday = date.Day;
-                    tm.tm_mon = date.Month - 1; // needs to be 0 indexed
-                    tm.tm_year = date.Year - 1900; // years since 1900
-                    tm.tm_wday = 0; // this is ignored by mktime
-                    tm.tm_yday = 0; // this is also ignored
-                    tm.tm_isdst = date.IsDaylightSavingTime() ? 1 : 0;
-                    return tm;
+                    return Interop.Unix.Access(filePath, Interop.Unix.X_OK) != -1;
                 }
 
-                [LibraryImport(psLib, SetLastError = true)]
-                internal static unsafe partial int SetDate(UnixTm* tm);
+                internal static uint GetCurrentThreadId()
+                {
+                    if (OperatingSystem.IsMacOS())
+                    {
+                        Interop.Unix.PthreadThreadIdNp(IntPtr.Zero, out ulong tid);
+                        return (uint)tid;
+                    }
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial int CreateSymLink(string filePath, string target);
+                    return (uint)Interop.Unix.GetTid();
+                }
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial int CreateHardLink(string filePath, string target);
+                internal static bool KillProcess(int pid)
+                {
+                    return Interop.Unix.Kill(pid, Interop.Unix.SIGKILL) == 0;
+                }
 
-                [LibraryImport(psLib)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static partial string GetUserFromPid(int pid);
+                internal static int WaitPid(int pid, bool nohang)
+                {
+                    return Interop.Unix.WaitPid(pid, IntPtr.Zero, nohang ? Interop.Unix.WNOHANG : 0);
+                }
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                [return: MarshalAs(UnmanagedType.I1)]
-                internal static partial bool IsSameFileSystemItem(string filePathOne, string filePathTwo);
+                // Set the system clock. Mirrors libpsl-native's SetDate, which converted a
+                // broken-down local time via mktime() and called settimeofday(). DateTimeOffset
+                // performs the equivalent local-time-to-Unix-seconds conversion in managed code.
+                internal static int SetDate(DateTime date)
+                {
+                    Interop.Unix.Timeval tv;
+                    tv.Seconds = new DateTimeOffset(date).ToUnixTimeSeconds();
+                    tv.Microseconds = 0;
+                    return Interop.Unix.SetTimeOfDay(ref tv, IntPtr.Zero);
+                }
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial int GetInodeData(string path, out ulong device, out ulong inode);
+                internal static int CreateSymLink(string filePath, string target)
+                {
+                    // libpsl-native mapped CreateSymLink(link, target) to symlink(target, link).
+                    return Interop.Unix.Symlink(target, filePath);
+                }
+
+                internal static int CreateHardLink(string filePath, string target)
+                {
+                    // libpsl-native mapped CreateHardLink(newlink, target) to link(target, newlink).
+                    return Interop.Unix.Link(target, filePath);
+                }
+
+                // File type bits (S_IFMT family) and set-user/group/sticky bits. These constants
+                // are identical on Linux and macOS.
+                private const int S_IFMT = 0xF000;
+                private const int S_IFDIR = 0x4000;
+                private const int S_IFCHR = 0x2000;
+                private const int S_IFBLK = 0x6000;
+                private const int S_IFREG = 0x8000;
+                private const int S_IFIFO = 0x1000;
+                private const int S_IFLNK = 0xA000;
+                private const int S_IFSOCK = 0xC000;
+                private const int S_ISUID = 0x800;
+                private const int S_ISGID = 0x400;
+                private const int S_ISVTX = 0x200;
+
+                internal static int GetCommonStat(string filePath, out CommonStatStruct cs)
+                {
+                    return GetCommonStatImpl(filePath, followSymlink: true, out cs);
+                }
+
+                internal static int GetCommonLStat(string filePath, out CommonStatStruct cs)
+                {
+                    return GetCommonStatImpl(filePath, followSymlink: false, out cs);
+                }
+
+                private static int GetCommonStatImpl(string filePath, bool followSymlink, out CommonStatStruct cs)
+                {
+                    cs = default;
+                    int ret = Interop.Unix.Stat(filePath, followSymlink, out Interop.Unix.StatInfo info);
+                    if (ret != 0)
+                    {
+                        return ret;
+                    }
+
+                    cs.Inode = info.Inode;
+                    cs.Mode = info.Mode;
+                    cs.UserId = info.UserId;
+                    cs.GroupId = info.GroupId;
+                    cs.HardlinkCount = info.HardlinkCount;
+                    cs.Size = info.Size;
+                    cs.AccessTime = info.AccessTime;
+                    cs.ModifiedTime = info.ModifiedTime;
+                    cs.StatusChangeTime = info.StatusChangeTime;
+                    cs.BlockSize = info.BlockSize;
+                    cs.DeviceId = (int)info.Device;
+                    cs.NumberOfBlocks = (int)info.NumberOfBlocks;
+
+                    int fmt = info.Mode & S_IFMT;
+                    cs.IsDirectory = fmt == S_IFDIR ? 1 : 0;
+                    cs.IsFile = fmt == S_IFREG ? 1 : 0;
+                    cs.IsSymbolicLink = fmt == S_IFLNK ? 1 : 0;
+                    cs.IsBlockDevice = fmt == S_IFBLK ? 1 : 0;
+                    cs.IsCharacterDevice = fmt == S_IFCHR ? 1 : 0;
+                    cs.IsNamedPipe = fmt == S_IFIFO ? 1 : 0;
+                    cs.IsSocket = fmt == S_IFSOCK ? 1 : 0;
+
+                    // Matches libpsl-native: only the corresponding bit among the three special bits is set.
+                    cs.IsSetUid = (info.Mode & 0xE00) == S_ISUID ? 1 : 0;
+                    cs.IsSetGid = (info.Mode & 0xE00) == S_ISGID ? 1 : 0;
+                    cs.IsSticky = (info.Mode & 0xE00) == S_ISVTX ? 1 : 0;
+                    return 0;
+                }
+
+                // Uses lstat semantics, matching libpsl-native's GetLinkCount.
+                internal static int GetLinkCount(string filePath, out int linkCount)
+                {
+                    int ret = Interop.Unix.Stat(filePath, followSymlink: false, out Interop.Unix.StatInfo info);
+                    linkCount = info.HardlinkCount;
+                    return ret;
+                }
+
+                // Uses stat semantics (follows symlinks), matching libpsl-native's GetInodeData.
+                internal static int GetInodeData(string path, out ulong device, out ulong inode)
+                {
+                    int ret = Interop.Unix.Stat(path, followSymlink: true, out Interop.Unix.StatInfo info);
+                    device = (ulong)info.Device;
+                    inode = (ulong)info.Inode;
+                    return ret;
+                }
+
+                internal static bool IsSameFileSystemItem(string filePathOne, string filePathTwo)
+                {
+                    if (Interop.Unix.Stat(filePathOne, followSymlink: true, out Interop.Unix.StatInfo one) == 0
+                        && Interop.Unix.Stat(filePathTwo, followSymlink: true, out Interop.Unix.StatInfo two) == 0)
+                    {
+                        return one.Device == two.Device && one.Inode == two.Inode;
+                    }
+
+                    return false;
+                }
+
+                // macOS: getppid() only returns the *current* process's parent, so the parent of an
+                // arbitrary pid is obtained via proc_pidinfo. On Linux the caller uses /proc instead.
+                internal static int GetPPid(int pid)
+                {
+                    return Interop.Unix.GetParentPid(pid);
+                }
+
+                internal static string GetUserFromPid(int pid)
+                {
+                    if (Platform.IsMacOS)
+                    {
+                        if (Interop.Unix.TryGetProcessUserId(pid, out uint uid))
+                        {
+                            return GetPwUid(unchecked((int)uid));
+                        }
+
+                        return null;
+                    }
+
+                    // Linux: the owner of /proc/<pid> is the process's real user id.
+                    if (Interop.Unix.Stat($"/proc/{pid}", followSymlink: true, out Interop.Unix.StatInfo info) == 0)
+                    {
+                        return GetPwUid(info.UserId);
+                    }
+
+                    return null;
+                }
+
+                internal static string GetPwUid(int id)
+                {
+                    return Interop.Unix.GetPwUid(id);
+                }
+
+                internal static string GetGrGid(int id)
+                {
+                    return Interop.Unix.GetGrGid(id);
+                }
+#else
+                // Windows builds exclude engine/Interop/Unix. These Unix-only helpers are never
+                // called on Windows but must be present so the platform-neutral wrappers compile.
+                internal static bool IsExecutable(string filePath)
+                    => throw new PlatformNotSupportedException();
+
+                internal static uint GetCurrentThreadId()
+                    => throw new PlatformNotSupportedException();
+
+                internal static bool KillProcess(int pid)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int WaitPid(int pid, bool nohang)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int SetDate(DateTime date)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int CreateSymLink(string filePath, string target)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int CreateHardLink(string filePath, string target)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int GetCommonStat(string filePath, out CommonStatStruct cs)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int GetCommonLStat(string filePath, out CommonStatStruct cs)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int GetLinkCount(string filePath, out int linkCount)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int GetInodeData(string path, out ulong device, out ulong inode)
+                    => throw new PlatformNotSupportedException();
+
+                internal static bool IsSameFileSystemItem(string filePathOne, string filePathTwo)
+                    => throw new PlatformNotSupportedException();
+
+                internal static int GetPPid(int pid)
+                    => throw new PlatformNotSupportedException();
+
+                internal static string GetUserFromPid(int pid)
+                    => throw new PlatformNotSupportedException();
+
+                internal static string GetPwUid(int id)
+                    => throw new PlatformNotSupportedException();
+
+                internal static string GetGrGid(int id)
+                    => throw new PlatformNotSupportedException();
+#endif
 
                 /// <summary>
                 /// This is a struct from getcommonstat.h in the native library.
@@ -1111,18 +1275,6 @@ namespace System.Management.Automation
                     /// <summary>Whether the sticky bit is set on the filesystem item.</summary>
                     internal int IsSticky;
                 }
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-                internal static unsafe partial int GetCommonLStat(string filePath, out CommonStatStruct cs);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-                internal static unsafe partial int GetCommonStat(string filePath, out CommonStatStruct cs);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial string GetPwUid(int id);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial string GetGrGid(int id);
             }
         }
     }
