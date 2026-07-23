@@ -26,7 +26,14 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// CurrentUser configuration applies to the current user.
         /// </summary>
-        CurrentUser = 1
+        CurrentUser = 1,
+
+        /// <summary>
+        /// MachineFolder configuration applies to all users and is stored in the writable per-machine
+        /// data store of a packaged (MSIX) install. It is only present when running as such a package;
+        /// otherwise this scope has no backing file.
+        /// </summary>
+        MachineFolder = 2
     }
 
     /// <summary>
@@ -61,6 +68,11 @@ namespace System.Management.Automation.Configuration
         private string systemWideConfigFile;
         private string systemWideConfigDirectory;
 
+        // When running as a packaged MSIX app with the per-machine data store provisioned, the path to the
+        // writable per-machine (admin) 'MachineFolder' config file. Null when not packaged, in which case
+        // the MachineFolder scope has no backing file and merge orders collapse to the legacy behavior.
+        private string machineFolderConfigFile;
+
         // The json file containing the per-user configuration settings.
         private readonly string perUserConfigFile;
         private readonly string perUserConfigDirectory;
@@ -85,6 +97,17 @@ namespace System.Management.Automation.Configuration
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
 
+            // When running as a packaged MSIX app that opts into the per-machine data store, expose that
+            // writable location as an additional 'MachineFolder' (admin) configuration scope. The shipped
+            // $PSHOME config remains the read-only product defaults; system-wide writes are redirected to
+            // the machine folder and only the changed keys are stored there (no full seed). Policy and
+            // preference settings merge these scopes with different precedence (see the Utils merge orders).
+            string machineStore = Utils.GetPackagedMachineDataStorePath();
+            if (!string.IsNullOrEmpty(machineStore))
+            {
+                machineFolderConfigFile = Path.Combine(machineStore, ConfigFileName);
+            }
+
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the execution scenario.
             // Writes will attempt to create the directory if it does not already exist.
@@ -95,7 +118,7 @@ namespace System.Management.Automation.Configuration
             }
 
             emptyConfig = new JObject();
-            configRoots = new JObject[2];
+            configRoots = new JObject[3];
             serializer = JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 });
 
             fileLock = new ReaderWriterLockSlim();
@@ -103,7 +126,33 @@ namespace System.Management.Automation.Configuration
 
         private string GetConfigFilePath(ConfigScope scope)
         {
-            return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
+            switch (scope)
+            {
+                case ConfigScope.CurrentUser:
+                    return perUserConfigFile;
+                case ConfigScope.MachineFolder:
+                    // Null when not running as a packaged app with the per-machine data store provisioned.
+                    return machineFolderConfigFile;
+                default:
+                    // AllUsers -> the read-only $PSHOME (product) config.
+                    return systemWideConfigFile;
+            }
+        }
+
+        /// <summary>
+        /// Maps a logical write scope to the physical config scope that receives the write. System-wide
+        /// (AllUsers) writes are redirected to the writable per-machine data store (MachineFolder) when
+        /// running as a packaged app, so only the changed keys are stored there and the read-only $PSHOME
+        /// product config is left untouched. All other scopes write in place.
+        /// </summary>
+        private ConfigScope ResolveWriteScope(ConfigScope scope)
+        {
+            if (scope == ConfigScope.AllUsers && !string.IsNullOrEmpty(machineFolderConfigFile))
+            {
+                return ConfigScope.MachineFolder;
+            }
+
+            return scope;
         }
 
         /// <summary>
@@ -124,6 +173,9 @@ namespace System.Management.Automation.Configuration
             FileInfo info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
+
+            // An explicit settings file overrides the per-machine data store; disable the MachineFolder scope.
+            machineFolderConfigFile = null;
         }
 
         /// <summary>
@@ -207,39 +259,43 @@ namespace System.Management.Automation.Configuration
         /// <param name="setEnabled">If true, add to configuration; otherwise, remove from configuration.</param>
         internal void SetExperimentalFeatures(ConfigScope scope, string featureName, bool setEnabled)
         {
+            // Experimental features intentionally stay on the legacy scopes ($PSHOME for AllUsers) and are not
+            // redirected to the packaged per-machine data store; MachineFolder support for experimental features
+            // is deferred to a separate change (see https://github.com/PowerShell/PowerShell/issues/27702).
+            // This keeps behavior identical to non-packaged installs, so an AllUsers write under MSIX fails
+            // against the read-only $PSHOME just as it does today.
             var features = new List<string>(GetExperimentalFeatures());
             bool containsFeature = features.Contains(featureName);
             if (setEnabled && !containsFeature)
             {
                 features.Add(featureName);
-                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray(), allowMachineFolderRedirect: false);
             }
             else if (!setEnabled && containsFeature)
             {
                 features.Remove(featureName);
-                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray(), allowMachineFolderRedirect: false);
             }
         }
 
         internal bool IsImplicitWinCompatEnabled()
         {
-            bool settingValue = ReadValueFromFile<bool?>(ConfigScope.CurrentUser, DisableImplicitWinCompatKey)
-                ?? ReadValueFromFile<bool?>(ConfigScope.AllUsers, DisableImplicitWinCompatKey)
-                ?? false;
+            // DisableImplicitWinCompat is a preference: the highest-precedence scope that sets it wins.
+            bool settingValue = MergePreferenceValue<bool?>(DisableImplicitWinCompatKey) ?? false;
 
             return !settingValue;
         }
 
         internal string[] GetWindowsPowerShellCompatibilityModuleDenyList()
         {
-            return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityModuleDenyListKey)
-                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey);
+            // The compatibility module deny list is a policy: its entries are unioned across every scope.
+            return MergePolicyList(WindowsPowerShellCompatibilityModuleDenyListKey);
         }
 
         internal string[] GetWindowsPowerShellCompatibilityNoClobberModuleList()
         {
-            return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityNoClobberModuleListKey)
-                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey);
+            // The no-clobber list is a preference: the highest-precedence scope that defines it wins.
+            return MergePreferenceValue<string[]>(WindowsPowerShellCompatibilityNoClobberModuleListKey);
         }
 
         /// <summary>
@@ -381,6 +437,78 @@ namespace System.Management.Automation.Configuration
 #endif // UNIX
 
         /// <summary>
+        /// The order in which configuration scopes are consulted when resolving a *preference* setting:
+        /// the current user's value wins, then the admin-writable MachineFolder override, then the
+        /// $PSHOME (AllUsers) product default. Policy lists resolved by <see cref="MergePolicyList"/>
+        /// union every scope, so the iteration order does not affect them.
+        /// </summary>
+        private static readonly ConfigScope[] s_configScopePreferenceOrder = new[]
+        {
+            ConfigScope.CurrentUser,
+            ConfigScope.MachineFolder,
+            ConfigScope.AllUsers
+        };
+
+        /// <summary>
+        /// Resolves a *preference* setting: returns the value from the highest-precedence scope that
+        /// defines <paramref name="key"/> (see <see cref="s_configScopePreferenceOrder"/>), so that a
+        /// more specific scope overrides a broader one. Use this for settings that behave like a
+        /// preference - the current user's choice should take precedence over a system-wide value.
+        /// In contrast to <see cref="MergePolicyList"/> (which unions every scope), only the winning
+        /// scope's value is used; lower scopes are ignored once a higher one defines the key. Returns
+        /// <paramref name="defaultValue"/> when no scope defines the key. <typeparamref name="T"/> must
+        /// be a reference type or a nullable value type so that an unset scope is observable as null.
+        /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="key">The configuration key to resolve.</param>
+        /// <param name="defaultValue">The value to return when no scope defines the key.</param>
+        private T MergePreferenceValue<T>(string key, T defaultValue = default)
+        {
+            foreach (ConfigScope scope in s_configScopePreferenceOrder)
+            {
+                T value = ReadValueFromFile<T>(scope, key);
+                if (value is not null)
+                {
+                    return value;
+                }
+            }
+
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// Resolves a *policy* list: returns the case-insensitive union of the string entries defined in
+        /// every configuration scope for <paramref name="key"/>. Use this for list settings that behave
+        /// like a policy and must accumulate across scopes, so that an entry contributed by one scope
+        /// (for example a module added to the list by a product update in $PSHOME) is never dropped
+        /// because a higher-precedence scope also defines the key. Every scope can only add entries; a
+        /// higher-precedence scope never removes an entry contributed by a lower scope. Returns null when
+        /// no scope contributes an entry.
+        /// </summary>
+        /// <param name="key">The configuration key to resolve.</param>
+        private string[] MergePolicyList(string key)
+        {
+            var merged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (ConfigScope scope in s_configScopePreferenceOrder)
+            {
+                string[] values = ReadValueFromFile<string[]>(scope, key);
+                if (values is not null)
+                {
+                    merged.UnionWith(values);
+                }
+            }
+
+            if (merged.Count == 0)
+            {
+                return null;
+            }
+
+            var result = new string[merged.Count];
+            merged.CopyTo(result);
+            return result;
+        }
+
+        /// <summary>
         /// Read a value from the configuration file.
         /// </summary>
         /// <typeparam name="T">The type of the value</typeparam>
@@ -472,10 +600,20 @@ namespace System.Management.Automation.Configuration
         /// <param name="key">The string key of the value.</param>
         /// <param name="value">The value to set.</param>
         /// <param name="addValue">Whether the key-value pair should be added to or removed from the file.</param>
-        private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue)
+        /// <param name="allowMachineFolderRedirect">When true (default), system-wide (AllUsers) writes are redirected to the writable per-machine data store on a packaged install; pass false to write to the literal scope.</param>
+        private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue, bool allowMachineFolderRedirect = true)
         {
             try
             {
+                // Redirect system-wide writes to the writable per-machine data store when packaged, so only
+                // the changed keys are stored there and the read-only $PSHOME product config is untouched.
+                // Callers that must target the literal scope (e.g. experimental features, whose MachineFolder
+                // support is deferred) pass allowMachineFolderRedirect: false.
+                if (allowMachineFolderRedirect)
+                {
+                    scope = ResolveWriteScope(scope);
+                }
+
                 string fileName = GetConfigFilePath(scope);
                 fileLock.EnterWriteLock();
 
@@ -573,14 +711,15 @@ namespace System.Management.Automation.Configuration
         /// <param name="scope">The ConfigScope of the file to update.</param>
         /// <param name="key">The string key of the value.</param>
         /// <param name="value">The value to write.</param>
-        private void WriteValueToFile<T>(ConfigScope scope, string key, T value)
+        /// <param name="allowMachineFolderRedirect">When true (default), system-wide (AllUsers) writes are redirected to the writable per-machine data store on a packaged install; pass false to write to the literal scope.</param>
+        private void WriteValueToFile<T>(ConfigScope scope, string key, T value, bool allowMachineFolderRedirect = true)
         {
             if (scope == ConfigScope.CurrentUser && !Directory.Exists(perUserConfigDirectory))
             {
                 Directory.CreateDirectory(perUserConfigDirectory);
             }
 
-            UpdateValueInFile<T>(scope, key, value, true);
+            UpdateValueInFile<T>(scope, key, value, true, allowMachineFolderRedirect);
         }
 
         /// <summary>

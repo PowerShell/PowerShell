@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<Package IgnorableNamespaces="uap mp rescap desktop6"
+<Package IgnorableNamespaces="uap mp rescap desktop6 appdata"
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6"
+  xmlns:appdata="http://schemas.microsoft.com/appx/manifest/appdata/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
 
   <Identity Name="Microsoft.$PRODUCTNAME$" ProcessorArchitecture="$ARCH$" Publisher="$PUBLISHER$" Version="$VERSION$" />
@@ -17,10 +18,13 @@
     <Logo>assets\StoreLogo.png</Logo>
     <desktop6:RegistryWriteVirtualization>disabled</desktop6:RegistryWriteVirtualization>
     <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>
+    <appdata:ApplicationData>
+      <appdata:MachineFolder Sddl="(A;OICI;GA;;;BA)(A;OICI;GR;;;BU)" />
+    </appdata:ApplicationData>
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.18362.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
   </Dependencies>
 
   <Resources>

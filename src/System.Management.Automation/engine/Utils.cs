@@ -475,6 +475,28 @@ namespace System.Management.Automation
 
             return string.Empty;
         }
+
+        private const int AppModelErrorNoPackage = 15700;
+
+        [DllImport("kernel32.dll", EntryPoint = "GetCurrentPackageFamilyName", CharSet = CharSet.Unicode)]
+        private static extern int GetCurrentPackageFamilyNameNative(ref uint packageFamilyNameLength, [Out] StringBuilder packageFamilyName);
+
+        /// <summary>
+        /// Returns the package family name of the current process when it has package (MSIX) identity; otherwise null.
+        /// </summary>
+        private static string TryGetCurrentPackageFamilyName()
+        {
+            uint length = 0;
+            int rc = GetCurrentPackageFamilyNameNative(ref length, packageFamilyName: null);
+            if (rc == AppModelErrorNoPackage || length == 0)
+            {
+                return null;
+            }
+
+            var buffer = new StringBuilder((int)length);
+            rc = GetCurrentPackageFamilyNameNative(ref length, buffer);
+            return rc == 0 ? buffer.ToString() : null;
+        }
 #endif
 
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
@@ -491,6 +513,66 @@ namespace System.Management.Automation
             }
 
             return baseDirectory;
+        }
+
+#if !UNIX
+        private static string s_packagedMachineDataStorePath;
+        private static bool s_packagedMachineDataStorePathInitialized;
+#endif
+
+        /// <summary>
+        /// When running as a packaged MSIX app that opts into the per-machine ApplicationData store
+        /// (via the 'appdata:MachineFolder' manifest extension), returns the path to that writable
+        /// per-machine folder. Returns null when the process has no package identity, when the store
+        /// has not been provisioned by the OS, or on non-Windows platforms. The result is cached so the
+        /// probe happens at most once per process.
+        /// </summary>
+        internal static string GetPackagedMachineDataStorePath()
+        {
+#if UNIX
+            return null;
+#else
+            if (s_packagedMachineDataStorePathInitialized)
+            {
+                return s_packagedMachineDataStorePath;
+            }
+
+            string result = null;
+            try
+            {
+                string packageFamilyName = TryGetCurrentPackageFamilyName();
+                if (!string.IsNullOrEmpty(packageFamilyName))
+                {
+                    // Use the 64-bit registry view on 64-bit systems so 'PackageRepositoryRoot' is found
+                    // regardless of process architecture; otherwise a 32-bit pwsh on 64-bit Windows would be
+                    // redirected by WOW64 to the WOW6432Node view where the OS does not write this value.
+                    using RegistryKey baseKey = RegistryKey.OpenBaseKey(
+                        RegistryHive.LocalMachine,
+                        Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Default);
+                    using RegistryKey key = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Appx");
+                    if (key?.GetValue("PackageRepositoryRoot") is string repositoryRoot && !string.IsNullOrEmpty(repositoryRoot))
+                    {
+                        // Mirrors how the Windows App SDK locates the per-machine data store.
+                        string path = Path.Combine(repositoryRoot, "Families", "ApplicationData", packageFamilyName, "Machine");
+
+                        // The folder only exists if the OS provisioned the per-machine data store for this package family.
+                        if (Directory.Exists(path))
+                        {
+                            result = path;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) when (ex is SecurityException or UnauthorizedAccessException or IOException)
+            {
+                // Any failure to read the registry means the store is unavailable; callers fall back to $PSHOME.
+                result = null;
+            }
+
+            s_packagedMachineDataStorePath = result;
+            s_packagedMachineDataStorePathInitialized = true;
+            return result;
+#endif
         }
 
         private static string[] s_productFolderDirectories;
@@ -705,10 +787,16 @@ namespace System.Management.Automation
         /// </summary>
         internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
-        internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
+        // Merge orders across the configuration scopes. ConfigScope.MachineFolder is the writable per-machine
+        // (admin) store of a packaged (MSIX) install; it has no backing file otherwise, so including it here
+        // is a no-op for non-packaged installs and these orders then collapse to the legacy behavior.
+        // Policy settings: admin (MachineFolder) > product ($PSHOME / AllUsers) > user (CurrentUser).
+        // Preference settings: user (CurrentUser) > admin (MachineFolder) > product (AllUsers).
+        // Note: Group Policy (registry) still takes precedence over all of these; see GetPolicySettingFromGPO.
+        internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.MachineFolder, ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
-        internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };
-        internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.AllUsers };
+        internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.MachineFolder, ConfigScope.AllUsers, ConfigScope.CurrentUser };
+        internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.MachineFolder, ConfigScope.AllUsers };
 
         internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
@@ -968,6 +1056,13 @@ namespace System.Management.Automation
 
             foreach (ConfigScope scope in preferenceOrder)
             {
+                // MachineFolder is a config-file-only scope (the packaged per-machine data store); it has no
+                // Group Policy / registry representation, so skip it here and let the config-file lookup handle it.
+                if (scope == ConfigScope.MachineFolder)
+                {
+                    continue;
+                }
+
                 if (InternalTestHooks.BypassGroupPolicyCaching)
                 {
                     policy = GetPolicySettingFromGPOImpl<T>(scope);

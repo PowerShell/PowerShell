@@ -36,6 +36,15 @@ namespace PSTests.Sequential
 
         private readonly bool originalTestHookValue;
 
+        // Reflection handle to the private, mutable 'machineFolderConfigFile' field of the PowerShellConfig
+        // singleton. On non-packaged installs this field is null, so the MachineFolder scope has no backing
+        // file. Tests point it at a temp file to exercise the 3-scope (CurrentUser/MachineFolder/AllUsers)
+        // merge behavior used by MSIX installs, and it is restored to its original value on cleanup.
+        private readonly FieldInfo machineFolderConfigFileField;
+        private readonly string originalMachineFolderConfigFile;
+        private readonly string machineFolderTestConfigDirectory;
+        private readonly string machineFolderTestConfigFile;
+
         public PowerShellPolicyFixture()
         {
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
@@ -70,6 +79,11 @@ namespace PSTests.Sequential
                 NullValueHandling = NullValueHandling.Ignore
             };
             serializer = JsonSerializer.Create(settings);
+
+            machineFolderConfigFileField = typeof(PowerShellConfig).GetField("machineFolderConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
+            originalMachineFolderConfigFile = (string)machineFolderConfigFileField.GetValue(PowerShellConfig.Instance);
+            machineFolderTestConfigDirectory = Path.Combine(Path.GetTempPath(), "PSMachineFolderTest_" + Guid.NewGuid().ToString("N"));
+            machineFolderTestConfigFile = Path.Combine(machineFolderTestConfigDirectory, ConfigFileName);
 
             systemWidePolicies = new PowerShellPolicies()
             {
@@ -106,6 +120,7 @@ namespace PSTests.Sequential
             if (disposing)
             {
                 CleanupConfigFiles();
+                CleanupMachineFolderConfig();
                 if (systemWideConfigBackupFile != null)
                 {
                     File.Move(systemWideConfigBackupFile, systemWideConfigFile);
@@ -389,11 +404,62 @@ namespace PSTests.Sequential
 
         internal void ForceReadingFromFile()
         {
-            // Reset the cached roots.
+            // Reset the cached roots for every scope (AllUsers, CurrentUser, MachineFolder).
             FieldInfo roots = typeof(PowerShellConfig).GetField("configRoots", BindingFlags.NonPublic | BindingFlags.Instance);
             JObject[] value = (JObject[])roots.GetValue(PowerShellConfig.Instance);
-            value[0] = null;
-            value[1] = null;
+            for (int i = 0; i < value.Length; i++)
+            {
+                value[i] = null;
+            }
+        }
+
+        /// <summary>
+        /// Writes powershell.config.json content for the AllUsers ($PSHOME) and CurrentUser scopes and,
+        /// optionally, provisions a MachineFolder scope backed by a temp file (as happens for MSIX installs
+        /// where system-wide settings live in an admin-writable per-machine data store). Pass null for a
+        /// scope to leave it without a config file. The MachineFolder scope is disabled again whenever
+        /// <paramref name="machineFolderConfig"/> is null so tests do not leak state to one another.
+        /// </summary>
+        /// <param name="allUsersConfig">Object serialized to the AllUsers ($PSHOME) config file, or null to leave that scope unconfigured.</param>
+        /// <param name="currentUserConfig">Object serialized to the CurrentUser config file, or null to leave that scope unconfigured.</param>
+        /// <param name="machineFolderConfig">Object serialized to a temp MachineFolder config file injected into the singleton, or null to leave the MachineFolder scope disabled.</param>
+        internal void SetupWinCompatConfig(object allUsersConfig, object currentUserConfig, object machineFolderConfig = null)
+        {
+            CleanupConfigFiles();
+            CleanupMachineFolderConfig();
+
+            if (allUsersConfig != null)
+            {
+                WriteConfigFile(systemWideConfigFile, allUsersConfig);
+            }
+
+            if (currentUserConfig != null)
+            {
+                WriteConfigFile(currentUserConfigFile, currentUserConfig);
+            }
+
+            if (machineFolderConfig != null)
+            {
+                Directory.CreateDirectory(machineFolderTestConfigDirectory);
+                WriteConfigFile(machineFolderTestConfigFile, machineFolderConfig);
+                machineFolderConfigFileField.SetValue(PowerShellConfig.Instance, machineFolderTestConfigFile);
+            }
+        }
+
+        private void WriteConfigFile(string path, object config)
+        {
+            using var streamWriter = new StreamWriter(path);
+            serializer.Serialize(streamWriter, config);
+        }
+
+        private void CleanupMachineFolderConfig()
+        {
+            // Restore the process-wide singleton field and remove any temp files created for MachineFolder tests.
+            machineFolderConfigFileField.SetValue(PowerShellConfig.Instance, originalMachineFolderConfigFile);
+            if (Directory.Exists(machineFolderTestConfigDirectory))
+            {
+                Directory.Delete(machineFolderTestConfigDirectory, recursive: true);
+            }
         }
 
         #endregion
@@ -986,6 +1052,163 @@ namespace PSTests.Sequential
 
             Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers));
             Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser));
+        }
+
+        // The Windows PowerShell compatibility module deny list is a *policy*: its entries are unioned across
+        // every config scope so a module added by a product update in $PSHOME (AllUsers) is never dropped
+        // because a higher-precedence scope (MachineFolder or CurrentUser) also defines the key.
+        [Fact]
+        [Priority(12)]
+        public void PowerShellConfig_GetWinCompatModuleDenyList_UnionsAcrossScopes()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "SystemModule" } },
+                currentUserConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "UserModule" } });
+            fixture.ForceReadingFromFile();
+
+            string[] denyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+
+            Assert.NotNull(denyList);
+            Assert.Equal(2, denyList.Length);
+            Assert.Contains("SystemModule", denyList);
+            Assert.Contains("UserModule", denyList);
+        }
+
+        [Fact]
+        [Priority(13)]
+        public void PowerShellConfig_GetWinCompatModuleDenyList_DeduplicatesCaseInsensitively()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "DuplicateModule" } },
+                currentUserConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "duplicatemodule" } });
+            fixture.ForceReadingFromFile();
+
+            string[] denyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+
+            Assert.NotNull(denyList);
+            Assert.Single(denyList);
+        }
+
+        [Fact]
+        [Priority(14)]
+        public void PowerShellConfig_GetWinCompatModuleDenyList_IncludesMachineFolderScope()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "SystemModule" } },
+                currentUserConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "UserModule" } },
+                machineFolderConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "MachineModule" } });
+            fixture.ForceReadingFromFile();
+
+            string[] denyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+
+            Assert.NotNull(denyList);
+            Assert.Equal(3, denyList.Length);
+            Assert.Contains("SystemModule", denyList);
+            Assert.Contains("UserModule", denyList);
+            Assert.Contains("MachineModule", denyList);
+        }
+
+        [Fact]
+        [Priority(15)]
+        public void PowerShellConfig_GetWinCompatModuleDenyList_ReturnsNullWhenUndefined()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { ConsolePrompting = true },
+                currentUserConfig: new { ConsolePrompting = true });
+            fixture.ForceReadingFromFile();
+
+            string[] denyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+
+            Assert.Null(denyList);
+        }
+
+        // The no-clobber module list is a *preference*: only the highest-precedence scope that defines it
+        // wins (CurrentUser > MachineFolder > AllUsers); lower scopes are ignored once a higher one sets it.
+        [Fact]
+        [Priority(16)]
+        public void PowerShellConfig_GetWinCompatNoClobberList_CurrentUserWins()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "SystemModule" } },
+                currentUserConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "UserModule" } });
+            fixture.ForceReadingFromFile();
+
+            string[] noClobber = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+
+            Assert.NotNull(noClobber);
+            Assert.Single(noClobber);
+            Assert.Equal("UserModule", noClobber[0]);
+        }
+
+        [Fact]
+        [Priority(17)]
+        public void PowerShellConfig_GetWinCompatNoClobberList_FallsBackToAllUsers()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "SystemModule" } },
+                currentUserConfig: new { ConsolePrompting = true });
+            fixture.ForceReadingFromFile();
+
+            string[] noClobber = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+
+            Assert.NotNull(noClobber);
+            Assert.Single(noClobber);
+            Assert.Equal("SystemModule", noClobber[0]);
+        }
+
+        [Fact]
+        [Priority(18)]
+        public void PowerShellConfig_GetWinCompatNoClobberList_MachineFolderOverridesAllUsers()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "SystemModule" } },
+                currentUserConfig: new { ConsolePrompting = true },
+                machineFolderConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "MachineModule" } });
+            fixture.ForceReadingFromFile();
+
+            string[] noClobber = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+
+            Assert.NotNull(noClobber);
+            Assert.Single(noClobber);
+            Assert.Equal("MachineModule", noClobber[0]);
+        }
+
+        // DisableImplicitWinCompat is a *preference* bool: IsImplicitWinCompatEnabled() returns the negation
+        // of the value from the highest-precedence scope that sets it, defaulting to enabled when unset.
+        [Fact]
+        [Priority(19)]
+        public void PowerShellConfig_IsImplicitWinCompatEnabled_TrueWhenUndefined()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { ConsolePrompting = true },
+                currentUserConfig: new { ConsolePrompting = true });
+            fixture.ForceReadingFromFile();
+
+            Assert.True(PowerShellConfig.Instance.IsImplicitWinCompatEnabled());
+        }
+
+        [Fact]
+        [Priority(20)]
+        public void PowerShellConfig_IsImplicitWinCompatEnabled_FalseWhenAllUsersDisables()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { DisableImplicitWinCompat = true },
+                currentUserConfig: new { ConsolePrompting = true });
+            fixture.ForceReadingFromFile();
+
+            Assert.False(PowerShellConfig.Instance.IsImplicitWinCompatEnabled());
+        }
+
+        [Fact]
+        [Priority(21)]
+        public void PowerShellConfig_IsImplicitWinCompatEnabled_CurrentUserReEnables()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { DisableImplicitWinCompat = true },
+                currentUserConfig: new { DisableImplicitWinCompat = false });
+            fixture.ForceReadingFromFile();
+
+            Assert.True(PowerShellConfig.Instance.IsImplicitWinCompatEnabled());
         }
     }
 }

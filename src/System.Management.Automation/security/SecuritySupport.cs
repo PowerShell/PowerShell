@@ -123,6 +123,33 @@ namespace System.Management.Automation.Internal
         {
             get
             {
+                // Scopes are evaluated in this order and the first one that resolves to a value other
+                // than Undefined wins. The list intentionally combines policy and preference scopes.
+                //
+                // Important: despite the "ExecutionPolicy" name, an execution policy that comes from
+                // *configuration* (the Process, CurrentUser and LocalMachine scopes below - the
+                // PSExecutionPolicyPreference environment variable or a powershell.config.json file) is a
+                // PREFERENCE, not a policy. Only Group Policy (the MachinePolicy and UserPolicy scopes,
+                // backed by the registry) is a true policy. That distinction is why the policy scopes are
+                // evaluated first and the config-based preference scopes follow, with the current user's
+                // preference winning over the system-wide one.
+                //
+                //   Policy scopes (Group Policy, from the registry) are evaluated first so that an
+                //   administrator's Group Policy always takes precedence:
+                //     - MachinePolicy: machine-wide Group Policy.
+                //     - UserPolicy:    per-user Group Policy.
+                //
+                //   Preference scopes are evaluated afterwards, and the current user's preference
+                //   intentionally wins over the system-wide preference:
+                //     - Process:      the PSExecutionPolicyPreference environment variable.
+                //     - CurrentUser:  the current user's config.
+                //     - LocalMachine: the system-wide config.
+                //
+                // This order is public behavior and must not change. For a packaged (MSIX) install the
+                // system-wide execution policy is still read through the LocalMachine scope - it resolves
+                // from the admin-writable machine-folder data store first and then the $PSHOME default -
+                // but it remains a preference, so the current user's preference continues to win, keeping
+                // legacy behavior unchanged.
                 return new ExecutionPolicyScope[] {
                         ExecutionPolicyScope.MachinePolicy,
                         ExecutionPolicyScope.UserPolicy,
@@ -478,9 +505,12 @@ namespace System.Management.Automation.Internal
                 case ExecutionPolicyScope.CurrentUser:
                     return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.CurrentUser, shellId);
 
-                // 2: Look up the system-wide preference
+                // 2: Look up the system-wide preference. When packaged, the admin machine-folder override
+                //    takes precedence over the $PSHOME product default. When not packaged, MachineFolder has
+                //    no backing file and this falls back to the AllUsers ($PSHOME) config.
                 case ExecutionPolicyScope.LocalMachine:
-                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.AllUsers, shellId);
+                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.MachineFolder, shellId)
+                        ?? PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.AllUsers, shellId);
             }
 
             return null;
