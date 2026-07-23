@@ -1508,6 +1508,12 @@ namespace System.Management.Automation
                             // Set to ConstrainedLanguage mode.  But no restrictions are applied in audit mode
                             // and only audit messages will be emitted to logs.
                             context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+
+                            // Record that this ConstrainedLanguage state originates from the audit-mode policy
+                            // (and not from an explicit session/JEA configuration or an enforced lockdown).
+                            // Consumers such as Start-Job use this to distinguish an audit-induced boundary,
+                            // which imposes no restrictions, from an independently configured one.
+                            context.LanguageModeWasSetByAppControlAudit = true;
                             break;
                     }
                     break;
