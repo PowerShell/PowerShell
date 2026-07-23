@@ -5,6 +5,10 @@ inputs:
     description: 'Optional filter pattern (e.g., "*.md" for markdown files, ".github/" for GitHub files)'
     required: false
     default: ''
+  include-deleted:
+    description: 'Include deleted/removed files in the results (true/false)'
+    required: false
+    default: 'false'
   event-types:
     description: 'Comma-separated list of event types to support (pull_request, push)'
     required: false
@@ -26,6 +30,7 @@ runs:
         script: |
           const eventTypes = '${{ inputs.event-types }}'.split(',').map(t => t.trim());
           const filter = '${{ inputs.filter }}';
+          const includeDeleted = ('${{ inputs.include-deleted }}' || 'false').toLowerCase() === 'true';
           let changedFiles = [];
 
           if (eventTypes.includes('pull_request') && context.eventName === 'pull_request') {
@@ -55,7 +60,7 @@ runs:
             }
 
             changedFiles = allFiles
-              .filter(file => file.status === 'added' || file.status === 'modified' || file.status === 'renamed')
+              .filter(file => file.status === 'added' || file.status === 'modified' || file.status === 'renamed' || (includeDeleted && file.status === 'removed'))
               .map(file => file.filename);
 
           } else if (eventTypes.includes('push') && context.eventName === 'push') {
@@ -69,7 +74,7 @@ runs:
             });
 
             changedFiles = comparison.files
-              .filter(file => file.status === 'added' || file.status === 'modified' || file.status === 'renamed')
+              .filter(file => file.status === 'added' || file.status === 'modified' || file.status === 'renamed' || (includeDeleted && file.status === 'removed'))
               .map(file => file.filename);
 
           } else {
