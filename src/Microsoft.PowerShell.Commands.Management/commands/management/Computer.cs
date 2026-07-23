@@ -1478,14 +1478,15 @@ $result
         /// Specify a delay before the reboot occurs.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, UInt32.MaxValue)]
+        [ValidateRange(0, ValidateRangeKind.Positive)]
         public UInt32 ShutdownDelay { get; set; }
     
         /// <summary>
         /// Provide a comment for rebooting the computer.
         /// </summary>
         [Parameter]
-        public string Comment { get; set; } = string.Empty;
+        [ValidateNotNullOrEmpty]
+        public string Comment { get; set; }
 
         /// <summary>
         /// The reason for rebooting the computer.
