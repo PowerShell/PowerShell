@@ -768,18 +768,20 @@ namespace System.Management.Automation
             //      - Path.IsPathRooted("/some/path") return false on Windows.
             moduleNameOrPath = PathHandling.NormalizeDirectorySeparators(moduleNameOrPath);
 
-            // On Windows:
-            //      - Path.IsFullyQualified("\default\root") returns false, but
-            //      - Path.IsPathRooted("\default\root") returns true.
-            if (!Path.IsPathRooted(moduleNameOrPath))
-            {
-                moduleNameOrPath = Path.Join(relativeTo, moduleNameOrPath);
-            }
-
             string normalizedPath = ModuleCmdletBase.ResolveToSingleFileSystemPath(moduleNameOrPath, executionContext)?.TrimEnd(StringLiterals.DefaultPathSeparator);
 
-            // If the resolved path is null, just return the fully qualified path generated before.
-            return normalizedPath ?? Path.GetFullPath(moduleNameOrPath);
+            if (normalizedPath != null)
+            {
+                return normalizedPath;
+            }
+            else if (Path.IsPathRooted(moduleNameOrPath))
+            {
+                return Path.GetFullPath(moduleNameOrPath);
+            }
+            else
+            {
+                return Path.GetFullPath(Path.Join(relativeTo, moduleNameOrPath));
+            }
         }
 
         /// <summary>

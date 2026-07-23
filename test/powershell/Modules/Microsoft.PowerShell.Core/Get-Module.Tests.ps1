@@ -500,13 +500,12 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is home-rooted' -Tags "CI" {
-    It 'wrongly does not expand ''~'' to $HOME' {
+    It 'expands ''~'' to $HOME' {
         $path = Join-Path ~ missing.psm1
         Test-Path $path | Should -BeFalse
 
         Get-Module -ListAvailable -Name $path | ForEach-Object Path | Should -BeExactly (Join-Path $HOME missing.psm1)
-        # TODO: This is a bug.
-        Get-Module -ListAvailable -FullyQualifiedName $path | ForEach-Object Path | Should -BeExactly (Join-Path $pwd $path)
+        Get-Module -ListAvailable -FullyQualifiedName $path | ForEach-Object Path | Should -BeExactly (Join-Path $HOME missing.psm1)
     }
 
     It 'wrongly returns module information instead of $null or error for missing script module' {
@@ -564,10 +563,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             $actual | Should -HaveCount 1
             $actual[0].Path | Should -BeExactly (Join-Path $HOME loose.psm1)
 
-            # TODO: This is a bug.
             $actual = Get-Module -ListAvailable -FullyQualifiedName $path
             $actual | Should -HaveCount 1
-            $actual[0].Path | Should -BeExactly (Join-Path $pwd $path)
+            $actual[0].Path | Should -BeExactly (Join-Path $HOME loose.psm1)
         }
     }
 
