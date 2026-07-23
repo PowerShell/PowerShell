@@ -401,6 +401,7 @@ function Start-PSBuild {
         [switch]$NoPSModuleRestore,
         [switch]$CI,
         [switch]$ForMinimalSize,
+        [switch]$ForceProduceLocalizedResources,
 
         # Skips the step where the pwsh that's been built is used to create a configuration
         # Useful when changing parsing/compilation, since bugs there can mean we can't get past this step
@@ -553,11 +554,20 @@ Fix steps:
         Stop-DevPowerShell
     }
 
-    # setup arguments
-    # adding ErrorOnDuplicatePublishOutputFiles=false due to .NET SDk issue: https://github.com/dotnet/sdk/issues/15748
-    # removing --no-restore due to .NET SDK issue: https://github.com/dotnet/sdk/issues/18999
-    # $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
-    $Arguments = @("publish","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
+    # Setup arguments
+    # Added ErrorOnDuplicatePublishOutputFiles=false due to .NET SDK issue: https://github.com/dotnet/sdk/issues/15748
+    # Removed the option "--no-restore" due to .NET SDK issue: https://github.com/dotnet/sdk/issues/18999
+    $Arguments = @("publish", "/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
+
+    # Today, we only support localization for MSIX packages. For Linux and macOS packages, fxdependent and min-size packages,
+    # as well as .zip packages, we only support the default en-US culture.
+    # Therefore, we only produce satellite assemblies for win7-x64, win7-x86, and win-arm64 by default (excluding min-size build),
+    # unless the caller wants to force produce localized resources.
+    if (!$ForceProduceLocalizedResources -and ($Options.Runtime -notmatch '^(win7-x64|win7-x86|win-arm64)$' -or $ForMinimalSize)) {
+        # Disable satellite assemblies for other cultures.
+        $Arguments += "/property:SatelliteResourceLanguages=en"
+    }
+
     if ($Output -or $SMAOnly) {
         $Arguments += "--output", (Split-Path $Options.Output)
     }
@@ -596,7 +606,7 @@ Fix steps:
 
     # We pass in the AppDeployment property to indicate which type of deployment we are doing.
     # This allows the PowerShell.Common.props to set the correct properties for the build.
-    $AppDeployment = if(($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) -and $Options.Runtime -notmatch $optimizedFddRegex) {
+    $AppDeployment = if($Options.Runtime -like 'fxdependent*' -and $Options.Runtime -notmatch $optimizedFddRegex) {
         # Global and zip files
         "FxDependent"
     }
@@ -612,6 +622,12 @@ Fix steps:
     }
 
     $Arguments += "/property:AppDeployment=$AppDeployment"
+
+    if ($ForMinimalSize) {
+        # Skip Ready-to-Run compilation in 'PowerShell.Common.props' to keep binary size smaller
+        $Arguments += "/property:ForMinimalSize=True"
+    }
+
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
 
