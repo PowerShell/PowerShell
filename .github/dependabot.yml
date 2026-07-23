@@ -30,3 +30,34 @@ updates:
       interval: daily
     labels:
       - "CL-BuildPackaging"
+
+  - package-ecosystem: "docker"
+    directory: "/tools/AttackSurfaceAnalyzer/docker"
+    schedule:
+      interval: daily
+    labels:
+      - "CL-BuildPackaging"
+
+  - package-ecosystem: "docker"
+    directory: "/tools/AttackSurfaceAnalyzer/docker"
+    target-branch: "release/v7.4"
+    schedule:
+      interval: daily
+    labels:
+      - "CL-BuildPackaging"
+
+  - package-ecosystem: "docker"
+    directory: "/tools/AttackSurfaceAnalyzer/docker"
+    target-branch: "release/v7.5"
+    schedule:
+      interval: daily
+    labels:
+      - "CL-BuildPackaging"
+
+  - package-ecosystem: "docker"
+    directory: "/tools/AttackSurfaceAnalyzer/docker"
+    target-branch: "release/v7.6"
+    schedule:
+      interval: daily
+    labels:
+      - "CL-BuildPackaging"
