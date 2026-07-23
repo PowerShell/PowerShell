@@ -585,25 +585,35 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!string.IsNullOrEmpty(name))
                 {
+                    string quotedString = QuoteName(name);
+
                     if (first)
                     {
                         first = false;
+                        result.Append(quotedString);
+                        offset += quotedString.Length;
                     }
                     else
                     {
-                        result.Append(", ");
-                    }
+                        // Account for the ", " in the offset calculation
+                        int newOffset = offset + 2 + quotedString.Length;
 
-                    string quotedString = QuoteName(name);
-                    offset += quotedString.Length;
-                    if (offset > 80)
-                    {
-                        result.Append(streamWriter.NewLine);
-                        result.Append("               ");
-                        offset = 15 + quotedString.Length;
-                    }
+                        if (newOffset > 80)
+                        {
+                            // Wrap to next line with consistent indentation (4 spaces)
+                            result.Append(",");
+                            result.Append(streamWriter.NewLine);
+                            result.Append("    ");
+                            offset = 4 + quotedString.Length;
+                        }
+                        else
+                        {
+                            result.Append(", ");
+                            offset = newOffset;
+                        }
 
-                    result.Append(quotedString);
+                        result.Append(quotedString);
+                    }
                 }
             }
 
@@ -669,9 +679,9 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!firstModule)
                     {
-                        result.Append(", ");
+                        result.Append(",");
                         result.Append(streamWriter.NewLine);
-                        result.Append("               ");
+                        result.Append("    ");
                     }
 
                     firstModule = false;
