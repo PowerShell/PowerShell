@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Internal;
@@ -442,15 +443,87 @@ namespace System.Management.Automation
             return null;
         }
 
-        internal static bool NonWindowsCreateSymbolicLink(string path, string target)
+        private static int GetNonWindowsLinkCreationErrorCode(Exception ex)
         {
-            // Linux doesn't care if target is a directory or not
-            return Unix.NativeMethods.CreateSymLink(path, target) == 0;
+            if (ex is IOException)
+            {
+                int errorCode = Marshal.GetLastPInvokeError();
+                return errorCode != 0 ? errorCode : 5; // EIO
+            }
+
+            if (ex is UnauthorizedAccessException)
+            {
+                return 13; // EACCES
+            }
+
+            if (ex is NotSupportedException)
+            {
+                return IsMacOS ? 45 : 95; // ENOTSUP
+            }
+
+            if (ex is ArgumentException)
+            {
+                return 22; // EINVAL
+            }
+
+            if (ex is PathTooLongException)
+            {
+                return 36; // ENAMETOOLONG
+            }
+
+            return 5; // EIO
         }
 
-        internal static bool NonWindowsCreateHardLink(string path, string strTargetPath)
+        internal static bool NonWindowsCreateSymbolicLink(string path, string target, bool isDirectory, out int errorCode)
         {
-            return Unix.NativeMethods.CreateHardLink(path, strTargetPath) == 0;
+            errorCode = 0;
+
+            try
+            {
+                if (isDirectory)
+                {
+                    Directory.CreateSymbolicLink(path, target);
+                }
+                else
+                {
+                    File.CreateSymbolicLink(path, target);
+                }
+
+                return true;
+            }
+            catch (Exception ex) when (
+                ex is IOException or
+                UnauthorizedAccessException or
+                NotSupportedException or
+                ArgumentException or
+                PathTooLongException)
+            {
+                errorCode = GetNonWindowsLinkCreationErrorCode(ex);
+
+                return false;
+            }
+        }
+
+        internal static bool NonWindowsCreateHardLink(string path, string strTargetPath, out int errorCode)
+        {
+            errorCode = 0;
+
+            try
+            {
+                File.CreateHardLink(path, strTargetPath);
+                return true;
+            }
+            catch (Exception ex) when (
+                ex is IOException or
+                UnauthorizedAccessException or
+                NotSupportedException or
+                ArgumentException or
+                PathTooLongException)
+            {
+                errorCode = GetNonWindowsLinkCreationErrorCode(ex);
+
+                return false;
+            }
         }
 
         internal static unsafe bool NonWindowsSetDate(DateTime dateToUse)
@@ -489,12 +562,19 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsKillProcess(int pid)
         {
-            return Unix.NativeMethods.KillProcess(pid);
-        }
-
-        internal static int NonWindowsWaitPid(int pid, bool nohang)
-        {
-            return Unix.NativeMethods.WaitPid(pid, nohang);
+            try
+            {
+                Process.GetProcessById(pid).Kill();
+                return true;
+            }
+            catch (Exception ex) when (
+                ex is ArgumentException or
+                InvalidOperationException or
+                Win32Exception or
+                NotSupportedException)
+            {
+                return false;
+            }
         }
 
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
@@ -751,7 +831,37 @@ namespace System.Management.Automation
             // This is a helper that attempts to map errno into a PowerShell ErrorCategory
             internal static ErrorCategory GetErrorCategory(int errno)
             {
-                return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
+                return errno switch
+                {
+                    // EPERM, EACCES
+                    1 or 13 => ErrorCategory.PermissionDenied,
+
+                    // ENOENT
+                    2 => ErrorCategory.ObjectNotFound,
+
+                    // EEXIST
+                    17 => ErrorCategory.ResourceExists,
+
+                    // ENOTDIR, EISDIR
+                    20 or 21 => ErrorCategory.InvalidArgument,
+
+                    // ENOSPC
+                    28 => ErrorCategory.ResourceBusy,
+
+                    // EROFS
+                    30 => ErrorCategory.PermissionDenied,
+
+                    // EINVAL
+                    22 => ErrorCategory.InvalidArgument,
+
+                    // EMFILE, ENFILE
+                    24 or 23 => ErrorCategory.OpenError,
+
+                    // ENOTEMPTY
+                    39 => ErrorCategory.WriteError,
+
+                    _ => ErrorCategory.NotSpecified,
+                };
             }
 
             /// <summary>Determine if the item is a hardlink.</summary>
@@ -944,9 +1054,6 @@ namespace System.Management.Automation
                 // C bools are 1 byte and so must be marshalled as I1
 
                 [LibraryImport(psLib)]
-                internal static partial int GetErrorCategory(int errno);
-
-                [LibraryImport(psLib)]
                 internal static partial int GetPPid(int pid);
 
                 [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
@@ -958,13 +1065,6 @@ namespace System.Management.Automation
 
                 [LibraryImport(psLib)]
                 internal static partial uint GetCurrentThreadId();
-
-                [LibraryImport(psLib)]
-                [return: MarshalAs(UnmanagedType.Bool)]
-                internal static partial bool KillProcess(int pid);
-
-                [LibraryImport(psLib)]
-                internal static partial int WaitPid(int pid, [MarshalAs(UnmanagedType.Bool)] bool nohang);
 
                 // This is the struct `private_tm` from setdate.h in libpsl-native.
                 // Packing is set to 4 to match the unmanaged declaration.
@@ -1018,12 +1118,6 @@ namespace System.Management.Automation
 
                 [LibraryImport(psLib, SetLastError = true)]
                 internal static unsafe partial int SetDate(UnixTm* tm);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial int CreateSymLink(string filePath, string target);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial int CreateHardLink(string filePath, string target);
 
                 [LibraryImport(psLib)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
