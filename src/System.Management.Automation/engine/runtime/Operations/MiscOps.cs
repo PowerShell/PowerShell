@@ -3640,6 +3640,93 @@ namespace System.Management.Automation
 
             return result;
         }
+
+        /// <summary>
+        /// Gets a slice of elements from an ITuple starting at the specified index.
+        /// Used for array assignment when there are more tuple elements than variables.
+        /// </summary>
+        /// <param name="tuple">The tuple to slice.</param>
+        /// <param name="startIndex">The starting index.</param>
+        /// <returns>An array containing the remaining elements.</returns>
+        internal static object[] GetTupleSlice(ITuple tuple, int startIndex)
+        {
+            int countElements = tuple.Length - startIndex;
+            object[] result = new object[countElements];
+
+            int i = startIndex;
+            int j = 0;
+            while (j < countElements)
+            {
+                result[j++] = tuple[i++];
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Attempts to find a Deconstruct method on the given type.
+        /// </summary>
+        /// <param name="type">The type to search.</param>
+        /// <returns>The Deconstruct method info, or null if not found.</returns>
+        internal static MethodInfo GetDeconstructMethod(Type type)
+        {
+            // Look for a public instance method named "Deconstruct" with all out parameters
+            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (method.Name != "Deconstruct" || method.ReturnType != typeof(void))
+                {
+                    continue;
+                }
+
+                var parameters = method.GetParameters();
+                if (parameters.Length == 0)
+                {
+                    continue;
+                }
+
+                if (parameters.All(param => param.IsOut))
+                {
+                    return method;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Invokes the Deconstruct method on the given object and returns the deconstructed values.
+        /// </summary>
+        /// <param name="obj">The object to deconstruct.</param>
+        /// <param name="method">The Deconstruct method to invoke.</param>
+        /// <returns>An array containing the deconstructed values.</returns>
+        internal static object[] InvokeDeconstruct(object obj, MethodInfo method)
+        {
+            var parameters = method.GetParameters();
+            var args = new object[parameters.Length];
+            method.Invoke(obj, args);
+            return args;
+        }
+
+        /// <summary>
+        /// Gets a slice of values starting at the specified index.
+        /// Used for array assignment when there are more deconstructed values than variables.
+        /// This method takes the already-deconstructed array to avoid calling Deconstruct() multiple times.
+        /// </summary>
+        /// <param name="allValues">The array of all deconstructed values.</param>
+        /// <param name="startIndex">The starting index.</param>
+        /// <returns>An array containing the remaining values.</returns>
+        internal static object[] GetDeconstructSlice(object[] allValues, int startIndex)
+        {
+            int countElements = allValues.Length - startIndex;
+            object[] result = new object[countElements];
+
+            for (int i = 0; i < countElements; i++)
+            {
+                result[i] = allValues[startIndex + i];
+            }
+
+            return result;
+        }
     }
 
     internal static class MemberInvocationLoggingOps
