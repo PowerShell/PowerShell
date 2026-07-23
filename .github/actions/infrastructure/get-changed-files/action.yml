@@ -78,6 +78,7 @@ runs:
           }
 
           // Apply filter if provided
+          // Note: Filter matching is intentionally case-insensitive for cross-platform consistency
           if (filter) {
             const filterLower = filter.toLowerCase();
             const beforeFilter = changedFiles.length;
