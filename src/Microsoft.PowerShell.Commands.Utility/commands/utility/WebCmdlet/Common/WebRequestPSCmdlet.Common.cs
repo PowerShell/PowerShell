@@ -1662,7 +1662,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(uri);
 
-            return uri.IsAbsoluteUri ? uri : new Uri("http://" + uri.OriginalString);
+            return uri.IsAbsoluteUri ? uri : new Uri("https://" + uri.OriginalString);
         }
 #nullable restore
 
