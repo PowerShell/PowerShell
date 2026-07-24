@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             {
                 // Simple case - the objects are still live because they came from in-proc. Just cast them back
                 this.CommandType = (CommandTypes)(other.Members["CommandType"].Value);
-                this.Module = other.Members["Module"].Value as ShowCommandModuleInfo;
+                this.Module = other.Members["Module"]?.Value as ShowCommandModuleInfo;
             }
             else
             {
