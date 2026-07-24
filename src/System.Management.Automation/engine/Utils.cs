@@ -484,7 +484,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the package family name of the current process when it has package (MSIX) identity; otherwise null.
         /// </summary>
-        private static string TryGetCurrentPackageFamilyName()
+        private static string GetCurrentPackageFamilyName()
         {
             uint length = 0;
             int rc = GetCurrentPackageFamilyNameNative(ref length, packageFamilyName: null);
@@ -540,7 +540,7 @@ namespace System.Management.Automation
             string result = null;
             try
             {
-                string packageFamilyName = TryGetCurrentPackageFamilyName();
+                string packageFamilyName = GetCurrentPackageFamilyName();
                 if (!string.IsNullOrEmpty(packageFamilyName))
                 {
                     // Use the 64-bit registry view on 64-bit systems so 'PackageRepositoryRoot' is found
