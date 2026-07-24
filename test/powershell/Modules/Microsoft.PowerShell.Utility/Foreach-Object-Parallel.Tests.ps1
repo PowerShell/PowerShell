@@ -267,6 +267,33 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $usingErrors[0].FullyQualifiedErrorId | Should -BeExactly 'UsingVariableIsUndefined,Microsoft.PowerShell.Commands.ForEachObjectCommand'
     }
 
+    It 'Invalid property does not break subsequent using references' {
+        $Var1 = "Hello"
+        $Var2 = $null
+        $Var3 = "World"
+        $result = 1 | ForEach-Object -Parallel {
+            $Var1 = $using:Var1
+
+            # Even if this won't run, the client validates the property in
+            # strict mode and throws PropertyNotFoundException. This should
+            # not affect the other $using variables.
+            $Var2 = if ($false) { $using:Var2.InvalidProperty }
+            $Var3 = $using:Var3
+
+            [PSCustomObject]@{
+                Item = $_
+                Var1 = $Var1
+                Var2 = $Var2
+                Var3 = $Var3
+            }
+        }
+
+        $result.Item | Should -BeExactly 1
+        $result.Var1 | Should -Be Hello
+        $result.Var2 | Should -BeNullOrEmpty
+        $result.Var3 | Should -Be World
+    }
+
     It 'Verifies terminating error streaming' {
 
         $result = 1..1 | ForEach-Object -Parallel { throw 'Terminating Error!'; "Hello" } 2>&1
