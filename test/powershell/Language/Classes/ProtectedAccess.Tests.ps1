@@ -187,4 +187,3 @@ Describe "Protected Member Access - members not visible outside class" -Tags "CI
     It "Invalid protected constructor Access" { { [Base]::new() } | Should -Throw -ErrorId "MethodCountCouldNotFindBest" }
     It "Invalid protected method Access" { { $derived1.Method() } | Should -Throw -ErrorId "MethodNotFound" }
 }
-

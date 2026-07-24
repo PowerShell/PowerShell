@@ -24,4 +24,3 @@ $a = $Day.d0, $Day.d1, $Day.d2, $Day.d3, $Day.d4, $Day.d5, $Day.d6
         # Use string formatting to build a sentence.
 
         "{0} {1}" -f $Day.messageDate, $a[(Get-Date -UFormat %u)] | Out-Host
-
