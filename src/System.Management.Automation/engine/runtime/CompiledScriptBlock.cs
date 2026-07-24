@@ -2191,6 +2191,8 @@ namespace System.Management.Automation
         private bool _exitWasCalled;
         private bool _anyClauseExecuted;
 
+        internal bool ShouldRethrowExitException => _rethrowExitException;
+
         public PSScriptCmdlet(ScriptBlock scriptBlock, bool useNewScope, bool fromScriptFile, ExecutionContext context)
         {
             _scriptBlock = scriptBlock;
