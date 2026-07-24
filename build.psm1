@@ -1838,13 +1838,13 @@ function Start-PSPester {
         }
     }
 
-    $runProps = "Path = @('" + ($Path -join "','") + "')"
-    if ( $PassThru ) {
-        $runProps += "; PassThru = `$true"
+    $runProps = "Path = @('$($Path -join "','")'); "
+    if ($PassThru) {
+        $runProps += 'PassThru = $true; '
     }
     # Pester 6 fails discovery on an empty/`$null -ForEach or -TestCases by default.
     # Keep the Pester 5 behavior (empty set = zero tests, no error) for this suite.
-    $runProps += "; FailOnNullOrEmptyForEach = `$false"
+    $runProps += 'FailOnNullOrEmptyForEach = $false'
 
     $command += "`$pesterConfig = [PesterConfiguration]@{"
     $command += " Run = @{ ${runProps} }"
@@ -2034,31 +2034,33 @@ function Start-PSPester {
                     # console by Pester and captured in the NUnit XML, so projecting them away
                     # here is safe. Failed test details are preserved in TestResult so that
                     # Show-PSPesterError -testFailureObject continues to print a useful summary.
-                    $projection = '| ForEach-Object { ' + `
-                        '$run = $_; ' + `
-                        '$failed = @(); ' + `
-                        'if ($null -ne $run.Tests) { ' + `
-                            '$failed = @($run.Tests | Where-Object { -not $_.Passed } | ForEach-Object { ' + `
-                                '[pscustomobject]@{ ' + `
-                                    'Passed = $false; ' + `
-                                    'Describe = $(if ($_.Block -and $_.Block.Path) { ($_.Block.Path -join ''/'') } else { '''' }); ' + `
-                                    'Context = ''''; ' + `
-                                    'Name = [string]$_.Name; ' + `
-                                    'FailureMessage = $(if ($_.ErrorRecord) { (($_.ErrorRecord | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine) } else { '''' }); ' + `
-                                    'StackTrace = $(if ($_.ErrorRecord -and $_.ErrorRecord.Count -gt 0 -and $_.ErrorRecord[0].ScriptStackTrace) { [string]$_.ErrorRecord[0].ScriptStackTrace } else { '''' }) ' + `
-                                '} ' + `
-                            '}) ' + `
-                        '}; ' + `
-                        '[pscustomobject]@{ ' + `
-                            'TotalCount = [int]$run.TotalCount; ' + `
-                            'FailedCount = [int]$run.FailedCount; ' + `
-                            'PassedCount = [int]$run.PassedCount; ' + `
-                            'SkippedCount = [int]$run.SkippedCount; ' + `
-                            'NotRunCount = [int]$run.NotRunCount; ' + `
-                            'InconclusiveCount = [int]$run.InconclusiveCount; ' + `
-                            'TestResult = $failed ' + `
-                        '} ' + `
-                    '}'
+                    $projection = @'
+| ForEach-Object {
+    $run = $_
+    $failed = @()
+    if ($null -ne $run.Tests) {
+        $failed = @($run.Tests | Where-Object { -not $_.Passed } | ForEach-Object {
+            [pscustomobject]@{
+                Passed = $false
+                Describe = $(if ($_.Block -and $_.Block.Path) { ($_.Block.Path -join '/') } else { '' })
+                Context = ''
+                Name = [string]$_.Name
+                FailureMessage = $(if ($_.ErrorRecord) { (($_.ErrorRecord | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine) } else { '' })
+                StackTrace = $(if ($_.ErrorRecord -and $_.ErrorRecord.Count -gt 0 -and $_.ErrorRecord[0].ScriptStackTrace) { [string]$_.ErrorRecord[0].ScriptStackTrace } else { '' })
+            }
+        })
+    }
+    [pscustomobject]@{
+        TotalCount = [int]$run.TotalCount
+        FailedCount = [int]$run.FailedCount
+        PassedCount = [int]$run.PassedCount
+        SkippedCount = [int]$run.SkippedCount
+        NotRunCount = [int]$run.NotRunCount
+        InconclusiveCount = [int]$run.InconclusiveCount
+        TestResult = $failed
+    }
+}
+'@
                     $command += "$projection | Export-Clixml -Path '$passThruFile' -Force"
 
                     $passThruCommand = { & $powershell $PSFlags -c $command }
