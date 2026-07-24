@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\Test.Common.props"/>
+  <Import Project="..\..\Test.Common.props" />
 
   <PropertyGroup>
     <Description>PowerShell Fuzzing</Description>
@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpFuzz" Version="2.2.0" />
+    <PackageReference Include="SharpFuzz" Version="2.3.0" />
   </ItemGroup>
 
 </Project>

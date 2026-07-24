@@ -8,8 +8,6 @@
     CmdletsToExport   = @()
     FunctionsToExport = @(
         'Expand-PSSignedBuild'
-        'Invoke-AzDevOpsLinuxPackageBuild'
-        'Invoke-AzDevOpsLinuxPackageCreation'
         'New-DotnetSdkContainerFxdPackage'
         'Start-PrepForGlobalToolNupkg'
         'New-GlobalToolNupkgSource'
