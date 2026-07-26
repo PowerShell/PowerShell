@@ -2573,6 +2573,19 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 pathDirInfo.Delete();
                             }
+
+                            // On non-Windows platforms, CreateJunction returns false because
+                            // junctions are an NTFS-specific feature. Report a clear error instead
+                            // of silently doing nothing.
+                            if (!Platform.IsWindows)
+                            {
+                                string message = FileSystemProviderStrings.JunctionNotSupported;
+                                WriteError(new ErrorRecord(
+                                    new PlatformNotSupportedException(message),
+                                    "JunctionNotSupported",
+                                    ErrorCategory.NotImplemented,
+                                    path));
+                            }
                         }
                     }
                     catch (Exception exception)

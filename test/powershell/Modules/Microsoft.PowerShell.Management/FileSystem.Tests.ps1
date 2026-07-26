@@ -703,6 +703,12 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $junctionToDir | Should -BeTrue
         }
 
+        It "New-Item junction fails with clear error on non-Windows" -Skip:$IsWindows {
+            $targetDir = New-Item -ItemType Directory -Path "$TestDrive/target"
+            { New-Item -ItemType Junction -Path "$TestDrive/junction" -Target $targetDir.FullName -ErrorAction Stop } |
+                Should -Throw -ErrorId "JunctionNotSupported,Microsoft.PowerShell.Commands.NewItemCommand"
+        }
+
         It 'New-Item fails creating junction with relative path' -Skip:(!$IsWindows) {
             try {
                 Push-Location $TestDrive
