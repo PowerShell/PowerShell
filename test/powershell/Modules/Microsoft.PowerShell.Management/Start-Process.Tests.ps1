@@ -191,22 +191,28 @@ Describe "Environment Tests" -Tags "Feature" {
     It "UseNewEnvironment parameter should reset environment variables for child process" {
 
         $PWSH = (Get-Process -Id $PID).MainModule.FileName
-        $outputFile = Join-Path -Path $TestDrive -ChildPath output.txt
-
-        $env:TestEnvVariable | Should -BeNullOrEmpty
-
         $env:TestEnvVariable = 1
-        $userName = $env:USERNAME
 
         try {
-            Start-Process $PWSH -ArgumentList '-NoProfile','-Command Write-Output \"$($env:TestEnvVariable);$($env:USERNAME)\"' -RedirectStandardOutput $outputFile -Wait
-            Get-Content -LiteralPath $outputFile | Should -BeExactly "1;$userName"
+            $outputFile = Join-Path -Path $TestDrive -ChildPath output1.txt
+            $cmd = '"Get-ChildItem env: | Select-Object Name,Value | ConvertTo-Json"'
+            Start-Process $PWSH -ArgumentList '-NoProfile',"-Command $cmd" -RedirectStandardOutput $outputFile -Wait
+            $fullEnvVariables = Get-Content $outputFile | ConvertFrom-Json
+            $fullVariableCount = $fullEnvVariables.Count
+            $fullVariableCount | Should -BeGreaterThan 3
+            $expectedVariable = $fullEnvVariables | Where-Object Name -ceq TestEnvVariable
+            $expectedVariable.Value | Should -be $env:TestEnvVariable
 
             # Check that:
-            # 1. Environment variables is resetted (TestEnvVariable is removed)
-            # 2. Environment variables comes from current user profile
-            Start-Process $PWSH -ArgumentList '-NoProfile','-Command Write-Output \"$($env:TestEnvVariable);$($env:USERNAME)\"' -RedirectStandardOutput $outputFile -Wait -UseNewEnvironment
-            Get-Content -LiteralPath $outputFile | Should -BeExactly ";$userName"
+            # 1. Environment variables are reset (TestEnvVariable is removed)
+            # 2. An environment variable found now, should also be in the full set
+            $outputFile = Join-Path -Path $TestDrive -ChildPath output2.txt
+            Start-Process $PWSH -ArgumentList '-NoProfile',"-Command $cmd" -RedirectStandardOutput $outputFile -Wait -UseNewEnvironment
+            $envVariables = Get-Content $outputFile | ConvertFrom-Json
+            $envVariables.Count | Should -BeLessThan $fullVariableCount
+            $envVariables | Where-Object Name -ceq TestEnvVariable | Should -BeNullOrEmpty
+            $currentVariable = $envVariables[0]
+            $fullEnvVariables.Where({$_.Name -ceq $currentVariable.Name}).Value | Should -be $currentVariable.Value
         } finally {
             $env:TestEnvVariable = $null
         }
