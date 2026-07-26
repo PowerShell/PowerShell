@@ -2444,6 +2444,30 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             return $session
         }
 
+        function RunWithNoSession {
+            param(
+                [uri]$Uri,
+                [object]$Session,
+                [string]$Command,
+                [switch]$ExpectConnectionRecreated
+            )
+            $defaultSession = 'global:PSDefaultWebSession'
+            $pwsh = [PowerShell]::Create()
+            $pwsh.Runspace.SessionStateProxy.SetVariable('uri', $Uri)
+            if ($Session) {
+                $pwsh.Runspace.SessionStateProxy.SetVariable($defaultSession, $Session)
+            }
+            $script = "`$null = $command -Verbose"
+            $pwsh.AddScript($script).Invoke()
+
+            $expectedConnRecreatedCount = if ($ExpectConnectionRecreated) { 1 } else { 0 }
+            ($pwsh.Streams.Verbose | Where-Object { $matchConnRecreatedMessage.Matches($_.Message) }).Count | Should -Be $expectedConnRecreatedCount
+            $session = $pwsh.Runspace.SessionStateProxy.GetVariable($defaultSession)
+            $pwsh.Dispose()
+            return $session
+
+        }
+
         It 'Connection persistence maintained' {
             $uri = Get-WebListenerUrl
             $Session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
@@ -2548,6 +2572,21 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri -proxy $proxy" -Session $session -ExpectConnectionRecreated
             # No proxy specified - connection retained
             $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri" -Session $session
+        }
+
+        It 'Opportunistic persistence is used when no WebSession is specified' {
+            $uri = Get-WebListenerUrl
+            $defaultSession = $null
+            $defaultSession = RunWithNoSession -session $defaultSession -Uri $uri -Command 'Invoke-WebRequest -Uri $uri'
+            $defaultSession = RunWithNoSession -session $defaultSession -Uri $uri -Command 'Invoke-WebRequest -Uri $uri'
+
+            $defaultSession = $null
+            $defaultSession = RunWithNoSession -session $defaultSession -Uri $uri -Command 'Invoke-WebRequest -Uri $uri'
+            # Skip certificate check prevents re-use
+            $defaultSession = RunWithNoSession -session $defaultSession -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -SkipCertificateCheck' -ExpectConnectionRecreated
+            # Using same parameter again has re-use
+            $defaultSession = RunWithNoSession -session $defaultSession -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -SkipCertificateCheck'
+
         }
     }
 }
