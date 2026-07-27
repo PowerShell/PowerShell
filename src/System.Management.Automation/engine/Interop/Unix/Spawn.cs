@@ -50,8 +50,57 @@ internal static partial class Interop
         [LibraryImport("libc", EntryPoint = "posix_spawn_file_actions_adddup2")]
         private static partial int FileActionsAddDup2(IntPtr fileActions, int fd, int newFd);
 
-        [LibraryImport("libc", EntryPoint = "posix_spawn_file_actions_addchdir_np", StringMarshalling = StringMarshalling.Utf8)]
-        private static partial int FileActionsAddChdir(IntPtr fileActions, string path);
+        [LibraryImport("libc", EntryPoint = "chdir", StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+        private static partial int Chdir(string path);
+
+        [LibraryImport("libc", EntryPoint = "fchdir", SetLastError = true)]
+        private static partial int Fchdir(int fd);
+
+        [LibraryImport("libc", EntryPoint = "open", StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+        private static partial int Open(string path, int flags);
+
+        private const int O_RDONLY = 0;
+
+        // posix_spawn_file_actions_addchdir_np is a non-POSIX extension that may be absent
+        // on older glibc (< 2.29) or musl libc. We resolve it dynamically at first use so
+        // that platforms without the symbol get a safe chdir-based fallback instead of an
+        // EntryPointNotFoundException.
+        private delegate int FileActionsAddChdirDelegate(IntPtr fileActions, IntPtr path);
+
+        private static readonly FileActionsAddChdirDelegate? s_fileActionsAddChdir = ResolveFileActionsAddChdir();
+
+        private static FileActionsAddChdirDelegate? ResolveFileActionsAddChdir()
+        {
+            if (NativeLibrary.TryLoad("libc", typeof(Interop).Assembly, searchPath: null, out IntPtr libcHandle)
+                && NativeLibrary.TryGetExport(libcHandle, "posix_spawn_file_actions_addchdir_np", out IntPtr funcPtr))
+            {
+                return Marshal.GetDelegateForFunctionPointer<FileActionsAddChdirDelegate>(funcPtr);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Calls <c>posix_spawn_file_actions_addchdir_np</c> if available on the current platform.
+        /// </summary>
+        /// <returns>0 on success, or a non-zero errno value on failure. Returns -1 if the symbol is not available.</returns>
+        private static int TryFileActionsAddChdir(IntPtr fileActions, string path)
+        {
+            if (s_fileActionsAddChdir is null)
+            {
+                return -1;
+            }
+
+            IntPtr pathPtr = Marshal.StringToCoTaskMemUTF8(path);
+            try
+            {
+                return s_fileActionsAddChdir(fileActions, pathPtr);
+            }
+            finally
+            {
+                Marshal.FreeCoTaskMem(pathPtr);
+            }
+        }
 
         [LibraryImport("libc", EntryPoint = "posix_spawnattr_init")]
         private static partial int SpawnAttrInit(IntPtr attr);
@@ -167,9 +216,25 @@ internal static partial class Interop
                     throw new Win32Exception(rc);
                 }
 
-                if (cwd is not null && (rc = FileActionsAddChdir(fileActions, cwd)) != 0)
+                // Set the child's working directory. Prefer the atomic
+                // posix_spawn_file_actions_addchdir_np when available; otherwise fall back to
+                // chdir before spawn and restore afterwards (process-wide, but the best we can
+                // do on platforms without the _np extension such as older glibc / musl).
+                bool useChdirFallback = false;
+                int savedCwdFd = -1;
+
+                if (cwd is not null)
                 {
-                    throw new Win32Exception(rc);
+                    rc = TryFileActionsAddChdir(fileActions, cwd);
+                    if (rc == -1)
+                    {
+                        // Symbol not available – use chdir fallback.
+                        useChdirFallback = true;
+                    }
+                    else if (rc != 0)
+                    {
+                        throw new Win32Exception(rc);
+                    }
                 }
 
                 if (ownSession)
@@ -184,33 +249,62 @@ internal static partial class Interop
                 AllocNullTerminatedArray(argv, ref argvPtr);
                 AllocNullTerminatedArray(envp, ref envpPtr);
 
-                rc = PosixSpawn(out int childPid, filename, fileActions, attr, argvPtr, envpPtr);
-                if (rc != 0)
+                // If the _np API was unavailable, use chdir to set the child's cwd.
+                // Open a fd to the current directory first so we can restore it afterwards.
+                if (useChdirFallback)
                 {
-                    throw new Win32Exception(rc);
+                    savedCwdFd = Open(".", O_RDONLY);
+                    if (savedCwdFd < 0)
+                    {
+                        throw new Win32Exception(Marshal.GetLastPInvokeError());
+                    }
+
+                    if (Chdir(cwd!) != 0)
+                    {
+                        Close(savedCwdFd);
+                        throw new Win32Exception(Marshal.GetLastPInvokeError());
+                    }
                 }
 
-                // Success: hand the parent's ends back to the caller and clear the locals so
-                // the finally block does not close the descriptors that were returned.
-                if (redirectStdin)
+                try
                 {
-                    stdinFd = stdinWrite;
-                    stdinWrite = -1;
-                }
+                    rc = PosixSpawn(out int childPid, filename, fileActions, attr, argvPtr, envpPtr);
+                    if (rc != 0)
+                    {
+                        throw new Win32Exception(rc);
+                    }
 
-                if (redirectStdout)
+                    // Success: hand the parent's ends back to the caller and clear the locals so
+                    // the finally block does not close the descriptors that were returned.
+                    if (redirectStdin)
+                    {
+                        stdinFd = stdinWrite;
+                        stdinWrite = -1;
+                    }
+
+                    if (redirectStdout)
+                    {
+                        stdoutFd = stdoutRead;
+                        stdoutRead = -1;
+                    }
+
+                    if (redirectStderr)
+                    {
+                        stderrFd = stderrRead;
+                        stderrRead = -1;
+                    }
+
+                    return childPid;
+                }
+                finally
                 {
-                    stdoutFd = stdoutRead;
-                    stdoutRead = -1;
+                    // Restore the original working directory if we changed it.
+                    if (savedCwdFd >= 0)
+                    {
+                        Fchdir(savedCwdFd);
+                        Close(savedCwdFd);
+                    }
                 }
-
-                if (redirectStderr)
-                {
-                    stderrFd = stderrRead;
-                    stderrRead = -1;
-                }
-
-                return childPid;
             }
             finally
             {
