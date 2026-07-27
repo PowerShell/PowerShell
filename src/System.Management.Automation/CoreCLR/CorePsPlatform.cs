@@ -1082,9 +1082,9 @@ namespace System.Management.Automation
                     cs.IsSocket = fmt == S_IFSOCK ? 1 : 0;
 
                     // Matches libpsl-native: only the corresponding bit among the three special bits is set.
-                    cs.IsSetUid = (info.Mode & 0xE00) == S_ISUID ? 1 : 0;
-                    cs.IsSetGid = (info.Mode & 0xE00) == S_ISGID ? 1 : 0;
-                    cs.IsSticky = (info.Mode & 0xE00) == S_ISVTX ? 1 : 0;
+                    cs.IsSetUid = (info.Mode & S_ISUID) != 0 ? 1 : 0;
+                    cs.IsSetGid = (info.Mode & S_ISGID) != 0 ? 1 : 0;
+                    cs.IsSticky = (info.Mode & S_ISVTX) != 0 ? 1 : 0;
                     return 0;
                 }
 
