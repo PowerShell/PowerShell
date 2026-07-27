@@ -123,6 +123,9 @@ namespace System.Management.Automation.Internal
         {
             get
             {
+                // Only MachinePolicy and UserPolicy are policy. Process, CurrentUser, and
+                // LocalMachine are preferences, with the current-user preference taking
+                // precedence over the machine-wide configuration preference.
                 return new ExecutionPolicyScope[] {
                         ExecutionPolicyScope.MachinePolicy,
                         ExecutionPolicyScope.UserPolicy,

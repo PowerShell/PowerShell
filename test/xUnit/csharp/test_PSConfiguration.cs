@@ -3,10 +3,16 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Reflection;
+using System.Runtime.Versioning;
+#if !UNIX
+using System.Security.AccessControl;
+using System.Security.Principal;
+#endif
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -21,11 +27,14 @@ namespace PSTests.Sequential
         private const string ConfigFileName = "powershell.config.json";
 
         private readonly string systemWideConfigFile;
+        private readonly string productConfigFile;
         private readonly string currentUserConfigFile;
 
         private readonly string currentUserConfigBackupFile;
 
+        private readonly string testConfigRoot;
         private readonly string systemWideConfigDirectory;
+        private readonly string productConfigDirectory;
         private readonly string currentUserConfigDirectory;
 
         private readonly JsonSerializer serializer;
@@ -37,13 +46,20 @@ namespace PSTests.Sequential
         private readonly string originalTestAllUsersConfigDirectory;
         private readonly string originalSingletonSystemConfigDir;
         private readonly string originalSingletonSystemConfigFile;
+        private readonly string originalSingletonProductConfigFile;
+#if !UNIX
+        private readonly bool originalUseDefaultSystemConfigDirectory;
+#endif
 
         public PowerShellPolicyFixture()
         {
             // Use a temp directory for system-wide config to avoid needing write access
             // to /etc/powershell (Unix) or %ProgramData%\Microsoft\PowerShell (Windows) in CI
-            systemWideConfigDirectory = Path.Combine(Path.GetTempPath(), "PSTestSystemConfig_" + Guid.NewGuid().ToString("N"));
+            testConfigRoot = Path.Combine(Path.GetTempPath(), "PSTestConfig_" + Guid.NewGuid().ToString("N"));
+            systemWideConfigDirectory = Path.Combine(testConfigRoot, "SystemWide");
+            productConfigDirectory = Path.Combine(testConfigRoot, "Product");
             Directory.CreateDirectory(systemWideConfigDirectory);
+            Directory.CreateDirectory(productConfigDirectory);
             originalTestAllUsersConfigDirectory = InternalTestHooks.TestAllUsersConfigDirectory;
             InternalTestHooks.TestAllUsersConfigDirectory = systemWideConfigDirectory;
 
@@ -55,15 +71,28 @@ namespace PSTests.Sequential
             }
 
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
+            productConfigFile = Path.Combine(productConfigDirectory, ConfigFileName);
             currentUserConfigFile = Path.Combine(currentUserConfigDirectory, ConfigFileName);
 
-            // Redirect the PowerShellConfig singleton to use the temp system config directory
+            // Redirect the PowerShellConfig singleton to isolated system and product config files.
             var sysConfigDirField = typeof(PowerShellConfig).GetField("systemWideConfigDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
             var sysConfigFileField = typeof(PowerShellConfig).GetField("systemWideConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
+            var productConfigFileField = typeof(PowerShellConfig).GetField("productConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
+#if !UNIX
+            var useDefaultSystemConfigDirectoryField = typeof(PowerShellConfig).GetField("useDefaultSystemConfigDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
+#endif
             originalSingletonSystemConfigDir = (string)sysConfigDirField.GetValue(PowerShellConfig.Instance);
             originalSingletonSystemConfigFile = (string)sysConfigFileField.GetValue(PowerShellConfig.Instance);
+            originalSingletonProductConfigFile = (string)productConfigFileField.GetValue(PowerShellConfig.Instance);
+#if !UNIX
+            originalUseDefaultSystemConfigDirectory = (bool)useDefaultSystemConfigDirectoryField.GetValue(PowerShellConfig.Instance);
+#endif
             sysConfigDirField.SetValue(PowerShellConfig.Instance, systemWideConfigDirectory);
             sysConfigFileField.SetValue(PowerShellConfig.Instance, systemWideConfigFile);
+            productConfigFileField.SetValue(PowerShellConfig.Instance, productConfigFile);
+#if !UNIX
+            useDefaultSystemConfigDirectoryField.SetValue(PowerShellConfig.Instance, false);
+#endif
 
             if (File.Exists(currentUserConfigFile))
             {
@@ -124,13 +153,22 @@ namespace PSTests.Sequential
                 // Restore the PowerShellConfig singleton to the original system config paths
                 var sysConfigDirField = typeof(PowerShellConfig).GetField("systemWideConfigDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
                 var sysConfigFileField = typeof(PowerShellConfig).GetField("systemWideConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
+                var productConfigFileField = typeof(PowerShellConfig).GetField("productConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
+#if !UNIX
+                var useDefaultSystemConfigDirectoryField = typeof(PowerShellConfig).GetField("useDefaultSystemConfigDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
+#endif
                 sysConfigDirField.SetValue(PowerShellConfig.Instance, originalSingletonSystemConfigDir);
                 sysConfigFileField.SetValue(PowerShellConfig.Instance, originalSingletonSystemConfigFile);
+                productConfigFileField.SetValue(PowerShellConfig.Instance, originalSingletonProductConfigFile);
+#if !UNIX
+                useDefaultSystemConfigDirectoryField.SetValue(PowerShellConfig.Instance, originalUseDefaultSystemConfigDirectory);
+#endif
                 InternalTestHooks.TestAllUsersConfigDirectory = originalTestAllUsersConfigDirectory;
+                ForceReadingFromFile();
 
-                if (Directory.Exists(systemWideConfigDirectory))
+                if (Directory.Exists(testConfigRoot))
                 {
-                    Directory.Delete(systemWideConfigDirectory, recursive: true);
+                    Directory.Delete(testConfigRoot, recursive: true);
                 }
 
                 InternalTestHooks.BypassGroupPolicyCaching = originalTestHookValue;
@@ -294,13 +332,23 @@ namespace PSTests.Sequential
         {
             var maxPause = 10;
 
-            while (maxPause-- != 0 && (File.Exists(systemWideConfigFile) || File.Exists(currentUserConfigFile)))
+            while (maxPause-- != 0 &&
+                (File.Exists(systemWideConfigFile) || File.Exists(productConfigFile) || File.Exists(currentUserConfigFile)))
             {
                 var pause = false;
 
                 try
                 {
                     File.Delete(systemWideConfigFile);
+                }
+                catch (IOException)
+                {
+                    pause = true;
+                }
+
+                try
+                {
+                    File.Delete(productConfigFile);
                 }
                 catch (IOException)
                 {
@@ -406,11 +454,33 @@ namespace PSTests.Sequential
 
         internal void ForceReadingFromFile()
         {
-            // Reset the cached roots.
+            // Reset the cached roots for every physical configuration source.
             FieldInfo roots = typeof(PowerShellConfig).GetField("configRoots", BindingFlags.NonPublic | BindingFlags.Instance);
             JObject[] value = (JObject[])roots.GetValue(PowerShellConfig.Instance);
-            value[0] = null;
-            value[1] = null;
+            for (int i = 0; i < value.Length; i++)
+            {
+                value[i] = null;
+            }
+        }
+
+        internal void SetupConfigSources(object productConfig, object systemWideConfig, object currentUserConfig)
+        {
+            CleanupConfigFiles();
+
+            WriteConfigFile(productConfigFile, productConfig);
+            WriteConfigFile(systemWideConfigFile, systemWideConfig);
+            WriteConfigFile(currentUserConfigFile, currentUserConfig);
+        }
+
+        private void WriteConfigFile(string path, object config)
+        {
+            if (config is null)
+            {
+                return;
+            }
+
+            using var streamWriter = new StreamWriter(path);
+            serializer.Serialize(streamWriter, config);
         }
 
         #endregion
@@ -1004,5 +1074,170 @@ namespace PSTests.Sequential
             Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers));
             Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser));
         }
+
+        [Fact, Priority(12)]
+        public void PowerShellConfig_AllUsersValueFallsBackToProductConfig()
+        {
+            fixture.SetupConfigSources(
+                productConfig: new JObject { ["Microsoft.PowerShell:ExecutionPolicy"] = "RemoteSigned" },
+                systemWideConfig: new { ConsolePrompting = true },
+                currentUserConfig: null);
+            fixture.ForceReadingFromFile();
+
+            Assert.Equal(
+                "RemoteSigned",
+                PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.AllUsers, Utils.DefaultPowerShellShellID));
+        }
+
+        [Fact, Priority(13)]
+        public void PowerShellConfig_AllUsersValuePrefersSystemConfig()
+        {
+            fixture.SetupConfigSources(
+                productConfig: new JObject { ["Microsoft.PowerShell:ExecutionPolicy"] = "RemoteSigned" },
+                systemWideConfig: new JObject { ["Microsoft.PowerShell:ExecutionPolicy"] = "AllSigned" },
+                currentUserConfig: null);
+            fixture.ForceReadingFromFile();
+
+            Assert.Equal(
+                "AllSigned",
+                PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.AllUsers, Utils.DefaultPowerShellShellID));
+        }
+
+        [Fact, Priority(14)]
+        public void PowerShellConfig_EmptySystemExecutionPolicyFallsBackToProductConfig()
+        {
+            fixture.SetupConfigSources(
+                productConfig: new JObject { ["Microsoft.PowerShell:ExecutionPolicy"] = "RemoteSigned" },
+                systemWideConfig: new JObject { ["Microsoft.PowerShell:ExecutionPolicy"] = string.Empty },
+                currentUserConfig: null);
+            fixture.ForceReadingFromFile();
+
+            Assert.Equal(
+                "RemoteSigned",
+                PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.AllUsers, Utils.DefaultPowerShellShellID));
+        }
+
+        [Fact, Priority(15)]
+        public void PowerShellConfig_WinCompatDenyListUnionsAllSources()
+        {
+            fixture.SetupConfigSources(
+                productConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "ProductModule", "DuplicateModule" } },
+                systemWideConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "SystemModule", "duplicatemodule" } },
+                currentUserConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "UserModule" } });
+            fixture.ForceReadingFromFile();
+
+            string[] denyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+
+            Assert.Equal(4, denyList.Length);
+            Assert.Contains(denyList, module => module.Equals("ProductModule", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(denyList, module => module.Equals("SystemModule", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(denyList, module => module.Equals("UserModule", StringComparison.OrdinalIgnoreCase));
+            Assert.Single(denyList, module => module.Equals("DuplicateModule", StringComparison.OrdinalIgnoreCase));
+        }
+
+        [Fact, Priority(16)]
+        public void PowerShellConfig_WinCompatDenyListReturnsNullWhenUndefined()
+        {
+            fixture.SetupConfigSources(
+                productConfig: new { ConsolePrompting = true },
+                systemWideConfig: new { ConsolePrompting = true },
+                currentUserConfig: new { ConsolePrompting = true });
+            fixture.ForceReadingFromFile();
+
+            Assert.Null(PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList());
+        }
+
+        [Fact, Priority(17)]
+        public void PowerShellConfig_WinCompatNoClobberListUsesPreferenceOrder()
+        {
+            fixture.SetupConfigSources(
+                productConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "ProductModule" } },
+                systemWideConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "SystemModule" } },
+                currentUserConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "UserModule" } });
+            fixture.ForceReadingFromFile();
+
+            Assert.Equal(
+                new[] { "UserModule" },
+                PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList());
+        }
+
+        [Fact, Priority(18)]
+        public void PowerShellConfig_WinCompatNoClobberListSystemConfigOverridesProduct()
+        {
+            fixture.SetupConfigSources(
+                productConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "ProductModule" } },
+                systemWideConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "SystemModule" } },
+                currentUserConfig: new { ConsolePrompting = true });
+            fixture.ForceReadingFromFile();
+
+            Assert.Equal(
+                new[] { "SystemModule" },
+                PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList());
+        }
+
+        [Fact, Priority(19)]
+        public void PowerShellConfig_ImplicitWinCompatUsesPreferenceOrder()
+        {
+            fixture.SetupConfigSources(
+                productConfig: new { DisableImplicitWinCompat = true },
+                systemWideConfig: new { DisableImplicitWinCompat = true },
+                currentUserConfig: new { DisableImplicitWinCompat = false });
+            fixture.ForceReadingFromFile();
+
+            Assert.True(PowerShellConfig.Instance.IsImplicitWinCompatEnabled());
+        }
+
+        [Fact, Priority(20)]
+        public void PowerShellConfig_ResolveSystemConfigDirectoryUsesPackageFamily()
+        {
+            string baseDirectory = Path.Combine("ProgramData", "Microsoft", "PowerShell");
+            string actual = PowerShellConfig.ResolveSystemConfigDirectory(baseDirectory, "Microsoft.PowerShell_8wekyb3d8bbwe");
+
+#if UNIX
+            Assert.Equal(baseDirectory, actual);
+#else
+            Assert.Equal(
+                Path.Combine(baseDirectory, "Packages", "Microsoft.PowerShell_8wekyb3d8bbwe"),
+                actual);
+#endif
+        }
+
+#if !UNIX
+        [Fact, Priority(21)]
+        [SupportedOSPlatform("windows")]
+        public void PowerShellConfig_SystemConfigDirectorySecurityUsesRestrictedInheritedAcl()
+        {
+            DirectorySecurity security = PowerShellConfig.CreateSystemConfigDirectorySecurity();
+
+            Assert.True(security.AreAccessRulesProtected);
+            Assert.Equal(
+                new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null),
+                security.GetOwner(typeof(SecurityIdentifier)));
+            AssertAccessRule(security, WellKnownSidType.LocalSystemSid, FileSystemRights.FullControl);
+            AssertAccessRule(security, WellKnownSidType.BuiltinAdministratorsSid, FileSystemRights.FullControl);
+            AssertAccessRule(security, WellKnownSidType.BuiltinUsersSid, FileSystemRights.ReadAndExecute);
+        }
+
+        [SupportedOSPlatform("windows")]
+        private static void AssertAccessRule(
+            DirectorySecurity security,
+            WellKnownSidType sidType,
+            FileSystemRights rights)
+        {
+            var expectedSid = new SecurityIdentifier(sidType, domainSid: null);
+            AuthorizationRuleCollection rules = security.GetAccessRules(
+                includeExplicit: true,
+                includeInherited: false,
+                targetType: typeof(SecurityIdentifier));
+
+            Assert.Contains(
+                rules.OfType<FileSystemAccessRule>(),
+                rule => rule.IdentityReference.Equals(expectedSid)
+                    && rule.AccessControlType == AccessControlType.Allow
+                    && (rule.FileSystemRights & rights) == rights
+                    && rule.InheritanceFlags.HasFlag(InheritanceFlags.ContainerInherit)
+                    && rule.InheritanceFlags.HasFlag(InheritanceFlags.ObjectInherit));
+        }
+#endif
     }
 }

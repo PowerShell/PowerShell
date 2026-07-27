@@ -7,50 +7,29 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
 
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
-        $systemConfigPath = (Get-PowerShellConfiguration -Scope AllUsers).Path
-        $userConfigPath = (Get-PowerShellConfiguration -Scope CurrentUser).Path
-
-        # Enable/Disable-ExperimentalFeature always writes to the new platform
-        # location via GetConfigFilePathForWrite(), even when the effective read
-        # path (from Get-PowerShellConfiguration) points to legacy $PSHOME.
-        # Track both so AfterEach can clean up writes that land at a different path.
-        if ($IsWindows) {
-            $systemWritePath = Join-Path $env:ProgramData "Microsoft\PowerShell\powershell.config.json"
-        } else {
-            $systemWritePath = "/etc/powershell/powershell.config.json"
-        }
-
-        $systemWriteDir = Split-Path $systemWritePath
-        if (!(Test-Path $systemWriteDir)) {
-            $null = New-Item -ItemType Directory -Path $systemWriteDir -Force -ErrorAction SilentlyContinue
-        }
-
-        $systemConfigDir = Split-Path $systemConfigPath
-        if (($systemConfigDir -ne $systemWriteDir) -and !(Test-Path $systemConfigDir)) {
-            $null = New-Item -ItemType Directory -Path $systemConfigDir -Force -ErrorAction SilentlyContinue
-        }
+        $productConfigPath = Join-Path $PSHOME "powershell.config.json"
+        $systemConfigDirectory = Get-PowerShellSystemConfigDirectory
+        $systemConfigPath = Join-Path $systemConfigDirectory "powershell.config.json"
+        $userConfigPath = Join-Path (Split-Path $PROFILE.CurrentUserAllHosts) "powershell.config.json"
 
         $userConfigDir = Split-Path $userConfigPath
         if (!(Test-Path $userConfigDir)) {
             $null = New-Item -ItemType Directory -Path $userConfigDir -Force -ErrorAction SilentlyContinue
         }
 
-        $systemWriteExists = $false
-        if (($systemWritePath -ne $systemConfigPath) -and (Test-Path $systemWritePath)) {
-            $systemWriteExists = $true
-            Move-Item $systemWritePath "$systemWritePath.backup" -Force -ErrorAction SilentlyContinue
+        $productConfigExists = Test-Path $productConfigPath
+        if ($productConfigExists) {
+            Move-Item $productConfigPath "$productConfigPath.backup" -Force
         }
 
-        $systemConfigExists = $false
-        if (Test-Path $systemConfigPath) {
-            $systemConfigExists = $true
-            Move-Item $systemConfigPath "$systemConfigPath.backup" -Force -ErrorAction SilentlyContinue
+        $systemConfigExists = Test-Path $systemConfigPath
+        if ($systemConfigExists) {
+            Move-Item $systemConfigPath "$systemConfigPath.backup" -Force
         }
 
-        $userConfigExists = $false
-        if (Test-Path $userConfigPath) {
-            $userConfigExists = $true
-            Move-Item $userConfigPath "$userConfigPath.backup" -Force -ErrorAction SilentlyContinue
+        $userConfigExists = Test-Path $userConfigPath
+        if ($userConfigExists) {
+            Move-Item $userConfigPath "$userConfigPath.backup" -Force
         }
 
         $testModulePath = Join-Path -Path $PSScriptRoot -ChildPath "assets"
@@ -59,8 +38,8 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     }
 
     AfterAll {
-        if ($systemWriteExists) {
-            Move-Item "$systemWritePath.backup" $systemWritePath -Force -ErrorAction SilentlyContinue
+        if ($productConfigExists) {
+            Move-Item "$productConfigPath.backup" $productConfigPath -Force -ErrorAction SilentlyContinue
         }
 
         if ($systemConfigExists) {
@@ -72,14 +51,12 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         }
 
         $env:PSModulePath = $originalModulePath
+        Remove-TestPowerShellSystemConfigDirectory
     }
 
     AfterEach {
         Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
         Remove-Item $userConfigPath -Force -ErrorAction SilentlyContinue
-        if ($systemWritePath -ne $systemConfigPath) {
-            Remove-Item $systemWritePath -Force -ErrorAction SilentlyContinue
-        }
     }
 
     It "Enable-ExperimentalFeature will enable Experimental Feature for scope: <scope>" -TestCases @(
@@ -89,6 +66,7 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         param ($scope)
 
         if (!(Test-CanWriteToSystemConfigDir) -and $scope -eq "AllUsers") {
+            Set-ItResult -Skipped -Because "The test account cannot write the system configuration directory."
             return
         }
 
@@ -107,6 +85,7 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         param ($scope, $configPath)
 
         if (!(Test-CanWriteToSystemConfigDir) -and $scope -eq "AllUsers") {
+            Set-ItResult -Skipped -Because "The test account cannot write the system configuration directory."
             return
         }
 

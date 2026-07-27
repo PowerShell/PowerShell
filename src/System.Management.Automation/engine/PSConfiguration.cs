@@ -5,6 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation.Internal;
+#if !UNIX
+using System.Security.AccessControl;
+using System.Security.Principal;
+#endif
 using System.Text;
 using System.Threading;
 
@@ -47,6 +51,13 @@ namespace System.Management.Automation.Configuration
     /// </remarks>
     internal sealed class PowerShellConfig
     {
+        private enum ConfigSource
+        {
+            SystemWide = 0,
+            CurrentUser = 1,
+            Product = 2
+        }
+
         private const string ConfigFileName = "powershell.config.json";
         private const string ExecutionPolicyDefaultShellKey = "Microsoft.PowerShell:ExecutionPolicy";
         private const string DisableImplicitWinCompatKey = "DisableImplicitWinCompat";
@@ -61,15 +72,23 @@ namespace System.Management.Automation.Configuration
         private string systemWideConfigFile;
         private string systemWideConfigDirectory;
 
-        // Legacy system-wide config file path in $PSHOME, used for fallback reads.
-        private readonly string legacySystemWideConfigFile;
+        // The immutable product configuration shipped in $PSHOME.
+        private string productConfigFile;
+
+#if !UNIX
+        // True when the default machine-wide location is in use and PowerShell owns its ACL.
+        private bool useDefaultSystemConfigDirectory;
+#endif
+
+        // The root of the PowerShell-owned machine-wide directory hierarchy.
+        private readonly string defaultSystemConfigDirectory;
 
         // The json file containing the per-user configuration settings.
         private readonly string perUserConfigFile;
         private readonly string perUserConfigDirectory;
 
         // Note: JObject and JsonSerializer are thread safe.
-        // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
+        // Root Json objects corresponding to each physical configuration source.
         // They are used as a cache to avoid hitting the disk for every read operation.
         private readonly JObject[] configRoots;
         private readonly JObject emptyConfig;
@@ -84,12 +103,17 @@ namespace System.Management.Automation.Configuration
 
         private PowerShellConfig()
         {
-            // Sets the system-wide configuration file to the new platform-specific location.
-            // On Unix: /etc/powershell/powershell.config.json
-            // On Windows: %ProgramData%\Microsoft\PowerShell\powershell.config.json
-            systemWideConfigDirectory = InternalTestHooks.TestAllUsersConfigDirectory ?? Platform.SystemConfigDirectory;
+            // The writable AllUsers location is /etc/powershell on Unix and ProgramData on Windows.
+            // MSIX package families receive isolated ProgramData directories.
+            string testDirectory = InternalTestHooks.TestAllUsersConfigDirectory;
+            defaultSystemConfigDirectory = Platform.SystemConfigDirectory;
+#if !UNIX
+            useDefaultSystemConfigDirectory = testDirectory is null;
+#endif
+            systemWideConfigDirectory = testDirectory
+                ?? ResolveSystemConfigDirectory(defaultSystemConfigDirectory, Utils.GetCurrentPackageFamilyName());
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
-            legacySystemWideConfigFile = Path.Combine(Utils.DefaultPowerShellAppBase, ConfigFileName);
+            productConfigFile = Path.Combine(Utils.DefaultPowerShellAppBase, ConfigFileName);
 
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the execution scenario.
@@ -101,42 +125,40 @@ namespace System.Management.Automation.Configuration
             }
 
             emptyConfig = new JObject();
-            configRoots = new JObject[2];
+            configRoots = new JObject[3];
             serializer = JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 });
 
             fileLock = new ReaderWriterLockSlim();
         }
 
-        // Writes always target the new platform-specific location (systemWideConfigFile).
-        // Reads may fall back to the legacy $PSHOME location via GetEffectiveSystemWideConfigFile().
+        internal static string ResolveSystemConfigDirectory(string baseDirectory, string packageFamilyName)
+        {
+#if UNIX
+            return baseDirectory;
+#else
+            return string.IsNullOrEmpty(packageFamilyName)
+                ? baseDirectory
+                : Path.Combine(baseDirectory, "Packages", packageFamilyName);
+#endif
+        }
+
         private string GetConfigFilePathForWrite(ConfigScope scope)
         {
             return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
         }
 
-        private string GetConfigFilePathForRead(ConfigScope scope)
+        private string GetConfigFilePath(ConfigSource source)
         {
-            return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : GetEffectiveSystemWideConfigFile();
-        }
-
-        private string GetEffectiveSystemWideConfigFile()
-        {
-            if (File.Exists(systemWideConfigFile))
+            switch (source)
             {
-                return systemWideConfigFile;
+                case ConfigSource.SystemWide:
+                    return systemWideConfigFile;
+                case ConfigSource.CurrentUser:
+                    return perUserConfigFile;
+                default:
+                    return productConfigFile;
             }
-
-            if (!string.IsNullOrEmpty(legacySystemWideConfigFile) && File.Exists(legacySystemWideConfigFile))
-            {
-                return legacySystemWideConfigFile;
-            }
-
-            return systemWideConfigFile;
         }
-
-        internal string AllUsersConfigFilePath => GetEffectiveSystemWideConfigFile();
-
-        internal string CurrentUserConfigFilePath => perUserConfigFile;
 
         /// <summary>
         /// Sets the system wide configuration file path.
@@ -156,6 +178,12 @@ namespace System.Management.Automation.Configuration
             FileInfo info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
+            productConfigFile = null;
+#if !UNIX
+            useDefaultSystemConfigDirectory = false;
+#endif
+            Interlocked.Exchange(ref configRoots[(int)ConfigSource.SystemWide], null);
+            Interlocked.Exchange(ref configRoots[(int)ConfigSource.Product], null);
         }
 
         /// <summary>
@@ -193,8 +221,24 @@ namespace System.Management.Automation.Configuration
         internal string GetExecutionPolicy(ConfigScope scope, string shellId)
         {
             string key = GetExecutionPolicySettingKey(shellId);
-            string execPolicy = ReadValueFromFile<string>(scope, key);
-            return string.IsNullOrEmpty(execPolicy) ? null : execPolicy;
+            if (scope == ConfigScope.CurrentUser)
+            {
+                return TryReadValueFromSource(ConfigSource.CurrentUser, key, out string currentUserPolicy)
+                    && !string.IsNullOrEmpty(currentUserPolicy)
+                        ? currentUserPolicy
+                        : null;
+            }
+
+            foreach (ConfigSource source in s_systemWideSourcePreferenceOrder)
+            {
+                if (TryReadValueFromSource(source, key, out string executionPolicy)
+                    && !string.IsNullOrEmpty(executionPolicy))
+                {
+                    return executionPolicy;
+                }
+            }
+
+            return null;
         }
 
         internal void RemoveExecutionPolicy(ConfigScope scope, string shellId)
@@ -255,23 +299,19 @@ namespace System.Management.Automation.Configuration
 
         internal bool IsImplicitWinCompatEnabled()
         {
-            bool settingValue = ReadValueFromFile<bool?>(ConfigScope.CurrentUser, DisableImplicitWinCompatKey)
-                ?? ReadValueFromFile<bool?>(ConfigScope.AllUsers, DisableImplicitWinCompatKey)
-                ?? false;
+            bool settingValue = MergePreferenceValue<bool?>(DisableImplicitWinCompatKey) ?? false;
 
             return !settingValue;
         }
 
         internal string[] GetWindowsPowerShellCompatibilityModuleDenyList()
         {
-            return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityModuleDenyListKey)
-                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey);
+            return MergePolicyList(WindowsPowerShellCompatibilityModuleDenyListKey);
         }
 
         internal string[] GetWindowsPowerShellCompatibilityNoClobberModuleList()
         {
-            return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityNoClobberModuleListKey)
-                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey);
+            return MergePreferenceValue<string[]>(WindowsPowerShellCompatibilityNoClobberModuleListKey);
         }
 
         /// <summary>
@@ -412,6 +452,59 @@ namespace System.Management.Automation.Configuration
         }
 #endif // UNIX
 
+        private static readonly ConfigSource[] s_systemWideSourcePreferenceOrder =
+        {
+            ConfigSource.SystemWide,
+            ConfigSource.Product
+        };
+
+        private static readonly ConfigSource[] s_configSourcePreferenceOrder =
+        {
+            ConfigSource.CurrentUser,
+            ConfigSource.SystemWide,
+            ConfigSource.Product
+        };
+
+        /// <summary>
+        /// Returns the first value defined by the highest-precedence configuration source.
+        /// </summary>
+        private T MergePreferenceValue<T>(string key, T defaultValue = default)
+        {
+            foreach (ConfigSource source in s_configSourcePreferenceOrder)
+            {
+                if (TryReadValueFromSource(source, key, out T value))
+                {
+                    return value;
+                }
+            }
+
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// Returns the case-insensitive union of a policy list across all configuration sources.
+        /// </summary>
+        private string[] MergePolicyList(string key)
+        {
+            var merged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (ConfigSource source in s_configSourcePreferenceOrder)
+            {
+                if (TryReadValueFromSource(source, key, out string[] values))
+                {
+                    merged.UnionWith(values);
+                }
+            }
+
+            if (merged.Count == 0)
+            {
+                return null;
+            }
+
+            var result = new string[merged.Count];
+            merged.CopyTo(result);
+            return result;
+        }
+
         /// <summary>
         /// Read a value from the configuration file.
         /// </summary>
@@ -421,13 +514,34 @@ namespace System.Management.Automation.Configuration
         /// <param name="defaultValue">The default value to return if the key is not present.</param>
         private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default)
         {
-            string fileName = GetConfigFilePathForRead(scope);
-            if (string.IsNullOrEmpty(fileName))
+            if (scope == ConfigScope.CurrentUser)
             {
-                return defaultValue;
+                return TryReadValueFromSource(ConfigSource.CurrentUser, key, out T value)
+                    ? value
+                    : defaultValue;
             }
 
-            JObject configData = configRoots[(int)scope];
+            foreach (ConfigSource source in s_systemWideSourcePreferenceOrder)
+            {
+                if (TryReadValueFromSource(source, key, out T value))
+                {
+                    return value;
+                }
+            }
+
+            return defaultValue;
+        }
+
+        private bool TryReadValueFromSource<T>(ConfigSource source, string key, out T value)
+        {
+            string fileName = GetConfigFilePath(source);
+            if (string.IsNullOrEmpty(fileName))
+            {
+                value = default;
+                return false;
+            }
+
+            JObject configData = configRoots[(int)source];
 
             if (configData == null)
             {
@@ -458,7 +572,7 @@ namespace System.Management.Automation.Configuration
                 }
 
                 // Set the configuration cache.
-                JObject originalValue = Interlocked.CompareExchange(ref configRoots[(int)scope], configData, null);
+                JObject originalValue = Interlocked.CompareExchange(ref configRoots[(int)source], configData, null);
                 if (originalValue != null)
                 {
                     configData = originalValue;
@@ -467,10 +581,12 @@ namespace System.Management.Automation.Configuration
 
             if (configData != emptyConfig && configData.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out JToken jToken))
             {
-                return jToken.ToObject<T>(serializer) ?? defaultValue;
+                value = jToken.ToObject<T>(serializer);
+                return value is not null;
             }
 
-            return defaultValue;
+            value = default;
+            return false;
         }
 
         private static FileStream OpenFileStreamWithRetry(string fullPath, FileMode mode, FileAccess access, FileShare share)
@@ -509,6 +625,9 @@ namespace System.Management.Automation.Configuration
             try
             {
                 string fileName = GetConfigFilePathForWrite(scope);
+                ConfigSource source = scope == ConfigScope.CurrentUser
+                    ? ConfigSource.CurrentUser
+                    : ConfigSource.SystemWide;
                 fileLock.EnterWriteLock();
 
                 // Since multiple properties can be in a single file, replacement is required instead of overwrite if a file already exists.
@@ -590,7 +709,7 @@ namespace System.Management.Automation.Configuration
                 }
 
                 // Refresh the configuration cache.
-                Interlocked.Exchange(ref configRoots[(int)scope], jsonObject);
+                Interlocked.Exchange(ref configRoots[(int)source], jsonObject);
             }
             finally
             {
@@ -611,13 +730,89 @@ namespace System.Management.Automation.Configuration
             {
                 Directory.CreateDirectory(perUserConfigDirectory);
             }
-            else if (scope == ConfigScope.AllUsers && !Directory.Exists(systemWideConfigDirectory))
+            else if (scope == ConfigScope.AllUsers)
             {
-                Directory.CreateDirectory(systemWideConfigDirectory);
+                EnsureSystemConfigDirectory();
             }
 
             UpdateValueInFile<T>(scope, key, value, true);
         }
+
+        private void EnsureSystemConfigDirectory()
+        {
+#if UNIX
+            Directory.CreateDirectory(systemWideConfigDirectory);
+#else
+            if (!useDefaultSystemConfigDirectory)
+            {
+                Directory.CreateDirectory(systemWideConfigDirectory);
+                return;
+            }
+
+            DirectorySecurity security = CreateSystemConfigDirectorySecurity();
+            EnsureDirectoryWithSecurity(defaultSystemConfigDirectory, security);
+            if (!string.Equals(defaultSystemConfigDirectory, systemWideConfigDirectory, StringComparison.OrdinalIgnoreCase))
+            {
+                EnsureDirectoryWithSecurity(Path.Combine(defaultSystemConfigDirectory, "Packages"), security);
+                EnsureDirectoryWithSecurity(systemWideConfigDirectory, security);
+            }
+#endif
+        }
+
+#if !UNIX
+        private static void EnsureDirectoryWithSecurity(string path, DirectorySecurity security)
+        {
+            var directory = new DirectoryInfo(path);
+            if (!directory.Exists)
+            {
+                try
+                {
+                    directory.Create(security);
+                }
+                catch (IOException) when (Directory.Exists(path))
+                {
+                    // Another process created the directory first.
+                }
+            }
+
+            directory.Refresh();
+            if ((directory.Attributes & FileAttributes.ReparsePoint) != 0)
+            {
+                throw new IOException(path);
+            }
+
+            directory.SetAccessControl(security);
+        }
+
+        internal static DirectorySecurity CreateSystemConfigDirectorySecurity()
+        {
+            const InheritanceFlags Inheritance = InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit;
+
+            var administrators = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null);
+            var security = new DirectorySecurity();
+            security.SetAccessRuleProtection(isProtected: true, preserveInheritance: false);
+            security.SetOwner(administrators);
+            security.AddAccessRule(new FileSystemAccessRule(
+                new SecurityIdentifier(WellKnownSidType.LocalSystemSid, domainSid: null),
+                FileSystemRights.FullControl,
+                Inheritance,
+                PropagationFlags.None,
+                AccessControlType.Allow));
+            security.AddAccessRule(new FileSystemAccessRule(
+                administrators,
+                FileSystemRights.FullControl,
+                Inheritance,
+                PropagationFlags.None,
+                AccessControlType.Allow));
+            security.AddAccessRule(new FileSystemAccessRule(
+                new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, domainSid: null),
+                FileSystemRights.ReadAndExecute,
+                Inheritance,
+                PropagationFlags.None,
+                AccessControlType.Allow));
+            return security;
+        }
+#endif
 
         /// <summary>
         /// TODO: Should this return success, fail, or throw?

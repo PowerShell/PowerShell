@@ -7,46 +7,29 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
 
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
-        $systemConfigPath = (Get-PowerShellConfiguration -Scope AllUsers).Path
-        $userConfigPath = (Get-PowerShellConfiguration -Scope CurrentUser).Path
-
-        if ($IsWindows) {
-            $systemWritePath = Join-Path $env:ProgramData "Microsoft\PowerShell\powershell.config.json"
-        } else {
-            $systemWritePath = "/etc/powershell/powershell.config.json"
-        }
-
-        $systemWriteDir = Split-Path $systemWritePath
-        if (!(Test-Path $systemWriteDir)) {
-            $null = New-Item -ItemType Directory -Path $systemWriteDir -Force -ErrorAction SilentlyContinue
-        }
-
-        $systemConfigDir = Split-Path $systemConfigPath
-        if (($systemConfigDir -ne $systemWriteDir) -and !(Test-Path $systemConfigDir)) {
-            $null = New-Item -ItemType Directory -Path $systemConfigDir -Force -ErrorAction SilentlyContinue
-        }
+        $productConfigPath = Join-Path $PSHOME "powershell.config.json"
+        $systemConfigDirectory = Get-PowerShellSystemConfigDirectory
+        $systemConfigPath = Join-Path $systemConfigDirectory "powershell.config.json"
+        $userConfigPath = Join-Path (Split-Path $PROFILE.CurrentUserAllHosts) "powershell.config.json"
 
         $userConfigDir = Split-Path $userConfigPath
         if (!(Test-Path $userConfigDir)) {
             $null = New-Item -ItemType Directory -Path $userConfigDir -Force -ErrorAction SilentlyContinue
         }
 
-        $systemWriteExists = $false
-        if (($systemWritePath -ne $systemConfigPath) -and (Test-Path $systemWritePath)) {
-            $systemWriteExists = $true
-            Move-Item $systemWritePath "$systemWritePath.backup" -Force -ErrorAction SilentlyContinue
+        $productConfigExists = Test-Path $productConfigPath
+        if ($productConfigExists) {
+            Move-Item $productConfigPath "$productConfigPath.backup" -Force
         }
 
-        $systemConfigExists = $false
-        if (Test-Path $systemConfigPath) {
-            $systemConfigExists = $true
-            Move-Item $systemConfigPath "$systemConfigPath.backup" -Force -ErrorAction SilentlyContinue
+        $systemConfigExists = Test-Path $systemConfigPath
+        if ($systemConfigExists) {
+            Move-Item $systemConfigPath "$systemConfigPath.backup" -Force
         }
 
-        $userConfigExists = $false
-        if (Test-Path $userConfigPath) {
-            $userConfigExists = $true
-            Move-Item $userConfigPath "$userConfigPath.backup" -Force -ErrorAction SilentlyContinue
+        $userConfigExists = Test-Path $userConfigPath
+        if ($userConfigExists) {
+            Move-Item $userConfigPath "$userConfigPath.backup" -Force
         }
 
         $testModulePath = Join-Path -Path $PSScriptRoot -ChildPath "assets"
@@ -56,11 +39,11 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     AfterAll {
-        if ($systemWriteExists) {
-            Move-Item "$systemWritePath.backup" $systemWritePath -Force -ErrorAction SilentlyContinue
+        if ($productConfigExists) {
+            Move-Item "$productConfigPath.backup" $productConfigPath -Force -ErrorAction SilentlyContinue
         }
 
-        if ($systemConfigExists -and (Test-CanWriteToSystemConfigDir)) {
+        if ($systemConfigExists) {
             Move-Item "$systemConfigPath.backup" $systemConfigPath -Force -ErrorAction SilentlyContinue
         }
 
@@ -69,17 +52,12 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
         }
 
         $env:PSModulePath = $originalModulePath
+        Remove-TestPowerShellSystemConfigDirectory
     }
 
     AfterEach {
-        if (Test-CanWriteToSystemConfigDir) {
-            Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
-        }
-
+        Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
         Remove-Item $userConfigPath -Force -ErrorAction SilentlyContinue
-        if ($systemWritePath -ne $systemConfigPath) {
-            Remove-Item $systemWritePath -Force -ErrorAction SilentlyContinue
-        }
     }
 
     Context "Feature disabled tests" {
@@ -148,7 +126,12 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     Context "User config takes precedence over system config" {
-        It "Feature is enabled in user config only" -Skip:(!(Test-CanWriteToSystemConfigDir)) {
+        It "Feature is enabled in user config only" {
+            if (!(Test-CanWriteToSystemConfigDir)) {
+                Set-ItResult -Skipped -Because "The test account cannot write the system configuration directory."
+                return
+            }
+
             '{"ExperimentalFeatures":["ExpTest.FeatureOne"]}' > $userConfigPath
             '{"ExperimentalFeatures":["ExpTest.FeatureTwo"]}' > $systemConfigPath
 

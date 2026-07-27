@@ -477,6 +477,50 @@ namespace System.Management.Automation
         }
 #endif
 
+#if !UNIX
+        private const int ErrorInsufficientBuffer = 122;
+        private const int AppModelErrorNoPackage = 15700;
+
+        [DllImport("kernel32.dll", EntryPoint = "GetCurrentPackageFamilyName", CharSet = CharSet.Unicode)]
+        private static extern int GetCurrentPackageFamilyNameNative(ref uint packageFamilyNameLength, [Out] StringBuilder packageFamilyName);
+#endif
+
+        /// <summary>
+        /// Gets the package family name for the current MSIX process, or null when the process is unpackaged.
+        /// </summary>
+        internal static string GetCurrentPackageFamilyName()
+        {
+#if UNIX
+            return null;
+#else
+            try
+            {
+                uint length = 0;
+                int result = GetCurrentPackageFamilyNameNative(ref length, packageFamilyName: null);
+                if (result == AppModelErrorNoPackage)
+                {
+                    return null;
+                }
+
+                if (result != ErrorInsufficientBuffer || length == 0)
+                {
+                    return null;
+                }
+
+                var buffer = new StringBuilder((int)length);
+                result = GetCurrentPackageFamilyNameNative(ref length, buffer);
+                return result == 0 ? buffer.ToString() : null;
+            }
+            catch (Exception exception) when (
+                exception is DllNotFoundException
+                or EntryPointNotFoundException
+                or MarshalDirectiveException)
+            {
+                return null;
+            }
+#endif
+        }
+
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
 
         internal static string GetApplicationBase(string shellId)
