@@ -81,21 +81,16 @@ namespace System.Management.Automation
             return result;
         }
 
-        /// <summary>
-        /// Returns the following information about each method overload:
-        /// Method name, Return type, and parameters (name and type)
-        /// </summary>
-        /// <returns></returns>
-        internal List<Tuple<PSTypeName, string, List<Tuple<string, PSTypeName>>>> MethodDefinitionsAsTuples()
+        internal List<engine.SignatureHelp.SignatureInformation> MethodDefinitionsAsSignatureInformation()
         {
-            var result = new List<Tuple<PSTypeName, string, List<Tuple<string, PSTypeName>>>>();
+            var result = new List<engine.SignatureHelp.SignatureInformation>();
 
             foreach (int index in _methods)
             {
                 _typeInfo.GetFuncDesc(index, out nint pFuncDesc);
                 COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
 
-                var signature = ComUtil.GetMethodSignatureFromFuncDescAsTuple(_typeInfo, funcdesc);
+                var signature = ComUtil.GetMethodSignatureFromFuncDescAsSignatureInformation(_typeInfo, funcdesc);
                 result.Add(signature);
 
                 _typeInfo.ReleaseFuncDesc(pFuncDesc);

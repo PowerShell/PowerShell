@@ -108,26 +108,33 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="typeinfo">ITypeInfo interface of the object.</param>
         /// <param name="funcdesc">FuncDesc which defines the method.</param>
-        /// <returns>A tuple that contains Method name, Return type, and parameters (name and type) for the method.</returns>
-        internal static Tuple<PSTypeName, string, List<Tuple<string, PSTypeName>>> GetMethodSignatureFromFuncDescAsTuple(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc)
+        internal static engine.SignatureHelp.SignatureInformation GetMethodSignatureFromFuncDescAsSignatureInformation(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc)
         {
+            StringBuilder builder = new();
+
             // First value is function name
             int namesCount = funcdesc.cParams + 1;
             string[] names = new string[funcdesc.cParams + 1];
             typeinfo.GetNames(funcdesc.memid, names, namesCount, out _);
-            string methodName = names[0];
 
-            // Get the return type.
+            // First get the string for return type.
             string retstring = GetStringFromTypeDesc(typeinfo, funcdesc.elemdescFunc.tdesc);
-            PSTypeName returnType = new(retstring);
+            _ = builder.Append(retstring + " ");
+
+            // Append the function name
+            _ = builder.Append(names[0]);
+            _ = builder.Append(" (");
 
             IntPtr ElementDescriptionArrayPtr = funcdesc.lprgelemdescParam;
             int ElementDescriptionSize = Marshal.SizeOf<COM.ELEMDESC>();
-            var paramList = new List<Tuple<string, PSTypeName>>();
+
+            var parameters = new engine.SignatureHelp.ParameterInformation[funcdesc.cParams];
             for (int i = 0; i < funcdesc.cParams; i++)
             {
+                int signatureStartOffset = builder.Length;
                 int ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
                 IntPtr ElementDescriptionPointer;
+
                 // Disable PRefast warning for converting to int32 and converting back into intptr.
                 // Code below takes into account 32 bit vs 64 bit conversions
 #pragma warning disable 56515
@@ -143,13 +150,26 @@ namespace System.Management.Automation
 
                 COM.ELEMDESC ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
-                string paramName = names[i + 1];
-                string paramTypeAsString = GetStringFromTypeDesc(typeinfo, ElementDescription.tdesc);
-                PSTypeName parameterType = new(paramTypeAsString);
-                paramList.Add(new Tuple<string, PSTypeName>(paramName, parameterType));
+                string paramstring = GetStringFromTypeDesc(typeinfo, ElementDescription.tdesc);
+
+                _ = builder.Append(paramstring);
+                _ = builder.Append(" " + names[i + 1]);
+
+                parameters[i] = new engine.SignatureHelp.ParameterInformation(
+                    new PSTypeName(paramstring),
+                    signatureStartOffset,
+                    signatureLength: builder.Length - signatureStartOffset);
+
+                if (i < funcdesc.cParams - 1)
+                {
+                    _ = builder.Append(", ");
+                }
             }
 
-            return new Tuple<PSTypeName, string, List<Tuple<string, PSTypeName>>>(returnType, methodName, paramList);
+            _ = builder.Append(')');
+
+            typeinfo.GetDocumentation(funcdesc.memid, out _, out string documentation, out _, out _);
+            return new engine.SignatureHelp.SignatureInformation(builder.ToString(), parameters, documentation);
         }
 
         /// <summary>
