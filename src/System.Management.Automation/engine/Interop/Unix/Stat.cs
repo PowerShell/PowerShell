@@ -112,13 +112,68 @@ internal static partial class Interop
             internal ulong Spare2_12;
         }
 
-        [LibraryImport("libc", EntryPoint = "statx", StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-        private static partial int Statx(int dirfd, string pathname, int flags, uint mask, out StatxBuffer buffer);
+        // The statx libc wrapper was added in glibc 2.28 and musl 1.1.20. On older baselines
+        // the symbol may be absent even though the kernel syscall (available since Linux 4.11)
+        // exists. We resolve the wrapper dynamically to avoid EntryPointNotFoundException and
+        // fall back to the raw syscall on x86_64 when the wrapper is missing.
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl, SetLastError = true)]
+        private delegate int StatxDelegate(int dirfd, IntPtr pathname, int flags, uint mask, out StatxBuffer buffer);
+
+        private static readonly StatxDelegate? s_statxWrapper = ResolveStatxWrapper();
+
+        // __NR_statx syscall number (only defined for x86_64 where the variadic calling
+        // convention matches the non-variadic one, making it safe to P/Invoke syscall).
+        private const long SYS_statx_x86_64 = 332;
+
+        [LibraryImport("libc", EntryPoint = "syscall", SetLastError = true)]
+        private static partial long SyscallStatx(long number, int dirfd, IntPtr pathname, int flags, uint mask, out StatxBuffer buffer);
+
+        private static StatxDelegate? ResolveStatxWrapper()
+        {
+            if (NativeLibrary.TryLoad("libc", typeof(Interop).Assembly, searchPath: null, out IntPtr libcHandle)
+                && NativeLibrary.TryGetExport(libcHandle, "statx", out IntPtr funcPtr))
+            {
+                return Marshal.GetDelegateForFunctionPointer<StatxDelegate>(funcPtr);
+            }
+
+            return null;
+        }
+
+        private static int CallStatx(int dirfd, string pathname, int flags, uint mask, out StatxBuffer buffer)
+        {
+            IntPtr pathPtr = Marshal.StringToCoTaskMemUTF8(pathname);
+            try
+            {
+                if (s_statxWrapper is not null)
+                {
+                    return s_statxWrapper(dirfd, pathPtr, flags, mask, out buffer);
+                }
+
+                // Fall back to the raw syscall on x86_64. On other architectures the variadic
+                // calling convention for syscall() differs from the non-variadic P/Invoke
+                // convention, so we cannot safely call it and must require the libc wrapper.
+                if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+                {
+                    long result = SyscallStatx(SYS_statx_x86_64, dirfd, pathPtr, flags, mask, out buffer);
+                    return (int)result;
+                }
+
+                throw new PlatformNotSupportedException(
+                    $"The 'statx' libc wrapper was not found and the raw syscall fallback is not " +
+                    $"available on architecture '{RuntimeInformation.ProcessArchitecture}'. " +
+                    $"Upgrade to glibc >= 2.28 or musl >= 1.1.20.");
+            }
+            finally
+            {
+                Marshal.FreeCoTaskMem(pathPtr);
+            }
+        }
 
         private static int LinuxStat(string path, bool followSymlink, ref StatInfo info)
         {
             int flags = followSymlink ? 0 : AT_SYMLINK_NOFOLLOW;
-            int ret = Statx(AT_FDCWD, path, flags, STATX_BASIC_STATS, out StatxBuffer buffer);
+            int ret = CallStatx(AT_FDCWD, path, flags, STATX_BASIC_STATS, out StatxBuffer buffer);
             if (ret != 0)
             {
                 return ret;
