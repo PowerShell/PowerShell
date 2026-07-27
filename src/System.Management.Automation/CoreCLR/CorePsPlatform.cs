@@ -981,8 +981,13 @@ namespace System.Management.Automation
                 {
                     if (OperatingSystem.IsMacOS())
                     {
-                        Interop.Unix.PthreadThreadIdNp(IntPtr.Zero, out ulong tid);
-                        return (uint)tid;
+                        if (Interop.Unix.PthreadThreadIdNp(IntPtr.Zero, out ulong tid) == 0)
+                        {
+                            return (uint)tid;
+                        }
+
+                        // Fallback: use the managed thread id if pthread_threadid_np fails.
+                        return (uint)Environment.CurrentManagedThreadId;
                     }
 
                     return (uint)Interop.Unix.GetTid();
