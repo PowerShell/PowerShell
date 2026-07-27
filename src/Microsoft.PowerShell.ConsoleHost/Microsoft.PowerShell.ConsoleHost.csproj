@@ -18,12 +18,4 @@
     <Compile Remove="WindowsTaskbarJumpList\*.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="singleshell\installer\EngineInstaller.cs" />
-    <Compile Remove="singleshell\installer\MshHostMshSnapin.cs" />
-    <Compile Remove="gen\HostMshSnapinResources.cs" />
-
-    <EmbeddedResource Remove="resources\HostMshSnapinResources.resx" />
-  </ItemGroup>
-
 </Project>
