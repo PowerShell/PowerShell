@@ -31,10 +31,36 @@ internal static partial class Interop
         [LibraryImport("libc", EntryPoint = "waitpid", SetLastError = true)]
         internal static partial int WaitPid(int pid, IntPtr status, int options);
 
-        /// <summary>Linux: return the caller's kernel thread id via <c>gettid(2)</c>.</summary>
-        /// <returns>The current thread id.</returns>
-        [LibraryImport("libc", EntryPoint = "gettid")]
-        internal static partial int GetTid();
+        // syscall numbers for gettid – stable ABI constants per architecture.
+        private const long SYS_gettid_x86_64 = 186;
+        private const long SYS_gettid_aarch64 = 178;
+        private const long SYS_gettid_s390x = 236;
+        private const long SYS_gettid_ppc64le = 207;
+        private const long SYS_gettid_arm = 224;
+
+        [LibraryImport("libc", EntryPoint = "syscall")]
+        private static partial long Syscall(long number);
+
+        /// <summary>
+        /// Linux: return the caller's kernel thread id via <c>syscall(SYS_gettid)</c>.
+        /// Uses the raw syscall interface instead of the <c>gettid(2)</c> libc wrapper,
+        /// which is only available since glibc 2.30.
+        /// </summary>
+        internal static int GetTid()
+        {
+            long sysNo = RuntimeInformation.ProcessArchitecture switch
+            {
+                Architecture.X64 => SYS_gettid_x86_64,
+                Architecture.Arm64 => SYS_gettid_aarch64,
+                Architecture.S390x => SYS_gettid_s390x,
+                Architecture.Ppc64le => SYS_gettid_ppc64le,
+                Architecture.Arm => SYS_gettid_arm,
+                _ => throw new PlatformNotSupportedException(
+                    $"gettid syscall number is not known for architecture '{RuntimeInformation.ProcessArchitecture}'."),
+            };
+
+            return (int)Syscall(sysNo);
+        }
 
         /// <summary>macOS: return the caller's integral thread id via <c>pthread_threadid_np</c>.</summary>
         /// <param name="thread">The pthread to query, or <see cref="IntPtr.Zero"/> for the current thread.</param>
