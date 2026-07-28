@@ -1216,7 +1216,9 @@ namespace System.Management.Automation.Language
                 // Pre-processing the arguments -- command arguments
                 for (commandIndex++; commandIndex < _commandElements.Count; commandIndex++)
                 {
-                    if (implementsDynamicParameters && _commandElements[commandIndex] == paramAtCursor)
+                    if (implementsDynamicParameters
+                        && _commandElements[commandIndex] == paramAtCursor
+                        && !processor.CommandInfo.Parameters.ContainsKey(paramAtCursor.ParameterName))
                     {
                         // Commands with dynamic parameters will try to bind the command elements.
                         // A partially complete parameter will most likely cause a binding error and negatively affect the results.
