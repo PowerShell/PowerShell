@@ -1534,6 +1534,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Output.RawContent | Should -Match ([regex]::Escape('Content-Length: 2'))
         }
 
+        It "Verifies Invoke-WebRequest ToString preserves non-ASCII characters when charset is declared" {
+            $query = @{
+                contenttype = 'text/plain; charset=utf-8'
+                body        = 'café'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
+
+            $response.Error | Should -BeNullOrEmpty
+            # ToString() should preserve the non-ASCII 'é' instead of replacing it with '?'.
+            $response.Output.ToString() | Should -Match 'café'
+        }
+
         It "Verifies Invoke-WebRequest Supports Multiple response headers with same name" {
             $query = @{
                 contenttype = 'text/plain'
