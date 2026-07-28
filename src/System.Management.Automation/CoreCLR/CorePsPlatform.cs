@@ -165,9 +165,6 @@ namespace System.Management.Automation
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
         internal static readonly string UserConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
-
-        // System-wide configuration directory for AllUsers scope.
-        internal static readonly string SystemConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.SYSTEM_CONFIG);
 #else
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = SafeDeriveFromSpecialFolder(
@@ -317,8 +314,6 @@ namespace System.Management.Automation
             SHARED_MODULES,
             /// <summary> XDG_CONFIG_HOME/powershell </summary>
             DEFAULT,
-            /// <summary> /etc/powershell </summary>
-            SYSTEM_CONFIG,
         }
 
         /// <summary>
@@ -369,9 +364,6 @@ namespace System.Management.Automation
 
                     case XDG_Type.SHARED_MODULES:
                         return "/usr/local/share/powershell/Modules";
-
-                    case XDG_Type.SYSTEM_CONFIG:
-                        return "/etc/powershell";
 
                     case XDG_Type.CACHE:
                         // Use 'XDG_CACHE_HOME' if it's set, otherwise use the default path.

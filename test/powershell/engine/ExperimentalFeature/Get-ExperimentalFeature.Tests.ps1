@@ -7,7 +7,6 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
 
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
-        $productConfigPath = Join-Path $PSHOME "powershell.config.json"
         $systemConfigDirectory = Get-PowerShellSystemConfigDirectory
         $systemConfigPath = Join-Path $systemConfigDirectory "powershell.config.json"
         $userConfigPath = Join-Path (Split-Path $PROFILE.CurrentUserAllHosts) "powershell.config.json"
@@ -15,11 +14,6 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
         $userConfigDir = Split-Path $userConfigPath
         if (!(Test-Path $userConfigDir)) {
             $null = New-Item -ItemType Directory -Path $userConfigDir -Force -ErrorAction SilentlyContinue
-        }
-
-        $productConfigExists = Test-Path $productConfigPath
-        if ($productConfigExists) {
-            Move-Item $productConfigPath "$productConfigPath.backup" -Force
         }
 
         $systemConfigExists = Test-Path $systemConfigPath
@@ -39,10 +33,6 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     AfterAll {
-        if ($productConfigExists) {
-            Move-Item "$productConfigPath.backup" $productConfigPath -Force -ErrorAction SilentlyContinue
-        }
-
         if ($systemConfigExists) {
             Move-Item "$systemConfigPath.backup" $systemConfigPath -Force -ErrorAction SilentlyContinue
         }

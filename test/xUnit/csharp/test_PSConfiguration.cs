@@ -53,8 +53,7 @@ namespace PSTests.Sequential
 
         public PowerShellPolicyFixture()
         {
-            // Use a temp directory for system-wide config to avoid needing write access
-            // to /etc/powershell (Unix) or %ProgramData%\Microsoft\PowerShell (Windows) in CI
+            // Use separate temp directories to exercise system and product configuration merging.
             testConfigRoot = Path.Combine(Path.GetTempPath(), "PSTestConfig_" + Guid.NewGuid().ToString("N"));
             systemWideConfigDirectory = Path.Combine(testConfigRoot, "SystemWide");
             productConfigDirectory = Path.Combine(testConfigRoot, "Product");
@@ -1190,20 +1189,37 @@ namespace PSTests.Sequential
         [Fact, Priority(20)]
         public void PowerShellConfig_ResolveSystemConfigDirectoryUsesPackageFamily()
         {
-            string baseDirectory = Path.Combine("ProgramData", "Microsoft", "PowerShell");
-            string actual = PowerShellConfig.ResolveSystemConfigDirectory(baseDirectory, "Microsoft.PowerShell_8wekyb3d8bbwe");
+            string productDirectory = Path.Combine("ProgramFiles", "PowerShell", "7");
+            string programDataDirectory = Path.Combine("ProgramData", "Microsoft", "PowerShell");
+            string actual = PowerShellConfig.ResolveSystemConfigDirectory(
+                productDirectory,
+                programDataDirectory,
+                "Microsoft.PowerShell_8wekyb3d8bbwe");
 
 #if UNIX
-            Assert.Equal(baseDirectory, actual);
+            Assert.Equal(productDirectory, actual);
 #else
             Assert.Equal(
-                Path.Combine(baseDirectory, "Packages", "Microsoft.PowerShell_8wekyb3d8bbwe"),
+                Path.Combine(programDataDirectory, "Packages", "Microsoft.PowerShell_8wekyb3d8bbwe"),
                 actual);
 #endif
         }
 
-#if !UNIX
         [Fact, Priority(21)]
+        public void PowerShellConfig_ResolveSystemConfigDirectoryPreservesProductDirectoryWithoutPackageIdentity()
+        {
+            string productDirectory = Path.Combine("ProgramFiles", "PowerShell", "7");
+            string programDataDirectory = Path.Combine("ProgramData", "Microsoft", "PowerShell");
+            string actual = PowerShellConfig.ResolveSystemConfigDirectory(
+                productDirectory,
+                programDataDirectory,
+                packageFamilyName: null);
+
+            Assert.Equal(productDirectory, actual);
+        }
+
+#if !UNIX
+        [Fact, Priority(22)]
         [SupportedOSPlatform("windows")]
         public void PowerShellConfig_SystemConfigDirectorySecurityUsesRestrictedInheritedAcl()
         {

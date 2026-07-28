@@ -78,10 +78,10 @@ namespace System.Management.Automation.Configuration
 #if !UNIX
         // True when the default machine-wide location is in use and PowerShell owns its ACL.
         private bool useDefaultSystemConfigDirectory;
-#endif
 
         // The root of the PowerShell-owned machine-wide directory hierarchy.
         private readonly string defaultSystemConfigDirectory;
+#endif
 
         // The json file containing the per-user configuration settings.
         private readonly string perUserConfigFile;
@@ -103,17 +103,29 @@ namespace System.Management.Automation.Configuration
 
         private PowerShellConfig()
         {
-            // The writable AllUsers location is /etc/powershell on Unix and ProgramData on Windows.
-            // MSIX package families receive isolated ProgramData directories.
             string testDirectory = InternalTestHooks.TestAllUsersConfigDirectory;
-            defaultSystemConfigDirectory = Platform.SystemConfigDirectory;
+            string productConfigDirectory = Utils.DefaultPowerShellAppBase;
+            bool useSeparateSystemConfig = testDirectory is not null;
 #if !UNIX
-            useDefaultSystemConfigDirectory = testDirectory is null;
-#endif
+            string packageFamilyName = Utils.GetCurrentPackageFamilyName();
+            defaultSystemConfigDirectory = Platform.SystemConfigDirectory;
+            useDefaultSystemConfigDirectory = testDirectory is null && !string.IsNullOrEmpty(packageFamilyName);
+            useSeparateSystemConfig |= !string.IsNullOrEmpty(packageFamilyName);
+
+            // Only MSIX uses a writable machine-wide source. MSI, ZIP, and Unix installations
+            // preserve the existing AllUsers location in $PSHOME.
             systemWideConfigDirectory = testDirectory
-                ?? ResolveSystemConfigDirectory(defaultSystemConfigDirectory, Utils.GetCurrentPackageFamilyName());
+                ?? ResolveSystemConfigDirectory(
+                    productConfigDirectory,
+                    defaultSystemConfigDirectory,
+                    packageFamilyName);
+#else
+            systemWideConfigDirectory = testDirectory ?? productConfigDirectory;
+#endif
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
-            productConfigFile = Path.Combine(Utils.DefaultPowerShellAppBase, ConfigFileName);
+            productConfigFile = useSeparateSystemConfig
+                ? Path.Combine(productConfigDirectory, ConfigFileName)
+                : null;
 
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the execution scenario.
@@ -131,14 +143,17 @@ namespace System.Management.Automation.Configuration
             fileLock = new ReaderWriterLockSlim();
         }
 
-        internal static string ResolveSystemConfigDirectory(string baseDirectory, string packageFamilyName)
+        internal static string ResolveSystemConfigDirectory(
+            string productDirectory,
+            string programDataDirectory,
+            string packageFamilyName)
         {
 #if UNIX
-            return baseDirectory;
+            return productDirectory;
 #else
             return string.IsNullOrEmpty(packageFamilyName)
-                ? baseDirectory
-                : Path.Combine(baseDirectory, "Packages", packageFamilyName);
+                ? productDirectory
+                : Path.Combine(programDataDirectory, "Packages", packageFamilyName);
 #endif
         }
 
@@ -273,28 +288,6 @@ namespace System.Management.Automation.Configuration
             }
 
             return features;
-        }
-
-        /// <summary>
-        /// Set the enabled list of experimental features in the config file.
-        /// </summary>
-        /// <param name="scope">The ConfigScope of the configuration file to update.</param>
-        /// <param name="featureName">The name of the experimental feature to change in the configuration.</param>
-        /// <param name="setEnabled">If true, add to configuration; otherwise, remove from configuration.</param>
-        internal void SetExperimentalFeatures(ConfigScope scope, string featureName, bool setEnabled)
-        {
-            var features = new List<string>(GetExperimentalFeatures());
-            bool containsFeature = features.Contains(featureName);
-            if (setEnabled && !containsFeature)
-            {
-                features.Add(featureName);
-                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
-            }
-            else if (!setEnabled && containsFeature)
-            {
-                features.Remove(featureName);
-                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
-            }
         }
 
         internal bool IsImplicitWinCompatEnabled()

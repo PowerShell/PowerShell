@@ -2,11 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -113,6 +116,45 @@ namespace Microsoft.PowerShell.Commands
                     yield return moduleFile;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Provides argument completion for experimental feature names.
+    /// </summary>
+    public class ExperimentalFeatureNameCompleter : IArgumentCompleter
+    {
+        /// <summary>
+        /// Returns completion results for experimental feature names.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of completion results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+        {
+            SortedSet<string> experimentalFeatures = new(StringComparer.OrdinalIgnoreCase);
+
+            foreach (ExperimentalFeature feature in GetExperimentalFeatures())
+            {
+                experimentalFeatures.Add(feature.Name);
+            }
+
+            return CompletionHelpers.GetMatchingResults(wordToComplete, experimentalFeatures);
+        }
+
+        private static Collection<ExperimentalFeature> GetExperimentalFeatures()
+        {
+            using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+            ps.AddCommand("Get-ExperimentalFeature");
+            return ps.Invoke<ExperimentalFeature>();
         }
     }
 }
