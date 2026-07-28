@@ -52,7 +52,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
+        [ValidateSet("msix", "deb", "deb-arm64", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size-x64", "min-size-arm64", "tar-alpine-fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -77,8 +77,8 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ($Type -in ('zip', 'min-size') -or $Type -like 'fxdependent*') {
-            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
+        if ($Type -contains 'zip' -or $Type -like 'min-size*' -or $Type -like 'fxdependent*') {
+            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is essentially a 'zip' package.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
@@ -102,16 +102,16 @@ function Start-PSPackage {
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
         } elseif ($MacOSRuntime) {
-           $MacOSRuntime, "Release"
+            $MacOSRuntime, "Release"
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "linux-musl-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm") {
-            New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            New-PSOptions -Configuration "Release" -Runtime "linux-arm" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm64") {
             if ($IsMacOS) {
                 New-PSOptions -Configuration "Release" -Runtime "osx-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             } else {
-                New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+                New-PSOptions -Configuration "Release" -Runtime "linux-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -120,6 +120,13 @@ function Start-PSPackage {
         }
         elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-noopt-linux-musl-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
+        elseif ($Type.Count -eq 1 -and $Type[0] -eq "deb-arm64") {
+            New-PSOptions -Configuration "Release" -Runtime 'linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
+        elseif ($Type.Count -eq 1 -and $Type[0] -eq "min-size-arm64") {
+            $runtimeToUse = if ($IsMacOS) { "osx-arm64" } elseif ($IsLinux) { "linux-arm64" } else { "win-arm64" }
+            New-PSOptions -Configuration "Release" -Runtime $runtimeToUse -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
         else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -406,7 +413,7 @@ function Start-PSPackage {
                     New-PdbZipPackage @Arguments
                 }
             }
-            "min-size" {
+            { $_ -like "min-size*" } {
                 # Add suffix '-gc' because this package is for the Guest Config team.
                 if ($Environment.IsWindows) {
                     $Arguments = @{
@@ -416,12 +423,10 @@ function Start-PSPackage {
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
                             R2RState = 'SdkOnly'
-                            OperatingSystem = "Windows"
-                            Architecture = "amd64"
                         }
                     }
 
-                    if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
+                    if ($PSCmdlet.ShouldProcess("Create min-size Zip Package")) {
                         New-ZipPackage @Arguments
                     }
                 }
@@ -430,6 +435,7 @@ function Start-PSPackage {
                         PackageSourcePath = $Source
                         Name = $Name
                         PackageNameSuffix = 'gc'
+                        Architecture = $Runtime.Split('-')[1]
                         Version = $Version
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
@@ -437,12 +443,15 @@ function Start-PSPackage {
                         }
                     }
 
-                    if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                    if ($PSCmdlet.ShouldProcess("Create min-size tar.gz Package")) {
                         New-TarballPackage @Arguments
                     }
                 }
+                else {
+                    throw "The 'min-size*' package types are supported only on Windows and Linux."
+                }
             }
-            { $_ -like "fxdependent*"} {
+            { $_ -like "fxdependent*" } {
                 if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
@@ -613,6 +622,24 @@ function Start-PSPackage {
                     }
                 }
             }
+            'deb-arm64' {
+                $Arguments = @{
+                    Type = 'deb'
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    NoSudo = $NoSudo
+                    LTS = $LTS
+                    HostArchitecture = "arm64"
+                }
+                foreach ($Distro in $Script:DebianDistributions) {
+                    $Arguments["Distribution"] = $Distro
+                    if ($PSCmdlet.ShouldProcess("Create DEB Package for $Distro")) {
+                        New-UnixPackage @Arguments
+                    }
+                }
+            }
             'rpm' {
                 $Arguments = @{
                     Type = 'rpm'
@@ -775,6 +802,18 @@ function New-TarballPackage {
 
     $Staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath -R2RVerification $R2RVerification
+
+    # Ensure PowerShell executable has correct permissions in tarball
+    $pwshInStaging = Join-Path $Staging 'pwsh'
+    if (Test-Path -LiteralPath $pwshInStaging) {
+        Start-NativeExecution { chmod 755 $pwshInStaging }
+    }
+
+    # Included .NET executable for producing crash dumps
+    $createdumpInStaging = Join-Path $Staging 'createdump'
+    if (Test-Path -LiteralPath $createdumpInStaging) {
+        Start-NativeExecution { chmod 755 $createdumpInStaging }
+    }
 
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
         if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
@@ -1032,7 +1071,7 @@ function New-UnixPackage {
         # This is a string because strings are appended to it
         [string]$Iteration = "1",
 
-        # Host architecture values allowed for deb type packages: amd64
+        # Host architecture values allowed for deb type packages: amd64, arm64
         # Host architecture values allowed for rpm type packages include: x86_64, aarch64, native, all, noarch, any
         # Host architecture values allowed for osxpkg type packages include: x86_64, arm64
         [string]
@@ -1194,7 +1233,11 @@ function New-UnixPackage {
                 find $Staging -type f | xargs chmod 644
                 chmod 644 $ManGzipInfo.GzipFile
                 # refers to executable, does not vary by channel
-                chmod 755 "$Staging/pwsh" #only the executable file should be granted the execution permission
+                chmod 755 "$Staging/pwsh" # only the executable file should be granted the execution permission
+                # Included .NET executable for producing crash dumps
+                if (Test-Path "$Staging/createdump") {
+                    chmod 755 "$Staging/createdump"
+                }
             }
         }
 
@@ -1872,6 +1915,12 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         $pwshPath = "$targetPath/pwsh"
         if (Test-Path $pwshPath) {
             Start-NativeExecution { chmod 755 $pwshPath }
+        }
+
+        # Included .NET executable for producing crash dumps
+        $createdumpPath = "$targetPath/createdump"
+        if (Test-Path $createdumpPath) {
+            Start-NativeExecution { chmod 755 $createdumpPath }
         }
 
         # Calculate md5sums for all files in data directory (excluding symlinks)
@@ -3559,42 +3608,6 @@ function New-NugetPackage
     Pop-Location
 }
 
-<#
-.SYNOPSIS
-Publish the specified Nuget Package to MyGet feed.
-
-.DESCRIPTION
-The specified nuget package is published to the powershell.myget.org/powershell-core feed.
-
-.PARAMETER PackagePath
-Path to the NuGet Package.
-
-.PARAMETER ApiKey
-API key for powershell.myget.org
-#>
-function Publish-NugetToMyGet
-{
-    param(
-        [Parameter(Mandatory = $true)]
-        [string] $PackagePath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $ApiKey
-    )
-
-    $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
-
-    if ($null -eq $nuget)
-    {
-        throw 'nuget application is not available in PATH'
-    }
-
-    Get-ChildItem $PackagePath | ForEach-Object {
-        Write-Log "Pushing $_ to PowerShell Myget"
-        Start-NativeExecution { nuget push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey } > $null
-    }
-}
-
 function New-SubFolder
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -4520,272 +4533,6 @@ function New-GlobalToolNupkgFromSource
     Remove-Item -Path $CGManifestPath -Recurse -Force -ErrorAction SilentlyContinue
 }
 
-${mainLinuxBuildFolder} = 'pwshLinuxBuild'
-${minSizeLinuxBuildFolder} = 'pwshLinuxBuildMinSize'
-${arm32LinuxBuildFolder} = 'pwshLinuxBuildArm32'
-${arm64LinuxBuildFolder} = 'pwshLinuxBuildArm64'
-${amd64MarinerBuildFolder} = 'pwshMarinerBuildAmd64'
-${amd64AlpineFxdBuildFolder} = 'pwshAlpineFxdBuildAmd64'
-${arm64MarinerBuildFolder} = 'pwshMarinerBuildArm64'
-
-<#
-    Used in Azure DevOps Yaml to package all the linux packages for a channel.
-#>
-function Invoke-AzDevOpsLinuxPackageCreation {
-    param(
-        [switch]
-        $LTS,
-
-        [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
-        [ValidateNotNullOrEmpty()]
-        [string]$ReleaseTag,
-
-        [Parameter(Mandatory)]
-        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
-        [String]$BuildType
-    )
-
-    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
-        throw "Must be run in Azure DevOps"
-    }
-
-    try {
-        Write-Verbose "Packaging '$BuildType'; LTS:$LTS for $ReleaseTag ..." -Verbose
-
-        Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\psoptions.json"
-
-        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
-
-        switch ($BuildType) {
-            'fxdependent' {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
-            }
-            'alpine' {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
-            }
-            'rpm' {
-                Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
-            }
-            default {
-                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
-                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
-                Start-PSPackage @releaseTagParam -LTS:$LTS -Type 'deb', 'tar'
-            }
-        }
-
-        if ($BuildType -eq 'deb') {
-            Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
-
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\psoptions.json"
-
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}"
-
-            Write-Verbose -Verbose "---- Min-Size ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
-
-            ## Create 'linux-arm' 'tar.gz' package.
-            ## Note that 'linux-arm' can only be built on Ubuntu environment.
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}"
-            Start-PSPackage -Type tar-arm @releaseTagParam -LTS:$LTS
-
-            ## Create 'linux-arm64' 'tar.gz' package.
-            ## Note that 'linux-arm64' can only be built on Ubuntu environment.
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}"
-            Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
-        } elseif ($BuildType -eq 'rpm') {
-            # Generate mariner amd64 package
-            Write-Verbose -Verbose "Generating mariner amd64 package"
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}"
-
-            Write-Verbose -Verbose "---- rpm-fxdependent ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type rpm-fxdependent @releaseTagParam -LTS:$LTS
-
-            # Generate mariner arm64 package
-            Write-Verbose -Verbose "Generating mariner arm64 package"
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}"
-
-            Write-Verbose -Verbose "---- rpm-fxdependent-arm64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type rpm-fxdependent-arm64 @releaseTagParam -LTS:$LTS
-        } elseif ($BuildType -eq 'alpine') {
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}-meta\psoptions.json"
-            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}-meta\linuxFilePermission.json"
-            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}"
-
-            Write-Verbose -Verbose "---- tar-alpine-fxdependent ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type tar-alpine-fxdependent @releaseTagParam -LTS:$LTS
-        }
-    }
-    catch {
-        Get-Error -InputObject $_
-        throw
-    }
-}
-
-<#
-    Used in Azure DevOps Yaml to do all the builds needed for all Linux packages for a channel.
-#>
-function Invoke-AzDevOpsLinuxPackageBuild {
-    param (
-        [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
-        [ValidateNotNullOrEmpty()]
-        [string]$ReleaseTag,
-
-        [Parameter(Mandatory)]
-        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
-        [String]$BuildType
-    )
-
-    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
-        throw "Must be run in Azure DevOps"
-    }
-
-    try {
-
-        Write-Verbose "Building '$BuildType' for $ReleaseTag ..." -Verbose
-
-        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
-
-        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true }
-
-        switch ($BuildType) {
-            'fxdependent' {
-                $buildParams.Add("Runtime", "fxdependent")
-            }
-            'alpine' {
-                $buildParams.Add("Runtime", 'linux-musl-x64')
-            }
-        }
-
-        $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
-        Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-        Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-        # Remove symbol files.
-        Remove-Item "${buildFolder}\*.pdb" -Force
-
-        if ($BuildType -eq 'deb') {
-            ## Build 'min-size'
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Min-Size ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['ForMinimalSize'] = $true
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${minSizeLinuxBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            ## Build 'linux-arm' and create 'tar.gz' package for it.
-            ## Note that 'linux-arm' can only be built on Ubuntu environment.
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files.
-            Remove-Item "${buildFolder}\*.pdb" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files.
-            Remove-Item "${buildFolder}\*.pdb" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        } elseif ($BuildType -eq 'rpm') {
-            ## Build for Mariner amd64
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Mariner x64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner x64 package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-linux-x64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64MarinerBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-
-            ## Build for Mariner arm64
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Mariner arm64 ----"
-
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner arm64 package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-linux-arm64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64MarinerBuildFolder}"
-
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        } elseif ($BuildType -eq 'alpine') {
-            ## Build for alpine fxdependent
-            $options = Get-PSOptions
-            Write-Verbose -Verbose "---- fxdependent alpine x64 ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner package"
-                Remove-Item -Path $binDir -Recurse -Force
-            }
-
-            $buildParams['Runtime'] = 'fxdependent-noopt-linux-musl-x64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64AlpineFxdBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
-        }
-    }
-    catch {
-        Get-Error -InputObject $_
-        throw
-    }
-}
-
 <#
     Apply the file permissions specified in the json file $FilePath to the files under $RootPath.
     The format of the json file is like:
@@ -5133,213 +4880,4 @@ function Send-AzdoFile {
     } else {
         Write-Warning "This environment is neither Azure Devops nor GitHub Actions. Cannot capture the log file in this environment."
     }
-}
-
-# Class used for serializing and deserialing a BOM into Json
-class BomRecord {
-    hidden
-    [string]
-    $Pattern
-
-    [ValidateSet("Product", "NonProduct")]
-    [string]
-    $FileType = "NonProduct"
-
-    [string[]]
-    $Architecture
-
-    # Add methods to normalize Pattern to use `/` as the directory separator,
-    # but give a Pattern that is usable on the current platform
-    [string]
-    GetPattern () {
-        # Get the directory separator character for the current OS
-        $dirSeparator = [System.io.path]::DirectorySeparatorChar
-
-        # If the directory separator character is not a slash, then replace all slashes in the pattern with the OS-specific directory separator character
-        if ($dirSeparator -ne '/') {
-            return $this.Pattern.replace('/', $dirSeparator)
-        }
-
-        # If the directory separator character is a slash, then return the pattern as-is
-        return $this.Pattern
-    }
-
-    [void]
-    SetPattern ([string]$Pattern) {
-        # Get the directory separator character for the current OS
-        $dirSeparator = [System.io.path]::DirectorySeparatorChar
-
-        # If the directory separator character is not a slash, then replace all instances of the OS-specific directory separator character with slashes in the pattern
-        if ($dirSeparator -ne '/') {
-            $this.Pattern = $Pattern.Replace($dirSeparator, '/')
-        }
-
-        # If the directory separator character is a slash, then set the pattern as-is
-        $this.Pattern = $Pattern
-    }
-
-    [void]
-    EnsureArchitecture([string[]]$DefaultArchitecture = @("x64","x86","arm64")) {
-        if (-not $this.PSObject.Properties.Match("Architecture")) {
-            $this.Architecture = $DefaultArchitecture
-        }
-    }
-}
-
-# Verify a folder based on a BOM json.
-# Use -Fix to update the BOM, Please review the file types.
-function Test-Bom {
-    param(
-        [ValidateSet('mac','windows','linux')]
-        [string]
-        $BomName,
-        [ValidateScript({ Test-Path $_ })]
-        [string]
-        $Path,
-        [switch]
-        $Fix,
-        [string]
-        $Architecture
-    )
-
-    Write-Log "verifying no unauthorized files have been added or removed..."
-    $root = (Resolve-Path $Path).ProviderPath -replace "\$([System.io.path]::DirectorySeparatorChar)$"
-
-    $bomFile = Join-Path -Path $PSScriptRoot -ChildPath "Boms\$BomName.json"
-    Write-Verbose "bomFile: $bomFile" -Verbose
-    [BomRecord[]]$bomRecords = Get-Content -Path $bomFile | ConvertFrom-Json
-    $bomList = [System.Collections.Generic.List[BomRecord]]::new($bomRecords)
-    $noMatch = @()
-    $patternsUsed = @()
-    $files = @(Get-ChildItem -File -Path $Path -Recurse)
-    $totalFiles = $files.Count
-    $currentFileCount = 0
-
-    # Test each file if it is a match for a pattern in the BOM
-    # Add patters found to $patternsUsed
-    # Generate a list of new BOMs in $noMatch
-    $files | ForEach-Object {
-        [System.IO.FileInfo] $file = $_
-        $fileName = $file.Name
-        $filePath = $file.FullName
-        $currentFileCount++
-
-        Write-Progress -Activity "Testing $BomName BOM" -PercentComplete (100*$currentFileCount/$totalFiles) -Status "Processing $fileName"
-
-        $match = $false
-        [BomRecord] $matchingRecord = $null
-
-        # Test file against each BOM that can still have a match
-        foreach ($bom in $bomList) {
-            $pattern = $root + [system.io.path]::DirectorySeparatorChar + $bom.GetPattern()
-            if ($filePath -like $pattern) {
-                $matchingRecord = $bom
-                $match = $true
-                if ($patternsUsed -notcontains $bom) {
-                    $patternsUsed += $bom
-                }
-                break
-            }
-        }
-
-        # if we didn't find a match, create a record in the noMatch list.
-        if (!$match) {
-            $relativePath = $_.FullName.Replace($root, "").Substring(1)
-            $isProduct = Test-IsProductFile -Path $relativePath
-            $fileType = "NonProduct"
-            if ($isProduct) {
-                $fileType = "Product"
-            }
-
-            [BomRecord] $newBomRecord = [BomRecord] @{
-                FileType = $fileType
-            }
-
-            $newBomRecord.SetPattern([WildcardPattern]::Escape($_.FullName.Replace($root, "").Substring(1)))
-            $noMatch += $newBomRecord
-        }
-        elseif ($matchingRecord -and ![WildcardPattern]::ContainsWildcardCharacters($matchingRecord.GetPattern())) {
-            # remove any exact pattern which have been matched to speed up file processing,
-            # because they should not have additional matches.
-            if ($matchingRecord -is [BomRecord]) {
-                $null = $bomList.Remove($matchingRecord)
-            } else {
-                Write-Warning "Cannot remove matchingRecord $($matchingRecord.GetPattern())"
-            }
-        }
-    }
-
-    Write-Progress -Activity "Testing $BomName BOM" -Completed
-
-    Write-Verbose "$($noMatch.count) records need to be added to $bomFile" -Verbose
-
-    # Create the complete new manifest
-    $currentRecords = @()
-    # Add BOMs for all the files that didn't match
-    $currentRecords += $noMatch
-    # Add BOMs for all the patterns that did match
-    $currentRecords += $patternsUsed
-
-    # Generate a name for the updated BOM
-    $newBom = Join-Path -Path ([system.io.path]::GetTempPath()) -ChildPath ("${bomName}-" +  [system.io.path]::GetRandomFileName() + "-bom.json")
-
-    # Sort and serialize the BOM
-    $currentRecords | Sort-Object -Property FileType, Pattern | ConvertTo-Json | Out-File -Encoding utf8NoBOM -FilePath $newBom
-
-    # check if we removed any BOMs
-    $needsRemoval = $bom | Where-Object {
-        $_ -notin $patternsUsed
-    }
-
-    Write-Verbose "$($needsRemoval.count) need removal from $bomFile" -Verbose
-
-    # If we added or removed BOMs, log the new file and throw
-    if ($noMatch.count -gt 0 -or $needsRemoval.Count -gt 0) {
-        Send-AzdoFile -Path $newBom
-
-        # If -Fix was specified, update the original BOM
-        if ($Fix) {
-            Copy-Item -Path $newBom -Destination $bomFile -Force -Verbose
-        }
-
-        throw "Please update $bomFile per the above instructions"
-    }
-}
-
-# Simple test to guess if a file is a product file
-function Test-IsProductFile {
-    param(
-        $Path
-    )
-
-    $itemsToCopy = @(
-        "*.ps1"
-        "*Microsoft.PowerShell*.dll"
-        "*Microsoft.PowerShell*.psd1"
-        "*Microsoft.PowerShell*.ps1xml"
-        "*Microsoft.WSMan.Management*.psd1"
-        "*Microsoft.WSMan.Management*.ps1xml"
-        "*pwsh.dll"
-        "*System.Management.Automation.dll"
-        "*PSDiagnostics.ps?1"
-        "*pwsh"
-        "*pwsh.exe"
-    )
-
-    $itemsToExclude = @(
-        # This package is retrieved from https://www.github.com/powershell/MarkdownRender
-        "*Microsoft.PowerShell.MarkdownRender.dll"
-
-        )
-    if ($Path -like $itemsToExclude) {
-        return $false
-    }
-
-    foreach ($pattern in $itemsToCopy) {
-        if ($Path -like $pattern) {
-            return $true
-        }
-    }
-
-    return $false
 }

@@ -6,11 +6,11 @@ parameters:
 steps:
 - powershell: |
     $shouldSign = $true
-    $authenticodeCert = 'CP-230012'
-    $msixCert = 'CP-230012'
+    $authenticodeCert = '$(authenticode_cert_id)'
+    $msixCert = '$(authenticode_cert_id)'
     if($env:IS_DAILY -eq 'true')
     {
-      $authenticodeCert = 'CP-460906'
+      $authenticodeCert = '$(authenticode_test_cert_id)'
     }
     if($env:SKIP_SIGNING -eq 'Yes')
     {

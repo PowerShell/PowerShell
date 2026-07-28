@@ -83,6 +83,12 @@ stages:
 
   - template: /.pipelines/templates/linux.yml@self
     parameters:
+      Runtime: 'linux-arm64'
+      JobName: 'linux_arm64_minSize'
+      BuildConfiguration: 'minSize'
+
+  - template: /.pipelines/templates/linux.yml@self
+    parameters:
       Runtime: 'linux-arm'
       JobName: 'linux_arm'
 
@@ -134,6 +140,11 @@ stages:
       Architecture: x64
       BuildConfiguration: minSize
       JobName: build_windows_x64_minSize_release
+  - template: /.pipelines/templates/windows-hosted-build.yml@self
+    parameters:
+      Architecture: arm64
+      BuildConfiguration: minSize
+      JobName: build_windows_arm64_minSize_release
   - template: /.pipelines/templates/windows-hosted-build.yml@self
     parameters:
       Architecture: x86

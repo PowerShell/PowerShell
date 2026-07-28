@@ -138,12 +138,6 @@ extends:
             if (-not $matched) {
                 throw "Release tag must be in the format v#.#.#, such as 'v7.4.3'. Current version: $releaseTag"
             }
-
-            # Extract minor version and verify it's even (LTS versions only)
-            $minorVersion = [int]$Matches[1]
-            if($minorVersion % 2 -ne 0) {
-                throw "Only release msixbundle vpack for LTS releases. Current version: $releaseTag"
-            }
           displayName: Stop any preview release
           env:
             ob_restore_phase: true
@@ -270,7 +264,7 @@ extends:
 
             Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
             if (-not (Test-Path $signedFilesPath\pwsh.exe)) {
-              throw "pwsh.exe not found in $signedFilesPath"
+                throw "pwsh.exe not found in $signedFilesPath"
             }
 
             Write-Verbose -Message "Restoring PSOptions from $psoptionsFilePath" -Verbose
@@ -278,18 +272,47 @@ extends:
             Restore-PSOptions -PSOptionsPath "$psoptionsFilePath"
             Get-PSOptions | Write-Verbose -Verbose
 
+            $metadata = Get-Content "$repoRoot\tools\metadata.json" -Raw | ConvertFrom-Json
+            Write-Verbose -Verbose "metadata:"
+            $metadata | Out-String | Write-Verbose -Verbose
+
+            $publishLTS = $metadata.LTSRelease.PublishToChannels
+            $publishStable = $metadata.StableRelease.PublishToChannels
+
+            Write-Verbose -Verbose "Publish LTS: $publishLTS"
+            Write-Verbose -Verbose "Publish Stable: $publishStable"
+
+            if (-not $publishLTS -and -not $publishStable) {
+                throw "metadata.json indicates no channels to publish to."
+            }
+
             ## Generated packages are placed in the current directory by default.
             Set-Location $repoRoot
-            Start-PSPackage -Type msix -SkipReleaseChecks -WindowsRuntime $runtime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS
+            Start-PSPackage -Type msix -SkipReleaseChecks -WindowsRuntime $runtime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$publishLTS
+
+            if ($publishLTS -and $publishStable) {
+                $enabledChannels = "LTS,Stable"
+                Write-Verbose -Verbose "Publish to both LTS and Stable channels. Building additional Stable MSIX."
+                Start-PSPackage -Type msix -SkipReleaseChecks -WindowsRuntime $runtime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+            }
 
             $msixPkgNameFilter = "PowerShell*.msix"
-            $msixPkgFile = Get-ChildItem -Path $repoRoot -Filter $msixPkgNameFilter -File
-            $msixPkgPath = $msixPkgFile.FullName
-            Write-Verbose -Verbose "Unsigned msix package: $msixPkgPath"
+            $msixPkgFile = Get-ChildItem -Path $repoRoot -Filter $msixPkgNameFilter -Recurse -File | ForEach-Object FullName
+            Write-Verbose -Verbose "Unsigned msix package(s): $msixPkgFile"
 
             $pkgDir = '$(ob_outputDirectory)\pkgs'
             $null = New-Item -ItemType Directory -Path $pkgDir -Force
-            Copy-Item -Path $msixPkgPath -Destination $pkgDir -Force -Verbose
+            Copy-Item -Path $msixPkgFile -Destination $pkgDir -Force -Verbose
+
+            if (-not $enabledChannels) {
+                $enabledChannels = $publishLTS ? 'LTS' : ($publishStable ? 'Stable' : 'None')
+            }
+
+            ## Create an output variable for the enabled channels so that downstream stages can use it.
+            $vstsCommandString = "vso[task.setvariable variable=EnabledChannels;isOutput=true]$enabledChannels"
+            Write-Host ("sending " + $vstsCommandString)
+            Write-Host "##$vstsCommandString"
+          name: BuildMSIXPackage
           displayName: 'Build MSIX Package (Unsigned)'
 
         ### END OF Packaging ###
@@ -298,146 +321,28 @@ extends:
             Get-ChildItem -Path '$(ob_outputDirectory)\pkgs' -Recurse
           displayName: 'List Unsigned Package'
 
+        - pwsh: |
+            $signedFilesPath = '$(ob_outputDirectory)\Signed-$(Runtime)'
+            Remove-Item -Path $signedFilesPath -Recurse -Force -Verbose
+          displayName: 'Remove Signed-$(Runtime) folder'
+
     - stage: Pack_MSIXBundle_And_Sign
       displayName: 'Pack and sign MSIXBundle'
       dependsOn: [Build_MSIX_Package]
+
+      variables:
+        EnabledChannels: $[ stageDependencies.Build_MSIX_Package.Build.outputs['x64.BuildMSIXPackage.EnabledChannels'] ]
+
       jobs:
-      - job: Bundle
-        pool:
-          type: windows
-        variables:
-          ArtifactPlatform: 'windows'
-          ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
-          ob_artifactBaseName: drop_pack_msixbundle
-          ob_createvpack_enabled: ${{ parameters.createVPack }}
-          ob_createvpack_packagename: 'PowerShell7.Store.app'
-          ob_createvpack_owneralias: 'dongbow'
-          ob_createvpack_description: 'VPack for the PowerShell 7 Store Application'
-          ob_createvpack_targetDestinationDirectory: '$(Destination)'  ## The value is from the 'CreateVpack' task, used when pulling the generated VPack.
-          ob_createvpack_propsFile: false
-          ob_createvpack_provData: true
-          ob_createvpack_metadata: '$(Build.SourceVersion)'
-          ob_createvpack_versionAs: string
-          ob_createvpack_version: '$(Version)'
-          ob_createvpack_verbose: true
+      - template: /.pipelines/templates/create-msixbundle-vpack.yml@self
+        parameters:
+          Channel: 'LTS'
+          createVPack: ${{ parameters.createVPack }}
 
-        steps:
-        - checkout: self
-          displayName: Checkout source code - during restore
-          clean: true
-          path: s  ## $(Build.SourcesDirectory) is at '$(Pipeline.Workspace)\s', so we need to check out repo to the 's' folder.
-          env:
-            ob_restore_phase: true
-
-        - template: /.pipelines/templates/SetVersionVariables.yml@self
-          parameters:
-            ReleaseTagVar: $(ReleaseTagVar)
-            CreateJson: no
-
-        - template: /.pipelines/templates/shouldSign.yml@self
-
-        - task: DownloadPipelineArtifact@2
-          inputs:
-            artifactName: drop_build_x64
-            itemPattern: |
-              **/*.msix
-            targetPath: '$(Build.ArtifactStagingDirectory)\downloads'
-          displayName: Download msix for x64
-
-        - task: DownloadPipelineArtifact@2
-          inputs:
-            artifactName: drop_build_arm64
-            itemPattern: |
-              **/*.msix
-            targetPath: '$(Build.ArtifactStagingDirectory)\downloads'
-          displayName: Download msix for arm64
-
-        # Finds the makeappx tool on the machine.
-        - pwsh: |
-            Write-Verbose -Verbose 'PowerShell Version: $(Version)'
-            $cmd = Get-Command makeappx.exe -ErrorAction Ignore
-            if ($cmd) {
-                Write-Verbose -Verbose 'makeappx available in PATH'
-                $exePath = $cmd.Source
-            } else {
-                $makeappx = Get-ChildItem -Recurse 'C:\Program Files (x86)\Windows Kits\10\makeappx.exe' |
-                  Where-Object { $_.DirectoryName -match 'x64' } |
-                  Select-Object -Last 1
-                $exePath = $makeappx.FullName
-                Write-Verbose -Verbose "makeappx was found: $exePath"
-            }
-            $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
-            Write-Host ("sending " + $vstsCommandString)
-            Write-Host "##$vstsCommandString"
-          displayName: Find makeappx tool
-          retryCountOnTaskFailure: 1
-
-        - pwsh: |
-            $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
-            $null = New-Item -Path $sourceDir -ItemType Directory -Force
-
-            $msixFiles = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\downloads\*.msix" -Recurse
-            foreach ($msixFile in $msixFiles) {
-                $null = Copy-Item -Path $msixFile.FullName -Destination $sourceDir -Force -Verbose
-            }
-
-            $file = Get-ChildItem $sourceDir | Select-Object -First 1
-            $prefix = ($file.BaseName -split "-win")[0]
-            $pkgName = "$prefix.msixbundle"
-            Write-Verbose -Verbose "Creating $pkgName"
-
-            $makeappx = '$(MakeAppxPath)'
-            $outputDir = "$sourceDir\output"
-            New-Item $outputDir -Type Directory -Force > $null
-            & $makeappx bundle /d $sourceDir /p "$outputDir\$pkgName"
-            if ($LASTEXITCODE -ne 0) {
-                throw "makeappx bundle failed with exit code $LASTEXITCODE"
-            }
-
-            Get-ChildItem -Path $sourceDir -Recurse | Out-String -Width 200
-            $vstsCommandString = "vso[task.setvariable variable=BundleDir]$outputDir"
-            Write-Host ("sending " + $vstsCommandString)
-            Write-Host "##$vstsCommandString"
-          displayName: Create MsixBundle
-          retryCountOnTaskFailure: 1
-
-        - task: onebranch.pipeline.signing@1
-          displayName: Sign MsixBundle
-          inputs:
-            command: 'sign'
-            signing_profile: $(MSIXProfile)
-            files_to_sign: '**/*.msixbundle'
-            search_root: '$(BundleDir)'
-
-        - pwsh: |
-            $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
-            Write-Verbose -Verbose "Signed bundle: $signedBundle"
-
-            $signature = Get-AuthenticodeSignature -FilePath $signedBundle.FullName
-            if ($signature.Status -ne 'Valid') {
-                throw "The bundle file doesn't have a valid signature. Signature status: $($signature.Status)"
-            }
-
-            if (-not (Test-Path '$(ob_outputDirectory)' -PathType Container)) {
-                $null = New-Item '$(ob_outputDirectory)' -ItemType Directory -ErrorAction Stop
-            }
-
-            $targetPath = Join-Path '$(ob_outputDirectory)' 'Microsoft.PowerShell-LTS_8wekyb3d8bbwe.msixbundle'
-            Copy-Item -Verbose -Path $signedBundle.FullName -Destination $targetPath
-
-            Write-Verbose -Verbose "Uploaded Bundle:"
-            Get-ChildItem -Path $(ob_outputDirectory) | Out-String -Width 200 -Stream | Write-Verbose -Verbose
-          displayName: 'Stage msixbundle for VPack'
-
-        - pwsh: |
-            Write-Verbose "VPack Version: $(ob_createvpack_version)" -Verbose
-            $vpackFiles = Get-ChildItem -Path '$(ob_outputDirectory)\*' -Recurse
-            if($vpackFiles.Count -eq 0) {
-                throw "No files found in $(ob_outputDirectory)"
-            }
-            $vpackFiles | Out-String -Width 200
-          displayName: Debug Output Directory and Version
-          condition: succeededOrFailed()
+      - template: /.pipelines/templates/create-msixbundle-vpack.yml@self
+        parameters:
+          Channel: 'Stable'
+          createVPack: ${{ parameters.createVPack }}
 
     - stage: Publish_Symbols
       displayName: 'Publish Symbols'
