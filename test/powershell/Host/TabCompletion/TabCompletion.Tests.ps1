@@ -2120,8 +2120,10 @@ class InheritedClassTest : System.Attribute
         $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
     }
 
-    It 'Should complete dynamic parameter at cursor if parameter is not dynamic' {
-        $res = TabExpansion2 -inputScript 'Get-ChildItem -Path $PSHOME' -cursorColumn 18
+    It 'Should complete a static parameter at cursor for a command that implements dynamic parameters' {
+        $script = 'Get-ChildItem -Pat^h $PSHOME'
+        $cursorIndex = $script.IndexOf('^')
+        $res = TabExpansion2 -inputScript $script.Remove($cursorIndex, 1) -cursorColumn $cursorIndex
         $res.CompletionMatches[0].CompletionText | Should -Be '-Path'
     }
 
