@@ -475,24 +475,18 @@ namespace System.Management.Automation
 
             return string.Empty;
         }
-#endif
 
-#if !UNIX
         private const int ErrorInsufficientBuffer = 122;
         private const int AppModelErrorNoPackage = 15700;
 
         [DllImport("kernel32.dll", EntryPoint = "GetCurrentPackageFamilyName", CharSet = CharSet.Unicode)]
         private static extern int GetCurrentPackageFamilyNameNative(ref uint packageFamilyNameLength, [Out] StringBuilder packageFamilyName);
-#endif
 
         /// <summary>
-        /// Gets the package family name for the current MSIX process, or null when the process is unpackaged.
+        /// Returns the package family name of the current process when it has package (MSIX) identity; otherwise null.
         /// </summary>
-        internal static string GetCurrentPackageFamilyName()
+        private static string GetCurrentPackageFamilyName()
         {
-#if UNIX
-            return null;
-#else
             try
             {
                 uint length = 0;
@@ -518,8 +512,8 @@ namespace System.Management.Automation
             {
                 return null;
             }
-#endif
         }
+#endif
 
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
 
@@ -535,6 +529,43 @@ namespace System.Management.Automation
             }
 
             return baseDirectory;
+        }
+
+#if !UNIX
+        private static string s_packagedMachineDataStorePath;
+        private static bool s_packagedMachineDataStorePathInitialized;
+#endif
+
+        /// <summary>
+        /// When running with MSIX package identity, returns the package-family-isolated ProgramData
+        /// directory used for writable machine-wide configuration. Returns null for unpackaged
+        /// processes and on non-Windows platforms.
+        /// </summary>
+        internal static string GetPackagedMachineDataStorePath()
+        {
+#if UNIX
+            return null;
+#else
+            if (s_packagedMachineDataStorePathInitialized)
+            {
+                return s_packagedMachineDataStorePath;
+            }
+
+            s_packagedMachineDataStorePath = GetPackagedMachineDataStorePath(
+                Platform.SystemConfigDirectory,
+                GetCurrentPackageFamilyName());
+            s_packagedMachineDataStorePathInitialized = true;
+            return s_packagedMachineDataStorePath;
+#endif
+        }
+
+        internal static string GetPackagedMachineDataStorePath(
+            string programDataConfigDirectory,
+            string packageFamilyName)
+        {
+            return string.IsNullOrEmpty(programDataConfigDirectory) || string.IsNullOrEmpty(packageFamilyName)
+                ? null
+                : Path.Combine(programDataConfigDirectory, "Packages", packageFamilyName);
         }
 
         private static string[] s_productFolderDirectories;
@@ -749,10 +780,16 @@ namespace System.Management.Automation
         /// </summary>
         internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
-        internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
+        // Merge orders across the configuration scopes. ConfigScope.MachineFolder is the writable per-machine
+        // (admin) store of a packaged (MSIX) install; it has no backing file otherwise, so including it here
+        // is a no-op for non-packaged installs and these orders then collapse to the legacy behavior.
+        // Policy settings: admin (MachineFolder) > product ($PSHOME / AllUsers) > user (CurrentUser).
+        // Preference settings: user (CurrentUser) > admin (MachineFolder) > product (AllUsers).
+        // Note: Group Policy (registry) still takes precedence over all of these; see GetPolicySettingFromGPO.
+        internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.MachineFolder, ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
-        internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };
-        internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.AllUsers };
+        internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.MachineFolder, ConfigScope.AllUsers, ConfigScope.CurrentUser };
+        internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.MachineFolder, ConfigScope.AllUsers };
 
         internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
@@ -1012,6 +1049,13 @@ namespace System.Management.Automation
 
             foreach (ConfigScope scope in preferenceOrder)
             {
+                // MachineFolder is a config-file-only scope (the packaged per-machine data store); it has no
+                // Group Policy / registry representation, so skip it here and let the config-file lookup handle it.
+                if (scope == ConfigScope.MachineFolder)
+                {
+                    continue;
+                }
+
                 if (InternalTestHooks.BypassGroupPolicyCaching)
                 {
                     policy = GetPolicySettingFromGPOImpl<T>(scope);
@@ -1720,9 +1764,6 @@ namespace System.Management.Automation.Internal
 
         // Test out smaller connection buffer size when calling WNetGetConnection.
         internal static int WNetGetConnectionBufferSize = -1;
-
-        // Override the AllUsers config directory for testing config path fallback logic.
-        internal static string TestAllUsersConfigDirectory;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)

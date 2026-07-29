@@ -27,14 +27,12 @@ namespace PSTests.Sequential
         private const string ConfigFileName = "powershell.config.json";
 
         private readonly string systemWideConfigFile;
-        private readonly string productConfigFile;
         private readonly string currentUserConfigFile;
 
+        private readonly string systemWideConfigBackupFile;
         private readonly string currentUserConfigBackupFile;
 
-        private readonly string testConfigRoot;
         private readonly string systemWideConfigDirectory;
-        private readonly string productConfigDirectory;
         private readonly string currentUserConfigDirectory;
 
         private readonly JsonSerializer serializer;
@@ -43,55 +41,35 @@ namespace PSTests.Sequential
         private readonly PowerShellPolicies currentUserPolicies;
 
         private readonly bool originalTestHookValue;
-        private readonly string originalTestAllUsersConfigDirectory;
-        private readonly string originalSingletonSystemConfigDir;
-        private readonly string originalSingletonSystemConfigFile;
-        private readonly string originalSingletonProductConfigFile;
-#if !UNIX
-        private readonly bool originalUseDefaultSystemConfigDirectory;
-#endif
+
+        // Reflection handle to the private, mutable 'machineFolderConfigFile' field of the PowerShellConfig
+        // singleton. On non-packaged installs this field is null, so the MachineFolder scope has no backing
+        // file. Tests point it at a temp file to exercise the 3-scope (CurrentUser/MachineFolder/AllUsers)
+        // merge behavior used by MSIX installs, and it is restored to its original value on cleanup.
+        private readonly FieldInfo machineFolderConfigFileField;
+        private readonly string originalMachineFolderConfigFile;
+        private readonly string machineFolderTestConfigDirectory;
+        private readonly string machineFolderTestConfigFile;
 
         public PowerShellPolicyFixture()
         {
-            // Use separate temp directories to exercise system and product configuration merging.
-            testConfigRoot = Path.Combine(Path.GetTempPath(), "PSTestConfig_" + Guid.NewGuid().ToString("N"));
-            systemWideConfigDirectory = Path.Combine(testConfigRoot, "SystemWide");
-            productConfigDirectory = Path.Combine(testConfigRoot, "Product");
-            Directory.CreateDirectory(systemWideConfigDirectory);
-            Directory.CreateDirectory(productConfigDirectory);
-            originalTestAllUsersConfigDirectory = InternalTestHooks.TestAllUsersConfigDirectory;
-            InternalTestHooks.TestAllUsersConfigDirectory = systemWideConfigDirectory;
-
-            currentUserConfigDirectory = Platform.UserConfigDirectory;
+            systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
+            currentUserConfigDirectory = Platform.ConfigDirectory;
 
             if (!Directory.Exists(currentUserConfigDirectory))
             {
+                // Create the CurrentUser config directory if it doesn't exist
                 Directory.CreateDirectory(currentUserConfigDirectory);
             }
 
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
-            productConfigFile = Path.Combine(productConfigDirectory, ConfigFileName);
             currentUserConfigFile = Path.Combine(currentUserConfigDirectory, ConfigFileName);
 
-            // Redirect the PowerShellConfig singleton to isolated system and product config files.
-            var sysConfigDirField = typeof(PowerShellConfig).GetField("systemWideConfigDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
-            var sysConfigFileField = typeof(PowerShellConfig).GetField("systemWideConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
-            var productConfigFileField = typeof(PowerShellConfig).GetField("productConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
-#if !UNIX
-            var useDefaultSystemConfigDirectoryField = typeof(PowerShellConfig).GetField("useDefaultSystemConfigDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
-#endif
-            originalSingletonSystemConfigDir = (string)sysConfigDirField.GetValue(PowerShellConfig.Instance);
-            originalSingletonSystemConfigFile = (string)sysConfigFileField.GetValue(PowerShellConfig.Instance);
-            originalSingletonProductConfigFile = (string)productConfigFileField.GetValue(PowerShellConfig.Instance);
-#if !UNIX
-            originalUseDefaultSystemConfigDirectory = (bool)useDefaultSystemConfigDirectoryField.GetValue(PowerShellConfig.Instance);
-#endif
-            sysConfigDirField.SetValue(PowerShellConfig.Instance, systemWideConfigDirectory);
-            sysConfigFileField.SetValue(PowerShellConfig.Instance, systemWideConfigFile);
-            productConfigFileField.SetValue(PowerShellConfig.Instance, productConfigFile);
-#if !UNIX
-            useDefaultSystemConfigDirectoryField.SetValue(PowerShellConfig.Instance, false);
-#endif
+            if (File.Exists(systemWideConfigFile))
+            {
+                systemWideConfigBackupFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                File.Move(systemWideConfigFile, systemWideConfigBackupFile);
+            }
 
             if (File.Exists(currentUserConfigFile))
             {
@@ -107,6 +85,11 @@ namespace PSTests.Sequential
                 NullValueHandling = NullValueHandling.Ignore
             };
             serializer = JsonSerializer.Create(settings);
+
+            machineFolderConfigFileField = typeof(PowerShellConfig).GetField("machineFolderConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
+            originalMachineFolderConfigFile = (string)machineFolderConfigFileField.GetValue(PowerShellConfig.Instance);
+            machineFolderTestConfigDirectory = Path.Combine(Path.GetTempPath(), "PSMachineFolderTest_" + Guid.NewGuid().ToString("N"));
+            machineFolderTestConfigFile = Path.Combine(machineFolderTestConfigDirectory, ConfigFileName);
 
             systemWidePolicies = new PowerShellPolicies()
             {
@@ -143,31 +126,15 @@ namespace PSTests.Sequential
             if (disposing)
             {
                 CleanupConfigFiles();
+                CleanupMachineFolderConfig();
+                if (systemWideConfigBackupFile != null)
+                {
+                    File.Move(systemWideConfigBackupFile, systemWideConfigFile);
+                }
 
                 if (currentUserConfigBackupFile != null)
                 {
                     File.Move(currentUserConfigBackupFile, currentUserConfigFile);
-                }
-
-                // Restore the PowerShellConfig singleton to the original system config paths
-                var sysConfigDirField = typeof(PowerShellConfig).GetField("systemWideConfigDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
-                var sysConfigFileField = typeof(PowerShellConfig).GetField("systemWideConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
-                var productConfigFileField = typeof(PowerShellConfig).GetField("productConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
-#if !UNIX
-                var useDefaultSystemConfigDirectoryField = typeof(PowerShellConfig).GetField("useDefaultSystemConfigDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
-#endif
-                sysConfigDirField.SetValue(PowerShellConfig.Instance, originalSingletonSystemConfigDir);
-                sysConfigFileField.SetValue(PowerShellConfig.Instance, originalSingletonSystemConfigFile);
-                productConfigFileField.SetValue(PowerShellConfig.Instance, originalSingletonProductConfigFile);
-#if !UNIX
-                useDefaultSystemConfigDirectoryField.SetValue(PowerShellConfig.Instance, originalUseDefaultSystemConfigDirectory);
-#endif
-                InternalTestHooks.TestAllUsersConfigDirectory = originalTestAllUsersConfigDirectory;
-                ForceReadingFromFile();
-
-                if (Directory.Exists(testConfigRoot))
-                {
-                    Directory.Delete(testConfigRoot, recursive: true);
                 }
 
                 InternalTestHooks.BypassGroupPolicyCaching = originalTestHookValue;
@@ -331,23 +298,13 @@ namespace PSTests.Sequential
         {
             var maxPause = 10;
 
-            while (maxPause-- != 0 &&
-                (File.Exists(systemWideConfigFile) || File.Exists(productConfigFile) || File.Exists(currentUserConfigFile)))
+            while (maxPause-- != 0 && (File.Exists(systemWideConfigFile) || File.Exists(currentUserConfigFile)))
             {
                 var pause = false;
 
                 try
                 {
                     File.Delete(systemWideConfigFile);
-                }
-                catch (IOException)
-                {
-                    pause = true;
-                }
-
-                try
-                {
-                    File.Delete(productConfigFile);
                 }
                 catch (IOException)
                 {
@@ -453,7 +410,7 @@ namespace PSTests.Sequential
 
         internal void ForceReadingFromFile()
         {
-            // Reset the cached roots for every physical configuration source.
+            // Reset the cached roots for every scope (AllUsers, CurrentUser, MachineFolder).
             FieldInfo roots = typeof(PowerShellConfig).GetField("configRoots", BindingFlags.NonPublic | BindingFlags.Instance);
             JObject[] value = (JObject[])roots.GetValue(PowerShellConfig.Instance);
             for (int i = 0; i < value.Length; i++)
@@ -462,24 +419,62 @@ namespace PSTests.Sequential
             }
         }
 
-        internal void SetupConfigSources(object productConfig, object systemWideConfig, object currentUserConfig)
+        /// <summary>
+        /// Writes powershell.config.json content for the AllUsers ($PSHOME) and CurrentUser scopes and,
+        /// optionally, provisions a MachineFolder scope backed by a temp file (as happens for MSIX installs
+        /// where system-wide settings live in an admin-writable per-machine data store). Pass null for a
+        /// scope to leave it without a config file. The MachineFolder scope is disabled again whenever
+        /// <paramref name="machineFolderConfig"/> is null so tests do not leak state to one another.
+        /// </summary>
+        /// <param name="allUsersConfig">Object serialized to the AllUsers ($PSHOME) config file, or null to leave that scope unconfigured.</param>
+        /// <param name="currentUserConfig">Object serialized to the CurrentUser config file, or null to leave that scope unconfigured.</param>
+        /// <param name="machineFolderConfig">Object serialized to a temp MachineFolder config file injected into the singleton, or null to leave the MachineFolder scope disabled.</param>
+        internal void SetupWinCompatConfig(object allUsersConfig, object currentUserConfig, object machineFolderConfig = null)
         {
             CleanupConfigFiles();
+            CleanupMachineFolderConfig();
 
-            WriteConfigFile(productConfigFile, productConfig);
-            WriteConfigFile(systemWideConfigFile, systemWideConfig);
-            WriteConfigFile(currentUserConfigFile, currentUserConfig);
+            if (allUsersConfig != null)
+            {
+                WriteConfigFile(systemWideConfigFile, allUsersConfig);
+            }
+
+            if (currentUserConfig != null)
+            {
+                WriteConfigFile(currentUserConfigFile, currentUserConfig);
+            }
+
+            if (machineFolderConfig != null)
+            {
+                Directory.CreateDirectory(machineFolderTestConfigDirectory);
+                WriteConfigFile(machineFolderTestConfigFile, machineFolderConfig);
+                machineFolderConfigFileField.SetValue(PowerShellConfig.Instance, machineFolderTestConfigFile);
+            }
+        }
+
+        internal string SetupMachineFolderWrite()
+        {
+            CleanupConfigFiles();
+            CleanupMachineFolderConfig();
+            machineFolderConfigFileField.SetValue(PowerShellConfig.Instance, machineFolderTestConfigFile);
+            ForceReadingFromFile();
+            return machineFolderTestConfigFile;
         }
 
         private void WriteConfigFile(string path, object config)
         {
-            if (config is null)
-            {
-                return;
-            }
-
             using var streamWriter = new StreamWriter(path);
             serializer.Serialize(streamWriter, config);
+        }
+
+        private void CleanupMachineFolderConfig()
+        {
+            // Restore the process-wide singleton field and remove any temp files created for MachineFolder tests.
+            machineFolderConfigFileField.SetValue(PowerShellConfig.Instance, originalMachineFolderConfigFile);
+            if (Directory.Exists(machineFolderTestConfigDirectory))
+            {
+                Directory.Delete(machineFolderTestConfigDirectory, recursive: true);
+            }
         }
 
         #endregion
@@ -1074,164 +1069,252 @@ namespace PSTests.Sequential
             Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser));
         }
 
-        [Fact, Priority(12)]
-        public void PowerShellConfig_AllUsersValueFallsBackToProductConfig()
+        // The Windows PowerShell compatibility module deny list is a *policy*: its entries are unioned across
+        // every config scope so a module added by a product update in $PSHOME (AllUsers) is never dropped
+        // because a higher-precedence scope (MachineFolder or CurrentUser) also defines the key.
+        [Fact]
+        [Priority(12)]
+        public void PowerShellConfig_GetWinCompatModuleDenyList_UnionsAcrossScopes()
         {
-            fixture.SetupConfigSources(
-                productConfig: new JObject { ["Microsoft.PowerShell:ExecutionPolicy"] = "RemoteSigned" },
-                systemWideConfig: new { ConsolePrompting = true },
-                currentUserConfig: null);
-            fixture.ForceReadingFromFile();
-
-            Assert.Equal(
-                "RemoteSigned",
-                PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.AllUsers, Utils.DefaultPowerShellShellID));
-        }
-
-        [Fact, Priority(13)]
-        public void PowerShellConfig_AllUsersValuePrefersSystemConfig()
-        {
-            fixture.SetupConfigSources(
-                productConfig: new JObject { ["Microsoft.PowerShell:ExecutionPolicy"] = "RemoteSigned" },
-                systemWideConfig: new JObject { ["Microsoft.PowerShell:ExecutionPolicy"] = "AllSigned" },
-                currentUserConfig: null);
-            fixture.ForceReadingFromFile();
-
-            Assert.Equal(
-                "AllSigned",
-                PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.AllUsers, Utils.DefaultPowerShellShellID));
-        }
-
-        [Fact, Priority(14)]
-        public void PowerShellConfig_EmptySystemExecutionPolicyFallsBackToProductConfig()
-        {
-            fixture.SetupConfigSources(
-                productConfig: new JObject { ["Microsoft.PowerShell:ExecutionPolicy"] = "RemoteSigned" },
-                systemWideConfig: new JObject { ["Microsoft.PowerShell:ExecutionPolicy"] = string.Empty },
-                currentUserConfig: null);
-            fixture.ForceReadingFromFile();
-
-            Assert.Equal(
-                "RemoteSigned",
-                PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.AllUsers, Utils.DefaultPowerShellShellID));
-        }
-
-        [Fact, Priority(15)]
-        public void PowerShellConfig_WinCompatDenyListUnionsAllSources()
-        {
-            fixture.SetupConfigSources(
-                productConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "ProductModule", "DuplicateModule" } },
-                systemWideConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "SystemModule", "duplicatemodule" } },
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "SystemModule" } },
                 currentUserConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "UserModule" } });
             fixture.ForceReadingFromFile();
 
             string[] denyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
 
-            Assert.Equal(4, denyList.Length);
-            Assert.Contains(denyList, module => module.Equals("ProductModule", StringComparison.OrdinalIgnoreCase));
-            Assert.Contains(denyList, module => module.Equals("SystemModule", StringComparison.OrdinalIgnoreCase));
-            Assert.Contains(denyList, module => module.Equals("UserModule", StringComparison.OrdinalIgnoreCase));
-            Assert.Single(denyList, module => module.Equals("DuplicateModule", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(denyList);
+            Assert.Equal(2, denyList.Length);
+            Assert.Contains("SystemModule", denyList);
+            Assert.Contains("UserModule", denyList);
         }
 
-        [Fact, Priority(16)]
-        public void PowerShellConfig_WinCompatDenyListReturnsNullWhenUndefined()
+        [Fact]
+        [Priority(13)]
+        public void PowerShellConfig_GetWinCompatModuleDenyList_DeduplicatesCaseInsensitively()
         {
-            fixture.SetupConfigSources(
-                productConfig: new { ConsolePrompting = true },
-                systemWideConfig: new { ConsolePrompting = true },
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "DuplicateModule" } },
+                currentUserConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "duplicatemodule" } });
+            fixture.ForceReadingFromFile();
+
+            string[] denyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+
+            Assert.NotNull(denyList);
+            Assert.Single(denyList);
+        }
+
+        [Fact]
+        [Priority(14)]
+        public void PowerShellConfig_GetWinCompatModuleDenyList_IncludesMachineFolderScope()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "SystemModule" } },
+                currentUserConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "UserModule" } },
+                machineFolderConfig: new { WindowsPowerShellCompatibilityModuleDenyList = new[] { "MachineModule" } });
+            fixture.ForceReadingFromFile();
+
+            string[] denyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+
+            Assert.NotNull(denyList);
+            Assert.Equal(3, denyList.Length);
+            Assert.Contains("SystemModule", denyList);
+            Assert.Contains("UserModule", denyList);
+            Assert.Contains("MachineModule", denyList);
+        }
+
+        [Fact]
+        [Priority(15)]
+        public void PowerShellConfig_GetWinCompatModuleDenyList_ReturnsNullWhenUndefined()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { ConsolePrompting = true },
                 currentUserConfig: new { ConsolePrompting = true });
             fixture.ForceReadingFromFile();
 
-            Assert.Null(PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList());
+            string[] denyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+
+            Assert.Null(denyList);
         }
 
-        [Fact, Priority(17)]
-        public void PowerShellConfig_WinCompatNoClobberListUsesPreferenceOrder()
+        // The no-clobber module list is a *preference*: only the highest-precedence scope that defines it
+        // wins (CurrentUser > MachineFolder > AllUsers); lower scopes are ignored once a higher one sets it.
+        [Fact]
+        [Priority(16)]
+        public void PowerShellConfig_GetWinCompatNoClobberList_CurrentUserWins()
         {
-            fixture.SetupConfigSources(
-                productConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "ProductModule" } },
-                systemWideConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "SystemModule" } },
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "SystemModule" } },
                 currentUserConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "UserModule" } });
             fixture.ForceReadingFromFile();
 
-            Assert.Equal(
-                new[] { "UserModule" },
-                PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList());
+            string[] noClobber = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+
+            Assert.NotNull(noClobber);
+            Assert.Single(noClobber);
+            Assert.Equal("UserModule", noClobber[0]);
         }
 
-        [Fact, Priority(18)]
-        public void PowerShellConfig_WinCompatNoClobberListSystemConfigOverridesProduct()
+        [Fact]
+        [Priority(17)]
+        public void PowerShellConfig_GetWinCompatNoClobberList_FallsBackToAllUsers()
         {
-            fixture.SetupConfigSources(
-                productConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "ProductModule" } },
-                systemWideConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "SystemModule" } },
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "SystemModule" } },
                 currentUserConfig: new { ConsolePrompting = true });
             fixture.ForceReadingFromFile();
 
-            Assert.Equal(
-                new[] { "SystemModule" },
-                PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList());
+            string[] noClobber = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+
+            Assert.NotNull(noClobber);
+            Assert.Single(noClobber);
+            Assert.Equal("SystemModule", noClobber[0]);
         }
 
-        [Fact, Priority(19)]
-        public void PowerShellConfig_ImplicitWinCompatUsesPreferenceOrder()
+        [Fact]
+        [Priority(18)]
+        public void PowerShellConfig_GetWinCompatNoClobberList_MachineFolderOverridesAllUsers()
         {
-            fixture.SetupConfigSources(
-                productConfig: new { DisableImplicitWinCompat = true },
-                systemWideConfig: new { DisableImplicitWinCompat = true },
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "SystemModule" } },
+                currentUserConfig: new { ConsolePrompting = true },
+                machineFolderConfig: new { WindowsPowerShellCompatibilityNoClobberModuleList = new[] { "MachineModule" } });
+            fixture.ForceReadingFromFile();
+
+            string[] noClobber = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+
+            Assert.NotNull(noClobber);
+            Assert.Single(noClobber);
+            Assert.Equal("MachineModule", noClobber[0]);
+        }
+
+        // DisableImplicitWinCompat is a *preference* bool: IsImplicitWinCompatEnabled() returns the negation
+        // of the value from the highest-precedence scope that sets it, defaulting to enabled when unset.
+        [Fact]
+        [Priority(19)]
+        public void PowerShellConfig_IsImplicitWinCompatEnabled_TrueWhenUndefined()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { ConsolePrompting = true },
+                currentUserConfig: new { ConsolePrompting = true });
+            fixture.ForceReadingFromFile();
+
+            Assert.True(PowerShellConfig.Instance.IsImplicitWinCompatEnabled());
+        }
+
+        [Fact]
+        [Priority(20)]
+        public void PowerShellConfig_IsImplicitWinCompatEnabled_FalseWhenAllUsersDisables()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { DisableImplicitWinCompat = true },
+                currentUserConfig: new { ConsolePrompting = true });
+            fixture.ForceReadingFromFile();
+
+            Assert.False(PowerShellConfig.Instance.IsImplicitWinCompatEnabled());
+        }
+
+        [Fact]
+        [Priority(21)]
+        public void PowerShellConfig_IsImplicitWinCompatEnabled_CurrentUserReEnables()
+        {
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { DisableImplicitWinCompat = true },
                 currentUserConfig: new { DisableImplicitWinCompat = false });
             fixture.ForceReadingFromFile();
 
             Assert.True(PowerShellConfig.Instance.IsImplicitWinCompatEnabled());
         }
 
-        [Fact, Priority(20)]
-        public void PowerShellConfig_ResolveSystemConfigDirectoryUsesPackageFamily()
+        [Fact]
+        [Priority(22)]
+        public void Utils_GetPackagedMachineDataStorePath_UsesPackageFamily()
         {
-            string productDirectory = Path.Combine("ProgramFiles", "PowerShell", "7");
-            string programDataDirectory = Path.Combine("ProgramData", "Microsoft", "PowerShell");
-            string actual = PowerShellConfig.ResolveSystemConfigDirectory(
-                productDirectory,
-                programDataDirectory,
+            string programDataConfigDirectory = Path.Combine("ProgramData", "Microsoft", "PowerShell");
+            string actual = Utils.GetPackagedMachineDataStorePath(
+                programDataConfigDirectory,
                 "Microsoft.PowerShell_8wekyb3d8bbwe");
 
-#if UNIX
-            Assert.Equal(productDirectory, actual);
-#else
             Assert.Equal(
-                Path.Combine(programDataDirectory, "Packages", "Microsoft.PowerShell_8wekyb3d8bbwe"),
+                Path.Combine(programDataConfigDirectory, "Packages", "Microsoft.PowerShell_8wekyb3d8bbwe"),
                 actual);
-#endif
         }
 
-        [Fact, Priority(21)]
-        public void PowerShellConfig_ResolveSystemConfigDirectoryPreservesProductDirectoryWithoutPackageIdentity()
+        [Fact]
+        [Priority(23)]
+        public void Utils_GetPackagedMachineDataStorePath_RequiresPackageIdentity()
         {
-            string productDirectory = Path.Combine("ProgramFiles", "PowerShell", "7");
-            string programDataDirectory = Path.Combine("ProgramData", "Microsoft", "PowerShell");
-            string actual = PowerShellConfig.ResolveSystemConfigDirectory(
-                productDirectory,
-                programDataDirectory,
-                packageFamilyName: null);
+            Assert.Null(Utils.GetPackagedMachineDataStorePath(
+                Path.Combine("ProgramData", "Microsoft", "PowerShell"),
+                packageFamilyName: null));
+        }
 
-            Assert.Equal(productDirectory, actual);
+        [Fact]
+        [Priority(24)]
+        public void PowerShellConfig_AllUsersWriteCreatesMachineFolderDirectory()
+        {
+            string configFile = fixture.SetupMachineFolderWrite();
+
+            PowerShellConfig.Instance.SetExecutionPolicy(
+                ConfigScope.AllUsers,
+                Utils.DefaultPowerShellShellID,
+                "RemoteSigned");
+
+            Assert.True(File.Exists(configFile));
+            JObject config = JObject.Parse(File.ReadAllText(configFile));
+            Assert.Equal("RemoteSigned", (string)config["Microsoft.PowerShell:ExecutionPolicy"]);
+        }
+
+        [Fact]
+        [Priority(25)]
+        public void PowerShellConfig_AllUsersRemoveTargetsMachineFolder()
+        {
+            string configFile = fixture.SetupMachineFolderWrite();
+            PowerShellConfig.Instance.SetExecutionPolicy(
+                ConfigScope.AllUsers,
+                Utils.DefaultPowerShellShellID,
+                "RemoteSigned");
+
+            PowerShellConfig.Instance.RemoveExecutionPolicy(
+                ConfigScope.AllUsers,
+                Utils.DefaultPowerShellShellID);
+
+            JObject config = JObject.Parse(File.ReadAllText(configFile));
+            Assert.Null(config.Property("Microsoft.PowerShell:ExecutionPolicy"));
         }
 
 #if !UNIX
-        [Fact, Priority(22)]
+        [Fact]
+        [Priority(26)]
         [SupportedOSPlatform("windows")]
-        public void PowerShellConfig_SystemConfigDirectorySecurityUsesRestrictedInheritedAcl()
+        public void PowerShellConfig_MachineFolderDirectorySecurityUsesRestrictedInheritedAcl()
         {
-            DirectorySecurity security = PowerShellConfig.CreateSystemConfigDirectorySecurity();
+            DirectorySecurity security = PowerShellConfig.CreateMachineFolderDirectorySecurity();
 
             Assert.True(security.AreAccessRulesProtected);
+            Assert.True(PowerShellConfig.IsMachineFolderSecuritySecure(security));
             Assert.Equal(
                 new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null),
                 security.GetOwner(typeof(SecurityIdentifier)));
             AssertAccessRule(security, WellKnownSidType.LocalSystemSid, FileSystemRights.FullControl);
             AssertAccessRule(security, WellKnownSidType.BuiltinAdministratorsSid, FileSystemRights.FullControl);
             AssertAccessRule(security, WellKnownSidType.BuiltinUsersSid, FileSystemRights.ReadAndExecute);
+        }
+
+        [Fact]
+        [Priority(27)]
+        [SupportedOSPlatform("windows")]
+        public void PowerShellConfig_MachineFolderSecurityRejectsUserWriteAccess()
+        {
+            DirectorySecurity security = PowerShellConfig.CreateMachineFolderDirectorySecurity();
+            security.AddAccessRule(new FileSystemAccessRule(
+                new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, domainSid: null),
+                FileSystemRights.WriteData,
+                InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                PropagationFlags.None,
+                AccessControlType.Allow));
+
+            Assert.False(PowerShellConfig.IsMachineFolderSecuritySecure(security));
         }
 
         [SupportedOSPlatform("windows")]

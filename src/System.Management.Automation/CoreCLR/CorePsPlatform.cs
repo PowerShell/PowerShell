@@ -164,18 +164,17 @@ namespace System.Management.Automation
 #if UNIX
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
-        internal static readonly string UserConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
+        internal static readonly string ConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
 #else
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = SafeDeriveFromSpecialFolder(
             Environment.SpecialFolder.LocalApplicationData,
             @"Microsoft\PowerShell");
 
-        internal static readonly string UserConfigDirectory = SafeDeriveFromSpecialFolder(
+        internal static readonly string ConfigDirectory = SafeDeriveFromSpecialFolder(
             Environment.SpecialFolder.Personal,
             @"PowerShell");
 
-        // System-wide configuration directory for AllUsers scope.
         internal static readonly string SystemConfigDirectory = SafeDeriveFromSpecialFolder(
             Environment.SpecialFolder.CommonApplicationData,
             @"Microsoft\PowerShell");
@@ -313,7 +312,7 @@ namespace System.Management.Automation
             /// <summary> /usr/local/share/powershell/Modules </summary>
             SHARED_MODULES,
             /// <summary> XDG_CONFIG_HOME/powershell </summary>
-            DEFAULT,
+            DEFAULT
         }
 
         /// <summary>

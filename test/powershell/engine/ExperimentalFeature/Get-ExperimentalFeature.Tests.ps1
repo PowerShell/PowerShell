@@ -7,23 +7,24 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
 
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
-        $systemConfigDirectory = Get-PowerShellSystemConfigDirectory
-        $systemConfigPath = Join-Path $systemConfigDirectory "powershell.config.json"
-        $userConfigPath = Join-Path (Split-Path $PROFILE.CurrentUserAllHosts) "powershell.config.json"
-
-        $userConfigDir = Split-Path $userConfigPath
-        if (!(Test-Path $userConfigDir)) {
-            $null = New-Item -ItemType Directory -Path $userConfigDir -Force -ErrorAction SilentlyContinue
+        $systemConfigPath = "$PSHOME/powershell.config.json"
+        if ($IsWindows) {
+            $userConfigPath = "~/Documents/powershell/powershell.config.json"
+        }
+        else {
+            $userConfigPath = "~/.config/powershell/powershell.config.json"
         }
 
-        $systemConfigExists = Test-Path $systemConfigPath
-        if ($systemConfigExists) {
-            Move-Item $systemConfigPath "$systemConfigPath.backup" -Force
+        $systemConfigExists = $false
+        if (Test-Path $systemConfigPath) {
+            $systemConfigExists = $true
+            Move-Item $systemConfigPath "$systemConfigPath.backup" -Force -ErrorAction SilentlyContinue
         }
 
-        $userConfigExists = Test-Path $userConfigPath
-        if ($userConfigExists) {
-            Move-Item $userConfigPath "$userConfigPath.backup" -Force
+        $userConfigExists = $false
+        if (Test-Path $userConfigPath) {
+            $userConfigExists = $true
+            Move-Item $userConfigPath "$userConfigPath.backup" -Force -ErrorAction SilentlyContinue
         }
 
         $testModulePath = Join-Path -Path $PSScriptRoot -ChildPath "assets"
@@ -33,7 +34,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     AfterAll {
-        if ($systemConfigExists) {
+        if ($systemConfigExists -and (Test-CanWriteToPsHome)) {
             Move-Item "$systemConfigPath.backup" $systemConfigPath -Force -ErrorAction SilentlyContinue
         }
 
@@ -42,11 +43,13 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
         }
 
         $env:PSModulePath = $originalModulePath
-        Remove-TestPowerShellSystemConfigDirectory
     }
 
     AfterEach {
-        Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
+        if (Test-CanWriteToPsHome) {
+            Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
+        }
+
         Remove-Item $userConfigPath -Force -ErrorAction SilentlyContinue
     }
 
@@ -116,12 +119,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     Context "User config takes precedence over system config" {
-        It "Feature is enabled in user config only" {
-            if (!(Test-CanWriteToSystemConfigDir)) {
-                Set-ItResult -Skipped -Because "The test account cannot write the system configuration directory."
-                return
-            }
-
+        It "Feature is enabled in user config only" -Skip:(!(Test-CanWriteToPsHome)) {
             '{"ExperimentalFeatures":["ExpTest.FeatureOne"]}' > $userConfigPath
             '{"ExperimentalFeatures":["ExpTest.FeatureTwo"]}' > $systemConfigPath
 

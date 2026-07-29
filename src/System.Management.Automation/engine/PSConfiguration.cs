@@ -30,7 +30,14 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// CurrentUser configuration applies to the current user.
         /// </summary>
-        CurrentUser = 1
+        CurrentUser = 1,
+
+        /// <summary>
+        /// MachineFolder configuration applies to all users and is stored in the writable per-machine
+        /// data store of a packaged (MSIX) install. It is only present when running as such a package;
+        /// otherwise this scope has no backing file.
+        /// </summary>
+        MachineFolder = 2
     }
 
     /// <summary>
@@ -51,13 +58,6 @@ namespace System.Management.Automation.Configuration
     /// </remarks>
     internal sealed class PowerShellConfig
     {
-        private enum ConfigSource
-        {
-            SystemWide = 0,
-            CurrentUser = 1,
-            Product = 2
-        }
-
         private const string ConfigFileName = "powershell.config.json";
         private const string ExecutionPolicyDefaultShellKey = "Microsoft.PowerShell:ExecutionPolicy";
         private const string DisableImplicitWinCompatKey = "DisableImplicitWinCompat";
@@ -72,15 +72,14 @@ namespace System.Management.Automation.Configuration
         private string systemWideConfigFile;
         private string systemWideConfigDirectory;
 
-        // The immutable product configuration shipped in $PSHOME.
-        private string productConfigFile;
+        // When running as a packaged MSIX app, the path to the writable per-machine (admin)
+        // 'MachineFolder' config file. Null when not packaged, in which case the MachineFolder
+        // scope has no backing file and merge orders collapse to the legacy behavior.
+        private string machineFolderConfigFile;
 
 #if !UNIX
-        // True when the default machine-wide location is in use and PowerShell owns its ACL.
-        private bool useDefaultSystemConfigDirectory;
-
-        // The root of the PowerShell-owned machine-wide directory hierarchy.
-        private readonly string defaultSystemConfigDirectory;
+        // True when PowerShell owns and secures the default ProgramData hierarchy.
+        private bool useDefaultMachineFolderConfigDirectory;
 #endif
 
         // The json file containing the per-user configuration settings.
@@ -88,7 +87,7 @@ namespace System.Management.Automation.Configuration
         private readonly string perUserConfigDirectory;
 
         // Note: JObject and JsonSerializer are thread safe.
-        // Root Json objects corresponding to each physical configuration source.
+        // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
         // They are used as a cache to avoid hitting the disk for every read operation.
         private readonly JObject[] configRoots;
         private readonly JObject emptyConfig;
@@ -103,34 +102,28 @@ namespace System.Management.Automation.Configuration
 
         private PowerShellConfig()
         {
-            string testDirectory = InternalTestHooks.TestAllUsersConfigDirectory;
-            string productConfigDirectory = Utils.DefaultPowerShellAppBase;
-            bool useSeparateSystemConfig = testDirectory is not null;
-#if !UNIX
-            string packageFamilyName = Utils.GetCurrentPackageFamilyName();
-            defaultSystemConfigDirectory = Platform.SystemConfigDirectory;
-            useDefaultSystemConfigDirectory = testDirectory is null && !string.IsNullOrEmpty(packageFamilyName);
-            useSeparateSystemConfig |= !string.IsNullOrEmpty(packageFamilyName);
-
-            // Only MSIX uses a writable machine-wide source. MSI, ZIP, and Unix installations
-            // preserve the existing AllUsers location in $PSHOME.
-            systemWideConfigDirectory = testDirectory
-                ?? ResolveSystemConfigDirectory(
-                    productConfigDirectory,
-                    defaultSystemConfigDirectory,
-                    packageFamilyName);
-#else
-            systemWideConfigDirectory = testDirectory ?? productConfigDirectory;
-#endif
+            // Sets the system-wide configuration file.
+            systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
-            productConfigFile = useSeparateSystemConfig
-                ? Path.Combine(productConfigDirectory, ConfigFileName)
-                : null;
+
+            // When running as a packaged MSIX app, expose its package-family-isolated ProgramData
+            // location as an additional 'MachineFolder' (admin) configuration scope. The shipped
+            // $PSHOME config remains the read-only product defaults; system-wide writes are redirected
+            // to ProgramData and only the changed keys are stored there (no full seed). Policy and
+            // preference settings merge these scopes with different precedence (see the Utils merge orders).
+            string machineStore = Utils.GetPackagedMachineDataStorePath();
+            if (!string.IsNullOrEmpty(machineStore))
+            {
+                machineFolderConfigFile = Path.Combine(machineStore, ConfigFileName);
+#if !UNIX
+                useDefaultMachineFolderConfigDirectory = true;
+#endif
+            }
 
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the execution scenario.
             // Writes will attempt to create the directory if it does not already exist.
-            perUserConfigDirectory = Platform.UserConfigDirectory;
+            perUserConfigDirectory = Platform.ConfigDirectory;
             if (!string.IsNullOrEmpty(perUserConfigDirectory))
             {
                 perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
@@ -143,36 +136,35 @@ namespace System.Management.Automation.Configuration
             fileLock = new ReaderWriterLockSlim();
         }
 
-        internal static string ResolveSystemConfigDirectory(
-            string productDirectory,
-            string programDataDirectory,
-            string packageFamilyName)
+        private string GetConfigFilePath(ConfigScope scope)
         {
-#if UNIX
-            return productDirectory;
-#else
-            return string.IsNullOrEmpty(packageFamilyName)
-                ? productDirectory
-                : Path.Combine(programDataDirectory, "Packages", packageFamilyName);
-#endif
-        }
-
-        private string GetConfigFilePathForWrite(ConfigScope scope)
-        {
-            return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
-        }
-
-        private string GetConfigFilePath(ConfigSource source)
-        {
-            switch (source)
+            switch (scope)
             {
-                case ConfigSource.SystemWide:
-                    return systemWideConfigFile;
-                case ConfigSource.CurrentUser:
+                case ConfigScope.CurrentUser:
                     return perUserConfigFile;
+                case ConfigScope.MachineFolder:
+                    // Null when not running as a packaged app.
+                    return machineFolderConfigFile;
                 default:
-                    return productConfigFile;
+                    // AllUsers -> the read-only $PSHOME (product) config.
+                    return systemWideConfigFile;
             }
+        }
+
+        /// <summary>
+        /// Maps a logical write scope to the physical config scope that receives the write. System-wide
+        /// (AllUsers) writes are redirected to the writable per-machine data store (MachineFolder) when
+        /// running as a packaged app, so only the changed keys are stored there and the read-only $PSHOME
+        /// product config is left untouched. All other scopes write in place.
+        /// </summary>
+        private ConfigScope ResolveWriteScope(ConfigScope scope)
+        {
+            if (scope == ConfigScope.AllUsers && !string.IsNullOrEmpty(machineFolderConfigFile))
+            {
+                return ConfigScope.MachineFolder;
+            }
+
+            return scope;
         }
 
         /// <summary>
@@ -193,12 +185,12 @@ namespace System.Management.Automation.Configuration
             FileInfo info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
-            productConfigFile = null;
+
+            // An explicit settings file overrides the per-machine data store; disable the MachineFolder scope.
+            machineFolderConfigFile = null;
 #if !UNIX
-            useDefaultSystemConfigDirectory = false;
+            useDefaultMachineFolderConfigDirectory = false;
 #endif
-            Interlocked.Exchange(ref configRoots[(int)ConfigSource.SystemWide], null);
-            Interlocked.Exchange(ref configRoots[(int)ConfigSource.Product], null);
         }
 
         /// <summary>
@@ -236,24 +228,8 @@ namespace System.Management.Automation.Configuration
         internal string GetExecutionPolicy(ConfigScope scope, string shellId)
         {
             string key = GetExecutionPolicySettingKey(shellId);
-            if (scope == ConfigScope.CurrentUser)
-            {
-                return TryReadValueFromSource(ConfigSource.CurrentUser, key, out string currentUserPolicy)
-                    && !string.IsNullOrEmpty(currentUserPolicy)
-                        ? currentUserPolicy
-                        : null;
-            }
-
-            foreach (ConfigSource source in s_systemWideSourcePreferenceOrder)
-            {
-                if (TryReadValueFromSource(source, key, out string executionPolicy)
-                    && !string.IsNullOrEmpty(executionPolicy))
-                {
-                    return executionPolicy;
-                }
-            }
-
-            return null;
+            string execPolicy = ReadValueFromFile<string>(scope, key);
+            return string.IsNullOrEmpty(execPolicy) ? null : execPolicy;
         }
 
         internal void RemoveExecutionPolicy(ConfigScope scope, string shellId)
@@ -298,22 +274,28 @@ namespace System.Management.Automation.Configuration
         /// <param name="setEnabled">If true, add to configuration; otherwise, remove from configuration.</param>
         internal void SetExperimentalFeatures(ConfigScope scope, string featureName, bool setEnabled)
         {
+            // Experimental features intentionally stay on the legacy scopes ($PSHOME for AllUsers) and are not
+            // redirected to the packaged per-machine data store; MachineFolder support for experimental features
+            // is deferred to a separate change (see https://github.com/PowerShell/PowerShell/issues/27702).
+            // This keeps behavior identical to non-packaged installs, so an AllUsers write under MSIX fails
+            // against the read-only $PSHOME just as it does today.
             var features = new List<string>(GetExperimentalFeatures());
             bool containsFeature = features.Contains(featureName);
             if (setEnabled && !containsFeature)
             {
                 features.Add(featureName);
-                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray(), allowMachineFolderRedirect: false);
             }
             else if (!setEnabled && containsFeature)
             {
                 features.Remove(featureName);
-                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray(), allowMachineFolderRedirect: false);
             }
         }
 
         internal bool IsImplicitWinCompatEnabled()
         {
+            // DisableImplicitWinCompat is a preference: the highest-precedence scope that sets it wins.
             bool settingValue = MergePreferenceValue<bool?>(DisableImplicitWinCompatKey) ?? false;
 
             return !settingValue;
@@ -321,11 +303,13 @@ namespace System.Management.Automation.Configuration
 
         internal string[] GetWindowsPowerShellCompatibilityModuleDenyList()
         {
+            // The compatibility module deny list is a policy: its entries are unioned across every scope.
             return MergePolicyList(WindowsPowerShellCompatibilityModuleDenyListKey);
         }
 
         internal string[] GetWindowsPowerShellCompatibilityNoClobberModuleList()
         {
+            // The no-clobber list is a preference: the highest-precedence scope that defines it wins.
             return MergePreferenceValue<string[]>(WindowsPowerShellCompatibilityNoClobberModuleListKey);
         }
 
@@ -467,27 +451,38 @@ namespace System.Management.Automation.Configuration
         }
 #endif // UNIX
 
-        private static readonly ConfigSource[] s_systemWideSourcePreferenceOrder =
+        /// <summary>
+        /// The order in which configuration scopes are consulted when resolving a *preference* setting:
+        /// the current user's value wins, then the admin-writable MachineFolder override, then the
+        /// $PSHOME (AllUsers) product default. Policy lists resolved by <see cref="MergePolicyList"/>
+        /// union every scope, so the iteration order does not affect them.
+        /// </summary>
+        private static readonly ConfigScope[] s_configScopePreferenceOrder = new[]
         {
-            ConfigSource.SystemWide,
-            ConfigSource.Product
-        };
-
-        private static readonly ConfigSource[] s_configSourcePreferenceOrder =
-        {
-            ConfigSource.CurrentUser,
-            ConfigSource.SystemWide,
-            ConfigSource.Product
+            ConfigScope.CurrentUser,
+            ConfigScope.MachineFolder,
+            ConfigScope.AllUsers
         };
 
         /// <summary>
-        /// Returns the first value defined by the highest-precedence configuration source.
+        /// Resolves a *preference* setting: returns the value from the highest-precedence scope that
+        /// defines <paramref name="key"/> (see <see cref="s_configScopePreferenceOrder"/>), so that a
+        /// more specific scope overrides a broader one. Use this for settings that behave like a
+        /// preference - the current user's choice should take precedence over a system-wide value.
+        /// In contrast to <see cref="MergePolicyList"/> (which unions every scope), only the winning
+        /// scope's value is used; lower scopes are ignored once a higher one defines the key. Returns
+        /// <paramref name="defaultValue"/> when no scope defines the key. <typeparamref name="T"/> must
+        /// be a reference type or a nullable value type so that an unset scope is observable as null.
         /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="key">The configuration key to resolve.</param>
+        /// <param name="defaultValue">The value to return when no scope defines the key.</param>
         private T MergePreferenceValue<T>(string key, T defaultValue = default)
         {
-            foreach (ConfigSource source in s_configSourcePreferenceOrder)
+            foreach (ConfigScope scope in s_configScopePreferenceOrder)
             {
-                if (TryReadValueFromSource(source, key, out T value))
+                T value = ReadValueFromFile<T>(scope, key);
+                if (value is not null)
                 {
                     return value;
                 }
@@ -497,14 +492,22 @@ namespace System.Management.Automation.Configuration
         }
 
         /// <summary>
-        /// Returns the case-insensitive union of a policy list across all configuration sources.
+        /// Resolves a *policy* list: returns the case-insensitive union of the string entries defined in
+        /// every configuration scope for <paramref name="key"/>. Use this for list settings that behave
+        /// like a policy and must accumulate across scopes, so that an entry contributed by one scope
+        /// (for example a module added to the list by a product update in $PSHOME) is never dropped
+        /// because a higher-precedence scope also defines the key. Every scope can only add entries; a
+        /// higher-precedence scope never removes an entry contributed by a lower scope. Returns null when
+        /// no scope contributes an entry.
         /// </summary>
+        /// <param name="key">The configuration key to resolve.</param>
         private string[] MergePolicyList(string key)
         {
             var merged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (ConfigSource source in s_configSourcePreferenceOrder)
+            foreach (ConfigScope scope in s_configScopePreferenceOrder)
             {
-                if (TryReadValueFromSource(source, key, out string[] values))
+                string[] values = ReadValueFromFile<string[]>(scope, key);
+                if (values is not null)
                 {
                     merged.UnionWith(values);
                 }
@@ -529,34 +532,13 @@ namespace System.Management.Automation.Configuration
         /// <param name="defaultValue">The default value to return if the key is not present.</param>
         private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default)
         {
-            if (scope == ConfigScope.CurrentUser)
-            {
-                return TryReadValueFromSource(ConfigSource.CurrentUser, key, out T value)
-                    ? value
-                    : defaultValue;
-            }
-
-            foreach (ConfigSource source in s_systemWideSourcePreferenceOrder)
-            {
-                if (TryReadValueFromSource(source, key, out T value))
-                {
-                    return value;
-                }
-            }
-
-            return defaultValue;
-        }
-
-        private bool TryReadValueFromSource<T>(ConfigSource source, string key, out T value)
-        {
-            string fileName = GetConfigFilePath(source);
+            string fileName = GetConfigFilePath(scope);
             if (string.IsNullOrEmpty(fileName))
             {
-                value = default;
-                return false;
+                return defaultValue;
             }
 
-            JObject configData = configRoots[(int)source];
+            JObject configData = configRoots[(int)scope];
 
             if (configData == null)
             {
@@ -566,6 +548,12 @@ namespace System.Management.Automation.Configuration
                     {
                         // Open file for reading, but allow multiple readers
                         fileLock.EnterReadLock();
+#if !UNIX
+                        if (scope == ConfigScope.MachineFolder && useDefaultMachineFolderConfigDirectory)
+                        {
+                            ValidateMachineFolderConfigPath(fileName);
+                        }
+#endif
 
                         using var stream = OpenFileStreamWithRetry(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                         using var jsonReader = new JsonTextReader(new StreamReader(stream));
@@ -587,7 +575,7 @@ namespace System.Management.Automation.Configuration
                 }
 
                 // Set the configuration cache.
-                JObject originalValue = Interlocked.CompareExchange(ref configRoots[(int)source], configData, null);
+                JObject originalValue = Interlocked.CompareExchange(ref configRoots[(int)scope], configData, null);
                 if (originalValue != null)
                 {
                     configData = originalValue;
@@ -596,12 +584,10 @@ namespace System.Management.Automation.Configuration
 
             if (configData != emptyConfig && configData.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out JToken jToken))
             {
-                value = jToken.ToObject<T>(serializer);
-                return value is not null;
+                return jToken.ToObject<T>(serializer) ?? defaultValue;
             }
 
-            value = default;
-            return false;
+            return defaultValue;
         }
 
         private static FileStream OpenFileStreamWithRetry(string fullPath, FileMode mode, FileAccess access, FileShare share)
@@ -635,15 +621,32 @@ namespace System.Management.Automation.Configuration
         /// <param name="key">The string key of the value.</param>
         /// <param name="value">The value to set.</param>
         /// <param name="addValue">Whether the key-value pair should be added to or removed from the file.</param>
-        private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue)
+        /// <param name="allowMachineFolderRedirect">When true (default), system-wide (AllUsers) writes are redirected to the writable per-machine data store on a packaged install; pass false to write to the literal scope.</param>
+        private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue, bool allowMachineFolderRedirect = true)
         {
             try
             {
-                string fileName = GetConfigFilePathForWrite(scope);
-                ConfigSource source = scope == ConfigScope.CurrentUser
-                    ? ConfigSource.CurrentUser
-                    : ConfigSource.SystemWide;
+                // Redirect system-wide writes to the writable per-machine data store when packaged, so only
+                // the changed keys are stored there and the read-only $PSHOME product config is untouched.
+                // Callers that must target the literal scope (e.g. experimental features, whose MachineFolder
+                // support is deferred) pass allowMachineFolderRedirect: false.
+                if (allowMachineFolderRedirect)
+                {
+                    scope = ResolveWriteScope(scope);
+                }
+
+                string fileName = GetConfigFilePath(scope);
                 fileLock.EnterWriteLock();
+                if (scope == ConfigScope.MachineFolder)
+                {
+                    EnsureMachineFolderConfigDirectory();
+#if !UNIX
+                    if (useDefaultMachineFolderConfigDirectory && File.Exists(fileName))
+                    {
+                        ValidateMachineFolderConfigPath(fileName);
+                    }
+#endif
+                }
 
                 // Since multiple properties can be in a single file, replacement is required instead of overwrite if a file already exists.
                 // Handling the read and write operations within a single FileStream prevents other processes from reading or writing the file while
@@ -723,8 +726,15 @@ namespace System.Management.Automation.Configuration
                     fs.SetLength(fs.Position);
                 }
 
+#if !UNIX
+                if (scope == ConfigScope.MachineFolder && useDefaultMachineFolderConfigDirectory)
+                {
+                    EnsureMachineFolderConfigFileSecurity(fileName);
+                }
+#endif
+
                 // Refresh the configuration cache.
-                Interlocked.Exchange(ref configRoots[(int)source], jsonObject);
+                Interlocked.Exchange(ref configRoots[(int)scope], jsonObject);
             }
             finally
             {
@@ -739,38 +749,34 @@ namespace System.Management.Automation.Configuration
         /// <param name="scope">The ConfigScope of the file to update.</param>
         /// <param name="key">The string key of the value.</param>
         /// <param name="value">The value to write.</param>
-        private void WriteValueToFile<T>(ConfigScope scope, string key, T value)
+        /// <param name="allowMachineFolderRedirect">When true (default), system-wide (AllUsers) writes are redirected to the writable per-machine data store on a packaged install; pass false to write to the literal scope.</param>
+        private void WriteValueToFile<T>(ConfigScope scope, string key, T value, bool allowMachineFolderRedirect = true)
         {
             if (scope == ConfigScope.CurrentUser && !Directory.Exists(perUserConfigDirectory))
             {
                 Directory.CreateDirectory(perUserConfigDirectory);
             }
-            else if (scope == ConfigScope.AllUsers)
-            {
-                EnsureSystemConfigDirectory();
-            }
 
-            UpdateValueInFile<T>(scope, key, value, true);
+            UpdateValueInFile<T>(scope, key, value, true, allowMachineFolderRedirect);
         }
 
-        private void EnsureSystemConfigDirectory()
+        private void EnsureMachineFolderConfigDirectory()
         {
+            string machineFolderConfigDirectory = Path.GetDirectoryName(machineFolderConfigFile);
 #if UNIX
-            Directory.CreateDirectory(systemWideConfigDirectory);
+            Directory.CreateDirectory(machineFolderConfigDirectory);
 #else
-            if (!useDefaultSystemConfigDirectory)
+            if (!useDefaultMachineFolderConfigDirectory)
             {
-                Directory.CreateDirectory(systemWideConfigDirectory);
+                Directory.CreateDirectory(machineFolderConfigDirectory);
                 return;
             }
 
-            DirectorySecurity security = CreateSystemConfigDirectorySecurity();
-            EnsureDirectoryWithSecurity(defaultSystemConfigDirectory, security);
-            if (!string.Equals(defaultSystemConfigDirectory, systemWideConfigDirectory, StringComparison.OrdinalIgnoreCase))
-            {
-                EnsureDirectoryWithSecurity(Path.Combine(defaultSystemConfigDirectory, "Packages"), security);
-                EnsureDirectoryWithSecurity(systemWideConfigDirectory, security);
-            }
+            DirectorySecurity security = CreateMachineFolderDirectorySecurity();
+            string systemConfigDirectory = Platform.SystemConfigDirectory;
+            EnsureDirectoryWithSecurity(systemConfigDirectory, security);
+            EnsureDirectoryWithSecurity(Path.Combine(systemConfigDirectory, "Packages"), security);
+            EnsureDirectoryWithSecurity(machineFolderConfigDirectory, security);
 #endif
         }
 
@@ -799,7 +805,7 @@ namespace System.Management.Automation.Configuration
             directory.SetAccessControl(security);
         }
 
-        internal static DirectorySecurity CreateSystemConfigDirectorySecurity()
+        internal static DirectorySecurity CreateMachineFolderDirectorySecurity()
         {
             const InheritanceFlags Inheritance = InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit;
 
@@ -827,6 +833,110 @@ namespace System.Management.Automation.Configuration
                 AccessControlType.Allow));
             return security;
         }
+
+        private static FileSecurity CreateMachineFolderFileSecurity()
+        {
+            var administrators = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null);
+            var security = new FileSecurity();
+            security.SetAccessRuleProtection(isProtected: true, preserveInheritance: false);
+            security.SetOwner(administrators);
+            security.AddAccessRule(new FileSystemAccessRule(
+                new SecurityIdentifier(WellKnownSidType.LocalSystemSid, domainSid: null),
+                FileSystemRights.FullControl,
+                AccessControlType.Allow));
+            security.AddAccessRule(new FileSystemAccessRule(
+                administrators,
+                FileSystemRights.FullControl,
+                AccessControlType.Allow));
+            security.AddAccessRule(new FileSystemAccessRule(
+                new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, domainSid: null),
+                FileSystemRights.ReadAndExecute,
+                AccessControlType.Allow));
+            return security;
+        }
+
+        private static void EnsureMachineFolderConfigFileSecurity(string path)
+        {
+            var file = new FileInfo(path);
+            file.Refresh();
+            if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
+            {
+                throw new IOException(path);
+            }
+
+            file.SetAccessControl(CreateMachineFolderFileSecurity());
+        }
+
+        private static void ValidateMachineFolderConfigPath(string configFile)
+        {
+            string systemConfigDirectory = Platform.SystemConfigDirectory;
+            ValidateMachineFolderDirectory(systemConfigDirectory);
+            ValidateMachineFolderDirectory(Path.Combine(systemConfigDirectory, "Packages"));
+            ValidateMachineFolderDirectory(Path.GetDirectoryName(configFile));
+
+            var file = new FileInfo(configFile);
+            file.Refresh();
+            if ((file.Attributes & FileAttributes.ReparsePoint) != 0
+                || !IsMachineFolderSecuritySecure(file.GetAccessControl()))
+            {
+                throw new UnauthorizedAccessException(configFile);
+            }
+        }
+
+        private static void ValidateMachineFolderDirectory(string path)
+        {
+            var directory = new DirectoryInfo(path);
+            directory.Refresh();
+            if (!directory.Exists
+                || (directory.Attributes & FileAttributes.ReparsePoint) != 0
+                || !IsMachineFolderSecuritySecure(directory.GetAccessControl()))
+            {
+                throw new UnauthorizedAccessException(path);
+            }
+        }
+
+        internal static bool IsMachineFolderSecuritySecure(FileSystemSecurity security)
+        {
+            const FileSystemRights WriteRights =
+                FileSystemRights.WriteData
+                | FileSystemRights.AppendData
+                | FileSystemRights.WriteExtendedAttributes
+                | FileSystemRights.WriteAttributes
+                | FileSystemRights.Delete
+                | FileSystemRights.DeleteSubdirectoriesAndFiles
+                | FileSystemRights.ChangePermissions
+                | FileSystemRights.TakeOwnership;
+
+            if (!security.AreAccessRulesProtected)
+            {
+                return false;
+            }
+
+            var administrators = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null);
+            var localSystem = new SecurityIdentifier(WellKnownSidType.LocalSystemSid, domainSid: null);
+            var owner = (SecurityIdentifier)security.GetOwner(typeof(SecurityIdentifier));
+            if (!owner.Equals(administrators) && !owner.Equals(localSystem))
+            {
+                return false;
+            }
+
+            AuthorizationRuleCollection rules = security.GetAccessRules(
+                includeExplicit: true,
+                includeInherited: true,
+                targetType: typeof(SecurityIdentifier));
+            foreach (FileSystemAccessRule rule in rules)
+            {
+                if (rule.AccessControlType == AccessControlType.Allow
+                    && (rule.FileSystemRights & WriteRights) != 0
+                    && !rule.IdentityReference.Equals(administrators)
+                    && !rule.IdentityReference.Equals(localSystem))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 #endif
 
         /// <summary>
@@ -837,11 +947,12 @@ namespace System.Management.Automation.Configuration
         /// <param name="key">The string key of the value.</param>
         private void RemoveValueFromFile<T>(ConfigScope scope, string key)
         {
-            string fileName = GetConfigFilePathForWrite(scope);
+            scope = ResolveWriteScope(scope);
+            string fileName = GetConfigFilePath(scope);
             // Optimization: If the file doesn't exist, there is nothing to remove
             if (File.Exists(fileName))
             {
-                UpdateValueInFile<T>(scope, key, default(T), false);
+                UpdateValueInFile<T>(scope, key, default(T), false, allowMachineFolderRedirect: false);
             }
         }
     }

@@ -345,68 +345,6 @@ function Test-CanWriteToPsHome
     $script:CanWriteToPsHome
 }
 
-$script:CanWriteToSystemConfigDir = $null
-$script:CreatedSystemConfigDirectories = @()
-function Get-PowerShellSystemConfigDirectory {
-    $configType = [PSObject].Assembly.GetType('System.Management.Automation.Configuration.PowerShellConfig')
-    $staticFlags = [Reflection.BindingFlags]'Static,NonPublic'
-    $instanceFlags = [Reflection.BindingFlags]'Instance,NonPublic'
-    $config = $configType.GetField('Instance', $staticFlags).GetValue($null)
-    return $configType.GetField('systemWideConfigDirectory', $instanceFlags).GetValue($config)
-}
-
-function Test-CanWriteToSystemConfigDir {
-    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingEmptyCatchBlock', '', Justification = "an error message is not appropriate for this function")]
-    param ()
-    if ($null -ne $script:CanWriteToSystemConfigDir) {
-        return $script:CanWriteToSystemConfigDir
-    }
-
-    $script:CanWriteToSystemConfigDir = $false
-    $systemConfigDirectory = Get-PowerShellSystemConfigDirectory
-
-    try {
-        if (!(Test-Path $systemConfigDirectory)) {
-            $directory = $systemConfigDirectory
-            while ($directory -and !(Test-Path -LiteralPath $directory)) {
-                $script:CreatedSystemConfigDirectories += $directory
-                $parentDirectory = Split-Path -Parent $directory
-                if (!$parentDirectory -or $parentDirectory -eq $directory) {
-                    break
-                }
-
-                $directory = $parentDirectory
-            }
-
-            $null = New-Item -ItemType Directory -Path $systemConfigDirectory -Force -ErrorAction Stop
-        }
-
-        if (Test-Path $systemConfigDirectory) {
-            $testFileName = Join-Path $systemConfigDirectory (New-Guid).Guid
-            $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
-            $script:CanWriteToSystemConfigDir = $true
-            Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
-        }
-    }
-    catch {
-        ; # do nothing
-    }
-
-    $script:CanWriteToSystemConfigDir
-}
-
-function Remove-TestPowerShellSystemConfigDirectory {
-    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'This function only cleans up directories created by tests.')]
-    param ()
-
-    foreach ($directory in $script:CreatedSystemConfigDirectories) {
-        Remove-Item -LiteralPath $directory -Force -ErrorAction SilentlyContinue
-    }
-
-    $script:CreatedSystemConfigDirectories = @()
-    $script:CanWriteToSystemConfigDir = $null
-}
-
 # Creates a password meeting Windows complexity rules
 function New-ComplexPassword
 {
@@ -683,3 +621,4 @@ function Get-HelpNetworkTestCases
 
     return $cases | Sort-Object -Property ExpectedError, Command -Unique
 }
+
