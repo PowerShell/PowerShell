@@ -118,35 +118,35 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FileNotExist" xml:space="preserve">
-    <value>The data file '{0}' cannot be found. </value>
+    <value>Não foi possível encontrar o arquivo de dados '{0}'. </value>
   </data>
   <data name="NotCalledFromAScriptFile" xml:space="preserve">
-    <value>The FileName parameter was not specified. The FileName parameter is required when Import-LocalizedData is not called from a script file.</value>
+    <value>O parâmetro FileName não foi especificado. O parâmetro FileName é necessário quando Import-LocalizedData não é chamado de um arquivo de script.</value>
   </data>
   <data name="ErrorOpeningFile" xml:space="preserve">
-    <value>The following error occurred while PowerShell was opening the data file '{0}':
+    <value>Ocorreu o seguinte erro enquanto o PowerShell abria o arquivo de dados '{0}':
 {1}.</value>
   </data>
   <data name="ErrorLoadingDataFile" xml:space="preserve">
-    <value>The following error occurred while PowerShell was loading the '{0}' script data file:
+    <value>Ocorreu o seguinte erro enquanto o PowerShell carregava o arquivo de dados do script '{0}':
 {1}.</value>
   </data>
   <data name="FileNameParameterCannotHavePath" xml:space="preserve">
-    <value>The argument for the FileName parameter should not contain a path.</value>
+    <value>O argumento do parâmetro FileName não deve conter um caminho.</value>
   </data>
   <data name="CannotFindPsd1File" xml:space="preserve">
-    <value>Cannot find the PowerShell data file '{0}' in directory '{1}', or in any parent culture directories.</value>
+    <value>Não foi possível localizar o arquivo de dados do PowerShell '{0}' no diretório '{1}' nem em nenhum diretório de cultura pai.</value>
   </data>
   <data name="CannotDefineSupportedCommand" xml:space="preserve">
-    <value>Cannot import localized data. The definition of additional supported commands is not allowed in this language mode.</value>
+    <value>Não é possível importar dados localizados. A definição de comandos adicionais com suporte não é permitida neste modo de linguagem.</value>
   </data>
   <data name="IncorrectVariableName" xml:space="preserve">
-    <value>The BindingVariable name '{0}' is invalid.</value>
+    <value>O nome de BindingVariable '{0}' é inválido.</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
-    <value>Import-LocalizedData Cmdlet</value>
+    <value>Cmdlet Import-LocalizedData</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Additional supported commands (via SupportedCommand parameter) will not be allowed in ConstrainedLanguage mode.</value>
+    <value>Comandos adicionais com suporte (por meio do parâmetro SupportedCommand) não serão permitidos no modo ConstrainedLanguage.</value>
   </data>
 </root>

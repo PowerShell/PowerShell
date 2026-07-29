@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidColorErrorTemplate" xml:space="preserve">
-    <value>Cannot process the color because {0} is not a valid color.</value>
+    <value>{0} が有効な色ではないため、色を処理できません。</value>
   </data>
 </root>

@@ -118,35 +118,35 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FileNotExist" xml:space="preserve">
-    <value>The data file '{0}' cannot be found. </value>
+    <value>"{0}" dosyası bulunamıyor. </value>
   </data>
   <data name="NotCalledFromAScriptFile" xml:space="preserve">
-    <value>The FileName parameter was not specified. The FileName parameter is required when Import-LocalizedData is not called from a script file.</value>
+    <value>FileName parametresi belirtilmedi. Import-LocalizedData bir betik dosyasından çağrılmadığında FileName parametresi gereklidir.</value>
   </data>
   <data name="ErrorOpeningFile" xml:space="preserve">
-    <value>The following error occurred while PowerShell was opening the data file '{0}':
+    <value>Windows PowerShell, "{0}" veri dosyasını açarken şu hata oluştu: 
 {1}.</value>
   </data>
   <data name="ErrorLoadingDataFile" xml:space="preserve">
-    <value>The following error occurred while PowerShell was loading the '{0}' script data file:
+    <value>Windows PowerShell, "{0}" betik veri dosyasını yüklerken şu hata oluştu: 
 {1}.</value>
   </data>
   <data name="FileNameParameterCannotHavePath" xml:space="preserve">
-    <value>The argument for the FileName parameter should not contain a path.</value>
+    <value>FileName parametresi için belirtilen bağımsız değişken bir yol içermemelidir.</value>
   </data>
   <data name="CannotFindPsd1File" xml:space="preserve">
-    <value>Cannot find the PowerShell data file '{0}' in directory '{1}', or in any parent culture directories.</value>
+    <value>"{0}" Windows PowerShell veri dosyası, "{1}" dizininde veya herhangi bir üst kültür dizininde bulunamıyor.</value>
   </data>
   <data name="CannotDefineSupportedCommand" xml:space="preserve">
-    <value>Cannot import localized data. The definition of additional supported commands is not allowed in this language mode.</value>
+    <value>Yerelleştirilmiş veriler içeri aktarılamıyor. Bu dil modunda ek desteklenen komutların tanımlanmasına izin verilmiyor.</value>
   </data>
   <data name="IncorrectVariableName" xml:space="preserve">
-    <value>The BindingVariable name '{0}' is invalid.</value>
+    <value>BindingVariable adı '{0}' geçersiz.</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
     <value>Import-LocalizedData Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Additional supported commands (via SupportedCommand parameter) will not be allowed in ConstrainedLanguage mode.</value>
+    <value>Desteklenen ek komutlara (SupportedCommand parametresi aracılığıyla) ConstrainedLanguage modunda izin verilmez.</value>
   </data>
 </root>
