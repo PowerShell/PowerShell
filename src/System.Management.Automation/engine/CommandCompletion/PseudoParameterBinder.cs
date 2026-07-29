@@ -1219,6 +1219,7 @@ namespace System.Management.Automation.Language
                     if (implementsDynamicParameters
                         && _commandElements[commandIndex] == paramAtCursor
                         && !processor.CommandInfo.ExternalCommandMetadata.Parameters.ContainsKey(paramAtCursor.ParameterName))
+                    {
                         // Commands with dynamic parameters will try to bind the command elements.
                         // A partially complete parameter will most likely cause a binding error and negatively affect the results.
                         continue;
