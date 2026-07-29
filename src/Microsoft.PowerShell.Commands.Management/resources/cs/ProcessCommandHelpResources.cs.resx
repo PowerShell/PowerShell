@@ -118,34 +118,34 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GetProcessShortDescription" xml:space="preserve">
-    <value>Lists processes currently running.</value>
+    <value>Vypíše aktuálně spuštěné procesy.</value>
   </data>
   <data name="GetProcessDetailedDescription" xml:space="preserve">
     <value>
 -Id id
 [int[]]
-[pipeline input allowed]
-Comma-separated list of process identifiers that specify the processes to get
+[vstup z kanálu je povolen]
+Čárkami oddělený seznam identifikátorů procesů určujících procesy, které se mají získat
 
--ProcessName name
+-ProcessName název
 [string[]]
-[pipeline input allowed]
-Comma-separated list of process names that specify the processes to get
+[vstup z kanálu je povolen]
+Čárkami oddělený seznam názvů procesů určujících procesy, které se mají získat
 
--Exclude name
+-Exclude název
 [ArrayList]
-Comma-separated list of process names to be excluded from the output.
+Čárkami oddělený seznam názvů procesů, které mají být z výstupu vyloučeny.
 
 ---
-The command enumerates processes from the local computer, and outputs System.Diagnostics.Process object(s). The command writes the process object to the output pipeline one at a time. The command takes parameters like ID(Process Identifier) or Process Name from the command line. The command returns the corresponding system.diagnostics.process for the supplied ID or ProcessName parameters.</value>
+Příkaz vypíše procesy z místního počítače a vrátí objekty System.Diagnostics.Process. Příkaz zapisuje objekt procesu do výstupního kanálu po jednom. Příkaz přijímá z příkazového řádku parametry, jako jsou ID (identifikátor procesu) nebo ProcessName (název procesu). Příkaz vrátí odpovídající objekt System.Diagnostics.Process pro zadané parametry ID nebo ProcessName.</value>
   </data>
   <data name="GetProcessNote1" xml:space="preserve">
-    <value>Exclude works only for process name.</value>
+    <value>Možnost Vyloučit funguje pouze pro název procesu.</value>
   </data>
   <data name="GetProcessExample1Description" xml:space="preserve">
-    <value>Returns all running processes.</value>
+    <value>Vrátí všechny spuštěné procesy.</value>
   </data>
   <data name="GetProcessExample2Description" xml:space="preserve">
-    <value>Returns all processes with names starting with svc.</value>
+    <value>Vrátí všechny procesy s názvy začínajícími na svc.</value>
   </data>
 </root>

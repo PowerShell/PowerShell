@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidDataLine" xml:space="preserve">
-    <value>Data line '{0}' is not in 'name=value' format. </value>
+    <value>Veri satırı "{0}" "ad=değer" biçiminde değil. </value>
   </data>
   <data name="DataItemAlreadyDefined" xml:space="preserve">
-    <value>Data item '{1}' in line '{0}' is already defined. </value>
+    <value>Satır "{0}" içindeki "{1}" veri öğesi zaten tanımlı. </value>
   </data>
 </root>

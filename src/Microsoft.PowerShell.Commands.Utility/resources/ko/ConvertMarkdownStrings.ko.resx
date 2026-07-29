@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidInputObjectType" xml:space="preserve">
-    <value>The type of the input object '{0}' is invalid.</value>
+    <value>입력 개체 '{0}'의 형식이 잘못되었습니다.</value>
   </data>
   <data name="FileSystemPathsOnly" xml:space="preserve">
-    <value>Only FileSystem Provider paths are supported. The file path is not supported: '{0}'.</value>
+    <value>FileSystem 공급자 경로만 지원됩니다. 파일 경로가 지원되지 않습니다. '{0}'.</value>
   </data>
   <data name="MarkdownInfoInvalid" xml:space="preserve">
-    <value>The property {0} of the given object is null or empty.</value>
+    <value>지정된 개체의 속성 {0}은(는) null이거나 비어 있습니다.</value>
   </data>
   <data name="InvalidParameterSet" xml:space="preserve">
-    <value>Invalid parameter set name: {0}.</value>
+    <value>잘못된 매개 변수 집합 이름: {0}.</value>
   </data>
 </root>

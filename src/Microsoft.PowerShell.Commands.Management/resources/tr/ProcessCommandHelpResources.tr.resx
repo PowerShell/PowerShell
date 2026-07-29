@@ -118,34 +118,34 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GetProcessShortDescription" xml:space="preserve">
-    <value>Lists processes currently running.</value>
+    <value>O anda çalışan işlemleri listeler.</value>
   </data>
   <data name="GetProcessDetailedDescription" xml:space="preserve">
     <value>
--Id id
+-Id kimliği
 [int[]]
 [pipeline input allowed]
-Comma-separated list of process identifiers that specify the processes to get
+Alınacak işlemleri belirten işlem kimliklerinin virgülle ayrılmış listesi
 
--ProcessName name
+-ProcessName adı
 [string[]]
 [pipeline input allowed]
-Comma-separated list of process names that specify the processes to get
+Alınacak işlemleri belirten işlem kimliklerinin virgülle ayrılmış listesi
 
--Exclude name
+-Exclude adı
 [ArrayList]
-Comma-separated list of process names to be excluded from the output.
+Çıkıştan hariç tutulacak işlem adlarının virgülle ayrılmış listesi.
 
 ---
-The command enumerates processes from the local computer, and outputs System.Diagnostics.Process object(s). The command writes the process object to the output pipeline one at a time. The command takes parameters like ID(Process Identifier) or Process Name from the command line. The command returns the corresponding system.diagnostics.process for the supplied ID or ProcessName parameters.</value>
+Komut, yerel bilgisayardaki işlemleri listeler ve System.Diagnostics.Process nesnelerini çıktı olarak verir. Komut, işlem nesnelerini çıktı işlem hattına teker teker yazar. Komut, komut satırından ID (İşlem Kimliği) ya da Process Name gibi parametreleri alır. Komut, sağlanan ID veya ProcessName parametreleri için ilgili system.diagnostics.process nesnesini döndürür.</value>
   </data>
   <data name="GetProcessNote1" xml:space="preserve">
-    <value>Exclude works only for process name.</value>
+    <value>Hariç tutma yalnızca işlem adı için çalışır.</value>
   </data>
   <data name="GetProcessExample1Description" xml:space="preserve">
-    <value>Returns all running processes.</value>
+    <value>Tüm çalışan işlemleri döndürür.</value>
   </data>
   <data name="GetProcessExample2Description" xml:space="preserve">
-    <value>Returns all processes with names starting with svc.</value>
+    <value>Adları svc ile başlayan tüm işlemleri döndürür.</value>
   </data>
 </root>

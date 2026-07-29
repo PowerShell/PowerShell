@@ -118,34 +118,34 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GetProcessShortDescription" xml:space="preserve">
-    <value>Lists processes currently running.</value>
+    <value>Listet Prozesse auf, die derzeit ausgeführt werden.</value>
   </data>
   <data name="GetProcessDetailedDescription" xml:space="preserve">
     <value>
 -Id id
 [int[]]
-[pipeline input allowed]
-Comma-separated list of process identifiers that specify the processes to get
+[Pipelineeingabe zulässig]
+Durch Kommata getrennte Liste von Prozessbezeichnern, die die abzurufenden Prozesse angeben
 
--ProcessName name
-[string[]]
-[pipeline input allowed]
-Comma-separated list of process names that specify the processes to get
+-ProcessName-Name
+[Zeichenfolge[]]
+[Pipelineeingabe zulässig]
+Durch Kommata getrennte Liste von Prozessnamen, die die abzurufenden Prozesse angeben
 
--Exclude name
+-Name ausschließen
 [ArrayList]
-Comma-separated list of process names to be excluded from the output.
+Durch Kommata getrennte Liste von Prozessnamen, die von der Ausgabe ausgeschlossen werden sollen.
 
 ---
-The command enumerates processes from the local computer, and outputs System.Diagnostics.Process object(s). The command writes the process object to the output pipeline one at a time. The command takes parameters like ID(Process Identifier) or Process Name from the command line. The command returns the corresponding system.diagnostics.process for the supplied ID or ProcessName parameters.</value>
+Der Befehl listet Prozesse vom lokalen Computer auf und gibt System.Diagnostics.Process-Objekt(e) aus. Der Befehl schreibt das Prozessobjekt einzeln in die Ausgabepipeline. Der Befehl akzeptiert Parameter wie ID (Prozessbezeichner) oder Prozessname über die Befehlszeile. Der Befehl gibt den entsprechenden system.diagnostics.process-Wert für die angegebenen ID- oder ProcessName-Parameter zurück.</value>
   </data>
   <data name="GetProcessNote1" xml:space="preserve">
-    <value>Exclude works only for process name.</value>
+    <value>„Ausschließen“ funktioniert nur für den Prozessnamen.</value>
   </data>
   <data name="GetProcessExample1Description" xml:space="preserve">
-    <value>Returns all running processes.</value>
+    <value>Gibt alle laufenden Prozesse zurück.</value>
   </data>
   <data name="GetProcessExample2Description" xml:space="preserve">
-    <value>Returns all processes with names starting with svc.</value>
+    <value>Gibt alle Prozesse mit Namen zurück, die mit svc beginnen.</value>
   </data>
 </root>

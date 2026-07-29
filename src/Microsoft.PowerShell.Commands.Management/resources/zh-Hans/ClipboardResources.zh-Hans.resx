@@ -59,54 +59,54 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetClipboardContent" xml:space="preserve">
-    <value>Set string '{0}' to the clipboard.</value>
+    <value>将字符串 '{0}' 放入剪贴板。</value>
   </data>
   <data name="AppendClipboardContent" xml:space="preserve">
-    <value>Append string '{0}' to the clipboard.</value>
+    <value>将字符串 '{0}' 追加到剪贴板。</value>
   </data>
   <data name="SetSingleFileToClipboard" xml:space="preserve">
-    <value>Set file '{0}' to the clipboard.</value>
+    <value>将文件“{0}”放入剪贴板。</value>
   </data>
   <data name="AppendSingleFileToClipboard" xml:space="preserve">
-    <value>Append file '{0}' to the clipboard.</value>
+    <value>将文件“{0}”追加到剪贴板。</value>
   </data>
   <data name="SetMultipleFilesToClipboard" xml:space="preserve">
-    <value>Set {0} files to the clipboard.</value>
+    <value>将 {0} 个文件放入剪贴板。</value>
   </data>
   <data name="AppendMultipleFilesToClipboard" xml:space="preserve">
-    <value>Append {0} files to the clipboard.</value>
+    <value>将 {0} 个文件追加到剪贴板。</value>
   </data>
   <data name="NoAppendableClipboardContent" xml:space="preserve">
-    <value>There's no content in Clipboard or the content format is not compatible. Set input object to the Clipboard.</value>
+    <value>剪贴板中没有内容，或内容格式不兼容。请将输入对象放入剪贴板。</value>
   </data>
   <data name="ClipboardCleared" xml:space="preserve">
-    <value>The Clipboard has been cleared.</value>
+    <value>已清除剪贴板。</value>
   </data>
   <data name="InvalidTypeCombine" xml:space="preserve">
-    <value>TextFormatType can only be combined with Text format.</value>
+    <value>TextFormatType 只能与 Text 格式组合使用。</value>
   </data>
   <data name="InvalidRawCombine" xml:space="preserve">
-    <value>Raw can only be combined with Text or FileDropList format.</value>
+    <value>Raw 只能与 Text 或 FileDropList 格式组合使用。</value>
   </data>
   <data name="InvalidHtmlCombine" xml:space="preserve">
-    <value>Html can only be combined with Html Text format.</value>
+    <value>Html 只能与 Html Text 格式组合使用。</value>
   </data>
   <data name="UnsupportedFormat" xml:space="preserve">
-    <value>Only Text format is supported on this platform.</value>
+    <value>此平台仅支持 Text 格式。</value>
   </data>
   <data name="UnsupportedPlatform" xml:space="preserve">
-    <value>The clipboard is not supported on this platform.</value>
+    <value>此平台不支持剪贴板。</value>
   </data>
   <data name="AsHtmlUnsupported" xml:space="preserve">
-    <value>The '-AsHtml' switch is not supported on this platform.</value>
+    <value>此平台不支持 '-AsHtml' 开关。</value>
   </data>
   <data name="TextFormatUnsupported" xml:space="preserve">
-    <value>The '-TextFormatType' parameter only supports 'Text' on this platform.</value>
+    <value>'-TextFormatType' 参数在此平台上仅支持 'Text'。</value>
   </data>
   <data name="PathUnsupported" xml:space="preserve">
-    <value>The '-Path' parameter is not supported on this platform.</value>
+    <value>此平台不支持 '-Path' 参数。</value>
   </data>
   <data name="LiteralPathUnsupported" xml:space="preserve">
-    <value>The '-LiteralPath' parameter is not supported on this platform.</value>
+    <value>此平台上不支持 '-LiteralPath' 参数。</value>
   </data>
 </root>

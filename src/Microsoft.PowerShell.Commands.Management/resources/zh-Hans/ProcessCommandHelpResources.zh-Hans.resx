@@ -118,34 +118,34 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GetProcessShortDescription" xml:space="preserve">
-    <value>Lists processes currently running.</value>
+    <value>列出当前正在运行的进程。</value>
   </data>
   <data name="GetProcessDetailedDescription" xml:space="preserve">
     <value>
 -Id id
 [int[]]
 [pipeline input allowed]
-Comma-separated list of process identifiers that specify the processes to get
+以逗号分隔的进程标识符列表，用于指定要获取的进程
 
--ProcessName name
+-ProcessName 名称
 [string[]]
 [pipeline input allowed]
-Comma-separated list of process names that specify the processes to get
+以逗号分隔的进程名称列表，用于指定要获取的进程
 
--Exclude name
+-排除名称
 [ArrayList]
-Comma-separated list of process names to be excluded from the output.
+要从输出中排除的进程名称的逗号分隔列表。
 
 ---
-The command enumerates processes from the local computer, and outputs System.Diagnostics.Process object(s). The command writes the process object to the output pipeline one at a time. The command takes parameters like ID(Process Identifier) or Process Name from the command line. The command returns the corresponding system.diagnostics.process for the supplied ID or ProcessName parameters.</value>
+该命令枚举本地计算机上的进程，并输出 System.Diagnostics.Process 对象。该命令一次将一个进程对象写入输出管道。该命令从命令行获取 ID (进程标识符)或进程名称等参数。该命令返回与所提供的 ID 或 ProcessName 参数对应的 system.diagnostics.process。</value>
   </data>
   <data name="GetProcessNote1" xml:space="preserve">
-    <value>Exclude works only for process name.</value>
+    <value>排除仅适用于进程名称。</value>
   </data>
   <data name="GetProcessExample1Description" xml:space="preserve">
-    <value>Returns all running processes.</value>
+    <value>返回所有正在运行的进程。</value>
   </data>
   <data name="GetProcessExample2Description" xml:space="preserve">
-    <value>Returns all processes with names starting with svc.</value>
+    <value>返回所有名称以 svc. 开头的进程。</value>
   </data>
 </root>

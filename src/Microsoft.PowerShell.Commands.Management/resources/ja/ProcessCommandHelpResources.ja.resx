@@ -118,34 +118,34 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GetProcessShortDescription" xml:space="preserve">
-    <value>Lists processes currently running.</value>
+    <value>現在実行中のプロセスを一覧表示します。</value>
   </data>
   <data name="GetProcessDetailedDescription" xml:space="preserve">
     <value>
 -Id id
 [int[]]
-[pipeline input allowed]
-Comma-separated list of process identifiers that specify the processes to get
+[パイプライン入力が許可されました]
+取得するプロセスを指定するプロセス識別子のコンマ区切りの一覧
 
--ProcessName name
+-ProcessName 名
 [string[]]
-[pipeline input allowed]
-Comma-separated list of process names that specify the processes to get
+[パイプライン入力が許可されました]
+取得するプロセスを指定するプロセス名のコンマ区切りの一覧
 
--Exclude name
+-除外名
 [ArrayList]
-Comma-separated list of process names to be excluded from the output.
+出力から除外するプロセス名のコンマ区切りリスト。
 
 ---
-The command enumerates processes from the local computer, and outputs System.Diagnostics.Process object(s). The command writes the process object to the output pipeline one at a time. The command takes parameters like ID(Process Identifier) or Process Name from the command line. The command returns the corresponding system.diagnostics.process for the supplied ID or ProcessName parameters.</value>
+このコマンドは、ローカル コンピューターからプロセスを列挙し、System.Diagnostics.Process オブジェクトを出力します。このコマンドは、プロセス オブジェクトを出力パイプラインに一度に 1 つずつ書き込みます。このコマンドは、コマンド ラインから ID (プロセス識別子) またはプロセス名などのパラメーターを受け取ります。このコマンドは、指定された ID または ProcessName パラメーターに対応する system.diagnostics.process を返します。</value>
   </data>
   <data name="GetProcessNote1" xml:space="preserve">
-    <value>Exclude works only for process name.</value>
+    <value>除外は、プロセス名に対してのみ機能します。</value>
   </data>
   <data name="GetProcessExample1Description" xml:space="preserve">
-    <value>Returns all running processes.</value>
+    <value>実行中のすべてのプロセスを返します。</value>
   </data>
   <data name="GetProcessExample2Description" xml:space="preserve">
-    <value>Returns all processes with names starting with svc.</value>
+    <value>svc で始まる名前を持つすべてのプロセスを返します。</value>
   </data>
 </root>

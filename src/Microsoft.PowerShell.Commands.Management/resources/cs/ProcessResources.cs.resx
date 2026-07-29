@@ -211,7 +211,7 @@
     <value>Cannot debug process "{0} ({1})" because of the following error: {2}</value>
   </data>
   <data name="AttachDebuggerReturnCode2" xml:space="preserve">
-    <value>The user does not have access to the requested information.</value>
+    <value>Uživatel nemá přístup k požadovaným informacím.</value>
   </data>
   <data name="AttachDebuggerReturnCode21" xml:space="preserve">
     <value>The specified parameter is not valid.</value>

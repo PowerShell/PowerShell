@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidInputObjectType" xml:space="preserve">
-    <value>The type of the input object '{0}' is invalid.</value>
+    <value>O tipo do objeto de entrada '{0}' é inválido.</value>
   </data>
   <data name="FileSystemPathsOnly" xml:space="preserve">
-    <value>Only FileSystem Provider paths are supported. The file path is not supported: '{0}'.</value>
+    <value>Somente caminhos do Provedor FileSystem têm suporte. Não há suporte para o caminho do arquivo: '{0}'.</value>
   </data>
   <data name="MarkdownInfoInvalid" xml:space="preserve">
-    <value>The property {0} of the given object is null or empty.</value>
+    <value>A propriedade {0} do objeto fornecido é nula ou vazia.</value>
   </data>
   <data name="InvalidParameterSet" xml:space="preserve">
-    <value>Invalid parameter set name: {0}.</value>
+    <value>Nome do conjunto de parâmetros inválido: {0}.</value>
   </data>
 </root>

@@ -59,54 +59,54 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetClipboardContent" xml:space="preserve">
-    <value>Set string '{0}' to the clipboard.</value>
+    <value>'{0}' dizesini panoya ayarlayın.</value>
   </data>
   <data name="AppendClipboardContent" xml:space="preserve">
-    <value>Append string '{0}' to the clipboard.</value>
+    <value>'{0}' dizesini panoya ekleyin.</value>
   </data>
   <data name="SetSingleFileToClipboard" xml:space="preserve">
-    <value>Set file '{0}' to the clipboard.</value>
+    <value>'{0}' dosyasını panoya ayarlayın.</value>
   </data>
   <data name="AppendSingleFileToClipboard" xml:space="preserve">
-    <value>Append file '{0}' to the clipboard.</value>
+    <value>'{0}' dosyasını panoya ekleyin.</value>
   </data>
   <data name="SetMultipleFilesToClipboard" xml:space="preserve">
-    <value>Set {0} files to the clipboard.</value>
+    <value>{0} dosyayı panoya ayarlayın.</value>
   </data>
   <data name="AppendMultipleFilesToClipboard" xml:space="preserve">
-    <value>Append {0} files to the clipboard.</value>
+    <value>{0} dosyayı panoya ekleyin.</value>
   </data>
   <data name="NoAppendableClipboardContent" xml:space="preserve">
-    <value>There's no content in Clipboard or the content format is not compatible. Set input object to the Clipboard.</value>
+    <value>Panoda içerik yok ya da içeriğin biçimi uyumlu değil. Giriş nesnesini Panoya ayarlayın.</value>
   </data>
   <data name="ClipboardCleared" xml:space="preserve">
-    <value>The Clipboard has been cleared.</value>
+    <value>Pano temizlendi.</value>
   </data>
   <data name="InvalidTypeCombine" xml:space="preserve">
-    <value>TextFormatType can only be combined with Text format.</value>
+    <value>TextFormatType yalnızca Text biçimiyle birleştirilebilir.</value>
   </data>
   <data name="InvalidRawCombine" xml:space="preserve">
-    <value>Raw can only be combined with Text or FileDropList format.</value>
+    <value>Raw yalnızca Text veya FileDropList biçimiyle birleştirilebilir.</value>
   </data>
   <data name="InvalidHtmlCombine" xml:space="preserve">
-    <value>Html can only be combined with Html Text format.</value>
+    <value>Html yalnızca Html Text biçimiyle birleştirilebilir.</value>
   </data>
   <data name="UnsupportedFormat" xml:space="preserve">
-    <value>Only Text format is supported on this platform.</value>
+    <value>Bu platformda yalnızca Text biçimi desteklenir.</value>
   </data>
   <data name="UnsupportedPlatform" xml:space="preserve">
-    <value>The clipboard is not supported on this platform.</value>
+    <value>Pano bu platformda desteklenmiyor.</value>
   </data>
   <data name="AsHtmlUnsupported" xml:space="preserve">
-    <value>The '-AsHtml' switch is not supported on this platform.</value>
+    <value>'-AsHtml' anahtarı bu platformda desteklenmiyor.</value>
   </data>
   <data name="TextFormatUnsupported" xml:space="preserve">
-    <value>The '-TextFormatType' parameter only supports 'Text' on this platform.</value>
+    <value>'-TextFormatType' parametresi bu platformda yalnızca 'Text' biçimini destekler.</value>
   </data>
   <data name="PathUnsupported" xml:space="preserve">
-    <value>The '-Path' parameter is not supported on this platform.</value>
+    <value>'-Path' parametresi bu platformda desteklenmiyor.</value>
   </data>
   <data name="LiteralPathUnsupported" xml:space="preserve">
-    <value>The '-LiteralPath' parameter is not supported on this platform.</value>
+    <value>'-LiteralPath' parametresi bu platformda desteklenmiyor.</value>
   </data>
 </root>

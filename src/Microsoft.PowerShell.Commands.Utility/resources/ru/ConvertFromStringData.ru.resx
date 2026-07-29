@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidDataLine" xml:space="preserve">
-    <value>Data line '{0}' is not in 'name=value' format. </value>
+    <value>Строка данных "{0}" не в формате "имя=значение". </value>
   </data>
   <data name="DataItemAlreadyDefined" xml:space="preserve">
-    <value>Data item '{1}' in line '{0}' is already defined. </value>
+    <value>Элемент данных "{1}" в строке "{0}" уже определен. </value>
   </data>
 </root>

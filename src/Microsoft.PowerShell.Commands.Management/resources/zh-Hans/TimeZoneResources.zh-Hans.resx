@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MultipleMatchingTimeZones" xml:space="preserve">
-    <value>Cannot set the local time zone because the name '{0}' resolves to multiple entries.</value>
+    <value>无法设置本地时区，因为名称 '{0}' 解析为多个条目。</value>
   </data>
   <data name="TimeZoneNameNotFound" xml:space="preserve">
-    <value>The time zone name '{0}' was not found on the local computer.</value>
+    <value>在本地计算机上找不到时区名称 '{0}'。</value>
   </data>
 </root>

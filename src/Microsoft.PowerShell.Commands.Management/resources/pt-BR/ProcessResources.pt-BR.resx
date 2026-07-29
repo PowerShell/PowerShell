@@ -211,7 +211,7 @@
     <value>Cannot debug process "{0} ({1})" because of the following error: {2}</value>
   </data>
   <data name="AttachDebuggerReturnCode2" xml:space="preserve">
-    <value>The user does not have access to the requested information.</value>
+    <value>O usuário não tem acesso às informações solicitadas.</value>
   </data>
   <data name="AttachDebuggerReturnCode21" xml:space="preserve">
     <value>The specified parameter is not valid.</value>
@@ -223,7 +223,7 @@
     <value>Unknown failure.</value>
   </data>
   <data name="AttachDebuggerReturnCode9" xml:space="preserve">
-    <value>The path specified does not exist.</value>
+    <value>O caminho especificado não existe.</value>
   </data>
   <data name="ParameterNotSupported" xml:space="preserve">
     <value>The parameter '{0}' is not supported for the cmdlet '{1}' on this edition of Windows.</value>
