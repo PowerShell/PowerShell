@@ -118,213 +118,213 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidFileName" xml:space="preserve">
-    <value>This command cannot be used because file does not exist.Check the file existence and run your command.</value>
+    <value>Nie można użyć tego polecenia, ponieważ plik nie istnieje. Sprawdź, czy plik istnieje i uruchom swoje polecenie.</value>
   </data>
   <data name="NewItemShouldContinueClientCertCaption" xml:space="preserve">
-    <value>Creates a new ClientCertificate item.</value>
+    <value>Tworzy nowy element ClientCertificate.</value>
   </data>
   <data name="NotProperURI" xml:space="preserve">
-    <value>This command cannot be executed because the Connection URI is not in correct format. Please check the connection uri and Run your command again.</value>
+    <value>Nie można wykonać tego polecenia, ponieważ identyfikator URI połączenia ma nieprawidłowy format. Sprawdź identyfikator URI połączenia i uruchom polecenie ponownie.</value>
   </data>
   <data name="CredSSPContinueQuery" xml:space="preserve">
-    <value>CredSSP authentication allows the user credentials on this computer to be sent to a remote computer. If you use CredSSP authentication for a connection to a malicious or compromised computer, that computer will have access to your user name and password. For more information, see the Enable-WSManCredSSP Help topic.
-Do you want to enable CredSSP authentication?</value>
+    <value>Uwierzytelnianie CredSSP umożliwia wysłanie poświadczeń użytkownika na tym komputerze do komputera zdalnego. Jeśli użyjesz uwierzytelniania CredSSP podczas łączenia się ze złośliwym komputerem lub który ma naruszone zabezpieczenia, komputer ten uzyska dostęp do Twojej nazwy użytkownika i hasła. Więcej informacji można znaleźć w temacie pomocy Enable-WSManCredSSP.
+Czy chcesz włączyć uwierzytelnianie CredSSP?</value>
   </data>
   <data name="NewItemShouldContinueListenerCaption" xml:space="preserve">
-    <value>Creates a new Listener item.</value>
+    <value>Tworzy nowy element nasłuchujący.</value>
   </data>
   <data name="ShouldContinueSecurityQuery" xml:space="preserve">
-    <value>This command modifies the security settings on a resource in the following WinRM plug-in: {0}.
-Do you want to continue?</value>
+    <value>To polecenie modyfikuje ustawienia zabezpieczeń zasobu w następującym dodatku usługi WinRM: {0}.
+Czy na pewno chcesz kontynuować?</value>
   </data>
   <data name="SetItemWhatIfAndConfirmText" xml:space="preserve">
-    <value>"Set-Item" on the WinRM configuration setting "{0}" to update the value to "{1}"</value>
+    <value>Element „Set-Item” w ustawieniu konfiguracji usługi WinRM „{0}”, aby zaktualizować wartość na „{1}”</value>
   </data>
   <data name="EnableCredSSPPolicyValidateError" xml:space="preserve">
-    <value>This command cannot be executed because the setting cannot be enabled.</value>
+    <value>Nie można wykonać tego polecenia, ponieważ nie można włączyć ustawienia.</value>
   </data>
   <data name="NewItemShouldContinueListenerQuery" xml:space="preserve">
-    <value>This command creates a new Listener item.
+    <value>To polecenie tworzy nowy element nasłuchujący.
 
-Do you want to continue?</value>
+Czy na pewno chcesz kontynuować?</value>
   </data>
   <data name="ErrorElevationNeeded" xml:space="preserve">
-    <value>Access is denied. You need to run this cmdlet from an elevated process.</value>
+    <value>Odmowa dostępu. To polecenie cmdlet trzeba uruchomić z procesu z podwyższonymi uprawnieniami.</value>
   </data>
   <data name="DriveRootError" xml:space="preserve">
-    <value>This command cannot be used because WsMan drive root is not supported on this version of Windows OS.</value>
+    <value>Tego polecenia nie można użyć, ponieważ katalog główny dysku WsMan nie jest obsługiwany w tej wersji systemu operacyjnego Windows.</value>
   </data>
   <data name="WSManServiceStartCaption" xml:space="preserve">
-    <value>Start WinRM Service</value>
+    <value>Uruchom usługę WinRM</value>
   </data>
   <data name="CredSSPServerContinueQuery" xml:space="preserve">
-    <value>CredSSP authentication allows the server to accept user credentials from a remote computer. If you enable CredSSP authentication on the server, the server will have access to the user name and password of the client computer if the client computer sends them. For more information, see the Enable-WSManCredSSP Help topic.
-Do you want to enable CredSSP authentication?</value>
+    <value>Uwierzytelnianie CredSSP umożliwia serwerowi akceptowanie poświadczeń użytkownika z komputera zdalnego. Jeśli włączysz uwierzytelnianie CredSSP na serwerze, serwer uzyska dostęp do nazwy użytkownika i hasła komputera klienckiego, jeśli ten je prześle. Więcej informacji można znaleźć w temacie pomocy Enable-WSManCredSSP.
+Czy chcesz włączyć uwierzytelnianie CredSSP?</value>
   </data>
   <data name="QuickConfigContinueCaption" xml:space="preserve">
-    <value>WinRM Quick Configuration</value>
+    <value>Szybka konfiguracja usługi WinRM</value>
   </data>
   <data name="Vendor" xml:space="preserve">
     <value>Microsoft</value>
   </data>
   <data name="NoChangeValue" xml:space="preserve">
-    <value>This command cannot set the input value because these values are Primary keys or Container items of the resource object. Change the input value and Run your command.</value>
+    <value>Tego polecenia nie można użyć do ustawienia wartości wejściowej, ponieważ są to klucze podstawowe lub elementy kontenera obiektu zasobu. Zmień wartość wejściową i uruchom swoje polecenie.</value>
   </data>
   <data name="CredSSPContinueCaption" xml:space="preserve">
-    <value>CredSSP Authentication Configuration for WS-Management</value>
+    <value>Konfiguracja uwierzytelniania CredSSP dla protokołu WS-Management</value>
   </data>
   <data name="SetItemShouldContinueCaption" xml:space="preserve">
-    <value>Set the value of the item</value>
+    <value>Ustaw wartość elementu</value>
   </data>
   <data name="TrustedHostValueTypeError" xml:space="preserve">
-    <value>Cannot convert 'System.Object[]' to the type 'System.String' required by the parameter. Specified method is not supported.</value>
+    <value>Nie można przekonwertować elementu „System.Object[]” na typ „System.String” wymagany przez parametr. Podana metoda nie jest obsługiwana.</value>
   </data>
   <data name="CredSSPServiceNotConfigured" xml:space="preserve">
-    <value>This computer is not configured to receive credentials from a remote client computer.</value>
+    <value>Ten komputer nie jest skonfigurowany do odbierania poświadczeń ze zdalnego komputera klienckiego.</value>
   </data>
   <data name="DisconnectFailure" xml:space="preserve">
-    <value>This command cannot be used from the current path. Move to root path of the provider using cd\ and run your command again.</value>
+    <value>Tego polecenia nie można użyć z bieżącej ścieżki. Przejdź do ścieżki katalogu głównego dostawcy za pomocą polecenia cd\ i ponownie uruchom swoje polecenie.</value>
   </data>
   <data name="CmdletNotAvailable" xml:space="preserve">
-    <value>This PowerShell cmdlet is not available on for Windows XP and Windows Server 2003.</value>
+    <value>To polecenie cmdlet programu PowerShell nie jest dostępne w systemach Windows XP i Windows Server 2003.</value>
   </data>
   <data name="NoAttributeMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter matches a non-text property on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>Tego polecenia nie można użyć, ponieważ parametr jest zgodny z właściwością inną niż tekstowa w identyfikatorze URI zasobu. Sprawdź parametry wejściowe i uruchom swoje polecenie.</value>
   </data>
   <data name="AmbiguousAuthentication" xml:space="preserve">
-    <value>A {0} cannot be specified when {1} is specified.</value>
+    <value>Nie można określić elementu {0}, gdy określono element{1}.</value>
   </data>
   <data name="InvalidComputerName" xml:space="preserve">
-    <value>The WinRM client cannot complete the operation.Check if the computer name is valid.</value>
+    <value>Klient usługi WinRM nie może ukończyć operacji. Sprawdź, czy nazwa komputera jest prawidłowa.</value>
   </data>
   <data name="CredSSPClientAndDelegateMustBeSpecified" xml:space="preserve">
-    <value>The {0} parameter is mandatory when the {1} parameter value is {2}.</value>
+    <value>Parametr {0} jest wymagany, gdy wartość parametru {1} to {2}.</value>
   </data>
   <data name="value" xml:space="preserve">
-    <value>This command cannot be used because Parameter Value is not supplied. Check the value again and run your command.</value>
+    <value>Tego polecenia nie można użyć, ponieważ nie podano wartości parametru. Sprawdź ponownie wartość i uruchom swoje polecenie.</value>
   </data>
   <data name="ItemDoesNotExist" xml:space="preserve">
-    <value>This command cannot be used because path does not exist.Check the path existence and run your command.</value>
+    <value>Nie można użyć tego polecenia, ponieważ ścieżka nie istnieje. Sprawdź, czy ścieżka istnieje i uruchom swoje polecenie.</value>
   </data>
   <data name="ShouldContinueSecurityCaption" xml:space="preserve">
-    <value>Security Configuration for WinRM Plug-in.</value>
+    <value>Konfiguracja zabezpieczeń wtyczki usługi WinRM.</value>
   </data>
   <data name="SetItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because this cmdlet is not supported at this level of Provider path.</value>
+    <value>Tego polecenia nie można użyć w bieżącej ścieżce, ponieważ to polecenie cmdlet nie jest obsługiwane na tym poziomie ścieżki dostawcy.</value>
   </data>
   <data name="NoDelegateFreshCred" xml:space="preserve">
-    <value>The machine is not configured to allow delegating fresh credentials.</value>
+    <value>Maszyna nie jest skonfigurowana w sposób umożliwiający delegowanie nowych poświadczeń.</value>
   </data>
   <data name="SetItemServiceRestartWarning" xml:space="preserve">
-    <value>The configuration changes you made will only be effective after the WinRM service is restarted.  To restart the WinRM service, run the following command: 'Restart-Service winrm'</value>
+    <value>Wprowadzone zmiany konfiguracji zaczną obowiązywać dopiero po ponownym uruchomieniu usługi WinRM.  Aby ponownie uruchomić usługę WinRM, uruchom następujące polecenie: „Restart-Service winrm”</value>
   </data>
   <data name="QuickConfigContinueQuery" xml:space="preserve">
-    <value>Running the Set-WSManQuickConfig command has significant security implications, as it enables remote management through the WinRM service on this computer.
-This command:
-    1. Checks whether the WinRM service is running. If the WinRM service is not running, the service is started.
-    2. Sets the WinRM service startup type to automatic.
-    3. Creates a listener to accept requests on any IP address. By default, the transport is HTTP.
-    4. Enables a firewall exception for WS-Management traffic.
-    5. Enables Kerberos and Negotiate service authentication.
-Do you want to enable remote management through the WinRM service on this computer?</value>
+    <value>Uruchomienie polecenia Set-WSManQuickConfig ma istotny wpływ na zabezpieczenia, ponieważ włącza zdalne zarządzanie na tym komputerze za pośrednictwem usługi WinRM.
+To polecenie:
+    1. Sprawdza, czy usługa WinRM jest uruchomiona. Jeżeli usługa WinRM nie jest uruchomiona, zostanie ona uruchomiona.
+    2. Ustawia typ uruchamiania usługi WinRM na automatyczny.
+    3. Tworzy obiekt nasłuchujący, który będzie akceptował żądania z dowolnego adresu IP. Domyślnie transportem jest protokół HTTP.
+    4. Włącza wyjątek zapory dla ruchu WS-Management.
+    5. Włącza uwierzytelnianie usługi Kerberos i Negotiate.
+Czy chcesz włączyć zdalne zarządzanie za pośrednictwem usługi WinRM na tym komputerze?</value>
   </data>
   <data name="SetItemOnRunAsPasswordNoRunAsUser" xml:space="preserve">
-    <value>The value for RunAsPassword cannot be set without a value set for RunAsUser. Set the value for both RunAsUser and RunAsPassword in Powershell by calling the Set-Item cmdlet with the value for -Path attribute equal to the value of RunAsUser.</value>
+    <value>Nie można ustawić wartości RunAsPassword bez ustawienia wartości RunAsUser. Ustaw wartości dla elementów RunAsUser i RunAsPassword w programie PowerShell, wywołując polecenie cmdlet „Set-Item” z wartością atrybutu ścieżki równą wartości RunAsUser.</value>
   </data>
   <data name="SetItemWarningForGlobalQuota" xml:space="preserve">
-    <value>The updated configuration might affect the operation of the plugins having a per plugin quota value greater than {0}. Verify the configuration of all the registered plugins and change the per plugin quota values for the affected plugins.</value>
+    <value>Zaktualizowana konfiguracja może wpłynąć na działanie wtyczek, których wartość limitu na wtyczkę jest większa niż {0}. Sprawdź konfigurację wszystkich zarejestrowanych wtyczek i zmień wartości limitu dla wtyczek, których to dotyczy.</value>
   </data>
   <data name="SetItemShouldContinueQuery" xml:space="preserve">
-    <value>This command set the value of the Item.
+    <value>To polecenie ustawia wartość elementu.
 
-Do you want to continue?</value>
+Czy na pewno chcesz kontynuować?</value>
   </data>
   <data name="DelegateFreshCred" xml:space="preserve">
-    <value>The machine is configured to allow delegating fresh credentials to the following target(s):</value>
+    <value>Maszyna jest skonfigurowana tak, aby zezwalać na delegowanie świeżych poświadczeń do następujących elementów docelowych:</value>
   </data>
   <data name="ConfigStorage" xml:space="preserve">
-    <value>Root of WsMan Config Storage.</value>
+    <value>Katalog główny magazynu konfiguracji WsMan.</value>
   </data>
   <data name="WinRMServiceError" xml:space="preserve">
-    <value>This command cannot be executed because the WinRM Service is not started.</value>
+    <value>Nie można wykonać tego polecenia, ponieważ usługa WinRM nie jest uruchomiona.</value>
   </data>
   <data name="InvalidPath" xml:space="preserve">
-    <value>This command cannot be used because root path does not exist.Check the root path and run your command.</value>
+    <value>Tego polecenia nie można użyć, ponieważ ścieżka katalogu głównego nie istnieje. Sprawdź ścieżkę katalogu głównego i uruchom swoje polecenie.</value>
   </data>
   <data name="RemoveItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because Remove-Item is not supported at this level of Provider path.</value>
+    <value>Tego polecenia nie można użyć w bieżącej ścieżce, ponieważ element Remove-Item nie jest obsługiwane na tym poziomie ścieżki dostawcy.</value>
   </data>
   <data name="SetItemTrustedHostsWarningQuery" xml:space="preserve">
-    <value>This command modifies the TrustedHosts list for the WinRM client. The computers in the TrustedHosts list might not be authenticated. The client might send credential information to these computers. Are you sure that you want to modify this list?</value>
+    <value>To polecenie modyfikuje listę TrustedHosts dla klienta usługi WinRM. Komputery znajdujące się na liście TrustedHosts mogą nie być uwierzytelnione. Klient może wysłać informacje o poświadczeniach do tych komputerów. Czy na pewno chcesz zmodyfikować tę listę?</value>
   </data>
   <data name="SetItemRootSDDLWarningQuery" xml:space="preserve">
-    <value>This command modifies the RootSDDL setting for the WinRM service.  The RootSDDL stores the default security settings for any WinRM securable resource that does not specify its own SDDL. Changing the SDDL might affect security for many WinRM resources. Are you sure that you want to modify these default settings?</value>
+    <value>To polecenie modyfikuje ustawienie RootSDDL dla usługi WinRM.  Parametr RootSDDL przechowuje domyślne ustawienia zabezpieczeń dla każdego zabezpieczanego zasobu usługi WinRM, który nie określa własnego parametru SDDL. Zmiana parametru SDDL może mieć wpływ na zabezpieczenia wielu zasobów usługi WinRM. Czy na pewno chcesz zmodyfikować te ustawienia domyślne?</value>
   </data>
   <data name="NewWSManSessionOptionCred" xml:space="preserve">
-    <value>This command cannot be used without credential because the authentication algorithm is Basic or Digest. Use Credentials parameter to specify value and run your command.</value>
+    <value>Tego polecenia nie można użyć bez poświadczeń, ponieważ algorytm uwierzytelniania jest podstawowy lub szyfrowany. Użyj parametru poświadczeń, aby określić wartość i uruchomić polecenie.</value>
   </data>
   <data name="SetItemWarnigForPPQ" xml:space="preserve">
-    <value>The updated configuration is effective only if it is less than or equal to the value of global quota {0}. Verify the value for the global quota using the PowerShell cmdlet "Get-Item {0}".</value>
+    <value>Zaktualizowana konfiguracja jest skuteczna tylko wtedy, gdy jest mniejsza lub równa wartości globalnego limitu przydziału {0}. Sprawdź wartość globalnego limitu przydziału przy użyciu polecenia cmdlet programu PowerShell „Get-Item {0}”.</value>
   </data>
   <data name="DisableCredSSPPolicyValidateError" xml:space="preserve">
-    <value>This command cannot be executed because the setting cannot be disabled.</value>
+    <value>Nie można wykonać tego polecenia, ponieważ nie można wyłączyć ustawienia.</value>
   </data>
   <data name="ResourceURIMissingInResourceDir" xml:space="preserve">
-    <value>Unable to find value for "{0}" element in the path {1}.</value>
+    <value>Nie można odnaleźć wartości dla elementu „{0}” w ścieżce {1}.</value>
   </data>
   <data name="NewWSManSessionOptionAuth" xml:space="preserve">
-    <value>This command cannot be used without Basic or Digest authentication algorithm because credentials are specified.Use Basic or Digest authentication algorithm and run your command.</value>
+    <value>Tego polecenia nie można użyć bez algorytmu uwierzytelniania podstawowego lub szyfrowanego, ponieważ określono poświadczenia. Użyj algorytmu uwierzytelniania podstawowego lub szyfrowanego i uruchom swoje polecenie.</value>
   </data>
   <data name="SetItemGeneralSecurityCaption" xml:space="preserve">
-    <value>WinRM Security Configuration.</value>
+    <value>Konfiguracja zabezpieczeń usługi WinRM.</value>
   </data>
   <data name="NewItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because New-Item is not supported at this level of Provider path.</value>
+    <value>Tego polecenia nie można użyć w bieżącej ścieżce, ponieważ element New-Item nie jest obsługiwane na tym poziomie ścieżki dostawcy.</value>
   </data>
   <data name="WinrmNotConfigured" xml:space="preserve">
-    <value>This command cannot be used because the configuration is corrupted. Run WinRM invoke Restore WinRM/config to restore the default configuration</value>
+    <value>Tego polecenia nie można użyć, ponieważ konfiguracja jest uszkodzona. Uruchom usługę WinRM wywołaj polecenie „Restore WinRM/config”, aby przywrócić konfigurację domyślną</value>
   </data>
   <data name="InvalidValueType" xml:space="preserve">
-    <value>This command cannot be used because the parameter value type is invalid. {0} configuration expects a value of Type {1}. Verify that the value is correct and try again.</value>
+    <value>Nie można użyć tego polecenia, ponieważ typ wartości parametru jest nieprawidłowy. Konfiguracja {0} oczekuje wartości typu {1}. Sprawdź, czy wartość jest poprawna, i spróbuj ponownie.</value>
   </data>
   <data name="WSManServiceStartQuery" xml:space="preserve">
-    <value>WinRM service is not started currently. Running this command will start the WinRM service.
+    <value>Usługa WinRM nie jest obecnie uruchomiona. Uruchomienie tego polecenia spowoduje uruchomienie usługi WinRM.
 
-Do you want to continue?</value>
+Czy na pewno chcesz kontynuować?</value>
   </data>
   <data name="NoResourceMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter does not match any properties on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>Nie można użyć tego polecenia, ponieważ parametr nie pasuje do żadnej właściwości w identyfikatorze ResourceURI. Sprawdź parametry wejściowe i uruchom swoje polecenie.</value>
   </data>
   <data name="CredSSPServiceConfigured" xml:space="preserve">
-    <value>This computer is configured to receive credentials from a remote client computer.</value>
+    <value>Ten komputer jest skonfigurowany do odbierania poświadczeń ze zdalnego komputera klienckiego.</value>
   </data>
   <data name="CredSSPRoleAndDelegateCannotBeSpecified" xml:space="preserve">
-    <value>The {0} parameter cannot be used when the {1} parameter value is {2}. The {0} parameter can be used only when the {1} parameter value is {3}.</value>
+    <value>Nie można użyć parametru {0}, gdy wartość parametru {1} to {2}. Parametr {0} można stosować tylko wtedy, gdy wartością parametru {1} jest {3}.</value>
   </data>
   <data name="SetItemServiceRestartWarningRemote" xml:space="preserve">
-    <value>The configuration changes you made will only be effective after the WinRM service is restarted on {0}.</value>
+    <value>Wprowadzone zmiany konfiguracji zaczną obowiązywać dopiero po ponownym uruchomieniu usługi WinRM na {0}.</value>
   </data>
   <data name="ConnectFailure" xml:space="preserve">
-    <value>This command cannot be used from the current path. Move to root path of the provider using cd\ and run your command again.</value>
+    <value>Tego polecenia nie można użyć z bieżącej ścieżki. Przejdź do ścieżki katalogu głównego dostawcy za pomocą polecenia cd\ i ponownie uruchom swoje polecenie.</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>This PowerShell snap-in contains cmdlets (such as Get-WSManInstance and Set-WSManInstance) that are used by the PowerShell host to manage WSMan operations.</value>
+    <value>Ta przystawka programu PowerShell zawiera polecenia cmdlet (takie jak Get-WSManInstance i Set-WSManInstance), które są używane przez hosta programu PowerShell do zarządzania operacjami WSMan.</value>
   </data>
   <data name="LocalHost" xml:space="preserve">
-    <value>This command cannot be used to remove the computer 'localhost' because it will always be connected. Give some other connected computer and run your command.</value>
+    <value>Tego polecenia nie można użyć do usunięcia komputera „localhost”, ponieważ będzie on zawsze połączony. Podaj inny połączony komputer i uruchom swoje polecenie.</value>
   </data>
   <data name="NewItemShouldContinueClientCertQuery" xml:space="preserve">
-    <value>This command creates a new ClientCertificate item.
+    <value>To polecenie tworzy nowy element ClientCertificate.
 
-Do you want to continue?</value>
+Czy na pewno chcesz kontynuować?</value>
   </data>
   <data name="ClearItemOnRunAsPassword" xml:space="preserve">
-    <value>The RunAsPassword value cannot be removed. Remove the values for RunAsUser and RunAsPassword in PowerShell by calling the Clear-Item cmdlet with the value for -Path attribute equal to the value of RunAsUser.</value>
+    <value>Nie można usunąć wartości RunAsPassword. Usuń wartości RunAsUser i RunAsPassword w programie PowerShell, wywołując polecenie cmdlet „Clear-Item” z wartością atrybutu ścieżki równą wartości RunAsUser.</value>
   </data>
   <data name="NewDriveRootDoesNotExist" xml:space="preserve">
-    <value>Unable to create a drive with the specified root. The root path does not exist.</value>
+    <value>Nie można utworzyć dysku z określonym katalogiem głównym. Ścieżka główna nie istnieje.</value>
   </data>
   <data name="MultipleResourceMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter matches multiple properties on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>Nie można użyć tego polecenia, ponieważ parametr pasuje do wielu właściwości w identyfikatorze ResourceURI. Sprawdź parametry wejściowe i uruchom swoje polecenie.</value>
   </data>
 </root>

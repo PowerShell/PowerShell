@@ -118,213 +118,213 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidFileName" xml:space="preserve">
-    <value>This command cannot be used because file does not exist.Check the file existence and run your command.</value>
+    <value>无法使用此命令，因为文件不存在。检查文件是否存在并运行命令。</value>
   </data>
   <data name="NewItemShouldContinueClientCertCaption" xml:space="preserve">
-    <value>Creates a new ClientCertificate item.</value>
+    <value>创建新的 ClientCertificate 项。</value>
   </data>
   <data name="NotProperURI" xml:space="preserve">
-    <value>This command cannot be executed because the Connection URI is not in correct format. Please check the connection uri and Run your command again.</value>
+    <value>无法执行此命令，因为连接 URI 的格式不正确。请检查连接 URI，然后再次运行命令。</value>
   </data>
   <data name="CredSSPContinueQuery" xml:space="preserve">
-    <value>CredSSP authentication allows the user credentials on this computer to be sent to a remote computer. If you use CredSSP authentication for a connection to a malicious or compromised computer, that computer will have access to your user name and password. For more information, see the Enable-WSManCredSSP Help topic.
-Do you want to enable CredSSP authentication?</value>
+    <value>CredSSP 身份验证允许将此计算机上的用户凭据发送到远程计算机。如果你使用 CredSSP 身份验证连接到恶意计算机或已遭入侵的计算机，该计算机将可以访问你的用户名和密码。有关详细信息，请参阅 Enable-WSManCredSSP 帮助主题。
+是否要启用 CredSSP 身份验证?</value>
   </data>
   <data name="NewItemShouldContinueListenerCaption" xml:space="preserve">
-    <value>Creates a new Listener item.</value>
+    <value>创建新的侦听器项。</value>
   </data>
   <data name="ShouldContinueSecurityQuery" xml:space="preserve">
-    <value>This command modifies the security settings on a resource in the following WinRM plug-in: {0}.
-Do you want to continue?</value>
+    <value>此命令将修改以下 WinRM 插件中资源的安全设置: {0}。
+是否要继续?</value>
   </data>
   <data name="SetItemWhatIfAndConfirmText" xml:space="preserve">
-    <value>"Set-Item" on the WinRM configuration setting "{0}" to update the value to "{1}"</value>
+    <value>WinRM 配置设置“{0}”上的 "Set-Item" 将值更新为“{1}”</value>
   </data>
   <data name="EnableCredSSPPolicyValidateError" xml:space="preserve">
-    <value>This command cannot be executed because the setting cannot be enabled.</value>
+    <value>无法执行此命令，因为无法启用该设置。</value>
   </data>
   <data name="NewItemShouldContinueListenerQuery" xml:space="preserve">
-    <value>This command creates a new Listener item.
+    <value>此命令将创建一个新的侦听器项。
 
-Do you want to continue?</value>
+是否要继续?</value>
   </data>
   <data name="ErrorElevationNeeded" xml:space="preserve">
-    <value>Access is denied. You need to run this cmdlet from an elevated process.</value>
+    <value>拒绝访问。需要从提升的进程运行此 cmdlet。</value>
   </data>
   <data name="DriveRootError" xml:space="preserve">
-    <value>This command cannot be used because WsMan drive root is not supported on this version of Windows OS.</value>
+    <value>无法使用此命令，因为此版本的 Windows 操作系统不支持 WsMan 驱动器根目录。</value>
   </data>
   <data name="WSManServiceStartCaption" xml:space="preserve">
-    <value>Start WinRM Service</value>
+    <value>启动 WinRM 服务</value>
   </data>
   <data name="CredSSPServerContinueQuery" xml:space="preserve">
-    <value>CredSSP authentication allows the server to accept user credentials from a remote computer. If you enable CredSSP authentication on the server, the server will have access to the user name and password of the client computer if the client computer sends them. For more information, see the Enable-WSManCredSSP Help topic.
-Do you want to enable CredSSP authentication?</value>
+    <value>CredSSP 身份验证允许服务器接受来自远程计算机的用户凭据。如果在服务器上启用 CredSSP 身份验证，并且客户端计算机发送了这些凭据，则服务器将可以访问客户端计算机的用户名和密码。有关详细信息，请参阅 Enable-WSManCredSSP 帮助主题。
+是否要启用 CredSSP 身份验证?</value>
   </data>
   <data name="QuickConfigContinueCaption" xml:space="preserve">
-    <value>WinRM Quick Configuration</value>
+    <value>WinRM 快速配置</value>
   </data>
   <data name="Vendor" xml:space="preserve">
     <value>Microsoft</value>
   </data>
   <data name="NoChangeValue" xml:space="preserve">
-    <value>This command cannot set the input value because these values are Primary keys or Container items of the resource object. Change the input value and Run your command.</value>
+    <value>此命令无法设置输入值，因为这些值是资源对象的主键或容器项。请更改输入值并运行命令。</value>
   </data>
   <data name="CredSSPContinueCaption" xml:space="preserve">
-    <value>CredSSP Authentication Configuration for WS-Management</value>
+    <value>WS-Management 的 CredSSP 身份验证配置</value>
   </data>
   <data name="SetItemShouldContinueCaption" xml:space="preserve">
-    <value>Set the value of the item</value>
+    <value>设置项的值</value>
   </data>
   <data name="TrustedHostValueTypeError" xml:space="preserve">
-    <value>Cannot convert 'System.Object[]' to the type 'System.String' required by the parameter. Specified method is not supported.</value>
+    <value>无法将 "System.Object[]" 转换为参数所需的类型 "System.String"。不支持指定的方法。</value>
   </data>
   <data name="CredSSPServiceNotConfigured" xml:space="preserve">
-    <value>This computer is not configured to receive credentials from a remote client computer.</value>
+    <value>此计算机未配置为接收来自远程客户端计算机的凭据。</value>
   </data>
   <data name="DisconnectFailure" xml:space="preserve">
-    <value>This command cannot be used from the current path. Move to root path of the provider using cd\ and run your command again.</value>
+    <value>无法从当前路径使用此命令。请使用 cd\ 转到提供程序的根路径，然后再次运行命令。</value>
   </data>
   <data name="CmdletNotAvailable" xml:space="preserve">
-    <value>This PowerShell cmdlet is not available on for Windows XP and Windows Server 2003.</value>
+    <value>此 PowerShell cmdlet 在 Windows XP 和 Windows Server 2003 上不可用。</value>
   </data>
   <data name="NoAttributeMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter matches a non-text property on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>无法使用此命令，因为参数与 ResourceURI 上的非文本属性匹配。请检查输入参数并运行命令。</value>
   </data>
   <data name="AmbiguousAuthentication" xml:space="preserve">
-    <value>A {0} cannot be specified when {1} is specified.</value>
+    <value>指定 {1} 时，无法指定 {0}。</value>
   </data>
   <data name="InvalidComputerName" xml:space="preserve">
-    <value>The WinRM client cannot complete the operation.Check if the computer name is valid.</value>
+    <value>WinRM 客户端无法完成该操作。请检查计算机名是否有效。</value>
   </data>
   <data name="CredSSPClientAndDelegateMustBeSpecified" xml:space="preserve">
-    <value>The {0} parameter is mandatory when the {1} parameter value is {2}.</value>
+    <value>当 {1} 参数值为 {2} 时，{0} 参数是必需的。</value>
   </data>
   <data name="value" xml:space="preserve">
-    <value>This command cannot be used because Parameter Value is not supplied. Check the value again and run your command.</value>
+    <value>无法使用此命令，因为未提供参数值。请再次检查值并运行命令。</value>
   </data>
   <data name="ItemDoesNotExist" xml:space="preserve">
-    <value>This command cannot be used because path does not exist.Check the path existence and run your command.</value>
+    <value>无法使用此命令，因为路径不存在。检查路径是否存在并运行命令。</value>
   </data>
   <data name="ShouldContinueSecurityCaption" xml:space="preserve">
-    <value>Security Configuration for WinRM Plug-in.</value>
+    <value>WinRM 插件的安全配置。</value>
   </data>
   <data name="SetItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because this cmdlet is not supported at this level of Provider path.</value>
+    <value>无法在当前路径中使用此命令，因为此级别的提供程序路径不支持此 cmdlet。</value>
   </data>
   <data name="NoDelegateFreshCred" xml:space="preserve">
-    <value>The machine is not configured to allow delegating fresh credentials.</value>
+    <value>未将此计算机配置为允许委派新凭据。</value>
   </data>
   <data name="SetItemServiceRestartWarning" xml:space="preserve">
-    <value>The configuration changes you made will only be effective after the WinRM service is restarted.  To restart the WinRM service, run the following command: 'Restart-Service winrm'</value>
+    <value>所做的配置更改仅在 WinRM 服务重新启动后才有效。 要重新启动 WinRM 服务，请运行以下命令: "Restart-Service winrm"</value>
   </data>
   <data name="QuickConfigContinueQuery" xml:space="preserve">
-    <value>Running the Set-WSManQuickConfig command has significant security implications, as it enables remote management through the WinRM service on this computer.
-This command:
-    1. Checks whether the WinRM service is running. If the WinRM service is not running, the service is started.
-    2. Sets the WinRM service startup type to automatic.
-    3. Creates a listener to accept requests on any IP address. By default, the transport is HTTP.
-    4. Enables a firewall exception for WS-Management traffic.
-    5. Enables Kerberos and Negotiate service authentication.
-Do you want to enable remote management through the WinRM service on this computer?</value>
+    <value>运行 Set-WSManQuickConfig 命令具有重大的安全隐患，因为它可通过此计算机上的 WinRM 服务进行远程管理。
+此命令:
+    1. 检查 WinRM 服务是否正在运行。如果 WinRM 服务未运行，则启动该服务。
+    2. 将 WinRM 服务启动类型设置为自动。
+    3. 创建一个可接受任何 IP 地址上的请求的侦听器。默认情况下，传输为 HTTP。
+    4. 为 WS-Management 流量启用防火墙例外。
+    5. 启用 Kerberos 和 Negotiate 服务身份验证。
+是否要在此计算机上通过 WinRM 服务启用远程管理?</value>
   </data>
   <data name="SetItemOnRunAsPasswordNoRunAsUser" xml:space="preserve">
-    <value>The value for RunAsPassword cannot be set without a value set for RunAsUser. Set the value for both RunAsUser and RunAsPassword in Powershell by calling the Set-Item cmdlet with the value for -Path attribute equal to the value of RunAsUser.</value>
+    <value>如果未为 RunAsUser 设置值，则无法设置 RunAsPassword 的值。调用 Set-Item cmdlet，并将 -Path 属性的值设为 RunAsUser 的值，以在 Powershell 中设置 RunAsUser 和 RunAsPassword 的值。</value>
   </data>
   <data name="SetItemWarningForGlobalQuota" xml:space="preserve">
-    <value>The updated configuration might affect the operation of the plugins having a per plugin quota value greater than {0}. Verify the configuration of all the registered plugins and change the per plugin quota values for the affected plugins.</value>
+    <value>更新的配置可能会影响每个插件配额值大于 {0} 的插件的操作。验证所有已注册插件的配置，并更改受影响插件的每个插件配额值。</value>
   </data>
   <data name="SetItemShouldContinueQuery" xml:space="preserve">
-    <value>This command set the value of the Item.
+    <value>此命令设置该项的值。
 
-Do you want to continue?</value>
+是否要继续?</value>
   </data>
   <data name="DelegateFreshCred" xml:space="preserve">
-    <value>The machine is configured to allow delegating fresh credentials to the following target(s):</value>
+    <value>计算机配置为允许将新凭据委派给以下目标:</value>
   </data>
   <data name="ConfigStorage" xml:space="preserve">
-    <value>Root of WsMan Config Storage.</value>
+    <value>WsMan 配置存储的根目录。</value>
   </data>
   <data name="WinRMServiceError" xml:space="preserve">
-    <value>This command cannot be executed because the WinRM Service is not started.</value>
+    <value>无法执行此命令，因为 WinRM 服务未启动。</value>
   </data>
   <data name="InvalidPath" xml:space="preserve">
-    <value>This command cannot be used because root path does not exist.Check the root path and run your command.</value>
+    <value>根路径不存在，无法使用此命令。请检查根路径并运行命令。</value>
   </data>
   <data name="RemoveItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because Remove-Item is not supported at this level of Provider path.</value>
+    <value>无法在当前路径中使用此命令，因为此级别的提供程序路径不支持 Remove-Item。</value>
   </data>
   <data name="SetItemTrustedHostsWarningQuery" xml:space="preserve">
-    <value>This command modifies the TrustedHosts list for the WinRM client. The computers in the TrustedHosts list might not be authenticated. The client might send credential information to these computers. Are you sure that you want to modify this list?</value>
+    <value>此命令将修改 WinRM 客户端的 TrustedHosts 列表。TrustedHosts 列表中的计算机可能未通过身份验证。客户端可能会向这些计算机发送凭据信息。是否确定要修改此列表?</value>
   </data>
   <data name="SetItemRootSDDLWarningQuery" xml:space="preserve">
-    <value>This command modifies the RootSDDL setting for the WinRM service.  The RootSDDL stores the default security settings for any WinRM securable resource that does not specify its own SDDL. Changing the SDDL might affect security for many WinRM resources. Are you sure that you want to modify these default settings?</value>
+    <value>此命令会修改 WinRM 服务的 RootSDDL 设置。 RootSDDL 存储任何未指定自身 SDDL 的 WinRM 安全资源的默认安全设置。更改 SDDL 可能会影响许多 WinRM 资源的安全性。是否确定要修改这些默认设置?</value>
   </data>
   <data name="NewWSManSessionOptionCred" xml:space="preserve">
-    <value>This command cannot be used without credential because the authentication algorithm is Basic or Digest. Use Credentials parameter to specify value and run your command.</value>
+    <value>由于身份验证算法为 Basic 或 Digest，因此无法在没有凭据的情况下使用此命令。使用 Credentials 参数指定值并运行命令。</value>
   </data>
   <data name="SetItemWarnigForPPQ" xml:space="preserve">
-    <value>The updated configuration is effective only if it is less than or equal to the value of global quota {0}. Verify the value for the global quota using the PowerShell cmdlet "Get-Item {0}".</value>
+    <value>更新后的配置仅在其小于或等于全局配额 {0} 的值时才生效。请使用 PowerShell cmdlet“Get-Item {0}”验证全局配额的值。</value>
   </data>
   <data name="DisableCredSSPPolicyValidateError" xml:space="preserve">
-    <value>This command cannot be executed because the setting cannot be disabled.</value>
+    <value>无法执行此命令，因为无法禁用该设置。</value>
   </data>
   <data name="ResourceURIMissingInResourceDir" xml:space="preserve">
-    <value>Unable to find value for "{0}" element in the path {1}.</value>
+    <value>在路径 {1} 中找不到“{0}”元素的值。</value>
   </data>
   <data name="NewWSManSessionOptionAuth" xml:space="preserve">
-    <value>This command cannot be used without Basic or Digest authentication algorithm because credentials are specified.Use Basic or Digest authentication algorithm and run your command.</value>
+    <value>由于已指定凭据，因此不能在没有 Basic 或 Digest 身份验证算法的情况下使用此命令。请使用 Basic 或 Digest 身份验证算法并运行命令。</value>
   </data>
   <data name="SetItemGeneralSecurityCaption" xml:space="preserve">
-    <value>WinRM Security Configuration.</value>
+    <value>WinRM 安全配置。</value>
   </data>
   <data name="NewItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because New-Item is not supported at this level of Provider path.</value>
+    <value>无法在当前路径中使用此命令，因为此级别的提供程序路径不支持 New-Item。</value>
   </data>
   <data name="WinrmNotConfigured" xml:space="preserve">
-    <value>This command cannot be used because the configuration is corrupted. Run WinRM invoke Restore WinRM/config to restore the default configuration</value>
+    <value>无法使用此命令，因为配置已损坏。请运行 WinRM invoke Restore WinRM/config 以还原默认配置</value>
   </data>
   <data name="InvalidValueType" xml:space="preserve">
-    <value>This command cannot be used because the parameter value type is invalid. {0} configuration expects a value of Type {1}. Verify that the value is correct and try again.</value>
+    <value>无法使用此命令，因为参数值类型无效。{0} 配置需要类型为 {1} 的值。请验证值是否正确，然后重试。</value>
   </data>
   <data name="WSManServiceStartQuery" xml:space="preserve">
-    <value>WinRM service is not started currently. Running this command will start the WinRM service.
+    <value>当前未启动 WinRM 服务。运行此命令将启动 WinRM 服务。
 
-Do you want to continue?</value>
+是否要继续?</value>
   </data>
   <data name="NoResourceMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter does not match any properties on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>无法使用此命令，因为该参数与 ResourceURI 上的任何属性都不匹配。请检查输入参数并运行命令。</value>
   </data>
   <data name="CredSSPServiceConfigured" xml:space="preserve">
-    <value>This computer is configured to receive credentials from a remote client computer.</value>
+    <value>此计算机配置为接收来自远程客户端计算机的凭据。</value>
   </data>
   <data name="CredSSPRoleAndDelegateCannotBeSpecified" xml:space="preserve">
-    <value>The {0} parameter cannot be used when the {1} parameter value is {2}. The {0} parameter can be used only when the {1} parameter value is {3}.</value>
+    <value>当 {1} 参数值为 {2} 时，无法使用 {0} 参数。仅当 {1} 参数值为 {3} 时，才能使用 {0} 参数。</value>
   </data>
   <data name="SetItemServiceRestartWarningRemote" xml:space="preserve">
-    <value>The configuration changes you made will only be effective after the WinRM service is restarted on {0}.</value>
+    <value>只有在 {0} 上重新启动 WinRM 服务后，所做的配置更改才会生效。</value>
   </data>
   <data name="ConnectFailure" xml:space="preserve">
-    <value>This command cannot be used from the current path. Move to root path of the provider using cd\ and run your command again.</value>
+    <value>无法从当前路径使用此命令。请使用 cd\ 转到提供程序的根路径，然后再次运行命令。</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>This PowerShell snap-in contains cmdlets (such as Get-WSManInstance and Set-WSManInstance) that are used by the PowerShell host to manage WSMan operations.</value>
+    <value>此 PowerShell 管理单元包含由 PowerShell 主机用来管理 WSMan 操作的 cmdlet (例如 Get-WSManInstance 和 Set-WSManInstance)。</value>
   </data>
   <data name="LocalHost" xml:space="preserve">
-    <value>This command cannot be used to remove the computer 'localhost' because it will always be connected. Give some other connected computer and run your command.</value>
+    <value>此命令不能用于删除计算机 "localhost"，因为它将始终处于连接状态。请提供其他已连接的计算机并运行命令。</value>
   </data>
   <data name="NewItemShouldContinueClientCertQuery" xml:space="preserve">
-    <value>This command creates a new ClientCertificate item.
+    <value>此命令创建新的 ClientCertificate 项。
 
-Do you want to continue?</value>
+是否要继续?</value>
   </data>
   <data name="ClearItemOnRunAsPassword" xml:space="preserve">
-    <value>The RunAsPassword value cannot be removed. Remove the values for RunAsUser and RunAsPassword in PowerShell by calling the Clear-Item cmdlet with the value for -Path attribute equal to the value of RunAsUser.</value>
+    <value>无法删除 RunAsPassword 值。通过调用 Clear-Item cmdlet (其中 -Path 属性的值等于 RunAsUser 的值)来删除 PowerShell 中 RunAsUser 和 RunAsPassword 的值。</value>
   </data>
   <data name="NewDriveRootDoesNotExist" xml:space="preserve">
-    <value>Unable to create a drive with the specified root. The root path does not exist.</value>
+    <value>无法使用指定的根创建驱动器。根路径不存在。</value>
   </data>
   <data name="MultipleResourceMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter matches multiple properties on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>无法使用此命令，因为该参数与 ResourceURI 上的多个属性匹配。请检查输入参数并运行命令。</value>
   </data>
 </root>

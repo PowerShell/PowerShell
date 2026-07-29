@@ -118,213 +118,213 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidFileName" xml:space="preserve">
-    <value>This command cannot be used because file does not exist.Check the file existence and run your command.</value>
+    <value>Dosya mevcut olmadığından bu komut kullanılamıyor. Dosyanın mevcut olduğunu denetleyin ve komutunuzu çalıştırın.</value>
   </data>
   <data name="NewItemShouldContinueClientCertCaption" xml:space="preserve">
-    <value>Creates a new ClientCertificate item.</value>
+    <value>Yeni bir ClientCertificate öğesi oluşturur.</value>
   </data>
   <data name="NotProperURI" xml:space="preserve">
-    <value>This command cannot be executed because the Connection URI is not in correct format. Please check the connection uri and Run your command again.</value>
+    <value>Bağlantı URI'si doğru biçimde olmadığından bu komut yürütülemiyor. Lütfen bağlantı URI'sini denetleyin ve komutunuzu yeniden çalıştırın.</value>
   </data>
   <data name="CredSSPContinueQuery" xml:space="preserve">
-    <value>CredSSP authentication allows the user credentials on this computer to be sent to a remote computer. If you use CredSSP authentication for a connection to a malicious or compromised computer, that computer will have access to your user name and password. For more information, see the Enable-WSManCredSSP Help topic.
-Do you want to enable CredSSP authentication?</value>
+    <value>CredSSP kimlik doğrulaması, bu bilgisayardaki kullanıcı kimlik bilgilerinin uzak bir bilgisayara gönderilmesine izin verir. Kötü amaçlı veya güvenliği ihlal edilmiş bir bilgisayara bağlanmak için CredSSP kimlik doğrulamasını kullanırsanız, o bilgisayar kullanıcı adınıza ve parolanıza erişebilir. Daha fazla bilgi için Enable-WSManCredSSP Yardım konusuna bakın.
+CredSSP kimlik doğrulamasını etkinleştirmek istiyor musunuz?</value>
   </data>
   <data name="NewItemShouldContinueListenerCaption" xml:space="preserve">
-    <value>Creates a new Listener item.</value>
+    <value>Yeni bir Dinleyici öğesi oluşturur.</value>
   </data>
   <data name="ShouldContinueSecurityQuery" xml:space="preserve">
-    <value>This command modifies the security settings on a resource in the following WinRM plug-in: {0}.
-Do you want to continue?</value>
+    <value>Bu komut, şu WinRM eklentisindeki bir kaynağın güvenlik ayarlarını değiştirir: {0}.
+Devam etmek istiyor musunuz?</value>
   </data>
   <data name="SetItemWhatIfAndConfirmText" xml:space="preserve">
-    <value>"Set-Item" on the WinRM configuration setting "{0}" to update the value to "{1}"</value>
+    <value>Değeri "{1}" olarak güncelleştirmek için WinRM yapılandırma ayarı "{0}" üzerindeki "Set-Item"</value>
   </data>
   <data name="EnableCredSSPPolicyValidateError" xml:space="preserve">
-    <value>This command cannot be executed because the setting cannot be enabled.</value>
+    <value>Ayar etkinleştirilemediği için bu komut yürütülemiyor.</value>
   </data>
   <data name="NewItemShouldContinueListenerQuery" xml:space="preserve">
-    <value>This command creates a new Listener item.
+    <value>Bu komut yeni bir Dinleyici öğesi oluşturur.
 
-Do you want to continue?</value>
+Devam etmek istiyor musunuz?</value>
   </data>
   <data name="ErrorElevationNeeded" xml:space="preserve">
-    <value>Access is denied. You need to run this cmdlet from an elevated process.</value>
+    <value>Erişim reddedildi. Bu cmdlet'i yükseltilmiş bir işlemden çalıştırmanız gerekir.</value>
   </data>
   <data name="DriveRootError" xml:space="preserve">
-    <value>This command cannot be used because WsMan drive root is not supported on this version of Windows OS.</value>
+    <value>WsMan sürücü kökü Windows işletim sisteminin bu sürümünde desteklenmediğinden bu komut kullanılamıyor.</value>
   </data>
   <data name="WSManServiceStartCaption" xml:space="preserve">
-    <value>Start WinRM Service</value>
+    <value>WinRM Hizmetini Başlat</value>
   </data>
   <data name="CredSSPServerContinueQuery" xml:space="preserve">
-    <value>CredSSP authentication allows the server to accept user credentials from a remote computer. If you enable CredSSP authentication on the server, the server will have access to the user name and password of the client computer if the client computer sends them. For more information, see the Enable-WSManCredSSP Help topic.
-Do you want to enable CredSSP authentication?</value>
+    <value>CredSSP kimlik doğrulaması, sunucunun uzak bir bilgisayardan kullanıcı kimlik bilgilerini kabul etmesine izin verir. Sunucuda CredSSP kimlik doğrulamasını etkinleştirirseniz, istemci bilgisayar bunları gönderirse sunucu istemci bilgisayarın kullanıcı adı ve parolasına erişebilir. Daha fazla bilgi için Enable-WSManCredSSP Yardım konusuna bakın.
+CredSSP kimlik doğrulamasını etkinleştirmek istiyor musunuz?</value>
   </data>
   <data name="QuickConfigContinueCaption" xml:space="preserve">
-    <value>WinRM Quick Configuration</value>
+    <value>WinRM Hızlı Yapılandırma</value>
   </data>
   <data name="Vendor" xml:space="preserve">
     <value>Microsoft</value>
   </data>
   <data name="NoChangeValue" xml:space="preserve">
-    <value>This command cannot set the input value because these values are Primary keys or Container items of the resource object. Change the input value and Run your command.</value>
+    <value>Bu komut, bu değerler kaynak nesnesinin Birincil anahtarları veya Kapsayıcı öğeleri olduğu için giriş değerini ayarlayamaz. Giriş değerini değiştirin ve komutunuzu çalıştırın.</value>
   </data>
   <data name="CredSSPContinueCaption" xml:space="preserve">
-    <value>CredSSP Authentication Configuration for WS-Management</value>
+    <value>WS-Management için CredSSP Kimlik Doğrulama Yapılandırması</value>
   </data>
   <data name="SetItemShouldContinueCaption" xml:space="preserve">
-    <value>Set the value of the item</value>
+    <value>Öğenin değerini ayarlayın</value>
   </data>
   <data name="TrustedHostValueTypeError" xml:space="preserve">
-    <value>Cannot convert 'System.Object[]' to the type 'System.String' required by the parameter. Specified method is not supported.</value>
+    <value>'System.Object[]', parametrenin gerektirdiği 'System.String' türüne dönüştürülemiyor. Belirtilen yöntem desteklenmiyor.</value>
   </data>
   <data name="CredSSPServiceNotConfigured" xml:space="preserve">
-    <value>This computer is not configured to receive credentials from a remote client computer.</value>
+    <value>Bu bilgisayar, kimlik bilgilerini uzak bir istemci bilgisayardan alacak şekilde yapılandırıldı.</value>
   </data>
   <data name="DisconnectFailure" xml:space="preserve">
-    <value>This command cannot be used from the current path. Move to root path of the provider using cd\ and run your command again.</value>
+    <value>Bu komut geçerli yoldan kullanılamaz. cd\ kullanarak sağlayıcının kök yoluna gidin ve komutunuzu yeniden çalıştırın.</value>
   </data>
   <data name="CmdletNotAvailable" xml:space="preserve">
-    <value>This PowerShell cmdlet is not available on for Windows XP and Windows Server 2003.</value>
+    <value>Bu PowerShell cmdlet'i Windows XP ve Windows Server 2003'te kullanılamaz.</value>
   </data>
   <data name="NoAttributeMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter matches a non-text property on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>Parametre, ResourceURI üzerindeki metin olmayan bir özellikle eşleştiğinden bu komut kullanılamıyor. Giriş parametrelerini denetleyin ve komutunuzu çalıştırın.</value>
   </data>
   <data name="AmbiguousAuthentication" xml:space="preserve">
-    <value>A {0} cannot be specified when {1} is specified.</value>
+    <value>{1} belirtildiğinde bir {0} belirtilemez.</value>
   </data>
   <data name="InvalidComputerName" xml:space="preserve">
-    <value>The WinRM client cannot complete the operation.Check if the computer name is valid.</value>
+    <value>WinRM istemcisi işlemi tamamlayamıyor. Bilgisayar adının geçerli olup olmadığını denetleyin.</value>
   </data>
   <data name="CredSSPClientAndDelegateMustBeSpecified" xml:space="preserve">
-    <value>The {0} parameter is mandatory when the {1} parameter value is {2}.</value>
+    <value>{0} parametresi, {1} parametresinin değeri {2}olduğunda zorunludur.</value>
   </data>
   <data name="value" xml:space="preserve">
-    <value>This command cannot be used because Parameter Value is not supplied. Check the value again and run your command.</value>
+    <value>Parametre Değeri sağlanmadığından bu komut kullanılamıyor. Değeri yeniden denetleyin ve komutunuzu çalıştırın.</value>
   </data>
   <data name="ItemDoesNotExist" xml:space="preserve">
-    <value>This command cannot be used because path does not exist.Check the path existence and run your command.</value>
+    <value>Yol mevcut olmadığından bu komut kullanılamıyor. Yolun mevcut olduğunu denetleyin ve komutunuzu çalıştırın.</value>
   </data>
   <data name="ShouldContinueSecurityCaption" xml:space="preserve">
-    <value>Security Configuration for WinRM Plug-in.</value>
+    <value>WinRM Eklentisi için Güvenlik Yapılandırması.</value>
   </data>
   <data name="SetItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because this cmdlet is not supported at this level of Provider path.</value>
+    <value>Bu Sağlayıcı yolunun bu düzeyinde bu cmdlet desteklenmediğinden bu komut geçerli yolda kullanılamaz.</value>
   </data>
   <data name="NoDelegateFreshCred" xml:space="preserve">
-    <value>The machine is not configured to allow delegating fresh credentials.</value>
+    <value>Makine, yeni kimlik bilgilerinin temsilci olarak atanmasına izin verecek şekilde yapılandırılmamış.</value>
   </data>
   <data name="SetItemServiceRestartWarning" xml:space="preserve">
-    <value>The configuration changes you made will only be effective after the WinRM service is restarted.  To restart the WinRM service, run the following command: 'Restart-Service winrm'</value>
+    <value>Yaptığınız yapılandırma değişiklikleri yalnızca WinRM hizmeti yeniden başlatıldıktan sonra etkili olur.  WinRM hizmetini yeniden başlatmak için şu komutu çalıştırın: 'Restart-Service winrm'</value>
   </data>
   <data name="QuickConfigContinueQuery" xml:space="preserve">
-    <value>Running the Set-WSManQuickConfig command has significant security implications, as it enables remote management through the WinRM service on this computer.
-This command:
-    1. Checks whether the WinRM service is running. If the WinRM service is not running, the service is started.
-    2. Sets the WinRM service startup type to automatic.
-    3. Creates a listener to accept requests on any IP address. By default, the transport is HTTP.
-    4. Enables a firewall exception for WS-Management traffic.
-    5. Enables Kerberos and Negotiate service authentication.
-Do you want to enable remote management through the WinRM service on this computer?</value>
+    <value>Set-WSManQuickConfig komutunu çalıştırmak, bu bilgisayarda WinRM hizmeti aracılığıyla uzaktan yönetimi etkinleştirdiği için önemli güvenlik etkileri oluşturur.
+Bu komut:
+    1. WinRM hizmetinin çalışıp çalışmadığını denetler. WinRM hizmeti çalışmıyorsa, hizmet başlatılır.
+    2. WinRM hizmetinin başlangıç türünü otomatik olarak ayarlar.
+    Herhangi bir IP adresinde isteği kabul etmek için dinleyici oluşturur. Varsayılan olarak aktarım HTTP'dir.
+    4. WS-Management trafiği için bir güvenlik duvarı özel durumunu etkinleştirir.
+    5. Kerberos ve Negotiate hizmet kimlik doğrulamasını etkinleştirir.
+Bu bilgisayarda WinRM hizmeti aracılığıyla uzaktan yönetimi etkinleştirmek istiyor musunuz?</value>
   </data>
   <data name="SetItemOnRunAsPasswordNoRunAsUser" xml:space="preserve">
-    <value>The value for RunAsPassword cannot be set without a value set for RunAsUser. Set the value for both RunAsUser and RunAsPassword in Powershell by calling the Set-Item cmdlet with the value for -Path attribute equal to the value of RunAsUser.</value>
+    <value>RunAsUser için bir değer ayarlanmadan RunAsPassword değeri ayarlanamaz. -Path özniteliğinin değeri RunAsUser değerine eşit olacak şekilde Set-Item cmdlet'ini çağırarak PowerShell'de hem RunAsUser hem de RunAsPassword değerlerini ayarlayın.</value>
   </data>
   <data name="SetItemWarningForGlobalQuota" xml:space="preserve">
-    <value>The updated configuration might affect the operation of the plugins having a per plugin quota value greater than {0}. Verify the configuration of all the registered plugins and change the per plugin quota values for the affected plugins.</value>
+    <value>Güncelleştirilmiş yapılandırma, eklenti başına kota değeri {0} değerinden büyük olan eklentilerin çalışmasını etkileyebilir. Tüm kayıtlı eklentilerin yapılandırmasını doğrulayın ve etkilenen eklentiler için eklenti başına kota değerlerini değiştirin.</value>
   </data>
   <data name="SetItemShouldContinueQuery" xml:space="preserve">
-    <value>This command set the value of the Item.
+    <value>Bu komut Item öğesinin değerini ayarlar.
 
-Do you want to continue?</value>
+Devam etmek istiyor musunuz?</value>
   </data>
   <data name="DelegateFreshCred" xml:space="preserve">
-    <value>The machine is configured to allow delegating fresh credentials to the following target(s):</value>
+    <value>Makine, yeni kimlik bilgilerinin aşağıdaki hedeflere temsilci olarak atanmasına izin verecek şekilde yapılandırıldı:</value>
   </data>
   <data name="ConfigStorage" xml:space="preserve">
-    <value>Root of WsMan Config Storage.</value>
+    <value>WsMan Yapılandırma Depolamasının kökü.</value>
   </data>
   <data name="WinRMServiceError" xml:space="preserve">
-    <value>This command cannot be executed because the WinRM Service is not started.</value>
+    <value>WinRM Hizmeti başlatılmadığından bu komut yürütülemiyor.</value>
   </data>
   <data name="InvalidPath" xml:space="preserve">
-    <value>This command cannot be used because root path does not exist.Check the root path and run your command.</value>
+    <value>Kök yolu mevcut olmadığından bu komut kullanılamıyor. Kök yolunu denetleyin ve komutunuzu çalıştırın.</value>
   </data>
   <data name="RemoveItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because Remove-Item is not supported at this level of Provider path.</value>
+    <value>Bu Sağlayıcı yolunun bu düzeyinde Remove-Item desteklenmediğinden bu komut geçerli yolda kullanılamaz.</value>
   </data>
   <data name="SetItemTrustedHostsWarningQuery" xml:space="preserve">
-    <value>This command modifies the TrustedHosts list for the WinRM client. The computers in the TrustedHosts list might not be authenticated. The client might send credential information to these computers. Are you sure that you want to modify this list?</value>
+    <value>Bu komut, WinRM istemcisinin TrustedHosts listesini değiştirir. TrustedHosts listesindeki bilgisayarların kimliği doğrulanmamış olabilir. İstemci, kimlik bilgilerini bu bilgisayarlara gönderebilir. Bu listeyi değiştirmek istediğinizden emin misiniz?</value>
   </data>
   <data name="SetItemRootSDDLWarningQuery" xml:space="preserve">
-    <value>This command modifies the RootSDDL setting for the WinRM service.  The RootSDDL stores the default security settings for any WinRM securable resource that does not specify its own SDDL. Changing the SDDL might affect security for many WinRM resources. Are you sure that you want to modify these default settings?</value>
+    <value>Bu komut, WinRM hizmeti için RootSDDL ayarını değiştirir.  RootSDDL, kendi SDDL'sini belirtmeyen tüm WinRM güvenlikli kaynakları için varsayılan güvenlik ayarlarını depolar. SDDL'nin değiştirilmesi, birçok WinRM kaynağının güvenliğini etkileyebilir. Bu varsayılan ayarları değiştirmek istediğinizden emin misiniz?</value>
   </data>
   <data name="NewWSManSessionOptionCred" xml:space="preserve">
-    <value>This command cannot be used without credential because the authentication algorithm is Basic or Digest. Use Credentials parameter to specify value and run your command.</value>
+    <value>Kimlik doğrulama algoritması Temel veya Özet olduğu için bu komut kimlik bilgileri olmadan kullanılamaz. Değer belirtmek için Credentials parametresini kullanın ve komutunuzu çalıştırın.</value>
   </data>
   <data name="SetItemWarnigForPPQ" xml:space="preserve">
-    <value>The updated configuration is effective only if it is less than or equal to the value of global quota {0}. Verify the value for the global quota using the PowerShell cmdlet "Get-Item {0}".</value>
+    <value>Güncelleştirilmiş yapılandırma yalnızca genel kota {0} değerinden küçük veya buna eşitse geçerlidir. Genel kota değerini PowerShell cmdlet'i "Get-Item {0}" ile doğrulayın.</value>
   </data>
   <data name="DisableCredSSPPolicyValidateError" xml:space="preserve">
-    <value>This command cannot be executed because the setting cannot be disabled.</value>
+    <value>Ayar devre dışı bırakılamadığı için bu komut yürütülemiyor.</value>
   </data>
   <data name="ResourceURIMissingInResourceDir" xml:space="preserve">
-    <value>Unable to find value for "{0}" element in the path {1}.</value>
+    <value>{1} yolunda "{0}" öğesi için değer bulunamıyor.</value>
   </data>
   <data name="NewWSManSessionOptionAuth" xml:space="preserve">
-    <value>This command cannot be used without Basic or Digest authentication algorithm because credentials are specified.Use Basic or Digest authentication algorithm and run your command.</value>
+    <value>Kimlik bilgileri belirtildiği için bu komut Temel veya Özet kimlik doğrulama algoritması olmadan kullanılamaz. Temel veya Özet kimlik doğrulama algoritmasını kullanın ve komutunuzu çalıştırın.</value>
   </data>
   <data name="SetItemGeneralSecurityCaption" xml:space="preserve">
-    <value>WinRM Security Configuration.</value>
+    <value>WinRM Güvenlik Yapılandırması.</value>
   </data>
   <data name="NewItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because New-Item is not supported at this level of Provider path.</value>
+    <value>Bu Sağlayıcı yolunun bu düzeyinde New-Item desteklenmediğinden bu komut geçerli yolda kullanılamaz.</value>
   </data>
   <data name="WinrmNotConfigured" xml:space="preserve">
-    <value>This command cannot be used because the configuration is corrupted. Run WinRM invoke Restore WinRM/config to restore the default configuration</value>
+    <value>Yapılandırma bozuk olduğundan bu komut kullanılamıyor. Varsayılan yapılandırmayı geri yüklemek için WinRM invoke Restore WinRM/config komutunu çalıştırın</value>
   </data>
   <data name="InvalidValueType" xml:space="preserve">
-    <value>This command cannot be used because the parameter value type is invalid. {0} configuration expects a value of Type {1}. Verify that the value is correct and try again.</value>
+    <value>Parametre değeri türü geçersiz olduğundan bu komut kullanılamaz. {0} yapılandırması, {1} Türünde bir değer bekliyor. Değerin doğru olduğundan emin olun ve yeniden deneyin.</value>
   </data>
   <data name="WSManServiceStartQuery" xml:space="preserve">
-    <value>WinRM service is not started currently. Running this command will start the WinRM service.
+    <value>WinRM hizmeti şu anda başlatılmadı. Bu komutu çalıştırmak WinRM hizmetini başlatır.
 
-Do you want to continue?</value>
+Devam etmek istiyor musunuz?</value>
   </data>
   <data name="NoResourceMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter does not match any properties on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>Parametre, ResourceURI üzerindeki hiçbir özellikle eşleşmediğinden bu komut kullanılamıyor. Giriş parametrelerini denetleyin ve komutunuzu çalıştırın.</value>
   </data>
   <data name="CredSSPServiceConfigured" xml:space="preserve">
-    <value>This computer is configured to receive credentials from a remote client computer.</value>
+    <value>Bu bilgisayar, kimlik bilgilerini uzak bir istemci bilgisayardan alacak şekilde yapılandırıldı.</value>
   </data>
   <data name="CredSSPRoleAndDelegateCannotBeSpecified" xml:space="preserve">
-    <value>The {0} parameter cannot be used when the {1} parameter value is {2}. The {0} parameter can be used only when the {1} parameter value is {3}.</value>
+    <value>{0} parametresi, {1} parametresinin değeri {2}olduğunda kullanılamaz. {0} parametresi yalnızca {1} parametresinin değeri {3} olduğunda kullanılabilir.</value>
   </data>
   <data name="SetItemServiceRestartWarningRemote" xml:space="preserve">
-    <value>The configuration changes you made will only be effective after the WinRM service is restarted on {0}.</value>
+    <value>Yaptığınız yapılandırma değişiklikleri yalnızca WinRM hizmeti {0} üzerinde yeniden başlatıldıktan sonra etkili olur.</value>
   </data>
   <data name="ConnectFailure" xml:space="preserve">
-    <value>This command cannot be used from the current path. Move to root path of the provider using cd\ and run your command again.</value>
+    <value>Bu komut geçerli yoldan kullanılamaz. cd\ kullanarak sağlayıcının kök yoluna gidin ve komutunuzu yeniden çalıştırın.</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>This PowerShell snap-in contains cmdlets (such as Get-WSManInstance and Set-WSManInstance) that are used by the PowerShell host to manage WSMan operations.</value>
+    <value>Bu PowerShell ek bileşeni, PowerShell ana bilgisayarı tarafından WSMan işlemlerini yönetmek için kullanılan cmdlet'leri (örneğin Get-WSManInstance ve Set-WSManInstance) içerir.</value>
   </data>
   <data name="LocalHost" xml:space="preserve">
-    <value>This command cannot be used to remove the computer 'localhost' because it will always be connected. Give some other connected computer and run your command.</value>
+    <value>Bu bilgisayar her zaman bağlı olduğundan, bu komut, 'localhost' bilgisayarını kaldırmak için kullanılamaz. Başka bir bağlı bilgisayar belirtin ve komutunuzu çalıştırın.</value>
   </data>
   <data name="NewItemShouldContinueClientCertQuery" xml:space="preserve">
-    <value>This command creates a new ClientCertificate item.
+    <value>Bu komut yeni bir ClientCertificate öğesi oluşturur.
 
-Do you want to continue?</value>
+Devam etmek istiyor musunuz?</value>
   </data>
   <data name="ClearItemOnRunAsPassword" xml:space="preserve">
-    <value>The RunAsPassword value cannot be removed. Remove the values for RunAsUser and RunAsPassword in PowerShell by calling the Clear-Item cmdlet with the value for -Path attribute equal to the value of RunAsUser.</value>
+    <value>RunAsPassword değeri kaldırılamaz. -Path özniteliğinin değeri RunAsUser değerine eşit olacak şekilde Clear-Item cmdlet'ini çağırarak PowerShell'de RunAsUser ve RunAsPassword değerlerini kaldırın.</value>
   </data>
   <data name="NewDriveRootDoesNotExist" xml:space="preserve">
-    <value>Unable to create a drive with the specified root. The root path does not exist.</value>
+    <value>Belirtilen köke sahip bir sürücü oluşturulamıyor. Kök yol yok.</value>
   </data>
   <data name="MultipleResourceMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter matches multiple properties on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>Parametre, ResourceURI üzerindeki birden fazla özellikle eşleştiğinden bu komut kullanılamıyor. Giriş parametrelerini denetleyin ve komutunuzu çalıştırın.</value>
   </data>
 </root>

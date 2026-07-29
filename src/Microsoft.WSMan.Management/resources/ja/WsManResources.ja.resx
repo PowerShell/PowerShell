@@ -118,213 +118,213 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidFileName" xml:space="preserve">
-    <value>This command cannot be used because file does not exist.Check the file existence and run your command.</value>
+    <value>ファイルが存在しないため、このコマンドは使用できません。ファイルの存在を確認し、コマンドを実行してください。</value>
   </data>
   <data name="NewItemShouldContinueClientCertCaption" xml:space="preserve">
-    <value>Creates a new ClientCertificate item.</value>
+    <value>新しい ClientCertificate 項目を作成します。</value>
   </data>
   <data name="NotProperURI" xml:space="preserve">
-    <value>This command cannot be executed because the Connection URI is not in correct format. Please check the connection uri and Run your command again.</value>
+    <value>接続 URI の形式が正しくないため、このコマンドを実行できません。接続 URI を確認し、コマンドをもう一度実行してください。</value>
   </data>
   <data name="CredSSPContinueQuery" xml:space="preserve">
-    <value>CredSSP authentication allows the user credentials on this computer to be sent to a remote computer. If you use CredSSP authentication for a connection to a malicious or compromised computer, that computer will have access to your user name and password. For more information, see the Enable-WSManCredSSP Help topic.
-Do you want to enable CredSSP authentication?</value>
+    <value>CredSSP 認証を使用すると、このコンピューターのユーザー資格情報をリモート コンピューターに送信できます。悪意のあるコンピューターまたは侵害されたコンピューターへの接続に CredSSP 認証を使用する場合、そのコンピューターはユーザー名とパスワードにアクセスできます。詳細については、Enable-WSManCredSSP のヘルプ トピックを参照してください。
+CredSSP 認証を有効にしますか?</value>
   </data>
   <data name="NewItemShouldContinueListenerCaption" xml:space="preserve">
-    <value>Creates a new Listener item.</value>
+    <value>新しいリスナー項目を作成します。</value>
   </data>
   <data name="ShouldContinueSecurityQuery" xml:space="preserve">
-    <value>This command modifies the security settings on a resource in the following WinRM plug-in: {0}.
-Do you want to continue?</value>
+    <value>このコマンドは、次の WinRM プラグインのリソースのセキュリティ設定を変更します: {0}。
+続行しますか?</value>
   </data>
   <data name="SetItemWhatIfAndConfirmText" xml:space="preserve">
-    <value>"Set-Item" on the WinRM configuration setting "{0}" to update the value to "{1}"</value>
+    <value>値を "{1}" に更新するための WinRM 構成設定 "{0}" の "Set-Item"</value>
   </data>
   <data name="EnableCredSSPPolicyValidateError" xml:space="preserve">
-    <value>This command cannot be executed because the setting cannot be enabled.</value>
+    <value>設定を有効にできないため、このコマンドを実行できません。</value>
   </data>
   <data name="NewItemShouldContinueListenerQuery" xml:space="preserve">
-    <value>This command creates a new Listener item.
+    <value>このコマンドは、新しいリスナー項目を作成します。
 
-Do you want to continue?</value>
+続行しますか?</value>
   </data>
   <data name="ErrorElevationNeeded" xml:space="preserve">
-    <value>Access is denied. You need to run this cmdlet from an elevated process.</value>
+    <value>アクセスは拒否されました。昇格されたプロセスからこのコマンドレットを実行する必要があります。</value>
   </data>
   <data name="DriveRootError" xml:space="preserve">
-    <value>This command cannot be used because WsMan drive root is not supported on this version of Windows OS.</value>
+    <value>このバージョンの Windows OS では WsMan ドライブ ルートがサポートされていないため、このコマンドは使用できません。</value>
   </data>
   <data name="WSManServiceStartCaption" xml:space="preserve">
-    <value>Start WinRM Service</value>
+    <value>WinRM サービスの開始</value>
   </data>
   <data name="CredSSPServerContinueQuery" xml:space="preserve">
-    <value>CredSSP authentication allows the server to accept user credentials from a remote computer. If you enable CredSSP authentication on the server, the server will have access to the user name and password of the client computer if the client computer sends them. For more information, see the Enable-WSManCredSSP Help topic.
-Do you want to enable CredSSP authentication?</value>
+    <value>CredSSP 認証を使用すると、サーバーはリモート コンピューターからユーザー資格情報を受け入れます。サーバーで CredSSP 認証を有効にした場合、クライアント コンピューターから送信された場合、サーバーはクライアント コンピューターのユーザー名とパスワードにアクセスできます。詳細については、Enable-WSManCredSSP のヘルプ トピックを参照してください。
+CredSSP 認証を有効にしますか?</value>
   </data>
   <data name="QuickConfigContinueCaption" xml:space="preserve">
-    <value>WinRM Quick Configuration</value>
+    <value>WinRM クイック構成</value>
   </data>
   <data name="Vendor" xml:space="preserve">
     <value>Microsoft</value>
   </data>
   <data name="NoChangeValue" xml:space="preserve">
-    <value>This command cannot set the input value because these values are Primary keys or Container items of the resource object. Change the input value and Run your command.</value>
+    <value>これらの値はリソース オブジェクトの主キーまたはコンテナー項目であるため、このコマンドは入力値を設定できません。入力値を変更し、コマンドを実行します。</value>
   </data>
   <data name="CredSSPContinueCaption" xml:space="preserve">
-    <value>CredSSP Authentication Configuration for WS-Management</value>
+    <value>WS-Management の CredSSP 認証構成</value>
   </data>
   <data name="SetItemShouldContinueCaption" xml:space="preserve">
-    <value>Set the value of the item</value>
+    <value>項目の値を設定する</value>
   </data>
   <data name="TrustedHostValueTypeError" xml:space="preserve">
-    <value>Cannot convert 'System.Object[]' to the type 'System.String' required by the parameter. Specified method is not supported.</value>
+    <value>'System.Object[]' をパラメーターに必要な型 'System.String' に変換できません。指定されたメソッドはサポートされていません。</value>
   </data>
   <data name="CredSSPServiceNotConfigured" xml:space="preserve">
-    <value>This computer is not configured to receive credentials from a remote client computer.</value>
+    <value>このコンピューターは、リモート クライアント コンピューターから資格情報を受信するように構成されていません。</value>
   </data>
   <data name="DisconnectFailure" xml:space="preserve">
-    <value>This command cannot be used from the current path. Move to root path of the provider using cd\ and run your command again.</value>
+    <value>このコマンドは、現在のパスからは使用できません。cd\ を使用してプロバイダーのルート パスに移動し、コマンドをもう一度実行してください。</value>
   </data>
   <data name="CmdletNotAvailable" xml:space="preserve">
-    <value>This PowerShell cmdlet is not available on for Windows XP and Windows Server 2003.</value>
+    <value>この PowerShell コマンドレットは、Windows XP および Windows Server 2003 では使用できません。</value>
   </data>
   <data name="NoAttributeMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter matches a non-text property on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>パラメーターが ResourceURI のテキスト以外のプロパティと一致するため、このコマンドを使用できません。入力パラメーターを確認し、コマンドを実行してください。</value>
   </data>
   <data name="AmbiguousAuthentication" xml:space="preserve">
-    <value>A {0} cannot be specified when {1} is specified.</value>
+    <value>{1} が指定されている場合、{0} は指定できません。</value>
   </data>
   <data name="InvalidComputerName" xml:space="preserve">
-    <value>The WinRM client cannot complete the operation.Check if the computer name is valid.</value>
+    <value>WinRM クライアントは操作を完了できません。コンピューター名が有効かどうかを確認してください。</value>
   </data>
   <data name="CredSSPClientAndDelegateMustBeSpecified" xml:space="preserve">
-    <value>The {0} parameter is mandatory when the {1} parameter value is {2}.</value>
+    <value>{1} パラメーター値が {2} の場合、{0} パラメーターは必須です。</value>
   </data>
   <data name="value" xml:space="preserve">
-    <value>This command cannot be used because Parameter Value is not supplied. Check the value again and run your command.</value>
+    <value>パラメーター値が指定されていないため、このコマンドは使用できません。値をもう一度確認し、コマンドを実行します。</value>
   </data>
   <data name="ItemDoesNotExist" xml:space="preserve">
-    <value>This command cannot be used because path does not exist.Check the path existence and run your command.</value>
+    <value>パスが存在しないため、このコマンドは使用できません。パスの存在を確認し、コマンドを実行します。</value>
   </data>
   <data name="ShouldContinueSecurityCaption" xml:space="preserve">
-    <value>Security Configuration for WinRM Plug-in.</value>
+    <value>WinRM プラグインのセキュリティ構成。</value>
   </data>
   <data name="SetItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because this cmdlet is not supported at this level of Provider path.</value>
+    <value>このコマンドレットはこのレベルのプロバイダー パスではサポートされていないため、現在のパスではこのコマンドを使用できません。</value>
   </data>
   <data name="NoDelegateFreshCred" xml:space="preserve">
-    <value>The machine is not configured to allow delegating fresh credentials.</value>
+    <value>このマシンは、新しい資格情報の委任を許可するようには構成されていません。</value>
   </data>
   <data name="SetItemServiceRestartWarning" xml:space="preserve">
-    <value>The configuration changes you made will only be effective after the WinRM service is restarted.  To restart the WinRM service, run the following command: 'Restart-Service winrm'</value>
+    <value>行った構成の変更は、WinRM サービスが再起動された後にのみ有効になります。 WinRM サービスを再起動するには、次のコマンドを実行します: 'Restart-Service winrm'</value>
   </data>
   <data name="QuickConfigContinueQuery" xml:space="preserve">
-    <value>Running the Set-WSManQuickConfig command has significant security implications, as it enables remote management through the WinRM service on this computer.
-This command:
-    1. Checks whether the WinRM service is running. If the WinRM service is not running, the service is started.
-    2. Sets the WinRM service startup type to automatic.
-    3. Creates a listener to accept requests on any IP address. By default, the transport is HTTP.
-    4. Enables a firewall exception for WS-Management traffic.
-    5. Enables Kerberos and Negotiate service authentication.
-Do you want to enable remote management through the WinRM service on this computer?</value>
+    <value>Set-WSManQuickConfig コマンドを実行すると、このコンピューターの WinRM サービスを介したリモート管理が可能になり、セキュリティに大きな影響があります。
+このコマンドは次のとおりです: 
+    1. WinRM サービスが実行されているかどうかを確認します。WinRM サービスが実行されていない場合は、サービスを開始します。
+    2. WinRM サービスのスタートアップの種類を自動に設定されます。
+    3. 任意の IP アドレスで要求を受け入れるリスナーが作成されます。既定では、トランスポートは HTTP です。
+    4. WS-Management トラフィックのファイアウォール例外が有効になります。
+    5. Kerberos および Negotiate サービス認証が有効になります。
+このコンピューターの WinRM サービスを使用してリモート管理を有効にしますか?</value>
   </data>
   <data name="SetItemOnRunAsPasswordNoRunAsUser" xml:space="preserve">
-    <value>The value for RunAsPassword cannot be set without a value set for RunAsUser. Set the value for both RunAsUser and RunAsPassword in Powershell by calling the Set-Item cmdlet with the value for -Path attribute equal to the value of RunAsUser.</value>
+    <value>RunAsPassword の値は、RunAsUser に値を設定しないと設定できません。-Path 属性の値が RunAsUser の値と等しい Set-Item コマンドレットを呼び出して、PowerShell で RunAsUser と RunAsPassword の両方の値を設定してください。</value>
   </data>
   <data name="SetItemWarningForGlobalQuota" xml:space="preserve">
-    <value>The updated configuration might affect the operation of the plugins having a per plugin quota value greater than {0}. Verify the configuration of all the registered plugins and change the per plugin quota values for the affected plugins.</value>
+    <value>更新された構成は、プラグインごとのクォータ値が {0} より大きいプラグインの操作に影響する可能性があります。登録されているすべてのプラグインの構成を確認し、影響を受けるプラグインの、プラグインごとのクォータ値を変更します。</value>
   </data>
   <data name="SetItemShouldContinueQuery" xml:space="preserve">
-    <value>This command set the value of the Item.
+    <value>このコマンドは、Item の値を設定します。
 
-Do you want to continue?</value>
+続行しますか?</value>
   </data>
   <data name="DelegateFreshCred" xml:space="preserve">
-    <value>The machine is configured to allow delegating fresh credentials to the following target(s):</value>
+    <value>このマシンは、次のターゲットへの新しい資格情報の委任を許可するように構成されています:</value>
   </data>
   <data name="ConfigStorage" xml:space="preserve">
-    <value>Root of WsMan Config Storage.</value>
+    <value>WsMan Config Storage のルート。</value>
   </data>
   <data name="WinRMServiceError" xml:space="preserve">
-    <value>This command cannot be executed because the WinRM Service is not started.</value>
+    <value>WinRM サービスが開始されていないため、このコマンドを実行できません。</value>
   </data>
   <data name="InvalidPath" xml:space="preserve">
-    <value>This command cannot be used because root path does not exist.Check the root path and run your command.</value>
+    <value>ルート パスが存在しないため、このコマンドは使用できません。ルート パスを確認し、コマンドを実行してください。</value>
   </data>
   <data name="RemoveItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because Remove-Item is not supported at this level of Provider path.</value>
+    <value>Remove-Item はこのレベルのプロバイダー パスではサポートされていないため、現在のパスではこのコマンドを使用できません。</value>
   </data>
   <data name="SetItemTrustedHostsWarningQuery" xml:space="preserve">
-    <value>This command modifies the TrustedHosts list for the WinRM client. The computers in the TrustedHosts list might not be authenticated. The client might send credential information to these computers. Are you sure that you want to modify this list?</value>
+    <value>このコマンドは、WinRM クライアントの TrustedHosts リストを変更します。TrustedHosts リスト内のコンピューターが認証されていない可能性があります。クライアントは、これらのコンピューターに資格情報を送信する場合があります。このリストを変更しますか?</value>
   </data>
   <data name="SetItemRootSDDLWarningQuery" xml:space="preserve">
-    <value>This command modifies the RootSDDL setting for the WinRM service.  The RootSDDL stores the default security settings for any WinRM securable resource that does not specify its own SDDL. Changing the SDDL might affect security for many WinRM resources. Are you sure that you want to modify these default settings?</value>
+    <value>このコマンドにより WinRM サービスの RootSDDL 設定が変更されます。 RootSDDL には、独自の SDDL を指定しない WinRM セキュリティ保護可能なリソースの既定のセキュリティ設定が格納されます。SDDL を変更すると、多くの WinRM リソースのセキュリティに影響する可能性があります。これらの既定の設定を変更しますか?</value>
   </data>
   <data name="NewWSManSessionOptionCred" xml:space="preserve">
-    <value>This command cannot be used without credential because the authentication algorithm is Basic or Digest. Use Credentials parameter to specify value and run your command.</value>
+    <value>認証アルゴリズムが Basic または Digest であるため、このコマンドは資格情報なしでは使用できません。Credentials パラメーターを使用して値を指定し、コマンドを実行してください。</value>
   </data>
   <data name="SetItemWarnigForPPQ" xml:space="preserve">
-    <value>The updated configuration is effective only if it is less than or equal to the value of global quota {0}. Verify the value for the global quota using the PowerShell cmdlet "Get-Item {0}".</value>
+    <value>更新された構成は、グローバル クォータ {0} の値以下の場合にのみ有効です。PowerShell コマンドレット "Get-Item {0}" を使用して、グローバル クォータの値を確認します。</value>
   </data>
   <data name="DisableCredSSPPolicyValidateError" xml:space="preserve">
-    <value>This command cannot be executed because the setting cannot be disabled.</value>
+    <value>設定を無効にできないため、このコマンドを実行できません。</value>
   </data>
   <data name="ResourceURIMissingInResourceDir" xml:space="preserve">
-    <value>Unable to find value for "{0}" element in the path {1}.</value>
+    <value>パス {1} に "{0}" 要素の値が見つかりません。</value>
   </data>
   <data name="NewWSManSessionOptionAuth" xml:space="preserve">
-    <value>This command cannot be used without Basic or Digest authentication algorithm because credentials are specified.Use Basic or Digest authentication algorithm and run your command.</value>
+    <value>資格情報が指定されているため、基本認証アルゴリズムまたはダイジェスト認証アルゴリズムがないと、このコマンドを使用できません。基本認証アルゴリズムまたはダイジェスト認証アルゴリズムを使用して、コマンドを実行してください。</value>
   </data>
   <data name="SetItemGeneralSecurityCaption" xml:space="preserve">
-    <value>WinRM Security Configuration.</value>
+    <value>WinRM セキュリティの構成を同期します。</value>
   </data>
   <data name="NewItemNotSupported" xml:space="preserve">
-    <value>This command cannot be used in the current path because New-Item is not supported at this level of Provider path.</value>
+    <value>New-Item はこのレベルのプロバイダー パスでサポートされていないため、現在のパスではこのコマンドを使用できません。</value>
   </data>
   <data name="WinrmNotConfigured" xml:space="preserve">
-    <value>This command cannot be used because the configuration is corrupted. Run WinRM invoke Restore WinRM/config to restore the default configuration</value>
+    <value>構成が壊れているため、このコマンドは使用できません。WinRM を実行して Restore WinRM/config を呼び出し、既定の構成を復元します</value>
   </data>
   <data name="InvalidValueType" xml:space="preserve">
-    <value>This command cannot be used because the parameter value type is invalid. {0} configuration expects a value of Type {1}. Verify that the value is correct and try again.</value>
+    <value>パラメーター値の型が無効なため、このコマンドは使用できません。{0} 構成では、型 {1} の値が必要です。値が正しいことを確認してから、もう一度やり直してください。</value>
   </data>
   <data name="WSManServiceStartQuery" xml:space="preserve">
-    <value>WinRM service is not started currently. Running this command will start the WinRM service.
+    <value>WinRM サービスは現在開始されていません。このコマンドを実行すると、WinRM サービスが開始されます。
 
-Do you want to continue?</value>
+続行しますか?</value>
   </data>
   <data name="NoResourceMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter does not match any properties on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>パラメーターが ResourceURI のどのプロパティとも一致しないため、このコマンドを使用できません。入力パラメーターを確認して、コマンドを実行してください。</value>
   </data>
   <data name="CredSSPServiceConfigured" xml:space="preserve">
-    <value>This computer is configured to receive credentials from a remote client computer.</value>
+    <value>このコンピューターは、リモート クライアント コンピューターから資格情報を受信するように構成されています。</value>
   </data>
   <data name="CredSSPRoleAndDelegateCannotBeSpecified" xml:space="preserve">
-    <value>The {0} parameter cannot be used when the {1} parameter value is {2}. The {0} parameter can be used only when the {1} parameter value is {3}.</value>
+    <value>{1} パラメーター値が {2} の場合、{0} パラメーターは使用できません。{0} パラメーターは、{1} パラメーター値が {3} の場合にのみ使用できます。</value>
   </data>
   <data name="SetItemServiceRestartWarningRemote" xml:space="preserve">
-    <value>The configuration changes you made will only be effective after the WinRM service is restarted on {0}.</value>
+    <value>行った構成の変更は、WinRM サービスが {0} に再起動された後にのみ有効になります。</value>
   </data>
   <data name="ConnectFailure" xml:space="preserve">
-    <value>This command cannot be used from the current path. Move to root path of the provider using cd\ and run your command again.</value>
+    <value>このコマンドは、現在のパスからは使用できません。cd\ を使用してプロバイダーのルート パスに移動し、コマンドをもう一度実行してください。</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>This PowerShell snap-in contains cmdlets (such as Get-WSManInstance and Set-WSManInstance) that are used by the PowerShell host to manage WSMan operations.</value>
+    <value>この PowerShell スナップインには、PowerShell ホストが WSMan 操作を管理するために使用するコマンドレット (Get-WSManInstance や Set-WSManInstance など) が含まれています。</value>
   </data>
   <data name="LocalHost" xml:space="preserve">
-    <value>This command cannot be used to remove the computer 'localhost' because it will always be connected. Give some other connected computer and run your command.</value>
+    <value>このコマンドは、常に接続されるため、コンピューター 'localhost' を削除するために使用できません。他の接続されたコンピューターを指定して、コマンドを実行します。</value>
   </data>
   <data name="NewItemShouldContinueClientCertQuery" xml:space="preserve">
-    <value>This command creates a new ClientCertificate item.
+    <value>このコマンドは、新しい ClientCertificate 項目を作成します。
 
-Do you want to continue?</value>
+続行しますか?</value>
   </data>
   <data name="ClearItemOnRunAsPassword" xml:space="preserve">
-    <value>The RunAsPassword value cannot be removed. Remove the values for RunAsUser and RunAsPassword in PowerShell by calling the Clear-Item cmdlet with the value for -Path attribute equal to the value of RunAsUser.</value>
+    <value>RunAsPassword 値を削除できません。PowerShell で -Path 属性の値が RunAsUser の値と等しい Clear-Item コマンドレットを呼び出して、RunAsUser と RunAsPassword の値を削除してください。</value>
   </data>
   <data name="NewDriveRootDoesNotExist" xml:space="preserve">
-    <value>Unable to create a drive with the specified root. The root path does not exist.</value>
+    <value>指定されたルートを持つドライブを作成できません。ルート パスが存在しません。</value>
   </data>
   <data name="MultipleResourceMatch" xml:space="preserve">
-    <value>This command cannot be used because the parameter matches multiple properties on the ResourceURI.Check the input parameters and run your command.</value>
+    <value>パラメーターが ResourceURI の複数のプロパティと一致するため、このコマンドを使用できません。入力パラメーターを確認して、コマンドを実行してください。</value>
   </data>
 </root>

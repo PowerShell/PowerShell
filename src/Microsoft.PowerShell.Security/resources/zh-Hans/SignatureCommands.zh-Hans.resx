@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertNotGoodForSigning" xml:space="preserve">
-    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+    <value>无法对代码进行签名。指定的证书不适用于代码签名。</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code.  The TimeStamp server URL must be fully qualified in the form of http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+    <value>无法对代码进行签名。 时间戳服务器 URL 必须以 http://&lt;server url&gt; or https://&lt;server url&gt; 的形式完全限定。</value>
   </data>
   <data name="CannotRetrieveFromContainer" xml:space="preserve">
-    <value>The Get-AuthenticodeSignature cmdlet does not support directories. Supply a path to a file and retry.</value>
+    <value>Get-AuthenticodeSignature cmdlet 不支持目录。提供文件的路径，然后重试。</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>File {0} was not found.</value>
+    <value>找不到文件 {0}。</value>
   </data>
 </root>
