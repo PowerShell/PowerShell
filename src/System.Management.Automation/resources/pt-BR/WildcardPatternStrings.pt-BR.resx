@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidPattern" xml:space="preserve">
-    <value>The specified wildcard character pattern is not valid: {0}</value>
+    <value>O padrão de caractere curinga especificado não é válido: {0}</value>
   </data>
 </root>

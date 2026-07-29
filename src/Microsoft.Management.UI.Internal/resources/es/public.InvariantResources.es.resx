@@ -121,7 +121,7 @@
     <value>{0} cannot be modified directly, use {1} instead.</value>
   </data>
   <data name="Columns" xml:space="preserve">
-    <value>Columns</value>
+    <value>Columnas</value>
   </data>
   <data name="ManagementListDateTimeColumnFormatString" xml:space="preserve">
     <value>{0:G}</value>

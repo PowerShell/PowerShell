@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CancelText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>取消</value>
   </data>
   <data name="CaseSensitiveTitle" xml:space="preserve">
     <value>Match Case</value>
@@ -128,7 +128,7 @@
     <comment>Name of a group of parameters common to all cmdlets</comment>
   </data>
   <data name="DescriptionTitle" xml:space="preserve">
-    <value>Description</value>
+    <value>说明</value>
   </data>
   <data name="ExamplesTitle" xml:space="preserve">
     <value>Examples</value>
@@ -161,7 +161,7 @@
     <value>Notes</value>
   </data>
   <data name="OKText" xml:space="preserve">
-    <value>OK</value>
+    <value>确定</value>
   </data>
   <data name="OneMatch" xml:space="preserve">
     <value>1 match</value>
@@ -191,7 +191,7 @@
     <value>_Previous</value>
   </data>
   <data name="PropertiesTitle" xml:space="preserve">
-    <value>Properties</value>
+    <value>属性</value>
   </data>
   <data name="RelatedLinksTitle" xml:space="preserve">
     <value>RelatedLinks</value>
@@ -203,7 +203,7 @@
     <value>Search Options</value>
   </data>
   <data name="SettingsText" xml:space="preserve">
-    <value>Settings</value>
+    <value>设置</value>
   </data>
   <data name="SomeMatchesFormat" xml:space="preserve">
     <value>{0} matches</value>
