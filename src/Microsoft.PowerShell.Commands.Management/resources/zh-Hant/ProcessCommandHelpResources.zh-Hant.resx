@@ -118,34 +118,34 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GetProcessShortDescription" xml:space="preserve">
-    <value>Lists processes currently running.</value>
+    <value>列出目前正在執行的處理序。</value>
   </data>
   <data name="GetProcessDetailedDescription" xml:space="preserve">
     <value>
--Id id
+-Id 識別碼
 [int[]]
 [pipeline input allowed]
-Comma-separated list of process identifiers that specify the processes to get
+以逗號分隔的處理序識別碼清單，指定要取得的處理序
 
--ProcessName name
+-ProcessName 名稱
 [string[]]
 [pipeline input allowed]
-Comma-separated list of process names that specify the processes to get
+以逗號分隔的處理序名稱清單，指定要取得的處理序
 
--Exclude name
+-Exclude 名稱
 [ArrayList]
-Comma-separated list of process names to be excluded from the output.
+以逗號分隔的清單，列出要從輸出中排除的處理序名稱。
 
 ---
-The command enumerates processes from the local computer, and outputs System.Diagnostics.Process object(s). The command writes the process object to the output pipeline one at a time. The command takes parameters like ID(Process Identifier) or Process Name from the command line. The command returns the corresponding system.diagnostics.process for the supplied ID or ProcessName parameters.</value>
+此命令會列舉本機電腦上的處理序，並輸出 System.Diagnostics.Process 物件。此命令會一次將一個處理序物件寫入輸出管線。此命令會從命令列接受 ID (處理序識別碼) 或 Process Name 等參數。此命令會針對所提供的 ID 或 ProcessName 參數，傳回對應的 system.diagnostics.process。</value>
   </data>
   <data name="GetProcessNote1" xml:space="preserve">
-    <value>Exclude works only for process name.</value>
+    <value>排除僅適用於處理序名稱。</value>
   </data>
   <data name="GetProcessExample1Description" xml:space="preserve">
-    <value>Returns all running processes.</value>
+    <value>傳回所有執行中的處理序。</value>
   </data>
   <data name="GetProcessExample2Description" xml:space="preserve">
-    <value>Returns all processes with names starting with svc.</value>
+    <value>傳回名稱以 svc 開頭的所有處理序。</value>
   </data>
 </root>

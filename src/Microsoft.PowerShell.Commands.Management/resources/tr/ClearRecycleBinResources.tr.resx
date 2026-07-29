@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ClearRecycleBinContent" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin</value>
+    <value>Geri Dönüşüm Kutusu’ndaki tüm içerikler</value>
   </data>
   <data name="ClearRecycleBinContentForDrive" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin for the '{0}' drive</value>
+    <value>'{0}' sürücüsündeki Geri Dönüşüm Kutusu'nun tüm içeriği</value>
   </data>
   <data name="ClearRecycleBinProgressActivity" xml:space="preserve">
-    <value>Clearing Recycle Bin</value>
+    <value>Geri Dönüşüm Kutusu'nu Boşaltılıyor</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionByDrive" xml:space="preserve">
-    <value>for the '{0}' drive</value>
+    <value>'{0}' sürücüsü için</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionForAllDrives" xml:space="preserve">
-    <value>for all drives</value>
+    <value>tüm sürücüler için</value>
   </data>
   <data name="DriveNotFound" xml:space="preserve">
-    <value>Cannot find drive. A drive with the name '{0}' does not exist. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>Sürücü bulunamıyor. '{0}' adlı bir sürücü yok. Sistemde bulunan Sabit sürücüleri görmek için lütfen '{1}' cmdlet'ini çalıştırın.</value>
   </data>
   <data name="InvalidDriveNameFormat" xml:space="preserve">
-    <value>Invalid input. The following formats are supported: '{0}', '{1}' or '{2}'.</value>
+    <value>Geçersiz giriş. Aşağıdaki biçimler desteklenmektedir: '{0}', '{1}' veya '{2}'.</value>
   </data>
   <data name="InvalidDriveType" xml:space="preserve">
-    <value>The drive with the name '{0}' is not a Fixed drive and does not support the Recycle Bin. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>'{0}' adlı sürücü, Sabit sürücü değildir ve Geri Dönüşüm Kutusu'nu desteklemez. Sistemde bulunan Sabit sürücüleri görmek için lütfen '{1}' cmdlet'ini çalıştırın.</value>
   </data>
 </root>

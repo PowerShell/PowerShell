@@ -118,63 +118,63 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidPowerShellStateGeneral" xml:space="preserve">
-    <value>The state of the current PowerShell instance is not valid for this operation.</value>
+    <value>目前 PowerShell 執行個體的狀態不適用於此作業。</value>
   </data>
   <data name="ExecutionAlreadyStarted" xml:space="preserve">
-    <value>The operation cannot be performed because a command has already been started. Wait for the command to complete, or stop it, and then try the operation again.</value>
+    <value>無法執行作業，因為已經啟動命令。請等候命令完成或停止命令，然後再試一次。</value>
   </data>
   <data name="NoCommandToInvoke" xml:space="preserve">
-    <value>No commands are specified.</value>
+    <value>未指定任何命令。</value>
   </data>
   <data name="InvalidStateCreateNested" xml:space="preserve">
-    <value>The PowerShell instance is not in the correct state for creating a nested PowerShell instance. Nested PowerShell instances should only be created in a running PowerShell instance.</value>
+    <value>PowerShell 執行個體的狀態不適合建立巢狀 PowerShell 執行個體。只有在執行中的 PowerShell 執行個體中，才能建立巢狀 PowerShell 執行個體。</value>
   </data>
   <data name="InvalidRunspaceState" xml:space="preserve">
-    <value>Cannot perform operation because the runspace is not in the '{0}' state. Current state of runspace is '{1}'.</value>
+    <value>無法執行作業，因為 Runspace 不處於 '{0}' 狀態。Runspace 目前的狀態為 '{1}'。</value>
   </data>
   <data name="NestedPowerShellInvokeAsync" xml:space="preserve">
-    <value>Nested PowerShell instances cannot be invoked asynchronously. Use the Invoke method.</value>
+    <value>無法以非同步方式叫用巢狀 PowerShell 執行個體。請使用 Invoke 方法。</value>
   </data>
   <data name="AsyncResultNotOwned" xml:space="preserve">
-    <value>The {0} object was not created by calling {1} on this PowerShell instance.</value>
+    <value>未透過在此 PowerShell 執行個體上呼叫 {1} 來建立 {0} 物件。</value>
   </data>
   <data name="ApartmentStateMismatch" xml:space="preserve">
-    <value>When the runspace is set to reuse a thread, the apartment state in the invocation settings must match the runspace.</value>
+    <value>當 Runspace 設定為重複使用執行緒時，叫用設定中的 Apartment 狀態必須與 Runspace 相符。</value>
   </data>
   <data name="ApartmentStateMismatchCurrentThread" xml:space="preserve">
-    <value>When the runspace is set to use the current thread, the apartment state in the invocation settings must match that of the current thread.</value>
+    <value>當 Runspace 設定為使用目前的執行緒時，叫用設定中的 Apartment 狀態必須與目前執行緒的狀態相符。</value>
   </data>
   <data name="ParameterRequiresCommand" xml:space="preserve">
-    <value>A command is required to add a parameter. A command must be added to the PowerShell instance before adding a parameter.</value>
+    <value>需要命令才能新增參數。必須先將命令新增至 PowerShell 執行個體，才能新增參數。</value>
   </data>
   <data name="KeyMustBeString" xml:space="preserve">
-    <value>The keys in the dictionary must be strings.</value>
+    <value>字典中的索引鍵必須是字串。</value>
   </data>
   <data name="CommandInvokedFromWrongThreadWithCommand" xml:space="preserve">
-    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The command you attempted to invoke was: {0}</value>
+    <value>沒有可用的 Runspace 可在此執行緒中執行命令。您可以在 System.Management.Automation.Runspaces.Runspace 類型的 DefaultRunspace 屬性中提供一個。您嘗試叫用的命令為: {0}</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>This PowerShell object cannot be connected because it is not associated with a remote runspace or runspace pool.</value>
+    <value>無法連線此 PowerShell 物件，因為它與遠端 Runspace 或 Runspace 集區沒有關聯。</value>
   </data>
   <data name="DiscOnSyncCommand" xml:space="preserve">
-    <value>The running command has been disconnected but is still running on the remote server.  Reconnect to get command operation status and output data.</value>
+    <value>執行中的命令已中斷連線，但仍在遠端伺服器上執行。 請重新連線，以取得命令作業狀態和輸出資料。</value>
   </data>
   <data name="ExecutionDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then either wait for the command to finish, or stop the command.</value>
+    <value>無法執行作業，因為目前的 PowerShell 工作階段處於「已中斷連線」狀態。 請連線此 PowerShell 工作階段，然後等候命令完成或停止命令。</value>
   </data>
   <data name="IsDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then try again.</value>
+    <value>無法執行作業，因為目前的 PowerShell 工作階段處於「已中斷連線」狀態。 請連線此 PowerShell 工作階段，然後再試一次。</value>
   </data>
   <data name="ConnectFailed" xml:space="preserve">
-    <value>The connection attempt to the remote command failed.</value>
+    <value>連線遠端命令的嘗試失敗。</value>
   </data>
   <data name="ExecutionStopping" xml:space="preserve">
-    <value>The operation cannot be performed because a command is currently stopping. Wait for the command to complete stopping, and then try the operation again.</value>
+    <value>無法執行作業，因為命令目前正在停止。請等候命令完成停止，然後再試一次。</value>
   </data>
   <data name="CommandInvokedFromWrongThreadWithoutCommand" xml:space="preserve">
-    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The current PowerShell instance contains no command to invoke.</value>
+    <value>沒有可用的 Runspace 可在此執行緒中執行命令。您可以在 System.Management.Automation.Runspaces.Runspace 類型的 DefaultRunspace 屬性中提供一個。目前的 PowerShell 執行個體不包含任何可叫用的命令。</value>
   </data>
   <data name="NoDefaultRunspaceForPSCreate" xml:space="preserve">
-    <value>A PowerShell object cannot be created that uses the current runspace because there is no current runspace available.  The current runspace might be starting, such as when it is created with an Initial Session State.</value>
+    <value>無法建立使用目前 Runspace 的 PowerShell 物件，因為目前沒有可用的 Runspace。 目前的 Runspace 可能正在啟動，例如在使用初始工作階段狀態建立時。</value>
   </data>
 </root>

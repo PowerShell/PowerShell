@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotAppendCsvWithMismatchedPropertyNames" xml:space="preserve">
-    <value>Cannot append CSV content to the following file: {1}. The appended object does not have a property that corresponds to the following column: {0}. To continue with mismatched properties, add the -Force parameter, and then retry the command.</value>
+    <value>CSV içeriği aşağıdaki dosyaya eklenemiyor: {1}. Eklenen nesnede, şu sütuna karşılık gelen bir özellik bulunmamaktadır: {0}. Eşleşmeyen özelliklerle devam etmek için -Force parametresini ekleyin ve ardından komutu yeniden deneyin.</value>
     <comment>{0} is a placeholder for property name (i.e. ProcessId)
         {1} is a placeholder for filename (i.e. c:\users\lukasza\foo.csv)
 
@@ -128,33 +128,33 @@
     </comment>
   </data>
   <data name="CannotSpecifyQuoteFieldsAndUseQuotes" xml:space="preserve">
-    <value>You must specify either the -UseQuotes or -QuoteFields parameters, but not both.</value>
+    <value>-UseQuotes ya da -QuoteFields parametrelerinden birini belirtmeniz gerekir; ancak ikisini birden belirtemezsiniz.</value>
   </data>
   <data name="CannotSpecifyPathAndLiteralPath" xml:space="preserve">
-    <value>You must specify either the -Path or -LiteralPath parameters, but not both.</value>
+    <value>-Path ya da -LiteralPath parametrelerinden birini belirtmeniz gerekir; ancak ikisini birden belirtemezsiniz.</value>
   </data>
   <data name="UseDefaultNameForUnspecifiedHeader" xml:space="preserve">
-    <value>One or more headers were not specified. Default names starting with "H" have been used in place of any missing headers.</value>
+    <value>Bir veya daha fazla başlık belirtilmemiştir. Eksik başlıkların yerine “H” harfiyle başlayan varsayılan isimler kullanılmıştır.</value>
   </data>
   <data name="FileNameIsAMandatoryParameter" xml:space="preserve">
-    <value>FileName is a mandatory parameter.</value>
+    <value>FileName zorunlu bir parametredir.</value>
   </data>
   <data name="ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenAppending" xml:space="preserve">
-    <value>ReconcilePreexistingPropertyNames method should only get called when appending.</value>
+    <value>ReconcilePreexistingPropertyNames yöntemi yalnızca ekleme işlemi sırasında çağrılmalıdır.</value>
   </data>
   <data name="ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenPreexistingPropertyNamesHaveBeenReadSuccessfully" xml:space="preserve">
-    <value>ReconcilePreexistingPropertyNames method should only get called when preexisting property names have been read successfully.</value>
+    <value>ReconcilePreexistingPropertyNames yöntemi, yalnızca önceden var olan özellik adları başarıyla okunduğunda çağrılmalıdır.</value>
   </data>
   <data name="BuildPropertyNamesMethodShouldBeCalledOnlyOncePerCmdletInstance" xml:space="preserve">
-    <value>BuildPropertyNames method should be called only once per cmdlet instance.</value>
+    <value>BuildPropertyNames yöntemi, her cmdlet örneği için yalnızca bir kez çağrılmalıdır.</value>
   </data>
   <data name="TypeHierarchyShouldNotHaveNullValues" xml:space="preserve">
-    <value>Type hierarchy should not have null values.</value>
+    <value>Tip hiyerarşisinde null değerler bulunmamalıdır.</value>
   </data>
   <data name="EOFIsReached" xml:space="preserve">
-    <value>EOF is reached.</value>
+    <value>EOF'a ulaşıldı.</value>
   </data>
   <data name="CannotSpecifyAppendAndNoHeader" xml:space="preserve">
-    <value>You must specify either the -Append or -NoHeader parameters, but not both.</value>
+    <value>-Append ya da -NoHeader parametrelerinden birini belirtmeniz gerekir; ancak ikisini birden belirtemezsiniz.</value>
   </data>
 </root>

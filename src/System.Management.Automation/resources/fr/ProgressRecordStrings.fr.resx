@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ArgMayNotBeNegative" xml:space="preserve">
-    <value>Cannot process the argument because {0} cannot be a negative value.</value>
+    <value>Nous ne pouvons pas traiter l’argument, car {0} ne peut pas être négatif.</value>
   </data>
   <data name="ArgMayNotBeNullOrEmpty" xml:space="preserve">
-    <value>Cannot process the argument because the value of {0} cannot be null or empty.</value>
+    <value>Nous ne pouvons pas traiter l’argument, car la valeur de {0} ne peut pas être null ou vide.</value>
   </data>
   <data name="PercentMayNotBeMoreThan100" xml:space="preserve">
-    <value>Cannot set percent because {0} cannot be greater than 100.</value>
+    <value>Nous ne pouvons pas définir le pourcentage, car {0} ne peut pas être supérieur à 100.</value>
   </data>
   <data name="ParentActivityIdCantBeActivityId" xml:space="preserve">
-    <value>ParentActivityId cannot be the same as the ActivityId.</value>
+    <value>ParentActivityId ne peut pas être identique à ActivityId.</value>
   </data>
 </root>

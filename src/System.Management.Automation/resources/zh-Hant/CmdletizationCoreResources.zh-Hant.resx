@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ScriptWriter_ModuleDescription" xml:space="preserve">
-    <value>Cmdlets over '{0}' class</value>
+    <value>'{0}' 類別的 Cmdlet</value>
     <comment>{0} is a placeholder for a name of a CIM class.  Example: "ROOT\cimv2\Win32_Process"</comment>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
@@ -129,7 +129,7 @@
 {1} is a placeholder for a cmdlet parameter name.  Example: Name</comment>
   </data>
   <data name="ExportCimCommand_ErrorInCmdletizationXmlFile" xml:space="preserve">
-    <value>Cannot process Cmdlet Definition XML for the following file: {0}. {1}</value>
+    <value>無法處理下列檔案的 Cmdlet 定義 XML: {0}。 {1}</value>
     <comment>{0} is a placeholder for a file name.
 {1} is an exception message copied from an XmlException or XmlSchemaException</comment>
   </data>
@@ -140,36 +140,36 @@
 {1} is a placeholder for a parameter set name.  Example: 'foo'</comment>
   </data>
   <data name="ScriptWriter_ObjectModelWrapperDefinesMultipleParameterSets" xml:space="preserve">
-    <value>Cannot process the ObjectModelWrapper attribute. The {0} type defines multiple parameter sets. Verify that the Cmdlet Definition XML specifies a valid type in the ObjectModelWrapper attribute and retry.</value>
+    <value>無法處理 ObjectModelWrapper 屬性。{0} 類型定義了多個參數集。請確認 Cmdlet 定義 XML 在 ObjectModelWrapper 屬性中指定有效的類型，然後再試一次。</value>
     <comment>{StrContains="ObjectModelWrapper"}
 {0} is a placeholder for a .NET class name.  Example: System.Net.IPAddress</comment>
   </data>
   <data name="ScriptWriter_ObjectModelWrapperIsStillGeneric" xml:space="preserve">
-    <value>Cannot process the ObjectModelWrapper attribute. The {0} type is an open generic type.  Verify that the Cmdlet Definition XML specifies a valid type in the ObjectModelWrapper attribute and retry.</value>
+    <value>無法處理 ObjectModelWrapper 屬性。{0} 類型是開放式泛型類型。 請確認 Cmdlet 定義 XML 在 ObjectModelWrapper 屬性中指定有效的類型，然後再試一次。</value>
     <comment>{StrContains="ObjectModelWrapper"}
 {0} is a placeholder for a .NET class name.  Example: System.Net.IPAddress</comment>
   </data>
   <data name="ScriptWriter_ObjectModelWrapperNotDerivedFromObjectModelWrapper" xml:space="preserve">
-    <value>Cannot process the ObjectModelWrapper attribute. The {0} type is not derived from the following class: {1}.  Verify that the Cmdlet Definition XML specifies a valid type in the ObjectModelWrapper attribute and retry.</value>
+    <value>無法處理 ObjectModelWrapper 屬性。{0} 類型不是從下列類別衍生: {1}。 請確認 Cmdlet 定義 XML 在 ObjectModelWrapper 屬性中指定有效的類型，然後再試一次。</value>
     <comment>{StrContains="ObjectModelWrapper"}
 {0} is a placeholder for a .NET class name.  Example: System.Net.IPAddress
 {1} is a placeholder for a .NET class name. Example: Microsoft.PowerShell.Cmdletization.ObjectModelWrapper</comment>
   </data>
   <data name="ScriptWriter_ObjectModelWrapperUsesIgnoredParameterMetadata" xml:space="preserve">
-    <value>Cannot process the ObjectModelWrapper attribute. The {0} type defines the {1} cmdlet parameter with a {2} attribute parameter that is ignored.  Verify that the Cmdlet Definition XML specifies a valid type in the ObjectModelWrapper attribute and retry.</value>
+    <value>無法處理 ObjectModelWrapper 屬性。{0} 類型定義了 {1} Cmdlet 參數，且帶有一個會被忽略的 {2} 屬性參數。 請確認 Cmdlet 定義 XML 在 ObjectModelWrapper 屬性中指定有效的類型，然後再試一次。</value>
     <comment>{StrContains="ObjectModelWrapper"}
 {0} is a placeholder for a .NET class name.  Example: System.Net.IPAddress
 {1} is a placeholder for a cmdlet parameter name.  Example: 'ProcessId'
 {2} is a placeholder for a name of a property of ParameterAttribute class. Example: ValueFromPipelineByPropertyName </comment>
   </data>
   <data name="ScriptWriter_ParameterNameConflictsWithCommonParameters" xml:space="preserve">
-    <value>Cannot define the {0} parameter for the {1} cmdlet.  The parameter name is already defined by the {2} class.  Change the name of the parameter in Cmdlet Definition XML and retry.</value>
+    <value>無法為 {1} Cmdlet 定義 {0} 參數。 參數名稱已由 {2} 類別定義。 請在 Cmdlet 定義 XML 中變更參數名稱，然後再試一次。</value>
     <comment>{0} is a placeholder for a cmdlet parameter name.  Example: 'ProcessId'
 {1} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
 {2} is a placeholder for a .NET class name.  Example: 'Microsoft.PowerShell.Cmdletization.Cim.CimWrapper'</comment>
   </data>
   <data name="ScriptWriter_ParameterNameConflictsWithQueryParameters" xml:space="preserve">
-    <value>Cannot define the {0} parameter for the {1} cmdlet. The parameter name is already defined within the {2} XML element. Change the name of the parameter in the Cmdlet Definition XML, and then try again.</value>
+    <value>無法為 {1} Cmdlet 定義 {0} 參數。參數名稱已在 {2} XML 元素內定義。請變更 Cmdlet 定義 XML 中的參數名稱，然後再試一次。</value>
     <comment>{0} is a placeholder for a cmdlet parameter name.  Example: 'ProcessId'
 {1} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
 {2} is a placeholder for an xml element name.  Example: &lt;GetCmdletParameters&gt;</comment>
@@ -181,7 +181,7 @@
 {1} is a placeholder for a secondary exception message (i.e. "")</comment>
   </data>
   <data name="EnumWriter_InvalidEnumName" xml:space="preserve">
-    <value>The value of the EnumName attribute doesn't translate to a valid C# identifier: {0}. Verify the EnumName attribute in the Cmdlet Definition XML, and then try again.</value>
+    <value>EnumName 屬性的值無法轉換為有效的 C# 識別碼: {0}。請在 Cmdlet 定義 XML 中確認 EnumName 屬性，然後再試一次。</value>
     <comment>{StrContains="EnumName"}</comment>
   </data>
   <data name="EnumWriter_InvalidValueName" xml:space="preserve">
@@ -189,11 +189,11 @@
     <comment>{StrContains="Enum"} {StrContains="Value"} {StrContains="Name"}</comment>
   </data>
   <data name="ScriptWriter_InvalidEnum" xml:space="preserve">
-    <value>Cannot process the &lt;Enum EnumName="{0}" ...&gt; element.  {1}</value>
+    <value>無法處理  &lt;Enum EnumName="{0}" ...&gt; 元素。{1}</value>
     <comment>{StrContains="Enum"} {StrContains="EnumName"}</comment>
   </data>
   <data name="ImportModule_UnsupportedCmdletAdapter" xml:space="preserve">
-    <value>The remote computer returned a CDXML file that is not valid. The following cmdlet adapter is not supported for importing a CDXML module from a remote computer: {0}</value>
+    <value>遠端電腦傳回了無效的 CDXML 檔案。不支援下列 Cmdlet 配接器用於從遠端電腦匯入 CDXML 模組: {0}</value>
     <comment>{0} is a placeholder for a fully qualified type name</comment>
   </data>
 </root>

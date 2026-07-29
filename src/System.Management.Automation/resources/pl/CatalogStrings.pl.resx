@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CatalogDefinitionFileNotGenerated" xml:space="preserve">
-    <value>Unable to generate catalog definition file.</value>
+    <value>Nie można wygenerować pliku definicji wykazu.</value>
   </data>
   <data name="AddFileToCatalog" xml:space="preserve">
-    <value>Adding file '{0}' to the catalog. Relative path of file in catalog is '{1}'.</value>
+    <value>Dodawanie pliku „{0}” do wykazu. Ścieżka względna pliku w wykazie to „{1}”.</value>
   </data>
   <data name="SkipValidationOfCatalogFile" xml:space="preserve">
-    <value>Skipping validating file {0} from catalog. </value>
+    <value>Pomijanie weryfikacji pliku {0} z wykazu. </value>
   </data>
   <data name="FoundFileHashInCatalogItem" xml:space="preserve">
-    <value>Found file {0} in the catalog with hash of {1}. </value>
+    <value>Znaleziono plik {0} w wykazie o wartości skrótu {1}. </value>
   </data>
   <data name="FoundDuplicateFilesRelativePath" xml:space="preserve">
-    <value>Paths for catalog contains multiple files with same relative path {0}. </value>
+    <value>Ścieżki wykazu zawierają wiele plików o tej samej ścieżce względnej {0}. </value>
   </data>
   <data name="FoundFileInPath" xml:space="preserve">
-    <value>Found file {0} on disk with hash of {1}.</value>
+    <value>Znaleziono plik {0} na dysku o wartości skrótu {1}.</value>
   </data>
   <data name="SkipValidationOfPathFile" xml:space="preserve">
-    <value>Skipping validating file {0} from path.</value>
+    <value>Pomijanie weryfikacji pliku {0} ze ścieżki.</value>
   </data>
   <data name="UnableToAcquireHashAlgorithmContext" xml:space="preserve">
-    <value>Unable to acquire a handle to a catalog administrator context for a given hash algorithm {0}.</value>
+    <value>Nie można uzyskać dojścia do kontekstu administratora katalogu dla danego algorytmu wyznaczania wartości skrótu {0}.</value>
   </data>
   <data name="UnableToCreateFileHash" xml:space="preserve">
-    <value>Unable to create the hash for file {0}. </value>
+    <value>Nie można utworzyć skrótu dla pliku {0}. </value>
   </data>
   <data name="UnableToOpenCatalogFile" xml:space="preserve">
-    <value>Unable to open catalog file {0}.</value>
+    <value>Nie można otworzyć pliku wykazu {0}.</value>
   </data>
   <data name="UnKnownCatalogVersion" xml:space="preserve">
-    <value>Catalog version is not valid. We only support catalog version {0} and version {1}.</value>
+    <value>Wersja wykazu jest nieprawidłowa. Obsługujemy tylko wersję {0} i wersję {1} wykazu.</value>
   </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
-    <value>Unable to open catalog definition file.</value>
+    <value>Nie można otworzyć pliku definicji wykazu.</value>
   </data>
   <data name="FoundDuplicateFileMemberInCatalog" xml:space="preserve">
-    <value>Found multiple entries of file member {0} in the catalog.</value>
+    <value>Znaleziono wiele wpisów elementu członkowskiego pliku {0} w wykazie.</value>
   </data>
   <data name="UnableToFindFileNameOrPathForCatalogMember" xml:space="preserve">
-    <value>Unable to find file name or path for catalog member  {0}.</value>
+    <value>Nie można odnaleźć nazwy pliku lub ścieżki dla elementu członkowskiego wykazu  {0}.</value>
   </data>
   <data name="UnableToFindFileToHash" xml:space="preserve">
-    <value>Unable to find file {0} to hash.</value>
+    <value>Nie można odnaleźć pliku {0} dla skrótu.</value>
   </data>
   <data name="UnableToReadFileToHash" xml:space="preserve">
-    <value>Unable to read file {0} to calculate its hash.</value>
+    <value>Nie można odczytać pliku {0} w celu obliczenia jego wartości skrótu.</value>
   </data>
 </root>

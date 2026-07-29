@@ -118,48 +118,48 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MaxPoolLessThan1" xml:space="preserve">
-    <value>The maximum pool size cannot be less than 1.</value>
+    <value>集區大小上限不得小於 1。</value>
   </data>
   <data name="MinPoolLessThan1" xml:space="preserve">
-    <value>The minimum pool size cannot be less than 1.</value>
+    <value>集區大小下限不得小於 1。</value>
   </data>
   <data name="MinPoolGreaterThanMaxPool" xml:space="preserve">
-    <value>The minimum pool size cannot be greater than the maximum pool size.</value>
+    <value>集區大小下限不能大於集區大小上限。</value>
   </data>
   <data name="InvalidRunspacePoolStateGeneral" xml:space="preserve">
-    <value>The state of the runspace pool is not valid for this operation.</value>
+    <value>Runspace 集區的狀態不適用於此作業。</value>
   </data>
   <data name="InvalidRunspacePoolState" xml:space="preserve">
-    <value>Cannot perform the operation because the runspace pool is not in the '{0}' state. The current state is '{1}'.</value>
+    <value>無法執行作業，因為 Runspace 集區不處於 '{0}' 狀態。目前的狀態為 '{1}'。</value>
   </data>
   <data name="CannotOpenAgain" xml:space="preserve">
-    <value>Cannot open the runspace pool because it is not in the 'BeforeOpen' state. The current state is '{0}'.</value>
+    <value>無法開啟 Runspace 集區，因為它不處於 'BeforeOpen' 狀態。目前的狀態為 '{0}'。</value>
   </data>
   <data name="AsyncResultNotOwned" xml:space="preserve">
-    <value>The {0} object was not created by calling {1} on the current RunspacePool instance.</value>
+    <value>{0} 物件不是透過在目前的 RunspacePool 執行個體上呼叫 {1} 所建立。</value>
   </data>
   <data name="RunspaceNotBelongsToPool" xml:space="preserve">
-    <value>Cannot release the runspace to the current pool because the runspace does not belong to the current pool.</value>
+    <value>無法將 Runspace 釋出至目前的集區，因為該 Runspace 不屬於目前的集區。</value>
   </data>
   <data name="ChangePropertyAfterOpen" xml:space="preserve">
-    <value>This property cannot be changed after the runspace pool has been opened.</value>
+    <value>開啟 Runspace 集區之後，就無法變更此屬性。</value>
   </data>
   <data name="RunspaceDisconnectConnectNotSupported" xml:space="preserve">
-    <value>This runspace does not support disconnect and connect operations.</value>
+    <value>此 Runspace 不支援中斷連線和連線作業。</value>
   </data>
   <data name="CannotWhileDisconnected" xml:space="preserve">
-    <value>Cannot perform the operation because the runspace pool is in the Disconnected state.</value>
+    <value>無法執行作業，因為 Runspace 集區處於已中斷連線狀態。</value>
   </data>
   <data name="DisconnectNotSupportedOnServer" xml:space="preserve">
-    <value>The Disconnect operation is not supported on the server.  The server must be running PowerShell 3.0 or greater for remote runspace pool disconnection support.</value>
+    <value>伺服器不支援中斷連線作業。 伺服器必須執行 PowerShell 3.0 或更新版本，才能支援遠端 Runspace 集區中斷連線。</value>
   </data>
   <data name="CannotReconstructCommands" xml:space="preserve">
-    <value>This runspace pool {0} is not configured to provide disconnected PowerShell objects for commands running on the remote server.  Use the RunspacePool class GetRunspacePools() static method to query the server and return runspace pool objects that are configured to do this.</value>
+    <value>此 Runspace 集區 {0} 未設定為針對在遠端伺服器上執行的命令提供已中斷連線的 PowerShell 物件。 請使用 RunspacePool 類別的 GetRunspacePools() 靜態方法查詢伺服器，並傳回已設定為執行此作業的 Runspace 集區物件。</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>This runspace pool cannot be connected because the corresponding server side runspace pool is connected to another client.</value>
+    <value>無法連線此 Runspace 集區，因為對應的伺服器端 Runspace 集區已連線至另一個用戶端。</value>
   </data>
   <data name="ResetRunspaceStateNotSupportedOnServer" xml:space="preserve">
-    <value>ResetRunspaceState is not supported on the server.  The server must be running PowerShell 5.0 or greater.</value>
+    <value>伺服器不支援 ResetRunspaceState。 伺服器必須執行 PowerShell 5.0 或更新版本。</value>
   </data>
 </root>

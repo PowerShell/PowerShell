@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MonadRootRegistryAccessFailed" xml:space="preserve">
-    <value>Unable to access PowerShell registry information.</value>
+    <value>無法存取 PowerShell 登錄資訊。</value>
   </data>
   <data name="MonadEngineRegistryAccessFailed" xml:space="preserve">
-    <value>Unable to access PowerShell Engine registry information.</value>
+    <value>無法存取 PowerShell 引擎登錄資訊。</value>
   </data>
   <data name="PublicKeyTokenAccessFailed" xml:space="preserve">
-    <value>Unable to access PublicKeyToken information.</value>
+    <value>無法存取 PublicKeyToken 資訊。</value>
   </data>
   <data name="SpecifiedVersionNotFound" xml:space="preserve">
-    <value>Version {0} of PowerShell is not available on this computer.</value>
+    <value>這部電腦上沒有版本 {0} 的 PowerShell。</value>
   </data>
   <data name="MshSnapinDoesNotExist" xml:space="preserve">
-    <value>The PowerShell snap-in '{0}' is not installed on this computer.</value>
+    <value>這部電腦上未安裝 PowerShell 嵌入式管理單元 '{0}'。</value>
   </data>
   <data name="MandatoryValueNotPresent" xml:space="preserve">
-    <value>The mandatory value {0} is not specified for registry key {1}.</value>
+    <value>未為登錄機碼 {1} 指定強制值 {0}。</value>
   </data>
   <data name="MandatoryValueNotInCorrectFormat" xml:space="preserve">
-    <value>The mandatory value {0} is not in the correct format for registry key {1}.  The expected format is 'string.'</value>
+    <value>強制值 {0} 不是登錄機碼 {1} 的正確格式。 預期格式為 'string'。</value>
   </data>
   <data name="MandatoryValueNotInCorrectFormatMultiString" xml:space="preserve">
-    <value>The mandatory value {0} is not in the correct format for registry key {1}.  The expected format is 'multistring.'</value>
+    <value>強制值 {0} 不是登錄機碼 {1} 的正確格式。 預期格式為 'multistring'。</value>
   </data>
   <data name="DefaultMshSnapinNotPresent" xml:space="preserve">
-    <value>Cannot find required information in registry or missing key files.  Cannot load some cmdlets.</value>
+    <value>在登錄中找不到必要資訊，或缺少機碼檔案。 無法載入某些 Cmdlet。</value>
   </data>
   <data name="NoMshSnapinPresentForVersion" xml:space="preserve">
-    <value>No snap-ins have been registered for PowerShell version {0}.</value>
+    <value>尚未為 PowerShell 版本 {0} 註冊任何嵌入式管理單元。</value>
   </data>
   <data name="ResourceReaderDisposed" xml:space="preserve">
-    <value>Cannot retrieve the string resource because the reader has been disposed.</value>
+    <value>無法擷取字串資源，因為讀取器已經處置。</value>
   </data>
   <data name="VersionValueInCorrect" xml:space="preserve">
-    <value>Version value {0} is not specified or is incorrect for registry key {1}.</value>
+    <value>登錄機碼 {1} 的版本值 {0} 未指定或不正確。</value>
   </data>
   <data name="PSVersionAttributeNotExist" xml:space="preserve">
-    <value>No [PSVersion] attribute was found for PowerShell type {0}. Add a PSVersion attribute to the type using [PSVersion(PowerShell SnapinBase.PSEngineVersion)].</value>
+    <value>找不到 PowerShell 類型 {0} 的 [PSVersion] 屬性。請使用 [PSVersion(PowerShell SnapinBase.PSEngineVersion)] 將 PSVersion 屬性新增至該類型。</value>
   </data>
 </root>

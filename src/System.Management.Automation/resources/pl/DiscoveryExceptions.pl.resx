@@ -118,114 +118,114 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CmdletFormatInvalid" xml:space="preserve">
-    <value>The cmdlet name "{0}" cannot be validated because it is not in the correct format. Cmdlet names must include a verb and a noun separated by a "-", such as "Get-Process".</value>
+    <value>Nie można sprawdzić poprawności nazwy polecenia cmdlet „{0}”, ponieważ ma ona niepoprawny format. Nazwy poleceń cmdlet muszą zawierać czasownik i rzeczownik oddzielony znakiem „-”, na przykład „Get-Process”.</value>
   </data>
   <data name="ParameterDeclaredInParameterSetMultipleTimes" xml:space="preserve">
-    <value>The parameter "{0}" is declared in parameter-set "{1}" multiple times.</value>
+    <value>Parametr „{0}” jest wielokrotnie zadeklarowany w zestawie parametrów „{1}”.</value>
   </data>
   <data name="AliasDeclaredMultipleTimes" xml:space="preserve">
-    <value>The alias "{0}" is declared multiple times.</value>
+    <value>Alias „{0}” jest deklarowany wiele razy.</value>
   </data>
   <data name="CompiledCommandParameterMemberMustBeFieldOrProperty" xml:space="preserve">
-    <value>Parameter could not be declared. Parameters can be declared only on fields and properties.</value>
+    <value>Nie można zadeklarować parametru. Parametry mogą być deklarowane tylko w polach i właściwościach.</value>
   </data>
   <data name="InvalidCmdletNameFormat" xml:space="preserve">
-    <value>Cannot process the cmdlet. A cmdlet name must consist of a verb and noun pair separated by '-'.</value>
+    <value>Nie można przetworzyć polecenia cmdlet. Nazwa polecenia cmdlet musi składać się z pary czasowników i rzeczowników rozdzielonych znakiem „-”.</value>
   </data>
   <data name="CommandNotFoundException" xml:space="preserve">
-    <value>The term '{0}' is not recognized as a name of a cmdlet, function, script file, or executable program.
-Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>Termin „{0}” nie jest rozpoznawany jako nazwa polecenia cmdlet, funkcji, pliku skryptu lub programu wykonywalnego.
+Sprawdź pisownię nazwy lub sprawdź, czy ścieżka została dołączona, sprawdź, czy ścieżka jest poprawna, i spróbuj ponownie.</value>
   </data>
   <data name="CmdletNotFoundException" xml:space="preserve">
-    <value>Argument '{0}' is not recognized as a cmdlet: {1}</value>
+    <value>Argument „{0}” nie jest rozpoznawany jako polecenie cmdlet: {1}</value>
   </data>
   <data name="CmdletDoesNotDeriveFromCmdletType" xml:space="preserve">
-    <value>The argument '{0}' is not recognized as a cmdlet, possibly because it does not derive from the Cmdlet or PSCmdlet classes: {1}</value>
+    <value>Argument „{0}” nie jest rozpoznawany jako polecenie cmdlet, prawdopodobnie dlatego, że nie pochodzi od klas cmdlet lub PSCmdlet: {1}</value>
   </data>
   <data name="AliasNotResolvedException" xml:space="preserve">
-    <value>Cannot resolve alias '{0}' because it refers to term '{1}', which is not recognized as a cmdlet, function, executable program, or script file. Verify the term and try again.</value>
+    <value>Nie można rozpoznać aliasu „{0}”, ponieważ odwołuje się on do terminu „{1}”, który nie jest rozpoznawany jako polecenie cmdlet, funkcja, program wykonywalny lub plik skryptu. Sprawdź termin i spróbuj ponownie.</value>
   </data>
   <data name="CommandNameNotCmdlet" xml:space="preserve">
-    <value>Parameter '{0}' with value '{1}' cannot be processed because it is not a cmdlet and cannot be processed by the CommandProcessor.</value>
+    <value>Nie można przetworzyć parametru „{0}” o wartości „{1}”, ponieważ nie jest on poleceniem cmdlet i nie może zostać przetworzony przez element CommandProcessor.</value>
   </data>
   <data name="DuplicateCmdletName" xml:space="preserve">
-    <value>A cmdlet named '{0}' already exists. Cmdlets must have unique names.</value>
+    <value>Polecenie cmdlet o nazwie „{0}” już istnieje. Polecenia cmdlet muszą mieć unikatowe nazwy.</value>
   </data>
   <data name="DuplicateCmdletProviderName" xml:space="preserve">
-    <value>A cmdlet provider named '{0}' already exists. Cmdlet providers must have unique names.</value>
+    <value>Dostawca poleceń cmdlet o nazwie „{0}” już istnieje. Dostawcy poleceń cmdlet muszą mieć unikatowe nazwy.</value>
   </data>
   <data name="DuplicateAssemblyName" xml:space="preserve">
-    <value>An assembly named '{0}' already exists. Assemblies must have unique names.</value>
+    <value>Zestaw o nazwie „{0}” już istnieje. Zestawy muszą mieć unikatowe nazwy.</value>
   </data>
   <data name="DuplicateScriptName" xml:space="preserve">
-    <value>A script named '{0}' already exists. Scripts must have unique names.</value>
+    <value>Skrypt o nazwie „{0}” już istnieje. Skrypty muszą mieć unikatowe nazwy.</value>
   </data>
   <data name="ScriptRequiresInvalidFormat" xml:space="preserve">
-    <value>Cannot process the #requires statement because it is not in the correct format.
-The #requires statement must be in one of the following formats:
- "#requires -shellid &lt;shellID&gt;"
- "#requires -version &lt;major.minor&gt;"
- "#requires -psedition &lt;edition&gt;"
- "#requires -pssnapin &lt;psSnapInName&gt; [-version &lt;major.minor&gt;]"
- "#requires -modules &lt;ModuleSpecification&gt;"
- "#requires -runasadministrator"</value>
+    <value>Nie można przetworzyć instrukcji #requires, ponieważ ma ona niepoprawny format.
+Instrukcja #requires musi mieć jeden z następujących formatów:
+ „#requires -shellid &lt;shellID&gt;”
+ „#requires -version &lt;major.minor&gt;”
+ „#requires -psedition &lt;edition&gt;”
+ „#requires -pssnapin &lt;psSnapInName&gt; [-version &lt;major.minor&gt;]”
+ „#requires -modules &lt;ModuleSpecification&gt;”
+ „#requires -runasadministrator”</value>
   </data>
   <data name="RequiresInterpreterNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell. To run this script you must use the shell located at '{2}'.</value>
+    <value>Nie można uruchomić skryptu „{0}”, ponieważ zawierał instrukcję „#requires” o identyfikatorze powłoki {1}, która jest niezgodna z bieżącą powłoką. Aby uruchomić ten skrypt, musisz użyć powłoki znajdującej się w lokalizacji „{2}”.</value>
   </data>
   <data name="RequiresInterpreterNotCompatibleNoPath" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell.</value>
+    <value>Nie można uruchomić skryptu „{0}”, ponieważ zawierał instrukcję „#requires” o identyfikatorze powłoki {1}, która jest niezgodna z bieżącą powłoką.</value>
   </data>
   <data name="RequiresPSVersionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell {1}. The version of PowerShell that is required by the script does not match the currently running version of PowerShell {2}.</value>
+    <value>Nie można uruchomić skryptu „{0}”, ponieważ zawiera on instrukcję „#requires” dla programu PowerShell {1}. Wersja programu PowerShell wymagana przez skrypt jest niezgodna z aktualnie uruchomioną wersją programu PowerShell {2}.</value>
   </data>
   <data name="RequiresPSEditionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell editions '{1}'. The edition of PowerShell that is required by the script does not match the currently running PowerShell {2} edition.</value>
+    <value>Nie można uruchomić skryptu „{0}”, ponieważ zawierał instrukcję „#requires” dla wersji programu PowerShell „{1}”. Wersja programu PowerShell wymagana przez skrypt jest niezgodna z aktualnie uruchomioną wersją programu PowerShell {2}.</value>
   </data>
   <data name="RequiresMissingPSSnapIns" xml:space="preserve">
-    <value>The script '{0}' cannot be run because the following snap-ins that are specified by the "#requires" statements of the script are missing: {1}.</value>
+    <value>Nie można uruchomić skryptu „{0}”, ponieważ brakuje następujących przystawek określonych przez instrukcje „#requires” skryptu: {1}.</value>
   </data>
   <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
     <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
   </data>
   <data name="RequiresElevation" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contains a "#requires" statement for running as Administrator. The current PowerShell session is not running as Administrator. Start PowerShell by using the Run as Administrator option, and then try running the script again.</value>
+    <value>Nie można uruchomić skryptu „{0}”, ponieważ zawiera on instrukcję „#requires” służącą do uruchamiania jako administrator. Bieżąca sesja programu PowerShell nie jest uruchomiona jako administrator. Uruchom program PowerShell przy użyciu opcji Uruchom jako administrator, a następnie spróbuj ponownie uruchomić skrypt.</value>
   </data>
   <data name="PSSnapInNameVersion" xml:space="preserve">
-    <value>{0} (Version {1})</value>
+    <value>{0} (Wersja {1})</value>
   </data>
   <data name="CommandArgsOnlyForSingleCmdlet" xml:space="preserve">
-    <value>The command could not be retrieved because the ArgumentList parameter can be specified only when retrieving a single cmdlet or script.</value>
+    <value>Nie można pobrać polecenia, ponieważ parametr ArgumentList można określić tylko podczas pobierania pojedynczego polecenia cmdlet lub skryptu.</value>
   </data>
   <data name="ReservedParameterName" xml:space="preserve">
-    <value>The parameter name "{0}" is reserved for future use.</value>
+    <value>Nazwa parametru „{0}” jest zarezerwowana do użycia w przyszłości.</value>
   </data>
   <data name="RequiresMissingModules" xml:space="preserve">
-    <value>The script '{0}' cannot be run because the following modules that are specified by the "#requires" statements of the script are missing: {1}.</value>
+    <value>Nie można uruchomić skryptu „{0}”, ponieważ brakuje następujących modułów określonych przez instrukcje „#requires” skryptu: {1}.</value>
   </data>
   <data name="CouldNotAutoImportMatchingModule" xml:space="preserve">
-    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded. For more information, run 'Import-Module {1}'.</value>
+    <value>Znaleziono polecenie „{0}” w module „{1}”, ale nie można załadować modułu. Aby uzyskać więcej informacji, uruchom polecenie „Import-Module {1}”.</value>
   </data>
   <data name="CouldNotAutoImportMatchingModuleWithErrorMessage" xml:space="preserve">
-    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded due to the following error: [{2}]
-For more information, run 'Import-Module {1}'.</value>
+    <value>W module „{1}” znaleziono polecenie „{0}”, ale nie można załadować modułu z powodu następującego błędu: [{2}]
+Aby uzyskać więcej informacji, uruchom polecenie „Import-Module {1}”.</value>
   </data>
   <data name="CouldNotAutoImportModule" xml:space="preserve">
-    <value>The module '{0}' could not be loaded. For more information, run 'Import-Module {0}'.</value>
+    <value>Nie można załadować modułu „{0}”. Aby uzyskać więcej informacji, uruchom polecenie „Import-Module {0}”.</value>
   </data>
   <data name="CommandParameterNotFound" xml:space="preserve">
-    <value>No matching commands include a parameter named '{0}'.  Check the spelling of the parameter name, and then try again.</value>
+    <value>Żadne pasujące polecenia nie zawierają parametru o nazwie „{0}”.  Sprawdź pisownię nazwy parametru, a następnie spróbuj ponownie.</value>
   </data>
   <data name="DotSourceNotSupported" xml:space="preserve">
-    <value>Cannot dot-source this command because it was defined in a different language mode. To invoke this command without importing its contents, omit the '.' operator.</value>
+    <value>Nie można wykonać polecenia dot-source, ponieważ zostało ono zdefiniowane w innym trybie języka. Aby wywołać to polecenie bez importowania jego zawartości, pomiń operator „.”.</value>
   </data>
   <data name="GetCommandShowCommandInfoParamError" xml:space="preserve">
-    <value>The ShowCommandInfo and Syntax parameters cannot be specified together.</value>
+    <value>Nie można jednocześnie określić parametrów ShowCommandInfo i Syntax.</value>
   </data>
   <data name="ScriptDisabledWhenFeatureOn" xml:space="preserve">
-    <value>This script command is disabled when the experimental feature '{0}' has been turned on.</value>
+    <value>To polecenie skryptu jest wyłączone, gdy funkcja eksperymentalna „{0}” została włączona.</value>
   </data>
   <data name="ScriptDisabledWhenFeatureOff" xml:space="preserve">
-    <value>This script command is disabled when the experimental feature '{0}' has been turned off.</value>
+    <value>To polecenie skryptu jest wyłączone, gdy funkcja eksperymentalna „{0}” została wyłączona.</value>
   </data>
 </root>

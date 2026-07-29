@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertificatePathMustBeFileSystemPath" xml:space="preserve">
-    <value>Cannot load certificate. '{0}' must resolve to a file system path.</value>
+    <value>無法載入憑證。'{0}' 必須解析為檔案系統路徑。</value>
   </data>
   <data name="CertificateCannotBeUsedForEncryption" xml:space="preserve">
-    <value>Certificate '{0}' cannot be used for encryption. Encryption certificates must contain the Data Encipherment or Key Encipherment key usage, and include the Document Encryption Enhanced Key Usage ({1}).</value>
+    <value>憑證 '{0}' 無法用於加密。加密憑證必須包含「資料加密」或「金鑰編密」金鑰使用方式，並包含「文件加密增強金鑰使用方法」({1})。</value>
   </data>
   <data name="IdentifierMustReferenceSingleCertificate" xml:space="preserve">
-    <value>Cannot load certificate. The identifier '{0}' matches multiple certificates. To encrypt to multiple recipients, provide multiple specific values to the '{1}' parameter, rather than a wildcard that matches multiple certificates.</value>
+    <value>無法載入憑證。識別碼 '{0}' 符合多個憑證。若要加密給多個收件者，請將多個特定值提供給 '{1}' 參數，而不要使用會比對多個憑證的萬用字元。</value>
   </data>
   <data name="NoCertificateFound" xml:space="preserve">
-    <value>Cannot load encryption certificate. The certificate setting '{0}' does not represent a valid base-64 encoded certificate, nor does it represent a valid certificate by file, directory, thumbprint, or subject name.</value>
+    <value>無法載入加密憑證。憑證設定 '{0}' 不是有效的 Base-64 編碼憑證，也不代表任何有效的憑證 (無論是根據檔案、目錄、指紋或主體名稱)。</value>
   </data>
   <data name="CertificateContainsPrivateKey" xml:space="preserve">
-    <value>WARNING: The certificate '{0}' contains a private key. Protected Event Logging certificates used for encryption should only contain the public key.</value>
+    <value>警告: 憑證 '{0}' 包含私密金鑰。用於加密的受保護事件記錄憑證只應包含公開金鑰。</value>
   </data>
   <data name="CouldNotEncryptContent" xml:space="preserve">
-    <value>ERROR: Could not protect event log message '{0}': {1}</value>
+    <value>錯誤: 無法保護事件記錄檔訊息 '{0}': {1}</value>
   </data>
   <data name="CouldNotUseCertificate" xml:space="preserve">
-    <value>ERROR: Could not find or use certificate: {0}</value>
+    <value>錯誤: 找不到或無法使用憑證: {0}</value>
   </data>
   <data name="CannotEncryptSecureString" xml:space="preserve">
-    <value>Session key not available to encrypt secure string.</value>
+    <value>無法使用工作階段金鑰加密安全字串。</value>
   </data>
   <data name="InvalidOffset" xml:space="preserve">
-    <value>Invalid buffer offset.</value>
+    <value>緩衝區位移無效。</value>
   </data>
   <data name="InvalidPublicKey" xml:space="preserve">
-    <value>Invalid public key data.</value>
+    <value>公開金鑰資料無效。</value>
   </data>
   <data name="CannotImportPublicKey" xml:space="preserve">
-    <value>Cannot import public key.</value>
+    <value>無法匯入公開金鑰。</value>
   </data>
   <data name="InvalidSessionKey" xml:space="preserve">
-    <value>Invalid session key data.</value>
+    <value>工作階段金鑰資料無效。</value>
   </data>
   <data name="ScriptFileBlockedBySystemPolicy" xml:space="preserve">
-    <value>Script file, '{0}', is blocked from running by system policy.</value>
+    <value>系統原則已封鎖指令檔 '{0}' 執行。</value>
   </data>
   <data name="UnknownSystemScriptFileEnforcement" xml:space="preserve">
-    <value>An unknown script file policy enforcement value was returned: {0}.</value>
+    <value>系統傳回未知的指令檔原則強制值: {0}。</value>
   </data>
   <data name="ExternalScriptWDACLogTitle" xml:space="preserve">
-    <value>Script File Read</value>
+    <value>指令碼檔案大小</value>
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
-    <value>Script file '{0}' is not trusted by policy and will run in ConstrainedLanguage mode.</value>
+    <value>指令檔 '{0}' 不受原則信任，將以 ConstrainedLanguage 模式執行。</value>
   </data>
 </root>

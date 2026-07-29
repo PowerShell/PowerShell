@@ -59,54 +59,54 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetClipboardContent" xml:space="preserve">
-    <value>Set string '{0}' to the clipboard.</value>
+    <value>Définissez la chaîne « {0} » au Presse-papiers.</value>
   </data>
   <data name="AppendClipboardContent" xml:space="preserve">
-    <value>Append string '{0}' to the clipboard.</value>
+    <value>Ajoutez la chaîne « {0} » au Presse-papiers.</value>
   </data>
   <data name="SetSingleFileToClipboard" xml:space="preserve">
-    <value>Set file '{0}' to the clipboard.</value>
+    <value>Définissez le fichier « {0} » au Presse-papiers.</value>
   </data>
   <data name="AppendSingleFileToClipboard" xml:space="preserve">
-    <value>Append file '{0}' to the clipboard.</value>
+    <value>Ajoutez le fichier « {0} » au Presse-papiers.</value>
   </data>
   <data name="SetMultipleFilesToClipboard" xml:space="preserve">
-    <value>Set {0} files to the clipboard.</value>
+    <value>Définissez {0} fichiers au Presse-papiers.</value>
   </data>
   <data name="AppendMultipleFilesToClipboard" xml:space="preserve">
-    <value>Append {0} files to the clipboard.</value>
+    <value>Ajoutez {0} fichiers au Presse-papiers.</value>
   </data>
   <data name="NoAppendableClipboardContent" xml:space="preserve">
-    <value>There's no content in Clipboard or the content format is not compatible. Set input object to the Clipboard.</value>
+    <value>Aucun contenu n’est présent dans le Presse-papiers ou le format du contenu n’est pas compatible. Définissez l’objet d’entrée sur le Presse-papiers.</value>
   </data>
   <data name="ClipboardCleared" xml:space="preserve">
-    <value>The Clipboard has been cleared.</value>
+    <value>Le Presse-papiers a été vidé.</value>
   </data>
   <data name="InvalidTypeCombine" xml:space="preserve">
-    <value>TextFormatType can only be combined with Text format.</value>
+    <value>TextFormatType ne peut être combiné qu’avec le format Text.</value>
   </data>
   <data name="InvalidRawCombine" xml:space="preserve">
-    <value>Raw can only be combined with Text or FileDropList format.</value>
+    <value>Raw ne peut être combiné qu’avec le format Text ou FileDropList.</value>
   </data>
   <data name="InvalidHtmlCombine" xml:space="preserve">
-    <value>Html can only be combined with Html Text format.</value>
+    <value>Le format HTML ne peut être combiné qu’avec le format de texte HTML.</value>
   </data>
   <data name="UnsupportedFormat" xml:space="preserve">
-    <value>Only Text format is supported on this platform.</value>
+    <value>Seul le format texte est pris en charge sur cette plateforme.</value>
   </data>
   <data name="UnsupportedPlatform" xml:space="preserve">
-    <value>The clipboard is not supported on this platform.</value>
+    <value>Le Presse-papiers n’est pas pris en charge sur cette plateforme.</value>
   </data>
   <data name="AsHtmlUnsupported" xml:space="preserve">
-    <value>The '-AsHtml' switch is not supported on this platform.</value>
+    <value>Le commutateur « -AsHtml » n’est pas pris en charge sur cette plateforme.</value>
   </data>
   <data name="TextFormatUnsupported" xml:space="preserve">
-    <value>The '-TextFormatType' parameter only supports 'Text' on this platform.</value>
+    <value>Le paramètre « -TextFormatType » prend en charge uniquement « Text » sur cette plateforme.</value>
   </data>
   <data name="PathUnsupported" xml:space="preserve">
-    <value>The '-Path' parameter is not supported on this platform.</value>
+    <value>Le paramètre « -Path » n’est pas pris en charge sur cette plateforme.</value>
   </data>
   <data name="LiteralPathUnsupported" xml:space="preserve">
-    <value>The '-LiteralPath' parameter is not supported on this platform.</value>
+    <value>Le paramètre « -LiteralPath » n’est pas pris en charge sur cette plateforme.</value>
   </data>
 </root>

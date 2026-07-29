@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CmdletNotAvailable" xml:space="preserve">
-    <value>The operation cannot be performed. The specified cmdlet is not supported in a custom shell.</value>
+    <value>L’opération ne peut pas être effectuée. L’applet de commande spécifiée n’est pas prise en charge dans un interpréteur de commandes personnalisé.</value>
   </data>
   <data name="NoPSSnapInsFound" xml:space="preserve">
-    <value>No PowerShell snap-ins matching the pattern '{0}' were found. Check the pattern and then try the command again.</value>
+    <value>Aucun composant logiciel enfichable PowerShell correspondant au modèle « {0} » n’a été trouvé. Vérifiez le modèle, puis réessayez la commande.</value>
   </data>
   <data name="InvalidPSSnapInName" xml:space="preserve">
-    <value>The format of the specified snap-in name was not valid.  PowerShell snap-in names can only contain alpha-numeric characters, dashes, underscores and periods. Correct the name and then try the operation again.</value>
+    <value>Le format du nom du composant logiciel enfichable spécifié n’était pas valide.  Les noms des composants logiciels enfichables PowerShell ne peuvent contenir que des caractères alphanumériques, des tirets, des traits de soulignement et des points. Corrigez le nom, puis retentez l'opération.</value>
   </data>
   <data name="LoadSystemSnapinAsModule" xml:space="preserve">
-    <value>Cannot add PowerShell snap-in {0} because it is a system PowerShell module. Use Import-Module to load the module.</value>
+    <value>Nous ne pouvons pas ajouter le composant logiciel enfichable PowerShell {0}, car il s’agit d’un module PowerShell système. Utilisez Import-Module pour charger le module.</value>
   </data>
 </root>
