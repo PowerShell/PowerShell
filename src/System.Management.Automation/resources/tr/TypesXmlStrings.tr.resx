@@ -118,138 +118,138 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FileLineError" xml:space="preserve">
-    <value>{0}, {1}({2}) : Error: {3}</value>
+    <value>{0}, {1}({2}) : Hata: {3}</value>
   </data>
   <data name="FileLineTypeError" xml:space="preserve">
-    <value>{0}, {1}({2}) : Error in type "{3}": {4}</value>
+    <value>{0}, {1}({2}) : "{3}" türünde hata: {4}</value>
   </data>
   <data name="NotMoreThanOnceOne" xml:space="preserve">
-    <value>Node "{0}" must occur only once under "{1}". The parent node, "{1}", will be ignored.</value>
+    <value>"{0}" düğümü, "{1}" altında yalnızca bir kez bulunmalıdır. "{1}" üst düğümü yoksayılacak.</value>
   </data>
   <data name="UnknownNode" xml:space="preserve">
-    <value>The node {0} is not allowed. The following nodes are allowed: {1}.</value>
+    <value>{0} düğümüne izin verilmiyor. Şu düğümlere izin veriliyor: {1}.</value>
   </data>
   <data name="NodeShouldNotHaveInnerText" xml:space="preserve">
-    <value>Node "{0}" should not have an inner text.</value>
+    <value>"{0}" düğümünün bir iç metni olmamalıdır.</value>
   </data>
   <data name="NodeShouldHaveInnerText" xml:space="preserve">
-    <value>Node "{0}" should have an inner text.</value>
+    <value>"{0}" düğümünün bir iç metni olmalıdır.</value>
   </data>
   <data name="NodeNotFoundOnce" xml:space="preserve">
-    <value>Node "{0}" was not found. It should occur only once under "{1}". The parent node, "{1}", will be ignored.</value>
+    <value>"{0}" düğümü bulunamadı. "{1}" altında yalnızca bir kez bulunmalıdır. "{1}" üst düğümü yoksayılacak.</value>
   </data>
   <data name="TypeNodeShouldHaveMembersOrTypeConverters" xml:space="preserve">
-    <value>The "Type" node must have "Members", "TypeConverters", or "TypeAdapters".</value>
+    <value>"Type" düğümünde "Members", "TypeConverters" veya "TypeAdapters" olmalıdır.</value>
   </data>
   <data name="UnableToInstantiateTypeConverter" xml:space="preserve">
-    <value>Cannot create an instance of the type converter for type {0} due to exception: {1}.</value>
+    <value>Şu özel durumu nedeniyle {0} türü için tür dönüştürücüsünün örneği oluşturulamıyor: {1}.</value>
   </data>
   <data name="UnableToInstantiateTypeAdapter" xml:space="preserve">
-    <value>PowerShell cannot create an instance of the type adapter for the type {0} because of the following exception: {1}.</value>
+    <value>Windows PowerShell, şu özel durum nedeniyle {0} türü için tür bağdaştırıcısının bir örneğini oluşturamıyor: {1}.</value>
   </data>
   <data name="InvalidAdaptedType" xml:space="preserve">
-    <value>The adapted type "{0}" is not valid.</value>
+    <value>Uyarlanan tür "{0}" geçerli değil.</value>
   </data>
   <data name="TypeConverterAlreadyPresent" xml:space="preserve">
-    <value>The TypeConverter was ignored because it already occurs.</value>
+    <value>TypeConverter zaten bulunduğu için yoksayıldı.</value>
   </data>
   <data name="TypeAdapterAlreadyPresent" xml:space="preserve">
-    <value>The TypeAdapter was ignored because it already occurs.</value>
+    <value>TypeAdapter zaten bulunduğu için yoksayıldı.</value>
   </data>
   <data name="TypeIsNotTypeConverter" xml:space="preserve">
-    <value>Type "{0}" should be either TypeConverter or PSTypeConverter.</value>
+    <value>"{0}" türü, TypeConverter ya da PSTypeConverter olmalıdır.</value>
   </data>
   <data name="TypeIsNotTypeAdapter" xml:space="preserve">
-    <value>Type "{0}" should be a PSPropertyAdapter.</value>
+    <value>"{0}" türü bir PSPropertyAdapter olmalıdır.</value>
   </data>
   <data name="DuplicateMember" xml:space="preserve">
-    <value>The member {0} is already present.</value>
+    <value>{0} üyesi zaten var.</value>
   </data>
   <data name="ReservedNameMember" xml:space="preserve">
-    <value>The following member name is reserved: {0}</value>
+    <value>Şu üye adı ayrılmış: {0}</value>
   </data>
   <data name="Exception" xml:space="preserve">
-    <value>Exception: {0}</value>
+    <value>Özel durum: {0}</value>
   </data>
   <data name="ScriptPropertyShouldHaveGetterOrSetter" xml:space="preserve">
-    <value>The ScriptProperty should have a getter or setter.</value>
+    <value>CodeProperty bir alıcıya veya ayarlayıcıya sahip olmalıdır.</value>
   </data>
   <data name="CodePropertyShouldHaveGetterOrSetter" xml:space="preserve">
-    <value>The CodeProperty should have a getter or setter.</value>
+    <value>CodeProperty bir alıcıya veya ayarlayıcıya sahip olmalıdır.</value>
   </data>
   <data name="FileError" xml:space="preserve">
     <value>{0}, {1} : {2}</value>
   </data>
   <data name="ValueShouldBeTrueOrFalse" xml:space="preserve">
-    <value>The value should be either TRUE or FALSE instead of {0}.</value>
+    <value>Değer, {0} yerine TRUE ya da FALSE olmalıdır.</value>
   </data>
   <data name="IsHiddenNotSupported" xml:space="preserve">
-    <value>Node "{0}" should not have "{1}" attribute.</value>
+    <value>"{0}" düğümü "{1}" özniteliğine sahip olmamalıdır.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>{0}, {1}: The file was not found.</value>
+    <value>{0}, {1}: Dosya bulunamadı.</value>
   </data>
   <data name="DuplicateFile" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because it was already loaded by {2}.</value>
+    <value>{0}, {1}: Dosya zaten {2} tarafından yüklendiği için atlandı.</value>
   </data>
   <data name="CannotFindRegistryKey" xml:space="preserve">
-    <value>Cannot find the registry key: {0}{1}. Using {2} to load the configuration files.</value>
+    <value>Kayıt defteri anahtarı bulunamadı: {0}{1}. Yapılandırma dosyalarını yüklemek için {2} kullanılıyor.</value>
   </data>
   <data name="CannotFindRegistryKeyPath" xml:space="preserve">
-    <value>Cannot find the path {0} specified in the registry key: {1}{2}. Using {3} to load the configuration files.</value>
+    <value>Kayıt defteri anahtarında belirtilen {0} yolu bulunamıyor: {1}{2}. Yapılandırma dosyalarını yüklemek için {3} kullanılıyor.</value>
   </data>
   <data name="EntryShouldBeMshXml" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because it does not have the ps1xml file name extension.</value>
+    <value>{0}, {1}: Dosya, ps1xml dosya adı uzantısına sahip olmadığından atlandı.</value>
   </data>
   <data name="ValidationException" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because of the following validation exception: {2}.</value>
+    <value>{0}, {1}: Dosya şu doğrulama özel durumu nedeniyle atlandı: {2}.</value>
   </data>
   <data name="MemberShouldBeNote" xml:space="preserve">
-    <value>Member "{0}" must be a note.</value>
+    <value>"{0}" üyesi bir not olmalıdır.</value>
   </data>
   <data name="ErrorConvertingNote" xml:space="preserve">
-    <value>Cannot convert note "{0}":"{1}".</value>
+    <value>"{0}" notu dönüştürülemiyor: "{1}".</value>
   </data>
   <data name="MemberShouldNotBePresent" xml:space="preserve">
-    <value>Do not use the member "{0}" here.</value>
+    <value>"{0}" üyesini burada kullanmayın.</value>
   </data>
   <data name="MemberShouldHaveType" xml:space="preserve">
-    <value>Member "{0}" must have type "{1}".</value>
+    <value>"{0}" üyesi "{1}" türünde olmalıdır.</value>
   </data>
   <data name="MemberMustBePresent" xml:space="preserve">
-    <value>"{0}" must be present when the "{1}" is "{2}" and "{3}" is "{4}".</value>
+    <value>"{1}", "{2}" olduğunda ve "{3}", "{4}" olduğunda "{0}" mevcut olmalıdır.</value>
   </data>
   <data name="SerializationSettingsIgnored" xml:space="preserve">
-    <value>A previous error caused all serialization settings to be ignored.</value>
+    <value>Önceki bir hata nedeniyle tüm serileştirme ayarları yoksayıldı.</value>
   </data>
   <data name="NotAStandardMember" xml:space="preserve">
-    <value>"{0}" is not a standard member and will be ignored.</value>
+    <value>"{0}" standart bir üye değil ve yoksayılacak.</value>
   </data>
   <data name="TypeFileNotRooted" xml:space="preserve">
-    <value>The {0} path is not fully qualified. Specify a fully qualified type file path.</value>
+    <value>{0} yolu tam değil. Tam bir tür dosyası yolu belirtin.</value>
   </data>
   <data name="SharedTypeTableCannotBeUpdated" xml:space="preserve">
-    <value>The TypeTable cannot be updated because the TypeTable might have been created outside of the runspace.</value>
+    <value>TypeTable, çalışma alanı dışında oluşturulmuş olabileceği için TypeTable güncelleştirilemiyor.</value>
   </data>
   <data name="TypeTableLoadErrors" xml:space="preserve">
-    <value>There were errors loading TypeTable. Look in the Errors property to get detailed error messages.</value>
+    <value>TypeTable yüklenirken hatalar oluştu. Ayrıntılı hata mesajları için Hatalar özelliğine bakın.</value>
   </data>
   <data name="TypeDataTypeError" xml:space="preserve">
-    <value>Error in TypeData "{0}": {1}</value>
+    <value>TypeData "{0}" hatası: {1}</value>
   </data>
   <data name="TypeDataShouldHaveValue" xml:space="preserve">
-    <value>"{0}" should have a value for its property "{1}".</value>
+    <value>"{0}", "{1}" özelliği için bir değere sahip olmalıdır.</value>
   </data>
   <data name="TypeDataShouldNotBeNullOrEmpty" xml:space="preserve">
-    <value>"{0}" should not have null or an empty string in its property "{1}".</value>
+    <value>"{0}" öğesinin "{1}" özelliğinde null ya da boş bir dize olmamalıdır.</value>
   </data>
   <data name="TypeNotFound" xml:space="preserve">
-    <value>The type "{0}" was not found. The type name value must be the full name of the type. Verify the type name and run the command again.</value>
+    <value>"{0}" türü bulunamadı. Tür adı değeri, türün tam adı olmalıdır. Tür adını doğrulayın ve komutu yeniden çalıştırın.</value>
   </data>
   <data name="TypeDataShouldNotBeEmpty" xml:space="preserve">
-    <value>The TypeData must have "Members", "TypeConverters", "TypeAdapters" or "StandardMembers".</value>
+    <value>TypeData öğesinde "Members", "TypeConverters", "TypeAdapters" veya "StandardMembers" olmalıdır.</value>
   </data>
   <data name="TypeTableCannotCoExist" xml:space="preserve">
-    <value>A shared type table cannot be updated with more than one entry.</value>
+    <value>Paylaşılan tür tablosu birden fazla girdiyle güncelleştirilemez.</value>
   </data>
 </root>

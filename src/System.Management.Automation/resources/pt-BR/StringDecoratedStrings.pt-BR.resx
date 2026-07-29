@@ -59,6 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="RequireExplicitRendering" xml:space="preserve">
-    <value>Only 'ANSI' or 'PlainText' is supported for this method.</value>
+    <value>Somente 'ANSI' ou 'PlainText' são compatíveis com este método.</value>
   </data>
 </root>

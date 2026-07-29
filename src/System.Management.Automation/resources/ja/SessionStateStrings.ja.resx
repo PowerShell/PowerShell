@@ -418,7 +418,7 @@
     <value>Cannot find location stack '{0}'. It does not exist or it is not a container.</value>
   </data>
   <data name="PathNotFound" xml:space="preserve">
-    <value>Cannot find path '{0}' because it does not exist.</value>
+    <value>パス '{0}' は存在しないため、見つかりません。</value>
   </data>
   <data name="AliasNotFound" xml:space="preserve">
     <value>Cannot find alias because alias '{0}' does not exist.</value>

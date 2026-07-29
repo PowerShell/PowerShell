@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertificatePathMustBeFileSystemPath" xml:space="preserve">
-    <value>Cannot load certificate. '{0}' must resolve to a file system path.</value>
+    <value>証明書を読み込めません。'{0}' はファイル システム パスに解決する必要があります。</value>
   </data>
   <data name="CertificateCannotBeUsedForEncryption" xml:space="preserve">
-    <value>Certificate '{0}' cannot be used for encryption. Encryption certificates must contain the Data Encipherment or Key Encipherment key usage, and include the Document Encryption Enhanced Key Usage ({1}).</value>
+    <value>証明書 '{0}' は暗号化に使用できません。暗号化証明書には、データ暗号化キー使用法またはキー暗号化キー使用法を含め、ドキュメント暗号化拡張キー使用法 ({1}) を含める必要があります。</value>
   </data>
   <data name="IdentifierMustReferenceSingleCertificate" xml:space="preserve">
-    <value>Cannot load certificate. The identifier '{0}' matches multiple certificates. To encrypt to multiple recipients, provide multiple specific values to the '{1}' parameter, rather than a wildcard that matches multiple certificates.</value>
+    <value>証明書を読み込むことができません。識別子 '{0}' は、複数の証明書と一致します。複数の受信者に暗号化するには、'{1}' パラメーターに、複数の証明書と一致するワイルドカードではなく、複数の特定の値を指定してください。</value>
   </data>
   <data name="NoCertificateFound" xml:space="preserve">
-    <value>Cannot load encryption certificate. The certificate setting '{0}' does not represent a valid base-64 encoded certificate, nor does it represent a valid certificate by file, directory, thumbprint, or subject name.</value>
+    <value>暗号化証明書を読み込めません。証明書設定 '{0}' は、有効な base-64 でエンコードされた証明書を表すものではなく、ファイル、ディレクトリ、拇印、またはサブジェクト名別の有効な証明書を表すものでもありません。</value>
   </data>
   <data name="CertificateContainsPrivateKey" xml:space="preserve">
-    <value>WARNING: The certificate '{0}' contains a private key. Protected Event Logging certificates used for encryption should only contain the public key.</value>
+    <value>警告: 証明書 '{0}' に秘密キーが含まれています。暗号化に使用される保護されたイベント ログ証明書には、公開キーのみを含める必要があります。</value>
   </data>
   <data name="CouldNotEncryptContent" xml:space="preserve">
-    <value>ERROR: Could not protect event log message '{0}': {1}</value>
+    <value>エラー: イベント ログ メッセージ '{0}' を保護できませんでした: {1}</value>
   </data>
   <data name="CouldNotUseCertificate" xml:space="preserve">
-    <value>ERROR: Could not find or use certificate: {0}</value>
+    <value>エラー: 証明書が見つからないか、使用できませんでした: {0}</value>
   </data>
   <data name="CannotEncryptSecureString" xml:space="preserve">
-    <value>Session key not available to encrypt secure string.</value>
+    <value>セッション キーは、安全な文字列を暗号化できません。</value>
   </data>
   <data name="InvalidOffset" xml:space="preserve">
-    <value>Invalid buffer offset.</value>
+    <value>バッファー オフセットが無効です。</value>
   </data>
   <data name="InvalidPublicKey" xml:space="preserve">
-    <value>Invalid public key data.</value>
+    <value>公開キー データが無効です。</value>
   </data>
   <data name="CannotImportPublicKey" xml:space="preserve">
-    <value>Cannot import public key.</value>
+    <value>公開キーをインポートできません。</value>
   </data>
   <data name="InvalidSessionKey" xml:space="preserve">
-    <value>Invalid session key data.</value>
+    <value>セッション キー データが無効です。</value>
   </data>
   <data name="ScriptFileBlockedBySystemPolicy" xml:space="preserve">
-    <value>Script file, '{0}', is blocked from running by system policy.</value>
+    <value>スクリプト ファイル '{0}' は、システム ポリシーによって実行がブロックされています。</value>
   </data>
   <data name="UnknownSystemScriptFileEnforcement" xml:space="preserve">
-    <value>An unknown script file policy enforcement value was returned: {0}.</value>
+    <value>不明なスクリプト ファイル ポリシーの適用値が返されました: {0}。</value>
   </data>
   <data name="ExternalScriptWDACLogTitle" xml:space="preserve">
-    <value>Script File Read</value>
+    <value>スクリプト ファイルの読み取り</value>
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
-    <value>Script file '{0}' is not trusted by policy and will run in ConstrainedLanguage mode.</value>
+    <value>スクリプト ファイル '{0}' は、ポリシーによって信頼されていないため、ConstrainedLanguage モードで実行されます。</value>
   </data>
 </root>

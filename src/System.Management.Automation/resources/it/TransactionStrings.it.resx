@@ -118,57 +118,57 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoTransactionActive" xml:space="preserve">
-    <value>Cannot use transaction. No transaction is active.</value>
+    <value>Non è possibile utilizzare la transazione. Nessuna transazione è attiva.</value>
   </data>
   <data name="NoTransactionActiveForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. No transaction is active.</value>
+    <value>Non è possibile eseguire il commit della transazione. Nessuna transazione è attiva.</value>
   </data>
   <data name="NoTransactionActiveForRollback" xml:space="preserve">
-    <value>Cannot roll back the transaction, because there is no active transaction.</value>
+    <value>Non è possibile ripristinare la transazione allo stato precedente perché non è attiva alcuna transazione.</value>
   </data>
   <data name="CommittedTransactionForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been committed.</value>
+    <value>Non è possibile ripristinare la transazione allo stato precedente. È già stato eseguito il commit della transazione.</value>
   </data>
   <data name="CommittedTransactionForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has already been committed.</value>
+    <value>Non è possibile eseguire il commit della transazione. È già stato eseguito il commit della transazione.</value>
   </data>
   <data name="TransactionRolledBackForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has been rolled back or has timed out.</value>
+    <value>Non è possibile eseguire il commit della transazione. La transazione è stata ripristinata allo stato precedente o è scaduta.</value>
   </data>
   <data name="TransactionRolledBackForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been rolled back or has timed out.</value>
+    <value>Non è possibile ripristinare la transazione allo stato precedente. La transazione è già stata ripristinata allo stato precedente o è scaduta.</value>
   </data>
   <data name="NoTransactionForActivation" xml:space="preserve">
-    <value>Cannot set active transaction. No transaction has been created.</value>
+    <value>Non è possibile impostare la transazione attiva. Nessuna transazione è stata creata.</value>
   </data>
   <data name="NoTransactionForActivationBecauseRollback" xml:space="preserve">
-    <value>Cannot set active transaction. The active transaction has been rolled back or has timed out.</value>
+    <value>Non è possibile impostare la transazione attiva. La transazione attiva è stata ripristinata allo stato precedente o è scaduta.</value>
   </data>
   <data name="NoTransactionAvailable" xml:space="preserve">
-    <value>This cmdlet requires an active transaction. The current transaction has already been committed or rolled back.</value>
+    <value>Per questo cmdlet è necessaria una transazione attiva. La transazione corrente è già stata confermata o ripristinata allo stato precedente.</value>
   </data>
   <data name="CmdletRequiresUseTx" xml:space="preserve">
-    <value>This cmdlet requires a transaction. Run the command again with the -UseTransaction parameter.</value>
+    <value>Questo cmdlet richiede una transazione. Eseguire di nuovo il comando con il parametro -UseTransaction.</value>
   </data>
   <data name="NoTransactionStarted" xml:space="preserve">
-    <value>Cannot use transaction. No transaction has been started.</value>
+    <value>Non è possibile utilizzare la transazione. Nessuna transazione è stata avviata.</value>
   </data>
   <data name="NoTransactionStartedFromCommit" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been committed.</value>
+    <value>Non è possibile utilizzare la transazione. È stato eseguito il commit della transazione.</value>
   </data>
   <data name="NoTransactionStartedFromRollback" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been rolled back or has timed out.</value>
+    <value>Non è possibile utilizzare la transazione. La transazione è stata ripristinata allo stato precedente o è scaduta.</value>
   </data>
   <data name="TransactionTimedOut" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has timed out.</value>
+    <value>Non è possibile utilizzare la transazione. La transazione è scaduta.</value>
   </data>
   <data name="BaseTransactionNotSet" xml:space="preserve">
-    <value>The base transaction has not been set.</value>
+    <value>La transazione di base non è stata impostata.</value>
   </data>
   <data name="BaseTransactionNotActive" xml:space="preserve">
-    <value>The base transaction is not active.</value>
+    <value>La transazione di base non è attiva.</value>
   </data>
   <data name="BaseTransactionMustBeFirst" xml:space="preserve">
-    <value>The base transaction cannot be set after other transactions have been created.</value>
+    <value>Non è possibile impostare la transazione di base dopo la creazione di altre transazioni.</value>
   </data>
 </root>

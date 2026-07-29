@@ -118,57 +118,57 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoTransactionActive" xml:space="preserve">
-    <value>Cannot use transaction. No transaction is active.</value>
+    <value>트랜잭션을 사용할 수 없습니다. 활성 트랜잭션이 없습니다.</value>
   </data>
   <data name="NoTransactionActiveForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. No transaction is active.</value>
+    <value>트랜잭션을 커밋할 수 없습니다. 활성 트랜잭션이 없습니다.</value>
   </data>
   <data name="NoTransactionActiveForRollback" xml:space="preserve">
-    <value>Cannot roll back the transaction, because there is no active transaction.</value>
+    <value>활성 트랜잭션이 없으므로 트랜잭션을 롤백할 수 없습니다.</value>
   </data>
   <data name="CommittedTransactionForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been committed.</value>
+    <value>트랜잭션을 롤백할 수 없습니다. 트랜잭션이 이미 커밋되었습니다.</value>
   </data>
   <data name="CommittedTransactionForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has already been committed.</value>
+    <value>트랜잭션을 커밋할 수 없습니다. 트랜잭션이 이미 커밋되었습니다.</value>
   </data>
   <data name="TransactionRolledBackForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has been rolled back or has timed out.</value>
+    <value>트랜잭션을 커밋할 수 없습니다. 트랜잭션이 롤백되었거나 시간이 초과되었습니다.</value>
   </data>
   <data name="TransactionRolledBackForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been rolled back or has timed out.</value>
+    <value>트랜잭션을 롤백할 수 없습니다. 트랜잭션이 이미 롤백되었거나 시간이 초과되었습니다.</value>
   </data>
   <data name="NoTransactionForActivation" xml:space="preserve">
-    <value>Cannot set active transaction. No transaction has been created.</value>
+    <value>활성 트랜잭션을 설정할 수 없습니다. 트랜잭션이 생성되지 않았습니다.</value>
   </data>
   <data name="NoTransactionForActivationBecauseRollback" xml:space="preserve">
-    <value>Cannot set active transaction. The active transaction has been rolled back or has timed out.</value>
+    <value>활성 트랜잭션을 설정할 수 없습니다. 활성 트랜잭션이 롤백되었거나 시간이 초과되었습니다.</value>
   </data>
   <data name="NoTransactionAvailable" xml:space="preserve">
-    <value>This cmdlet requires an active transaction. The current transaction has already been committed or rolled back.</value>
+    <value>이 cmdlet에는 활성 트랜잭션이 필요합니다. 현재 트랜잭션은 이미 커밋되었거나 롤백되었습니다.</value>
   </data>
   <data name="CmdletRequiresUseTx" xml:space="preserve">
-    <value>This cmdlet requires a transaction. Run the command again with the -UseTransaction parameter.</value>
+    <value>이 cmdlet에는 트랜잭션이 필요합니다. -UseTransaction 매개 변수와 함께 명령을 다시 실행하세요.</value>
   </data>
   <data name="NoTransactionStarted" xml:space="preserve">
-    <value>Cannot use transaction. No transaction has been started.</value>
+    <value>트랜잭션을 사용할 수 없습니다. 트랜잭션이 시작되지 않았습니다.</value>
   </data>
   <data name="NoTransactionStartedFromCommit" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been committed.</value>
+    <value>트랜잭션을 사용할 수 없습니다. 트랜잭션이 커밋되었습니다.</value>
   </data>
   <data name="NoTransactionStartedFromRollback" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been rolled back or has timed out.</value>
+    <value>트랜잭션을 사용할 수 없습니다. 트랜잭션이 롤백되었거나 시간이 초과되었습니다.</value>
   </data>
   <data name="TransactionTimedOut" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has timed out.</value>
+    <value>트랜잭션을 사용할 수 없습니다. 트랜잭션 시간이 초과되었습니다.</value>
   </data>
   <data name="BaseTransactionNotSet" xml:space="preserve">
-    <value>The base transaction has not been set.</value>
+    <value>기본 트랜잭션이 설정되지 않았습니다.</value>
   </data>
   <data name="BaseTransactionNotActive" xml:space="preserve">
-    <value>The base transaction is not active.</value>
+    <value>기본 트랜잭션이 활성 상태가 아닙니다.</value>
   </data>
   <data name="BaseTransactionMustBeFirst" xml:space="preserve">
-    <value>The base transaction cannot be set after other transactions have been created.</value>
+    <value>다른 트랜잭션이 생성된 후에는 기본 트랜잭션을 설정할 수 없습니다.</value>
   </data>
 </root>

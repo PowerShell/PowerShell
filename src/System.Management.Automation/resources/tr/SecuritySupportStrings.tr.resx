@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertificatePathMustBeFileSystemPath" xml:space="preserve">
-    <value>Cannot load certificate. '{0}' must resolve to a file system path.</value>
+    <value>Sertifika yüklenemiyor. '{0}' bir dosya sistemi yoluna çözümlenmelidir.</value>
   </data>
   <data name="CertificateCannotBeUsedForEncryption" xml:space="preserve">
-    <value>Certificate '{0}' cannot be used for encryption. Encryption certificates must contain the Data Encipherment or Key Encipherment key usage, and include the Document Encryption Enhanced Key Usage ({1}).</value>
+    <value>'{0}' sertifikası şifreleme için kullanılamaz. Şifreleme sertifikaları, Veri Şifreleme veya Anahtar Şifreleme anahtar kullanımını ve Belge Şifreleme Gelişmiş Anahtar Kullanımı ({1}) değerini içermelidir.</value>
   </data>
   <data name="IdentifierMustReferenceSingleCertificate" xml:space="preserve">
-    <value>Cannot load certificate. The identifier '{0}' matches multiple certificates. To encrypt to multiple recipients, provide multiple specific values to the '{1}' parameter, rather than a wildcard that matches multiple certificates.</value>
+    <value>Sertifika yüklenemiyor. '{0}' tanımlayıcısı birden çok sertifikayla eşleşiyor. Birden çok alıcıya şifrelemek için, birden çok sertifikayla eşleşen bir joker karakter yerine '{1}' parametresine birden çok belirli değer sağlayın.</value>
   </data>
   <data name="NoCertificateFound" xml:space="preserve">
-    <value>Cannot load encryption certificate. The certificate setting '{0}' does not represent a valid base-64 encoded certificate, nor does it represent a valid certificate by file, directory, thumbprint, or subject name.</value>
+    <value>Şifreleme sertifikası yüklenemiyor. '{0}' sertifika ayarı, base-64 ile kodlanmış geçerli bir sertifikayı temsil etmiyor ve dosya, dizin, parmak izi veya konu adına göre geçerli bir sertifikayı temsil etmiyor.</value>
   </data>
   <data name="CertificateContainsPrivateKey" xml:space="preserve">
-    <value>WARNING: The certificate '{0}' contains a private key. Protected Event Logging certificates used for encryption should only contain the public key.</value>
+    <value>UYARI: '{0}' sertifikası özel anahtar içeriyor. Şifreleme için kullanılan Korumalı Olay Günlüğü sertifikaları yalnızca ortak anahtarı içermelidir.</value>
   </data>
   <data name="CouldNotEncryptContent" xml:space="preserve">
-    <value>ERROR: Could not protect event log message '{0}': {1}</value>
+    <value>HATA: Olay günlüğü iletisi '{0}' korunamadı: {1}</value>
   </data>
   <data name="CouldNotUseCertificate" xml:space="preserve">
-    <value>ERROR: Could not find or use certificate: {0}</value>
+    <value>HATA: Sertifika bulunamadı veya kullanılamadı: {0}</value>
   </data>
   <data name="CannotEncryptSecureString" xml:space="preserve">
-    <value>Session key not available to encrypt secure string.</value>
+    <value>Güvenli dizeyi şifrelemek için oturum anahtarı kullanılamıyor.</value>
   </data>
   <data name="InvalidOffset" xml:space="preserve">
-    <value>Invalid buffer offset.</value>
+    <value>Geçersiz arabellek uzaklığı.</value>
   </data>
   <data name="InvalidPublicKey" xml:space="preserve">
-    <value>Invalid public key data.</value>
+    <value>Ortak anahtar verileri geçersiz.</value>
   </data>
   <data name="CannotImportPublicKey" xml:space="preserve">
-    <value>Cannot import public key.</value>
+    <value>Ortak anahtar içeri aktarılamıyor.</value>
   </data>
   <data name="InvalidSessionKey" xml:space="preserve">
-    <value>Invalid session key data.</value>
+    <value>Oturum anahtarı verileri geçersiz.</value>
   </data>
   <data name="ScriptFileBlockedBySystemPolicy" xml:space="preserve">
-    <value>Script file, '{0}', is blocked from running by system policy.</value>
+    <value>'{0}' betik dosyasının çalıştırılması sistem ilkesi tarafından engellendi.</value>
   </data>
   <data name="UnknownSystemScriptFileEnforcement" xml:space="preserve">
-    <value>An unknown script file policy enforcement value was returned: {0}.</value>
+    <value>Bilinmeyen bir betik dosyası ilke zorlaması değeri döndürüldü: {0}.</value>
   </data>
   <data name="ExternalScriptWDACLogTitle" xml:space="preserve">
-    <value>Script File Read</value>
+    <value>Betik Dosyası Okundu</value>
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
-    <value>Script file '{0}' is not trusted by policy and will run in ConstrainedLanguage mode.</value>
+    <value>'{0}' betik dosyasına ilke tarafından güvenilmiyor ve ConstrainedLanguage modunda çalışacak.</value>
   </data>
 </root>

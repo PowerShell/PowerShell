@@ -118,138 +118,138 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FileLineError" xml:space="preserve">
-    <value>{0}, {1}({2}) : Error: {3}</value>
+    <value>{0}, {1}({2}) : 오류: {3}</value>
   </data>
   <data name="FileLineTypeError" xml:space="preserve">
-    <value>{0}, {1}({2}) : Error in type "{3}": {4}</value>
+    <value>{0}, {1}({2}) : 형식 "{3}" 오류: {4}</value>
   </data>
   <data name="NotMoreThanOnceOne" xml:space="preserve">
-    <value>Node "{0}" must occur only once under "{1}". The parent node, "{1}", will be ignored.</value>
+    <value>노드 "{0}"은(는) "{1}"에서 한 번만 발생해야 합니다. 부모 노드 "{1}"은(는) 무시됩니다.</value>
   </data>
   <data name="UnknownNode" xml:space="preserve">
-    <value>The node {0} is not allowed. The following nodes are allowed: {1}.</value>
+    <value>노드 {0}은(는) 허용되지 않습니다. 다음 노드가 허용됩니다. {1}.</value>
   </data>
   <data name="NodeShouldNotHaveInnerText" xml:space="preserve">
-    <value>Node "{0}" should not have an inner text.</value>
+    <value>노드 "{0}"에는 내부 텍스트가 없어야 합니다.</value>
   </data>
   <data name="NodeShouldHaveInnerText" xml:space="preserve">
-    <value>Node "{0}" should have an inner text.</value>
+    <value>노드 "{0}"에는 내부 텍스트가 있어야 합니다.</value>
   </data>
   <data name="NodeNotFoundOnce" xml:space="preserve">
-    <value>Node "{0}" was not found. It should occur only once under "{1}". The parent node, "{1}", will be ignored.</value>
+    <value>노드 "{0}"을(를) 찾을 수 없습니다. "{1}" 아래에는 하나만 있어야 합니다. 부모 노드 "{1}"은(는) 무시됩니다.</value>
   </data>
   <data name="TypeNodeShouldHaveMembersOrTypeConverters" xml:space="preserve">
-    <value>The "Type" node must have "Members", "TypeConverters", or "TypeAdapters".</value>
+    <value>"Type" 노드에는 "Members", "TypeConverters" 또는 "TypeAdapters"가 있어야 합니다.</value>
   </data>
   <data name="UnableToInstantiateTypeConverter" xml:space="preserve">
-    <value>Cannot create an instance of the type converter for type {0} due to exception: {1}.</value>
+    <value>예외로 인해 {0} 형식에 대한 형식 변환기의 인스턴스를 만들 수 없습니다. {1}.</value>
   </data>
   <data name="UnableToInstantiateTypeAdapter" xml:space="preserve">
-    <value>PowerShell cannot create an instance of the type adapter for the type {0} because of the following exception: {1}.</value>
+    <value>PowerShell은 다음 예외 때문에 형식 {0}에 대한 형식 어댑터의 인스턴스를 만들 수 없습니다: {1}.</value>
   </data>
   <data name="InvalidAdaptedType" xml:space="preserve">
-    <value>The adapted type "{0}" is not valid.</value>
+    <value>조정된 형식 "{0}"이(가) 잘못되었습니다.</value>
   </data>
   <data name="TypeConverterAlreadyPresent" xml:space="preserve">
-    <value>The TypeConverter was ignored because it already occurs.</value>
+    <value>TypeConverter가 이미 있으므로 무시되었습니다.</value>
   </data>
   <data name="TypeAdapterAlreadyPresent" xml:space="preserve">
-    <value>The TypeAdapter was ignored because it already occurs.</value>
+    <value>TypeAdapter가 이미 있으므로 무시되었습니다.</value>
   </data>
   <data name="TypeIsNotTypeConverter" xml:space="preserve">
-    <value>Type "{0}" should be either TypeConverter or PSTypeConverter.</value>
+    <value>"{0}" 형식은 TypeConverter 또는 PSTypeConverter여야 합니다.</value>
   </data>
   <data name="TypeIsNotTypeAdapter" xml:space="preserve">
-    <value>Type "{0}" should be a PSPropertyAdapter.</value>
+    <value>"{0}" 형식은 PSPropertyAdapter여야 합니다.</value>
   </data>
   <data name="DuplicateMember" xml:space="preserve">
-    <value>The member {0} is already present.</value>
+    <value>멤버 {0}이(가) 이미 있습니다.</value>
   </data>
   <data name="ReservedNameMember" xml:space="preserve">
-    <value>The following member name is reserved: {0}</value>
+    <value>다음 멤버 이름이 예약되어 있습니다. {0}</value>
   </data>
   <data name="Exception" xml:space="preserve">
-    <value>Exception: {0}</value>
+    <value>예외: {0}</value>
   </data>
   <data name="ScriptPropertyShouldHaveGetterOrSetter" xml:space="preserve">
-    <value>The ScriptProperty should have a getter or setter.</value>
+    <value>ScriptProperty에는 getter 또는 setter가 있어야 합니다.</value>
   </data>
   <data name="CodePropertyShouldHaveGetterOrSetter" xml:space="preserve">
-    <value>The CodeProperty should have a getter or setter.</value>
+    <value>CodeProperty에는 getter 또는 setter가 있어야 합니다.</value>
   </data>
   <data name="FileError" xml:space="preserve">
     <value>{0}, {1} : {2}</value>
   </data>
   <data name="ValueShouldBeTrueOrFalse" xml:space="preserve">
-    <value>The value should be either TRUE or FALSE instead of {0}.</value>
+    <value>값은 {0} 대신 TRUE 또는 FALSE여야 합니다.</value>
   </data>
   <data name="IsHiddenNotSupported" xml:space="preserve">
-    <value>Node "{0}" should not have "{1}" attribute.</value>
+    <value>노드 "{0}"에는 "{1}" 특성이 없어야 합니다.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>{0}, {1}: The file was not found.</value>
+    <value>{0}, {1}: 파일을 찾을 수 없습니다.</value>
   </data>
   <data name="DuplicateFile" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because it was already loaded by {2}.</value>
+    <value>{0}, {1}: 파일은 이미 {2}에서 로드되었으므로 건너뛰었습니다.</value>
   </data>
   <data name="CannotFindRegistryKey" xml:space="preserve">
-    <value>Cannot find the registry key: {0}{1}. Using {2} to load the configuration files.</value>
+    <value>레지스트리 키 {0}{1}을(를) 찾을 수 없습니다. {2} 사용하여 구성 파일을 로드합니다.</value>
   </data>
   <data name="CannotFindRegistryKeyPath" xml:space="preserve">
-    <value>Cannot find the path {0} specified in the registry key: {1}{2}. Using {3} to load the configuration files.</value>
+    <value>레지스트리 키에 지정된 경로 {0}을(를) 찾을 수 없습니다: {1}{2}. 구성 파일을 로드하기 위해 {3}을(를) 사용합니다.</value>
   </data>
   <data name="EntryShouldBeMshXml" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because it does not have the ps1xml file name extension.</value>
+    <value>{0}, {1}: ps1xml 파일 이름 확장명이 없으므로 파일을 건너뛰었습니다.</value>
   </data>
   <data name="ValidationException" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because of the following validation exception: {2}.</value>
+    <value>{0}, {1}: 유효성 검사 예외 {2} 때문에 파일을 건너뛰어 졌습니다.</value>
   </data>
   <data name="MemberShouldBeNote" xml:space="preserve">
-    <value>Member "{0}" must be a note.</value>
+    <value>멤버 "{0}"은(는) 메모여야 합니다.</value>
   </data>
   <data name="ErrorConvertingNote" xml:space="preserve">
-    <value>Cannot convert note "{0}":"{1}".</value>
+    <value>메모 "{0}":"{1}"을(를) 변환할 수 없습니다.</value>
   </data>
   <data name="MemberShouldNotBePresent" xml:space="preserve">
-    <value>Do not use the member "{0}" here.</value>
+    <value>여기서는 "{0}" 멤버를 사용하지 마세요.</value>
   </data>
   <data name="MemberShouldHaveType" xml:space="preserve">
-    <value>Member "{0}" must have type "{1}".</value>
+    <value>멤버 "{0}"에는 "{1}" 형식이 있어야 합니다.</value>
   </data>
   <data name="MemberMustBePresent" xml:space="preserve">
-    <value>"{0}" must be present when the "{1}" is "{2}" and "{3}" is "{4}".</value>
+    <value>"{0}"은(는) "{1}"이(가) "{2}"이고 "{3}"이(가) "{4}"일 때 있어야 합니다.</value>
   </data>
   <data name="SerializationSettingsIgnored" xml:space="preserve">
-    <value>A previous error caused all serialization settings to be ignored.</value>
+    <value>이전 오류로 인해 모든 직렬화 설정이 무시되었습니다.</value>
   </data>
   <data name="NotAStandardMember" xml:space="preserve">
-    <value>"{0}" is not a standard member and will be ignored.</value>
+    <value>"{0}"은(는) 표준 멤버가 아니며 무시됩니다.</value>
   </data>
   <data name="TypeFileNotRooted" xml:space="preserve">
-    <value>The {0} path is not fully qualified. Specify a fully qualified type file path.</value>
+    <value>{0} 경로는 정규화되지 않았습니다. 정규화된 형식의 파일 경로를 지정하세요.</value>
   </data>
   <data name="SharedTypeTableCannotBeUpdated" xml:space="preserve">
-    <value>The TypeTable cannot be updated because the TypeTable might have been created outside of the runspace.</value>
+    <value>TypeTable은 runspace 외부에서 만들어졌을 수 있으므로 업데이트할 수 없습니다.</value>
   </data>
   <data name="TypeTableLoadErrors" xml:space="preserve">
-    <value>There were errors loading TypeTable. Look in the Errors property to get detailed error messages.</value>
+    <value>TypeTable을 로드하는 동안 오류가 발생했습니다. 자세한 오류 메시지는 Errors 속성을 확인하세요.</value>
   </data>
   <data name="TypeDataTypeError" xml:space="preserve">
-    <value>Error in TypeData "{0}": {1}</value>
+    <value>TypeData "{0}" 오류: {1}</value>
   </data>
   <data name="TypeDataShouldHaveValue" xml:space="preserve">
-    <value>"{0}" should have a value for its property "{1}".</value>
+    <value>"{0}"에는 "{1}" 속성에 대한 값이 있어야 합니다.</value>
   </data>
   <data name="TypeDataShouldNotBeNullOrEmpty" xml:space="preserve">
-    <value>"{0}" should not have null or an empty string in its property "{1}".</value>
+    <value>"{0}"의 속성 "{1}"에는 null이나 빈 문자열이 있으면 안 됩니다.</value>
   </data>
   <data name="TypeNotFound" xml:space="preserve">
-    <value>The type "{0}" was not found. The type name value must be the full name of the type. Verify the type name and run the command again.</value>
+    <value>"{0}" 형식을 찾을 수 없습니다. 형식 이름 값은 형식의 전체 이름이어야 합니다. 형식 이름을 확인한 다음 명령을 다시 실행하세요.</value>
   </data>
   <data name="TypeDataShouldNotBeEmpty" xml:space="preserve">
-    <value>The TypeData must have "Members", "TypeConverters", "TypeAdapters" or "StandardMembers".</value>
+    <value>TypeData에는 "Members", "TypeConverters", "TypeAdapters" 또는 "StandardMembers"가 있어야 합니다.</value>
   </data>
   <data name="TypeTableCannotCoExist" xml:space="preserve">
-    <value>A shared type table cannot be updated with more than one entry.</value>
+    <value>공유 형식 테이블은 여러 항목으로 업데이트할 수 없습니다.</value>
   </data>
 </root>

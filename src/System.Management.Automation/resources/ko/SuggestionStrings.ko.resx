@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Suggestion_CommandExistsInCurrentDirectory" xml:space="preserve">
-    <value>The command "{0}" was not found, but does exist in the current location.
-PowerShell does not load commands from the current location by default (see 'Get-Help about_Command_Precedence').
+    <value>명령 "{0}"을(를) 찾을 수 없지만 현재 위치에 있습니다.
+PowerShell은 기본적으로 현재 위치에서 명령을 로드하지 않습니다('Get-Help about_Command_Precedence' 참조).
 
-If you trust this command, run the following command instead:</value>
+이 명령을 신뢰하는 경우 대신 다음 명령을 실행하세요:</value>
   </data>
   <data name="Suggestion_CommandNotFound" xml:space="preserve">
-    <value>The most similar commands are:</value>
+    <value>가장 유사한 명령은 다음과 같습니다.</value>
   </data>
 </root>

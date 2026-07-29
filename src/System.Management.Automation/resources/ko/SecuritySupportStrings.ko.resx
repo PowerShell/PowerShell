@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertificatePathMustBeFileSystemPath" xml:space="preserve">
-    <value>Cannot load certificate. '{0}' must resolve to a file system path.</value>
+    <value>인증서를 로드할 수 없습니다. '{0}'은(는) 파일 시스템 경로로 확인되어야 합니다.</value>
   </data>
   <data name="CertificateCannotBeUsedForEncryption" xml:space="preserve">
-    <value>Certificate '{0}' cannot be used for encryption. Encryption certificates must contain the Data Encipherment or Key Encipherment key usage, and include the Document Encryption Enhanced Key Usage ({1}).</value>
+    <value>인증서 '{0}'은(는) 암호화에 사용할 수 없습니다. 암호화 인증서에는 데이터 암호화 또는 키 암호화 키 사용이 포함되어야 하며, 문서 암호화 확장된 키 사용({1})도 포함되어야 합니다.</value>
   </data>
   <data name="IdentifierMustReferenceSingleCertificate" xml:space="preserve">
-    <value>Cannot load certificate. The identifier '{0}' matches multiple certificates. To encrypt to multiple recipients, provide multiple specific values to the '{1}' parameter, rather than a wildcard that matches multiple certificates.</value>
+    <value>인증서를 로드할 수 없습니다. 식별자 '{0}'이(가) 여러 인증서와 일치합니다. 여러 수신자에게 암호화하려면 여러 인증서와 일치하는 와일드카드 대신 '{1}' 매개 변수에 여러 개의 특정 값을 제공하세요.</value>
   </data>
   <data name="NoCertificateFound" xml:space="preserve">
-    <value>Cannot load encryption certificate. The certificate setting '{0}' does not represent a valid base-64 encoded certificate, nor does it represent a valid certificate by file, directory, thumbprint, or subject name.</value>
+    <value>암호화 인증서를 로드할 수 없습니다. 인증서 설정 '{0}'은(는) 유효한 base-64 인코딩 인증서를 나타내지 않으며, 파일, 디렉터리, 지문 또는 주체 이름으로 된 유효한 인증서도 나타내지 않습니다.</value>
   </data>
   <data name="CertificateContainsPrivateKey" xml:space="preserve">
-    <value>WARNING: The certificate '{0}' contains a private key. Protected Event Logging certificates used for encryption should only contain the public key.</value>
+    <value>경고: 인증서 '{0}'에 개인 키가 포함되어 있습니다. 암호화에 사용되는 보호된 이벤트 로깅 인증서에는 공개 키만 포함되어야 합니다.</value>
   </data>
   <data name="CouldNotEncryptContent" xml:space="preserve">
-    <value>ERROR: Could not protect event log message '{0}': {1}</value>
+    <value>오류: 이벤트 로그 메시지 '{0}'을(를) 보호할 수 없음: {1}</value>
   </data>
   <data name="CouldNotUseCertificate" xml:space="preserve">
-    <value>ERROR: Could not find or use certificate: {0}</value>
+    <value>오류: 인증서를 찾거나 사용할 수 없음: {0}</value>
   </data>
   <data name="CannotEncryptSecureString" xml:space="preserve">
-    <value>Session key not available to encrypt secure string.</value>
+    <value>보안 문자열을 암호화할 세션 키를 사용할 수 없습니다.</value>
   </data>
   <data name="InvalidOffset" xml:space="preserve">
-    <value>Invalid buffer offset.</value>
+    <value>버퍼 오프셋이 잘못되었습니다.</value>
   </data>
   <data name="InvalidPublicKey" xml:space="preserve">
-    <value>Invalid public key data.</value>
+    <value>공개 키 데이터가 잘못되었습니다.</value>
   </data>
   <data name="CannotImportPublicKey" xml:space="preserve">
-    <value>Cannot import public key.</value>
+    <value>공개 키를 가져올 수 없습니다.</value>
   </data>
   <data name="InvalidSessionKey" xml:space="preserve">
-    <value>Invalid session key data.</value>
+    <value>세션 키 데이터가 잘못되었습니다.</value>
   </data>
   <data name="ScriptFileBlockedBySystemPolicy" xml:space="preserve">
-    <value>Script file, '{0}', is blocked from running by system policy.</value>
+    <value>스크립트 파일 '{0}'은(는) 시스템 정책에 의해 실행이 차단되었습니다.</value>
   </data>
   <data name="UnknownSystemScriptFileEnforcement" xml:space="preserve">
-    <value>An unknown script file policy enforcement value was returned: {0}.</value>
+    <value>알 수 없는 스크립트 파일 정책 적용 값이 반환됨: {0}.</value>
   </data>
   <data name="ExternalScriptWDACLogTitle" xml:space="preserve">
-    <value>Script File Read</value>
+    <value>스크립트 파일 읽기</value>
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
-    <value>Script file '{0}' is not trusted by policy and will run in ConstrainedLanguage mode.</value>
+    <value>스크립트 파일 '{0}'은(는) 정책에서 신뢰되지 않으므로 ConstrainedLanguage 모드에서 실행됩니다.</value>
   </data>
 </root>

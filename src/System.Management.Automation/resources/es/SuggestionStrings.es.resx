@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Suggestion_CommandExistsInCurrentDirectory" xml:space="preserve">
-    <value>The command "{0}" was not found, but does exist in the current location.
-PowerShell does not load commands from the current location by default (see 'Get-Help about_Command_Precedence').
+    <value>No se encontró el comando "{0}", pero sí existe en la ubicación actual.
+PowerShell no carga comandos desde la ubicación actual de manera predeterminada (consulte "Get-Help about_Command_Precedence").
 
-If you trust this command, run the following command instead:</value>
+Si confía en este comando, ejecute en su lugar el siguiente comando:</value>
   </data>
   <data name="Suggestion_CommandNotFound" xml:space="preserve">
-    <value>The most similar commands are:</value>
+    <value>Los comandos más similares son:</value>
   </data>
 </root>

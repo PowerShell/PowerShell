@@ -118,138 +118,138 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FileLineError" xml:space="preserve">
-    <value>{0}, {1}({2}) : Error: {3}</value>
+    <value>{0}, {1}({2}) : Chyba: {3}</value>
   </data>
   <data name="FileLineTypeError" xml:space="preserve">
-    <value>{0}, {1}({2}) : Error in type "{3}": {4}</value>
+    <value>{0}, {1}({2}) : Chyba v typu {3}: {4}</value>
   </data>
   <data name="NotMoreThanOnceOne" xml:space="preserve">
-    <value>Node "{0}" must occur only once under "{1}". The parent node, "{1}", will be ignored.</value>
+    <value>Uzel {0} se pod uzlem {1} smí vyskytovat jen jednou. Nadřazený uzel {1} bude ignorován.</value>
   </data>
   <data name="UnknownNode" xml:space="preserve">
-    <value>The node {0} is not allowed. The following nodes are allowed: {1}.</value>
+    <value>Uzel {0} není povolený. Povolené jsou následující uzly: {1}.</value>
   </data>
   <data name="NodeShouldNotHaveInnerText" xml:space="preserve">
-    <value>Node "{0}" should not have an inner text.</value>
+    <value>Uzel {0} by neměl obsahovat vnitřní text.</value>
   </data>
   <data name="NodeShouldHaveInnerText" xml:space="preserve">
-    <value>Node "{0}" should have an inner text.</value>
+    <value>Uzel {0} by měl obsahovat vnitřní text.</value>
   </data>
   <data name="NodeNotFoundOnce" xml:space="preserve">
-    <value>Node "{0}" was not found. It should occur only once under "{1}". The parent node, "{1}", will be ignored.</value>
+    <value>Uzel {0} se nenašel. Pod uzlem {1} se smí vyskytovat jen jednou. Nadřazený uzel {1} bude ignorován.</value>
   </data>
   <data name="TypeNodeShouldHaveMembersOrTypeConverters" xml:space="preserve">
-    <value>The "Type" node must have "Members", "TypeConverters", or "TypeAdapters".</value>
+    <value>Uzel Type musí obsahovat Members, TypeConverters nebo TypeAdapters.</value>
   </data>
   <data name="UnableToInstantiateTypeConverter" xml:space="preserve">
-    <value>Cannot create an instance of the type converter for type {0} due to exception: {1}.</value>
+    <value>Instanci převaděče typů pro typ {0} nejde vytvořit kvůli výjimce: {1}.</value>
   </data>
   <data name="UnableToInstantiateTypeAdapter" xml:space="preserve">
-    <value>PowerShell cannot create an instance of the type adapter for the type {0} because of the following exception: {1}.</value>
+    <value>PowerShell nemůže vytvořit instanci adaptéru typů pro typ {0} kvůli následující výjimce: {1}.</value>
   </data>
   <data name="InvalidAdaptedType" xml:space="preserve">
-    <value>The adapted type "{0}" is not valid.</value>
+    <value>Adaptovaný typ {0} není platný.</value>
   </data>
   <data name="TypeConverterAlreadyPresent" xml:space="preserve">
-    <value>The TypeConverter was ignored because it already occurs.</value>
+    <value>TypeConverter byl ignorován, protože už se vyskytuje.</value>
   </data>
   <data name="TypeAdapterAlreadyPresent" xml:space="preserve">
-    <value>The TypeAdapter was ignored because it already occurs.</value>
+    <value>TypeAdapter byl ignorován, protože už se vyskytuje.</value>
   </data>
   <data name="TypeIsNotTypeConverter" xml:space="preserve">
-    <value>Type "{0}" should be either TypeConverter or PSTypeConverter.</value>
+    <value>Typ {0} musí být TypeConverter nebo PSTypeConverter.</value>
   </data>
   <data name="TypeIsNotTypeAdapter" xml:space="preserve">
-    <value>Type "{0}" should be a PSPropertyAdapter.</value>
+    <value>Typ {0} by měl být PSPropertyAdapter.</value>
   </data>
   <data name="DuplicateMember" xml:space="preserve">
-    <value>The member {0} is already present.</value>
+    <value>Člen {0} už existuje.</value>
   </data>
   <data name="ReservedNameMember" xml:space="preserve">
-    <value>The following member name is reserved: {0}</value>
+    <value>Následující název členu je rezervovaný: {0}</value>
   </data>
   <data name="Exception" xml:space="preserve">
-    <value>Exception: {0}</value>
+    <value>Výjimka: {0}</value>
   </data>
   <data name="ScriptPropertyShouldHaveGetterOrSetter" xml:space="preserve">
-    <value>The ScriptProperty should have a getter or setter.</value>
+    <value>ScriptProperty musí obsahovat getter nebo setter.</value>
   </data>
   <data name="CodePropertyShouldHaveGetterOrSetter" xml:space="preserve">
-    <value>The CodeProperty should have a getter or setter.</value>
+    <value>CodeProperty musí obsahovat getter nebo setter.</value>
   </data>
   <data name="FileError" xml:space="preserve">
     <value>{0}, {1} : {2}</value>
   </data>
   <data name="ValueShouldBeTrueOrFalse" xml:space="preserve">
-    <value>The value should be either TRUE or FALSE instead of {0}.</value>
+    <value>Místo hodnoty {0} použijte TRUE nebo FALSE.</value>
   </data>
   <data name="IsHiddenNotSupported" xml:space="preserve">
-    <value>Node "{0}" should not have "{1}" attribute.</value>
+    <value>Uzel {0} by neměl obsahovat atribut {1}.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>{0}, {1}: The file was not found.</value>
+    <value>{0}, {1}: Soubor se nenašel.</value>
   </data>
   <data name="DuplicateFile" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because it was already loaded by {2}.</value>
+    <value>{0}, {1}: Soubor byl přeskočen, protože už byl načtený pomocí {2}.</value>
   </data>
   <data name="CannotFindRegistryKey" xml:space="preserve">
-    <value>Cannot find the registry key: {0}{1}. Using {2} to load the configuration files.</value>
+    <value>Klíč registru se nenašel: {0}{1}. Konfigurační soubory se načítají pomocí {2}.</value>
   </data>
   <data name="CannotFindRegistryKeyPath" xml:space="preserve">
-    <value>Cannot find the path {0} specified in the registry key: {1}{2}. Using {3} to load the configuration files.</value>
+    <value>Cesta {0} zadaná v klíči registru {1}{2} se nenašla. Konfigurační soubory se načítají pomocí {3}.</value>
   </data>
   <data name="EntryShouldBeMshXml" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because it does not have the ps1xml file name extension.</value>
+    <value>{0}, {1}: Soubor byl přeskočen, protože nemá příponu názvu souboru ps1xml.</value>
   </data>
   <data name="ValidationException" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because of the following validation exception: {2}.</value>
+    <value>{0}, {1}: Soubor byl přeskočen kvůli následující výjimce při ověřování: {2}.</value>
   </data>
   <data name="MemberShouldBeNote" xml:space="preserve">
-    <value>Member "{0}" must be a note.</value>
+    <value>Člen {0} musí být poznámka.</value>
   </data>
   <data name="ErrorConvertingNote" xml:space="preserve">
-    <value>Cannot convert note "{0}":"{1}".</value>
+    <value>Poznámku {0}:{1} nejde převést.</value>
   </data>
   <data name="MemberShouldNotBePresent" xml:space="preserve">
-    <value>Do not use the member "{0}" here.</value>
+    <value>Člen {0} tady nepoužívejte.</value>
   </data>
   <data name="MemberShouldHaveType" xml:space="preserve">
-    <value>Member "{0}" must have type "{1}".</value>
+    <value>Člen {0} musí být typu {1}.</value>
   </data>
   <data name="MemberMustBePresent" xml:space="preserve">
-    <value>"{0}" must be present when the "{1}" is "{2}" and "{3}" is "{4}".</value>
+    <value>Prvek {0} musí existovat, když {1} má hodnotu {2} a {3} má hodnotu {4}.</value>
   </data>
   <data name="SerializationSettingsIgnored" xml:space="preserve">
-    <value>A previous error caused all serialization settings to be ignored.</value>
+    <value>Kvůli předchozí chybě byla ignorována všechna nastavení serializace.</value>
   </data>
   <data name="NotAStandardMember" xml:space="preserve">
-    <value>"{0}" is not a standard member and will be ignored.</value>
+    <value>{0} není standardní člen a bude ignorován.</value>
   </data>
   <data name="TypeFileNotRooted" xml:space="preserve">
-    <value>The {0} path is not fully qualified. Specify a fully qualified type file path.</value>
+    <value>Cesta {0} není plně kvalifikovaná. Zadejte plně kvalifikovanou cestu k souboru typu.</value>
   </data>
   <data name="SharedTypeTableCannotBeUpdated" xml:space="preserve">
-    <value>The TypeTable cannot be updated because the TypeTable might have been created outside of the runspace.</value>
+    <value>Objekt TypeTable nejde aktualizovat, protože mohl být vytvořený mimo prostředí runspace.</value>
   </data>
   <data name="TypeTableLoadErrors" xml:space="preserve">
-    <value>There were errors loading TypeTable. Look in the Errors property to get detailed error messages.</value>
+    <value>Při načítání objektu TypeTable došlo k chybám. Podrobné chybové zprávy najdete ve vlastnosti Errors.</value>
   </data>
   <data name="TypeDataTypeError" xml:space="preserve">
-    <value>Error in TypeData "{0}": {1}</value>
+    <value>Chyba v TypeData {0}: {1}</value>
   </data>
   <data name="TypeDataShouldHaveValue" xml:space="preserve">
-    <value>"{0}" should have a value for its property "{1}".</value>
+    <value>Prvek {0} by měl mít ve vlastnosti {1} hodnotu.</value>
   </data>
   <data name="TypeDataShouldNotBeNullOrEmpty" xml:space="preserve">
-    <value>"{0}" should not have null or an empty string in its property "{1}".</value>
+    <value>Prvek {0} nesmí mít ve vlastnosti {1} hodnotu null ani prázdný řetězec.</value>
   </data>
   <data name="TypeNotFound" xml:space="preserve">
-    <value>The type "{0}" was not found. The type name value must be the full name of the type. Verify the type name and run the command again.</value>
+    <value>Typ {0} se nenašel. Hodnota názvu typu musí být úplný název typu. Ověřte název typu a spusťte příkaz znovu.</value>
   </data>
   <data name="TypeDataShouldNotBeEmpty" xml:space="preserve">
-    <value>The TypeData must have "Members", "TypeConverters", "TypeAdapters" or "StandardMembers".</value>
+    <value>TypeData musí obsahovat Members, TypeConverters, TypeAdapters nebo StandardMembers.</value>
   </data>
   <data name="TypeTableCannotCoExist" xml:space="preserve">
-    <value>A shared type table cannot be updated with more than one entry.</value>
+    <value>Sdílenou tabulku typů nejde aktualizovat více než jednou položkou.</value>
   </data>
 </root>
