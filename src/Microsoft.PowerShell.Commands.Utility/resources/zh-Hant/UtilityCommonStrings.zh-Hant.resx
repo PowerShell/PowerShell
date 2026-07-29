@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Invalidpath" xml:space="preserve">
-    <value>{2} has one or more exceptions that are not valid.</value>
+    <value>{2} 有一或多個無效的例外狀況。</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>This command cannot be run because the file path '{0}' is not valid. Please provide a valid file path and then run the command.</value>
+    <value>無法執行此命令，因為檔案路徑 '{0}' 無效。請提供有效的檔案路徑，然後執行命令。</value>
   </data>
   <data name="EmptyCSSUri" xml:space="preserve">
-    <value>This command cannot be run because '{0}' is empty or blank. Please specify CSSUri and then run the command.</value>
+    <value>無法執行此命令，因為 '{0}' 是空的或空白。請指定 CSSUri，然後執行命令。</value>
   </data>
   <data name="FileOpenError" xml:space="preserve">
-    <value>Cannot open the file because the current provider ({0}) cannot open files.</value>
+    <value>無法開啟檔案，因為目前的提供者 ({0}) 無法開啟檔案。</value>
   </data>
   <data name="SearchXMLPrefixNullError" xml:space="preserve">
-    <value>This command cannot be run because the prefix value in the Namespace parameter is null. Provide a valid value for the prefix, and then run the command again.</value>
+    <value>無法執行此命令，因為 Namespace 參數中的前置詞值為 null。請為前置詞提供有效值，然後再次執行命令。</value>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>The objects grouped by this property cannot be expanded because there is a key duplication. Provide a valid value for the property, and then try again.</value>
+    <value>無法展開依此屬性分組的物件，因為索引鍵重複。請為此屬性提供有效值，然後再試一次。</value>
   </data>
   <data name="NotSupported" xml:space="preserve">
-    <value>The command is not supported on this operating system.</value>
+    <value>此作業系統不支援這個命令。</value>
   </data>
   <data name="FileReadError" xml:space="preserve">
-    <value>The file '{0}' cannot be read: {1}</value>
+    <value>無法讀取檔案 '{0}': {1}</value>
   </data>
   <data name="FormatHexTypeNotSupported" xml:space="preserve">
-    <value>Cannot convert input of type '{0}' to hexadecimal. To view the hexadecimal formatting of its string representation, pipe it to the Out-String cmdlet before piping it to Format-Hex.</value>
+    <value>無法將類型為 '{0}' 的輸入轉換為十六進位。若要檢視其字串表示的十六進位格式，請先將它傳送至 Out-String Cmdlet，再傳送至 Format-Hex。</value>
   </data>
   <data name="FormatHexOnlySupportsFileSystemPaths" xml:space="preserve">
-    <value>The given path '{0}' is not supported. This command only supports the FileSystem Provider paths.</value>
+    <value>不支援指定的路徑 '{0}'。此命令僅支援 FileSystem 提供者路徑。</value>
   </data>
   <data name="FormatHexPathPrefix" xml:space="preserve">
-    <value>Path: </value>
+    <value>路徑:</value>
   </data>
   <data name="GroupObjectWithHashTable" xml:space="preserve">
-    <value>The command cannot be run because the AsString parameter requires that you specify the AsHashtable parameter.</value>
+    <value>無法執行命令，因為 AsString 參數需要您指定 AsHashtable 參數。</value>
   </data>
   <data name="GroupObjectSingleProperty" xml:space="preserve">
-    <value>The command cannot be run because using the AsHashTable parameter with more than one property requires adding the AsString parameter.</value>
+    <value>無法執行命令，因為當 AsHashTable 參數搭配一個以上的屬性使用時，必須同時加入 AsString 參數。</value>
   </data>
   <data name="PathDoesNotExist" xml:space="preserve">
     <value>找不到路徑 '{0}'，因為它不存在。</value>
   </data>
   <data name="PSPrefixReservedInInformationTag" xml:space="preserve">
-    <value>Cannot use tag '{0}'. The 'PS' prefix is reserved.</value>
+    <value>無法使用標記 '{0}'。'PS' 前置詞是保留的。</value>
   </data>
   <data name="CouldNotParseAsPowerShellDataFile" xml:space="preserve">
-    <value>The file '{0}' could not be parsed as a PowerShell Data File.</value>
+    <value>無法將檔案 '{0}' 剖析為 PowerShell 資料檔案。</value>
   </data>
   <data name="InvalidSDDL" xml:space="preserve">
-    <value>Cannot construct a security descriptor from the given SDDL due to the following error: {0}</value>
+    <value>無法從指定的 SDDL 建構安全性描述元，因為發生下列錯誤: {0}</value>
   </data>
   <data name="IEXWDACLogTitle" xml:space="preserve">
     <value>Invoke-Expression Cmdlet</value>
   </data>
   <data name="IEXWDACLogMessage" xml:space="preserve">
-    <value>Invoke-Expression cmdlet script block will be run in ConstrainedLanguage mode.</value>
+    <value>Invoke-Expression Cmdlet 指令碼區塊將會以 ConstrainedLanguage 模式執行。</value>
   </data>
 </root>

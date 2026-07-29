@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="HostNameValue" xml:space="preserve">
-    <value>The email cannot be sent because no SMTP server was specified. You must specify an SMTP server by using either the SmtpServer parameter or the $PSEmailServer variable.</value>
+    <value>Non è possibile inviare il messaggio e-mail perché non è stato specificato alcun server SMTP. È necessario specificare un server SMTP usando il parametro SmtpServer o la variabile $PSEmailServer.</value>
   </data>
 </root>
