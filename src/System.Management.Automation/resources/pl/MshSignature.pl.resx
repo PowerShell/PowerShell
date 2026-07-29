@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MshSignature_Valid" xml:space="preserve">
-    <value>Signature verified.</value>
+    <value>Zweryfikowano podpis.</value>
   </data>
   <data name="MshSignature_NotSigned" xml:space="preserve">
-    <value>The file {0} is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170</value>
+    <value>Plik {0} nie jest podpisany cyfrowo. Nie można uruchomić tego skryptu w bieżącym systemie. Aby uzyskać więcej informacji na temat uruchamiania skryptów i ustawiania zasad wykonywania, zobacz about_Execution_Policies na https://go.microsoft.com/fwlink/?LinkID=135170</value>
   </data>
   <data name="MshSignature_HashMismatch" xml:space="preserve">
-    <value>The contents of file {0} might have been changed by an unauthorized user or process, because the hash of the file does not match the hash stored in the digital signature. The script cannot run on the specified system. For more information, run Get-Help about_Signing.</value>
+    <value>Zawartość pliku {0} mogła zostać zmieniona przez nieautoryzowanego użytkownika lub proces, ponieważ skrót pliku jest niezgodny ze skrótem przechowywanym w podpisie cyfrowym. Nie można uruchomić skryptu w określonym systemie. Aby uzyskać więcej informacji, uruchom polecenie Get-Help about_Signing.</value>
   </data>
   <data name="MshSignature_NotTrusted" xml:space="preserve">
-    <value>File {0} is signed but the signer is not trusted on this system.</value>
+    <value>Plik {0} jest podpisany, ale podpisywanie nie jest zaufane w tym systemie.</value>
   </data>
   <data name="MshSignature_NotSupportedFileFormat" xml:space="preserve">
-    <value>Cannot sign the file because the system does not support signing operations on {0} files.</value>
+    <value>Nie można podpisać pliku, ponieważ system nie obsługuje operacji podpisywania plików ({0}) .</value>
   </data>
   <data name="MshSignature_NotSupportedFileFormat_NoExtension" xml:space="preserve">
-    <value>Cannot sign the file because the system does not support signing operations on files that do not have a file name extension.</value>
+    <value>Nie można podpisać pliku, ponieważ system nie obsługuje operacji podpisywania plików, które nie mają rozszerzenia nazwy pliku.</value>
   </data>
   <data name="MshSignature_Incompatible" xml:space="preserve">
-    <value>The signature cannot be verified because it is incompatible with the current system.</value>
+    <value>Nie można zweryfikować podpisu, ponieważ jest on niezgodny z bieżącym systemem.</value>
   </data>
   <data name="MshSignature_Incompatible_HashAlgorithm" xml:space="preserve">
-    <value>The signature cannot be verified because it is incompatible with the current system. The hash algorithm is not valid.</value>
+    <value>Nie można zweryfikować podpisu, ponieważ jest on niezgodny z bieżącym systemem. Algorytm wyznaczania wartości skrótu jest nieprawidłowy.</value>
   </data>
 </root>

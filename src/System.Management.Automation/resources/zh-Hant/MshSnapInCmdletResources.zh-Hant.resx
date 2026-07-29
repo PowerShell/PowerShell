@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CmdletNotAvailable" xml:space="preserve">
-    <value>The operation cannot be performed. The specified cmdlet is not supported in a custom shell.</value>
+    <value>無法執行作業。指定的 Cmdlet 不支援自訂殼層。</value>
   </data>
   <data name="NoPSSnapInsFound" xml:space="preserve">
-    <value>No PowerShell snap-ins matching the pattern '{0}' were found. Check the pattern and then try the command again.</value>
+    <value>找不到符合模式 '{0}' 的 PowerShell 嵌入式管理單元。請檢查模式，然後再試一次命令。</value>
   </data>
   <data name="InvalidPSSnapInName" xml:space="preserve">
-    <value>The format of the specified snap-in name was not valid.  PowerShell snap-in names can only contain alpha-numeric characters, dashes, underscores and periods. Correct the name and then try the operation again.</value>
+    <value>指定的嵌入式管理單元名稱格式無效。 PowerShell 嵌入式管理單元名稱只能包含英數字元、連字號、底線和句點。請更正名稱，然後再次嘗試操作。</value>
   </data>
   <data name="LoadSystemSnapinAsModule" xml:space="preserve">
-    <value>Cannot add PowerShell snap-in {0} because it is a system PowerShell module. Use Import-Module to load the module.</value>
+    <value>無法新增 PowerShell 嵌入式管理單元 {0} ，因為它是系統 PowerShell 模組。請使用 Import-Module 載入該模組。</value>
   </data>
 </root>

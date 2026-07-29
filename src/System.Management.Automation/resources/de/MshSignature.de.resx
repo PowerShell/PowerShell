@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MshSignature_Valid" xml:space="preserve">
-    <value>Signature verified.</value>
+    <value>Signatur überprüft.</value>
   </data>
   <data name="MshSignature_NotSigned" xml:space="preserve">
-    <value>The file {0} is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170</value>
+    <value>Die Datei „{0}“ ist nicht digital signiert. Dieses Skript kann nicht auf dem aktuellen System ausgeführt werden. Weitere Informationen zum Ausführen von Skripts und zum Festlegen der Ausführungsrichtlinie finden Sie in „about_Execution_Policies“ unter https://go.microsoft.com/fwlink/?LinkID=135170</value>
   </data>
   <data name="MshSignature_HashMismatch" xml:space="preserve">
-    <value>The contents of file {0} might have been changed by an unauthorized user or process, because the hash of the file does not match the hash stored in the digital signature. The script cannot run on the specified system. For more information, run Get-Help about_Signing.</value>
+    <value>Der Inhalt der Datei „{0}“ könnte von einer nicht autorisierten Person oder einem nicht autorisierten Prozess geändert worden sein, da der Hash der Datei nicht mit dem in der digitalen Signatur gespeicherten Hash übereinstimmt. Das Skript kann auf dem angegebenen System nicht ausgeführt werden. Führen Sie „Get-Help about_Signing“ aus, um weitere Informationen zu erhalten.</value>
   </data>
   <data name="MshSignature_NotTrusted" xml:space="preserve">
-    <value>File {0} is signed but the signer is not trusted on this system.</value>
+    <value>Die Datei „{0}“ ist signiert, aber die signierende Person gilt auf diesem System nicht als vertrauenswürdig.</value>
   </data>
   <data name="MshSignature_NotSupportedFileFormat" xml:space="preserve">
-    <value>Cannot sign the file because the system does not support signing operations on {0} files.</value>
+    <value>Die Datei kann nicht signiert werden, da das System keine Signiervorgänge für {0}-Dateien unterstützt.</value>
   </data>
   <data name="MshSignature_NotSupportedFileFormat_NoExtension" xml:space="preserve">
-    <value>Cannot sign the file because the system does not support signing operations on files that do not have a file name extension.</value>
+    <value>Die Datei kann nicht signiert werden, da das System keine Signiervorgänge für Dateien ohne Dateinamenerweiterung unterstützt.</value>
   </data>
   <data name="MshSignature_Incompatible" xml:space="preserve">
-    <value>The signature cannot be verified because it is incompatible with the current system.</value>
+    <value>Die Signatur kann nicht überprüft werden, da sie mit dem aktuellen System nicht kompatibel ist.</value>
   </data>
   <data name="MshSignature_Incompatible_HashAlgorithm" xml:space="preserve">
-    <value>The signature cannot be verified because it is incompatible with the current system. The hash algorithm is not valid.</value>
+    <value>Die Signatur kann nicht überprüft werden, da sie mit dem aktuellen System nicht kompatibel ist. Der Hashalgorithmus ist ungültig.</value>
   </data>
 </root>

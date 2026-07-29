@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CmdletNotAvailable" xml:space="preserve">
-    <value>The operation cannot be performed. The specified cmdlet is not supported in a custom shell.</value>
+    <value>작업을 수행할 수 없습니다. 지정한 cmdlet은 사용자 지정 셸에서 지원되지 않습니다.</value>
   </data>
   <data name="NoPSSnapInsFound" xml:space="preserve">
-    <value>No PowerShell snap-ins matching the pattern '{0}' were found. Check the pattern and then try the command again.</value>
+    <value>'{0}' 패턴과 일치하는 PowerShell 스냅인을 찾을 수 없습니다. 패턴을 확인한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="InvalidPSSnapInName" xml:space="preserve">
-    <value>The format of the specified snap-in name was not valid.  PowerShell snap-in names can only contain alpha-numeric characters, dashes, underscores and periods. Correct the name and then try the operation again.</value>
+    <value>지정한 스냅인 이름의 형식이 올바르지 않습니다.  PowerShell 스냅인 이름에는 영숫자, 대시, 밑줄, 마침표만 사용할 수 있습니다. 이름을 수정한 다음 작업을 다시 시도하십시오.</value>
   </data>
   <data name="LoadSystemSnapinAsModule" xml:space="preserve">
-    <value>Cannot add PowerShell snap-in {0} because it is a system PowerShell module. Use Import-Module to load the module.</value>
+    <value>PowerShell 스냅인 {0}은(는) 시스템 PowerShell 모듈이므로 추가할 수 없습니다. 모듈을 로드하려면 Import-Module을 사용하세요.</value>
   </data>
 </root>

@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MshSignature_Valid" xml:space="preserve">
-    <value>Signature verified.</value>
+    <value>서명이 확인되었습니다.</value>
   </data>
   <data name="MshSignature_NotSigned" xml:space="preserve">
-    <value>The file {0} is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170</value>
+    <value>파일 {0}에는 디지털 서명이 없습니다. 현재 시스템에서 이 스크립트를 실행할 수 없습니다. 스크립트 실행 및 실행 정책 설정에 대한 자세한 내용은 https://go.microsoft.com/fwlink/?LinkID=135170 about_Execution_Policies를 참조하세요.</value>
   </data>
   <data name="MshSignature_HashMismatch" xml:space="preserve">
-    <value>The contents of file {0} might have been changed by an unauthorized user or process, because the hash of the file does not match the hash stored in the digital signature. The script cannot run on the specified system. For more information, run Get-Help about_Signing.</value>
+    <value>파일 {0}의 내용은 파일의 해시가 디지털 서명에 저장된 해시와 일치하지 않기 때문에 무단 사용자나 프로세스에 의해 변경되었을 수 있습니다. 지정한 시스템에서 스크립트를 실행할 수 없습니다. 자세한 내용은 Get-Help about_Signing을 실행해 보세요.</value>
   </data>
   <data name="MshSignature_NotTrusted" xml:space="preserve">
-    <value>File {0} is signed but the signer is not trusted on this system.</value>
+    <value>파일 {0}은(는) 서명되었지만 이 시스템에서 서명자를 신뢰할 수 없습니다.</value>
   </data>
   <data name="MshSignature_NotSupportedFileFormat" xml:space="preserve">
-    <value>Cannot sign the file because the system does not support signing operations on {0} files.</value>
+    <value>시스템에서 {0} 파일에 대한 서명 작업을 지원하지 않으므로 파일에 서명할 수 없습니다.</value>
   </data>
   <data name="MshSignature_NotSupportedFileFormat_NoExtension" xml:space="preserve">
-    <value>Cannot sign the file because the system does not support signing operations on files that do not have a file name extension.</value>
+    <value>파일 이름 확장명이 없는 파일에서는 서명 작업을 지원하지 않으므로 파일에 서명할 수 없습니다.</value>
   </data>
   <data name="MshSignature_Incompatible" xml:space="preserve">
-    <value>The signature cannot be verified because it is incompatible with the current system.</value>
+    <value>서명이 현재 시스템과 호환되지 않아 확인할 수 없습니다.</value>
   </data>
   <data name="MshSignature_Incompatible_HashAlgorithm" xml:space="preserve">
-    <value>The signature cannot be verified because it is incompatible with the current system. The hash algorithm is not valid.</value>
+    <value>서명이 현재 시스템과 호환되지 않아 확인할 수 없습니다. 해시 알고리즘이 올바르지 않습니다.</value>
   </data>
 </root>

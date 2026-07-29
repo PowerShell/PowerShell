@@ -118,144 +118,144 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NamedParameterNotFound" xml:space="preserve">
-    <value>A parameter cannot be found that matches parameter name '{1}'.</value>
+    <value>找不到符合參數名稱 '{1}' 的參數。</value>
   </data>
   <data name="PositionalParameterNotFound" xml:space="preserve">
-    <value>A positional parameter cannot be found that accepts argument '{1}'.</value>
+    <value>找不到接受引數 '{1}' 的位置參數。</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
-    <value>Missing an argument for parameter '{1}'. Specify a parameter of type '{2}' and try again.</value>
+    <value>遺漏參數 '{1}' 的引數。指定類型 '{2}' 的參數，然後再試一次。</value>
   </data>
   <data name="AmbiguousParameter" xml:space="preserve">
-    <value>Parameter cannot be processed because the parameter name '{1}' is ambiguous. Possible matches include:{6}.</value>
+    <value>無法處理參數，因為參數名稱 '{1}' 不明確。可能的符合項目包括: {6}。</value>
   </data>
   <data name="CannotConvertArgument" xml:space="preserve">
-    <value>Cannot convert '{6}' to the type '{2}' required by parameter '{1}'. {7}</value>
+    <value>無法將 '{6}' 轉換為參數 '{1}' 所需的類型 '{2}'。{7}</value>
   </data>
   <data name="CannotConvertArgumentNoMessage" xml:space="preserve">
-    <value>Cannot bind parameter '{1}'. {6}</value>
+    <value>無法繫結參數 '{1}'。{6}</value>
   </data>
   <data name="AmbiguousPositionalParameter" xml:space="preserve">
-    <value>Cannot bind positional parameters '{1}'.</value>
+    <value>無法繫結位置參數 '{1}'。</value>
   </data>
   <data name="AmbiguousPositionalParameterNoName" xml:space="preserve">
-    <value>Cannot bind positional parameters because no names were given.</value>
+    <value>無法繫結位置參數，因為未指定任何名稱。</value>
   </data>
   <data name="AmbiguousParameterSet" xml:space="preserve">
-    <value>Parameter set cannot be resolved using the specified named parameters. One or more parameters issued cannot be used together or an insufficient number of parameters were provided.</value>
+    <value>無法使用指定的具名參數來解析參數集。一或多個發出的參數無法一起使用，或提供的參數數目不足。</value>
   </data>
   <data name="MissingMandatoryParameter" xml:space="preserve">
-    <value>Cannot process command because of one or more missing mandatory parameters:{1}.</value>
+    <value>無法處理命令，因為遺漏一或多個必要參數: {1}。</value>
   </data>
   <data name="ParameterNotInParameterSet" xml:space="preserve">
-    <value>Parameter '{1}' cannot be specified in parameter set '{6}'.</value>
+    <value>無法在參數集 '{6}' 中指定參數 '{1}'。</value>
   </data>
   <data name="ParameterAlreadyBound" xml:space="preserve">
-    <value>Cannot bind parameter because parameter '{1}' is specified more than once. To provide multiple values to parameters that can accept multiple values, use the array syntax. For example, "-parameter value1,value2,value3".</value>
+    <value>無法繫結參數，因為參數 '{1}' 指定了一次以上。若要為可接受多個值的參數提供多個值，請使用陣列語法。例如，"-parameter value1,value2,value3"。</value>
   </data>
   <data name="ScriptBlockArgumentNoInput" xml:space="preserve">
-    <value>Cannot evaluate parameter '{1}' because its argument is specified as a script block and there is no input. A script block cannot be evaluated without input.</value>
+    <value>無法評估參數 '{1}'，因為其引數被指定為指令碼區塊，且沒有輸入。無法評估沒有輸入的指令碼區塊。</value>
   </data>
   <data name="ScriptBlockArgumentInvocationFailed" xml:space="preserve">
-    <value>The input to the script block for parameter '{1}' failed. {6}</value>
+    <value>參數 '{1}' 的指令碼區塊輸入失敗。{6}</value>
   </data>
   <data name="ScriptBlockArgumentNoOutput" xml:space="preserve">
-    <value>Cannot evaluate parameter '{1}' because its argument input did not produce any output.</value>
+    <value>無法評估參數 '{1}'，因為其引數輸入未產生任何輸出。</value>
   </data>
   <data name="InputObjectNotBound" xml:space="preserve">
-    <value>The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.</value>
+    <value>輸入物件無法繫結至命令的任何參數，因為命令未採用管線輸入，或輸入及其屬性不符合任何採用管線輸入的參數。</value>
   </data>
   <data name="InputObjectMissingMandatory" xml:space="preserve">
-    <value>The input object cannot be bound because it did not contain the information required to bind all mandatory parameters: {6}</value>
+    <value>無法繫結輸入物件，因為它未包含要繫結所有必要參數的資訊: {6}</value>
   </data>
   <data name="GetDefaultValueFailed" xml:space="preserve">
-    <value>Pipeline input cannot be processed because the default value of parameter '{1}' cannot be retrieved. {6}</value>
+    <value>無法處理管線輸入，因為無法擷取參數 '{1}' 的預設值。{6}</value>
   </data>
   <data name="GetDynamicParametersException" xml:space="preserve">
-    <value>Cannot retrieve the dynamic parameters for the cmdlet. {6}</value>
+    <value>無法擷取此 Cmdlet 的動態參數。{6}</value>
   </data>
   <data name="PromptMessage" xml:space="preserve">
-    <value>Supply values for the following parameters:</value>
+    <value>為下列參數提供值:</value>
   </data>
   <data name="PromptCaption" xml:space="preserve">
-    <value>cmdlet {0} at command pipeline position {1}</value>
+    <value>Cmdlet {0} 位於命令管線位置 {1}</value>
   </data>
   <data name="ParameterArgumentTransformationError" xml:space="preserve">
-    <value>Cannot process argument transformation on parameter '{1}'. {6}</value>
+    <value>無法處理參數 '{1}' 的引數轉換。{6}</value>
   </data>
   <data name="ParameterArgumentTransformationErrorMessageOnly" xml:space="preserve">
     <value>{6}</value>
   </data>
   <data name="ParameterArgumentValidationError" xml:space="preserve">
-    <value>Cannot validate argument on parameter '{1}'. {6}</value>
+    <value>無法驗證參數 '{1}' 上的引數。{6}</value>
   </data>
   <data name="ParameterBindingFailed" xml:space="preserve">
-    <value>Cannot bind parameter '{1}' to the target. {6}</value>
+    <value>無法將參數 '{1}' 繫結至目標。{6}</value>
   </data>
   <data name="ParameterArgumentValidationErrorNullNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is null.</value>
+    <value>無法將引數繫結至參數 '{1}'，因為它為 null。</value>
   </data>
   <data name="ParameterArgumentValidationErrorEmptyStringNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is an empty string.</value>
+    <value>無法將引數繫結至參數 '{1}'，因為它是空的字串。</value>
   </data>
   <data name="ParameterArgumentValidationErrorEmptyCollectionNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is an empty collection.</value>
+    <value>無法將引數繫結至參數 '{1}'，因為它是空的集合。</value>
   </data>
   <data name="ParameterArgumentValidationErrorEmptyArrayNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is an empty array.</value>
+    <value>無法將引數繫結至參數 '{1}'，因為它是空的陣列。</value>
   </data>
   <data name="DuplicateParameterDefinition" xml:space="preserve">
-    <value>Cannot process command. The parameter '{0}' is defined multiple times.</value>
+    <value>無法處理命令。參數 '{0}' 已定義多次。</value>
   </data>
   <data name="CannotExtractAddMethod" xml:space="preserve">
-    <value>Cannot bind cmdlet {0} because parameter '{1}' is of type '{2}' and the Add() method cannot be identified, or multiple Add() methods exist. {6}</value>
+    <value>無法繫結 Cmdlet {0}，因為參數 '{1}' 的類型為 '{2}'且無法識別 Add() 方法，或有多個 Add() 方法存在。{6}</value>
   </data>
   <data name="RuntimeDefinedParameterNameMismatch" xml:space="preserve">
-    <value>Cannot bind cmdlet {0} because runtime-defined parameter '{1}' was added to the RuntimeDefinedParameterDictionary with key '{6}'. The key must be the same as RuntimeDefinedParameter.Name.</value>
+    <value>無法繫結 Cmdlet {0} ，因為執行階段定義的參數 '{1}' 已新增至具有索引鍵 '{6}' 的 RuntimeDefinedParameterDictionary。索引鍵必須與 RuntimeDefinedParameter.Name 相同。</value>
   </data>
   <data name="MismatchedPSTypeName" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}', because PSTypeNames of the argument do not match the PSTypeName required by the parameter: {6}.</value>
+    <value>無法將引數繫結至參數 '{1}'，因為引數的 PSTypeNames 與參數所需的 PSTypeName 不相符: {6}。</value>
   </data>
   <data name="DifferentValuesAssignedToSingleParameter" xml:space="preserve">
-    <value>Multiple different default values are defined in $PSDefaultParameterValues for the parameter matching the following name or alias: {0}. These defaults have been ignored.</value>
+    <value>在 $PSDefaultParameterValues 中針對符合下列名稱或別名的參數定義了多個不同的預設值: {0}。已忽略這些預設值。</value>
   </data>
   <data name="MultipleParametersMatched" xml:space="preserve">
-    <value>The following name or alias defined in $PSDefaultParameterValues for this cmdlet resolves to multiple parameters: {0}. The default has been ignored.</value>
+    <value>為此 Cmdlet 在 $PSDefaultParameterValues 中定義的下列名稱或別名解析為多個參數: {0}。已忽略預設值。</value>
   </data>
   <data name="DefaultBindingErrorElaborationMultiple" xml:space="preserve">
-    <value>{6} This error might have been caused by applying the default parameter binding. You can disable the default parameter binding in $PSDefaultParameterValues by setting $PSDefaultParameterValues["Disabled"] to be $true, and then trying again. The following default parameters were successfully bound for this cmdlet when the error occurred:{7}</value>
+    <value>{6} 此錯誤可能是由套用預設參數繫結所造成。您可將 $PSDefaultParameterValues["Disabled"] 設定為 $true 以在 $PSDefaultParameterValues 中停用預設參數繫結，然後再試一次。發生錯誤時，已順利為此 Cmdlet 繫結下列預設參數: {7}</value>
   </data>
   <data name="DefaultBindingErrorElaborationSingle" xml:space="preserve">
-    <value>{6} This failure might be caused by applying the default parameter binding. You can disable the default parameter binding in $PSDefaultParameterValues by setting $PSDefaultParameterValues["Disabled"] to be $true, and retry. The following default parameter was successfully bound for this cmdlet when the error occurred:{7}</value>
+    <value>{6} 此失敗可能是由套用預設參數繫結所造成。您可將 $PSDefaultParameterValues["Disabled"] 設定為 $true 以在 $PSDefaultParameterValues 中停用預設參數繫結，然後重試。發生錯誤時，已順利為此 Cmdlet 繫結下列預設參數: {7}</value>
   </data>
   <data name="FailToBindDefaultParameter" xml:space="preserve">
-    <value>The binding of default value '{0}' to parameter '{1}' failed: {2}</value>
+    <value>預設值 '{0}' 繫結至參數 '{1}' 失敗: {2}</value>
   </data>
   <data name="SingleKeyInBadFormat" xml:space="preserve">
-    <value>The key '{0}' does not have a valid format. For information about the correct format, see about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266.</value>
+    <value>索引鍵 '{0}' 的格式無效。如需正確格式的詳細資訊，請參閱 about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266。</value>
   </data>
   <data name="MultipleKeysInBadFormat" xml:space="preserve">
-    <value>The keys '{0}' do not have valid formats. For information about the correct format, see about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266.</value>
+    <value>索引鍵 '{0}' 沒有有效的格式。如需正確格式的詳細資訊，請參閱 about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266。</value>
   </data>
   <data name="UseOfDeprecatedParameterWarning" xml:space="preserve">
-    <value>Parameter '{0}' is obsolete. {1}</value>
+    <value>參數 '{0}' 已經過時。{1}</value>
   </data>
   <data name="StringValueKeyExpected" xml:space="preserve">
-    <value>The key '{0}' of type '{1}' is not a string value. DefaultParameterDictionary only accepts string value keys.</value>
+    <value>類型 '{1}' 的索引鍵 '{0}' 不是字串值。DefaultParameterDictionary 只接受字串值索引鍵。</value>
   </data>
   <data name="KeyAlreadyAdded" xml:space="preserve">
-    <value>The key '{0}' has already been added to the dictionary.</value>
+    <value>索引鍵 '{0}' 已新增到字典中。</value>
   </data>
   <data name="WDACBinderInvocationLogTitle" xml:space="preserve">
-    <value>Method or Property Invocation Not Allowed</value>
+    <value>不允許叫用方法或屬性</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in Constrained Language mode for untrusted scripts.</value>
+    <value>在未受信任指令碼的限制語言模式中，不允許在類型 '{1}' 上叫用方法或屬性 '{0}'。</value>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
-    <value>Type Creation Not Allowed</value>
+    <value>不允許建立類型</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Creation of Type '{0}' will not be allowed during parameter binding in Constrained Language mode for untrusted scripts.</value>
+    <value>在未受信任指令碼的限制語言模式中，不允許在參數繫結其間建立類型 '{0}'。</value>
   </data>
 </root>

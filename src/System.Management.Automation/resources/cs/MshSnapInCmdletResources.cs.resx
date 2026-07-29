@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CmdletNotAvailable" xml:space="preserve">
-    <value>The operation cannot be performed. The specified cmdlet is not supported in a custom shell.</value>
+    <value>Operaci nejde provést. Zadaná rutina není ve vlastním prostředí shellu podporovaná.</value>
   </data>
   <data name="NoPSSnapInsFound" xml:space="preserve">
-    <value>No PowerShell snap-ins matching the pattern '{0}' were found. Check the pattern and then try the command again.</value>
+    <value>Nenašly se žádné moduly snap-in PowerShellu odpovídající vzoru {0}. Zkontrolujte vzor a spusťte příkaz znovu.</value>
   </data>
   <data name="InvalidPSSnapInName" xml:space="preserve">
-    <value>The format of the specified snap-in name was not valid.  PowerShell snap-in names can only contain alpha-numeric characters, dashes, underscores and periods. Correct the name and then try the operation again.</value>
+    <value>Formát zadaného názvu modulu snap-in není platný.  Názvy modulů snap-in PowerShellu můžou obsahovat jen alfanumerické znaky, pomlčky, podtržítka a tečky. Opravte název a potom operaci zopakujte.</value>
   </data>
   <data name="LoadSystemSnapinAsModule" xml:space="preserve">
-    <value>Cannot add PowerShell snap-in {0} because it is a system PowerShell module. Use Import-Module to load the module.</value>
+    <value>Modul snap-in PowerShellu {0} nejde přidat, protože jde o systémový modul PowerShellu. Načtěte modul pomocí Import-Module.</value>
   </data>
 </root>

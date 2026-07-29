@@ -118,144 +118,144 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NamedParameterNotFound" xml:space="preserve">
-    <value>A parameter cannot be found that matches parameter name '{1}'.</value>
+    <value>Не удалось найти параметр, соответствующий имени параметра "{1}".</value>
   </data>
   <data name="PositionalParameterNotFound" xml:space="preserve">
-    <value>A positional parameter cannot be found that accepts argument '{1}'.</value>
+    <value>Не удается найти позиционный параметр, принимающий аргумент "{1}".</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
-    <value>Missing an argument for parameter '{1}'. Specify a parameter of type '{2}' and try again.</value>
+    <value>Отсутствует аргумент для параметра "{1}". Укажите параметр типа "{2}" и повторите попытку.</value>
   </data>
   <data name="AmbiguousParameter" xml:space="preserve">
-    <value>Parameter cannot be processed because the parameter name '{1}' is ambiguous. Possible matches include:{6}.</value>
+    <value>Не удается обработать параметр, так как имя параметра "{1}" неоднозначно. Возможные совпадения:{6}.</value>
   </data>
   <data name="CannotConvertArgument" xml:space="preserve">
-    <value>Cannot convert '{6}' to the type '{2}' required by parameter '{1}'. {7}</value>
+    <value>Не удается преобразовать "{6}" в тип "{2}", необходимый для параметра "{1}". {7}</value>
   </data>
   <data name="CannotConvertArgumentNoMessage" xml:space="preserve">
-    <value>Cannot bind parameter '{1}'. {6}</value>
+    <value>"Не удается привязать параметр "{1}". {6}</value>
   </data>
   <data name="AmbiguousPositionalParameter" xml:space="preserve">
-    <value>Cannot bind positional parameters '{1}'.</value>
+    <value>Не удается привязать позиционные параметры "{1}".</value>
   </data>
   <data name="AmbiguousPositionalParameterNoName" xml:space="preserve">
-    <value>Cannot bind positional parameters because no names were given.</value>
+    <value>"Не удается привязать позиционные параметры, поскольку имена не предоставлены".</value>
   </data>
   <data name="AmbiguousParameterSet" xml:space="preserve">
-    <value>Parameter set cannot be resolved using the specified named parameters. One or more parameters issued cannot be used together or an insufficient number of parameters were provided.</value>
+    <value>Не удается разрешить набор параметров с использованием указанных именованных параметров. Один или несколько из указанных параметров не могут использоваться одновременно, или предоставлено недостаточное число параметров.</value>
   </data>
   <data name="MissingMandatoryParameter" xml:space="preserve">
-    <value>Cannot process command because of one or more missing mandatory parameters:{1}.</value>
+    <value>Не удается обработать команду из-за одного или более отсутствующих обязательных параметров:{1}.</value>
   </data>
   <data name="ParameterNotInParameterSet" xml:space="preserve">
-    <value>Parameter '{1}' cannot be specified in parameter set '{6}'.</value>
+    <value>Параметр "{1}" не может быть указан в наборе параметров "{6}".</value>
   </data>
   <data name="ParameterAlreadyBound" xml:space="preserve">
-    <value>Cannot bind parameter because parameter '{1}' is specified more than once. To provide multiple values to parameters that can accept multiple values, use the array syntax. For example, "-parameter value1,value2,value3".</value>
+    <value>Невозможно привязать параметр, поскольку параметр "{1}" указан более одного раза. Для передачи нескольких значений параметрам, которые могут принимать несколько значений, используйте синтаксис массива. Например, "-parameter value1,value2,value3".</value>
   </data>
   <data name="ScriptBlockArgumentNoInput" xml:space="preserve">
-    <value>Cannot evaluate parameter '{1}' because its argument is specified as a script block and there is no input. A script block cannot be evaluated without input.</value>
+    <value>Не удается вывести параметр "{1}", так как его аргумент указан как блок сценария и входные данные не указаны. Блок сценария не может быть оценен без ввода.</value>
   </data>
   <data name="ScriptBlockArgumentInvocationFailed" xml:space="preserve">
-    <value>The input to the script block for parameter '{1}' failed. {6}</value>
+    <value>Сбой ввода в блок сценария для параметра "{1}". {6}</value>
   </data>
   <data name="ScriptBlockArgumentNoOutput" xml:space="preserve">
-    <value>Cannot evaluate parameter '{1}' because its argument input did not produce any output.</value>
+    <value>Не удается вывести параметр "{1}", так как входные данные его аргумента не производят выходных данных.</value>
   </data>
   <data name="InputObjectNotBound" xml:space="preserve">
-    <value>The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.</value>
+    <value>Входной объект не может быть привязан ни к одному из параметров команды потому, что команда не принимает входные данные из конвейера, или потому, что входные данные и их свойства не соответствуют ни одному из параметров, принимающих входные данные из конвейера.</value>
   </data>
   <data name="InputObjectMissingMandatory" xml:space="preserve">
-    <value>The input object cannot be bound because it did not contain the information required to bind all mandatory parameters: {6}</value>
+    <value>Не удается привязать входной объект, так как он не содержит сведений, необходимых для привязки всех обязательных параметров: {6}</value>
   </data>
   <data name="GetDefaultValueFailed" xml:space="preserve">
-    <value>Pipeline input cannot be processed because the default value of parameter '{1}' cannot be retrieved. {6}</value>
+    <value>Не удается обработать входные данные конвейера, так как не удается получить значение параметра "{1}" по умолчанию. {6}</value>
   </data>
   <data name="GetDynamicParametersException" xml:space="preserve">
-    <value>Cannot retrieve the dynamic parameters for the cmdlet. {6}</value>
+    <value>Не удается получить динамические параметры для этого командлета. {6}</value>
   </data>
   <data name="PromptMessage" xml:space="preserve">
-    <value>Supply values for the following parameters:</value>
+    <value>Предоставьте значения для следующих параметров:</value>
   </data>
   <data name="PromptCaption" xml:space="preserve">
-    <value>cmdlet {0} at command pipeline position {1}</value>
+    <value>командлет в позиции {0} командного конвейера {1}</value>
   </data>
   <data name="ParameterArgumentTransformationError" xml:space="preserve">
-    <value>Cannot process argument transformation on parameter '{1}'. {6}</value>
+    <value>Невозможно обработать преобразование аргумента для параметра "{1}". {6}</value>
   </data>
   <data name="ParameterArgumentTransformationErrorMessageOnly" xml:space="preserve">
     <value>{6}</value>
   </data>
   <data name="ParameterArgumentValidationError" xml:space="preserve">
-    <value>Cannot validate argument on parameter '{1}'. {6}</value>
+    <value>Не удается проверить аргумент параметра "{1}". {6}</value>
   </data>
   <data name="ParameterBindingFailed" xml:space="preserve">
-    <value>Cannot bind parameter '{1}' to the target. {6}</value>
+    <value>Не удается привязать параметр "{1}" к целевому объекту. {6}</value>
   </data>
   <data name="ParameterArgumentValidationErrorNullNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is null.</value>
+    <value>Не удается привязать аргумент к параметру "{1}", так как он имеет значение null.</value>
   </data>
   <data name="ParameterArgumentValidationErrorEmptyStringNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is an empty string.</value>
+    <value>Не удается привязать аргумент к параметру "{1}", так как это пустая строка.</value>
   </data>
   <data name="ParameterArgumentValidationErrorEmptyCollectionNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is an empty collection.</value>
+    <value>Не удается привязать аргумент к параметру "{1}", так как это пустая коллекция.</value>
   </data>
   <data name="ParameterArgumentValidationErrorEmptyArrayNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is an empty array.</value>
+    <value>Не удается привязать аргумент к параметру "{1}", так как он является пустым массивом.</value>
   </data>
   <data name="DuplicateParameterDefinition" xml:space="preserve">
-    <value>Cannot process command. The parameter '{0}' is defined multiple times.</value>
+    <value>Не удается обработать команду. Параметр "{0}" определен несколько раз.</value>
   </data>
   <data name="CannotExtractAddMethod" xml:space="preserve">
-    <value>Cannot bind cmdlet {0} because parameter '{1}' is of type '{2}' and the Add() method cannot be identified, or multiple Add() methods exist. {6}</value>
+    <value>Не удается привязать командлет {0}, так как параметр "{1}" имеет тип "{2}" и метод Add() не может быть определен, или существует несколько методов Add(). {6}</value>
   </data>
   <data name="RuntimeDefinedParameterNameMismatch" xml:space="preserve">
-    <value>Cannot bind cmdlet {0} because runtime-defined parameter '{1}' was added to the RuntimeDefinedParameterDictionary with key '{6}'. The key must be the same as RuntimeDefinedParameter.Name.</value>
+    <value>Невозможно привязать командлет {0}, поскольку параметр "{1}", определяемый средой выполнения, добавлен в RuntimeDefinedParameterDictionary с ключом "{6}". Ключ должен совпадать с RuntimeDefinedParameter.Name.</value>
   </data>
   <data name="MismatchedPSTypeName" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}', because PSTypeNames of the argument do not match the PSTypeName required by the parameter: {6}.</value>
+    <value>Не удается привязать аргумент к параметру "{1}", так как psTypeNames аргумента не соответствует psTypeName, необходимому для параметра: {6}.</value>
   </data>
   <data name="DifferentValuesAssignedToSingleParameter" xml:space="preserve">
-    <value>Multiple different default values are defined in $PSDefaultParameterValues for the parameter matching the following name or alias: {0}. These defaults have been ignored.</value>
+    <value>В $PSDefaultParameterValues параметра, совпадающих со следующим именем или псевдонимом, определено несколько различных значений по умолчанию: {0}. Эти значения по умолчанию проигнорированы.</value>
   </data>
   <data name="MultipleParametersMatched" xml:space="preserve">
-    <value>The following name or alias defined in $PSDefaultParameterValues for this cmdlet resolves to multiple parameters: {0}. The default has been ignored.</value>
+    <value>Следующее имя или псевдоним, определенный в $PSDefaultParameterValues для этого $PSDefaultParameterValues, соединяется с несколькими параметрами: {0}. Значение по умолчанию пропущено.</value>
   </data>
   <data name="DefaultBindingErrorElaborationMultiple" xml:space="preserve">
-    <value>{6} This error might have been caused by applying the default parameter binding. You can disable the default parameter binding in $PSDefaultParameterValues by setting $PSDefaultParameterValues["Disabled"] to be $true, and then trying again. The following default parameters were successfully bound for this cmdlet when the error occurred:{7}</value>
+    <value>{6} Эта ошибка могла быть вызвана применением привязки параметра по умолчанию. Вы можете отключить привязку параметров по умолчанию в $PSDefaultParameterValues, $PSDefaultParameterValues["Отключено"], чтобы $true и повторить попытку. Следующие параметры по умолчанию успешно привязаны для этого командлета при ошибке:{7}</value>
   </data>
   <data name="DefaultBindingErrorElaborationSingle" xml:space="preserve">
-    <value>{6} This failure might be caused by applying the default parameter binding. You can disable the default parameter binding in $PSDefaultParameterValues by setting $PSDefaultParameterValues["Disabled"] to be $true, and retry. The following default parameter was successfully bound for this cmdlet when the error occurred:{7}</value>
+    <value>{6} Эта ошибка может быть вызвана применением привязки параметра по умолчанию. Вы можете отключить привязку параметров по умолчанию в $PSDefaultParameterValues, $PSDefaultParameterValues ["Отключено"], чтобы $true и повторить попытку. Следующий параметр по умолчанию успешно привязан для этого командлета при ошибке:{7}</value>
   </data>
   <data name="FailToBindDefaultParameter" xml:space="preserve">
-    <value>The binding of default value '{0}' to parameter '{1}' failed: {2}</value>
+    <value>Сбой привязки значения по умолчанию "{0}" к параметру "{1}": {2}</value>
   </data>
   <data name="SingleKeyInBadFormat" xml:space="preserve">
-    <value>The key '{0}' does not have a valid format. For information about the correct format, see about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266.</value>
+    <value>Ключ "{0}" имеет не допустимый формат. Сведения о правильном формате см. about_Parameters_Default_Values в https://go.microsoft.com/fwlink/?LinkId=228266.</value>
   </data>
   <data name="MultipleKeysInBadFormat" xml:space="preserve">
-    <value>The keys '{0}' do not have valid formats. For information about the correct format, see about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266.</value>
+    <value>Ключи "{0}" имеют недопустимый формат. Сведения о правильном формате см. about_Parameters_Default_Values в https://go.microsoft.com/fwlink/?LinkId=228266.</value>
   </data>
   <data name="UseOfDeprecatedParameterWarning" xml:space="preserve">
-    <value>Parameter '{0}' is obsolete. {1}</value>
+    <value>Параметр "{0}" устарел. {1}</value>
   </data>
   <data name="StringValueKeyExpected" xml:space="preserve">
-    <value>The key '{0}' of type '{1}' is not a string value. DefaultParameterDictionary only accepts string value keys.</value>
+    <value>Ключ "{0}" типа "{1}" не является строкой. DefaultParameterDictionary принимает только ключи строки значений.</value>
   </data>
   <data name="KeyAlreadyAdded" xml:space="preserve">
-    <value>The key '{0}' has already been added to the dictionary.</value>
+    <value>Ключ "{0}" уже добавлен в словарь.</value>
   </data>
   <data name="WDACBinderInvocationLogTitle" xml:space="preserve">
-    <value>Method or Property Invocation Not Allowed</value>
+    <value>Вызов метода или свойства не разрешен</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in Constrained Language mode for untrusted scripts.</value>
+    <value>Вызов метода или свойства "{0}" типа "{1}" не будет разрешен в режиме ограниченного языка для ненадежных сценариев.</value>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
-    <value>Type Creation Not Allowed</value>
+    <value>Создание типа не разрешено</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Creation of Type '{0}' will not be allowed during parameter binding in Constrained Language mode for untrusted scripts.</value>
+    <value>Создание типа "{0}" не будет разрешено во время привязки параметров в режиме ограниченного языка для недоверенных сценариев.</value>
   </data>
 </root>

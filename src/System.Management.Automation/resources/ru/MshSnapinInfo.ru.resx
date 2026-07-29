@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MonadRootRegistryAccessFailed" xml:space="preserve">
-    <value>Unable to access PowerShell registry information.</value>
+    <value>Не удалось получить доступ к сведениям реестра PowerShell.</value>
   </data>
   <data name="MonadEngineRegistryAccessFailed" xml:space="preserve">
-    <value>Unable to access PowerShell Engine registry information.</value>
+    <value>Не удалось получить доступ к сведениям реестра PowerShell Engine.</value>
   </data>
   <data name="PublicKeyTokenAccessFailed" xml:space="preserve">
-    <value>Unable to access PublicKeyToken information.</value>
+    <value>Не удалось получить доступ к сведениям PublicKeyToken.</value>
   </data>
   <data name="SpecifiedVersionNotFound" xml:space="preserve">
-    <value>Version {0} of PowerShell is not available on this computer.</value>
+    <value>Версия {0} PowerShell недоступна на этом компьютере.</value>
   </data>
   <data name="MshSnapinDoesNotExist" xml:space="preserve">
-    <value>The PowerShell snap-in '{0}' is not installed on this computer.</value>
+    <value>Оснастка PowerShell "{0}" не установлена на этом компьютере.</value>
   </data>
   <data name="MandatoryValueNotPresent" xml:space="preserve">
-    <value>The mandatory value {0} is not specified for registry key {1}.</value>
+    <value>Обязательное значение {0} для ключа реестра {1} не указано.</value>
   </data>
   <data name="MandatoryValueNotInCorrectFormat" xml:space="preserve">
-    <value>The mandatory value {0} is not in the correct format for registry key {1}.  The expected format is 'string.'</value>
+    <value>Обязательное значение {0} имеет некорректный формат для ключа реестра {1}.  Ожидаемый формат: "string".</value>
   </data>
   <data name="MandatoryValueNotInCorrectFormatMultiString" xml:space="preserve">
-    <value>The mandatory value {0} is not in the correct format for registry key {1}.  The expected format is 'multistring.'</value>
+    <value>Обязательное значение {0} имеет некорректный формат для ключа реестра {1}.  Ожидаемый формат: "multistring".</value>
   </data>
   <data name="DefaultMshSnapinNotPresent" xml:space="preserve">
-    <value>Cannot find required information in registry or missing key files.  Cannot load some cmdlets.</value>
+    <value>Не удается найти необходимые сведения в реестре или отсутствуют ключевые файлы.  Не удается загрузить некоторые командлеты.</value>
   </data>
   <data name="NoMshSnapinPresentForVersion" xml:space="preserve">
-    <value>No snap-ins have been registered for PowerShell version {0}.</value>
+    <value>Для версии PowerShell не зарегистрировано ни одного подключаемого модуля {0}.</value>
   </data>
   <data name="ResourceReaderDisposed" xml:space="preserve">
-    <value>Cannot retrieve the string resource because the reader has been disposed.</value>
+    <value>Не удается получить строковый ресурс, так как объект чтения освобожден.</value>
   </data>
   <data name="VersionValueInCorrect" xml:space="preserve">
-    <value>Version value {0} is not specified or is incorrect for registry key {1}.</value>
+    <value>Значение версии {0} не указано или неверно для ключа реестра {1}.</value>
   </data>
   <data name="PSVersionAttributeNotExist" xml:space="preserve">
-    <value>No [PSVersion] attribute was found for PowerShell type {0}. Add a PSVersion attribute to the type using [PSVersion(PowerShell SnapinBase.PSEngineVersion)].</value>
+    <value>Не найден атрибут [PSVersion] для типа PowerShell {0}. Добавьте атрибут PSVersion к типу с помощью [PSVersion(PowerShell SnapinBase.PSEngineVersion)].</value>
   </data>
 </root>

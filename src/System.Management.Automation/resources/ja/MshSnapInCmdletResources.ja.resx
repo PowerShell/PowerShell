@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CmdletNotAvailable" xml:space="preserve">
-    <value>The operation cannot be performed. The specified cmdlet is not supported in a custom shell.</value>
+    <value>操作を実行できません。指定されたコマンドレットは、カスタム シェルではサポートされていません。</value>
   </data>
   <data name="NoPSSnapInsFound" xml:space="preserve">
-    <value>No PowerShell snap-ins matching the pattern '{0}' were found. Check the pattern and then try the command again.</value>
+    <value>パターン '{0}' に一致する PowerShell スナップインが見つかりませんでした。パターンを確認してから、コマンドを再試行してください。</value>
   </data>
   <data name="InvalidPSSnapInName" xml:space="preserve">
-    <value>The format of the specified snap-in name was not valid.  PowerShell snap-in names can only contain alpha-numeric characters, dashes, underscores and periods. Correct the name and then try the operation again.</value>
+    <value>指定されたスナップイン名の形式が無効でした。 PowerShell スナップイン名に使用できるのは、英数字、ダッシュ、アンダースコア、ピリオドのみです。名前を訂正してから、操作を再試行してください。</value>
   </data>
   <data name="LoadSystemSnapinAsModule" xml:space="preserve">
-    <value>Cannot add PowerShell snap-in {0} because it is a system PowerShell module. Use Import-Module to load the module.</value>
+    <value>システム PowerShell モジュールであるため、PowerShell スナップイン {0} を追加できません。Import-Module を使用してモジュールを読み込みます。</value>
   </data>
 </root>

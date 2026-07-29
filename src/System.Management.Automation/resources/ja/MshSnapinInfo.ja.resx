@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MonadRootRegistryAccessFailed" xml:space="preserve">
-    <value>Unable to access PowerShell registry information.</value>
+    <value>PowerShell のレジストリ情報にアクセスできません。</value>
   </data>
   <data name="MonadEngineRegistryAccessFailed" xml:space="preserve">
-    <value>Unable to access PowerShell Engine registry information.</value>
+    <value>PowerShell エンジンのレジストリ情報にアクセスできません。</value>
   </data>
   <data name="PublicKeyTokenAccessFailed" xml:space="preserve">
-    <value>Unable to access PublicKeyToken information.</value>
+    <value>PublicKeyToken の情報にアクセスできません。</value>
   </data>
   <data name="SpecifiedVersionNotFound" xml:space="preserve">
-    <value>Version {0} of PowerShell is not available on this computer.</value>
+    <value>PowerShell のバージョン {0} は、このコンピューターでは使用できません。</value>
   </data>
   <data name="MshSnapinDoesNotExist" xml:space="preserve">
-    <value>The PowerShell snap-in '{0}' is not installed on this computer.</value>
+    <value>PowerShell スナップイン '{0}' が、このコンピューターにインストールされていません。</value>
   </data>
   <data name="MandatoryValueNotPresent" xml:space="preserve">
-    <value>The mandatory value {0} is not specified for registry key {1}.</value>
+    <value>レジストリ キー {1} に必須の値 {0} が指定されていません。</value>
   </data>
   <data name="MandatoryValueNotInCorrectFormat" xml:space="preserve">
-    <value>The mandatory value {0} is not in the correct format for registry key {1}.  The expected format is 'string.'</value>
+    <value>必須の値 {0} は、レジストリ キー {1} に対して正しい形式ではありません。 必要な形式は 'string' です。</value>
   </data>
   <data name="MandatoryValueNotInCorrectFormatMultiString" xml:space="preserve">
-    <value>The mandatory value {0} is not in the correct format for registry key {1}.  The expected format is 'multistring.'</value>
+    <value>必須の値 {0} は、レジストリ キー {1} に対して正しい形式ではありません。 必要な形式は 'multistring' です。</value>
   </data>
   <data name="DefaultMshSnapinNotPresent" xml:space="preserve">
-    <value>Cannot find required information in registry or missing key files.  Cannot load some cmdlets.</value>
+    <value>必要な情報がレジストリに見つからないか、キー ファイルが見つかりません。 一部のコマンドレットを読み込めません。</value>
   </data>
   <data name="NoMshSnapinPresentForVersion" xml:space="preserve">
-    <value>No snap-ins have been registered for PowerShell version {0}.</value>
+    <value>PowerShell バージョン {0} には、登録済みのスナップインがありません。</value>
   </data>
   <data name="ResourceReaderDisposed" xml:space="preserve">
-    <value>Cannot retrieve the string resource because the reader has been disposed.</value>
+    <value>リーダーが破棄されたため、文字列リソースを取得できません。</value>
   </data>
   <data name="VersionValueInCorrect" xml:space="preserve">
-    <value>Version value {0} is not specified or is incorrect for registry key {1}.</value>
+    <value>レジストリ キー {1} のバージョン値 {0} が指定されていないか、正しくありません。</value>
   </data>
   <data name="PSVersionAttributeNotExist" xml:space="preserve">
-    <value>No [PSVersion] attribute was found for PowerShell type {0}. Add a PSVersion attribute to the type using [PSVersion(PowerShell SnapinBase.PSEngineVersion)].</value>
+    <value>PowerShell 型 {0} の [PSVersion] 属性が見つかりませんでした。[PSVersion(PowerShell SnapinBase.PSEngineVersion)] を使用して、型に PSVersion 属性を追加してください。</value>
   </data>
 </root>

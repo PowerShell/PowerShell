@@ -118,144 +118,144 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NamedParameterNotFound" xml:space="preserve">
-    <value>A parameter cannot be found that matches parameter name '{1}'.</value>
+    <value>No se encuentra un parámetro que coincida con el nombre de parámetro "{1}".</value>
   </data>
   <data name="PositionalParameterNotFound" xml:space="preserve">
-    <value>A positional parameter cannot be found that accepts argument '{1}'.</value>
+    <value>No se encuentra ningún parámetro posicional que acepte el argumento "{1}".</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
-    <value>Missing an argument for parameter '{1}'. Specify a parameter of type '{2}' and try again.</value>
+    <value>Falta un argumento para el parámetro "{1}". Especifique un parámetro de tipo "{2}" e inténtelo de nuevo.</value>
   </data>
   <data name="AmbiguousParameter" xml:space="preserve">
-    <value>Parameter cannot be processed because the parameter name '{1}' is ambiguous. Possible matches include:{6}.</value>
+    <value>No se puede procesar el parámetro porque el nombre del parámetro "{1}" es ambiguo. Las posibles coincidencias incluyen:{6}.</value>
   </data>
   <data name="CannotConvertArgument" xml:space="preserve">
-    <value>Cannot convert '{6}' to the type '{2}' required by parameter '{1}'. {7}</value>
+    <value>No se puede convertir "{6}" al tipo "{2}" que requiere el parámetro "{1}". {7}</value>
   </data>
   <data name="CannotConvertArgumentNoMessage" xml:space="preserve">
-    <value>Cannot bind parameter '{1}'. {6}</value>
+    <value>No se puede enlazar el parámetro "{1}". {6}</value>
   </data>
   <data name="AmbiguousPositionalParameter" xml:space="preserve">
-    <value>Cannot bind positional parameters '{1}'.</value>
+    <value>No se pueden enlazar los parámetros posicionales "{1}".</value>
   </data>
   <data name="AmbiguousPositionalParameterNoName" xml:space="preserve">
-    <value>Cannot bind positional parameters because no names were given.</value>
+    <value>No se pueden enlazar parámetros posicionales porque no se han proporcionado nombres.</value>
   </data>
   <data name="AmbiguousParameterSet" xml:space="preserve">
-    <value>Parameter set cannot be resolved using the specified named parameters. One or more parameters issued cannot be used together or an insufficient number of parameters were provided.</value>
+    <value>El conjunto de parámetros no se puede resolver con los parámetros con nombre especificados. Uno o varios parámetros enviados no se pueden usar juntos o se proporcionó un número insuficiente de parámetros.</value>
   </data>
   <data name="MissingMandatoryParameter" xml:space="preserve">
-    <value>Cannot process command because of one or more missing mandatory parameters:{1}.</value>
+    <value>No se puede procesar el comando porque faltan uno o varios parámetros obligatorios:{1}.</value>
   </data>
   <data name="ParameterNotInParameterSet" xml:space="preserve">
-    <value>Parameter '{1}' cannot be specified in parameter set '{6}'.</value>
+    <value>El parámetro "{1}" no se puede especificar en el conjunto de parámetros "{6}".</value>
   </data>
   <data name="ParameterAlreadyBound" xml:space="preserve">
-    <value>Cannot bind parameter because parameter '{1}' is specified more than once. To provide multiple values to parameters that can accept multiple values, use the array syntax. For example, "-parameter value1,value2,value3".</value>
+    <value>No se puede enlazar el parámetro porque el parámetro "{1}" se ha especificado más de una vez. Para proporcionar varios valores a parámetros que aceptan varios valores, use la sintaxis de matriz. Por ejemplo, "-parameter value1,value2,value3".</value>
   </data>
   <data name="ScriptBlockArgumentNoInput" xml:space="preserve">
-    <value>Cannot evaluate parameter '{1}' because its argument is specified as a script block and there is no input. A script block cannot be evaluated without input.</value>
+    <value>No se puede evaluar el parámetro "{1}" porque su argumento está especificado como un bloque de script y no hay entrada. Un bloque de script no se puede evaluar sin entrada.</value>
   </data>
   <data name="ScriptBlockArgumentInvocationFailed" xml:space="preserve">
-    <value>The input to the script block for parameter '{1}' failed. {6}</value>
+    <value>Error en la entrada del bloque de script para el parámetro "{1}". {6}</value>
   </data>
   <data name="ScriptBlockArgumentNoOutput" xml:space="preserve">
-    <value>Cannot evaluate parameter '{1}' because its argument input did not produce any output.</value>
+    <value>No se puede evaluar el parámetro "{1}" porque la entrada de su argumento no produjo ninguna salida.</value>
   </data>
   <data name="InputObjectNotBound" xml:space="preserve">
-    <value>The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.</value>
+    <value>El objeto de entrada no se puede enlazar a ningún parámetro del comando, bien porque el comando no acepta entrada de canalización o porque la entrada y sus propiedades no coinciden con ninguno de los parámetros que aceptan entrada de canalización.</value>
   </data>
   <data name="InputObjectMissingMandatory" xml:space="preserve">
-    <value>The input object cannot be bound because it did not contain the information required to bind all mandatory parameters: {6}</value>
+    <value>No se puede enlazar el objeto de entrada porque no contiene la información necesaria para enlazar todos los parámetros obligatorios: {6}</value>
   </data>
   <data name="GetDefaultValueFailed" xml:space="preserve">
-    <value>Pipeline input cannot be processed because the default value of parameter '{1}' cannot be retrieved. {6}</value>
+    <value>No se puede procesar la entrada de la canalización porque no se puede recuperar el valor predeterminado del parámetro "{1}". {6}</value>
   </data>
   <data name="GetDynamicParametersException" xml:space="preserve">
-    <value>Cannot retrieve the dynamic parameters for the cmdlet. {6}</value>
+    <value>No se puede recuperar los parámetros dinámicos para el cmdlet. {6}</value>
   </data>
   <data name="PromptMessage" xml:space="preserve">
-    <value>Supply values for the following parameters:</value>
+    <value>Proporcione valores para estos parámetros:</value>
   </data>
   <data name="PromptCaption" xml:space="preserve">
-    <value>cmdlet {0} at command pipeline position {1}</value>
+    <value>cmdlet {0} en la posición {1} de la canalización de comandos</value>
   </data>
   <data name="ParameterArgumentTransformationError" xml:space="preserve">
-    <value>Cannot process argument transformation on parameter '{1}'. {6}</value>
+    <value>No se puede procesar la transformación del argumento del parámetro "{1}". {6}</value>
   </data>
   <data name="ParameterArgumentTransformationErrorMessageOnly" xml:space="preserve">
     <value>{6}</value>
   </data>
   <data name="ParameterArgumentValidationError" xml:space="preserve">
-    <value>Cannot validate argument on parameter '{1}'. {6}</value>
+    <value>No se puede validar el argumento en el parámetro "{1}". {6}</value>
   </data>
   <data name="ParameterBindingFailed" xml:space="preserve">
-    <value>Cannot bind parameter '{1}' to the target. {6}</value>
+    <value>No se puede enlazar el parámetro "{1}" al destino. {6}</value>
   </data>
   <data name="ParameterArgumentValidationErrorNullNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is null.</value>
+    <value>No se puede enlazar el argumento al parámetro "{1}" porque es null.</value>
   </data>
   <data name="ParameterArgumentValidationErrorEmptyStringNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is an empty string.</value>
+    <value>No se puede enlazar el argumento al parámetro "{1}" porque es una cadena vacía.</value>
   </data>
   <data name="ParameterArgumentValidationErrorEmptyCollectionNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is an empty collection.</value>
+    <value>No se puede enlazar el argumento al parámetro "{1}" porque es una colección vacía.</value>
   </data>
   <data name="ParameterArgumentValidationErrorEmptyArrayNotAllowed" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}' because it is an empty array.</value>
+    <value>No se puede enlazar el argumento al parámetro "{1}" porque es un matriz vacía.</value>
   </data>
   <data name="DuplicateParameterDefinition" xml:space="preserve">
-    <value>Cannot process command. The parameter '{0}' is defined multiple times.</value>
+    <value>No se puede procesar el comando. El parámetro "{0}" se define varias veces.</value>
   </data>
   <data name="CannotExtractAddMethod" xml:space="preserve">
-    <value>Cannot bind cmdlet {0} because parameter '{1}' is of type '{2}' and the Add() method cannot be identified, or multiple Add() methods exist. {6}</value>
+    <value>No se puede enlazar el cmdlet {0} porque el parámetro "{1}" es de tipo "{2}" y no se puede identificar el método Add() o existen varios métodos Add(). {6}</value>
   </data>
   <data name="RuntimeDefinedParameterNameMismatch" xml:space="preserve">
-    <value>Cannot bind cmdlet {0} because runtime-defined parameter '{1}' was added to the RuntimeDefinedParameterDictionary with key '{6}'. The key must be the same as RuntimeDefinedParameter.Name.</value>
+    <value>No se puede enlazar el cmdlet {0} porque el parámetro definido por el runtime "{1}" se agregó al RuntimeDefinedParameterDictionary con la clave "{6}". La clave debe ser la misma que RuntimeDefinedParameter.Name.</value>
   </data>
   <data name="MismatchedPSTypeName" xml:space="preserve">
-    <value>Cannot bind argument to parameter '{1}', because PSTypeNames of the argument do not match the PSTypeName required by the parameter: {6}.</value>
+    <value>No se puede enlazar el argumento al parámetro "{1}" porque los PSTypeNames del argumento no coinciden con el PSTypeName que requiere el parámetro: {6}.</value>
   </data>
   <data name="DifferentValuesAssignedToSingleParameter" xml:space="preserve">
-    <value>Multiple different default values are defined in $PSDefaultParameterValues for the parameter matching the following name or alias: {0}. These defaults have been ignored.</value>
+    <value>En $PSDefaultParameterValues se definen varios valores predeterminados diferentes para el parámetro que coincide con el siguiente nombre o alias: {0}. Estos valores predeterminados se han ignorado.</value>
   </data>
   <data name="MultipleParametersMatched" xml:space="preserve">
-    <value>The following name or alias defined in $PSDefaultParameterValues for this cmdlet resolves to multiple parameters: {0}. The default has been ignored.</value>
+    <value>El siguiente nombre o alias definido en $PSDefaultParameterValues para este cmdlet se resuelve en varios parámetros: {0}. Se ha ignorado el valor predeterminado.</value>
   </data>
   <data name="DefaultBindingErrorElaborationMultiple" xml:space="preserve">
-    <value>{6} This error might have been caused by applying the default parameter binding. You can disable the default parameter binding in $PSDefaultParameterValues by setting $PSDefaultParameterValues["Disabled"] to be $true, and then trying again. The following default parameters were successfully bound for this cmdlet when the error occurred:{7}</value>
+    <value>{6} Es posible que este error se deba a la aplicación del enlace de parámetros predeterminado. Puede deshabilitar el enlace de parámetros predeterminado en $PSDefaultParameterValues estableciendo $PSDefaultParameterValues["Disabled"] en $true y, a continuación, vuelva a intentarlo. Los siguientes parámetros predeterminados se enlazaron correctamente a este cmdlet cuando se produjo el error:{7}</value>
   </data>
   <data name="DefaultBindingErrorElaborationSingle" xml:space="preserve">
-    <value>{6} This failure might be caused by applying the default parameter binding. You can disable the default parameter binding in $PSDefaultParameterValues by setting $PSDefaultParameterValues["Disabled"] to be $true, and retry. The following default parameter was successfully bound for this cmdlet when the error occurred:{7}</value>
+    <value>{6} Es posible que este error se deba a la aplicación del enlace de parámetros predeterminado. Puede deshabilitar el enlace de parámetros predeterminado en $PSDefaultParameterValues estableciendo $PSDefaultParameterValues["Disabled"] en $true y volver a intentarlo. El siguiente parámetro predeterminado se enlazó correctamente a este cmdlet cuando se produjo el error:{7}</value>
   </data>
   <data name="FailToBindDefaultParameter" xml:space="preserve">
-    <value>The binding of default value '{0}' to parameter '{1}' failed: {2}</value>
+    <value>Error al enlazar el valor predeterminado "{0}" al parámetro "{1}": {2}</value>
   </data>
   <data name="SingleKeyInBadFormat" xml:space="preserve">
-    <value>The key '{0}' does not have a valid format. For information about the correct format, see about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266.</value>
+    <value>La clave "{0}" no tiene un formato válido. Para obtener información sobre el formato correcto, consulte about_Parameters_Default_Values en https://go.microsoft.com/fwlink/?LinkId=228266.</value>
   </data>
   <data name="MultipleKeysInBadFormat" xml:space="preserve">
-    <value>The keys '{0}' do not have valid formats. For information about the correct format, see about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266.</value>
+    <value>Las claves "{0}" no tienen un formato válido. Para obtener información sobre el formato correcto, consulte about_Parameters_Default_Values en https://go.microsoft.com/fwlink/?LinkId=228266.</value>
   </data>
   <data name="UseOfDeprecatedParameterWarning" xml:space="preserve">
-    <value>Parameter '{0}' is obsolete. {1}</value>
+    <value>El parámetro "{0}" está obsoleto. {1}</value>
   </data>
   <data name="StringValueKeyExpected" xml:space="preserve">
-    <value>The key '{0}' of type '{1}' is not a string value. DefaultParameterDictionary only accepts string value keys.</value>
+    <value>La clave "{0}" de tipo "{1}" no es un valor de cadena. DefaultParameterDictionary solo acepta claves con valores de cadena.</value>
   </data>
   <data name="KeyAlreadyAdded" xml:space="preserve">
-    <value>The key '{0}' has already been added to the dictionary.</value>
+    <value>La clave "{0}" ya se ha agregado al diccionario.</value>
   </data>
   <data name="WDACBinderInvocationLogTitle" xml:space="preserve">
-    <value>Method or Property Invocation Not Allowed</value>
+    <value>No se permite invocar una propiedad o un método</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in Constrained Language mode for untrusted scripts.</value>
+    <value>No se permitirá invocar el Método o la Propiedad "{0}" en el tipo "{1}" en el modo de lenguaje restringido para scripts que no son de confianza.</value>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
-    <value>Type Creation Not Allowed</value>
+    <value>No se permite crear tipos</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Creation of Type '{0}' will not be allowed during parameter binding in Constrained Language mode for untrusted scripts.</value>
+    <value>No se permitirá la creación del tipo "{0}" durante el enlace de parámetros en el modo de lenguaje restringido para scripts que no son de confianza.</value>
   </data>
 </root>

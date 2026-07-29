@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CmdletNotAvailable" xml:space="preserve">
-    <value>The operation cannot be performed. The specified cmdlet is not supported in a custom shell.</value>
+    <value>Nie można wykonać operacji. Określone polecenie cmdlet nie jest obsługiwane w powłoce niestandardowej.</value>
   </data>
   <data name="NoPSSnapInsFound" xml:space="preserve">
-    <value>No PowerShell snap-ins matching the pattern '{0}' were found. Check the pattern and then try the command again.</value>
+    <value>Nie znaleziono żadnych przystawek programu PowerShell pasujących do wzorca „{0}”. Sprawdź wzorzec, a następnie spróbuj ponownie wykonać polecenie.</value>
   </data>
   <data name="InvalidPSSnapInName" xml:space="preserve">
-    <value>The format of the specified snap-in name was not valid.  PowerShell snap-in names can only contain alpha-numeric characters, dashes, underscores and periods. Correct the name and then try the operation again.</value>
+    <value>Format określonej nazwy przystawki był nieprawidłowy.  Nazwy przystawek programu PowerShell mogą zawierać tylko znaki alfanumeryczne, łączniki, podkreślenia i kropki. Sprawdź nazwę, a następnie spróbuj ponownie wykonać operację.</value>
   </data>
   <data name="LoadSystemSnapinAsModule" xml:space="preserve">
-    <value>Cannot add PowerShell snap-in {0} because it is a system PowerShell module. Use Import-Module to load the module.</value>
+    <value>Nie można dodać przystawki {0} programu PowerShell, ponieważ jest to moduł systemowy programu PowerShell. Załaduj moduł za pomocą polecenia Import-Module.</value>
   </data>
 </root>

@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MshSignature_Valid" xml:space="preserve">
-    <value>Signature verified.</value>
+    <value>署名が検証されました。</value>
   </data>
   <data name="MshSignature_NotSigned" xml:space="preserve">
-    <value>The file {0} is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170</value>
+    <value>ファイル {0} はデジタル署名されていません。現在のシステムでこのスクリプトを実行することはできません。スクリプトの実行と実行ポリシーの設定の詳細については、https://go.microsoft.com/fwlink/?LinkID=135170 で about_Execution_Policies を参照してください</value>
   </data>
   <data name="MshSignature_HashMismatch" xml:space="preserve">
-    <value>The contents of file {0} might have been changed by an unauthorized user or process, because the hash of the file does not match the hash stored in the digital signature. The script cannot run on the specified system. For more information, run Get-Help about_Signing.</value>
+    <value>ファイルのハッシュがデジタル署名に格納されているハッシュと一致しないため、ファイル {0} の内容が承認されていないユーザーまたはプロセスによって変更された可能性があります。指定されたシステムではスクリプトを実行できません。詳細については、Get-Help about_Signing を実行してください。</value>
   </data>
   <data name="MshSignature_NotTrusted" xml:space="preserve">
-    <value>File {0} is signed but the signer is not trusted on this system.</value>
+    <value>ファイル {0} は署名されていますが、署名者はこのシステムで信頼されていません。</value>
   </data>
   <data name="MshSignature_NotSupportedFileFormat" xml:space="preserve">
-    <value>Cannot sign the file because the system does not support signing operations on {0} files.</value>
+    <value>システムが {0} ファイルに対する署名操作をサポートしていないため、ファイルに署名できません。</value>
   </data>
   <data name="MshSignature_NotSupportedFileFormat_NoExtension" xml:space="preserve">
-    <value>Cannot sign the file because the system does not support signing operations on files that do not have a file name extension.</value>
+    <value>ファイル名拡張子を持たないファイルに対する署名操作がシステムでサポートされていないため、ファイルに署名できません。</value>
   </data>
   <data name="MshSignature_Incompatible" xml:space="preserve">
-    <value>The signature cannot be verified because it is incompatible with the current system.</value>
+    <value>現在のシステムと互換性がないため、署名を検証できません。</value>
   </data>
   <data name="MshSignature_Incompatible_HashAlgorithm" xml:space="preserve">
-    <value>The signature cannot be verified because it is incompatible with the current system. The hash algorithm is not valid.</value>
+    <value>現在のシステムと互換性がないため、署名を検証できません。ハッシュ アルゴリズムが無効です。</value>
   </data>
 </root>
