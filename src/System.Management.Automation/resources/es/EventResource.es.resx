@@ -64,763 +64,763 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MissingEventIdMessage" xml:space="preserve">
-    <value>A message was not found for event id PowerShell.Core.Instrumentation.man.</value>
+    <value>No se encontró un mensaje para el id. de evento PowerShell.Core.Instrumentation.man.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ScheduledJobStarted" xml:space="preserve">
-    <value>Scheduled Job {0} started at {1}
+    <value>El trabajo {0} programado se inició a las {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ScheduledJobCompleted" xml:space="preserve">
-    <value>Scheduled Job {0} completed at {1} with state {2}
+    <value>Trabajo programado {0} completado a las {1} con el estado {2}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ScheduledJobException" xml:space="preserve">
-    <value>Scheduled Job Exception {0}:
- Message: {1}
+    <value>Excepción {0} de trabajo programado :
+ Mensaje: {1}
  StackTrace: {2}
  InnerException: {3}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ExperimentalFeatureInvalidName" xml:space="preserve">
-    <value>Experimental Feature Initialization: Ignore the experimental feature '{0}' from the config file. {1}</value>
+    <value>Inicialización de características experimentales: omita la característica experimental '{0}' del archivo de configuración. {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ExperimentalFeatureReadConfigError" xml:space="preserve">
-    <value>Experimental Feature Initialization: Failed to read the config file.
- Exception: {0}
- Message: {1}
+    <value>Inicialización experimental de características: no se pudo leer el archivo de configuración.
+ Excepción: {0}
+ Mensaje: {1}
  StackTrace: {2}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPluginStarted" xml:space="preserve">
-    <value>Workflow plugin loaded.
+    <value>Complemento de flujo de trabajo cargado.
  	 EndpointName: {0}
- 	 User: {1}
+ 	 Usuario: {1}
  	 HostingMode: {2}
- 	 Protocol: {3}
- 	 Configuration:
+ 	 Protocolo: {3}
+ 	 Configuración:
  {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowExecutionStarted" xml:space="preserve">
-    <value>Workflow execution started.
+    <value>Se inició la ejecución del flujo de trabajo.
  	 WorkflowId: {0}
  	 ManagedNodes: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowStateChanged" xml:space="preserve">
-    <value>Workflow state changed.
+    <value>El estado del flujo de trabajo cambió.
  	 WorkflowId: {0}
  	 NewState: {1}
  	 OldState: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPluginRequestedToShutdown" xml:space="preserve">
-    <value>Workflow plugin has been requested for a shutdown.
+    <value>Se ha solicitado un apagado del complemento de flujo de trabajo.
  	 EndpointName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPluginRestarted" xml:space="preserve">
-    <value>Workflow plugin restarted.
+    <value>Se reinició el complemento de flujo de trabajo.
  	 EndpointName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowWorkflowsResuming" xml:space="preserve">
-    <value>Workflow is resuming.
+    <value>El flujo de trabajo se está reanudando.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowQuotaViolationDetected" xml:space="preserve">
-    <value>A quota limit that was set for the endpoint was exceeded.
+    <value>Se superó un límite de cuota establecido para el punto de conexión.
  	 EndpointName: {0}
  	 ConfigName: {1}
  	 AllowedValue: {2}
  	 ValueInQuestion: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowWorkflowsResumed" xml:space="preserve">
-    <value>Workflow has resumed.
+    <value>El flujo de trabajo se ha reanudado.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowRunspacePoolCreated" xml:space="preserve">
-    <value>Workflow runspace pool was created.
+    <value>Se creó un grupo de espacio de ejecución de flujo de trabajo.
  	 WorkflowId: {0}
  	 ManagedNode: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionQueued" xml:space="preserve">
-    <value>Activity was queued for execution.
+    <value>La actividad se puso en cola para su ejecución.
  	 WorkflowId: {0}
  	 ActivityName: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionStarted" xml:space="preserve">
-    <value>Activity execution started.
+    <value>Se inició la ejecución de la actividad.
  	 ActivityName: {0}
  	 ActivityTypeName: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportingFromXaml" xml:space="preserve">
-    <value>Workflow is being imported from a XAML file.
+    <value>El flujo de trabajo se está importando desde un archivo XAML.
  	 WorkflowId: {0}
  	 XamlFile: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportedFromXaml" xml:space="preserve">
-    <value>Workflow has been imported from a XAML file.
+    <value>El flujo de trabajo se ha importado desde un archivo XAML.
  	 WorkflowId: {0}
  	 XamlFile: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlError" xml:space="preserve">
-    <value>Workflow could not be imported from a XAML file because of an error.
+    <value>No se pudo importar el flujo de trabajo desde un archivo XAML debido a un error.
  	 WorkflowId: {0}
  	 ErrorDescription: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlValidationStarted" xml:space="preserve">
-    <value>Workflow validation started.
+    <value>Se inició la validación del flujo de trabajo.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlValidationFinishedSuccessfully" xml:space="preserve">
-    <value>Workflow validation succeeded.
+    <value>La validación del flujo de trabajo se realizó correctamente.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlValidationFinishedWithError" xml:space="preserve">
-    <value>Workflow validation failed with error.
+    <value>Error en la validación del flujo de trabajo.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlActivityValidated" xml:space="preserve">
-    <value>Workflow activity validated.
+    <value>Actividad de flujo de trabajo validada.
  	 WorkflowId: {0}
  	 ActivityDisplayName: {1}
  	 ActivityTypeName: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlActivityValidationFailed" xml:space="preserve">
-    <value>Workflow activity could not be validated.
+    <value>No se pudo validar la actividad de flujo de trabajo.
  	 WorkflowId: {0}
  	 ActivityDisplayName: {1}
  	 ActivityTypeName: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionFailed" xml:space="preserve">
-    <value>Activity execution failed.
+    <value>Error en la ejecución de la actividad.
  	 WorkflowId: {0}
  	 ActivityName: {1}
  	 FailureDescription: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowRunspaceAvailabilityChanged" xml:space="preserve">
-    <value>Runspace availability changed.
+    <value>La disponibilidad del espacio de ejecución ha cambiado.
  	 RunspaceId: {0}
- 	 Availability: {1}</value>
+ 	 Disponibilidad: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowRunspaceStateChanged" xml:space="preserve">
-    <value>Runspace state changed.
+    <value>El estado del espacio de ejecución cambió.
  	 RunspaceId: {0}
  	 NewState: {1}
  	 OldState: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowLoadedForExecution" xml:space="preserve">
-    <value>Workflow loaded for execution.
+    <value>Flujo de trabajo cargado para su ejecución.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowUnloaded" xml:space="preserve">
-    <value>Workflow unloaded.
+    <value>Flujo de trabajo descargado.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowCancelled" xml:space="preserve">
-    <value>Workflow execution cancelled.
+    <value>Ejecución del flujo de trabajo cancelada.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowAborted" xml:space="preserve">
-    <value>Workflow execution aborted.
+    <value>Se anuló la ejecución del flujo de trabajo.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowCleanup" xml:space="preserve">
-    <value>Workflow cleanup operation executed.
+    <value>Operación de limpieza de flujo de trabajo ejecutada.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowLoadedFromDisk" xml:space="preserve">
-    <value>Persisted workflow loaded from disk.
+    <value>Flujo de trabajo persistente cargado desde el disco.
  	 WorkflowId: {0}
- 	 Path: {1}</value>
+ 	 Ruta: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowDeletedFromDisk" xml:space="preserve">
-    <value>Workflow data was deleted from disk.
+    <value>Los datos de flujo de trabajo se eliminaron del disco.
  	 WorkflowId: {0}
- 	 Path: {1}</value>
+ 	 Ruta: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PRemoveJobStarted" xml:space="preserve">
-    <value>Starting remove job.
+    <value>Iniciando el trabajo de eliminación.
  	 JobId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobStateChanged" xml:space="preserve">
-    <value>Job state changed.
+    <value>El estado del trabajo ha cambiado.
  	 JobId: {0}
  	 WorkflowId: {1}
  	 NewState: {2}
  	 OldState: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobError" xml:space="preserve">
-    <value>Job error.
+    <value>Error de trabajo.
  	 JobId: {0}
  	 WorkflowId: {1}
  	 ErrorDescription: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowJobCreated" xml:space="preserve">
-    <value>Job created for workflow (child job).
+    <value>Trabajo creado para el flujo de trabajo (trabajo secundario).
  	 ParentJobId: {0}
  	 ChildJobId: {1}
  	 ChildWorkflowId: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PParentJobCreated" xml:space="preserve">
-    <value>Parent job created for workflow.
+    <value>Trabajo primario creado para el flujo de trabajo.
  	 JobId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobCreationCompleted" xml:space="preserve">
-    <value>All required jobs were created for workflow execution.
+    <value>Se crearon todos los trabajos necesarios para la ejecución del flujo de trabajo.
  	 JobId: {0}
  	 WorkflowId: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobRemoved" xml:space="preserve">
-    <value>Child job removed for workflow.
+    <value>Trabajo secundario quitado para el flujo de trabajo.
  	 ParentJobId: {0}
  	 ChildJobId: {1}
  	 WorkflowId: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobRemoveError" xml:space="preserve">
-    <value>An error occurred while removing job.
+    <value>Error al quitar el trabajo.
  	 ParentJobId: {0}
  	 ChildJobId: {1}
  	 WorkflowId: {2}
  	 Error: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PLoadingWorkflowForExecution" xml:space="preserve">
-    <value>Loading workflow for execution.
+    <value>Cargando flujo de trabajo para su ejecución.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowExecutionFinished" xml:space="preserve">
-    <value>Workflow execution finished.
+    <value>Finalizó la ejecución del flujo de trabajo.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PCancellingWorkflowExecution" xml:space="preserve">
-    <value>Cancelling workflow execution.
+    <value>Cancelando la ejecución del flujo de trabajo.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PAbortingWorkflowExecution" xml:space="preserve">
-    <value>Aborting workflow execution.
+    <value>Anulando la ejecución del flujo de trabajo.
  	 WorkflowId: {0}
- 	 Reason: {1}</value>
+ 	 Motivo: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PUnloadingWorkflow" xml:space="preserve">
-    <value>Unloading workflow.
+    <value>Descargando flujo de trabajo.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PForcedWorkflowShutdownStarted" xml:space="preserve">
-    <value>Forced workflow shutdown started.
+    <value>Se inició el apagado forzado del flujo de trabajo.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PForcedWorkflowShutdownFinished" xml:space="preserve">
-    <value>Forced workflow shutdown finished.
+    <value>Finalizó el cierre forzado del flujo de trabajo.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PForcedWorkflowShutdownError" xml:space="preserve">
-    <value>An error occurred while forcefully shutting down a workflow.
+    <value>Error al cerrar forzosamente un flujo de trabajo.
  	 WorkflowId: {0}
  	 ErrorDescription: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PPersistingWorkflow" xml:space="preserve">
-    <value>Persisting workflow to disk.
+    <value>Conservando el flujo de trabajo en el disco.
  	 WorkflowId: {0}
  	 PersistPath: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPersisted" xml:space="preserve">
-    <value>Workflow persisted to disk.
+    <value>El flujo de trabajo se conserva en el disco.
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionFinished" xml:space="preserve">
-    <value>Activity execution finished.
+    <value>Finalizó la ejecución de la actividad.
  	 ActivityName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowExecutionError" xml:space="preserve">
-    <value>Workflow execution error.
+    <value>Error de ejecución del flujo de trabajo.
  	 WorkflowId: {0}
  	 ErrorDescription: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointRegistered" xml:space="preserve">
-    <value>A new PowerShell endpoint was registered.
+    <value>Se registró un nuevo punto de conexión de PowerShell.
  	 EndpointName: {0}
  	 EndpointType: {1}
  	 RegisteredBy: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointModified" xml:space="preserve">
-    <value>Endpoint configuration modified.
+    <value>Se modificó la configuración del punto de conexión.
  	 EndpointName: {0}
  	 ModifiedBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointUnregistered" xml:space="preserve">
-    <value>Endpoint configuration unregistered.
+    <value>Se anule el registro de la configuración del punto de conexión.
  	 EndpointName: {0}
  	 UnregisteredBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointDisabled" xml:space="preserve">
-    <value>Endpoint configuration disabled.
+    <value>Configuración del punto de conexión deshabilitada.
  	 EndpointName: {0}
  	 DisabledBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointEnabled" xml:space="preserve">
-    <value>Endpoint configuration enabled.
+    <value>Configuración de punto de conexión habilitada.
  	 EndpointName: {0}
  	 EnabledBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3POutOfProcessRunspaceStarted" xml:space="preserve">
-    <value>Out of process runspace started.
- 	 Command: {0}</value>
+    <value>Se inició el espacio de ejecución fuera del proceso.
+ 	 Comando: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PParameterSplattingWasPerformed" xml:space="preserve">
-    <value>Parameter splatting was performed during workflow execution.
- 	 Parameters: {0}
- 	 Computers: {1}</value>
+    <value>La expansión de parámetros se realizó durante la ejecución del flujo de trabajo.
+ 	 Parámetros: {0}
+ 	 Equipos: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowEngineStarted" xml:space="preserve">
-    <value>Workflow engine started.
+    <value>Se inició el motor de flujo de trabajo.
  	 EndpointName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PWORKFLOW_MANAGER_CHECKPOINTPATH" xml:space="preserve">
-    <value>Workflow manager instantiated with
+    <value>Se creó una instancia del administrador de flujo de trabajo con
  	 CheckpointPath: {0}
  	 ConfigProviderId: {1}
  	 UserName: {2}
- 	 Path: {3}</value>
+ 	 Ruta: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_CMDLETS_HOSTNAMERESOLVE" xml:space="preserve">
-    <value>Computer Name $null or . resolve to LocalHost</value>
+    <value>Nombre de equipo $null o . resolver en LocalHost</value>
 </data>
   <data name="PS_PROVIDEReventE_O_CMDLETS_SCHEMERESOLVE" xml:space="preserve">
-    <value>Resolving to default scheme http</value>
+    <value>Resolviendo en http de esquema predeterminado</value>
 </data>
   <data name="PS_PROVIDEReventE_O_CMDLETS_SHELLRESOLVE" xml:space="preserve">
-    <value>Remote shell name resolved to default PowerShellCore</value>
+    <value>Nombre de shell remoto resuelto en PowerShellCore predeterminado</value>
 </data>
   <data name="PS_PROVIDEReventE_O_COMMAND_HEALTH" xml:space="preserve">
     <value>{2}
 
-Context:
+Contexto:
 {0}
 
-User Data:
+Datos de usuario:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ENGINE_HEALTH" xml:space="preserve">
     <value>{2}
 
-Context:
+Contexto:
 {0}
 
-User Data:
+Datos de usuario:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_PROVIDER_HEALTH" xml:space="preserve">
     <value>{2}
 
-Context:
+Contexto:
 {0}
 
-User Data:
+Datos de usuario:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_PIPELINE_DETAIL" xml:space="preserve">
     <value>{2}
 
-Context:
+Contexto:
 {0}
 
-User Data:
+Datos de usuario:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_SCRIPTBLOCK_CREATE_DETAIL" xml:space="preserve">
-    <value>Creating Scriptblock text ({0} of {1}):
+    <value>Creando texto de bloque de script ({0} de {1}):
 {2}
 
-ScriptBlock ID: {3}
-Path: {4}</value>
+Id. de bloque de script: {3}
+Ruta: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_SCRIPTBLOCK_INVOKE_START_DETAIL" xml:space="preserve">
-    <value>Started invocation of ScriptBlock ID: {0}
-Runspace ID: {1}</value>
+    <value>Se inició la invocación del id. de ScriptBlock: {0}
+Id. de espacio de ejecución: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_SCRIPTBLOCK_INVOKE_COMPLETE_DETAIL" xml:space="preserve">
-    <value>Completed invocation of ScriptBlock ID: {0}
-Runspace ID: {1}</value>
+    <value>Invocación completada del id. de ScriptBlock: {0}
+Id. de espacio de ejecución: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_COMMAND_LIFECYCLE" xml:space="preserve">
     <value>{2}
 
-Context:
+Contexto:
 {0}
 
-User Data:
+Datos de usuario:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_ENGINE_LIFECYCLE" xml:space="preserve">
     <value>{2}
 
-Context:
+Contexto:
 {0}
 
-User Data:
+Datos de usuario:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_PROVIDER_LIFECYCLE" xml:space="preserve">
     <value>{2}
 
-Context:
+Contexto:
 {0}
 
-User Data:
+Datos de usuario:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_SETTINGS" xml:space="preserve">
     <value>{2}
 
-Context:
+Contexto:
 {0}
 
-User Data:
+Datos de usuario:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_WriteTransferEvent" xml:space="preserve">
-    <value>Correlating activity id's.
+    <value>Correlación de identificadores de actividad.
  	 CurrentActivityId: {0}
  	 ParentActivityId: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_ENGINE_TRACE" xml:space="preserve">
-    <value>Class Name = {0}
-Method Name = {1}
-Workflow GUID = {2}
-Message = {3}
+    <value>Nombre de clase = {0}
+Nombre del método = {1}
+GUID de flujo de trabajo = {2}
+Mensaje = {3}
 {4}
-Activity Name = {5}
-Activity GUID = {6}
-Parameters = {7}</value>
+Nombre de actividad = {5}
+GUID de actividad = {6}
+Parámetros = {7}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACE_CONSTRUCTOR" xml:space="preserve">
-    <value>Creating Runspace object
- 	 Instance Id: {0}</value>
+    <value>Creando objeto Runspace
+ 	 Id. de instancia: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACEPOOL_CONSTRUCTOR" xml:space="preserve">
-    <value>Creating RunspacePool object
+    <value>Creando objeto RunspacePool
  	 InstanceId {0}
  	 MinRunspaces {1}
  	 MaxRunspaces {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACEPOOL_OPEN" xml:space="preserve">
-    <value>Opening RunspacePool</value>
+    <value>Abriendo RunspacePool</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACEPOOL_TRANSFER" xml:space="preserve">
-    <value>Modifying activity Id and correlating</value>
+    <value>Modificación del identificador de actividad y correlación</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACE_STATE_CHANGE" xml:space="preserve">
-    <value>Runspace state changed to {0}</value>
+    <value>El estado del espacio de ejecución cambió a {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_RUNSPACE_CREATE_RETRY" xml:space="preserve">
-    <value>Attempting session creation retry {0} for error code {1} on session Id {2}</value>
+    <value>Intentando reintentar {0} la creación de la sesión para el código de error {1} en el identificador de sesión {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_LISTENER_START" xml:space="preserve">
-    <value>PowerShell has started an IPC listening thread on process: {0} in AppDomain: {1}.</value>
+    <value>PowerShell ha iniciado un subproceso de escucha de IPC en el proceso: {0} en AppDomain: {1}.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_LISTENER_END" xml:space="preserve">
-    <value>PowerShell has ended an IPC listening thread on process: {0} in AppDomain: {1}.</value>
+    <value>PowerShell ha finalizado un subproceso de escucha de IPC en el proceso: {0} en AppDomain: {1}.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_LISTENER_ERROR" xml:space="preserve">
-    <value>An error has occurred in PowerShell IPC listening thread on process: {0} in AppDomain: {1}.  Error Message: {2}.</value>
+    <value>Error en el subproceso de escucha de IPC de PowerShell en el proceso: {0} en AppDomain: {1}.  Mensaje error: {2}.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_CONNECT" xml:space="preserve">
-    <value>PowerShell IPC connect on process: {0} in AppDomain: {1} for User: {2}.</value>
+    <value>Conexión IPC de PowerShell en el proceso: {0} en AppDomain: {1} para el usuario: {2}.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_DISCONNECT" xml:space="preserve">
-    <value>PowerShell IPC disconnect on process: {0} in AppDomain: {1} for User: {2}.</value>
+    <value>Desconexión de IPC de PowerShell en el proceso: {0} en AppDomain: {1} para el usuario: {2}.</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_PORT" xml:space="preserve">
-    <value>Port resolved to {0}</value>
+    <value>Puerto resuelto en {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_APPNAME" xml:space="preserve">
-    <value>AppName resolved to {0}</value>
+    <value>AppName resuelto en {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_COMPUTERNAME" xml:space="preserve">
-    <value>ComputerName resolved to {0}</value>
+    <value>ComputerName resuelto en {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_SCHEME" xml:space="preserve">
-    <value>Scheme is {0}</value>
+    <value>El esquema es {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_TEST" xml:space="preserve">
-    <value>Test analytic message</value>
+    <value>Mensaje analítico de prueba</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_WSMANCONNECTIONINFO" xml:space="preserve">
-    <value>Connection Parameters are
- Connection URI: {0}
- Resource URI: {1}
- User: {2}
+    <value>Los parámetros de conexión son
+ URI de conexión: {0}
+ URI de recurso: {1}
+ Usuario: {2}
  OpenTimeout: {3}
  IdleTimeout: {4}
  CancelTimeout: {5}
  AuthenticationMechanism: {6}
- Thumb Print: {7}
+ Huella digital: {7}
  MaxUriRedirectionCount: {8}
  MaxReceivedDataSizePerCommand: {0}0
  MaxReceivedObjectSize: {0}1</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACEPOOL_TRANSFER" xml:space="preserve">
-    <value>Modifying activity Id and correlating</value>
+    <value>Modificación del identificador de actividad y correlación</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_RCVDOBJ" xml:space="preserve">
-    <value>Received object with Runspace Id: {0} Command Id: {1} Destination: {2} DataType: {3} TargetInterface: {4}</value>
+    <value>Objeto recibido con id. de espacio de ejecución: {0} Id. de comando: {1} Destino: {2} DataType: {3} TargetInterface: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_APPDOMAIN_UNHANDLED_EXCEPTION" xml:space="preserve">
-    <value>An unhandled exception occurred in the appdomain.
-Exception Type: {0}
-Exception Message: {1}
-Exception StackTrace: {2}</value>
+    <value>Se produjo una excepción no controlada en el appdomain.
+Tipo de excepción: {0}
+Mensaje de excepción: {1}
+Excepción StackTrace: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_ERROR" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. WSMan reported an error with error code: {2}.
- Error message: {3}
+    <value>Id. de espacio de ejecución: {0} Id. de canalización: {1}. WSMan notificó un error con el código de error: {2}.
+ Mensaje de error: {3}
  StackTrace: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_APPDOMAIN_UNHANDLED_EXCEPTION" xml:space="preserve">
-    <value>An unhandled exception occurred in the appdomain.
-Exception Type: {0}
-Exception Message: {1}
-Exception StackTrace: {2}</value>
+    <value>Se produjo una excepción no controlada en el appdomain.
+Tipo de excepción: {0}
+Mensaje de excepción: {1}
+Excepción StackTrace: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_TRANSPORT_ERROR" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. WSMan reported an error with error code: {2}.
- Error message: {3}
+    <value>Id. de espacio de ejecución: {0} Id. de canalización: {1}. WSMan notificó un error con el código de error: {2}.
+ Mensaje de error: {3}
  StackTrace: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CONNECT" xml:space="preserve">
-    <value>Runspace Id {0}. Establishing a connection using WSMan Create Shell</value>
+    <value>Id. de espacio de ejecución {0}. Establecimiento de una conexión mediante WSMan Create Shell</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SHELL_CONNECT_CALLBACK" xml:space="preserve">
-    <value>Runspace Id {0}. Callback received for WSMan Create Shell</value>
+    <value>Id. de espacio de ejecución {0}. Devolución de llamada recibida para WSMan Create Shell</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SHELL_CLOSE" xml:space="preserve">
-    <value>Runspace Id: {0}. Closing shell using WSManCloseShell</value>
+    <value>Id. de espacio de ejecución: {0}. Cierre del shell mediante WSManCloseShell</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SHELL_CLOSE_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0}. Callback received for WSManCloseShell</value>
+    <value>Id. de espacio de ejecución: {0}. Devolución de llamada recibida para WSManCloseShell</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SEND_DATA" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Sending data of size {2}</value>
+    <value>Id. de espacio de ejecución: {0} Id. de canalización: {1}. Envío de datos de tamaño {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SEND_DATA_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Callback received for WSManSendShellInputEx</value>
+    <value>Id. de espacio de ejecución: {0} Id. de canalización: {1}. Devolución de llamada recibida para WSManSendShellInputEx</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_RECEIVE_DATA" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Placing Receive request using WSManReceiveShellOutputEx</value>
+    <value>Id. de espacio de ejecución: {0} Id. de canalización: {1}. Colocación de la solicitud receive mediante WSManReceiveShellOutputEx</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_RECEIVE_DATA_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Received Data of size {2}.</value>
+    <value>Id. de espacio de ejecución: {0} Id. de canalización: {1}. Datos recibidos de tamaño {2}.</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CONNECT" xml:space="preserve">
-    <value>Runspace Id {0} Pipeline Id {1}. Establishing a command connection using WSManRunShellCommandEx</value>
+    <value>Id. de espacio de ejecución {0} Id. de canalización {1}. Establecimiento de una conexión de comandos mediante WSManRunShellCommandEx</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CONNECT_CALLBACK" xml:space="preserve">
-    <value>Runspace Id {0} Pipeline Id {1}. Callback received for command connection</value>
+    <value>Id. de espacio de ejecución {0} Id. de canalización {1}. Devolución de llamada recibida para la conexión de comandos</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CLOSE" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Closing transport for command</value>
+    <value>Id. de espacio de ejecución: {0} Id. de canalización {1}. Cerrando transporte para el comando</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CLOSE_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Callback received for command close</value>
+    <value>Id. de espacio de ejecución: {0} Id. de canalización {1}. Devolución de llamada recibida para cerrar el comando</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SIGNAL" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Sending signal with code {2} using WSManSignalShellEx</value>
+    <value>Id. de espacio de ejecución: {0} Id. de canalización {1}. Envío de señal con código {2} mediante WSManSignalShellEx</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SIGNAL_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Callback received for WSManSignalShellEx</value>
+    <value>Id. de espacio de ejecución: {0} Id. de canalización {1}. Devolución de llamada recibida para WSManSignalShellEx</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_URI_REDIRECTION" xml:space="preserve">
-    <value>Runspace Id: {0}. Connection is getting redirected to Uri: {1}</value>
+    <value>Id. de espacio de ejecución: {0}. La conexión se redirige al URI: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SERVER_SEND_DATA" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Server is sending data of size {2} to client. DataType: {3} TargetInterface: {4}</value>
+    <value>Id. de espacio de ejecución: {0} Id. de canalización: {1}. El servidor está enviando datos de tamaño {2} al cliente. DataType: {3} TargetInterface: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_CREATE_SERVER_REMOTESESSION" xml:space="preserve">
-    <value>Request {0}. Creating a server remote session. UserName: {1} Custom Shell Id: {2}</value>
+    <value>Solicitud {0}. Creando una sesión remota de servidor. UserName: {1} Id. de shell personalizado: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_REPORT_CONTEXT" xml:space="preserve">
-    <value>Reporting context for request: {0} Context Reported: {0}</value>
+    <value>Contexto de informe para la solicitud: {0} contexto notificado: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_REPORT_OPERATION_COMPLETE" xml:space="preserve">
-    <value>Reporting operation complete for request: {0}
- Error Code: {1}
- Error Message: {2}
+    <value>Operación de informes completada para la solicitud: {0}
+ Código de error: {1}
+ Mensaje de error: {2}
  StackTrace: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_CREATE_COMMAND_REMOTESESSION" xml:space="preserve">
-    <value>Shell Context {0}. Request Id {1}. Creating a commonad session for running a command.</value>
+    <value>Contexto de shell {0}. Id. de solicitud {1}. Crear una sesión de Commonad para ejecutar un comando.</value>
 </data>
   <data name="PS_PROVIDEReventE_A_STOP_COMMAND" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} Request Id {2}. Stopping command.</value>
+    <value>Contexto de shell {0} Contexto de comando {1} Id. de solicitud {2}. Deteniendo comando.</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERVER_RECEIVED_DATA" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} Request Id {2}. Received data from client.</value>
+    <value>Contexto de shell {0} Contexto de comando {1} Id. de solicitud {2}. Datos recibidos del cliente.</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERVER_RECEIVE_REQUEST" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} Request Id {2}. Client sent a receive request so that server can send data.</value>
+    <value>Contexto de shell {0} Contexto de comando {1} Id. de solicitud {2}. El cliente envió una solicitud de recepción para que el servidor pueda enviar datos.</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERVER_CLOSE_OPERATION" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} IsReceiveOperation {2}. Got close operation request.</value>
+    <value>Contexto {1} de comando de contexto {0} de shell IsReceiveOperation {2}. Se obtuvo una solicitud de operación de cierre.</value>
 </data>
   <data name="PS_PROVIDEReventE_A_LOAD_PSCUSTOMSHELL_ASSEMBLY" xml:space="preserve">
-    <value>Loading assembly {0} for custom shell with shell Id {1}</value>
+    <value>Cargando ensamblado {0} para shell personalizado con id. de shell {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_LOAD_PSCUSTOMSHELL_TYPE" xml:space="preserve">
-    <value>Loading type {0} for custom shell with shell Id {1}</value>
+    <value>Cargando el tipo {0} para el shell personalizado con el identificador de shell {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RECEIVED_FRAGMENT" xml:space="preserve">
-    <value>Received remoting fragment.
- 	 Object Id: {0}
- 	 Fragment Id: {1}
- 	 Start Flag: {2}
- 	 End Flag: {3}
- 	 Payload Length: {4}
- 	 Payload Data: {5}</value>
+    <value>Fragmento de comunicación remota recibido.
+ 	 Id. de objeto: {0}
+ 	 Id. de fragmento: {1}
+ 	 Marca de inicio: {2}
+ 	 Marca de finalización: {3}
+ 	 Longitud de carga: {4}
+ 	 Datos de carga: {5}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SENT_FRAGMENT" xml:space="preserve">
-    <value>Sent remoting fragment.
- 	 Object Id: {0}
- 	 Fragment Id: {1}
- 	 Start Flag: {2}
- 	 End Flag: {3}
- 	 Payload Length: {4}
- 	 Payload Data: {5}</value>
+    <value>Fragmento de comunicación remota enviado.
+ 	 Id. de objeto: {0}
+ 	 Id. de fragmento: {1}
+ 	 Marca de inicio: {2}
+ 	 Marca de finalización: {3}
+ 	 Longitud de carga: {4}
+ 	 Datos de carga: {5}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SHUTTING_DOWN" xml:space="preserve">
-    <value>Shutting down winrm service.</value>
+    <value>Cerrando el servicio winrm.</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_REHYDRATION_SUCCESS" xml:space="preserve">
-    <value>Successfully rehydrated an object.
- 	 Deserialized type name: {0}
- 	 Rehydrated by casting to type: {1}
- 	 Rehydrated object is of type: {2}</value>
+    <value>Un objeto se rehidrató correctamente.
+ 	 Nombre del tipo deserializado: {0}
+ 	 Rehidratación mediante conversión al tipo: {1}
+ 	 El objeto rehidratado es de tipo: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_REHYDRATION_FAILURE" xml:space="preserve">
-    <value>Failed to rehydrated an object.
- 	 Deserialized type name: {0}
- 	 Rehydrated by casting to type: {1}
- 	 Type cast exception: {2}
- 	 Type cast inner exception: {3}</value>
+    <value>No se pudo rehidratar un objeto.
+ 	 Nombre del tipo deserializado: {0}
+ 	 Rehidratación mediante conversión al tipo: {1}
+ 	 Excepción de conversión de tipos: {2}
+ 	 Excepción interna de conversión de tipos: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_DEPTH_OVERRIDE" xml:space="preserve">
-    <value>Serialization depth has been overridden.
- 	 Serialized type name: {0}
- 	 Original depth: {1}
- 	 Overridden depth: {2}
- 	 Current depth below top level: {3}</value>
+    <value>Se ha invalidado la profundidad de serialización.
+ 	 Nombre de tipo serializado: {0}
+ 	 Profundidad original: {1}
+ 	 Profundidad invalidada: {2}
+ 	 Profundidad actual por debajo del nivel superior: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_MODE_OVERRIDE" xml:space="preserve">
-    <value>Serialization mode has been overridden.
- 	 Serialized type name: {0}
- 	 Overridden mode: {1}</value>
+    <value>Se ha invalidado el modo de serialización.
+ 	 Nombre de tipo serializado: {0}
+ 	 Modo invalidado: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_SCRIPT_PROPERTY_WITHOUT_RUNSPACE" xml:space="preserve">
-    <value>Serialization of a script property has been skipped, because there is no runspace to use for evaluation of the property.
- 	 Property name: {0}
- 	 Property owner's type name: {1}
- 	 Getter script: {2}</value>
+    <value>Se ha omitido la serialización de una propiedad de script porque no hay ningún espacio de ejecución que usar para la evaluación de la propiedad.
+ 	 Nombre de la propiedad: {0}
+ 	 Nombre de tipo del propietario de la propiedad: {1}
+ 	 Script de captador: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_PROPERTY_GETTER_FAILED" xml:space="preserve">
-    <value>Serialization of a property has been skipped, because property getter failed.
- 	 Property name: {0}
- 	 Property owner's type name: {1}
- 	 Exception from property getter: {2}
- 	 Inner exception from property getter: {3}</value>
+    <value>Se omitió la serialización de una propiedad porque se produjo un error en el captador de propiedad.
+ 	 Nombre de la propiedad: {0}
+ 	 Nombre de tipo del propietario de la propiedad: {1}
+ 	 Excepción del captador de propiedades: {2}
+ 	 Excepción interna del captador de propiedades: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_ENUMERATION_FAILED" xml:space="preserve">
-    <value>Serialization of an enumerable object might not be complete, because object being enumerated threw an exception.
- 	 Type of object being enumerated: {0}
- 	 Exception: {1}</value>
+    <value>Es posible que la serialización de un objeto enumerable no esté completa, porque el objeto que se está enumerando produjo una excepción.
+ 	 Tipo de objeto que se enumera: {0}
+ 	 Excepción: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_TOSTRING_FAILED" xml:space="preserve">
-    <value>Serialization called object's ToString method which failed.
- 	 Type of object: {0}
- 	 Exception: {1}</value>
+    <value>La serialización llamó al método ToString del objeto y se produjo un error.
+ 	 Tipo de objeto: {0}
+ 	 Excepción: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_MAX_DEPTH_WHEN_SERIALIZING" xml:space="preserve">
-    <value>Maximum depth below top level has been reached, forcing object to be serialized as strings.
- 	 Object type at max depth: {0}
- 	 Property name at max depth: {1}
- 	 Depth: {2}</value>
+    <value>Se ha alcanzado la profundidad máxima por debajo del nivel superior, lo que obliga a serializar el objeto como cadenas.
+ 	 Tipo de objeto en profundidad máxima: {0}
+ 	 Nombre de propiedad en profundidad máxima: {1}
+ 	 Profundidad: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_XMLEXCEPTION_WHEN_DESERIALIZING" xml:space="preserve">
-    <value>XmlException has been thrown by the deserializer (most likely indicating incorrect clixml format).
- 	 Line number: {0} Line position: {1}
- 	 Exception: {2}</value>
+    <value>El deserializador ha iniciado XmlException (lo más probable es que indique un formato clixml incorrecto).
+ 	 Número de línea: {0} posición de línea: {1}
+ 	 Excepción: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_SPECIFIC_PROPERTY_MISSING" xml:space="preserve">
-    <value>Serialization of specified properties failed, because one of the specified properties was missing.
- 	 Type of object: {0}
- 	 Property name: {1}</value>
+    <value>Error en la serialización de las propiedades especificadas porque faltaba una de las propiedades especificadas.
+ 	 Tipo de objeto: {0}
+ 	 Nombre de la propiedad: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_PowershellConsoleStartupStart" xml:space="preserve">
-    <value>PowerShell console is starting up</value>
+    <value>Se está iniciando la consola de PowerShell</value>
 </data>
   <data name="PS_PROVIDEReventE_O_PowershellConsoleStartupStop" xml:space="preserve">
-    <value>PowerShell console is ready for user input</value>
+    <value>La consola de PowerShell está lista para la entrada del usuario</value>
 </data>
   <data name="PS_PROVIDEReventE_D_DebugMessage" xml:space="preserve">
     <value>{0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_Powershell_ErrorRecord" xml:space="preserve">
-    <value>Tracing ErrorRecord:
- Message: {0}
+    <value>Registro de errores de seguimiento:
+ Mensaje: {0}
  CategoryInfo.Category: {1}
  CategoryInfo.Reason : {2}
  CategoryInfo.TargetName : {3}
  FullyQualifiedErrorId: {4}
- Exception Details:
- Message : {5}
- Stack Trace: {6}
+ Detalles de la excepción:
+ Mensaje : {5}
+ Seguimiento de la pila: {6}
  InnerException {7}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_D_Powershell_Exception" xml:space="preserve">
-    <value>Exception:
- Message: {0}
+    <value>Excepción:
+ Mensaje: {0}
  StackTrace: {1}
  InnerException : {2}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_Powershell_PSObject" xml:space="preserve">
-    <value>Tracing PSObject</value>
+    <value>Seguimiento de PSObject</value>
 </data>
   <data name="PS_PROVIDEReventE_D_Powershell_Job" xml:space="preserve">
-    <value>Tracing Job:
+    <value>Trabajo de seguimiento:
  Id: {0}
  InstanceId: {1}
- Name: {2}
- Location: {3}
- State: {4}
- Command: {5}
+ Nombre: {2}
+ Ubicación: {3}
+ Estado: {4}
+ Comando: {5}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_D_MESSAGE" xml:space="preserve">
-    <value>Trace Information:
+    <value>Información de seguimiento:
  {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_MESSAGE2" xml:space="preserve">
-    <value>Trace Information:
- {0} {1}</value>
+    <value>Información de seguimiento:
+ {0} {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginStartWorkflowApplication" xml:space="preserve">
-    <value>BEGIN ImportWorkflowCommand::StartWorkflowApplication. Starting invocation of workflow function. Tracking Guid {0}</value>
+    <value>BEGIN ImportWorkflowCommand::StartWorkflowApplication. Iniciando la invocación de la función de flujo de trabajo. GUID de seguimiento {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndStartWorkflowApplication" xml:space="preserve">
-    <value>END ImportWorkflowCommand::StartWorkflowApplication. Ending invocation of workflow function. Tracking Guid {0}</value>
+    <value>END ImportWorkflowCommand::StartWorkflowApplication. Finalización de la invocación de la función de flujo de trabajo. GUID de seguimiento {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginCreateNewJob" xml:space="preserve">
-    <value>BEGIN Creating new job in ImportWorkflowCommand::StartWorkflowApplication. Tracking Guid {0}</value>
+    <value>EMPEZAR a crear un nuevo trabajo en ImportWorkflowCommand::StartWorkflowApplication. GUID de seguimiento {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndCreateNewJob" xml:space="preserve">
-    <value>END Creating new job in ImportWorkflowCommand::StartWorkflowApplication. Tracking Guid {0}</value>
+    <value>FIN Crear un nuevo trabajo en ImportWorkflowCommand::StartWorkflowApplication. GUID de seguimiento {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PTrackingGuidContainerParentJobCorrelation" xml:space="preserve">
-    <value>END Creating new job in ImportWorkflowCommand::StartWorkflowApplication. Tracking Guid {0} : ContainerParentJob Guid {1}</value>
+    <value>FIN Crear un nuevo trabajo en ImportWorkflowCommand::StartWorkflowApplication. GUID {0} de seguimiento : Guid de ContainerParentJob {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginJobLogic" xml:space="preserve">
     <value>BEGIN JobLogic ContainerParentJob Guid {0}</value>
@@ -835,90 +835,90 @@ Exception StackTrace: {2}</value>
     <value>END WorkflowExecution ContainerParentJob Guid {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PChildWorkflowJobAddition" xml:space="preserve">
-    <value>WorkflowJob with Guid {0} added to ContainerParentJob with Guid {1}</value>
+    <value>WorkflowJob con GUID {0} agregado a ContainerParentJob con GUID {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PProxyJobRemoteJobAssociation" xml:space="preserve">
-    <value>ProxyJob with Guid {0} associated with remote ContainerParentJob with Guid {1}</value>
+    <value>ProxyJob con GUID {0} asociado a ContainerParentJob remoto con GUID {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginContainerParentJobExecution" xml:space="preserve">
-    <value>BEGIN Execution of ContainerParentJob with Guid {0}</value>
+    <value>BEGIN Ejecución de ContainerParentJob con GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndContainerParentJobExecution" xml:space="preserve">
-    <value>END Execution of ContainerParentJob with Guid {0}</value>
+    <value>END Ejecución de ContainerParentJob con GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginProxyJobExecution" xml:space="preserve">
-    <value>BEGIN Execution of Proxy Job with Guid {0}</value>
+    <value>INICIAR ejecución del trabajo de proxy con GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndProxyJobExecution" xml:space="preserve">
-    <value>END Execution of Proxy Job with Guid {0}</value>
+    <value>END Ejecución del trabajo de proxy con GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginProxyJobEventHandler" xml:space="preserve">
-    <value>BEGIN StateChanged event handler for Proxy Job with Guid {0}</value>
+    <value>Controlador de eventos BEGIN StateChanged para el trabajo de proxy con GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndProxyJobEventHandler" xml:space="preserve">
-    <value>END StateChanged event handler for Proxy Job with Guid {0}</value>
+    <value>Controlador de eventos END StateChanged para el trabajo de proxy con GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginProxyChildJobEventHandler" xml:space="preserve">
-    <value>BEGIN StateChanged event handler for Proxy Child Job with Guid {0}</value>
+    <value>Controlador de eventos BEGIN StateChanged para el trabajo secundario de proxy con GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndProxyChildJobEventHandler" xml:space="preserve">
-    <value>END StateChanged event handler for Proxy Child Job with Guid {0}</value>
+    <value>Controlador de eventos END StateChanged para el trabajo secundario de proxy con GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginRunGarbageCollection" xml:space="preserve">
-    <value>BEGIN Running garbage collection</value>
+    <value>EMPEZAR a ejecutar la recolección de elementos no utilizados</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndRunGarbageCollection" xml:space="preserve">
-    <value>END Running garbage collection</value>
+    <value>FINALIZAR la ejecución de la recolección de elementos no utilizados</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PPERSISTENCE_STORE_MAXSIZE_REACHED" xml:space="preserve">
-    <value>Persistence store has reached its maximum specified size</value>
+    <value>El almacén de persistencia ha alcanzado su tamaño máximo especificado</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEExecuteScript" xml:space="preserve">
-    <value>Windows PowerShell ISE has started to run script file {0}.</value>
+    <value>Windows PowerShell ISE ha empezado a ejecutar el archivo {0}de script.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEExecuteSelection" xml:space="preserve">
-    <value>Windows PowerShell ISE has started to run a user-selected script from file {0}.</value>
+    <value>Windows PowerShell ISE ha empezado a ejecutar un script seleccionado por el usuario desde el archivo {0}.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEStopCommand" xml:space="preserve">
-    <value>Windows PowerShell ISE is stopping the current command.</value>
+    <value>Windows PowerShell ISE está deteniendo el comando actual.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEResumeDebugger" xml:space="preserve">
-    <value>Windows PowerShell ISE is resuming the debugger.</value>
+    <value>Windows PowerShell ISE está reanudando el depurador.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEStopDebugger" xml:space="preserve">
-    <value>Windows PowerShell ISE is stopping the debugger.</value>
+    <value>Windows PowerShell ISE está deteniendo el depurador.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDebuggerStepInto" xml:space="preserve">
-    <value>Windows PowerShell ISE is stepping into debugging.</value>
+    <value>Windows PowerShell ISE está depurando paso a paso.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDebuggerStepOver" xml:space="preserve">
-    <value>Windows PowerShell ISE is stepping over debugging.</value>
+    <value>Windows PowerShell ISE está recorriendo paso a paso la depuración.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDebuggerStepOut" xml:space="preserve">
-    <value>Windows PowerShell ISE is stepping out of debugging.</value>
+    <value>Windows PowerShell ISE está saliendo de la depuración.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEEnableAllBreakpoints" xml:space="preserve">
-    <value>Windows PowerShell ISE is enabling all breakpoints.</value>
+    <value>Windows PowerShell ISE está habilitando todos los puntos de interrupción.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDisableAllBreakpoints" xml:space="preserve">
-    <value>Windows PowerShell ISE is disabling all breakpoints.</value>
+    <value>Windows PowerShell ISE está deshabilitando todos los puntos de interrupción.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISERemoveAllBreakpoints" xml:space="preserve">
-    <value>Windows PowerShell ISE is removing all breakpoints.</value>
+    <value>Windows PowerShell ISE quita todos los puntos de interrupción.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISESetBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is setting the breakpoint at line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE está estableciendo el punto de interrupción en la línea #: {0} del archivo {1}.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISERemoveBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is removing the breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE está quitando el punto de interrupción de la línea #: {0} del archivo {1}.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEEnableBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is enabling the breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE está habilitando el punto de interrupción en la línea #: {0} del archivo {1}.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDisableBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is disabling the breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE está deshabilitando el punto de interrupción en la línea #: {0} del archivo {1}.</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEHitBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE has hit a breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE ha alcanzado un punto de interrupción en la línea #: {0} del archivo {1}.</value>
 </data>
 </root>

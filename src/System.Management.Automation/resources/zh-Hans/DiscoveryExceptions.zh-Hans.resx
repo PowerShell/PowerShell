@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CmdletFormatInvalid" xml:space="preserve">
-    <value>The cmdlet name "{0}" cannot be validated because it is not in the correct format. Cmdlet names must include a verb and a noun separated by a "-", such as "Get-Process".</value>
+    <value>无法验证 cmdlet 名称 "{0}"，因为其格式不正确。cmdlet 名称必须包含一个动词和一个名词，且它们之间用 "-" 分隔，例如 "Get-Process"。</value>
   </data>
   <data name="ParameterDeclaredInParameterSetMultipleTimes" xml:space="preserve">
-    <value>The parameter "{0}" is declared in parameter-set "{1}" multiple times.</value>
+    <value>在参数集 "{1}" 中多次声明了参数 "{0}"。</value>
   </data>
   <data name="AliasDeclaredMultipleTimes" xml:space="preserve">
-    <value>The alias "{0}" is declared multiple times.</value>
+    <value>多次声明了别名 "{0}"。</value>
   </data>
   <data name="CompiledCommandParameterMemberMustBeFieldOrProperty" xml:space="preserve">
-    <value>Parameter could not be declared. Parameters can be declared only on fields and properties.</value>
+    <value>无法声明参数。只能在字段和属性上声明参数。</value>
   </data>
   <data name="InvalidCmdletNameFormat" xml:space="preserve">
-    <value>Cannot process the cmdlet. A cmdlet name must consist of a verb and noun pair separated by '-'.</value>
+    <value>无法处理该 cmdlet。cmdlet 名称必须由用 '-' 分隔的动词和名词组成。</value>
   </data>
   <data name="CommandNotFoundException" xml:space="preserve">
-    <value>The term '{0}' is not recognized as a name of a cmdlet, function, script file, or executable program.
-Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>术语 '{0}' 不会被识别为 cmdlet、函数、脚本文件或可执行程序的名称。
+请检查名称的拼写或验证路径是否正确(如果包含路径)，然后重试。</value>
   </data>
   <data name="CmdletNotFoundException" xml:space="preserve">
-    <value>Argument '{0}' is not recognized as a cmdlet: {1}</value>
+    <value>自变量 '{0}' 未被识别为 cmdlet: {1}</value>
   </data>
   <data name="CmdletDoesNotDeriveFromCmdletType" xml:space="preserve">
-    <value>The argument '{0}' is not recognized as a cmdlet, possibly because it does not derive from the Cmdlet or PSCmdlet classes: {1}</value>
+    <value>自变量 '{0}' 未被识别为 cmdlet，这可能是因为它并非派生自 Cmdlet 或 PSCmdlet 类: {1}</value>
   </data>
   <data name="AliasNotResolvedException" xml:space="preserve">
-    <value>Cannot resolve alias '{0}' because it refers to term '{1}', which is not recognized as a cmdlet, function, executable program, or script file. Verify the term and try again.</value>
+    <value>无法解析别名 '{0}'，因为它引用了术语 '{1}'，而该术语不会被识别为 cmdlet、函数、可执行程序或脚本文件。请验证该术语，然后重试。</value>
   </data>
   <data name="CommandNameNotCmdlet" xml:space="preserve">
-    <value>Parameter '{0}' with value '{1}' cannot be processed because it is not a cmdlet and cannot be processed by the CommandProcessor.</value>
+    <value>无法处理值为 '{1}' 的参数 '{0}'，因为它不是 cmdlet，无法由 CommandProcessor 处理。</value>
   </data>
   <data name="DuplicateCmdletName" xml:space="preserve">
-    <value>A cmdlet named '{0}' already exists. Cmdlets must have unique names.</value>
+    <value>名为 '{0}' 的 cmdlet 已存在。Cmdlet 必须具有唯一名称。</value>
   </data>
   <data name="DuplicateCmdletProviderName" xml:space="preserve">
-    <value>A cmdlet provider named '{0}' already exists. Cmdlet providers must have unique names.</value>
+    <value>名为 '{0}' 的 cmdlet 提供程序已存在。cmdlet 提供程序必须具有唯一名称。</value>
   </data>
   <data name="DuplicateAssemblyName" xml:space="preserve">
-    <value>An assembly named '{0}' already exists. Assemblies must have unique names.</value>
+    <value>名为 '{0}' 的程序集已存在。程序集必须具有唯一名称。</value>
   </data>
   <data name="DuplicateScriptName" xml:space="preserve">
-    <value>A script named '{0}' already exists. Scripts must have unique names.</value>
+    <value>名为 '{0}' 的脚本已存在。脚本必须具有唯一名称。</value>
   </data>
   <data name="ScriptRequiresInvalidFormat" xml:space="preserve">
-    <value>Cannot process the #requires statement because it is not in the correct format.
-The #requires statement must be in one of the following formats:
+    <value>无法处理 #requires 语句，因为其格式不正确。
+#requires 语句必须采用以下格式之一:
  "#requires -shellid &lt;shellID&gt;"
  "#requires -version &lt;major.minor&gt;"
  "#requires -psedition &lt;edition&gt;"
@@ -171,61 +171,61 @@ The #requires statement must be in one of the following formats:
  "#requires -runasadministrator"</value>
   </data>
   <data name="RequiresInterpreterNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell. To run this script you must use the shell located at '{2}'.</value>
+    <value>无法运行脚本 '{0}'，因为它包含 shell ID 为 {1} 且与当前 shell 不兼容的 "#requires" 语句。若要运行此脚本，必须使用位于 '{2}' 的 shell。</value>
   </data>
   <data name="RequiresInterpreterNotCompatibleNoPath" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell.</value>
+    <value>无法运行脚本 '{0}'，因为它包含 shell ID 为 {1} 且与当前 shell 不兼容的 "#requires" 语句。</value>
   </data>
   <data name="RequiresPSVersionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell {1}. The version of PowerShell that is required by the script does not match the currently running version of PowerShell {2}.</value>
+    <value>无法运行脚本 '{0}'，因为它包含 PowerShell {1} 的 "#requires" 语句。该脚本所需的 PowerShell 版本与当前运行的 PowerShell 版本 {2} 不匹配。</value>
   </data>
   <data name="RequiresPSEditionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell editions '{1}'. The edition of PowerShell that is required by the script does not match the currently running PowerShell {2} edition.</value>
+    <value>无法运行脚本 '{0}'，因为它包含 PowerShell 版本 '{1}' 的 "#requires" 语句。该脚本所需的 PowerShell 版本与当前运行的 PowerShell {2} 版本不匹配。</value>
   </data>
   <data name="RequiresMissingPSSnapIns" xml:space="preserve">
-    <value>The script '{0}' cannot be run because the following snap-ins that are specified by the "#requires" statements of the script are missing: {1}.</value>
+    <value>无法运行脚本 '{0}'，因为该脚本的 "#requires" 语句指定了以下缺失管理单元: {1}。</value>
   </data>
   <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
-    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
+    <value>#requires 语句仅指定了 shellID。在 PowerShell 中运行时，#Requires 语句必须指定所需的 PowerShell 管理单元。</value>
   </data>
   <data name="RequiresElevation" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contains a "#requires" statement for running as Administrator. The current PowerShell session is not running as Administrator. Start PowerShell by using the Run as Administrator option, and then try running the script again.</value>
+    <value>脚本 '{0}' 无法运行，因为它包含用于以管理员身份运行的 "#requires" 语句。当前 PowerShell 会话并非以管理员身份运行。请使用“以管理员身份运行”选项启动 PowerShell，然后再次尝试运行该脚本。</value>
   </data>
   <data name="PSSnapInNameVersion" xml:space="preserve">
-    <value>{0} (Version {1})</value>
+    <value>{0} (版本 {1})</value>
   </data>
   <data name="CommandArgsOnlyForSingleCmdlet" xml:space="preserve">
-    <value>The command could not be retrieved because the ArgumentList parameter can be specified only when retrieving a single cmdlet or script.</value>
+    <value>无法检索该命令，因为只有在检索单个 cmdlet 或脚本时才能指定 ArgumentList 参数。</value>
   </data>
   <data name="ReservedParameterName" xml:space="preserve">
-    <value>The parameter name "{0}" is reserved for future use.</value>
+    <value>已保留参数名称 "{0}" 以供将来使用。</value>
   </data>
   <data name="RequiresMissingModules" xml:space="preserve">
-    <value>The script '{0}' cannot be run because the following modules that are specified by the "#requires" statements of the script are missing: {1}.</value>
+    <value>无法运行脚本 '{0}'，因为该脚本的 "#requires" 语句指定了以下缺失模块: {1}。</value>
   </data>
   <data name="CouldNotAutoImportMatchingModule" xml:space="preserve">
-    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded. For more information, run 'Import-Module {1}'.</value>
+    <value>在模块 '{1}' 中找到了 '{0}' 命令，但无法加载该模块。有关详细信息，请运行 'Import-Module {1}'。</value>
   </data>
   <data name="CouldNotAutoImportMatchingModuleWithErrorMessage" xml:space="preserve">
-    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded due to the following error: [{2}]
-For more information, run 'Import-Module {1}'.</value>
+    <value>在模块 '{1}' 中找到了 '{0}' 命令，但由于以下错误而无法加载该模块: [{2}]
+有关详细信息，请运行 'Import-Module {1}'。</value>
   </data>
   <data name="CouldNotAutoImportModule" xml:space="preserve">
-    <value>The module '{0}' could not be loaded. For more information, run 'Import-Module {0}'.</value>
+    <value>无法加载模块 '{0}'。有关详细信息，请运行 'Import-Module {0}'。</value>
   </data>
   <data name="CommandParameterNotFound" xml:space="preserve">
-    <value>No matching commands include a parameter named '{0}'.  Check the spelling of the parameter name, and then try again.</value>
+    <value>没有匹配的命令包含名为 '{0}' 的参数。 请检查参数名称的拼写，然后重试。</value>
   </data>
   <data name="DotSourceNotSupported" xml:space="preserve">
-    <value>Cannot dot-source this command because it was defined in a different language mode. To invoke this command without importing its contents, omit the '.' operator.</value>
+    <value>无法使用点号加载此命令，因为它是在不同的语言模式下定义的。若要调用此命令而不导入其内容，请省略 '.' 运算符。</value>
   </data>
   <data name="GetCommandShowCommandInfoParamError" xml:space="preserve">
-    <value>The ShowCommandInfo and Syntax parameters cannot be specified together.</value>
+    <value>不能同时指定 ShowCommandInfo 和 Syntax 参数。</value>
   </data>
   <data name="ScriptDisabledWhenFeatureOn" xml:space="preserve">
-    <value>This script command is disabled when the experimental feature '{0}' has been turned on.</value>
+    <value>启用实验性功能 '{0}' 时，将禁用此脚本命令。</value>
   </data>
   <data name="ScriptDisabledWhenFeatureOff" xml:space="preserve">
-    <value>This script command is disabled when the experimental feature '{0}' has been turned off.</value>
+    <value>禁用实验性功能 '{0}' 时，将禁用此脚本命令。</value>
   </data>
 </root>

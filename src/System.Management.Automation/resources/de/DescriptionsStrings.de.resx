@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NullOrEmptyErrorTemplate" xml:space="preserve">
-    <value>{0} cannot be null or empty.</value>
+    <value>{0} darf nicht NULL oder leer sein.</value>
   </data>
 </root>

@@ -121,18 +121,18 @@
     <value>{0}…{1}</value>
   </data>
   <data name="ErrorDetailsEmptyTemplate" xml:space="preserve">
-    <value>Error text is empty for error "{0}" : "{1}"</value>
+    <value>오류 "{0}"의 오류 텍스트가 비어 있음 : "{1}"</value>
   </data>
   <data name="RedirectedException" xml:space="preserve">
-    <value>Object "{0}" is reported as an error.</value>
+    <value>개체 "{0}"이(가) 오류로 보고됩니다.</value>
   </data>
   <data name="UnsupportedPreferenceError" xml:space="preserve">
-    <value>The value {0} is not supported for an ActionPreference variable. The provided value should be used only as a value for a preference parameter, and has been replaced by the default value. For more information, see the Help topic, "about_Preference_Variables."</value>
+    <value>ActionPreference 변수에는 값 {0}이(가) 지원되지 않습니다. 제공된 값은 기본 설정 매개 변수의 값으로만 사용해야 하며 기본값으로 대체되었습니다. 자세한 내용은 도움말 항목 "about_Preference_Variables"를 참조하세요.</value>
   </data>
   <data name="ActionPreferenceReservedForFutureUseError" xml:space="preserve">
-    <value>The {0} ActionPreference value is reserved for future use and is not supported at this time. For more information about preference variables, see the Help topic, "about_Preference_Variables."</value>
+    <value>{0} ActionPreference 값은 나중에 사용하도록 예약되어 있으며 현재는 지원되지 않습니다. 기본 설정 변수에 대한 자세한 내용은 도움말 항목 "about_Preference_Variables"를 참조하세요.</value>
   </data>
   <data name="ReservedActionPreferenceReplacedError" xml:space="preserve">
-    <value>The {0} ActionPreference value is reserved for future use and is not supported at this time. It has been replaced in your {1} variable by the default value of {2}. For more information about preference variables, see the Help topic, "about_Preference_Variables."</value>
+    <value>{0} ActionPreference 값은 나중에 사용하도록 예약되어 있으며 현재는 지원되지 않습니다. {1} 변수에서 기본값인 {2}(으)로 대체되었습니다. 기본 설정 변수에 대한 자세한 내용은 도움말 항목 "about_Preference_Variables"를 참조하세요.</value>
   </data>
 </root>

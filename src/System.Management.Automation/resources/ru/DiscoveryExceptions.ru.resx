@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CmdletFormatInvalid" xml:space="preserve">
-    <value>The cmdlet name "{0}" cannot be validated because it is not in the correct format. Cmdlet names must include a verb and a noun separated by a "-", such as "Get-Process".</value>
+    <value>Имя командлета "{0}" не может быть проверено, поскольку оно имеет неправильный формат. Названия командлетов должны содержать глагол и существительное, разделенные дефисом, например, "Get-Process".</value>
   </data>
   <data name="ParameterDeclaredInParameterSetMultipleTimes" xml:space="preserve">
-    <value>The parameter "{0}" is declared in parameter-set "{1}" multiple times.</value>
+    <value>Параметр "{0}" объявлен в наборе параметров "{1}" несколько раз.</value>
   </data>
   <data name="AliasDeclaredMultipleTimes" xml:space="preserve">
-    <value>The alias "{0}" is declared multiple times.</value>
+    <value>Псевдоним "{0}" объявлен несколько раз.</value>
   </data>
   <data name="CompiledCommandParameterMemberMustBeFieldOrProperty" xml:space="preserve">
-    <value>Parameter could not be declared. Parameters can be declared only on fields and properties.</value>
+    <value>Не удалось объявить параметр. Параметры можно объявлять только для полей и свойств.</value>
   </data>
   <data name="InvalidCmdletNameFormat" xml:space="preserve">
-    <value>Cannot process the cmdlet. A cmdlet name must consist of a verb and noun pair separated by '-'.</value>
+    <value>Не удается обработать командлет. Имя командлета должно состоять из пары глагола и существительного, разделенных дефисом (-).</value>
   </data>
   <data name="CommandNotFoundException" xml:space="preserve">
-    <value>The term '{0}' is not recognized as a name of a cmdlet, function, script file, or executable program.
-Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>Термин "{0}" не распознается как имя, которое является именем для выполнения, функции, файла сценария или исполняемой программы.
+Проверьте правильность написания имени, а если включен путь, то проверьте правильность пути и повторите попытку.</value>
   </data>
   <data name="CmdletNotFoundException" xml:space="preserve">
-    <value>Argument '{0}' is not recognized as a cmdlet: {1}</value>
+    <value>Аргумент "{0}" не распознается как командлет: {1}</value>
   </data>
   <data name="CmdletDoesNotDeriveFromCmdletType" xml:space="preserve">
-    <value>The argument '{0}' is not recognized as a cmdlet, possibly because it does not derive from the Cmdlet or PSCmdlet classes: {1}</value>
+    <value>Аргумент "{0}" не распознается как командлет, возможно, потому что он не является производным от классов Cmdlet или PSCmdlet: {1}</value>
   </data>
   <data name="AliasNotResolvedException" xml:space="preserve">
-    <value>Cannot resolve alias '{0}' because it refers to term '{1}', which is not recognized as a cmdlet, function, executable program, or script file. Verify the term and try again.</value>
+    <value>Не удается разрешить псевдоним "{0}", поскольку он относится к термину "{1}", который не распознается как командлет, функция, исполняемая программа или файл сценария. Проверьте термин и повторите попытку.</value>
   </data>
   <data name="CommandNameNotCmdlet" xml:space="preserve">
-    <value>Parameter '{0}' with value '{1}' cannot be processed because it is not a cmdlet and cannot be processed by the CommandProcessor.</value>
+    <value>Параметр "{0}" со значением "{1}" не может быть обработан, поскольку он не является командлетом и не может быть обработан обработчиком команд.</value>
   </data>
   <data name="DuplicateCmdletName" xml:space="preserve">
-    <value>A cmdlet named '{0}' already exists. Cmdlets must have unique names.</value>
+    <value>Командлет с именем "{0}" уже существует. Имена командлетов должны быть уникальными.</value>
   </data>
   <data name="DuplicateCmdletProviderName" xml:space="preserve">
-    <value>A cmdlet provider named '{0}' already exists. Cmdlet providers must have unique names.</value>
+    <value>Поставщик с именем "{0}" уже существует. Поставщики командлетов должны иметь уникальные имена.</value>
   </data>
   <data name="DuplicateAssemblyName" xml:space="preserve">
-    <value>An assembly named '{0}' already exists. Assemblies must have unique names.</value>
+    <value>Сборка с именем "{0}" уже существует. Имена сборок должны быть уникальными.</value>
   </data>
   <data name="DuplicateScriptName" xml:space="preserve">
-    <value>A script named '{0}' already exists. Scripts must have unique names.</value>
+    <value>Сценарий с именем "{0}" уже существует. Имена сценариев должны быть уникальными.</value>
   </data>
   <data name="ScriptRequiresInvalidFormat" xml:space="preserve">
-    <value>Cannot process the #requires statement because it is not in the correct format.
-The #requires statement must be in one of the following formats:
+    <value>Не обеспечить обработку #requires, так как он имеет неправильный формат.
+В #requires должен быть один из следующих форматов:
  "#requires -shellid &lt;shellID&gt;"
  "#requires -version &lt;major.minor&gt;"
  "#requires -psedition &lt;edition&gt;"
@@ -171,61 +171,61 @@ The #requires statement must be in one of the following formats:
  "#requires -runasadministrator"</value>
   </data>
   <data name="RequiresInterpreterNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell. To run this script you must use the shell located at '{2}'.</value>
+    <value>Скрипт "{0}" не может быть запущен, поскольку он содержит оператор "#requires" с идентификатором оболочки {1}, несовместимым с текущей оболочкой. Для запуска этого сценария необходимо использовать оболочку, расположенную в "{2}".</value>
   </data>
   <data name="RequiresInterpreterNotCompatibleNoPath" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell.</value>
+    <value>Скрипт "{0}" не может быть запущен, поскольку он содержит оператор "#requires" с идентификатором оболочки {1}, несовместимым с текущей оболочкой.</value>
   </data>
   <data name="RequiresPSVersionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell {1}. The version of PowerShell that is required by the script does not match the currently running version of PowerShell {2}.</value>
+    <value>Сценарий "{0}" не может быть запущен, поскольку он содержит оператор "#requires" для PowerShell {1}. Требуемая для выполнения сценария версия PowerShell не соответствует текущей запущенной версии PowerShell {2}.</value>
   </data>
   <data name="RequiresPSEditionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell editions '{1}'. The edition of PowerShell that is required by the script does not match the currently running PowerShell {2} edition.</value>
+    <value>Сценарий "{0}" не может быть запущен, поскольку он содержит оператор "#requires" для версий PowerShell "{1}". Требуемая для выполнения сценария версия PowerShell не соответствует текущей используемой версии PowerShell {2}.</value>
   </data>
   <data name="RequiresMissingPSSnapIns" xml:space="preserve">
-    <value>The script '{0}' cannot be run because the following snap-ins that are specified by the "#requires" statements of the script are missing: {1}.</value>
+    <value>Сценарий "{0}" не может быть запущен, поскольку отсутствуют следующие подключаемые модули, указанные в операторах "#requires" сценария: {1}.</value>
   </data>
   <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
-    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
+    <value>В операторе #requires указан только идентификатор оболочки. Операторы #Requires должны указывать требуемую оснастку PowerShell при запуске в PowerShell.</value>
   </data>
   <data name="RequiresElevation" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contains a "#requires" statement for running as Administrator. The current PowerShell session is not running as Administrator. Start PowerShell by using the Run as Administrator option, and then try running the script again.</value>
+    <value>Сценарий "{0}" не может быть запущен, поскольку содержит оператор "#requires" для запуска от имени администратора. Текущая сессия PowerShell запущена не от имени администратора. Запустите PowerShell, используя параметр "Запуск от имени администратора", а затем попробуйте запустить сценарий еще раз.</value>
   </data>
   <data name="PSSnapInNameVersion" xml:space="preserve">
-    <value>{0} (Version {1})</value>
+    <value>{0} (версия {1})</value>
   </data>
   <data name="CommandArgsOnlyForSingleCmdlet" xml:space="preserve">
-    <value>The command could not be retrieved because the ArgumentList parameter can be specified only when retrieving a single cmdlet or script.</value>
+    <value>Не удалось получить команду, поскольку параметр ArgumentList можно указать только при получении отдельного командлета или сценария.</value>
   </data>
   <data name="ReservedParameterName" xml:space="preserve">
-    <value>The parameter name "{0}" is reserved for future use.</value>
+    <value>Имя параметра "{0}" зарезервировано для дальнейшего использования.</value>
   </data>
   <data name="RequiresMissingModules" xml:space="preserve">
-    <value>The script '{0}' cannot be run because the following modules that are specified by the "#requires" statements of the script are missing: {1}.</value>
+    <value>Сценарий "{0}" не может быть запущен, поскольку отсутствуют следующие модули, указанные в операторах "#requires" сценария: {1}.</value>
   </data>
   <data name="CouldNotAutoImportMatchingModule" xml:space="preserve">
-    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded. For more information, run 'Import-Module {1}'.</value>
+    <value>Команда "{0}" была найдена в модуле "{1}", но модуль не удалось загрузить. Для получения более подробной информации выполните команду "Import-Module {1}".</value>
   </data>
   <data name="CouldNotAutoImportMatchingModuleWithErrorMessage" xml:space="preserve">
-    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded due to the following error: [{2}]
-For more information, run 'Import-Module {1}'.</value>
+    <value>Команда "{0}" найдена в модуле "{1}", но не удалось загрузить модуль из-за следующей ошибки: [{2}]
+Для получения более подробной информации выполните команду "Import-Module {1}".</value>
   </data>
   <data name="CouldNotAutoImportModule" xml:space="preserve">
-    <value>The module '{0}' could not be loaded. For more information, run 'Import-Module {0}'.</value>
+    <value>Не удалось загрузить модуль "{0}". Для получения дополнительных сведений выполните команду "Import-Module {0}".</value>
   </data>
   <data name="CommandParameterNotFound" xml:space="preserve">
-    <value>No matching commands include a parameter named '{0}'.  Check the spelling of the parameter name, and then try again.</value>
+    <value>Ни одна из соответствующих команд не содержит параметра с именем "{0}".  Проверьте правильность написания имени параметра и попробуйте снова.</value>
   </data>
   <data name="DotSourceNotSupported" xml:space="preserve">
-    <value>Cannot dot-source this command because it was defined in a different language mode. To invoke this command without importing its contents, omit the '.' operator.</value>
+    <value>Невозможно выполнить команду с помощью dot-source, поскольку она определена в другом языковом режиме. Чтобы выполнить эту команду без импорта ее содержимого, опустите оператор ".".</value>
   </data>
   <data name="GetCommandShowCommandInfoParamError" xml:space="preserve">
-    <value>The ShowCommandInfo and Syntax parameters cannot be specified together.</value>
+    <value>Параметры ShowCommandInfo и Syntax нельзя указывать одновременно.</value>
   </data>
   <data name="ScriptDisabledWhenFeatureOn" xml:space="preserve">
-    <value>This script command is disabled when the experimental feature '{0}' has been turned on.</value>
+    <value>Эта команда скрипта отключена, если включена экспериментальная функция "{0}".</value>
   </data>
   <data name="ScriptDisabledWhenFeatureOff" xml:space="preserve">
-    <value>This script command is disabled when the experimental feature '{0}' has been turned off.</value>
+    <value>Эта команда сценария отключена, если экспериментальная функция "{0}" выключена.</value>
   </data>
 </root>

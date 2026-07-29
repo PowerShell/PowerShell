@@ -64,493 +64,493 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MissingEventIdMessage" xml:space="preserve">
-    <value>A message was not found for event id PowerShell.Core.Instrumentation.man.</value>
+    <value>未找到事件 ID PowerShell.Core.Instrumentation.man 的消息。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ScheduledJobStarted" xml:space="preserve">
-    <value>Scheduled Job {0} started at {1}
+    <value>计划作业 {0} 已于 {1}开始
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ScheduledJobCompleted" xml:space="preserve">
-    <value>Scheduled Job {0} completed at {1} with state {2}
+    <value>计划作业 {0} 已于 {1}完成，状态为 {2}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ScheduledJobException" xml:space="preserve">
-    <value>Scheduled Job Exception {0}:
- Message: {1}
+    <value>计划作业异常 {0}:
+ 消息: {1}
  StackTrace: {2}
  InnerException: {3}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ExperimentalFeatureInvalidName" xml:space="preserve">
-    <value>Experimental Feature Initialization: Ignore the experimental feature '{0}' from the config file. {1}</value>
+    <value>实验性功能初始化: 忽略配置文件中的实验性功能 '{0}'。{1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ExperimentalFeatureReadConfigError" xml:space="preserve">
-    <value>Experimental Feature Initialization: Failed to read the config file.
- Exception: {0}
- Message: {1}
+    <value>实验性功能初始化: 未能读取配置文件。
+ 异常: {0}
+ 消息: {1}
  StackTrace: {2}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPluginStarted" xml:space="preserve">
-    <value>Workflow plugin loaded.
+    <value>已加载工作流插件。
  	 EndpointName: {0}
- 	 User: {1}
+ 	 用户: {1}
  	 HostingMode: {2}
- 	 Protocol: {3}
- 	 Configuration:
+ 	 协议: {3}
+ 	 配置:
  {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowExecutionStarted" xml:space="preserve">
-    <value>Workflow execution started.
+    <value>工作流执行已开始。
  	 WorkflowId: {0}
  	 ManagedNodes: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowStateChanged" xml:space="preserve">
-    <value>Workflow state changed.
+    <value>已更改工作流状态。
  	 WorkflowId: {0}
  	 NewState: {1}
  	 OldState: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPluginRequestedToShutdown" xml:space="preserve">
-    <value>Workflow plugin has been requested for a shutdown.
+    <value>已请求关闭工作流插件。
  	 EndpointName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPluginRestarted" xml:space="preserve">
-    <value>Workflow plugin restarted.
+    <value>已重启工作流插件。
  	 EndpointName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowWorkflowsResuming" xml:space="preserve">
-    <value>Workflow is resuming.
+    <value>正在恢复工作流。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowQuotaViolationDetected" xml:space="preserve">
-    <value>A quota limit that was set for the endpoint was exceeded.
+    <value>已超出为终结点设置的配额限制。
  	 EndpointName: {0}
  	 ConfigName: {1}
  	 AllowedValue: {2}
  	 ValueInQuestion: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowWorkflowsResumed" xml:space="preserve">
-    <value>Workflow has resumed.
+    <value>工作流已恢复。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowRunspacePoolCreated" xml:space="preserve">
-    <value>Workflow runspace pool was created.
+    <value>已创建工作流运行空间池。
  	 WorkflowId: {0}
  	 ManagedNode: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionQueued" xml:space="preserve">
-    <value>Activity was queued for execution.
+    <value>活动已排队等待执行。
  	 WorkflowId: {0}
  	 ActivityName: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionStarted" xml:space="preserve">
-    <value>Activity execution started.
+    <value>活动执行已开始。
  	 ActivityName: {0}
  	 ActivityTypeName: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportingFromXaml" xml:space="preserve">
-    <value>Workflow is being imported from a XAML file.
+    <value>正在从 XAML 文件导入工作流。
  	 WorkflowId: {0}
  	 XamlFile: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportedFromXaml" xml:space="preserve">
-    <value>Workflow has been imported from a XAML file.
+    <value>已从 XAML 文件导入工作流。
  	 WorkflowId: {0}
  	 XamlFile: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlError" xml:space="preserve">
-    <value>Workflow could not be imported from a XAML file because of an error.
+    <value>由于出现错误，无法从 XAML 文件导入工作流。
  	 WorkflowId: {0}
  	 ErrorDescription: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlValidationStarted" xml:space="preserve">
-    <value>Workflow validation started.
+    <value>已启动工作流验证。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlValidationFinishedSuccessfully" xml:space="preserve">
-    <value>Workflow validation succeeded.
+    <value>工作流验证成功。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlValidationFinishedWithError" xml:space="preserve">
-    <value>Workflow validation failed with error.
+    <value>工作流验证失败，出现错误。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlActivityValidated" xml:space="preserve">
-    <value>Workflow activity validated.
+    <value>已验证工作流活动。
  	 WorkflowId: {0}
  	 ActivityDisplayName: {1}
  	 ActivityTypeName: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlActivityValidationFailed" xml:space="preserve">
-    <value>Workflow activity could not be validated.
+    <value>无法验证工作流活动。
  	 WorkflowId: {0}
  	 ActivityDisplayName: {1}
  	 ActivityTypeName: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionFailed" xml:space="preserve">
-    <value>Activity execution failed.
+    <value>活动执行失败。
  	 WorkflowId: {0}
  	 ActivityName: {1}
  	 FailureDescription: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowRunspaceAvailabilityChanged" xml:space="preserve">
-    <value>Runspace availability changed.
+    <value>运行空间可用性已更改。
  	 RunspaceId: {0}
- 	 Availability: {1}</value>
+ 	 可用性: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowRunspaceStateChanged" xml:space="preserve">
-    <value>Runspace state changed.
+    <value>已更改运行空间状态。
  	 RunspaceId: {0}
  	 NewState: {1}
  	 OldState: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowLoadedForExecution" xml:space="preserve">
-    <value>Workflow loaded for execution.
+    <value>已加载工作流以供执行。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowUnloaded" xml:space="preserve">
-    <value>Workflow unloaded.
+    <value>已卸载工作流。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowCancelled" xml:space="preserve">
-    <value>Workflow execution cancelled.
+    <value>工作流执行已取消。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowAborted" xml:space="preserve">
-    <value>Workflow execution aborted.
+    <value>工作流执行已中止。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowCleanup" xml:space="preserve">
-    <value>Workflow cleanup operation executed.
+    <value>已执行工作流清理操作。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowLoadedFromDisk" xml:space="preserve">
-    <value>Persisted workflow loaded from disk.
+    <value>已从磁盘加载持久化工作流。
  	 WorkflowId: {0}
- 	 Path: {1}</value>
+ 	 路径: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowDeletedFromDisk" xml:space="preserve">
-    <value>Workflow data was deleted from disk.
+    <value>已从磁盘中删除工作流数据。
  	 WorkflowId: {0}
- 	 Path: {1}</value>
+ 	 路径: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PRemoveJobStarted" xml:space="preserve">
-    <value>Starting remove job.
+    <value>正在开始移除作业。
  	 JobId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobStateChanged" xml:space="preserve">
-    <value>Job state changed.
+    <value>已更改作业状态。
  	 JobId: {0}
  	 WorkflowId: {1}
  	 NewState: {2}
  	 OldState: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobError" xml:space="preserve">
-    <value>Job error.
+    <value>作业错误。
  	 JobId: {0}
  	 WorkflowId: {1}
  	 ErrorDescription: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowJobCreated" xml:space="preserve">
-    <value>Job created for workflow (child job).
+    <value>已为工作流创建作业(子作业)。
  	 ParentJobId: {0}
  	 ChildJobId: {1}
  	 ChildWorkflowId: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PParentJobCreated" xml:space="preserve">
-    <value>Parent job created for workflow.
+    <value>已为工作流创建父作业。
  	 JobId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobCreationCompleted" xml:space="preserve">
-    <value>All required jobs were created for workflow execution.
+    <value>已创建执行工作流所需的所有作业。
  	 JobId: {0}
  	 WorkflowId: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobRemoved" xml:space="preserve">
-    <value>Child job removed for workflow.
+    <value>已为工作流移除子作业。
  	 ParentJobId: {0}
  	 ChildJobId: {1}
  	 WorkflowId: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobRemoveError" xml:space="preserve">
-    <value>An error occurred while removing job.
+    <value>移除作业时出错。
  	 ParentJobId: {0}
  	 ChildJobId: {1}
  	 WorkflowId: {2}
- 	 Error: {3}</value>
+ 	 错误: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PLoadingWorkflowForExecution" xml:space="preserve">
-    <value>Loading workflow for execution.
+    <value>正在加载工作流以供执行。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowExecutionFinished" xml:space="preserve">
-    <value>Workflow execution finished.
+    <value>工作流执行已完成。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PCancellingWorkflowExecution" xml:space="preserve">
-    <value>Cancelling workflow execution.
+    <value>正在取消工作流执行。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PAbortingWorkflowExecution" xml:space="preserve">
-    <value>Aborting workflow execution.
+    <value>正在中止工作流执行。
  	 WorkflowId: {0}
- 	 Reason: {1}</value>
+ 	 原因: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PUnloadingWorkflow" xml:space="preserve">
-    <value>Unloading workflow.
+    <value>正在卸载工作流。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PForcedWorkflowShutdownStarted" xml:space="preserve">
-    <value>Forced workflow shutdown started.
+    <value>强制工作流关闭已开始。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PForcedWorkflowShutdownFinished" xml:space="preserve">
-    <value>Forced workflow shutdown finished.
+    <value>强制工作流关闭已完成。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PForcedWorkflowShutdownError" xml:space="preserve">
-    <value>An error occurred while forcefully shutting down a workflow.
+    <value>强制关闭工作流时出错。
  	 WorkflowId: {0}
  	 ErrorDescription: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PPersistingWorkflow" xml:space="preserve">
-    <value>Persisting workflow to disk.
+    <value>正在将工作流持久保存到磁盘。
  	 WorkflowId: {0}
  	 PersistPath: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPersisted" xml:space="preserve">
-    <value>Workflow persisted to disk.
+    <value>已将工作流持久保存到磁盘。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionFinished" xml:space="preserve">
-    <value>Activity execution finished.
+    <value>活动执行已完成。
  	 ActivityName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowExecutionError" xml:space="preserve">
-    <value>Workflow execution error.
+    <value>工作流执行错误。
  	 WorkflowId: {0}
  	 ErrorDescription: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointRegistered" xml:space="preserve">
-    <value>A new PowerShell endpoint was registered.
+    <value>已注册新的 PowerShell 终结点。
  	 EndpointName: {0}
  	 EndpointType: {1}
  	 RegisteredBy: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointModified" xml:space="preserve">
-    <value>Endpoint configuration modified.
+    <value>已修改终结点配置。
  	 EndpointName: {0}
  	 ModifiedBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointUnregistered" xml:space="preserve">
-    <value>Endpoint configuration unregistered.
+    <value>终结点配置已注销。
  	 EndpointName: {0}
  	 UnregisteredBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointDisabled" xml:space="preserve">
-    <value>Endpoint configuration disabled.
+    <value>已禁用终结点配置。
  	 EndpointName: {0}
  	 DisabledBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointEnabled" xml:space="preserve">
-    <value>Endpoint configuration enabled.
+    <value>已启用终结点配置。
  	 EndpointName: {0}
  	 EnabledBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3POutOfProcessRunspaceStarted" xml:space="preserve">
-    <value>Out of process runspace started.
- 	 Command: {0}</value>
+    <value>已启动进程外运行空间。
+ 	 命令: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PParameterSplattingWasPerformed" xml:space="preserve">
-    <value>Parameter splatting was performed during workflow execution.
- 	 Parameters: {0}
- 	 Computers: {1}</value>
+    <value>在工作流执行期间执行了参数展开。
+ 	 参数: {0}
+ 	 计算机: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowEngineStarted" xml:space="preserve">
-    <value>Workflow engine started.
+    <value>已启动工作流引擎。
  	 EndpointName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PWORKFLOW_MANAGER_CHECKPOINTPATH" xml:space="preserve">
-    <value>Workflow manager instantiated with
+    <value>工作流管理器已使用以下值实例化
  	 CheckpointPath: {0}
  	 ConfigProviderId: {1}
  	 UserName: {2}
  	 Path: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_CMDLETS_HOSTNAMERESOLVE" xml:space="preserve">
-    <value>Computer Name $null or . resolve to LocalHost</value>
+    <value>计算机名称 $null 或 . 解析为 LocalHost</value>
 </data>
   <data name="PS_PROVIDEReventE_O_CMDLETS_SCHEMERESOLVE" xml:space="preserve">
-    <value>Resolving to default scheme http</value>
+    <value>正在解析为默认方案 http</value>
 </data>
   <data name="PS_PROVIDEReventE_O_CMDLETS_SHELLRESOLVE" xml:space="preserve">
-    <value>Remote shell name resolved to default PowerShellCore</value>
+    <value>远程 shell 名称已解析为默认 PowerShellCore</value>
 </data>
   <data name="PS_PROVIDEReventE_O_COMMAND_HEALTH" xml:space="preserve">
     <value>{2}
 
-Context:
+上下文:
 {0}
 
-User Data:
+用户数据:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ENGINE_HEALTH" xml:space="preserve">
     <value>{2}
 
-Context:
+上下文:
 {0}
 
-User Data:
+用户数据:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_PROVIDER_HEALTH" xml:space="preserve">
     <value>{2}
 
-Context:
+上下文:
 {0}
 
-User Data:
+用户数据:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_PIPELINE_DETAIL" xml:space="preserve">
     <value>{2}
 
-Context:
+上下文:
 {0}
 
-User Data:
+用户数据:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_SCRIPTBLOCK_CREATE_DETAIL" xml:space="preserve">
-    <value>Creating Scriptblock text ({0} of {1}):
+    <value>正在创建脚本块文本({0}/{1}):
 {2}
 
 ScriptBlock ID: {3}
-Path: {4}</value>
+路径: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_SCRIPTBLOCK_INVOKE_START_DETAIL" xml:space="preserve">
-    <value>Started invocation of ScriptBlock ID: {0}
-Runspace ID: {1}</value>
+    <value>已开启对 ScriptBlock ID 的调用: {0}
+运行空间 ID: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_SCRIPTBLOCK_INVOKE_COMPLETE_DETAIL" xml:space="preserve">
-    <value>Completed invocation of ScriptBlock ID: {0}
-Runspace ID: {1}</value>
+    <value>已完成对 ScriptBlock ID 的调用: {0}
+运行空间 ID: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_COMMAND_LIFECYCLE" xml:space="preserve">
     <value>{2}
 
-Context:
+上下文:
 {0}
 
-User Data:
+用户数据:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_ENGINE_LIFECYCLE" xml:space="preserve">
     <value>{2}
 
-Context:
+上下文:
 {0}
 
-User Data:
+用户数据:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_PROVIDER_LIFECYCLE" xml:space="preserve">
     <value>{2}
 
-Context:
+上下文:
 {0}
 
-User Data:
+用户数据:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_SETTINGS" xml:space="preserve">
     <value>{2}
 
-Context:
+上下文:
 {0}
 
-User Data:
+用户数据:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_WriteTransferEvent" xml:space="preserve">
-    <value>Correlating activity id's.
+    <value>正在关联活动 ID。
  	 CurrentActivityId: {0}
  	 ParentActivityId: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_ENGINE_TRACE" xml:space="preserve">
-    <value>Class Name = {0}
-Method Name = {1}
-Workflow GUID = {2}
-Message = {3}
+    <value>类名 = {0}
+方法名称 = {1}
+工作流 GUID = {2}
+消息 = {3}
 {4}
-Activity Name = {5}
-Activity GUID = {6}
-Parameters = {7}</value>
+活动名称 = {5}
+活动 GUID = {6}
+参数 = {7}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACE_CONSTRUCTOR" xml:space="preserve">
-    <value>Creating Runspace object
- 	 Instance Id: {0}</value>
+    <value>正在创建 Runspace 对象
+ 	 实例 ID: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACEPOOL_CONSTRUCTOR" xml:space="preserve">
-    <value>Creating RunspacePool object
+    <value>正在创建 RunspacePool 对象
  	 InstanceId {0}
  	 MinRunspaces {1}
  	 MaxRunspaces {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACEPOOL_OPEN" xml:space="preserve">
-    <value>Opening RunspacePool</value>
+    <value>正在打开 RunspacePool</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACEPOOL_TRANSFER" xml:space="preserve">
-    <value>Modifying activity Id and correlating</value>
+    <value>正在修改活动 ID 并建立关联</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACE_STATE_CHANGE" xml:space="preserve">
-    <value>Runspace state changed to {0}</value>
+    <value>运行空间状态已更改为 {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_RUNSPACE_CREATE_RETRY" xml:space="preserve">
-    <value>Attempting session creation retry {0} for error code {1} on session Id {2}</value>
+    <value>正在尝试为会话 ID {2} 上的错误代码 {1} 进行第 {0} 次会话创建重试</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_LISTENER_START" xml:space="preserve">
-    <value>PowerShell has started an IPC listening thread on process: {0} in AppDomain: {1}.</value>
+    <value>PowerShell 已在 AppDomain {1} 中的进程 {0} 上开启 IPC 侦听线程。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_LISTENER_END" xml:space="preserve">
-    <value>PowerShell has ended an IPC listening thread on process: {0} in AppDomain: {1}.</value>
+    <value>PowerShell 已在 AppDomain {1} 中的进程 {0} 上结束 IPC 侦听线程。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_LISTENER_ERROR" xml:space="preserve">
-    <value>An error has occurred in PowerShell IPC listening thread on process: {0} in AppDomain: {1}.  Error Message: {2}.</value>
+    <value>在 PowerShell IPC 侦听线程中，AppDomain {1} 中的进程 {0} 上发生错误。 错误消息: {2}。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_CONNECT" xml:space="preserve">
-    <value>PowerShell IPC connect on process: {0} in AppDomain: {1} for User: {2}.</value>
+    <value>PowerShell IPC 在 AppDomain {1} 中的进程 {0} 上为用户 {2} 建立连接。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_DISCONNECT" xml:space="preserve">
-    <value>PowerShell IPC disconnect on process: {0} in AppDomain: {1} for User: {2}.</value>
+    <value>PowerShell IPC 在 AppDomain {1} 中的进程 {0} 上为用户 {2} 断开连接。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_PORT" xml:space="preserve">
-    <value>Port resolved to {0}</value>
+    <value>端口已解析为 {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_APPNAME" xml:space="preserve">
-    <value>AppName resolved to {0}</value>
+    <value>AppName 已解析为 {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_COMPUTERNAME" xml:space="preserve">
-    <value>ComputerName resolved to {0}</value>
+    <value>ComputerName 已解析为 {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_SCHEME" xml:space="preserve">
-    <value>Scheme is {0}</value>
+    <value>方案为 {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_TEST" xml:space="preserve">
-    <value>Test analytic message</value>
+    <value>测试分析消息</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_WSMANCONNECTIONINFO" xml:space="preserve">
-    <value>Connection Parameters are
+    <value>连接参数包括
  Connection URI: {0}
  Resource URI: {1}
  User: {2}
@@ -564,361 +564,361 @@ Parameters = {7}</value>
  MaxReceivedObjectSize: {0}1</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACEPOOL_TRANSFER" xml:space="preserve">
-    <value>Modifying activity Id and correlating</value>
+    <value>正在修改活动 ID 并建立关联</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_RCVDOBJ" xml:space="preserve">
-    <value>Received object with Runspace Id: {0} Command Id: {1} Destination: {2} DataType: {3} TargetInterface: {4}</value>
+    <value>已接收的对象，该对象的运行空间 ID: {0} 命令 ID: {1} 目标: {2} DataType: {3} TargetInterface: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_APPDOMAIN_UNHANDLED_EXCEPTION" xml:space="preserve">
-    <value>An unhandled exception occurred in the appdomain.
-Exception Type: {0}
-Exception Message: {1}
-Exception StackTrace: {2}</value>
+    <value>appdomain 中发生未经处理的异常。
+异常类型: {0}
+异常消息: {1}
+异常 StackTrace: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_ERROR" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. WSMan reported an error with error code: {2}.
- Error message: {3}
+    <value>运行空间 ID: {0} 管道 ID: {1}。WSMan 报告了一个错误，错误代码为: {2}。
+ 错误消息: {3}
  StackTrace: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_APPDOMAIN_UNHANDLED_EXCEPTION" xml:space="preserve">
-    <value>An unhandled exception occurred in the appdomain.
-Exception Type: {0}
-Exception Message: {1}
-Exception StackTrace: {2}</value>
+    <value>appdomain 中发生未经处理的异常。
+异常类型: {0}
+异常消息: {1}
+异常 StackTrace: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_TRANSPORT_ERROR" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. WSMan reported an error with error code: {2}.
- Error message: {3}
+    <value>运行空间 ID: {0} 管道 ID: {1}。WSMan 报告了一个错误，错误代码为: {2}。
+ 错误消息: {3}
  StackTrace: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CONNECT" xml:space="preserve">
-    <value>Runspace Id {0}. Establishing a connection using WSMan Create Shell</value>
+    <value>运行空间 ID {0}。正在使用 WSMan Create Shell 建立连接</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SHELL_CONNECT_CALLBACK" xml:space="preserve">
-    <value>Runspace Id {0}. Callback received for WSMan Create Shell</value>
+    <value>运行空间 ID {0}。已收到 WSMan Create Shell 的回叫</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SHELL_CLOSE" xml:space="preserve">
-    <value>Runspace Id: {0}. Closing shell using WSManCloseShell</value>
+    <value>运行空间 ID: {0}。正在使用 WSManCloseShell 关闭 shell</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SHELL_CLOSE_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0}. Callback received for WSManCloseShell</value>
+    <value>运行空间 ID: {0}。已收到 WSManCloseShell 的回叫</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SEND_DATA" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Sending data of size {2}</value>
+    <value>运行空间 ID: {0} 管道 ID: {1}。正在发送大小为 {2} 的数据</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SEND_DATA_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Callback received for WSManSendShellInputEx</value>
+    <value>运行空间 ID: {0} 管道 ID: {1}。已收到 WSManSendShellInputEx 的回叫</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_RECEIVE_DATA" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Placing Receive request using WSManReceiveShellOutputEx</value>
+    <value>运行空间 ID: {0} 管道 ID: {1}。正在使用 WSManReceiveShellOutputEx 发送接收请求</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_RECEIVE_DATA_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Received Data of size {2}.</value>
+    <value>运行空间 ID: {0} 管道 ID: {1}。已接收大小为 {2} 的数据。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CONNECT" xml:space="preserve">
-    <value>Runspace Id {0} Pipeline Id {1}. Establishing a command connection using WSManRunShellCommandEx</value>
+    <value>运行空间 ID {0} 管道 ID {1}。正在使用 WSManRunShellCommandEx 建立命令连接</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CONNECT_CALLBACK" xml:space="preserve">
-    <value>Runspace Id {0} Pipeline Id {1}. Callback received for command connection</value>
+    <value>运行空间 ID {0} 管道 ID {1}。已收到命令连接的回叫</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CLOSE" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Closing transport for command</value>
+    <value>运行空间 ID: {0} 管道 ID {1}。正在关闭命令的传输</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CLOSE_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Callback received for command close</value>
+    <value>运行空间 ID: {0} 管道 ID {1}。已收到命令关闭的回叫</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SIGNAL" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Sending signal with code {2} using WSManSignalShellEx</value>
+    <value>运行空间 ID: {0} 管道 ID {1}。正在使用 WSManSignalShellEx 来通过代码 {2} 发送信号</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SIGNAL_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Callback received for WSManSignalShellEx</value>
+    <value>运行空间 ID: {0} 管道 ID {1}。已收到 WSManSignalShellEx 的回叫</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_URI_REDIRECTION" xml:space="preserve">
-    <value>Runspace Id: {0}. Connection is getting redirected to Uri: {1}</value>
+    <value>运行空间 ID: {0}。连接正在重定向到 URI: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SERVER_SEND_DATA" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Server is sending data of size {2} to client. DataType: {3} TargetInterface: {4}</value>
+    <value>运行空间 ID: {0} 管道 ID: {1}。服务器正在向客户端发送大小为 {2} 的数据。DataType: {3} TargetInterface: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_CREATE_SERVER_REMOTESESSION" xml:space="preserve">
-    <value>Request {0}. Creating a server remote session. UserName: {1} Custom Shell Id: {2}</value>
+    <value>请求 {0}。正在创建服务器远程会话。UserName: {1} 自定义 Shell ID: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_REPORT_CONTEXT" xml:space="preserve">
-    <value>Reporting context for request: {0} Context Reported: {0}</value>
+    <value>正在报告请求的上下文: {0} 已报告的上下文: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_REPORT_OPERATION_COMPLETE" xml:space="preserve">
-    <value>Reporting operation complete for request: {0}
- Error Code: {1}
- Error Message: {2}
+    <value>针对请求 {0} 的报告操作已完成
+ 错误代码: {1}
+ 错误消息: {2}
  StackTrace: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_CREATE_COMMAND_REMOTESESSION" xml:space="preserve">
-    <value>Shell Context {0}. Request Id {1}. Creating a commonad session for running a command.</value>
+    <value>Shell 上下文 {0}。请求 ID {1}。正在创建用于运行命令的命令会话。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_STOP_COMMAND" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} Request Id {2}. Stopping command.</value>
+    <value>Shell 上下文 {0} 命令上下文 {1} 请求 ID {2}。停止命令。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERVER_RECEIVED_DATA" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} Request Id {2}. Received data from client.</value>
+    <value>Shell 上下文 {0} 命令上下文 {1} 请求 ID {2}。已收到来自客户端的数据。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERVER_RECEIVE_REQUEST" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} Request Id {2}. Client sent a receive request so that server can send data.</value>
+    <value>Shell 上下文 {0} 命令上下文 {1} 请求 ID {2}。客户端发送了接收请求，以便服务器可以发送数据。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERVER_CLOSE_OPERATION" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} IsReceiveOperation {2}. Got close operation request.</value>
+    <value>Shell 上下文 {0} 命令上下文 {1} IsReceiveOperation {2}。已收到关闭操作请求。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_LOAD_PSCUSTOMSHELL_ASSEMBLY" xml:space="preserve">
-    <value>Loading assembly {0} for custom shell with shell Id {1}</value>
+    <value>正在加载 shell ID 为 {1} 的自定义 shell 的程序集 {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_LOAD_PSCUSTOMSHELL_TYPE" xml:space="preserve">
-    <value>Loading type {0} for custom shell with shell Id {1}</value>
+    <value>正在为 shell ID 为 {1} 的自定义 shell 加载类型 {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RECEIVED_FRAGMENT" xml:space="preserve">
-    <value>Received remoting fragment.
- 	 Object Id: {0}
- 	 Fragment Id: {1}
- 	 Start Flag: {2}
- 	 End Flag: {3}
- 	 Payload Length: {4}
- 	 Payload Data: {5}</value>
+    <value>已收到远程处理片段。
+ 	 对象 ID: {0}
+ 	 片段 ID: {1}
+ 	 起始标志: {2}
+ 	 结束标志: {3}
+ 	 有效负载长度: {4}
+ 	 有效负载数据: {5}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SENT_FRAGMENT" xml:space="preserve">
-    <value>Sent remoting fragment.
- 	 Object Id: {0}
- 	 Fragment Id: {1}
- 	 Start Flag: {2}
- 	 End Flag: {3}
- 	 Payload Length: {4}
- 	 Payload Data: {5}</value>
+    <value>已发送远程处理片段。
+ 	 对象 ID: {0}
+ 	 片段 ID: {1}
+ 	 起始标志: {2}
+ 	 结束标志: {3}
+ 	 有效负载长度: {4}
+ 	 有效负载数据: {5}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SHUTTING_DOWN" xml:space="preserve">
-    <value>Shutting down winrm service.</value>
+    <value>正在关闭 WinRM 服务。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_REHYDRATION_SUCCESS" xml:space="preserve">
-    <value>Successfully rehydrated an object.
- 	 Deserialized type name: {0}
- 	 Rehydrated by casting to type: {1}
- 	 Rehydrated object is of type: {2}</value>
+    <value>已成功解除冻结对象。
+ 	 反序列化类型名称: {0}
+ 	 通过强制转换为类型 {1} 解除冻结
+ 	 解除冻结的对象的类型为: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_REHYDRATION_FAILURE" xml:space="preserve">
-    <value>Failed to rehydrated an object.
- 	 Deserialized type name: {0}
- 	 Rehydrated by casting to type: {1}
- 	 Type cast exception: {2}
- 	 Type cast inner exception: {3}</value>
+    <value>未能解除冻结对象。
+ 	 反序列化类型名称: {0}
+ 	 通过强制转换为类型 {1} 解除冻结
+ 	 类型强制转换异常: {2}
+ 	 类型强制转换内部异常: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_DEPTH_OVERRIDE" xml:space="preserve">
-    <value>Serialization depth has been overridden.
- 	 Serialized type name: {0}
- 	 Original depth: {1}
- 	 Overridden depth: {2}
- 	 Current depth below top level: {3}</value>
+    <value>已覆盖序列化深度。
+ 	 序列化类型名称: {0}
+ 	 原始深度: {1}
+ 	 覆盖后的深度: {2}
+ 	 顶层以下的当前深度: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_MODE_OVERRIDE" xml:space="preserve">
-    <value>Serialization mode has been overridden.
- 	 Serialized type name: {0}
- 	 Overridden mode: {1}</value>
+    <value>已覆盖序列化模式。
+ 	 序列化类型名称: {0}
+ 	 覆盖后的模式: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_SCRIPT_PROPERTY_WITHOUT_RUNSPACE" xml:space="preserve">
-    <value>Serialization of a script property has been skipped, because there is no runspace to use for evaluation of the property.
- 	 Property name: {0}
- 	 Property owner's type name: {1}
- 	 Getter script: {2}</value>
+    <value>已跳过脚本属性的序列化，因为没有可用于计算属性的运行空间。
+ 	 属性名称: {0}
+ 	 属性所有者的类型名称: {1}
+ 	 Getter 脚本: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_PROPERTY_GETTER_FAILED" xml:space="preserve">
-    <value>Serialization of a property has been skipped, because property getter failed.
- 	 Property name: {0}
- 	 Property owner's type name: {1}
- 	 Exception from property getter: {2}
- 	 Inner exception from property getter: {3}</value>
+    <value>已跳过属性序列化，因为属性 getter 失败。
+ 	 属性名称: {0}
+ 	 属性所有者的类型名称: {1}
+ 	 来自属性 getter 的异常: {2}
+ 	 来自属性 getter 的内部异常: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_ENUMERATION_FAILED" xml:space="preserve">
-    <value>Serialization of an enumerable object might not be complete, because object being enumerated threw an exception.
- 	 Type of object being enumerated: {0}
- 	 Exception: {1}</value>
+    <value>可能无法完成可枚举对象的序列化，因为枚举的对象引发了异常。
+ 	 正在枚举的对象的类型: {0}
+ 	 异常: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_TOSTRING_FAILED" xml:space="preserve">
-    <value>Serialization called object's ToString method which failed.
- 	 Type of object: {0}
- 	 Exception: {1}</value>
+    <value>序列化调用了对象的 ToString 方法，但该方法失败。
+ 	 对象类型: {0}
+ 	 异常: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_MAX_DEPTH_WHEN_SERIALIZING" xml:space="preserve">
-    <value>Maximum depth below top level has been reached, forcing object to be serialized as strings.
- 	 Object type at max depth: {0}
- 	 Property name at max depth: {1}
- 	 Depth: {2}</value>
+    <value>已达到顶层以下的最大深度，正在强制将对象序列化为字符串。
+ 	 最大深度处的对象类型: {0}
+ 	 最大深度处的属性名称: {1}
+ 	 深度: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_XMLEXCEPTION_WHEN_DESERIALIZING" xml:space="preserve">
-    <value>XmlException has been thrown by the deserializer (most likely indicating incorrect clixml format).
- 	 Line number: {0} Line position: {1}
- 	 Exception: {2}</value>
+    <value>反序列化程序引发了 XmlException(很可能表明 clixml 格式不正确)。
+ 	 行号: {0} 行位置: {1}
+ 	 异常:{2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_SPECIFIC_PROPERTY_MISSING" xml:space="preserve">
-    <value>Serialization of specified properties failed, because one of the specified properties was missing.
- 	 Type of object: {0}
- 	 Property name: {1}</value>
+    <value>指定属性的序列化失败，因为指定的某个属性缺失。
+ 	 对象类型: {0}
+ 	 属性名称: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_PowershellConsoleStartupStart" xml:space="preserve">
-    <value>PowerShell console is starting up</value>
+    <value>正在启动 PowerShell 控制台</value>
 </data>
   <data name="PS_PROVIDEReventE_O_PowershellConsoleStartupStop" xml:space="preserve">
-    <value>PowerShell console is ready for user input</value>
+    <value>PowerShell 控制台已准备好接受用户输入</value>
 </data>
   <data name="PS_PROVIDEReventE_D_DebugMessage" xml:space="preserve">
     <value>{0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_Powershell_ErrorRecord" xml:space="preserve">
-    <value>Tracing ErrorRecord:
- Message: {0}
+    <value>跟踪错误记录:
+ 消息: {0}
  CategoryInfo.Category: {1}
  CategoryInfo.Reason : {2}
  CategoryInfo.TargetName : {3}
  FullyQualifiedErrorId: {4}
- Exception Details:
- Message : {5}
- Stack Trace: {6}
+ 异常详细信息:
+ 消息 : {5}
+ 堆栈跟踪: {6}
  InnerException {7}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_D_Powershell_Exception" xml:space="preserve">
-    <value>Exception:
- Message: {0}
+    <value>异常:
+ 消息: {0}
  StackTrace: {1}
  InnerException : {2}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_Powershell_PSObject" xml:space="preserve">
-    <value>Tracing PSObject</value>
+    <value>跟踪 PSObject</value>
 </data>
   <data name="PS_PROVIDEReventE_D_Powershell_Job" xml:space="preserve">
-    <value>Tracing Job:
- Id: {0}
+    <value>跟踪作业:
+ ID: {0}
  InstanceId: {1}
- Name: {2}
- Location: {3}
- State: {4}
- Command: {5}
+ 名称: {2}
+ 位置: {3}
+ 状态: {4}
+ 命令: {5}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_D_MESSAGE" xml:space="preserve">
-    <value>Trace Information:
+    <value>跟踪信息:
  {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_MESSAGE2" xml:space="preserve">
-    <value>Trace Information:
+    <value>跟踪信息:
  {0} {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginStartWorkflowApplication" xml:space="preserve">
-    <value>BEGIN ImportWorkflowCommand::StartWorkflowApplication. Starting invocation of workflow function. Tracking Guid {0}</value>
+    <value>开始 ImportWorkflowCommand::StartWorkflowApplication。正在开始工作流函数的调用。跟踪 Guid {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndStartWorkflowApplication" xml:space="preserve">
-    <value>END ImportWorkflowCommand::StartWorkflowApplication. Ending invocation of workflow function. Tracking Guid {0}</value>
+    <value>结束 ImportWorkflowCommand::StartWorkflowApplication。正在结束工作流函数的调用。跟踪 Guid {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginCreateNewJob" xml:space="preserve">
-    <value>BEGIN Creating new job in ImportWorkflowCommand::StartWorkflowApplication. Tracking Guid {0}</value>
+    <value>开始在 ImportWorkflowCommand::StartWorkflowApplication 中创建新作业。跟踪 Guid {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndCreateNewJob" xml:space="preserve">
-    <value>END Creating new job in ImportWorkflowCommand::StartWorkflowApplication. Tracking Guid {0}</value>
+    <value>结束在 ImportWorkflowCommand::StartWorkflowApplication 中创建新作业。跟踪 Guid {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PTrackingGuidContainerParentJobCorrelation" xml:space="preserve">
-    <value>END Creating new job in ImportWorkflowCommand::StartWorkflowApplication. Tracking Guid {0} : ContainerParentJob Guid {1}</value>
+    <value>结束在 ImportWorkflowCommand::StartWorkflowApplication 中创建新作业。跟踪 Guid {0} : ContainerParentJob Guid {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginJobLogic" xml:space="preserve">
-    <value>BEGIN JobLogic ContainerParentJob Guid {0}</value>
+    <value>开始 JobLogic ContainerParentJob Guid {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndJobLogic" xml:space="preserve">
-    <value>END JobLogic ContainerParentJob Guid {0}</value>
+    <value>结束 JobLogic ContainerParentJob Guid {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginWorkflowExecution" xml:space="preserve">
-    <value>BEGIN WorkflowExecution ContainerParentJob Guid {0}</value>
+    <value>开始 WorkflowExecution ContainerParentJob Guid {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndWorkflowExecution" xml:space="preserve">
-    <value>END WorkflowExecution ContainerParentJob Guid {0}</value>
+    <value>结束 WorkflowExecution ContainerParentJob Guid {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PChildWorkflowJobAddition" xml:space="preserve">
-    <value>WorkflowJob with Guid {0} added to ContainerParentJob with Guid {1}</value>
+    <value>已将 Guid 为 {0} 的 WorkflowJob 添加到 Guid 为 {1} 的 ContainerParentJob</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PProxyJobRemoteJobAssociation" xml:space="preserve">
-    <value>ProxyJob with Guid {0} associated with remote ContainerParentJob with Guid {1}</value>
+    <value>Guid 为 {0} 的 ProxyJob 与 Guid 为 {1} 的远程 ContainerParentJob 关联</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginContainerParentJobExecution" xml:space="preserve">
-    <value>BEGIN Execution of ContainerParentJob with Guid {0}</value>
+    <value>开始 Guid 为 {0} 的 ContainerParentJob 执行</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndContainerParentJobExecution" xml:space="preserve">
-    <value>END Execution of ContainerParentJob with Guid {0}</value>
+    <value>结束 Guid 为 {0} 的 ContainerParentJob 执行</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginProxyJobExecution" xml:space="preserve">
-    <value>BEGIN Execution of Proxy Job with Guid {0}</value>
+    <value>开始 Guid 为 {0} 的代理作业执行</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndProxyJobExecution" xml:space="preserve">
-    <value>END Execution of Proxy Job with Guid {0}</value>
+    <value>结束 Guid 为 {0} 的代理作业执行</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginProxyJobEventHandler" xml:space="preserve">
-    <value>BEGIN StateChanged event handler for Proxy Job with Guid {0}</value>
+    <value>开始 Guid 为 {0} 的代理作业的 StateChanged 事件处理程序</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndProxyJobEventHandler" xml:space="preserve">
-    <value>END StateChanged event handler for Proxy Job with Guid {0}</value>
+    <value>结束 Guid 为 {0} 的代理作业的 StateChanged 事件处理程序</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginProxyChildJobEventHandler" xml:space="preserve">
-    <value>BEGIN StateChanged event handler for Proxy Child Job with Guid {0}</value>
+    <value>开始 Guid 为 {0} 的代理子作业的 StateChanged 事件处理程序</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndProxyChildJobEventHandler" xml:space="preserve">
-    <value>END StateChanged event handler for Proxy Child Job with Guid {0}</value>
+    <value>结束 Guid 为 {0} 的代理子作业的 StateChanged 事件处理程序</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginRunGarbageCollection" xml:space="preserve">
-    <value>BEGIN Running garbage collection</value>
+    <value>开始运行垃圾回收</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndRunGarbageCollection" xml:space="preserve">
-    <value>END Running garbage collection</value>
+    <value>结束运行垃圾回收</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PPERSISTENCE_STORE_MAXSIZE_REACHED" xml:space="preserve">
-    <value>Persistence store has reached its maximum specified size</value>
+    <value>持久性存储已达到指定的最大大小</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEExecuteScript" xml:space="preserve">
-    <value>Windows PowerShell ISE has started to run script file {0}.</value>
+    <value>Windows PowerShell ISE 已开始运行脚本文件 {0}。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEExecuteSelection" xml:space="preserve">
-    <value>Windows PowerShell ISE has started to run a user-selected script from file {0}.</value>
+    <value>Windows PowerShell ISE 已开始从文件 {0} 运行用户选择的脚本。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEStopCommand" xml:space="preserve">
-    <value>Windows PowerShell ISE is stopping the current command.</value>
+    <value>Windows PowerShell ISE 正在停止当前命令。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEResumeDebugger" xml:space="preserve">
-    <value>Windows PowerShell ISE is resuming the debugger.</value>
+    <value>Windows PowerShell ISE 正在恢复调试程序。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEStopDebugger" xml:space="preserve">
-    <value>Windows PowerShell ISE is stopping the debugger.</value>
+    <value>Windows PowerShell ISE 正在停止调试程序。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDebuggerStepInto" xml:space="preserve">
-    <value>Windows PowerShell ISE is stepping into debugging.</value>
+    <value>Windows PowerShell ISE 正在进入调试过程。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDebuggerStepOver" xml:space="preserve">
-    <value>Windows PowerShell ISE is stepping over debugging.</value>
+    <value>Windows PowerShell ISE 正在跳过调试过程。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDebuggerStepOut" xml:space="preserve">
-    <value>Windows PowerShell ISE is stepping out of debugging.</value>
+    <value>Windows PowerShell ISE 正在退出调试过程。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEEnableAllBreakpoints" xml:space="preserve">
-    <value>Windows PowerShell ISE is enabling all breakpoints.</value>
+    <value>Windows PowerShell ISE 将启用所有断点。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDisableAllBreakpoints" xml:space="preserve">
-    <value>Windows PowerShell ISE is disabling all breakpoints.</value>
+    <value>Windows PowerShell ISE 将禁用所有断点。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISERemoveAllBreakpoints" xml:space="preserve">
-    <value>Windows PowerShell ISE is removing all breakpoints.</value>
+    <value>Windows PowerShell ISE 正在移除所有断点。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISESetBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is setting the breakpoint at line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE 正在为文件 {1} 的第 {0} 行设置断点。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISERemoveBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is removing the breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE 正在为文件 {1} 的第 {0} 行移除断点。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEEnableBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is enabling the breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE 正在为文件 {1} 的第 {0} 行启用断点。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDisableBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is disabling the breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE 正在为文件 {1} 的第 {0} 行禁用断点。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEHitBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE has hit a breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE 已在文件 {1} 的第 {0} 行命中断点。</value>
 </data>
 </root>
