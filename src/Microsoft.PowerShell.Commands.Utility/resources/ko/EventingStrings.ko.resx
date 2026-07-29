@@ -139,9 +139,9 @@
     <value>Action must be specified for non-forwarded events.</value>
   </data>
   <data name="Unsubscribe" xml:space="preserve">
-    <value>Unsubscribe</value>
+    <value>구독 취소</value>
   </data>
   <data name="Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>제거</value>
   </data>
 </root>

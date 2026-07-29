@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotAppendCsvWithMismatchedPropertyNames" xml:space="preserve">
-    <value>Cannot append CSV content to the following file: {1}. The appended object does not have a property that corresponds to the following column: {0}. To continue with mismatched properties, add the -Force parameter, and then retry the command.</value>
+    <value>無法將 CSV 內容附加至下列檔案: {1}。附加物件的屬性未對應下列資料行: {0}。若要繼續使用不相符的屬性，請新增 -Force 參數，然後重新執行命令。</value>
     <comment>{0} is a placeholder for property name (i.e. ProcessId)
         {1} is a placeholder for filename (i.e. c:\users\lukasza\foo.csv)
 
@@ -128,33 +128,33 @@
     </comment>
   </data>
   <data name="CannotSpecifyQuoteFieldsAndUseQuotes" xml:space="preserve">
-    <value>You must specify either the -UseQuotes or -QuoteFields parameters, but not both.</value>
+    <value>您必須指定 -UseQuotes 或 -QuoteFields 參數，但不能同時指定兩者。</value>
   </data>
   <data name="CannotSpecifyPathAndLiteralPath" xml:space="preserve">
-    <value>You must specify either the -Path or -LiteralPath parameters, but not both.</value>
+    <value>您必須指定 -Path 或 -LiteralPath 參數，但不能同時指定兩者。</value>
   </data>
   <data name="UseDefaultNameForUnspecifiedHeader" xml:space="preserve">
-    <value>One or more headers were not specified. Default names starting with "H" have been used in place of any missing headers.</value>
+    <value>未指定一或多個標頭。已使用以 "H" 開頭的預設名稱取代任何遺漏的標頭。</value>
   </data>
   <data name="FileNameIsAMandatoryParameter" xml:space="preserve">
-    <value>FileName is a mandatory parameter.</value>
+    <value>FileName 是必要參數。</value>
   </data>
   <data name="ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenAppending" xml:space="preserve">
-    <value>ReconcilePreexistingPropertyNames method should only get called when appending.</value>
+    <value>只有在附加時，才應呼叫 ReconcilePreexistingPropertyNames 方法。</value>
   </data>
   <data name="ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenPreexistingPropertyNamesHaveBeenReadSuccessfully" xml:space="preserve">
-    <value>ReconcilePreexistingPropertyNames method should only get called when preexisting property names have been read successfully.</value>
+    <value>只有在成功讀取現有屬性名稱後，才應呼叫 ReconcilePreexistingPropertyNames 方法。</value>
   </data>
   <data name="BuildPropertyNamesMethodShouldBeCalledOnlyOncePerCmdletInstance" xml:space="preserve">
-    <value>BuildPropertyNames method should be called only once per cmdlet instance.</value>
+    <value>每個 Cmdlet 執行個體只能呼叫一次 BuildPropertyNames 方法。</value>
   </data>
   <data name="TypeHierarchyShouldNotHaveNullValues" xml:space="preserve">
-    <value>Type hierarchy should not have null values.</value>
+    <value>類型階層不應有 null 值。</value>
   </data>
   <data name="EOFIsReached" xml:space="preserve">
-    <value>EOF is reached.</value>
+    <value>已達到檔案結尾。</value>
   </data>
   <data name="CannotSpecifyAppendAndNoHeader" xml:space="preserve">
-    <value>You must specify either the -Append or -NoHeader parameters, but not both.</value>
+    <value>您必須指定 -Append 或 -NoHeader 參數，但不能同時指定兩者。</value>
   </data>
 </root>

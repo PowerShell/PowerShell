@@ -124,7 +124,7 @@
     <value>There is no breakpoint with ID '{0}'.</value>
   </data>
   <data name="FileDoesNotExist" xml:space="preserve">
-    <value>File '{0}' does not exist.</value>
+    <value>Il file '{0}' non esiste.</value>
   </data>
   <data name="WrongExtension" xml:space="preserve">
     <value>Cannot set breakpoint on file '{0}'; only *.ps1 and *.psm1 files are valid.</value>

@@ -139,9 +139,9 @@
     <value>Action must be specified for non-forwarded events.</value>
   </data>
   <data name="Unsubscribe" xml:space="preserve">
-    <value>Unsubscribe</value>
+    <value>Abonnement kündigen</value>
   </data>
   <data name="Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>Entfernen</value>
   </data>
 </root>

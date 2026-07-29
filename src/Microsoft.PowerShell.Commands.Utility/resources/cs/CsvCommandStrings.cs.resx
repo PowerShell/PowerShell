@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotAppendCsvWithMismatchedPropertyNames" xml:space="preserve">
-    <value>Cannot append CSV content to the following file: {1}. The appended object does not have a property that corresponds to the following column: {0}. To continue with mismatched properties, add the -Force parameter, and then retry the command.</value>
+    <value>Obsah CSV nejde přidat do následujícího souboru: {1}. Přidávaný objekt nemá vlastnost odpovídající následujícímu sloupci: {0}. Chcete-li pokračovat i s neodpovídajícími vlastnostmi, přidejte parametr -Force a spusťte příkaz znovu.</value>
     <comment>{0} is a placeholder for property name (i.e. ProcessId)
         {1} is a placeholder for filename (i.e. c:\users\lukasza\foo.csv)
 
@@ -128,33 +128,33 @@
     </comment>
   </data>
   <data name="CannotSpecifyQuoteFieldsAndUseQuotes" xml:space="preserve">
-    <value>You must specify either the -UseQuotes or -QuoteFields parameters, but not both.</value>
+    <value>Musíte zadat parametr -UseQuotes nebo -QuoteFields, ale ne oba.</value>
   </data>
   <data name="CannotSpecifyPathAndLiteralPath" xml:space="preserve">
-    <value>You must specify either the -Path or -LiteralPath parameters, but not both.</value>
+    <value>Musíte zadat parametr -Path nebo -LiteralPath, ale ne oba.</value>
   </data>
   <data name="UseDefaultNameForUnspecifiedHeader" xml:space="preserve">
-    <value>One or more headers were not specified. Default names starting with "H" have been used in place of any missing headers.</value>
+    <value>Jedno nebo více záhlaví nebylo zadaných. Místo všech chybějících záhlaví se použily výchozí názvy začínající písmenem H.</value>
   </data>
   <data name="FileNameIsAMandatoryParameter" xml:space="preserve">
-    <value>FileName is a mandatory parameter.</value>
+    <value>FileName je povinný parametr.</value>
   </data>
   <data name="ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenAppending" xml:space="preserve">
-    <value>ReconcilePreexistingPropertyNames method should only get called when appending.</value>
+    <value>Metoda ReconcilePreexistingPropertyNames se má volat jen při přidávání.</value>
   </data>
   <data name="ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenPreexistingPropertyNamesHaveBeenReadSuccessfully" xml:space="preserve">
-    <value>ReconcilePreexistingPropertyNames method should only get called when preexisting property names have been read successfully.</value>
+    <value>Metoda ReconcilePreexistingPropertyNames se má volat jen po úspěšném načtení existujících názvů vlastností.</value>
   </data>
   <data name="BuildPropertyNamesMethodShouldBeCalledOnlyOncePerCmdletInstance" xml:space="preserve">
-    <value>BuildPropertyNames method should be called only once per cmdlet instance.</value>
+    <value>Metoda BuildPropertyNames se má u každé instance rutiny volat jen jednou.</value>
   </data>
   <data name="TypeHierarchyShouldNotHaveNullValues" xml:space="preserve">
-    <value>Type hierarchy should not have null values.</value>
+    <value>Hierarchie typů nesmí obsahovat hodnoty null.</value>
   </data>
   <data name="EOFIsReached" xml:space="preserve">
-    <value>EOF is reached.</value>
+    <value>Bylo dosaženo konce souboru.</value>
   </data>
   <data name="CannotSpecifyAppendAndNoHeader" xml:space="preserve">
-    <value>You must specify either the -Append or -NoHeader parameters, but not both.</value>
+    <value>Musíte zadat parametr -Append nebo -NoHeader, ale ne oba.</value>
   </data>
 </root>

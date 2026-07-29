@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotAppendCsvWithMismatchedPropertyNames" xml:space="preserve">
-    <value>Cannot append CSV content to the following file: {1}. The appended object does not have a property that corresponds to the following column: {0}. To continue with mismatched properties, add the -Force parameter, and then retry the command.</value>
+    <value>Nie można dołączyć zawartości CSV do następującego pliku: {1}. Dołączony obiekt nie ma właściwości odpowiadającej następującej kolumnie: {0}. Aby kontynuować z niezgodnymi właściwościami, dodaj parametr -Force, a następnie ponów próbę wykonania polecenia.</value>
     <comment>{0} is a placeholder for property name (i.e. ProcessId)
         {1} is a placeholder for filename (i.e. c:\users\lukasza\foo.csv)
 
@@ -128,33 +128,33 @@
     </comment>
   </data>
   <data name="CannotSpecifyQuoteFieldsAndUseQuotes" xml:space="preserve">
-    <value>You must specify either the -UseQuotes or -QuoteFields parameters, but not both.</value>
+    <value>Należy określić parametry -UseQuotes lub -QuoteFields, ale nie oba te parametry.</value>
   </data>
   <data name="CannotSpecifyPathAndLiteralPath" xml:space="preserve">
-    <value>You must specify either the -Path or -LiteralPath parameters, but not both.</value>
+    <value>Należy określić parametry -Path lub -LiteralPath, ale nie oba te parametry.</value>
   </data>
   <data name="UseDefaultNameForUnspecifiedHeader" xml:space="preserve">
-    <value>One or more headers were not specified. Default names starting with "H" have been used in place of any missing headers.</value>
+    <value>Nie określono co najmniej jednego nagłówka. Zamiast brakujących nagłówków użyto domyślnych nazw rozpoczynających się od znaku „H”.</value>
   </data>
   <data name="FileNameIsAMandatoryParameter" xml:space="preserve">
-    <value>FileName is a mandatory parameter.</value>
+    <value>FileName jest parametrem obowiązkowym.</value>
   </data>
   <data name="ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenAppending" xml:space="preserve">
-    <value>ReconcilePreexistingPropertyNames method should only get called when appending.</value>
+    <value>Metoda ReconcilePreexistingPropertyNames powinna zostać wywołana tylko w przypadku dołączenia.</value>
   </data>
   <data name="ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenPreexistingPropertyNamesHaveBeenReadSuccessfully" xml:space="preserve">
-    <value>ReconcilePreexistingPropertyNames method should only get called when preexisting property names have been read successfully.</value>
+    <value>Metoda ReconcilePreexistingPropertyNames powinna zostać wywołana tylko wtedy, gdy istniejące wcześniej nazwy właściwości zostały pomyślnie odczytane.</value>
   </data>
   <data name="BuildPropertyNamesMethodShouldBeCalledOnlyOncePerCmdletInstance" xml:space="preserve">
-    <value>BuildPropertyNames method should be called only once per cmdlet instance.</value>
+    <value>Metoda BuildPropertyNames powinna być wywoływana tylko raz na wystąpienie polecenia cmdlet.</value>
   </data>
   <data name="TypeHierarchyShouldNotHaveNullValues" xml:space="preserve">
-    <value>Type hierarchy should not have null values.</value>
+    <value>Hierarchia typów nie powinna mieć wartości null.</value>
   </data>
   <data name="EOFIsReached" xml:space="preserve">
-    <value>EOF is reached.</value>
+    <value>Osiągnięto EOF.</value>
   </data>
   <data name="CannotSpecifyAppendAndNoHeader" xml:space="preserve">
-    <value>You must specify either the -Append or -NoHeader parameters, but not both.</value>
+    <value>Należy określić parametry -Append lub -NoHeader, ale nie oba te parametry.</value>
   </data>
 </root>
