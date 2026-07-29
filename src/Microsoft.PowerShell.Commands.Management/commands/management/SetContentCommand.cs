@@ -29,7 +29,14 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new(GetCurrentContext());
+            // Use a context that does not carry the current cmdlet reference
+            // to avoid a second ShouldProcess prompt from the provider.
+            CmdletProviderContext currentContext = GetCurrentContext();
+            CmdletProviderContext context = new(currentContext.ExecutionContext, CommandOrigin.Internal)
+            {
+                SuppressWildcardExpansion = currentContext.SuppressWildcardExpansion,
+                Filter = currentContext.Filter,
+            };
 
             foreach (string path in paths)
             {
