@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UnknownParameterTypeError" xml:space="preserve">
-    <value>Cannot convert {0} to one of the following types {1}.</value>
+    <value>{0} を次のいずれかの型に変換できません: {1}。</value>
   </data>
   <data name="NullParameterTypeError" xml:space="preserve">
-    <value>The value of a parameter was null; one of the following types was expected: {0}.</value>
+    <value>パラメーターの値が null でした。次のいずれかの型が必要です: {0}。</value>
   </data>
   <data name="DuplicateKeyError" xml:space="preserve">
-    <value>The duplicated key "{0}" conflicts with "{1}".</value>
+    <value>重複したキー "{0}" が "{1}" と競合しています。</value>
   </data>
   <data name="IllegalTypeMultiError" xml:space="preserve">
-    <value>The "{0}" key has a type, {1}, that is not valid; expected types are {2}.</value>
+    <value>"{0}" キーの型 {1} は無効です。想定される型は {2} です。</value>
   </data>
   <data name="IllegalTypeSingleError" xml:space="preserve">
-    <value>The "{0}" key has a type, {1}, that is not valid; expected type is {2}.</value>
+    <value>"{0}" キーの型 {1} は無効です。想定される型は {2} です。</value>
   </data>
   <data name="AmbiguousKeyError" xml:space="preserve">
-    <value>The {0} key is ambiguous; {1} and {2} conflict.</value>
+    <value>{0} キーがあいまいです。{1} と {2} が競合しています。</value>
   </data>
   <data name="DictionaryKeyNullError" xml:space="preserve">
-    <value>The value of a key cannot be null.</value>
+    <value>キーの値を null にすることはできません。</value>
   </data>
   <data name="DictionaryKeyNonStringError" xml:space="preserve">
-    <value>The {0} key type is not valid. The key must be a string.</value>
+    <value>{0} キーの型が無効です。キーは文字列である必要があります。</value>
   </data>
   <data name="MissingKeyValueError" xml:space="preserve">
-    <value>The {0} key has no value.</value>
+    <value>{0} キーに値がありません。</value>
   </data>
   <data name="MissingKeyMandatoryEntryError" xml:space="preserve">
-    <value>A mandatory entry for {0} is missing.</value>
+    <value>{0} の必須エントリがありません。</value>
   </data>
   <data name="IllegalKeyError" xml:space="preserve">
-    <value>The {0} key is not valid.</value>
+    <value>{0} キーが無効です。</value>
   </data>
   <data name="IllegalAlignmentValueError" xml:space="preserve">
-    <value>The value "{0}" for key "{1}" is not valid; valid values are {2}.</value>
+    <value>キー "{1}" の値 "{0}" が無効です。有効な値は {2} です。</value>
   </data>
   <data name="OutOfRangeWidthValueError" xml:space="preserve">
-    <value>The value "{0}" for key "{1}" should be greater than 0.</value>
+    <value>キー "{1}" の値 "{0}" は 0 より大きくする必要があります。</value>
   </data>
   <data name="EmptyFormatStringValueError" xml:space="preserve">
-    <value>Cannot have an empty formatting string for key "{0}".</value>
+    <value>キー "{0}" の書式設定文字列は空にできません。</value>
   </data>
   <data name="MshExEmptyStringHashError" xml:space="preserve">
-    <value>The "{0}" key cannot have an empty string value.</value>
+    <value>"{0}" キーに空の文字列値を指定することはできません。</value>
   </data>
   <data name="MshExEmptyStringError" xml:space="preserve">
-    <value>An empty string value is not allowed.</value>
+    <value>空の文字列値は使用できません。</value>
   </data>
   <data name="MshExGlobbingHashError" xml:space="preserve">
-    <value>The "{0}" key cannot have wildcard characters in value "{1}".</value>
+    <value>"{0}" キーの値 "{1}" にワイルドカード文字を含めることはできません。</value>
   </data>
   <data name="MshExGlobbingStringError" xml:space="preserve">
-    <value>Wildcard characters are not allowed in "{0}".</value>
+    <value>ワイルドカード文字は "{0}" では使用できません。</value>
   </data>
   <data name="IllegalEnumerableExpansionValue" xml:space="preserve">
-    <value>The EnumerableExpansion value is not valid.</value>
+    <value>EnumerableExpansion 値は無効です。</value>
   </data>
 </root>

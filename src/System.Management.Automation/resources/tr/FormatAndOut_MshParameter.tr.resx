@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UnknownParameterTypeError" xml:space="preserve">
-    <value>Cannot convert {0} to one of the following types {1}.</value>
+    <value>{0}, şu türlerden birine dönüştürülemiyor: {1}.</value>
   </data>
   <data name="NullParameterTypeError" xml:space="preserve">
-    <value>The value of a parameter was null; one of the following types was expected: {0}.</value>
+    <value>Bir parametrenin değeri null idi; şu türlerden biri bekleniyordu: {0}.</value>
   </data>
   <data name="DuplicateKeyError" xml:space="preserve">
-    <value>The duplicated key "{0}" conflicts with "{1}".</value>
+    <value>Yinelenen "{0}" anahtarı "{1}" ile çakışıyor.</value>
   </data>
   <data name="IllegalTypeMultiError" xml:space="preserve">
-    <value>The "{0}" key has a type, {1}, that is not valid; expected types are {2}.</value>
+    <value>"{0}" anahtarının türü {1} ve geçerli değil; beklenen türler: {2}.</value>
   </data>
   <data name="IllegalTypeSingleError" xml:space="preserve">
-    <value>The "{0}" key has a type, {1}, that is not valid; expected type is {2}.</value>
+    <value>"{0}" anahtarının türü {1} ve geçerli değil; beklenen tür: {2}.</value>
   </data>
   <data name="AmbiguousKeyError" xml:space="preserve">
-    <value>The {0} key is ambiguous; {1} and {2} conflict.</value>
+    <value>{0} anahtarı belirsiz; {1} ve {2} çakışıyor.</value>
   </data>
   <data name="DictionaryKeyNullError" xml:space="preserve">
-    <value>The value of a key cannot be null.</value>
+    <value>Bir anahtarın değeri null olamaz.</value>
   </data>
   <data name="DictionaryKeyNonStringError" xml:space="preserve">
-    <value>The {0} key type is not valid. The key must be a string.</value>
+    <value>{0} anahtarının türü geçerli değil. Anahtar bir dize olmalıdır.</value>
   </data>
   <data name="MissingKeyValueError" xml:space="preserve">
-    <value>The {0} key has no value.</value>
+    <value>{0} anahtarının değeri yok.</value>
   </data>
   <data name="MissingKeyMandatoryEntryError" xml:space="preserve">
-    <value>A mandatory entry for {0} is missing.</value>
+    <value>{0} için zorunlu bir girdi eksik.</value>
   </data>
   <data name="IllegalKeyError" xml:space="preserve">
-    <value>The {0} key is not valid.</value>
+    <value>{0} anahtarı geçerli değil.</value>
   </data>
   <data name="IllegalAlignmentValueError" xml:space="preserve">
-    <value>The value "{0}" for key "{1}" is not valid; valid values are {2}.</value>
+    <value>"{1}" anahtarı için "{0}" değeri geçerli değil; geçerli değerler: {2}.</value>
   </data>
   <data name="OutOfRangeWidthValueError" xml:space="preserve">
-    <value>The value "{0}" for key "{1}" should be greater than 0.</value>
+    <value>"{1}" anahtarı için "{0}" değeri 0'dan büyük olmalıdır.</value>
   </data>
   <data name="EmptyFormatStringValueError" xml:space="preserve">
-    <value>Cannot have an empty formatting string for key "{0}".</value>
+    <value>"{0}" anahtarı için boş bir biçimlendirme dizesi olamaz.</value>
   </data>
   <data name="MshExEmptyStringHashError" xml:space="preserve">
-    <value>The "{0}" key cannot have an empty string value.</value>
+    <value>"{0}" anahtarında boş bir dize değeri olamaz.</value>
   </data>
   <data name="MshExEmptyStringError" xml:space="preserve">
-    <value>An empty string value is not allowed.</value>
+    <value>Burada boş dizeye izin verilmiyor.</value>
   </data>
   <data name="MshExGlobbingHashError" xml:space="preserve">
-    <value>The "{0}" key cannot have wildcard characters in value "{1}".</value>
+    <value>"{0}" anahtarında "{1}" değerinde joker karakterler olamaz.</value>
   </data>
   <data name="MshExGlobbingStringError" xml:space="preserve">
-    <value>Wildcard characters are not allowed in "{0}".</value>
+    <value>"{0}" için joker karakterlere izin verilmez.</value>
   </data>
   <data name="IllegalEnumerableExpansionValue" xml:space="preserve">
-    <value>The EnumerableExpansion value is not valid.</value>
+    <value>EnumerableExpansion değeri geçerli değil.</value>
   </data>
 </root>

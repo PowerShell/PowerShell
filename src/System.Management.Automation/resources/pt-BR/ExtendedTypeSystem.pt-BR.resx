@@ -310,7 +310,7 @@
     <value>Argument: '{0}' should not be a {1}. Do not use {2}.</value>
   </data>
   <data name="PropertyNotFoundInTypeDescriptor" xml:space="preserve">
-    <value>The property "{0}" was not found.</value>
+    <value>Propriedade "{0}" não encontrada.</value>
   </data>
   <data name="InvalidComponent" xml:space="preserve">
     <value>Cannot get or set the property value. The "{0}" argument should be of type "{1}" or "{2}".</value>
@@ -325,7 +325,7 @@
     <value>{0} is not a valid class path.</value>
   </data>
   <data name="InvalidWMIPath" xml:space="preserve">
-    <value>{0} is not a valid path.</value>
+    <value>{0} não é um caminho válido.</value>
   </data>
   <data name="PropertyIsSettableError" xml:space="preserve">
     <value>The adapter cannot determine whether property "{0}" can be changed.</value>

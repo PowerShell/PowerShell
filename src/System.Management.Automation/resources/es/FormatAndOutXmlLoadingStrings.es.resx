@@ -118,207 +118,207 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AttributesNotAllowed" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The XML element {2} does not allow attributes.</value>
+    <value>Error en XPath {0} del archivo {1}: el elemento XML {2} no permite atributos.</value>
   </data>
   <data name="NoChildrenAllowed" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Node {2} cannot have child objects.</value>
+    <value>Error en XPath {0} del archivo {1}: el nodo {2} no puede tener objetos secundarios.</value>
   </data>
   <data name="InvalidNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is not valid.</value>
+    <value>Error en XPath {0} en el archivo {1}: {2} no es válido.</value>
   </data>
   <data name="NoDefaultShapeEntry" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: There must be at least one default {2}.</value>
+    <value>Error en XPath {0} del archivo {1}: debe haber al menos un valor predeterminado {2}.</value>
   </data>
   <data name="TooManyDefaultShapeEntry" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: There cannot be more than one default {2}.</value>
+    <value>Error en XPath {0} del archivo {1}: no puede haber más de un valor predeterminado {2}.</value>
   </data>
   <data name="NullControlName" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The control name cannot be null or empty.</value>
+    <value>Error en XPath {0} del archivo {1}: el nombre del control no puede ser nulo ni estar vacío.</value>
   </data>
   <data name="InvalidControlForOutOfBandView" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Out Of Band views can only have CustomControl or ListControl.</value>
+    <value>Error en XPath {0} del archivo {1}: las vistas fuera de banda solo pueden tener CustomControl o ListControl.</value>
   </data>
   <data name="OutOfBandGroupByConflict" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: An Out Of Band view cannot have GroupBy.</value>
+    <value>Error en XPath {0} del archivo {1}: una vista fuera de banda no puede tener GroupBy.</value>
   </data>
   <data name="ViewNotLoaded" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The view cannot be loaded.</value>
+    <value>Error en XPath {0} del archivo {1}: no se puede cargar la vista.</value>
   </data>
   <data name="InvalidAlignmentValue" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: "{2}" is not a valid alignment value.</value>
+    <value>Error en XPath {0} del archivo {1}: "{2}" no es un valor de alineación válido.</value>
   </data>
   <data name="ExpectPositiveInteger" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A positive integer is expected.</value>
+    <value>Error en XPath {0} del archivo {1}: se espera un entero positivo.</value>
   </data>
   <data name="InvalidColumnHeader" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The column header definition is not valid; all headers are discarded.</value>
+    <value>Error en XPath {0} del archivo {1}: la definición del encabezado de columna no es válida; se descartan todos los encabezados.</value>
   </data>
   <data name="IncorrectRowItemCount" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The row item count = {2} on alternative set #{3} does not match default row item count = {4}.</value>
+    <value>Error en XPath {0} del archivo {1}: el recuento de elementos de fila = {2} del conjunto alternativo #{3} no coincide con el recuento predeterminado de elementos de fila = {4}.</value>
   </data>
   <data name="IncorrectHeaderItemCount" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The header item count = {2} does not match default row item count = {3}.</value>
+    <value>Error en XPath {0} del archivo {1}: el recuento de elementos del encabezado = {2} no coincide con el recuento predeterminado de elementos de fila = {3}.</value>
   </data>
   <data name="NoListViewItem" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: At least one list view item must be specified.</value>
+    <value>Error en XPath {0} del archivo {1}: se debe especificar al menos un elemento de vista de lista.</value>
   </data>
   <data name="InvalidPropertyEntry" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The property entry is not valid.</value>
+    <value>Error en XPath {0} del archivo {1}: la entrada de propiedad no es válida.</value>
   </data>
   <data name="NoDefinitionList" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The definition list is missing.</value>
+    <value>Error en XPath {0} del archivo {1}: falta la lista de definiciones.</value>
   </data>
   <data name="ExpectBoolean" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A Boolean value is expected.</value>
+    <value>Error en XPath {0} del archivo {1}: se espera un valor booleano.</value>
   </data>
   <data name="ExpectNaturalNumber" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A non-negative integer is expected.</value>
+    <value>Error en XPath {0} del archivo {1}: se espera un entero no negativo.</value>
   </data>
   <data name="ExpectInteger" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: An integer is expected.</value>
+    <value>Error en XPath {0} del archivo {1}: se espera un entero.</value>
   </data>
   <data name="MissingInnerText" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The inner text value is missing.</value>
+    <value>Error en XPath {0} del archivo {1}: falta el valor de texto interno.</value>
   </data>
   <data name="EmptyCustomControlList" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The custom control token list cannot be empty.</value>
+    <value>Error en XPath {0} en el archivo {1}: la lista de tokens de control personalizado no puede estar vacía.</value>
   </data>
   <data name="LoadTagFailed" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} failed to load.</value>
+    <value>Error en XPath {0} del archivo {1}: error al cargar {2}.</value>
   </data>
   <data name="NodeWithoutExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} cannot be specified without an expression.</value>
+    <value>Error en XPath {0} del archivo {1}: no se puede especificar {2} sin una expresión.</value>
   </data>
   <data name="NodeWithExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} cannot be specified with an expression.</value>
+    <value>Error en XPath {0} del archivo {1}: no se puede especificar {2} con una expresión.</value>
   </data>
   <data name="NoFormatString" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A format string is missing.</value>
+    <value>Error en XPath {0} del archivo {1}: falta una cadena de formato.</value>
   </data>
   <data name="NoScriptBlockText" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Script block text is missing.</value>
+    <value>Error en XPath {0} del archivo {1}: falta el texto del bloque de script.</value>
   </data>
   <data name="NoProperty" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A property is missing.</value>
+    <value>Error en XPath {0} del archivo {1}: falta una propiedad.</value>
   </data>
   <data name="InvalidScriptBlock" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Script block "{2}" is not valid.</value>
+    <value>Error en XPath {0} del archivo {1}: el bloque de script "{2}" no es válido.</value>
   </data>
   <data name="StringResourceNotFound" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The string {2} from resource {3} in assembly {4} is not found.</value>
+    <value>Error en XPath {0} del archivo {1}: no se encuentra la cadena {2} del recurso {3} en el ensamblado {4}.</value>
   </data>
   <data name="ResourceNotFound" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The resource {2} in assembly {3} is not found.</value>
+    <value>Error en XPath {0} del archivo {1}: no se encuentra el recurso {2} en el ensamblado {3}.</value>
   </data>
   <data name="AssemblyNotFound" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The assembly {2} is not found.</value>
+    <value>Error en XPath {0} del archivo {1}: no se encuentra el ensamblado {2}.</value>
   </data>
   <data name="NonXmlElementNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The node must be an XmlElement.</value>
+    <value>Error en XPath {0} del archivo {1}: el nodo debe ser un XmlElement.</value>
   </data>
   <data name="ExpectExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: An expression is expected.</value>
+    <value>Error en XPath {0} del archivo {1}: se espera una expresión.</value>
   </data>
   <data name="ControlLabelWithoutExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Cannot have control or Label without an expression.</value>
+    <value>Error en XPath {0} del archivo {1}: no se puede tener el control o la etiqueta sin una expresión.</value>
   </data>
   <data name="ControlAndLabel" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Cannot have control and Label at the same time.</value>
+    <value>Error en XPath {0} del archivo {1}: no se pueden tener el control y la etiqueta al mismo tiempo.</value>
   </data>
   <data name="SelectionSetNameAndTypeName" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Cannot have SelectionSetName and TypeName at the same time.</value>
+    <value>Error en XPath {0} del archivo {1}: no se pueden tener SelectionSetName y TypeName al mismo tiempo.</value>
   </data>
   <data name="EmptyAppliesTo" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: No type or condition is specified for applying the view.</value>
+    <value>Error en XPath {0} del archivo {1}: no se ha especificado ningún tipo ni condición para aplicar la vista.</value>
   </data>
   <data name="InvalidNodeValue" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The {2} value is not valid.</value>
+    <value>Error en XPath {0} del archivo {1}: el valor {2} no es válido.</value>
   </data>
   <data name="DuplicatedNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A duplicate node exists.</value>
+    <value>Error en XPath {0} del archivo {1}: existe un nodo duplicado.</value>
   </data>
   <data name="MutuallyExclusiveNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} and {3} are mutually exclusive.</value>
+    <value>Error en XPath {0} del archivo {1}: {2} y {3} se excluyen mutuamente.</value>
   </data>
   <data name="ThreeMutuallyExclusiveNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2}, {3} and {4} are mutually exclusive.</value>
+    <value>Error en XPath {0} del archivo {1}: {2}, {3} y {4} se excluyen mutuamente.</value>
   </data>
   <data name="UnknownNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an unknown node.</value>
+    <value>Error en XPath {0} en el archivo {1}: {2} es un nodo desconocido.</value>
   </data>
   <data name="UnknownAttribute" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an unknown attribute.</value>
+    <value>Error en XPath {0} del archivo {1}: {2} es un atributo desconocido.</value>
   </data>
   <data name="MissingAttribute" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is a missing attribute.</value>
+    <value>Error en XPath {0} del archivo {1}: {2} es un atributo que falta.</value>
   </data>
   <data name="MissingNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Node {2} is missing.</value>
+    <value>Error en XPath {0} en el archivo {1}: falta el nodo {2}.</value>
   </data>
   <data name="MissingNodeFromList" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A node is missing from {2}.</value>
+    <value>Error en XPath {0} del archivo {1}: falta un nodo de {2}.</value>
   </data>
   <data name="EmptyNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an empty node.</value>
+    <value>Error en XPath {0} del archivo {1}: {2} es un nodo vacío.</value>
   </data>
   <data name="EmptyAttribute" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an empty attribute.</value>
+    <value>Error en XPath {0} del archivo {1}: {2} es un atributo vacío.</value>
   </data>
   <data name="ErrorInFile" xml:space="preserve">
-    <value>Error in file {0}: {1}</value>
+    <value>Error en el archivo {0}: {1}</value>
   </data>
   <data name="TooManyErrors" xml:space="preserve">
-    <value>Too many errors in file {0}.</value>
+    <value>Hay demasiados errores en el archivo {0}.</value>
   </data>
   <data name="FormatLoadingErrors" xml:space="preserve">
-    <value>Errors occurred while loading the format data file: {0}</value>
+    <value>Se han producido errores al cargar el archivo de datos de formato: {0}</value>
   </data>
   <data name="AssemblyInGAC" xml:space="preserve">
-    <value>(Global Assembly Cache) {0}</value>
+    <value>(Caché global de ensamblados) {0}</value>
   </data>
   <data name="MshSnapinQualifiedError" xml:space="preserve">
     <value>{0}, {1}</value>
   </data>
   <data name="FormatFileNotRooted" xml:space="preserve">
-    <value>The path {0} is not fully qualified. Specify a fully qualified format file path.</value>
+    <value>La ruta {0} no está completa. Especifique una ruta de acceso de archivo de formato completa.</value>
   </data>
   <data name="SharedFormatTableCannotBeUpdated" xml:space="preserve">
-    <value>The FormatTable cannot be updated because the FormatTable might have been created outside of the runspace.</value>
+    <value>No se puede actualizar FormatTable porque es posible que se haya creado fuera del espacio de ejecución.</value>
   </data>
   <data name="FormatTableLoadErrors" xml:space="preserve">
-    <value>Errors occurred while loading the FormatTable. View the contents of the Errors property to get detailed error messages.</value>
+    <value>Se han producido errores al cargar FormatTable. Consulte el contenido de la propiedad Errors para obtener mensajes de error detallados.</value>
   </data>
   <data name="ErrorInFormattingData" xml:space="preserve">
-    <value>Error in formatting data "{0}": {1}</value>
+    <value>Error al dar formato a los datos "{0}": {1}</value>
   </data>
   <data name="IncorrectHeaderItemCountInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: The header item count = {2} does not match the default row item count = {3}.</value>
+    <value>Error en los datos de vista con el nombre de tipo {0} en el índice {1}: el recuento de elementos del encabezado = {2} no coincide con el recuento de elementos predeterminado de la fila = {3}.</value>
   </data>
   <data name="InvalidFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: Formatting data "{2}" is not valid.</value>
+    <value>Error en los datos de vista con el nombre de tipo {0} en el índice {1}: los datos de formato "{2}" no son válidos.</value>
   </data>
   <data name="InvalidScriptBlockInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: Script block "{2}" is not valid.</value>
+    <value>Error en los datos de vista con el nombre de tipo {0} en el índice {1}: el bloque de script "{2}" no es válido.</value>
   </data>
   <data name="LoadTagFailedInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: {2} failed to load.</value>
+    <value>Error en los datos de vista con el nombre de tipo {0} en el índice {1}: {2} no se pudo cargar.</value>
   </data>
   <data name="MultipleRowEntriesFoundInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: A TableControl should contain only one {2}.</value>
+    <value>Error en los datos de vista con el nombre de tipo {0} en el índice {1}: TableControl solo debe contener una {2}.</value>
   </data>
   <data name="NoDefaultShapeEntryInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: There must be at least one default {2}.</value>
+    <value>Error en los datos de vista con el nombre de tipo {0} en el índice {1}: debe haber al menos un valor predeterminado {2}.</value>
   </data>
   <data name="NoListViewItemInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: At least one list view item must be specified.</value>
+    <value>Error en los datos de vista con el nombre de tipo {0} en el índice {1}: se debe especificar al menos un elemento de vista de lista.</value>
   </data>
   <data name="TooManyDefaultShapeEntryInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: There cannot be more than one default {2}.</value>
+    <value>Error en los datos de vista con el nombre de tipo {0} en el índice {1}: no puede haber más de un valor predeterminado {2}.</value>
   </data>
   <data name="TooManyErrorsInFormattingData" xml:space="preserve">
-    <value>Too many errors in the formatting data for type "{0}".</value>
+    <value>Hay demasiados errores en los datos de formato para el tipo "{0}".</value>
   </data>
   <data name="FormatTableCannotCoExist" xml:space="preserve">
-    <value>A shared format table cannot be updated with more than one entry.</value>
+    <value>Una tabla de formato compartida no se puede actualizar con más de una entrada.</value>
   </data>
 </root>

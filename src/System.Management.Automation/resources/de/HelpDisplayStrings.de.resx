@@ -151,7 +151,7 @@
     <value>EXAMPLES</value>
   </data>
   <data name="Example" xml:space="preserve">
-    <value>Example</value>
+    <value>Beispiel</value>
   </data>
   <data name="ExampleUpperCase" xml:space="preserve">
     <value>EXAMPLE</value>
@@ -172,7 +172,7 @@
     <value>Question:</value>
   </data>
   <data name="Answer" xml:space="preserve">
-    <value>Answer</value>
+    <value>Antwort</value>
   </data>
   <data name="TermColon" xml:space="preserve">
     <value>Term:</value>
@@ -274,7 +274,7 @@
        go to {1}.</value>
   </data>
   <data name="None" xml:space="preserve">
-    <value>None</value>
+    <value>Keine</value>
   </data>
   <data name="ParameterAliases" xml:space="preserve">
     <value>Aliases                      </value>

@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UnknownParameterTypeError" xml:space="preserve">
-    <value>Cannot convert {0} to one of the following types {1}.</value>
+    <value>{0}을(를) 다음 {1} 형식 중 하나로 변환할 수 없습니다.</value>
   </data>
   <data name="NullParameterTypeError" xml:space="preserve">
-    <value>The value of a parameter was null; one of the following types was expected: {0}.</value>
+    <value>매개 변수 값이 null입니다. 다음 형식 중 하나가 필요합니다: {0}.</value>
   </data>
   <data name="DuplicateKeyError" xml:space="preserve">
-    <value>The duplicated key "{0}" conflicts with "{1}".</value>
+    <value>중복된 키 "{0}"이(가) "{1}"과(와) 충돌합니다.</value>
   </data>
   <data name="IllegalTypeMultiError" xml:space="preserve">
-    <value>The "{0}" key has a type, {1}, that is not valid; expected types are {2}.</value>
+    <value>"{0}" 키의 형식이 {1}(으)로 잘못되었습니다. 예상 형식은 {2}입니다.</value>
   </data>
   <data name="IllegalTypeSingleError" xml:space="preserve">
-    <value>The "{0}" key has a type, {1}, that is not valid; expected type is {2}.</value>
+    <value>"{0}" 키에 잘못된 형식이 {1}이(가) 있습니다. 필요한 형식은 {2}입니다.</value>
   </data>
   <data name="AmbiguousKeyError" xml:space="preserve">
-    <value>The {0} key is ambiguous; {1} and {2} conflict.</value>
+    <value>{0} 키가 모호합니다. {1}과(와) {2}이(가) 충돌합니다.</value>
   </data>
   <data name="DictionaryKeyNullError" xml:space="preserve">
-    <value>The value of a key cannot be null.</value>
+    <value>키 값은 null일 수 없습니다.</value>
   </data>
   <data name="DictionaryKeyNonStringError" xml:space="preserve">
-    <value>The {0} key type is not valid. The key must be a string.</value>
+    <value>{0} 키 유형이 유효하지 않습니다. 키는 문자열이어야 합니다.</value>
   </data>
   <data name="MissingKeyValueError" xml:space="preserve">
-    <value>The {0} key has no value.</value>
+    <value>{0} 키에 값이 없습니다.</value>
   </data>
   <data name="MissingKeyMandatoryEntryError" xml:space="preserve">
-    <value>A mandatory entry for {0} is missing.</value>
+    <value>{0}에 필수 항목이 없습니다.</value>
   </data>
   <data name="IllegalKeyError" xml:space="preserve">
-    <value>The {0} key is not valid.</value>
+    <value>{0} 키가 잘못되었습니다.</value>
   </data>
   <data name="IllegalAlignmentValueError" xml:space="preserve">
-    <value>The value "{0}" for key "{1}" is not valid; valid values are {2}.</value>
+    <value>키 "{0}"의 값 "{1}"이(가) 잘못되었습니다. 유효한 값은 {2}입니다.</value>
   </data>
   <data name="OutOfRangeWidthValueError" xml:space="preserve">
-    <value>The value "{0}" for key "{1}" should be greater than 0.</value>
+    <value>"{1}" 키의 "{0}" 값은 0보다 커야 합니다.</value>
   </data>
   <data name="EmptyFormatStringValueError" xml:space="preserve">
-    <value>Cannot have an empty formatting string for key "{0}".</value>
+    <value>키 "{0}"에 대해 빈 서식 문자열은 사용할 수 없습니다.</value>
   </data>
   <data name="MshExEmptyStringHashError" xml:space="preserve">
-    <value>The "{0}" key cannot have an empty string value.</value>
+    <value>"{0}" 키에는 빈 문자열 값을 사용할 수 없습니다.</value>
   </data>
   <data name="MshExEmptyStringError" xml:space="preserve">
-    <value>An empty string value is not allowed.</value>
+    <value>빈 문자열 값은 허용되지 않습니다.</value>
   </data>
   <data name="MshExGlobbingHashError" xml:space="preserve">
-    <value>The "{0}" key cannot have wildcard characters in value "{1}".</value>
+    <value>"{0}" 키의 값 "{1}"에는 와일드카드 문자를 사용할 수 없습니다.</value>
   </data>
   <data name="MshExGlobbingStringError" xml:space="preserve">
-    <value>Wildcard characters are not allowed in "{0}".</value>
+    <value>"{0}"에서는 와일드카드 문자를 사용할 수 없습니다.</value>
   </data>
   <data name="IllegalEnumerableExpansionValue" xml:space="preserve">
-    <value>The EnumerableExpansion value is not valid.</value>
+    <value>EnumerableExpansion 값이 올바르지 않습니다.</value>
   </data>
 </root>

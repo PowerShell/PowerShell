@@ -298,7 +298,7 @@
     <value>Symbolic links are not supported for the specified path.</value>
   </data>
   <data name="CopyItemRemotelyProgressActivity" xml:space="preserve">
-    <value>Copying {0} to {1}</value>
+    <value>'{0}' wird in '{1}' kopiert.</value>
   </data>
   <data name="CopyItemRemoteDestinationIsFile" xml:space="preserve">
     <value>Destination path {0} is a file that already exists on the target destination.</value>
@@ -307,7 +307,7 @@
     <value>Failed to copy file {0} to remote target destination.</value>
   </data>
   <data name="CopyItemRemotelyStatusDescription" xml:space="preserve">
-    <value>From {0} to {1}</value>
+    <value>Von {0} bis {1}</value>
   </data>
   <data name="CopyItemRemotelyDestinationIsFile" xml:space="preserve">
     <value>Cannot copy a directory '{0}' to file '{0}'</value>

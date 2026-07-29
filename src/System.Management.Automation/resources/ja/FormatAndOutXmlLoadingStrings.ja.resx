@@ -118,207 +118,207 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AttributesNotAllowed" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The XML element {2} does not allow attributes.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: XML 要素 {2} では属性が許可されていません。</value>
   </data>
   <data name="NoChildrenAllowed" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Node {2} cannot have child objects.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ノード {2} に子オブジェクトを含めることはできません。</value>
   </data>
   <data name="InvalidNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is not valid.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} が無効です。</value>
   </data>
   <data name="NoDefaultShapeEntry" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: There must be at least one default {2}.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 既定の {2} が少なくとも 1 つ必要です。</value>
   </data>
   <data name="TooManyDefaultShapeEntry" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: There cannot be more than one default {2}.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 既定の {2} が複数存在することはできません。</value>
   </data>
   <data name="NullControlName" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The control name cannot be null or empty.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: コントロール名を null 値または空にすることはできません。</value>
   </data>
   <data name="InvalidControlForOutOfBandView" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Out Of Band views can only have CustomControl or ListControl.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 帯域外ビューには CustomControl または ListControl のみを含めることができます。</value>
   </data>
   <data name="OutOfBandGroupByConflict" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: An Out Of Band view cannot have GroupBy.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 帯域外ビューに GroupBy を含めることはできません。</value>
   </data>
   <data name="ViewNotLoaded" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The view cannot be loaded.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ビューを読み込めません。</value>
   </data>
   <data name="InvalidAlignmentValue" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: "{2}" is not a valid alignment value.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: "{2}" は有効なアラインメント値ではありません。</value>
   </data>
   <data name="ExpectPositiveInteger" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A positive integer is expected.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 正の整数が必要です。</value>
   </data>
   <data name="InvalidColumnHeader" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The column header definition is not valid; all headers are discarded.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 列ヘッダー定義が無効です。すべてのヘッダーが破棄されます。</value>
   </data>
   <data name="IncorrectRowItemCount" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The row item count = {2} on alternative set #{3} does not match default row item count = {4}.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 行項目数 = 代替セット # {3} の{2} が、既定の行項目数 = {4} と一致しません。</value>
   </data>
   <data name="IncorrectHeaderItemCount" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The header item count = {2} does not match default row item count = {3}.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ヘッダー項目数 = {2} が既定の行項目数 = {3} と一致しません。</value>
   </data>
   <data name="NoListViewItem" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: At least one list view item must be specified.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 少なくとも 1 つのリスト ビュー項目を指定する必要があります。</value>
   </data>
   <data name="InvalidPropertyEntry" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The property entry is not valid.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: プロパティ エントリが無効です。</value>
   </data>
   <data name="NoDefinitionList" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The definition list is missing.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 定義リストがありません。</value>
   </data>
   <data name="ExpectBoolean" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A Boolean value is expected.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ブール値が必要です。</value>
   </data>
   <data name="ExpectNaturalNumber" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A non-negative integer is expected.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 負でない整数が必要です。</value>
   </data>
   <data name="ExpectInteger" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: An integer is expected.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 整数が必要です。</value>
   </data>
   <data name="MissingInnerText" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The inner text value is missing.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 内部テキスト値がありません。</value>
   </data>
   <data name="EmptyCustomControlList" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The custom control token list cannot be empty.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: カスタム コントロール トークン リストを空にすることはできません。</value>
   </data>
   <data name="LoadTagFailed" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} failed to load.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} が読み込めませんでした。</value>
   </data>
   <data name="NodeWithoutExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} cannot be specified without an expression.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました。式がないと {2} を指定できません。</value>
   </data>
   <data name="NodeWithExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} cannot be specified with an expression.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} を式で指定することはできません。</value>
   </data>
   <data name="NoFormatString" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A format string is missing.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 書式指定文字列がありません。</value>
   </data>
   <data name="NoScriptBlockText" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Script block text is missing.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: スクリプト ブロックのテキストがありません。</value>
   </data>
   <data name="NoProperty" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A property is missing.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: プロパティがありません。</value>
   </data>
   <data name="InvalidScriptBlock" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Script block "{2}" is not valid.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: スクリプト ブロック "{2}" が無効です。</value>
   </data>
   <data name="StringResourceNotFound" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The string {2} from resource {3} in assembly {4} is not found.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: アセンブリ {4} のリソース {3} から文字列 {2} が見つかりません。</value>
   </data>
   <data name="ResourceNotFound" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The resource {2} in assembly {3} is not found.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: アセンブリ {3} のリソース {2} が見つかりません。</value>
   </data>
   <data name="AssemblyNotFound" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The assembly {2} is not found.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: アセンブリ {2} が見つかりません。</value>
   </data>
   <data name="NonXmlElementNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The node must be an XmlElement.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ノードは XmlElement である必要があります。</value>
   </data>
   <data name="ExpectExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: An expression is expected.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 式が必要です。</value>
   </data>
   <data name="ControlLabelWithoutExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Cannot have control or Label without an expression.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 式がないと、コントロールまたはラベルを持つことができません。</value>
   </data>
   <data name="ControlAndLabel" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Cannot have control and Label at the same time.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: コントロールとラベルを同時に持つことはできません。</value>
   </data>
   <data name="SelectionSetNameAndTypeName" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Cannot have SelectionSetName and TypeName at the same time.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: SelectionSetName と TypeName を同時に指定することはできません。</value>
   </data>
   <data name="EmptyAppliesTo" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: No type or condition is specified for applying the view.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ビューを適用するための型または条件が指定されていません。</value>
   </data>
   <data name="InvalidNodeValue" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The {2} value is not valid.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} 値が無効です。</value>
   </data>
   <data name="DuplicatedNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A duplicate node exists.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 重複するノードが存在します。</value>
   </data>
   <data name="MutuallyExclusiveNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} and {3} are mutually exclusive.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} と {3} は相互に排他的です。</value>
   </data>
   <data name="ThreeMutuallyExclusiveNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2}, {3} and {4} are mutually exclusive.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2}、{3}、{4} は相互に排他的です。</value>
   </data>
   <data name="UnknownNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an unknown node.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} は不明なノードです。</value>
   </data>
   <data name="UnknownAttribute" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an unknown attribute.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} は不明な属性です。</value>
   </data>
   <data name="MissingAttribute" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is a missing attribute.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} 属性がありません。</value>
   </data>
   <data name="MissingNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Node {2} is missing.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ノード {2} がありません。</value>
   </data>
   <data name="MissingNodeFromList" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A node is missing from {2}.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ノードが {2} に見つかりません。</value>
   </data>
   <data name="EmptyNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an empty node.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} は空のノードです。</value>
   </data>
   <data name="EmptyAttribute" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an empty attribute.</value>
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} は空の属性です。</value>
   </data>
   <data name="ErrorInFile" xml:space="preserve">
-    <value>Error in file {0}: {1}</value>
+    <value>ファイル {0} でエラーが発生しました: {1}</value>
   </data>
   <data name="TooManyErrors" xml:space="preserve">
-    <value>Too many errors in file {0}.</value>
+    <value>ファイル {0} にエラーが多すぎます。</value>
   </data>
   <data name="FormatLoadingErrors" xml:space="preserve">
-    <value>Errors occurred while loading the format data file: {0}</value>
+    <value>フォーマット データ ファイルの読み込み中にエラーが発生しました: {0}</value>
   </data>
   <data name="AssemblyInGAC" xml:space="preserve">
-    <value>(Global Assembly Cache) {0}</value>
+    <value>(グローバル アセンブリ キャッシュ) {0}</value>
   </data>
   <data name="MshSnapinQualifiedError" xml:space="preserve">
-    <value>{0}, {1}</value>
+    <value>{0}、{1}</value>
   </data>
   <data name="FormatFileNotRooted" xml:space="preserve">
-    <value>The path {0} is not fully qualified. Specify a fully qualified format file path.</value>
+    <value>パス {0} は完全修飾パスではありません。完全修飾形式のファイル パスを指定します。</value>
   </data>
   <data name="SharedFormatTableCannotBeUpdated" xml:space="preserve">
-    <value>The FormatTable cannot be updated because the FormatTable might have been created outside of the runspace.</value>
+    <value>FormatTable が実行空間の外部に作成されている可能性があるため、FormatTable を更新できません。</value>
   </data>
   <data name="FormatTableLoadErrors" xml:space="preserve">
-    <value>Errors occurred while loading the FormatTable. View the contents of the Errors property to get detailed error messages.</value>
+    <value>FormatTable の読み込み中にエラーが発生しました。"Errors" プロパティの内容を表示して、詳細なエラー メッセージを取得します。</value>
   </data>
   <data name="ErrorInFormattingData" xml:space="preserve">
-    <value>Error in formatting data "{0}": {1}</value>
+    <value>データ "{0}" の書式設定中にエラーが発生しました: {1}</value>
   </data>
   <data name="IncorrectHeaderItemCountInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: The header item count = {2} does not match the default row item count = {3}.</value>
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: ヘッダー項目数 = {2} が既定の行項目数 = {3} と一致しません。</value>
   </data>
   <data name="InvalidFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: Formatting data "{2}" is not valid.</value>
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: データ "{2}" の書式設定が無効です。</value>
   </data>
   <data name="InvalidScriptBlockInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: Script block "{2}" is not valid.</value>
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: スクリプト ブロック "{2}" が無効です。</value>
   </data>
   <data name="LoadTagFailedInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: {2} failed to load.</value>
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: {2} が読み込めませんでした。</value>
   </data>
   <data name="MultipleRowEntriesFoundInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: A TableControl should contain only one {2}.</value>
+    <value>インデックス {1} で型名が {0} のビュー データでエラーが発生しました: TableControl に含める {2} は 1 つだけです。</value>
   </data>
   <data name="NoDefaultShapeEntryInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: There must be at least one default {2}.</value>
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: 既定の {2} が少なくとも 1 つ必要です。</value>
   </data>
   <data name="NoListViewItemInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: At least one list view item must be specified.</value>
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: 少なくとも 1 つのリスト ビュー項目を指定する必要があります。</value>
   </data>
   <data name="TooManyDefaultShapeEntryInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: There cannot be more than one default {2}.</value>
+    <value>インデックス {1} で型名が {0} のビュー データでエラーが発生しました: 既定の {2} が複数存在することはできません。</value>
   </data>
   <data name="TooManyErrorsInFormattingData" xml:space="preserve">
-    <value>Too many errors in the formatting data for type "{0}".</value>
+    <value>型 "{0}" の書式設定データにエラーが多すぎます。</value>
   </data>
   <data name="FormatTableCannotCoExist" xml:space="preserve">
-    <value>A shared format table cannot be updated with more than one entry.</value>
+    <value>共有フォーマット テーブルを複数のエントリで更新することはできません。</value>
   </data>
 </root>

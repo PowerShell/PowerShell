@@ -118,207 +118,207 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AttributesNotAllowed" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The XML element {2} does not allow attributes.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Element XML {2} nepovoluje atributy.</value>
   </data>
   <data name="NoChildrenAllowed" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Node {2} cannot have child objects.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Uzel {2} nemůže obsahovat podřízené objekty.</value>
   </data>
   <data name="InvalidNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is not valid.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvek {2} není platný.</value>
   </data>
   <data name="NoDefaultShapeEntry" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: There must be at least one default {2}.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Je vyžadovaná alespoň jedna výchozí položka {2}.</value>
   </data>
   <data name="TooManyDefaultShapeEntry" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: There cannot be more than one default {2}.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Může existovat nejvýše jedna výchozí položka {2}.</value>
   </data>
   <data name="NullControlName" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The control name cannot be null or empty.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Název ovládacího prvku nesmí být null ani prázdný.</value>
   </data>
   <data name="InvalidControlForOutOfBandView" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Out Of Band views can only have CustomControl or ListControl.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Zobrazení Out Of Band můžou obsahovat jen CustomControl nebo ListControl.</value>
   </data>
   <data name="OutOfBandGroupByConflict" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: An Out Of Band view cannot have GroupBy.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Zobrazení Out Of Band nemůže obsahovat GroupBy.</value>
   </data>
   <data name="ViewNotLoaded" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The view cannot be loaded.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Zobrazení nejde načíst.</value>
   </data>
   <data name="InvalidAlignmentValue" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: "{2}" is not a valid alignment value.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: {2} není platná hodnota zarovnání.</value>
   </data>
   <data name="ExpectPositiveInteger" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A positive integer is expected.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Očekává se kladné celé číslo.</value>
   </data>
   <data name="InvalidColumnHeader" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The column header definition is not valid; all headers are discarded.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Definice záhlaví sloupců není platná. Všechna záhlaví se zahodí.</value>
   </data>
   <data name="IncorrectRowItemCount" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The row item count = {2} on alternative set #{3} does not match default row item count = {4}.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Počet položek řádku = {2} v alternativní sadě #{3} neodpovídá počtu položek výchozího řádku = {4}.</value>
   </data>
   <data name="IncorrectHeaderItemCount" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The header item count = {2} does not match default row item count = {3}.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Počet položek záhlaví = {2} neodpovídá počtu položek výchozího řádku = {3}.</value>
   </data>
   <data name="NoListViewItem" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: At least one list view item must be specified.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Musí být zadaná alespoň jedna položka zobrazení seznamu.</value>
   </data>
   <data name="InvalidPropertyEntry" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The property entry is not valid.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Položka vlastnosti není platná.</value>
   </data>
   <data name="NoDefinitionList" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The definition list is missing.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí seznam definic.</value>
   </data>
   <data name="ExpectBoolean" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A Boolean value is expected.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Očekává se logická hodnota.</value>
   </data>
   <data name="ExpectNaturalNumber" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A non-negative integer is expected.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Očekává se nezáporné celé číslo.</value>
   </data>
   <data name="ExpectInteger" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: An integer is expected.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Očekává se celé číslo.</value>
   </data>
   <data name="MissingInnerText" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The inner text value is missing.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí hodnota vnitřního textu.</value>
   </data>
   <data name="EmptyCustomControlList" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The custom control token list cannot be empty.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Seznam tokenů vlastního ovládacího prvku nesmí být prázdný.</value>
   </data>
   <data name="LoadTagFailed" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} failed to load.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvek {2} se nepovedlo načíst.</value>
   </data>
   <data name="NodeWithoutExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} cannot be specified without an expression.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvek {2} nejde zadat bez výrazu.</value>
   </data>
   <data name="NodeWithExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} cannot be specified with an expression.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvek {2} nejde zadat společně s výrazem.</value>
   </data>
   <data name="NoFormatString" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A format string is missing.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí formátovací řetězec.</value>
   </data>
   <data name="NoScriptBlockText" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Script block text is missing.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí text bloku skriptu.</value>
   </data>
   <data name="NoProperty" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A property is missing.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí vlastnost.</value>
   </data>
   <data name="InvalidScriptBlock" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Script block "{2}" is not valid.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Blok skriptu {2} není platný.</value>
   </data>
   <data name="StringResourceNotFound" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The string {2} from resource {3} in assembly {4} is not found.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Řetězec {2} z prostředku {3} v sestavení {4} se nenašel.</value>
   </data>
   <data name="ResourceNotFound" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The resource {2} in assembly {3} is not found.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prostředek {2} v sestavení {3} se nenašel.</value>
   </data>
   <data name="AssemblyNotFound" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The assembly {2} is not found.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Sestavení {2} se nenašlo.</value>
   </data>
   <data name="NonXmlElementNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The node must be an XmlElement.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Uzel musí být typu XmlElement.</value>
   </data>
   <data name="ExpectExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: An expression is expected.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Očekává se výraz.</value>
   </data>
   <data name="ControlLabelWithoutExpression" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Cannot have control or Label without an expression.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Bez výrazu nejde použít ovládací prvek ani Label.</value>
   </data>
   <data name="ControlAndLabel" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Cannot have control and Label at the same time.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Ovládací prvek a Label nejde použít současně.</value>
   </data>
   <data name="SelectionSetNameAndTypeName" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Cannot have SelectionSetName and TypeName at the same time.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: SelectionSetName a TypeName nejde použít současně.</value>
   </data>
   <data name="EmptyAppliesTo" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: No type or condition is specified for applying the view.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Není zadaný typ ani podmínka pro použití zobrazení.</value>
   </data>
   <data name="InvalidNodeValue" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: The {2} value is not valid.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Hodnota {2} není platná.</value>
   </data>
   <data name="DuplicatedNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A duplicate node exists.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Existuje duplicitní uzel.</value>
   </data>
   <data name="MutuallyExclusiveNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} and {3} are mutually exclusive.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvky {2} a {3} se vzájemně vylučují.</value>
   </data>
   <data name="ThreeMutuallyExclusiveNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2}, {3} and {4} are mutually exclusive.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvky {2}, {3} a {4} se vzájemně vylučují.</value>
   </data>
   <data name="UnknownNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an unknown node.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: {2} je neznámý uzel.</value>
   </data>
   <data name="UnknownAttribute" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an unknown attribute.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: {2} je neznámý atribut.</value>
   </data>
   <data name="MissingAttribute" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is a missing attribute.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí atribut {2}.</value>
   </data>
   <data name="MissingNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: Node {2} is missing.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí uzel {2}.</value>
   </data>
   <data name="MissingNodeFromList" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: A node is missing from {2}.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: V prvku {2} chybí uzel.</value>
   </data>
   <data name="EmptyNode" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an empty node.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: {2} je prázdný uzel.</value>
   </data>
   <data name="EmptyAttribute" xml:space="preserve">
-    <value>Error at XPath {0} in file {1}: {2} is an empty attribute.</value>
+    <value>Chyba na cestě XPath {0} v souboru {1}: {2} je prázdný atribut.</value>
   </data>
   <data name="ErrorInFile" xml:space="preserve">
-    <value>Error in file {0}: {1}</value>
+    <value>Chyba v souboru {0}: {1}</value>
   </data>
   <data name="TooManyErrors" xml:space="preserve">
-    <value>Too many errors in file {0}.</value>
+    <value>Soubor {0} obsahuje příliš mnoho chyb.</value>
   </data>
   <data name="FormatLoadingErrors" xml:space="preserve">
-    <value>Errors occurred while loading the format data file: {0}</value>
+    <value>Při načítání souboru s daty formátování došlo k chybám: {0}</value>
   </data>
   <data name="AssemblyInGAC" xml:space="preserve">
-    <value>(Global Assembly Cache) {0}</value>
+    <value>(Globální mezipaměť sestavení) {0}</value>
   </data>
   <data name="MshSnapinQualifiedError" xml:space="preserve">
     <value>{0}, {1}</value>
   </data>
   <data name="FormatFileNotRooted" xml:space="preserve">
-    <value>The path {0} is not fully qualified. Specify a fully qualified format file path.</value>
+    <value>Cesta {0} není plně kvalifikovaná. Zadejte plně kvalifikovanou cestu k souboru formátu.</value>
   </data>
   <data name="SharedFormatTableCannotBeUpdated" xml:space="preserve">
-    <value>The FormatTable cannot be updated because the FormatTable might have been created outside of the runspace.</value>
+    <value>Objekt FormatTable nejde aktualizovat, protože mohl být vytvořený mimo prostředí runspace.</value>
   </data>
   <data name="FormatTableLoadErrors" xml:space="preserve">
-    <value>Errors occurred while loading the FormatTable. View the contents of the Errors property to get detailed error messages.</value>
+    <value>Při načítání objektu FormatTable došlo k chybám. Podrobné chybové zprávy najdete v obsahu vlastnosti Errors.</value>
   </data>
   <data name="ErrorInFormattingData" xml:space="preserve">
-    <value>Error in formatting data "{0}": {1}</value>
+    <value>Chyba v datech formátování {0}: {1}</value>
   </data>
   <data name="IncorrectHeaderItemCountInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: The header item count = {2} does not match the default row item count = {3}.</value>
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Počet položek záhlaví = {2} neodpovídá počtu položek výchozího řádku = {3}.</value>
   </data>
   <data name="InvalidFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: Formatting data "{2}" is not valid.</value>
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Data formátování {2} nejsou platná.</value>
   </data>
   <data name="InvalidScriptBlockInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: Script block "{2}" is not valid.</value>
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Blok skriptu {2} není platný.</value>
   </data>
   <data name="LoadTagFailedInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: {2} failed to load.</value>
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Prvek {2} se nepovedlo načíst.</value>
   </data>
   <data name="MultipleRowEntriesFoundInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: A TableControl should contain only one {2}.</value>
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: TableControl smí obsahovat jen jeden prvek {2}.</value>
   </data>
   <data name="NoDefaultShapeEntryInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: There must be at least one default {2}.</value>
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Je vyžadovaná alespoň jedna výchozí položka {2}.</value>
   </data>
   <data name="NoListViewItemInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: At least one list view item must be specified.</value>
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Musí být zadaná alespoň jedna položka zobrazení seznamu.</value>
   </data>
   <data name="TooManyDefaultShapeEntryInFormattingData" xml:space="preserve">
-    <value>Error in view data with type name {0} at index {1}: There cannot be more than one default {2}.</value>
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Může existovat nejvýše jedna výchozí položka {2}.</value>
   </data>
   <data name="TooManyErrorsInFormattingData" xml:space="preserve">
-    <value>Too many errors in the formatting data for type "{0}".</value>
+    <value>Data formátování pro typ {0} obsahují příliš mnoho chyb.</value>
   </data>
   <data name="FormatTableCannotCoExist" xml:space="preserve">
-    <value>A shared format table cannot be updated with more than one entry.</value>
+    <value>Sdílenou tabulku formátování nejde aktualizovat více než jednou položkou.</value>
   </data>
 </root>

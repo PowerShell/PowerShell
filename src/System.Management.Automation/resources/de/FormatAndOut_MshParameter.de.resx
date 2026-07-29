@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UnknownParameterTypeError" xml:space="preserve">
-    <value>Cannot convert {0} to one of the following types {1}.</value>
+    <value>{0} kann nicht in einen der folgenden Typen {1} konver werden.</value>
   </data>
   <data name="NullParameterTypeError" xml:space="preserve">
-    <value>The value of a parameter was null; one of the following types was expected: {0}.</value>
+    <value>Der Wert eines Parameters war Null. einer der folgenden Typen wurde erwartet: {0}.</value>
   </data>
   <data name="DuplicateKeyError" xml:space="preserve">
-    <value>The duplicated key "{0}" conflicts with "{1}".</value>
+    <value>Der duplizierte Schlüssel „{0}“ verursacht einen Konflikt mit „{1}“.</value>
   </data>
   <data name="IllegalTypeMultiError" xml:space="preserve">
-    <value>The "{0}" key has a type, {1}, that is not valid; expected types are {2}.</value>
+    <value>Der Schlüssel „{0}“ weist einen ungültigen Typ {1} auf; erwartete Typen sind {2}.</value>
   </data>
   <data name="IllegalTypeSingleError" xml:space="preserve">
-    <value>The "{0}" key has a type, {1}, that is not valid; expected type is {2}.</value>
+    <value>Der Schlüssel „{0}“ weist einen ungültigen Typ „{1}“ auf; erwarteter Typ: {2}.</value>
   </data>
   <data name="AmbiguousKeyError" xml:space="preserve">
-    <value>The {0} key is ambiguous; {1} and {2} conflict.</value>
+    <value>Der Schlüssel {0} ist mehrdeutig und {1} und {2} stehen in Konflikt.</value>
   </data>
   <data name="DictionaryKeyNullError" xml:space="preserve">
-    <value>The value of a key cannot be null.</value>
+    <value>Der Wert eines Schlüssels darf nicht Null sein.</value>
   </data>
   <data name="DictionaryKeyNonStringError" xml:space="preserve">
-    <value>The {0} key type is not valid. The key must be a string.</value>
+    <value>Der Schlüsseltyp „{0}“ ist ungültig. Der Schlüssel muss eine Zeichenfolge sein.</value>
   </data>
   <data name="MissingKeyValueError" xml:space="preserve">
-    <value>The {0} key has no value.</value>
+    <value>Der Schlüssel „{0}“ hat keinen Wert.</value>
   </data>
   <data name="MissingKeyMandatoryEntryError" xml:space="preserve">
-    <value>A mandatory entry for {0} is missing.</value>
+    <value>Ein obligatorischer Eintrag für {0} fehlt.</value>
   </data>
   <data name="IllegalKeyError" xml:space="preserve">
-    <value>The {0} key is not valid.</value>
+    <value>Der Schlüssel „{0}“ ist ungültig.</value>
   </data>
   <data name="IllegalAlignmentValueError" xml:space="preserve">
-    <value>The value "{0}" for key "{1}" is not valid; valid values are {2}.</value>
+    <value>Der Wert „{0}“ für den Schlüssel „{1}“ ist ungültig. Gültige Werte sind {2}.</value>
   </data>
   <data name="OutOfRangeWidthValueError" xml:space="preserve">
-    <value>The value "{0}" for key "{1}" should be greater than 0.</value>
+    <value>Der Wert „{0}“ für den Schlüssel „{1}“ muss größer als 0 sein.</value>
   </data>
   <data name="EmptyFormatStringValueError" xml:space="preserve">
-    <value>Cannot have an empty formatting string for key "{0}".</value>
+    <value>Für den Schlüssel „{0}“ darf keine leere Formatierungszeichenfolge vorhanden sein.</value>
   </data>
   <data name="MshExEmptyStringHashError" xml:space="preserve">
-    <value>The "{0}" key cannot have an empty string value.</value>
+    <value>Der Schlüssel „{0}“ darf keinen leeren Zeichenfolgenwert aufweisen.</value>
   </data>
   <data name="MshExEmptyStringError" xml:space="preserve">
-    <value>An empty string value is not allowed.</value>
+    <value>Ein leerer Zeichenfolgenwert ist nicht zulässig.</value>
   </data>
   <data name="MshExGlobbingHashError" xml:space="preserve">
-    <value>The "{0}" key cannot have wildcard characters in value "{1}".</value>
+    <value>Der Schlüssel „{0}“ darf keine Platzhalterzeichen im Wert „{1}“ enthalten.</value>
   </data>
   <data name="MshExGlobbingStringError" xml:space="preserve">
-    <value>Wildcard characters are not allowed in "{0}".</value>
+    <value>Die Platzhalterzeichen sind in „{0}“ nicht zulässig.</value>
   </data>
   <data name="IllegalEnumerableExpansionValue" xml:space="preserve">
-    <value>The EnumerableExpansion value is not valid.</value>
+    <value>Der EnumerableExpansion-Wert ist ungültig.</value>
   </data>
 </root>
