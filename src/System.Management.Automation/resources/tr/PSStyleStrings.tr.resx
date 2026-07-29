@@ -59,12 +59,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TextContainsContent" xml:space="preserve">
-    <value>The specified string contains printable content when it should only contain ANSI escape sequences: {0}</value>
+    <value>Belirtilen dize, yalnızca ANSI kaçış dizileri içermesi gerekirken yazdırılabilir içerik içeriyor: {0}</value>
   </data>
   <data name="ProgressWidthTooSmall" xml:space="preserve">
-    <value>The MaxWidth for the Progress rendering must be at least 18 to render correctly.</value>
+    <value>Sürüyor işleme için MaxWidth, doğru şekilde işlemek için en az 18 olmalıdır.</value>
   </data>
   <data name="ExtensionNotStartingWithPeriod" xml:space="preserve">
-    <value>When adding or removing extensions, the extension must start with a period.</value>
+    <value>Uzantılar eklenirken veya kaldırılırken, uzantı bir nokta ile başlamalıdır.</value>
   </data>
 </root>

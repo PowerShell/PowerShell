@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ListModifierDisallowedKey" xml:space="preserve">
-    <value>The following unknown list modifier was detected: '{0}'. Valid list modifiers are Add, Remove, and Replace.</value>
+    <value>Обнаружен следующий неизвестный модификатор списка: "{0}". Допустимые модификаторы списка: Add, Remove и Replace.</value>
   </data>
   <data name="UpdateFailed" xml:space="preserve">
-    <value>Cannot apply the update because the object is not a supported collection type.</value>
+    <value>Не удается применить обновление, так как объект не является поддерживаемой коллекцией.</value>
   </data>
 </root>

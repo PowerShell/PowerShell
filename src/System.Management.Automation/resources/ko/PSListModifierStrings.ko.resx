@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ListModifierDisallowedKey" xml:space="preserve">
-    <value>The following unknown list modifier was detected: '{0}'. Valid list modifiers are Add, Remove, and Replace.</value>
+    <value>알 수 없는 목록 한정자가 검색되었습니다. '{0}'. 올바른 목록 한정자는 Add, Remove, Replace입니다.</value>
   </data>
   <data name="UpdateFailed" xml:space="preserve">
-    <value>Cannot apply the update because the object is not a supported collection type.</value>
+    <value>개체가 지원되는 컬렉션 형식이 아니므로 업데이트를 적용할 수 없습니다.</value>
   </data>
 </root>

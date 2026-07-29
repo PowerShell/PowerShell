@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IndexOutOfRange" xml:space="preserve">
-    <value>The index specified is less than zero or greater than the number of items in the buffer. Index should be in the range {0}-{1}.</value>
+    <value>指定的索引小于零或大于缓冲区中的项数。索引应在以下范围内: {0}-{1}。</value>
   </data>
   <data name="ValueNullReference" xml:space="preserve">
-    <value>Cannot convert a null reference to a value type.</value>
+    <value>无法将 null 引用转换为值类型。</value>
   </data>
   <data name="CannotConvertToGenericType" xml:space="preserve">
-    <value>Cannot convert value from type {0} to type {1}.</value>
+    <value>无法将值从 {0} 类型转换为 {1} 类型。</value>
   </data>
   <data name="WriteToClosedBuffer" xml:space="preserve">
-    <value>Objects cannot be added to a closed buffer. Make sure the buffer is open for Add and Insert operations to succeed.</value>
+    <value>无法将对象添加到已关闭的缓冲区。请确保缓冲区处于打开状态，以便成功执行“添加”和“插入”操作。</value>
   </data>
   <data name="SerializationNotSupported" xml:space="preserve">
-    <value>The SerializeInput property can only be set for the PSObject type of PSDataCollection. Set the SerializeInput property to false, or change the collection type to a PSObject.</value>
+    <value>只有 PSObject 类型的 PSDataCollection 才能设置 SerializeInput 属性。请将 SerializeInput 属性设为 false，或将集合类型更改为 PSObject。</value>
   </data>
 </root>

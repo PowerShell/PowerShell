@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IndexOutOfRange" xml:space="preserve">
-    <value>The index specified is less than zero or greater than the number of items in the buffer. Index should be in the range {0}-{1}.</value>
+    <value>지정한 인덱스가 0보다 작거나 버퍼의 항목 수보다 큽니다. 인덱스가 범위 {0}-{1}에 있어야 합니다.</value>
   </data>
   <data name="ValueNullReference" xml:space="preserve">
-    <value>Cannot convert a null reference to a value type.</value>
+    <value>null 참조를 값 형식으로 변환할 수 없습니다.</value>
   </data>
   <data name="CannotConvertToGenericType" xml:space="preserve">
-    <value>Cannot convert value from type {0} to type {1}.</value>
+    <value>값을 형식 {0}에서 형식 {1}(으)로 변환할 수 없습니다.</value>
   </data>
   <data name="WriteToClosedBuffer" xml:space="preserve">
-    <value>Objects cannot be added to a closed buffer. Make sure the buffer is open for Add and Insert operations to succeed.</value>
+    <value>닫힌 버퍼에는 개체를 추가할 수 없습니다. Add 및 Insert 작업이 성공하려면 버퍼를 열어 두세요.</value>
   </data>
   <data name="SerializationNotSupported" xml:space="preserve">
-    <value>The SerializeInput property can only be set for the PSObject type of PSDataCollection. Set the SerializeInput property to false, or change the collection type to a PSObject.</value>
+    <value>SerializeInput 속성은 PSDataCollection의 PSObject 형식에만 설정할 수 있습니다. SerializeInput 속성을 false로 설정하거나 컬렉션 형식을 PSObject로 변경하세요.</value>
   </data>
 </root>

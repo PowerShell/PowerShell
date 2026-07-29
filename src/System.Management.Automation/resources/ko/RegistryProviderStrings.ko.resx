@@ -118,216 +118,216 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetItemAction" xml:space="preserve">
-    <value>Set Item</value>
+    <value>항목 설정</value>
   </data>
   <data name="SetItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Value: {1}</value>
+    <value>항목: {0} 값: {1}</value>
   </data>
   <data name="ClearItemAction" xml:space="preserve">
-    <value>Clear Item</value>
+    <value>항목 지우기</value>
   </data>
   <data name="ClearItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>항목: {0}</value>
   </data>
   <data name="NewItemAction" xml:space="preserve">
-    <value>New Item</value>
+    <value>새 항목</value>
   </data>
   <data name="NewItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>항목: {0}</value>
   </data>
   <data name="RemoveKeyAction" xml:space="preserve">
-    <value>Remove Key</value>
+    <value>키 제거</value>
   </data>
   <data name="RemoveKeyResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>항목: {0}</value>
   </data>
   <data name="CopyKeyAction" xml:space="preserve">
-    <value>Copy Key</value>
+    <value>키 복사</value>
   </data>
   <data name="CopyKeyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>항목: {0} 대상: {1}</value>
   </data>
   <data name="RenameItemAction" xml:space="preserve">
-    <value>Rename Item</value>
+    <value>항목 이름 바꾸기</value>
   </data>
   <data name="RenameItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} NewName: {1}</value>
+    <value>항목: {0} NewName: {1}</value>
   </data>
   <data name="MoveItemAction" xml:space="preserve">
-    <value>Move Item</value>
+    <value>항목 이동</value>
   </data>
   <data name="MoveItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>항목: {0} 대상: {1}</value>
   </data>
   <data name="SetPropertyAction" xml:space="preserve">
-    <value>Set Property</value>
+    <value>속성 설정</value>
   </data>
   <data name="SetPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>항목: {0} 속성: {1}</value>
   </data>
   <data name="ClearPropertyAction" xml:space="preserve">
-    <value>Clear Property</value>
+    <value>속성 지우기</value>
   </data>
   <data name="ClearPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>항목: {0} 속성: {1}</value>
   </data>
   <data name="NewPropertyAction" xml:space="preserve">
-    <value>New Property</value>
+    <value>새 속성</value>
   </data>
   <data name="NewPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>항목: {0} 속성: {1}</value>
   </data>
   <data name="RemovePropertyAction" xml:space="preserve">
-    <value>Remove Property</value>
+    <value>속성 제거</value>
   </data>
   <data name="RemovePropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>항목: {0} 속성: {1}</value>
   </data>
   <data name="RenamePropertyAction" xml:space="preserve">
-    <value>Rename property.</value>
+    <value>속성 이름을 바꿉니다.</value>
   </data>
   <data name="RenamePropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} SourceProperty: {1} DestinationProperty: {2}</value>
+    <value>항목: {0} SourceProperty: {1} DestinationProperty: {2}</value>
   </data>
   <data name="CopyPropertyAction" xml:space="preserve">
-    <value>Copy Property</value>
+    <value>속성 복사</value>
   </data>
   <data name="CopyPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
+    <value>항목: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
   </data>
   <data name="MovePropertyAction" xml:space="preserve">
-    <value>Move Property</value>
+    <value>속성 이동</value>
   </data>
   <data name="MovePropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
+    <value>항목: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
   </data>
   <data name="ContainerInvalidOperationTemplate" xml:space="preserve">
-    <value>The operation was not processed. The location that was provided does not allow this operation.</value>
+    <value>작업이 완료되지 않았습니다. 제공된 위치에서는 이 작업을 허용하지 않습니다.</value>
   </data>
   <data name="SourceContainerInvalidOperationTemplate" xml:space="preserve">
-    <value>The operation is not allowed on the source location.</value>
+    <value>원본 위치에서는 이 작업을 허용하지 않습니다.</value>
   </data>
   <data name="DestinationContainerInvalidOperationTemplate" xml:space="preserve">
-    <value>The operation is not allowed on the destination location.</value>
+    <value>대상 위치에서는 이 작업을 허용하지 않습니다.</value>
   </data>
   <data name="HKLMDriveDescription" xml:space="preserve">
-    <value>The configuration settings for the local computer</value>
+    <value>로컬 컴퓨터에 대한 구성 설정</value>
   </data>
   <data name="HKCUDriveDescription" xml:space="preserve">
-    <value>The software settings for the current user</value>
+    <value>현재 사용자에 대한 소프트웨어 설정</value>
   </data>
   <data name="KeyAlreadyExists" xml:space="preserve">
-    <value>A key in this path already exists.</value>
+    <value>이 경로에 이미 키가 있습니다.</value>
   </data>
   <data name="DestinationChildOfSource" xml:space="preserve">
-    <value>The operation cannot be performed because the destination path is subordinate to the source path.</value>
+    <value>대상 경로가 원본 경로의 하위 경로이므로 작업을 수행할 수 없습니다.</value>
   </data>
   <data name="PropertyAlreadyExists" xml:space="preserve">
-    <value>The property already exists.</value>
+    <value>속성이 이미 있습니다.</value>
   </data>
   <data name="PropertyNotAtPath" xml:space="preserve">
-    <value>Property {0} does not exist at path {1}.</value>
+    <value>{1} 경로에 속성 {0}이(가) 없습니다.</value>
   </data>
   <data name="KeyDoesNotExist" xml:space="preserve">
-    <value>The registry key at the specified path does not exist.</value>
+    <value>지정한 경로에 있는 레지스트리 키가 없습니다.</value>
   </data>
   <data name="TypeParameterBindingFailure" xml:space="preserve">
-    <value>Could not bind parameter 'Type'. Could not convert "{0}" to "{1}". The possible enumeration values are "String, ExpandString, Binary, DWord, MultiString, QWord, Unknown".</value>
+    <value>'Type' 매개 변수를 바인딩할 수 없습니다. "{0}"을(를) "{1}"(으)로 변환할 수 없습니다. 가능한 열거형 값은 "String, ExpandString, Binary, DWord, MultiString, QWord, Unknown"입니다.</value>
   </data>
   <data name="KeyCreatedValueFailed" xml:space="preserve">
-    <value>Key {0} has been created, but a default value could not be set.</value>
+    <value>키 {0}이(가) 만들어졌지만 기본값을 설정할 수 없습니다.</value>
   </data>
   <data name="NewDriveRootDoesNotExist" xml:space="preserve">
-    <value>Unable to create a drive with the specified root. The root path does not exist.</value>
+    <value>지정한 루트로 드라이브를 만들 수 없습니다. 루트 경로가 없습니다.</value>
   </data>
   <data name="RenameItemAlreadyExists" xml:space="preserve">
-    <value>The item cannot be renamed because an item with that name already exists in the same container.</value>
+    <value>같은 컨테이너에 같은 이름의 항목이 이미 있으므로 이름을 바꿀 수 없습니다.</value>
   </data>
   <data name="Arg_RegInvalidKeyName" xml:space="preserve">
-    <value>Registry key name must start with a valid base key name.</value>
+    <value>레지스트리 키 이름은 유효한 기본 키 이름으로 시작해야 합니다.</value>
   </data>
   <data name="ArgRegKeyDelHive" xml:space="preserve">
-    <value>The subkey argument is not valid.</value>
+    <value>하위 키 인수가 잘못되었습니다.</value>
   </data>
   <data name="Arg_RegSubKeyAbsent" xml:space="preserve">
-    <value>Cannot delete a subkey tree because the subkey does not exist.</value>
+    <value>하위 키가 존재하지 않으므로 하위 키 트리를 삭제할 수 없습니다.</value>
   </data>
   <data name="Arg_RegSubKeyValueAbsent" xml:space="preserve">
-    <value>No value exists with that name.</value>
+    <value>해당 이름의 값이 없습니다.</value>
   </data>
   <data name="Arg_EnumIllegalVal" xml:space="preserve">
-    <value>The enum value {0} is not valid.</value>
+    <value>열거형 값 {0}이(가) 올바르지 않습니다.</value>
   </data>
   <data name="Arg_Value" xml:space="preserve">
-    <value>A value argument must be specified.</value>
+    <value>값 인수를 지정해야 합니다.</value>
   </data>
   <data name="Arg_Name" xml:space="preserve">
-    <value>A name argument must be specified.</value>
+    <value>이름 인수를 지정해야 합니다.</value>
   </data>
   <data name="Arg_RegBadKeyKind" xml:space="preserve">
-    <value>The specified RegistryValueKind is a value that is not valid.</value>
+    <value>지정한 RegistryValueKind는 유효하지 않은 값입니다.</value>
   </data>
   <data name="Arg_RegSetStrArrNull" xml:space="preserve">
-    <value>RegistryKey.SetValue does not allow a String[] that contains a null String reference.</value>
+    <value>RegistryKey.SetValue는 null 문자열 참조를 포함하는 String[]을 허용하지 않습니다.</value>
   </data>
   <data name="Arg_RegKeyStrLenBug" xml:space="preserve">
-    <value>Registry subkeys should not be greater than 255 characters.</value>
+    <value>레지스트리 하위 키는 255자 이하여야 합니다.</value>
   </data>
   <data name="Arg_RegKeyStrEmpty" xml:space="preserve">
-    <value>A non-empty subkey name must be specified.</value>
+    <value>비어 있지 않은 하위 키 이름을 지정해야 합니다.</value>
   </data>
   <data name="Arg_RegSetMismatchedKind" xml:space="preserve">
-    <value>The type of the value object did not match the specified RegistryValueKind or the object could not be properly converted.</value>
+    <value>값 개체의 형식이 지정한 RegistryValueKind와 일치하지 않거나 개체를 올바르게 변환할 수 없습니다.</value>
   </data>
   <data name="Arg_RegSetBadArrType" xml:space="preserve">
-    <value>RegistryKey.SetValue does not support arrays of type '{0}'. Only Byte[] and String[] are supported.</value>
+    <value>RegistryKey.SetValue는 '{0}' 형식의 배열을 지원하지 않습니다. Byte[]와 String[]만 지원됩니다.</value>
   </data>
   <data name="Arg_RegKeyNotFound" xml:space="preserve">
-    <value>The specified registry key does not exist.</value>
+    <value>지정한 레지스트리 키가 없습니다.</value>
   </data>
   <data name="Arg_RegValueNameStrLenBug" xml:space="preserve">
-    <value>The length of the specified value name exceeds the maximum of 16383 characters.</value>
+    <value>지정된 값 이름의 길이가 최대 16383자를 초과합니다.</value>
   </data>
   <data name="Arg_ValueDataLenBug" xml:space="preserve">
-    <value>The size of the specified value data exceeds the maximum of 1 MB.</value>
+    <value>지정한 값 데이터의 크기가 최대 1MB를 초과합니다.</value>
   </data>
   <data name="ArgumentException_RegSubKeyAbsent" xml:space="preserve">
-    <value>The specified registry subkey does not exist.</value>
+    <value>지정한 레지스트리 하위 키가 없습니다.</value>
   </data>
   <data name="Argument_InvalidRegistryKeyPermissionCheck" xml:space="preserve">
-    <value>The specified RegistryKeyPermissionCheck value is not valid.</value>
+    <value>지정한 RegistryKeyPermissionCheck 값이 올바르지 않습니다.</value>
   </data>
   <data name="InvalidOperation_RegRemoveSubKey" xml:space="preserve">
-    <value>The registry key has subkeys; recursive removals are not supported by this method.</value>
+    <value>레지스트리 키에 하위 키가 있습니다. 이 메서드에서는 재귀적 제거를 지원하지 않습니다.</value>
   </data>
   <data name="InvalidOperation_NeedTransaction" xml:space="preserve">
-    <value>Cannot create a KTM handle without a Transaction.Current or specified transaction.</value>
+    <value>Transaction.Current 또는 지정한 트랜잭션이 없으면 KTM 핸들을 만들 수 없습니다.</value>
   </data>
   <data name="InvalidOperation_MustUseSameTransaction" xml:space="preserve">
-    <value>The specified transaction or Transaction.Current must match the transaction used to create or open this TransactedRegistryKey.</value>
+    <value>지정한 트랜잭션 또는 Transaction.Current는 이 TransactedRegistryKey를 만들거나 연 데 사용한 트랜잭션과 일치해야 합니다.</value>
   </data>
   <data name="InvalidOperation_NotAssociatedWithTransaction" xml:space="preserve">
-    <value>The TransactedRegistryKey object is not associated with a transaction because it is for a predefined key.</value>
+    <value>이 TransactedRegistryKey 개체는 미리 정의된 키이므로 트랜잭션과 연결되어 있지 않습니다.</value>
   </data>
   <data name="Security_RegistryPermission" xml:space="preserve">
-    <value>Requested registry access is not allowed.</value>
+    <value>요청한 레지스트리 액세스가 허용되지 않습니다.</value>
   </data>
   <data name="UnauthorizedAccess_RegistryKeyGeneric_Key" xml:space="preserve">
-    <value>Access to the registry key '{0}' is denied.</value>
+    <value>레지스트리 키 '{0}'에 대한 액세스가 거부되었습니다.</value>
   </data>
   <data name="UnauthorizedAccess_RegistryNoWrite" xml:space="preserve">
-    <value>Cannot write to the registry key.</value>
+    <value>레지스트리 키에 쓸 수 없습니다.</value>
   </data>
   <data name="ObjectDisposed_RegKeyClosed" xml:space="preserve">
-    <value>Cannot access a closed registry key.</value>
+    <value>닫힌 레지스트리 키에 액세스할 수 없습니다.</value>
   </data>
   <data name="UnknownError_Num" xml:space="preserve">
-    <value>Unknown error: {0}.</value>
+    <value>알 수 없는 오류 {0}이(가) 발생했습니다.</value>
   </data>
   <data name="NotSupported_KernelTransactions" xml:space="preserve">
-    <value>Registry transactions are not supported on this platform.</value>
+    <value>이 플랫폼에서는 레지스트리 트랜잭션을 지원하지 않습니다.</value>
   </data>
   <data name="AccessControl_InvalidHandle" xml:space="preserve">
-    <value>The specified handle is not valid.</value>
+    <value>지정한 핸들이 잘못되었습니다.</value>
   </data>
 </root>

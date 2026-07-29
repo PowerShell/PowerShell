@@ -118,48 +118,48 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MaxPoolLessThan1" xml:space="preserve">
-    <value>The maximum pool size cannot be less than 1.</value>
+    <value>Maximální velikost fondu nemůže být menší než 1.</value>
   </data>
   <data name="MinPoolLessThan1" xml:space="preserve">
-    <value>The minimum pool size cannot be less than 1.</value>
+    <value>Minimální velikost fondu nemůže být menší než 1.</value>
   </data>
   <data name="MinPoolGreaterThanMaxPool" xml:space="preserve">
-    <value>The minimum pool size cannot be greater than the maximum pool size.</value>
+    <value>Minimální velikost fondu nemůže být větší než maximální velikost fondu.</value>
   </data>
   <data name="InvalidRunspacePoolStateGeneral" xml:space="preserve">
-    <value>The state of the runspace pool is not valid for this operation.</value>
+    <value>Stav fondu prostředí runspace není pro tuto operaci platný.</value>
   </data>
   <data name="InvalidRunspacePoolState" xml:space="preserve">
-    <value>Cannot perform the operation because the runspace pool is not in the '{0}' state. The current state is '{1}'.</value>
+    <value>Operaci nelze provést, protože fond prostředí runspace není ve stavu {0}. Aktuální stav je {1}.</value>
   </data>
   <data name="CannotOpenAgain" xml:space="preserve">
-    <value>Cannot open the runspace pool because it is not in the 'BeforeOpen' state. The current state is '{0}'.</value>
+    <value>Operaci otevření fondu prostředí runspace nelze provést, protože není ve stavu BeforeOpen. Aktuální stav je {0}.</value>
   </data>
   <data name="AsyncResultNotOwned" xml:space="preserve">
-    <value>The {0} object was not created by calling {1} on the current RunspacePool instance.</value>
+    <value>Objekt {0} nebyl vytvořen voláním {1} pro aktuální instanci RunspacePool.</value>
   </data>
   <data name="RunspaceNotBelongsToPool" xml:space="preserve">
-    <value>Cannot release the runspace to the current pool because the runspace does not belong to the current pool.</value>
+    <value>Prostředí runspace nelze uvolnit do aktuálního fondu, protože do něj nepatří.</value>
   </data>
   <data name="ChangePropertyAfterOpen" xml:space="preserve">
-    <value>This property cannot be changed after the runspace pool has been opened.</value>
+    <value>Tuto vlastnost nelze po otevření fondu prostředí runspace změnit.</value>
   </data>
   <data name="RunspaceDisconnectConnectNotSupported" xml:space="preserve">
-    <value>This runspace does not support disconnect and connect operations.</value>
+    <value>Toto prostředí runspace nepodporuje operace připojení a odpojení.</value>
   </data>
   <data name="CannotWhileDisconnected" xml:space="preserve">
-    <value>Cannot perform the operation because the runspace pool is in the Disconnected state.</value>
+    <value>Operaci nelze provést, protože fond prostředí runspace je ve stavu Odpojeno.</value>
   </data>
   <data name="DisconnectNotSupportedOnServer" xml:space="preserve">
-    <value>The Disconnect operation is not supported on the server.  The server must be running PowerShell 3.0 or greater for remote runspace pool disconnection support.</value>
+    <value>Operace Odpojit není na serveru podporována.  Aby bylo podporováno odpojení vzdáleného fondu prostředí runspace, musí být na serveru spuštěný PowerShell 3.0 nebo novější.</value>
   </data>
   <data name="CannotReconstructCommands" xml:space="preserve">
-    <value>This runspace pool {0} is not configured to provide disconnected PowerShell objects for commands running on the remote server.  Use the RunspacePool class GetRunspacePools() static method to query the server and return runspace pool objects that are configured to do this.</value>
+    <value>Fond prostředí runspace {0} není nakonfigurován tak, aby poskytoval odpojené objekty PowerShellu pro příkazy spuštěné na vzdáleném serveru.  Použijte statickou metodu GetRunspacePools() třídy RunspacePool k dotazování serveru a vracení objektů fondu prostředí runspace, které jsou nakonfigurovány pro tuto operaci.</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>This runspace pool cannot be connected because the corresponding server side runspace pool is connected to another client.</value>
+    <value>Tento fond prostředí runspace nelze připojit, protože odpovídající fond prostředí runspace na straně serveru je připojen k jinému klientovi.</value>
   </data>
   <data name="ResetRunspaceStateNotSupportedOnServer" xml:space="preserve">
-    <value>ResetRunspaceState is not supported on the server.  The server must be running PowerShell 5.0 or greater.</value>
+    <value>ResetRunspaceState se na serveru nepodporuje.  Na serveru musí být spuštěný PowerShell 5.0 nebo novější.</value>
   </data>
 </root>

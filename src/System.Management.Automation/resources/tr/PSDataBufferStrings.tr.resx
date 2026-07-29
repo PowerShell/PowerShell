@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IndexOutOfRange" xml:space="preserve">
-    <value>The index specified is less than zero or greater than the number of items in the buffer. Index should be in the range {0}-{1}.</value>
+    <value>Belirtilen dizin sıfırdan küçük ya da arabellekteki öğe sayısından büyük. Dizin {0}-{1} aralığında olmalıdır.</value>
   </data>
   <data name="ValueNullReference" xml:space="preserve">
-    <value>Cannot convert a null reference to a value type.</value>
+    <value>Null başvuru bir değer türüne dönüştürülemiyor.</value>
   </data>
   <data name="CannotConvertToGenericType" xml:space="preserve">
-    <value>Cannot convert value from type {0} to type {1}.</value>
+    <value>Değer, {0} türünden {1} türüne dönüştürülemiyor.</value>
   </data>
   <data name="WriteToClosedBuffer" xml:space="preserve">
-    <value>Objects cannot be added to a closed buffer. Make sure the buffer is open for Add and Insert operations to succeed.</value>
+    <value>Nesneler, kapalı bir arabelleğe eklenemez. Ekle ve Yerleştir işlemlerinin başarılı olması için arabelleğin açık olduğundan emin olun.</value>
   </data>
   <data name="SerializationNotSupported" xml:space="preserve">
-    <value>The SerializeInput property can only be set for the PSObject type of PSDataCollection. Set the SerializeInput property to false, or change the collection type to a PSObject.</value>
+    <value>SerializeInput özelliği yalnızca PSDataCollection öğesinin PSObject türü için ayarlanabilir. SerializeInput özelliğini false olarak ayarlayın veya veri kümesi türünü PSObject olarak değiştirin.</value>
   </data>
 </root>

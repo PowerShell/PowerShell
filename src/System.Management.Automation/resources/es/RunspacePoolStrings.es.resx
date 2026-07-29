@@ -118,48 +118,48 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MaxPoolLessThan1" xml:space="preserve">
-    <value>The maximum pool size cannot be less than 1.</value>
+    <value>El tamaño máximo del grupo no puede ser inferior a 1.</value>
   </data>
   <data name="MinPoolLessThan1" xml:space="preserve">
-    <value>The minimum pool size cannot be less than 1.</value>
+    <value>El tamaño mínimo del grupo no puede ser inferior a 1.</value>
   </data>
   <data name="MinPoolGreaterThanMaxPool" xml:space="preserve">
-    <value>The minimum pool size cannot be greater than the maximum pool size.</value>
+    <value>El tamaño mínimo del grupo no puede ser mayor que el tamaño máximo del grupo.</value>
   </data>
   <data name="InvalidRunspacePoolStateGeneral" xml:space="preserve">
-    <value>The state of the runspace pool is not valid for this operation.</value>
+    <value>El estado del grupo de espacios de ejecución no es válido para esta operación.</value>
   </data>
   <data name="InvalidRunspacePoolState" xml:space="preserve">
-    <value>Cannot perform the operation because the runspace pool is not in the '{0}' state. The current state is '{1}'.</value>
+    <value>No se puede realizar la operación porque el grupo de espacio de ejecución no se encuentra en el estado "{0}". El estado actual es "{1}".</value>
   </data>
   <data name="CannotOpenAgain" xml:space="preserve">
-    <value>Cannot open the runspace pool because it is not in the 'BeforeOpen' state. The current state is '{0}'.</value>
+    <value>No se puede abrir el grupo de espacios de ejecución porque no está en el estado "BeforeOpen". El estado actual es "{0}".</value>
   </data>
   <data name="AsyncResultNotOwned" xml:space="preserve">
-    <value>The {0} object was not created by calling {1} on the current RunspacePool instance.</value>
+    <value>El objeto {0} no se creó al llamar a {1} en la instancia actual de RunspacePool.</value>
   </data>
   <data name="RunspaceNotBelongsToPool" xml:space="preserve">
-    <value>Cannot release the runspace to the current pool because the runspace does not belong to the current pool.</value>
+    <value>No se puede lanzar el espacio de ejecución en el grupo actual porque el espacio de ejecución no pertenece a ese grupo.</value>
   </data>
   <data name="ChangePropertyAfterOpen" xml:space="preserve">
-    <value>This property cannot be changed after the runspace pool has been opened.</value>
+    <value>Esta propiedad no se puede cambiar después de abrir el grupo de espacios de ejecución.</value>
   </data>
   <data name="RunspaceDisconnectConnectNotSupported" xml:space="preserve">
-    <value>This runspace does not support disconnect and connect operations.</value>
+    <value>Este espacio de ejecución no admite operaciones de desconexión y conexión.</value>
   </data>
   <data name="CannotWhileDisconnected" xml:space="preserve">
-    <value>Cannot perform the operation because the runspace pool is in the Disconnected state.</value>
+    <value>No se puede realizar la operación porque el grupo de espacio de ejecución está en estado Desconectado.</value>
   </data>
   <data name="DisconnectNotSupportedOnServer" xml:space="preserve">
-    <value>The Disconnect operation is not supported on the server.  The server must be running PowerShell 3.0 or greater for remote runspace pool disconnection support.</value>
+    <value>La operación Desconectar no se admite en el servidor.  El servidor debe ejecutar PowerShell 3.0 o una versión posterior para admitir la desconexión del grupo de espacios de ejecución remoto.</value>
   </data>
   <data name="CannotReconstructCommands" xml:space="preserve">
-    <value>This runspace pool {0} is not configured to provide disconnected PowerShell objects for commands running on the remote server.  Use the RunspacePool class GetRunspacePools() static method to query the server and return runspace pool objects that are configured to do this.</value>
+    <value>Este grupo de espacios de ejecución {0} no está configurado para proporcionar objetos de PowerShell desconectados para los comandos que se ejecutan en el servidor remoto.  Use el método estático GetRunspacePools() de la clase RunspacePool para consultar el servidor y devolver los objetos de grupo de espacios de ejecución que están configurados para hacerlo.</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>This runspace pool cannot be connected because the corresponding server side runspace pool is connected to another client.</value>
+    <value>No se puede conectar este grupo de espacios de ejecución porque el grupo de espacios de ejecución correspondiente del lado del servidor está conectado a otro cliente.</value>
   </data>
   <data name="ResetRunspaceStateNotSupportedOnServer" xml:space="preserve">
-    <value>ResetRunspaceState is not supported on the server.  The server must be running PowerShell 5.0 or greater.</value>
+    <value>ResetRunspaceState no se admite en el servidor.  El servidor debe ejecutar PowerShell 5.0 o una versión posterior.</value>
   </data>
 </root>

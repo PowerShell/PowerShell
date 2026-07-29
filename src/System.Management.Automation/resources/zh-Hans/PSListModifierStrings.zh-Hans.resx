@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ListModifierDisallowedKey" xml:space="preserve">
-    <value>The following unknown list modifier was detected: '{0}'. Valid list modifiers are Add, Remove, and Replace.</value>
+    <value>检测到以下未知列表修饰符:“{0}”。有效的列表修饰符为“添加”、“移除”和“替换”。</value>
   </data>
   <data name="UpdateFailed" xml:space="preserve">
-    <value>Cannot apply the update because the object is not a supported collection type.</value>
+    <value>无法应用更新，因为该对象不是受支持的集合类型。</value>
   </data>
 </root>

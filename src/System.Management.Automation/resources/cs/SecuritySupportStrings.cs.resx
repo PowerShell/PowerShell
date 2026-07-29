@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertificatePathMustBeFileSystemPath" xml:space="preserve">
-    <value>Cannot load certificate. '{0}' must resolve to a file system path.</value>
+    <value>Certifikát nelze načíst. Hodnota {0} se musí přeložit na cestu v systému souborů.</value>
   </data>
   <data name="CertificateCannotBeUsedForEncryption" xml:space="preserve">
-    <value>Certificate '{0}' cannot be used for encryption. Encryption certificates must contain the Data Encipherment or Key Encipherment key usage, and include the Document Encryption Enhanced Key Usage ({1}).</value>
+    <value>Certifikát {0} nelze použít k šifrování. Certifikáty používané k šifrování musí mít nastavené použití klíče šifrování dat nebo šifrování klíče a obsahovat rozšířené použití klíče šifrování dokumentů ({1}).</value>
   </data>
   <data name="IdentifierMustReferenceSingleCertificate" xml:space="preserve">
-    <value>Cannot load certificate. The identifier '{0}' matches multiple certificates. To encrypt to multiple recipients, provide multiple specific values to the '{1}' parameter, rather than a wildcard that matches multiple certificates.</value>
+    <value>Nelze načíst certifikát. Identifikátor {0} odpovídá více certifikátům. Pokud chcete zašifrovat data pro více příjemců, zadejte do parametru {1} více konkrétních hodnot místo zástupného znaku, který odpovídá více certifikátům.</value>
   </data>
   <data name="NoCertificateFound" xml:space="preserve">
-    <value>Cannot load encryption certificate. The certificate setting '{0}' does not represent a valid base-64 encoded certificate, nor does it represent a valid certificate by file, directory, thumbprint, or subject name.</value>
+    <value>Certifikát pro šifrování nelze načíst. Nastavení certifikátu {0} nepředstavuje platný certifikát kódovaný pomocí Base64 ani platný certifikát zadaný souborem, adresářem, kryptografickým otiskem nebo názvem subjektu.</value>
   </data>
   <data name="CertificateContainsPrivateKey" xml:space="preserve">
-    <value>WARNING: The certificate '{0}' contains a private key. Protected Event Logging certificates used for encryption should only contain the public key.</value>
+    <value>UPOZORNĚNÍ: Certifikát {0} obsahuje privátní klíč. Certifikáty pro protokolování chráněných událostí používané k šifrování by měly obsahovat pouze veřejný klíč.</value>
   </data>
   <data name="CouldNotEncryptContent" xml:space="preserve">
-    <value>ERROR: Could not protect event log message '{0}': {1}</value>
+    <value>CHYBA: Zprávu protokolu událostí {0} nelze chránit: {1}</value>
   </data>
   <data name="CouldNotUseCertificate" xml:space="preserve">
-    <value>ERROR: Could not find or use certificate: {0}</value>
+    <value>CHYBA: Nelze najít nebo použít certifikát: {0}</value>
   </data>
   <data name="CannotEncryptSecureString" xml:space="preserve">
-    <value>Session key not available to encrypt secure string.</value>
+    <value>Klíč relace není k dispozici pro šifrování zabezpečeného řetězce.</value>
   </data>
   <data name="InvalidOffset" xml:space="preserve">
-    <value>Invalid buffer offset.</value>
+    <value>Neplatný posun ve vyrovnávací paměti</value>
   </data>
   <data name="InvalidPublicKey" xml:space="preserve">
-    <value>Invalid public key data.</value>
+    <value>Neplatná data veřejného klíče</value>
   </data>
   <data name="CannotImportPublicKey" xml:space="preserve">
-    <value>Cannot import public key.</value>
+    <value>Nelze importovat veřejný klíč.</value>
   </data>
   <data name="InvalidSessionKey" xml:space="preserve">
-    <value>Invalid session key data.</value>
+    <value>Neplatná data klíče relace</value>
   </data>
   <data name="ScriptFileBlockedBySystemPolicy" xml:space="preserve">
-    <value>Script file, '{0}', is blocked from running by system policy.</value>
+    <value>Spuštění souboru skriptu {0} je blokováno systémovou zásadou.</value>
   </data>
   <data name="UnknownSystemScriptFileEnforcement" xml:space="preserve">
-    <value>An unknown script file policy enforcement value was returned: {0}.</value>
+    <value>Byla vrácena neznámá hodnota vynucení zásad souboru skriptu: {0}.</value>
   </data>
   <data name="ExternalScriptWDACLogTitle" xml:space="preserve">
-    <value>Script File Read</value>
+    <value>Čtení souboru skriptu</value>
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
-    <value>Script file '{0}' is not trusted by policy and will run in ConstrainedLanguage mode.</value>
+    <value>Soubor skriptu {0} není podle zásad důvěryhodný a bude spuštěn v režimu ConstrainedLanguage.</value>
   </data>
 </root>

@@ -59,12 +59,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TextContainsContent" xml:space="preserve">
-    <value>The specified string contains printable content when it should only contain ANSI escape sequences: {0}</value>
+    <value>指定的字串包含可列印的內容，但它應該只包含 ANSI 逸出序列: {0}</value>
   </data>
   <data name="ProgressWidthTooSmall" xml:space="preserve">
-    <value>The MaxWidth for the Progress rendering must be at least 18 to render correctly.</value>
+    <value>Progress 呈現的 MaxWidth 必須至少為 18，才能正確呈現。</value>
   </data>
   <data name="ExtensionNotStartingWithPeriod" xml:space="preserve">
-    <value>When adding or removing extensions, the extension must start with a period.</value>
+    <value>新增或移除副檔名時，副檔名必須以句點開頭。</value>
   </data>
 </root>

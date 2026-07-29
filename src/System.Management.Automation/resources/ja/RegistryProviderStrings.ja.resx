@@ -118,216 +118,216 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetItemAction" xml:space="preserve">
-    <value>Set Item</value>
+    <value>項目の設定</value>
   </data>
   <data name="SetItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Value: {1}</value>
+    <value>項目: {0} 値: {1}</value>
   </data>
   <data name="ClearItemAction" xml:space="preserve">
-    <value>Clear Item</value>
+    <value>項目のクリア</value>
   </data>
   <data name="ClearItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>項目: {0}</value>
   </data>
   <data name="NewItemAction" xml:space="preserve">
-    <value>New Item</value>
+    <value>新しい項目</value>
   </data>
   <data name="NewItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>項目: {0}</value>
   </data>
   <data name="RemoveKeyAction" xml:space="preserve">
-    <value>Remove Key</value>
+    <value>キーの削除</value>
   </data>
   <data name="RemoveKeyResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>項目: {0}</value>
   </data>
   <data name="CopyKeyAction" xml:space="preserve">
-    <value>Copy Key</value>
+    <value>キーのコピー</value>
   </data>
   <data name="CopyKeyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>項目: {0} 宛先: {1}</value>
   </data>
   <data name="RenameItemAction" xml:space="preserve">
-    <value>Rename Item</value>
+    <value>項目名の変更</value>
   </data>
   <data name="RenameItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} NewName: {1}</value>
+    <value>項目: {0} NewName: {1}</value>
   </data>
   <data name="MoveItemAction" xml:space="preserve">
-    <value>Move Item</value>
+    <value>項目の移動</value>
   </data>
   <data name="MoveItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>項目: {0} 宛先: {1}</value>
   </data>
   <data name="SetPropertyAction" xml:space="preserve">
-    <value>Set Property</value>
+    <value>プロパティの設定</value>
   </data>
   <data name="SetPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>項目: {0} プロパティ: {1}</value>
   </data>
   <data name="ClearPropertyAction" xml:space="preserve">
-    <value>Clear Property</value>
+    <value>プロパティをクリア</value>
   </data>
   <data name="ClearPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>項目: {0} プロパティ: {1}</value>
   </data>
   <data name="NewPropertyAction" xml:space="preserve">
-    <value>New Property</value>
+    <value>新しいプロパティ</value>
   </data>
   <data name="NewPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>項目: {0} プロパティ: {1}</value>
   </data>
   <data name="RemovePropertyAction" xml:space="preserve">
-    <value>Remove Property</value>
+    <value>プロパティの削除</value>
   </data>
   <data name="RemovePropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>項目: {0} プロパティ: {1}</value>
   </data>
   <data name="RenamePropertyAction" xml:space="preserve">
-    <value>Rename property.</value>
+    <value>プロパティ名を変更します。</value>
   </data>
   <data name="RenamePropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} SourceProperty: {1} DestinationProperty: {2}</value>
+    <value>項目: {0} SourceProperty: {1} DestinationProperty: {2}</value>
   </data>
   <data name="CopyPropertyAction" xml:space="preserve">
-    <value>Copy Property</value>
+    <value>プロパティのコピー</value>
   </data>
   <data name="CopyPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
+    <value>項目: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
   </data>
   <data name="MovePropertyAction" xml:space="preserve">
-    <value>Move Property</value>
+    <value>プロパティの移動</value>
   </data>
   <data name="MovePropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
+    <value>項目: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
   </data>
   <data name="ContainerInvalidOperationTemplate" xml:space="preserve">
-    <value>The operation was not processed. The location that was provided does not allow this operation.</value>
+    <value>操作は処理されませんでした。指定された場所では、この操作は許可されていません。</value>
   </data>
   <data name="SourceContainerInvalidOperationTemplate" xml:space="preserve">
-    <value>The operation is not allowed on the source location.</value>
+    <value>ソースの場所に対する操作は許可されていません。</value>
   </data>
   <data name="DestinationContainerInvalidOperationTemplate" xml:space="preserve">
-    <value>The operation is not allowed on the destination location.</value>
+    <value>この操作は、宛先の場所では許可されていません。</value>
   </data>
   <data name="HKLMDriveDescription" xml:space="preserve">
-    <value>The configuration settings for the local computer</value>
+    <value>ローカル コンピューターの構成設定</value>
   </data>
   <data name="HKCUDriveDescription" xml:space="preserve">
-    <value>The software settings for the current user</value>
+    <value>現在のユーザーのソフトウェア設定</value>
   </data>
   <data name="KeyAlreadyExists" xml:space="preserve">
-    <value>A key in this path already exists.</value>
+    <value>このパスには既にキーが存在します。</value>
   </data>
   <data name="DestinationChildOfSource" xml:space="preserve">
-    <value>The operation cannot be performed because the destination path is subordinate to the source path.</value>
+    <value>宛先パスがソース パスの下位にあるため、操作を実行できません。</value>
   </data>
   <data name="PropertyAlreadyExists" xml:space="preserve">
-    <value>The property already exists.</value>
+    <value>プロパティは既に存在します。</value>
   </data>
   <data name="PropertyNotAtPath" xml:space="preserve">
-    <value>Property {0} does not exist at path {1}.</value>
+    <value>プロパティ {0} はパス {1} に存在しません。</value>
   </data>
   <data name="KeyDoesNotExist" xml:space="preserve">
-    <value>The registry key at the specified path does not exist.</value>
+    <value>指定されたパスのレジストリ キーが存在しません。</value>
   </data>
   <data name="TypeParameterBindingFailure" xml:space="preserve">
-    <value>Could not bind parameter 'Type'. Could not convert "{0}" to "{1}". The possible enumeration values are "String, ExpandString, Binary, DWord, MultiString, QWord, Unknown".</value>
+    <value>パラメーター 'Type' をバインドできませんでした。"{0}" を "{1}" に変換できませんでした。使用可能な列挙値は、"String、ExpandString、Binary、DWord、MultiString、QWord、Unknown" です。</value>
   </data>
   <data name="KeyCreatedValueFailed" xml:space="preserve">
-    <value>Key {0} has been created, but a default value could not be set.</value>
+    <value>キー {0} は作成されましたが、既定値を設定できませんでした。</value>
   </data>
   <data name="NewDriveRootDoesNotExist" xml:space="preserve">
-    <value>Unable to create a drive with the specified root. The root path does not exist.</value>
+    <value>指定されたルートを持つドライブを作成できません。ルート パスが存在しません。</value>
   </data>
   <data name="RenameItemAlreadyExists" xml:space="preserve">
-    <value>The item cannot be renamed because an item with that name already exists in the same container.</value>
+    <value>同じコンテナーに同じ名前の項目が既に存在するため、項目の名前を変更できません。</value>
   </data>
   <data name="Arg_RegInvalidKeyName" xml:space="preserve">
-    <value>Registry key name must start with a valid base key name.</value>
+    <value>レジストリ キー名は、有効なベース キー名で始まる必要があります。</value>
   </data>
   <data name="ArgRegKeyDelHive" xml:space="preserve">
-    <value>The subkey argument is not valid.</value>
+    <value>サブキーの引数が無効です。</value>
   </data>
   <data name="Arg_RegSubKeyAbsent" xml:space="preserve">
-    <value>Cannot delete a subkey tree because the subkey does not exist.</value>
+    <value>サブキーが存在しないため、サブキー ツリーを削除できません。</value>
   </data>
   <data name="Arg_RegSubKeyValueAbsent" xml:space="preserve">
-    <value>No value exists with that name.</value>
+    <value>その名前の値は存在しません。</value>
   </data>
   <data name="Arg_EnumIllegalVal" xml:space="preserve">
-    <value>The enum value {0} is not valid.</value>
+    <value>列挙値 {0} が無効です。</value>
   </data>
   <data name="Arg_Value" xml:space="preserve">
-    <value>A value argument must be specified.</value>
+    <value>値引数を指定する必要があります。</value>
   </data>
   <data name="Arg_Name" xml:space="preserve">
-    <value>A name argument must be specified.</value>
+    <value>名前引数を指定する必要があります。</value>
   </data>
   <data name="Arg_RegBadKeyKind" xml:space="preserve">
-    <value>The specified RegistryValueKind is a value that is not valid.</value>
+    <value>指定された RegistryValueKind は無効な値です。</value>
   </data>
   <data name="Arg_RegSetStrArrNull" xml:space="preserve">
-    <value>RegistryKey.SetValue does not allow a String[] that contains a null String reference.</value>
+    <value>RegistryKey.SetValue では、null 値の文字列参照を含む String[] は許可されていません。</value>
   </data>
   <data name="Arg_RegKeyStrLenBug" xml:space="preserve">
-    <value>Registry subkeys should not be greater than 255 characters.</value>
+    <value>レジストリ サブキーは 255 文字以下にする必要があります。</value>
   </data>
   <data name="Arg_RegKeyStrEmpty" xml:space="preserve">
-    <value>A non-empty subkey name must be specified.</value>
+    <value>空でないサブキー名を指定する必要があります。</value>
   </data>
   <data name="Arg_RegSetMismatchedKind" xml:space="preserve">
-    <value>The type of the value object did not match the specified RegistryValueKind or the object could not be properly converted.</value>
+    <value>値オブジェクトの型が指定された RegistryValueKind と一致しなかったか、オブジェクトを正しく変換できませんでした。</value>
   </data>
   <data name="Arg_RegSetBadArrType" xml:space="preserve">
-    <value>RegistryKey.SetValue does not support arrays of type '{0}'. Only Byte[] and String[] are supported.</value>
+    <value>RegistryKey.SetValue では型 '{0}' の配列はサポートされていません。サポートされているのは Byte[] と String[] のみです。</value>
   </data>
   <data name="Arg_RegKeyNotFound" xml:space="preserve">
-    <value>The specified registry key does not exist.</value>
+    <value>指定されたレジストリ キーが存在しません。</value>
   </data>
   <data name="Arg_RegValueNameStrLenBug" xml:space="preserve">
-    <value>The length of the specified value name exceeds the maximum of 16383 characters.</value>
+    <value>指定された値の名前の長さが最大 16383 文字を超えています。</value>
   </data>
   <data name="Arg_ValueDataLenBug" xml:space="preserve">
-    <value>The size of the specified value data exceeds the maximum of 1 MB.</value>
+    <value>指定された値データのサイズが最大の 1 MB を超えています。</value>
   </data>
   <data name="ArgumentException_RegSubKeyAbsent" xml:space="preserve">
-    <value>The specified registry subkey does not exist.</value>
+    <value>指定されたレジストリ サブキーは存在しません。</value>
   </data>
   <data name="Argument_InvalidRegistryKeyPermissionCheck" xml:space="preserve">
-    <value>The specified RegistryKeyPermissionCheck value is not valid.</value>
+    <value>指定された RegistryKeyPermissionCheck 値が無効です。</value>
   </data>
   <data name="InvalidOperation_RegRemoveSubKey" xml:space="preserve">
-    <value>The registry key has subkeys; recursive removals are not supported by this method.</value>
+    <value>レジストリ キーにはサブキーがあります。再帰的な削除は、このメソッドではサポートされていません。</value>
   </data>
   <data name="InvalidOperation_NeedTransaction" xml:space="preserve">
-    <value>Cannot create a KTM handle without a Transaction.Current or specified transaction.</value>
+    <value>Transaction.Current または指定したトランザクションがないと、KTM ハンドルを作成できません。</value>
   </data>
   <data name="InvalidOperation_MustUseSameTransaction" xml:space="preserve">
-    <value>The specified transaction or Transaction.Current must match the transaction used to create or open this TransactedRegistryKey.</value>
+    <value>指定されたトランザクションまたは Transaction.Current は、この TransactedRegistryKey の作成またはオープンに使用されたトランザクションと一致している必要があります。</value>
   </data>
   <data name="InvalidOperation_NotAssociatedWithTransaction" xml:space="preserve">
-    <value>The TransactedRegistryKey object is not associated with a transaction because it is for a predefined key.</value>
+    <value>TransactedRegistryKey オブジェクトは、あらかじめ定義されたキー用であるため、トランザクションに関連付けられていません。</value>
   </data>
   <data name="Security_RegistryPermission" xml:space="preserve">
-    <value>Requested registry access is not allowed.</value>
+    <value>要求されたレジストリ アクセスは許可されていません。</value>
   </data>
   <data name="UnauthorizedAccess_RegistryKeyGeneric_Key" xml:space="preserve">
-    <value>Access to the registry key '{0}' is denied.</value>
+    <value>レジストリ キー '{0}' へのアクセスが拒否されました。</value>
   </data>
   <data name="UnauthorizedAccess_RegistryNoWrite" xml:space="preserve">
-    <value>Cannot write to the registry key.</value>
+    <value>レジストリ キーに書き込めません。</value>
   </data>
   <data name="ObjectDisposed_RegKeyClosed" xml:space="preserve">
-    <value>Cannot access a closed registry key.</value>
+    <value>閉じているレジストリ キーにはアクセスできません。</value>
   </data>
   <data name="UnknownError_Num" xml:space="preserve">
-    <value>Unknown error: {0}.</value>
+    <value>不明なエラー: {0}。</value>
   </data>
   <data name="NotSupported_KernelTransactions" xml:space="preserve">
-    <value>Registry transactions are not supported on this platform.</value>
+    <value>レジストリ トランザクションは、このプラットフォームではサポートされていません。</value>
   </data>
   <data name="AccessControl_InvalidHandle" xml:space="preserve">
-    <value>The specified handle is not valid.</value>
+    <value>指定されたハンドルが無効です。</value>
   </data>
 </root>
