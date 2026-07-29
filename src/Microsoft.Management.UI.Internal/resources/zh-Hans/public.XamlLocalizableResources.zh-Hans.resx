@@ -138,7 +138,7 @@
     <comment>Localizable AutomationName for control that is used by accessibility screen readers.</comment>
   </data>
   <data name="AutoResXGen_BreadcrumbItem_Text_144" xml:space="preserve">
-    <value>Find in this column</value>
+    <value>在此列中查找</value>
     <comment>Background text shown in the search box.</comment>
   </data>
   <data name="AutoResXGen_DesignerStyleResources_Tooltip_148" xml:space="preserve">
@@ -174,7 +174,7 @@
     <value>Cancel</value>
   </data>
   <data name="AutoResXGen_ManagementList2_AutomationPropertiesName_314" xml:space="preserve">
-    <value>Click to save a search query</value>
+    <value>单击以保存搜索查询</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Content_42" xml:space="preserve">
     <value>Available columns</value>
@@ -203,37 +203,37 @@
     <value>Select columns</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Tooltip_76" xml:space="preserve">
-    <value>Move selected column to list of visible columns</value>
+    <value>将选定列移到可视列的列表中</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Tooltip_84" xml:space="preserve">
-    <value>Move selected column to list of hidden columns</value>
+    <value>将选定列移到隐藏列的列表中</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Text_142" xml:space="preserve">
-    <value>This column may not be removed.</value>
+    <value>此列可能无法删除。</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Text_152" xml:space="preserve">
-    <value>The list must always display at least one column.</value>
+    <value>此列表必须始终显示至少一列。</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Content_93" xml:space="preserve">
     <value>Selected columns</value>
   </data>
   <data name="ColumnsExplorer_Column_FindTextBox_BackgroundText" xml:space="preserve">
-    <value>Find in this column</value>
+    <value>在此列中查找</value>
   </data>
   <data name="AutoResXGen_DesignerStyleResources_ToolTip_97" xml:space="preserve">
     <value>Expand</value>
   </data>
   <data name="AutoResXGen_ManagementList2_ToolTip_104" xml:space="preserve">
-    <value>Click to clear all filter criteria.</value>
+    <value>单击以清除所有筛选条件。</value>
   </data>
   <data name="AutoResXGen_ManagementList2_ToolTip_132" xml:space="preserve">
-    <value>Click to add search criteria.</value>
+    <value>单击以添加搜索条件。</value>
   </data>
   <data name="AutoResXGen_ManagementList2_ToolTip_32" xml:space="preserve">
-    <value>Click to expand search criteria.</value>
+    <value>单击以展开搜索条件。</value>
   </data>
   <data name="AutoResXGen_ManagementList2_NoItemsText_50" xml:space="preserve">
-    <value>There are currently no saved queries.</value>
+    <value>当前没有保存的查询。</value>
   </data>
   <data name="AutoResXGen_ManagementList2_AutomationPropertiesName_52" xml:space="preserve">
     <value>Queries</value>
@@ -360,7 +360,7 @@
     <comment>The accessible name of the Stop Search button in the filter panel.</comment>
   </data>
   <data name="ManagementList_ToggleFilterPanelButton_AutomationName" xml:space="preserve">
-    <value>Expand or Collapse Filter Panel</value>
+    <value>展开或折叠筛选器面板</value>
     <comment>The accessible name of the button that expands/collapses the filter panel.</comment>
   </data>
   <data name="ManagementList_SearchBox_BackgroundText_Live" xml:space="preserve">
@@ -368,7 +368,7 @@
     <comment>The background text of the list's search box when filtering is immediate.</comment>
   </data>
   <data name="AutoResXGen_ManagementList_ToolTip_314" xml:space="preserve">
-    <value>Click to display saved search queries.</value>
+    <value>单击以显示已保存的搜索查询。</value>
   </data>
   <data name="AutoResXGen_ManagementList_Text_392" xml:space="preserve">
     <value>Filter applied.</value>

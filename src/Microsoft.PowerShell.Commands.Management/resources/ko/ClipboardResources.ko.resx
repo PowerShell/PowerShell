@@ -59,54 +59,54 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetClipboardContent" xml:space="preserve">
-    <value>Set string '{0}' to the clipboard.</value>
+    <value>'{0}' 문자열을 클립보드로 설정합니다.</value>
   </data>
   <data name="AppendClipboardContent" xml:space="preserve">
-    <value>Append string '{0}' to the clipboard.</value>
+    <value>'{0}' 문자열을 클립보드에 추가합니다.</value>
   </data>
   <data name="SetSingleFileToClipboard" xml:space="preserve">
-    <value>Set file '{0}' to the clipboard.</value>
+    <value>'{0}' 파일을 클립보드로 설정합니다.</value>
   </data>
   <data name="AppendSingleFileToClipboard" xml:space="preserve">
-    <value>Append file '{0}' to the clipboard.</value>
+    <value>'{0}' 파일을 클립보드에 추가합니다.</value>
   </data>
   <data name="SetMultipleFilesToClipboard" xml:space="preserve">
-    <value>Set {0} files to the clipboard.</value>
+    <value>{0} 파일을 클립보드로 설정합니다.</value>
   </data>
   <data name="AppendMultipleFilesToClipboard" xml:space="preserve">
-    <value>Append {0} files to the clipboard.</value>
+    <value>{0} 파일을 클립보드에 추가합니다.</value>
   </data>
   <data name="NoAppendableClipboardContent" xml:space="preserve">
-    <value>There's no content in Clipboard or the content format is not compatible. Set input object to the Clipboard.</value>
+    <value>클립보드에 콘텐츠가 없거나 콘텐츠 형식이 호환되지 않습니다. 입력 개체를 클립보드에 설정하세요.</value>
   </data>
   <data name="ClipboardCleared" xml:space="preserve">
-    <value>The Clipboard has been cleared.</value>
+    <value>클립보드를 지웠습니다.</value>
   </data>
   <data name="InvalidTypeCombine" xml:space="preserve">
-    <value>TextFormatType can only be combined with Text format.</value>
+    <value>TextFormatType은 텍스트 형식과만 함께 사용할 수 있습니다.</value>
   </data>
   <data name="InvalidRawCombine" xml:space="preserve">
-    <value>Raw can only be combined with Text or FileDropList format.</value>
+    <value>Raw는 텍스트 또는 FileDropList 형식과만 함께 사용할 수 있습니다.</value>
   </data>
   <data name="InvalidHtmlCombine" xml:space="preserve">
-    <value>Html can only be combined with Html Text format.</value>
+    <value>HTML은 HTML 텍스트 형식과만 함께 사용할 수 있습니다.</value>
   </data>
   <data name="UnsupportedFormat" xml:space="preserve">
-    <value>Only Text format is supported on this platform.</value>
+    <value>이 플랫폼에서는 텍스트 형식만 지원됩니다.</value>
   </data>
   <data name="UnsupportedPlatform" xml:space="preserve">
-    <value>The clipboard is not supported on this platform.</value>
+    <value>클립보드는 이 플랫폼에서 지원되지 않습니다.</value>
   </data>
   <data name="AsHtmlUnsupported" xml:space="preserve">
-    <value>The '-AsHtml' switch is not supported on this platform.</value>
+    <value>이 플랫폼에서는 '-AsHtml' 스위치를 지원하지 않습니다.</value>
   </data>
   <data name="TextFormatUnsupported" xml:space="preserve">
-    <value>The '-TextFormatType' parameter only supports 'Text' on this platform.</value>
+    <value>이 플랫폼에서는 '-TextFormatType' 매개 변수가 'Text'만 지원합니다.</value>
   </data>
   <data name="PathUnsupported" xml:space="preserve">
-    <value>The '-Path' parameter is not supported on this platform.</value>
+    <value>'-Path' 매개 변수는 이 플랫폼에서 지원되지 않습니다.</value>
   </data>
   <data name="LiteralPathUnsupported" xml:space="preserve">
-    <value>The '-LiteralPath' parameter is not supported on this platform.</value>
+    <value>'-LiteralPath' 매개 변수는 이 플랫폼에서 지원되지 않습니다.</value>
   </data>
 </root>

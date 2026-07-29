@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ClearRecycleBinContent" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin</value>
+    <value>Veškerý obsah Koše</value>
   </data>
   <data name="ClearRecycleBinContentForDrive" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin for the '{0}' drive</value>
+    <value>Veškerý obsah Koše pro jednotku {0}</value>
   </data>
   <data name="ClearRecycleBinProgressActivity" xml:space="preserve">
-    <value>Clearing Recycle Bin</value>
+    <value>Vyprazdňování Koše</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionByDrive" xml:space="preserve">
-    <value>for the '{0}' drive</value>
+    <value>pro jednotku {0}</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionForAllDrives" xml:space="preserve">
-    <value>for all drives</value>
+    <value>pro všechny jednotky</value>
   </data>
   <data name="DriveNotFound" xml:space="preserve">
-    <value>Cannot find drive. A drive with the name '{0}' does not exist. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>Jednotku nelze najít. Jednotka s názvem {0} neexistuje. Spuštěním rutiny {1} zobrazíte dostupné pevné jednotky v systému.</value>
   </data>
   <data name="InvalidDriveNameFormat" xml:space="preserve">
-    <value>Invalid input. The following formats are supported: '{0}', '{1}' or '{2}'.</value>
+    <value>Neplatný vstup Podporovány jsou následující formáty: {0}, {1} nebo {2}.</value>
   </data>
   <data name="InvalidDriveType" xml:space="preserve">
-    <value>The drive with the name '{0}' is not a Fixed drive and does not support the Recycle Bin. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>Jednotka s názvem {0} není pevná jednotka a nepodporuje Koš. Spuštěním rutiny {1} zobrazíte dostupné pevné jednotky v systému.</value>
   </data>
 </root>

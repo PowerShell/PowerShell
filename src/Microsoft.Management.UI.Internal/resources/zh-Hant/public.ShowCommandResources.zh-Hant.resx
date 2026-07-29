@@ -127,7 +127,7 @@
     <value>_Run</value>
   </data>
   <data name="All" xml:space="preserve">
-    <value>All</value>
+    <value>全部</value>
   </data>
   <data name="AllModulesControl_Label_Modules" xml:space="preserve">
     <value>Modules:</value>
@@ -195,10 +195,10 @@ Module: {1} ({2})</value>
     <value>Common to all parameter sets</value>
   </data>
   <data name="Mandatory" xml:space="preserve">
-    <value>Mandatory</value>
+    <value>強制</value>
   </data>
   <data name="Optional" xml:space="preserve">
-    <value>Optional</value>
+    <value>選擇性</value>
   </data>
   <data name="PositionFormat" xml:space="preserve">
     <value>Position: {0}</value>

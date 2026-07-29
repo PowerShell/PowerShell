@@ -118,41 +118,41 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ActionButtons_Button_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>取消</value>
   </data>
   <data name="ActionButtons_Button_Copy" xml:space="preserve">
-    <value>Co_py</value>
+    <value>复制(_P)</value>
   </data>
   <data name="ActionButtons_Button_Run" xml:space="preserve">
-    <value>_Run</value>
+    <value>运行(_R)</value>
   </data>
   <data name="All" xml:space="preserve">
-    <value>All</value>
+    <value>全部</value>
   </data>
   <data name="AllModulesControl_Label_Modules" xml:space="preserve">
-    <value>Modules:</value>
+    <value>模块:</value>
   </data>
   <data name="CmdletControl_Button_GetHelp" xml:space="preserve">
-    <value> ? </value>
+    <value> ?</value>
   </data>
   <data name="CmdletControl_Button_ToolTip_Help" xml:space="preserve">
-    <value>Help</value>
+    <value>帮助</value>
   </data>
   <data name="CmdletControl_Header_CommonParameters" xml:space="preserve">
-    <value>Common Parameters</value>
+    <value>通用参数</value>
   </data>
   <data name="CmdletControl_Header_Errors" xml:space="preserve">
-    <value>Errors</value>
+    <value>错误</value>
   </data>
   <data name="DetailsParameterTitleFormat" xml:space="preserve">
-    <value>Parameters for "{0}":</value>
+    <value>"{0}" 的参数:</value>
   </data>
   <data name="CmdletTooltipFormat" xml:space="preserve">
-    <value>Name: {0}
-Module: {1} ({2})</value>
+    <value>名称: {0}
+模块: {1} ({2})</value>
   </data>
   <data name="EndProcessingErrorMessage" xml:space="preserve">
-    <value>The following errors occurred running the command:
+    <value>运行命令时出现以下错误:
 {0}</value>
   </data>
   <data name="MandatoryLabelSegment" xml:space="preserve">
@@ -168,72 +168,72 @@ Module: {1} ({2})</value>
     <comment>This is a label for a control, hence the colon. {0} is a parameter name</comment>
   </data>
   <data name="ShowModuleControl_Label_Name" xml:space="preserve">
-    <value>Name:</value>
+    <value>名称:</value>
   </data>
   <data name="ActionButtons_Button_Ok" xml:space="preserve">
-    <value>OK</value>
+    <value>确定</value>
   </data>
   <data name="MultiParameter_Button_Browse" xml:space="preserve">
     <value>...</value>
   </data>
   <data name="CommandNameAutomationName" xml:space="preserve">
-    <value>Command Name</value>
+    <value>命令名称</value>
   </data>
   <data name="ModulesAutomationName" xml:space="preserve">
-    <value>Modules</value>
+    <value>模块</value>
   </data>
   <data name="NoModuleName" xml:space="preserve">
-    <value>&lt;No module name&gt;</value>
+    <value>&lt;没有模块名称&gt;</value>
   </data>
   <data name="SelectMultipleValuesForParameterFormat" xml:space="preserve">
-    <value>Select multiple values for "{0}"</value>
+    <value>为 "{0}" 选择多个值</value>
   </data>
   <data name="CanReceiveValueFromPipeline" xml:space="preserve">
-    <value>Can receive value from pipeline</value>
+    <value>可以从管道接收值</value>
   </data>
   <data name="CommonToAllParameterSets" xml:space="preserve">
-    <value>Common to all parameter sets</value>
+    <value>对所有参数集通用</value>
   </data>
   <data name="Mandatory" xml:space="preserve">
-    <value>Mandatory</value>
+    <value>强制</value>
   </data>
   <data name="Optional" xml:space="preserve">
-    <value>Optional</value>
+    <value>可选</value>
   </data>
   <data name="PositionFormat" xml:space="preserve">
-    <value>Position: {0}</value>
+    <value>位置: {0}</value>
   </data>
   <data name="TypeFormat" xml:space="preserve">
-    <value>Type: {0}</value>
+    <value>类型: {0}</value>
   </data>
   <data name="Imported" xml:space="preserve">
-    <value>Imported</value>
+    <value>已导入</value>
   </data>
   <data name="NotImported" xml:space="preserve">
-    <value>Not Imported</value>
+    <value>未导入</value>
   </data>
   <data name="ImportModuleButtonText" xml:space="preserve">
-    <value>Show Details</value>
+    <value>显示详细信息</value>
   </data>
   <data name="ImportModuleFailedFormat" xml:space="preserve">
-    <value>Failed to import the module required by command "{0}". Module name: "{1}". Error message: "{2}".</value>
+    <value>未能导入命令 "{0}" 所需的模块。模块名称: "{1}"。错误消息:“{2}”。</value>
   </data>
   <data name="NotImportedFormat" xml:space="preserve">
-    <value>To import the "{0}" module and its cmdlets, including "{1}", click {2}.</value>
+    <value>若要导入 "{0}" 模块及其 cmdlet (包括 "{1}")，请单击 {2}。</value>
   </data>
   <data name="ShowCommandError" xml:space="preserve">
-    <value>Show Command - Error</value>
+    <value>显示命令 - 错误</value>
   </data>
   <data name="PleaseWaitMessage" xml:space="preserve">
-    <value>Please Wait...</value>
+    <value>请稍候...</value>
   </data>
   <data name="ShowModuleControl_RefreshButton" xml:space="preserve">
-    <value>Refresh</value>
+    <value>刷新</value>
   </data>
   <data name="NoParameters" xml:space="preserve">
-    <value>There are no parameters.</value>
+    <value>没有参数。</value>
   </data>
   <data name="RefreshShowCommandTooltipFormat" xml:space="preserve">
-    <value>Click after using "{0}" to see the new commands</value>
+    <value>使用 "{0}" 后单击可查看新命令</value>
   </data>
 </root>

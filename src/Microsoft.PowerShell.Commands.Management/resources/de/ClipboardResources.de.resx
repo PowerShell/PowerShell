@@ -59,54 +59,54 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetClipboardContent" xml:space="preserve">
-    <value>Set string '{0}' to the clipboard.</value>
+    <value>Zeichenfolge „{0}“ in die Zwischenablage festlegen.</value>
   </data>
   <data name="AppendClipboardContent" xml:space="preserve">
-    <value>Append string '{0}' to the clipboard.</value>
+    <value>Zeichenfolge „{0}“ an die Zwischenablage anhängen.</value>
   </data>
   <data name="SetSingleFileToClipboard" xml:space="preserve">
-    <value>Set file '{0}' to the clipboard.</value>
+    <value>Legen Sie die Datei „{0}“ in der Zwischenablage fest.</value>
   </data>
   <data name="AppendSingleFileToClipboard" xml:space="preserve">
-    <value>Append file '{0}' to the clipboard.</value>
+    <value>Hängen Sie die Datei „{0}“ an die Zwischenablage an.</value>
   </data>
   <data name="SetMultipleFilesToClipboard" xml:space="preserve">
-    <value>Set {0} files to the clipboard.</value>
+    <value>Legen Sie {0} Dateien in der Zwischenablage fest.</value>
   </data>
   <data name="AppendMultipleFilesToClipboard" xml:space="preserve">
-    <value>Append {0} files to the clipboard.</value>
+    <value>Fügen Sie {0} Dateien an die Zwischenablage an.</value>
   </data>
   <data name="NoAppendableClipboardContent" xml:space="preserve">
-    <value>There's no content in Clipboard or the content format is not compatible. Set input object to the Clipboard.</value>
+    <value>In der Zwischenablage sind keine Inhalte vorhanden, oder das Inhaltsformat ist nicht kompatibel. Legen Sie das Eingabeobjekt auf die Zwischenablage fest.</value>
   </data>
   <data name="ClipboardCleared" xml:space="preserve">
-    <value>The Clipboard has been cleared.</value>
+    <value>Die Zwischenablage wurde gelöscht.</value>
   </data>
   <data name="InvalidTypeCombine" xml:space="preserve">
-    <value>TextFormatType can only be combined with Text format.</value>
+    <value>TextFormatType kann nur mit dem Textformat kombiniert werden.</value>
   </data>
   <data name="InvalidRawCombine" xml:space="preserve">
-    <value>Raw can only be combined with Text or FileDropList format.</value>
+    <value>Raw kann nur mit dem Text- oder FileDropList-Format kombiniert werden.</value>
   </data>
   <data name="InvalidHtmlCombine" xml:space="preserve">
-    <value>Html can only be combined with Html Text format.</value>
+    <value>HTML kann nur mit dem HTML-Textformat kombiniert werden.</value>
   </data>
   <data name="UnsupportedFormat" xml:space="preserve">
-    <value>Only Text format is supported on this platform.</value>
+    <value>Auf dieser Plattform wird nur das Textformat unterstützt.</value>
   </data>
   <data name="UnsupportedPlatform" xml:space="preserve">
-    <value>The clipboard is not supported on this platform.</value>
+    <value>Die Zwischenablage wird auf dieser Plattform nicht unterstützt.</value>
   </data>
   <data name="AsHtmlUnsupported" xml:space="preserve">
-    <value>The '-AsHtml' switch is not supported on this platform.</value>
+    <value>Der Schalter „-AsHtml“ wird auf dieser Plattform nicht unterstützt.</value>
   </data>
   <data name="TextFormatUnsupported" xml:space="preserve">
-    <value>The '-TextFormatType' parameter only supports 'Text' on this platform.</value>
+    <value>Der Parameter „-TextFormatType“ unterstützt nur „Text“ auf dieser Plattform.</value>
   </data>
   <data name="PathUnsupported" xml:space="preserve">
-    <value>The '-Path' parameter is not supported on this platform.</value>
+    <value>Der Parameter „-Path“ wird auf dieser Plattform nicht unterstützt.</value>
   </data>
   <data name="LiteralPathUnsupported" xml:space="preserve">
-    <value>The '-LiteralPath' parameter is not supported on this platform.</value>
+    <value>Der Parameter -LiteralPath wird auf dieser Plattform nicht unterstützt.</value>
   </data>
 </root>

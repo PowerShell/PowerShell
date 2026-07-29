@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ClearRecycleBinContent" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin</value>
+    <value>Tous les éléments de la Corbeille</value>
   </data>
   <data name="ClearRecycleBinContentForDrive" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin for the '{0}' drive</value>
+    <value>Tout le contenu de la Corbeille du lecteur « {0} »</value>
   </data>
   <data name="ClearRecycleBinProgressActivity" xml:space="preserve">
-    <value>Clearing Recycle Bin</value>
+    <value>Effacement Corbeille</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionByDrive" xml:space="preserve">
-    <value>for the '{0}' drive</value>
+    <value>pour le lecteur « {0} »</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionForAllDrives" xml:space="preserve">
-    <value>for all drives</value>
+    <value>pour tous les disques</value>
   </data>
   <data name="DriveNotFound" xml:space="preserve">
-    <value>Cannot find drive. A drive with the name '{0}' does not exist. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>Nous ne pouvons pas trouver le lecteur. Aucun lecteur nommé « {0} » n’existe. Exécutez l’applet de commande « {1} » pour voir les lecteurs fixes disponibles sur le système.</value>
   </data>
   <data name="InvalidDriveNameFormat" xml:space="preserve">
-    <value>Invalid input. The following formats are supported: '{0}', '{1}' or '{2}'.</value>
+    <value>Entrée non valide. Les formats suivants sont pris en charge : « {0} », « {1} » ou « {2} ».</value>
   </data>
   <data name="InvalidDriveType" xml:space="preserve">
-    <value>The drive with the name '{0}' is not a Fixed drive and does not support the Recycle Bin. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>Le lecteur nommé « {0} » n’est pas un lecteur fixe et ne prend pas en charge la Corbeille. Exécutez l’applet de commande « {1} » pour voir les lecteurs fixes disponibles sur le système.</value>
   </data>
 </root>

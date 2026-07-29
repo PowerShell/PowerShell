@@ -149,7 +149,7 @@
     <comment>A filter rule that indicates a field must equal the specified value.</comment>
   </data>
   <data name="FilterRule_GreaterThanOrEqual" xml:space="preserve">
-    <value>is greater than or equal to</value>
+    <value>ist größer als oder gleich</value>
     <comment>A filter rule that indicates a field must be greater than or equal to the specified value.</comment>
   </data>
   <data name="FilterRule_IsBetween" xml:space="preserve">
@@ -165,7 +165,7 @@
     <comment>A filter rule that indicates a field must not be empty.</comment>
   </data>
   <data name="FilterRule_LessThanOrEqual" xml:space="preserve">
-    <value>is less than or equal to</value>
+    <value>ist kleiner als oder gleich</value>
     <comment>A filter rule that indicates a field must be less than or equal to the specified value.</comment>
   </data>
   <data name="FilterRule_TextEndsWith" xml:space="preserve">
@@ -189,7 +189,7 @@
     <comment>{0} will be filled in with the culture appropriate ShortDatePattern</comment>
   </data>
   <data name="ErrorMessageForUnparsableNumericType" xml:space="preserve">
-    <value>The value must be a valid number.</value>
+    <value>Der Wert muss eine gültige Zahl sein.</value>
   </data>
   <data name="SearchBox_BackgroundText" xml:space="preserve">
     <value>Search</value>
@@ -200,7 +200,7 @@
     <comment>This value will be loaded at runtime to define the flow direction of WPF application.  This value should be set to "RightToLeft" for mirrored language and "LeftToRight" for others.</comment>
   </data>
   <data name="Ellipsis" xml:space="preserve">
-    <value>…</value>
+    <value>...</value>
     <comment>An ellipsis character.</comment>
   </data>
   <data name="ZoomIn1Shortcut" xml:space="preserve">

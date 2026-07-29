@@ -247,7 +247,7 @@ The defined template is following:
     <value>The {0} performance counter path is either not valid or it is not present in the following files: {1}.</value>
   </data>
   <data name="Timestamp" xml:space="preserve">
-    <value>Timestamp</value>
+    <value>Zaman damgası</value>
   </data>
   <data name="DateTimeExpected" xml:space="preserve">
     <value>The following value is not in a valid DateTime format: {0}.</value>

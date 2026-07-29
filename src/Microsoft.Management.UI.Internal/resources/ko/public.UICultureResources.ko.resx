@@ -118,81 +118,81 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ColumnPicker" xml:space="preserve">
-    <value>Select Columns...</value>
+    <value>열 선택...</value>
   </data>
   <data name="GroupTitleNone" xml:space="preserve">
-    <value>(none)</value>
+    <value>(없음)</value>
     <comment>The group title for items within a column whose value is empty/null.</comment>
   </data>
   <data name="ErrorTextBoxTypeConversionErrorText" xml:space="preserve">
-    <value>Value should be of Type {0}.</value>
+    <value>값은 {0} 형식이어야 합니다.</value>
     <comment>This text represents the error which will be shown when the entered type does not match the type we are expecting. {0} is the expected type.</comment>
   </data>
   <data name="ValidatingSelectorValueOutOfBounds" xml:space="preserve">
-    <value>The current selection is empty.</value>
+    <value>현재 선택 영역이 비어 있습니다.</value>
     <comment>The error validation string to present to the user when they have selected a value out of bounds.</comment>
   </data>
   <data name="FilterRule_Contains" xml:space="preserve">
-    <value>contains</value>
+    <value>포함</value>
     <comment>A filter rule that indicates a field must contain the specified value.</comment>
   </data>
   <data name="FilterRule_DoesNotContain" xml:space="preserve">
-    <value>does not contain</value>
+    <value>다음 값을 포함하지 않음</value>
     <comment>A filter rule that indicates a field must not contain the specified value.</comment>
   </data>
   <data name="FilterRule_DoesNotEqual" xml:space="preserve">
-    <value>does not equal</value>
+    <value>다음 값과 같지 않음</value>
     <comment>A filter rule that indicates a field must not equal the specified value.</comment>
   </data>
   <data name="FilterRule_Equals" xml:space="preserve">
-    <value>equals</value>
+    <value>같음</value>
     <comment>A filter rule that indicates a field must equal the specified value.</comment>
   </data>
   <data name="FilterRule_GreaterThanOrEqual" xml:space="preserve">
-    <value>is greater than or equal to</value>
+    <value>크거나 같음</value>
     <comment>A filter rule that indicates a field must be greater than or equal to the specified value.</comment>
   </data>
   <data name="FilterRule_IsBetween" xml:space="preserve">
-    <value>is between</value>
+    <value>다음 범위에 속함</value>
     <comment>A filter rule that indicates a field must be between the specified values.</comment>
   </data>
   <data name="FilterRule_IsEmpty" xml:space="preserve">
-    <value>is empty</value>
+    <value>비어 있음</value>
     <comment>A filter rule that indicates a field must be empty.</comment>
   </data>
   <data name="FilterRule_IsNotEmpty" xml:space="preserve">
-    <value>is not empty</value>
+    <value>비어 있지 않음</value>
     <comment>A filter rule that indicates a field must not be empty.</comment>
   </data>
   <data name="FilterRule_LessThanOrEqual" xml:space="preserve">
-    <value>is less than or equal to</value>
+    <value>작거나 같음</value>
     <comment>A filter rule that indicates a field must be less than or equal to the specified value.</comment>
   </data>
   <data name="FilterRule_TextEndsWith" xml:space="preserve">
-    <value>ends with</value>
+    <value>다음 값으로 끝남</value>
     <comment>A filter rule that indicates a field must end with the specified value.</comment>
   </data>
   <data name="FilterRule_TextStartsWith" xml:space="preserve">
-    <value>starts with</value>
+    <value>다음 값으로 시작</value>
     <comment>A filter rule that indicates a field must start with the specified value.</comment>
   </data>
   <data name="BackForwardHistory_BrowseBack_Disabled_Helptext" xml:space="preserve">
-    <value>Back</value>
+    <value>뒤로</value>
     <comment>The text representing the tool tip and help text for the Back Button in the Back Forward History control when the button is disabled</comment>
   </data>
   <data name="BackForwardHistory_BrowseForward_Disabled_Helptext" xml:space="preserve">
-    <value>Forward</value>
+    <value>전달</value>
     <comment>The text representing the tool tip and help text for the Forward Button in the Back Forward History control when the button is disabled</comment>
   </data>
   <data name="ErrorMessageForUnparsableDateTimeType" xml:space="preserve">
-    <value>The value must be a valid date in the following format: {0}.</value>
+    <value>값은 {0} 형식의 유효한 날짜여야 합니다.</value>
     <comment>{0} will be filled in with the culture appropriate ShortDatePattern</comment>
   </data>
   <data name="ErrorMessageForUnparsableNumericType" xml:space="preserve">
-    <value>The value must be a valid number.</value>
+    <value>값은 올바른 숫자여야 합니다.</value>
   </data>
   <data name="SearchBox_BackgroundText" xml:space="preserve">
-    <value>Search</value>
+    <value>검색</value>
     <comment>The default background text of the search box.</comment>
   </data>
   <data name="FlowDirection" xml:space="preserve">
@@ -200,7 +200,7 @@
     <comment>This value will be loaded at runtime to define the flow direction of WPF application.  This value should be set to "RightToLeft" for mirrored language and "LeftToRight" for others.</comment>
   </data>
   <data name="Ellipsis" xml:space="preserve">
-    <value>…</value>
+    <value>...</value>
     <comment>An ellipsis character.</comment>
   </data>
   <data name="ZoomIn1Shortcut" xml:space="preserve">

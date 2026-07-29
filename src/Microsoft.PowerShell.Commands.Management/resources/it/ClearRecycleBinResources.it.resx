@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ClearRecycleBinContent" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin</value>
+    <value>Tutto il contenuto del cestino</value>
   </data>
   <data name="ClearRecycleBinContentForDrive" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin for the '{0}' drive</value>
+    <value>Tutto il contenuto del cestino per l'unità "{0}"</value>
   </data>
   <data name="ClearRecycleBinProgressActivity" xml:space="preserve">
-    <value>Clearing Recycle Bin</value>
+    <value>Svuotamento del cestino</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionByDrive" xml:space="preserve">
-    <value>for the '{0}' drive</value>
+    <value>per l'unità "{0}"</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionForAllDrives" xml:space="preserve">
-    <value>for all drives</value>
+    <value>per tutte le unità</value>
   </data>
   <data name="DriveNotFound" xml:space="preserve">
-    <value>Cannot find drive. A drive with the name '{0}' does not exist. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>Impossibile trovare l'unità. L'unità con il nome "{0}" non esiste. Eseguire il cmdlet "{1}" per visualizzare le unità fisse disponibili nel sistema.</value>
   </data>
   <data name="InvalidDriveNameFormat" xml:space="preserve">
-    <value>Invalid input. The following formats are supported: '{0}', '{1}' or '{2}'.</value>
+    <value>Input non valido. Sono supportati i seguenti formati: "{0}", "{1}" o "{2}".</value>
   </data>
   <data name="InvalidDriveType" xml:space="preserve">
-    <value>The drive with the name '{0}' is not a Fixed drive and does not support the Recycle Bin. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>L'unità con il nome "{0}" non è un'unità fissa e non supporta il cestino. Eseguire il cmdlet "{1}" per visualizzare le unità fisse disponibili nel sistema.</value>
   </data>
 </root>

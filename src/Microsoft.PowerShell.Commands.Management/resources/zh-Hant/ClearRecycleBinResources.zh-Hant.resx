@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ClearRecycleBinContent" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin</value>
+    <value>資源回收筒中的所有內容</value>
   </data>
   <data name="ClearRecycleBinContentForDrive" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin for the '{0}' drive</value>
+    <value>'{0}' 磁碟機之資源回收筒中的所有內容</value>
   </data>
   <data name="ClearRecycleBinProgressActivity" xml:space="preserve">
-    <value>Clearing Recycle Bin</value>
+    <value>正在清理資源回收筒</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionByDrive" xml:space="preserve">
-    <value>for the '{0}' drive</value>
+    <value>'{0}' 磁碟機</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionForAllDrives" xml:space="preserve">
-    <value>for all drives</value>
+    <value>所有磁碟機</value>
   </data>
   <data name="DriveNotFound" xml:space="preserve">
-    <value>Cannot find drive. A drive with the name '{0}' does not exist. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>找不到磁碟機。沒有名為 '{0}' 的磁碟機。請執行 '{1}' Cmdlet，以查看系統中可用的固定磁碟機。</value>
   </data>
   <data name="InvalidDriveNameFormat" xml:space="preserve">
-    <value>Invalid input. The following formats are supported: '{0}', '{1}' or '{2}'.</value>
+    <value>輸入無效。支援下列格式: '{0}'、'{1}' 或 '{2}'。</value>
   </data>
   <data name="InvalidDriveType" xml:space="preserve">
-    <value>The drive with the name '{0}' is not a Fixed drive and does not support the Recycle Bin. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>名稱為 '{0}' 的磁碟機不是固定磁碟機，而且不支援資源回收筒。請執行 '{1}' Cmdlet，以查看系統中可用的固定磁碟機。</value>
   </data>
 </root>

@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ClearRecycleBinContent" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin</value>
+    <value>휴지통에 있는 모든 항목</value>
   </data>
   <data name="ClearRecycleBinContentForDrive" xml:space="preserve">
-    <value>All of the contents of the Recycle Bin for the '{0}' drive</value>
+    <value>'{0}' 드라이브의 휴지통에 있는 모든 내용</value>
   </data>
   <data name="ClearRecycleBinProgressActivity" xml:space="preserve">
-    <value>Clearing Recycle Bin</value>
+    <value>휴지통 지우는 중</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionByDrive" xml:space="preserve">
-    <value>for the '{0}' drive</value>
+    <value>'{0}' 드라이브용</value>
   </data>
   <data name="ClearRecycleBinStatusDescriptionForAllDrives" xml:space="preserve">
-    <value>for all drives</value>
+    <value>모든 드라이브에 대해</value>
   </data>
   <data name="DriveNotFound" xml:space="preserve">
-    <value>Cannot find drive. A drive with the name '{0}' does not exist. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>드라이브를 찾을 수 없습니다. 이름이 '{0}'인 드라이브가 없습니다. '{1}' cmdlet을 실행하여 시스템에서 사용 가능한 고정 드라이브를 확인하세요.</value>
   </data>
   <data name="InvalidDriveNameFormat" xml:space="preserve">
-    <value>Invalid input. The following formats are supported: '{0}', '{1}' or '{2}'.</value>
+    <value>유효하지 않은 입력입니다. 지원되는 형식은 '{0}', '{1}' 또는 '{2}'입니다.</value>
   </data>
   <data name="InvalidDriveType" xml:space="preserve">
-    <value>The drive with the name '{0}' is not a Fixed drive and does not support the Recycle Bin. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>'{0}' 드라이브는 Fixed 드라이브가 아니므로 휴지통을 지원하지 않습니다. '{1}' cmdlet을 실행하여 시스템에서 사용 가능한 고정 드라이브를 확인하세요.</value>
   </data>
 </root>

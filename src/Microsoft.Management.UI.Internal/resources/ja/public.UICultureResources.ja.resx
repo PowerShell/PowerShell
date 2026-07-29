@@ -125,11 +125,11 @@
     <comment>The group title for items within a column whose value is empty/null.</comment>
   </data>
   <data name="ErrorTextBoxTypeConversionErrorText" xml:space="preserve">
-    <value>Value should be of Type {0}.</value>
+    <value>値は、型 {0} である必要があります。</value>
     <comment>This text represents the error which will be shown when the entered type does not match the type we are expecting. {0} is the expected type.</comment>
   </data>
   <data name="ValidatingSelectorValueOutOfBounds" xml:space="preserve">
-    <value>The current selection is empty.</value>
+    <value>現在の選択内容が空です。</value>
     <comment>The error validation string to present to the user when they have selected a value out of bounds.</comment>
   </data>
   <data name="FilterRule_Contains" xml:space="preserve">
@@ -149,7 +149,7 @@
     <comment>A filter rule that indicates a field must equal the specified value.</comment>
   </data>
   <data name="FilterRule_GreaterThanOrEqual" xml:space="preserve">
-    <value>is greater than or equal to</value>
+    <value>次の値以上</value>
     <comment>A filter rule that indicates a field must be greater than or equal to the specified value.</comment>
   </data>
   <data name="FilterRule_IsBetween" xml:space="preserve">
@@ -165,7 +165,7 @@
     <comment>A filter rule that indicates a field must not be empty.</comment>
   </data>
   <data name="FilterRule_LessThanOrEqual" xml:space="preserve">
-    <value>is less than or equal to</value>
+    <value>次の値以下</value>
     <comment>A filter rule that indicates a field must be less than or equal to the specified value.</comment>
   </data>
   <data name="FilterRule_TextEndsWith" xml:space="preserve">
@@ -189,7 +189,7 @@
     <comment>{0} will be filled in with the culture appropriate ShortDatePattern</comment>
   </data>
   <data name="ErrorMessageForUnparsableNumericType" xml:space="preserve">
-    <value>The value must be a valid number.</value>
+    <value>この値には有効な数値を指定してください。</value>
   </data>
   <data name="SearchBox_BackgroundText" xml:space="preserve">
     <value>Search</value>
