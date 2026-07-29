@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Creates a temporary directory and writes it to the pipeline.
-        /// Uses <see cref="Directory.CreateTempSubdirectory()"/> for atomic creation,
+        /// Uses <see cref="Directory.CreateTempSubdirectory(string)"/> for atomic creation,
         /// which guarantees a fresh directory without check-to-create race conditions.
         /// </summary>
         protected override void EndProcessing()
