@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertNotGoodForSigning" xml:space="preserve">
-    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+    <value>No se puede firmar el código. El certificado especificado no es adecuado para la firma de código.</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code.  The TimeStamp server URL must be fully qualified in the form of http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+    <value>No se puede firmar el código.  La URL del servidor de marca de tiempo debe estar completa, en la forma http://&lt;server url&gt; o https://&lt;server url&gt;.</value>
   </data>
   <data name="CannotRetrieveFromContainer" xml:space="preserve">
-    <value>The Get-AuthenticodeSignature cmdlet does not support directories. Supply a path to a file and retry.</value>
+    <value>El cmdlet Get-AuthenticodeSignature no admite directorios. Proporcione una ruta de acceso a un archivo y vuelva a intentarlo.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>File {0} was not found.</value>
+    <value>No se ha encontrado el archivo {0}.</value>
   </data>
 </root>

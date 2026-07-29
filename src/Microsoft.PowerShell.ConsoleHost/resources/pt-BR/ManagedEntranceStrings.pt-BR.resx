@@ -121,37 +121,37 @@
     <value>PowerShell {0}</value>
   </data>
   <data name="ShellBannerCLMode" xml:space="preserve">
-    <value>[Constrained Language Mode]</value>
+    <value>[Modo de Linguagem Restritiva]</value>
   </data>
   <data name="ShellBannerCLAuditMode" xml:space="preserve">
-    <value>[Constrained Language AUDIT Mode : No Restrictions]</value>
+    <value>[Modo de AUDITORIA de Linguagem Restrita: Sem Restrições]</value>
   </data>
   <data name="ShellBannerNLMode" xml:space="preserve">
-    <value>[No Language Mode]</value>
+    <value>[Modo sem Linguagem]</value>
   </data>
   <data name="ShellBannerRLMode" xml:space="preserve">
-    <value>[Restricted Language Mode]</value>
+    <value>[Modo de Linguagem Restrita]</value>
   </data>
   <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell preview release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Uma nova versão prévia do PowerShell está disponível: v{0} {2}
+  {1} Atualize agora ou confira a página da versão em:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="StableUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell stable release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Uma nova versão estável do PowerShell está disponível: v{0} {2}
+  {1} Atualize agora ou confira a página da versão em:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="LTSUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell LTS release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Uma nova versão LTS do PowerShell está disponível: v{0} {2}
+  {1} Atualize agora ou confira a página da versão em:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="UsageHelp" xml:space="preserve">
-    <value>Usage: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
+    <value>Uso: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
                                 | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
                   [-CommandWithArgs &lt;string&gt; [&lt;CommandParameters&gt;]
@@ -166,190 +166,190 @@
 
        pwsh[.exe] -h | -Help | -? | /?
 
-PowerShell Online Help https://aka.ms/powershell-docs
+Ajuda Online do PowerShell https://aka.ms/powershell-docs
 
-All parameters are case-insensitive.</value>
+Todos os parâmetros não diferenciam maiúsculas de minúsculas.</value>
   </data>
   <data name="ExtendedHelp" xml:space="preserve">
     <value>
 
 -File | -f
 
-    If the value of File is "-", the command text is read from standard input.
-    Running "pwsh -File -" without redirected standard input starts a regular
-    session. This is the same as not specifying the File parameter at all.
+    Se o valor de File for "-", será feita a leitura do texto do comando a partir da entrada padrão.
+    Executar "pwsh -File -" sem entrada padrão redirecionada inicia uma sessão
+    regular. Isso é o mesmo que não especificar o parâmetro File de forma alguma.
 
-    This is the default parameter if no parameters are present but values are
-    present in the command line. The specified script runs in the local scope
-    ("dot-sourced"), so that the functions and variables that the script
-    creates are available in the current session. Enter the script file path
-    and any parameters. File must be the last parameter in the command, because
-    all characters typed after the File parameter name are interpreted as the
-    script file path followed by the script parameters.
+    Este é o parâmetro padrão quando não há parâmetros, mas há valores
+    presente na linha de comando. O script especificado é executado no escopo local
+    ("dot-sourced"), para que as funções e variáveis que o script
+    cria fiquem disponíveis na sessão atual. Insira o caminho do arquivo de script
+    e quaisquer parâmetros. File deve ser o último parâmetro no comando, porque
+    todos os caracteres digitados após o nome do parâmetro File são interpretados como o
+    caminho do arquivo de script seguido pelos parâmetros do script.
 
-    Typically, the switch parameters of a script are either included or
-    omitted. For example, the following command uses the All parameter of the
-    Get-Script.ps1 script file: "-File .\Get-Script.ps1 -All"
+    Normalmente, os parâmetros de opção de um script são incluídos ou
+    omitidos. Por exemplo, o comando a seguir usa o parâmetro All do
+    Get-Script.ps1 arquivo de script: "-File .\Get-Script.ps1 -All"
 
-    In rare cases, you might need to provide a BOOLEAN value for a switch
-    parameter. To provide a BOOLEAN value for a switch parameter in the value
-    of the FILE parameter, Use the parameter normally followed immediately by a
-    colon and the boolean value, such as the following:
+    Em casos raros, talvez seja necessário fornecer um valor BOOLIANO para um parâmetro
+    de opção. Para fornecer um valor BOOLIANO para um parâmetro de opção no valor
+    do parâmetro FILE, use o parâmetro normalmente seguido imediatamente por
+    dois-pontos e pelo valor booleano, como no exemplo a seguir:
     "-File .\Get-Script.ps1 -All:$False".
 
-    Parameters passed to the script are passed as literal strings, after
-    interpretation by the current shell. For example, if you are in cmd.exe and
-    want to pass an environment variable value, you would use the cmd.exe
-    syntax: "pwsh -File .\test.ps1 -TestParam %windir%"
+    Os parâmetros passados para o script são passados como cadeias de caracteres literais, após
+    a interpretação pelo shell atual. Por exemplo, se você estiver no cmd.exe e
+    quiser passar um valor de variável de ambiente, você usaria a sintaxe do
+    cmd.exe: "pwsh -File .\test.ps1 -TestParam %windir%"
 
-    In contrast, running "pwsh -File .\test.ps1 -TestParam $env:windir" in
-    cmd.exe results in the script receiving the literal string "$env:windir"
-    because it has no special meaning to the current cmd.exe shell. The
-    "$env:windir" style of environment variable reference can be used inside a
-    Command parameter, since there it is interpreted as PowerShell code.
+    Em contraste, executar "pwsh -File .\test.ps1 -TestParam $env:windir" em
+    cmd.exe fará com que o script receba a cadeia de caracteres literal "$env:windir"
+    porque ela não tem um significado especial para o shell cmd.exe atual. O
+    O estilo de referência de variável de ambiente "$env:windir" pode ser usado dentro de um
+    parâmetro Command, pois lá ele é interpretado como código do PowerShell.
 
-    Similarly, if you want to execute the same command from a Batch script,
-    you would use "%~dp0" instead of ".\" or "$PSScriptRoot" to represent the current
-    execution directory: "pwsh -File %~dp0test.ps1 -TestParam %windir%". If you
-    instead used ".\test.ps1", PowerShell would throw an error because it cannot
-    find the literal path ".\test.ps1".
+    Da mesma forma, se você quiser executar o mesmo comando a partir de um script de Lote,
+    você usaria "%~dp0" em vez de ".\" ou "$PSScriptRoot" para representar o diretório
+    de execução atual: "pwsh -File %~dp0test.ps1 -TestParam %windir%". Se você
+    usasse ".\test.ps1", o PowerShell geraria um erro porque ele não consegue
+    localizar o caminho literal ".\test.ps1".
 
-    When the script file invoked terminates with an exit command, the process
-    exit code is set to the numeric argument used with the exit command. With
-    normal termination, the exit code is always 0.
+    Quando o arquivo de script invocado termina com um comando de saída, o
+    o código de saída do processo é definido como o argumento numérico usado com o comando de saída. Em
+    caso de encerramento normal, o código de saída é sempre 0.
 
-    Similar to -Command, when a script-terminating error occurs, the exit code
-    is set to 1. However, unlike with -Command, when the execution is
-    interrupted with Ctrl-C the exit code is 0.
+    Semelhante a -Command, quando ocorre um erro que termina o script, o código de saída
+    é definido como 1. No entanto, ao contrário de -Command, quando a execução é
+    interrompida com Ctrl-C, o código de saída é 0.
 
 -Command | -c
 
-    Executes the specified commands (and any parameters) as though they were
-    typed at the PowerShell command prompt, and then exits, unless the NoExit
-    parameter is specified.
+    Executa os comandos especificados (e quaisquer parâmetros) como se fossem
+    digitados no prompt de comando do PowerShell e, em seguida, encerrados, a menos que o parâmetro NoExit
+    seja especificado.
 
-    The value of Command can be "-", a script block, or a string. If the value
-    of Command is "-", the command text is read from standard input.
+    O valor de Command pode ser "-", um bloco de script ou uma cadeia de caracteres. Se o valor
+    de Command for "-", o texto do comando será lido da entrada padrão.
 
-    The Command parameter only accepts a script block for execution when it can
-    recognize the value passed to Command as a ScriptBlock type. This is only
-    possible when running pwsh from another PowerShell host. The ScriptBlock
-    type may be contained in an existing variable, returned from an expression,
-    or parsed by the PowerShell host as a literal script block enclosed in
-    curly braces "{}", before being passed to pwsh.
+    O parâmetro Command aceita um bloco de script para execução somente quando consegue
+    reconhecer o valor passado para Command como um tipo ScriptBlock. Isso só é
+    possível somente ao executar pwsh de outro processo que hospeda o PowerShell. O tipo ScriptBlock
+    pode estar contido em uma variável existente, ser retornado de uma expressão,
+    ou analisado pelo processo que hospeda o PowerShell como um bloco de script literal delimitado por
+    chaves curvas "{}", antes de ser passado para pwsh.
 
         pwsh -Command {Get-WinEvent -LogName security}
 
-    In cmd.exe, there is no such thing as a script block (or ScriptBlock type),
-    so the value passed to Command will always be a string. You can write a
-    script block inside the string, but instead of being executed it will
-    behave exactly as though you typed it at a typical PowerShell prompt,
-    printing the contents of the script block back out to you.
+    No cmd.exe, não existe algo como um bloco de script (ou tipo ScriptBlock),
+    portanto, o valor passado para Command será sempre uma cadeia de caracteres. Você pode escrever o
+    bloco de script dentro da cadeia, mas, em vez de ser executado, ele
+    se comportará exatamente como se você o tivesse digitado em um prompt típico do PowerShell,
+    imprimindo o conteúdo do bloco de script de volta para você.
 
-    A string passed to Command is still executed as PowerShell script, so the
-    script block curly braces are often not required in the first place when
-    running from cmd.exe. To execute an inline script block defined inside a
-    string, the call operator "&amp;" can be used:
+    Uma cadeia de caracteres passada para Command ainda é executada como script do PowerShell, portanto,
+    as chaves do bloco de script geralmente nem são necessárias quando
+    em execução a partir de cmd.exe. Para executar um bloco de script embutido definido dentro de uma
+    cadeia de caracteres, pode-se usar o operador de chamada &amp;:
 
         pwsh -Command "&amp; {Get-WinEvent -LogName security}"
 
-    If the value of Command is a string, Command must be the last parameter for
-    pwsh, because all arguments following it are interpreted as part of the
-    command to execute.
+    Se o valor de Command for uma cadeia, Command deverá ser o último parâmetro de
+    pwsh, pois todos os argumentos posteriores a ele são interpretados como parte do
+    comando a executar.
 
-    When called from within an existing PowerShell session, the results are
-    returned to the parent shell as deserialized XML objects, not live objects.
-    For other shells, the results are returned as strings.
+    Quando chamado de uma sessão existente do PowerShell, os resultados são
+    retornados ao shell pai como objetos XML desserializados, não como objetos ativos.
+    Para outros shells, os resultados são retornados como cadeias de caracteres.
 
-    If the value of Command is "-", the command text is read from standard
-    input. You must redirect standard input when using the Command parameter
-    with standard input. For example:
+    Se o valor de Command for "-", o texto do comando será lido da entrada
+    padrão. Você deve redirecionar a entrada padrão ao usar o parâmetro Command
+    com entrada padrão. Por exemplo:
 
         @'
         "in"
 
-        "hi" |
+        "olá" |
         % { "$_ there" }
 
         "out"
         '@ | powershell -NoProfile -Command -
 
-    This example produces the following output:
+    Este exemplo produz a seguinte saída:
 
         in
         hi there
         out
 
-    The process exit code is determined by status of the last (executed)
-    command within the script block. The exit code is 0 when $? is $true or 1
-    when $? is $false. If the last command is an external program or a
-    PowerShell script that explicitly sets an exit code other than 0 or 1, that
-    exit code is converted to 1 for process exit code. To preserve the specific
-    exit code, add exit $LASTEXITCODE to your command string or script block.
+    O código de saída do processo é determinado pelo status do 
+    comando executado no bloco de script (executado). O código de saída é 0 quando $? é $true ou 1
+    quando $? é $false. Se o último comando for um programa externo ou um
+    Script do PowerShell que defina explicitamente um código de saída diferente de 0 ou 1,
+    o código de saída será convertido em 1 para o código de saída do processo. Para preservar o
+    código de saída específico, adicione exit $LASTEXITCODE à cadeia de caracteres do comando ou ao bloco de script.
 
-    Similarly, the value 1 is returned when a script-terminating
-    (runspace-terminating) error, such as a throw or -ErrorAction Stop, occurs
-    or when execution is interrupted with Ctrl-C.
+    Da mesma forma, o valor 1 é retornado quando ocorre um erro de encerramento de script
+    (erro que encerra o script), como um throw ou -ErrorAction Stop, ocorre
+    ou quando a execução é interrompida com Ctrl-C.
 
 -CommandWithArgs | -cwa
 
     [Experimental]
-    Executes a PowerShell command with arguments.  Unlike `-Command`, this
-    parameter populates the `$args built-in variable which can be used by the
-    command.
+    Executa um comando do PowerShell com argumentos.  Ao contrário de `-Command`, esse
+    parâmetro preenche a variável interna `$args, que pode ser usada pelo
+    comando.
 
-    The first string is the command and subsequent strings delimited by whitespace
-    are the arguments.
+    A primeira cadeia de caracteres é o comando e as cadeias de caracteres seguintes, separadas por espaços em branco,
+    são os argumentos.
 
-    For example:
+    Por exemplo:
 
         pwsh -CommandWithArgs '$args | % { "arg: $_" }' arg1 arg2
 
-    This example produces the following output:
+    Este exemplo produz a seguinte saída:
 
         arg: arg1
         arg: arg2
 
 -ConfigurationName | -config
 
-    Specifies a configuration endpoint in which PowerShell is run. This can be
-    any endpoint registered on the local machine including the default
-    PowerShell remoting endpoints or a custom endpoint having specific user
-    role capabilities.
+    Especifica um ponto de extremidade de configuração no qual o PowerShell é executado. Esse pode ser
+    qualquer ponto de extremidade registrado no computador local, incluindo
+    pontos de extremidade padrão de comunicação remota do PowerShell ou um ponto de extremidade personalizado com capacidades específicas de
+    função de usuário.
 
-    Example: "pwsh -ConfigurationName AdminRoles"
+    Exemplo: "pwsh -ConfigurationName AdminRoles"
 
 -ConfigurationFile
 
-    Specifies a session configuration (.pssc) file path. The configuration
-    contained in the configuration file will be applied to the PowerShell
-    session.
+    Especifica o caminho de um arquivo de configuração de sessão (.pssc). A configuração
+    contida no arquivo de configuração será aplicada à sessão do
+    PowerShell.
 
-    Example: "pwsh -ConfigurationFile "C:\ProgramData\PowerShell\MyConfig.pssc"
+    Exemplo: "pwsh -ConfigurationFile "C:\ProgramData\PowerShell\MyConfig.pssc"
 
 -CustomPipeName
 
-    Specifies the name to use for an additional IPC server (named pipe) used
-    for debugging and other cross-process communication. This offers a
-    predictable mechanism for connecting to other PowerShell instances.
-    Typically used with the CustomPipeName parameter on "Enter-PSHostProcess".
+    Especifica o nome que será usado para um servidor IPC adicional (pipe nomeado) usado
+    para depuração e outras comunicações entre processos. Este oferece um
+    mecanismo previsível para se conectar a outras instâncias do PowerShell.
+    Normalmente usado com o parâmetro CustomPipeName no comando "Enter-PSHostProcess".
 
-    This parameter was introduced in PowerShell 6.2.
+    Este parâmetro foi introduzido no PowerShell 6.2.
 
-    For example:
+    Por exemplo:
 
-        # PowerShell instance 1
+        # Instância do PowerShell 1
         pwsh -CustomPipeName mydebugpipe
-        # PowerShell instance 2
+        # Instância do PowerShell 2
         Enter-PSHostProcess -CustomPipeName mydebugpipe
 
 -EncodedCommand | -e | -ec
 
-    Accepts a Base64-encoded string version of a command. Use this parameter to
-    submit commands to PowerShell that require complex, nested quoting. The
-    Base64 representation must be a UTF-16 encoded string.
+    Aceita uma versão do comando codificada em Base64 de um comando. Use este parâmetro para
+    enviar comandos ao PowerShell que exigem aspas complexas e aninhadas. O
+    A representação em Base64 deve ser uma cadeia de caracteres codificada em UTF-16.
 
-    For example:
+    Por exemplo:
 
         $command = 'dir "c:\program files" '
         $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
@@ -358,136 +358,136 @@ All parameters are case-insensitive.</value>
 
 -ExecutionPolicy | -ex | -ep
 
-    Sets the default execution policy for the current session and saves it in
-    the $env:PSExecutionPolicyPreference environment variable. This parameter
-    does not change the persistently configured execution policies.
+    Define a política de execução padrão para a sessão atual e a salva na
+    variável de ambiente $env:PSExecutionPolicyPreference. Este parâmetro
+    não altera as políticas de execução configuradas de forma persistente.
 
-    This parameter only applies to Windows computers. The
-    $env:PSExecutionPolicyPreference environment variable does not exist on
-    non-Windows platforms.
+    Este parâmetro aplica-se somente a computadores Windows. A
+    variável de ambiente $env:PSExecutionPolicyPreference não existe em
+    plataformas não Windows.
 
 -InputFormat | -inp | -if
 
-    Describes the format of data sent to PowerShell. Valid values are "Text"
-    (text strings) or "XML" (serialized CLIXML format).
+    Descreve o formato dos dados enviados ao PowerShell. Os valores válidos são "Text"
+    (cadeias de caracteres de texto) ou "XML" (formato CLIXML serializado).
 
 -Interactive | -i
 
-    Present an interactive prompt to the user. Inverse for NonInteractive
-    parameter.
+    Apresente um prompt interativo ao usuário. É o inverso do parâmetro
+    NonInteractive.
 
 -Login | -l
 
-    On Linux and macOS, starts PowerShell as a login shell, using /bin/sh to
-    execute login profiles such as /etc/profile and ~/.profile. On Windows,
-    this switch does nothing.
+    No Linux e macOS, inicia o PowerShell como um shell de logon, usando /bin/sh para
+    executar perfis de logon, como /etc/profile e ~/.profile. No Windows,
+    este parâmetro de opçã não faz nada.
 
-    [!IMPORTANT] This parameter must come first to start PowerShell as a login
-    shell. The parameter is ignored if passed in any other position.
+    [!IMPORTANT] Este parâmetro deve vir primeiro para iniciar o PowerShell como um shell
+    de logon. O parâmetro será ignorado se for passado em qualquer outra posição.
 
-    To set up pwsh as the login shell on UNIX-like operating systems:
+    Para configurar o pwsh como o shell de logon em sistemas operacionais semelhantes ao UNIX:
 
-    - Verify that the full absolute path to pwsh is listed under /etc/shells
+    - Verifique se o caminho absoluto completo para pwsh está listado em /etc/shells
 
-      - This path is usually something like /usr/bin/pwsh on Linux or
-        /usr/local/bin/pwsh on macOS
-      - With some installation methods, this entry will be added
-        automatically at installation time
-      - If pwsh is not present in /etc/shells, use an editor to append the
-        path to pwsh on the last line. This requires elevated privileges to
-        edit.
+      - Este caminho geralmente é algo como /usr/bin/pwsh no Linux ou
+        /usr/local/bin/pwsh no macOS
+      - Com alguns métodos de instalação, esta entrada é adicionada
+        automaticamente durante a instalação
+      - Se o pwsh não estiver presente em /etc/shells, use um editor para acrescentar o
+        caminho para pwsh na última linha. A edição exige privilégios elevados para
+        editar.
 
-    - Use the chsh utility to set your current user's shell to pwsh:
+    - Use o utilitário chsh para definir o shell do usuário atual como pwsh:
 
         chsh -s /usr/bin/pwsh
 
-    [!WARNING] Setting pwsh as the login shell is currently not supported on
-    Windows Subsystem for Linux (WSL), and attempting to set pwsh as the
-    login shell there may lead to being unable to start WSL interactively.
+    [!WARNING] No momento, não há suporte para definir pwsh como o shell de logon no
+    Subsistema do Windows para Linux (WSL), e tentar definir o pwsh como
+    shell de logon no WSL pode fazer com que não seja possível iniciar o WSL interativamente.
 
 -MTA
 
-    Start PowerShell using a multi-threaded apartment. This switch is only
-    available on Windows.
+    Iniciar o PowerShell usando um multi-threaded apartment. Este parâmetro só está
+    disponível no Windows.
 
 -NoExit | -noe
 
-    Does not exit after running startup commands.
+    Não encerra o PowerShell após executar os comandos de inicialização.
 
-    Example: "pwsh -NoExit -Command Get-Date"
+    Exemplo: "pwsh -NoExit -Command Get-Date"
 
 -NoLogo | -nol
 
-    Hides the banner text at startup of interactive sessions.
+    Oculta o texto da barra de notificação na inicialização de sessões interativas.
 
 -NonInteractive | -noni
 
-    This switch is used to create sessions that shouldn't require user input.
-    This is useful for scripts that run in scheduled tasks or CI/CD pipelines.
-    Any attempts to use interactive features, like 'Read-Host' or confirmation
-    prompts, result in statement terminating errors rather than hanging.
+    Este parâmetro é usado para criar sessões que não devem exigir a entrada do usuário.
+    Isto é útil para scripts executados em tarefas agendadas ou pipelines de CI/CD.
+    Todas as tentativas de usar recursos interativos, como 'Read-Host' ou prompts de confirmação,
+    resultam em erros de término de instrução em vez de ficarem aguardando indefinidamente.
 
 -NoProfile | -nop
 
-    Does not load the PowerShell profiles.
+    Não carrega os perfis do PowerShell.
 
 -NoProfileLoadTime
 
-    Hides the PowerShell profile load time text shown at startup when the load
-    time exceeds 500 milliseconds.
+    Oculta o texto do tempo de carregamento do perfil do PowerShell exibido na inicialização quando esse
+    tempo ultrapassa 500 milissegundos.
 
 -OutputFormat | -o | -of
 
-    Determines how output from PowerShell is formatted. Valid values are "Text"
-    (text strings) or "XML" (serialized CLIXML format).
+    Determina como a saída do PowerShell é formatada. Os valores válidos são "Text"
+    (cadeias de caracteres de texto) ou "XML" (formato CLIXML serializado).
 
-    Example: "pwsh -o XML -c Get-Date"
+    Exemplo: "pwsh -o XML -c Get-Date"
 
-    When called within a PowerShell session, you get deserialized objects as
-    output rather plain strings. When called from other shells, the output is
-    string data formatted as CLIXML text.
+    Quando chamado em uma sessão do PowerShell, você obtém objetos desserializados como
+    saída, em vez de cadeias de caracteres simples. Quando chamado de outros shells, a saída é
+    dados de cadeia de caracteres formatados como texto CLIXML.
 
 -SettingsFile | -settings
 
-    Overrides the system-wide "powershell.config.json" settings file for the
-    session. By default, system-wide settings are read from the
-    "powershell.config.json" in the "$PSHOME" directory.
+    Substitui, para a sessão, o arquivo de configurações
+    "powershell.config.json". Por padrão, as configurações de todo o sistema são lidas do
+    "powershell.config.json" no diretório "$PSHOME".
 
-    Note that these settings are not used by the endpoint specified by the
-    "-ConfigurationName" argument.
+    Observe que essas configurações não são usadas pelo ponto de extremidade especificado pelo
+    argumento "-ConfigurationName".
 
-    Example: "pwsh -SettingsFile c:\myproject\powershell.config.json"
+    Exemplo: "pwsh -SettingsFile c:\myproject\powershell.config.json"
 
 -SSHServerMode | -sshs
 
-    Used in sshd_config for running PowerShell as an SSH subsystem. It is not
-    intended or supported for any other use.
+    Usado em sshd_config para executar o PowerShell como subsistema SSH. Não se
+    destina a nenhum outro uso, que também não tem suporte.
 
 -STA
 
-    Start PowerShell using a single-threaded apartment. This is the default.
-    This switch is only available on Windows.
+    Iniciar PowerShell usando um single-threaded apartment. Esse é o padrão.
+    Este parâmetro só está disponível no Windows.
 
 -Version | -v
 
-    Displays the version of PowerShell. Additional parameters are ignored.
+    Exibe a versão do PowerShell. Os parâmetros adicionais são ignorados.
 
 -WindowStyle | -w
 
-    Sets the window style for the session. Valid values are Normal, Minimized,
-    Maximized, and Hidden.
+    Define o estilo da janela para a sessão. Os valores válidos são Normal, Minimized,
+    Maximized e Hidden.
 
 -WorkingDirectory | -wd
 
-    Sets the initial working directory by executing at startup. Any valid
-    PowerShell file path is supported.
+    Define o diretório de trabalho inicial executando na inicialização. Há suporte para
+    qualquer caminho de arquivo válido do PowerShell.
 
-    To start PowerShell in your home directory, use: pwsh -WorkingDirectory ~
+    Para iniciar o PowerShell no diretório inicial, use: pwsh -WorkingDirectory ~
 
 -Help, -?, /?
 
-    Displays help for pwsh. If you are typing a pwsh command in PowerShell,
-    prepend the command parameters with a hyphen (-), not a forward slash (/).
+    Exibe a ajuda do pwsh. Se você estiver digitando um comando pwsh no PowerShell,
+    preceda os parâmetros do comando com um hífen (-), não com uma barra (/).
     </value>
   </data>
 </root>

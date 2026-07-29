@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertNotGoodForSigning" xml:space="preserve">
-    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+    <value>Kod imzalanamıyor. Belirtilen sertifika kod imzalama için uygun değil.</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code.  The TimeStamp server URL must be fully qualified in the form of http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+    <value>Kod imzalanamıyor.  Zaman damgası sunucusu URL'si, http://&lt;server url&gt; veya https://&lt;server url&gt; biçiminde tam olarak belirtilmelidir.</value>
   </data>
   <data name="CannotRetrieveFromContainer" xml:space="preserve">
-    <value>The Get-AuthenticodeSignature cmdlet does not support directories. Supply a path to a file and retry.</value>
+    <value>Get-AuthenticodeSignature cmdlet'i dizinleri desteklemez. Bir dosya yolu sağlayıp yeniden deneyin.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>File {0} was not found.</value>
+    <value>{0} dosyası bulunamadı.</value>
   </data>
 </root>

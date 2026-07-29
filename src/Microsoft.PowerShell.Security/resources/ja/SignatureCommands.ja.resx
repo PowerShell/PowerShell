@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertNotGoodForSigning" xml:space="preserve">
-    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+    <value>コードに署名できません。指定された証明書はコード署名に適していません。</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code.  The TimeStamp server URL must be fully qualified in the form of http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+    <value>コードに署名できません。 TimeStamp サーバー URL は、http://&lt;server url&gt; または https://&lt;server url&gt; の形式で完全修飾されている必要があります。</value>
   </data>
   <data name="CannotRetrieveFromContainer" xml:space="preserve">
-    <value>The Get-AuthenticodeSignature cmdlet does not support directories. Supply a path to a file and retry.</value>
+    <value>Get-AuthenticodeSignature コマンドレットではディレクトリはサポートされていません。ファイルへのパスを指定して再試行してください。</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>File {0} was not found.</value>
+    <value>ファイル {0} が見つかりませんでした。</value>
   </data>
 </root>

@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FilePathMustBeFileSystemPath" xml:space="preserve">
-    <value>The path '{0}' must refer to a single file system path.</value>
+    <value>パス '{0}' は、1 つのファイル システム パスを参照する必要があります。</value>
   </data>
   <data name="InputContainedNoEncryptedContent" xml:space="preserve">
-    <value>Cannot unprotect message. The input contained no encrypted content.</value>
+    <value>メッセージの保護を解除できません。入力には暗号化されたコンテンツが含まれていませんでした。</value>
   </data>
   <data name="InputContainedNoEncryptedContentIncludeContext" xml:space="preserve">
-    <value>Cannot unprotect message. The input contained no encrypted content. Specify the '{0}' parameter if you wish to output the original content when no encrypted content is detected.</value>
+    <value>メッセージの保護を解除できません。入力には暗号化されたコンテンツが含まれていませんでした。暗号化されたコンテンツが検出されない場合に元のコンテンツを出力する場合は、'{0}' パラメーターを指定します。</value>
   </data>
 </root>

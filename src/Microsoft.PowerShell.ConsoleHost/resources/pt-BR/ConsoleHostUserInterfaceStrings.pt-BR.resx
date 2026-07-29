@@ -160,7 +160,7 @@
     <value>Cannot display the prompt for "{0}" because type "{1}" cannot be loaded.</value>
   </data>
   <data name="NullOrEmptyErrorTemplate" xml:space="preserve">
-    <value>"{0}" cannot be null or empty.</value>
+    <value>"{0}" não pode ser nulo ou vazio.</value>
   </data>
   <data name="NullErrorTemplate" xml:space="preserve">
     <value>"{0}" cannot be null.</value>

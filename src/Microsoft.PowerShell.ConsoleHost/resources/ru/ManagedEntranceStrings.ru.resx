@@ -121,32 +121,32 @@
     <value>PowerShell {0}</value>
   </data>
   <data name="ShellBannerCLMode" xml:space="preserve">
-    <value>[Constrained Language Mode]</value>
+    <value>[Ограниченный языковой режим]</value>
   </data>
   <data name="ShellBannerCLAuditMode" xml:space="preserve">
-    <value>[Constrained Language AUDIT Mode : No Restrictions]</value>
+    <value>[Режим АУДИТА с ограничением по языку: без ограничений]</value>
   </data>
   <data name="ShellBannerNLMode" xml:space="preserve">
-    <value>[No Language Mode]</value>
+    <value>[Режим без языка]</value>
   </data>
   <data name="ShellBannerRLMode" xml:space="preserve">
-    <value>[Restricted Language Mode]</value>
+    <value>[Ограниченный языковой режим]</value>
   </data>
   <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell preview release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Доступна новая предварительная версия PowerShell.: v{0} {2}
+  {1} Обновите сейчас или ознакомьтесь со страницей релиза по адресу:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="StableUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell stable release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Доступна новая стабильная версия PowerShell.: v{0} {2}
+  {1} Обновите сейчас или ознакомьтесь со страницей релиза по адресу::{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="LTSUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell LTS release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Доступна новая версия PowerShell LTS: v{0} {2}
+  {1} Обновите сейчас или ознакомьтесь со страницей релиза по адресу:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
@@ -168,7 +168,7 @@
 
 PowerShell Online Help https://aka.ms/powershell-docs
 
-All parameters are case-insensitive.</value>
+Все параметры нечувствительны к регистру.</value>
   </data>
   <data name="ExtendedHelp" xml:space="preserve">
     <value>
