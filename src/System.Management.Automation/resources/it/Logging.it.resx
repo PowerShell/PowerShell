@@ -123,7 +123,7 @@
     ErrorId=[ErrorId]
     ErrorMessage=[ErrorMessage]
 
-    Severity=[Severity]
+    Gravità=[Severity]
 
     SequenceNumber=[SequenceNumber]
 
@@ -151,7 +151,7 @@ AdditionalInfo:
     ErrorId=[ErrorId]
     ErrorMessage=[ErrorMessage]
 
-    Severity=[Severity]
+    Gravità=[Severity]
 
     SequenceNumber=[SequenceNumber]
 
@@ -175,7 +175,7 @@ AdditionalInfo:
     ErrorId=[ErrorId]
     ErrorMessage=[ErrorMessage]
 
-    Severity=[Severity]
+    Gravità=[Severity]
 
     SequenceNumber=[SequenceNumber]
 
@@ -289,12 +289,12 @@ AdditionalInfo:
     <value>UNKNOWN</value>
   </data>
   <data name="EngineExperimentalFeatureNotFound" xml:space="preserve">
-    <value>The engine experimental feature '{0}' declared in the config file is not registered in the current PowerShell.</value>
+    <value>La funzionalità sperimentale del motore ''{0}'' dichiarata nel file di configurazione non è registrata nel PowerShell corrente.</value>
   </data>
   <data name="InvalidExperimentalFeatureName" xml:space="preserve">
-    <value>The experimental feature '{0}' declared in the config file is invalid.
-The name of an experimental feature should follow the convention below: 
-    Engine Feature Name: 'PS[FeatureName]'
-    Module Feature Name: '[ModuleName].[FeatureName]'</value>
+    <value>La funzionalità sperimentale ''{0}'' dichiarata nel file di configurazione non è valida.
+Il nome di una funzionalità sperimentale deve seguire la convenzione seguente: 
+    Nome della funzionalità del motore: ''PS[FeatureName]''
+    Nome della funzionalità del modulo: '[ModuleName].[FeatureName]'</value>
   </data>
 </root>

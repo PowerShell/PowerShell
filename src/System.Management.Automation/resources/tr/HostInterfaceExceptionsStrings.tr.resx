@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DefaultCtorMessageTemplate" xml:space="preserve">
-    <value>An error of type "{0}" has occurred.</value>
+    <value>"{0}" türünde bir hata oluştu.</value>
   </data>
   <data name="HostFunctionNotImplemented" xml:space="preserve">
-    <value>A command that prompts the user failed because the host program or the command type does not support user interaction. Try a host program that supports user interaction, such as the PowerShell Console, and remove prompt-related commands from command types that do not support user interaction.</value>
+    <value>Kullanıcıdan giriş isteyen bir komut başarısız oldu çünkü ana bilgisayar programı ya da komut türü kullanıcı etkileşimini desteklemiyor. Windows PowerShell Konsolu gibi kullanıcı etkileşimini destekleyen bir ana bilgisayar programı deneyin ve kullanıcı etkileşimini desteklemeyen komut türlerinden istemle ilgili komutları kaldırın.</value>
   </data>
   <data name="HostFunctionPromptNotImplemented" xml:space="preserve">
-    <value>A command that prompts the user failed because the host program or the command type does not support user interaction. The host was attempting to request confirmation with the following message: {0}</value>
+    <value>Kullanıcıdan giriş isteyen bir komut başarısız oldu çünkü ana bilgisayar programı ya da komut türü kullanıcı etkileşimini desteklemiyor. Ana bilgisayar, şu mesajla onay istemeye çalışıyordu: {0}</value>
   </data>
   <data name="RunspacePoolNotOpened" xml:space="preserve">
-    <value>The method cannot be invoked because the pool has been closed or has failed.</value>
+    <value>Havuz kapatıldığı veya başarısız olduğu için yöntem çağrılamıyor.</value>
   </data>
 </root>

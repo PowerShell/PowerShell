@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DefaultCtorMessageTemplate" xml:space="preserve">
-    <value>An error of type "{0}" has occurred.</value>
+    <value>Došlo k chybě typu {0}.</value>
   </data>
   <data name="HostFunctionNotImplemented" xml:space="preserve">
-    <value>A command that prompts the user failed because the host program or the command type does not support user interaction. Try a host program that supports user interaction, such as the PowerShell Console, and remove prompt-related commands from command types that do not support user interaction.</value>
+    <value>Příkaz s výzvou uživateli selhal, protože hostitelský program nebo typ příkazu nepodporuje interakci s uživatelem. Použijte hostitelský program, který podporuje interakci s uživatelem, například konzolu PowerShellu, a z typů příkazů, které interakci s uživatelem nepodporují, odeberte příkazy související s výzvami.</value>
   </data>
   <data name="HostFunctionPromptNotImplemented" xml:space="preserve">
-    <value>A command that prompts the user failed because the host program or the command type does not support user interaction. The host was attempting to request confirmation with the following message: {0}</value>
+    <value>Příkaz s výzvou uživateli selhal, protože hostitelský program nebo typ příkazu nepodporuje interakci s uživatelem. Hostitel se pokoušel vyžádat potvrzení pomocí následující zprávy: {0}</value>
   </data>
   <data name="RunspacePoolNotOpened" xml:space="preserve">
-    <value>The method cannot be invoked because the pool has been closed or has failed.</value>
+    <value>Metodu nejde vyvolat, protože fond byl zavřený nebo selhal.</value>
   </data>
 </root>

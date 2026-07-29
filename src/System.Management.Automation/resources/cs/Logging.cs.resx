@@ -118,183 +118,183 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EngineHealthContext" xml:space="preserve">
-    <value>    ExceptionClass=[ExceptionClass]
-    ErrorCategory=[ErrorCategory]
-    ErrorId=[ErrorId]
-    ErrorMessage=[ErrorMessage]
+    <value>    TřídaVýjimky=[ExceptionClass]
+    KategorieChyby=[ErrorCategory]
+    IDChyby=[ErrorId]
+    ChybováZpráva=[ErrorMessage]
 
-    Severity=[Severity]
+    Závažnost=[Severity]
 
-    SequenceNumber=[SequenceNumber]
+    PořadovéČíslo=[SequenceNumber]
 
-    HostName=[HostName]
-    HostVersion=[HostVersion]
-    HostId=[HostId]
-    HostApplication=[HostApplication]
-    EngineVersion=[EngineVersion]
-    RunspaceId=[RunspaceId]
-    PipelineId=[PipelineId]
-    CommandName=[CommandName]
-    CommandType=[CommandType]
-    ScriptName=[ScriptName]
-    CommandPath=[CommandPath]
-    CommandLine=[CommandLine]
+    NázevHostitele=[HostName]
+    VerzeHostitele=[HostVersion]
+    IDHostitele=[HostId]
+    HostitelskáAplikace=[HostApplication]
+    VerzeJádra=[EngineVersion]
+    IDProstředíRunspace=[RunspaceId]
+    IDKanálu=[PipelineId]
+    NázevPříkazu=[CommandName]
+    TypPříkazu=[CommandType]
+    NázevSkriptu=[ScriptName]
+    CestaKPříkazu=[CommandPath]
+    PříkazovýŘádek=[CommandLine]
 
-AdditionalInfo:
-    Name=[AdditionalInfo_Name1];Value=[AdditionalInfo_Value1]
-    Name=[AdditionalInfo_Name2];Value=[AdditionalInfo_Value2]
-    Name=[AdditionalInfo_Name3];Value=[AdditionalInfo_Value3]</value>
+DalšíInformace:
+    Název=[AdditionalInfo_Name1];Hodnota=[AdditionalInfo_Value1]
+    Název=[AdditionalInfo_Name2];Hodnota=[AdditionalInfo_Value2]
+    Název=[AdditionalInfo_Name3];Hodnota=[AdditionalInfo_Value3]</value>
   </data>
   <data name="CommandHealthContext" xml:space="preserve">
-    <value>    ExceptionClass=[ExceptionClass]
-    ErrorCategory=[ErrorCategory]
-    ErrorId=[ErrorId]
-    ErrorMessage=[ErrorMessage]
+    <value>    TřídaVýjimky=[ExceptionClass]
+    KategorieChyby=[ErrorCategory]
+    IDChyby=[ErrorId]
+    ChybováZpráva=[ErrorMessage]
 
-    Severity=[Severity]
+    Závažnost=[Severity]
 
-    SequenceNumber=[SequenceNumber]
+    PořadovéČíslo=[SequenceNumber]
 
-    HostName=[HostName]
-    HostVersion=[HostVersion]
-    HostId=[HostId]
-    HostApplication=[HostApplication]
-    EngineVersion=[EngineVersion]
-    RunspaceId=[RunspaceId]
-    PipelineId=[PipelineId]
-    CommandName=[CommandName]
-    CommandType=[CommandType]
-    ScriptName=[ScriptName]
-    CommandPath=[CommandPath]
-    CommandLine=[CommandLine]</value>
+    NázevHostitele=[HostName]
+    VerzeHostitele=[HostVersion]
+    IDHostitele=[HostId]
+    HostitelskáAplikace=[HostApplication]
+    VerzeJádra=[EngineVersion]
+    IDProstředíRunspace=[RunspaceId]
+    IDKanálu=[PipelineId]
+    NázevPříkazu=[CommandName]
+    TypPříkazu=[CommandType]
+    NázevSkriptu=[ScriptName]
+    CestaKPříkazu=[CommandPath]
+    PříkazovýŘádek=[CommandLine]</value>
   </data>
   <data name="ProviderHealthContext" xml:space="preserve">
-    <value>    ProviderName=[ProviderName]
-    ExceptionClass=[ExceptionClass]
-    ErrorCategory=[ErrorCategory]
-    ErrorId=[ErrorId]
-    ErrorMessage=[ErrorMessage]
+    <value>    NázevPoskytovatele=[ProviderName]
+    TřídaVýjimky=[ExceptionClass]
+    KategorieChyby=[ErrorCategory]
+    IDChyby=[ErrorId]
+    ChybováZpráva=[ErrorMessage]
 
-    Severity=[Severity]
+    Závažnost=[Severity]
 
-    SequenceNumber=[SequenceNumber]
+    PořadovéČíslo=[SequenceNumber]
 
-    HostName=[HostName]
-    HostVersion=[HostVersion]
-    HostId=[HostId]
-    HostApplication=[HostApplication]
-    EngineVersion=[EngineVersion]
-    RunspaceId=[RunspaceId]
-    PipelineId=[PipelineId]
-    CommandName=[CommandName]
-    CommandType=[CommandType]
-    ScriptName=[ScriptName]
-    CommandPath=[CommandPath]
-    CommandLine=[CommandLine]</value>
+    NázevHostitele=[HostName]
+    VerzeHostitele=[HostVersion]
+    IDHostitele=[HostId]
+    HostitelskáAplikace=[HostApplication]
+    VerzeJádra=[EngineVersion]
+    IDProstředíRunspace=[RunspaceId]
+    IDKanálu=[PipelineId]
+    NázevPříkazu=[CommandName]
+    TypPříkazu=[CommandType]
+    NázevSkriptu=[ScriptName]
+    CestaKPříkazu=[CommandPath]
+    PříkazovýŘádek=[CommandLine]</value>
   </data>
   <data name="EngineLifecycleContext" xml:space="preserve">
-    <value>    NewEngineState=[NewEngineState]
-    PreviousEngineState=[PreviousEngineState]
+    <value>    NovýStavJádra=[NewEngineState]
+    PředchozíStavJádra=[PreviousEngineState]
 
-    SequenceNumber=[SequenceNumber]
+    PořadovéČíslo=[SequenceNumber]
 
-    HostName=[HostName]
-    HostVersion=[HostVersion]
-    HostId=[HostId]
-    HostApplication=[HostApplication]
-    EngineVersion=[EngineVersion]
-    RunspaceId=[RunspaceId]
-    PipelineId=[PipelineId]
-    CommandName=[CommandName]
-    CommandType=[CommandType]
-    ScriptName=[ScriptName]
-    CommandPath=[CommandPath]
-    CommandLine=[CommandLine]</value>
+    NázevHostitele=[HostName]
+    VerzeHostitele=[HostVersion]
+    IDHostitele=[HostId]
+    HostitelskáAplikace=[HostApplication]
+    VerzeJádra=[EngineVersion]
+    IDProstředíRunspace=[RunspaceId]
+    IDKanálu=[PipelineId]
+    NázevPříkazu=[CommandName]
+    TypPříkazu=[CommandType]
+    NázevSkriptu=[ScriptName]
+    CestaKPříkazu=[CommandPath]
+    PříkazovýŘádek=[CommandLine]</value>
   </data>
   <data name="CommandLifecycleContext" xml:space="preserve">
-    <value>    NewCommandState=[NewCommandState]
+    <value>    NovýStavPříkazu=[NewCommandState]
 
-    SequenceNumber=[SequenceNumber]
+    PořadovéČíslo=[SequenceNumber]
 
-    HostName=[HostName]
-    HostVersion=[HostVersion]
-    HostId=[HostId]
-    HostApplication=[HostApplication]
-    EngineVersion=[EngineVersion]
-    RunspaceId=[RunspaceId]
-    PipelineId=[PipelineId]
-    CommandName=[CommandName]
-    CommandType=[CommandType]
-    ScriptName=[ScriptName]
-    CommandPath=[CommandPath]
-    CommandLine=[CommandLine]</value>
+    NázevHostitele=[HostName]
+    VerzeHostitele=[HostVersion]
+    IDHostitele=[HostId]
+    HostitelskáAplikace=[HostApplication]
+    VerzeJádra=[EngineVersion]
+    IDProstředíRunspace=[RunspaceId]
+    IDKanálu=[PipelineId]
+    NázevPříkazu=[CommandName]
+    TypPříkazu=[CommandType]
+    NázevSkriptu=[ScriptName]
+    CestaKPříkazu=[CommandPath]
+    PříkazovýŘádek=[CommandLine]</value>
   </data>
   <data name="ProviderLifecycleContext" xml:space="preserve">
-    <value>    ProviderName=[ProviderName]
-    NewProviderState=[NewProviderState]
+    <value>    NázevPoskytovatele=[ProviderName]
+    NovýStavPoskytovatele=[NewProviderState]
 
-    SequenceNumber=[SequenceNumber]
+    PořadovéČíslo=[SequenceNumber]
 
-    HostName=[HostName]
-    HostVersion=[HostVersion]
-    HostId=[HostId]
-    HostApplication=[HostApplication]
-    EngineVersion=[EngineVersion]
-    RunspaceId=[RunspaceId]
-    PipelineId=[PipelineId]
-    CommandName=[CommandName]
-    CommandType=[CommandType]
-    ScriptName=[ScriptName]
-    CommandPath=[CommandPath]
-    CommandLine=[CommandLine]</value>
+    NázevHostitele=[HostName]
+    VerzeHostitele=[HostVersion]
+    IDHostitele=[HostId]
+    HostitelskáAplikace=[HostApplication]
+    VerzeJádra=[EngineVersion]
+    IDProstředíRunspace=[RunspaceId]
+    IDKanálu=[PipelineId]
+    NázevPříkazu=[CommandName]
+    TypPříkazu=[CommandType]
+    NázevSkriptu=[ScriptName]
+    CestaKPříkazu=[CommandPath]
+    PříkazovýŘádek=[CommandLine]</value>
   </data>
   <data name="SettingsContext" xml:space="preserve">
-    <value>    VariableName=[VariableName]
-    NewValue=[NewValue]
-    PreviousValue=[PreviousValue]
+    <value>    NázevProměnné=[VariableName]
+    NováHodnota=[NewValue]
+    PředchozíHodnota=[PreviousValue]
 
-    SequenceNumber=[SequenceNumber]
+    PořadovéČíslo=[SequenceNumber]
 
-    HostName=[HostName]
-    HostVersion=[HostVersion]
-    HostId=[HostId]
-    HostApplication=[HostApplication]
-    EngineVersion=[EngineVersion]
-    RunspaceId=[RunspaceId]
-    PipelineId=[PipelineId]
-    CommandName=[CommandName]
-    CommandType=[CommandType]
-    ScriptName=[ScriptName]
-    CommandPath=[CommandPath]
-    CommandLine=[CommandLine]</value>
+    NázevHostitele=[HostName]
+    VerzeHostitele=[HostVersion]
+    IDHostitele=[HostId]
+    HostitelskáAplikace=[HostApplication]
+    VerzeJádra=[EngineVersion]
+    IDProstředíRunspace=[RunspaceId]
+    IDKanálu=[PipelineId]
+    NázevPříkazu=[CommandName]
+    TypPříkazu=[CommandType]
+    NázevSkriptu=[ScriptName]
+    CestaKPříkazu=[CommandPath]
+    PříkazovýŘádek=[CommandLine]</value>
   </data>
   <data name="PipelineExecutionDetailContext" xml:space="preserve">
-    <value>    DetailSequence=[DetailSequence]
-    DetailTotal=[DetailTotal]
+    <value>    PořadíPodrobností=[DetailSequence]
+    CelkemPodrobností=[DetailTotal]
 
-    SequenceNumber=[SequenceNumber]
+    PořadovéČíslo=[SequenceNumber]
 
-    UserId=[User]
-    HostName=[HostName]
-    HostVersion=[HostVersion]
-    HostId=[HostId]
-    HostApplication=[HostApplication]
-    EngineVersion=[EngineVersion]
-    RunspaceId=[RunspaceId]
-    PipelineId=[PipelineId]
-    ScriptName=[ScriptName]
-    CommandLine=[CommandLine]</value>
+    IDUživatele=[User]
+    NázevHostitele=[HostName]
+    VerzeHostitele=[HostVersion]
+    IDHostitele=[HostId]
+    HostitelskáAplikace=[HostApplication]
+    VerzeJádra=[EngineVersion]
+    IDProstředíRunspace=[RunspaceId]
+    IDKanálu=[PipelineId]
+    NázevSkriptu=[ScriptName]
+    PříkazovýŘádek=[CommandLine]</value>
   </data>
   <data name="UnknownUserName" xml:space="preserve">
-    <value>UNKNOWN</value>
+    <value>NEZNÁMÉ</value>
   </data>
   <data name="EngineExperimentalFeatureNotFound" xml:space="preserve">
-    <value>The engine experimental feature '{0}' declared in the config file is not registered in the current PowerShell.</value>
+    <value>Experimentální funkce jádra {0} deklarovaná v konfiguračním souboru není v aktuálním PowerShellu zaregistrovaná.</value>
   </data>
   <data name="InvalidExperimentalFeatureName" xml:space="preserve">
-    <value>The experimental feature '{0}' declared in the config file is invalid.
-The name of an experimental feature should follow the convention below: 
-    Engine Feature Name: 'PS[FeatureName]'
-    Module Feature Name: '[ModuleName].[FeatureName]'</value>
+    <value>Experimentální funkce {0} deklarovaná v konfiguračním souboru není platná.
+Název experimentální funkce musí odpovídat následující konvenci: 
+    Název funkce jádra: PS[FeatureName]
+    Název funkce modulu: [ModuleName].[FeatureName]</value>
   </data>
 </root>

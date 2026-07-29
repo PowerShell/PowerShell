@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Name" xml:space="preserve">
-    <value>NAME</value>
+    <value>Имя</value>
   </data>
   <data name="Synopsis" xml:space="preserve">
     <value>SYNOPSIS</value>
@@ -151,7 +151,7 @@
     <value>EXAMPLES</value>
   </data>
   <data name="Example" xml:space="preserve">
-    <value>Example</value>
+    <value>Пример</value>
   </data>
   <data name="ExampleUpperCase" xml:space="preserve">
     <value>EXAMPLE</value>
@@ -172,7 +172,7 @@
     <value>Question:</value>
   </data>
   <data name="Answer" xml:space="preserve">
-    <value>Answer</value>
+    <value>Ответ</value>
   </data>
   <data name="TermColon" xml:space="preserve">
     <value>Term:</value>
@@ -274,7 +274,7 @@
        go to {1}.</value>
   </data>
   <data name="None" xml:space="preserve">
-    <value>None</value>
+    <value>Нет</value>
   </data>
   <data name="ParameterAliases" xml:space="preserve">
     <value>Aliases                      </value>

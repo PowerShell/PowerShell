@@ -286,15 +286,15 @@ AdditionalInfo:
     CommandLine=[CommandLine]</value>
   </data>
   <data name="UnknownUserName" xml:space="preserve">
-    <value>UNKNOWN</value>
+    <value>DESCONHECIDO</value>
   </data>
   <data name="EngineExperimentalFeatureNotFound" xml:space="preserve">
-    <value>The engine experimental feature '{0}' declared in the config file is not registered in the current PowerShell.</value>
+    <value>O recurso experimental do mecanismo '{0}' declarado no arquivo de configuração não está registrado no PowerShell atual.</value>
   </data>
   <data name="InvalidExperimentalFeatureName" xml:space="preserve">
-    <value>The experimental feature '{0}' declared in the config file is invalid.
-The name of an experimental feature should follow the convention below: 
-    Engine Feature Name: 'PS[FeatureName]'
-    Module Feature Name: '[ModuleName].[FeatureName]'</value>
+    <value>O recurso experimental '{0}' declarado no arquivo de configuração é inválido.
+O nome de um recurso experimental deve seguir a convenção abaixo: 
+    Nome do Recurso do Mecanismo: 'PS[FeatureName]'
+    Nome do Recurso do Módulo: '[ModuleName].[FeatureName]'</value>
   </data>
 </root>

@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DefaultCtorMessageTemplate" xml:space="preserve">
-    <value>An error of type "{0}" has occurred.</value>
+    <value>"{0}" 형식의 오류가 발생했습니다.</value>
   </data>
   <data name="HostFunctionNotImplemented" xml:space="preserve">
-    <value>A command that prompts the user failed because the host program or the command type does not support user interaction. Try a host program that supports user interaction, such as the PowerShell Console, and remove prompt-related commands from command types that do not support user interaction.</value>
+    <value>호스트 프로그램 또는 명령 유형이 사용자 상호 작용을 지원하지 않으므로 사용자에게 메시지를 표시하는 명령이 실패했습니다. PowerShell 콘솔과 같이 사용자 상호 작용을 지원하는 호스트 프로그램을 사용하고, 사용자 상호 작용을 지원하지 않는 명령 유형에서 메시지 표시 관련 명령을 제거하세요.</value>
   </data>
   <data name="HostFunctionPromptNotImplemented" xml:space="preserve">
-    <value>A command that prompts the user failed because the host program or the command type does not support user interaction. The host was attempting to request confirmation with the following message: {0}</value>
+    <value>호스트 프로그램 또는 명령 유형이 사용자 상호 작용을 지원하지 않으므로 사용자에게 메시지를 표시하는 명령이 실패했습니다. 호스트에서 다음 메시지로 확인을 요청하는 중이었음: {0}</value>
   </data>
   <data name="RunspacePoolNotOpened" xml:space="preserve">
-    <value>The method cannot be invoked because the pool has been closed or has failed.</value>
+    <value>풀이 닫혔거나 실패했으므로 메서드를 호출할 수 없습니다.</value>
   </data>
 </root>

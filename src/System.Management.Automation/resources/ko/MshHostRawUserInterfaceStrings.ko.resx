@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LessThanErrorTemplate" xml:space="preserve">
-    <value>"{0}" cannot be greater than or equal to "{1}".</value>
+    <value>"{0}"은(는) "{1}"보다 크거나 같을 수 없습니다.</value>
   </data>
   <data name="NonPositiveNumberErrorTemplate" xml:space="preserve">
-    <value>"{0}" needs to be a positive number.</value>
+    <value>"{0}"은(는) 양수여야 합니다.</value>
   </data>
   <data name="AllNullOrEmptyStringsErrorTemplate" xml:space="preserve">
-    <value>All strings are null or empty.</value>
+    <value>모든 문자열은 null이거나 비어 있습니다.</value>
   </data>
 </root>

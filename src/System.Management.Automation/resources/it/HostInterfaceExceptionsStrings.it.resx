@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DefaultCtorMessageTemplate" xml:space="preserve">
-    <value>An error of type "{0}" has occurred.</value>
+    <value>Si è verificato un errore di tipo "{0}".</value>
   </data>
   <data name="HostFunctionNotImplemented" xml:space="preserve">
-    <value>A command that prompts the user failed because the host program or the command type does not support user interaction. Try a host program that supports user interaction, such as the PowerShell Console, and remove prompt-related commands from command types that do not support user interaction.</value>
+    <value>Un comando che richiede l'intervento dell'utente ha riscontrato un errore perché il programma host o il tipo di comando non supporta l'interazione dell'utente. Provare con un programma host che supporta l'interazione dell'utente, come la console di PowerShell, e rimuovere i comandi correlati a prompt dai tipi di comandi che non supportano l'interazione dell'utente.</value>
   </data>
   <data name="HostFunctionPromptNotImplemented" xml:space="preserve">
-    <value>A command that prompts the user failed because the host program or the command type does not support user interaction. The host was attempting to request confirmation with the following message: {0}</value>
+    <value>Un comando che richiede l'intervento dell'utente ha riscontrato un errore perché il programma host o il tipo di comando non supporta l'interazione dell'utente. L'host stava tentando di richiedere una conferma con il messaggio seguente: {0}</value>
   </data>
   <data name="RunspacePoolNotOpened" xml:space="preserve">
-    <value>The method cannot be invoked because the pool has been closed or has failed.</value>
+    <value>Il metodo non può essere richiamato perché il pool è stato chiuso o ha riscontrato un errore.</value>
   </data>
 </root>

@@ -118,76 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="HelpNotFound" xml:space="preserve">
-    <value>Get-Help could not find {0} in a help file in this session. To download updated help topics type: "Update-Help". To get help online, search for the help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>„Get-Help“ konnte in dieser Sitzung keine „{0}“ in einer Hilfedatei finden. Geben Sie zum Herunterladen aktualisierter Hilfethemen Folgendes ein: „Update-Help“. Um online Hilfe zu erhalten, suchen Sie in der TechNet-Bibliothek unter https://go.microsoft.com/fwlink/?LinkID=107116 nach dem Hilfethema.</value>
   </data>
   <data name="HelpCategoryInvalid" xml:space="preserve">
-    <value>Cannot process the Help category because "{0}" is not a valid Help category.</value>
+    <value>Die Hilfekategorie kann nicht verarbeitet werden, da „{0}“ keine gültige Hilfekategorie ist.</value>
   </data>
   <data name="HelpFileLoadFailure" xml:space="preserve">
-    <value>Cannot load the Help file "{0}". Details: {1}.</value>
+    <value>Die Hilfedatei „{0}“ kann nicht geladen werden. Details: {1}.</value>
   </data>
   <data name="HelpFileNotAccessible" xml:space="preserve">
-    <value>Cannot access the Help file "{0}" because the current user does not have access rights to the file. Details: {1}.</value>
+    <value>Auf die Hilfedatei „{0}“ kann nicht zugegriffen werden, da der aktuelle Benutzer keine Zugriffsrechte für die Datei besitzt. Details: {1}.</value>
   </data>
   <data name="HelpFileNotValid" xml:space="preserve">
-    <value>The Help file "{0}" is not a valid xml document. Details: {1}.</value>
+    <value>Die Hilfedatei „{0}“ ist kein gültiges XML-Dokument. Details: {1}.</value>
   </data>
   <data name="LoadHelpFileForTargetFailed" xml:space="preserve">
-    <value>An error occurred while loading Help content for {0} from file {1}. Details: {2}. To download updated Help topics, run the Update-Help cmdlet. To get help online, search for the Help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>Beim Laden des Hilfeinhalts für „{0}“ aus der Datei „{1}“ ist ein Fehler aufgetreten. Details: {2}. Um aktualisierte Hilfethemen herunterzuladen, führen Sie das Cmdlet „Update-Help“ aus. Um online Hilfe zu erhalten, suchen Sie in der TechNet-Bibliothek unter https://go.microsoft.com/fwlink/?LinkID=107116 nach dem Hilfethema.</value>
   </data>
   <data name="ProviderLoadError" xml:space="preserve">
-    <value>The provider "{0}" cannot be loaded. Details: {1}.</value>
+    <value>Der Anbieter „{0}“ kann nicht geladen werden. Details: {1}.</value>
   </data>
   <data name="HelpLoadError" xml:space="preserve">
-    <value>Cannot load the Help file. The following {1} errors occurred while loading the Help file "{0}".</value>
+    <value>Die Hilfedatei kann nicht geladen werden. Die folgenden {1}-Fehler sind beim Laden der Hilfedatei „{0}“ aufgetreten.</value>
   </data>
   <data name="MamlInvalidChildNodeError" xml:space="preserve">
-    <value>The node "{0}" cannot have "{1}" as a child node. Node Path: {2}.</value>
+    <value>Der Knoten „{0}“ darf „{1}“ nicht als untergeordneten Knoten haben. Knotenpfad: {2}.</value>
   </data>
   <data name="MamlInvalidChildNodeCountError" xml:space="preserve">
-    <value>The node "{0}" can have a maximum of {2} child nodes of type "{1}". Node Path: {3}.</value>
+    <value>Der Knoten „{0}“ darf maximal {2} untergeordnete Knoten vom Typ „{1}“ haben. Knotenpfad: {3}.</value>
   </data>
   <data name="RegistryPathNotFound" xml:space="preserve">
-    <value>Cannot find the registry key: "{0}{1}"; using "{2}" to load Help files.</value>
+    <value>Der Registrierungsschlüssel „{0}{1}“ wurde nicht gefunden; verwenden Sie „{2}“ zum Laden der Hilfedateien.</value>
   </data>
   <data name="NoParmsFound" xml:space="preserve">
-    <value>No parameter matches criteria {0}.</value>
+    <value>Kein Parameter entspricht den {0}-Kriterien.</value>
   </data>
   <data name="ParamNotSupported" xml:space="preserve">
-    <value>{0} is not supported by the requested Help category.</value>
+    <value>„{0}“ wird von der angeforderten Hilfekategorie nicht unterstützt.</value>
   </data>
   <data name="NoURIFound" xml:space="preserve">
-    <value>The online version of this Help topic cannot be displayed because the Internet address (URI) of the Help topic is not specified in the command code or in the help file for the command.</value>
+    <value>Die Onlineversion dieses Hilfethemas kann nicht angezeigt werden, da die Internetadresse (URI) des Hilfethemas im Befehlscode oder in der Hilfedatei für den Befehl nicht angegeben ist.</value>
   </data>
   <data name="InvalidURI" xml:space="preserve">
-    <value>The specified URI {0} is not valid.</value>
+    <value>Der angegebene URI „{0}“ ist ungültig.</value>
   </data>
   <data name="CannotLaunchURI" xml:space="preserve">
-    <value>Starting a browser to display online Help failed. No program or browser is associated to open the URI {0}.</value>
+    <value>Beim Starten eines Browsers zum Anzeigen der Onlinehilfe ist ein Fehler aufgetreten. Zum Öffnen der URI „{0}“ ist kein Programm oder Browser zugeordnet.</value>
   </data>
   <data name="ProtocolNotSupported" xml:space="preserve">
-    <value>The protocol specified in the Uri "{0}" is not supported. Only "{1}" and "{2}" protocols are supported.</value>
+    <value>Das im URI „{0}“ angegebene Protokoll wird nicht unterstützt. Es werden nur die Protokolle „{1}“ und „{2}“ unterstützt.</value>
   </data>
   <data name="MultipleOnlineTopicsNotSupported" xml:space="preserve">
-    <value>Multiple Help topics were found. Use only one Help topic with the -{0} option.</value>
+    <value>Es wurden mehrere Hilfethemen gefunden. Verwenden Sie nur ein Hilfethema mit der Option „-{0} “.</value>
   </data>
   <data name="RemoteRunspaceNotAvailable" xml:space="preserve">
-    <value>Cannot get Help from a remote runspace, because the runspace has not been opened.  Open the runspace by running an implicit remoting command, and then try running the command to get Help again.</value>
+    <value>Von einem Remoterunspace kann keine Hilfe abgerufen werden, da der Runspace nicht geöffnet wurde.  Öffnen Sie den Runspace, indem Sie einen impliziten Remotingbefehl ausführen, und versuchen Sie dann erneut, den Befehl zum Abrufen der Hilfe auszuführen.</value>
   </data>
   <data name="UpdatableHelpRequiresElevation" xml:space="preserve">
-    <value>Access is denied. The command could not update Help topics for the PowerShell core modules, or for any modules in the $pshome\Modules directory.
-To update these Help topics, start PowerShell by using the "Run as Administrator" command, and try running Update-Help again.</value>
+    <value>Der Zugriff wird verweigert. Der Befehl konnte die Hilfethemen für die PowerShell-Kernmodule oder für Module im Verzeichnis „$pshome\Modules“ nicht aktualisieren.
+Um diese Hilfethemen zu aktualisieren, starten Sie PowerShell mit dem Befehl „Als Admin ausführen“, und führen Sie „Update-Help“ erneut aus.</value>
   </data>
   <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
-    <value>To use the {0}, make sure your application uses 'Microsoft.NET.Sdk.WindowsDesktop' as the project SDK and the corresponding assembly 'Microsoft.PowerShell.GraphicalHost' is available. ({1})</value>
+    <value>Um die „{0}“ zu verwenden, stellen Sie sicher, dass Ihre Anwendung „Microsoft.NET.Sdk.WindowsDesktop“ als Projekt-SDK verwendet und die entsprechende Assembly „Microsoft.PowerShell.GraphicalHost“ verfügbar ist. ({1})</value>
   </data>
   <data name="RemotingNotSupportedForFeature" xml:space="preserve">
-    <value>{0} does not work in a remote session.</value>
+    <value>„{0}“ funktioniert in einer Remotesitzung nicht.</value>
   </data>
   <data name="CircularDependencyInHelpForwarding" xml:space="preserve">
-    <value>ForwardHelpTargetName cannot refer to the function itself.</value>
+    <value>„ForwardHelpTargetName“ kann nicht auf die Funktion selbst verweisen.</value>
   </data>
   <data name="NoNetworkCommands" xml:space="preserve">
-    <value>Cannot get help from a network location when in a restricted session.</value>
+    <value>In einer eingeschränkten Sitzung kann keine Hilfe von einem Netzwerkstandort abgerufen werden.</value>
   </data>
 </root>

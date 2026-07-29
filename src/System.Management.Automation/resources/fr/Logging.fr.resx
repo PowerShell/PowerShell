@@ -123,7 +123,7 @@
     ErrorId=[ErrorId]
     ErrorMessage=[ErrorMessage]
 
-    Severity=[Severity]
+    Gravité =[Severity]
 
     SequenceNumber=[SequenceNumber]
 
@@ -140,7 +140,7 @@
     CommandPath=[CommandPath]
     CommandLine=[CommandLine]
 
-AdditionalInfo:
+AdditionalInfo : 
     Name=[AdditionalInfo_Name1];Value=[AdditionalInfo_Value1]
     Name=[AdditionalInfo_Name2];Value=[AdditionalInfo_Value2]
     Name=[AdditionalInfo_Name3];Value=[AdditionalInfo_Value3]</value>
@@ -151,7 +151,7 @@ AdditionalInfo:
     ErrorId=[ErrorId]
     ErrorMessage=[ErrorMessage]
 
-    Severity=[Severity]
+    Gravité =[Severity]
 
     SequenceNumber=[SequenceNumber]
 
@@ -175,7 +175,7 @@ AdditionalInfo:
     ErrorId=[ErrorId]
     ErrorMessage=[ErrorMessage]
 
-    Severity=[Severity]
+    Gravité =[Severity]
 
     SequenceNumber=[SequenceNumber]
 
@@ -286,15 +286,15 @@ AdditionalInfo:
     CommandLine=[CommandLine]</value>
   </data>
   <data name="UnknownUserName" xml:space="preserve">
-    <value>UNKNOWN</value>
+    <value>INCONNU</value>
   </data>
   <data name="EngineExperimentalFeatureNotFound" xml:space="preserve">
-    <value>The engine experimental feature '{0}' declared in the config file is not registered in the current PowerShell.</value>
+    <value>La fonctionnalité expérimentale du moteur « {0} » déclarée dans le fichier de configuration n’est pas enregistrée dans la version actuelle de PowerShell.</value>
   </data>
   <data name="InvalidExperimentalFeatureName" xml:space="preserve">
-    <value>The experimental feature '{0}' declared in the config file is invalid.
-The name of an experimental feature should follow the convention below: 
-    Engine Feature Name: 'PS[FeatureName]'
-    Module Feature Name: '[ModuleName].[FeatureName]'</value>
+    <value>La fonctionnalité expérimentale « {0} » déclarée dans le fichier de configuration n’est pas valide.
+Le nom d’une fonctionnalité expérimentale doit suivre la convention ci-dessous : 
+    Nom de la fonctionnalité du moteur : « PS[FeatureName] »
+    Nom de la fonctionnalité du module : « [ModuleName].[FeatureName] »</value>
   </data>
 </root>

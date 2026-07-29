@@ -118,76 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="HelpNotFound" xml:space="preserve">
-    <value>Get-Help could not find {0} in a help file in this session. To download updated help topics type: "Update-Help". To get help online, search for the help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>Get-Help가 이 세션의 도움말 파일에서 {0}을(를) 찾을 수 없습니다. 업데이트된 도움말 항목을 다운로드하려면 "Update-Help"를 입력하세요. 온라인으로 도움말을 보려면 TechNet 라이브러리(https://go.microsoft.com/fwlink/?LinkID=107116)에서 도움말 항목을 검색하세요.</value>
   </data>
   <data name="HelpCategoryInvalid" xml:space="preserve">
-    <value>Cannot process the Help category because "{0}" is not a valid Help category.</value>
+    <value>"{0}"이(가) 올바른 도움말 범주가 아니므로 도움말 범주를 처리할 수 없습니다.</value>
   </data>
   <data name="HelpFileLoadFailure" xml:space="preserve">
-    <value>Cannot load the Help file "{0}". Details: {1}.</value>
+    <value>도움말 파일 "{0}"을(를) 로드할 수 없습니다. 자세한 정보: {1}.</value>
   </data>
   <data name="HelpFileNotAccessible" xml:space="preserve">
-    <value>Cannot access the Help file "{0}" because the current user does not have access rights to the file. Details: {1}.</value>
+    <value>현재 사용자에게 파일에 대한 액세스 권한이 없으므로 도움말 파일 "{0}"에 액세스할 수 없습니다. 자세한 정보: {1}.</value>
   </data>
   <data name="HelpFileNotValid" xml:space="preserve">
-    <value>The Help file "{0}" is not a valid xml document. Details: {1}.</value>
+    <value>도움말 파일 "{0}"이(가) 유효한 XML 문서가 아닙니다. 자세한 정보: {1}.</value>
   </data>
   <data name="LoadHelpFileForTargetFailed" xml:space="preserve">
-    <value>An error occurred while loading Help content for {0} from file {1}. Details: {2}. To download updated Help topics, run the Update-Help cmdlet. To get help online, search for the Help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>{0}에 대한 도움말 콘텐츠를 파일 {1}에서 로드하는 동안 오류가 발생했습니다. 자세한 정보: {2}. 업데이트된 도움말 항목을 다운로드하려면 Update-Help cmdlet을 실행하세요. 온라인으로 도움말을 보려면 TechNet 라이브러리(https://go.microsoft.com/fwlink/?LinkID=107116)에서 도움말 항목을 검색하세요.</value>
   </data>
   <data name="ProviderLoadError" xml:space="preserve">
-    <value>The provider "{0}" cannot be loaded. Details: {1}.</value>
+    <value>공급자 "{0}"을(를) 로드할 수 없습니다. 자세한 정보: {1}.</value>
   </data>
   <data name="HelpLoadError" xml:space="preserve">
-    <value>Cannot load the Help file. The following {1} errors occurred while loading the Help file "{0}".</value>
+    <value>도움말 파일을 로드할 수 없습니다. 도움말 파일 "{0}"을(를) 로드하는 동안 다음 {1} 오류가 발생했습니다.</value>
   </data>
   <data name="MamlInvalidChildNodeError" xml:space="preserve">
-    <value>The node "{0}" cannot have "{1}" as a child node. Node Path: {2}.</value>
+    <value>노드 "{0}"은(는) "{1}"을(를) 자식 노드로 가질 수 없습니다. 노드 경로: {2}.</value>
   </data>
   <data name="MamlInvalidChildNodeCountError" xml:space="preserve">
-    <value>The node "{0}" can have a maximum of {2} child nodes of type "{1}". Node Path: {3}.</value>
+    <value>노드 "{0}"은(는) 유형 "{1}"의 자식 노드를 최대 {2}개까지 가질 수 있습니다. 노드 경로: {3}.</value>
   </data>
   <data name="RegistryPathNotFound" xml:space="preserve">
-    <value>Cannot find the registry key: "{0}{1}"; using "{2}" to load Help files.</value>
+    <value>레지스트리 키 "{0}{1}"을(를) 찾을 수 없습니다. "{2}"을(를) 사용하여 도움말 파일을 로드하세요.</value>
   </data>
   <data name="NoParmsFound" xml:space="preserve">
-    <value>No parameter matches criteria {0}.</value>
+    <value>조건 {0}과(와) 일치하는 매개 변수가 없습니다.</value>
   </data>
   <data name="ParamNotSupported" xml:space="preserve">
-    <value>{0} is not supported by the requested Help category.</value>
+    <value>{0}은(는) 요청된 도움말 범주에서 지원되지 않습니다.</value>
   </data>
   <data name="NoURIFound" xml:space="preserve">
-    <value>The online version of this Help topic cannot be displayed because the Internet address (URI) of the Help topic is not specified in the command code or in the help file for the command.</value>
+    <value>명령 코드 또는 명령의 도움말 파일에 도움말 항목의 인터넷 주소(URI)가 지정되어 있지 않아 이 도움말 항목의 온라인 버전을 표시할 수 없습니다.</value>
   </data>
   <data name="InvalidURI" xml:space="preserve">
-    <value>The specified URI {0} is not valid.</value>
+    <value>지정한 URI {0}이(가) 잘못되었습니다.</value>
   </data>
   <data name="CannotLaunchURI" xml:space="preserve">
-    <value>Starting a browser to display online Help failed. No program or browser is associated to open the URI {0}.</value>
+    <value>온라인 도움말을 표시하기 위해 브라우저를 시작하지 못했습니다. URI {0}을(를) 열 프로그램이나 브라우저가 연결되어 있지 않습니다.</value>
   </data>
   <data name="ProtocolNotSupported" xml:space="preserve">
-    <value>The protocol specified in the Uri "{0}" is not supported. Only "{1}" and "{2}" protocols are supported.</value>
+    <value>URI "{0}"에 지정된 프로토콜은 지원되지 않습니다. "{1}" 및 "{2}" 프로토콜만 지원됩니다.</value>
   </data>
   <data name="MultipleOnlineTopicsNotSupported" xml:space="preserve">
-    <value>Multiple Help topics were found. Use only one Help topic with the -{0} option.</value>
+    <value>여러 도움말 항목을 찾았습니다. -{0} 옵션에는 도움말 항목을 하나만 사용하세요.</value>
   </data>
   <data name="RemoteRunspaceNotAvailable" xml:space="preserve">
-    <value>Cannot get Help from a remote runspace, because the runspace has not been opened.  Open the runspace by running an implicit remoting command, and then try running the command to get Help again.</value>
+    <value>연결된 runspace의 도움말을 가져올 수 없습니다. runspace가 열려 있지 않기 때문입니다.  암시적 원격 명령을 실행하여 runspace를 연 다음, 도움말을 다시 가져오세요.</value>
   </data>
   <data name="UpdatableHelpRequiresElevation" xml:space="preserve">
-    <value>Access is denied. The command could not update Help topics for the PowerShell core modules, or for any modules in the $pshome\Modules directory.
-To update these Help topics, start PowerShell by using the "Run as Administrator" command, and try running Update-Help again.</value>
+    <value>액세스가 거부되었습니다. 이 명령은 PowerShell Core 모듈이나 $pshome\Modules 디렉터리에 있는 어떤 모듈에 대해서도 도움말 항목을 업데이트할 수 없습니다.
+이 도움말 항목을 업데이트하려면 "관리자 권한으로 실행"을 사용해 PowerShell을 시작한 다음 Update-Help를 다시 실행해 보세요.</value>
   </data>
   <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
-    <value>To use the {0}, make sure your application uses 'Microsoft.NET.Sdk.WindowsDesktop' as the project SDK and the corresponding assembly 'Microsoft.PowerShell.GraphicalHost' is available. ({1})</value>
+    <value>{0}을(를) 사용하려면 애플리케이션에서 'Microsoft.NET.Sdk.WindowsDesktop'을 프로젝트 SDK로 사용하고, 해당 어셈블리 'Microsoft.PowerShell.GraphicalHost'를 사용할 수 있는지 확인하세요. ({1})</value>
   </data>
   <data name="RemotingNotSupportedForFeature" xml:space="preserve">
-    <value>{0} does not work in a remote session.</value>
+    <value>{0}은(는) 원격 세션에서 작동하지 않습니다.</value>
   </data>
   <data name="CircularDependencyInHelpForwarding" xml:space="preserve">
-    <value>ForwardHelpTargetName cannot refer to the function itself.</value>
+    <value>ForwardHelpTargetName은 함수 자체를 참조할 수 없습니다.</value>
   </data>
   <data name="NoNetworkCommands" xml:space="preserve">
-    <value>Cannot get help from a network location when in a restricted session.</value>
+    <value>제한된 세션에 있을 때 네트워크 위치에서 도움을 받을 수 없습니다.</value>
   </data>
 </root>

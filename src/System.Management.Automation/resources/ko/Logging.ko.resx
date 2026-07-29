@@ -286,15 +286,15 @@ AdditionalInfo:
     CommandLine=[CommandLine]</value>
   </data>
   <data name="UnknownUserName" xml:space="preserve">
-    <value>UNKNOWN</value>
+    <value>알 수 없음</value>
   </data>
   <data name="EngineExperimentalFeatureNotFound" xml:space="preserve">
-    <value>The engine experimental feature '{0}' declared in the config file is not registered in the current PowerShell.</value>
+    <value>구성 파일에 선언된 엔진 실험적 기능 '{0}'은(는) 현재 PowerShell에 등록되어 있지 않습니다.</value>
   </data>
   <data name="InvalidExperimentalFeatureName" xml:space="preserve">
-    <value>The experimental feature '{0}' declared in the config file is invalid.
-The name of an experimental feature should follow the convention below: 
-    Engine Feature Name: 'PS[FeatureName]'
-    Module Feature Name: '[ModuleName].[FeatureName]'</value>
+    <value>구성 파일에 선언된 실험적 기능 '{0}'은(는) 유효하지 않습니다.
+실험적 기능 이름은 아래 규칙을 따라야 합니다. 
+    엔진 기능 이름: 'PS[FeatureName]'
+    모듈 기능 이름: '[ModuleName].[FeatureName]'</value>
   </data>
 </root>

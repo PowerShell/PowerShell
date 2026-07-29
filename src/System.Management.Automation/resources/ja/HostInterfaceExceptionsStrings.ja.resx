@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DefaultCtorMessageTemplate" xml:space="preserve">
-    <value>An error of type "{0}" has occurred.</value>
+    <value>"{0}" の種類のエラーが発生しました。</value>
   </data>
   <data name="HostFunctionNotImplemented" xml:space="preserve">
-    <value>A command that prompts the user failed because the host program or the command type does not support user interaction. Try a host program that supports user interaction, such as the PowerShell Console, and remove prompt-related commands from command types that do not support user interaction.</value>
+    <value>ホスト プログラムまたはコマンドの種類がユーザーによる操作をサポートしていないため、ユーザーにプロンプトを表示するコマンドが失敗しました。ユーザーによる操作をサポートするホスト プログラム (PowerShell コンソールなど) を試し、ユーザーによる操作をサポートしていないコマンドの種類からプロンプト関連のコマンドを削除してください。</value>
   </data>
   <data name="HostFunctionPromptNotImplemented" xml:space="preserve">
-    <value>A command that prompts the user failed because the host program or the command type does not support user interaction. The host was attempting to request confirmation with the following message: {0}</value>
+    <value>ホスト プログラムまたはコマンドの種類がユーザーによる操作をサポートしていないため、ユーザーにプロンプトを表示するコマンドが失敗しました。ホストは、次のメッセージを使用して確認を要求しようとしました: {0}</value>
   </data>
   <data name="RunspacePoolNotOpened" xml:space="preserve">
-    <value>The method cannot be invoked because the pool has been closed or has failed.</value>
+    <value>プールが閉じられているか、失敗したため、メソッドを呼び出すことができません。</value>
   </data>
 </root>
