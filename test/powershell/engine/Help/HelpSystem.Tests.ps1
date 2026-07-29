@@ -14,6 +14,8 @@ $script:cmdletsToSkip = @(
     "Disable-PSRemoting", # Content not available: Issue # https://github.com/PowerShell/PowerShell-Docs/issues/1790
     "Enable-PSRemoting",
     "Get-ExperimentalFeature",
+    "Enable-ExperimentalFeature",
+    "Disable-ExperimentalFeature",
     "Get-PSSubsystem",
     "Switch-Process"
 )

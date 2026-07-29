@@ -290,6 +290,28 @@ namespace System.Management.Automation.Configuration
             return features;
         }
 
+        /// <summary>
+        /// Set the enabled list of experimental features in the config file.
+        /// </summary>
+        /// <param name="scope">The ConfigScope of the configuration file to update.</param>
+        /// <param name="featureName">The name of the experimental feature to change in the configuration.</param>
+        /// <param name="setEnabled">If true, add to configuration; otherwise, remove from configuration.</param>
+        internal void SetExperimentalFeatures(ConfigScope scope, string featureName, bool setEnabled)
+        {
+            var features = new List<string>(GetExperimentalFeatures());
+            bool containsFeature = features.Contains(featureName);
+            if (setEnabled && !containsFeature)
+            {
+                features.Add(featureName);
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+            }
+            else if (!setEnabled && containsFeature)
+            {
+                features.Remove(featureName);
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+            }
+        }
+
         internal bool IsImplicitWinCompatEnabled()
         {
             bool settingValue = MergePreferenceValue<bool?>(DisableImplicitWinCompatKey) ?? false;
