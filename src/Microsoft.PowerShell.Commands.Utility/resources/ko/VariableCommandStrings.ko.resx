@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetVariableAction" xml:space="preserve">
-    <value>Set variable</value>
+    <value>변수 설정</value>
   </data>
   <data name="SetVariableTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>이름: {0} 값: {1}</value>
   </data>
   <data name="UseSingleVariable" xml:space="preserve">
-    <value>Use a single variable rather than a collection</value>
+    <value>컬렉션 대신 단일 변수를 사용하세요</value>
   </data>
   <data name="NewVariableAction" xml:space="preserve">
-    <value>New variable</value>
+    <value>새 변수</value>
   </data>
   <data name="NewVariableTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>이름: {0} 값: {1}</value>
   </data>
   <data name="RemoveVariableAction" xml:space="preserve">
-    <value>Remove variable</value>
+    <value>변수 제거</value>
   </data>
   <data name="RemoveVariableTarget" xml:space="preserve">
-    <value>Name: {0}</value>
+    <value>이름: {0}</value>
   </data>
   <data name="ClearVariableAction" xml:space="preserve">
-    <value>Clear variable</value>
+    <value>변수 지우기</value>
   </data>
   <data name="ClearVariableTarget" xml:space="preserve">
-    <value>Name: {0}</value>
+    <value>이름: {0}</value>
   </data>
 </root>

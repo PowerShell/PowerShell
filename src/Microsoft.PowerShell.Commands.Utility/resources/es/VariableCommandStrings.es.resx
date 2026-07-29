@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetVariableAction" xml:space="preserve">
-    <value>Set variable</value>
+    <value>Establecer variable</value>
   </data>
   <data name="SetVariableTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>Nombre: {0} Valor: {1}</value>
   </data>
   <data name="UseSingleVariable" xml:space="preserve">
-    <value>Use a single variable rather than a collection</value>
+    <value>Usar una sola variable en lugar de una colección</value>
   </data>
   <data name="NewVariableAction" xml:space="preserve">
-    <value>New variable</value>
+    <value>Nueva variable</value>
   </data>
   <data name="NewVariableTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>Nombre: {0} Valor: {1}</value>
   </data>
   <data name="RemoveVariableAction" xml:space="preserve">
-    <value>Remove variable</value>
+    <value>Quitar variable</value>
   </data>
   <data name="RemoveVariableTarget" xml:space="preserve">
-    <value>Name: {0}</value>
+    <value>Nombre: {0}</value>
   </data>
   <data name="ClearVariableAction" xml:space="preserve">
-    <value>Clear variable</value>
+    <value>Borrar variable</value>
   </data>
   <data name="ClearVariableTarget" xml:space="preserve">
-    <value>Name: {0}</value>
+    <value>Nombre: {0}</value>
   </data>
 </root>

@@ -118,84 +118,84 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddBreakHandlerExceptionMessage" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred when adding a break handler. Contact Microsoft Support Services.</value>
+    <value>新增中斷處理常式時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 支援服務。</value>
   </data>
   <data name="RemoveBreakHandlerExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while trying to remove a break handler. Contact Microsoft Customer Support Services.</value>
+    <value>嘗試移除中斷處理常式時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="GetInputModeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting input about the console handle. Contact Microsoft Customer Support Services.</value>
+    <value>取得主控台控制代碼的輸入時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="GetActiveScreenBufferHandleExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while retrieving the handle for the active console output buffer. Contact Microsoft Customer Support Services.</value>
+    <value>擷取使用中主控台輸出緩衝區的控制代碼時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="GetModeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting the console mode. Contact Microsoft Customer Support Services.</value>
+    <value>取得主控台模式時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="SetModeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting the console mode. Contact Microsoft Customer Support Services.</value>
+    <value>設定主控台模式時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="ReadConsoleExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while reading characters from the console input buffer. Contact Microsoft Customer Support Services.</value>
+    <value>從主控台輸入緩衝區讀取字元時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="ReadConsoleInputExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while reading input records from the console input buffer. Contact Microsoft Customer Support Services.</value>
+    <value>從主控台輸入緩衝區讀取輸入記錄時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="PeekConsoleInputExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while reading the contents of the console input buffer. Contact Microsoft Customer Support Services.</value>
+    <value>讀取主控台輸入緩衝區的內容時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="GetNumberOfConsoleInputEventsExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting the number of events in the console input buffer. Contact Microsoft Customer Support Services.</value>
+    <value>取得主控台輸入緩衝區中的事件數目時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="FlushConsoleInputBufferExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while flushing the console input buffer. Contact Microsoft Customer Support Services.</value>
+    <value>排清主控台輸入緩衝區時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="GetConsoleScreenBufferInfoExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting console output buffer information. Contact Microsoft Customer Support Services.</value>
+    <value>取得主控台輸出緩衝區資訊時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="SetConsoleScreenBufferSizeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting the console output buffer size. Contact Microsoft Customer Support Services.</value>
+    <value>設定主控台輸出緩衝區大小時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="WriteConsoleOutputExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while writing to the console output buffer. Contact Microsoft Customer Support Services.</value>
+    <value>寫入主控台輸出緩衝區時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="ReadConsoleOutputExceptionTemplate" xml:space="preserve">
-    <value>Win32 internal error "{0}" 0x{1:X} occurred while reading the console output buffer. Contact Microsoft Customer Support Services.</value>
+    <value>讀取主控台輸出緩衝區時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="FillConsoleOutputCharacterExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while filling the console output buffer with characters. Contact Microsoft Customer Support Services.</value>
+    <value>填入主控台輸出緩衝區字元時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="FillConsoleOutputAttributeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while filling the console output buffer with attributes. Contact Microsoft Customer Support Services.</value>
+    <value>填入主控台輸出緩衝區屬性時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="ScrollConsoleScreenBufferExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while scrolling the console output buffer. Contact Microsoft Customer Support Services.</value>
+    <value>捲動主控台輸出緩衝區時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="SetConsoleWindowInfoExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting the console window information. Contact Microsoft Customer Support Services.</value>
+    <value>設定主控台視窗資訊時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="GetLargestConsoleWindowSizeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting the largest console window size. Contact Microsoft Customer Support Services.</value>
+    <value>取得最大主控台視窗大小時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="SetConsoleWindowTitleExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting the console window title. Contact Microsoft Customer Support Services.</value>
+    <value>設定主控台視窗標題時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="WriteConsoleExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while writing to the console output buffer at the current cursor position. Contact Microsoft Customer Support Services.</value>
+    <value>在目前游標位置寫入主控台輸出緩衝區時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="SetConsoleTextAttributeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting character attributes for the console output buffer. Contact Microsoft Customer Support Services.</value>
+    <value>設定主控台輸出緩衝區字元屬性時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="GetConsoleCursorInfoExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting cursor information. Contact Microsoft Customer Support Services.</value>
+    <value>取得游標資訊時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="SetConsoleCursorInfoExceptionTemplate" xml:space="preserve">
-    <value>Win32 internal error "{0}" 0x{1:X} occurred while setting cursor information.Contact Microsoft Customer Support Services.</value>
+    <value>設定游標資訊時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="GetConsoleFontInfoExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting console font information. Contact Microsoft Customer Support Services.</value>
+    <value>取得主控台字型資訊時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
   <data name="SendKeyPressInputExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while sending keyboard input. Contact Microsoft Customer Support Services.</value>
+    <value>傳送鍵盤輸入時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
   </data>
 </root>

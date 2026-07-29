@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ActivityParameterHelpMessage" xml:space="preserve">
-    <value>Text to describe the activity for which progress is being reported.</value>
+    <value>用于描述正在报告进度的活动的文本。</value>
   </data>
   <data name="StatusParameterHelpMessage" xml:space="preserve">
-    <value>Text to describe the current state of the activity for which progress is being reported.</value>
+    <value>用于描述正在报告进度的活动当前状态的文本。</value>
   </data>
   <data name="Processing" xml:space="preserve">
-    <value>Processing</value>
+    <value>正在处理</value>
   </data>
 </root>

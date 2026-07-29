@@ -124,6 +124,6 @@
     <value>Text to describe the current state of the activity for which progress is being reported.</value>
   </data>
   <data name="Processing" xml:space="preserve">
-    <value>Processing</value>
+    <value>Przetwarzanie</value>
   </data>
 </root>
