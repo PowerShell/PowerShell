@@ -118,39 +118,39 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandProcessorAlreadyUsed" xml:space="preserve">
-    <value>Cannot process the cmdlet instance because the cmdlet instance is in use by another pipeline. Please contact Microsoft Customer Support Services.</value>
+    <value>다른 파이프라인에서 이미 이 cmdlet instance를 사용하고 있으므로 처리할 수 없습니다. Microsoft 고객 지원 서비스에 문의하세요.</value>
   </data>
   <data name="ExecutionAlreadyStarted" xml:space="preserve">
-    <value>Cannot perform the operation because the pipeline is started. Stop the pipeline and try the operation again.</value>
+    <value>파이프라인이 시작된 상태이므로 작업을 수행할 수 없습니다. 파이프라인을 중지한 다음 작업을 다시 시도하세요.</value>
   </data>
   <data name="ActionPreferenceStop" xml:space="preserve">
-    <value>Cannot continue to run the cmdlet because running cmdlets has been prevented by the Stop policy.</value>
+    <value>Stop 정책에 의해 cmdlet 실행이 차단되었으므로 cmdlet을 더 이상 실행할 수 없습니다.</value>
   </data>
   <data name="FirstCommandCannotHaveInput" xml:space="preserve">
-    <value>Cannot run the pipeline because the first cmdlet in the pipeline is trying to read input from the results of a preceding cmdlet. Either modify the first cmdlet, remove the first cmdlet, or add to the pipeline the cmdlet whose output is required by the first cmdlet, and then try running the pipeline again.</value>
+    <value>파이프라인의 첫 번째 cmdlet이 앞선 cmdlet의 결과에서 입력을 읽으려고 해서 파이프라인을 실행할 수 없습니다. 첫 번째 cmdlet을 수정하거나, 제거하거나, 첫 번째 cmdlet에 필요한 출력을 제공하는 cmdlet을 파이프라인에 추가한 다음 다시 실행해 보세요.</value>
   </data>
   <data name="InvalidCommandNumber" xml:space="preserve">
-    <value>Cannot process the cmdlet number. The ReadFromCommand function must specify the Id of a cmdlet that has already been added to the pipeline. Please contact Microsoft Customer Support Services.</value>
+    <value>cmdlet 번호를 처리할 수 없습니다. ReadFromCommand 함수에는 이미 파이프라인에 추가된 cmdlet의 ID를 지정해야 합니다. Microsoft 고객 지원 서비스에 문의하세요.</value>
   </data>
   <data name="PipeAlreadyTaken" xml:space="preserve">
-    <value>Cannot read the output of the ReadFromCommand and ReadErrorQueue functions because another cmdlet is already reading that output. Please contact Microsoft Customer Support Services.</value>
+    <value>다른 cmdlet이 이미 해당 출력을 읽고 있으므로 ReadFromCommand 및 ReadErrorQueue 함수의 출력을 읽을 수 없습니다. Microsoft 고객 지원 서비스에 문의하세요.</value>
   </data>
   <data name="PipelineExecuteRequiresAtLeastOneCommand" xml:space="preserve">
-    <value>Cannot run the pipeline because there are no commands. Add at least one command to the pipeline, and then run it again.</value>
+    <value>명령이 없어서 파이프라인을 실행할 수 없습니다. 파이프라인에 명령을 하나 이상 추가한 다음 다시 실행하세요.</value>
   </data>
   <data name="PipelineNotStarted" xml:space="preserve">
-    <value>Cannot complete the pipeline operation because it has not yet been started. You must call the Begin() method before calling End() on a steppable pipeline.</value>
+    <value>파이프라인 작업이 아직 시작되지 않았으므로 완료할 수 없습니다. 스테퍼블 파이프라인에서 End()를 호출하기 전에 Begin() 메서드를 호출해야 합니다.</value>
   </data>
   <data name="WriteNotPermitted" xml:space="preserve">
-    <value>The WriteObject and WriteError methods cannot be called from outside the overrides of the BeginProcessing, ProcessRecord, and EndProcessing methods, and they can only be called from within the same thread. Validate that the cmdlet makes these calls correctly, or contact Microsoft Customer Support Services.</value>
+    <value>WriteObject 및 WriteError 메서드는 BeginProcessing, ProcessRecord 및 EndProcessing 메서드의 재정의 외부에서 호출할 수 없으며 동일한 스레드 내에서만 호출할 수 있습니다. cmdlet이 이러한 호출을 올바르게 수행하는지 확인하거나 Microsoft 고객 지원 서비스에 문의하세요.</value>
   </data>
   <data name="SecondFailure" xml:space="preserve">
-    <value>A cmdlet threw an exception after calling ThrowTerminatingError.
-The first exception was "{0}" with stack trace "{1}".
-The second exception was "{2}" with stack trace "{3}".</value>
+    <value>cmdlet이 ThrowTerminatingError를 호출한 후 예외를 throw했습니다.
+첫 번째 예외는 "{0}"이며 스택 추적은 "{1}"입니다.
+두 번째 예외는 "{2}"이며 스택 추적은 "{3}"입니다.</value>
   </data>
   <data name="WriteToClosedPipeline" xml:space="preserve">
-    <value>The WriteObject and WriteError methods cannot be called after the pipeline has been closed. Please contact Microsoft Customer Support Services.</value>
+    <value>파이프라인을 닫은 후에는 WriteObject 및 WriteError 메서드를 호출할 수 없습니다. Microsoft 고객 지원 서비스에 문의하세요.</value>
   </data>
   <data name="PipelineExecutionInformation" xml:space="preserve">
     <value>CommandInvocation({0}): "{1}"</value>
@@ -165,15 +165,15 @@ The second exception was "{2}" with stack trace "{3}".</value>
     <value>ParameterBinding({0}): name="{1}"; value="{2}"</value>
   </data>
   <data name="CannotCreatePipeline" xml:space="preserve">
-    <value>An error occurred while creating the pipeline.</value>
+    <value>파이프라인을 만드는 동안 오류가 발생했습니다.</value>
   </data>
   <data name="ConnectNotSupported" xml:space="preserve">
-    <value>This pipeline does not support disconnect-connect semantics.</value>
+    <value>이 파이프라인은 연결 끊기 연결 의미 체계를 지원하지 않습니다.</value>
   </data>
   <data name="PipelineNotDisconnected" xml:space="preserve">
-    <value>Cannot connect this pipeline because it is not in the disconnected state.</value>
+    <value>이 파이프라인은 연결 끊김 상태가 아니므로 연결할 수 없습니다.</value>
   </data>
   <data name="InvalidRemoteCommand" xml:space="preserve">
-    <value>The runspace object has a null remote command associated with it.  A disconnected RemotePipeline object cannot be created because there is no remote command specified.</value>
+    <value>runspace 개체에 연결된 원격 명령이 null입니다.  지정된 원격 명령이 없으므로 연결이 끊긴 RemotePipeline 개체를 만들 수 없습니다.</value>
   </data>
 </root>

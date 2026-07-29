@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IndexOutOfRange" xml:space="preserve">
-    <value>The index specified is less than zero or greater than the number of items in the buffer. Index should be in the range {0}-{1}.</value>
+    <value>L'indice specificato è minore di zero o maggiore del numero di elementi nel buffer. L'indice deve essere compreso nell'intervallo {0}-{1}.</value>
   </data>
   <data name="ValueNullReference" xml:space="preserve">
-    <value>Cannot convert a null reference to a value type.</value>
+    <value>Non è possibile convertire un riferimento null in un tipo di valore.</value>
   </data>
   <data name="CannotConvertToGenericType" xml:space="preserve">
-    <value>Cannot convert value from type {0} to type {1}.</value>
+    <value>Non è possibile convertire il valore dal tipo {0} al tipo {1}.</value>
   </data>
   <data name="WriteToClosedBuffer" xml:space="preserve">
-    <value>Objects cannot be added to a closed buffer. Make sure the buffer is open for Add and Insert operations to succeed.</value>
+    <value>Non è possibile aggiungere oggetti a un buffer chiuso. Assicurarsi che il buffer sia aperto per consentire l'esito positivo delle operazioni di aggiunta e inserimento.</value>
   </data>
   <data name="SerializationNotSupported" xml:space="preserve">
-    <value>The SerializeInput property can only be set for the PSObject type of PSDataCollection. Set the SerializeInput property to false, or change the collection type to a PSObject.</value>
+    <value>La proprietà SerializeInput può essere impostata solo per il tipo PSObject di PSDataCollection. Impostare la proprietà SerializeInput su false oppure modificare il tipo di raccolta in PSObject.</value>
   </data>
 </root>

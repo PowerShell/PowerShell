@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="HelpInfoObjectRequired" xml:space="preserve">
-    <value>The 'help' parameter is not recognized as a valid HelpInfo object created by the 'get-help' command.</value>
+    <value>O parâmetro 'help' não é reconhecido como um objeto HelpInfo válido criado pelo comando 'get-help'.</value>
   </data>
   <data name="CommandMetadataMissingCommandName" xml:space="preserve">
-    <value>The proxy command cannot be generated because the CommandMetadata has no name.</value>
+    <value>O comando proxy não pode ser gerado porque CommandMetadata não tem nome.</value>
   </data>
 </root>

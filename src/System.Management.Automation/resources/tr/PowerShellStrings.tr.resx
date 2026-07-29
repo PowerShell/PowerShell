@@ -118,63 +118,63 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidPowerShellStateGeneral" xml:space="preserve">
-    <value>The state of the current PowerShell instance is not valid for this operation.</value>
+    <value>Geçerli PowerShell örneğinin durumu bu işlem için geçerli değil.</value>
   </data>
   <data name="ExecutionAlreadyStarted" xml:space="preserve">
-    <value>The operation cannot be performed because a command has already been started. Wait for the command to complete, or stop it, and then try the operation again.</value>
+    <value>Bir komut zaten başlatıldığı için işlem gerçekleştirilemiyor. Komutun tamamlanmasını bekleyin veya komutu durdurun ve ardından işlemi yeniden deneyin.</value>
   </data>
   <data name="NoCommandToInvoke" xml:space="preserve">
-    <value>No commands are specified.</value>
+    <value>Komut belirtilmedi.</value>
   </data>
   <data name="InvalidStateCreateNested" xml:space="preserve">
-    <value>The PowerShell instance is not in the correct state for creating a nested PowerShell instance. Nested PowerShell instances should only be created in a running PowerShell instance.</value>
+    <value>PowerShell örneği, iç içe geçmiş PowerShell örneği oluşturmak için doğru durumda değil. İç içe geçmiş PowerShell örnekleri yalnızca çalışan bir PowerShell örneğinde oluşturulmalıdır.</value>
   </data>
   <data name="InvalidRunspaceState" xml:space="preserve">
-    <value>Cannot perform operation because the runspace is not in the '{0}' state. Current state of runspace is '{1}'.</value>
+    <value>Çalışma alanı '{0}' durumunda olmadığından işlem gerçekleştirilemiyor. Çalışma alanının geçerli durumu '{1}'.</value>
   </data>
   <data name="NestedPowerShellInvokeAsync" xml:space="preserve">
-    <value>Nested PowerShell instances cannot be invoked asynchronously. Use the Invoke method.</value>
+    <value>İç içe geçmiş PowerShell örnekleri zaman uyumsuz olarak çağrılamaz. Invoke yöntemini kullanın.</value>
   </data>
   <data name="AsyncResultNotOwned" xml:space="preserve">
-    <value>The {0} object was not created by calling {1} on this PowerShell instance.</value>
+    <value>{0} nesnesi, bu PowerShell örneğinde {1} çağrılarak oluşturulmadı.</value>
   </data>
   <data name="ApartmentStateMismatch" xml:space="preserve">
-    <value>When the runspace is set to reuse a thread, the apartment state in the invocation settings must match the runspace.</value>
+    <value>Çalışma alanı bir iş parçacığını yeniden kullanacak şekilde ayarlandığında, çağırma ayarlarındaki bölme durumu çalışma alanıyla eşleşmelidir.</value>
   </data>
   <data name="ApartmentStateMismatchCurrentThread" xml:space="preserve">
-    <value>When the runspace is set to use the current thread, the apartment state in the invocation settings must match that of the current thread.</value>
+    <value>Çalışma alanı geçerli iş parçacığını kullanacak şekilde ayarlandığında, çağırma ayarlarındaki bölme durumu geçerli iş parçacığın durumuyla eşleşmelidir.</value>
   </data>
   <data name="ParameterRequiresCommand" xml:space="preserve">
-    <value>A command is required to add a parameter. A command must be added to the PowerShell instance before adding a parameter.</value>
+    <value>Parametre eklemek için bir komut gereklidir. Parametre eklemeden önce PowerShell örneğine bir komut eklenmelidir.</value>
   </data>
   <data name="KeyMustBeString" xml:space="preserve">
-    <value>The keys in the dictionary must be strings.</value>
+    <value>Sözlükteki anahtarlar dize olmalıdır.</value>
   </data>
   <data name="CommandInvokedFromWrongThreadWithCommand" xml:space="preserve">
-    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The command you attempted to invoke was: {0}</value>
+    <value>Bu iş parçacığında komutları çalıştırmak için kullanılabilir Çalışma Alanı yok. System.Management.Automation.Runspaces.Runspace türünün DefaultRunspace özelliğinde bir tane sağlayabilirsiniz. Çağırmaya çalıştığınız komut: {0}</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>This PowerShell object cannot be connected because it is not associated with a remote runspace or runspace pool.</value>
+    <value>Bu PowerShell nesnesi, uzak çalışma alanı veya çalışma alanı havuzuyla ilişkili olmadığından bağlanamıyor.</value>
   </data>
   <data name="DiscOnSyncCommand" xml:space="preserve">
-    <value>The running command has been disconnected but is still running on the remote server.  Reconnect to get command operation status and output data.</value>
+    <value>Çalışan komutun bağlantısı kesildi ancak uzak sunucuda hala çalışıyor.  Komutun işlem durumunu ve çıkış verilerini almak için yeniden bağlanın.</value>
   </data>
   <data name="ExecutionDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then either wait for the command to finish, or stop the command.</value>
+    <value>Geçerli PowerShell oturumu Bağlantısı Kesik durumunda olduğundan işlem gerçekleştirilemiyor.  Bu PowerShell oturumunu bağlayın, ardından komutun tamamlanmasını bekleyin veya komutu durdurun.</value>
   </data>
   <data name="IsDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then try again.</value>
+    <value>Geçerli PowerShell oturumu Bağlantısı Kesik durumunda olduğundan işlem gerçekleştirilemiyor.  Bu PowerShell oturumunu bağlayın, ardından yeniden deneyin.</value>
   </data>
   <data name="ConnectFailed" xml:space="preserve">
-    <value>The connection attempt to the remote command failed.</value>
+    <value>Uzak komuta bağlanma denemesi başarısız oldu.</value>
   </data>
   <data name="ExecutionStopping" xml:space="preserve">
-    <value>The operation cannot be performed because a command is currently stopping. Wait for the command to complete stopping, and then try the operation again.</value>
+    <value>Bir komut şu anda durdurulduğu için işlem gerçekleştirilemiyor. Komutun durdurma işlemini tamamlamasını bekleyin, ardından işlemi yeniden deneyin.</value>
   </data>
   <data name="CommandInvokedFromWrongThreadWithoutCommand" xml:space="preserve">
-    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The current PowerShell instance contains no command to invoke.</value>
+    <value>Bu iş parçacığında komutları çalıştırmak için kullanılabilir Çalışma Alanı yok. System.Management.Automation.Runspaces.Runspace türünün DefaultRunspace özelliğinde bir tane sağlayabilirsiniz. Geçerli PowerShell örneğinde çağrılacak komut yok.</value>
   </data>
   <data name="NoDefaultRunspaceForPSCreate" xml:space="preserve">
-    <value>A PowerShell object cannot be created that uses the current runspace because there is no current runspace available.  The current runspace might be starting, such as when it is created with an Initial Session State.</value>
+    <value>Kullanılabilir bir geçerli çalışma alanı olmadığından, geçerli çalışma alanını kullanan bir PowerShell nesnesi oluşturulamıyor.  Geçerli çalışma alanı, bir İlk Oturum Durumu ile oluşturulduğunda olduğu gibi başlatılıyor olabilir.</value>
   </data>
 </root>

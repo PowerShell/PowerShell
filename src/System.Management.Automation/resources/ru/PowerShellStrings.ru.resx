@@ -118,63 +118,63 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidPowerShellStateGeneral" xml:space="preserve">
-    <value>The state of the current PowerShell instance is not valid for this operation.</value>
+    <value>Состояние текущего экземпляра PowerShell недопустимо для этой операции.</value>
   </data>
   <data name="ExecutionAlreadyStarted" xml:space="preserve">
-    <value>The operation cannot be performed because a command has already been started. Wait for the command to complete, or stop it, and then try the operation again.</value>
+    <value>Невозможно выполнить эту операцию, поскольку команда уже запущена. Дождитесь полной остановки команды или остановите эту команду, затем снова попробуйте выполнить эту операцию.</value>
   </data>
   <data name="NoCommandToInvoke" xml:space="preserve">
-    <value>No commands are specified.</value>
+    <value>Команды не указаны.</value>
   </data>
   <data name="InvalidStateCreateNested" xml:space="preserve">
-    <value>The PowerShell instance is not in the correct state for creating a nested PowerShell instance. Nested PowerShell instances should only be created in a running PowerShell instance.</value>
+    <value>Экземпляр PowerShell находится в неподходящем состоянии для создания вложенного экземпляра PowerShell. Вложенные экземпляры PowerShell следует создавать только в работающем экземпляре PowerShell.</value>
   </data>
   <data name="InvalidRunspaceState" xml:space="preserve">
-    <value>Cannot perform operation because the runspace is not in the '{0}' state. Current state of runspace is '{1}'.</value>
+    <value>Невозможно выполнить операцию, поскольку пространство выполнения не находится в состоянии "{0}". Текущее состояние пространства выполнения: "{1}".</value>
   </data>
   <data name="NestedPowerShellInvokeAsync" xml:space="preserve">
-    <value>Nested PowerShell instances cannot be invoked asynchronously. Use the Invoke method.</value>
+    <value>Вложенные экземпляры PowerShell невозможно вызывать асинхронно. Используйте метод Invoke.</value>
   </data>
   <data name="AsyncResultNotOwned" xml:space="preserve">
-    <value>The {0} object was not created by calling {1} on this PowerShell instance.</value>
+    <value>Объект {0} не был создан путем вызова {1} в этом экземпляре PowerShell.</value>
   </data>
   <data name="ApartmentStateMismatch" xml:space="preserve">
-    <value>When the runspace is set to reuse a thread, the apartment state in the invocation settings must match the runspace.</value>
+    <value>Если для пространства выполнения задано повторное использование потока, состояние подразделения в параметрах вызова должно совпадать с пространством выполнения.</value>
   </data>
   <data name="ApartmentStateMismatchCurrentThread" xml:space="preserve">
-    <value>When the runspace is set to use the current thread, the apartment state in the invocation settings must match that of the current thread.</value>
+    <value>Если для пространства выполнения задано использование текущего потока, состояние подразделения в параметрах вызова должно совпадать с текущим потоком.</value>
   </data>
   <data name="ParameterRequiresCommand" xml:space="preserve">
-    <value>A command is required to add a parameter. A command must be added to the PowerShell instance before adding a parameter.</value>
+    <value>Для добавления параметра требуется команда. Перед добавлением параметра необходимо добавить команду в экземпляр PowerShell.</value>
   </data>
   <data name="KeyMustBeString" xml:space="preserve">
-    <value>The keys in the dictionary must be strings.</value>
+    <value>Ключи в словаре должны быть строками.</value>
   </data>
   <data name="CommandInvokedFromWrongThreadWithCommand" xml:space="preserve">
-    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The command you attempted to invoke was: {0}</value>
+    <value>Нет доступного пространства выполнения для выполнения команд в этом потоке. Его можно указать в свойстве DefaultRunspace типа System.Management.Automation.Runspaces.Runspace. Вы попытались вызвать команду: {0}</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>This PowerShell object cannot be connected because it is not associated with a remote runspace or runspace pool.</value>
+    <value>Невозможно подключить объект PowerShell, поскольку он не связан с удаленным пространством выполнения или с пулом пространств выполнения.</value>
   </data>
   <data name="DiscOnSyncCommand" xml:space="preserve">
-    <value>The running command has been disconnected but is still running on the remote server.  Reconnect to get command operation status and output data.</value>
+    <value>Выполняющаяся команда отключена, но по-прежнему выполняется на удаленном сервере.  Повторно установите подключение, чтобы получить состояние операции команды и выходные данные.</value>
   </data>
   <data name="ExecutionDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then either wait for the command to finish, or stop the command.</value>
+    <value>Невозможно выполнить операцию, поскольку текущий сеанс PowerShell находится в отключенном состоянии.  Подключите этот сеанс PowerShell, а затем дождитесь завершения этой команды или остановите ее.</value>
   </data>
   <data name="IsDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then try again.</value>
+    <value>Невозможно выполнить операцию, поскольку текущий сеанс PowerShell находится в отключенном состоянии.  Подключите этот сеанс PowerShell и повторите попытку.</value>
   </data>
   <data name="ConnectFailed" xml:space="preserve">
-    <value>The connection attempt to the remote command failed.</value>
+    <value>Сбой подключения к удаленной команде.</value>
   </data>
   <data name="ExecutionStopping" xml:space="preserve">
-    <value>The operation cannot be performed because a command is currently stopping. Wait for the command to complete stopping, and then try the operation again.</value>
+    <value>Невозможно выполнить эту операцию, поскольку команда в настоящее время останавливается. Дождитесь полной остановки команды, затем снова попробуйте выполнить эту операцию.</value>
   </data>
   <data name="CommandInvokedFromWrongThreadWithoutCommand" xml:space="preserve">
-    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The current PowerShell instance contains no command to invoke.</value>
+    <value>Нет доступного пространства выполнения для выполнения команд в этом потоке. Его можно указать в свойстве DefaultRunspace типа System.Management.Automation.Runspaces.Runspace. Текущий экземпляр PowerShell не содержит команды для вызова.</value>
   </data>
   <data name="NoDefaultRunspaceForPSCreate" xml:space="preserve">
-    <value>A PowerShell object cannot be created that uses the current runspace because there is no current runspace available.  The current runspace might be starting, such as when it is created with an Initial Session State.</value>
+    <value>Невозможно создать объект PowerShell, использующий текущее пространство выполнения, поскольку текущее пространство выполнения недоступно.  Текущее пространство выполнения может запускаться, например, если оно создается с начальным состоянием сеанса.</value>
   </data>
 </root>

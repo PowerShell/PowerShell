@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IndexOutOfRange" xml:space="preserve">
-    <value>The index specified is less than zero or greater than the number of items in the buffer. Index should be in the range {0}-{1}.</value>
+    <value>指定されたインデックスが 0 未満か、バッファー内の項目数より大きくなっています。インデックスは {0} - {1} の範囲内である必要があります。</value>
   </data>
   <data name="ValueNullReference" xml:space="preserve">
-    <value>Cannot convert a null reference to a value type.</value>
+    <value>null 参照を値の型に変換できません。</value>
   </data>
   <data name="CannotConvertToGenericType" xml:space="preserve">
-    <value>Cannot convert value from type {0} to type {1}.</value>
+    <value>値を型 {0} から型 {1} に変換できません。</value>
   </data>
   <data name="WriteToClosedBuffer" xml:space="preserve">
-    <value>Objects cannot be added to a closed buffer. Make sure the buffer is open for Add and Insert operations to succeed.</value>
+    <value>閉じられたバッファーにはオブジェクトを追加できません。Add および Insert 操作を正常に実行するには、バッファーが開いていることを確認してください。</value>
   </data>
   <data name="SerializationNotSupported" xml:space="preserve">
-    <value>The SerializeInput property can only be set for the PSObject type of PSDataCollection. Set the SerializeInput property to false, or change the collection type to a PSObject.</value>
+    <value>SerializeInput プロパティは、PSDataCollection の PSObject 型に対してのみ設定できます。SerializeInput プロパティを false に設定するか、コレクションの型を PSObject に変更してください。</value>
   </data>
 </root>

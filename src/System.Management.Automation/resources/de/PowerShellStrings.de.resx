@@ -118,63 +118,63 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidPowerShellStateGeneral" xml:space="preserve">
-    <value>The state of the current PowerShell instance is not valid for this operation.</value>
+    <value>Der Zustand der aktuellen PowerShell-Instanz ist für diesen Vorgang ungültig.</value>
   </data>
   <data name="ExecutionAlreadyStarted" xml:space="preserve">
-    <value>The operation cannot be performed because a command has already been started. Wait for the command to complete, or stop it, and then try the operation again.</value>
+    <value>Der Vorgang kann nicht ausgeführt werden, da bereits ein Befehl gestartet wurde. Warten Sie, bis der Befehl abgeschlossen ist, oder beenden Sie ihn, und wiederholen Sie dann den Vorgang.</value>
   </data>
   <data name="NoCommandToInvoke" xml:space="preserve">
-    <value>No commands are specified.</value>
+    <value>Es wurden keine Befehle angegeben.</value>
   </data>
   <data name="InvalidStateCreateNested" xml:space="preserve">
-    <value>The PowerShell instance is not in the correct state for creating a nested PowerShell instance. Nested PowerShell instances should only be created in a running PowerShell instance.</value>
+    <value>Die PowerShell-Instanz befindet sich nicht im richtigen Zustand zum Erstellen einer geschachtelten PowerShell-Instanz. Geschachtelte PowerShell-Instanzen dürfen nur in einer ausgeführten PowerShell-Instanz erstellt werden.</value>
   </data>
   <data name="InvalidRunspaceState" xml:space="preserve">
-    <value>Cannot perform operation because the runspace is not in the '{0}' state. Current state of runspace is '{1}'.</value>
+    <value>Der Vorgang kann nicht ausgeführt werden, da sich der Runspace nicht im Zustand „{0}“ befindet. Der aktuelle Zustand des Runspaces ist „{1}“.</value>
   </data>
   <data name="NestedPowerShellInvokeAsync" xml:space="preserve">
-    <value>Nested PowerShell instances cannot be invoked asynchronously. Use the Invoke method.</value>
+    <value>Geschachtelte PowerShell-Instanzen können nicht asynchron aufgerufen werden. Verwenden Sie die Invoke-Methode.</value>
   </data>
   <data name="AsyncResultNotOwned" xml:space="preserve">
-    <value>The {0} object was not created by calling {1} on this PowerShell instance.</value>
+    <value>Das {0}-Objekt wurde nicht durch Aufrufen von „{1}“ für diese PowerShell-Instanz erstellt.</value>
   </data>
   <data name="ApartmentStateMismatch" xml:space="preserve">
-    <value>When the runspace is set to reuse a thread, the apartment state in the invocation settings must match the runspace.</value>
+    <value>Wenn der Runspace für die Wiederverwendung eines Threads festgelegt ist, muss der Apartmentzustand in den Aufrufeinstellungen mit dem Runspace übereinstimmen.</value>
   </data>
   <data name="ApartmentStateMismatchCurrentThread" xml:space="preserve">
-    <value>When the runspace is set to use the current thread, the apartment state in the invocation settings must match that of the current thread.</value>
+    <value>Wenn der Runspace für die Verwendung des aktuellen Threads festgelegt ist, muss der Apartmentzustand in den Aufrufeinstellungen mit dem aktuellen Thread übereinstimmen.</value>
   </data>
   <data name="ParameterRequiresCommand" xml:space="preserve">
-    <value>A command is required to add a parameter. A command must be added to the PowerShell instance before adding a parameter.</value>
+    <value>Zum Hinzufügen eines Parameters ist ein Befehl erforderlich. Vor dem Hinzufügen eines Parameters muss der PowerShell-Instanz ein Befehl hinzugefügt werden.</value>
   </data>
   <data name="KeyMustBeString" xml:space="preserve">
-    <value>The keys in the dictionary must be strings.</value>
+    <value>Die Schlüssel im Wörterbuch müssen Zeichenfolgen sein.</value>
   </data>
   <data name="CommandInvokedFromWrongThreadWithCommand" xml:space="preserve">
-    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The command you attempted to invoke was: {0}</value>
+    <value>Es ist kein Runspace zum Ausführen von Befehlen in diesem Thread verfügbar. Sie können einen in der DefaultRunspace-Eigenschaft des Typs „System.Management.Automation.Runspaces.Runspace“ angeben. Der Befehl, den Sie aufrufen wollten, war: {0}</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>This PowerShell object cannot be connected because it is not associated with a remote runspace or runspace pool.</value>
+    <value>Für dieses PowerShell-Objekt kann keine Verbindung hergestellt werden, da es keinem Remoterunspace oder Runspacepool zugeordnet ist.</value>
   </data>
   <data name="DiscOnSyncCommand" xml:space="preserve">
-    <value>The running command has been disconnected but is still running on the remote server.  Reconnect to get command operation status and output data.</value>
+    <value>Der ausgeführte Befehl wurde getrennt, wird aber weiterhin auf dem Remoteserver ausgeführt.  Stellen Sie die Verbindung wieder her, um den Status des Befehlsvorgangs und die Ausgabedaten abzurufen.</value>
   </data>
   <data name="ExecutionDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then either wait for the command to finish, or stop the command.</value>
+    <value>Der Vorgang kann nicht ausgeführt werden, da sich die aktuelle PowerShell-Sitzung im Zustand „Getrennt“ befindet.  Stellen Sie die Verbindung mit dieser PowerShell-Sitzung her, und warten Sie dann, bis der Befehl abgeschlossen ist, oder beenden Sie den Befehl.</value>
   </data>
   <data name="IsDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then try again.</value>
+    <value>Der Vorgang kann nicht ausgeführt werden, da sich die aktuelle PowerShell-Sitzung im Zustand „Getrennt“ befindet.  Stellen Sie die Verbindung mit dieser PowerShell-Sitzung her, und wiederholen Sie dann den Vorgang.</value>
   </data>
   <data name="ConnectFailed" xml:space="preserve">
-    <value>The connection attempt to the remote command failed.</value>
+    <value>Fehler beim Herstellen einer Verbindung mit dem Remotebefehl.</value>
   </data>
   <data name="ExecutionStopping" xml:space="preserve">
-    <value>The operation cannot be performed because a command is currently stopping. Wait for the command to complete stopping, and then try the operation again.</value>
+    <value>Der Vorgang kann nicht ausgeführt werden, da zurzeit ein Befehl angehalten wird. Warten Sie, bis das Anhalten des Befehls abgeschlossen ist, und wiederholen Sie dann den Vorgang.</value>
   </data>
   <data name="CommandInvokedFromWrongThreadWithoutCommand" xml:space="preserve">
-    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The current PowerShell instance contains no command to invoke.</value>
+    <value>Es ist kein Runspace zum Ausführen von Befehlen in diesem Thread verfügbar. Sie können einen in der DefaultRunspace-Eigenschaft des Typs „System.Management.Automation.Runspaces.Runspace“ angeben. Die aktuelle PowerShell-Instanz enthält keinen aufzurufenden Befehl.</value>
   </data>
   <data name="NoDefaultRunspaceForPSCreate" xml:space="preserve">
-    <value>A PowerShell object cannot be created that uses the current runspace because there is no current runspace available.  The current runspace might be starting, such as when it is created with an Initial Session State.</value>
+    <value>Es kann kein PowerShell-Objekt erstellt werden, das den aktuellen Runspace verwendet, da kein aktueller Runspace verfügbar ist.  Der aktuelle Runspace wird möglicherweise gestartet, z. B. wenn er mit einem Initial Session State erstellt wird.</value>
   </data>
 </root>

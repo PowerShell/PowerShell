@@ -118,39 +118,39 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandProcessorAlreadyUsed" xml:space="preserve">
-    <value>Cannot process the cmdlet instance because the cmdlet instance is in use by another pipeline. Please contact Microsoft Customer Support Services.</value>
+    <value>Невозможно обработать экземпляр командлета, так как он уже используется другим конвейером. Обратитесь в службы поддержки клиентов Майкрософт.</value>
   </data>
   <data name="ExecutionAlreadyStarted" xml:space="preserve">
-    <value>Cannot perform the operation because the pipeline is started. Stop the pipeline and try the operation again.</value>
+    <value>Невозможно выполнить операцию, так как конвейер запущен. Остановите конвейер и повторите операцию.</value>
   </data>
   <data name="ActionPreferenceStop" xml:space="preserve">
-    <value>Cannot continue to run the cmdlet because running cmdlets has been prevented by the Stop policy.</value>
+    <value>Невозможно продолжить выполнение командлета, так как политика Stop запрещает запуск командлетов.</value>
   </data>
   <data name="FirstCommandCannotHaveInput" xml:space="preserve">
-    <value>Cannot run the pipeline because the first cmdlet in the pipeline is trying to read input from the results of a preceding cmdlet. Either modify the first cmdlet, remove the first cmdlet, or add to the pipeline the cmdlet whose output is required by the first cmdlet, and then try running the pipeline again.</value>
+    <value>Не удается запустить конвейер, так как первый командлет в нем пытается прочитать входные данные из результатов предыдущего командлета. Измените или удалите первый командлет. Либо добавьте в конвейер командлет, выходные данные которого требуются первому командлету, а затем попробуйте запустить конвейер еще раз.</value>
   </data>
   <data name="InvalidCommandNumber" xml:space="preserve">
-    <value>Cannot process the cmdlet number. The ReadFromCommand function must specify the Id of a cmdlet that has already been added to the pipeline. Please contact Microsoft Customer Support Services.</value>
+    <value>Невозможно обработать номер командлета. Функция ReadFromCommand должна указывать идентификатор командлета, который уже добавлен в конвейер. Обратитесь в службы поддержки клиентов Майкрософт.</value>
   </data>
   <data name="PipeAlreadyTaken" xml:space="preserve">
-    <value>Cannot read the output of the ReadFromCommand and ReadErrorQueue functions because another cmdlet is already reading that output. Please contact Microsoft Customer Support Services.</value>
+    <value>Невозможно прочитать выходные данные функций ReadFromCommand и ReadErrorQueue, так как их уже читает другой командлет. Обратитесь в службы поддержки клиентов Майкрософт.</value>
   </data>
   <data name="PipelineExecuteRequiresAtLeastOneCommand" xml:space="preserve">
-    <value>Cannot run the pipeline because there are no commands. Add at least one command to the pipeline, and then run it again.</value>
+    <value>Невозможно запустить конвейер, так как в нем нет команд. Добавьте в конвейер хотя бы одну команду и запустите его снова.</value>
   </data>
   <data name="PipelineNotStarted" xml:space="preserve">
-    <value>Cannot complete the pipeline operation because it has not yet been started. You must call the Begin() method before calling End() on a steppable pipeline.</value>
+    <value>Невозможно завершить операцию конвейера, так как он еще не запущен. Перед вызовом End() для пошагового конвейера необходимо вызвать метод Begin().</value>
   </data>
   <data name="WriteNotPermitted" xml:space="preserve">
-    <value>The WriteObject and WriteError methods cannot be called from outside the overrides of the BeginProcessing, ProcessRecord, and EndProcessing methods, and they can only be called from within the same thread. Validate that the cmdlet makes these calls correctly, or contact Microsoft Customer Support Services.</value>
+    <value>Методы WriteObject и WriteError нельзя вызывать вне переопределений методов BeginProcessing, ProcessRecord и EndProcessing, и их можно вызывать только из одного потока. Проверьте, что командлет вызывает их правильно, или обратитесь в службы поддержки клиентов Майкрософт.</value>
   </data>
   <data name="SecondFailure" xml:space="preserve">
-    <value>A cmdlet threw an exception after calling ThrowTerminatingError.
-The first exception was "{0}" with stack trace "{1}".
-The second exception was "{2}" with stack trace "{3}".</value>
+    <value>После вызова ThrowTerminatingError командлет сгенерировал исключение.
+Первым исключением было "{0}" с трассировкой стека "{1}".
+Вторым исключением было "{2}" с трассировкой стека "{3}".</value>
   </data>
   <data name="WriteToClosedPipeline" xml:space="preserve">
-    <value>The WriteObject and WriteError methods cannot be called after the pipeline has been closed. Please contact Microsoft Customer Support Services.</value>
+    <value>Методы WriteObject и WriteError нельзя вызывать после закрытия конвейера. Обратитесь в службы поддержки клиентов Майкрософт.</value>
   </data>
   <data name="PipelineExecutionInformation" xml:space="preserve">
     <value>CommandInvocation({0}): "{1}"</value>
@@ -165,15 +165,15 @@ The second exception was "{2}" with stack trace "{3}".</value>
     <value>ParameterBinding({0}): name="{1}"; value="{2}"</value>
   </data>
   <data name="CannotCreatePipeline" xml:space="preserve">
-    <value>An error occurred while creating the pipeline.</value>
+    <value>Произошла ошибка при создании конвейера.</value>
   </data>
   <data name="ConnectNotSupported" xml:space="preserve">
-    <value>This pipeline does not support disconnect-connect semantics.</value>
+    <value>Этот конвейер не поддерживает семантику отключения и подключения.</value>
   </data>
   <data name="PipelineNotDisconnected" xml:space="preserve">
-    <value>Cannot connect this pipeline because it is not in the disconnected state.</value>
+    <value>Невозможно подключить этот конвейер, так как он не находится в отключенном состоянии.</value>
   </data>
   <data name="InvalidRemoteCommand" xml:space="preserve">
-    <value>The runspace object has a null remote command associated with it.  A disconnected RemotePipeline object cannot be created because there is no remote command specified.</value>
+    <value>С объектом пространства выполнения связана удаленная команда со значением null.  Невозможно создать отключенный объект RemotePipeline, так как удаленная команда не указана.</value>
   </data>
 </root>

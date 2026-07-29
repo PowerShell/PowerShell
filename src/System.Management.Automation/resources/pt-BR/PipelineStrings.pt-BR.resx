@@ -118,39 +118,39 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandProcessorAlreadyUsed" xml:space="preserve">
-    <value>Cannot process the cmdlet instance because the cmdlet instance is in use by another pipeline. Please contact Microsoft Customer Support Services.</value>
+    <value>Não é possível processar a instância do cmdlet porque ela está sendo usada por outro pipeline. Contate os Serviços de Atendimento ao Cliente da Microsoft.</value>
   </data>
   <data name="ExecutionAlreadyStarted" xml:space="preserve">
-    <value>Cannot perform the operation because the pipeline is started. Stop the pipeline and try the operation again.</value>
+    <value>Não é possível executar a operação porque o pipeline já foi iniciado. Pare o pipeline e tente a operação novamente.</value>
   </data>
   <data name="ActionPreferenceStop" xml:space="preserve">
-    <value>Cannot continue to run the cmdlet because running cmdlets has been prevented by the Stop policy.</value>
+    <value>Não é possível continuar executando o cmdlet porque a política Stop impediu a execução de cmdlets.</value>
   </data>
   <data name="FirstCommandCannotHaveInput" xml:space="preserve">
-    <value>Cannot run the pipeline because the first cmdlet in the pipeline is trying to read input from the results of a preceding cmdlet. Either modify the first cmdlet, remove the first cmdlet, or add to the pipeline the cmdlet whose output is required by the first cmdlet, and then try running the pipeline again.</value>
+    <value>Não é possível executar o pipeline porque o primeiro cmdlet do pipeline está tentando ler a entrada dos resultados de um cmdlet anterior. Modifique o primeiro cmdlet, remova-o ou adicione ao pipeline o cmdlet cuja saída é necessária para o primeiro cmdlet e tente executar o pipeline novamente.</value>
   </data>
   <data name="InvalidCommandNumber" xml:space="preserve">
-    <value>Cannot process the cmdlet number. The ReadFromCommand function must specify the Id of a cmdlet that has already been added to the pipeline. Please contact Microsoft Customer Support Services.</value>
+    <value>Não é possível processar o número do cmdlet. A função ReadFromCommand deve especificar a ID de um cmdlet que já tenha sido adicionado ao pipeline. Contate os Serviços de Atendimento ao Cliente da Microsoft.</value>
   </data>
   <data name="PipeAlreadyTaken" xml:space="preserve">
-    <value>Cannot read the output of the ReadFromCommand and ReadErrorQueue functions because another cmdlet is already reading that output. Please contact Microsoft Customer Support Services.</value>
+    <value>Não é possível ler a saída das funções ReadFromCommand e ReadErrorQueue porque outro cmdlet já está lendo essa saída. Contate os Serviços de Atendimento ao Cliente da Microsoft.</value>
   </data>
   <data name="PipelineExecuteRequiresAtLeastOneCommand" xml:space="preserve">
-    <value>Cannot run the pipeline because there are no commands. Add at least one command to the pipeline, and then run it again.</value>
+    <value>Não é possível executar o pipeline porque não há comandos. Adicione pelo menos um comando ao pipeline e execute-o novamente.</value>
   </data>
   <data name="PipelineNotStarted" xml:space="preserve">
-    <value>Cannot complete the pipeline operation because it has not yet been started. You must call the Begin() method before calling End() on a steppable pipeline.</value>
+    <value>Não é possível concluir a operação de pipeline porque ela ainda não foi iniciada. Você deve chamar o método Begin() antes de chamar End() em um pipeline em etapas.</value>
   </data>
   <data name="WriteNotPermitted" xml:space="preserve">
-    <value>The WriteObject and WriteError methods cannot be called from outside the overrides of the BeginProcessing, ProcessRecord, and EndProcessing methods, and they can only be called from within the same thread. Validate that the cmdlet makes these calls correctly, or contact Microsoft Customer Support Services.</value>
+    <value>Os métodos WriteObject e WriteError não podem ser chamados de fora das substituições dos métodos BeginProcessing, ProcessRecord e EndProcessing, e só podem ser chamados na mesma thread. Verifique se o cmdlet faz essas chamadas corretamente ou entre em contato com o Atendimento ao cliente da Microsoft.</value>
   </data>
   <data name="SecondFailure" xml:space="preserve">
-    <value>A cmdlet threw an exception after calling ThrowTerminatingError.
-The first exception was "{0}" with stack trace "{1}".
-The second exception was "{2}" with stack trace "{3}".</value>
+    <value>Um cmdlet gerou uma exceção depois de chamar ThrowTerminatingError.
+A primeira exceção foi "{0}", com rastreamento de pilha "{1}".
+A segunda exceção foi "{2}", com rastreamento de pilha "{3}".</value>
   </data>
   <data name="WriteToClosedPipeline" xml:space="preserve">
-    <value>The WriteObject and WriteError methods cannot be called after the pipeline has been closed. Please contact Microsoft Customer Support Services.</value>
+    <value>Os métodos WriteObject e WriteError não podem ser chamados depois que o pipeline foi fechado. Contate os Serviços de Atendimento ao Cliente da Microsoft.</value>
   </data>
   <data name="PipelineExecutionInformation" xml:space="preserve">
     <value>CommandInvocation({0}): "{1}"</value>
@@ -165,15 +165,15 @@ The second exception was "{2}" with stack trace "{3}".</value>
     <value>ParameterBinding({0}): name="{1}"; value="{2}"</value>
   </data>
   <data name="CannotCreatePipeline" xml:space="preserve">
-    <value>An error occurred while creating the pipeline.</value>
+    <value>Ocorreu um erro ao criar o pipeline.</value>
   </data>
   <data name="ConnectNotSupported" xml:space="preserve">
-    <value>This pipeline does not support disconnect-connect semantics.</value>
+    <value>Este pipeline não dá suporte à semântica de desconexão e reconexão.</value>
   </data>
   <data name="PipelineNotDisconnected" xml:space="preserve">
-    <value>Cannot connect this pipeline because it is not in the disconnected state.</value>
+    <value>Não é possível conectar este pipeline porque ele não está no estado desconectado.</value>
   </data>
   <data name="InvalidRemoteCommand" xml:space="preserve">
-    <value>The runspace object has a null remote command associated with it.  A disconnected RemotePipeline object cannot be created because there is no remote command specified.</value>
+    <value>O objeto runspace tem um comando remoto nulo associado a ele.  Não é possível criar um objeto RemotePipeline desconectado porque não há nenhum comando remoto especificado.</value>
   </data>
 </root>

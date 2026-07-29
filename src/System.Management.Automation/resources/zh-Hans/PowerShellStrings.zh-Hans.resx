@@ -118,63 +118,63 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidPowerShellStateGeneral" xml:space="preserve">
-    <value>The state of the current PowerShell instance is not valid for this operation.</value>
+    <value>当前 PowerShell 实例的状态对此操作无效。</value>
   </data>
   <data name="ExecutionAlreadyStarted" xml:space="preserve">
-    <value>The operation cannot be performed because a command has already been started. Wait for the command to complete, or stop it, and then try the operation again.</value>
+    <value>无法执行该操作，因为已启动命令。请等待命令完成，或停止该命令，然后重试该操作。</value>
   </data>
   <data name="NoCommandToInvoke" xml:space="preserve">
-    <value>No commands are specified.</value>
+    <value>未指定任何命令。</value>
   </data>
   <data name="InvalidStateCreateNested" xml:space="preserve">
-    <value>The PowerShell instance is not in the correct state for creating a nested PowerShell instance. Nested PowerShell instances should only be created in a running PowerShell instance.</value>
+    <value>PowerShell 实例未处于正确状态，无法创建嵌套 PowerShell 实例。应仅在正在运行的 PowerShell 实例中创建嵌套 PowerShell 实例。</value>
   </data>
   <data name="InvalidRunspaceState" xml:space="preserve">
-    <value>Cannot perform operation because the runspace is not in the '{0}' state. Current state of runspace is '{1}'.</value>
+    <value>无法执行操作，因为运行空间未处于“{0}”状态。运行空间的当前状态为“{1}”。</value>
   </data>
   <data name="NestedPowerShellInvokeAsync" xml:space="preserve">
-    <value>Nested PowerShell instances cannot be invoked asynchronously. Use the Invoke method.</value>
+    <value>无法异步调用嵌套 PowerShell 实例。使用 Invoke 方法。</value>
   </data>
   <data name="AsyncResultNotOwned" xml:space="preserve">
-    <value>The {0} object was not created by calling {1} on this PowerShell instance.</value>
+    <value>{0} 对象不是通过在此 PowerShell 实例上调用 {1} 来创建的。</value>
   </data>
   <data name="ApartmentStateMismatch" xml:space="preserve">
-    <value>When the runspace is set to reuse a thread, the apartment state in the invocation settings must match the runspace.</value>
+    <value>当运行空间设置为重用线程时，调用设置中的单元状态必须与运行空间匹配。</value>
   </data>
   <data name="ApartmentStateMismatchCurrentThread" xml:space="preserve">
-    <value>When the runspace is set to use the current thread, the apartment state in the invocation settings must match that of the current thread.</value>
+    <value>当运行空间设置为使用当前线程时，调用设置中的单元状态必须与当前线程的单元状态匹配。</value>
   </data>
   <data name="ParameterRequiresCommand" xml:space="preserve">
-    <value>A command is required to add a parameter. A command must be added to the PowerShell instance before adding a parameter.</value>
+    <value>添加参数需要命令。在添加参数之前，必须将命令添加到 PowerShell 实例。</value>
   </data>
   <data name="KeyMustBeString" xml:space="preserve">
-    <value>The keys in the dictionary must be strings.</value>
+    <value>字典中的键必须是字符串。</value>
   </data>
   <data name="CommandInvokedFromWrongThreadWithCommand" xml:space="preserve">
-    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The command you attempted to invoke was: {0}</value>
+    <value>没有可在此线程中运行命令的运行空间。可以在 System.Management.Automation.Runspaces.Runspace 类型的 DefaultRunspace 属性中提供一个。尝试调用的命令为: {0}</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>This PowerShell object cannot be connected because it is not associated with a remote runspace or runspace pool.</value>
+    <value>无法连接此 PowerShell 对象，因为它未与远程运行空间或运行空间池关联。</value>
   </data>
   <data name="DiscOnSyncCommand" xml:space="preserve">
-    <value>The running command has been disconnected but is still running on the remote server.  Reconnect to get command operation status and output data.</value>
+    <value>已断开正在运行的命令已断开连接，但仍在远程服务器上运行。 重新连接以获取命令操作状态和输出数据。</value>
   </data>
   <data name="ExecutionDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then either wait for the command to finish, or stop the command.</value>
+    <value>无法执行此操作，因为当前 PowerShell 会话处于“已断开连接”状态。 连接此 PowerShell 会话，然后等待命令完成或停止该命令。</value>
   </data>
   <data name="IsDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then try again.</value>
+    <value>无法执行此操作，因为当前 PowerShell 会话处于“已断开连接”状态。 连接此 PowerShell 会话，然后重试。</value>
   </data>
   <data name="ConnectFailed" xml:space="preserve">
-    <value>The connection attempt to the remote command failed.</value>
+    <value>对远程命令的连接尝试失败。</value>
   </data>
   <data name="ExecutionStopping" xml:space="preserve">
-    <value>The operation cannot be performed because a command is currently stopping. Wait for the command to complete stopping, and then try the operation again.</value>
+    <value>无法执行该操作，因为命令当前正在停止。等待命令完成停止，然后重试该操作。</value>
   </data>
   <data name="CommandInvokedFromWrongThreadWithoutCommand" xml:space="preserve">
-    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The current PowerShell instance contains no command to invoke.</value>
+    <value>没有可在此线程中运行命令的运行空间。可以在 System.Management.Automation.Runspaces.Runspace 类型的 DefaultRunspace 属性中提供一个。当前 PowerShell 实例不包含要调用的命令。</value>
   </data>
   <data name="NoDefaultRunspaceForPSCreate" xml:space="preserve">
-    <value>A PowerShell object cannot be created that uses the current runspace because there is no current runspace available.  The current runspace might be starting, such as when it is created with an Initial Session State.</value>
+    <value>无法创建使用当前运行空间的 PowerShell 对象，因为当前没有可用的运行空间。 当前运行空间可能正在启动，例如在初始会话状态下创建它时会出现此情况。</value>
   </data>
 </root>

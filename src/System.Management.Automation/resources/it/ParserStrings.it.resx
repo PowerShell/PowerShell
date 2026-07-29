@@ -1242,7 +1242,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Invalid Get method. Get method must return [{0}] and accepts no parameters.</value>
   </data>
   <data name="ErrorLoadingAssembly" xml:space="preserve">
-    <value>Cannot load assembly '{0}'.</value>
+    <value>Non è possibile caricare l'assembly '{0}'.</value>
   </data>
   <data name="CannotLoadAssemblyFromUncPath" xml:space="preserve">
     <value>Cannot use assembly with an UNC path: '{0}'.</value>
