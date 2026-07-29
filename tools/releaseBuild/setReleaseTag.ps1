@@ -67,8 +67,8 @@ function New-BuildInfoJson {
 }
 
 # Script to set the release tag based on the branch name if it is not set or it is "fromBranch"
-# the branch name is expected to be release-<semver> or <previewname>
-# VSTS passes it as 'refs/heads/release-v6.0.2'
+# the branch name is expected to be release/<semver>, rebuild/v<semver>-rebuild.<number>, or <previewname>
+# VSTS passes it as 'refs/heads/release/v6.0.2'
 
 $branchOnly = $Branch -replace '^refs/heads/';
 $branchOnly = $branchOnly -replace '[_\-]'
@@ -79,7 +79,13 @@ $isDaily = $false
 
 if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 {
-    # Branch is named release-<semver>
+    $validRebuildBranchRegex = '^refs/heads/rebuild/v[0-9]+\.[0-9]+\.[0-9]+-rebuild\.(?:0|[1-9][0-9]*)$'
+    if ($Branch -match '^refs/heads/rebuild/' -and $Branch -notmatch $validRebuildBranchRegex)
+    {
+        throw "Malformed rebuild branch '$Branch'. Expected branch name format: 'rebuild/v<major>.<minor>.<patch>-rebuild.<number>'."
+    }
+
+    # Branch is named release/<semver> or rebuild/v<semver>-rebuild.<number>
     $releaseBranchRegex = '^.*((release/|rebuild/.*rebuild))'
     if($Branch -match $releaseBranchRegex)
     {
