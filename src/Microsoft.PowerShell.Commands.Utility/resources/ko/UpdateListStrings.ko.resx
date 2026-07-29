@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MemberDoesntExist" xml:space="preserve">
-    <value>The property '{0}' cannot be found on this object</value>
+    <value>이 개체에서 '{0}' 속성을 찾을 수 없습니다.</value>
   </data>
   <data name="MissingPropertyParameter" xml:space="preserve">
-    <value>You must specify the Property parameter when the InputObject parameter is specified.</value>
+    <value>InputObject 매개 변수를 지정하는 경우 Property 매개 변수를 지정해야 합니다.</value>
   </data>
   <data name="MissingInputObjectParameter" xml:space="preserve">
-    <value>You must specify the InputObject parameter when the Property parameter is specified.</value>
+    <value>Property 매개 변수를 지정하는 경우 InputObject 매개 변수를 지정해야 합니다.</value>
   </data>
 </root>

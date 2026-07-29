@@ -118,69 +118,69 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UpdateData_WrongProviderError" xml:space="preserve">
-    <value>Cannot open the file because the current provider is "{0}", and this command requires a file.</value>
+    <value>Die Datei kann nicht geöffnet werden, da der aktuelle Anbieter „{0}“ ist, und dieser Befehl eine Datei erfordert.</value>
   </data>
   <data name="UpdateData_WrongExtension" xml:space="preserve">
-    <value>Cannot read the file "{0}"  because it does not have the file name extension "{1}".</value>
+    <value>Die Datei „{0}“ kann nicht gelesen werden, da sie nicht die Dateinamenerweiterung „{1}“ hat.</value>
   </data>
   <data name="UpdateTypeDataAction" xml:space="preserve">
-    <value>Update TypeData</value>
+    <value>TypeData aktualisieren</value>
   </data>
   <data name="UpdateFormatDataAction" xml:space="preserve">
-    <value>Update FormatData</value>
+    <value>FormatData aktualisieren</value>
   </data>
   <data name="UpdateTarget" xml:space="preserve">
     <value>FileName: {0}</value>
   </data>
   <data name="CannotUpdateMemberType" xml:space="preserve">
-    <value>Cannot update a member with type "{0}". Specify a different type for the MemberType parameter.</value>
+    <value>Ein Member vom Typ „{0}“ kann nicht aktualisiert werden. Geben Sie für den Parameter MemberType einen anderen Typ an.</value>
   </data>
   <data name="ShouldBeSpecified" xml:space="preserve">
-    <value>The {0} parameter is required for the type "{1}". Please specify the {0} parameter.</value>
+    <value>Der {0}-Parameter ist für den Typ „{1}“ erforderlich. Geben Sie den {0}-Parameter an.</value>
   </data>
   <data name="ShouldNotBeNull" xml:space="preserve">
-    <value>The {0} parameter should not be null or an empty string for a member of type "{1}". Specify a non-null value for the {0} parameter when updating this member type.</value>
+    <value>Der {0}-Parameter darf für einen Member vom Typ „{1}“ nicht NULL oder eine leere Zeichenfolge sein. Geben Sie beim Aktualisieren dieses Membertyps für den {0}-Parameter einen Wert ungleich NULL an.</value>
   </data>
   <data name="ShouldNotBeSpecified" xml:space="preserve">
-    <value>The {0} parameter is not necessary for a member of type "{1}", and should not be specified. Do not specify the {0} parameter when updating this member type.</value>
+    <value>Der {0}-Parameter ist für einen Member vom Typ „{1}“ nicht erforderlich und sollte nicht angegeben werden. Geben Sie den {0}-Parameter nicht an, wenn Sie diesen Membertyp aktualisieren.</value>
   </data>
   <data name="TypeDataEmpty" xml:space="preserve">
-    <value>No member is specified for the update on type "{0}".</value>
+    <value>Für die Aktualisierung des Typs „{0}“ ist kein Member angegeben.</value>
   </data>
   <data name="TargetTypeNameEmpty" xml:space="preserve">
-    <value>The target type name should not be null, empty, or contain only white spaces.</value>
+    <value>Der Zieltypname darf nicht NULL oder leer sein oder nur Leerzeichen enthalten.</value>
   </data>
   <data name="Value1AndValue2AreNotBothNull" xml:space="preserve">
-    <value>The Value and SecondValue parameters should not both be null for a member of type "{0}". Specify a non-null value for one of the two parameters.</value>
+    <value>Die Value- und SecondValue-Parameter dürfen für einen Member vom Typ „{0}“ nicht beide NULL sein. Geben Sie für einen der beiden Parameter einen Wert ungleich NULL an.</value>
   </data>
   <data name="WrongMemberCount" xml:space="preserve">
-    <value>Only one member type can be specified. The member types specified are: "{0}". Update the type with only one member type.</value>
+    <value>Es kann nur ein Membertyp angegeben werden. Die angegebenen Membertypen sind: „{0}“. Aktualisieren Sie den Typ nur mit einem Membertyp.</value>
   </data>
   <data name="MemberTypeIsMissing" xml:space="preserve">
-    <value>The MemberName, Value, and SecondValue parameters cannot be specified without the MemberType parameter.</value>
+    <value>Die MemberName-, Value- und SecondValue-Parameter können nicht ohne den MemberType-Parameter angegeben werden.</value>
   </data>
   <data name="RemoveTypeDataAction" xml:space="preserve">
-    <value>Remove TypeData</value>
+    <value>TypeData entfernen</value>
   </data>
   <data name="RemoveTypeDataTarget" xml:space="preserve">
-    <value>Name of the type that will be removed: {0}</value>
+    <value>Name des zu entfernenden Typs: {0}</value>
   </data>
   <data name="UpdateTypeDataTarget" xml:space="preserve">
-    <value>Type to update: {0}</value>
+    <value>Zu aktualisierender Typ: {0}</value>
   </data>
   <data name="RemoveTypeFileAction" xml:space="preserve">
-    <value>Remove type file</value>
+    <value>Typdatei entfernen</value>
   </data>
   <data name="TypeFileNotExistsInCurrentSession" xml:space="preserve">
-    <value>The file {0} is not imported into the current session.</value>
+    <value>Die Datei „{0}“ wird nicht in die aktuelle Sitzung importiert.</value>
   </data>
   <data name="FormatUpdatesDisabled" xml:space="preserve">
-    <value>Updating format data is not allowed in this runspace. The 'DisableFormatUpdates' property is set to True when creating the runspace.</value>
+    <value>Das Aktualisieren von Formatdaten ist in diesem Runspace nicht zulässig. Die Eigenschaft „DisableFormatUpdates“ wird beim Erstellen des Runspace auf TRUE festgelegt.</value>
   </data>
   <data name="CannotUpdateFormatWithFormatTable" xml:space="preserve">
-    <value>Cannot update the format data with a FormatTable instance.</value>
+    <value>Die Formatdaten können nicht mithilfe einer Instanz der FormatTable aktualisiert werden.</value>
   </data>
   <data name="CannotUpdateTypeWithTypeTable" xml:space="preserve">
-    <value>Cannot update the type data with a TypeTable instance.</value>
+    <value>Die Typdaten können nicht mithilfe einer TypeTable-Instanz aktualisiert werden.</value>
   </data>
 </root>

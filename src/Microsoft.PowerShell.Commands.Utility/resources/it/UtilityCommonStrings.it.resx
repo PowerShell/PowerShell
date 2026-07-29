@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Invalidpath" xml:space="preserve">
-    <value>{2} has one or more exceptions that are not valid.</value>
+    <value>{2} presenta una o più eccezioni non valide.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>This command cannot be run because the file path '{0}' is not valid. Please provide a valid file path and then run the command.</value>
+    <value>Questo comando non può essere eseguito perché il percorso del file "{0}" non è valido. Specificare un percorso di file valido e quindi eseguire il comando.</value>
   </data>
   <data name="EmptyCSSUri" xml:space="preserve">
-    <value>This command cannot be run because '{0}' is empty or blank. Please specify CSSUri and then run the command.</value>
+    <value>Questo comando non può essere eseguito perché "{0}" è vuoto o non contiene caratteri. Specificare CSSUri e quindi eseguire il comando.</value>
   </data>
   <data name="FileOpenError" xml:space="preserve">
-    <value>Cannot open the file because the current provider ({0}) cannot open files.</value>
+    <value>Non è possibile aprire il file perché il provider corrente ({0}) non può aprire i file.</value>
   </data>
   <data name="SearchXMLPrefixNullError" xml:space="preserve">
-    <value>This command cannot be run because the prefix value in the Namespace parameter is null. Provide a valid value for the prefix, and then run the command again.</value>
+    <value>Questo comando non può essere eseguito perché il valore del prefisso nel parametro Namespace è Null. Specificare un valore valido per il prefisso e quindi eseguire di nuovo il comando.</value>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>The objects grouped by this property cannot be expanded because there is a key duplication. Provide a valid value for the property, and then try again.</value>
+    <value>Gli oggetti raggruppati in base a questa proprietà non possono essere espansi perché è presente una chiave duplicata. Specificare un valore valido per la proprietà e quindi riprovare.</value>
   </data>
   <data name="NotSupported" xml:space="preserve">
-    <value>The command is not supported on this operating system.</value>
+    <value>Il comando non è supportato in questo sistema operativo.</value>
   </data>
   <data name="FileReadError" xml:space="preserve">
-    <value>The file '{0}' cannot be read: {1}</value>
+    <value>Non è possibile leggere il file "{0}": {1}</value>
   </data>
   <data name="FormatHexTypeNotSupported" xml:space="preserve">
-    <value>Cannot convert input of type '{0}' to hexadecimal. To view the hexadecimal formatting of its string representation, pipe it to the Out-String cmdlet before piping it to Format-Hex.</value>
+    <value>Non è possibile convertire l'input di tipo "{0}" in esadecimale. Per visualizzare la formattazione esadecimale della relativa rappresentazione di stringa, inviarla tramite pipe al cmdlet Out-String prima di inviarla tramite pipe a Format-Hex.</value>
   </data>
   <data name="FormatHexOnlySupportsFileSystemPaths" xml:space="preserve">
-    <value>The given path '{0}' is not supported. This command only supports the FileSystem Provider paths.</value>
+    <value>Il percorso specificato "{0}" non è supportato. Questo comando supporta solo i percorsi del provider FileSystem.</value>
   </data>
   <data name="FormatHexPathPrefix" xml:space="preserve">
-    <value>Path: </value>
+    <value>Percorso: </value>
   </data>
   <data name="GroupObjectWithHashTable" xml:space="preserve">
-    <value>The command cannot be run because the AsString parameter requires that you specify the AsHashtable parameter.</value>
+    <value>Non è possibile eseguire il comando perché il parametro AsString richiede di specificare il parametro AsHashtable.</value>
   </data>
   <data name="GroupObjectSingleProperty" xml:space="preserve">
-    <value>The command cannot be run because using the AsHashTable parameter with more than one property requires adding the AsString parameter.</value>
+    <value>Non è possibile eseguire il comando perché per usare il parametro AsHashTable con più di una proprietà è necessario aggiungere il parametro AsString.</value>
   </data>
   <data name="PathDoesNotExist" xml:space="preserve">
-    <value>Cannot find path '{0}' because it does not exist.</value>
+    <value>Non è possibile trovare il percorso '{0}' perché non esiste.</value>
   </data>
   <data name="PSPrefixReservedInInformationTag" xml:space="preserve">
-    <value>Cannot use tag '{0}'. The 'PS' prefix is reserved.</value>
+    <value>Non è possibile usare il tag "{0}". Il prefisso "PS" è riservato.</value>
   </data>
   <data name="CouldNotParseAsPowerShellDataFile" xml:space="preserve">
-    <value>The file '{0}' could not be parsed as a PowerShell Data File.</value>
+    <value>Non è possibile analizzare il file "{0}" come file di dati di PowerShell.</value>
   </data>
   <data name="InvalidSDDL" xml:space="preserve">
-    <value>Cannot construct a security descriptor from the given SDDL due to the following error: {0}</value>
+    <value>Non è possibile creare un descrittore di sicurezza dall'SDDL specificato a causa dell'errore seguente: {0}</value>
   </data>
   <data name="IEXWDACLogTitle" xml:space="preserve">
-    <value>Invoke-Expression Cmdlet</value>
+    <value>Cmdlet Invoke-Expression</value>
   </data>
   <data name="IEXWDACLogMessage" xml:space="preserve">
-    <value>Invoke-Expression cmdlet script block will be run in ConstrainedLanguage mode.</value>
+    <value>Il blocco di script del cmdlet Invoke-Expression verrà eseguito in modalità ConstrainedLanguage.</value>
   </data>
 </root>

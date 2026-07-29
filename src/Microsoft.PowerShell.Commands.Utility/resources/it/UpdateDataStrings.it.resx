@@ -118,69 +118,69 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UpdateData_WrongProviderError" xml:space="preserve">
-    <value>Cannot open the file because the current provider is "{0}", and this command requires a file.</value>
+    <value>Non è possibile aprire il file perché il provider corrente è "{0}" e questo comando richiede un file.</value>
   </data>
   <data name="UpdateData_WrongExtension" xml:space="preserve">
-    <value>Cannot read the file "{0}"  because it does not have the file name extension "{1}".</value>
+    <value>Non è possibile leggere il file "{0}" perché non ha l'estensione "{1}".</value>
   </data>
   <data name="UpdateTypeDataAction" xml:space="preserve">
-    <value>Update TypeData</value>
+    <value>Aggiorna TypeData</value>
   </data>
   <data name="UpdateFormatDataAction" xml:space="preserve">
-    <value>Update FormatData</value>
+    <value>Aggiorna FormatData</value>
   </data>
   <data name="UpdateTarget" xml:space="preserve">
     <value>FileName: {0}</value>
   </data>
   <data name="CannotUpdateMemberType" xml:space="preserve">
-    <value>Cannot update a member with type "{0}". Specify a different type for the MemberType parameter.</value>
+    <value>Non è possibile aggiornare un membro con tipo "{0}". Specificare un tipo diverso per il parametro MemberType.</value>
   </data>
   <data name="ShouldBeSpecified" xml:space="preserve">
-    <value>The {0} parameter is required for the type "{1}". Please specify the {0} parameter.</value>
+    <value>Il parametro {0} è obbligatorio per il tipo "{1}". Specificare il parametro {0}.</value>
   </data>
   <data name="ShouldNotBeNull" xml:space="preserve">
-    <value>The {0} parameter should not be null or an empty string for a member of type "{1}". Specify a non-null value for the {0} parameter when updating this member type.</value>
+    <value>Il parametro {0} non deve essere null o una stringa vuota per un membro di tipo "{1}". Specificare un valore non null per il parametro {0} quando si aggiorna questo tipo di membro.</value>
   </data>
   <data name="ShouldNotBeSpecified" xml:space="preserve">
-    <value>The {0} parameter is not necessary for a member of type "{1}", and should not be specified. Do not specify the {0} parameter when updating this member type.</value>
+    <value>Il parametro {0} non è necessario per un membro di tipo "{1}" e non deve essere specificato. Non specificare il parametro {0} quando si aggiorna questo tipo di membro.</value>
   </data>
   <data name="TypeDataEmpty" xml:space="preserve">
-    <value>No member is specified for the update on type "{0}".</value>
+    <value>Nessun membro è specificato per l'aggiornamento sul tipo "{0}".</value>
   </data>
   <data name="TargetTypeNameEmpty" xml:space="preserve">
-    <value>The target type name should not be null, empty, or contain only white spaces.</value>
+    <value>Il nome del tipo di destinazione non deve essere null, vuoto o contenere solo spazi vuoti.</value>
   </data>
   <data name="Value1AndValue2AreNotBothNull" xml:space="preserve">
-    <value>The Value and SecondValue parameters should not both be null for a member of type "{0}". Specify a non-null value for one of the two parameters.</value>
+    <value>I parametri Value e SecondValue non devono essere entrambi null per un membro di tipo "{0}". Specificare un valore non null per uno dei due parametri.</value>
   </data>
   <data name="WrongMemberCount" xml:space="preserve">
-    <value>Only one member type can be specified. The member types specified are: "{0}". Update the type with only one member type.</value>
+    <value>È possibile specificare un solo tipo di membro. I tipi di membro specificati sono: "{0}". Aggiornare il tipo con un solo tipo di membro.</value>
   </data>
   <data name="MemberTypeIsMissing" xml:space="preserve">
-    <value>The MemberName, Value, and SecondValue parameters cannot be specified without the MemberType parameter.</value>
+    <value>Non è possibile specificare parametri MemberName, Value e SecondValue senza il parametro MemberType.</value>
   </data>
   <data name="RemoveTypeDataAction" xml:space="preserve">
-    <value>Remove TypeData</value>
+    <value>Rimuovi TypeData</value>
   </data>
   <data name="RemoveTypeDataTarget" xml:space="preserve">
-    <value>Name of the type that will be removed: {0}</value>
+    <value>Nome del tipo che verrà rimosso: {0}</value>
   </data>
   <data name="UpdateTypeDataTarget" xml:space="preserve">
-    <value>Type to update: {0}</value>
+    <value>Tipo da aggiornare: {0}</value>
   </data>
   <data name="RemoveTypeFileAction" xml:space="preserve">
-    <value>Remove type file</value>
+    <value>Rimuovi tipo di file</value>
   </data>
   <data name="TypeFileNotExistsInCurrentSession" xml:space="preserve">
-    <value>The file {0} is not imported into the current session.</value>
+    <value>Il file {0} non è stato importato nella sessione corrente.</value>
   </data>
   <data name="FormatUpdatesDisabled" xml:space="preserve">
-    <value>Updating format data is not allowed in this runspace. The 'DisableFormatUpdates' property is set to True when creating the runspace.</value>
+    <value>L'aggiornamento dei dati di formato non è consentito in questo spazio di esecuzione. La proprietà 'DisableFormatUpdates' è impostata su True durante la creazione dello spazio di esecuzione.</value>
   </data>
   <data name="CannotUpdateFormatWithFormatTable" xml:space="preserve">
-    <value>Cannot update the format data with a FormatTable instance.</value>
+    <value>Non è possibile aggiornare i dati di formato con un'istanza di FormatTable.</value>
   </data>
   <data name="CannotUpdateTypeWithTypeTable" xml:space="preserve">
-    <value>Cannot update the type data with a TypeTable instance.</value>
+    <value>Non è possibile aggiornare i dati del tipo con un'istanza di TypeTable.</value>
   </data>
 </root>

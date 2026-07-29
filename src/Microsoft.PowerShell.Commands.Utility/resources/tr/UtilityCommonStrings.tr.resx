@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Invalidpath" xml:space="preserve">
-    <value>{2} has one or more exceptions that are not valid.</value>
+    <value>{2} geçersiz olan bir veya daha fazla özel durum içeriyor.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>This command cannot be run because the file path '{0}' is not valid. Please provide a valid file path and then run the command.</value>
+    <value>‘{0}' dosya yolu geçersiz olduğu için bu komut çalıştırılamaz. Lütfen geçerli bir dosya yolu sağlayın ve ardından komutu çalıştırın.</value>
   </data>
   <data name="EmptyCSSUri" xml:space="preserve">
-    <value>This command cannot be run because '{0}' is empty or blank. Please specify CSSUri and then run the command.</value>
+    <value>‘{0}' boş veya boşluk olduğu için bu komut çalıştırılamaz. Lütfen CSSUri belirtin ve ardından komutu çalıştırın.</value>
   </data>
   <data name="FileOpenError" xml:space="preserve">
-    <value>Cannot open the file because the current provider ({0}) cannot open files.</value>
+    <value>Geçerli sağlayıcı ({0}) dosyaları açamadığı için dosya açılamıyor.</value>
   </data>
   <data name="SearchXMLPrefixNullError" xml:space="preserve">
-    <value>This command cannot be run because the prefix value in the Namespace parameter is null. Provide a valid value for the prefix, and then run the command again.</value>
+    <value>Namespace parametresindeki önek değeri null olduğu için bu komut çalıştırılamaz. Önek için geçerli bir değer sağlayın ve ardından komutu yeniden çalıştırın.</value>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>The objects grouped by this property cannot be expanded because there is a key duplication. Provide a valid value for the property, and then try again.</value>
+    <value>Bu özellik tarafından gruplandırılan nesneler, bir anahtar çoğaltması olduğu için genişletilemez. Özellik için geçerli bir değer sağlayın ve ardından yeniden deneyin.</value>
   </data>
   <data name="NotSupported" xml:space="preserve">
-    <value>The command is not supported on this operating system.</value>
+    <value>Bu komut geçerli işletim sisteminde desteklenmiyor.</value>
   </data>
   <data name="FileReadError" xml:space="preserve">
-    <value>The file '{0}' cannot be read: {1}</value>
+    <value>‘{0}' dosyası okunamıyor: {1}</value>
   </data>
   <data name="FormatHexTypeNotSupported" xml:space="preserve">
-    <value>Cannot convert input of type '{0}' to hexadecimal. To view the hexadecimal formatting of its string representation, pipe it to the Out-String cmdlet before piping it to Format-Hex.</value>
+    <value>‘{0}' türündeki giriş onaltılığa dönüştürülemiyor. Dize gösteriminin onaltılık biçimlendirmesini görüntülemek için, Format-Hex'e göndermeden önce onu Out-String cmdlet'ine kanal oluşturun.</value>
   </data>
   <data name="FormatHexOnlySupportsFileSystemPaths" xml:space="preserve">
-    <value>The given path '{0}' is not supported. This command only supports the FileSystem Provider paths.</value>
+    <value>Verilen '{0}' yolu desteklenmiyor. Bu komut yalnızca FileSystem Provider yollarını destekler.</value>
   </data>
   <data name="FormatHexPathPrefix" xml:space="preserve">
-    <value>Path: </value>
+    <value>Yol: </value>
   </data>
   <data name="GroupObjectWithHashTable" xml:space="preserve">
-    <value>The command cannot be run because the AsString parameter requires that you specify the AsHashtable parameter.</value>
+    <value>AsString parametresi, AsHashtable parametresini belirtmenizi gerektirdiği için bu komut çalıştırılamaz.</value>
   </data>
   <data name="GroupObjectSingleProperty" xml:space="preserve">
-    <value>The command cannot be run because using the AsHashTable parameter with more than one property requires adding the AsString parameter.</value>
+    <value>AsHashTable parametresini birden fazla özellik ile kullanmak, AsString parametresinin eklenmesini gerektirdiğinden bu komut çalıştırılamaz.</value>
   </data>
   <data name="PathDoesNotExist" xml:space="preserve">
-    <value>Cannot find path '{0}' because it does not exist.</value>
+    <value>‘{0}' yolu bulunamadığı için bulunamıyor.</value>
   </data>
   <data name="PSPrefixReservedInInformationTag" xml:space="preserve">
-    <value>Cannot use tag '{0}'. The 'PS' prefix is reserved.</value>
+    <value>‘{0}' etiketi kullanılamaz. 'PS' öneki ayrılmış.</value>
   </data>
   <data name="CouldNotParseAsPowerShellDataFile" xml:space="preserve">
-    <value>The file '{0}' could not be parsed as a PowerShell Data File.</value>
+    <value>‘{0}' PowerShell Veri dosyası olarak ayrıştırılamadı.</value>
   </data>
   <data name="InvalidSDDL" xml:space="preserve">
-    <value>Cannot construct a security descriptor from the given SDDL due to the following error: {0}</value>
+    <value>Verilen hata nedeniyle güvenlik tanımlayıcısı belirtilen SDDL'den oluşturulamıyor: {0}</value>
   </data>
   <data name="IEXWDACLogTitle" xml:space="preserve">
     <value>Invoke-Expression Cmdlet</value>
   </data>
   <data name="IEXWDACLogMessage" xml:space="preserve">
-    <value>Invoke-Expression cmdlet script block will be run in ConstrainedLanguage mode.</value>
+    <value>Invoke-Expression cmdlet betik bloğu, ConstrainedLanguage modunda çalıştırılacak.</value>
   </data>
 </root>

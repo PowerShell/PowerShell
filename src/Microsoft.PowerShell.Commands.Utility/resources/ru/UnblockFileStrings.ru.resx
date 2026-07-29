@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LinuxNotSupported" xml:space="preserve">
-    <value>The cmdlet does not support Linux.</value>
+    <value>Командлет не поддерживает Linux.</value>
   </data>
   <data name="UnblockError" xml:space="preserve">
-    <value>There was an error unblocking {0}.</value>
+    <value>Произошла ошибка при снятии блокировки {0}.</value>
   </data>
 </root>

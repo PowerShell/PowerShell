@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TraceFileOnly" xml:space="preserve">
-    <value>Trace output can only be written to the file system. The path '{0}' referred to a '{1}' provider path.</value>
+    <value>추적 출력은 파일 시스템에만 쓸 수 있습니다. 경로 '{0}'은(는) '{1}' 공급자 경로를 가리킵니다.</value>
   </data>
   <data name="TraceSingleFileOnly" xml:space="preserve">
-    <value>Trace output can only be written to a single file. The path '{0}' resolved to more than one file.</value>
+    <value>추적 출력은 단일 파일에만 쓸 수 있습니다. 경로 '{0}'은(는) 하나 이상의 파일로 확인되었습니다.</value>
   </data>
 </root>

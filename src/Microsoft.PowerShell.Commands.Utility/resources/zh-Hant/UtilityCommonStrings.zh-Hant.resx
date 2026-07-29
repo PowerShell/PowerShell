@@ -157,7 +157,7 @@
     <value>The command cannot be run because using the AsHashTable parameter with more than one property requires adding the AsString parameter.</value>
   </data>
   <data name="PathDoesNotExist" xml:space="preserve">
-    <value>Cannot find path '{0}' because it does not exist.</value>
+    <value>找不到路徑 '{0}'，因為它不存在。</value>
   </data>
   <data name="PSPrefixReservedInInformationTag" xml:space="preserve">
     <value>Cannot use tag '{0}'. The 'PS' prefix is reserved.</value>

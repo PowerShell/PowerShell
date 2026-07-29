@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Invalidpath" xml:space="preserve">
-    <value>{2} has one or more exceptions that are not valid.</value>
+    <value>Objekt {2} obsahuje jednu nebo více neplatných výjimek.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>This command cannot be run because the file path '{0}' is not valid. Please provide a valid file path and then run the command.</value>
+    <value>Tento příkaz nejde spustit, protože cesta k souboru {0} není platná. Zadejte platnou cestu k souboru a spusťte příkaz znovu.</value>
   </data>
   <data name="EmptyCSSUri" xml:space="preserve">
-    <value>This command cannot be run because '{0}' is empty or blank. Please specify CSSUri and then run the command.</value>
+    <value>Tento příkaz nejde spustit, protože hodnota {0} je prázdná. Zadejte CSSUri a spusťte příkaz znovu.</value>
   </data>
   <data name="FileOpenError" xml:space="preserve">
-    <value>Cannot open the file because the current provider ({0}) cannot open files.</value>
+    <value>Soubor nejde otevřít, protože aktuální poskytovatel ({0}) neumí otevírat soubory.</value>
   </data>
   <data name="SearchXMLPrefixNullError" xml:space="preserve">
-    <value>This command cannot be run because the prefix value in the Namespace parameter is null. Provide a valid value for the prefix, and then run the command again.</value>
+    <value>Tento příkaz nejde spustit, protože hodnota předpony v parametru Namespace má hodnotu null. Zadejte platnou hodnotu předpony a spusťte příkaz znovu.</value>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>The objects grouped by this property cannot be expanded because there is a key duplication. Provide a valid value for the property, and then try again.</value>
+    <value>Objekty seskupené podle této vlastnosti nejde rozbalit, protože se opakuje klíč. Zadejte platnou hodnotu vlastnosti a zkuste to znovu.</value>
   </data>
   <data name="NotSupported" xml:space="preserve">
-    <value>The command is not supported on this operating system.</value>
+    <value>Tento příkaz není v tomto operačním systému podporovaný.</value>
   </data>
   <data name="FileReadError" xml:space="preserve">
-    <value>The file '{0}' cannot be read: {1}</value>
+    <value>Soubor {0} nejde přečíst: {1}</value>
   </data>
   <data name="FormatHexTypeNotSupported" xml:space="preserve">
-    <value>Cannot convert input of type '{0}' to hexadecimal. To view the hexadecimal formatting of its string representation, pipe it to the Out-String cmdlet before piping it to Format-Hex.</value>
+    <value>Vstup typu {0} nejde převést na šestnáctkovou hodnotu. Chcete-li zobrazit šestnáctkové formátování jeho řetězcové reprezentace, předejte ho před rutinou Format-Hex prostřednictvím kanálu rutině Out-String.</value>
   </data>
   <data name="FormatHexOnlySupportsFileSystemPaths" xml:space="preserve">
-    <value>The given path '{0}' is not supported. This command only supports the FileSystem Provider paths.</value>
+    <value>Zadaná cesta {0} není podporovaná. Tento příkaz podporuje jen cesty poskytovatele FileSystem.</value>
   </data>
   <data name="FormatHexPathPrefix" xml:space="preserve">
-    <value>Path: </value>
+    <value>Cesta: </value>
   </data>
   <data name="GroupObjectWithHashTable" xml:space="preserve">
-    <value>The command cannot be run because the AsString parameter requires that you specify the AsHashtable parameter.</value>
+    <value>Příkaz nejde spustit, protože parametr AsString vyžaduje zadání parametru AsHashtable.</value>
   </data>
   <data name="GroupObjectSingleProperty" xml:space="preserve">
-    <value>The command cannot be run because using the AsHashTable parameter with more than one property requires adding the AsString parameter.</value>
+    <value>Příkaz nejde spustit, protože při použití parametru AsHashTable s více než jednou vlastností je nutné přidat parametr AsString.</value>
   </data>
   <data name="PathDoesNotExist" xml:space="preserve">
-    <value>Cannot find path '{0}' because it does not exist.</value>
+    <value>Cesta {0} se nenašla, protože neexistuje.</value>
   </data>
   <data name="PSPrefixReservedInInformationTag" xml:space="preserve">
-    <value>Cannot use tag '{0}'. The 'PS' prefix is reserved.</value>
+    <value>Značku {0} nejde použít. Předpona PS je rezervovaná.</value>
   </data>
   <data name="CouldNotParseAsPowerShellDataFile" xml:space="preserve">
-    <value>The file '{0}' could not be parsed as a PowerShell Data File.</value>
+    <value>Soubor {0} se nepovedlo analyzovat jako datový soubor PowerShellu.</value>
   </data>
   <data name="InvalidSDDL" xml:space="preserve">
-    <value>Cannot construct a security descriptor from the given SDDL due to the following error: {0}</value>
+    <value>Z daného SDDL nejde vytvořit popisovač zabezpečení kvůli následující chybě: {0}</value>
   </data>
   <data name="IEXWDACLogTitle" xml:space="preserve">
-    <value>Invoke-Expression Cmdlet</value>
+    <value>Rutina Invoke-Expression</value>
   </data>
   <data name="IEXWDACLogMessage" xml:space="preserve">
-    <value>Invoke-Expression cmdlet script block will be run in ConstrainedLanguage mode.</value>
+    <value>Blok skriptu rutiny Invoke-Expression se spustí v režimu ConstrainedLanguage.</value>
   </data>
 </root>

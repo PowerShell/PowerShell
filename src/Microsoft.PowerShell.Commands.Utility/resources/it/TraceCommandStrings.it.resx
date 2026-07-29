@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TraceFileOnly" xml:space="preserve">
-    <value>Trace output can only be written to the file system. The path '{0}' referred to a '{1}' provider path.</value>
+    <value>L'output di traccia può essere scritto solo nel file system. Il percorso '{0}' fa riferimento a un percorso del provider '{1}'.</value>
   </data>
   <data name="TraceSingleFileOnly" xml:space="preserve">
-    <value>Trace output can only be written to a single file. The path '{0}' resolved to more than one file.</value>
+    <value>L'output di traccia può essere scritto solo in un singolo file. Il percorso '{0}' è stato risolto in più file.</value>
   </data>
 </root>

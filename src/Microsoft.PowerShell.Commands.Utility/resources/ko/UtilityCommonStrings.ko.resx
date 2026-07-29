@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Invalidpath" xml:space="preserve">
-    <value>{2} has one or more exceptions that are not valid.</value>
+    <value>{2}에 잘못된 예외가 하나 이상 있습니다.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>This command cannot be run because the file path '{0}' is not valid. Please provide a valid file path and then run the command.</value>
+    <value>파일 경로 '{0}'이(가) 잘못되었으므로 이 명령을 실행할 수 없습니다. 올바른 파일 경로를 제공한 다음 명령을 실행하세요.</value>
   </data>
   <data name="EmptyCSSUri" xml:space="preserve">
-    <value>This command cannot be run because '{0}' is empty or blank. Please specify CSSUri and then run the command.</value>
+    <value>'{0}'이(가) 비어 있거나 공백이므로 이 명령을 실행할 수 없습니다. CSSUri를 지정한 다음 명령을 실행하세요.</value>
   </data>
   <data name="FileOpenError" xml:space="preserve">
-    <value>Cannot open the file because the current provider ({0}) cannot open files.</value>
+    <value>현재 공급자({0})에서는 파일을 열 수 없으므로 파일을 열 수 없습니다.</value>
   </data>
   <data name="SearchXMLPrefixNullError" xml:space="preserve">
-    <value>This command cannot be run because the prefix value in the Namespace parameter is null. Provide a valid value for the prefix, and then run the command again.</value>
+    <value>Namespace 매개 변수의 접두사 값이 null이므로 이 명령을 실행할 수 없습니다. 접두사에 유효한 값을 지정한 다음 명령을 다시 실행하세요.</value>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>The objects grouped by this property cannot be expanded because there is a key duplication. Provide a valid value for the property, and then try again.</value>
+    <value>이 속성으로 그룹화된 개체는 키가 중복되어 확장할 수 없습니다. 속성에 유효한 값을 지정한 다음 다시 시도하세요.</value>
   </data>
   <data name="NotSupported" xml:space="preserve">
-    <value>The command is not supported on this operating system.</value>
+    <value>이 운영 체제에서는 명령이 지원되지 않습니다.</value>
   </data>
   <data name="FileReadError" xml:space="preserve">
-    <value>The file '{0}' cannot be read: {1}</value>
+    <value>'{0}' 파일을 읽을 수 없습니다. {1}</value>
   </data>
   <data name="FormatHexTypeNotSupported" xml:space="preserve">
-    <value>Cannot convert input of type '{0}' to hexadecimal. To view the hexadecimal formatting of its string representation, pipe it to the Out-String cmdlet before piping it to Format-Hex.</value>
+    <value>'{0}' 형식의 입력은 16진수로 변환할 수 없습니다. 문자열 표현의 16진수 서식을 보려면 Format-Hex에 전달하기 전에 Out-String cmdlet에 먼저 전달하세요.</value>
   </data>
   <data name="FormatHexOnlySupportsFileSystemPaths" xml:space="preserve">
-    <value>The given path '{0}' is not supported. This command only supports the FileSystem Provider paths.</value>
+    <value>지정된 경로 '{0}'은(는) 지원되지 않습니다. 이 명령은 FileSystem 공급자 경로만 지원합니다.</value>
   </data>
   <data name="FormatHexPathPrefix" xml:space="preserve">
-    <value>Path: </value>
+    <value>경로: </value>
   </data>
   <data name="GroupObjectWithHashTable" xml:space="preserve">
-    <value>The command cannot be run because the AsString parameter requires that you specify the AsHashtable parameter.</value>
+    <value>AsString 매개 변수를 사용하려면 AsHashtable 매개 변수를 지정해야 하므로 명령을 실행할 수 없습니다.</value>
   </data>
   <data name="GroupObjectSingleProperty" xml:space="preserve">
-    <value>The command cannot be run because using the AsHashTable parameter with more than one property requires adding the AsString parameter.</value>
+    <value>하나 이상의 속성과 함께 AsHashTable 매개 변수를 사용하려면 AsString 매개 변수도 지정해야 하므로 명령을 실행할 수 없습니다.</value>
   </data>
   <data name="PathDoesNotExist" xml:space="preserve">
-    <value>Cannot find path '{0}' because it does not exist.</value>
+    <value>경로 '{0}'이(가) 없으므로 찾을 수 없습니다.</value>
   </data>
   <data name="PSPrefixReservedInInformationTag" xml:space="preserve">
-    <value>Cannot use tag '{0}'. The 'PS' prefix is reserved.</value>
+    <value>태그 '{0}'을(를) 사용할 수 없습니다. 'PS' 접두사는 예약되어 있습니다.</value>
   </data>
   <data name="CouldNotParseAsPowerShellDataFile" xml:space="preserve">
-    <value>The file '{0}' could not be parsed as a PowerShell Data File.</value>
+    <value>'{0}' 파일을 PowerShell 데이터 파일로 구문 분석할 수 없습니다.</value>
   </data>
   <data name="InvalidSDDL" xml:space="preserve">
-    <value>Cannot construct a security descriptor from the given SDDL due to the following error: {0}</value>
+    <value>다음 오류로 인해 제공된 SDDL에서 보안 설명자를 생성할 수 없습니다. {0}</value>
   </data>
   <data name="IEXWDACLogTitle" xml:space="preserve">
     <value>Invoke-Expression Cmdlet</value>
   </data>
   <data name="IEXWDACLogMessage" xml:space="preserve">
-    <value>Invoke-Expression cmdlet script block will be run in ConstrainedLanguage mode.</value>
+    <value>Invoke-Expression cmdlet 스크립트 블록은 ConstrainedLanguage 모드에서 실행됩니다.</value>
   </data>
 </root>
