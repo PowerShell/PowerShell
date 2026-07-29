@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CatalogDefinitionFileNotGenerated" xml:space="preserve">
-    <value>Unable to generate catalog definition file.</value>
+    <value>카탈로그 정의 파일을 생성할 수 없습니다.</value>
   </data>
   <data name="AddFileToCatalog" xml:space="preserve">
-    <value>Adding file '{0}' to the catalog. Relative path of file in catalog is '{1}'.</value>
+    <value>파일 '{0}'을(를) 카탈로그에 추가하는 중입니다. 카탈로그에 있는 파일의 상대 경로는 '{1}'입니다.</value>
   </data>
   <data name="SkipValidationOfCatalogFile" xml:space="preserve">
-    <value>Skipping validating file {0} from catalog. </value>
+    <value>카탈로그에서 파일 {0}의 유효성 검사를 건너뜁니다. </value>
   </data>
   <data name="FoundFileHashInCatalogItem" xml:space="preserve">
-    <value>Found file {0} in the catalog with hash of {1}. </value>
+    <value>해시가 {1}인 파일 {0}을(를) 카탈로그에서 찾았습니다. </value>
   </data>
   <data name="FoundDuplicateFilesRelativePath" xml:space="preserve">
-    <value>Paths for catalog contains multiple files with same relative path {0}. </value>
+    <value>카탈로그 경로에 상대 경로가 {0}(으)로 동일한 파일이 여러 개 있습니다. </value>
   </data>
   <data name="FoundFileInPath" xml:space="preserve">
-    <value>Found file {0} on disk with hash of {1}.</value>
+    <value>해시가 {1}인 파일 {0}을(를) 디스크에서 찾았습니다.</value>
   </data>
   <data name="SkipValidationOfPathFile" xml:space="preserve">
-    <value>Skipping validating file {0} from path.</value>
+    <value>경로에서 파일 {0}의 유효성 검사를 건너뜁니다.</value>
   </data>
   <data name="UnableToAcquireHashAlgorithmContext" xml:space="preserve">
-    <value>Unable to acquire a handle to a catalog administrator context for a given hash algorithm {0}.</value>
+    <value>지정된 해시 알고리즘 {0}에 대한 카탈로그 관리자 컨텍스트의 핸들을 가져올 수 없습니다.</value>
   </data>
   <data name="UnableToCreateFileHash" xml:space="preserve">
-    <value>Unable to create the hash for file {0}. </value>
+    <value>파일 {0}의 해시를 만들 수 없습니다. </value>
   </data>
   <data name="UnableToOpenCatalogFile" xml:space="preserve">
-    <value>Unable to open catalog file {0}.</value>
+    <value>카탈로그 파일 {0}을(를) 열 수 없습니다.</value>
   </data>
   <data name="UnKnownCatalogVersion" xml:space="preserve">
-    <value>Catalog version is not valid. We only support catalog version {0} and version {1}.</value>
+    <value>카탈로그 버전이 유효하지 않습니다. 버전 {0} 및 버전 {1} 카탈로그만 지원됩니다.</value>
   </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
-    <value>Unable to open catalog definition file.</value>
+    <value>카탈로그 정의 파일을 열 수 없습니다.</value>
   </data>
   <data name="FoundDuplicateFileMemberInCatalog" xml:space="preserve">
-    <value>Found multiple entries of file member {0} in the catalog.</value>
+    <value>카탈로그에서 파일 구성원 {0}의 항목을 여러 개 찾았습니다.</value>
   </data>
   <data name="UnableToFindFileNameOrPathForCatalogMember" xml:space="preserve">
-    <value>Unable to find file name or path for catalog member  {0}.</value>
+    <value>카탈로그 구성원 {0}의 파일 이름 또는 경로를 찾을 수 없습니다.</value>
   </data>
   <data name="UnableToFindFileToHash" xml:space="preserve">
-    <value>Unable to find file {0} to hash.</value>
+    <value>해시할 파일 {0}을(를) 찾을 수 없습니다.</value>
   </data>
   <data name="UnableToReadFileToHash" xml:space="preserve">
-    <value>Unable to read file {0} to calculate its hash.</value>
+    <value>해시를 계산할 파일 {0}을(를) 읽을 수 없습니다.</value>
   </data>
 </root>

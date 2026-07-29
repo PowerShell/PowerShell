@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CatalogDefinitionFileNotGenerated" xml:space="preserve">
-    <value>Unable to generate catalog definition file.</value>
+    <value>カタログ定義ファイルを生成できません。</value>
   </data>
   <data name="AddFileToCatalog" xml:space="preserve">
-    <value>Adding file '{0}' to the catalog. Relative path of file in catalog is '{1}'.</value>
+    <value>ファイル '{0}' をカタログに追加しています。カタログ内のファイルの相対パスは '{1}' です。</value>
   </data>
   <data name="SkipValidationOfCatalogFile" xml:space="preserve">
-    <value>Skipping validating file {0} from catalog. </value>
+    <value>カタログからのファイル {0} の検証をスキップしています。</value>
   </data>
   <data name="FoundFileHashInCatalogItem" xml:space="preserve">
-    <value>Found file {0} in the catalog with hash of {1}. </value>
+    <value>{1} のハッシュを持つファイル {0} がカタログ内に見つかりました。</value>
   </data>
   <data name="FoundDuplicateFilesRelativePath" xml:space="preserve">
-    <value>Paths for catalog contains multiple files with same relative path {0}. </value>
+    <value>カタログのパスには、同じ相対パス {0} を持つ複数のファイルが含まれています。</value>
   </data>
   <data name="FoundFileInPath" xml:space="preserve">
-    <value>Found file {0} on disk with hash of {1}.</value>
+    <value>{1} のハッシュを持つファイル {0} がディスクに見つかりました。</value>
   </data>
   <data name="SkipValidationOfPathFile" xml:space="preserve">
-    <value>Skipping validating file {0} from path.</value>
+    <value>パスからのファイル {0} の検証をスキップしています。</value>
   </data>
   <data name="UnableToAcquireHashAlgorithmContext" xml:space="preserve">
-    <value>Unable to acquire a handle to a catalog administrator context for a given hash algorithm {0}.</value>
+    <value>指定されたハッシュ アルゴリズム {0} のカタログ管理者コンテキストへのハンドルを取得できません。</value>
   </data>
   <data name="UnableToCreateFileHash" xml:space="preserve">
-    <value>Unable to create the hash for file {0}. </value>
+    <value>ファイル {0} のハッシュを作成できません。</value>
   </data>
   <data name="UnableToOpenCatalogFile" xml:space="preserve">
-    <value>Unable to open catalog file {0}.</value>
+    <value>カタログ ファイル {0} を開けません。</value>
   </data>
   <data name="UnKnownCatalogVersion" xml:space="preserve">
-    <value>Catalog version is not valid. We only support catalog version {0} and version {1}.</value>
+    <value>カタログ バージョンが無効です。カタログのバージョン {0} およびバージョン {1} のみがサポートされています。</value>
   </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
-    <value>Unable to open catalog definition file.</value>
+    <value>カタログ定義ファイルを開けません。</value>
   </data>
   <data name="FoundDuplicateFileMemberInCatalog" xml:space="preserve">
-    <value>Found multiple entries of file member {0} in the catalog.</value>
+    <value>カタログ内にファイル メンバー {0} の複数のエントリが見つかりました。</value>
   </data>
   <data name="UnableToFindFileNameOrPathForCatalogMember" xml:space="preserve">
-    <value>Unable to find file name or path for catalog member  {0}.</value>
+    <value>カタログ メンバー {0} のファイル名またはパスが見つかりません。</value>
   </data>
   <data name="UnableToFindFileToHash" xml:space="preserve">
-    <value>Unable to find file {0} to hash.</value>
+    <value>ハッシュするファイル {0} が見つかりません。</value>
   </data>
   <data name="UnableToReadFileToHash" xml:space="preserve">
-    <value>Unable to read file {0} to calculate its hash.</value>
+    <value>ハッシュを計算するファイル {0} を読み取れません。</value>
   </data>
 </root>

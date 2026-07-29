@@ -118,43 +118,43 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ShouldContinuePromptCaption" xml:space="preserve">
-    <value>Continue with this operation?</value>
+    <value>Bu işleme devam edilsin mi?</value>
   </data>
   <data name="ContinueOneLabel" xml:space="preserve">
-    <value>&amp;Yes</value>
+    <value>&amp;Evet</value>
   </data>
   <data name="ContinueOneHelpMessage" xml:space="preserve">
-    <value>Continue with only the next step of the operation.</value>
+    <value>İşlemin yalnızca bir sonraki adımıyla devam edin.</value>
   </data>
   <data name="ContinueAllLabel" xml:space="preserve">
-    <value>Yes to &amp;All</value>
+    <value>&amp;Tümüne Evet</value>
   </data>
   <data name="ContinueAllHelpMessage" xml:space="preserve">
-    <value>Continue with all the steps of the operation.</value>
+    <value>İşlemin tüm adımlarıyla devam edin.</value>
   </data>
   <data name="SkipOneLabel" xml:space="preserve">
-    <value>&amp;No</value>
+    <value>&amp;Hayır</value>
   </data>
   <data name="SkipOneHelpMessage" xml:space="preserve">
-    <value>Skip this operation and proceed with the next operation.</value>
+    <value>Bu işlemi atlayın ve sonraki işleme devam edin.</value>
   </data>
   <data name="SkipAllLabel" xml:space="preserve">
-    <value>No to A&amp;ll</value>
+    <value>Tümüne &amp;Hayır</value>
   </data>
   <data name="SkipAllHelpMessage" xml:space="preserve">
-    <value>Skip this operation and all subsequent operations.</value>
+    <value>Bu işlemi ve sonraki tüm işlemleri atlayın.</value>
   </data>
   <data name="HaltHelpMessage" xml:space="preserve">
-    <value>Stop this command.</value>
+    <value>Bu komutu çalıştırın.</value>
   </data>
   <data name="HaltLabel" xml:space="preserve">
-    <value>&amp;Halt Command</value>
+    <value>&amp;Durdurma Komutu</value>
   </data>
   <data name="PauseLabel" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>&amp;Askıya Al</value>
   </data>
   <data name="PauseHelpMessage" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type "{0}" to resume the pipeline.</value>
+    <value>Geçerli işlem hattını duraklatın ve komut istemine dönün. İşlem hattını sürdürmek için "{0}" yazın.</value>
   </data>
   <data name="ProgramExitedWithNonZeroCode" xml:space="preserve">
     <!-- NOTE:
@@ -163,81 +163,81 @@
       however that is used for ApplicationFailedExceptions thrown when the NativeCommandProcessor fails in an unexpected way.
       In this case, we have a more specific error for the native command scenario, so the two are not conflated.
     -->
-    <value>Program "{0}" ended with non-zero exit code: {1} ({2}).</value>
+    <value>Program "{0}", sıfır olmayan çıkış koduyla sona erdi: {1} ({2}).</value>
   </data>
   <data name="ShouldProcessMessage" xml:space="preserve">
-    <value>Performing the operation "{0}" on target "{1}".</value>
+    <value>"{1}" hedefi üzerinde "{0}" işlemi gerçekleştiriliyor.</value>
   </data>
   <data name="ShouldProcessWhatIfMessage" xml:space="preserve">
     <value>What if: {0}</value>
   </data>
   <data name="ShouldProcessWarningFallback" xml:space="preserve">
-    <value>Are you sure you want to perform this action?
+    <value>Bu işlemi gerçekleştirmek istediğinizden emin misiniz?
 {0}</value>
   </data>
   <data name="InquireCaptionDefault" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Onayla</value>
   </data>
   <data name="ErrorPreferenceStop" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to Stop: {1}</value>
+    <value>Çalışan komut, tercih değişkeni "{0}" veya ortak parametre Durdur: {1} olarak ayarlandığı için durduruldu.</value>
   </data>
   <data name="PreferenceStop" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to Stop.</value>
+    <value>Çalışan komut, tercih değişkeni "{0}" veya ortak parametre Durdur olarak ayarlandığı için durduruldu.</value>
   </data>
   <data name="PreferenceInvalid" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to the following value that is not valid: "{1}".</value>
+    <value>Çalışan komut, tercih değişkeni "{0}" veya ortak parametre geçerli olmayan şu değere ayarlandığı için durduruldu: "{1}".</value>
   </data>
   <data name="InquireHalt" xml:space="preserve">
-    <value>The running command stopped because the user selected the Stop option.</value>
+    <value>Çalışan komut, kullanıcı Durdur seçeneğini belirlediği için durduruldu.</value>
   </data>
   <data name="InquireCtrlC" xml:space="preserve">
-    <value>The running command stopped because the user interrupted the command.</value>
+    <value>Çalışan komut, kullanıcı komutu kestiği için durduruldu.</value>
   </data>
   <data name="CannotInvokePSCmdletsDirectly" xml:space="preserve">
-    <value>Cmdlets derived from PSCmdlet cannot be invoked directly.  </value>
+    <value>PSCmdlet'ten türetilen cmdlet'ler doğrudan çağrılamaz.  </value>
   </data>
   <data name="ParameterNotValidInRemoteRunspace" xml:space="preserve">
-    <value>Cmdlet '{0}' does not support parameter '{1}' in a remote session.</value>
+    <value>Cmdlet '{0}', uzak oturumda '{1}' parametresini desteklemiyor.</value>
   </data>
   <data name="PagingSupportAccurateTotalCountTemplate" xml:space="preserve">
-    <value>Total count: {0}</value>
+    <value>Toplam sayı: {0}</value>
     <comment>{0} is a placeholder for an integer number.
 
 Reviewed by TArcher on 2010-07-20</comment>
   </data>
   <data name="PagingSupportEstimatedTotalCountTemplate" xml:space="preserve">
-    <value>Estimated total count: {0}</value>
+    <value>Tahmini toplam sayı: {0}</value>
     <comment>{0} is a placeholder for an integer number
 
 Reviewed by TArcher on 2010-07-20
 </comment>
   </data>
   <data name="PagingSupportUnknownTotalCountTemplate" xml:space="preserve">
-    <value>Unknown total count</value>
+    <value>Toplam sayı bilinmiyor</value>
     <comment>Reviewed by TArcher on 2010-07-20</comment>
   </data>
   <data name="ObsoleteCommand" xml:space="preserve">
-    <value>command '{0}'</value>
+    <value>komut '{0}'</value>
   </data>
   <data name="UseOfDeprecatedCommandWarning" xml:space="preserve">
-    <value>The {0} is obsolete. {1}</value>
+    <value>{0} eski. {1}</value>
   </data>
   <data name="ExecFailed" xml:space="preserve">
-    <value>Exec call failed with errorno {0} for command line: {1}</value>
+    <value>Exec çağrısı, şu komut satırı için {0} hata numarasıyla başarısız oldu: {1}</value>
   </data>
   <data name="NativeCommandNotFound" xml:space="preserve">
-    <value>Command '{0}' was not found. The specified command must be an executable.</value>
+    <value>'{0}' komutu bulunamadı. Belirtilen komut yürütülebilir bir dosya olmalıdır.</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
-    <value>Script Block Processing Dot-Source Check</value>
+    <value>Betik Bloğu İşleme Dot-Source Denetimi</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Dot-Source processing for script block '{0}' will fail in Constrained Language mode because its language mode '{1}' does not match the current language mode '{2}'.</value>
+    <value>Betik bloğu '{0}' için Dot-Source işleme, dil modu '{1}' geçerli dil modu '{2}' ile eşleşmediği için Kısıtlı Dil modunda başarısız olur.</value>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
-    <value>Command Searcher</value>
+    <value>Komut Arayıcı</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
-    <value>Command '{0}' in module '{1}' is untrusted and will not be accessible in ConstrainedLanguage mode.</value>
+    <value>'{1}' modülündeki '{0}' komutuna güvenilmiyor ve Kısıtlı Dil modunda erişilebilir olmayacak.</value>
   </data>
 </root>

@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CatalogDefinitionFileNotGenerated" xml:space="preserve">
-    <value>Unable to generate catalog definition file.</value>
+    <value>无法生成目录定义文件。</value>
   </data>
   <data name="AddFileToCatalog" xml:space="preserve">
-    <value>Adding file '{0}' to the catalog. Relative path of file in catalog is '{1}'.</value>
+    <value>正在将文件“{0}”添加到目录。目录中文件的相对路径为“{1}”。</value>
   </data>
   <data name="SkipValidationOfCatalogFile" xml:space="preserve">
-    <value>Skipping validating file {0} from catalog. </value>
+    <value>正在跳过验证目录中的文件 {0}。</value>
   </data>
   <data name="FoundFileHashInCatalogItem" xml:space="preserve">
-    <value>Found file {0} in the catalog with hash of {1}. </value>
+    <value>在目录中找到哈希为 {1} 的文件 {0}。</value>
   </data>
   <data name="FoundDuplicateFilesRelativePath" xml:space="preserve">
-    <value>Paths for catalog contains multiple files with same relative path {0}. </value>
+    <value>目录的路径包含多个相对路径 {0} 相同的文件。</value>
   </data>
   <data name="FoundFileInPath" xml:space="preserve">
-    <value>Found file {0} on disk with hash of {1}.</value>
+    <value>在磁盘上找到哈希为 {1} 的文件 {0}。</value>
   </data>
   <data name="SkipValidationOfPathFile" xml:space="preserve">
-    <value>Skipping validating file {0} from path.</value>
+    <value>正在跳过验证路径中的文件 {0}。</value>
   </data>
   <data name="UnableToAcquireHashAlgorithmContext" xml:space="preserve">
-    <value>Unable to acquire a handle to a catalog administrator context for a given hash algorithm {0}.</value>
+    <value>无法获取给定哈希算法 {0} 的目录管理员上下文的句柄。</value>
   </data>
   <data name="UnableToCreateFileHash" xml:space="preserve">
-    <value>Unable to create the hash for file {0}. </value>
+    <value>无法为文件 {0} 创建哈希。</value>
   </data>
   <data name="UnableToOpenCatalogFile" xml:space="preserve">
-    <value>Unable to open catalog file {0}.</value>
+    <value>无法打开目录文件 {0}。</value>
   </data>
   <data name="UnKnownCatalogVersion" xml:space="preserve">
-    <value>Catalog version is not valid. We only support catalog version {0} and version {1}.</value>
+    <value>目录版本无效。我们仅支持目录版本 {0} 和版本 {1}。</value>
   </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
-    <value>Unable to open catalog definition file.</value>
+    <value>无法打开目录定义文件。</value>
   </data>
   <data name="FoundDuplicateFileMemberInCatalog" xml:space="preserve">
-    <value>Found multiple entries of file member {0} in the catalog.</value>
+    <value>在目录中找到文件成员 {0} 的多个条目。</value>
   </data>
   <data name="UnableToFindFileNameOrPathForCatalogMember" xml:space="preserve">
-    <value>Unable to find file name or path for catalog member  {0}.</value>
+    <value>找不到目录成员 {0} 的文件名或路径。</value>
   </data>
   <data name="UnableToFindFileToHash" xml:space="preserve">
-    <value>Unable to find file {0} to hash.</value>
+    <value>找不到要进行哈希处理的文件 {0}。</value>
   </data>
   <data name="UnableToReadFileToHash" xml:space="preserve">
-    <value>Unable to read file {0} to calculate its hash.</value>
+    <value>无法读取文件 {0} 以计算其哈希。</value>
   </data>
 </root>

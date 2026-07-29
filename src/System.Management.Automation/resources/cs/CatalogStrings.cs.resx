@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CatalogDefinitionFileNotGenerated" xml:space="preserve">
-    <value>Unable to generate catalog definition file.</value>
+    <value>Soubor s definicí katalogu nejde vygenerovat.</value>
   </data>
   <data name="AddFileToCatalog" xml:space="preserve">
-    <value>Adding file '{0}' to the catalog. Relative path of file in catalog is '{1}'.</value>
+    <value>Soubor {0} se přidává do katalogu. Relativní cesta souboru v katalogu je {1}.</value>
   </data>
   <data name="SkipValidationOfCatalogFile" xml:space="preserve">
-    <value>Skipping validating file {0} from catalog. </value>
+    <value>Ověření souboru {0} z katalogu se přeskakuje. </value>
   </data>
   <data name="FoundFileHashInCatalogItem" xml:space="preserve">
-    <value>Found file {0} in the catalog with hash of {1}. </value>
+    <value>V katalogu se našel soubor {0} s hodnotou hash {1}. </value>
   </data>
   <data name="FoundDuplicateFilesRelativePath" xml:space="preserve">
-    <value>Paths for catalog contains multiple files with same relative path {0}. </value>
+    <value>Cesty katalogu obsahují několik souborů se stejnou relativní cestou {0}. </value>
   </data>
   <data name="FoundFileInPath" xml:space="preserve">
-    <value>Found file {0} on disk with hash of {1}.</value>
+    <value>Na disku se našel soubor {0} s hodnotou hash {1}.</value>
   </data>
   <data name="SkipValidationOfPathFile" xml:space="preserve">
-    <value>Skipping validating file {0} from path.</value>
+    <value>Ověření souboru {0} z cesty se přeskakuje.</value>
   </data>
   <data name="UnableToAcquireHashAlgorithmContext" xml:space="preserve">
-    <value>Unable to acquire a handle to a catalog administrator context for a given hash algorithm {0}.</value>
+    <value>Nepovedlo se získat popisovač kontextu správce katalogu pro zadaný hashovací algoritmus {0}.</value>
   </data>
   <data name="UnableToCreateFileHash" xml:space="preserve">
-    <value>Unable to create the hash for file {0}. </value>
+    <value>Pro soubor {0} nejde vytvořit hodnotu hash. </value>
   </data>
   <data name="UnableToOpenCatalogFile" xml:space="preserve">
-    <value>Unable to open catalog file {0}.</value>
+    <value>Soubor katalogu {0} nejde otevřít.</value>
   </data>
   <data name="UnKnownCatalogVersion" xml:space="preserve">
-    <value>Catalog version is not valid. We only support catalog version {0} and version {1}.</value>
+    <value>Verze katalogu není platná. Podporujeme jen katalog verze {0} a verze {1}.</value>
   </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
-    <value>Unable to open catalog definition file.</value>
+    <value>Soubor s definicí katalogu nejde otevřít.</value>
   </data>
   <data name="FoundDuplicateFileMemberInCatalog" xml:space="preserve">
-    <value>Found multiple entries of file member {0} in the catalog.</value>
+    <value>V katalogu se našlo několik položek člena souboru {0}.</value>
   </data>
   <data name="UnableToFindFileNameOrPathForCatalogMember" xml:space="preserve">
-    <value>Unable to find file name or path for catalog member  {0}.</value>
+    <value>Název souboru ani cesta pro člena katalogu {0} se nenašly.</value>
   </data>
   <data name="UnableToFindFileToHash" xml:space="preserve">
-    <value>Unable to find file {0} to hash.</value>
+    <value>Soubor {0} pro výpočet hodnoty hash se nenašel.</value>
   </data>
   <data name="UnableToReadFileToHash" xml:space="preserve">
-    <value>Unable to read file {0} to calculate its hash.</value>
+    <value>Soubor {0} nejde přečíst pro výpočet hodnoty hash.</value>
   </data>
 </root>

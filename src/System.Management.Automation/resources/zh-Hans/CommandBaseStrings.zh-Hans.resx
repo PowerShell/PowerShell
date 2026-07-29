@@ -118,43 +118,43 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ShouldContinuePromptCaption" xml:space="preserve">
-    <value>Continue with this operation?</value>
+    <value>继续执行此操作?</value>
   </data>
   <data name="ContinueOneLabel" xml:space="preserve">
-    <value>&amp;Yes</value>
+    <value>是(&amp;Y)</value>
   </data>
   <data name="ContinueOneHelpMessage" xml:space="preserve">
-    <value>Continue with only the next step of the operation.</value>
+    <value>仅继续执行操作的下一步。</value>
   </data>
   <data name="ContinueAllLabel" xml:space="preserve">
-    <value>Yes to &amp;All</value>
+    <value>全是(&amp;A)</value>
   </data>
   <data name="ContinueAllHelpMessage" xml:space="preserve">
-    <value>Continue with all the steps of the operation.</value>
+    <value>继续执行操作的所有步骤。</value>
   </data>
   <data name="SkipOneLabel" xml:space="preserve">
-    <value>&amp;No</value>
+    <value>否(&amp;N)</value>
   </data>
   <data name="SkipOneHelpMessage" xml:space="preserve">
-    <value>Skip this operation and proceed with the next operation.</value>
+    <value>跳过此操作并继续执行下一个操作。</value>
   </data>
   <data name="SkipAllLabel" xml:space="preserve">
-    <value>No to A&amp;ll</value>
+    <value>全否(&amp;L)</value>
   </data>
   <data name="SkipAllHelpMessage" xml:space="preserve">
-    <value>Skip this operation and all subsequent operations.</value>
+    <value>跳过此操作和所有后续操作。</value>
   </data>
   <data name="HaltHelpMessage" xml:space="preserve">
-    <value>Stop this command.</value>
+    <value>停止此命令。</value>
   </data>
   <data name="HaltLabel" xml:space="preserve">
-    <value>&amp;Halt Command</value>
+    <value>停止命令(&amp;H)</value>
   </data>
   <data name="PauseLabel" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>暂停(&amp;S)</value>
   </data>
   <data name="PauseHelpMessage" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type "{0}" to resume the pipeline.</value>
+    <value>暂停当前管道并返回到命令提示符。键入“{0}”以恢复管道。</value>
   </data>
   <data name="ProgramExitedWithNonZeroCode" xml:space="preserve">
     <!-- NOTE:
@@ -163,81 +163,81 @@
       however that is used for ApplicationFailedExceptions thrown when the NativeCommandProcessor fails in an unexpected way.
       In this case, we have a more specific error for the native command scenario, so the two are not conflated.
     -->
-    <value>Program "{0}" ended with non-zero exit code: {1} ({2}).</value>
+    <value>程序“{0}”以非零退出代码结束: {1} ({2})。</value>
   </data>
   <data name="ShouldProcessMessage" xml:space="preserve">
-    <value>Performing the operation "{0}" on target "{1}".</value>
+    <value>正在对目标“{1}”执行操作“{0}”。</value>
   </data>
   <data name="ShouldProcessWhatIfMessage" xml:space="preserve">
     <value>What if: {0}</value>
   </data>
   <data name="ShouldProcessWarningFallback" xml:space="preserve">
-    <value>Are you sure you want to perform this action?
+    <value>是否确实要执行此操作?
 {0}</value>
   </data>
   <data name="InquireCaptionDefault" xml:space="preserve">
-    <value>Confirm</value>
+    <value>确认</value>
   </data>
   <data name="ErrorPreferenceStop" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to Stop: {1}</value>
+    <value>已停止正在运行的命令，因为首选变量“{0}”或通用参数设置为“停止”: {1}</value>
   </data>
   <data name="PreferenceStop" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to Stop.</value>
+    <value>已停止正在运行的命令，因为首选变量“{0}”或通用参数设置为“停止”。</value>
   </data>
   <data name="PreferenceInvalid" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to the following value that is not valid: "{1}".</value>
+    <value>已停止正在运行的命令，因为首选变量“{0}”或通用参数设置以下无效值:“{1}”。</value>
   </data>
   <data name="InquireHalt" xml:space="preserve">
-    <value>The running command stopped because the user selected the Stop option.</value>
+    <value>已停止正在运行的命令，因为用户选择了“停止”选项。</value>
   </data>
   <data name="InquireCtrlC" xml:space="preserve">
-    <value>The running command stopped because the user interrupted the command.</value>
+    <value>已停止正在运行的命令，因为用户中断了该命令。</value>
   </data>
   <data name="CannotInvokePSCmdletsDirectly" xml:space="preserve">
-    <value>Cmdlets derived from PSCmdlet cannot be invoked directly.  </value>
+    <value>无法直接调用派生自 PSCmdlet 的 Cmdlet。 </value>
   </data>
   <data name="ParameterNotValidInRemoteRunspace" xml:space="preserve">
-    <value>Cmdlet '{0}' does not support parameter '{1}' in a remote session.</value>
+    <value>Cmdlet“{0}”不支持远程会话中的参数“{1}”。</value>
   </data>
   <data name="PagingSupportAccurateTotalCountTemplate" xml:space="preserve">
-    <value>Total count: {0}</value>
+    <value>总计: {0}</value>
     <comment>{0} is a placeholder for an integer number.
 
 Reviewed by TArcher on 2010-07-20</comment>
   </data>
   <data name="PagingSupportEstimatedTotalCountTemplate" xml:space="preserve">
-    <value>Estimated total count: {0}</value>
+    <value>估计总计数: {0}</value>
     <comment>{0} is a placeholder for an integer number
 
 Reviewed by TArcher on 2010-07-20
 </comment>
   </data>
   <data name="PagingSupportUnknownTotalCountTemplate" xml:space="preserve">
-    <value>Unknown total count</value>
+    <value>总计数未知</value>
     <comment>Reviewed by TArcher on 2010-07-20</comment>
   </data>
   <data name="ObsoleteCommand" xml:space="preserve">
-    <value>command '{0}'</value>
+    <value>命令“{0}”</value>
   </data>
   <data name="UseOfDeprecatedCommandWarning" xml:space="preserve">
-    <value>The {0} is obsolete. {1}</value>
+    <value>{0} 已过时。{1}</value>
   </data>
   <data name="ExecFailed" xml:space="preserve">
-    <value>Exec call failed with errorno {0} for command line: {1}</value>
+    <value>对以下命令行的执行调用失败，errorno 为 {0}: {1}</value>
   </data>
   <data name="NativeCommandNotFound" xml:space="preserve">
-    <value>Command '{0}' was not found. The specified command must be an executable.</value>
+    <value>找不到命令“{0}”。指定的命令必须是可执行的。</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
-    <value>Script Block Processing Dot-Source Check</value>
+    <value>脚本块处理点源检查</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Dot-Source processing for script block '{0}' will fail in Constrained Language mode because its language mode '{1}' does not match the current language mode '{2}'.</value>
+    <value>脚本块“{0}”的点源处理将会在受约束语言模式下失败，因为其语言模式“{1}”与当前语言模式“{2}”不匹配。</value>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
-    <value>Command Searcher</value>
+    <value>命令搜索器</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
-    <value>Command '{0}' in module '{1}' is untrusted and will not be accessible in ConstrainedLanguage mode.</value>
+    <value>模块“{1}”中的命令“{0}”不受信任，无法在 ConstrainedLanguage 模式下访问。</value>
   </data>
 </root>

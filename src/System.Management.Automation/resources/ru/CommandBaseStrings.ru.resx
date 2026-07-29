@@ -118,43 +118,43 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ShouldContinuePromptCaption" xml:space="preserve">
-    <value>Continue with this operation?</value>
+    <value>Продолжить эту операцию?</value>
   </data>
   <data name="ContinueOneLabel" xml:space="preserve">
-    <value>&amp;Yes</value>
+    <value>Д&amp;а</value>
   </data>
   <data name="ContinueOneHelpMessage" xml:space="preserve">
-    <value>Continue with only the next step of the operation.</value>
+    <value>Продолжить выполнять только следующий шаг этой операции.</value>
   </data>
   <data name="ContinueAllLabel" xml:space="preserve">
-    <value>Yes to &amp;All</value>
+    <value>Да для &amp;всех</value>
   </data>
   <data name="ContinueAllHelpMessage" xml:space="preserve">
-    <value>Continue with all the steps of the operation.</value>
+    <value>Продолжить выполнять все шаги этой операции.</value>
   </data>
   <data name="SkipOneLabel" xml:space="preserve">
-    <value>&amp;No</value>
+    <value>&amp;Нет</value>
   </data>
   <data name="SkipOneHelpMessage" xml:space="preserve">
-    <value>Skip this operation and proceed with the next operation.</value>
+    <value>Пропустить эту операцию и перейти к следующей.</value>
   </data>
   <data name="SkipAllLabel" xml:space="preserve">
-    <value>No to A&amp;ll</value>
+    <value>Нет для всех</value>
   </data>
   <data name="SkipAllHelpMessage" xml:space="preserve">
-    <value>Skip this operation and all subsequent operations.</value>
+    <value>Пропустить эту операцию и все последующие операции.</value>
   </data>
   <data name="HaltHelpMessage" xml:space="preserve">
-    <value>Stop this command.</value>
+    <value>Остановить эту команду.</value>
   </data>
   <data name="HaltLabel" xml:space="preserve">
-    <value>&amp;Halt Command</value>
+    <value>&amp;Остановить команду</value>
   </data>
   <data name="PauseLabel" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>&amp;Приостановить</value>
   </data>
   <data name="PauseHelpMessage" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type "{0}" to resume the pipeline.</value>
+    <value>Приостановить текущий конвейер и вернуться в командную строку. Введите "{0}", чтобы возобновить работу конвейера.</value>
   </data>
   <data name="ProgramExitedWithNonZeroCode" xml:space="preserve">
     <!-- NOTE:
@@ -163,81 +163,81 @@
       however that is used for ApplicationFailedExceptions thrown when the NativeCommandProcessor fails in an unexpected way.
       In this case, we have a more specific error for the native command scenario, so the two are not conflated.
     -->
-    <value>Program "{0}" ended with non-zero exit code: {1} ({2}).</value>
+    <value>Программа "{0}" завершилась с ненулевым кодом выхода: {1} ({2}).</value>
   </data>
   <data name="ShouldProcessMessage" xml:space="preserve">
-    <value>Performing the operation "{0}" on target "{1}".</value>
+    <value>Выполнение операции "{0}" для целевого объекта "{1}".</value>
   </data>
   <data name="ShouldProcessWhatIfMessage" xml:space="preserve">
-    <value>What if: {0}</value>
+    <value>Что если: {0}</value>
   </data>
   <data name="ShouldProcessWarningFallback" xml:space="preserve">
-    <value>Are you sure you want to perform this action?
+    <value>Действительно выполнить это действие?
 {0}</value>
   </data>
   <data name="InquireCaptionDefault" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Подтвердить</value>
   </data>
   <data name="ErrorPreferenceStop" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to Stop: {1}</value>
+    <value>Выполнение команды остановлено, поскольку для переменной предпочтения "{0}" или для общего параметра задано значение "Stop": {1}</value>
   </data>
   <data name="PreferenceStop" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to Stop.</value>
+    <value>Выполнение команды остановлено, поскольку для переменной предпочтения "{0}" или для общего параметра задано значение "Stop".</value>
   </data>
   <data name="PreferenceInvalid" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to the following value that is not valid: "{1}".</value>
+    <value>Выполняющаяся команда остановлена, поскольку для переменной предпочтения "{0}" или для общего параметра заданно значение: "{1}". Это недопустимое значение.</value>
   </data>
   <data name="InquireHalt" xml:space="preserve">
-    <value>The running command stopped because the user selected the Stop option.</value>
+    <value>Выполняющаяся команда остановлена, поскольку пользователь выбрал параметр "Остановить".</value>
   </data>
   <data name="InquireCtrlC" xml:space="preserve">
-    <value>The running command stopped because the user interrupted the command.</value>
+    <value>Выполняющаяся команда остановлена, поскольку пользователь прервал ее работу.</value>
   </data>
   <data name="CannotInvokePSCmdletsDirectly" xml:space="preserve">
-    <value>Cmdlets derived from PSCmdlet cannot be invoked directly.  </value>
+    <value>Нельзя вызвать напрямую командлеты, производные от PSCmdlet.  </value>
   </data>
   <data name="ParameterNotValidInRemoteRunspace" xml:space="preserve">
-    <value>Cmdlet '{0}' does not support parameter '{1}' in a remote session.</value>
+    <value>Командлет "{0}" не поддерживает параметр "{1}" в удаленном сеансе.</value>
   </data>
   <data name="PagingSupportAccurateTotalCountTemplate" xml:space="preserve">
-    <value>Total count: {0}</value>
+    <value>Общее количество: {0}</value>
     <comment>{0} is a placeholder for an integer number.
 
 Reviewed by TArcher on 2010-07-20</comment>
   </data>
   <data name="PagingSupportEstimatedTotalCountTemplate" xml:space="preserve">
-    <value>Estimated total count: {0}</value>
+    <value>Предполагаемое общее количество: {0}</value>
     <comment>{0} is a placeholder for an integer number
 
 Reviewed by TArcher on 2010-07-20
 </comment>
   </data>
   <data name="PagingSupportUnknownTotalCountTemplate" xml:space="preserve">
-    <value>Unknown total count</value>
+    <value>Неизвестное общее количество</value>
     <comment>Reviewed by TArcher on 2010-07-20</comment>
   </data>
   <data name="ObsoleteCommand" xml:space="preserve">
-    <value>command '{0}'</value>
+    <value>команда "{0}"</value>
   </data>
   <data name="UseOfDeprecatedCommandWarning" xml:space="preserve">
-    <value>The {0} is obsolete. {1}</value>
+    <value>Элемент {0} устарел. {1}</value>
   </data>
   <data name="ExecFailed" xml:space="preserve">
-    <value>Exec call failed with errorno {0} for command line: {1}</value>
+    <value>Сбой вызова выполнения с кодом ошибки {0} для командной строки: {1}</value>
   </data>
   <data name="NativeCommandNotFound" xml:space="preserve">
-    <value>Command '{0}' was not found. The specified command must be an executable.</value>
+    <value>Команда "{0}" не найдена. Указанная команда должна быть исполняемым файлом.</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
-    <value>Script Block Processing Dot-Source Check</value>
+    <value>Проверка обработки блока сценария Dot-Source</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Dot-Source processing for script block '{0}' will fail in Constrained Language mode because its language mode '{1}' does not match the current language mode '{2}'.</value>
+    <value>Обработка Dot-Source для блока сценария "{0}" завершится сбоем в режиме ограниченного языка, поскольку его режим языка "{1}" не совпадает с текущим режимом языка "{2}".</value>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
-    <value>Command Searcher</value>
+    <value>Поиск команд</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
-    <value>Command '{0}' in module '{1}' is untrusted and will not be accessible in ConstrainedLanguage mode.</value>
+    <value>Команда "{0}" в модуле "{1}" не является доверенной и будет недоступна в режиме ConstrainedLanguage.</value>
   </data>
 </root>
