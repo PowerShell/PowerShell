@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CertificatePathMustBeFileSystemPath" xml:space="preserve">
+    <value>Non è possibile caricare il certificato. '{0}' deve risolversi in un percorso del file system.</value>
+  </data>
+  <data name="CertificateCannotBeUsedForEncryption" xml:space="preserve">
+    <value>Non è possibile utilizzare il certificato '{0}' per la crittografia. I certificati di Crittografia devono contenere l'utilizzo della chiave Crittografia dati o Crittografia chiave e includere l'Utilizzo chiavi avanzato della crittografia del documento ({1}).</value>
+  </data>
+  <data name="IdentifierMustReferenceSingleCertificate" xml:space="preserve">
+    <value>Non è possibile caricare il certificato. L'identificatore '{0}' corrisponde a più certificati. Per crittografare per più destinatari, specificare più valori distinti per il parametro '{1}', anziché un carattere jolly che corrisponde a più certificati.</value>
+  </data>
+  <data name="NoCertificateFound" xml:space="preserve">
+    <value>Non è possibile caricare il certificato di crittografia. L'impostazione del certificato '{0}' non rappresenta un certificato valido con codifica Base64, né un certificato valido tramite file, directory, identificazione personale o nome soggetto.</value>
+  </data>
+  <data name="CertificateContainsPrivateKey" xml:space="preserve">
+    <value>AVVISO: il certificato '{0}' contiene una chiave privata. I certificati di registrazione eventi protetti usati per la crittografia devono contenere solo la chiave pubblica.</value>
+  </data>
+  <data name="CouldNotEncryptContent" xml:space="preserve">
+    <value>ERRORE: non è possibile proteggere il messaggio del registro eventi '{0}': {1}</value>
+  </data>
+  <data name="CouldNotUseCertificate" xml:space="preserve">
+    <value>ERRORE: non è possibile trovare o usare il certificato: {0}</value>
+  </data>
+  <data name="CannotEncryptSecureString" xml:space="preserve">
+    <value>La chiave di sessione non è disponibile per crittografare la stringa sicura.</value>
+  </data>
+  <data name="InvalidOffset" xml:space="preserve">
+    <value>Offset del buffer non valido.</value>
+  </data>
+  <data name="InvalidPublicKey" xml:space="preserve">
+    <value>Dati della chiave pubblica non validi.</value>
+  </data>
+  <data name="CannotImportPublicKey" xml:space="preserve">
+    <value>Non è possibile importare la chiave pubblica.</value>
+  </data>
+  <data name="InvalidSessionKey" xml:space="preserve">
+    <value>Dati della chiave di sessione non validi.</value>
+  </data>
+  <data name="ScriptFileBlockedBySystemPolicy" xml:space="preserve">
+    <value>Il file di script '{0}' è bloccato dall'esecuzione dai criteri di sistema.</value>
+  </data>
+  <data name="UnknownSystemScriptFileEnforcement" xml:space="preserve">
+    <value>È stato restituito un valore sconosciuto per l'applicazione dei criteri del file di script: {0}.</value>
+  </data>
+  <data name="ExternalScriptWDACLogTitle" xml:space="preserve">
+    <value>Lettura file di script</value>
+  </data>
+  <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
+    <value>Il file di script '{0}' non è considerato attendibile dai criteri e verrà eseguito in modalità ConstrainedLanguage.</value>
+  </data>
+</root>
