@@ -1236,7 +1236,7 @@ namespace PSTests.Sequential
                 "Microsoft.PowerShell_8wekyb3d8bbwe");
 
             Assert.Equal(
-                Path.Combine(programDataConfigDirectory, "Packages", "Microsoft.PowerShell_8wekyb3d8bbwe"),
+                Path.Combine(programDataConfigDirectory, "Microsoft.PowerShell_8wekyb3d8bbwe"),
                 actual);
         }
 
@@ -1307,12 +1307,14 @@ namespace PSTests.Sequential
         [Fact]
         [Priority(26)]
         [SupportedOSPlatform("windows")]
-        public void PowerShellConfig_MachineFolderDirectorySecurityUsesRestrictedInheritedAcl()
+        public void PowerShellConfig_MachineFolderDirectorySecurityUsesProtectedInheritableAcl()
         {
             DirectorySecurity security = PowerShellConfig.CreateMachineFolderDirectorySecurity();
 
             Assert.True(security.AreAccessRulesProtected);
-            Assert.True(PowerShellConfig.IsMachineFolderSecuritySecure(security));
+            Assert.True(PowerShellConfig.IsMachineFolderSecuritySecure(
+                security,
+                expectedAccessRulesProtected: true));
             Assert.Equal(
                 new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null),
                 security.GetOwner(typeof(SecurityIdentifier)));
@@ -1324,6 +1326,44 @@ namespace PSTests.Sequential
         [Fact]
         [Priority(27)]
         [SupportedOSPlatform("windows")]
+        public void PowerShellConfig_MachineFolderFileSecurityAllowsAclInheritance()
+        {
+            var administrators = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null);
+            var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, domainSid: null);
+            var security = new FileSecurity();
+            security.SetAccessRuleProtection(isProtected: false, preserveInheritance: false);
+            security.SetOwner(administrators);
+            security.AddAccessRule(new FileSystemAccessRule(
+                new SecurityIdentifier(WellKnownSidType.LocalSystemSid, domainSid: null),
+                FileSystemRights.FullControl,
+                AccessControlType.Allow));
+            security.AddAccessRule(new FileSystemAccessRule(
+                administrators,
+                FileSystemRights.FullControl,
+                AccessControlType.Allow));
+            security.AddAccessRule(new FileSystemAccessRule(
+                users,
+                FileSystemRights.ReadAndExecute,
+                AccessControlType.Allow));
+
+            Assert.False(security.AreAccessRulesProtected);
+            Assert.True(PowerShellConfig.IsMachineFolderSecuritySecure(
+                security,
+                expectedAccessRulesProtected: false));
+
+            security.AddAccessRule(new FileSystemAccessRule(
+                users,
+                FileSystemRights.WriteData,
+                AccessControlType.Allow));
+
+            Assert.False(PowerShellConfig.IsMachineFolderSecuritySecure(
+                security,
+                expectedAccessRulesProtected: false));
+        }
+
+        [Fact]
+        [Priority(28)]
+        [SupportedOSPlatform("windows")]
         public void PowerShellConfig_MachineFolderSecurityRejectsUserWriteAccess()
         {
             DirectorySecurity security = PowerShellConfig.CreateMachineFolderDirectorySecurity();
@@ -1334,7 +1374,9 @@ namespace PSTests.Sequential
                 PropagationFlags.None,
                 AccessControlType.Allow));
 
-            Assert.False(PowerShellConfig.IsMachineFolderSecuritySecure(security));
+            Assert.False(PowerShellConfig.IsMachineFolderSecuritySecure(
+                security,
+                expectedAccessRulesProtected: true));
         }
 
         [SupportedOSPlatform("windows")]

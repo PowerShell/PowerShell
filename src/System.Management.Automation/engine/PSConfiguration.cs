@@ -785,7 +785,6 @@ namespace System.Management.Automation.Configuration
             DirectorySecurity security = CreateMachineFolderDirectorySecurity();
             string systemConfigDirectory = Platform.SystemConfigDirectory;
             EnsureDirectoryWithSecurity(systemConfigDirectory, security);
-            EnsureDirectoryWithSecurity(Path.Combine(systemConfigDirectory, "Packages"), security);
             EnsureDirectoryWithSecurity(machineFolderConfigDirectory, security);
         }
 
@@ -819,6 +818,8 @@ namespace System.Management.Automation.Configuration
 
             var administrators = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null);
             var security = new DirectorySecurity();
+            // Exclude ambient ProgramData permissions while allowing the explicit rules below
+            // to flow to files and subdirectories created inside the PFN directory.
             security.SetAccessRuleProtection(isProtected: true, preserveInheritance: false);
             security.SetOwner(administrators);
             security.AddAccessRule(new FileSystemAccessRule(
@@ -838,27 +839,6 @@ namespace System.Management.Automation.Configuration
                 FileSystemRights.ReadAndExecute,
                 Inheritance,
                 PropagationFlags.None,
-                AccessControlType.Allow));
-            return security;
-        }
-
-        private static FileSecurity CreateMachineFolderFileSecurity()
-        {
-            var administrators = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null);
-            var security = new FileSecurity();
-            security.SetAccessRuleProtection(isProtected: true, preserveInheritance: false);
-            security.SetOwner(administrators);
-            security.AddAccessRule(new FileSystemAccessRule(
-                new SecurityIdentifier(WellKnownSidType.LocalSystemSid, domainSid: null),
-                FileSystemRights.FullControl,
-                AccessControlType.Allow));
-            security.AddAccessRule(new FileSystemAccessRule(
-                administrators,
-                FileSystemRights.FullControl,
-                AccessControlType.Allow));
-            security.AddAccessRule(new FileSystemAccessRule(
-                new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, domainSid: null),
-                FileSystemRights.ReadAndExecute,
                 AccessControlType.Allow));
             return security;
         }
@@ -872,20 +852,26 @@ namespace System.Management.Automation.Configuration
                 throw new IOException(path);
             }
 
-            file.SetAccessControl(CreateMachineFolderFileSecurity());
+            // The PFN directory is the protected ACL boundary. Its files inherit the directory's
+            // access rules so future machine-wide data receives the same permissions by default.
+            FileSecurity security = file.GetAccessControl();
+            security.SetAccessRuleProtection(isProtected: false, preserveInheritance: false);
+            security.SetOwner(new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null));
+            file.SetAccessControl(security);
         }
 
         private static void ValidateMachineFolderConfigPath(string configFile)
         {
             string systemConfigDirectory = Platform.SystemConfigDirectory;
             ValidateMachineFolderDirectory(systemConfigDirectory);
-            ValidateMachineFolderDirectory(Path.Combine(systemConfigDirectory, "Packages"));
             ValidateMachineFolderDirectory(Path.GetDirectoryName(configFile));
 
             var file = new FileInfo(configFile);
             file.Refresh();
             if ((file.Attributes & FileAttributes.ReparsePoint) != 0
-                || !IsMachineFolderSecuritySecure(file.GetAccessControl()))
+                || !IsMachineFolderSecuritySecure(
+                    file.GetAccessControl(),
+                    expectedAccessRulesProtected: false))
             {
                 throw new UnauthorizedAccessException(configFile);
             }
@@ -897,13 +883,17 @@ namespace System.Management.Automation.Configuration
             directory.Refresh();
             if (!directory.Exists
                 || (directory.Attributes & FileAttributes.ReparsePoint) != 0
-                || !IsMachineFolderSecuritySecure(directory.GetAccessControl()))
+                || !IsMachineFolderSecuritySecure(
+                    directory.GetAccessControl(),
+                    expectedAccessRulesProtected: true))
             {
                 throw new UnauthorizedAccessException(path);
             }
         }
 
-        internal static bool IsMachineFolderSecuritySecure(FileSystemSecurity security)
+        internal static bool IsMachineFolderSecuritySecure(
+            FileSystemSecurity security,
+            bool expectedAccessRulesProtected)
         {
             const FileSystemRights WriteRights =
                 FileSystemRights.WriteData
@@ -915,7 +905,7 @@ namespace System.Management.Automation.Configuration
                 | FileSystemRights.ChangePermissions
                 | FileSystemRights.TakeOwnership;
 
-            if (!security.AreAccessRulesProtected)
+            if (security.AreAccessRulesProtected != expectedAccessRulesProtected)
             {
                 return false;
             }

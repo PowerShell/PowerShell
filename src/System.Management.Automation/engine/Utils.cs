@@ -565,7 +565,7 @@ namespace System.Management.Automation
         {
             return string.IsNullOrEmpty(programDataConfigDirectory) || string.IsNullOrEmpty(packageFamilyName)
                 ? null
-                : Path.Combine(programDataConfigDirectory, "Packages", packageFamilyName);
+                : Path.Combine(programDataConfigDirectory, packageFamilyName);
         }
 
         private static string[] s_productFolderDirectories;
