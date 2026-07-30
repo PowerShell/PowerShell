@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ShouldContinuePromptCaption" xml:space="preserve">
+    <value>继续执行此操作?</value>
+  </data>
+  <data name="ContinueOneLabel" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="ContinueOneHelpMessage" xml:space="preserve">
+    <value>仅继续执行操作的下一步。</value>
+  </data>
+  <data name="ContinueAllLabel" xml:space="preserve">
+    <value>全是</value>
+  </data>
+  <data name="ContinueAllHelpMessage" xml:space="preserve">
+    <value>继续执行操作的所有步骤。</value>
+  </data>
+  <data name="SkipOneLabel" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="SkipOneHelpMessage" xml:space="preserve">
+    <value>跳过此操作并继续执行下一个操作。</value>
+  </data>
+  <data name="SkipAllLabel" xml:space="preserve">
+    <value>全否</value>
+  </data>
+  <data name="SkipAllHelpMessage" xml:space="preserve">
+    <value>跳过此操作和所有后续操作。</value>
+  </data>
+  <data name="HaltHelpMessage" xml:space="preserve">
+    <value>停止此命令。</value>
+  </data>
+  <data name="HaltLabel" xml:space="preserve">
+    <value>停止命令</value>
+  </data>
+  <data name="PauseLabel" xml:space="preserve">
+    <value>暂停</value>
+  </data>
+  <data name="PauseHelpMessage" xml:space="preserve">
+    <value>暂停当前管道并返回到命令提示符。键入“{0}”以恢复管道。</value>
+  </data>
+  <data name="ProgramExitedWithNonZeroCode" xml:space="preserve">
+    <!-- NOTE:
+      This string was added for the native command error action preference integration feature.
+      ParserStrings already declares a ProgramFailedToExecute string,
+      however that is used for ApplicationFailedExceptions thrown when the NativeCommandProcessor fails in an unexpected way.
+      In this case, we have a more specific error for the native command scenario, so the two are not conflated.
+    -->
+    <value>程序“{0}”以非零退出代码结束: {1} ({2})。</value>
+  </data>
+  <data name="ShouldProcessMessage" xml:space="preserve">
+    <value>正在对目标“{1}”执行操作“{0}”。</value>
+  </data>
+  <data name="ShouldProcessWhatIfMessage" xml:space="preserve">
+    <value>What if: {0}</value>
+  </data>
+  <data name="ShouldProcessWarningFallback" xml:space="preserve">
+    <value>是否确实要执行此操作?
+{0}</value>
+  </data>
+  <data name="InquireCaptionDefault" xml:space="preserve">
+    <value>确认</value>
+  </data>
+  <data name="ErrorPreferenceStop" xml:space="preserve">
+    <value>已停止正在运行的命令，因为首选变量“{0}”或通用参数设置为“停止”: {1}</value>
+  </data>
+  <data name="PreferenceStop" xml:space="preserve">
+    <value>已停止正在运行的命令，因为首选变量“{0}”或通用参数设置为“停止”。</value>
+  </data>
+  <data name="PreferenceInvalid" xml:space="preserve">
+    <value>已停止正在运行的命令，因为首选变量“{0}”或通用参数设置以下无效值:“{1}”。</value>
+  </data>
+  <data name="InquireHalt" xml:space="preserve">
+    <value>已停止正在运行的命令，因为用户选择了“停止”选项。</value>
+  </data>
+  <data name="InquireCtrlC" xml:space="preserve">
+    <value>已停止正在运行的命令，因为用户中断了该命令。</value>
+  </data>
+  <data name="CannotInvokePSCmdletsDirectly" xml:space="preserve">
+    <value>无法直接调用派生自 PSCmdlet 的 Cmdlet。 </value>
+  </data>
+  <data name="ParameterNotValidInRemoteRunspace" xml:space="preserve">
+    <value>Cmdlet“{0}”不支持远程会话中的参数“{1}”。</value>
+  </data>
+  <data name="PagingSupportAccurateTotalCountTemplate" xml:space="preserve">
+    <value>总计: {0}</value>
+    <comment>{0} is a placeholder for an integer number.
+
+Reviewed by TArcher on 2010-07-20</comment>
+  </data>
+  <data name="PagingSupportEstimatedTotalCountTemplate" xml:space="preserve">
+    <value>估计总计数: {0}</value>
+    <comment>{0} is a placeholder for an integer number
+
+Reviewed by TArcher on 2010-07-20
+</comment>
+  </data>
+  <data name="PagingSupportUnknownTotalCountTemplate" xml:space="preserve">
+    <value>总计数未知</value>
+    <comment>Reviewed by TArcher on 2010-07-20</comment>
+  </data>
+  <data name="ObsoleteCommand" xml:space="preserve">
+    <value>命令“{0}”</value>
+  </data>
+  <data name="UseOfDeprecatedCommandWarning" xml:space="preserve">
+    <value>{0} 已过时。{1}</value>
+  </data>
+  <data name="ExecFailed" xml:space="preserve">
+    <value>对以下命令行的执行调用失败，errorno 为 {0}: {1}</value>
+  </data>
+  <data name="NativeCommandNotFound" xml:space="preserve">
+    <value>找不到命令“{0}”。指定的命令必须是可执行的。</value>
+  </data>
+  <data name="WDACLogTitle" xml:space="preserve">
+    <value>脚本块处理点源检查</value>
+  </data>
+  <data name="WDACLogMessage" xml:space="preserve">
+    <value>脚本块“{0}”的点源处理将会在受约束语言模式下失败，因为其语言模式“{1}”与当前语言模式“{2}”不匹配。</value>
+  </data>
+  <data name="SearcherWDACLogTitle" xml:space="preserve">
+    <value>命令搜索器</value>
+  </data>
+  <data name="SearcherWDACLogMessage" xml:space="preserve">
+    <value>模块“{1}”中的命令“{0}”不受信任，无法在 ConstrainedLanguage 模式下访问。</value>
+  </data>
+</root>
