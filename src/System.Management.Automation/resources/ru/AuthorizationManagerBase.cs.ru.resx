@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ISecurityDescriptorCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Nous ne pouvons pas utiliser l’interface, car ce fournisseur ne prend pas en charge l’interface ISecurityDescriptorCmdletProvider.</value>
+  <data name="AuthorizationManagerDefaultFailureReason" xml:space="preserve">
+    <value>Selhala kontrola AuthorizationManager.</value>
   </data>
 </root>

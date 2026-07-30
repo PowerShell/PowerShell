@@ -118,43 +118,43 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ShouldContinuePromptCaption" xml:space="preserve">
-    <value>Continue with this operation?</value>
+    <value>Continuare con questa operazione?</value>
   </data>
   <data name="ContinueOneLabel" xml:space="preserve">
-    <value>&amp;Yes</value>
+    <value>&amp;Sì</value>
   </data>
   <data name="ContinueOneHelpMessage" xml:space="preserve">
-    <value>Continue with only the next step of the operation.</value>
+    <value>Continuare solo con il passaggio successivo dell'operazione.</value>
   </data>
   <data name="ContinueAllLabel" xml:space="preserve">
-    <value>Yes to &amp;All</value>
+    <value>Sì per t&amp;utti</value>
   </data>
   <data name="ContinueAllHelpMessage" xml:space="preserve">
-    <value>Continue with all the steps of the operation.</value>
+    <value>Continuare con tutti i passaggi dell'operazione.</value>
   </data>
   <data name="SkipOneLabel" xml:space="preserve">
     <value>&amp;No</value>
   </data>
   <data name="SkipOneHelpMessage" xml:space="preserve">
-    <value>Skip this operation and proceed with the next operation.</value>
+    <value>Ignorare questa operazione e procedere con l'operazione successiva.</value>
   </data>
   <data name="SkipAllLabel" xml:space="preserve">
-    <value>No to A&amp;ll</value>
+    <value>N&amp;o per tutti</value>
   </data>
   <data name="SkipAllHelpMessage" xml:space="preserve">
-    <value>Skip this operation and all subsequent operations.</value>
+    <value>Ignorare questa operazione e tutte le operazioni successive.</value>
   </data>
   <data name="HaltHelpMessage" xml:space="preserve">
-    <value>Stop this command.</value>
+    <value>Arrestare questo comando.</value>
   </data>
   <data name="HaltLabel" xml:space="preserve">
-    <value>&amp;Halt Command</value>
+    <value>Comando I&amp;nterrompi</value>
   </data>
   <data name="PauseLabel" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>&amp;Sospendi</value>
   </data>
   <data name="PauseHelpMessage" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type "{0}" to resume the pipeline.</value>
+    <value>Sospendere la pipeline corrente e tornare al prompt dei comandi. Digitare "{0}" per riprendere la pipeline.</value>
   </data>
   <data name="ProgramExitedWithNonZeroCode" xml:space="preserve">
     <!-- NOTE:
@@ -163,81 +163,81 @@
       however that is used for ApplicationFailedExceptions thrown when the NativeCommandProcessor fails in an unexpected way.
       In this case, we have a more specific error for the native command scenario, so the two are not conflated.
     -->
-    <value>Program "{0}" ended with non-zero exit code: {1} ({2}).</value>
+    <value>Il programma "{0}" è terminato con un codice di uscita diverso da zero: {1} ({2}).</value>
   </data>
   <data name="ShouldProcessMessage" xml:space="preserve">
-    <value>Performing the operation "{0}" on target "{1}".</value>
+    <value>Esecuzione dell'operazione "{0}" sulla destinazione "{1}".</value>
   </data>
   <data name="ShouldProcessWhatIfMessage" xml:space="preserve">
     <value>What if: {0}</value>
   </data>
   <data name="ShouldProcessWarningFallback" xml:space="preserve">
-    <value>Are you sure you want to perform this action?
+    <value>Eseguire questa azione?
 {0}</value>
   </data>
   <data name="InquireCaptionDefault" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Confermare</value>
   </data>
   <data name="ErrorPreferenceStop" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to Stop: {1}</value>
+    <value>Il comando in esecuzione è stato arrestato perché la variabile di preferenza "{0}" o il parametro comune è impostato su Arresta: {1}</value>
   </data>
   <data name="PreferenceStop" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to Stop.</value>
+    <value>Il comando in esecuzione è stato arrestato perché la variabile di preferenza "{0}" o il parametro comune è impostato su Arresta.</value>
   </data>
   <data name="PreferenceInvalid" xml:space="preserve">
-    <value>The running command stopped because the preference variable "{0}" or common parameter is set to the following value that is not valid: "{1}".</value>
+    <value>Il comando in esecuzione è stato arrestato perché la variabile di preferenza "{0}" o il parametro comune è impostato sul valore seguente, che non è valido: "{1}".</value>
   </data>
   <data name="InquireHalt" xml:space="preserve">
-    <value>The running command stopped because the user selected the Stop option.</value>
+    <value>Il comando in esecuzione è stato arrestato perché l'utente ha selezionato l'opzione Arresta.</value>
   </data>
   <data name="InquireCtrlC" xml:space="preserve">
-    <value>The running command stopped because the user interrupted the command.</value>
+    <value>Il comando in esecuzione è stato arrestato perché l'utente lo ha interrotto.</value>
   </data>
   <data name="CannotInvokePSCmdletsDirectly" xml:space="preserve">
-    <value>Cmdlets derived from PSCmdlet cannot be invoked directly.  </value>
+    <value>Impossibile richiamare direttamente i cmdlet derivati da PSCmdlet.  </value>
   </data>
   <data name="ParameterNotValidInRemoteRunspace" xml:space="preserve">
-    <value>Cmdlet '{0}' does not support parameter '{1}' in a remote session.</value>
+    <value>Il cmdlet '{0}' non supporta il parametro '{1}' in una sessione remota.</value>
   </data>
   <data name="PagingSupportAccurateTotalCountTemplate" xml:space="preserve">
-    <value>Total count: {0}</value>
+    <value>Numero totale: {0}</value>
     <comment>{0} is a placeholder for an integer number.
 
 Reviewed by TArcher on 2010-07-20</comment>
   </data>
   <data name="PagingSupportEstimatedTotalCountTemplate" xml:space="preserve">
-    <value>Estimated total count: {0}</value>
+    <value>Numero totale stimato: {0}</value>
     <comment>{0} is a placeholder for an integer number
 
 Reviewed by TArcher on 2010-07-20
 </comment>
   </data>
   <data name="PagingSupportUnknownTotalCountTemplate" xml:space="preserve">
-    <value>Unknown total count</value>
+    <value>Conteggio totale sconosciuto</value>
     <comment>Reviewed by TArcher on 2010-07-20</comment>
   </data>
   <data name="ObsoleteCommand" xml:space="preserve">
-    <value>command '{0}'</value>
+    <value>comando '{0}'</value>
   </data>
   <data name="UseOfDeprecatedCommandWarning" xml:space="preserve">
-    <value>The {0} is obsolete. {1}</value>
+    <value>L'oggetto {0} è obsoleto. {1}</value>
   </data>
   <data name="ExecFailed" xml:space="preserve">
-    <value>Exec call failed with errorno {0} for command line: {1}</value>
+    <value>Chiamata EXEC non riuscita con errore {0} per la riga di comando: {1}</value>
   </data>
   <data name="NativeCommandNotFound" xml:space="preserve">
-    <value>Command '{0}' was not found. The specified command must be an executable.</value>
+    <value>Non è possibile trovare il comando "{0}". Il comando specificato deve essere un file eseguibile.</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
-    <value>Script Block Processing Dot-Source Check</value>
+    <value>Controllo Dot-Source per elaborazione blocco script</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Dot-Source processing for script block '{0}' will fail in Constrained Language mode because its language mode '{1}' does not match the current language mode '{2}'.</value>
+    <value>L'elaborazione Dot-Source per il blocco di script '{0}' non riuscirà in modalità linguaggio con restrizioni perché la relativa modalità linguaggio '{1}' non corrisponde alla modalità linguaggio corrente '{2}'.</value>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
-    <value>Command Searcher</value>
+    <value>Strumento di ricerca comandi</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
-    <value>Command '{0}' in module '{1}' is untrusted and will not be accessible in ConstrainedLanguage mode.</value>
+    <value>Il comando '{0}' nel modulo '{1}' non è attendibile e non sarà accessibile in modalità ConstrainedLanguage.</value>
   </data>
 </root>
