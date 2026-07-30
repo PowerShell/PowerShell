@@ -117,10 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="PromptForCredential_User" xml:space="preserve">
-    <value>Użytkownik: </value>
+  <data name="ActivityParameterHelpMessage" xml:space="preserve">
+    <value>描述正在報告進度之活動的文字。</value>
   </data>
-  <data name="PromptForCredential_Password" xml:space="preserve">
-    <value>Hasło użytkownika {0}: </value>
+  <data name="StatusParameterHelpMessage" xml:space="preserve">
+    <value>描述目前正在報告進度之活動目前狀態的文字。</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>正在處理</value>
   </data>
 </root>

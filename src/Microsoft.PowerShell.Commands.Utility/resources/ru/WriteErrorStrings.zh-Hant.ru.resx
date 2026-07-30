@@ -117,10 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="PromptForCredential_User" xml:space="preserve">
-    <value>Użytkownik: </value>
-  </data>
-  <data name="PromptForCredential_Password" xml:space="preserve">
-    <value>Hasło użytkownika {0}: </value>
+  <data name="WriteErrorException" xml:space="preserve">
+    <value>"The Write-Error cmdlet reported an error."</value>
   </data>
 </root>

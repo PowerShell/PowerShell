@@ -117,10 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="PromptForCredential_User" xml:space="preserve">
-    <value>Użytkownik: </value>
+  <data name="SetVariableAction" xml:space="preserve">
+    <value>設定變數</value>
   </data>
-  <data name="PromptForCredential_Password" xml:space="preserve">
-    <value>Hasło użytkownika {0}: </value>
+  <data name="SetVariableTarget" xml:space="preserve">
+    <value>名稱: {0}，值: {1}</value>
+  </data>
+  <data name="UseSingleVariable" xml:space="preserve">
+    <value>使用單一變數，而非集合</value>
+  </data>
+  <data name="NewVariableAction" xml:space="preserve">
+    <value>新增變數</value>
+  </data>
+  <data name="NewVariableTarget" xml:space="preserve">
+    <value>名稱: {0}，值: {1}</value>
+  </data>
+  <data name="RemoveVariableAction" xml:space="preserve">
+    <value>移除變數</value>
+  </data>
+  <data name="RemoveVariableTarget" xml:space="preserve">
+    <value>名稱: {0}</value>
+  </data>
+  <data name="ClearVariableAction" xml:space="preserve">
+    <value>清除變數</value>
+  </data>
+  <data name="ClearVariableTarget" xml:space="preserve">
+    <value>名稱: {0}</value>
   </data>
 </root>
