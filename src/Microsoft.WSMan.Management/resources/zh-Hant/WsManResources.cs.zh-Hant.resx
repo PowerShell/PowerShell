@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidFileName" xml:space="preserve">
+    <value>Tento příkaz nelze použít, protože soubor neexistuje. Zkontrolujte, zda soubor existuje, a spusťte příkaz znovu.</value>
+  </data>
+  <data name="NewItemShouldContinueClientCertCaption" xml:space="preserve">
+    <value>Vytvoří novou položku ClientCertificate.</value>
+  </data>
+  <data name="NotProperURI" xml:space="preserve">
+    <value>Tento příkaz nelze spustit, protože identifikátor URI připojení nemá správný formát. Zkontrolujte prosím identifikátor URI připojení a spusťte příkaz znovu.</value>
+  </data>
+  <data name="CredSSPContinueQuery" xml:space="preserve">
+    <value>Ověřování CredSSP umožňuje odeslat přihlašovací údaje uživatele z tohoto počítače do vzdáleného počítače. Pokud použijete ověřování CredSSP pro připojení ke škodlivému nebo napadenému počítači, bude mít tento počítač přístup k vašemu uživatelskému jménu a heslu. Další informace najdete v tématu nápovědy Enable-WSManCredSSP.
+Chcete povolit ověřování CredSSP?</value>
+  </data>
+  <data name="NewItemShouldContinueListenerCaption" xml:space="preserve">
+    <value>Vytvoří novou položku naslouchacího procesu.</value>
+  </data>
+  <data name="ShouldContinueSecurityQuery" xml:space="preserve">
+    <value>Tento příkaz upraví nastavení zabezpečení prostředku v následujícím modulu plug-in služby WinRM: {0}.
+Chcete pokračovat?</value>
+  </data>
+  <data name="SetItemWhatIfAndConfirmText" xml:space="preserve">
+    <value>Spuštěním rutiny Set-Item s nastavením konfigurace WinRM {0} aktualizujte hodnotu na {1}.</value>
+  </data>
+  <data name="EnableCredSSPPolicyValidateError" xml:space="preserve">
+    <value>Tento příkaz nelze spustit, protože toto nastavení nelze povolit.</value>
+  </data>
+  <data name="NewItemShouldContinueListenerQuery" xml:space="preserve">
+    <value>Tento příkaz vytvoří novou položku naslouchacího procesu.
+
+Chcete pokračovat?</value>
+  </data>
+  <data name="ErrorElevationNeeded" xml:space="preserve">
+    <value>Přístup je odepřený. Tuto rutinu musíte spustit z procesu se zvýšenými oprávněními.</value>
+  </data>
+  <data name="DriveRootError" xml:space="preserve">
+    <value>Tento příkaz nelze použít, protože kořen jednotky WsMan není v této verzi systému Windows podporován.</value>
+  </data>
+  <data name="WSManServiceStartCaption" xml:space="preserve">
+    <value>Spustit službu WinRM</value>
+  </data>
+  <data name="CredSSPServerContinueQuery" xml:space="preserve">
+    <value>Ověřování CredSSP umožňuje serveru přijímat přihlašovací údaje uživatele ze vzdáleného počítače. Pokud na serveru povolíte ověřování CredSSP, bude mít server přístup k uživatelskému jménu a heslu klientského počítače, pokud je klientský počítač odešle. Další informace najdete v tématu nápovědy Enable-WSManCredSSP.
+Chcete povolit ověřování CredSSP?</value>
+  </data>
+  <data name="QuickConfigContinueCaption" xml:space="preserve">
+    <value>Rychlá konfigurace WinRM</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="NoChangeValue" xml:space="preserve">
+    <value>Tento příkaz nemůže nastavit vstupní hodnotu, protože tyto hodnoty představují primární klíče nebo položky kontejneru objektu prostředku. Změňte vstupní hodnotu a spusťte příkaz znovu.</value>
+  </data>
+  <data name="CredSSPContinueCaption" xml:space="preserve">
+    <value>Konfigurace ověřování CredSSP pro službu WS-Management</value>
+  </data>
+  <data name="SetItemShouldContinueCaption" xml:space="preserve">
+    <value>Nastavit hodnotu položky</value>
+  </data>
+  <data name="TrustedHostValueTypeError" xml:space="preserve">
+    <value>Typ System.Object[] nelze převést na typ System.String vyžadovaný parametrem. Zadaná metoda není podporována.</value>
+  </data>
+  <data name="CredSSPServiceNotConfigured" xml:space="preserve">
+    <value>Tento počítač není nakonfigurován pro příjem přihlašovacích údajů ze vzdáleného klientského počítače.</value>
+  </data>
+  <data name="DisconnectFailure" xml:space="preserve">
+    <value>Tento příkaz nelze použít z aktuální cesty. Přejděte do kořenové cesty zprostředkovatele pomocí cd\ a spusťte příkaz znovu.</value>
+  </data>
+  <data name="CmdletNotAvailable" xml:space="preserve">
+    <value>Tato rutina PowerShellu není k dispozici pro systémy Windows XP a Windows Server 2003.</value>
+  </data>
+  <data name="NoAttributeMatch" xml:space="preserve">
+    <value>Tento příkaz nelze použít, protože parametr odpovídá netextové vlastnosti v ResourceURI. Zkontrolujte vstupní parametry a spusťte příkaz znovu.</value>
+  </data>
+  <data name="AmbiguousAuthentication" xml:space="preserve">
+    <value>Parametr {0} nelze zadat, pokud je zadán parametr {1}.</value>
+  </data>
+  <data name="InvalidComputerName" xml:space="preserve">
+    <value>Klient WinRM nemůže dokončit operaci. Zkontrolujte, zda je název počítače platný.</value>
+  </data>
+  <data name="CredSSPClientAndDelegateMustBeSpecified" xml:space="preserve">
+    <value>Parametr {0} je povinný, pokud je hodnota parametru {1} rovna {2}.</value>
+  </data>
+  <data name="value" xml:space="preserve">
+    <value>Tento příkaz nelze použít, protože není zadána hodnota parametru. Zkontrolujte hodnotu a spusťte příkaz znovu.</value>
+  </data>
+  <data name="ItemDoesNotExist" xml:space="preserve">
+    <value>Tento příkaz nelze použít, protože cesta neexistuje. Zkontrolujte, zda cesta existuje, a spusťte příkaz znovu.</value>
+  </data>
+  <data name="ShouldContinueSecurityCaption" xml:space="preserve">
+    <value>Konfigurace zabezpečení modulu plug-in WinRM.</value>
+  </data>
+  <data name="SetItemNotSupported" xml:space="preserve">
+    <value>Tento příkaz nelze použít v aktuální cestě, protože tato rutina není na této úrovni cesty zprostředkovatele podporována.</value>
+  </data>
+  <data name="NoDelegateFreshCred" xml:space="preserve">
+    <value>Tento počítač není nakonfigurován tak, aby umožňoval delegování nových přihlašovacích údajů.</value>
+  </data>
+  <data name="SetItemServiceRestartWarning" xml:space="preserve">
+    <value>Provedené změny konfigurace se projeví až po restartování služby WinRM.  Chcete-li restartovat službu WinRM, spusťte následující příkaz: Restart-Service winrm.</value>
+  </data>
+  <data name="QuickConfigContinueQuery" xml:space="preserve">
+    <value>Spuštění příkazu Set-WSManQuickConfig má významné důsledky pro zabezpečení, protože na tomto počítači povoluje vzdálenou správu prostřednictvím služby WinRM.
+Tento příkaz:
+    1. Zkontroluje, jestli je služba WinRM spuštěná. Pokud služba WinRM není spuštěná, spustí se.
+    2. Nastaví typ spouštění služby WinRM na Automaticky.
+    3. Vytvoří naslouchací proces pro příjem požadavků na libovolné IP adrese. Ve výchozím nastavení se používá přenos HTTP.
+    4. Povolí výjimku brány firewall pro provoz služby WS-Management.
+    5. Povolí ověřování služby Kerberos a Negotiate.
+Chcete na tomto počítači povolit vzdálenou správu prostřednictvím služby WinRM?</value>
+  </data>
+  <data name="SetItemOnRunAsPasswordNoRunAsUser" xml:space="preserve">
+    <value>Hodnotu RunAsPassword nelze nastavit, pokud není nastavena hodnota RunAsUser. Nastavte hodnoty RunAsUser a RunAsPassword v PowerShellu voláním rutiny Set-Item s hodnotou atributu -Path nastavenou na hodnotu RunAsUser.</value>
+  </data>
+  <data name="SetItemWarningForGlobalQuota" xml:space="preserve">
+    <value>Aktualizovaná konfigurace může ovlivnit fungování modulů plug-in, jejichž hodnota kvóty pro jednotlivé moduly plug-in je větší než {0}. Ověřte konfiguraci všech zaregistrovaných modulů plug-in a změňte hodnoty kvót pro jednotlivé moduly plug-in u dotčených modulů plug-in.</value>
+  </data>
+  <data name="SetItemShouldContinueQuery" xml:space="preserve">
+    <value>Tento příkaz nastaví hodnotu položky.
+
+Chcete pokračovat?</value>
+  </data>
+  <data name="DelegateFreshCred" xml:space="preserve">
+    <value>Tento počítač je nakonfigurován tak, aby umožňoval delegování nových přihlašovacích údajů na následující cíle:</value>
+  </data>
+  <data name="ConfigStorage" xml:space="preserve">
+    <value>Kořen úložiště konfigurace WsMan</value>
+  </data>
+  <data name="WinRMServiceError" xml:space="preserve">
+    <value>Tento příkaz nelze spustit, protože služba WinRM není spuštěná.</value>
+  </data>
+  <data name="InvalidPath" xml:space="preserve">
+    <value>Tento příkaz nelze použít, protože kořenová cesta neexistuje. Zkontrolujte kořenovou cestu a spusťte příkaz znovu.</value>
+  </data>
+  <data name="RemoveItemNotSupported" xml:space="preserve">
+    <value>Tento příkaz nelze použít v aktuální cestě, protože rutina Remove-Item není na této úrovni cesty zprostředkovatele podporována.</value>
+  </data>
+  <data name="SetItemTrustedHostsWarningQuery" xml:space="preserve">
+    <value>Tento příkaz upraví seznam TrustedHosts klienta WinRM. Počítače v seznamu TrustedHosts nemusí být ověřeny. Klient může do těchto počítačů odesílat přihlašovací údaje. Opravdu chcete tento seznam změnit?</value>
+  </data>
+  <data name="SetItemRootSDDLWarningQuery" xml:space="preserve">
+    <value>Tento příkaz upraví nastavení RootSDDL služby WinRM.  RootSDDL ukládá výchozí nastavení zabezpečení pro všechny prostředky zabezpečitelné pomocí služby WinRM, které neurčují vlastní deskriptor SDDL. Změna SDDL může ovlivnit zabezpečení mnoha prostředků služby WinRM. Opravdu chcete změnit tato výchozí nastavení?</value>
+  </data>
+  <data name="NewWSManSessionOptionCred" xml:space="preserve">
+    <value>Tento příkaz nelze použít bez přihlašovacích údajů, protože se používá základní ověřování nebo ověřování hodnotou hash. Pomocí parametru Credentials zadejte hodnotu a spusťte příkaz.</value>
+  </data>
+  <data name="SetItemWarnigForPPQ" xml:space="preserve">
+    <value>Aktualizovaná konfigurace se projeví pouze v případě, že je menší než nebo rovna hodnotě globální kvóty {0}. Ověřte hodnotu globální kvóty pomocí rutiny PowerShellu Get-Item {0}.</value>
+  </data>
+  <data name="DisableCredSSPPolicyValidateError" xml:space="preserve">
+    <value>Tento příkaz nelze spustit, protože toto nastavení nelze zakázat.</value>
+  </data>
+  <data name="ResourceURIMissingInResourceDir" xml:space="preserve">
+    <value>Hodnotu prvku {0} v cestě {1} se nepodařilo najít.</value>
+  </data>
+  <data name="NewWSManSessionOptionAuth" xml:space="preserve">
+    <value>Tento příkaz nelze použít bez základního ověřování nebo ověřování hodnotou hash, protože jsou zadány přihlašovací údaje. Použijte základní ověřování nebo ověřování hodnotou hash a spusťte příkaz.</value>
+  </data>
+  <data name="SetItemGeneralSecurityCaption" xml:space="preserve">
+    <value>Konfigurace zabezpečení WinRM</value>
+  </data>
+  <data name="NewItemNotSupported" xml:space="preserve">
+    <value>Tento příkaz nelze použít v aktuální cestě, protože rutina New-Item není na této úrovni cesty zprostředkovatele podporována.</value>
+  </data>
+  <data name="WinrmNotConfigured" xml:space="preserve">
+    <value>Tento příkaz nelze použít, protože konfigurace je poškozená. Chcete-li obnovit výchozí konfiguraci, spusťte příkaz WinRM invoke Restore WinRM/config.</value>
+  </data>
+  <data name="InvalidValueType" xml:space="preserve">
+    <value>Tento příkaz nelze použít, protože typ hodnoty parametru je neplatný. Konfigurace {0} očekává hodnotu typu {1}. Ověřte správnost hodnoty a zkuste to znovu.</value>
+  </data>
+  <data name="WSManServiceStartQuery" xml:space="preserve">
+    <value>Služba WinRM momentálně není spuštěná. Spuštěním tohoto příkazu se spustí služba WinRM.
+
+Chcete pokračovat?</value>
+  </data>
+  <data name="NoResourceMatch" xml:space="preserve">
+    <value>Tento příkaz nelze použít, protože parametr neodpovídá žádné vlastnosti v ResourceURI. Zkontrolujte vstupní parametry a spusťte příkaz znovu.</value>
+  </data>
+  <data name="CredSSPServiceConfigured" xml:space="preserve">
+    <value>Tento počítač je nakonfigurován pro příjem přihlašovacích údajů ze vzdáleného klientského počítače.</value>
+  </data>
+  <data name="CredSSPRoleAndDelegateCannotBeSpecified" xml:space="preserve">
+    <value>Parametr {0} nelze použít, pokud je hodnota parametru {1} rovna {2}. Parametr {0} lze použít pouze v případě, že hodnota parametru {1} je {3}.</value>
+  </data>
+  <data name="SetItemServiceRestartWarningRemote" xml:space="preserve">
+    <value>Provedené změny konfigurace se projeví až po restartování služby WinRM na počítači {0}.</value>
+  </data>
+  <data name="ConnectFailure" xml:space="preserve">
+    <value>Tento příkaz nelze použít z aktuální cesty. Přejděte do kořenové cesty zprostředkovatele pomocí cd\ a spusťte příkaz znovu.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Tento modul snap-in PowerShellu obsahuje rutiny (například Get-WSManInstance a Set-WSManInstance), které hostitel PowerShellu používá ke správě operací WSMan.</value>
+  </data>
+  <data name="LocalHost" xml:space="preserve">
+    <value>Tento příkaz nelze použít k odebrání počítače localhost, protože bude vždy připojený. Zadejte jiný připojený počítač a spusťte příkaz znovu.</value>
+  </data>
+  <data name="NewItemShouldContinueClientCertQuery" xml:space="preserve">
+    <value>Tento příkaz vytvoří novou položku ClientCertificate.
+
+Chcete pokračovat?</value>
+  </data>
+  <data name="ClearItemOnRunAsPassword" xml:space="preserve">
+    <value>Hodnotu RunAsPassword nelze odebrat. Odeberte hodnoty RunAsUser a RunAsPassword v PowerShellu voláním rutiny Clear-Item s hodnotou atributu -Path nastavenou na hodnotu RunAsUser.</value>
+  </data>
+  <data name="NewDriveRootDoesNotExist" xml:space="preserve">
+    <value>Jednotku se zadaným kořenovým adresářem nejde vytvořit. Kořenová cesta neexistuje.</value>
+  </data>
+  <data name="MultipleResourceMatch" xml:space="preserve">
+    <value>Tento příkaz nelze použít, protože parametr odpovídá více vlastnostem v ResourceURI. Zkontrolujte vstupní parametry a spusťte příkaz znovu.</value>
+  </data>
+</root>
