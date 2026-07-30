@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidFileName" xml:space="preserve">
+    <value>无法使用此命令，因为文件不存在。检查文件是否存在并运行命令。</value>
+  </data>
+  <data name="NewItemShouldContinueClientCertCaption" xml:space="preserve">
+    <value>创建新的 ClientCertificate 项。</value>
+  </data>
+  <data name="NotProperURI" xml:space="preserve">
+    <value>无法执行此命令，因为连接 URI 的格式不正确。请检查连接 URI，然后再次运行命令。</value>
+  </data>
+  <data name="CredSSPContinueQuery" xml:space="preserve">
+    <value>CredSSP 身份验证允许将此计算机上的用户凭据发送到远程计算机。如果你使用 CredSSP 身份验证连接到恶意计算机或已遭入侵的计算机，该计算机将可以访问你的用户名和密码。有关详细信息，请参阅 Enable-WSManCredSSP 帮助主题。
+是否要启用 CredSSP 身份验证?</value>
+  </data>
+  <data name="NewItemShouldContinueListenerCaption" xml:space="preserve">
+    <value>创建新的侦听器项。</value>
+  </data>
+  <data name="ShouldContinueSecurityQuery" xml:space="preserve">
+    <value>此命令将修改以下 WinRM 插件中资源的安全设置: {0}。
+是否要继续?</value>
+  </data>
+  <data name="SetItemWhatIfAndConfirmText" xml:space="preserve">
+    <value>WinRM 配置设置“{0}”上的 "Set-Item" 将值更新为“{1}”</value>
+  </data>
+  <data name="EnableCredSSPPolicyValidateError" xml:space="preserve">
+    <value>无法执行此命令，因为无法启用该设置。</value>
+  </data>
+  <data name="NewItemShouldContinueListenerQuery" xml:space="preserve">
+    <value>此命令将创建一个新的侦听器项。
+
+是否要继续?</value>
+  </data>
+  <data name="ErrorElevationNeeded" xml:space="preserve">
+    <value>拒绝访问。需要从提升的进程运行此 cmdlet。</value>
+  </data>
+  <data name="DriveRootError" xml:space="preserve">
+    <value>无法使用此命令，因为此版本的 Windows 操作系统不支持 WsMan 驱动器根目录。</value>
+  </data>
+  <data name="WSManServiceStartCaption" xml:space="preserve">
+    <value>启动 WinRM 服务</value>
+  </data>
+  <data name="CredSSPServerContinueQuery" xml:space="preserve">
+    <value>CredSSP 身份验证允许服务器接受来自远程计算机的用户凭据。如果在服务器上启用 CredSSP 身份验证，并且客户端计算机发送了这些凭据，则服务器将可以访问客户端计算机的用户名和密码。有关详细信息，请参阅 Enable-WSManCredSSP 帮助主题。
+是否要启用 CredSSP 身份验证?</value>
+  </data>
+  <data name="QuickConfigContinueCaption" xml:space="preserve">
+    <value>WinRM 快速配置</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="NoChangeValue" xml:space="preserve">
+    <value>此命令无法设置输入值，因为这些值是资源对象的主键或容器项。请更改输入值并运行命令。</value>
+  </data>
+  <data name="CredSSPContinueCaption" xml:space="preserve">
+    <value>WS-Management 的 CredSSP 身份验证配置</value>
+  </data>
+  <data name="SetItemShouldContinueCaption" xml:space="preserve">
+    <value>设置项的值</value>
+  </data>
+  <data name="TrustedHostValueTypeError" xml:space="preserve">
+    <value>无法将 "System.Object[]" 转换为参数所需的类型 "System.String"。不支持指定的方法。</value>
+  </data>
+  <data name="CredSSPServiceNotConfigured" xml:space="preserve">
+    <value>此计算机未配置为接收来自远程客户端计算机的凭据。</value>
+  </data>
+  <data name="DisconnectFailure" xml:space="preserve">
+    <value>无法从当前路径使用此命令。请使用 cd\ 转到提供程序的根路径，然后再次运行命令。</value>
+  </data>
+  <data name="CmdletNotAvailable" xml:space="preserve">
+    <value>此 PowerShell cmdlet 在 Windows XP 和 Windows Server 2003 上不可用。</value>
+  </data>
+  <data name="NoAttributeMatch" xml:space="preserve">
+    <value>无法使用此命令，因为参数与 ResourceURI 上的非文本属性匹配。请检查输入参数并运行命令。</value>
+  </data>
+  <data name="AmbiguousAuthentication" xml:space="preserve">
+    <value>指定 {1} 时，无法指定 {0}。</value>
+  </data>
+  <data name="InvalidComputerName" xml:space="preserve">
+    <value>WinRM 客户端无法完成该操作。请检查计算机名是否有效。</value>
+  </data>
+  <data name="CredSSPClientAndDelegateMustBeSpecified" xml:space="preserve">
+    <value>当 {1} 参数值为 {2} 时，{0} 参数是必需的。</value>
+  </data>
+  <data name="value" xml:space="preserve">
+    <value>无法使用此命令，因为未提供参数值。请再次检查值并运行命令。</value>
+  </data>
+  <data name="ItemDoesNotExist" xml:space="preserve">
+    <value>无法使用此命令，因为路径不存在。检查路径是否存在并运行命令。</value>
+  </data>
+  <data name="ShouldContinueSecurityCaption" xml:space="preserve">
+    <value>WinRM 插件的安全配置。</value>
+  </data>
+  <data name="SetItemNotSupported" xml:space="preserve">
+    <value>无法在当前路径中使用此命令，因为此级别的提供程序路径不支持此 cmdlet。</value>
+  </data>
+  <data name="NoDelegateFreshCred" xml:space="preserve">
+    <value>未将此计算机配置为允许委派新凭据。</value>
+  </data>
+  <data name="SetItemServiceRestartWarning" xml:space="preserve">
+    <value>所做的配置更改仅在 WinRM 服务重新启动后才有效。 要重新启动 WinRM 服务，请运行以下命令: "Restart-Service winrm"</value>
+  </data>
+  <data name="QuickConfigContinueQuery" xml:space="preserve">
+    <value>运行 Set-WSManQuickConfig 命令具有重大的安全隐患，因为它可通过此计算机上的 WinRM 服务进行远程管理。
+此命令:
+    1. 检查 WinRM 服务是否正在运行。如果 WinRM 服务未运行，则启动该服务。
+    2. 将 WinRM 服务启动类型设置为自动。
+    3. 创建一个可接受任何 IP 地址上的请求的侦听器。默认情况下，传输为 HTTP。
+    4. 为 WS-Management 流量启用防火墙例外。
+    5. 启用 Kerberos 和 Negotiate 服务身份验证。
+是否要在此计算机上通过 WinRM 服务启用远程管理?</value>
+  </data>
+  <data name="SetItemOnRunAsPasswordNoRunAsUser" xml:space="preserve">
+    <value>如果未为 RunAsUser 设置值，则无法设置 RunAsPassword 的值。调用 Set-Item cmdlet，并将 -Path 属性的值设为 RunAsUser 的值，以在 Powershell 中设置 RunAsUser 和 RunAsPassword 的值。</value>
+  </data>
+  <data name="SetItemWarningForGlobalQuota" xml:space="preserve">
+    <value>更新的配置可能会影响每个插件配额值大于 {0} 的插件的操作。验证所有已注册插件的配置，并更改受影响插件的每个插件配额值。</value>
+  </data>
+  <data name="SetItemShouldContinueQuery" xml:space="preserve">
+    <value>此命令设置该项的值。
+
+是否要继续?</value>
+  </data>
+  <data name="DelegateFreshCred" xml:space="preserve">
+    <value>计算机配置为允许将新凭据委派给以下目标:</value>
+  </data>
+  <data name="ConfigStorage" xml:space="preserve">
+    <value>WsMan 配置存储的根目录。</value>
+  </data>
+  <data name="WinRMServiceError" xml:space="preserve">
+    <value>无法执行此命令，因为 WinRM 服务未启动。</value>
+  </data>
+  <data name="InvalidPath" xml:space="preserve">
+    <value>根路径不存在，无法使用此命令。请检查根路径并运行命令。</value>
+  </data>
+  <data name="RemoveItemNotSupported" xml:space="preserve">
+    <value>无法在当前路径中使用此命令，因为此级别的提供程序路径不支持 Remove-Item。</value>
+  </data>
+  <data name="SetItemTrustedHostsWarningQuery" xml:space="preserve">
+    <value>此命令将修改 WinRM 客户端的 TrustedHosts 列表。TrustedHosts 列表中的计算机可能未通过身份验证。客户端可能会向这些计算机发送凭据信息。是否确定要修改此列表?</value>
+  </data>
+  <data name="SetItemRootSDDLWarningQuery" xml:space="preserve">
+    <value>此命令会修改 WinRM 服务的 RootSDDL 设置。 RootSDDL 存储任何未指定自身 SDDL 的 WinRM 安全资源的默认安全设置。更改 SDDL 可能会影响许多 WinRM 资源的安全性。是否确定要修改这些默认设置?</value>
+  </data>
+  <data name="NewWSManSessionOptionCred" xml:space="preserve">
+    <value>由于身份验证算法为 Basic 或 Digest，因此无法在没有凭据的情况下使用此命令。使用 Credentials 参数指定值并运行命令。</value>
+  </data>
+  <data name="SetItemWarnigForPPQ" xml:space="preserve">
+    <value>更新后的配置仅在其小于或等于全局配额 {0} 的值时才生效。请使用 PowerShell cmdlet“Get-Item {0}”验证全局配额的值。</value>
+  </data>
+  <data name="DisableCredSSPPolicyValidateError" xml:space="preserve">
+    <value>无法执行此命令，因为无法禁用该设置。</value>
+  </data>
+  <data name="ResourceURIMissingInResourceDir" xml:space="preserve">
+    <value>在路径 {1} 中找不到“{0}”元素的值。</value>
+  </data>
+  <data name="NewWSManSessionOptionAuth" xml:space="preserve">
+    <value>由于已指定凭据，因此不能在没有 Basic 或 Digest 身份验证算法的情况下使用此命令。请使用 Basic 或 Digest 身份验证算法并运行命令。</value>
+  </data>
+  <data name="SetItemGeneralSecurityCaption" xml:space="preserve">
+    <value>WinRM 安全配置。</value>
+  </data>
+  <data name="NewItemNotSupported" xml:space="preserve">
+    <value>无法在当前路径中使用此命令，因为此级别的提供程序路径不支持 New-Item。</value>
+  </data>
+  <data name="WinrmNotConfigured" xml:space="preserve">
+    <value>无法使用此命令，因为配置已损坏。请运行 WinRM invoke Restore WinRM/config 以还原默认配置</value>
+  </data>
+  <data name="InvalidValueType" xml:space="preserve">
+    <value>无法使用此命令，因为参数值类型无效。{0} 配置需要类型为 {1} 的值。请验证值是否正确，然后重试。</value>
+  </data>
+  <data name="WSManServiceStartQuery" xml:space="preserve">
+    <value>当前未启动 WinRM 服务。运行此命令将启动 WinRM 服务。
+
+是否要继续?</value>
+  </data>
+  <data name="NoResourceMatch" xml:space="preserve">
+    <value>无法使用此命令，因为该参数与 ResourceURI 上的任何属性都不匹配。请检查输入参数并运行命令。</value>
+  </data>
+  <data name="CredSSPServiceConfigured" xml:space="preserve">
+    <value>此计算机配置为接收来自远程客户端计算机的凭据。</value>
+  </data>
+  <data name="CredSSPRoleAndDelegateCannotBeSpecified" xml:space="preserve">
+    <value>当 {1} 参数值为 {2} 时，无法使用 {0} 参数。仅当 {1} 参数值为 {3} 时，才能使用 {0} 参数。</value>
+  </data>
+  <data name="SetItemServiceRestartWarningRemote" xml:space="preserve">
+    <value>只有在 {0} 上重新启动 WinRM 服务后，所做的配置更改才会生效。</value>
+  </data>
+  <data name="ConnectFailure" xml:space="preserve">
+    <value>无法从当前路径使用此命令。请使用 cd\ 转到提供程序的根路径，然后再次运行命令。</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>此 PowerShell 管理单元包含由 PowerShell 主机用来管理 WSMan 操作的 cmdlet (例如 Get-WSManInstance 和 Set-WSManInstance)。</value>
+  </data>
+  <data name="LocalHost" xml:space="preserve">
+    <value>此命令不能用于删除计算机 "localhost"，因为它将始终处于连接状态。请提供其他已连接的计算机并运行命令。</value>
+  </data>
+  <data name="NewItemShouldContinueClientCertQuery" xml:space="preserve">
+    <value>此命令创建新的 ClientCertificate 项。
+
+是否要继续?</value>
+  </data>
+  <data name="ClearItemOnRunAsPassword" xml:space="preserve">
+    <value>无法删除 RunAsPassword 值。通过调用 Clear-Item cmdlet (其中 -Path 属性的值等于 RunAsUser 的值)来删除 PowerShell 中 RunAsUser 和 RunAsPassword 的值。</value>
+  </data>
+  <data name="NewDriveRootDoesNotExist" xml:space="preserve">
+    <value>无法使用指定的根创建驱动器。根路径不存在。</value>
+  </data>
+  <data name="MultipleResourceMatch" xml:space="preserve">
+    <value>无法使用此命令，因为该参数与 ResourceURI 上的多个属性匹配。请检查输入参数并运行命令。</value>
+  </data>
+</root>
