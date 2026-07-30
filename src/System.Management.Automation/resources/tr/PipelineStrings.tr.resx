@@ -118,62 +118,62 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandProcessorAlreadyUsed" xml:space="preserve">
-    <value>Cannot process the cmdlet instance because the cmdlet instance is in use by another pipeline. Please contact Microsoft Customer Support Services.</value>
+    <value>Cmdlet örneği başka bir işlem hattı tarafından kullanıldığından işlenemiyor. Lütfen Microsoft Müşteri Destek Hizmetleri ile iletişime geçin.</value>
   </data>
   <data name="ExecutionAlreadyStarted" xml:space="preserve">
-    <value>Cannot perform the operation because the pipeline is started. Stop the pipeline and try the operation again.</value>
+    <value>İşlem, işlem hattı başlatılmış olduğu için gerçekleştirilemiyor. İşlem hattını durdurun ve işlemi tekrar deneyin.</value>
   </data>
   <data name="ActionPreferenceStop" xml:space="preserve">
-    <value>Cannot continue to run the cmdlet because running cmdlets has been prevented by the Stop policy.</value>
+    <value>Dur ilkesi nedeniyle cmdlet'lerin çalıştırılması engellendiğinden, cmdlet'in çalıştırılmasına devam edilemiyor.</value>
   </data>
   <data name="FirstCommandCannotHaveInput" xml:space="preserve">
-    <value>Cannot run the pipeline because the first cmdlet in the pipeline is trying to read input from the results of a preceding cmdlet. Either modify the first cmdlet, remove the first cmdlet, or add to the pipeline the cmdlet whose output is required by the first cmdlet, and then try running the pipeline again.</value>
+    <value>İşlem hattı çalıştırılamıyor çünkü işlem hattındaki ilk cmdlet, kendinden önceki bir cmdlet’in sonuçlarından girdi okumaya çalışıyor. Ya ilk cmdlet’i değiştirin, ya da ilk cmdlet’i kaldırın ya da ilk cmdlet’in çıktısına ihtiyaç duyan cmdlet’i işlem hattına ekleyin ve ardından işlem hattını tekrar çalıştırmayı deneyin.</value>
   </data>
   <data name="InvalidCommandNumber" xml:space="preserve">
-    <value>Cannot process the cmdlet number. The ReadFromCommand function must specify the Id of a cmdlet that has already been added to the pipeline. Please contact Microsoft Customer Support Services.</value>
+    <value>Cmdlet numarası işlenemiyor. ReadFromCommand işlevi, işlem hattına önceden eklenmiş bir cmdlet’in kimliğini belirtmelidir. Lütfen Microsoft Müşteri Destek Hizmetleri ile iletişime geçin.</value>
   </data>
   <data name="PipeAlreadyTaken" xml:space="preserve">
-    <value>Cannot read the output of the ReadFromCommand and ReadErrorQueue functions because another cmdlet is already reading that output. Please contact Microsoft Customer Support Services.</value>
+    <value>ReadFromCommand ve ReadErrorQueue işlevlerinin çıktısı, başka bir cmdlet tarafından halihazırda okunmakta olduğu için okunamıyor. Lütfen Microsoft Müşteri Destek Hizmetleri ile iletişime geçin.</value>
   </data>
   <data name="PipelineExecuteRequiresAtLeastOneCommand" xml:space="preserve">
-    <value>Cannot run the pipeline because there are no commands. Add at least one command to the pipeline, and then run it again.</value>
+    <value>Komut bulunmadığı için işlem hattı çalıştırılamıyor. İşlem hattına en az bir komut ekleyin ve ardından yeniden çalıştırın.</value>
   </data>
   <data name="PipelineNotStarted" xml:space="preserve">
-    <value>Cannot complete the pipeline operation because it has not yet been started. You must call the Begin() method before calling End() on a steppable pipeline.</value>
+    <value>İşlem hattı işlemi henüz başlatılmadığı için tamamlanamıyor. Adım adım ilerleyebilen bir işlem hattında End() yöntemini çağırmadan önce Begin() yöntemini çağırmanız gerekir.</value>
   </data>
   <data name="WriteNotPermitted" xml:space="preserve">
-    <value>The WriteObject and WriteError methods cannot be called from outside the overrides of the BeginProcessing, ProcessRecord, and EndProcessing methods, and they can only be called from within the same thread. Validate that the cmdlet makes these calls correctly, or contact Microsoft Customer Support Services.</value>
+    <value>WriteObject ve WriteError yöntemleri, BeginProcessing, ProcessRecord ve EndProcessing yöntemlerinin yeniden tanımlamalarının dışından çağrılamaz ve yalnızca aynı iş parçacığı içinden çağrılabilir. Cmdlet’in bu çağrıları doğru bir şekilde gerçekleştirdiğini doğrulayın veya Microsoft Müşteri Destek Hizmetleri ile iletişime geçin.</value>
   </data>
   <data name="SecondFailure" xml:space="preserve">
-    <value>A cmdlet threw an exception after calling ThrowTerminatingError.
-The first exception was "{0}" with stack trace "{1}".
-The second exception was "{2}" with stack trace "{3}".</value>
+    <value>Bir cmdlet, ThrowTerminatingError çağrıldıktan sonra bir istisna oluşturdu.
+İlk istisna, yığın izlemesi “{1}” olan “{0}” idi.
+İkinci istisna, yığın izlemesi “{3}” olan “{2}” idi.</value>
   </data>
   <data name="WriteToClosedPipeline" xml:space="preserve">
-    <value>The WriteObject and WriteError methods cannot be called after the pipeline has been closed. Please contact Microsoft Customer Support Services.</value>
+    <value>WriteObject ve WriteError yöntemleri, işlem hattı kapatıldıktan sonra çağrılamaz. Lütfen Microsoft Müşteri Destek Hizmetleri ile iletişime geçin.</value>
   </data>
   <data name="PipelineExecutionInformation" xml:space="preserve">
-    <value>CommandInvocation({0}): "{1}"</value>
+    <value>CommandInvocation({0}): “{1}”</value>
   </data>
   <data name="PipelineExecutionNonTerminatingError" xml:space="preserve">
-    <value>NonTerminatingError({0}): "{1}"</value>
+    <value>NonTerminatingError({0}): “{1}”</value>
   </data>
   <data name="PipelineExecutionTerminatingError" xml:space="preserve">
-    <value>TerminatingError({0}): "{1}"</value>
+    <value>TerminatingError({0}): “{1}”</value>
   </data>
   <data name="PipelineExecutionParameterBinding" xml:space="preserve">
-    <value>ParameterBinding({0}): name="{1}"; value="{2}"</value>
+    <value>ParameterBinding({0}): name="{1}"; value="{2}”</value>
   </data>
   <data name="CannotCreatePipeline" xml:space="preserve">
-    <value>An error occurred while creating the pipeline.</value>
+    <value>İşlem hattı oluşturulurken bir hata oluştu.</value>
   </data>
   <data name="ConnectNotSupported" xml:space="preserve">
-    <value>This pipeline does not support disconnect-connect semantics.</value>
+    <value>Bu işlem hattı, bağlantı kesme-bağlantı kurma semantiğini desteklemez.</value>
   </data>
   <data name="PipelineNotDisconnected" xml:space="preserve">
-    <value>Cannot connect this pipeline because it is not in the disconnected state.</value>
+    <value>Bu işlem hattı, bağlantısı kesik durumda olmadığı için bağlanamıyor.</value>
   </data>
   <data name="InvalidRemoteCommand" xml:space="preserve">
-    <value>The runspace object has a null remote command associated with it.  A disconnected RemotePipeline object cannot be created because there is no remote command specified.</value>
+    <value>Runspace nesnesine ilişkili bir null uzaktan komut bulunmaktadır.  Uzak komut belirtilmediğinden, bağlantısı kesilmiş bir RemotePipeline nesnesi oluşturulamaz.</value>
   </data>
 </root>

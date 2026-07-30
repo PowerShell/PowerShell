@@ -117,7 +117,79 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ISecurityDescriptorCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Nous ne pouvons pas utiliser l’interface, car ce fournisseur ne prend pas en charge l’interface ISecurityDescriptorCmdletProvider.</value>
+  <data name="Reason_DoNotRun" xml:space="preserve">
+    <value>File {0} cannot be loaded because you opted not to run this software now.</value>
+  </data>
+  <data name="Reason_NeverRun" xml:space="preserve">
+    <value>File {0} cannot be loaded because you opted never to run software from this publisher.</value>
+  </data>
+  <data name="Reason_NotTrusted" xml:space="preserve">
+    <value>File {0} is published by {1}. This publisher is explicitly not trusted on your system. The script will not run on the system. For more information, run the command "get-help about_signing".</value>
+  </data>
+  <data name="Reason_RestrictedMode" xml:space="preserve">
+    <value>File {0} cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.</value>
+  </data>
+  <data name="Reason_Unknown" xml:space="preserve">
+    <value>File {0} cannot be loaded. {1}.</value>
+  </data>
+  <data name="Reason_DisallowedBySafer" xml:space="preserve">
+    <value>File {0} cannot be loaded because its operation is blocked by software restriction policies, such as those created by using Group Policy.</value>
+  </data>
+  <data name="Reason_FileContentUnavailable" xml:space="preserve">
+    <value>File {0} cannot be loaded because its content could not be read.</value>
+  </data>
+  <data name="CertNotGoodForSigning" xml:space="preserve">
+    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+  </data>
+  <data name="TimeStampUrlRequired" xml:space="preserve">
+    <value>Cannot sign code. The TimeStamp server URL must be fully qualified, and in the format http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+  </data>
+  <data name="InvalidHashAlgorithm" xml:space="preserve">
+    <value>Cannot sign code. The hash algorithm is not supported.</value>
+  </data>
+  <data name="AuthenticodePromptCaption" xml:space="preserve">
+    <value>Do you want to run software from this untrusted publisher?</value>
+  </data>
+  <data name="AuthenticodePromptText" xml:space="preserve">
+    <value>File {0} is published by {1} and is not trusted on your system. Only run scripts from trusted publishers.</value>
+  </data>
+  <data name="AuthenticodePromptText_UnknownPublisher" xml:space="preserve">
+    <value>Software {0} is published by an unknown publisher. It is recommended that you do not run this software.</value>
+  </data>
+  <data name="RemoteFilePromptCaption" xml:space="preserve">
+    <value>Security warning</value>
+  </data>
+  <data name="RemoteFilePromptText" xml:space="preserve">
+    <value>Run only scripts that you trust. While scripts from the internet can be useful, this script can potentially harm your computer. If you trust this script, use the Unblock-File cmdlet to allow the script to run without this warning message. Do you want to run {0}?</value>
+  </data>
+  <data name="Choice_NeverRun" xml:space="preserve">
+    <value>Ne&amp;ver run</value>
+  </data>
+  <data name="Choice_NeverRun_Help" xml:space="preserve">
+    <value>Do not run the script from this publisher now, and do not prompt me to run this script in future. Future attempts to run this script will result in a silent failure.</value>
+  </data>
+  <data name="Choice_DoNotRun" xml:space="preserve">
+    <value>&amp;Do not run</value>
+  </data>
+  <data name="Choice_DoNotRun_Help" xml:space="preserve">
+    <value>Do not run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+  </data>
+  <data name="Choice_RunOnce" xml:space="preserve">
+    <value>&amp;Run once</value>
+  </data>
+  <data name="Choice_RunOnce_Help" xml:space="preserve">
+    <value>Run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+  </data>
+  <data name="Choice_AlwaysRun" xml:space="preserve">
+    <value>&amp;Always run</value>
+  </data>
+  <data name="Choice_AlwaysRun_Help" xml:space="preserve">
+    <value>Run the script from this publisher now, and do not prompt me to run this script in the future.</value>
+  </data>
+  <data name="Choice_Suspend" xml:space="preserve">
+    <value>&amp;Suspend</value>
+  </data>
+  <data name="Choice_Suspend_Help" xml:space="preserve">
+    <value>Pause the current pipeline and return to the command prompt. Type exit to resume operation when you are done.</value>
   </data>
 </root>
