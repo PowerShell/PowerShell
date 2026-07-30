@@ -117,70 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="UpdateData_WrongProviderError" xml:space="preserve">
-    <value>Dosya açılamıyor çünkü mevcut sağlayıcı “{0}” ve bu komut bir dosya gerektiriyor.</value>
+  <data name="AlreadyCompiledandLoaded" xml:space="preserve">
+    <value>The source code was already compiled and loaded.</value>
   </data>
-  <data name="UpdateData_WrongExtension" xml:space="preserve">
-    <value>“{0}” dosyası, “{1}” dosya adı uzantısına sahip olmadığı için okunamıyor.</value>
+  <data name="FileExtensionNotSupported" xml:space="preserve">
+    <value>Cannot add type. The "{0}" extension is not supported.</value>
   </data>
-  <data name="UpdateTypeDataAction" xml:space="preserve">
-    <value>TypeData'yı güncelleştir</value>
+  <data name="MultipleExtensionsNotSupported" xml:space="preserve">
+    <value>Cannot add type. Input files must all have the same file extension.</value>
   </data>
-  <data name="UpdateFormatDataAction" xml:space="preserve">
-    <value>FormatData'yı güncelleştir</value>
+  <data name="AssemblyNotFound" xml:space="preserve">
+    <value>Cannot add type. The assembly '{0}' could not be found.</value>
   </data>
-  <data name="UpdateTarget" xml:space="preserve">
-    <value>Dosya Adı: {0}</value>
+  <data name="TypeAlreadyExists" xml:space="preserve">
+    <value>Cannot add type. The type name '{0}' already exists.</value>
   </data>
-  <data name="CannotUpdateMemberType" xml:space="preserve">
-    <value>“{0}” türündeki bir üyeyi güncelleştiremiyorum. MemberType parametresi için farklı bir tür belirtin.</value>
+  <data name="OutputAssemblyDidNotResolve" xml:space="preserve">
+    <value>Cannot set output assembly. The path {0} did not resolve to a single file.</value>
   </data>
-  <data name="ShouldBeSpecified" xml:space="preserve">
-    <value>“{1}” türü için {0} parametresi zorunludur. Lütfen {0} parametresini belirtin.</value>
+  <data name="CompilerErrors" xml:space="preserve">
+    <value>Cannot add type. Compilation errors occurred.</value>
   </data>
-  <data name="ShouldNotBeNull" xml:space="preserve">
-    <value>“{1}” türündeki bir üye için {0} parametresi null veya boş bir dize olmamalıdır. Bu üye türünü güncelleştirirken {0} parametresi için null olmayan bir değer belirtin.</value>
+  <data name="OutputTypeRequiresOutputAssembly" xml:space="preserve">
+    <value>Cannot add type. The OutputType parameter requires that the OutputAssembly parameter be specified.</value>
   </data>
-  <data name="ShouldNotBeSpecified" xml:space="preserve">
-    <value>“{1}” türündeki bir üye için {0} parametresi gerekli değildir ve belirtilmemelidir. Bu üye türünü güncelleştirirken {0} parametresini belirtmeyin.</value>
+  <data name="CannotDefineNewType" xml:space="preserve">
+    <value>Cannot add type. Definition of new types is not supported in this language mode.</value>
   </data>
-  <data name="TypeDataEmpty" xml:space="preserve">
-    <value>“{0}” türündeki güncelleştirme için herhangi bir üye belirtilmemiştir.</value>
+  <data name="ReferenceAssemblyIgnored" xml:space="preserve">
+    <value>The specified reference assembly '{0}' is unnecessary and ignored.</value>
   </data>
-  <data name="TargetTypeNameEmpty" xml:space="preserve">
-    <value>Hedef tür adı null olmamalı, boş olmamalı veya yalnızca boşluk karakterlerinden oluşmamalıdır.</value>
+  <data name="AssemblyTypeNotSupported" xml:space="preserve">
+    <value>Both the assembly types 'ConsoleApplication' and 'WindowsApplication' are not currently supported.</value>
   </data>
-  <data name="Value1AndValue2AreNotBothNull" xml:space="preserve">
-    <value>“{0}” türündeki bir üye için Value ve SecondValue parametrelerinin ikisi de null olmamalıdır. İki parametreden biri için null olmayan bir değer belirtin.</value>
+  <data name="AddTypeLogTitle" xml:space="preserve">
+    <value>Add-Type Cmdlet</value>
   </data>
-  <data name="WrongMemberCount" xml:space="preserve">
-    <value>Yalnızca bir üye türü belirtilebilir. Belirtilen üye türleri şunlardır: “{0}”. Türü, yalnızca bir üye türü içerecek şekilde güncelleştirin.</value>
-  </data>
-  <data name="MemberTypeIsMissing" xml:space="preserve">
-    <value>MemberName, Value ve SecondValue parametreleri, MemberType parametresi olmadan belirtilemez.</value>
-  </data>
-  <data name="RemoveTypeDataAction" xml:space="preserve">
-    <value>TypeData'yı kaldır</value>
-  </data>
-  <data name="RemoveTypeDataTarget" xml:space="preserve">
-    <value>Kaldırılacak türün adı: {0}</value>
-  </data>
-  <data name="UpdateTypeDataTarget" xml:space="preserve">
-    <value>Güncelleştirmek için şunu yazın: {0}</value>
-  </data>
-  <data name="RemoveTypeFileAction" xml:space="preserve">
-    <value>Dosya türünü kaldır</value>
-  </data>
-  <data name="TypeFileNotExistsInCurrentSession" xml:space="preserve">
-    <value>{0} dosyası mevcut oturuma içe aktarılmamıştır.</value>
-  </data>
-  <data name="FormatUpdatesDisabled" xml:space="preserve">
-    <value>Bu çalışma alanında format verilerinin güncelleştirilmesine izin verilmez. Çalışma alanı oluşturulurken ‘DisableFormatUpdates’ özelliği True olarak ayarlanır.</value>
-  </data>
-  <data name="CannotUpdateFormatWithFormatTable" xml:space="preserve">
-    <value>FormatTable örneği kullanılarak biçim verileri güncelleştirilemiyor.</value>
-  </data>
-  <data name="CannotUpdateTypeWithTypeTable" xml:space="preserve">
-    <value>TypeTable örneği ile tür verileri güncelleştirilemiyor.</value>
+  <data name="AddTypeLogMessage" xml:space="preserve">
+    <value>Add-Type cmdlet will not be allowed in ConstrainedLanguage mode.</value>
   </data>
 </root>
