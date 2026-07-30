@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AttributesNotAllowed" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Element XML {2} nepovoluje atributy.</value>
+  </data>
+  <data name="NoChildrenAllowed" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Uzel {2} nemůže obsahovat podřízené objekty.</value>
+  </data>
+  <data name="InvalidNode" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvek {2} není platný.</value>
+  </data>
+  <data name="NoDefaultShapeEntry" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Je vyžadovaná alespoň jedna výchozí položka {2}.</value>
+  </data>
+  <data name="TooManyDefaultShapeEntry" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Může existovat nejvýše jedna výchozí položka {2}.</value>
+  </data>
+  <data name="NullControlName" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Název ovládacího prvku nesmí být null ani prázdný.</value>
+  </data>
+  <data name="InvalidControlForOutOfBandView" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Zobrazení Out Of Band můžou obsahovat jen CustomControl nebo ListControl.</value>
+  </data>
+  <data name="OutOfBandGroupByConflict" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Zobrazení Out Of Band nemůže obsahovat GroupBy.</value>
+  </data>
+  <data name="ViewNotLoaded" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Zobrazení nejde načíst.</value>
+  </data>
+  <data name="InvalidAlignmentValue" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: {2} není platná hodnota zarovnání.</value>
+  </data>
+  <data name="ExpectPositiveInteger" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Očekává se kladné celé číslo.</value>
+  </data>
+  <data name="InvalidColumnHeader" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Definice záhlaví sloupců není platná. Všechna záhlaví se zahodí.</value>
+  </data>
+  <data name="IncorrectRowItemCount" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Počet položek řádku = {2} v alternativní sadě #{3} neodpovídá počtu položek výchozího řádku = {4}.</value>
+  </data>
+  <data name="IncorrectHeaderItemCount" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Počet položek záhlaví = {2} neodpovídá počtu položek výchozího řádku = {3}.</value>
+  </data>
+  <data name="NoListViewItem" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Musí být zadaná alespoň jedna položka zobrazení seznamu.</value>
+  </data>
+  <data name="InvalidPropertyEntry" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Položka vlastnosti není platná.</value>
+  </data>
+  <data name="NoDefinitionList" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí seznam definic.</value>
+  </data>
+  <data name="ExpectBoolean" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Očekává se logická hodnota.</value>
+  </data>
+  <data name="ExpectNaturalNumber" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Očekává se nezáporné celé číslo.</value>
+  </data>
+  <data name="ExpectInteger" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Očekává se celé číslo.</value>
+  </data>
+  <data name="MissingInnerText" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí hodnota vnitřního textu.</value>
+  </data>
+  <data name="EmptyCustomControlList" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Seznam tokenů vlastního ovládacího prvku nesmí být prázdný.</value>
+  </data>
+  <data name="LoadTagFailed" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvek {2} se nepovedlo načíst.</value>
+  </data>
+  <data name="NodeWithoutExpression" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvek {2} nejde zadat bez výrazu.</value>
+  </data>
+  <data name="NodeWithExpression" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvek {2} nejde zadat společně s výrazem.</value>
+  </data>
+  <data name="NoFormatString" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí formátovací řetězec.</value>
+  </data>
+  <data name="NoScriptBlockText" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí text bloku skriptu.</value>
+  </data>
+  <data name="NoProperty" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí vlastnost.</value>
+  </data>
+  <data name="InvalidScriptBlock" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Blok skriptu {2} není platný.</value>
+  </data>
+  <data name="StringResourceNotFound" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Řetězec {2} z prostředku {3} v sestavení {4} se nenašel.</value>
+  </data>
+  <data name="ResourceNotFound" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prostředek {2} v sestavení {3} se nenašel.</value>
+  </data>
+  <data name="AssemblyNotFound" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Sestavení {2} se nenašlo.</value>
+  </data>
+  <data name="NonXmlElementNode" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Uzel musí být typu XmlElement.</value>
+  </data>
+  <data name="ExpectExpression" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Očekává se výraz.</value>
+  </data>
+  <data name="ControlLabelWithoutExpression" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Bez výrazu nejde použít ovládací prvek ani Label.</value>
+  </data>
+  <data name="ControlAndLabel" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Ovládací prvek a Label nejde použít současně.</value>
+  </data>
+  <data name="SelectionSetNameAndTypeName" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: SelectionSetName a TypeName nejde použít současně.</value>
+  </data>
+  <data name="EmptyAppliesTo" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Není zadaný typ ani podmínka pro použití zobrazení.</value>
+  </data>
+  <data name="InvalidNodeValue" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Hodnota {2} není platná.</value>
+  </data>
+  <data name="DuplicatedNode" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Existuje duplicitní uzel.</value>
+  </data>
+  <data name="MutuallyExclusiveNode" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvky {2} a {3} se vzájemně vylučují.</value>
+  </data>
+  <data name="ThreeMutuallyExclusiveNode" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Prvky {2}, {3} a {4} se vzájemně vylučují.</value>
+  </data>
+  <data name="UnknownNode" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: {2} je neznámý uzel.</value>
+  </data>
+  <data name="UnknownAttribute" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: {2} je neznámý atribut.</value>
+  </data>
+  <data name="MissingAttribute" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí atribut {2}.</value>
+  </data>
+  <data name="MissingNode" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: Chybí uzel {2}.</value>
+  </data>
+  <data name="MissingNodeFromList" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: V prvku {2} chybí uzel.</value>
+  </data>
+  <data name="EmptyNode" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: {2} je prázdný uzel.</value>
+  </data>
+  <data name="EmptyAttribute" xml:space="preserve">
+    <value>Chyba na cestě XPath {0} v souboru {1}: {2} je prázdný atribut.</value>
+  </data>
+  <data name="ErrorInFile" xml:space="preserve">
+    <value>Chyba v souboru {0}: {1}</value>
+  </data>
+  <data name="TooManyErrors" xml:space="preserve">
+    <value>Soubor {0} obsahuje příliš mnoho chyb.</value>
+  </data>
+  <data name="FormatLoadingErrors" xml:space="preserve">
+    <value>Při načítání souboru s daty formátování došlo k chybám: {0}</value>
+  </data>
+  <data name="AssemblyInGAC" xml:space="preserve">
+    <value>(Globální mezipaměť sestavení) {0}</value>
+  </data>
+  <data name="MshSnapinQualifiedError" xml:space="preserve">
+    <value>{0}, {1}</value>
+  </data>
+  <data name="FormatFileNotRooted" xml:space="preserve">
+    <value>Cesta {0} není plně kvalifikovaná. Zadejte plně kvalifikovanou cestu k souboru formátu.</value>
+  </data>
+  <data name="SharedFormatTableCannotBeUpdated" xml:space="preserve">
+    <value>Objekt FormatTable nejde aktualizovat, protože mohl být vytvořený mimo prostředí runspace.</value>
+  </data>
+  <data name="FormatTableLoadErrors" xml:space="preserve">
+    <value>Při načítání objektu FormatTable došlo k chybám. Podrobné chybové zprávy najdete v obsahu vlastnosti Errors.</value>
+  </data>
+  <data name="ErrorInFormattingData" xml:space="preserve">
+    <value>Chyba v datech formátování {0}: {1}</value>
+  </data>
+  <data name="IncorrectHeaderItemCountInFormattingData" xml:space="preserve">
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Počet položek záhlaví = {2} neodpovídá počtu položek výchozího řádku = {3}.</value>
+  </data>
+  <data name="InvalidFormattingData" xml:space="preserve">
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Data formátování {2} nejsou platná.</value>
+  </data>
+  <data name="InvalidScriptBlockInFormattingData" xml:space="preserve">
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Blok skriptu {2} není platný.</value>
+  </data>
+  <data name="LoadTagFailedInFormattingData" xml:space="preserve">
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Prvek {2} se nepovedlo načíst.</value>
+  </data>
+  <data name="MultipleRowEntriesFoundInFormattingData" xml:space="preserve">
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: TableControl smí obsahovat jen jeden prvek {2}.</value>
+  </data>
+  <data name="NoDefaultShapeEntryInFormattingData" xml:space="preserve">
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Je vyžadovaná alespoň jedna výchozí položka {2}.</value>
+  </data>
+  <data name="NoListViewItemInFormattingData" xml:space="preserve">
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Musí být zadaná alespoň jedna položka zobrazení seznamu.</value>
+  </data>
+  <data name="TooManyDefaultShapeEntryInFormattingData" xml:space="preserve">
+    <value>Chyba v datech zobrazení s názvem typu {0} na indexu {1}: Může existovat nejvýše jedna výchozí položka {2}.</value>
+  </data>
+  <data name="TooManyErrorsInFormattingData" xml:space="preserve">
+    <value>Data formátování pro typ {0} obsahují příliš mnoho chyb.</value>
+  </data>
+  <data name="FormatTableCannotCoExist" xml:space="preserve">
+    <value>Sdílenou tabulku formátování nejde aktualizovat více než jednou položkou.</value>
+  </data>
+</root>
