@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CommandProcessorAlreadyUsed" xml:space="preserve">
+    <value>Невозможно обработать экземпляр командлета, так как он уже используется другим конвейером. Обратитесь в службы поддержки клиентов Майкрософт.</value>
+  </data>
+  <data name="ExecutionAlreadyStarted" xml:space="preserve">
+    <value>Невозможно выполнить операцию, так как конвейер запущен. Остановите конвейер и повторите операцию.</value>
+  </data>
+  <data name="ActionPreferenceStop" xml:space="preserve">
+    <value>Невозможно продолжить выполнение командлета, так как политика Stop запрещает запуск командлетов.</value>
+  </data>
+  <data name="FirstCommandCannotHaveInput" xml:space="preserve">
+    <value>Не удается запустить конвейер, так как первый командлет в нем пытается прочитать входные данные из результатов предыдущего командлета. Измените или удалите первый командлет. Либо добавьте в конвейер командлет, выходные данные которого требуются первому командлету, а затем попробуйте запустить конвейер еще раз.</value>
+  </data>
+  <data name="InvalidCommandNumber" xml:space="preserve">
+    <value>Невозможно обработать номер командлета. Функция ReadFromCommand должна указывать идентификатор командлета, который уже добавлен в конвейер. Обратитесь в службы поддержки клиентов Майкрософт.</value>
+  </data>
+  <data name="PipeAlreadyTaken" xml:space="preserve">
+    <value>Невозможно прочитать выходные данные функций ReadFromCommand и ReadErrorQueue, так как их уже читает другой командлет. Обратитесь в службы поддержки клиентов Майкрософт.</value>
+  </data>
+  <data name="PipelineExecuteRequiresAtLeastOneCommand" xml:space="preserve">
+    <value>Невозможно запустить конвейер, так как в нем нет команд. Добавьте в конвейер хотя бы одну команду и запустите его снова.</value>
+  </data>
+  <data name="PipelineNotStarted" xml:space="preserve">
+    <value>Невозможно завершить операцию конвейера, так как он еще не запущен. Перед вызовом End() для пошагового конвейера необходимо вызвать метод Begin().</value>
+  </data>
+  <data name="WriteNotPermitted" xml:space="preserve">
+    <value>Методы WriteObject и WriteError нельзя вызывать вне переопределений методов BeginProcessing, ProcessRecord и EndProcessing, и их можно вызывать только из одного потока. Проверьте, что командлет вызывает их правильно, или обратитесь в службы поддержки клиентов Майкрософт.</value>
+  </data>
+  <data name="SecondFailure" xml:space="preserve">
+    <value>После вызова ThrowTerminatingError командлет сгенерировал исключение.
+Первым исключением было "{0}" с трассировкой стека "{1}".
+Вторым исключением было "{2}" с трассировкой стека "{3}".</value>
+  </data>
+  <data name="WriteToClosedPipeline" xml:space="preserve">
+    <value>Методы WriteObject и WriteError нельзя вызывать после закрытия конвейера. Обратитесь в службы поддержки клиентов Майкрософт.</value>
+  </data>
+  <data name="PipelineExecutionInformation" xml:space="preserve">
+    <value>CommandInvocation({0}): "{1}"</value>
+  </data>
+  <data name="PipelineExecutionNonTerminatingError" xml:space="preserve">
+    <value>NonTerminatingError({0}): "{1}"</value>
+  </data>
+  <data name="PipelineExecutionTerminatingError" xml:space="preserve">
+    <value>TerminatingError({0}): "{1}"</value>
+  </data>
+  <data name="PipelineExecutionParameterBinding" xml:space="preserve">
+    <value>ParameterBinding({0}): name="{1}"; value="{2}"</value>
+  </data>
+  <data name="CannotCreatePipeline" xml:space="preserve">
+    <value>Произошла ошибка при создании конвейера.</value>
+  </data>
+  <data name="ConnectNotSupported" xml:space="preserve">
+    <value>Этот конвейер не поддерживает семантику отключения и подключения.</value>
+  </data>
+  <data name="PipelineNotDisconnected" xml:space="preserve">
+    <value>Невозможно подключить этот конвейер, так как он не находится в отключенном состоянии.</value>
+  </data>
+  <data name="InvalidRemoteCommand" xml:space="preserve">
+    <value>С объектом пространства выполнения связана удаленная команда со значением null.  Невозможно создать отключенный объект RemotePipeline, так как удаленная команда не указана.</value>
+  </data>
+</root>
