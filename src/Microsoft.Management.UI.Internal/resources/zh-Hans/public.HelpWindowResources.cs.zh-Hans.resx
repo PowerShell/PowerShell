@@ -117,114 +117,114 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ColumnPicker" xml:space="preserve">
-    <value>Sélectionner des colonnes...</value>
+  <data name="CancelText" xml:space="preserve">
+    <value>Zrušit</value>
   </data>
-  <data name="GroupTitleNone" xml:space="preserve">
-    <value>(aucun)</value>
-    <comment>The group title for items within a column whose value is empty/null.</comment>
+  <data name="CaseSensitiveTitle" xml:space="preserve">
+    <value>Match Case</value>
   </data>
-  <data name="ErrorTextBoxTypeConversionErrorText" xml:space="preserve">
-    <value>La valeur doit être de type {0}.</value>
-    <comment>This text represents the error which will be shown when the entered type does not match the type we are expecting. {0} is the expected type.</comment>
+  <data name="CommonParameters" xml:space="preserve">
+    <value>CommonParameters</value>
+    <comment>Name of a group of parameters common to all cmdlets</comment>
   </data>
-  <data name="ValidatingSelectorValueOutOfBounds" xml:space="preserve">
-    <value>La sélection actuelle est vide.</value>
-    <comment>The error validation string to present to the user when they have selected a value out of bounds.</comment>
+  <data name="DescriptionTitle" xml:space="preserve">
+    <value>Popis</value>
   </data>
-  <data name="FilterRule_Contains" xml:space="preserve">
-    <value>contient</value>
-    <comment>A filter rule that indicates a field must contain the specified value.</comment>
+  <data name="ExamplesTitle" xml:space="preserve">
+    <value>Examples</value>
   </data>
-  <data name="FilterRule_DoesNotContain" xml:space="preserve">
-    <value>ne contient pas</value>
-    <comment>A filter rule that indicates a field must not contain the specified value.</comment>
+  <data name="FindText" xml:space="preserve">
+    <value>_Find:</value>
   </data>
-  <data name="FilterRule_DoesNotEqual" xml:space="preserve">
-    <value>n’est pas égal à</value>
-    <comment>A filter rule that indicates a field must not equal the specified value.</comment>
+  <data name="HelpSectionsTitle" xml:space="preserve">
+    <value>Help Sections</value>
   </data>
-  <data name="FilterRule_Equals" xml:space="preserve">
-    <value>est égal à</value>
-    <comment>A filter rule that indicates a field must equal the specified value.</comment>
+  <data name="HelpTitleFormat" xml:space="preserve">
+    <value>{0} Help</value>
   </data>
-  <data name="FilterRule_GreaterThanOrEqual" xml:space="preserve">
-    <value>est supérieur ou égal à</value>
-    <comment>A filter rule that indicates a field must be greater than or equal to the specified value.</comment>
+  <data name="InputsTitle" xml:space="preserve">
+    <value>Inputs</value>
   </data>
-  <data name="FilterRule_IsBetween" xml:space="preserve">
-    <value>est compris entre</value>
-    <comment>A filter rule that indicates a field must be between the specified values.</comment>
+  <data name="LinkTextFormat" xml:space="preserve">
+    <value>{0} {1}</value>
   </data>
-  <data name="FilterRule_IsEmpty" xml:space="preserve">
-    <value>est vide</value>
-    <comment>A filter rule that indicates a field must be empty.</comment>
+  <data name="MethodsTitle" xml:space="preserve">
+    <value>Methods</value>
   </data>
-  <data name="FilterRule_IsNotEmpty" xml:space="preserve">
-    <value>n’est pas vide</value>
-    <comment>A filter rule that indicates a field must not be empty.</comment>
+  <data name="NextText" xml:space="preserve">
+    <value>_Next</value>
   </data>
-  <data name="FilterRule_LessThanOrEqual" xml:space="preserve">
-    <value>est inférieur ou égal à</value>
-    <comment>A filter rule that indicates a field must be less than or equal to the specified value.</comment>
+  <data name="NoMatches" xml:space="preserve">
+    <value>No matches found</value>
   </data>
-  <data name="FilterRule_TextEndsWith" xml:space="preserve">
-    <value>se termine par</value>
-    <comment>A filter rule that indicates a field must end with the specified value.</comment>
+  <data name="NotesTitle" xml:space="preserve">
+    <value>Notes</value>
   </data>
-  <data name="FilterRule_TextStartsWith" xml:space="preserve">
-    <value>commence par</value>
-    <comment>A filter rule that indicates a field must start with the specified value.</comment>
+  <data name="OKText" xml:space="preserve">
+    <value>OK</value>
   </data>
-  <data name="BackForwardHistory_BrowseBack_Disabled_Helptext" xml:space="preserve">
-    <value>Retour</value>
-    <comment>The text representing the tool tip and help text for the Back Button in the Back Forward History control when the button is disabled</comment>
+  <data name="OneMatch" xml:space="preserve">
+    <value>1 match</value>
   </data>
-  <data name="BackForwardHistory_BrowseForward_Disabled_Helptext" xml:space="preserve">
-    <value>Transférer</value>
-    <comment>The text representing the tool tip and help text for the Forward Button in the Back Forward History control when the button is disabled</comment>
+  <data name="OutputsTitle" xml:space="preserve">
+    <value>Outputs</value>
   </data>
-  <data name="ErrorMessageForUnparsableDateTimeType" xml:space="preserve">
-    <value>La valeur doit être une date valide au format suivant : {0}.</value>
-    <comment>{0} will be filled in with the culture appropriate ShortDatePattern</comment>
+  <data name="ParameterAcceptWildcard" xml:space="preserve">
+    <value>Accept wildcard characters?</value>
   </data>
-  <data name="ErrorMessageForUnparsableNumericType" xml:space="preserve">
-    <value>La valeur doit être un nombre valide.</value>
+  <data name="ParameterDefaultValue" xml:space="preserve">
+    <value>Default value</value>
   </data>
-  <data name="SearchBox_BackgroundText" xml:space="preserve">
-    <value>Rechercher</value>
-    <comment>The default background text of the search box.</comment>
+  <data name="ParameterPipelineInput" xml:space="preserve">
+    <value>Accept pipeline input?</value>
   </data>
-  <data name="FlowDirection" xml:space="preserve">
-    <value>LeftToRight</value>
-    <comment>This value will be loaded at runtime to define the flow direction of WPF application.  This value should be set to "RightToLeft" for mirrored language and "LeftToRight" for others.</comment>
+  <data name="ParameterPosition" xml:space="preserve">
+    <value>Position?</value>
   </data>
-  <data name="Ellipsis" xml:space="preserve">
-    <value>…</value>
-    <comment>An ellipsis character.</comment>
+  <data name="ParameterRequired" xml:space="preserve">
+    <value>Required?</value>
   </data>
-  <data name="ZoomIn1Shortcut" xml:space="preserve">
-    <value>Ctrl+Add</value>
+  <data name="ParametersTitle" xml:space="preserve">
+    <value>Parameters</value>
   </data>
-  <data name="ZoomIn2Shortcut" xml:space="preserve">
-    <value>Ctrl+Shift+Add</value>
+  <data name="PreviousText" xml:space="preserve">
+    <value>_Previous</value>
   </data>
-  <data name="ZoomIn3Shortcut" xml:space="preserve">
-    <value>Ctrl+Plus</value>
+  <data name="PropertiesTitle" xml:space="preserve">
+    <value>Vlastnosti</value>
   </data>
-  <data name="ZoomIn4Shortcut" xml:space="preserve">
-    <value>Ctrl+Shift+Plus</value>
+  <data name="RelatedLinksTitle" xml:space="preserve">
+    <value>RelatedLinks</value>
   </data>
-  <data name="ZoomOut1Shortcut" xml:space="preserve">
-    <value>Ctrl+Subtract</value>
+  <data name="RemarksTitle" xml:space="preserve">
+    <value>Remarks</value>
   </data>
-  <data name="ZoomOut2Shortcut" xml:space="preserve">
-    <value>Ctrl+Shift+Subtract</value>
+  <data name="SearchOptionsTitle" xml:space="preserve">
+    <value>Search Options</value>
   </data>
-  <data name="ZoomOut3Shortcut" xml:space="preserve">
-    <value>Ctrl+Minus</value>
+  <data name="SettingsText" xml:space="preserve">
+    <value>Nastavení</value>
   </data>
-  <data name="ZoomOut4Shortcut" xml:space="preserve">
-    <value>Ctrl+Shift+Minus</value>
+  <data name="SomeMatchesFormat" xml:space="preserve">
+    <value>{0} matches</value>
+  </data>
+  <data name="SynopsisTitle" xml:space="preserve">
+    <value>Synopsis</value>
+  </data>
+  <data name="SyntaxTitle" xml:space="preserve">
+    <value>Syntax</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Help for {0}</value>
+    <comment>{0} is the name of a cmdlet</comment>
+  </data>
+  <data name="WholeWordTitle" xml:space="preserve">
+    <value>Whole Word</value>
+  </data>
+  <data name="ZoomLabelTextFormat" xml:space="preserve">
+    <value>{0}%</value>
+  </data>
+  <data name="ZoomSlider" xml:space="preserve">
+    <value>Zoom</value>
   </data>
 </root>
