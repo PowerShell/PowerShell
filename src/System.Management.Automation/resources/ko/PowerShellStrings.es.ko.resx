@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidPowerShellStateGeneral" xml:space="preserve">
+    <value>El estado de la instancia actual de PowerShell no es válido para esta operación.</value>
+  </data>
+  <data name="ExecutionAlreadyStarted" xml:space="preserve">
+    <value>No se puede realizar la operación porque ya se inició un comando. Espere a que se complete el comando o deténgalo y, a continuación, vuelva a intentar la operación.</value>
+  </data>
+  <data name="NoCommandToInvoke" xml:space="preserve">
+    <value>No se ha especificado ningún comando.</value>
+  </data>
+  <data name="InvalidStateCreateNested" xml:space="preserve">
+    <value>La instancia de PowerShell no está en el estado correcto para crear una instancia anidada de PowerShell. Las instancias anidadas de PowerShell solo se deben crear en una instancia de PowerShell en ejecución.</value>
+  </data>
+  <data name="InvalidRunspaceState" xml:space="preserve">
+    <value>No se puede realizar la operación porque el espacio de ejecución no se encuentra en el estado "{0}". El estado actual del espacio de ejecución es "{1}".</value>
+  </data>
+  <data name="NestedPowerShellInvokeAsync" xml:space="preserve">
+    <value>Las instancias anidadas de PowerShell no se pueden invocar de forma asincrónica. Use el método de Invocar.</value>
+  </data>
+  <data name="AsyncResultNotOwned" xml:space="preserve">
+    <value>El objeto {0} no se creó mediante la llamada a {1} en esta instancia de PowerShell.</value>
+  </data>
+  <data name="ApartmentStateMismatch" xml:space="preserve">
+    <value>Cuando el espacio de ejecución está configurado para reutilizar un subproceso, el estado del apartamento en la configuración de invocación debe coincidir con el del espacio de ejecución.</value>
+  </data>
+  <data name="ApartmentStateMismatchCurrentThread" xml:space="preserve">
+    <value>Cuando el espacio de ejecución está configurado para usar el subproceso actual, el estado del apartamento en la configuración de invocación debe coincidir con el del subproceso actual.</value>
+  </data>
+  <data name="ParameterRequiresCommand" xml:space="preserve">
+    <value>Se requiere un comando para agregar un parámetro. Debe agregarse un comando a la instancia de PowerShell antes de agregar un parámetro.</value>
+  </data>
+  <data name="KeyMustBeString" xml:space="preserve">
+    <value>Las claves del diccionario deben ser cadenas.</value>
+  </data>
+  <data name="CommandInvokedFromWrongThreadWithCommand" xml:space="preserve">
+    <value>No hay ningún espacio de ejecución disponible para ejecutar comandos en este subproceso. Puede proporcionar uno en la propiedad DefaultRunspace del tipo System.Management.Automation.Runspaces.Runspace. El comando que intentó invocar era: {0}</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>Este objeto de PowerShell no se puede conectar porque no está asociado a un espacio de ejecución remoto ni a un grupo de espacios de ejecución.</value>
+  </data>
+  <data name="DiscOnSyncCommand" xml:space="preserve">
+    <value>El comando en ejecución se ha desconectado, pero sigue ejecutándose en el servidor remoto.  Vuelva a conectarse para obtener el estado de la operación del comando y los datos de salida.</value>
+  </data>
+  <data name="ExecutionDisconnected" xml:space="preserve">
+    <value>No se puede realizar la operación porque la sesión actual de PowerShell está en estado Desconectado.  Conecte esta sesión de PowerShell y, a continuación, espere a que el comando termine o deténgalo.</value>
+  </data>
+  <data name="IsDisconnected" xml:space="preserve">
+    <value>No se puede realizar la operación porque la sesión actual de PowerShell está en estado Desconectado.  Conecte esta sesión de PowerShell e inténtelo de nuevo.</value>
+  </data>
+  <data name="ConnectFailed" xml:space="preserve">
+    <value>Error al intentar conectar con el comando remoto.</value>
+  </data>
+  <data name="ExecutionStopping" xml:space="preserve">
+    <value>No se puede realizar la operación porque un comando se está deteniendo actualmente. Espere a que termine de detenerse el comando y, a continuación, vuelva a intentar la operación.</value>
+  </data>
+  <data name="CommandInvokedFromWrongThreadWithoutCommand" xml:space="preserve">
+    <value>No hay ningún espacio de ejecución disponible para ejecutar comandos en este subproceso. Puede proporcionar uno en la propiedad DefaultRunspace del tipo System.Management.Automation.Runspaces.Runspace. La instancia actual de PowerShell no contiene ningún comando que invocar.</value>
+  </data>
+  <data name="NoDefaultRunspaceForPSCreate" xml:space="preserve">
+    <value>No se puede crear un objeto de PowerShell que use el espacio de ejecución actual porque no hay ningún espacio de ejecución actual disponible.  Es posible que el espacio de ejecución actual se esté iniciando, como cuando se crea con un estado de sesión inicial.</value>
+  </data>
+</root>
