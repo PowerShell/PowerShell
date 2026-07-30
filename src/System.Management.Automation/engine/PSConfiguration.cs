@@ -152,17 +152,30 @@ namespace System.Management.Automation.Configuration
         }
 
         /// <summary>
-        /// Maps a logical write scope to the physical config scope that receives the write. System-wide
-        /// (AllUsers) writes are redirected to the writable per-machine data store (MachineFolder) when
-        /// running as a packaged app, so only the changed keys are stored there and the read-only $PSHOME
-        /// product config is left untouched. All other scopes write in place.
+        /// Maps a logical write scope to the physical config scope that receives the write. On Unix,
+        /// MachineFolder resolves to AllUsers because the per-machine data store is Windows-only. On Windows,
+        /// system-wide (AllUsers) writes are redirected to the writable per-machine data store (MachineFolder)
+        /// when running as a packaged app, so only the changed keys are stored there and the read-only $PSHOME
+        /// product config is left untouched.
         /// </summary>
-        private ConfigScope ResolveWriteScope(ConfigScope scope)
+        private static ConfigScope ResolveWriteScope(
+            ConfigScope scope,
+            bool machineFolderAvailable,
+            bool allowMachineFolderRedirect = true)
         {
-            if (scope == ConfigScope.AllUsers && !string.IsNullOrEmpty(machineFolderConfigFile))
+#if UNIX
+            if (scope == ConfigScope.MachineFolder)
+            {
+                return ConfigScope.AllUsers;
+            }
+#else
+            if (allowMachineFolderRedirect
+                && scope == ConfigScope.AllUsers
+                && machineFolderAvailable)
             {
                 return ConfigScope.MachineFolder;
             }
+#endif
 
             return scope;
         }
@@ -626,27 +639,26 @@ namespace System.Management.Automation.Configuration
         {
             try
             {
-                // Redirect system-wide writes to the writable per-machine data store when packaged, so only
-                // the changed keys are stored there and the read-only $PSHOME product config is untouched.
-                // Callers that must target the literal scope (e.g. experimental features, whose MachineFolder
-                // support is deferred) pass allowMachineFolderRedirect: false.
-                if (allowMachineFolderRedirect)
-                {
-                    scope = ResolveWriteScope(scope);
-                }
+                // Resolve the physical write scope before selecting a path. On Unix, MachineFolder falls
+                // back to the legacy AllUsers location. On Windows, callers that must target the literal
+                // AllUsers scope pass allowMachineFolderRedirect: false.
+                scope = ResolveWriteScope(
+                    scope,
+                    machineFolderAvailable: !string.IsNullOrEmpty(machineFolderConfigFile),
+                    allowMachineFolderRedirect: allowMachineFolderRedirect);
 
                 string fileName = GetConfigFilePath(scope);
                 fileLock.EnterWriteLock();
+#if !UNIX
                 if (scope == ConfigScope.MachineFolder)
                 {
                     EnsureMachineFolderConfigDirectory();
-#if !UNIX
                     if (useDefaultMachineFolderConfigDirectory && File.Exists(fileName))
                     {
                         ValidateMachineFolderConfigPath(fileName);
                     }
-#endif
                 }
+#endif
 
                 // Since multiple properties can be in a single file, replacement is required instead of overwrite if a file already exists.
                 // Handling the read and write operations within a single FileStream prevents other processes from reading or writing the file while
@@ -760,12 +772,10 @@ namespace System.Management.Automation.Configuration
             UpdateValueInFile<T>(scope, key, value, true, allowMachineFolderRedirect);
         }
 
+#if !UNIX
         private void EnsureMachineFolderConfigDirectory()
         {
             string machineFolderConfigDirectory = Path.GetDirectoryName(machineFolderConfigFile);
-#if UNIX
-            Directory.CreateDirectory(machineFolderConfigDirectory);
-#else
             if (!useDefaultMachineFolderConfigDirectory)
             {
                 Directory.CreateDirectory(machineFolderConfigDirectory);
@@ -777,10 +787,8 @@ namespace System.Management.Automation.Configuration
             EnsureDirectoryWithSecurity(systemConfigDirectory, security);
             EnsureDirectoryWithSecurity(Path.Combine(systemConfigDirectory, "Packages"), security);
             EnsureDirectoryWithSecurity(machineFolderConfigDirectory, security);
-#endif
         }
 
-#if !UNIX
         private static void EnsureDirectoryWithSecurity(string path, DirectorySecurity security)
         {
             var directory = new DirectoryInfo(path);
@@ -947,7 +955,9 @@ namespace System.Management.Automation.Configuration
         /// <param name="key">The string key of the value.</param>
         private void RemoveValueFromFile<T>(ConfigScope scope, string key)
         {
-            scope = ResolveWriteScope(scope);
+            scope = ResolveWriteScope(
+                scope,
+                machineFolderAvailable: !string.IsNullOrEmpty(machineFolderConfigFile));
             string fileName = GetConfigFilePath(scope);
             // Optimization: If the file doesn't exist, there is nothing to remove
             if (File.Exists(fileName))

@@ -1249,6 +1249,27 @@ namespace PSTests.Sequential
                 packageFamilyName: null));
         }
 
+#if UNIX
+        [Fact]
+        [Priority(24)]
+        public void PowerShellConfig_MachineFolderWriteUsesAllUsersOnUnix()
+        {
+            const string FeatureName = "PSTest.UnixMachineFolderFallback";
+            fixture.SetupWinCompatConfig(
+                allUsersConfig: new { ConsolePrompting = true },
+                currentUserConfig: null);
+            fixture.ForceReadingFromFile();
+
+            PowerShellConfig.Instance.SetExperimentalFeatures(
+                ConfigScope.MachineFolder,
+                FeatureName,
+                setEnabled: true);
+
+            string configFile = Path.Combine(Utils.DefaultPowerShellAppBase, "powershell.config.json");
+            JObject config = JObject.Parse(File.ReadAllText(configFile));
+            Assert.Contains(FeatureName, config["ExperimentalFeatures"].Values<string>());
+        }
+#else
         [Fact]
         [Priority(24)]
         public void PowerShellConfig_AllUsersWriteCreatesMachineFolderDirectory()
@@ -1283,7 +1304,6 @@ namespace PSTests.Sequential
             Assert.Null(config.Property("Microsoft.PowerShell:ExecutionPolicy"));
         }
 
-#if !UNIX
         [Fact]
         [Priority(26)]
         [SupportedOSPlatform("windows")]
