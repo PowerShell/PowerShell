@@ -80,18 +80,20 @@ $isDaily = $false
 if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 {
     $validRebuildBranchRegex = '^refs/heads/rebuild/v[0-9]+\.[0-9]+\.[0-9]+-rebuild\.(?:0|[1-9][0-9]*)$'
-    if ($Branch -match '^refs/heads/rebuild/' -and $Branch -notmatch $validRebuildBranchRegex)
+    $isRebuildBranch = $Branch -match '^refs/heads/rebuild/'
+    $isValidRebuildBranch = $Branch -match $validRebuildBranchRegex
+    if ($isRebuildBranch -and -not $isValidRebuildBranch)
     {
         throw "Malformed rebuild branch '$Branch'. Expected branch name format: 'rebuild/v<major>.<minor>.<patch>-rebuild.<number>'."
     }
 
     # Branch is named release/<semver> or rebuild/v<semver>-rebuild.<number>
-    $releaseBranchRegex = '^.*((release/|rebuild/.*rebuild))'
-    if($Branch -match $releaseBranchRegex)
+    $isReleaseBranch = $Branch -match '^refs/heads/release/'
+    if($isReleaseBranch -or $isValidRebuildBranch)
     {
         $msixType = 'release'
         Write-Verbose "release branch:" -Verbose
-        $releaseTag = $Branch -replace '^.*((release|rebuild)/)'
+        $releaseTag = $Branch -replace '^refs/heads/(?:release|rebuild)/'
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
