@@ -18,7 +18,8 @@ Describe "Localized resource files validation" -Tags "CI" {
         $project.LocItems |
             ForEach-Object {
                 $sourceFile = $_.SourceFile
-                $parentDir = Split-Path -Path $sourceFile -Parent
+                $index = $sourceFile.LastIndexOf('\')
+                $parentDir = $sourceFile.Substring(0, $index)
                 $realSourceFile = Join-Path $repoRoot $sourceFile
 
                 Test-Path -Path $realSourceFile | Should -BeTrue
