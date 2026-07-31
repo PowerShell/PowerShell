@@ -1185,6 +1185,99 @@ ZoneId=$FileType
             Get-ExecutionPolicy -Scope LocalMachine | Should -Be "ByPass"
         }
     }
+
+    Describe 'Validate MSIX LocalMachine configuration' -Tags @('CI', 'RequireAdminOnWindows') {
+        It 'LocalMachine uses the package-family ProgramData file for MSIX' {
+            $packageFamilyName = [System.Management.Automation.Internal.InternalTestHooks]::GetCurrentPackageFamilyName()
+            if ([string]::IsNullOrEmpty($packageFamilyName)) {
+                Set-ItResult -Skipped -Because 'The test requires PowerShell to be running with MSIX package identity.'
+                return
+            }
+
+            $programDataDirectory = [Environment]::GetFolderPath([Environment+SpecialFolder]::CommonApplicationData)
+            $powerShellConfigDirectory = Join-Path $programDataDirectory 'Microsoft\PowerShell'
+            $machineConfigDirectory = Join-Path $powerShellConfigDirectory $packageFamilyName
+            $machineConfigFile = Join-Path $machineConfigDirectory 'powershell.config.json'
+            $backupConfigFile = Join-Path $TestDrive 'powershell.config.json'
+            $powerShellConfigDirectoryExisted = Test-Path -LiteralPath $powerShellConfigDirectory
+            $machineConfigDirectoryExisted = Test-Path -LiteralPath $machineConfigDirectory
+            $configFileExisted = Test-Path -LiteralPath $machineConfigFile
+            $originalPolicyExists = $false
+            $originalPolicy = $null
+
+            if ($configFileExisted) {
+                Copy-Item -LiteralPath $machineConfigFile -Destination $backupConfigFile -ErrorAction Stop
+                $originalConfig = Get-Content -LiteralPath $machineConfigFile -Raw | ConvertFrom-Json
+                if ($null -ne $originalConfig) {
+                    $originalPolicyProperty = $originalConfig.PSObject.Properties['Microsoft.PowerShell:ExecutionPolicy']
+                    if ($null -ne $originalPolicyProperty) {
+                        $originalPolicyExists = $true
+                        $originalPolicy = $originalPolicyProperty.Value
+                    }
+                }
+            }
+
+            $testPolicy = if ($originalPolicy -eq 'AllSigned') { 'RemoteSigned' } else { 'AllSigned' }
+            $setLocalMachinePolicy = {
+                param([string] $Policy)
+
+                try {
+                    Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy $Policy -Force -ErrorAction Stop
+                }
+                catch {
+                    if ($_.FullyQualifiedErrorId -ne 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand') {
+                        throw
+                    }
+                }
+            }
+
+            try {
+                & $setLocalMachinePolicy -Policy $testPolicy
+
+                $machineConfigFile | Should -Exist
+                $config = Get-Content -LiteralPath $machineConfigFile -Raw | ConvertFrom-Json
+                $config.'Microsoft.PowerShell:ExecutionPolicy' | Should -Be $testPolicy
+
+                (Get-Acl -LiteralPath $powerShellConfigDirectory).AreAccessRulesProtected | Should -BeTrue
+                (Get-Acl -LiteralPath $machineConfigDirectory).AreAccessRulesProtected | Should -BeTrue
+
+                $machineConfigFileAcl = Get-Acl -LiteralPath $machineConfigFile
+                $machineConfigFileAcl.AreAccessRulesProtected | Should -BeFalse
+                @($machineConfigFileAcl.Access | Where-Object { $_.IsInherited }).Count | Should -BeGreaterThan 0
+
+                & $setLocalMachinePolicy -Policy Undefined
+                $config = Get-Content -LiteralPath $machineConfigFile -Raw | ConvertFrom-Json
+                $config.PSObject.Properties['Microsoft.PowerShell:ExecutionPolicy'] | Should -BeNullOrEmpty
+            }
+            finally {
+                try {
+                    try {
+                        if ($configFileExisted -or (Test-Path -LiteralPath $machineConfigFile)) {
+                            $restorePolicy = if ($originalPolicyExists) { $originalPolicy } else { 'Undefined' }
+                            & $setLocalMachinePolicy -Policy $restorePolicy
+                        }
+                    }
+                    finally {
+                        if ($configFileExisted) {
+                            Copy-Item -LiteralPath $backupConfigFile -Destination $machineConfigFile -Force -ErrorAction Stop
+                        }
+                        else {
+                            Remove-Item -LiteralPath $machineConfigFile -Force -ErrorAction SilentlyContinue
+                        }
+                    }
+                }
+                finally {
+                    if (-not $machineConfigDirectoryExisted) {
+                        Remove-Item -LiteralPath $machineConfigDirectory -Force -ErrorAction SilentlyContinue
+                    }
+
+                    if (-not $powerShellConfigDirectoryExisted) {
+                        Remove-Item -LiteralPath $powerShellConfigDirectory -Force -ErrorAction SilentlyContinue
+                    }
+                }
+            }
+        }
+    }
 }
 finally {
     $global:PSDefaultParameterValues = $originalDefaultParameterValues

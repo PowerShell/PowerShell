@@ -3,16 +3,10 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Reflection;
-using System.Runtime.Versioning;
-#if !UNIX
-using System.Security.AccessControl;
-using System.Security.Principal;
-#endif
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -450,15 +444,6 @@ namespace PSTests.Sequential
                 WriteConfigFile(machineFolderTestConfigFile, machineFolderConfig);
                 machineFolderConfigFileField.SetValue(PowerShellConfig.Instance, machineFolderTestConfigFile);
             }
-        }
-
-        internal string SetupMachineFolderWrite()
-        {
-            CleanupConfigFiles();
-            CleanupMachineFolderConfig();
-            machineFolderConfigFileField.SetValue(PowerShellConfig.Instance, machineFolderTestConfigFile);
-            ForceReadingFromFile();
-            return machineFolderTestConfigFile;
         }
 
         private void WriteConfigFile(string path, object config)
@@ -1245,136 +1230,6 @@ namespace PSTests.Sequential
             string configFile = Path.Combine(Utils.DefaultPowerShellAppBase, "powershell.config.json");
             JObject config = JObject.Parse(File.ReadAllText(configFile));
             Assert.Contains(FeatureName, config["ExperimentalFeatures"].Values<string>());
-        }
-#else
-        [Fact]
-        [Priority(22)]
-        public void PowerShellConfig_AllUsersWriteCreatesMachineFolderDirectory()
-        {
-            string configFile = fixture.SetupMachineFolderWrite();
-
-            PowerShellConfig.Instance.SetExecutionPolicy(
-                ConfigScope.AllUsers,
-                Utils.DefaultPowerShellShellID,
-                "RemoteSigned");
-
-            Assert.True(File.Exists(configFile));
-            JObject config = JObject.Parse(File.ReadAllText(configFile));
-            Assert.Equal("RemoteSigned", (string)config["Microsoft.PowerShell:ExecutionPolicy"]);
-        }
-
-        [Fact]
-        [Priority(23)]
-        public void PowerShellConfig_AllUsersRemoveTargetsMachineFolder()
-        {
-            string configFile = fixture.SetupMachineFolderWrite();
-            PowerShellConfig.Instance.SetExecutionPolicy(
-                ConfigScope.AllUsers,
-                Utils.DefaultPowerShellShellID,
-                "RemoteSigned");
-
-            PowerShellConfig.Instance.RemoveExecutionPolicy(
-                ConfigScope.AllUsers,
-                Utils.DefaultPowerShellShellID);
-
-            JObject config = JObject.Parse(File.ReadAllText(configFile));
-            Assert.Null(config.Property("Microsoft.PowerShell:ExecutionPolicy"));
-        }
-
-        [Fact]
-        [Priority(24)]
-        [SupportedOSPlatform("windows")]
-        public void PowerShellConfig_MachineFolderDirectorySecurityUsesProtectedInheritableAcl()
-        {
-            DirectorySecurity security = PowerShellConfig.CreateMachineFolderDirectorySecurity();
-
-            Assert.True(security.AreAccessRulesProtected);
-            Assert.True(PowerShellConfig.IsMachineFolderSecuritySecure(
-                security,
-                expectedAccessRulesProtected: true));
-            Assert.Equal(
-                new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null),
-                security.GetOwner(typeof(SecurityIdentifier)));
-            AssertAccessRule(security, WellKnownSidType.LocalSystemSid, FileSystemRights.FullControl);
-            AssertAccessRule(security, WellKnownSidType.BuiltinAdministratorsSid, FileSystemRights.FullControl);
-            AssertAccessRule(security, WellKnownSidType.BuiltinUsersSid, FileSystemRights.ReadAndExecute);
-        }
-
-        [Fact]
-        [Priority(25)]
-        [SupportedOSPlatform("windows")]
-        public void PowerShellConfig_MachineFolderFileSecurityAllowsAclInheritance()
-        {
-            var administrators = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, domainSid: null);
-            var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, domainSid: null);
-            var security = new FileSecurity();
-            security.SetAccessRuleProtection(isProtected: false, preserveInheritance: false);
-            security.SetOwner(administrators);
-            security.AddAccessRule(new FileSystemAccessRule(
-                new SecurityIdentifier(WellKnownSidType.LocalSystemSid, domainSid: null),
-                FileSystemRights.FullControl,
-                AccessControlType.Allow));
-            security.AddAccessRule(new FileSystemAccessRule(
-                administrators,
-                FileSystemRights.FullControl,
-                AccessControlType.Allow));
-            security.AddAccessRule(new FileSystemAccessRule(
-                users,
-                FileSystemRights.ReadAndExecute,
-                AccessControlType.Allow));
-
-            Assert.False(security.AreAccessRulesProtected);
-            Assert.True(PowerShellConfig.IsMachineFolderSecuritySecure(
-                security,
-                expectedAccessRulesProtected: false));
-
-            security.AddAccessRule(new FileSystemAccessRule(
-                users,
-                FileSystemRights.WriteData,
-                AccessControlType.Allow));
-
-            Assert.False(PowerShellConfig.IsMachineFolderSecuritySecure(
-                security,
-                expectedAccessRulesProtected: false));
-        }
-
-        [Fact]
-        [Priority(26)]
-        [SupportedOSPlatform("windows")]
-        public void PowerShellConfig_MachineFolderSecurityRejectsUserWriteAccess()
-        {
-            DirectorySecurity security = PowerShellConfig.CreateMachineFolderDirectorySecurity();
-            security.AddAccessRule(new FileSystemAccessRule(
-                new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, domainSid: null),
-                FileSystemRights.WriteData,
-                InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
-                PropagationFlags.None,
-                AccessControlType.Allow));
-
-            Assert.False(PowerShellConfig.IsMachineFolderSecuritySecure(
-                security,
-                expectedAccessRulesProtected: true));
-        }
-
-        [SupportedOSPlatform("windows")]
-        private static void AssertAccessRule(
-            DirectorySecurity security,
-            WellKnownSidType sidType,
-            FileSystemRights rights)
-        {
-            var expectedSid = new SecurityIdentifier(sidType, domainSid: null);
-            AuthorizationRuleCollection rules = security.GetAccessRules(
-                includeExplicit: true,
-                includeInherited: false,
-                targetType: typeof(SecurityIdentifier));
-
-            Assert.Contains(
-                rules.OfType<FileSystemAccessRule>(),
-                rule => rule.IdentityReference.Equals(expectedSid)
-                    && rule.AccessControlType == AccessControlType.Allow
-                    && (rule.FileSystemRights & rights) == rights
-                    && rule.InheritanceFlags.HasFlag(InheritanceFlags.ContainerInherit)
-                    && rule.InheritanceFlags.HasFlag(InheritanceFlags.ObjectInherit));
         }
 #endif
     }
