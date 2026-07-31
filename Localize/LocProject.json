@@ -4,55 +4,754 @@
       "LanguageSet": "VS_Main_Languages",
       "LocItems": [
         {
-          "SourceFile": "src\\System.Management.Automation\\resources\\*.resx",
-          "OutputPath": "src\\System.Management.Automation\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
-          "CopyOption": "UsePlaceholders"
+          "SourceFile": "src\\System.Management.Automation\\resources\\Authenticode.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
         },
         {
-          "SourceFile": "src\\Microsoft.Management.Infrastructure.CimCmdlets\\resources\\*.resx",
-          "OutputPath": "src\\Microsoft.Management.Infrastructure.CimCmdlets\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
-          "CopyOption": "UsePlaceholders"
+          "SourceFile": "src\\System.Management.Automation\\resources\\AuthorizationManagerBase.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
         },
         {
-          "SourceFile": "src\\Microsoft.Management.UI.Internal\\resources\\*.resx",
-          "OutputPath": "src\\Microsoft.Management.UI.Internal\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
-          "CopyOption": "UsePlaceholders"
+          "SourceFile": "src\\System.Management.Automation\\resources\\AutomationExceptions.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
         },
         {
-          "SourceFile": "src\\Microsoft.PowerShell.Commands.Diagnostics\\resources\\*.resx",
-          "OutputPath": "src\\Microsoft.PowerShell.Commands.Diagnostics\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
-          "CopyOption": "UsePlaceholders"
-        },
-
-        {
-          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\*.resx",
-          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
-          "CopyOption": "UsePlaceholders"
+          "SourceFile": "src\\System.Management.Automation\\resources\\CatalogStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
         },
         {
-          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\*.resx",
-          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
-          "CopyOption": "UsePlaceholders"
+          "SourceFile": "src\\System.Management.Automation\\resources\\CimInstanceTypeAdapterResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
         },
         {
-          "SourceFile": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\*.resx",
-          "OutputPath": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
-          "CopyOption": "UsePlaceholders"
+          "SourceFile": "src\\System.Management.Automation\\resources\\CmdletizationCoreResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
         },
         {
-          "SourceFile": "src\\Microsoft.PowerShell.CoreCLR.Eventing\\resources\\*.resx",
-          "OutputPath": "src\\Microsoft.PowerShell.CoreCLR.Eventing\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
-          "CopyOption": "UsePlaceholders"
+          "SourceFile": "src\\System.Management.Automation\\resources\\CommandBaseStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
         },
         {
-          "SourceFile": "src\\Microsoft.PowerShell.Security\\resources\\*.resx",
-          "OutputPath": "src\\Microsoft.PowerShell.Security\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
-          "CopyOption": "UsePlaceholders"
+          "SourceFile": "src\\System.Management.Automation\\resources\\ConsoleInfoErrorStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
         },
         {
-          "SourceFile": "src\\Microsoft.WSMan.Management\\resources\\*.resx",
-          "OutputPath": "src\\Microsoft.WSMan.Management\\resources\\{Lang}\\{FileName}.{Lang}{Extension}",
-          "CopyOption": "UsePlaceholders"
+          "SourceFile": "src\\System.Management.Automation\\resources\\CoreClrStubResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\Credential.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\CredentialAttributeStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\CredUI.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\DebuggerStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\DescriptionsStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\DiscoveryExceptions.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\EnumExpressionEvaluatorStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\ErrorCategoryStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\ErrorPackage.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\EtwLoggingStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\EventingResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\EventResource.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\ExperimentalFeatureStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\ExtendedTypeSystem.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\FileSystemProviderStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\FormatAndOut_format_xxx.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\FormatAndOut_MshParameter.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\FormatAndOut_out_xxx.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\FormatAndOutXmlLoadingStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\GetErrorText.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\HelpDisplayStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\HelpErrors.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\HistoryStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\HostInterfaceExceptionsStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\InternalCommandStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\InternalHostStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\InternalHostUserInterfaceStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\Logging.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\Metadata.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\MiniShellErrors.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\Modules.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\MshHostRawUserInterfaceStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\MshSignature.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\MshSnapInCmdletResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\MshSnapinInfo.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\NativeCP.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\ParameterBinderStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\ParserStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\PathUtilsStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\PipelineStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\PowerShellStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\ProgressRecordStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\ProviderBaseSecurity.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\ProxyCommandStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\PSCommandStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\PSConfigurationStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\PSDataBufferStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\PSListModifierStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\PSStyleStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\RegistryProviderStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\RemotingErrorIdStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\RunspaceInit.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\RunspacePoolStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\RunspaceStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\SecuritySupportStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\Serialization.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\SessionStateProviderBaseStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\SessionStateStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\StringDecoratedStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\SubsystemStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\SuggestionStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\TabCompletionStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\TransactionStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\TypesXmlStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\VerbDescriptionStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\System.Management.Automation\\resources\\WildcardPatternStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.Management.Infrastructure.CimCmdlets\\resources\\CimCmdletStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.Management.Infrastructure.CimCmdlets\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.Management.UI.Internal\\resources\\public.GraphicalHostResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.Management.UI.Internal\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.Management.UI.Internal\\resources\\public.HelpWindowResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.Management.UI.Internal\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.Management.UI.Internal\\resources\\public.InvariantResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.Management.UI.Internal\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.Management.UI.Internal\\resources\\public.ShowCommandResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.Management.UI.Internal\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.Management.UI.Internal\\resources\\public.UICultureResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.Management.UI.Internal\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.Management.UI.Internal\\resources\\public.XamlLocalizableResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.Management.UI.Internal\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Diagnostics\\resources\\GetEventResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Diagnostics\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\ClearRecycleBinResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\ClipboardResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\CmdletizationResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\ComputerInfoResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\ComputerResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\HotFixResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\NavigationResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\ProcessCommandHelpResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\ProcessResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\ServiceResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\TestConnectionResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\TestPathResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Management\\resources\\TimeZoneResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Management\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\AddMember.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\AddTypeStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\AliasCommandStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\ConvertFromStringData.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\ConvertHTMLStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\ConvertMarkdownStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\CsvCommandStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\Debugger.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\EventingStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\FormatAndOut_out_gridview.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\GetFormatDataStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\GetMember.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\GetRandomCommandStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\GetUptimeStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\HostStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\HttpCommandStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\ImplicitRemotingStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\ImportLocalizedDataStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\MatchStringStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\MeasureObjectStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\NewObjectStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\OutPrinterDisplayStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\SelectObjectStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\SendMailMessageStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\SortObjectStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\StartSleepStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\TestJsonCmdletStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\TraceCommandStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\UnblockFileStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\UpdateDataStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\UpdateListStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\UtilityCommonStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\VariableCommandStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\WebCmdletStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\WriteErrorStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\WriteProgressResourceStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Commands.Utility\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\CommandLineParameterParserStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\ConsoleControlStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\ConsoleHostRawUserInterfaceStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\ConsoleHostStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\ConsoleHostUserInterfaceSecurityResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\ConsoleHostUserInterfaceStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\ManagedEntranceStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\ProgressNodeStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\TranscriptStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.ConsoleHost\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.CoreCLR.Eventing\\resources\\DotNetEventingStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.CoreCLR.Eventing\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Security\\resources\\CertificateCommands.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Security\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Security\\resources\\CertificateProviderStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Security\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Security\\resources\\CmsCommands.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Security\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Security\\resources\\ExecutionPolicyCommands.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Security\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Security\\resources\\SecureStringCommands.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Security\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Security\\resources\\SignatureCommands.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Security\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.PowerShell.Security\\resources\\UtilsStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.PowerShell.Security\\resources\\"
+        },
+        {
+          "SourceFile": "src\\Microsoft.WSMan.Management\\resources\\WsManResources.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\Microsoft.WSMan.Management\\resources\\"
         }
       ]
     }
