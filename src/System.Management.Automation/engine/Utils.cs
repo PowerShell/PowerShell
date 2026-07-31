@@ -485,7 +485,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the package family name of the current process when it has package (MSIX) identity; otherwise null.
         /// </summary>
-        private static string GetCurrentPackageFamilyName()
+        internal static string GetCurrentPackageFamilyName()
         {
             try
             {
@@ -551,21 +551,13 @@ namespace System.Management.Automation
                 return s_packagedMachineDataStorePath;
             }
 
-            s_packagedMachineDataStorePath = GetPackagedMachineDataStorePath(
-                Platform.SystemConfigDirectory,
-                GetCurrentPackageFamilyName());
+            string packageFamilyName = GetCurrentPackageFamilyName();
+            s_packagedMachineDataStorePath = string.IsNullOrEmpty(packageFamilyName)
+                ? null
+                : Path.Combine(Platform.SystemConfigDirectory, packageFamilyName);
             s_packagedMachineDataStorePathInitialized = true;
             return s_packagedMachineDataStorePath;
 #endif
-        }
-
-        internal static string GetPackagedMachineDataStorePath(
-            string programDataConfigDirectory,
-            string packageFamilyName)
-        {
-            return string.IsNullOrEmpty(programDataConfigDirectory) || string.IsNullOrEmpty(packageFamilyName)
-                ? null
-                : Path.Combine(programDataConfigDirectory, packageFamilyName);
         }
 
         private static string[] s_productFolderDirectories;
@@ -1770,6 +1762,19 @@ namespace System.Management.Automation.Internal
         {
             var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
             fieldInfo?.SetValue(null, value);
+        }
+
+        /// <summary>
+        /// Returns the current package family name for tests running inside an MSIX package,
+        /// or null when the current process has no package identity.
+        /// </summary>
+        public static string GetCurrentPackageFamilyName()
+        {
+#if UNIX
+            return null;
+#else
+            return Utils.GetCurrentPackageFamilyName();
+#endif
         }
 
         /// <summary>

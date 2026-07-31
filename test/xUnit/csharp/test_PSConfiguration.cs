@@ -1226,32 +1226,9 @@ namespace PSTests.Sequential
             Assert.True(PowerShellConfig.Instance.IsImplicitWinCompatEnabled());
         }
 
-        [Fact]
-        [Priority(22)]
-        public void Utils_GetPackagedMachineDataStorePath_UsesPackageFamily()
-        {
-            string programDataConfigDirectory = Path.Combine("ProgramData", "Microsoft", "PowerShell");
-            string actual = Utils.GetPackagedMachineDataStorePath(
-                programDataConfigDirectory,
-                "Microsoft.PowerShell_8wekyb3d8bbwe");
-
-            Assert.Equal(
-                Path.Combine(programDataConfigDirectory, "Microsoft.PowerShell_8wekyb3d8bbwe"),
-                actual);
-        }
-
-        [Fact]
-        [Priority(23)]
-        public void Utils_GetPackagedMachineDataStorePath_RequiresPackageIdentity()
-        {
-            Assert.Null(Utils.GetPackagedMachineDataStorePath(
-                Path.Combine("ProgramData", "Microsoft", "PowerShell"),
-                packageFamilyName: null));
-        }
-
 #if UNIX
         [Fact]
-        [Priority(24)]
+        [Priority(22)]
         public void PowerShellConfig_MachineFolderWriteUsesAllUsersOnUnix()
         {
             const string FeatureName = "PSTest.UnixMachineFolderFallback";
@@ -1271,7 +1248,7 @@ namespace PSTests.Sequential
         }
 #else
         [Fact]
-        [Priority(24)]
+        [Priority(22)]
         public void PowerShellConfig_AllUsersWriteCreatesMachineFolderDirectory()
         {
             string configFile = fixture.SetupMachineFolderWrite();
@@ -1287,7 +1264,7 @@ namespace PSTests.Sequential
         }
 
         [Fact]
-        [Priority(25)]
+        [Priority(23)]
         public void PowerShellConfig_AllUsersRemoveTargetsMachineFolder()
         {
             string configFile = fixture.SetupMachineFolderWrite();
@@ -1305,7 +1282,7 @@ namespace PSTests.Sequential
         }
 
         [Fact]
-        [Priority(26)]
+        [Priority(24)]
         [SupportedOSPlatform("windows")]
         public void PowerShellConfig_MachineFolderDirectorySecurityUsesProtectedInheritableAcl()
         {
@@ -1324,7 +1301,7 @@ namespace PSTests.Sequential
         }
 
         [Fact]
-        [Priority(27)]
+        [Priority(25)]
         [SupportedOSPlatform("windows")]
         public void PowerShellConfig_MachineFolderFileSecurityAllowsAclInheritance()
         {
@@ -1362,7 +1339,7 @@ namespace PSTests.Sequential
         }
 
         [Fact]
-        [Priority(28)]
+        [Priority(26)]
         [SupportedOSPlatform("windows")]
         public void PowerShellConfig_MachineFolderSecurityRejectsUserWriteAccess()
         {
