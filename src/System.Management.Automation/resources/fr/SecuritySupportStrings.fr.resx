@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertificatePathMustBeFileSystemPath" xml:space="preserve">
-    <value>Cannot load certificate. '{0}' must resolve to a file system path.</value>
+    <value>Impossible de charger le certificat. '{0}' doit être résolu en chemin d’accès au système de fichiers.</value>
   </data>
   <data name="CertificateCannotBeUsedForEncryption" xml:space="preserve">
-    <value>Certificate '{0}' cannot be used for encryption. Encryption certificates must contain the Data Encipherment or Key Encipherment key usage, and include the Document Encryption Enhanced Key Usage ({1}).</value>
+    <value>Le certificat '{0}' ne peut pas être utilisé pour le chiffrement. Les certificats de chiffrement doivent contenir l’utilisation de la clé Chiffrement des données ou Chiffrement de clé, et inclure l’utilisation améliorée de la clé de chiffrement de document ({1}).</value>
   </data>
   <data name="IdentifierMustReferenceSingleCertificate" xml:space="preserve">
-    <value>Cannot load certificate. The identifier '{0}' matches multiple certificates. To encrypt to multiple recipients, provide multiple specific values to the '{1}' parameter, rather than a wildcard that matches multiple certificates.</value>
+    <value>Impossible de charger le certificat. L’identificateur «{0}» correspond à plusieurs certificats. Pour chiffrer sur plusieurs destinataires, fournissez plusieurs valeurs spécifiques au paramètre «{1}», plutôt qu’un caractère générique qui correspond à plusieurs certificats.</value>
   </data>
   <data name="NoCertificateFound" xml:space="preserve">
-    <value>Cannot load encryption certificate. The certificate setting '{0}' does not represent a valid base-64 encoded certificate, nor does it represent a valid certificate by file, directory, thumbprint, or subject name.</value>
+    <value>Impossible de charger le certificat de chiffrement. Le paramètre de certificat «{0}» ne représente pas un certificat encodé en base 64 valide, ni un certificat valide par fichier, répertoire, empreinte numérique ou nom de sujet.</value>
   </data>
   <data name="CertificateContainsPrivateKey" xml:space="preserve">
-    <value>WARNING: The certificate '{0}' contains a private key. Protected Event Logging certificates used for encryption should only contain the public key.</value>
+    <value>AVERTISSEMENT : le certificat «{0}» contient une clé privée. Les certificats de journalisation des événements protégés utilisés pour le chiffrement doivent contenir uniquement la clé publique.</value>
   </data>
   <data name="CouldNotEncryptContent" xml:space="preserve">
-    <value>ERROR: Could not protect event log message '{0}': {1}</value>
+    <value>Erreur : impossible de protéger le message du journal des événements «{0}» : {1}</value>
   </data>
   <data name="CouldNotUseCertificate" xml:space="preserve">
-    <value>ERROR: Could not find or use certificate: {0}</value>
+    <value>Erreur : impossible de trouver ou d’utiliser le certificat : {0}</value>
   </data>
   <data name="CannotEncryptSecureString" xml:space="preserve">
-    <value>Session key not available to encrypt secure string.</value>
+    <value>Clé de session non disponible pour chiffrer la chaîne sécurisée.</value>
   </data>
   <data name="InvalidOffset" xml:space="preserve">
-    <value>Invalid buffer offset.</value>
+    <value>Décalage de mémoire tampon non valide.</value>
   </data>
   <data name="InvalidPublicKey" xml:space="preserve">
-    <value>Invalid public key data.</value>
+    <value>Données de clé publique non valides.</value>
   </data>
   <data name="CannotImportPublicKey" xml:space="preserve">
-    <value>Cannot import public key.</value>
+    <value>Impossible d’importer la clé publique.</value>
   </data>
   <data name="InvalidSessionKey" xml:space="preserve">
-    <value>Invalid session key data.</value>
+    <value>Données de clé de session non valides.</value>
   </data>
   <data name="ScriptFileBlockedBySystemPolicy" xml:space="preserve">
-    <value>Script file, '{0}', is blocked from running by system policy.</value>
+    <value>Le fichier de script, '{0}', est bloqué par la stratégie système.</value>
   </data>
   <data name="UnknownSystemScriptFileEnforcement" xml:space="preserve">
-    <value>An unknown script file policy enforcement value was returned: {0}.</value>
+    <value>Une valeur d’application de stratégie de fichier de script inconnue a été retournée : {0}.</value>
   </data>
   <data name="ExternalScriptWDACLogTitle" xml:space="preserve">
-    <value>Script File Read</value>
+    <value>Fichier de script lu</value>
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
-    <value>Script file '{0}' is not trusted by policy and will run in ConstrainedLanguage mode.</value>
+    <value>Le fichier de script «{0}» n’est pas approuvé par la stratégie et s’exécutera en mode ConstrainedLanguage.</value>
   </data>
 </root>
