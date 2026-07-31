@@ -1,6 +1,7 @@
 parameters:
   parentJob: ''
   buildArchitecture: x64
+  OfficialBuild: true
 
 jobs:
 - job: package_macOS_${{ parameters.buildArchitecture }}
@@ -84,6 +85,7 @@ jobs:
         if ($LASTEXITCODE -ne 0) { throw "codesign verification failed for $($_.FullName)" }
       }
     displayName: 'Verify Apple codesign on signed binaries'
+    condition: and(succeeded(), eq('${{ parameters.OfficialBuild }}', 'true'))
 
   - pwsh: |
       # Add -SkipReleaseChecks as a mitigation to unblock release.
@@ -191,6 +193,10 @@ jobs:
   - group: certificate_logical_to_actual
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_signing_setup_enabled
+    value: ${{ parameters.OfficialBuild }}
+  - name: ob_sdl_codeSignValidation_enabled
+    value: ${{ parameters.OfficialBuild }}
   - name: ob_sdl_binskim_enabled
     value: true
   - name: ob_sdl_credscan_suppressionsfileforartifacts
@@ -226,9 +232,11 @@ jobs:
       Write-Verbose -Verbose "Compressed files:"
       Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*.zip" -File | Write-Verbose -Verbose
     displayName: Compress package files for signing
+    condition: and(succeeded(), eq('${{ parameters.OfficialBuild }}', 'true'))
 
   - task: onebranch.pipeline.signing@1
     displayName: 'OneBranch CodeSigning Package'
+    condition: and(succeeded(), eq('${{ parameters.OfficialBuild }}', 'true'))
     inputs:
       command: 'sign'
       files_to_sign: '**/*-osx-*.zip'
@@ -248,6 +256,7 @@ jobs:
 
   - task: onebranch.pipeline.signing@1
     displayName: 'OneBranch Notarize Package'
+    condition: and(succeeded(), eq('${{ parameters.OfficialBuild }}', 'true'))
     inputs:
       command: 'sign'
       files_to_sign: '**/*-osx-*.zip'
@@ -294,3 +303,19 @@ jobs:
       Write-Verbose -Verbose "Expanded pkg file:"
       Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
     displayName: Expand signed file
+    condition: and(succeeded(), eq('${{ parameters.OfficialBuild }}', 'true'))
+
+  - pwsh: |
+      $buildArch = '${{ parameters.buildArchitecture }}'
+      $macosRuntime = "osx-$buildArch"
+      $pkgNameFilter = "powershell-*$macosRuntime.pkg"
+      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File
+
+      if ($pkgPath.Count -eq 0) {
+        throw "No package found for $macosRuntime"
+      }
+
+      $null = New-Item -Path $(ob_outputDirectory) -ItemType Directory -Force
+      $pkgPath | Copy-Item -Destination $(ob_outputDirectory) -Force -Verbose
+    displayName: Copy unsigned package for upload
+    condition: and(succeeded(), eq('${{ parameters.OfficialBuild }}', 'false'))
