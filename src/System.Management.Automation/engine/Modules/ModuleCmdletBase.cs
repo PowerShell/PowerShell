@@ -6108,7 +6108,7 @@ namespace Microsoft.PowerShell.Commands
 
             // If using AppDomain-level module path caching, add this module to the cache. This is only done for
             // the modules loaded with without version info or other qualifiers.
-            if (PSModuleInfo.UseAppDomainLevelModuleCache && module != null && moduleBase == null && this.AddToAppDomainLevelCache)
+            if (PSModuleInfo.UseAppDomainLevelModuleCache && module != null && moduleBase == null && this.AddToAppDomainLevelCache && !ModuleIntrinsics.HasCustomPSModulePath(this.Context))
             {
                 // Cache using the actual name specified by the user rather than the module basename
                 PSModuleInfo.AddToAppDomainLevelModuleCache(module.Name, fileName, this.BaseForce);
