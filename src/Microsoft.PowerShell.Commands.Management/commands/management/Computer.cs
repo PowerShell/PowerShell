@@ -332,13 +332,13 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential { get; set; }
 
         /// <summary>
-        /// Sets or gets the comment for rebooting the computer.
+        /// Gets or sets the comment for rebooting the computer.
         /// </summary>
         [Parameter]
         public string Comment { get; set; } = string.Empty;
 
         /// <summary>
-        /// Sets or gets the reason for rebooting the computer.
+        /// Gets or sets the reason for rebooting the computer.
         /// </summary>
         [Parameter]
         public Reasons Reason { get; set; }
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force { get; set; }
 
         /// <summary>
-        /// Sets or gets the delay before the reboot occurs.
+        /// Gets or sets the delay before the reboot occurs.
         /// </summary>
         [Parameter(ParameterSetName = DefaultParameterSet)]
         [ValidateRange(0, uint.MaxValue)]
@@ -1471,21 +1471,21 @@ $result
         public PSCredential Credential { get; set; }
 
         /// <summary>
-        /// Sets or gets the delay before the shutdown.
+        /// Gets or sets the delay before the shutdown.
         /// </summary>
         [Parameter]
         [ValidateRange(0, uint.MaxValue)]
         public uint ShutdownDelay { get; set; }
 
         /// <summary>
-        /// Sets or gets the comment for shutting down the computer.
+        /// Gets or sets the comment for shutting down the computer.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
         public string Comment { get; set; }
 
         /// <summary>
-        /// Sets or gets the reason for rebooting the computer.
+        /// Gets or sets the reason for rebooting the computer.
         /// </summary>
         [Parameter]
         public Reasons Reason { get; set; }
