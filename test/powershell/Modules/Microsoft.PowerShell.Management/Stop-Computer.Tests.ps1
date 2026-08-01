@@ -42,7 +42,7 @@ try
             }
         }
 
-        It "Should support -Comment parameter" {
+        It "Should support -Comment parameter" -Skip:(!$IsWindows) {
             Set-TesthookResult -testhookName $stopTesthookResultName -value $defaultResultValue
             $comment = "Testing comment"
             Stop-Computer -Comment $comment -ErrorAction Stop | Should -BeNullOrEmpty

@@ -332,13 +332,13 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential { get; set; }
 
         /// <summary>
-        /// Sets the comment for rebooting the computer.
+        /// Sets or gets the comment for rebooting the computer.
         /// </summary>
         [Parameter]
         public string Comment { get; set; } = string.Empty;
 
         /// <summary>
-        /// Sets the reason for rebooting the computer.
+        /// Sets or gets the reason for rebooting the computer.
         /// </summary>
         [Parameter]
         public Reasons Reason { get; set; }
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force { get; set; }
 
         /// <summary>
-        /// Sets the delay before the reboot occurs.
+        /// Sets or gets the delay before the reboot occurs.
         /// </summary>
         [Parameter(ParameterSetName = DefaultParameterSet)]
         [ValidateRange(0, uint.MaxValue)]
@@ -1471,21 +1471,21 @@ $result
         public PSCredential Credential { get; set; }
 
         /// <summary>
-        /// Sets the delay before the shutdown.
+        /// Sets or gets the delay before the shutdown.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, ValidateRangeKind.Positive)]
+        [ValidateRange(0, uint.MaxValue)]
         public uint ShutdownDelay { get; set; }
 
         /// <summary>
-        /// Sets the comment for shutting down the computer.
+        /// Sets or gets the comment for shutting down the computer.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
         public string Comment { get; set; }
 
         /// <summary>
-        /// Sets the reason for rebooting the computer.
+        /// Sets or gets the reason for rebooting the computer.
         /// </summary>
         [Parameter]
         public Reasons Reason { get; set; }
@@ -1972,6 +1972,7 @@ $result
                             {
                                 // If successful and the Restart parameter is specified, restart the computer
                                 object[] flags = new object[] { 0, 0, 0, 6 };
+                                flags[1] = StringUtil.Format(ComputerResources.RestartcomputerAfterRename, newName);
                                 ComputerWMIHelper.InvokeWin32ShutdownTrackerUsingWsman(
                                     this,
                                     isLocalhost,
