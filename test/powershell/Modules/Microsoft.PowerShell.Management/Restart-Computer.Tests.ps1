@@ -54,7 +54,7 @@ try
                 "SecurityIssue", "SecurityPatch","SecurityPatchUninstallation", "ServicePack", "ServicePackUninstallation", "TerminalServices", `
                 "Unstable", "Upgrade", "WMI"
             foreach ( $reason in $ReasonList ) {
-                Restart-Computer -Reason $reason | Should -BeNullOrEmpty
+                Restart-Computer -Reason $reason -ErrorAction Stop | Should -BeNullOrEmpty
             }
         }
 

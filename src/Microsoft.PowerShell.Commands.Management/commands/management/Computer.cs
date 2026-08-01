@@ -330,14 +330,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Credential]
         public PSCredential Credential { get; set; }
-
-        /// <summary>
-        /// Specify a delay before the reboot occurs.
-        /// </summary>
-        [Parameter]
-        [ValidateRange(0, UInt32.MaxValue)]
-        public UInt32 ShutdownDelay { get; set; }
-    
+  
         /// <summary>
         /// Provide a comment for rebooting the computer.
         /// </summary>
@@ -1475,14 +1468,14 @@ $result
         public PSCredential Credential { get; set; }
 
         /// <summary>
-        /// Specify a delay before the reboot occurs.
+        /// Specify a delay before the shutdown.
         /// </summary>
         [Parameter]
         [ValidateRange(0, ValidateRangeKind.Positive)]
         public UInt32 ShutdownDelay { get; set; }
     
         /// <summary>
-        /// Provide a comment for rebooting the computer.
+        /// Provide a comment for shutting down the computer.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
