@@ -13,14 +13,15 @@
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.1" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.5" />
     <PackageReference Include="JsonSchema.Net" Version="7.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

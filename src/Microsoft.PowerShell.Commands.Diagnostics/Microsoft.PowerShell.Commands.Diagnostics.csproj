@@ -14,10 +14,6 @@
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.5" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
     <Compile Remove="GetCounterCommand.cs" />
     <Compile Remove="CounterSample.cs" />
@@ -29,4 +25,9 @@
     <Compile Remove="NewWinEventCommand.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

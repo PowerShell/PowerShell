@@ -11,4 +11,9 @@
     <PackageReference Include="System.Diagnostics.EventLog" Version="10.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
