@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = DefaultParameterSet)]
         [ValidateRange(0, uint.MaxValue)]
-        public uint RestartDelay { get; set; }
+        public uint RestartDelaySec { get; set; }
 
         /// <summary>
         /// Specify the Wait parameter. Prompt will be blocked is the Timeout is not 0.
@@ -978,7 +978,7 @@ $result
 
             object[] flags = new object[] { 0, 0, 0, 2 };
 
-            flags[0] = RestartDelay;
+            flags[0] = RestartDelaySec;
             flags[1] = Comment;
             flags[2] = Reasons.Planned;
 
@@ -1475,14 +1475,14 @@ $result
         /// </summary>
         [Parameter]
         [ValidateRange(0, uint.MaxValue)]
-        public uint ShutdownDelay { get; set; }
+        public uint ShutdownDelaySec { get; set; }
 
         /// <summary>
         /// Gets or sets the comment for shutting down the computer.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public string Comment { get; set; }
+        public string Comment { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the reason for rebooting the computer.
@@ -1519,7 +1519,7 @@ $result
         protected override void ProcessRecord()
         {
             object[] flags = new object[] { 0, 0, 0, 1 };
-            flags[0] = ShutdownDelay;
+            flags[0] = ShutdownDelaySec;
             flags[1] = Comment;
             flags[2] = Reasons.Planned;
 
@@ -1528,6 +1528,9 @@ $result
                 case "Application":
                     flags[2] = Reasons.Application;
                     break;
+                case "Planned":
+                    flags[2] = Reasons.Planned;
+                    break;                    
                 case "Hardware":
                     flags[2] = Reasons.Hardware;
                     break;
