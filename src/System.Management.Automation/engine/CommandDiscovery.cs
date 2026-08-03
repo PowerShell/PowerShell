@@ -1241,7 +1241,7 @@ namespace System.Management.Automation
 
                     foreach (string directory in tokenizedPath)
                     {
-                        string tempDir = directory.TrimStart();
+                        string tempDir = directory.Trim();
                         if (tempDir.StartsWith('~'))
                         {
                             string homeDir = Environment.GetFolderPath(
