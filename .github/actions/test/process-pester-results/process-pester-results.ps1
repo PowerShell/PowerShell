@@ -26,7 +26,8 @@ $testInvalidCount = 0
 
 # Process test results and generate annotations for failures
 Get-ChildItem -Path "${TestResultsFolder}/*.xml" -Recurse | ForEach-Object {
-    $results = [xml] (get-content $_.FullName)
+    $resultsFilePath = $_.FullName
+    $results = [xml] (Get-Content $resultsFilePath)
 
     $testCaseCount += [int]$results.'test-results'.total
     $testErrorCount += [int]$results.'test-results'.errors
@@ -47,13 +48,32 @@ Get-ChildItem -Path "${TestResultsFolder}/*.xml" -Recurse | ForEach-Object {
     }
 
     foreach ($testfail in $failures) {
-        $description = $testfail.description
-        $testName = $testfail.name
-        $message = $testfail.failure.message
-        $stack_trace = $testfail.failure.'stack-trace'
+        $description = [string]$testfail.description
+        $testName = [string]$testfail.name
+        $message = [string]$testfail.failure.message
+        $stackTrace = [string]$testfail.failure.'stack-trace'
+
+        if ([string]::IsNullOrWhiteSpace($description)) {
+            $description = "<no description>"
+        }
+
+        if ([string]::IsNullOrWhiteSpace($testName)) {
+            $testName = "<unnamed test>"
+        }
+
+        if ([string]::IsNullOrWhiteSpace($message)) {
+            $message = "No failure message found in '$resultsFilePath'. See test result XML for details."
+        }
 
         # Parse stack trace to get file and line info
-        $fileInfo = Get-PesterFailureFileInfo -StackTraceString $stack_trace
+        $fileInfo = @{
+            File = $null
+            Line = $null
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($stackTrace)) {
+            $fileInfo = Get-PesterFailureFileInfo -StackTraceString $stackTrace
+        }
 
         if ($fileInfo.File) {
             # Convert absolute path to relative path for GitHub Actions
@@ -68,27 +88,32 @@ Get-ChildItem -Path "${TestResultsFolder}/*.xml" -Recurse | ForEach-Object {
                     $filePath = $filePath -replace '\\', '/'
                 }
             }
+        }
 
-            # Create annotation title
-            $annotationTitle = "Test Failure: $description / $testName"
+        # Create annotation title
+        $annotationTitle = "Test Failure: $description / $testName"
 
-            # Build the annotation message
-            $annotationMessage = $message -replace "`n", "%0A" -replace "`r"
+        # Build the annotation message
+        $annotationMessage = ($message -replace "`r", "") -replace "`n", "%0A"
 
-            # Build and output the workflow command
+        # Build and output the workflow command
+        if ($fileInfo.File) {
             $workflowCommand = "::error file=$filePath"
             if ($fileInfo.Line) {
                 $workflowCommand += ",line=$($fileInfo.Line)"
             }
             $workflowCommand += ",title=$annotationTitle::$annotationMessage"
+        }
+        else {
+            $workflowCommand = "::error title=$annotationTitle::$annotationMessage"
+        }
 
-            Write-Host $workflowCommand
+        Write-Host $workflowCommand
 
-            # Output a link to the test run
-            if ($env:GITHUB_SERVER_URL -and $env:GITHUB_REPOSITORY -and $env:GITHUB_RUN_ID) {
-                $logUrl = "$($env:GITHUB_SERVER_URL)/$($env:GITHUB_REPOSITORY)/actions/runs/$($env:GITHUB_RUN_ID)"
-                Write-Host "Test logs: $logUrl"
-            }
+        # Output a link to the test run
+        if ($env:GITHUB_SERVER_URL -and $env:GITHUB_REPOSITORY -and $env:GITHUB_RUN_ID) {
+            $logUrl = "$($env:GITHUB_SERVER_URL)/$($env:GITHUB_REPOSITORY)/actions/runs/$($env:GITHUB_RUN_ID)"
+            Write-Host "Test logs: $logUrl"
         }
     }
 }
