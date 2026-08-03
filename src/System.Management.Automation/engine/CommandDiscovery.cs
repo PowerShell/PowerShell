@@ -141,7 +141,22 @@ namespace System.Management.Automation
 
             Context = context;
             discoveryTracer.ShowHeaders = false;
+
+            // Get the directory that contains the current PowerShell's executable.
+            _psHome = Utils.DefaultPowerShellAppBase;
+            string dotnetToolPathSegment = $"{Path.DirectorySeparatorChar}.store{Path.DirectorySeparatorChar}powershell{Path.DirectorySeparatorChar}";
+
+            int index = _psHome.IndexOf(dotnetToolPathSegment, StringComparison.Ordinal);
+            if (index > 0)
+            {
+                // We're running PowerShell global tool. In this case the real entry executable should be the 'pwsh'
+                // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', not what
+                // PSHome is pointing to.
+                _psHome = _psHome[0..index];
+            }
         }
+
+        private readonly string _psHome;
 
         /// <summary>
         /// Determines if the cmdlet is a cmdlet that shouldn't be in the discovery list.
@@ -1199,63 +1214,59 @@ namespace System.Management.Automation
         /// </remarks>
         internal LookupPathCollection GetLookupDirectoryPaths()
         {
-            LookupPathCollection result = new LookupPathCollection();
-
             string path = Environment.GetEnvironmentVariable("PATH");
+            discoveryTracer.WriteLine("PATH: {0}", path);
 
-            discoveryTracer.WriteLine(
-                "PATH: {0}",
-                path);
-
-            bool isPathCacheValid =
-                path != null &&
-                string.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase) &&
-                _cachedPath != null;
+            bool isPathCacheValid = _cachedLookupPaths is not null
+                && string.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase);
 
             if (!isPathCacheValid)
             {
-                // Reset the cached lookup paths
+                _pathCacheKey = null;
                 _cachedLookupPaths = null;
 
-                // Tokenize the path and cache it
-
-                _pathCacheKey = path;
-
-                if (_pathCacheKey != null)
+                if (path is null)
                 {
+                    // Cache an collection with only '_psHome' when PATH is null (unset).
+                    _cachedLookupPaths = new LookupPathCollection() { _psHome };
+                }
+                else
+                {
+                    // Tokenize the path and cache it
+                    _pathCacheKey = path;
                     string[] tokenizedPath = _pathCacheKey.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
-                    _cachedPath = new Collection<string>();
+
+                    // Add '_psHome' to the front of the path list so that calling `pwsh` within `pwsh` always starts the same running version.
+                    List<string> pathList = new(capacity: tokenizedPath.Length + 1) { _psHome };
 
                     foreach (string directory in tokenizedPath)
                     {
                         string tempDir = directory.TrimStart();
-                        if (tempDir.EqualsOrdinalIgnoreCase("~"))
+                        if (tempDir.StartsWith('~'))
                         {
-                            tempDir = Environment.GetFolderPath(
+                            string homeDir = Environment.GetFolderPath(
                                 Environment.SpecialFolder.UserProfile,
                                 Environment.SpecialFolderOption.DoNotVerify);
-                        }
-                        else if (tempDir.StartsWith("~" + Path.DirectorySeparatorChar))
-                        {
-                            tempDir = Environment.GetFolderPath(
-                                Environment.SpecialFolder.UserProfile,
-                                Environment.SpecialFolderOption.DoNotVerify)
-                                + Path.DirectorySeparatorChar
-                                + tempDir.Substring(2);
+
+                            if (tempDir.Length is 1)
+                            {
+                                tempDir = homeDir;
+                            }
+                            else if (tempDir[1] == Path.DirectorySeparatorChar)
+                            {
+                                tempDir = $"{homeDir}{Path.DirectorySeparatorChar}{tempDir.Substring(2)}";
+                            }
                         }
 
-                        _cachedPath.Add(tempDir);
-                        result.Add(tempDir);
+                        pathList.Add(tempDir);
                     }
+
+                    // Cache the new lookup paths.
+                    _cachedLookupPaths = new LookupPathCollection(pathList);
                 }
             }
-            else
-            {
-                result.AddRange(_cachedPath);
-            }
 
-            // Cache the new lookup paths
-            return _cachedLookupPaths ??= result;
+            return _cachedLookupPaths;
         }
 
         /// <summary>
@@ -1268,11 +1279,6 @@ namespace System.Management.Automation
         /// The key that determines if the cached PATH can be used.
         /// </summary>
         private string _pathCacheKey;
-
-        /// <summary>
-        /// The cache of the tokenized PATH directories.
-        /// </summary>
-        private Collection<string> _cachedPath;
 
         #endregion internal members
 

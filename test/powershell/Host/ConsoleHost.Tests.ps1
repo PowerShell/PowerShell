@@ -745,8 +745,8 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     }
 
     Context "PATH environment variable" {
-        It "`$PSHOME should be in front so that pwsh.exe starts current running PowerShell" {
-            & $powershell -v | Should -Match $PSVersionTable.GitCommitId
+        It "Running 'pwsh' should starts the current running PowerShell" {
+            pwsh -v | Should -Match $PSVersionTable.GitCommitId
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {
@@ -1191,10 +1191,15 @@ Describe 'Pwsh startup and PATH' -Tag CI {
     }
 
     It 'pwsh starts even if PATH is not defined' {
-        $pwsh = Join-Path -Path $PSHOME -ChildPath "pwsh"
         Remove-Item Env:\PATH
-        $path = & $pwsh -noprofile -command '$env:PATH'
-        $path | Should -BeExactly ($PSHOME + [System.IO.Path]::PathSeparator)
+
+        $version = pwsh -v
+        $version | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
+    }
+
+    It 'pwsh should not alter the PATH environment variable during startup' {
+        Remove-Item Env:\PATH
+        pwsh -noprofile -command '$null -eq $env:PATH' | Should -BeTrue
     }
 }
 
