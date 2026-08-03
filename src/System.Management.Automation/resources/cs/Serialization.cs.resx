@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AttributeExpected" xml:space="preserve">
-    <value>{0} attribute was expected.</value>
+    <value>Byl očekáván atribut {0}.</value>
   </data>
   <data name="InvalidElementTag" xml:space="preserve">
-    <value>{0} XML tag is not recognized.</value>
+    <value>Značka XML {0} nebyla rozpoznána.</value>
   </data>
   <data name="InvalidReferenceId" xml:space="preserve">
-    <value>No object found for referenceId {0}</value>
+    <value>Pro referenceId {0} nebyl nalezen žádný objekt</value>
   </data>
   <data name="InvalidDictionaryKeyName" xml:space="preserve">
-    <value>Name attribute for dictionary key is incorrectly specified.</value>
+    <value>Atribut Name pro klíč slovníku je nesprávně zadán.</value>
   </data>
   <data name="InvalidDictionaryValueName" xml:space="preserve">
-    <value>Name attribute for dictionary value is incorrectly specified.</value>
+    <value>Atribut Name pro hodnotu slovníku je nesprávně zadán.</value>
   </data>
   <data name="InvalidVersion" xml:space="preserve">
-    <value>Version of PSObject is not valid.</value>
+    <value>Verze objektu PSObject není platná.</value>
   </data>
   <data name="UnexpectedVersion" xml:space="preserve">
-    <value>Version of incoming PSObject is {0}. Expected value is 1.</value>
+    <value>Verze příchozího objektu PSObject je {0}. Očekávaná hodnota je 1.</value>
   </data>
   <data name="InvalidTypeHierarchyReferenceId" xml:space="preserve">
-    <value>Cannot process names because no TypeNames were found for referenceId {0}.</value>
+    <value>Nelze zpracovat názvy, protože pro identifikátor referenceId {0} nebyly nalezeny žádné názvy TypeNames.</value>
   </data>
   <data name="DepthOfOneRequired" xml:space="preserve">
-    <value>Value of depth parameter must be greater than or equal to 1.</value>
+    <value>Hodnota parametru hloubky musí být větší nebo rovna 1.</value>
   </data>
   <data name="InvalidNodeType" xml:space="preserve">
-    <value>Current Node type is {0}. Expected type is {1}.</value>
+    <value>Aktuální typ uzlu je {0}. Očekávaný typ je {1}.</value>
   </data>
   <data name="DictionaryKeyNotSpecified" xml:space="preserve">
-    <value>Key for dictionary entry is not specified.</value>
+    <value>Není zadán klíč pro položku slovníku.</value>
   </data>
   <data name="DictionaryValueNotSpecified" xml:space="preserve">
-    <value>Value for dictionary entry is not specified.</value>
+    <value>Není zadána hodnota pro položku slovníku.</value>
   </data>
   <data name="ReadCalledAfterDone" xml:space="preserve">
-    <value>There are no more objects to deserialize.</value>
+    <value>Neexistují žádné další objekty, které by bylo možné deserializovat.</value>
   </data>
   <data name="NullAsDictionaryKey" xml:space="preserve">
-    <value>Null is specified as dictionary key.</value>
+    <value>Hodnota null je zadána jako klíč slovníku.</value>
   </data>
   <data name="InvalidPrimitiveType" xml:space="preserve">
-    <value>The contents of the {0} primitive type are not valid.</value>
+    <value>Obsah typu primitiva {0} není platný.</value>
   </data>
   <data name="DeserializationTooDeep" xml:space="preserve">
-    <value>Serialized XML is nested too deeply.</value>
+    <value>Serializovaný kód XML je vnořený příliš hluboko.</value>
   </data>
   <data name="Stopping" xml:space="preserve">
-    <value>Serializer was closed.</value>
+    <value>Serializátor byl zavřen.</value>
   </data>
   <data name="DeserializationMemoryQuota" xml:space="preserve">
-    <value>The data in the command exceeded the maximum size that is allowed by the session configuration. The allowed maximum is {0} MB. Change the input, use a different session configuration, or change the "{1}" and "{2}" properties of the session configuration on the remote computer.</value>
+    <value>Data v příkazu překročila maximální velikost povolenou konfigurací relace. Povolené maximum je {0} MB. Změňte vstup, použijte jinou konfiguraci relace nebo změňte vlastnosti konfigurace relace „{1}“ a „{2}“ ve vzdáleném počítači.</value>
   </data>
   <data name="DeserializeSecureStringFailed" xml:space="preserve">
-    <value>Deserialization of encrypted secure string failed</value>
+    <value>Deserializace šifrovaného zabezpečeného řetězce se nezdařila</value>
   </data>
   <data name="PrimitiveHashtableInvalidKey" xml:space="preserve">
-    <value>The key type {0} is not valid. The PSPrimitiveDictionary class accepts only keys of the type System.String.</value>
+    <value>Typ klíče {0} není platný. Třída PSPrimitiveDictionary přijímá pouze klíče typu System.String.</value>
   </data>
   <data name="PrimitiveHashtableInvalidValue" xml:space="preserve">
-    <value>The type of the value {0} is not valid. The PSPrimitiveDictionary class accepts only values of types that are fully serializable over PowerShell remoting. See the Help topic about_Remoting for a list of fully-serializable types.</value>
+    <value>Typ hodnoty {0} není platný. Třída PSPrimitiveDictionary přijímá pouze hodnoty typů, které jsou plně serializovatelné přes vzdálenou komunikaci PowerShellu. Seznam plně serializovatelných typů najdete v tématu nápovědy about_Remoting.</value>
   </data>
   <data name="InvalidKey" xml:space="preserve">
-    <value>Could not decrypt data. The data was not encrypted with this key.</value>
+    <value>Nepovedlo se dešifrovat data. Data nebyla tímto klíčem šifrována.</value>
   </data>
   <data name="InvalidEncryptedString" xml:space="preserve">
-    <value>The parameter value "{0}" is not a valid encrypted string.</value>
+    <value>Hodnota parametru {0} není platný šifrovaný řetězec.</value>
   </data>
   <data name="InvalidKeyLength" xml:space="preserve">
-    <value>The specified {0} is not valid. Valid {0} length settings are either 128 bits, 192 bits, or 256 bits.</value>
+    <value>Zadaný {0} není platný. Platné nastavení délky pro {0} je 128 bitů, 192 bitů nebo 256 bitů.</value>
   </data>
   <data name="DeserializeSecureStringNotSupported" xml:space="preserve">
-    <value>Deserialization of SecureString is currently only supported on Windows.</value>
+    <value>Deserializace SecureString je aktuálně podporována pouze ve Windows.</value>
   </data>
 </root>
