@@ -118,36 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidIdGetHistory" xml:space="preserve">
-    <value>The identifier {0} is not a valid value for a History identifier. Specify a positive number, and then try again.</value>
+    <value>标识符“{0}”不是有效的 History 标识符值。请指定一个正数，然后重试。</value>
   </data>
   <data name="NoHistoryForId" xml:space="preserve">
-    <value>Cannot locate the history for Id {0}.</value>
+    <value>找不到 ID {0} 的历史记录。</value>
   </data>
   <data name="NoCountWithMultipleIds" xml:space="preserve">
-    <value>The count cannot be combined with multiple Ids.</value>
+    <value>计数不能与多个 ID 组合使用。</value>
   </data>
   <data name="NoHistoryForCommandline" xml:space="preserve">
-    <value>Cannot locate the history for command line {0}.</value>
+    <value>找不到命令行 {0} 的历史记录。</value>
   </data>
   <data name="NoLastHistoryEntryFound" xml:space="preserve">
-    <value>Cannot locate most recent history.</value>
+    <value>找不到最近的历史记录。</value>
   </data>
   <data name="InvokeHistoryLoopDetected" xml:space="preserve">
-    <value>The Invoke-History cmdlet is called repeatedly, in a loop.</value>
+    <value>循环中重复调用 Invoke-History cmdlet。</value>
   </data>
   <data name="InvokeHistoryMultipleCommandsError" xml:space="preserve">
-    <value>Cannot process multiple history commands. You can only run a single command by using Invoke-History.</value>
+    <value>无法处理多个历史记录命令。只能使用 Invoke-History 运行单个命令。</value>
   </data>
   <data name="AddHistoryInvalidInput" xml:space="preserve">
-    <value>Cannot add history because the input object has a format that is not valid.</value>
+    <value>无法添加历史记录，因为输入对象的格式无效。</value>
   </data>
   <data name="InvalidCountValue" xml:space="preserve">
-    <value>The identifier {0} is not valid. Specify a positive number, and then try again.</value>
+    <value>标识符“{0}”无效。请指定一个正数，然后重试。</value>
   </data>
   <data name="ClearHistoryWarning" xml:space="preserve">
-    <value>This command will clear all the entries from the session history.</value>
+    <value>此命令将清除会话历史记录中的所有条目。</value>
   </data>
   <data name="NoCountWithMultipleCmdLine" xml:space="preserve">
-    <value>The count cannot be combined with multiple CommandLine parameters.</value>
+    <value>计数不能与多个 CommandLine 参数组合。</value>
   </data>
 </root>
