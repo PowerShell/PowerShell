@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ConsoleLineOutput_PagingPrompt" xml:space="preserve">
-    <value>&lt;SPACE&gt; next page; &lt;CR&gt; next line; Q quit</value>
+    <value>&lt;SPACE&gt; 下一頁; &lt;CR&gt; 下一行; Q 結束</value>
   </data>
   <data name="OutLineOutput_NullLineOutputParameter" xml:space="preserve">
-    <value>The value of LineOutput should not be null.</value>
+    <value>LineOutput 的值不應為 null。</value>
   </data>
   <data name="OutLineOutput_InvalidLineOutputParameterType" xml:space="preserve">
-    <value>The lineOutput type {0} was not expected; LineOutput expects type {1}.</value>
+    <value>lineOutput 類型 {0} 不符合預期; LineOutput 需要類型 {1}。</value>
   </data>
   <data name="OutLineOutput_OutOfSequencePacket" xml:space="preserve">
-    <value>The object of type "{0}" is not valid or not in the correct sequence. This is likely caused by a user-specified "{1}" command which is conflicting with the default formatting.</value>
+    <value>類型 "{0}" 的物件無效或順序不正確。這很可能是因為使用者指定的 "{1}" 命令與預設格式發生衝突。</value>
   </data>
   <data name="OutFile_FileOpenFailure" xml:space="preserve">
-    <value>Cannot open file "{0}".</value>
+    <value>無法開啟檔案 "{0}"。</value>
   </data>
   <data name="OutFile_Action" xml:space="preserve">
-    <value>Output to File</value>
+    <value>輸出至檔案</value>
   </data>
 </root>

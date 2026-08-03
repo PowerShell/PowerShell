@@ -118,108 +118,108 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandStateChange" xml:space="preserve">
-    <value>Command {0} is {1}.</value>
+    <value>命令 {0} 已 {1}。</value>
   </data>
   <data name="EngineStateChange" xml:space="preserve">
-    <value>Engine state changed from {0} to {1}.</value>
+    <value>引擎狀態已從 {0} 變更為 {1}。</value>
   </data>
   <data name="ErrorRecordId" xml:space="preserve">
-    <value>Fully Qualified Error ID = {0}</value>
+    <value>完整限定錯誤識別碼 = {0}</value>
   </data>
   <data name="ErrorRecordMessage" xml:space="preserve">
-    <value>Error Message = {0}</value>
+    <value>錯誤訊息 = {0}</value>
   </data>
   <data name="ErrorRecordRecommendedAction" xml:space="preserve">
-    <value>Recommended Action = {0}</value>
+    <value>建議的動作 = {0}</value>
   </data>
   <data name="ExecutionPolicyName" xml:space="preserve">
-    <value>Execution Policy</value>
+    <value>執行原則</value>
   </data>
   <data name="JobCommand" xml:space="preserve">
-    <value>Job Command = {0}</value>
+    <value>作業命令 = {0}</value>
   </data>
   <data name="JobId" xml:space="preserve">
-    <value>Job Id = {0}</value>
+    <value>工作識別碼 = {0}</value>
   </data>
   <data name="JobInstanceId" xml:space="preserve">
-    <value>Job Instance Id = {0}</value>
+    <value>工作執行個體識別碼 = {0}</value>
   </data>
   <data name="JobLocation" xml:space="preserve">
-    <value>Job Location = {0}</value>
+    <value>工作位置 = {0}</value>
   </data>
   <data name="JobName" xml:space="preserve">
-    <value>Job Name = {0}</value>
+    <value>作業名稱 = {0}</value>
   </data>
   <data name="JobState" xml:space="preserve">
-    <value>Job State = {0}</value>
+    <value>作業狀態 = {0}</value>
   </data>
   <data name="LogContextCommandName" xml:space="preserve">
-    <value>        Command Name = </value>
+    <value>        命令名稱 = </value>
   </data>
   <data name="LogContextCommandPath" xml:space="preserve">
-    <value>        Command Path = </value>
+    <value>        命令路徑 = </value>
   </data>
   <data name="LogContextCommandType" xml:space="preserve">
-    <value>        Command Type = </value>
+    <value>        命令類型 = </value>
   </data>
   <data name="LogContextEngineVersion" xml:space="preserve">
-    <value>        Engine Version = </value>
+    <value>        引擎版本 = </value>
   </data>
   <data name="LogContextHostId" xml:space="preserve">
-    <value>        Host ID = </value>
+    <value>        主機識別碼 = </value>
   </data>
   <data name="LogContextHostName" xml:space="preserve">
-    <value>        Host Name = </value>
+    <value>        主機名稱 = </value>
   </data>
   <data name="LogContextHostApplication" xml:space="preserve">
-    <value>        Host Application = </value>
+    <value>        主應用程式 = </value>
   </data>
   <data name="LogContextHostVersion" xml:space="preserve">
-    <value>        Host Version = </value>
+    <value>        主機版本 = </value>
   </data>
   <data name="LogContextPipelineId" xml:space="preserve">
-    <value>        Pipeline ID = </value>
+    <value>        管線識別碼 = </value>
   </data>
   <data name="LogContextRunspaceId" xml:space="preserve">
-    <value>        Runspace ID = </value>
+    <value>        Runspace 識別碼 = </value>
   </data>
   <data name="LogContextScriptName" xml:space="preserve">
-    <value>        Script Name = </value>
+    <value>        指令碼名稱 = </value>
   </data>
   <data name="LogContextSequenceNumber" xml:space="preserve">
-    <value>        Sequence Number = </value>
+    <value>        序號 = </value>
   </data>
   <data name="LogContextSeverity" xml:space="preserve">
-    <value>        Severity = </value>
+    <value>        嚴重性 = </value>
   </data>
   <data name="LogContextShellId" xml:space="preserve">
-    <value>        Shell ID = </value>
+    <value>        殼層識別碼 = </value>
   </data>
   <data name="LogContextTime" xml:space="preserve">
-    <value>        Time = </value>
+    <value>        時間 = </value>
   </data>
   <data name="LogContextUser" xml:space="preserve">
-    <value>        User = </value>
+    <value>        使用者 = </value>
   </data>
   <data name="LogContextConnectedUser" xml:space="preserve">
-    <value>        Connected User = </value>
+    <value>        已連線的使用者 = </value>
   </data>
   <data name="NullJobName" xml:space="preserve">
-    <value>NULL Job</value>
+    <value>NULL 作業</value>
   </data>
   <data name="ProviderNameString" xml:space="preserve">
-    <value>Provider name</value>
+    <value>提供者名稱</value>
   </data>
   <data name="ProviderStateChange" xml:space="preserve">
-    <value>Provider {0} changed state to {1}.</value>
+    <value>提供者 {0} 狀態已變更為 {1}。</value>
   </data>
   <data name="ScriptStateChange" xml:space="preserve">
-    <value>Script execution is {0}.</value>
+    <value>指令碼執行為 {0}。</value>
   </data>
   <data name="SettingChange" xml:space="preserve">
-    <value>Variable {0} changed from {1} to {2}.</value>
+    <value>變數 {0} 已從 {1} 變更為 {2}。</value>
   </data>
   <data name="SettingChangeNoPrevious" xml:space="preserve">
-    <value>Variable {0} changed to {1}.</value>
+    <value>變數 {0} 已變更為 {1}。</value>
   </data>
 </root>

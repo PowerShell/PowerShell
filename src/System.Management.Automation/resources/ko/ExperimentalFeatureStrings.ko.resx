@@ -59,9 +59,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExperimentalFeatureNameNotFound" xml:space="preserve">
-    <value>No experimental feature was found that matched the name '{0}'.</value>
+    <value>이름이 '{0}'인 일치하는 실험적 기능을 찾을 수 없습니다.</value>
   </data>
   <data name="ExperimentalFeaturePending" xml:space="preserve">
-    <value>Enabling and disabling experimental features do not take effect until next start of PowerShell.</value>
+    <value>실험적 기능을 사용하거나 사용하지 않도록 설정한 변경 내용은 다음에 PowerShell을 시작할 때 적용됩니다.</value>
   </data>
 </root>
