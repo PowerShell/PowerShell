@@ -121,99 +121,99 @@
     <value>{0} ({1})</value>
   </data>
   <data name="NoServiceFoundForGivenName" xml:space="preserve">
-    <value>Cannot find any service with service name '{0}'.</value>
+    <value>Не удается найти службу с именем {0}.</value>
   </data>
   <data name="NoServiceFoundForGivenDisplayName" xml:space="preserve">
-    <value>Cannot find any service with display name '{1}'.</value>
+    <value>Не удается найти службу с отображаемым именем {1}.</value>
   </data>
   <data name="ServiceHasDependentServices" xml:space="preserve">
-    <value>Cannot stop service '{1} ({0})' because it has dependent services. It can only be stopped if the Force flag is set.</value>
+    <value>Не удается остановить службу {1} ({0}), так как от нее зависят другие службы. Ее можно остановить, только если установлен флаг Force.</value>
   </data>
   <data name="ServiceHasDependentServicesNoForce" xml:space="preserve">
-    <value>Cannot stop service '{1} ({0})' because it has dependent services.</value>
+    <value>Не удается остановить службу {1} ({0}), так как от нее зависят другие службы.</value>
   </data>
   <data name="CouldNotStopService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be stopped due to the following error: {2}</value>
+    <value>Невозможно остановить службу {1} ({0}) из-за следующей ошибки: {2}</value>
   </data>
   <data name="CouldNotStartService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be started due to the following error: {2}</value>
+    <value>Невозможно запустить службу {1} ({0}) из-за следующей ошибки: {2}</value>
   </data>
   <data name="CouldNotSuspendService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be suspended due to the following error: {2}</value>
+    <value>Невозможно приостановить службу {1} ({0}) из-за следующей ошибки: {2}</value>
   </data>
   <data name="CouldNotSuspendServiceNotSupported" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be suspended because the service does not support being suspended or resumed.</value>
+    <value>Не удается приостановить службу {1} ({0}), так как служба не поддерживает приостановку или возобновление.</value>
   </data>
   <data name="CouldNotSuspendServiceNotRunning" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be suspended because it is not currently running.</value>
+    <value>Службу {1} ({0}) нельзя приостановить, так как она сейчас не запущена.</value>
   </data>
   <data name="CouldNotResumeService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be resumed due to the following error: {2}</value>
+    <value>Невозможно возобновить работу службы {1} ({0}) из-за следующей ошибки: {2}</value>
   </data>
   <data name="CouldNotResumeServiceNotSupported" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be resumed because the service does not support being suspended or resumed.</value>
+    <value>Не удается возобновить службу {1} ({0}), так как служба не поддерживает приостановку или возобновление.</value>
   </data>
   <data name="CouldNotResumeServiceNotRunning" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be resumed because it is not currently running.</value>
+    <value>Работу службы {1} ({0}) нельзя возобновить, так как она сейчас не запущена.</value>
   </data>
   <data name="CouldNotSetService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be configured due to the following error: {2}</value>
+    <value>Невозможно настроить службу {1} ({0}) из-за следующей ошибки: {2}</value>
   </data>
   <data name="CouldNotSetServiceDescription" xml:space="preserve">
-    <value>Service '{1} ({0})' description cannot be configured due to the following error: {2}</value>
+    <value>Невозможно настроить описание службы {1} ({0}) из-за следующей ошибки: {2}</value>
   </data>
   <data name="CouldNotSetServiceDelayedAutoStart" xml:space="preserve">
-    <value>Service '{1} ({0})' automatic (delayed start) cannot be configured due to the following error: {2}</value>
+    <value>Не удается настроить автоматический отложенный запуск ля службы {1} ({0}) из-за следующей ошибки: {2}</value>
   </data>
   <data name="CouldNotSetServiceSecurityDescriptorSddl" xml:space="preserve">
-    <value>Service '{0}' security descriptor cannot be configured due to the following error: {1}</value>
+    <value>Не удалось настроить дескриптор безопасности службы {0} из-за следующей ошибки: {1}</value>
   </data>
   <data name="CouldNotNewService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be created due to the following error: {2}</value>
+    <value>Невозможно создать службу {1} ({0}) из-за следующей ошибки: {2}</value>
   </data>
   <data name="CouldNotNewServiceDescription" xml:space="preserve">
-    <value>Service '{1} ({0})' was created, but its description cannot be configured due to the following error: {2}</value>
+    <value>Служба {1} ({0}) создана, но не удалось настроить ее описание из-за следующей ошибки: {2}</value>
   </data>
   <data name="CouldNotNewServiceDelayedAutoStart" xml:space="preserve">
-    <value>Service '{1} ({0})' was created, but its StartupType 'Automatic (Delayed Start)' could not be configured due to the following error: {2}</value>
+    <value>Служба {1} ({0}) создана, но не удалось настроить тип запуска "Автоматически (отложенный запуск)" из-за следующей ошибки: {2}</value>
   </data>
   <data name="CouldNotRemoveService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be removed due to the following error: {2}</value>
+    <value>Невозможно удалить службу {1} ({0}) из-за следующей ошибки: {2}</value>
   </data>
   <data name="CouldNotAccessDependentServices" xml:space="preserve">
-    <value>'Cannot access dependent services of '{1} ({0})'</value>
+    <value>Не удается получить доступ к зависимым службам {1} ({0})</value>
   </data>
   <data name="StartingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to start...</value>
+    <value>Ожидание запуска службы {1} ({0})…</value>
   </data>
   <data name="StoppingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to stop...</value>
+    <value>Ожидание остановки службы {1} ({0})…</value>
   </data>
   <data name="SuspendingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to suspend...</value>
+    <value>Ожидание приостановки службы {1} ({0})…</value>
   </data>
   <data name="ResumingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to resume...</value>
+    <value>Ожидание возобновления службы {1} ({0})...</value>
   </data>
   <data name="StartServiceFailed" xml:space="preserve">
-    <value>Failed to start service '{1} ({0})'.</value>
+    <value>Не удалось запустить службу {1} ({0}).</value>
   </data>
   <data name="StopServiceFailed" xml:space="preserve">
-    <value>Service '{1} ({0})' stop failed.</value>
+    <value>Не удалось остановить службу {1} ({0}).</value>
   </data>
   <data name="SuspendServiceFailed" xml:space="preserve">
-    <value>Service '{1} ({0})' suspend failed.</value>
+    <value>Не удалось приостановить службу {1} ({0}).</value>
   </data>
   <data name="ResumeServiceFailed" xml:space="preserve">
-    <value>Service '{1} ({0})' resume failed.</value>
+    <value>Не удалось возобновить работу службы {1} ({0}).</value>
   </data>
   <data name="FailToOpenServiceControlManager" xml:space="preserve">
-    <value>Failed to open SCManager due to the following error: {0}. Run PowerShell as admin and run your command again.</value>
+    <value>Не удалось открыть SCManager из-за следующей ошибки: {0}. Запустите PowerShell от имени администратора и повторите команду.</value>
   </data>
   <data name="UnsupportedStartupType" xml:space="preserve">
-    <value>The startup type '{0}' is not supported by {1}.</value>
+    <value>Тип запуска {0} не поддерживается {1}.</value>
   </data>
   <data name="CouldNotGetServiceProperty" xml:space="preserve">
-    <value>Could not retrieve property '{1}' for service '{0}': {2}</value>
+    <value>Не удалось получить свойство {1} для службы {0}: {2}</value>
   </data>
 </root>

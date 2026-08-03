@@ -118,63 +118,63 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LineLessThanOne" xml:space="preserve">
-    <value>Line cannot be less than 1.</value>
+    <value>줄은 1보다 작을 수 없습니다.</value>
   </data>
   <data name="BreakpointIdNotFound" xml:space="preserve">
-    <value>There is no breakpoint with ID '{0}'.</value>
+    <value>ID가 '{0}'인 중단점이 없습니다.</value>
   </data>
   <data name="FileDoesNotExist" xml:space="preserve">
     <value>파일 '{0}'이(가) 없습니다.</value>
   </data>
   <data name="WrongExtension" xml:space="preserve">
-    <value>Cannot set breakpoint on file '{0}'; only *.ps1 and *.psm1 files are valid.</value>
+    <value>파일 '{0}'에 중단점을 설정할 수 없습니다. *.ps1 및 *.psm1 파일만 유효합니다.</value>
   </data>
   <data name="RemoteDebuggerNotSupported" xml:space="preserve">
-    <value>Debugging is not supported on remote sessions.</value>
+    <value>원격 세션에서는 디버깅이 지원되지 않습니다.</value>
   </data>
   <data name="CannotSetBreakpointInconsistentLanguageMode" xml:space="preserve">
-    <value>Cannot set breakpoint. The language mode for this session is incompatible with the system-wide language mode.</value>
+    <value>중단점을 설정할 수 없습니다. 이 세션의 언어 모드는 시스템 전체 언어 모드와 호환되지 않습니다.</value>
   </data>
   <data name="RemoteDebuggerNotSupportedInHost" xml:space="preserve">
-    <value>Breakpoints cannot be set in the remote session because remote debugging is not supported by the current host.</value>
+    <value>원격 디버깅이 현재 호스트에서 지원되지 않으므로 원격 세션에서 중단점을 설정할 수 없습니다.</value>
   </data>
   <data name="RunspaceDebuggingCannotDebugDefaultRunspace" xml:space="preserve">
-    <value>You cannot debug the default host Runspace using this cmdlet. To debug the default Runspace use the normal debugging commands from the host.</value>
+    <value>이 cmdlet을 사용하여 기본 호스트 Runspace를 디버그할 수 없습니다. 기본 Runspace를 디버그하려면 호스트의 일반 디버깅 명령을 사용합니다.</value>
   </data>
   <data name="RunspaceDebuggingNoHostRunspaceOrDebugger" xml:space="preserve">
-    <value>Cannot debug Runspace. The host has no debugger. Try debugging the Runspace inside the PowerShell console or with Visual Studio Code, both of which have built-in debuggers.</value>
+    <value>Runspace를 디버그할 수 없습니다. 호스트에 디버거가 없습니다. PowerShell 콘솔 내에서 또는 Visual Studio Code를 사용하여 Runspace를 디버깅해 보세요. 둘 다 기본 제공 디버거가 있습니다.</value>
   </data>
   <data name="RunspaceDebuggingNoHost" xml:space="preserve">
-    <value>Cannot debug Runspace. There is no host or host UI. The debugger requires a host and host UI for debugging.</value>
+    <value>Runspace를 디버그할 수 없습니다. 호스트 또는 호스트 UI가 없습니다. 디버거를 디버깅하려면 호스트 및 호스트 UI가 필요합니다.</value>
   </data>
   <data name="RunspaceDebuggingTooManyRunspacesFound" xml:space="preserve">
-    <value>More than one Runspace was found. Only one Runspace can be debugged at a time.</value>
+    <value>Runspace를 두 개 이상 찾았습니다. 한 번에 하나의 Runspace만 디버깅할 수 있습니다.</value>
   </data>
   <data name="RunspaceDebuggingEndSession" xml:space="preserve">
-    <value>To end the debugging session type the 'Detach' command at the debugger prompt, or type 'Ctrl+C' otherwise.</value>
+    <value>디버깅 세션을 종료하려면 디버거 프롬프트에서 'Detach' 명령을 입력하거나, 그렇지 않으면 'Ctrl+C'를 입력합니다.</value>
   </data>
   <data name="RunspaceDebuggingScriptCompleted" xml:space="preserve">
-    <value>Command or script completed.</value>
+    <value>명령 또는 스크립트가 완료되었습니다.</value>
   </data>
   <data name="RunspaceDebuggingStarted" xml:space="preserve">
-    <value>Debugging Runspace: {0}</value>
+    <value>Runspace 디버깅: {0}</value>
   </data>
   <data name="RunspaceOptionInvalidRunspaceState" xml:space="preserve">
-    <value>Cannot set debug options on Runspace {0} because it is not in the Opened state.</value>
+    <value>Runspace {0}은(는) 열린 상태가 아니므로 디버그 옵션을 설정할 수 없습니다.</value>
   </data>
   <data name="PersistDebugPreferenceFailure" xml:space="preserve">
-    <value>Failed to persist debug options for Process {0}.</value>
+    <value>프로세스 {0}에 대한 디버그 옵션을 유지하지 못했습니다.</value>
   </data>
   <data name="RunspaceOptionNoDebugger" xml:space="preserve">
-    <value>No debugger was found for Runspace {0}.</value>
+    <value>Runspace {0}에 대한 디버거를 찾을 수 없습니다.</value>
   </data>
   <data name="RunspaceDebuggingNoRunspaceFound" xml:space="preserve">
-    <value>No Runspace was found.</value>
+    <value>Runspace를 찾을 수 없습니다.</value>
   </data>
   <data name="DebugBreakMessage" xml:space="preserve">
-    <value>Wait-Debugger called on line {0} in {1}.</value>
+    <value>{1}의 줄 {0}에서 대해 Wait-Debugger가 호출되었습니다.</value>
   </data>
   <data name="RunspaceInstanceIdNotFound" xml:space="preserve">
-    <value>A breakpoint associated with another runspace cannot be updated because there is no runspace with instance ID '{0}'.</value>
+    <value>인스턴스 ID가 '{0}'인 runspace가 없으므로 다른 runspace와 연결된 중단점을 업데이트할 수 없습니다.</value>
   </data>
 </root>

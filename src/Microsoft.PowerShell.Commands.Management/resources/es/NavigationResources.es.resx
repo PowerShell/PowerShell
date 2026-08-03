@@ -118,75 +118,75 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DeleteHasChildrenPrompt" xml:space="preserve">
-    <value>The specified path is a container that has child items. Do you want to delete this container and its child items?</value>
+    <value>La ruta de acceso especificada es un contenedor que tiene elementos secundarios. ¿Desea eliminar este contenedor y sus elementos secundarios?</value>
   </data>
   <data name="DeletePrompt" xml:space="preserve">
-    <value>Do you want to delete the specified item?</value>
+    <value>¿Desea eliminar el elemento especificado?</value>
   </data>
   <data name="CopyToExistingPrompt" xml:space="preserve">
-    <value>Cannot copy because the specified destination already exists. Do you want to overwrite the existing content?</value>
+    <value>No se puede copiar porque el destino especificado ya existe. ¿Desea sobrescribir el contenido existente?</value>
   </data>
   <data name="NewDriveConfirmAction" xml:space="preserve">
-    <value>New drive</value>
+    <value>Nueva unidad</value>
   </data>
   <data name="NewDriveConfirmResourceTemplate" xml:space="preserve">
-    <value>Name: {0} Provider: {1} Root: {2}</value>
+    <value>Nombre: {0} Proveedor: {1} Raíz: {2}</value>
   </data>
   <data name="RemoveDriveConfirmAction" xml:space="preserve">
-    <value>Remove Drive</value>
+    <value>Quitar unidad</value>
   </data>
   <data name="RemoveDriveConfirmResourceTemplate" xml:space="preserve">
-    <value>Name: {0} Provider: {1} Root: {2}</value>
+    <value>Nombre: {0} Proveedor: {1} Raíz: {2}</value>
   </data>
   <data name="RemoveDriveInUse" xml:space="preserve">
-    <value>Cannot remove drive '{0}' because it is in use.</value>
+    <value>No se puede quitar la unidad "{0}" porque está en uso.</value>
   </data>
   <data name="RemoveItemWithChildren" xml:space="preserve">
-    <value>The item at {0} has children and the Recurse parameter was not specified. If you continue, all children will be removed with the item. Are you sure you want to continue?</value>
+    <value>El elemento en {0} tiene elementos secundarios y no se especificó el parámetro Recurse. Si continúa, se quitarán todos los elementos secundarios con el elemento. ¿Está seguro de que quiere continuar?</value>
   </data>
   <data name="RemoveItemInUse" xml:space="preserve">
-    <value>Cannot remove the item at '{0}' because it is in use.</value>
+    <value>No se puede quitar el elemento en "{0}" porque está en uso.</value>
   </data>
   <data name="ItemNotFound" xml:space="preserve">
-    <value>An object at the specified path {0} does not exist, or has been filtered by the -Include or -Exclude parameter.</value>
+    <value>Un objeto en la ruta de acceso especificada {0} no existe, o se ha filtrado mediante el parámetro -Include o -Exclude.</value>
   </data>
   <data name="SetContentAction" xml:space="preserve">
-    <value>Set Content</value>
+    <value>Establecer contenido</value>
   </data>
   <data name="SetContentTarget" xml:space="preserve">
-    <value>Path: {0}</value>
+    <value>Ruta de acceso: {0}</value>
   </data>
   <data name="AddContentAction" xml:space="preserve">
-    <value>Add Content</value>
+    <value>Agregar contenido</value>
   </data>
   <data name="AddContentTarget" xml:space="preserve">
-    <value>Path: {0}</value>
+    <value>Ruta de acceso: {0}</value>
   </data>
   <data name="MoveItemDoesntExist" xml:space="preserve">
-    <value>Cannot move item because the item at '{0}' does not exist.</value>
+    <value>No se puede mover el elemento porque el elemento de "{0}" no existe.</value>
   </data>
   <data name="MoveItemInUse" xml:space="preserve">
-    <value>Cannot move item because the item at '{0}' is in use.</value>
+    <value>No se puede mover el elemento porque el elemento en "{0}" está en uso.</value>
   </data>
   <data name="RenameItemDoesntExist" xml:space="preserve">
-    <value>Cannot rename because item at '{0}' does not exist.</value>
+    <value>No se puede cambiar el nombre porque el elemento en "{0}" no existe.</value>
   </data>
   <data name="RenamedItemInUse" xml:space="preserve">
-    <value>Cannot rename the item at '{0}' because it is in use.</value>
+    <value>No se puede cambiar el nombre del elemento en "{0}" porque está en uso.</value>
   </data>
   <data name="ParsePathFormatError" xml:space="preserve">
-    <value>Cannot parse path because path '{0}' does not have a qualifier specified.</value>
+    <value>No se puede analizar la ruta de acceso porque la ruta de acceso "{0}" no tiene especificado un calificador.</value>
   </data>
   <data name="CreateAction" xml:space="preserve">
-    <value>Begin</value>
+    <value>Comenzar</value>
   </data>
   <data name="RollbackAction" xml:space="preserve">
-    <value>Rollback</value>
+    <value>Reversión</value>
   </data>
   <data name="CommitAction" xml:space="preserve">
-    <value>Commit</value>
+    <value>Confirmar</value>
   </data>
   <data name="TransactionResource" xml:space="preserve">
-    <value>Current transaction</value>
+    <value>Transacción actual</value>
   </data>
 </root>

@@ -118,75 +118,75 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DeleteHasChildrenPrompt" xml:space="preserve">
-    <value>The specified path is a container that has child items. Do you want to delete this container and its child items?</value>
+    <value>指定的路徑是含有子項目的容器。您要刪除此容器及其子項目嗎?</value>
   </data>
   <data name="DeletePrompt" xml:space="preserve">
-    <value>Do you want to delete the specified item?</value>
+    <value>是否要刪除指定的項目?</value>
   </data>
   <data name="CopyToExistingPrompt" xml:space="preserve">
-    <value>Cannot copy because the specified destination already exists. Do you want to overwrite the existing content?</value>
+    <value>無法複製，因為指定的目的地已經存在。要覆蓋目前的內容嗎?</value>
   </data>
   <data name="NewDriveConfirmAction" xml:space="preserve">
-    <value>New drive</value>
+    <value>新增磁碟機</value>
   </data>
   <data name="NewDriveConfirmResourceTemplate" xml:space="preserve">
-    <value>Name: {0} Provider: {1} Root: {2}</value>
+    <value>名稱: {0} 提供者: {1} 根: {2}</value>
   </data>
   <data name="RemoveDriveConfirmAction" xml:space="preserve">
-    <value>Remove Drive</value>
+    <value>移除磁碟機</value>
   </data>
   <data name="RemoveDriveConfirmResourceTemplate" xml:space="preserve">
-    <value>Name: {0} Provider: {1} Root: {2}</value>
+    <value>名稱: {0} 提供者: {1} 根: {2}</value>
   </data>
   <data name="RemoveDriveInUse" xml:space="preserve">
-    <value>Cannot remove drive '{0}' because it is in use.</value>
+    <value>無法移除磁碟機 '{0}'，因為它正在使用中。</value>
   </data>
   <data name="RemoveItemWithChildren" xml:space="preserve">
-    <value>The item at {0} has children and the Recurse parameter was not specified. If you continue, all children will be removed with the item. Are you sure you want to continue?</value>
+    <value>位於 {0} 的項目具有子項目，且未指定 Recurse 參數。如果繼續，所有子項目都會隨項目一起移除。確定要繼續嗎?</value>
   </data>
   <data name="RemoveItemInUse" xml:space="preserve">
-    <value>Cannot remove the item at '{0}' because it is in use.</value>
+    <value>無法移除位於 '{0}' 的項目，因為該項目正在使用中。</value>
   </data>
   <data name="ItemNotFound" xml:space="preserve">
-    <value>An object at the specified path {0} does not exist, or has been filtered by the -Include or -Exclude parameter.</value>
+    <value>位於指定路徑 {0} 的物件不存在，或已經 -Include 或 -Exclude 參數篩選。</value>
   </data>
   <data name="SetContentAction" xml:space="preserve">
-    <value>Set Content</value>
+    <value>設定內容</value>
   </data>
   <data name="SetContentTarget" xml:space="preserve">
-    <value>Path: {0}</value>
+    <value>路徑: {0}</value>
   </data>
   <data name="AddContentAction" xml:space="preserve">
-    <value>Add Content</value>
+    <value>新增內容</value>
   </data>
   <data name="AddContentTarget" xml:space="preserve">
-    <value>Path: {0}</value>
+    <value>路徑: {0}</value>
   </data>
   <data name="MoveItemDoesntExist" xml:space="preserve">
-    <value>Cannot move item because the item at '{0}' does not exist.</value>
+    <value>無法移動項目，因為位於 '{0}' 的項目並不存在。</value>
   </data>
   <data name="MoveItemInUse" xml:space="preserve">
-    <value>Cannot move item because the item at '{0}' is in use.</value>
+    <value>無法移動項目，因為位於 '{0}' 的項目正在使用中。</value>
   </data>
   <data name="RenameItemDoesntExist" xml:space="preserve">
-    <value>Cannot rename because item at '{0}' does not exist.</value>
+    <value>無法重新命名，因為位於 '{0}' 的項目不存在。</value>
   </data>
   <data name="RenamedItemInUse" xml:space="preserve">
-    <value>Cannot rename the item at '{0}' because it is in use.</value>
+    <value>無法重新命名位於 '{0}' 的項目，因為該項目正在使用中。</value>
   </data>
   <data name="ParsePathFormatError" xml:space="preserve">
-    <value>Cannot parse path because path '{0}' does not have a qualifier specified.</value>
+    <value>無法剖析路徑，因為路徑 '{0}' 未指定限定詞。</value>
   </data>
   <data name="CreateAction" xml:space="preserve">
-    <value>Begin</value>
+    <value>開始</value>
   </data>
   <data name="RollbackAction" xml:space="preserve">
-    <value>Rollback</value>
+    <value>復原</value>
   </data>
   <data name="CommitAction" xml:space="preserve">
-    <value>Commit</value>
+    <value>提交</value>
   </data>
   <data name="TransactionResource" xml:space="preserve">
-    <value>Current transaction</value>
+    <value>目前的交易</value>
   </data>
 </root>
