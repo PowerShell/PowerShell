@@ -47,7 +47,13 @@ try
             Restart-Computer -Comment $comment -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
-        It "Should support Reason types" {
+        It "Should support -RestartDelaySec parameter" -Skip:(!$IsWindows) {
+            Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
+            $restartDelaySec = 30
+            Restart-Computer -RestartDelaySec $restartDelaySec -ErrorAction Stop | Should -BeNullOrEmpty
+        }
+
+        It "Should support Reason types" -Skip:(!$IsWindows) {
             $ReasonList =  "Application", "Hardware", "OperatingSystem", "Other", "Power", "Software", "System", `
                 "BlueScreen", "Disk", "Environment", "Driver", "HotFix", "HotFixUninstall", "Unresponsive", "Installation", `
                 "Maintenance", "MMC", "NetworkConnectivity", "NetworkCard", "Other", "OtherDriver", "PowerSupply", "Processor", "Reconfigure", `

@@ -48,7 +48,13 @@ try
             Stop-Computer -Comment $comment -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
-        It "Should support Reason types" {
+        It "Should support -ShutdownDelaySec parameter" -Skip:(!$IsWindows) {
+            Set-TesthookResult -testhookName $stopTesthookResultName -value $defaultResultValue
+            $shutdownDelaySec = 30
+            Stop-Computer -ShutdownDelaySec $shutdownDelaySec -ErrorAction Stop | Should -BeNullOrEmpty
+        }
+
+        It "Should support Reason types" -Skip:(!$IsWindows) {
             $ReasonList =  "Application", "Hardware", "OperatingSystem", "Other", "Power", "Software", "System", `
             "BlueScreen", "Disk", "Environment", "Driver", "HotFix", "HotFixUninstall", "Unresponsive", "Installation", `
                 "Maintenance", "MMC", "NetworkConnectivity", "NetworkCard", "Other", "OtherDriver", "PowerSupply", "Processor", "Reconfigure", `
