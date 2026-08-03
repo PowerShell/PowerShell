@@ -17,8 +17,4 @@
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="WsManSnapin.cs" />
-  </ItemGroup>
-
 </Project>

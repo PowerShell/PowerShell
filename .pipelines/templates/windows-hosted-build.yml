@@ -177,8 +177,6 @@ jobs:
         Where-Object { -not $_.PSIsContainer } |
         Where-Object { $_.name -notin $filesToKeep } |
         Remove-Item -Verbose
-
-
     displayName: 'Build Winx64 Global tool'
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
     env:
