@@ -118,24 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ArgumentIllegalEnvVarName" xml:space="preserve">
-    <value>Environment variable name cannot contain equal character.</value>
+    <value>Ortam değişkeni adı eşittir karakteri içeremez.</value>
   </data>
   <data name="ArgumentLongEnvVarValue" xml:space="preserve">
-    <value>Environment variable name or value is too long.</value>
+    <value>Ortam değişkeni adı veya değeri fazla uzun.</value>
   </data>
   <data name="ArgumentStringFirstCharIsZero" xml:space="preserve">
-    <value>The first char in the string is the null character.</value>
+    <value>Dizedeki ilk karakter null karakterdir.</value>
   </data>
   <data name="ArgumentStringZeroLength" xml:space="preserve">
-    <value>String cannot be of zero length.</value>
+    <value>Dize uzunluğu sıfır olamaz.</value>
   </data>
   <data name="CannotGetComputerName" xml:space="preserve">
-    <value>Computer name could not be obtained.</value>
+    <value>Bilgisayar adı alınamadı.</value>
   </data>
   <data name="CannotGetDomainName" xml:space="preserve">
-    <value>Current user's domain name could not be obtained.</value>
+    <value>Geçerli kullanıcının etki alanı adı alınamadı.</value>
   </data>
   <data name="UnknownErrorNumber" xml:space="preserve">
-    <value>Unknown error "{0}".</value>
+    <value>Bilinmeyen hata: "{0}".</value>
   </data>
 </root>
