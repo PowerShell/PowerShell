@@ -1238,6 +1238,7 @@ namespace System.Management.Automation
 
                     // Add '_psHome' to the front of the path list so that calling `pwsh` within `pwsh` always starts the same running version.
                     List<string> pathList = new(capacity: tokenizedPath.Length + 1) { _psHome };
+                    ReadOnlySpan<char> psHomeSpan = _psHome.AsSpan().TrimEnd(Path.DirectorySeparatorChar);
 
                     foreach (string directory in tokenizedPath)
                     {
@@ -1255,6 +1256,16 @@ namespace System.Management.Automation
                             else if (tempDir[1] == Path.DirectorySeparatorChar)
                             {
                                 tempDir = $"{homeDir}{Path.DirectorySeparatorChar}{tempDir.Substring(2)}";
+                            }
+                        }
+
+                        // Try skipping the duplicate path if it is the same as '_psHome'.
+                        if (tempDir.Length >= psHomeSpan.Length)
+                        {
+                            ReadOnlySpan<char> tempDirSpan = tempDir.AsSpan().TrimEnd(Path.DirectorySeparatorChar);
+                            if (psHomeSpan.Equals(tempDirSpan, StringComparison.OrdinalIgnoreCase))
+                            {
+                                continue;
                             }
                         }
 
