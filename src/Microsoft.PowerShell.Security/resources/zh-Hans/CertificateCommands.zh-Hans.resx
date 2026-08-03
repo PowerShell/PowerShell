@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GetPfxCertPasswordPrompt" xml:space="preserve">
-    <value>Enter password: </value>
+    <value>输入密码:</value>
   </data>
   <data name="NoneOfTheFilesFound" xml:space="preserve">
-    <value>Command cannot find any of the specified files.</value>
+    <value>命令找不到任何指定的文件。</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>The following file could not be found: {0}.</value>
+    <value>找不到以下文件: {0}。</value>
   </data>
 </root>
