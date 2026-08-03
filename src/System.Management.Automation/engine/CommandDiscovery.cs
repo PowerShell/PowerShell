@@ -1227,7 +1227,7 @@ namespace System.Management.Automation
 
                 if (path is null)
                 {
-                    // Cache an collection with only '_psHome' when PATH is null (unset).
+                    // Cache a collection with only '_psHome' when PATH is null (unset).
                     _cachedLookupPaths = new LookupPathCollection() { _psHome };
                 }
                 else

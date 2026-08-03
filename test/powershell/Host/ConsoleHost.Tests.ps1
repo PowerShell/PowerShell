@@ -745,7 +745,7 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     }
 
     Context "PATH environment variable" {
-        It "Running 'pwsh' should starts the current running PowerShell" {
+        It "Running 'pwsh' should start the currently running PowerShell" {
             pwsh -v | Should -Match $PSVersionTable.GitCommitId
         }
 
@@ -1199,7 +1199,7 @@ Describe 'Pwsh startup and PATH' -Tag CI {
 
     It 'pwsh should not alter the PATH environment variable during startup' {
         Remove-Item Env:\PATH
-        pwsh -noprofile -command '$null -eq $env:PATH' | Should -BeTrue
+        pwsh -noprofile -command '$null -eq $env:PATH' | Should -BeExactly 'True'
     }
 }
 
