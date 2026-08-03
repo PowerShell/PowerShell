@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property "{0}" cannot be found in the input for any objects.</value>
+    <value>Non è possibile trovare la proprietà "{0}" nell'input di alcun oggetto.</value>
   </data>
   <data name="NonNumericInputObject" xml:space="preserve">
-    <value>Input object "{0}" is not numeric.</value>
+    <value>L'oggetto di input "{0}" non è numerico.</value>
   </data>
 </root>

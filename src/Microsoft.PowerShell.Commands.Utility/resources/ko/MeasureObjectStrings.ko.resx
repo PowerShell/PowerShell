@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property "{0}" cannot be found in the input for any objects.</value>
+    <value>입력의 어떤 개체에서도 "{0}" 속성을 찾을 수 없습니다.</value>
   </data>
   <data name="NonNumericInputObject" xml:space="preserve">
-    <value>Input object "{0}" is not numeric.</value>
+    <value>입력 개체 "{0}"은(는) 숫자 형식이 아닙니다.</value>
   </data>
 </root>
