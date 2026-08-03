@@ -41,7 +41,7 @@ runs:
       id: filter
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       env:
-        FILES_JSON: ${{ steps.get-files.outputs.files }}
+        FILES_PATH: ${{ steps.get-files.outputs.files_path }}
       with:
         github-token: ${{ inputs.GITHUB_TOKEN }}
         script: |
@@ -60,8 +60,15 @@ runs:
             return;
           }
 
-          // Get files from environment variable (secure against injection)
-          const files = JSON.parse(process.env.FILES_JSON || '[]');
+          // Read files from temp file to avoid ARG_MAX limits with large PRs
+          const fs = require('fs');
+          const filesPath = process.env.FILES_PATH;
+          let files = [];
+          if (filesPath && fs.existsSync(filesPath)) {
+            files = JSON.parse(fs.readFileSync(filesPath, 'utf8'));
+          } else {
+            console.log('Warning: files_path not found, no files to analyze');
+          }
 
           // Calculate hash for verification (matches get-changed-files action)
           const crypto = require('crypto');

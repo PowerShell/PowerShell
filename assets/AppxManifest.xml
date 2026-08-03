@@ -24,7 +24,20 @@
   </Dependencies>
 
   <Resources>
-    <Resource Language="en-us"/>
+    <Resource Language="en-US"/>
+    <Resource Language="cs"/>
+    <Resource Language="de"/>
+    <Resource Language="es"/>
+    <Resource Language="fr"/>
+    <Resource Language="it"/>
+    <Resource Language="ja"/>
+    <Resource Language="ko"/>
+    <Resource Language="pl"/>
+    <Resource Language="pt-BR"/>
+    <Resource Language="ru"/>
+    <Resource Language="tr"/>
+    <Resource Language="zh-Hans"/>
+    <Resource Language="zh-Hant"/>
   </Resources>
 
   <Applications>
