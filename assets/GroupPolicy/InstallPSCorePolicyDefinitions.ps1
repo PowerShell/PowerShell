@@ -72,7 +72,7 @@ if (Test-Path -Path $admxTargetFullPath)
 }
 else
 {
-    Write-Error "Could not install $admxName"
+    Write-Error "Could not install $admxName to $admxTargetFullPath"
 }
 
 Write-Verbose "Copying $adml to $admlTargetPath"
@@ -84,5 +84,5 @@ if (Test-Path -Path $admlTargetFullPath)
 }
 else
 {
-    Write-Error "Could not install $admlName"
+    Write-Error "Could not install $admlName to $admlTargetFullPath"
 }
