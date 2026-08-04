@@ -31,15 +31,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Prefix { get; set; }
 
-        private static ErrorRecord CreateErrorRecord(Exception exception, ErrorCategory category, string targetPath)
-        {
-            return new ErrorRecord(
-                exception,
-                NewTemporaryDirectoryWriteError,
-                category,
-                targetPath);
-        }
-
         /// <summary>
         /// Creates a temporary directory and writes it to the pipeline.
         /// Uses <see cref="Directory.CreateTempSubdirectory(string)"/> for atomic creation,
@@ -83,6 +74,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, targetDescription));
             }
+        }
+
+        private static ErrorRecord CreateErrorRecord(Exception exception, ErrorCategory category, string targetPath)
+        {
+            return new ErrorRecord(
+                exception,
+                NewTemporaryDirectoryWriteError,
+                category,
+                targetPath);
         }
     }
 }
