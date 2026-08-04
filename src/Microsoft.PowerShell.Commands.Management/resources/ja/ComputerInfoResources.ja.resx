@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LoadingOperationSystemInfo" xml:space="preserve">
-    <value>Loading operating system information</value>
+    <value>オペレーティング システム情報を読み込んでいます</value>
   </data>
   <data name="LoadingHotPatchInfo" xml:space="preserve">
-    <value>Loading hot-patch information</value>
+    <value>ホットパッチ情報を読み込んでいます</value>
   </data>
   <data name="LoadingRegistryInfo" xml:space="preserve">
-    <value>Loading registry information</value>
+    <value>レジストリ情報を読み込んでいます</value>
   </data>
   <data name="LoadingBiosInfo" xml:space="preserve">
-    <value>Loading BIOS information</value>
+    <value>BIOS 情報を読み込んでいます</value>
   </data>
   <data name="LoadingMotherboardInfo" xml:space="preserve">
-    <value>Loading motherboard information</value>
+    <value>マザーボード情報を読み込んでいます</value>
   </data>
   <data name="LoadingComputerInfo" xml:space="preserve">
-    <value>Loading Computer information</value>
+    <value>コンピューター情報を読み込んでいます</value>
   </data>
   <data name="LoadingProcessorInfo" xml:space="preserve">
-    <value>Loading processor information</value>
+    <value>プロセッサ情報を読み込んでいます</value>
   </data>
   <data name="LoadingNetworkAdapterInfo" xml:space="preserve">
-    <value>Loading network adapter information</value>
+    <value>ネットワーク アダプターの情報を読み込んでいます</value>
   </data>
 </root>

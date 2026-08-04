@@ -118,35 +118,35 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FileNotExist" xml:space="preserve">
-    <value>The data file '{0}' cannot be found. </value>
+    <value>找不到資料檔案 '{0}'。</value>
   </data>
   <data name="NotCalledFromAScriptFile" xml:space="preserve">
-    <value>The FileName parameter was not specified. The FileName parameter is required when Import-LocalizedData is not called from a script file.</value>
+    <value>未指定 FileName 參數。當未從指令碼檔呼叫 Import-LocalizedData 時，必須指定 FileName 參數。</value>
   </data>
   <data name="ErrorOpeningFile" xml:space="preserve">
-    <value>The following error occurred while PowerShell was opening the data file '{0}':
-{1}.</value>
+    <value>PowerShell 開啟資料檔案 '{0}' 時，發生下列錯誤: 
+{1}。</value>
   </data>
   <data name="ErrorLoadingDataFile" xml:space="preserve">
-    <value>The following error occurred while PowerShell was loading the '{0}' script data file:
-{1}.</value>
+    <value>PowerShell 載入 '{0}' 指令碼資料檔案時，發生下列錯誤: 
+{1}。</value>
   </data>
   <data name="FileNameParameterCannotHavePath" xml:space="preserve">
-    <value>The argument for the FileName parameter should not contain a path.</value>
+    <value>FileName 參數的引數不應包含路徑。</value>
   </data>
   <data name="CannotFindPsd1File" xml:space="preserve">
-    <value>Cannot find the PowerShell data file '{0}' in directory '{1}', or in any parent culture directories.</value>
+    <value>在目錄 '{0}' 或任何上層文化目錄中，都找不到 PowerShell 資料檔案 '{1}'。</value>
   </data>
   <data name="CannotDefineSupportedCommand" xml:space="preserve">
-    <value>Cannot import localized data. The definition of additional supported commands is not allowed in this language mode.</value>
+    <value>無法匯入當地語系化資料。此語言模式不允許定義額外支援的命令。</value>
   </data>
   <data name="IncorrectVariableName" xml:space="preserve">
-    <value>The BindingVariable name '{0}' is invalid.</value>
+    <value>BindingVariable 名稱 '{0}' 無效。</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
     <value>Import-LocalizedData Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Additional supported commands (via SupportedCommand parameter) will not be allowed in ConstrainedLanguage mode.</value>
+    <value>在 ConstrainedLanguage 模式中，不允許使用 SupportedCommand 參數新增其他支援的命令。</value>
   </data>
 </root>

@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ArgumentOutOfRange_NeedNonNegNum" xml:space="preserve">
-    <value>Non negative number is required.</value>
+    <value>Negatif olmayan bir sayı gerekiyor.</value>
   </data>
   <data name="ArgumentOutOfRange_NeedValidId" xml:space="preserve">
-    <value>The ID parameter must be in the range {0} through {1}.</value>
+    <value>ID parametresi {0} - {1} aralığında olmalıdır.</value>
   </data>
   <data name="ArgumentOutOfRange_MaxArgExceeded" xml:space="preserve">
-    <value>The total number of parameters must not exceed {0}.</value>
+    <value>Parametrelerin toplam sayısı en çok {0} olabilir.</value>
   </data>
   <data name="ArgumentOutOfRange_MaxStringsExceeded" xml:space="preserve">
-    <value>The number of String parameters must not exceed {0}.</value>
+    <value>String parametrelerinin sayısı en fazla {0} olabilir.</value>
   </data>
   <data name="Argument_NeedNonemptyDelimiter" xml:space="preserve">
-    <value>Delimiter cannot be an empty string.</value>
+    <value>Sınırlayıcı boş bir dize olamaz.</value>
   </data>
 </root>

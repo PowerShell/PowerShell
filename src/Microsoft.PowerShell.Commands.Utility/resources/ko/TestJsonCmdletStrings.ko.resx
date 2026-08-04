@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidJsonSchema" xml:space="preserve">
-    <value>Cannot parse the JSON schema.</value>
+    <value>JSON 스키마를 구문 분석할 수 없습니다.</value>
   </data>
   <data name="InvalidJson" xml:space="preserve">
-    <value>Cannot parse the JSON.</value>
+    <value>JSON을 구문 분석할 수 없습니다.</value>
   </data>
   <data name="InvalidJsonAgainstSchemaDetailed" xml:space="preserve">
-    <value>The JSON is not valid with the schema: {0} at '{1}'</value>
+    <value>JSON이 스키마와 일치하지 않습니다. '{1}'에서 {0}</value>
   </data>
   <data name="JsonSchemaFileOpenFailure" xml:space="preserve">
-    <value>Can not open JSON schema file: {0}</value>
+    <value>JSON 스키마 파일을 열 수 없습니다. {0}</value>
   </data>
   <data name="InvalidUriScheme" xml:space="preserve">
-    <value>URI scheme '{0}' is not supported. Only HTTP(S) and local file system URIs are allowed.</value>
+    <value>URI 체계 '{0}'은(는) 지원되지 않습니다. HTTP(S)와 로컬 파일 시스템 URI만 허용됩니다.</value>
   </data>
 </root>

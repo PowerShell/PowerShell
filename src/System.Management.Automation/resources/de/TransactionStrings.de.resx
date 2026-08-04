@@ -118,57 +118,57 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoTransactionActive" xml:space="preserve">
-    <value>Cannot use transaction. No transaction is active.</value>
+    <value>Die Transaktion kann nicht verwendet werden. Es ist keine Transaktion aktiv.</value>
   </data>
   <data name="NoTransactionActiveForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. No transaction is active.</value>
+    <value>Die Transaktion kann nicht committet werden. Es ist keine Transaktion aktiv.</value>
   </data>
   <data name="NoTransactionActiveForRollback" xml:space="preserve">
-    <value>Cannot roll back the transaction, because there is no active transaction.</value>
+    <value>Die Transaktion kann nicht zurückgesetzt werden, da keine aktive Transaktion vorhanden ist.</value>
   </data>
   <data name="CommittedTransactionForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been committed.</value>
+    <value>Die Transaktion kann nicht zurückgesetzt werden. Für die Transaktion wurde bereits ein Commit ausgeführt.</value>
   </data>
   <data name="CommittedTransactionForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has already been committed.</value>
+    <value>Die Transaktion kann nicht committet werden. Für die Transaktion wurde bereits ein Commit ausgeführt.</value>
   </data>
   <data name="TransactionRolledBackForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has been rolled back or has timed out.</value>
+    <value>Die Transaktion kann nicht committet werden. Die Transaktion wurde zurückgesetzt, oder das Zeitlimit wurde überschritten.</value>
   </data>
   <data name="TransactionRolledBackForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been rolled back or has timed out.</value>
+    <value>Die Transaktion kann nicht zurückgesetzt werden. Die Transaktion wurde bereits zurückgesetzt, oder das Zeitlimit wurde überschritten.</value>
   </data>
   <data name="NoTransactionForActivation" xml:space="preserve">
-    <value>Cannot set active transaction. No transaction has been created.</value>
+    <value>Die aktive Transaktion kann nicht festgelegt werden. Es wurde keine Transaktion erstellt.</value>
   </data>
   <data name="NoTransactionForActivationBecauseRollback" xml:space="preserve">
-    <value>Cannot set active transaction. The active transaction has been rolled back or has timed out.</value>
+    <value>Die aktive Transaktion kann nicht festgelegt werden. Die aktive Transaktion wurde zurückgesetzt, oder das Zeitlimit wurde überschritten.</value>
   </data>
   <data name="NoTransactionAvailable" xml:space="preserve">
-    <value>This cmdlet requires an active transaction. The current transaction has already been committed or rolled back.</value>
+    <value>Für dieses Cmdlet ist eine aktive Transaktion erforderlich. Die aktuelle Transaktion wurde bereits übernommen oder zurückgesetzt.</value>
   </data>
   <data name="CmdletRequiresUseTx" xml:space="preserve">
-    <value>This cmdlet requires a transaction. Run the command again with the -UseTransaction parameter.</value>
+    <value>Für dieses Cmdlet ist eine Transaktion erforderlich. Führen Sie den Befehl erneut mit dem -UseTransaction-Parameter aus.</value>
   </data>
   <data name="NoTransactionStarted" xml:space="preserve">
-    <value>Cannot use transaction. No transaction has been started.</value>
+    <value>Die Transaktion kann nicht verwendet werden. Es wurde keine Transaktion gestartet.</value>
   </data>
   <data name="NoTransactionStartedFromCommit" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been committed.</value>
+    <value>Die Transaktion kann nicht verwendet werden. Für die Transaktion wurde ein Commit ausgeführt.</value>
   </data>
   <data name="NoTransactionStartedFromRollback" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been rolled back or has timed out.</value>
+    <value>Die Transaktion kann nicht verwendet werden. Die Transaktion wurde zurückgesetzt, oder das Zeitlimit wurde überschritten.</value>
   </data>
   <data name="TransactionTimedOut" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has timed out.</value>
+    <value>Die Transaktion kann nicht verwendet werden. Das Zeitlimit für die Transaktion wurde überschritten.</value>
   </data>
   <data name="BaseTransactionNotSet" xml:space="preserve">
-    <value>The base transaction has not been set.</value>
+    <value>Die Basistransaktion wurde nicht festgelegt.</value>
   </data>
   <data name="BaseTransactionNotActive" xml:space="preserve">
-    <value>The base transaction is not active.</value>
+    <value>Die Basistransaktion ist nicht aktiv.</value>
   </data>
   <data name="BaseTransactionMustBeFirst" xml:space="preserve">
-    <value>The base transaction cannot be set after other transactions have been created.</value>
+    <value>Die Basistransaktion kann nicht festgelegt werden, nachdem andere Transaktionen erstellt wurden.</value>
   </data>
 </root>

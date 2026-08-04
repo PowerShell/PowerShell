@@ -118,45 +118,45 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotFindAppropriateCtor" xml:space="preserve">
-    <value>A constructor was not found. Cannot find an appropriate constructor for type {0}.</value>
+    <value>Oluşturucu bulunamadı. {0} türü için uygun bir oluşturucu bulunamadı.</value>
   </data>
   <data name="TypeNotFound" xml:space="preserve">
-    <value>Cannot find type [{0}]: verify that the assembly containing this type is loaded.</value>
+    <value>[{0}] türü bulunamadı: Bu türü içeren derlemenin yüklü olduğunu doğrulayın.</value>
   </data>
   <data name="CannotLoadComObjectType" xml:space="preserve">
-    <value>Cannot load COM type {0}.</value>
+    <value>{0} COM türü yüklenemiyor.</value>
   </data>
   <data name="ComInteropLoaded" xml:space="preserve">
-    <value>The object written to the pipeline is an instance of the type "{0}" from the component's primary interoperability assembly. If this type exposes different members than the IDispatch members, scripts that are written to work with this object might not work if the primary interoperability assembly is not installed.</value>
+    <value>İşlem hattına yazılan nesne, bileşenin birincil birlikte çalışabilirlik derlemesindeki "{0}" türünün bir örneğidir. Bu tür, IDispatch üyelerinden farklı üyeleri kullanıma sunuyorsa, bu nesneyle çalışacak şekilde yazılmış betikler, birincil birlikte çalışabilirlik derlemesi yüklü değilse çalışmayabilir.</value>
   </data>
   <data name="MemberNotFound" xml:space="preserve">
-    <value>The member "{1}" was not found for the specified {2} object.</value>
+    <value>Belirtilen {2} nesnesi için "{1}" üyesi bulunamadı.</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
-    <value>The value supplied is not valid, or the property is read-only. Change the value, and then try again.</value>
+    <value>Sağlanan değer geçerli değil veya özellik salt okunur. Değeri değiştirin ve ardından yeniden deneyin.</value>
   </data>
   <data name="CannotInstantiateWinRTType" xml:space="preserve">
-    <value>Creating instances of attribute and delegated Windows RT types is not supported.</value>
+    <value>Öznitelik ve temsilci Windows RT türlerinin örneklerinin oluşturulması desteklenmez.</value>
   </data>
   <data name="CannotInstantiateBoxedByRefLikeType" xml:space="preserve">
-    <value>Cannot create instances of the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
+    <value>ByRef benzeri "{0}" türünün örnekleri oluşturulamıyor. ByRef benzeri türler PowerShell'de desteklenmez.</value>
   </data>
   <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
-    <value>Cannot create type. Only core types are supported in this language mode.</value>
+    <value>Tür oluşturulamıyor. Bu dil modunda yalnızca çekirdek türler desteklenir.</value>
   </data>
   <data name="CannotCreateTypeLanguageMode" xml:space="preserve">
-    <value>Cannot create type. Only core types are supported in {0} language mode on a policy locked down machine.</value>
+    <value>Tür oluşturulamıyor. İlke tarafından kilitlenen bir makinede {0} dil modunda yalnızca çekirdek türler desteklenir.</value>
   </data>
   <data name="TypeWDACLogTitle" xml:space="preserve">
-    <value>New-Object Cmdlet Type Creation</value>
+    <value>New-Object Cmdlet'i Tür Oluşturma</value>
   </data>
   <data name="TypeWDACLogMessage" xml:space="preserve">
-    <value>The type '{0}' will not be created in ConstrainedLanguage mode.</value>
+    <value>'{0}' türü ConstrainedLanguage modunda oluşturulmaz.</value>
   </data>
   <data name="ComWDACLogTitle" xml:space="preserve">
-    <value>New-Object Cmdlet COM Object Creation</value>
+    <value>New-Object Cmdlet'i COM Nesnesi Oluşturma</value>
   </data>
   <data name="ComWDACLogMessage" xml:space="preserve">
-    <value>The COM object '{0}' will not be created in ConstrainedLanguage mode.</value>
+    <value>'{0}' COM nesnesi ConstrainedLanguage modunda oluşturulmaz.</value>
   </data>
 </root>

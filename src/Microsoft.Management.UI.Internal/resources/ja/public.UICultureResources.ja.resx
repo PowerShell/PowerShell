@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ColumnPicker" xml:space="preserve">
-    <value>Select Columns...</value>
+    <value>列の選択...</value>
   </data>
   <data name="GroupTitleNone" xml:space="preserve">
-    <value>(none)</value>
+    <value>(なし)</value>
     <comment>The group title for items within a column whose value is empty/null.</comment>
   </data>
   <data name="ErrorTextBoxTypeConversionErrorText" xml:space="preserve">
@@ -133,19 +133,19 @@
     <comment>The error validation string to present to the user when they have selected a value out of bounds.</comment>
   </data>
   <data name="FilterRule_Contains" xml:space="preserve">
-    <value>contains</value>
+    <value>次の値を含む</value>
     <comment>A filter rule that indicates a field must contain the specified value.</comment>
   </data>
   <data name="FilterRule_DoesNotContain" xml:space="preserve">
-    <value>does not contain</value>
+    <value>次の値を含まない</value>
     <comment>A filter rule that indicates a field must not contain the specified value.</comment>
   </data>
   <data name="FilterRule_DoesNotEqual" xml:space="preserve">
-    <value>does not equal</value>
+    <value>次の値と等しくない</value>
     <comment>A filter rule that indicates a field must not equal the specified value.</comment>
   </data>
   <data name="FilterRule_Equals" xml:space="preserve">
-    <value>equals</value>
+    <value>次の値と等しい</value>
     <comment>A filter rule that indicates a field must equal the specified value.</comment>
   </data>
   <data name="FilterRule_GreaterThanOrEqual" xml:space="preserve">
@@ -153,15 +153,15 @@
     <comment>A filter rule that indicates a field must be greater than or equal to the specified value.</comment>
   </data>
   <data name="FilterRule_IsBetween" xml:space="preserve">
-    <value>is between</value>
+    <value>が次の範囲:</value>
     <comment>A filter rule that indicates a field must be between the specified values.</comment>
   </data>
   <data name="FilterRule_IsEmpty" xml:space="preserve">
-    <value>is empty</value>
+    <value>が空である</value>
     <comment>A filter rule that indicates a field must be empty.</comment>
   </data>
   <data name="FilterRule_IsNotEmpty" xml:space="preserve">
-    <value>is not empty</value>
+    <value>が空ではない</value>
     <comment>A filter rule that indicates a field must not be empty.</comment>
   </data>
   <data name="FilterRule_LessThanOrEqual" xml:space="preserve">
@@ -169,30 +169,30 @@
     <comment>A filter rule that indicates a field must be less than or equal to the specified value.</comment>
   </data>
   <data name="FilterRule_TextEndsWith" xml:space="preserve">
-    <value>ends with</value>
+    <value>次の値で終わる</value>
     <comment>A filter rule that indicates a field must end with the specified value.</comment>
   </data>
   <data name="FilterRule_TextStartsWith" xml:space="preserve">
-    <value>starts with</value>
+    <value>次の値で始まる</value>
     <comment>A filter rule that indicates a field must start with the specified value.</comment>
   </data>
   <data name="BackForwardHistory_BrowseBack_Disabled_Helptext" xml:space="preserve">
-    <value>Back</value>
+    <value>戻る</value>
     <comment>The text representing the tool tip and help text for the Back Button in the Back Forward History control when the button is disabled</comment>
   </data>
   <data name="BackForwardHistory_BrowseForward_Disabled_Helptext" xml:space="preserve">
-    <value>Forward</value>
+    <value>転送</value>
     <comment>The text representing the tool tip and help text for the Forward Button in the Back Forward History control when the button is disabled</comment>
   </data>
   <data name="ErrorMessageForUnparsableDateTimeType" xml:space="preserve">
-    <value>The value must be a valid date in the following format: {0}.</value>
+    <value>この値は、次の形式の有効な日付でなければなりません: {0}。</value>
     <comment>{0} will be filled in with the culture appropriate ShortDatePattern</comment>
   </data>
   <data name="ErrorMessageForUnparsableNumericType" xml:space="preserve">
     <value>この値には有効な数値を指定してください。</value>
   </data>
   <data name="SearchBox_BackgroundText" xml:space="preserve">
-    <value>Search</value>
+    <value>検索</value>
     <comment>The default background text of the search box.</comment>
   </data>
   <data name="FlowDirection" xml:space="preserve">
@@ -210,21 +210,21 @@
     <value>Ctrl+Shift+Add</value>
   </data>
   <data name="ZoomIn3Shortcut" xml:space="preserve">
-    <value>Ctrl+Plus</value>
+    <value>Ctrl + プラス</value>
   </data>
   <data name="ZoomIn4Shortcut" xml:space="preserve">
-    <value>Ctrl+Shift+Plus</value>
+    <value>CTRL + SHIFT + P</value>
   </data>
   <data name="ZoomOut1Shortcut" xml:space="preserve">
-    <value>Ctrl+Subtract</value>
+    <value>Ctrl + 減算</value>
   </data>
   <data name="ZoomOut2Shortcut" xml:space="preserve">
-    <value>Ctrl+Shift+Subtract</value>
+    <value>Ctrl + Shift + 減算</value>
   </data>
   <data name="ZoomOut3Shortcut" xml:space="preserve">
-    <value>Ctrl+Minus</value>
+    <value>Ctrl + マイナス</value>
   </data>
   <data name="ZoomOut4Shortcut" xml:space="preserve">
-    <value>Ctrl+Shift+Minus</value>
+    <value>Ctrl + Shift + マイナス</value>
   </data>
 </root>

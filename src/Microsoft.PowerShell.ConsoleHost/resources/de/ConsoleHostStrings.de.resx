@@ -118,74 +118,74 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TooManyNestedPromptsError" xml:space="preserve">
-    <value>Cannot display prompt because too many nested prompts are already running.</value>
+    <value>Der Prompt kann nicht angezeigt werden, da bereits zu viele verschachtelte Prompts ausgeführt werden.</value>
   </data>
   <data name="InputExitCurrentLoopOutOfSyncError" xml:space="preserve">
-    <value>Cannot process input loop. ExitCurrentLoop was called when no InputLoops were running.</value>
+    <value>Die Eingabeschleife kann nicht verarbeitet werden. ExitCurrentLoop wurde aufgerufen, als keine Eingabeschleifen ausgeführt wurden.</value>
   </data>
   <data name="DefaultPrompt" xml:space="preserve">
     <value>PS&gt;</value>
   </data>
   <data name="ShellCannotBeStarted" xml:space="preserve">
-    <value>The shell cannot be started. A failure occurred during initialization:</value>
+    <value>Die Shell kann nicht gestartet werden. Fehler bei der Initialisierung.</value>
   </data>
   <data name="ShellCannotBeStartedWithConfigConflict" xml:space="preserve">
-    <value>The shell cannot be started. An InitialSessionState object has been provided along with a -ConfigurationFile argument. Both configuration directives cannot be used at the same time.</value>
+    <value>Die Shell kann nicht gestartet werden. Zusammen mit dem -ConfigurationFile-Argument wurde ein InitialSessionState-Objekt angegeben. Beide Konfigurationsanweisungen können nicht gleichzeitig verwendet werden.</value>
   </data>
   <data name="UnhandledExceptionShutdownMessage" xml:space="preserve">
-    <value>An error has occurred that was not properly handled. Additional information is shown below. The PowerShell process will exit.</value>
+    <value>Ein Fehler ist aufgetreten, der nicht ordnungsgemäß behandelt wurde. Weitere Informationen sind unten aufgeführt. Der PowerShell-Prozess wird beendet.</value>
   </data>
   <data name="TranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
-Username  : {1}\{2}
-Machine   : {3} ({4})
+Beginn des PowerShell-Transkripts
+Startzeit: {0:yyyyMMddHHmmss}
+Benutzername: {1}\{2}
+Computer: {3} ({4})
 **********************</value>
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
     <value>**********************
-PowerShell transcript end
-End time: {0:yyyyMMddHHmmss}
+Ende des PowerShell-Transkripts
+Endzeit: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="InitialCommandNotExecuted" xml:space="preserve">
-    <value>Command '{0}' could not be run because some PowerShell Snap-Ins did not load.</value>
+    <value>Der Befehl „{0}“ konnte nicht ausgeführt werden, da einige PowerShell-Snap-Ins nicht geladen wurden.</value>
   </data>
   <data name="CommandNotExecuted" xml:space="preserve">
-    <value>Command '{0}' was not run as the session in which it was intended to run was either closed or broken</value>
+    <value>Der Befehl „{0}“ wurde nicht ausgeführt, da die Sitzung, in der er ausgeführt werden sollte, geschlossen oder unterbrochen wurde</value>
   </data>
   <data name="EnteringDebugger" xml:space="preserve">
-    <value>Entering debug mode. Use h or ? for help. </value>
+    <value>Der Debugmodus wird aktiviert Verwenden Sie „h“ oder „?“, um Hilfe zu erhalten. </value>
   </data>
   <data name="HitBreakpoint" xml:space="preserve">
-    <value>Hit {0}</value>
+    <value>Treffer {0}</value>
   </data>
   <data name="DebuggerSourceCodeFormat" xml:space="preserve">
     <value>{0}:{1,-3} {2}</value>
   </data>
   <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
     <value>
-The current session does not support debugging; execution will continue.
+Die aktuelle Sitzung unterstützt kein Debugging, die Ausführung wird fortgesetzt.
 
 </value>
   </data>
   <data name="CannotLoadPSReadline" xml:space="preserve">
-    <value>Cannot load PSReadline module.  Console is running without PSReadline.</value>
+    <value>Das PSReadLine-Modul kann nicht geladen werden.  Die Konsole wird ohne PSReadLine ausgeführt.</value>
   </data>
   <data name="ConflictingServerModeParameters" xml:space="preserve">
-    <value>More than one server mode parameter was specified. Server mode parameters must be used exclusively.</value>
+    <value>Es wurden mehr als ein Servermodusparameter angegeben. Servermodusparameter müssen ausschließlich verwendet werden.</value>
   </data>
   <data name="SlowProfileLoadingMessage" xml:space="preserve">
-    <value>Loading personal and system profiles took {0}ms.</value>
+    <value>Das Laden der persönlichen und Systemprofile dauerte {0} ms.</value>
   </data>
   <data name="RunAsAdministrator" xml:space="preserve">
-    <value>Run as Administrator</value>
+    <value>Als Administrator ausführen</value>
   </data>
   <data name="PushRunspaceNotRemote" xml:space="preserve">
-    <value>PushRunspace can only push a remote runspace.</value>
+    <value>PushRunspace kann nur einen Remoterunspace pushen.</value>
   </data>
   <data name="MissingMandatoryParameter" xml:space="preserve">
-    <value>The '{0}' parameter is mandatory and must be specified when using the '{1}' parameter.</value>
+    <value>Der Parameter „{0}“ ist erforderlich und muss angegeben werden, wenn der Parameter „{1}“ verwendet wird.</value>
   </data>
 </root>

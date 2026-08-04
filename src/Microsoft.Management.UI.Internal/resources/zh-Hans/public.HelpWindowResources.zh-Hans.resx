@@ -121,7 +121,7 @@
     <value>取消</value>
   </data>
   <data name="CaseSensitiveTitle" xml:space="preserve">
-    <value>Match Case</value>
+    <value>区分大小写</value>
   </data>
   <data name="CommonParameters" xml:space="preserve">
     <value>CommonParameters</value>
@@ -131,64 +131,64 @@
     <value>说明</value>
   </data>
   <data name="ExamplesTitle" xml:space="preserve">
-    <value>Examples</value>
+    <value>示例</value>
   </data>
   <data name="FindText" xml:space="preserve">
-    <value>_Find:</value>
+    <value>查找(_F):</value>
   </data>
   <data name="HelpSectionsTitle" xml:space="preserve">
-    <value>Help Sections</value>
+    <value>帮助部分</value>
   </data>
   <data name="HelpTitleFormat" xml:space="preserve">
-    <value>{0} Help</value>
+    <value>{0} 帮助</value>
   </data>
   <data name="InputsTitle" xml:space="preserve">
-    <value>Inputs</value>
+    <value>输入</value>
   </data>
   <data name="LinkTextFormat" xml:space="preserve">
     <value>{0} {1}</value>
   </data>
   <data name="MethodsTitle" xml:space="preserve">
-    <value>Methods</value>
+    <value>方法</value>
   </data>
   <data name="NextText" xml:space="preserve">
-    <value>_Next</value>
+    <value>下一步(_N)</value>
   </data>
   <data name="NoMatches" xml:space="preserve">
-    <value>No matches found</value>
+    <value>找不到匹配项</value>
   </data>
   <data name="NotesTitle" xml:space="preserve">
-    <value>Notes</value>
+    <value>备注</value>
   </data>
   <data name="OKText" xml:space="preserve">
     <value>确定</value>
   </data>
   <data name="OneMatch" xml:space="preserve">
-    <value>1 match</value>
+    <value>1 个匹配项</value>
   </data>
   <data name="OutputsTitle" xml:space="preserve">
-    <value>Outputs</value>
+    <value>输出</value>
   </data>
   <data name="ParameterAcceptWildcard" xml:space="preserve">
-    <value>Accept wildcard characters?</value>
+    <value>接受通配符?</value>
   </data>
   <data name="ParameterDefaultValue" xml:space="preserve">
-    <value>Default value</value>
+    <value>默认值</value>
   </data>
   <data name="ParameterPipelineInput" xml:space="preserve">
-    <value>Accept pipeline input?</value>
+    <value>接受管道输入?</value>
   </data>
   <data name="ParameterPosition" xml:space="preserve">
-    <value>Position?</value>
+    <value>位置?</value>
   </data>
   <data name="ParameterRequired" xml:space="preserve">
-    <value>Required?</value>
+    <value>必需?</value>
   </data>
   <data name="ParametersTitle" xml:space="preserve">
-    <value>Parameters</value>
+    <value>参数</value>
   </data>
   <data name="PreviousText" xml:space="preserve">
-    <value>_Previous</value>
+    <value>上一步(_P)</value>
   </data>
   <data name="PropertiesTitle" xml:space="preserve">
     <value>属性</value>
@@ -197,34 +197,34 @@
     <value>RelatedLinks</value>
   </data>
   <data name="RemarksTitle" xml:space="preserve">
-    <value>Remarks</value>
+    <value>备注</value>
   </data>
   <data name="SearchOptionsTitle" xml:space="preserve">
-    <value>Search Options</value>
+    <value>搜索选项</value>
   </data>
   <data name="SettingsText" xml:space="preserve">
     <value>设置</value>
   </data>
   <data name="SomeMatchesFormat" xml:space="preserve">
-    <value>{0} matches</value>
+    <value>{0} 个匹配项</value>
   </data>
   <data name="SynopsisTitle" xml:space="preserve">
-    <value>Synopsis</value>
+    <value>摘要</value>
   </data>
   <data name="SyntaxTitle" xml:space="preserve">
-    <value>Syntax</value>
+    <value>语法</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Help for {0}</value>
+    <value>{0}的帮助</value>
     <comment>{0} is the name of a cmdlet</comment>
   </data>
   <data name="WholeWordTitle" xml:space="preserve">
-    <value>Whole Word</value>
+    <value>全字匹配</value>
   </data>
   <data name="ZoomLabelTextFormat" xml:space="preserve">
     <value>{0}%</value>
   </data>
   <data name="ZoomSlider" xml:space="preserve">
-    <value>Zoom</value>
+    <value>放大</value>
   </data>
 </root>

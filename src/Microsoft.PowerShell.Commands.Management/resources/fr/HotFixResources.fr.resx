@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoEntriesFound" xml:space="preserve">
-    <value>Cannot find the requested hotfix on the '{0}' computer. Verify the input and run the command again.</value>
+    <value>Nous ne pouvons pas trouver le correctif logiciel demandé sur l’ordinateur « {0} ». Vérifiez l’entrée et réexécutez la commande.</value>
   </data>
 </root>

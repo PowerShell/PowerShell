@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotModified" xml:space="preserve">
-    <value>{0} cannot be modified directly, use {1} instead.</value>
+    <value>無法直接修改 {0}，請改為使用 {1}。</value>
   </data>
   <data name="Columns" xml:space="preserve">
     <value>資料行</value>
@@ -140,9 +140,9 @@
     <comment>The format string that is used by the InnerList in the case where a whole number type is used. The {0} will be the column value.</comment>
   </data>
   <data name="NotSupportAddingToItems" xml:space="preserve">
-    <value>{0} does not support adding to the Items collection, use {1} instead.</value>
+    <value>{0} 不支援新增至項目集合，請改為使用 {1}。</value>
   </data>
   <data name="ViewSetWithType" xml:space="preserve">
-    <value>If View is set to a {0}, it should have the type {1}.</value>
+    <value>若將檢視設為 {0}，則應該有類型 {1}。</value>
   </data>
 </root>

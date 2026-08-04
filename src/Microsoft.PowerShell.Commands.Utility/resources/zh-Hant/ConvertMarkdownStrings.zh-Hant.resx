@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidInputObjectType" xml:space="preserve">
-    <value>The type of the input object '{0}' is invalid.</value>
+    <value>輸入物件 '{0}' 的類型無效。</value>
   </data>
   <data name="FileSystemPathsOnly" xml:space="preserve">
-    <value>Only FileSystem Provider paths are supported. The file path is not supported: '{0}'.</value>
+    <value>僅支援 FileSystem 提供者路徑。不支援檔案路徑: '{0}'。</value>
   </data>
   <data name="MarkdownInfoInvalid" xml:space="preserve">
-    <value>The property {0} of the given object is null or empty.</value>
+    <value>指定物件的屬性 {0} 為 null 或空字串。</value>
   </data>
   <data name="InvalidParameterSet" xml:space="preserve">
-    <value>Invalid parameter set name: {0}.</value>
+    <value>無效的參數集名稱: {0}。</value>
   </data>
 </root>
