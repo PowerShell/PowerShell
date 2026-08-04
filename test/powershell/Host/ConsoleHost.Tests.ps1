@@ -860,6 +860,8 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     Context "ApartmentState WPF tests" -Tag Slow {
 
         It "WPF requires STA and will work" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
+            Set-ItResult -Pending -Because "Disabled due to issue - https://github.com/dotnet/wpf/issues/11651 in .NET 11 Preview 5"
+
             Add-Type -AssemblyName presentationframework
 
             $xaml = [xml]@"

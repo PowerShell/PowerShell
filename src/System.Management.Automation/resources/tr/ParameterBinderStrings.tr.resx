@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NamedParameterNotFound" xml:space="preserve">
+    <value>'{1}' parametre adıyla eşleşen bir parametre bulunamadı.</value>
+  </data>
+  <data name="PositionalParameterNotFound" xml:space="preserve">
+    <value>'{1}' bağımsız değişkenini kabul eden bir konumsal parametre bulunamadı.</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>'{1}' parametresi için bir bağımsız değişken eksik. '{2}' türünde bir parametre belirtin ve yeniden deneyin.</value>
+  </data>
+  <data name="AmbiguousParameter" xml:space="preserve">
+    <value>'{1}' parametre adı belirsiz olduğundan parametre işlenemiyor. Olası eşleşmeler şunlardır:{6}.</value>
+  </data>
+  <data name="CannotConvertArgument" xml:space="preserve">
+    <value>'{6}', '{1}' parametresinin gerektirdiği '{2}' türüne dönüştürülemiyor. {7}</value>
+  </data>
+  <data name="CannotConvertArgumentNoMessage" xml:space="preserve">
+    <value>'{1}' parametresi bağlanamıyor. {6}</value>
+  </data>
+  <data name="AmbiguousPositionalParameter" xml:space="preserve">
+    <value>'{1}' konumsal parametreleri bağlanamıyor.</value>
+  </data>
+  <data name="AmbiguousPositionalParameterNoName" xml:space="preserve">
+    <value>Hiçbir ad verilmediğinden konum parametreleri bağlanamıyor.</value>
+  </data>
+  <data name="AmbiguousParameterSet" xml:space="preserve">
+    <value>Parametre kümesi belirtilen adlandırılmış parametreler kullanılarak çözümlenemiyor. Verilen bir veya birden fazla parametre birlikte kullanılamıyor ya da yetersiz sayıda parametre sağlandı.</value>
+  </data>
+  <data name="MissingMandatoryParameter" xml:space="preserve">
+    <value>Bir veya birden fazla zorunlu parametre eksik olduğundan komut işlenemiyor:{1}.</value>
+  </data>
+  <data name="ParameterNotInParameterSet" xml:space="preserve">
+    <value>'{1}' parametresi '{6}' parametre kümesinde belirtilemez.</value>
+  </data>
+  <data name="ParameterAlreadyBound" xml:space="preserve">
+    <value>'{1}' parametresi birden çok kez belirtildiğinden parametre bağlanamıyor. Birden çok değer kabul edebilen parametrelere birden çok değer sağlamak için, dizi söz dizimini kullanın. Örneğin, "-parametre değeri1,değer2,değer3".</value>
+  </data>
+  <data name="ScriptBlockArgumentNoInput" xml:space="preserve">
+    <value>Bağımsız değişkeni bir betik bloğu olarak belirtildiğinden ve giriş olmadığından '{1}' parametresi değerlendirilemiyor. Giriş olmadan betik bloğu değerlendirilemez.</value>
+  </data>
+  <data name="ScriptBlockArgumentInvocationFailed" xml:space="preserve">
+    <value>'{1}' parametresi için betik bloğu girişi başarısız oldu. {6}</value>
+  </data>
+  <data name="ScriptBlockArgumentNoOutput" xml:space="preserve">
+    <value>Bağımsız değişken girişi hiçbir çıktı üretmediğinden '{1}' parametresi değerlendirilemiyor.</value>
+  </data>
+  <data name="InputObjectNotBound" xml:space="preserve">
+    <value>Komut işlem hattı girişi almadığından veya giriş ve özellikleri işlem hattı girişi alan parametrelerin hiçbiriyle eşleşmediğinden, giriş nesnesi komut için hiçbir parametreye bağlanamıyor.</value>
+  </data>
+  <data name="InputObjectMissingMandatory" xml:space="preserve">
+    <value>Giriş nesnesi, tüm zorunlu parametreleri bağlamak için gereken bilgileri içermediğinden bağlanamıyor: {6}</value>
+  </data>
+  <data name="GetDefaultValueFailed" xml:space="preserve">
+    <value>'{1}' parametresinin varsayılan değeri alınamadığından işlem hattı girişi işlenemiyor. {6}</value>
+  </data>
+  <data name="GetDynamicParametersException" xml:space="preserve">
+    <value>Cmdlet için dinamik parametreler alınamıyor. {6}</value>
+  </data>
+  <data name="PromptMessage" xml:space="preserve">
+    <value>Şu parametreler için değer girin:</value>
+  </data>
+  <data name="PromptCaption" xml:space="preserve">
+    <value>{0} cmdlet'i komut işlem hattı {1} konumunda</value>
+  </data>
+  <data name="ParameterArgumentTransformationError" xml:space="preserve">
+    <value>'{1}' parametresinde bağımsız değişken dönüşümü işlenemiyor. {6}</value>
+  </data>
+  <data name="ParameterArgumentTransformationErrorMessageOnly" xml:space="preserve">
+    <value>{6}</value>
+  </data>
+  <data name="ParameterArgumentValidationError" xml:space="preserve">
+    <value>'{1}' parametresinde bağımsız değişken doğrulanamıyor. {6}</value>
+  </data>
+  <data name="ParameterBindingFailed" xml:space="preserve">
+    <value>'{1}' parametresi hedefe bağlanamıyor. {6}</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorNullNotAllowed" xml:space="preserve">
+    <value>'{1}' parametresi dolu olduğundan bağımsız değişken bağlanamıyor.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyStringNotAllowed" xml:space="preserve">
+    <value>Boş bir dize olduğundan bağımsız değişken '{1}' parametresine bağlanamıyor.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyCollectionNotAllowed" xml:space="preserve">
+    <value>Boş bir koleksiyon olduğundan bağımsız değişken '{1}' parametresine bağlanamıyor.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyArrayNotAllowed" xml:space="preserve">
+    <value>Boş bir dizi olduğundan bağımsız değişken '{1}' parametresine bağlanamıyor.</value>
+  </data>
+  <data name="DuplicateParameterDefinition" xml:space="preserve">
+    <value>Komut işlenemiyor. '{0}' parametresi birden çok kez tanımlandı.</value>
+  </data>
+  <data name="CannotExtractAddMethod" xml:space="preserve">
+    <value>'{1}' parametresi '{2}' türünde olduğu ve Add() yöntemi belirlenemediği veya birden çok Add() yöntemi mevcut olduğu için {0} cmdlet'i bağlanamıyor. {6}</value>
+  </data>
+  <data name="RuntimeDefinedParameterNameMismatch" xml:space="preserve">
+    <value>Çalışma zamanı tanımlı '{0}' parametresi RuntimeDefinedParameterDictionary'ye '{1}' anahtarıyla eklendiğinden {6} cmdlet'i bağlanamıyor. Anahtar RuntimeDefinedParameter.Name ile aynı olmalıdır.</value>
+  </data>
+  <data name="MismatchedPSTypeName" xml:space="preserve">
+    <value>Bağımsız değişkenin PSTypeNames değeri, '{6}' parametresinin gerektirdiği PSTypeName ile eşleşmediğinden bağımsız değişken '{1}' parametresine bağlanamıyor.</value>
+  </data>
+  <data name="DifferentValuesAssignedToSingleParameter" xml:space="preserve">
+    <value>Şu ad veya diğer adla eşleşen parametre için $PSDefaultParameterValues içinde birden çok farklı varsayılan değer tanımlandı: {0}. Bu varsayılan değerler yoksayıldı.</value>
+  </data>
+  <data name="MultipleParametersMatched" xml:space="preserve">
+    <value>Bu cmdlet için $PSDefaultParameterValues içinde tanımlanan şu ad veya diğer ad birden çok parametreye çözümleniyor: {0}. Varsayılan değer yoksayıldı.</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationMultiple" xml:space="preserve">
+    <value>{6} Varsayılan parametre bağlamalarının uygulanması bu hataya neden olmuş olabilir. $PSDefaultParameterValues["Disabled"] değerini $true olarak ayarlayarak $PSDefaultParameterValues varsayılan parametre bağlamasını devre dışı bırakabilir ve sonra yeniden deneyebilirsiniz. Hata oluştuğunda bu cmdlet için şu varsayılan parametreler başarıyla bağlanmıştı:{7}</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationSingle" xml:space="preserve">
+    <value>{6} Varsayılan parametre bağlamasının uygulanması bu hataya neden olmuş olabilir. $PSDefaultParameterValues["Disabled"] değerini $true olarak ayarlayarak $PSDefaultParameterValues varsayılan parametre bağlamasını devre dışı bırakabilir ve yeniden deneyebilirsiniz. Hata oluştuğunda bu cmdlet için şu varsayılan parametre başarıyla bağlanmıştı:{7}</value>
+  </data>
+  <data name="FailToBindDefaultParameter" xml:space="preserve">
+    <value>'{0}' varsayılan değeri '{1}' parametresine bağlanamadı: {2}</value>
+  </data>
+  <data name="SingleKeyInBadFormat" xml:space="preserve">
+    <value>'{0}' anahtarının biçimi geçerli değil. Doğru biçim hakkında bilgi için https://go.microsoft.com/fwlink/?LinkId=228266 adresindeki about_Parameters_Default_Values bölümüne bakın.</value>
+  </data>
+  <data name="MultipleKeysInBadFormat" xml:space="preserve">
+    <value>'{0}' anahtarlarının biçimleri geçerli değil. Doğru biçim hakkında bilgi için https://go.microsoft.com/fwlink/?LinkId=228266 adresindeki about_Parameters_Default_Values bölümüne bakın.</value>
+  </data>
+  <data name="UseOfDeprecatedParameterWarning" xml:space="preserve">
+    <value>'{0}' parametresi artık kullanılmıyor. {1}</value>
+  </data>
+  <data name="StringValueKeyExpected" xml:space="preserve">
+    <value>'{1}' türündeki '{0}' anahtarı bir dize değeri değil. DefaultParameterDictionary yalnızca dize değeri olan anahtarları kabul eder.</value>
+  </data>
+  <data name="KeyAlreadyAdded" xml:space="preserve">
+    <value>'{0}' anahtarı zaten sözlüğe eklenmiş.</value>
+  </data>
+  <data name="WDACBinderInvocationLogTitle" xml:space="preserve">
+    <value>Yöntem veya Özellik Çağrısına İzin Verilmiyor</value>
+  </data>
+  <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
+    <value>Güvenilmeyen betikler için Kısıtlı Dil modunda, '{1}' türündeki '{0}' Yöntemi veya Özelliğinin çağrılmasına izin verilmez.</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
+    <value>Tür Oluşturmaya İzin Verilmiyor</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
+    <value>Güvenilmeyen betikler için Kısıtlı Dil modunda parametre bağlama sırasında '{0}' türünün oluşturulmasına izin verilmez.</value>
+  </data>
+</root>
