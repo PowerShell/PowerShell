@@ -163,7 +163,7 @@
 {2} is a placeholder for a name of a property of ParameterAttribute class. Example: ValueFromPipelineByPropertyName </comment>
   </data>
   <data name="ScriptWriter_ParameterNameConflictsWithCommonParameters" xml:space="preserve">
-    <value>Non è possibile definire il parametro {0} per il cmdlet {1}.  Il nome del parametro è già definito dalla classe {2}.  Modificare il nome del parametro in mdlet Definition XML e riprovare.</value>
+    <value>Non è possibile definire il parametro {0} per il cmdlet {1}.  Il nome del parametro è già definito dalla classe {2}.  Modificare il nome del parametro in Cmdlet Definition XML e riprovare.</value>
     <comment>{0} is a placeholder for a cmdlet parameter name.  Example: 'ProcessId'
 {1} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
 {2} is a placeholder for a .NET class name.  Example: 'Microsoft.PowerShell.Cmdletization.Cim.CimWrapper'</comment>
