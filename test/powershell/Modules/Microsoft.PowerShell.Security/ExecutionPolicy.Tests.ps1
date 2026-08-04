@@ -1198,6 +1198,8 @@ ZoneId=$FileType
             $powerShellConfigDirectory = Join-Path $programDataDirectory 'Microsoft\PowerShell'
             $machineConfigDirectory = Join-Path $powerShellConfigDirectory $packageFamilyName
             $machineConfigFile = Join-Path $machineConfigDirectory 'powershell.config.json'
+            $accessTestFile = Join-Path $machineConfigDirectory "$((New-Guid).Guid).txt"
+            $accessTestExecutable = Join-Path $machineConfigDirectory "$((New-Guid).Guid).exe"
             $backupConfigFile = Join-Path $TestDrive 'powershell.config.json'
             $powerShellConfigDirectoryExisted = Test-Path -LiteralPath $powerShellConfigDirectory
             $machineConfigDirectoryExisted = Test-Path -LiteralPath $machineConfigDirectory
@@ -1245,12 +1247,24 @@ ZoneId=$FileType
                 $machineConfigFileAcl.AreAccessRulesProtected | Should -BeFalse
                 @($machineConfigFileAcl.Access | Where-Object { $_.IsInherited }).Count | Should -BeGreaterThan 0
 
+                Set-Content -LiteralPath $accessTestFile -Value 'initial' -NoNewline -Encoding ascii
+                Get-Content -LiteralPath $accessTestFile -Raw | Should -BeExactly 'initial'
+                Set-Content -LiteralPath $accessTestFile -Value 'updated' -NoNewline -Encoding ascii
+                Get-Content -LiteralPath $accessTestFile -Raw | Should -BeExactly 'updated'
+
+                Copy-Item -LiteralPath "$env:SystemRoot\System32\whoami.exe" -Destination $accessTestExecutable
+                $executionOutput = Start-NativeExecution { & $accessTestExecutable }
+                $executionOutput | Should -Not -BeNullOrEmpty
+
                 & $setLocalMachinePolicy -Policy Undefined
                 $config = Get-Content -LiteralPath $machineConfigFile -Raw | ConvertFrom-Json
                 $config.PSObject.Properties['Microsoft.PowerShell:ExecutionPolicy'] | Should -BeNullOrEmpty
             }
             finally {
                 try {
+                    Remove-Item -LiteralPath $accessTestFile -Force -ErrorAction SilentlyContinue
+                    Remove-Item -LiteralPath $accessTestExecutable -Force -ErrorAction SilentlyContinue
+
                     try {
                         if ($configFileExisted -or (Test-Path -LiteralPath $machineConfigFile)) {
                             $restorePolicy = if ($originalPolicyExists) { $originalPolicy } else { 'Undefined' }
@@ -1275,6 +1289,65 @@ ZoneId=$FileType
                         Remove-Item -LiteralPath $powerShellConfigDirectory -Force -ErrorAction SilentlyContinue
                     }
                 }
+            }
+        }
+    }
+
+    Describe 'Validate MSIX LocalMachine configuration access (unelevated)' -Tags 'CI' {
+        It 'Users can read and execute but cannot write in the package-family directory' {
+            $packageFamilyName = [System.Management.Automation.Internal.InternalTestHooks]::GetCurrentPackageFamilyName()
+            if ([string]::IsNullOrEmpty($packageFamilyName)) {
+                Set-ItResult -Skipped -Because 'The test requires PowerShell to be running with MSIX package identity.'
+                return
+            }
+
+            if (Test-IsElevated) {
+                Set-ItResult -Skipped -Because 'The test requires an unelevated PowerShell process.'
+                return
+            }
+
+            $programDataDirectory = [Environment]::GetFolderPath([Environment+SpecialFolder]::CommonApplicationData)
+            $machineConfigDirectory = Join-Path $programDataDirectory "Microsoft\PowerShell\$packageFamilyName"
+            $machineConfigFile = Join-Path $machineConfigDirectory 'powershell.config.json'
+            $accessTestFile = Join-Path $machineConfigDirectory 'msix-access-test.txt'
+            $accessTestExecutable = Join-Path $machineConfigDirectory 'msix-access-test.exe'
+            $writeTestFile = Join-Path $machineConfigDirectory 'msix-write-test.txt'
+
+            $machineConfigFile | Should -Exist
+            $accessTestFile | Should -Exist
+            $accessTestExecutable | Should -Exist
+
+            $originalConfig = Get-Content -LiteralPath $machineConfigFile -Raw
+            Get-Content -LiteralPath $accessTestFile -Raw | Should -BeExactly 'MSIX ACL read test'
+
+            $executionOutput = Start-NativeExecution { & $accessTestExecutable }
+            $executionOutput | Should -Not -BeNullOrEmpty
+
+            try {
+                $configWriteError = $null
+                try {
+                    Set-Content -LiteralPath $machineConfigFile -Value '{}' -NoNewline -ErrorAction Stop
+                }
+                catch {
+                    $configWriteError = $_
+                }
+
+                $configWriteError | Should -Not -BeNullOrEmpty
+                Get-Content -LiteralPath $machineConfigFile -Raw | Should -BeExactly $originalConfig
+
+                $newFileWriteError = $null
+                try {
+                    Set-Content -LiteralPath $writeTestFile -Value 'write should fail' -NoNewline -ErrorAction Stop
+                }
+                catch {
+                    $newFileWriteError = $_
+                }
+
+                $newFileWriteError | Should -Not -BeNullOrEmpty
+                $writeTestFile | Should -Not -Exist
+            }
+            finally {
+                Remove-Item -LiteralPath $writeTestFile -Force -ErrorAction SilentlyContinue
             }
         }
     }
