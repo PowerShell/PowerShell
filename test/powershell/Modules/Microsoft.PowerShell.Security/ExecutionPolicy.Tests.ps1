@@ -1187,20 +1187,43 @@ ZoneId=$FileType
     }
 
     Describe 'Validate MSIX LocalMachine configuration' -Tags @('CI', 'RequireAdminOnWindows') {
-        It 'LocalMachine uses the package-family ProgramData file for MSIX' {
+        BeforeAll {
+            $skipReason = $null
             $packageFamilyName = [System.Management.Automation.Internal.InternalTestHooks]::GetCurrentPackageFamilyName()
             if ([string]::IsNullOrEmpty($packageFamilyName)) {
-                Set-ItResult -Skipped -Because 'The test requires PowerShell to be running with MSIX package identity.'
+                $skipReason = 'The test requires PowerShell to be running with MSIX package identity.'
+            }
+            elseif (-not (Test-IsElevated)) {
+                $skipReason = 'The test requires an elevated PowerShell process.'
+            }
+
+            if ($null -eq $skipReason) {
+                $programDataDirectory = [Environment]::GetFolderPath([Environment+SpecialFolder]::CommonApplicationData)
+                $powerShellConfigDirectory = Join-Path $programDataDirectory 'Microsoft\PowerShell'
+                $machineConfigDirectory = Join-Path $powerShellConfigDirectory $packageFamilyName
+                $machineConfigFile = Join-Path $machineConfigDirectory 'powershell.config.json'
+                $setLocalMachinePolicy = {
+                    param([string] $Policy)
+
+                    try {
+                        Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy $Policy -Force -ErrorAction Stop
+                    }
+                    catch {
+                        if ($_.FullyQualifiedErrorId -ne 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand') {
+                            throw
+                        }
+                    }
+                }
+            }
+        }
+
+        BeforeEach {
+            $testStateInitialized = $false
+            if ($null -ne $skipReason) {
                 return
             }
 
-            $programDataDirectory = [Environment]::GetFolderPath([Environment+SpecialFolder]::CommonApplicationData)
-            $powerShellConfigDirectory = Join-Path $programDataDirectory 'Microsoft\PowerShell'
-            $machineConfigDirectory = Join-Path $powerShellConfigDirectory $packageFamilyName
-            $machineConfigFile = Join-Path $machineConfigDirectory 'powershell.config.json'
-            $accessTestFile = Join-Path $machineConfigDirectory "$((New-Guid).Guid).txt"
-            $accessTestExecutable = Join-Path $machineConfigDirectory "$((New-Guid).Guid).exe"
-            $backupConfigFile = Join-Path $TestDrive 'powershell.config.json'
+            $backupConfigFile = Join-Path $TestDrive "$((New-Guid).Guid).json"
             $powerShellConfigDirectoryExisted = Test-Path -LiteralPath $powerShellConfigDirectory
             $machineConfigDirectoryExisted = Test-Path -LiteralPath $machineConfigDirectory
             $configFileExisted = Test-Path -LiteralPath $machineConfigFile
@@ -1220,135 +1243,204 @@ ZoneId=$FileType
             }
 
             $testPolicy = if ($originalPolicy -eq 'AllSigned') { 'RemoteSigned' } else { 'AllSigned' }
-            $setLocalMachinePolicy = {
-                param([string] $Policy)
+            $testStateInitialized = $true
+            & $setLocalMachinePolicy -Policy $testPolicy
+        }
 
-                try {
-                    Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy $Policy -Force -ErrorAction Stop
-                }
-                catch {
-                    if ($_.FullyQualifiedErrorId -ne 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand') {
-                        throw
-                    }
-                }
+        AfterEach {
+            if ($null -ne $skipReason -or -not $testStateInitialized) {
+                return
             }
 
             try {
-                & $setLocalMachinePolicy -Policy $testPolicy
+                try {
+                    if ($configFileExisted -or (Test-Path -LiteralPath $machineConfigFile)) {
+                        $restorePolicy = if ($originalPolicyExists) { $originalPolicy } else { 'Undefined' }
+                        & $setLocalMachinePolicy -Policy $restorePolicy
+                    }
+                }
+                finally {
+                    if ($configFileExisted) {
+                        Copy-Item -LiteralPath $backupConfigFile -Destination $machineConfigFile -Force -ErrorAction Stop
+                    }
+                    else {
+                        Remove-Item -LiteralPath $machineConfigFile -Force -ErrorAction SilentlyContinue
+                    }
+                }
+            }
+            finally {
+                Remove-Item -LiteralPath $backupConfigFile -Force -ErrorAction SilentlyContinue
 
-                $machineConfigFile | Should -Exist
-                $config = Get-Content -LiteralPath $machineConfigFile -Raw | ConvertFrom-Json
-                $config.'Microsoft.PowerShell:ExecutionPolicy' | Should -Be $testPolicy
+                if (-not $machineConfigDirectoryExisted) {
+                    Remove-Item -LiteralPath $machineConfigDirectory -Force -ErrorAction SilentlyContinue
+                }
 
-                (Get-Acl -LiteralPath $powerShellConfigDirectory).AreAccessRulesProtected | Should -BeTrue
-                (Get-Acl -LiteralPath $machineConfigDirectory).AreAccessRulesProtected | Should -BeTrue
+                if (-not $powerShellConfigDirectoryExisted) {
+                    Remove-Item -LiteralPath $powerShellConfigDirectory -Force -ErrorAction SilentlyContinue
+                }
+            }
+        }
 
-                $machineConfigFileAcl = Get-Acl -LiteralPath $machineConfigFile
-                $machineConfigFileAcl.AreAccessRulesProtected | Should -BeFalse
-                @($machineConfigFileAcl.Access | Where-Object { $_.IsInherited }).Count | Should -BeGreaterThan 0
+        It 'writes LocalMachine policy to the package-family ProgramData file' {
+            if ($null -ne $skipReason) {
+                Set-ItResult -Skipped -Because $skipReason
+                return
+            }
 
+            $machineConfigFile | Should -Exist
+            $config = Get-Content -LiteralPath $machineConfigFile -Raw | ConvertFrom-Json
+            $config.'Microsoft.PowerShell:ExecutionPolicy' | Should -Be $testPolicy
+        }
+
+        It 'uses protected directory ACLs and an inherited configuration file ACL' {
+            if ($null -ne $skipReason) {
+                Set-ItResult -Skipped -Because $skipReason
+                return
+            }
+
+            (Get-Acl -LiteralPath $powerShellConfigDirectory).AreAccessRulesProtected | Should -BeTrue
+            (Get-Acl -LiteralPath $machineConfigDirectory).AreAccessRulesProtected | Should -BeTrue
+
+            $machineConfigFileAcl = Get-Acl -LiteralPath $machineConfigFile
+            $machineConfigFileAcl.AreAccessRulesProtected | Should -BeFalse
+            @($machineConfigFileAcl.Access | Where-Object { $_.IsInherited }).Count | Should -BeGreaterThan 0
+        }
+
+        It 'allows administrators to create, read, and update files in the package-family directory' {
+            if ($null -ne $skipReason) {
+                Set-ItResult -Skipped -Because $skipReason
+                return
+            }
+
+            $accessTestFile = Join-Path $machineConfigDirectory "$((New-Guid).Guid).txt"
+            try {
                 Set-Content -LiteralPath $accessTestFile -Value 'initial' -NoNewline -Encoding ascii
                 Get-Content -LiteralPath $accessTestFile -Raw | Should -BeExactly 'initial'
                 Set-Content -LiteralPath $accessTestFile -Value 'updated' -NoNewline -Encoding ascii
                 Get-Content -LiteralPath $accessTestFile -Raw | Should -BeExactly 'updated'
+            }
+            finally {
+                Remove-Item -LiteralPath $accessTestFile -Force -ErrorAction SilentlyContinue
+            }
+        }
 
+        It 'allows administrators to execute files in the package-family directory' {
+            if ($null -ne $skipReason) {
+                Set-ItResult -Skipped -Because $skipReason
+                return
+            }
+
+            $accessTestExecutable = Join-Path $machineConfigDirectory "$((New-Guid).Guid).exe"
+            try {
                 Copy-Item -LiteralPath "$env:SystemRoot\System32\whoami.exe" -Destination $accessTestExecutable
                 $executionOutput = Start-NativeExecution { & $accessTestExecutable }
                 $executionOutput | Should -Not -BeNullOrEmpty
-
-                & $setLocalMachinePolicy -Policy Undefined
-                $config = Get-Content -LiteralPath $machineConfigFile -Raw | ConvertFrom-Json
-                $config.PSObject.Properties['Microsoft.PowerShell:ExecutionPolicy'] | Should -BeNullOrEmpty
             }
             finally {
-                try {
-                    Remove-Item -LiteralPath $accessTestFile -Force -ErrorAction SilentlyContinue
-                    Remove-Item -LiteralPath $accessTestExecutable -Force -ErrorAction SilentlyContinue
-
-                    try {
-                        if ($configFileExisted -or (Test-Path -LiteralPath $machineConfigFile)) {
-                            $restorePolicy = if ($originalPolicyExists) { $originalPolicy } else { 'Undefined' }
-                            & $setLocalMachinePolicy -Policy $restorePolicy
-                        }
-                    }
-                    finally {
-                        if ($configFileExisted) {
-                            Copy-Item -LiteralPath $backupConfigFile -Destination $machineConfigFile -Force -ErrorAction Stop
-                        }
-                        else {
-                            Remove-Item -LiteralPath $machineConfigFile -Force -ErrorAction SilentlyContinue
-                        }
-                    }
-                }
-                finally {
-                    if (-not $machineConfigDirectoryExisted) {
-                        Remove-Item -LiteralPath $machineConfigDirectory -Force -ErrorAction SilentlyContinue
-                    }
-
-                    if (-not $powerShellConfigDirectoryExisted) {
-                        Remove-Item -LiteralPath $powerShellConfigDirectory -Force -ErrorAction SilentlyContinue
-                    }
-                }
+                Remove-Item -LiteralPath $accessTestExecutable -Force -ErrorAction SilentlyContinue
             }
+        }
+
+        It 'removes LocalMachine policy from the package-family ProgramData file' {
+            if ($null -ne $skipReason) {
+                Set-ItResult -Skipped -Because $skipReason
+                return
+            }
+
+            & $setLocalMachinePolicy -Policy Undefined
+            $config = Get-Content -LiteralPath $machineConfigFile -Raw | ConvertFrom-Json
+            $config.PSObject.Properties['Microsoft.PowerShell:ExecutionPolicy'] | Should -BeNullOrEmpty
         }
     }
 
     Describe 'Validate MSIX LocalMachine configuration access (unelevated)' -Tags 'CI' {
-        It 'Users can read and execute but cannot write in the package-family directory' {
+        BeforeAll {
+            $skipReason = $null
             $packageFamilyName = [System.Management.Automation.Internal.InternalTestHooks]::GetCurrentPackageFamilyName()
             if ([string]::IsNullOrEmpty($packageFamilyName)) {
-                Set-ItResult -Skipped -Because 'The test requires PowerShell to be running with MSIX package identity.'
-                return
+                $skipReason = 'The test requires PowerShell to be running with MSIX package identity.'
+            }
+            elseif (Test-IsElevated) {
+                $skipReason = 'The test requires an unelevated PowerShell process.'
             }
 
-            if (Test-IsElevated) {
-                Set-ItResult -Skipped -Because 'The test requires an unelevated PowerShell process.'
+            if ($null -eq $skipReason) {
+                $programDataDirectory = [Environment]::GetFolderPath([Environment+SpecialFolder]::CommonApplicationData)
+                $machineConfigDirectory = Join-Path $programDataDirectory "Microsoft\PowerShell\$packageFamilyName"
+                $machineConfigFile = Join-Path $machineConfigDirectory 'powershell.config.json'
+                $accessTestFile = Join-Path $machineConfigDirectory 'msix-access-test.txt'
+                $accessTestExecutable = Join-Path $machineConfigDirectory 'msix-access-test.exe'
+                $writeTestFile = Join-Path $machineConfigDirectory 'msix-write-test.txt'
+            }
+        }
+
+        AfterEach {
+            if ($null -eq $skipReason) {
+                Remove-Item -LiteralPath $writeTestFile -Force -ErrorAction SilentlyContinue
+            }
+        }
+
+        It 'allows users to read files in the package-family directory' {
+            if ($null -ne $skipReason) {
+                Set-ItResult -Skipped -Because $skipReason
                 return
             }
-
-            $programDataDirectory = [Environment]::GetFolderPath([Environment+SpecialFolder]::CommonApplicationData)
-            $machineConfigDirectory = Join-Path $programDataDirectory "Microsoft\PowerShell\$packageFamilyName"
-            $machineConfigFile = Join-Path $machineConfigDirectory 'powershell.config.json'
-            $accessTestFile = Join-Path $machineConfigDirectory 'msix-access-test.txt'
-            $accessTestExecutable = Join-Path $machineConfigDirectory 'msix-access-test.exe'
-            $writeTestFile = Join-Path $machineConfigDirectory 'msix-write-test.txt'
 
             $machineConfigFile | Should -Exist
             $accessTestFile | Should -Exist
-            $accessTestExecutable | Should -Exist
 
             $originalConfig = Get-Content -LiteralPath $machineConfigFile -Raw
+            $originalConfig | Should -Not -BeNullOrEmpty
             Get-Content -LiteralPath $accessTestFile -Raw | Should -BeExactly 'MSIX ACL read test'
+        }
 
+        It 'allows users to execute files in the package-family directory' {
+            if ($null -ne $skipReason) {
+                Set-ItResult -Skipped -Because $skipReason
+                return
+            }
+
+            $accessTestExecutable | Should -Exist
             $executionOutput = Start-NativeExecution { & $accessTestExecutable }
             $executionOutput | Should -Not -BeNullOrEmpty
+        }
 
+        It 'prevents users from overwriting the machine configuration file' {
+            if ($null -ne $skipReason) {
+                Set-ItResult -Skipped -Because $skipReason
+                return
+            }
+
+            $machineConfigFile | Should -Exist
+            $originalConfig = Get-Content -LiteralPath $machineConfigFile -Raw
+            $configWriteError = $null
             try {
-                $configWriteError = $null
-                try {
-                    Set-Content -LiteralPath $machineConfigFile -Value '{}' -NoNewline -ErrorAction Stop
-                }
-                catch {
-                    $configWriteError = $_
-                }
-
-                $configWriteError | Should -Not -BeNullOrEmpty
-                Get-Content -LiteralPath $machineConfigFile -Raw | Should -BeExactly $originalConfig
-
-                $newFileWriteError = $null
-                try {
-                    Set-Content -LiteralPath $writeTestFile -Value 'write should fail' -NoNewline -ErrorAction Stop
-                }
-                catch {
-                    $newFileWriteError = $_
-                }
-
-                $newFileWriteError | Should -Not -BeNullOrEmpty
-                $writeTestFile | Should -Not -Exist
+                Set-Content -LiteralPath $machineConfigFile -Value $originalConfig -NoNewline -ErrorAction Stop
             }
-            finally {
-                Remove-Item -LiteralPath $writeTestFile -Force -ErrorAction SilentlyContinue
+            catch {
+                $configWriteError = $_
             }
+
+            $configWriteError | Should -Not -BeNullOrEmpty
+            Get-Content -LiteralPath $machineConfigFile -Raw | Should -BeExactly $originalConfig
+        }
+
+        It 'prevents users from creating files in the package-family directory' {
+            if ($null -ne $skipReason) {
+                Set-ItResult -Skipped -Because $skipReason
+                return
+            }
+
+            $newFileWriteError = $null
+            try {
+                Set-Content -LiteralPath $writeTestFile -Value 'write should fail' -NoNewline -ErrorAction Stop
+            }
+            catch {
+                $newFileWriteError = $_
+            }
+
+            $newFileWriteError | Should -Not -BeNullOrEmpty
+            $writeTestFile | Should -Not -Exist
         }
     }
 }
