@@ -646,7 +646,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Xml",
-          "Version": "10.0.6"
+          "Version": "10.0.10"
         }
       },
       "DevelopmentDependency": false
