@@ -118,138 +118,138 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FileLineError" xml:space="preserve">
-    <value>{0}, {1}({2}) : Error: {3}</value>
+    <value>{0}, {1}({2}): Błąd: {3}</value>
   </data>
   <data name="FileLineTypeError" xml:space="preserve">
-    <value>{0}, {1}({2}) : Error in type "{3}": {4}</value>
+    <value>{0}, {1}({2}) : Błąd w typie „{3}”: {4}</value>
   </data>
   <data name="NotMoreThanOnceOne" xml:space="preserve">
-    <value>Node "{0}" must occur only once under "{1}". The parent node, "{1}", will be ignored.</value>
+    <value>Węzeł „{0}” musi występować tylko raz w obszarze „{1}”. Węzeł nadrzędny „{1}” zostanie zignorowany.</value>
   </data>
   <data name="UnknownNode" xml:space="preserve">
-    <value>The node {0} is not allowed. The following nodes are allowed: {1}.</value>
+    <value>Węzeł „{0}” jest niedozwolony. Dozwolone są następujące węzły: {1}.</value>
   </data>
   <data name="NodeShouldNotHaveInnerText" xml:space="preserve">
-    <value>Node "{0}" should not have an inner text.</value>
+    <value>Węzeł „{0}” nie powinien mieć wewnętrznego tekstu.</value>
   </data>
   <data name="NodeShouldHaveInnerText" xml:space="preserve">
-    <value>Node "{0}" should have an inner text.</value>
+    <value>Węzeł „{0}” powinien mieć tekst wewnętrzny.</value>
   </data>
   <data name="NodeNotFoundOnce" xml:space="preserve">
-    <value>Node "{0}" was not found. It should occur only once under "{1}". The parent node, "{1}", will be ignored.</value>
+    <value>Nie znaleziono węzła „{0}”. Powinien on występować tylko raz w obszarze „{1}”. Węzeł nadrzędny „{1}” zostanie zignorowany.</value>
   </data>
   <data name="TypeNodeShouldHaveMembersOrTypeConverters" xml:space="preserve">
-    <value>The "Type" node must have "Members", "TypeConverters", or "TypeAdapters".</value>
+    <value>Węzeł „Type” musi mieć wartości „Members”, „TypeConverters” lub „TypeAdapters”.</value>
   </data>
   <data name="UnableToInstantiateTypeConverter" xml:space="preserve">
-    <value>Cannot create an instance of the type converter for type {0} due to exception: {1}.</value>
+    <value>Nie można utworzyć wystąpienia konwertera typów dla typu {0} z powodu wyjątku: {1}.</value>
   </data>
   <data name="UnableToInstantiateTypeAdapter" xml:space="preserve">
-    <value>PowerShell cannot create an instance of the type adapter for the type {0} because of the following exception: {1}.</value>
+    <value>Program PowerShell nie może utworzyć wystąpienia karty typu dla typu {0} z powodu następującego wyjątku: {1}.</value>
   </data>
   <data name="InvalidAdaptedType" xml:space="preserve">
-    <value>The adapted type "{0}" is not valid.</value>
+    <value>Dostosowany typ „{0}” jest nieprawidłowy.</value>
   </data>
   <data name="TypeConverterAlreadyPresent" xml:space="preserve">
-    <value>The TypeConverter was ignored because it already occurs.</value>
+    <value>Element TypeConverter został zignorowany, ponieważ już występuje.</value>
   </data>
   <data name="TypeAdapterAlreadyPresent" xml:space="preserve">
-    <value>The TypeAdapter was ignored because it already occurs.</value>
+    <value>Element TypeAdapter został zignorowany, ponieważ już występuje.</value>
   </data>
   <data name="TypeIsNotTypeConverter" xml:space="preserve">
-    <value>Type "{0}" should be either TypeConverter or PSTypeConverter.</value>
+    <value>Typ „{0}” powinien być typem TypeConverter lub PSTypeConverter.</value>
   </data>
   <data name="TypeIsNotTypeAdapter" xml:space="preserve">
-    <value>Type "{0}" should be a PSPropertyAdapter.</value>
+    <value>Typem „{0}” powinno być PSPropertyAdapter.</value>
   </data>
   <data name="DuplicateMember" xml:space="preserve">
-    <value>The member {0} is already present.</value>
+    <value>Element członkowski {0} już istnieje.</value>
   </data>
   <data name="ReservedNameMember" xml:space="preserve">
-    <value>The following member name is reserved: {0}</value>
+    <value>Następująca nazwa elementu członkowskiego jest zarezerwowana: {0}</value>
   </data>
   <data name="Exception" xml:space="preserve">
-    <value>Exception: {0}</value>
+    <value>Wyjątek: {0}</value>
   </data>
   <data name="ScriptPropertyShouldHaveGetterOrSetter" xml:space="preserve">
-    <value>The ScriptProperty should have a getter or setter.</value>
+    <value>Właściwość ScriptProperty powinna mieć metodę pobierającą lub ustawiającą.</value>
   </data>
   <data name="CodePropertyShouldHaveGetterOrSetter" xml:space="preserve">
-    <value>The CodeProperty should have a getter or setter.</value>
+    <value>Właściwość CodeProperty powinna mieć metodę pobierającą lub ustawiającą.</value>
   </data>
   <data name="FileError" xml:space="preserve">
     <value>{0}, {1} : {2}</value>
   </data>
   <data name="ValueShouldBeTrueOrFalse" xml:space="preserve">
-    <value>The value should be either TRUE or FALSE instead of {0}.</value>
+    <value>Wartość powinna mieć wartość TRUE lub FALSE zamiast {0}.</value>
   </data>
   <data name="IsHiddenNotSupported" xml:space="preserve">
-    <value>Node "{0}" should not have "{1}" attribute.</value>
+    <value>Węzeł „{0}” nie powinien mieć atrybutu „{1}”.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>{0}, {1}: The file was not found.</value>
+    <value>{0}, {1}: nie znaleziono pliku.</value>
   </data>
   <data name="DuplicateFile" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because it was already loaded by {2}.</value>
+    <value>{0}, {1}: plik został pominięty, ponieważ został już załadowany przez {2}.</value>
   </data>
   <data name="CannotFindRegistryKey" xml:space="preserve">
-    <value>Cannot find the registry key: {0}{1}. Using {2} to load the configuration files.</value>
+    <value>Nie można znaleźć klucza rejestru: {0}{1}. Używanie {2} do załadowania plików konfiguracji.</value>
   </data>
   <data name="CannotFindRegistryKeyPath" xml:space="preserve">
-    <value>Cannot find the path {0} specified in the registry key: {1}{2}. Using {3} to load the configuration files.</value>
+    <value>Nie można odnaleźć ścieżki {0} określonej w kluczu rejestru: {1}{2}. Używanie {3} do ładowania plików konfiguracji.</value>
   </data>
   <data name="EntryShouldBeMshXml" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because it does not have the ps1xml file name extension.</value>
+    <value>{0}, {1}: plik został pominięty, ponieważ nie ma rozszerzenia nazwy pliku ps1xml.</value>
   </data>
   <data name="ValidationException" xml:space="preserve">
-    <value>{0}, {1}: The file was skipped because of the following validation exception: {2}.</value>
+    <value>{0}, {1}: plik został pominięty z powodu następującego wyjątku walidacji: {2}.</value>
   </data>
   <data name="MemberShouldBeNote" xml:space="preserve">
-    <value>Member "{0}" must be a note.</value>
+    <value>Element członkowski „{0}” musi być notatką.</value>
   </data>
   <data name="ErrorConvertingNote" xml:space="preserve">
-    <value>Cannot convert note "{0}":"{1}".</value>
+    <value>Nie można przekonwertować notatki „{0}” na „{1}”.</value>
   </data>
   <data name="MemberShouldNotBePresent" xml:space="preserve">
-    <value>Do not use the member "{0}" here.</value>
+    <value>Nie używaj tutaj elementu członkowskiego „{0}”.</value>
   </data>
   <data name="MemberShouldHaveType" xml:space="preserve">
-    <value>Member "{0}" must have type "{1}".</value>
+    <value>Element członkowski „{0}” musi mieć typ „{1}”.</value>
   </data>
   <data name="MemberMustBePresent" xml:space="preserve">
-    <value>"{0}" must be present when the "{1}" is "{2}" and "{3}" is "{4}".</value>
+    <value>Wartość „{0}” musi być obecna, gdy „{1}” ma wartość „{2}”, a „{3}” to „{4}”.</value>
   </data>
   <data name="SerializationSettingsIgnored" xml:space="preserve">
-    <value>A previous error caused all serialization settings to be ignored.</value>
+    <value>Poprzedni błąd spowodował zignorowanie wszystkich ustawień serializacji.</value>
   </data>
   <data name="NotAStandardMember" xml:space="preserve">
-    <value>"{0}" is not a standard member and will be ignored.</value>
+    <value>Element „{0}” nie jest standardowym elementem członkowskim i zostanie zignorowany.</value>
   </data>
   <data name="TypeFileNotRooted" xml:space="preserve">
-    <value>The {0} path is not fully qualified. Specify a fully qualified type file path.</value>
+    <value>Ścieżka {0} nie jest w pełni kwalifikowana. Określ w pełni kwalifikowaną ścieżkę pliku typu.</value>
   </data>
   <data name="SharedTypeTableCannotBeUpdated" xml:space="preserve">
-    <value>The TypeTable cannot be updated because the TypeTable might have been created outside of the runspace.</value>
+    <value>Nie można zaktualizować elementu TypeTable, ponieważ mógł on zostać utworzony poza obszarem działania.</value>
   </data>
   <data name="TypeTableLoadErrors" xml:space="preserve">
-    <value>There were errors loading TypeTable. Look in the Errors property to get detailed error messages.</value>
+    <value>Wystąpiły błędy podczas ładowania elementu TypeTable. Poszukaj właściwości Errors, aby uzyskać szczegółowe komunikaty o błędach.</value>
   </data>
   <data name="TypeDataTypeError" xml:space="preserve">
-    <value>Error in TypeData "{0}": {1}</value>
+    <value>Błąd w TypeData „{0}”: {1}</value>
   </data>
   <data name="TypeDataShouldHaveValue" xml:space="preserve">
-    <value>"{0}" should have a value for its property "{1}".</value>
+    <value>Element „{0}” powinien mieć wartość dla swojej właściwości „{1}”.</value>
   </data>
   <data name="TypeDataShouldNotBeNullOrEmpty" xml:space="preserve">
-    <value>"{0}" should not have null or an empty string in its property "{1}".</value>
+    <value>Typ „{0}” nie powinien mieć wartości null ani mieć pustego ciągu we właściwości „{1}”.</value>
   </data>
   <data name="TypeNotFound" xml:space="preserve">
-    <value>The type "{0}" was not found. The type name value must be the full name of the type. Verify the type name and run the command again.</value>
+    <value>Nie znaleziono typu „{0}”. Wartość nazwy typu musi być pełną nazwą typu. Sprawdź nazwę typu i ponownie uruchom polecenie.</value>
   </data>
   <data name="TypeDataShouldNotBeEmpty" xml:space="preserve">
-    <value>The TypeData must have "Members", "TypeConverters", "TypeAdapters" or "StandardMembers".</value>
+    <value>Element TypeData musi mieć wartości „Members”, „TypeConverters”, „TypeAdapters” lub „StandardMembers”.</value>
   </data>
   <data name="TypeTableCannotCoExist" xml:space="preserve">
-    <value>A shared type table cannot be updated with more than one entry.</value>
+    <value>Tabeli typu udostępnionego nie można zaktualizować za pomocą więcej niż jednego wpisu.</value>
   </data>
 </root>

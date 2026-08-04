@@ -118,76 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="HelpNotFound" xml:space="preserve">
-    <value>Get-Help could not find {0} in a help file in this session. To download updated help topics type: "Update-Help". To get help online, search for the help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>Get-Help は、このセッションのヘルプ ファイルで {0} を見つけることができませんでした。更新されたヘルプ トピックをダウンロードするには、「Update-Help」と入力してください。オンラインでヘルプを入手するには、TechNet ライブラリのヘルプ トピック (https://go.microsoft.com/fwlink/?LinkID=107116) を検索します。</value>
   </data>
   <data name="HelpCategoryInvalid" xml:space="preserve">
-    <value>Cannot process the Help category because "{0}" is not a valid Help category.</value>
+    <value>"{0}" は有効なヘルプ カテゴリではないため、ヘルプ カテゴリを処理できません。</value>
   </data>
   <data name="HelpFileLoadFailure" xml:space="preserve">
-    <value>Cannot load the Help file "{0}". Details: {1}.</value>
+    <value>ヘルプ ファイル "{0}" を読み込めません。詳細: {1}。</value>
   </data>
   <data name="HelpFileNotAccessible" xml:space="preserve">
-    <value>Cannot access the Help file "{0}" because the current user does not have access rights to the file. Details: {1}.</value>
+    <value>現在のユーザーにはファイルへのアクセス権がないため、ヘルプ ファイル "{0}" にアクセスできません。詳細: {1}。</value>
   </data>
   <data name="HelpFileNotValid" xml:space="preserve">
-    <value>The Help file "{0}" is not a valid xml document. Details: {1}.</value>
+    <value>ヘルプ ファイル "{0}" は有効な XML ドキュメントではありません。詳細: {1}。</value>
   </data>
   <data name="LoadHelpFileForTargetFailed" xml:space="preserve">
-    <value>An error occurred while loading Help content for {0} from file {1}. Details: {2}. To download updated Help topics, run the Update-Help cmdlet. To get help online, search for the Help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>ファイル {1} から {0} のヘルプ コンテンツを読み込み中にエラーが発生しました。詳細: {2}。更新されたヘルプ トピックをダウンロードするには、Update-Help コマンドレットを実行します。オンラインでヘルプを入手するには、TechNet ライブラリのヘルプ トピック (https://go.microsoft.com/fwlink/?LinkID=107116) を検索します。</value>
   </data>
   <data name="ProviderLoadError" xml:space="preserve">
-    <value>The provider "{0}" cannot be loaded. Details: {1}.</value>
+    <value>プロバイダー "{0}" を読み込めません。詳細: {1}。</value>
   </data>
   <data name="HelpLoadError" xml:space="preserve">
-    <value>Cannot load the Help file. The following {1} errors occurred while loading the Help file "{0}".</value>
+    <value>ヘルプ ファイルを読み込めません。ヘルプ ファイル " {0} " の読み込み中に次の {1} エラーが発生しました。</value>
   </data>
   <data name="MamlInvalidChildNodeError" xml:space="preserve">
-    <value>The node "{0}" cannot have "{1}" as a child node. Node Path: {2}.</value>
+    <value>ノード "{0}" に子ノードとして "{1}" を指定することはできません。ノード パス: {2}。</value>
   </data>
   <data name="MamlInvalidChildNodeCountError" xml:space="preserve">
-    <value>The node "{0}" can have a maximum of {2} child nodes of type "{1}". Node Path: {3}.</value>
+    <value>ノード "{0}" には、"{1}" 型の {2} 個の子ノードの最大数を指定できます。ノード パス: {3}。</value>
   </data>
   <data name="RegistryPathNotFound" xml:space="preserve">
-    <value>Cannot find the registry key: "{0}{1}"; using "{2}" to load Help files.</value>
+    <value>レジストリ キー "{0}{1}" が見つかりません。"{2}" を使用してヘルプ ファイルを読み込んでいます。</value>
   </data>
   <data name="NoParmsFound" xml:space="preserve">
-    <value>No parameter matches criteria {0}.</value>
+    <value>条件 {0} に一致するパラメーターはありません。</value>
   </data>
   <data name="ParamNotSupported" xml:space="preserve">
-    <value>{0} is not supported by the requested Help category.</value>
+    <value>{0} は、要求されたヘルプ カテゴリではサポートされていません。</value>
   </data>
   <data name="NoURIFound" xml:space="preserve">
-    <value>The online version of this Help topic cannot be displayed because the Internet address (URI) of the Help topic is not specified in the command code or in the help file for the command.</value>
+    <value>ヘルプ トピックのインターネット アドレス (URI) がコマンド コードまたはコマンドのヘルプ ファイルに指定されていないため、このヘルプ トピックのオンライン バージョンを表示できません。</value>
   </data>
   <data name="InvalidURI" xml:space="preserve">
-    <value>The specified URI {0} is not valid.</value>
+    <value>指定された URI {0} は無効です。</value>
   </data>
   <data name="CannotLaunchURI" xml:space="preserve">
-    <value>Starting a browser to display online Help failed. No program or browser is associated to open the URI {0}.</value>
+    <value>ブラウザーを起動してオンライン ヘルプを表示できませんでした。URI {0} を開くために関連付けられているプログラムまたはブラウザーはありません。</value>
   </data>
   <data name="ProtocolNotSupported" xml:space="preserve">
-    <value>The protocol specified in the Uri "{0}" is not supported. Only "{1}" and "{2}" protocols are supported.</value>
+    <value>URI "{0}" で指定されたプロトコルはサポートされていません。"{1}" プロトコルと "{2}" プロトコルのみがサポートされています。</value>
   </data>
   <data name="MultipleOnlineTopicsNotSupported" xml:space="preserve">
-    <value>Multiple Help topics were found. Use only one Help topic with the -{0} option.</value>
+    <value>複数のヘルプ トピックが見つかりました。"{0}" オプションで使用するヘルプ トピックは 1 つだけです。</value>
   </data>
   <data name="RemoteRunspaceNotAvailable" xml:space="preserve">
-    <value>Cannot get Help from a remote runspace, because the runspace has not been opened.  Open the runspace by running an implicit remoting command, and then try running the command to get Help again.</value>
+    <value>実行空間が開かないため、リモート実行空間からヘルプを取得できません。 暗黙的なリモート処理コマンドを実行して実行空間を開き、コマンドを実行してヘルプをもう一度取得してください。</value>
   </data>
   <data name="UpdatableHelpRequiresElevation" xml:space="preserve">
-    <value>Access is denied. The command could not update Help topics for the PowerShell core modules, or for any modules in the $pshome\Modules directory.
-To update these Help topics, start PowerShell by using the "Run as Administrator" command, and try running Update-Help again.</value>
+    <value>アクセスは拒否されました。コマンドは、PowerShell コア モジュールのヘルプ トピック、または $pshome\Modules ディレクトリ内のモジュールのヘルプ トピックを更新できませんでした。
+これらのヘルプ トピックを更新するには、"Run as Administrator" コマンドを使用して PowerShell を起動し、Update-Help をもう一度実行してみてください。</value>
   </data>
   <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
-    <value>To use the {0}, make sure your application uses 'Microsoft.NET.Sdk.WindowsDesktop' as the project SDK and the corresponding assembly 'Microsoft.PowerShell.GraphicalHost' is available. ({1})</value>
+    <value>{0} を使用するには、アプリケーションがプロジェクト SDK として 'Microsoft .NET.Sdk.WindowsDesktop' を使用し、対応するアセンブリ 'Microsoft.PowerShell.GraphicalHost' が使用可能であることを確認します。({1})</value>
   </data>
   <data name="RemotingNotSupportedForFeature" xml:space="preserve">
-    <value>{0} does not work in a remote session.</value>
+    <value>{0} はリモート セッションでは機能しません。</value>
   </data>
   <data name="CircularDependencyInHelpForwarding" xml:space="preserve">
-    <value>ForwardHelpTargetName cannot refer to the function itself.</value>
+    <value>ForwardHelpTargetName は当関数自体を参照できません。</value>
   </data>
   <data name="NoNetworkCommands" xml:space="preserve">
-    <value>Cannot get help from a network location when in a restricted session.</value>
+    <value>制限されたセッションでは、ネットワークの場所からヘルプを取得できません。</value>
   </data>
 </root>

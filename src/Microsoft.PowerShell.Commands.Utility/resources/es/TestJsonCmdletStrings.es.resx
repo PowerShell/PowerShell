@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidJsonSchema" xml:space="preserve">
-    <value>Cannot parse the JSON schema.</value>
+    <value>No se puede analizar el esquema JSON.</value>
   </data>
   <data name="InvalidJson" xml:space="preserve">
-    <value>Cannot parse the JSON.</value>
+    <value>No se puede analizar el archivo JSON.</value>
   </data>
   <data name="InvalidJsonAgainstSchemaDetailed" xml:space="preserve">
-    <value>The JSON is not valid with the schema: {0} at '{1}'</value>
+    <value>El JSON no es válido con el esquema: {0} en "{1}"</value>
   </data>
   <data name="JsonSchemaFileOpenFailure" xml:space="preserve">
-    <value>Can not open JSON schema file: {0}</value>
+    <value>No se puede abrir el archivo de esquema JSON: {0}</value>
   </data>
   <data name="InvalidUriScheme" xml:space="preserve">
-    <value>URI scheme '{0}' is not supported. Only HTTP(S) and local file system URIs are allowed.</value>
+    <value>No se admite el esquema URI "{0}". Solo se permiten HTTP(S) y URI del sistema de archivos local.</value>
   </data>
 </root>

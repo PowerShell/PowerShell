@@ -118,54 +118,54 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetAliasAction" xml:space="preserve">
-    <value>Set Alias</value>
+    <value>Establecer alias</value>
   </data>
   <data name="SetAliasTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>Nombre: {0} Valor: {1}</value>
   </data>
   <data name="NewAliasAction" xml:space="preserve">
-    <value>New Alias</value>
+    <value>Nuevo alias</value>
   </data>
   <data name="NewAliasTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>Nombre: {0} Valor: {1}</value>
   </data>
   <data name="ImportAliasAction" xml:space="preserve">
-    <value>Import Alias</value>
+    <value>Importar alias</value>
   </data>
   <data name="ImportAliasTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>Nombre: {0} Valor: {1}</value>
   </data>
   <data name="ExportAliasFileOpenFailed" xml:space="preserve">
-    <value>Cannot open file {0} to export the alias. {1}</value>
+    <value>No se puede abrir el archivo {0} para exportar el alias. {1}</value>
   </data>
   <data name="ExportAliasHeaderTitle" xml:space="preserve">
-    <value>Alias File</value>
+    <value>Archivo de alias</value>
   </data>
   <data name="ExportAliasHeaderUser" xml:space="preserve">
-    <value>Exported by : {0}</value>
+    <value>Exportado por : {0}</value>
   </data>
   <data name="ExportAliasHeaderDate" xml:space="preserve">
-    <value>Date/Time : {0:F}</value>
+    <value>Fecha y hora: {0:F}</value>
   </data>
   <data name="ExportAliasHeaderMachine" xml:space="preserve">
-    <value>Computer : {0}</value>
+    <value>Equipo : {0}</value>
   </data>
   <data name="ImportAliasFromFileSystemOnly" xml:space="preserve">
-    <value>Cannot import the alias because the specified path '{0}' referred to a '{1}' provider path. Change the value of the Path parameter to a file system path.</value>
+    <value>No se puede importar el alias porque la ruta de acceso especificada "{0}" hacía referencia a una ruta de acceso de proveedor ''{1}". Cambie el valor del parámetro Path a una ruta de acceso del sistema de archivos.</value>
   </data>
   <data name="ImportAliasPathResolvedToMultiple" xml:space="preserve">
-    <value>Cannot import alias because path '{0}' contains wildcard characters that resolve to multiple paths. Aliases can be imported from only one file. Change the value of the Path parameter to a path that resolves to a single file.</value>
+    <value>No se puede importar el alias porque la ruta de acceso "{0}" contiene caracteres comodín que se resuelven en varias rutas de acceso. Los alias solo se pueden importar desde un archivo. Cambie el valor del parámetro Path a una ruta de acceso que se resuelva en un único archivo.</value>
   </data>
   <data name="ImportAliasFileOpenFailed" xml:space="preserve">
-    <value>Cannot open file {0} to import the alias. {1}</value>
+    <value>No se puede abrir el archivo {0} para importar el alias. {1}</value>
   </data>
   <data name="ImportAliasFileInvalidFormat" xml:space="preserve">
-    <value>Cannot import an alias. Line number {1} in the file '{0}' is not a properly-formatted, comma-separated values (CSV) line for aliases. Change the line to contain four values separated by commas. If the value text itself contains a comma, then the value must be contained in quotation marks.</value>
+    <value>No se puede importar un alias. El número {1} de línea del archivo "{0}" no es una línea de valores separados por comas (CSV) con el formato correcto para los alias. Cambie la línea para que contenga cuatro valores separados por comas. Si el texto del valor contiene una coma, el valor debe ir entre comillas.</value>
   </data>
   <data name="ImportAliasOptionsError" xml:space="preserve">
-    <value>Cannot import the alias because line number {1} in the file '{0}' contains an option that is not recognized for aliases. Change the file to contain valid options.</value>
+    <value>No se puede importar el alias porque el número {1} de línea del archivo "{0}" contiene una opción que no se reconoce para los alias. Cambie el archivo para que contenga opciones válidas.</value>
   </data>
   <data name="NoAliasFound" xml:space="preserve">
-    <value>This command cannot find a matching alias because an alias with the {0} '{1}' does not exist.</value>
+    <value>Este comando no puede encontrar un alias coincidente porque no existe un alias con {0} "{1}".</value>
   </data>
 </root>

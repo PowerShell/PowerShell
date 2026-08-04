@@ -118,75 +118,75 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DeleteHasChildrenPrompt" xml:space="preserve">
-    <value>The specified path is a container that has child items. Do you want to delete this container and its child items?</value>
+    <value>Zadaná cesta je kontejner, který má podřízené položky. Chcete odstranit tento kontejner a jeho podřízené položky?</value>
   </data>
   <data name="DeletePrompt" xml:space="preserve">
-    <value>Do you want to delete the specified item?</value>
+    <value>Chcete odstranit zadanou položku?</value>
   </data>
   <data name="CopyToExistingPrompt" xml:space="preserve">
-    <value>Cannot copy because the specified destination already exists. Do you want to overwrite the existing content?</value>
+    <value>Nelze kopírovat, protože zadaný cíl již existuje. Chcete přepsat existující obsah?</value>
   </data>
   <data name="NewDriveConfirmAction" xml:space="preserve">
-    <value>New drive</value>
+    <value>Nová jednotka</value>
   </data>
   <data name="NewDriveConfirmResourceTemplate" xml:space="preserve">
-    <value>Name: {0} Provider: {1} Root: {2}</value>
+    <value>Název: {0} Zprostředkovatel: {1} Kořen: {2}</value>
   </data>
   <data name="RemoveDriveConfirmAction" xml:space="preserve">
-    <value>Remove Drive</value>
+    <value>Odebrat jednotku</value>
   </data>
   <data name="RemoveDriveConfirmResourceTemplate" xml:space="preserve">
-    <value>Name: {0} Provider: {1} Root: {2}</value>
+    <value>Název: {0} Zprostředkovatel: {1} Kořen: {2}</value>
   </data>
   <data name="RemoveDriveInUse" xml:space="preserve">
-    <value>Cannot remove drive '{0}' because it is in use.</value>
+    <value>Jednotku {0} nelze odebrat, protože se používá.</value>
   </data>
   <data name="RemoveItemWithChildren" xml:space="preserve">
-    <value>The item at {0} has children and the Recurse parameter was not specified. If you continue, all children will be removed with the item. Are you sure you want to continue?</value>
+    <value>Položka v {0} má podřízené položky a parametr Recurse nebyl zadán. Pokud budete pokračovat, odeberou se spolu s položkou všechny podřízené položky. Opravdu chcete pokračovat?</value>
   </data>
   <data name="RemoveItemInUse" xml:space="preserve">
-    <value>Cannot remove the item at '{0}' because it is in use.</value>
+    <value>Položku {0} nelze odebrat, protože se používá.</value>
   </data>
   <data name="ItemNotFound" xml:space="preserve">
-    <value>An object at the specified path {0} does not exist, or has been filtered by the -Include or -Exclude parameter.</value>
+    <value>Objekt v zadané cestě {0} neexistuje nebo byl filtrován pomocí parametru -Include nebo -Exclude.</value>
   </data>
   <data name="SetContentAction" xml:space="preserve">
-    <value>Set Content</value>
+    <value>Nastavit obsah</value>
   </data>
   <data name="SetContentTarget" xml:space="preserve">
-    <value>Path: {0}</value>
+    <value>Cesta: {0}</value>
   </data>
   <data name="AddContentAction" xml:space="preserve">
-    <value>Add Content</value>
+    <value>Přidat obsah</value>
   </data>
   <data name="AddContentTarget" xml:space="preserve">
-    <value>Path: {0}</value>
+    <value>Cesta: {0}</value>
   </data>
   <data name="MoveItemDoesntExist" xml:space="preserve">
-    <value>Cannot move item because the item at '{0}' does not exist.</value>
+    <value>Položku nelze přesunout, protože položka {0} neexistuje.</value>
   </data>
   <data name="MoveItemInUse" xml:space="preserve">
-    <value>Cannot move item because the item at '{0}' is in use.</value>
+    <value>Položku nelze přesunout, protože položka v {0} je používána.</value>
   </data>
   <data name="RenameItemDoesntExist" xml:space="preserve">
-    <value>Cannot rename because item at '{0}' does not exist.</value>
+    <value>Nelze přejmenovat, protože položka {0} neexistuje.</value>
   </data>
   <data name="RenamedItemInUse" xml:space="preserve">
-    <value>Cannot rename the item at '{0}' because it is in use.</value>
+    <value>Položku {0} nelze přejmenovat, protože se používá.</value>
   </data>
   <data name="ParsePathFormatError" xml:space="preserve">
-    <value>Cannot parse path because path '{0}' does not have a qualifier specified.</value>
+    <value>Cestu nelze analyzovat, protože cesta {0} nemá zadán kvalifikátor.</value>
   </data>
   <data name="CreateAction" xml:space="preserve">
-    <value>Begin</value>
+    <value>Začít</value>
   </data>
   <data name="RollbackAction" xml:space="preserve">
-    <value>Rollback</value>
+    <value>Vrátit zpět</value>
   </data>
   <data name="CommitAction" xml:space="preserve">
-    <value>Commit</value>
+    <value>Potvrdit</value>
   </data>
   <data name="TransactionResource" xml:space="preserve">
-    <value>Current transaction</value>
+    <value>Aktuální transakce</value>
   </data>
 </root>

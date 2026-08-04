@@ -118,76 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="HelpNotFound" xml:space="preserve">
-    <value>Get-Help could not find {0} in a help file in this session. To download updated help topics type: "Update-Help". To get help online, search for the help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>Get-Help 在此工作階段的說明檔中找不到 {0}。若要下載更新的說明主題，請輸入 "Update-Help"。若要線上取得說明，請在 TechNet 文件庫中搜尋說明主題，網址為 https://go.microsoft.com/fwlink/?LinkID=107116。</value>
   </data>
   <data name="HelpCategoryInvalid" xml:space="preserve">
-    <value>Cannot process the Help category because "{0}" is not a valid Help category.</value>
+    <value>無法處理說明類別，因為 "{0}" 不是有效的說明類別。</value>
   </data>
   <data name="HelpFileLoadFailure" xml:space="preserve">
-    <value>Cannot load the Help file "{0}". Details: {1}.</value>
+    <value>無法載入說明檔 "{0}"。詳細資料: {1}。</value>
   </data>
   <data name="HelpFileNotAccessible" xml:space="preserve">
-    <value>Cannot access the Help file "{0}" because the current user does not have access rights to the file. Details: {1}.</value>
+    <value>無法存取說明檔 "{0}"，因為目前的使用者沒有該檔案的存取權限。詳細資料: {1}。</value>
   </data>
   <data name="HelpFileNotValid" xml:space="preserve">
-    <value>The Help file "{0}" is not a valid xml document. Details: {1}.</value>
+    <value>說明檔 "{0}" 不是有效的 XML 文件。詳細資料: {1}。</value>
   </data>
   <data name="LoadHelpFileForTargetFailed" xml:space="preserve">
-    <value>An error occurred while loading Help content for {0} from file {1}. Details: {2}. To download updated Help topics, run the Update-Help cmdlet. To get help online, search for the Help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>載入來自檔案 {1} 的 {0} 說明內容時發生錯誤。詳細資料: {2}。若要下載更新的說明主題，請執行 Update-Help Cmdlet。若要線上取得說明，請在 TechNet 文件庫中搜尋說明主題，網址為 https://go.microsoft.com/fwlink/?LinkID=107116。</value>
   </data>
   <data name="ProviderLoadError" xml:space="preserve">
-    <value>The provider "{0}" cannot be loaded. Details: {1}.</value>
+    <value>無法載入提供者 "{0}"。詳細資料: {1}。</value>
   </data>
   <data name="HelpLoadError" xml:space="preserve">
-    <value>Cannot load the Help file. The following {1} errors occurred while loading the Help file "{0}".</value>
+    <value>無法載入說明檔。載入說明檔案 "{0}" 時發生下列 {1} 個錯誤。</value>
   </data>
   <data name="MamlInvalidChildNodeError" xml:space="preserve">
-    <value>The node "{0}" cannot have "{1}" as a child node. Node Path: {2}.</value>
+    <value>節點 "{0}" 不能有 "{1}" 作為子節點。節點路徑: {2}。</value>
   </data>
   <data name="MamlInvalidChildNodeCountError" xml:space="preserve">
-    <value>The node "{0}" can have a maximum of {2} child nodes of type "{1}". Node Path: {3}.</value>
+    <value>節點 "{0}" 最多可以有 {2} 個類型為 "{1}" 的子節點。節點路徑: {3}。</value>
   </data>
   <data name="RegistryPathNotFound" xml:space="preserve">
-    <value>Cannot find the registry key: "{0}{1}"; using "{2}" to load Help files.</value>
+    <value>找不到登錄機碼: "{0}{1}"；改用 "{2}" 載入說明檔。</value>
   </data>
   <data name="NoParmsFound" xml:space="preserve">
-    <value>No parameter matches criteria {0}.</value>
+    <value>沒有任何參數符合條件 {0}。</value>
   </data>
   <data name="ParamNotSupported" xml:space="preserve">
-    <value>{0} is not supported by the requested Help category.</value>
+    <value>要求的說明類別不支援 {0}。</value>
   </data>
   <data name="NoURIFound" xml:space="preserve">
-    <value>The online version of this Help topic cannot be displayed because the Internet address (URI) of the Help topic is not specified in the command code or in the help file for the command.</value>
+    <value>無法顯示此說明主題的線上版本，因為命令程式碼或命令的說明檔中未指定此說明主題的網際網路位址 (URI)。</value>
   </data>
   <data name="InvalidURI" xml:space="preserve">
-    <value>The specified URI {0} is not valid.</value>
+    <value>指定的 URI {0} 無效。</value>
   </data>
   <data name="CannotLaunchURI" xml:space="preserve">
-    <value>Starting a browser to display online Help failed. No program or browser is associated to open the URI {0}.</value>
+    <value>啟動瀏覽器以顯示線上說明失敗。沒有可用來開啟 URI {0} 的程式或瀏覽器。</value>
   </data>
   <data name="ProtocolNotSupported" xml:space="preserve">
-    <value>The protocol specified in the Uri "{0}" is not supported. Only "{1}" and "{2}" protocols are supported.</value>
+    <value>Uri "{0}" 中指定的通訊協定不受支援。僅支援 "{1}" 和 "{2}" 通訊協定。</value>
   </data>
   <data name="MultipleOnlineTopicsNotSupported" xml:space="preserve">
-    <value>Multiple Help topics were found. Use only one Help topic with the -{0} option.</value>
+    <value>找到多個說明主題。使用 -{0} 選項時，只能指定一個說明主題。</value>
   </data>
   <data name="RemoteRunspaceNotAvailable" xml:space="preserve">
-    <value>Cannot get Help from a remote runspace, because the runspace has not been opened.  Open the runspace by running an implicit remoting command, and then try running the command to get Help again.</value>
+    <value>無法從遠端 Runspace 取得說明，因為 Runspace 尚未開啟。 請執行隱含遠端命令以開啟 Runspace，然後再試一次取得說明的命令。</value>
   </data>
   <data name="UpdatableHelpRequiresElevation" xml:space="preserve">
-    <value>Access is denied. The command could not update Help topics for the PowerShell core modules, or for any modules in the $pshome\Modules directory.
-To update these Help topics, start PowerShell by using the "Run as Administrator" command, and try running Update-Help again.</value>
+    <value>存取遭到拒絕。此命令無法更新 PowerShell 核心模組或 $pshome\Modules 目錄中的任何模組的說明主題。
+若要更新這些說明主題，請使用「以系統管理員身分執行」命令啟動 PowerShell，然後再次嘗試執行 Update-Help。</value>
   </data>
   <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
-    <value>To use the {0}, make sure your application uses 'Microsoft.NET.Sdk.WindowsDesktop' as the project SDK and the corresponding assembly 'Microsoft.PowerShell.GraphicalHost' is available. ({1})</value>
+    <value>若要使用 {0}，請確定您的應用程式使用 'Microsoft.NET.Sdk.WindowsDesktop' 作為專案 SDK，而且對應的組件 'Microsoft.PowerShell.GraphicalHost' 可供使用。({1})</value>
   </data>
   <data name="RemotingNotSupportedForFeature" xml:space="preserve">
-    <value>{0} does not work in a remote session.</value>
+    <value>{0} 無法在遠端工作階段中使用。</value>
   </data>
   <data name="CircularDependencyInHelpForwarding" xml:space="preserve">
-    <value>ForwardHelpTargetName cannot refer to the function itself.</value>
+    <value>ForwardHelpTargetName 不能參考函式本身。</value>
   </data>
   <data name="NoNetworkCommands" xml:space="preserve">
-    <value>Cannot get help from a network location when in a restricted session.</value>
+    <value>在受限制的工作階段中，無法從網路位置取得說明。</value>
   </data>
 </root>

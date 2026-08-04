@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExecutionPolicyOverridden" xml:space="preserve">
-    <value>PowerShell updated your execution policy successfully, but the setting is overridden by a policy defined at a more specific scope.  Due to the override, your shell will retain its current effective execution policy of {0}. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more information please see "Get-Help Set-ExecutionPolicy".</value>
+    <value>Windows PowerShell yürütme ilkenizi başarıyla güncelleştirdi, ancak ayar daha belirli bir kapsamda tanımlanan bir ilke tarafından geçersiz kılınıyor.  Geçersiz kılma nedeniyle, kabuğunuz geçerli etkili yürütme ilkesi olarak {0} değerini koruyacak. Yürütme ilkenizi görüntülemek için "Get-ExecutionPolicy -List" yazın. Daha fazla bilgi için lütfen "Get-Help Set-ExecutionPolicy" bölümüne bakın.</value>
   </data>
   <data name="ExecutionPolicyOverriddenRecommendedAction" xml:space="preserve">
-    <value>Contact your system administrator.</value>
+    <value>Sistem yöneticinize başvurun.</value>
   </data>
   <data name="ListAndScopeSpecified" xml:space="preserve">
-    <value>Cannot get execution policy. Specify only the List or Scope parameters.</value>
+    <value>Yürütme ilkesi alınamıyor. Yalnızca List veya Scope parametrelerini belirtin.</value>
   </data>
   <data name="CantSetGroupPolicy" xml:space="preserve">
-    <value>Cannot set execution policy. Execution policies at the MachinePolicy or UserPolicy scopes must be set through Group Policy.</value>
+    <value>Yürütme ilkesi ayarlanamıyor. MachinePolicy veya UserPolicy kapsamlarındaki yürütme ilkeleri Grup İlkesi aracılığıyla ayarlanmalıdır.</value>
   </data>
   <data name="SetExecutionPolicyCaption" xml:space="preserve">
-    <value>Execution Policy Change</value>
+    <value>Yürütme İlkesi Değişikliği</value>
   </data>
   <data name="SetExecutionPolicyQuery" xml:space="preserve">
-    <value>The execution policy helps protect you from scripts that you do not trust. Changing the execution policy might expose you to the security risks described in the about_Execution_Policies help topic at https://go.microsoft.com/fwlink/?LinkID=135170. Do you want to change the execution policy?</value>
+    <value>Yürütme ilkesi, güvenmediğiniz betiklerden sizi korumaya yardımcı olur. Yürütme ilkesini değiştirmek, https://go.microsoft.com/fwlink/?LinkID=135170 adresindeki about_Execution_Policies yardım konusunda açıklanan güvenlik risklerine sizi kullanıma sunabilir. Yürütme ilkesini değiştirmek istiyor musunuz?</value>
   </data>
   <data name="SetExecutionPolicyAccessDeniedError" xml:space="preserve">
     <value>{0}
-To change the execution policy for the default (LocalMachine) scope, start PowerShell with the "Run as administrator" option. To change the execution policy for the current user, run "Set-ExecutionPolicy -Scope CurrentUser".</value>
+Varsayılan (LocalMachine) kapsamı için yürütme ilkesini değiştirmek üzere, PowerShell'i "Yönetici olarak çalıştır" seçeneğiyle başlatın. Geçerli kullanıcı için yürütme ilkesini değiştirmek üzere, "Set-ExecutionPolicy -Scope CurrentUser" komutunu çalıştırın.</value>
   </data>
 </root>

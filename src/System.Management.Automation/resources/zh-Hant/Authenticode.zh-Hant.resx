@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Reason_DoNotRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted not to run this software now.</value>
+    <value>無法載入檔案 {0}，因為您選擇現在不執行此軟體。</value>
   </data>
   <data name="Reason_NeverRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted never to run software from this publisher.</value>
+    <value>無法載入檔案 {0}，因為您選擇一律不執行來自此發行者的軟體。</value>
   </data>
   <data name="Reason_NotTrusted" xml:space="preserve">
-    <value>File {0} is published by {1}. This publisher is explicitly not trusted on your system. The script will not run on the system. For more information, run the command "get-help about_signing".</value>
+    <value>檔案 {0} 由 {1} 發行。此發行者在您的系統上明確不受信任。此指令碼將不會在系統上執行。如需詳細資訊，請執行命令 "get-help about_signing"。</value>
   </data>
   <data name="Reason_RestrictedMode" xml:space="preserve">
-    <value>File {0} cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.</value>
+    <value>無法載入檔案 {0}，因為此系統已停用指令碼執行。如需詳細資訊，請參閱 https://go.microsoft.com/fwlink/?LinkID=135170 中的 about_Execution_Policies。</value>
   </data>
   <data name="Reason_Unknown" xml:space="preserve">
-    <value>File {0} cannot be loaded. {1}.</value>
+    <value>無法載入檔案 {0}。{1}。</value>
   </data>
   <data name="Reason_DisallowedBySafer" xml:space="preserve">
-    <value>File {0} cannot be loaded because its operation is blocked by software restriction policies, such as those created by using Group Policy.</value>
+    <value>無法載入檔案 {0}，因為軟體限制原則封鎖了其作業，例如使用群組原則所建立的原則。</value>
   </data>
   <data name="Reason_FileContentUnavailable" xml:space="preserve">
-    <value>File {0} cannot be loaded because its content could not be read.</value>
+    <value>無法載入檔案 {0}，因為無法讀取其內容。</value>
   </data>
   <data name="CertNotGoodForSigning" xml:space="preserve">
-    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+    <value>無法簽署程式碼。指定的憑證不適合程式碼簽署。</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code. The TimeStamp server URL must be fully qualified, and in the format http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+    <value>無法簽署程式碼。TimeStamp 伺服器 URL 必須完整且格式為 http://&lt;server url&gt; 或 https://&lt;server url&gt;。</value>
   </data>
   <data name="InvalidHashAlgorithm" xml:space="preserve">
-    <value>Cannot sign code. The hash algorithm is not supported.</value>
+    <value>無法簽署程式碼。不支援雜湊演算法。</value>
   </data>
   <data name="AuthenticodePromptCaption" xml:space="preserve">
-    <value>Do you want to run software from this untrusted publisher?</value>
+    <value>您要執行來自這個不受信任的發行者的軟體嗎?</value>
   </data>
   <data name="AuthenticodePromptText" xml:space="preserve">
-    <value>File {0} is published by {1} and is not trusted on your system. Only run scripts from trusted publishers.</value>
+    <value>檔案 {0} 由 {1} 發行，且在您的系統上不受信任。只執行來自受信任發行者的指令碼。</value>
   </data>
   <data name="AuthenticodePromptText_UnknownPublisher" xml:space="preserve">
-    <value>Software {0} is published by an unknown publisher. It is recommended that you do not run this software.</value>
+    <value>軟體 {0} 的發行者未知。建議您不要執行此軟體。</value>
   </data>
   <data name="RemoteFilePromptCaption" xml:space="preserve">
-    <value>Security warning</value>
+    <value>安全性警告</value>
   </data>
   <data name="RemoteFilePromptText" xml:space="preserve">
-    <value>Run only scripts that you trust. While scripts from the internet can be useful, this script can potentially harm your computer. If you trust this script, use the Unblock-File cmdlet to allow the script to run without this warning message. Do you want to run {0}?</value>
+    <value>只執行您信任的指令碼。雖然這些來自網際網路的指令碼可能很有用，但是此指令碼也可能對您的電腦造成傷害。如果您信任此指令碼，請使用 Unblock-File cmdlet，讓指令碼在沒有此警告訊息的情況下執行。是否要執行 {0}?</value>
   </data>
   <data name="Choice_NeverRun" xml:space="preserve">
-    <value>Ne&amp;ver run</value>
+    <value>一律不執行(&amp;V)</value>
   </data>
   <data name="Choice_NeverRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and do not prompt me to run this script in future. Future attempts to run this script will result in a silent failure.</value>
+    <value>現在請不要執行來自此發行者的指令碼，且未來請勿提示我執行此指令碼。未來嘗試執行此指令碼將會無訊息失敗。</value>
   </data>
   <data name="Choice_DoNotRun" xml:space="preserve">
-    <value>&amp;Do not run</value>
+    <value>不要執行(&amp;D)</value>
   </data>
   <data name="Choice_DoNotRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>現在請不要執行來自此發行者的指令碼，並在未來繼續提示我執行此指令碼。</value>
   </data>
   <data name="Choice_RunOnce" xml:space="preserve">
-    <value>&amp;Run once</value>
+    <value>執行一次(&amp;R)</value>
   </data>
   <data name="Choice_RunOnce_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>請立即執行來自此發行者的指令碼，並在未來繼續提示我執行此指令碼。</value>
   </data>
   <data name="Choice_AlwaysRun" xml:space="preserve">
-    <value>&amp;Always run</value>
+    <value>一律執行(&amp;A)</value>
   </data>
   <data name="Choice_AlwaysRun_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and do not prompt me to run this script in the future.</value>
+    <value>執行來自此發行者的指令碼，且未來請勿提示我執行此指令碼。</value>
   </data>
   <data name="Choice_Suspend" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>暫止(&amp;S)</value>
   </data>
   <data name="Choice_Suspend_Help" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type exit to resume operation when you are done.</value>
+    <value>暫停目前的管線並返回命令提示字元。完成後，輸入 exit 以繼續作業。</value>
   </data>
 </root>

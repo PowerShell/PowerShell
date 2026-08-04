@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MultipleMatchingTimeZones" xml:space="preserve">
-    <value>Cannot set the local time zone because the name '{0}' resolves to multiple entries.</value>
+    <value>Não é possível definir o fuso horário local porque o nome '{0}' resolve para várias entradas.</value>
   </data>
   <data name="TimeZoneNameNotFound" xml:space="preserve">
-    <value>The time zone name '{0}' was not found on the local computer.</value>
+    <value>O nome do fuso horário '{0}' não foi encontrado no computador local.</value>
   </data>
 </root>

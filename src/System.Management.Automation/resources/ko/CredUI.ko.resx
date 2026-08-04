@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PromptForCredential_DefaultCaption" xml:space="preserve">
-    <value>PowerShell credential request </value>
+    <value>PowerShell 자격 증명 요청 </value>
   </data>
   <data name="PromptForCredential_DefaultMessage" xml:space="preserve">
-    <value>Enter your credentials. </value>
+    <value>자격 증명을 입력합니다. </value>
   </data>
   <data name="PromptForCredential_DefaultTarget" xml:space="preserve">
-    <value>Enter your credentials.</value>
+    <value>자격 증명을 입력합니다.</value>
   </data>
   <data name="PromptForCredential_InvalidCaption" xml:space="preserve">
-    <value>The maximum length of the caption is {0} characters.</value>
+    <value>캡션의 최대 길이는 {0}자입니다.</value>
   </data>
   <data name="PromptForCredential_InvalidMessage" xml:space="preserve">
-    <value>The maximum length of the message is {0} characters.</value>
+    <value>메시지의 최대 길이는 {0}자입니다.</value>
   </data>
   <data name="PromptForCredential_InvalidUserName" xml:space="preserve">
-    <value>The maximum length of the UserName value is {0} characters.</value>
+    <value>UserName 값의 최대 길이는 {0}자입니다.</value>
   </data>
 </root>

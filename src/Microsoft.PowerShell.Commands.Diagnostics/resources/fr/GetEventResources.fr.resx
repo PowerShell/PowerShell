@@ -118,198 +118,198 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CounterNotALogFile" xml:space="preserve">
-    <value>The {0} file does not have the expected file name extension. Specify only .blg, .csv, or .tsv files when you use the Path parameter.</value>
+    <value>Le fichier {0} n’a pas l’extension de nom de fichier attendue. Spécifiez uniquement des fichiers .blg, .csv ou .tsv lorsque vous utilisez le paramètre Path (Chemin d’accès).</value>
   </data>
   <data name="CounterApiError" xml:space="preserve">
-    <value>Internal performance counter API call failed. Error: {0:x8}.</value>
+    <value>Échec de l’appel d’API du compteur de performances interne. Erreur : {0:x8}.</value>
   </data>
   <data name="LogProviderOrPathNeeded" xml:space="preserve">
-    <value>You must specify at least one Log, Provider or Path key-value pair.</value>
+    <value>Vous devez spécifier au moins une paire clé-valeur de journal, de fournisseur ou de chemin d’accès.</value>
   </data>
   <data name="NoMatchingProvidersFound" xml:space="preserve">
-    <value>There is not an event provider on the {0} computer that matches "{1}".</value>
+    <value>Aucun fournisseur d’événements sur l’ordinateur {0} ne correspond à « {1} ».</value>
   </data>
   <data name="NullNotAllowedInHashtable" xml:space="preserve">
-    <value>A null value was encountered in the {0} hash table key. Null values are not permitted.</value>
+    <value>Une valeur nulle a été rencontrée dans la clé de la table de hachage {0}. Les valeurs nulles ne sont pas autorisées.</value>
   </data>
   <data name="QueryTrace" xml:space="preserve">
-    <value>Constructed structured query:
+    <value>Requête structurée construite :
 {0}.</value>
   </data>
   <data name="ProviderLogLink" xml:space="preserve">
-    <value>The {0} provider writes events to the {1} log.</value>
+    <value>Le fournisseur {0} écrit des événements dans le journal {1}.</value>
   </data>
   <data name="CounterInvalidDateRange" xml:space="preserve">
-    <value>The value of the StartTime parameter must be less than the value of the EndTime parameter.</value>
+    <value>La valeur du paramètre StartTime doit être inférieure à celle du paramètre EndTime.</value>
   </data>
   <data name="NoMatchingLogsFound" xml:space="preserve">
-    <value>There is not an event log on the {0} computer that matches "{1}".</value>
+    <value>Aucun journal des événements sur l’ordinateur {0} ne correspond à « {1} ».</value>
   </data>
   <data name="Vendor" xml:space="preserve">
     <value>Microsoft</value>
   </data>
   <data name="CounterCircularNoMaxSize" xml:space="preserve">
-    <value>The Circular parameter will be ignored unless the MaxSize parameter is also specified.</value>
+    <value>Le paramètre Circular (Circulaire) sera ignoré, sauf si le paramètre MaxSize est également spécifié.</value>
   </data>
   <data name="FileOpenFailed" xml:space="preserve">
-    <value>Unable to open the {0} file for writing.</value>
+    <value>Impossible d’ouvrir le fichier {0} pour l’écriture.</value>
   </data>
   <data name="KeywordLongExpected" xml:space="preserve">
-    <value>Invalid value '{0}' specified for keyword.</value>
+    <value>Valeur non valide « {0} » spécifiée pour le mot clé.</value>
   </data>
   <data name="CounterExportSampleNotInInitialSet" xml:space="preserve">
-    <value>The {0} performance counter cannot be exported to the {1} file because it was not part of the first sample set.</value>
+    <value>Le compteur de performances {0} ne peut pas être exporté vers le fichier {1}, car il ne faisait pas partie du premier jeu d’échantillons.</value>
   </data>
   <data name="NoMatchingEventsFound" xml:space="preserve">
-    <value>No events were found that match the specified selection criteria.</value>
+    <value>Aucun événement correspondant aux critères de sélection spécifiés n’a été trouvé.</value>
   </data>
   <data name="CounterPathTranslationFailed" xml:space="preserve">
-    <value>The default values for this command failed. Error: {0:x8}.</value>
+    <value>Les valeurs par défaut de cette commande ont échoué. Erreur : {0:x8}.</value>
   </data>
   <data name="CounterNoMixedLogTypes" xml:space="preserve">
-    <value>You cannot import different types of performance log files in the same command.  Specify only one type of file in the Path parameter.</value>
+    <value>Vous ne pouvez pas importer différents types de fichiers journaux de performances dans la même commande.  Spécifiez un seul type de fichier dans le paramètre Path.</value>
   </data>
   <data name="NotAFileSystemPath" xml:space="preserve">
-    <value>The {0} path does not appear to be a valid log file path. Specify a valid file system path.</value>
+    <value>Le chemin d’accès {0} ne semble pas être un chemin d’accès de fichier journal valide. Spécifiez un chemin d’accès de système de fichiers valide.</value>
   </data>
   <data name="EventIdNotSpecified" xml:space="preserve">
-    <value>A valid Event Id must be specified.</value>
+    <value>Un ID d’événement valide doit être spécifié.</value>
   </data>
   <data name="ProviderMetadataUnavailable" xml:space="preserve">
-    <value>Could not retrieve information about the {0} provider. Error: {1}.</value>
+    <value>Nous n’avons pas pu récupérer les informations sur le fournisseur {0}. Erreur : {1}.</value>
   </data>
   <data name="SpecifyOldestForLog" xml:space="preserve">
-    <value>The {0} event log can be read only in the forward chronological order because it is an analytical or a debug log. To see events from the {0} event log, use the Oldest parameter in the command.</value>
+    <value>Le journal des événements {0} ne peut être lu que dans l’ordre chronologique direct, car c’est un journal analytique ou de débogage. Pour afficher les événements depuis le journal des événements {0}, utilisez le paramètre Oldest (Plus ancien) dans la commande.</value>
   </data>
   <data name="ExportDestPathAmbiguous" xml:space="preserve">
-    <value>The following export destination path is ambiguous: {0}.</value>
+    <value>Le chemin de destination d’exportation suivant est ambigu : {0}.</value>
   </data>
   <data name="CounterPathIsInvalid" xml:space="preserve">
-    <value>The {0} performance counter path is not valid.</value>
+    <value>Le chemin d’accès au compteur de performances {0} n’est pas valide.</value>
   </data>
   <data name="CounterSampleDataInvalid" xml:space="preserve">
-    <value>The data in one of the performance counter samples is not valid. View the Status property for each PerformanceCounterSample object to make sure it contains valid data.</value>
+    <value>Les données de l’un des échantillons de compteur de performances ne sont pas valides. Affichez la propriété Status (Statut) de chaque objet PerformanceCounterSample pour vérifier que des données valides s’y trouvent.</value>
   </data>
   <data name="PayloadMismatch" xml:space="preserve">
-    <value>Provided payload does not match with the template that was defined for event id {0}.
-The defined template is following:
+    <value>La charge utile fournie ne correspond pas au modèle qui a été défini pour l’ID d’événement {0}.
+Le modèle défini est le suivant :
 {1}</value>
   </data>
   <data name="NoMatchingCounterSetsFound" xml:space="preserve">
-    <value>Cannot find any performance counter sets on the {0} computer that match the following: {1}.</value>
+    <value>Impossible de trouver des jeux de compteurs de performances dans l’ordinateur {0} qui correspond à ce qui suit : {1}.</value>
   </data>
   <data name="CounterPathsInFilesInvalid" xml:space="preserve">
-    <value>No valid counter paths were found in the files.</value>
+    <value>Aucun chemin d’accès de compteur valide n’a été trouvé dans les fichiers.</value>
   </data>
   <data name="FileCreateFailed" xml:space="preserve">
-    <value>Unable to create the {0} file. Verify that the path is valid.</value>
+    <value>Impossible de créer le fichier {0}. Vérifiez que le chemin d'accès est valide.</value>
   </data>
   <data name="NoCounterSetsOnComputer" xml:space="preserve">
-    <value>Could not find any performance counter sets on the {0} computer: error {1:x8}. Verify that the {0} computer exists, that it is discoverable, and that you have sufficient privileges to view performance counter data on that computer.</value>
+    <value>Nous n’avons pas pu trouver de jeux de compteurs de performances sur l’ordinateur {0} : erreur {1:x8}. Vérifiez que l’ordinateur {0} existe, qu’il est détectable et que vous disposez de privilèges suffisants pour afficher les données de compteurs de performances sur cet ordinateur.</value>
   </data>
   <data name="IncorrectEventId" xml:space="preserve">
-    <value>Event cannot be written because there are no events defined with id {0} for the provider {1}.  Please correct the event id and try again.</value>
+    <value>Impossible d’écrire un événement, car aucun événement n’est défini avec l’ID {0} pour le fournisseur {1}.  Veuillez corriger l’événement, puis réessayer.</value>
   </data>
   <data name="InvalidContext" xml:space="preserve">
-    <value>The {0} Context key-value is not a valid SID or NT account name.</value>
+    <value>La paire clé-valeur du contexte {0} n’est pas SID ou un nom de compte NT valide.</value>
   </data>
   <data name="IncorrectEventVersion" xml:space="preserve">
-    <value>Event cannot be written because the specified version {0} for event {1} is not defined for the provider {2}.  Please correct the version and try again.</value>
+    <value>Impossible d’écrire l’événement, car la version {0} spécifiée pour l’événement {1} n’est pas définie pour le fournisseur {2}.  Veuillez corriger la version, puis réessayer.</value>
   </data>
   <data name="Counter32FileLimit" xml:space="preserve">
-    <value>You cannot import more than 32 .blg counter log files in each command.</value>
+    <value>Vous ne pouvez pas importer plus de 32 fichiers journaux de compteurs .blg dans chaque commande.</value>
   </data>
   <data name="SpecifiedProvidersDontWriteToLog" xml:space="preserve">
-    <value>The specified providers do not write events to the {0} log. This log will be ignored.</value>
+    <value>Les fournisseurs spécifiés n’écrivent pas d’événements dans le journal {0}. Ce journal va être ignoré.</value>
   </data>
   <data name="InvalidSIDFormat" xml:space="preserve">
-    <value>The following value is not in a valid security identifier (SID) format: {0}. Enter a valid SID, such as S-1-5-32-544.</value>
+    <value>La valeur suivante n’est pas dans un format d’ID de sécurité (SID) valide : {0}. Entrez un SID valide, tel que S-1-5-32-544.</value>
   </data>
   <data name="NoProviderFound" xml:space="preserve">
-    <value>No provider found with name {0}.</value>
+    <value>Aucun fournisseur n’a été trouvé avec le nom {0}.</value>
   </data>
   <data name="CounterSetEnumAccessDenied" xml:space="preserve">
-    <value>Cannot retrieve information about the {0} performance counter set because access was denied.</value>
+    <value>Impossible de récupérer des informations sur le jeu de compteurs de performances {0}, car l’accès a été refusé.</value>
   </data>
   <data name="VersionNotSpecified" xml:space="preserve">
-    <value>Event cannot be written because multiple events with id {0} have been defined for provider {1}.  Please provide a version for the event and try again.</value>
+    <value>Impossible d’écrire l’événement, car plusieurs événements avec l’ID {0} ont été définis pour le fournisseur {1}.  Veuillez fournir une version pour l’événement, puis réessayer.</value>
   </data>
   <data name="SpecifyOldestForEtlEvt" xml:space="preserve">
-    <value>The {0} event log file can be read only in the forward chronological order because it is an .etl or an .evt file. To see events from the {0} event log, use the Oldest parameter in the command.</value>
+    <value>Le fichier journal des événements {0} ne peut être lu que dans l’ordre chronologique direct, car c’est un fichier .etl ou .evt. Pour afficher les événements depuis le journal des événements {0}, utilisez le paramètre Oldest (Plus ancien) dans la commande.</value>
   </data>
   <data name="ProviderNotSpecified" xml:space="preserve">
-    <value>Provider name must be specified.</value>
+    <value>Le nom de fournisseur doit être spécifié.</value>
   </data>
   <data name="NotALogFile" xml:space="preserve">
-    <value>The {0} file does not appear to be a valid log file. Specify only .evtx, .etl, or .evt files as values of the Path parameter.</value>
+    <value>Le fichier {0} ne semble pas être un fichier journal valide. Spécifiez uniquement des fichiers .evtx, .etl ou .evt comme valeurs du paramètre Path.</value>
   </data>
   <data name="CounterPathInvalidOrNotInFile" xml:space="preserve">
-    <value>The {0} performance counter path is either not valid or it is not present in the following files: {1}.</value>
+    <value>Le chemin d’accès au compteur de performances {0} n’est pas valide ou n’est pas présent dans les fichiers suivants : {1}.</value>
   </data>
   <data name="Timestamp" xml:space="preserve">
     <value>Horodateur</value>
   </data>
   <data name="DateTimeExpected" xml:space="preserve">
-    <value>The following value is not in a valid DateTime format: {0}.</value>
+    <value>La valeur suivante n’est pas dans un format DateTime valide : {0}.</value>
   </data>
   <data name="LogInfoUnavailable" xml:space="preserve">
-    <value>To access the '{0}' log start PowerShell with elevated user rights.  Error: {1}</value>
+    <value>Pour accéder au journal « {0} », démarrez PowerShell avec des droits de l’utilisateur élevés.  Erreur : {1}</value>
   </data>
   <data name="LogInfoNoAccess" xml:space="preserve">
-    <value>Access denied for log: '{0}'.</value>
+    <value>Accès refusé au journal : « {0} ».</value>
   </data>
   <data name="SuggestElevation" xml:space="preserve">
-    <value>Launch PowerShell with elevated user rights.</value>
+    <value>Lancez PowerShell avec des droits de l’utilisateur élevés.</value>
   </data>
   <data name="NoEventMessage" xml:space="preserve">
-    <value>Cannot retrieve event message text.</value>
+    <value>Impossible de récupérer le texte du message d’événement.</value>
   </data>
   <data name="CounterFileExists" xml:space="preserve">
-    <value>The {0} file already exists. To overwrite this file, use the Force parameter in the Export-Counter command.</value>
+    <value>Le fichier {0} existe déjà. Pour remplacer ce fichier, utilisez le paramètre Force dans la commande Export-Counter.</value>
   </data>
   <data name="CounterContinuousOrMaxSamples" xml:space="preserve">
-    <value>The Continuous parameter and the MaxSamples parameter cannot be used in the same command.</value>
+    <value>Les paramètres Continuous et MaxSamples ne peuvent pas être utilisés dans la même commande.</value>
   </data>
   <data name="ExportCtrWin7Required" xml:space="preserve">
-    <value>This cmdlet can be run only on Microsoft Windows 7 and above.</value>
+    <value>Cette cmdlet ne peut être exécutée que sur Microsoft Windows 7 et les versions ultérieures.</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>This PowerShell snap-in contains Windows Eventing and Performance Counter cmdlets.</value>
+    <value>Ce composant logiciel enfichable PowerShell contient les cmdlets d’événements Windows Eventing et de compteur de performances.</value>
   </data>
   <data name="NoMatchingCounterSetsInFile" xml:space="preserve">
-    <value>Cannot find any performance counter sets in the {0} files that match the following: {1}.</value>
+    <value>Impossible de trouver des jeux de compteurs de performances dans les fichiers {0} qui correspondent à ce qui suit : {1}.</value>
   </data>
   <data name="LogsAndProvidersDontOverlap" xml:space="preserve">
-    <value>The specified providers do not write events to any of the specified logs.</value>
+    <value>Les fournisseurs spécifiés n’écrivent aucun événement dans aucun des journaux spécifiés.</value>
   </data>
   <data name="CookedValues" xml:space="preserve">
-    <value>Cooked Values</value>
+    <value>Valeurs préparées</value>
   </data>
   <data name="Counter1FileLimit" xml:space="preserve">
-    <value>You cannot import more than one comma-separated (.csv) or tab-separated (.tsv) performance counter file in each command.</value>
+    <value>Vous ne pouvez pas importer plus d’un fichier de compteur de performances séparé par des virgules (.csv) ou par des tabulations (.tsv) dans chaque commande.</value>
   </data>
   <data name="LogCountLimitExceeded" xml:space="preserve">
-    <value>Log count ({0}) is exceeded Windows Event Log API limit ({1}). Adjust filter to return less log names.</value>
+    <value>Le nombre de journaux ({0}) a dépassé la limite de l’API Journal des événements Windows ({1}). Ajustez le filtre pour renvoyer moins de noms de journaux.</value>
   </data>
   <data name="ListLogParamHelp" xml:space="preserve">
-    <value>Specifies the event logs. Wildcards are permitted.</value>
+    <value>Spécifie les journaux des événements. Les caractères génériques sont autorisés.</value>
   </data>
   <data name="GetLogParamHelp" xml:space="preserve">
-    <value>Specifies the event logs that this cmdlet gets events from. Wildcards are permitted.</value>
+    <value>Spécifie les journaux des événements depuis lesquels cette cmdlet obtient des événements. Les caractères génériques sont autorisés.</value>
   </data>
   <data name="ListProviderParamHelp" xml:space="preserve">
-    <value>Specifies the event log providers that this cmdlet gets.</value>
+    <value>Spécifie les fournisseurs de journaux des événements que cette cmdlet obtient.</value>
   </data>
   <data name="GetProviderParamHelp" xml:space="preserve">
-    <value>Specifies the event log providers from which this cmdlet gets events.</value>
+    <value>Spécifie les fournisseurs de journaux des événements depuis lesquels cette cmdlet obtient des événements.</value>
   </data>
   <data name="PathParamHelp" xml:space="preserve">
-    <value>Specifies the path to the event log files that this cmdlet gets events from.</value>
+    <value>Spécifie le chemin d’accès aux fichiers journaux des événements depuis lesquels cette cmdlet obtient des événements.</value>
   </data>
   <data name="MaxEventsParamHelp" xml:space="preserve">
-    <value>Specifies the maximum number of events that are returned.</value>
+    <value>Spécifie le nombre maximal d'événements renvoyés.</value>
   </data>
   <data name="ComputerNameParamHelp" xml:space="preserve">
-    <value>Specifies the name of the computer from which this cmdlet gets data.</value>
+    <value>Spécifie le nom de l’ordinateur depuis lequel cette cmdlet obtient des données.</value>
   </data>
 </root>

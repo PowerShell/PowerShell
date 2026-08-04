@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Utf7EncodingObsolete" xml:space="preserve">
-    <value>Encoding 'UTF-7' is obsolete, please use UTF-8.</value>
+    <value>L’encodage « UTF-7 » est obsolète. Veuillez utiliser UTF-8.</value>
   </data>
   <data name="UtilityFileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>Le fichier {0} existe déjà et {1} a été spécifié.</value>
   </data>
   <data name="OutFile_ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>Cannot open file because the current provider ({0}) cannot open a file.</value>
+    <value>Nous ne pouvons ouvrir aucun fichier, car le fournisseur actuel ({0}) ne peut pas les ouvrir.</value>
   </data>
   <data name="OutFile_MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>Nous ne pouvons pas effectuer l’opération, car le chemin d’accès a été résolu en plusieurs fichiers. Cette commande ne peut pas s’exécuter sur plusieurs fichiers.</value>
   </data>
   <data name="OutFile_DidNotResolveFile" xml:space="preserve">
-    <value>Cannot perform operation because the wildcard path {0} did not resolve to a file.</value>
+    <value>Nous ne pouvons pas effectuer l’opération, car le chemin d’accès contenant des caractères génériques {0} n’a pas été résolu en un fichier.</value>
   </data>
   <data name="OutFile_WriteToFileEncodingUnknown" xml:space="preserve">
-    <value>Unknown encoding {0}; valid values are {1}.</value>
+    <value>Encodage inconnu {0}, les valeurs valides sont {1}.</value>
   </data>
   <data name="ExportPSSession_ErrorDirectoryExists" xml:space="preserve">
-    <value>The directory '{0}' already exists.  Use the -Force parameter if you want to overwrite the directory and files within the directory.</value>
+    <value>Le répertoire « {0} » existe déjà.  Utilisez le paramètre -Force si vous voulez remplacer le répertoire et les fichiers qu’il contient.</value>
   </data>
   <data name="ExportPSSession_ErrorModuleNameOrPath" xml:space="preserve">
-    <value>The user module path does not exist, and hence a module folder cannot be created for the provided module name '{0}'.</value>
+    <value>Le chemin d’accès du module utilisateur n’existe pas. Nous ne pouvons par conséquent pas créer un dossier de module pour le nom de module fourni « {0} ».</value>
   </data>
   <data name="ExportPSSession_CannotCreateOutputDirectory" xml:space="preserve">
-    <value>Cannot create the module {0} due to the following: {1}. Use a different argument for the -OutputModule parameter and retry.</value>
+    <value>Nous ne pouvons pas créer le module {0} pour la raison suivante : {1}. Utilisez un autre argument pour le paramètre -OutputModule, puis réessayez.</value>
     <comment>{StrContains="OutputModule"}
 {0} is a placeholder for the name of a directory
 {1} is a placeholder for an error message from the inner exception
@@ -161,6 +161,6 @@ At line:1 char:1
     </comment>
   </data>
   <data name="ExportPSSession_ScriptGeneratorVersionMismatch" xml:space="preserve">
-    <value>The module cannot be loaded because it has been generated with an incompatible version of the {0} cmdlet. Generate the module with the {0} cmdlet from the current session, and try loading the module again.</value>
+    <value>Nous ne pouvons pas charger le module, car il a été généré avec une version incompatible de la cmdlet {0}. Générez le module avec la cmdlet {0} à partir de la session actuelle, puis essayez de recharger le module.</value>
   </data>
 </root>
