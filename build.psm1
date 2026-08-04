@@ -496,7 +496,7 @@ function Start-PSBuild {
             # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
             # Excluded src/Modules/nuget.config as this is required for release build.
             # Excluded nuget.config as this is required for release build.
-            git clean -dx --force `
+            git clean -dX --force `
                 --exclude .vs/**/*.vsidx `
                 --exclude src/Modules/nuget.config `
                 --exclude .vs/PowerShell/v16/Server/sqlite3 `
