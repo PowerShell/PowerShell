@@ -37,3 +37,27 @@ We prefer all communications to be in English.
 Microsoft follows the principle of [Coordinated Vulnerability Disclosure](https://aka.ms/security.md/cvd).
 
 <!-- END MICROSOFT SECURITY.MD BLOCK -->
+
+## Before You Report: PowerShell Security Boundaries
+
+Before reporting a security issue in PowerShell, please review
+[docs/SECURITY.md](../docs/SECURITY.md), in particular the **Key Security Boundaries** and
+**Defense in Depth (Not Boundaries)** sections, and the official
+[PowerShell security features](https://learn.microsoft.com/powershell/scripting/security/security-features)
+documentation.
+
+Not every control that can be bypassed is a serviced security boundary. In particular, the
+following are typically treated as **defense-in-depth** features rather than security
+boundaries, so a bypass by itself may not be serviced as a vulnerability:
+
+- **Execution Policy**
+- **Constrained Language Mode (CLM)** when it is *not* enforced by App Control for Business
+  (ACfB / WDAC) - e.g. CLM via AppLocker, session configuration, or manually setting
+  `$ExecutionContext.SessionState.LanguageMode`
+- **AMSI** (antivirus content inspection)
+
+The security boundary Microsoft services is generally **System Lockdown with App Control for
+Business (ACfB / WDAC)** forcing untrusted script into Constrained Language Mode. If your report
+depends on bypassing a defense-in-depth feature without also crossing that boundary, it may not
+qualify as a serviced vulnerability. When in doubt, report it - MSRC will make the determination.
+
