@@ -492,10 +492,15 @@ function Start-PSBuild {
         Write-LogGroupStart -Title "Cleaning your working directory"
         Push-Location $PSScriptRoot
         try {
+            # Excluded *.vsidx files because VS takes a lock on them while it's open and git will prompt.
             # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
             # Excluded src/Modules/nuget.config as this is required for release build.
             # Excluded nuget.config as this is required for release build.
-            git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3 --exclude src/Modules/nuget.config  --exclude nuget.config
+            git clean -dx --force `
+                --exclude .vs/**/*.vsidx `
+                --exclude src/Modules/nuget.config `
+                --exclude .vs/PowerShell/v16/Server/sqlite3 `
+                --exclude nuget.config
         } finally {
             Write-LogGroupEnd -Title "Cleaning your working directory"
             Pop-Location
