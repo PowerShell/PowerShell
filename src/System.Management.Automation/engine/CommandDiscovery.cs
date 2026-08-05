@@ -126,11 +126,13 @@ namespace System.Management.Automation
 
         #region ctor
 
+        /// <summary>
+        /// The directory path where the currently running pwsh executable is located.
+        /// </summary>
         private static readonly string _psHome;
 
         static CommandDiscovery()
         {
-            // Get the directory that contains the current PowerShell's executable.
 #if UNIX
             string pwshName = "pwsh";
 #else
@@ -142,30 +144,32 @@ namespace System.Management.Automation
             {
                 // Use 'Environment.ProcessPath' if it points to 'pwsh.exe' or 'pwsh'.
                 _psHome = Path.GetDirectoryName(processPath);
+                return;
             }
-            else
+
+            // We need to handle 3 cases here:
+            //  - We are running from PowerShell dotnet global tool ('ProcessPath' points to 'dotnet' in this case).
+            //  - We are running from an application that hosts PowerShell via NuGet packages.
+            //  - Rare case where we are running from pwsh, but 'ProcessPath' somehow doesn't point to it.
+            _psHome = Utils.DefaultPowerShellAppBase;
+
+            // Check if the pwsh executable exists in pshome.
+            string exePath = Path.Combine(_psHome, pwshName);
+            if (!File.Exists(exePath))
             {
-                // We need to handle 2 cases here:
-                //  - for a dotnet global tool, 'ProcessPath' points to 'dotnet.exe' or 'dotnet'.
-                //  - for an application that hosts PowerShell using NuGet packages, 'pwsh.exe' or 'pwsh' doesn't exist in pshome.
-                _psHome = Utils.DefaultPowerShellAppBase;
-                string dotnetToolPathSegment = string.Format("{0}.store{0}powershell{0}", Path.DirectorySeparatorChar);
+                // This means PowerShell is being hosted via NuGet packages.
+                _psHome = null;
+                return;
+            }
 
-                int index = _psHome.IndexOf(dotnetToolPathSegment, StringComparison.Ordinal);
-                if (index > 0)
-                {
-                    // We're running PowerShell global tool. In this case the real entry executable should be the 'pwsh'
-                    // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', not what
-                    // PSHome is pointing to.
-                    _psHome = _psHome[0..index];
-                }
-
-                // If the executable doesn't exist, then we are running from an application that hosts PowerShell using NuGet packages.
-                string exePath = Path.Combine(_psHome, pwshName);
-                if (!File.Exists(exePath))
-                {
-                    _psHome = null;
-                }
+            string dotnetToolPathSegment = string.Format("{0}.store{0}powershell{0}", Path.DirectorySeparatorChar);
+            int index = _psHome.IndexOf(dotnetToolPathSegment, StringComparison.Ordinal);
+            if (index > 0)
+            {
+                // We're running PowerShell global tool. In this case the real entry executable should be the 'pwsh'
+                // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', not what
+                // PSHome is pointing to.
+                _psHome = _psHome[0..index];
             }
         }
 
