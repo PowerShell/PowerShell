@@ -80,9 +80,21 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool IsInvalidPrefix(string prefix)
         {
+            if (prefix.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                return true;
+            }
+
+            foreach (char prefixCharacter in prefix)
+            {
+                if (prefixCharacter is '/' or '\\' || char.IsControl(prefixCharacter))
+                {
+                    return true;
+                }
+            }
+
             return prefix.Equals(".", System.StringComparison.Ordinal)
-                || prefix.Equals("..", System.StringComparison.Ordinal)
-                || prefix.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0;
+                || prefix.Equals("..", System.StringComparison.Ordinal);
         }
 
         private static ErrorRecord CreateErrorRecord(

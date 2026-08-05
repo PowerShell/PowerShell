@@ -63,6 +63,29 @@ Describe "New-TemporaryDirectory" -Tags "CI" {
         { New-TemporaryDirectory -Prefix $Prefix -ErrorAction Stop } | Should -Throw -ErrorId "NewTemporaryDirectoryInvalidPrefix,Microsoft.PowerShell.Commands.NewTemporaryDirectoryCommand"
     }
 
+    It "rejects separator-like Prefix '<Prefix>'" -TestCases @(
+        @{ Prefix = "path/name" }
+        @{ Prefix = "path\name" }
+        @{ Prefix = "../name" }
+        @{ Prefix = "..\name" }
+    ) {
+        param($Prefix)
+
+        { New-TemporaryDirectory -Prefix $Prefix -ErrorAction Stop } | Should -Throw -ErrorId "NewTemporaryDirectoryInvalidPrefix,Microsoft.PowerShell.Commands.NewTemporaryDirectoryCommand"
+    }
+
+    It "rejects Prefix with control character '<CharacterCode>'" -TestCases @(
+        @{ CharacterCode = 10 }
+        @{ CharacterCode = 13 }
+        @{ CharacterCode = 9 }
+        @{ CharacterCode = 27 }
+    ) {
+        param($CharacterCode)
+
+        $Prefix = "bad$([char]$CharacterCode)name"
+        { New-TemporaryDirectory -Prefix $Prefix -ErrorAction Stop } | Should -Throw -ErrorId "NewTemporaryDirectoryInvalidPrefix,Microsoft.PowerShell.Commands.NewTemporaryDirectoryCommand"
+    }
+
     It "has an OutputType of System.IO.DirectoryInfo" {
         (Get-Command New-TemporaryDirectory).OutputType.Name | Should -Contain "System.IO.DirectoryInfo"
     }
