@@ -67,8 +67,8 @@ function New-BuildInfoJson {
 }
 
 # Script to set the release tag based on the branch name if it is not set or it is "fromBranch"
-# the branch name is expected to be release-<semver> or <previewname>
-# VSTS passes it as 'refs/heads/release-v6.0.2'
+# the branch name is expected to be release/<semver>, rebuild/v<semver>-rebuild.<number>, or <previewname>
+# VSTS passes it as 'refs/heads/release/v6.0.2'
 
 $branchOnly = $Branch -replace '^refs/heads/';
 $branchOnly = $branchOnly -replace '[_\-]'
@@ -79,13 +79,21 @@ $isDaily = $false
 
 if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 {
-    # Branch is named release-<semver>
-    $releaseBranchRegex = '^.*((release/|rebuild/.*rebuild))'
-    if($Branch -match $releaseBranchRegex)
+    $validRebuildBranchRegex = '^refs/heads/rebuild/v[0-9]+\.[0-9]+\.[0-9]+-rebuild\.(?:0|[1-9][0-9]*)$'
+    $isRebuildBranch = $Branch -match '^refs/heads/rebuild/'
+    $isValidRebuildBranch = $Branch -match $validRebuildBranchRegex
+    if ($isRebuildBranch -and -not $isValidRebuildBranch)
+    {
+        throw "Malformed rebuild branch '$Branch'. Expected branch name format: 'rebuild/v<major>.<minor>.<patch>-rebuild.<number>'."
+    }
+
+    # Branch is named release/<semver> or rebuild/v<semver>-rebuild.<number>
+    $isReleaseBranch = $Branch -match '^refs/heads/release/'
+    if($isReleaseBranch -or $isValidRebuildBranch)
     {
         $msixType = 'release'
         Write-Verbose "release branch:" -Verbose
-        $releaseTag = $Branch -replace '^.*((release|rebuild)/)'
+        $releaseTag = $Branch -replace '^refs/heads/(?:release|rebuild)/'
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"

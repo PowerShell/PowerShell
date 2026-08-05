@@ -59,9 +59,11 @@ stages:
   - template: /.pipelines/templates/mac.yml@self
     parameters:
       buildArchitecture: x64
+      OfficialBuild: ${{ parameters.OfficialBuild }}
   - template: /.pipelines/templates/mac.yml@self
     parameters:
       buildArchitecture: arm64
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
 - stage: linux
   displayName: linux - build and sign

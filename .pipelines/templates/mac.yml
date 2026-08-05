@@ -1,5 +1,6 @@
 parameters:
   buildArchitecture: 'x64'
+  OfficialBuild: true
 jobs:
 - job: build_macOS_${{ parameters.buildArchitecture }}
   displayName: Build macOS ${{ parameters.buildArchitecture }}
@@ -101,7 +102,7 @@ jobs:
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_codeSignValidation_enabled
-    value: true
+    value: ${{ parameters.OfficialBuild }}
   - name: ob_sdl_tsa_configFile
     value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
   - name: ob_sdl_credscan_suppressionsFile
@@ -150,7 +151,7 @@ jobs:
   - template: /.pipelines/templates/obp-file-signing.yml@self
     parameters:
       binPath: $(DropRootPath)
-      OfficialBuild: $(ps_official_build)
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   # Apple-sign the Mach-O binaries inside the signed output.
   - pwsh: |
@@ -158,9 +159,11 @@ jobs:
       $zipFile = "$(Pipeline.Workspace)/macho-$(BuildArchitecture).zip"
       Compress-Archive -Path "$signedDir/*" -DestinationPath $zipFile -Force
     displayName: Compress signed folder for Apple signing
+    condition: and(succeeded(), eq('${{ parameters.OfficialBuild }}', 'true'))
 
   - task: onebranch.pipeline.signing@1
     displayName: Apple CodeSign Mach-O binaries
+    condition: and(succeeded(), eq('${{ parameters.OfficialBuild }}', 'true'))
     inputs:
       command: 'sign'
       files_to_sign: 'macho-$(BuildArchitecture).zip'
@@ -183,6 +186,7 @@ jobs:
       $zipFile = "$(Pipeline.Workspace)/macho-$(BuildArchitecture).zip"
       Expand-Archive -Path $zipFile -DestinationPath $signedDir -Force -Verbose
     displayName: Expand Apple-signed Mach-O binaries into signed output
+    condition: and(succeeded(), eq('${{ parameters.OfficialBuild }}', 'true'))
 
   - pwsh: |
       $signedDir = "$(ob_outputDirectory)/Signed-$(Runtime)"
@@ -202,5 +206,6 @@ jobs:
         throw "ESRP did not apply a Developer ID signature to $($missing.Count) file(s): $($missing -join ', ')"
       }
     displayName: 'Verify Developer ID signature on Mach-O binaries'
+    condition: and(succeeded(), eq('${{ parameters.OfficialBuild }}', 'true'))
 
   - template: /.pipelines/templates/step/finalize.yml@self
