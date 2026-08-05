@@ -138,6 +138,13 @@
         "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
     },
     {
+        "url": "microsoft-ubuntu-resolute-prod",
+        "distribution": [
+            "resolute"
+        ],
+        "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+    },
+    {
         "url": "microsoft-ubuntu-xenial-prod",
         "distribution": [
             "xenial"
