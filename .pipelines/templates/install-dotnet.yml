@@ -2,6 +2,19 @@ parameters:
 - name: ob_restore_phase
   type: boolean
   default: true
+- name: architecture
+  type: string
+  default: 'win-x64'
+  values:
+      - 'win-x64'
+      - 'win-x86'
+      - 'win-arm64'
+      - 'linux-x64'
+      - 'linux-arm64'
+      - 'linux-musl-x64'
+      - 'linux-musl-arm64'
+      - 'osx-x64'
+      - 'osx-arm64'
 
 steps:
   - pwsh: |
@@ -19,6 +32,70 @@ steps:
 
     displayName: 'Install dotnet SDK'
     workingDirectory: $(RepoRoot)
+    condition: ne(variables['ISEARLYACCESS'], 'true')
     env:
       ob_restore_phase: ${{ parameters.ob_restore_phase }}
 
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifactName: 'dotnet-packages'
+      targetPath: '$(Pipeline.Workspace)/dotnet-packages'
+      displayName: "Download dotnet-packages artifact"
+      condition: eq(variables['ISEARLYACCESS'], 'true')
+    env:
+      ob_restore_phase: ${{ parameters.ob_restore_phase }}
+
+  - pwsh: |
+      $arch = '${{ parameters.architecture }}'
+      $sdkFilePattern = "dotnet-sdk-*-${arch}.*"
+
+      if (-not (Test-Path '$(Pipeline.Workspace)/dotnet-packages')) {
+        New-Item -Path '$(Pipeline.Workspace)/dotnet-packages' -ItemType Directory -Force -Verbose | Out-Null
+      }
+
+      $filePath = Get-ChildItem '$(Pipeline.Workspace)/dotnet-packages' -Recurse -File | Where-Object { $_.Name -like $sdkFilePattern } | Select-Object -First 1 -ExpandProperty FullName
+
+      if (-not $filePath) {
+        Get-ChildItem -Path '$(Pipeline.Workspace)/dotnet-packages' -Recurse
+        throw "SDK file matching pattern $sdkFilePattern not found in $(Pipeline.Workspace)/dotnet-packages"
+      }
+
+      $dotnetLocation = if ($IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
+
+      if (-not (Test-Path $dotnetLocation)) {
+        New-Item -ItemType Directory -Path $dotnetLocation -Force -Verbose | Out-Null
+      }
+
+      Write-Verbose -Verbose "Extracting SDK from $filePath to $dotnetLocation"
+
+      if ($filePath -match '\.(tar\.gz|tgz)$') {
+        & tar -xzf $filePath -C $dotnetLocation
+        if ($LASTEXITCODE -ne 0) {
+          throw "Failed to extract $filePath with tar (exit code $LASTEXITCODE)"
+        }
+      } elseif ($filePath -match '\.zip$') {
+        Expand-Archive -Path $filePath -DestinationPath $dotnetLocation -Force
+      } else {
+        throw "Unsupported SDK archive format: $filePath"
+      }
+
+      Write-Verbose -Verbose "Expand dotnet package complete."
+
+      $dotnetExe = if ($IsWindows) {
+        "$dotnetLocation\dotnet.exe"
+      } else {
+        "$dotnetLocation/dotnet"
+      }
+
+      if (-not (Test-Path $dotnetExe)) {
+        throw "dotnet executable not found at $dotnetExe"
+      }
+
+      Get-ChildItem -Path $dotnetLocation -Recurse
+
+      & $dotnetExe --info
+    workingDirectory: $(RepoRoot)
+    displayName: Install dotnet early access
+    condition: eq(variables['ISEARLYACCESS'], 'true')
+    env:
+      ob_restore_phase: ${{ parameters.ob_restore_phase }}

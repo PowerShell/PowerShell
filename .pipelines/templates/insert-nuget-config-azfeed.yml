@@ -16,8 +16,20 @@ steps:
       $configPath = "${env:NugetConfigDir}/nuget.config"
       Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
 
-      Write-Verbose -Verbose "Running: Switch-PSNugetConfig -Source Private -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '$(powershellPackageReadPat)'"
-      Switch-PSNugetConfig -Source Private -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '$(powershellPackageReadPat)'
+      $earlyAccess = $env:ISEARLYACCESS -eq 'true'
+
+      Write-Verbose -Verbose "Is Early access: $earlyAccess"
+
+      if (-not $earlyAccess)
+      {
+        Write-Verbose -Verbose "Running: Switch-PSNugetConfig -Source Private -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '$(powershellPackageReadPat)'"
+        Switch-PSNugetConfig -Source Private -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '$(powershellPackageReadPat)'
+      }
+      else
+      {
+        Write-Verbose -Verbose "Running: Switch-PSNugetConfig -Source EarlyAccess"
+        Switch-PSNugetConfig -Source EarlyAccess
+      }
 
       if(-not (Test-Path $configPath))
       {
@@ -33,6 +45,55 @@ steps:
   env:
     NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
     ob_restore_phase: ${{ parameters.ob_restore_phase }}
+
+- task: AzurePowerShell@5
+  inputs:
+    azureSubscription: powershell-net-early-access
+    azurePowerShellVersion: LatestVersion
+    ScriptType: InlineScript
+    pwsh: true
+    inline: |
+      Write-Verbose -Verbose "Getting an Azure DevOps access token"
+      # Microsoft's well-known Entra resource ID for the Azure DevOps token audience.
+      $azureDevOpsResourceUrl = '499b84ac-1321-427f-aa17-267ca6975798'
+      $azt = (Get-AzAccessToken -ResourceUrl $azureDevOpsResourceUrl).Token | ConvertFrom-SecureString -AsPlainText
+
+      Write-Host "##vso[task.setsecret]$azt"
+      Write-Verbose -Verbose "Setting up Azure Artifacts Credential Provider token"
+
+      $earlyAccessFeed = '$(EARLY_ACCESS_FEED)'
+      $ADORepoUri = switch ($earlyAccessFeed) {
+            'net8' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-8-early-access/nuget/v3/index.json' }
+            'net9' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-9-early-access/nuget/v3/index.json' }
+            'net10' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-10-early-access/nuget/v3/index.json' }
+            default { throw "Unknown early access feed URL: $earlyAccessFeed" }
+        }
+      $galleryRepoUri = 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-psgallery/nuget/v2'
+
+      Write-Verbose -Verbose "ADORepoUri == $ADORepoUri"
+
+      if ([string]::IsNullOrEmpty($ADORepoUri) -eq $false)
+      {
+        $endpointCredsObj = @{ endpointCredentials = @(
+          @{ endpoint = $ADORepoUri; password = $azt }
+          @{ endpoint = $galleryRepoUri; password = $azt }
+        )}
+        $VSS_NUGET_EXTERNAL_FEED_ENDPOINTS = $endpointCredsObj | ConvertTo-Json -Compress
+
+        Write-Verbose -Verbose "Setting VSS_NUGET_EXTERNAL_FEED_ENDPOINTS environment variable"
+
+        $vstsCommandString = "vso[task.setvariable variable=VSS_NUGET_EXTERNAL_FEED_ENDPOINTS]$VSS_NUGET_EXTERNAL_FEED_ENDPOINTS"
+        Write-Host "##$vstsCommandString"
+      }
+      else
+      {
+        Write-Verbose -Verbose "EARLY_ACCESS_FEED_URL is not set"
+      }
+  displayName: 'Setup Azure Artifacts Credential Provider secret'
+  condition: eq(variables['ISEARLYACCESS'], 'true')
+  env:
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
+
 
 - pwsh: |
     Get-ChildItem ${{ parameters.repoRoot }}/nuget.config -Recurse | Foreach-Object {
