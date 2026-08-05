@@ -62,7 +62,11 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -RevertFileOnlyEntry
             }
 
-            $results.Exception.Message | Should -Be 'The parameter "-File" is required by policy.'
+            if ($Arguments -contains '-NoExit') {
+                $results.Exception.Message | Should -Be 'The parameter "-NoExit" is disallowed by policy.'
+            } else {
+                $results.Exception.Message | Should -Be 'The parameter "-File" is required by policy.'
+            }
         }
     }
 }
