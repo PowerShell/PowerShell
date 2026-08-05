@@ -169,7 +169,7 @@
     <value>Następująca nazwa elementu członkowskiego jest zarezerwowana: {0}</value>
   </data>
   <data name="Exception" xml:space="preserve">
-    <value>Wyjątek: {0}</value>
+    <value>Wyjątek:{0}</value>
   </data>
   <data name="ScriptPropertyShouldHaveGetterOrSetter" xml:space="preserve">
     <value>Właściwość ScriptProperty powinna mieć metodę pobierającą lub ustawiającą.</value>
@@ -205,7 +205,7 @@
     <value>{0}, {1}: plik został pominięty z powodu następującego wyjątku walidacji: {2}.</value>
   </data>
   <data name="MemberShouldBeNote" xml:space="preserve">
-    <value>Element członkowski „{0}” musi być notatką.</value>
+    <value>Element członkowski „{0}”" musi być notatką.</value>
   </data>
   <data name="ErrorConvertingNote" xml:space="preserve">
     <value>Nie można przekonwertować notatki „{0}” na „{1}”.</value>
