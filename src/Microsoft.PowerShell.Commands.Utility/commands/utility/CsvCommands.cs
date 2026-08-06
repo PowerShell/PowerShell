@@ -1787,12 +1787,11 @@ namespace Microsoft.PowerShell.Commands
                 case "UseCulture":
                 case "CulturePath":
                 case "CultureLiteralPath":
-                    if (useCulture)
-                    {
-                        // ListSeparator is apparently always a character even though the property returns a string, checked via:
-                        // [CultureInfo]::GetCultures("AllCultures") | % { ([CultureInfo]($_.Name)).TextInfo.ListSeparator } | ? Length -ne 1
-                        delimiter = CultureInfo.CurrentCulture.TextInfo.ListSeparator[0];
-                    }
+                    // ListSeparator is apparently always a character even though the property returns a string, checked via:
+                    // [CultureInfo]::GetCultures("AllCultures") | % { ([CultureInfo]($_.Name)).TextInfo.ListSeparator } | ? Length -ne 1
+                    delimiter = useCulture
+                        ? CultureInfo.CurrentCulture.TextInfo.ListSeparator[0]
+                        : ImportExportCSVHelper.CSVDelimiter;
 
                     break;
                 default:
