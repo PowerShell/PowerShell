@@ -75,6 +75,16 @@ Describe "New-TemporaryDirectory" -Tags "CI" {
                 { New-TemporaryDirectory -Prefix $badPrefix -ErrorAction Stop } | Should -Throw
             }
         }
+
+        It "rejects '.' and '..' prefixes" {
+            { New-TemporaryDirectory -Prefix "." -ErrorAction Stop } | Should -Throw
+            { New-TemporaryDirectory -Prefix ".." -ErrorAction Stop } | Should -Throw
+        }
+
+        It "rejects prefixes with path separators" {
+            { New-TemporaryDirectory -Prefix "foo\bar" -ErrorAction Stop } | Should -Throw
+            { New-TemporaryDirectory -Prefix "foo/bar" -ErrorAction Stop } | Should -Throw
+        }
     }
 
     Context "ShouldProcess support" {
@@ -84,6 +94,12 @@ Describe "New-TemporaryDirectory" -Tags "CI" {
 
         It "with WhatIf and Prefix does not create a directory" {
             New-TemporaryDirectory -Prefix "Test_" -WhatIf | Should -BeNullOrEmpty
+        }
+
+        It "with WhatIf does not show a raw combined path for '..' prefix" {
+            $whatIfOutput = New-TemporaryDirectory -Prefix ".." -WhatIf 2>&1 | Out-String
+            $rawCombinedPath = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath ".."
+            $whatIfOutput | Should -Not -Match [regex]::Escape($rawCombinedPath)
         }
     }
 

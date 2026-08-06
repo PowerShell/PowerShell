@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (!string.IsNullOrEmpty(Prefix) && Prefix.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            if (!string.IsNullOrEmpty(Prefix) && !IsValidPrefix(Prefix))
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
@@ -49,9 +49,12 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
+            // CreateTempSubdirectory appends a random suffix, so the final directory
+            // name is not known upfront. Use a descriptive target so WhatIf/Confirm
+            // never shows a path that is not actually created (e.g. <temp>\..).
             string targetDescription = string.IsNullOrEmpty(Prefix)
                 ? Path.GetTempPath()
-                : Path.Combine(Path.GetTempPath(), Prefix);
+                : $"temporary directory under {Path.GetTempPath()} with prefix '{Prefix}'";
 
             if (!ShouldProcess(targetDescription))
             {
@@ -74,6 +77,39 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowTerminatingError(CreateErrorRecord(unauthorizedAccessException, ErrorCategory.PermissionDenied, targetDescription));
             }
+        }
+
+        /// <summary>
+        /// Validates that the prefix can be safely used as part of a directory name.
+        /// Rejects '.', '..', and any prefix containing path separators or control
+        /// characters, which would otherwise produce confusing cross-platform paths
+        /// or misleading WhatIf/Confirm targets.
+        /// </summary>
+        /// <param name="prefix">The prefix to validate.</param>
+        /// <returns>True if the prefix is valid, false otherwise.</returns>
+        private static bool IsValidPrefix(string prefix)
+        {
+            if (prefix is "." or "..")
+            {
+                return false;
+            }
+
+            if (prefix.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                return false;
+            }
+
+            // On Unix, '\\' and control characters are not invalid file name
+            // characters, but they can create confusing cross-platform behavior.
+            foreach (char c in prefix)
+            {
+                if (c is '/' or '\\' || char.IsControl(c))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static ErrorRecord CreateErrorRecord(Exception exception, ErrorCategory category, string targetPath)
