@@ -4213,7 +4213,7 @@ function New-PSOptionsObject
         $Configuration,
 
         [Parameter(Mandatory)]
-        [Bool]
+        [bool]
         $PSModuleRestore,
 
         [Parameter(Mandatory)]
@@ -4225,7 +4225,7 @@ function New-PSOptionsObject
         $Output,
 
         [Parameter(Mandatory)]
-        [Bool]
+        [bool]
         $ForMinimalSize
     )
 
