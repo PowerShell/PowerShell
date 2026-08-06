@@ -81,8 +81,32 @@ namespace System.Management.Automation.Language
             }
         }
 
+        private static void ReportConflictingTypeAliases(Ast ast, Parser parser, string typeName, bool typeIsExternal)
+        {
+            if (ast is ScriptBlockAst scriptBlock && scriptBlock.UsingStatements.Count > 0)
+            {
+                foreach (var statement in scriptBlock.UsingStatements)
+                {
+                    if (statement.UsingStatementKind == UsingStatementKind.Type && string.Equals(typeName, statement.Name.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (typeIsExternal)
+                        {
+                            parser.ReportError(statement.Extent, nameof(ParserStrings.TypeAliasConflictsImportedTypeDefinition),
+                                ParserStrings.TypeAliasConflictsImportedTypeDefinition, statement.Name.Value);
+                        }
+                        else
+                        {
+                            parser.ReportError(statement.Extent, nameof(ParserStrings.TypeAliasConflictsTypeDefinition),
+                                ParserStrings.TypeAliasConflictsTypeDefinition, statement.Name.Value);
+                        }
+                    }
+                }
+            }
+        }
+
         internal void AddType(Parser parser, TypeDefinitionAst typeDefinitionAst)
         {
+            ReportConflictingTypeAliases(_ast, parser, typeDefinitionAst.Name, typeIsExternal: false);
             TypeLookupResult result;
             if (_typeTable.TryGetValue(typeDefinitionAst.Name, out result))
             {
@@ -108,6 +132,7 @@ namespace System.Management.Automation.Language
 
         internal void AddTypeFromUsingModule(Parser parser, TypeDefinitionAst typeDefinitionAst, PSModuleInfo moduleInfo)
         {
+            ReportConflictingTypeAliases(_ast, parser, typeDefinitionAst.Name, typeIsExternal:true);
             TypeLookupResult result;
             if (_typeTable.TryGetValue(typeDefinitionAst.Name, out result))
             {
@@ -325,9 +350,21 @@ namespace System.Management.Automation.Language
         internal static void ResolveSymbols(Parser parser, ScriptBlockAst scriptBlockAst)
         {
             Diagnostics.Assert(scriptBlockAst.Parent == null, "Can only resolve starting from the root");
-
+            Dictionary<string, ITypeName> typeAliases = new(StringComparer.OrdinalIgnoreCase);
+            foreach (var usingStatement in scriptBlockAst.UsingStatements)
+            {
+                if (usingStatement.UsingStatementKind == UsingStatementKind.Type && usingStatement.TypeAlias is not null)
+                {
+                    typeAliases[usingStatement.Name.Value] = usingStatement.TypeAlias.TypeName;
+                }
+            }
+            if (typeAliases.Count == 0)
+            {
+                typeAliases = null;
+            }
+            Dictionary<string, string> namespaceAliases;
             var usingState = scriptBlockAst.UsingStatements.Count > 0
-                ? new TypeResolutionState(TypeOps.GetNamespacesForTypeResolutionState(scriptBlockAst.UsingStatements), TypeResolutionState.emptyAssemblies)
+                ? new TypeResolutionState(TypeOps.GetNamespacesForTypeResolutionState(scriptBlockAst.UsingStatements, out namespaceAliases), TypeResolutionState.emptyAssemblies, typeAliases, namespaceAliases)
                 : TypeResolutionState.GetDefaultUsingState(null);
             var resolver = new SymbolResolver(parser, usingState);
             resolver._symbolTable.EnterScope(scriptBlockAst, ScopeType.ScriptBlock);
