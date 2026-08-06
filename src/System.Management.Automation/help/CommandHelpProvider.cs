@@ -765,7 +765,7 @@ namespace System.Management.Automation
             if (helpInfo == null)
                 return;
 
-            if (!(helpInfo is MamlCommandHelpInfo commandHelpInfo))
+            if (helpInfo is not MamlCommandHelpInfo commandHelpInfo)
                 return;
 
             commandHelpInfo.AddUserDefinedData(userDefinedHelpData);

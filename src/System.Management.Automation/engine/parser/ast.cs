@@ -7376,7 +7376,7 @@ namespace System.Management.Automation.Language
                 PSTraceSource.NewInvalidOperationException();
             }
 
-            if (!(this.Parent is CommandExpressionAst commandExpr))
+            if (this.Parent is not CommandExpressionAst commandExpr)
             {
                 return false;
             }
@@ -7889,7 +7889,7 @@ namespace System.Management.Automation.Language
             var attributes = GetAttributes();
             var assignableValue = GetActualAssignableAst().GetAssignableValue();
 
-            if (!(assignableValue is VariableExpressionAst variableExpr))
+            if (assignableValue is not VariableExpressionAst variableExpr)
             {
                 return assignableValue.SetValue(compiler, Compiler.ConvertValue(rhs, attributes));
             }
@@ -8666,7 +8666,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            if (!(obj is TypeName other))
+            if (obj is not TypeName other)
                 return false;
 
             if (!_name.Equals(other._name, StringComparison.OrdinalIgnoreCase))
@@ -8994,7 +8994,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            if (!(obj is GenericTypeName other))
+            if (obj is not GenericTypeName other)
                 return false;
 
             if (!TypeName.Equals(other.TypeName))
@@ -9219,7 +9219,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            if (!(obj is ArrayTypeName other))
+            if (obj is not ArrayTypeName other)
                 return false;
 
             return ElementType.Equals(other.ElementType) && Rank == other.Rank;
@@ -9320,7 +9320,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            if (!(obj is ReflectionTypeName other))
+            if (obj is not ReflectionTypeName other)
                 return false;
             return _type == other._type;
         }
