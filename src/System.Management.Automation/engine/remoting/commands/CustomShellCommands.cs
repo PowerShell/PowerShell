@@ -3030,7 +3030,7 @@ Set-RunAsCredential $args[0] $args[1]
 
         private const string setPluginSbFormat = @"
 function Set-PSSessionConfiguration([PSObject]$customShellObject,
-     [Array]$initParametersMap,
+     [array]$initParametersMap,
      [bool]$force,
      [string]$sddl,
      [bool]$isSddlSpecified,
