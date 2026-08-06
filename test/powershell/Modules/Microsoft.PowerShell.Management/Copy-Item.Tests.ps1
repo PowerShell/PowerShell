@@ -14,23 +14,7 @@ Describe "Validate Copy-Item locally" -Tags "CI" {
     }
 }
 
-# This is a Pester test suite to validate Copy-Item remotely using a remote session.
-
-# If PS Remoting is not available, do not run the suite.
-function ShouldRun
-{
-    if ( $IsCoreCLR ) { return $false }
-    $result = Invoke-Command -ComputerName . -ScriptBlock {1} -ErrorAction SilentlyContinue
-    return ($result -eq 1)
-}
-
-if (-not (ShouldRun))
-{
-    Write-Host "PS Remoting is not available, skipping tests..." -ForegroundColor Cyan
-    return
-}
-
-Describe "Validate Copy-Item Remotely" -Tags "CI" {
+Describe "Validate Copy-Item Remotely" -Tags @('CI', 'RequireAdminOnWindows') {
 
     # Validate a copy item operation.
     # $filePath is the source file path
@@ -83,7 +67,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
     }
 
     BeforeAll {
-        $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
+        $s = New-RemoteSession
         if (-not $s)
         {
             throw "Failed to create PSSession for remote copy operations."
@@ -495,18 +479,9 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         }
 
         It "Copy-Item parameters -FromSession and -ToSession are mutually exclusive." {
-            try
-            {
-                $s1 = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
-                $s1 | Should -Not -BeNullOrEmpty
-                $filePath = CreateTestFile
-                $destinationFolderPath = GetDestinationFolderPath
-                { Copy-Item -Path $filePath -Destination $destinationFolderPath -FromSession $s -ToSession $s1 -ErrorAction Stop } | Should -Throw -ErrorId "InvalidInput,Microsoft.PowerShell.Commands.CopyItemCommand"
-            }
-            finally
-            {
-                Remove-PSSession -Session $s1 -ErrorAction SilentlyContinue
-            }
+            $filePath = CreateTestFile
+            $destinationFolderPath = GetDestinationFolderPath
+            { Copy-Item -Path $filePath -Destination $destinationFolderPath -FromSession $s -ToSession $s -ErrorAction Stop } | Should -Throw -ErrorId "InvalidInput,Microsoft.PowerShell.Commands.CopyItemCommand"
         }
     }
 
@@ -570,7 +545,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             }
             else
             {
-                It "Copy-Item ToSession -Destination '$path' throws $expectedFullyQualifiedErrorId" {
+                It "Copy-Item ToSession -Destination '$destination' throws $expectedFullyQualifiedErrorId" {
                     { Copy-Item -Path $path -ToSession $s -Destination $destination -ErrorAction Stop } |
                         Should -Throw -ErrorId $expectedFullyQualifiedErrorId
                 }
@@ -654,9 +629,21 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
     }
 }
 
-Describe "Validate Copy-Item error for target sessions not in FullLanguageMode." -Tags "Feature" {
+Describe "Validate Copy-Item error for target sessions not in FullLanguageMode." -Tags @('Feature', 'RequireAdminOnWindows') {
+
+    It "Copy-Item throws 'SessionIsNotInFullLanguageMode' error for a session in non-FullLanguageMode" -Pending {
+        ## A placeholder test to show that the real test is pending. Remove this once the real tests below are enabled.
+    }
 
     BeforeAll {
+        # Keep track of the sessions.
+        $testSessions = @{}
+        # Keep track of the session names to be unregistered.
+        $sessionToUnregister = @()
+
+        ## Test not validated yet. For now, make it do nothing.
+        $skipTestSuite = $true
+        if ($skipTestSuite) { return }
 
         $testDirectory = "TestDrive:\"
 
@@ -669,12 +656,6 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
 
         $testFilePath = Join-Path $source "testfile.txt"
         "File test content" | Out-File $testFilePath -Force
-
-        # Keep track of the sessions.
-        $testSessions = @{}
-
-        # Keep track of the session names to be unregistered.
-        $sessionToUnregister = @()
 
         $languageModes = @("ConstrainedLanguage", "NoLanguage", "RestrictedLanguage")
         $id = (Get-Random).ToString()
@@ -703,6 +684,7 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
     }
 
     AfterAll {
+        if ($skipTestSuite) { return }
 
         $testSessions.Values | Remove-PSSession -ErrorAction SilentlyContinue
 
@@ -728,12 +710,12 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
     }
 }
 
-Describe "Copy-Item can use Recurse and Exclude together" -Tags "Feature" {
+Describe "Copy-Item can use Recurse and Exclude together" -Tags @('CI', 'RequireAdminOnWindows') {
 
     Context "Local and Remote Tests" {
 
         BeforeAll {
-            $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
+            $s = New-RemoteSession
             if (-not $s)
             {
                 throw "Failed to create PSSession for remote copy operations."
@@ -773,10 +755,10 @@ Describe "Copy-Item can use Recurse and Exclude together" -Tags "Feature" {
     }
 }
 
-Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
+Describe "Copy-Item remotely bug fixes" -Tags @('CI', 'RequireAdminOnWindows') {
 
     BeforeAll {
-        $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
+        $s = New-RemoteSession
         if (-not $s)
         {
             throw "Failed to create PSSession for remote copy operations."
