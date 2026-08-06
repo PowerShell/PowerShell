@@ -51,7 +51,7 @@ Describe "TabCompletion" -Tags CI {
                 New-ModuleManifest -Path "$($NewDir.FullName)\$ModuleName.psd1" -RootModule "$ModuleName.psm1" -FunctionsToExport "MyTestFunction" -ModuleVersion $NewDir.Name
             }
 
-            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir            
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir
             $Res = TabExpansion2 -inputScript MyTestFunction
             $Res.CompletionMatches.Count | Should -Be 2
             $SortedMatches = $Res.CompletionMatches.CompletionText | Sort-Object
@@ -82,7 +82,7 @@ Describe "TabCompletion" -Tags CI {
                 New-ModuleManifest -Path "$($NewDir.FullName)\$ModuleName.psd1" -RootModule "$ModuleName.psm1" -FunctionsToExport "MyTestFunction" -ModuleVersion $NewDir.Name
             }
 
-            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir            
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir
             $Res = TabExpansion2 -inputScript 'Import-Module -Name TestModule'
             $Res.CompletionMatches.Count | Should -Be 1
             $Res.CompletionMatches[0].CompletionText | Should -Be TestModule1
@@ -165,21 +165,21 @@ Describe "TabCompletion" -Tags CI {
         $res = TabExpansion2 -inputScript 'param($PS = $P'
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
     }
-    
+
     It 'Should complete variable with description and value <Value>' -TestCases @(
         @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
         @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
         @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
     ) {
         param ($Value, $Expected)
-        
+
         New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
         $res = TabExpansion2 -inputScript '$VariableWithDescription'
         $res.CompletionMatches.Count | Should -Be 1
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$VariableWithDescription'
         $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
     }
-    
+
     It 'Should complete environment variable' {
         try {
             $env:PWSH_TEST_1 = 'value 1'
@@ -226,7 +226,7 @@ Describe "TabCompletion" -Tags CI {
         @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
     ) {
         param ($Value, $Expected)
-        
+
         New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
         $res = TabExpansion2 -inputScript '$local:VariableWithDescription'
         $res.CompletionMatches.Count | Should -Be 1
@@ -1191,7 +1191,7 @@ param([ValidatePattern(
                 [Parameter(ParameterSetName = 'SetWithoutHelp')]
                 [string]
                 $ParamWithHelp,
-                
+
                 [Parameter(ParameterSetName = 'SetWithHelp')]
                 [switch]
                 $ParamWithoutHelp
@@ -1733,7 +1733,7 @@ param([ValidatePattern(
 
             $commaSeparators = "',' ', '"
             $semiColonSeparators = "';' '; '"
-            
+
             $squareBracketFormatString = "'[{0}]'"
             $curlyBraceFormatString = "'{0:N2}'"
         }
@@ -2097,6 +2097,159 @@ Verb-Noun -Param1 Hello ^
         $res.CompletionMatches[0].CompletionText | Should -Be "Attributes"
     }
 
+    Context 'Positional parameter completion with multi-set parameters (issue #2212)' {
+        BeforeAll {
+            function Test-Func2212 {
+                [CmdletBinding(DefaultParameterSetName = 'Two')]
+                param(
+                    [Parameter(ParameterSetName = 'One', Position = 1)]
+                    [Parameter(ParameterSetName = 'Two', Position = 0)]
+                    [string]$First,
+
+                    [Parameter(ParameterSetName = 'Two', Position = 1)]
+                    [string]$Second,
+
+                    [Parameter(ParameterSetName = 'One', Position = 0)]
+                    [string]$OnlyOne
+                )
+            }
+
+            function Test-FuncSamePos {
+                [CmdletBinding(DefaultParameterSetName = 'Alpha')]
+                param(
+                    [Parameter(ParameterSetName = 'Alpha', Position = 0)]
+                    [string]$AlphaValue,
+
+                    [Parameter(ParameterSetName = 'Beta', Position = 0)]
+                    [string]$BetaValue
+                )
+            }
+
+            function Test-FuncMultiSetNamed {
+                [CmdletBinding(DefaultParameterSetName = 'A')]
+                param(
+                    [Parameter(ParameterSetName = 'A', Position = 0)]
+                    [Parameter(ParameterSetName = 'B', Position = 1)]
+                    [string]$Alpha,
+
+                    [Parameter(ParameterSetName = 'A')]
+                    [string]$OnlyA,
+
+                    [Parameter(ParameterSetName = 'B', Position = 0)]
+                    [string]$OnlyB
+                )
+            }
+
+            function Test-Func2212Arg {
+                [CmdletBinding()]
+                param(
+                    [Parameter(Position = 0)]
+                    [string]$Param1,
+
+                    [Parameter(Position = 1)]
+                    [System.Management.Automation.ActionPreference]$Param2
+                )
+            }
+
+            function Test-Func2212FakeBound {
+                [CmdletBinding(DefaultParameterSetName = 'Two')]
+                param(
+                    [Parameter(ParameterSetName = 'One', Position = 1)]
+                    [Parameter(ParameterSetName = 'Two', Position = 0)]
+                    [string]$First,
+
+                    [Parameter(ParameterSetName = 'Two', Position = 1)]
+                    [string]$Second,
+
+                    [Parameter(ParameterSetName = 'One', Position = 0)]
+                    [string]$OnlyOne,
+
+                    [ArgumentCompleter({
+                        param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+
+                        $hasFirst = [string]$fakeBoundParameters.Contains('First')
+                        $hasSecond = [string]$fakeBoundParameters.Contains('Second')
+                        $hasOnlyOne = [string]$fakeBoundParameters.Contains('OnlyOne')
+
+                        $firstValue = if ($fakeBoundParameters.Contains('First')) { [string]$fakeBoundParameters['First'] } else { '<none>' }
+                        $secondValue = if ($fakeBoundParameters.Contains('Second')) { [string]$fakeBoundParameters['Second'] } else { '<none>' }
+                        $onlyOneValue = if ($fakeBoundParameters.Contains('OnlyOne')) { [string]$fakeBoundParameters['OnlyOne'] } else { '<none>' }
+
+                        $results = @(
+                            "HasFirst:$hasFirst",
+                            "HasSecond:$hasSecond",
+                            "HasOnlyOne:$hasOnlyOne",
+                            "FirstValue:$firstValue",
+                            "SecondValue:$secondValue",
+                            "OnlyOneValue:$onlyOneValue"
+                        )
+
+                        foreach ($item in $results)
+                        {
+                            [System.Management.Automation.CompletionResult]::new($item, $item, 'ParameterValue', $item)
+                        }
+                    })]
+                    [string]$Probe
+                )
+            }
+        }
+
+        it 'Should not offer already-bound positional parameter for completion (issue #2212)' {
+            $ScriptInput = 'Test-Func2212 Hello -'
+            $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
+            $completionTexts = $res.CompletionMatches.CompletionText
+            $completionTexts | Should -Contain '-Second'
+            $completionTexts | Should -Not -Contain '-First'
+        }
+
+        it 'Should not offer re-bound parameter after two positional args (issue #2212)' {
+            $ScriptInput = 'Test-Func2212 Hello World -'
+            $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
+            $completionTexts = $res.CompletionMatches.CompletionText
+            $completionTexts | Should -Not -Contain '-First'
+            $completionTexts | Should -Not -Contain '-Second'
+            $completionTexts | Should -Contain '-Verbose'
+        }
+
+        it 'Should offer correct parameters when named param narrows set with multi-position parameter' {
+            $ScriptInput = 'Test-FuncMultiSetNamed -OnlyA val -'
+            $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
+            $completionTexts = $res.CompletionMatches.CompletionText
+            $completionTexts | Should -Contain '-Alpha'
+            $completionTexts | Should -Not -Contain '-OnlyB'
+        }
+
+        it 'Should complete argument for correct positional parameter with multi-set positions' {
+            $ScriptInput = 'Test-Func2212Arg Hello '
+            $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
+            $completionTexts = $res.CompletionMatches.CompletionText
+            $completionTexts | Should -Contain 'Break'
+            $completionTexts | Should -Contain 'Continue'
+        }
+
+        it 'Should handle same numeric position in different sets during completion' {
+            $ScriptInput = 'Test-FuncSamePos val1 -'
+            $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
+            $completionTexts = $res.CompletionMatches.CompletionText
+            $completionTexts | Should -Not -Contain '-AlphaValue'
+            $completionTexts | Should -Not -Contain '-BetaValue'
+            $completionTexts | Should -Contain '-Verbose'
+        }
+
+        it 'Should pass correct fakeBoundParameters for multi-set positional binding (issue #2212)' {
+            $ScriptInput = 'Test-Func2212FakeBound Hello World -Probe '
+            $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
+            $completionTexts = $res.CompletionMatches.CompletionText
+
+            $completionTexts | Should -Contain 'HasFirst:True'
+            $completionTexts | Should -Contain 'HasSecond:True'
+            $completionTexts | Should -Contain 'HasOnlyOne:False'
+            $completionTexts | Should -Contain 'FirstValue:Hello'
+            $completionTexts | Should -Contain 'SecondValue:World'
+            $completionTexts | Should -Contain 'OnlyOneValue:<none>'
+        }
+    }
+
     it 'Should complete base class members of types without type definition AST' {
         $res = TabExpansion2 -inputScript @'
 class InheritedClassTest : System.Attribute
@@ -2408,7 +2561,7 @@ param ($Param1)
             $null = New-Item -Path $TestFile
             $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
             Pop-Location
-                        
+
             $ExpectedPath = Join-Path -Path '.\' -ChildPath $ExpectedFileName
             $res.CompletionMatches.CompletionText | Where-Object {$_ -Like "*$ExpectedFileName"} | Should -Be $ExpectedPath
         }
