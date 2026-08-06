@@ -6,10 +6,10 @@
     "FromVersion": "10.0.5",
     "ToVersion": "10.0.6",
     "VulnerabilityId": [
+      "GHSA-W3X6-4M5H-CXQF",
       "CVE-2026-26171",
-      "CVE-2026-33116",
       "GHSA-37GX-XXP4-5RGX",
-      "GHSA-W3X6-4M5H-CXQF"
+      "CVE-2026-33116"
     ],
     "Severity": [
       "high"
@@ -18,11 +18,11 @@
       "[10.0.0, 10.0.5]"
     ],
     "AdvisoryUrls": [
-      "https://github.com/advisories/GHSA-37gx-xxp4-5rgx",
-      "https://github.com/advisories/GHSA-w3x6-4m5h-cxqf"
+      "https://github.com/advisories/GHSA-w3x6-4m5h-cxqf",
+      "https://github.com/advisories/GHSA-37gx-xxp4-5rgx"
     ],
-    "Justification": "",
-    "TimestampUtc": "04/16/2026 23:13:21"
+    "Justification": null,
+    "TimestampUtc": "2026-04-16T23:13:21.4575733Z"
   },
   {
     "ChangeType": "NonSecurity",
@@ -35,7 +35,7 @@
     "VulnerableRanges": [],
     "AdvisoryUrls": [],
     "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
-    "TimestampUtc": "04/16/2026 23:13:22"
+    "TimestampUtc": "2026-04-16T23:13:22.4500098Z"
   },
   {
     "ChangeType": "NonSecurity",
@@ -48,7 +48,7 @@
     "VulnerableRanges": [],
     "AdvisoryUrls": [],
     "Justification": "Required dependency of System.Security.Cryptography.Xml.",
-    "TimestampUtc": "04/16/2026 23:13:22"
+    "TimestampUtc": "2026-04-16T23:13:22.4500098Z"
   },
   {
     "ChangeType": "NonSecurity",
@@ -61,7 +61,7 @@
     "VulnerableRanges": [],
     "AdvisoryUrls": [],
     "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
-    "TimestampUtc": "05/14/2026 17:53:01"
+    "TimestampUtc": "2026-05-14T17:53:01.1430124Z"
   },
   {
     "ChangeType": "NonSecurity",
@@ -74,7 +74,7 @@
     "VulnerableRanges": [],
     "AdvisoryUrls": [],
     "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
-    "TimestampUtc": "06/09/2026 20:21:29"
+    "TimestampUtc": "2026-06-09T20:21:29.3313254Z"
   },
   {
     "ChangeType": "NonSecurity",
@@ -87,7 +87,7 @@
     "VulnerableRanges": [],
     "AdvisoryUrls": [],
     "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
-    "TimestampUtc": "07/15/2026 15:01:47"
+    "TimestampUtc": "2026-07-15T15:01:47.0062032Z"
   },
   {
     "ChangeType": "Security",
