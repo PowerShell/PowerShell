@@ -538,7 +538,7 @@ function Start-PSBuild {
         Write-LogGroupStart -Title "Cleaning your working directory"
         Push-Location $PSScriptRoot
         try {
-            CleanLenient
+            Measure-Command { CleanLenient }
         } finally {
             Write-LogGroupEnd -Title "Cleaning your working directory"
             Pop-Location
