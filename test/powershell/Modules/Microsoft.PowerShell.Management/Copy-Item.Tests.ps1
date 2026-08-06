@@ -14,6 +14,14 @@ Describe "Validate Copy-Item locally" -Tags "CI" {
     }
 }
 
+# This is a Pester test suite to validate Copy-Item remotely using a remote session.
+# We cannot create a PS Remoting session on non-Windows, so do not run the suite on those platforms.
+if (-not $IsWindows)
+{
+    Write-Host "The 'HelpersRemoting' module works on Windows only, skipping remote tests for Copy-Item ..." -ForegroundColor Cyan
+    return
+}
+
 Describe "Validate Copy-Item Remotely" -Tags @('CI', 'RequireAdminOnWindows') {
 
     # Validate a copy item operation.
