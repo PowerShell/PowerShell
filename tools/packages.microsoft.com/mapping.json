@@ -82,9 +82,9 @@
           "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
       },
       {
-          "url": "microsoft-debian-bookworm-prod",
+          "url": "microsoft-debian-trixie-prod",
           "distribution": [
-              "bookworm"
+              "trixie"
           ],
           "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
       },
@@ -93,7 +93,7 @@
           "distribution": [
               "trixie"
           ],
-          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_arm64.deb"
       },
       {
           "url": "microsoft-ubuntu-bionic-prod",
@@ -120,6 +120,13 @@
         "url": "microsoft-ubuntu-noble-prod",
         "distribution": [
             "noble"
+        ],
+        "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+    },
+    {
+        "url": "microsoft-ubuntu-resolute-prod",
+        "distribution": [
+            "resolute"
         ],
         "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
     },

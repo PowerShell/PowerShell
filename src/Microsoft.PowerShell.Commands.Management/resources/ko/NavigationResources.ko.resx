@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DeleteHasChildrenPrompt" xml:space="preserve">
+    <value>지정한 경로는 자식 항목이 있는 컨테이너입니다. 이 컨테이너와 해당 자식 항목을 삭제하시겠습니까?</value>
+  </data>
+  <data name="DeletePrompt" xml:space="preserve">
+    <value>지정한 항목을 삭제하시겠습니까?</value>
+  </data>
+  <data name="CopyToExistingPrompt" xml:space="preserve">
+    <value>지정한 대상이 이미 있으므로 복사할 수 없습니다. 기존 콘텐츠를 덮어쓰시겠습니까?</value>
+  </data>
+  <data name="NewDriveConfirmAction" xml:space="preserve">
+    <value>새 드라이브</value>
+  </data>
+  <data name="NewDriveConfirmResourceTemplate" xml:space="preserve">
+    <value>이름: {0} 공급자: {1} 루트: {2}</value>
+  </data>
+  <data name="RemoveDriveConfirmAction" xml:space="preserve">
+    <value>드라이브 제거</value>
+  </data>
+  <data name="RemoveDriveConfirmResourceTemplate" xml:space="preserve">
+    <value>이름: {0} 공급자: {1} 루트: {2}</value>
+  </data>
+  <data name="RemoveDriveInUse" xml:space="preserve">
+    <value>드라이브 '{0}'이(가) 사용 중이므로 제거할 수 없습니다.</value>
+  </data>
+  <data name="RemoveItemWithChildren" xml:space="preserve">
+    <value>항목 {0}에 자식 항목이 있으며 Recurse 매개 변수가 지정되지 않았습니다. 계속하면 모든 자식 항목이 항목과 함께 제거됩니다. 계속하시겠습니까?</value>
+  </data>
+  <data name="RemoveItemInUse" xml:space="preserve">
+    <value>항목 '{0}'이(가) 사용 중이므로 제거할 수 없습니다.</value>
+  </data>
+  <data name="ItemNotFound" xml:space="preserve">
+    <value>지정한 경로의 개체 {0}이(가) 없거나 -Include 또는 -Exclude 매개 변수로 필터링되었습니다.</value>
+  </data>
+  <data name="SetContentAction" xml:space="preserve">
+    <value>콘텐츠 설정</value>
+  </data>
+  <data name="SetContentTarget" xml:space="preserve">
+    <value>경로: {0}</value>
+  </data>
+  <data name="AddContentAction" xml:space="preserve">
+    <value>콘텐츠 추가</value>
+  </data>
+  <data name="AddContentTarget" xml:space="preserve">
+    <value>경로: {0}</value>
+  </data>
+  <data name="MoveItemDoesntExist" xml:space="preserve">
+    <value>항목 '{0}'이(가) 없으므로 항목을 이동할 수 없습니다.</value>
+  </data>
+  <data name="MoveItemInUse" xml:space="preserve">
+    <value>항목 '{0}'이(가) 사용 중이므로 항목을 이동할 수 없습니다.</value>
+  </data>
+  <data name="RenameItemDoesntExist" xml:space="preserve">
+    <value>항목 '{0}'이(가) 없어서 이름을 바꿀 수 없습니다.</value>
+  </data>
+  <data name="RenamedItemInUse" xml:space="preserve">
+    <value>항목 '{0}'이(가) 사용 중이므로 이름을 바꿀 수 없습니다.</value>
+  </data>
+  <data name="ParsePathFormatError" xml:space="preserve">
+    <value>경로 '{0}'에 한정자가 지정되지 않았으므로 경로를 구문 분석할 수 없습니다.</value>
+  </data>
+  <data name="CreateAction" xml:space="preserve">
+    <value>시작</value>
+  </data>
+  <data name="RollbackAction" xml:space="preserve">
+    <value>롤백</value>
+  </data>
+  <data name="CommitAction" xml:space="preserve">
+    <value>커밋</value>
+  </data>
+  <data name="TransactionResource" xml:space="preserve">
+    <value>현재 트랜잭션</value>
+  </data>
+</root>

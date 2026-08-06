@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MetadataMemberInitialization" xml:space="preserve">
+    <value>Nie można zainicjować atrybutów dla „{0}”: „{1}”</value>
+  </data>
+  <data name="ValidateRangeElementType" xml:space="preserve">
+    <value>Nie można sprawdzić poprawności argumentu, ponieważ jego typ „{0}” nie jest taki sam ({1}) jak maksymalne i minimalne granice parametru. Upewnij się, że argument ma typ {1}, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateRangePositiveFailure" xml:space="preserve">
+    <value>Nie można sprawdzić poprawności argumentu „{0}”, ponieważ jego wartość nie jest większa od zera.</value>
+  </data>
+  <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
+    <value>Nie można sprawdzić poprawności argumentu „{0}”, ponieważ jego wartość nie jest większa lub równa zero.</value>
+  </data>
+  <data name="ValidateRangeNegativeFailure" xml:space="preserve">
+    <value>Nie można sprawdzić poprawności argumentu „{0}”, ponieważ jego wartość nie jest mniejsza od zera.</value>
+  </data>
+  <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
+    <value>Nie można zweryfikować argumentu „{0}”, ponieważ jego wartość nie jest mniejsza lub równa zero.</value>
+  </data>
+  <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
+    <value>Nie można zaakceptować określonego zakresu minimalnego ({0}), ponieważ nie jest tego samego typu co określony zakres maksymalny ({1}). Zaktualizuj atrybut ValidateRange dla parametru.</value>
+  </data>
+  <data name="ValidateRangeNotIComparable" xml:space="preserve">
+    <value>Nie można zaakceptować typów parametrów MaxRange i MinRange. Oba parametry muszą być obiektami implementującymi interfejs IComparable.</value>
+  </data>
+  <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
+    <value>Nie można zaakceptować określonego zakresu maksymalnego, ponieważ jest on mniejszy niż określony zakres minimalny. Zaktualizuj atrybut ValidateRange dla parametru.</value>
+  </data>
+  <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
+    <value>Argument {0} jest większy niż maksymalny dozwolony zakres {1}. Podaj argument mniejszy lub równy {1}, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateRangeSmallerThanMinRangeFailure" xml:space="preserve">
+    <value>Argument {0} jest mniejszy niż minimalny dozwolony zakres {1}. Podaj argument, który jest większy lub równy {1}, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidatePatternFailure" xml:space="preserve">
+    <value>Argument „{0}” nie pasuje do wzorca „{1}”. Podaj argument zgodny ze wzorcem „{1}” i spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateCountNotInArray" xml:space="preserve">
+    <value>Atrybutu ValidateCount nie można zastosować do parametru, który nie jest tablicą. Usuń atrybut z parametru albo zmień parametr na parametr tablicowy.</value>
+  </data>
+  <data name="ValidateCountExactFailure" xml:space="preserve">
+    <value>Parametr wymaga dokładnie {0} wartości — podano {1} wartości.</value>
+  </data>
+  <data name="ValidateCountMinMaxFailure" xml:space="preserve">
+    <value>Parametr wymaga co najmniej {0} wartości i nie więcej niż {1} wartości — podano {2} wartości.</value>
+  </data>
+  <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>Określona maksymalna liczba argumentów dla parametru jest mniejsza niż określona minimalna liczba argumentów. Zaktualizuj atrybut ValidateCount parametru.</value>
+  </data>
+  <data name="ValidateLengthMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>Określona maksymalna długość argumentu w znakach jest krótsza niż określona minimalna długość argumentu w znakach. Zaktualizuj atrybut ValidateLength dla parametru.</value>
+  </data>
+  <data name="ValidateLengthNotString" xml:space="preserve">
+    <value>Atrybutu ValidateLength nie można zastosować do parametru, który nie jest parametrem typu string ani string[]. Zmień parametr na string lub string[].</value>
+  </data>
+  <data name="ValidateLengthMinLengthFailure" xml:space="preserve">
+    <value>Długość argumentu w znakach ({1}) jest zbyt mała. Określ argument o długości większej lub równej „{0}”, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateLengthMaxLengthFailure" xml:space="preserve">
+    <value>Długość znaku ({1}) argumentu jest za długa. Określ argument o długości mniejszej lub równej „{0}”, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateSetFailure" xml:space="preserve">
+    <value>Argument „{0}” nie należy do zestawu „{1}” określonego przez atrybut ValidateSet. Podaj argument znajdujący się w zestawie, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateSetGeneratedValidValuesListIsNull" xml:space="preserve">
+    <value>Generator poprawnych wartości zwrócił wartość null.</value>
+  </data>
+  <data name="ValidateFailureResult" xml:space="preserve">
+    <value>„{0}” nie powiodło się we właściwości „{1}” {2}</value>
+  </data>
+  <data name="ParsingTooManyParameterSets" xml:space="preserve">
+    <value>Nie można pobrać ani uruchomić polecenia. Przekroczono maksymalną liczbę zestawów parametrów dla tego polecenia.</value>
+  </data>
+  <data name="ArgumentTransformationArgumentsShouldBeStrings" xml:space="preserve">
+    <value>Nie można przetworzyć argumentu, ponieważ jego wartość nie jest ciągiem. Wartości argumentów parametrów, dla których określono atrybut ArgumentTransformationAttribute, powinny być ciągami.</value>
+  </data>
+  <data name="InvalidValueFailure" xml:space="preserve">
+    <value>Nie można sprawdzić poprawności zmiennej, ponieważ wartość {1} nie jest prawidłową wartością dla zmiennej {0}.</value>
+  </data>
+  <data name="InvalidMetadataForCurrentValue" xml:space="preserve">
+    <value>Nie można dodać atrybutu, ponieważ zmienna {0} o wartości {1} nie byłaby już prawidłowa.</value>
+  </data>
+  <data name="ValidateNotNullFailure" xml:space="preserve">
+    <value>Argument ma wartość null. Podaj prawidłową wartość argumentu, a następnie spróbuj ponownie uruchomić polecenie.</value>
+  </data>
+  <data name="ValidateNotNullCollectionFailure" xml:space="preserve">
+    <value>Argument ma wartość null lub element kolekcji argumentów zawiera wartość null. Podaj kolekcję, która nie zawiera żadnych wartości null, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyFailure" xml:space="preserve">
+    <value>Argument ma wartość null lub jest pusty. Podaj argument, który nie ma wartości null ani nie jest pusty, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
+    <value>Argument ma wartość null, jest pusty lub element kolekcji argumentów zawiera wartość null. Podaj kolekcję, która nie zawiera żadnych wartości null, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
+    <value>Argument ma wartość null, jest pusty lub zawiera tylko znaki białe. Podaj argument, który zawiera znaki inne niż białe, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
+    <value>Element kolekcji argumentów ma wartość null, jest pusty lub składa się tylko ze znaków białych. Podaj kolekcję, która nie zawiera żadnych tych wartości, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>Parametr o nazwie „{0}” został zdefiniowany wielokrotnie dla polecenia.</value>
+  </data>
+  <data name="AliasParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>Nie można określić aliasu parametru, ponieważ alias o nazwie „{0}” został już zdefiniowany wielokrotnie dla polecenia.</value>
+  </data>
+  <data name="ParameterNameConflictsWithAlias" xml:space="preserve">
+    <value>Nie można określić parametru „{0}”, ponieważ powoduje konflikt z aliasem parametru o tej samej nazwie dla parametru „{1}”.</value>
+  </data>
+  <data name="ValidateScriptFailure" xml:space="preserve">
+    <value>Skrypt walidacji „{1}” dla argumentu o wartości „{0}” nie zwrócił wyniku True. Ustal, dlaczego skrypt walidacji się nie powiódł, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateVersionFailure" xml:space="preserve">
+    <value>Argument „{0}” nie zawiera prawidłowej wersji programu PowerShell. Podaj prawidłowy numer wersji, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="ValidateVariableName" xml:space="preserve">
+    <value>Nie można sprawdzić poprawności argumentu „{0}”, ponieważ nie jest to prawidłowa nazwa zmiennej.</value>
+  </data>
+  <data name="JobDefinitionMustDeriveFromIJobConverter" xml:space="preserve">
+    <value>Typ konwersji zadania musi pochodzić z IAstToScriptBlockConverter.</value>
+  </data>
+  <data name="ValidateDrivePathArgNotString" xml:space="preserve">
+    <value>Argument ścieżki jest nieprawidłowy. Podaj argument ścieżki, który jest typem ciągu.</value>
+  </data>
+  <data name="ValidateDrivePathFailure" xml:space="preserve">
+    <value>Argument ścieżki na dysku {0} nie należy do zestawu zatwierdzonych dysków: {1}. Podaj argument ścieżki z zatwierdzonym dyskiem.</value>
+  </data>
+  <data name="ValidateDrivePathInvalidChar" xml:space="preserve">
+    <value>Argument ścieżki zawiera nieprawidłowe znaki.</value>
+  </data>
+  <data name="ValidateDrivePathNoRoot" xml:space="preserve">
+    <value>Argument ścieżki nie ma katalogu głównego.  Podaj pełną ścieżkę z katalogiem głównym.</value>
+  </data>
+  <data name="ArgumentNullOrEmpty" xml:space="preserve">
+    <value>Wartość argumentu dla parametru „{0}” nie może być równa null ani być pustym ciągiem.</value>
+  </data>
+  <data name="InvalidEnumArgument" xml:space="preserve">
+    <value>Element członkowski Enum „{0}” nie jest prawidłową wartością parametru „{1}”. Określ jeden z następujących elementów członkowskich i spróbuj ponownie: {2}.</value>
+  </data>
+  <data name="ValidateTrustedDataFailure" xml:space="preserve">
+    <value>Nie można przetworzyć danych wejściowych. Argument „{0}” nie jest zaufany.</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
+    <value>Sprawdzanie atrybutu ValidateTrustedData nie powiodło się</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
+    <value>Argument parametru „{0}” nie jest zaufany i nie przejdzie sprawdzania atrybutu ValidateTrustedData w trybie Constrained Language.</value>
+  </data>
+</root>

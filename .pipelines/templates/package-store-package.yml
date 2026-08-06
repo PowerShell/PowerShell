@@ -79,10 +79,24 @@ jobs:
         $currentChannel = if ($IsLTS) { 'LTS' }
           elseif ($IsStable) { 'Stable' }
           elseif ($IsPreview) { 'Preview' }
-          else {
-            Write-Error "No valid channel detected"
-            exit 1
+          else { $null }
+
+        if (-not $currentChannel) {
+          Write-Host "##[warning]No release channel selected (LTS/Stable/Preview all false). Skipping Store package creation."
+          Write-Host "##vso[task.setvariable variable=SkipStorePublish]true"
+          # Set channel flags so any downstream conditioned tasks evaluate to skip.
+          Write-Host "##vso[task.setvariable variable=LTS]false"
+          Write-Host "##vso[task.setvariable variable=STABLE]false"
+          Write-Host "##vso[task.setvariable variable=PREVIEW]false"
+          # Ensure the output directory exists so downstream artifact publishing does not fail.
+          $outputDirectory = "$(ob_outputDirectory)"
+          if (-not (Test-Path -LiteralPath $outputDirectory)) {
+            New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
           }
+          return
+        }
+
+        Write-Host "##vso[task.setvariable variable=SkipStorePublish]false"
 
         $config = $channelConfigs[$currentChannel]
         Write-Verbose -Verbose "Selected channel: $currentChannel"
@@ -242,3 +256,4 @@ jobs:
           exit 1
         }
       displayName: 'Upload StoreBroker Package'
+      condition: and(succeeded(), ne(variables['SkipStorePublish'], 'true'))

@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HelpNotFound" xml:space="preserve">
+    <value>Get-Help 在此工作階段的說明檔中找不到 {0}。若要下載更新的說明主題，請輸入 "Update-Help"。若要線上取得說明，請在 TechNet 文件庫中搜尋說明主題，網址為 https://go.microsoft.com/fwlink/?LinkID=107116。</value>
+  </data>
+  <data name="HelpCategoryInvalid" xml:space="preserve">
+    <value>無法處理說明類別，因為 "{0}" 不是有效的說明類別。</value>
+  </data>
+  <data name="HelpFileLoadFailure" xml:space="preserve">
+    <value>無法載入說明檔 "{0}"。詳細資料: {1}。</value>
+  </data>
+  <data name="HelpFileNotAccessible" xml:space="preserve">
+    <value>無法存取說明檔 "{0}"，因為目前的使用者沒有該檔案的存取權限。詳細資料: {1}。</value>
+  </data>
+  <data name="HelpFileNotValid" xml:space="preserve">
+    <value>說明檔 "{0}" 不是有效的 XML 文件。詳細資料: {1}。</value>
+  </data>
+  <data name="LoadHelpFileForTargetFailed" xml:space="preserve">
+    <value>載入來自檔案 {1} 的 {0} 說明內容時發生錯誤。詳細資料: {2}。若要下載更新的說明主題，請執行 Update-Help Cmdlet。若要線上取得說明，請在 TechNet 文件庫中搜尋說明主題，網址為 https://go.microsoft.com/fwlink/?LinkID=107116。</value>
+  </data>
+  <data name="ProviderLoadError" xml:space="preserve">
+    <value>無法載入提供者 "{0}"。詳細資料: {1}。</value>
+  </data>
+  <data name="HelpLoadError" xml:space="preserve">
+    <value>無法載入說明檔。載入說明檔案 "{0}" 時發生下列 {1} 個錯誤。</value>
+  </data>
+  <data name="MamlInvalidChildNodeError" xml:space="preserve">
+    <value>節點 "{0}" 不能有 "{1}" 作為子節點。節點路徑: {2}。</value>
+  </data>
+  <data name="MamlInvalidChildNodeCountError" xml:space="preserve">
+    <value>節點 "{0}" 最多可以有 {2} 個類型為 "{1}" 的子節點。節點路徑: {3}。</value>
+  </data>
+  <data name="RegistryPathNotFound" xml:space="preserve">
+    <value>找不到登錄機碼: "{0}{1}"；改用 "{2}" 載入說明檔。</value>
+  </data>
+  <data name="NoParmsFound" xml:space="preserve">
+    <value>沒有任何參數符合條件 {0}。</value>
+  </data>
+  <data name="ParamNotSupported" xml:space="preserve">
+    <value>要求的說明類別不支援 {0}。</value>
+  </data>
+  <data name="NoURIFound" xml:space="preserve">
+    <value>無法顯示此說明主題的線上版本，因為命令程式碼或命令的說明檔中未指定此說明主題的網際網路位址 (URI)。</value>
+  </data>
+  <data name="InvalidURI" xml:space="preserve">
+    <value>指定的 URI {0} 無效。</value>
+  </data>
+  <data name="CannotLaunchURI" xml:space="preserve">
+    <value>啟動瀏覽器以顯示線上說明失敗。沒有可用來開啟 URI {0} 的程式或瀏覽器。</value>
+  </data>
+  <data name="ProtocolNotSupported" xml:space="preserve">
+    <value>Uri "{0}" 中指定的通訊協定不受支援。僅支援 "{1}" 和 "{2}" 通訊協定。</value>
+  </data>
+  <data name="MultipleOnlineTopicsNotSupported" xml:space="preserve">
+    <value>找到多個說明主題。使用 -{0} 選項時，只能指定一個說明主題。</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailable" xml:space="preserve">
+    <value>無法從遠端 Runspace 取得說明，因為 Runspace 尚未開啟。 請執行隱含遠端命令以開啟 Runspace，然後再試一次取得說明的命令。</value>
+  </data>
+  <data name="UpdatableHelpRequiresElevation" xml:space="preserve">
+    <value>存取遭到拒絕。此命令無法更新 PowerShell 核心模組或 $pshome\Modules 目錄中的任何模組的說明主題。
+若要更新這些說明主題，請使用「以系統管理員身分執行」命令啟動 PowerShell，然後再次嘗試執行 Update-Help。</value>
+  </data>
+  <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
+    <value>若要使用 {0}，請確定您的應用程式使用 'Microsoft.NET.Sdk.WindowsDesktop' 作為專案 SDK，而且對應的組件 'Microsoft.PowerShell.GraphicalHost' 可供使用。({1})</value>
+  </data>
+  <data name="RemotingNotSupportedForFeature" xml:space="preserve">
+    <value>{0} 無法在遠端工作階段中使用。</value>
+  </data>
+  <data name="CircularDependencyInHelpForwarding" xml:space="preserve">
+    <value>ForwardHelpTargetName 不能參考函式本身。</value>
+  </data>
+  <data name="NoNetworkCommands" xml:space="preserve">
+    <value>在受限制的工作階段中，無法從網路位置取得說明。</value>
+  </data>
+</root>
