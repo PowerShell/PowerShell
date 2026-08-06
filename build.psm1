@@ -488,14 +488,65 @@ function Start-PSBuild {
         Stop-Process -Verbose
     }
 
+    function CleanLenient {
+        [CmdletBinding()]
+        param()
+        $failed = $false
+        # `git clean` may keep returning different sets of paths.
+        while (-not $failed -and (git clean --dry-run -dX | Select-Object -First 1)) {
+            # `git clean` will prompt if it can't unlink files, so we delete in PS to skip errors.
+            foreach ($line in git clean --dry-run -dX) {
+                if (-not $line.StartsWith('Would remove ')) {
+                    Write-Warning "Expected git clean --dry-run prefix 'Would remove ' not found in git output '$line'. The clean operation may be unreliable. The build script may need updating."
+                    continue
+                }
+                $path = Join-Path $PSScriptRoot $line.Substring('Would remove '.Length)
+                Write-Verbose "Cleaning path '$path'..."
+                # Visual Studio is Windows-only. Use backslashes.
+                # git clean will return '.vs/' and Join-Path (Windows) will normalize to '.vs\'.
+                if ($path.Contains('\.vs\')) {
+                    # VS may take locks on files while it's open. Skip them.
+                    if ([System.IO.Directory]::Exists($path)) {
+                        $failedDir = $false
+                        foreach ($filePath in [System.IO.Directory]::EnumerateFiles($path, '*.*', [System.IO.SearchOption]::AllDirectories)) {
+                            Write-Verbose "Removing file '$filePath'."
+                            try {
+                                [System.IO.File]::Delete($filePath)
+                            } catch {
+                                $failed = $true
+                                $failedDir = $true
+                                Write-Warning "Clean operation could not remove file '$filePath'."
+                            }
+                        }
+                        if (-not $failedDir) {
+                            Write-Information "Removing directory 1 '$path'."
+                            [System.IO.Directory]::Delete($path, $true)
+                        }
+                    } else {
+                        Write-Verbose "Removing file '$path'."
+                        try {
+                            [System.IO.File]::Delete($path)
+                        } catch {
+                            $failed = $true
+                            Write-Warning "Clean operation could not remove file '$path'."
+                        }
+                    }
+                } elseif ([System.IO.File]::Exists($path)) {
+                    [System.IO.File]::Delete($path)
+                } else {
+                    Write-Information "Removing directory '$path'."
+                    # Delete recursively.
+                    [System.IO.Directory]::Delete($path, $true)
+                }
+            }
+        }
+    }
+
     if ($Clean) {
         Write-LogGroupStart -Title "Cleaning your working directory"
         Push-Location $PSScriptRoot
         try {
-            # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
-            # Excluded src/Modules/nuget.config as this is required for release build.
-            # Excluded nuget.config as this is required for release build.
-            git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3 --exclude src/Modules/nuget.config  --exclude nuget.config
+            CleanLenient
         } finally {
             Write-LogGroupEnd -Title "Cleaning your working directory"
             Pop-Location
