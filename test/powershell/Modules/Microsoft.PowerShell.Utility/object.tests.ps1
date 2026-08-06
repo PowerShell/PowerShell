@@ -25,6 +25,23 @@ Describe "Object cmdlets" -Tags "CI" {
 
 Describe "Object cmdlets" -Tags "CI" {
     Context "Measure-Object" {
+        BeforeDiscovery {
+            $testCases = @(
+                @{ data = @("abc","ABC","Def"); min = "abc"; max = "Def"},
+                @{ data = @([datetime]::Today, [datetime]::Today.AddDays(-1)); min = ([datetime]::Today.AddDays(-1)).ToString() ; max = [datetime]::Today.ToString() }
+                @{ data = @(1,2,3,"ABC"); min = 1; max = "ABC"},
+                @{ data = @(4,2,3,"ABC",1); min = 1; max = "ABC"},
+                @{ data = @(4,2,3,"ABC",1,"DEF"); min = 1; max = "DEF"},
+                @{ data = @("111 Test","19"); min = "111 Test"; max = "19"},
+                @{ data = @("19", "111 Test"); min = "111 Test"; max = "19"},
+                @{ data = @("111 Test",19); min = "111 Test"; max = 19},
+                @{ data = @(19, "111 Test"); min = "111 Test"; max = 19},
+                @{ data = @(100,2,3, "A", 1); min = 1; max = "A"},
+                @{ data = @(4,2,3, "ABC", 1, "DEF"); min = 1; max = "DEF"},
+                @{ data = @("abc",[Datetime]::Today,"def"); min = [Datetime]::Today.ToString(); max = "def"}
+            )
+        }
+
         BeforeAll {
             ## Powershell language prefers , as an array separator without "".
             ## If a number has comma in them it considers it to be the 1000 separator like "1,000".
@@ -44,20 +61,6 @@ Describe "Object cmdlets" -Tags "CI" {
             $secondObject = New-Object psobject
             $secondObject | Add-Member -NotePropertyName Header -NotePropertyValue $secondValue
 
-            $testCases = @(
-                @{ data = @("abc","ABC","Def"); min = "abc"; max = "Def"},
-                @{ data = @([datetime]::Today, [datetime]::Today.AddDays(-1)); min = ([datetime]::Today.AddDays(-1)).ToString() ; max = [datetime]::Today.ToString() }
-                @{ data = @(1,2,3,"ABC"); min = 1; max = "ABC"},
-                @{ data = @(4,2,3,"ABC",1); min = 1; max = "ABC"},
-                @{ data = @(4,2,3,"ABC",1,"DEF"); min = 1; max = "DEF"},
-                @{ data = @("111 Test","19"); min = "111 Test"; max = "19"},
-                @{ data = @("19", "111 Test"); min = "111 Test"; max = "19"},
-                @{ data = @("111 Test",19); min = "111 Test"; max = 19},
-                @{ data = @(19, "111 Test"); min = "111 Test"; max = 19},
-                @{ data = @(100,2,3, "A", 1); min = 1; max = "A"},
-                @{ data = @(4,2,3, "ABC", 1, "DEF"); min = 1; max = "DEF"},
-                @{ data = @("abc",[Datetime]::Today,"def"); min = [Datetime]::Today.ToString(); max = "def"}
-            )
         }
 
         It "can compare string representation for minimum" {

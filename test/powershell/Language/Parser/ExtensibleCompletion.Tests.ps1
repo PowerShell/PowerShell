@@ -8,232 +8,239 @@ using namespace System.Management.Automation.Language
 using namespace System.Collections
 using namespace System.Collections.Generic
 
-#region Testcase infrastructure
+BeforeDiscovery {
+    #region Testcase infrastructure - Discovery
 
-class CompletionTestResult
-{
-    [string]$CompletionText
-    [string]$ListItemText
-    [CompletionResultType]$ResultType
-    [string]$ToolTip
-    [bool]$Found
-
-    [bool] Equals($Other)
+    class CompletionTestResult
     {
-        if ($Other -isnot [CompletionTestResult] -and
-            $Other -isnot [CompletionResult])
+        [string]$CompletionText
+        [string]$ListItemText
+        [CompletionResultType]$ResultType
+        [string]$ToolTip
+        [bool]$Found
+
+        [bool] Equals($Other)
         {
-            return $false
+            if ($Other -isnot [CompletionTestResult] -and
+                $Other -isnot [CompletionResult])
+            {
+                return $false
+            }
+
+            # Comparison is intentionally fuzzy - CompletionText and ResultType must be specified
+            # but the other properties don't need to match if they aren't specified
+
+            if ($this.CompletionText -cne $Other.CompletionText -or
+                $this.ResultType -ne $Other.ResultType)
+            {
+                return $false
+            }
+
+            if ($this.ListItemText -cne $Other.ListItemText -and
+                ![string]::IsNullOrEmpty($this.ListItemText) -and ![string]::IsNullOrEmpty($Other.ListItemText))
+            {
+                return $false
+            }
+
+            if ($this.ToolTip -cne $Other.ToolTip -and
+                ![string]::IsNullOrEmpty($this.ToolTip) -and ![string]::IsNullOrEmpty($Other.ToolTip))
+            {
+                return $false
+            }
+
+            return $true
         }
-
-        # Comparison is intentionally fuzzy - CompletionText and ResultType must be specified
-        # but the other properties don't need to match if they aren't specified
-
-        if ($this.CompletionText -cne $Other.CompletionText -or
-            $this.ResultType -ne $Other.ResultType)
-        {
-            return $false
-        }
-
-        if ($this.ListItemText -cne $Other.ListItemText -and
-            ![string]::IsNullOrEmpty($this.ListItemText) -and ![string]::IsNullOrEmpty($Other.ListItemText))
-        {
-            return $false
-        }
-
-        if ($this.ToolTip -cne $Other.ToolTip -and
-            ![string]::IsNullOrEmpty($this.ToolTip) -and ![string]::IsNullOrEmpty($Other.ToolTip))
-        {
-            return $false
-        }
-
-        return $true
     }
-}
 
-class CompletionTestCase
-{
-    [CompletionTestResult[]]$ExpectedResults
-    [string[]]$NotExpectedResults
-    [string]$TestInput
-}
-
-function Get-Completions
-{
-    param([string]$inputScript, [int]$cursorColumn = $inputScript.Length)
-
-    $results = [System.Management.Automation.CommandCompletion]::CompleteInput(
-        <#inputScript#>  $inputScript,
-        <#cursorColumn#> $cursorColumn,
-        <#options#>      $null)
-
-    return $results
-}
-
-function Get-CompletionTestCaseData
-{
-    param(
-        [Parameter(ValueFromPipeline)]
-        [hashtable[]]$Data)
-
-    process
+    class CompletionTestCase
     {
-        Write-Output ([CompletionTestCase[]]$Data)
+        [CompletionTestResult[]]$ExpectedResults
+        [string[]]$NotExpectedResults
+        [string]$TestInput
     }
-}
 
-function Test-Completions
-{
-    param(
-        [Parameter(ValueFromPipeline)]
-        [CompletionTestCase[]]$TestCases)
-
-    process
+    function Get-CompletionTestCaseData
     {
-        foreach ($test in $TestCases)
+        param(
+            [Parameter(ValueFromPipeline)]
+            [hashtable[]]$Data)
+
+        process
         {
-            Context ("Command line: <" + $test.TestInput + ">") {
-                $results = Get-Completions $test.TestInput
-                foreach ($result in $results.CompletionMatches)
-                {
+            Write-Output ([CompletionTestCase[]]$Data)
+        }
+    }
+
+    function Test-Completions
+    {
+        param(
+            [Parameter(ValueFromPipeline)]
+            [CompletionTestCase[]]$TestCases)
+
+        process
+        {
+            foreach ($test in $TestCases)
+            {
+                Context ("Command line: [" + $test.TestInput + "]") -ForEach @{ testInput = $test.TestInput } {
+                    BeforeAll {
+                        $results = Get-Completions $testInput
+                    }
+
                     foreach ($expected in $test.ExpectedResults)
                     {
-                        if ($expected.Equals($result))
-                        {
-                            $expected.Found = $true
+                        $skip = $false
+                        if ( $expected.CompletionText -Match "System.Management.Automation.PerformanceData|System.Management.Automation.Security" ) { $skip = $true }
+                        It ($expected.CompletionText) -TestCases @{ expected = $expected } -Skip:$skip {
+                            $found = $false
+                            foreach ($result in $results.CompletionMatches) {
+                                if ($expected.Equals($result)) {
+                                    $found = $true
+                                    break
+                                }
+                            }
+                            $found | Should -BeTrue
                         }
                     }
-                }
-                foreach ($expected in $test.ExpectedResults)
-                {
-                    $skip = $false
-                    if ( $expected.CompletionText -Match "System.Management.Automation.PerformanceData|System.Management.Automation.Security" ) { $skip = $true }
-                    It ($expected.CompletionText) -Skip:$skip {
-                        $expected.Found | Should -BeTrue
-                    }
-                }
 
-                foreach ($notExpected in $test.NotExpectedResults)
-                {
-                    It "Not expected: $notExpected" {
-                        foreach ($result in $results.CompletionMatches)
-                        {
-                            $result.CompletionText | Should -Not -Be $notExpected
+                    foreach ($notExpected in $test.NotExpectedResults)
+                    {
+                        It "Not expected: $notExpected" -TestCases @{ notExpected = $notExpected } {
+                            foreach ($result in $results.CompletionMatches)
+                            {
+                                $result.CompletionText | Should -Not -Be $notExpected
+                            }
                         }
                     }
                 }
             }
         }
     }
+
+    #endregion Testcase infrastructure - Discovery
 }
 
-#endregion Testcase infrastructure
+BeforeAll {
+    #region Testcase infrastructure - Run
 
-function AlphaArgumentCompleter
-{
-    param(
-        [string] $CommandName,
-        [string] $parameterName,
-        [string] $wordToComplete,
-        [CommandAst] $commandAst,
-        [IDictionary] $fakeBoundParameters)
-
-    $beta = $fakeBoundParameters['beta']
-    $gamma = $fakeBoundParameters['Gamma']
-    $result = "beta: $beta  gamma: $gamma  command: $commandName  parameterName: $parameterName  wordToComplete: $wordToComplete"
-    [CompletionResult]::new($result, $result, "ParameterValue", $result)
-}
-
-class BetaArgumentCompleter : IArgumentCompleter
-{
-    [IEnumerable[CompletionResult]] CompleteArgument(
-        [string] $CommandName,
-        [string] $parameterName,
-        [string] $wordToComplete,
-        [CommandAst] $commandAst,
-        [IDictionary] $fakeBoundParameters)
+    function Get-Completions
     {
-        $resultList = [List[CompletionResult]]::new()
+        param([string]$inputScript, [int]$cursorColumn = $inputScript.Length)
 
-        $alpha = $fakeBoundParameters['Alpha']
+        $results = [System.Management.Automation.CommandCompletion]::CompleteInput(
+            <#inputScript#>  $inputScript,
+            <#cursorColumn#> $cursorColumn,
+            <#options#>      $null)
+
+        return $results
+    }
+
+    function AlphaArgumentCompleter
+    {
+        param(
+            [string] $CommandName,
+            [string] $parameterName,
+            [string] $wordToComplete,
+            [CommandAst] $commandAst,
+            [IDictionary] $fakeBoundParameters)
+
+        $beta = $fakeBoundParameters['beta']
         $gamma = $fakeBoundParameters['Gamma']
-        $result = "alpha: $alpha  gamma: $gamma  command: $commandName  parameterName: $parameterName  wordToComplete: $wordToComplete"
-        $resultList.Add([CompletionResult]::new($result, $result, "ParameterValue", $result))
-
-        return $resultList
+        $result = "beta: $beta  gamma: $gamma  command: $commandName  parameterName: $parameterName  wordToComplete: $wordToComplete"
+        [CompletionResult]::new($result, $result, "ParameterValue", $result)
     }
-}
 
-function TestFunction
-{
-    param(
-        [ArgumentCompleter({ AlphaArgumentCompleter @args })]
-        $Alpha,
-        [ArgumentCompleter([BetaArgumentCompleter])]
-        $Beta,
-        $Gamma
-    )
-}
-
-
-class NumberCompleter : IArgumentCompleter
-{
-
-    [int] $From
-    [int] $To
-    [int] $Step
-
-    NumberCompleter([int] $from, [int] $to, [int] $step)
+    function TestFunction
     {
-        if ($from -gt $to) {
-            throw [ArgumentOutOfRangeException]::new("from")
+        param(
+            [ArgumentCompleter({ AlphaArgumentCompleter @args })]
+            $Alpha,
+            [ArgumentCompleter([BetaArgumentCompleter])]
+            $Beta,
+            $Gamma
+        )
+    }
+
+    function FactoryCompletionAdd {
+        param(
+            [NumberCompletion(0, 50, Step = 5)]
+            [int] $Number
+        )
+    }
+
+    class BetaArgumentCompleter : IArgumentCompleter
+    {
+        [IEnumerable[CompletionResult]] CompleteArgument(
+            [string] $CommandName,
+            [string] $parameterName,
+            [string] $wordToComplete,
+            [CommandAst] $commandAst,
+            [IDictionary] $fakeBoundParameters)
+        {
+            $resultList = [List[CompletionResult]]::new()
+
+            $alpha = $fakeBoundParameters['Alpha']
+            $gamma = $fakeBoundParameters['Gamma']
+            $result = "alpha: $alpha  gamma: $gamma  command: $commandName  parameterName: $parameterName  wordToComplete: $wordToComplete"
+            $resultList.Add([CompletionResult]::new($result, $result, "ParameterValue", $result))
+
+            return $resultList
         }
-        $this.From = $from
-        $this.To = $to
-        $this.Step = if($step -lt 1) { 1 } else { $step }
     }
 
-    [IEnumerable[CompletionResult]] CompleteArgument(
-        [string] $CommandName,
-        [string] $parameterName,
-        [string] $wordToComplete,
-        [CommandAst] $commandAst,
-        [IDictionary] $fakeBoundParameters)
+    class NumberCompleter : IArgumentCompleter
     {
-        $resultList = [List[CompletionResult]]::new()
-        $local:to = $this.To
-        for ($i = $this.From; $i -le $to; $i += $this.Step) {
-            if ($i.ToString().StartsWith($wordToComplete, [System.StringComparison]::Ordinal)) {
-                $num = $i.ToString()
-                $resultList.Add([CompletionResult]::new($num, $num, "ParameterValue", $num))
+
+        [int] $From
+        [int] $To
+        [int] $Step
+
+        NumberCompleter([int] $from, [int] $to, [int] $step)
+        {
+            if ($from -gt $to) {
+                throw [ArgumentOutOfRangeException]::new("from")
             }
+            $this.From = $from
+            $this.To = $to
+            $this.Step = if($step -lt 1) { 1 } else { $step }
         }
 
-        return $resultList
+        [IEnumerable[CompletionResult]] CompleteArgument(
+            [string] $CommandName,
+            [string] $parameterName,
+            [string] $wordToComplete,
+            [CommandAst] $commandAst,
+            [IDictionary] $fakeBoundParameters)
+        {
+            $resultList = [List[CompletionResult]]::new()
+            $local:to = $this.To
+            for ($i = $this.From; $i -le $to; $i += $this.Step) {
+                if ($i.ToString().StartsWith($wordToComplete, [System.StringComparison]::Ordinal)) {
+                    $num = $i.ToString()
+                    $resultList.Add([CompletionResult]::new($num, $num, "ParameterValue", $num))
+                }
+            }
+
+            return $resultList
+        }
     }
-}
 
-class NumberCompletionAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory
-{
-    [int] $From
-    [int] $To
-    [int] $Step
-
-    NumberCompletionAttribute([int] $from, [int] $to)
+    class NumberCompletionAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory
     {
-        $this.From = $from
-        $this.To = $to
-        $this.Step = 1
+        [int] $From
+        [int] $To
+        [int] $Step
+
+        NumberCompletionAttribute([int] $from, [int] $to)
+        {
+            $this.From = $from
+            $this.To = $to
+            $this.Step = 1
+        }
+
+        [IArgumentCompleter] Create() { return [NumberCompleter]::new($this.From, $this.To, $this.Step) }
     }
 
-    [IArgumentCompleter] Create() { return [NumberCompleter]::new($this.From, $this.To, $this.Step) }
-}
-
-function FactoryCompletionAdd {
-    param(
-        [NumberCompletion(0, 50, Step = 5)]
-        [int] $Number
-    )
+    #endregion Testcase infrastructure - Run
 }
 
 Describe "Factory based extensible completion" -Tags "CI" {
@@ -265,18 +272,20 @@ Describe "Test class based extensible completion" -Tags "CI" {
 }
 
 Describe "Test registration based extensible completion" -Tags "CI" {
-    Register-ArgumentCompleter -Command TestFunction -Parameter Gamma -ScriptBlock {
-        param(
-            [string] $CommandName,
-            [string] $parameterName,
-            [string] $wordToComplete,
-            [CommandAst] $commandAst,
-            [IDictionary] $fakeBoundParameters)
+    BeforeAll {
+        Register-ArgumentCompleter -Command TestFunction -Parameter Gamma -ScriptBlock {
+            param(
+                [string] $CommandName,
+                [string] $parameterName,
+                [string] $wordToComplete,
+                [CommandAst] $commandAst,
+                [IDictionary] $fakeBoundParameters)
 
-        $beta = $fakeBoundParameters['beta']
-        $alpha = $fakeBoundParameters['alpha']
-        $result = "beta: $beta  alpha: $alpha  command: $commandName  parameterName: $parameterName  wordToComplete: $wordToComplete"
-        [CompletionResult]::new($result, $result, "ParameterValue", $result)
+            $beta = $fakeBoundParameters['beta']
+            $alpha = $fakeBoundParameters['alpha']
+            $result = "beta: $beta  alpha: $alpha  command: $commandName  parameterName: $parameterName  wordToComplete: $wordToComplete"
+            [CompletionResult]::new($result, $result, "ParameterValue", $result)
+        }
     }
 
     @{
@@ -288,9 +297,11 @@ Describe "Test registration based extensible completion" -Tags "CI" {
 }
 
 Describe "Test extensible completion of native commands" -Tags "CI" {
-    Register-ArgumentCompleter -Command netsh -Native -ScriptBlock {
-        [CompletionResult]::new('advfirewall', 'advfirewall', "ParameterValue", 'advfirewall')
-        [CompletionResult]::new('bridge', 'bridge', "ParameterValue", 'bridge')
+    BeforeAll {
+        Register-ArgumentCompleter -Command netsh -Native -ScriptBlock {
+            [CompletionResult]::new('advfirewall', 'advfirewall', "ParameterValue", 'advfirewall')
+            [CompletionResult]::new('bridge', 'bridge', "ParameterValue", 'bridge')
+        }
     }
 
     @{
@@ -303,15 +314,17 @@ Describe "Test extensible completion of native commands" -Tags "CI" {
 }
 
 Describe "Test completion of parameters for native commands" -Tags "CI" {
-    Register-ArgumentCompleter -Native -CommandName foo -ScriptBlock {
-        Param($wordToComplete)
+    BeforeAll {
+        Register-ArgumentCompleter -Native -CommandName foo -ScriptBlock {
+            Param($wordToComplete)
 
-        @("-dir", "-verbose", "-help", "-version") |
-        Where-Object {
-            $_ -Match "$wordToComplete*"
-        } |
-        ForEach-Object {
-            [CompletionResult]::new($_, $_, [CompletionResultType]::ParameterName, $_)
+            @("-dir", "-verbose", "-help", "-version") |
+            Where-Object {
+                $_ -Match "$wordToComplete*"
+            } |
+            ForEach-Object {
+                [CompletionResult]::new($_, $_, [CompletionResultType]::ParameterName, $_)
+            }
         }
     }
 
@@ -431,6 +444,17 @@ Describe "Additional type name completion tests" -Tags "CI" {
 
 Describe "ArgumentCompletionsAttribute tests" -Tags "CI" {
 
+    BeforeDiscovery {
+        $testCasesScript = @(
+            @{ attributeName = "ArgumentCompletions"         ; cmdletName = "TestArgumentCompletionsAttribute"  },
+            @{ attributeName = "ArgumentCompletionsAttribute"; cmdletName = "TestArgumentCompletionsAttribute1" }
+        )
+        $testCasesCSharp = @(
+            @{ attributeName = "ArgumentCompletions"         ; cmdletName = "Get-ArgumentCompletions"  },
+            @{ attributeName = "ArgumentCompletionsAttribute"; cmdletName = "Get-ArgumentCompletions1" }
+        )
+    }
+
     BeforeAll {
         function TestArgumentCompletionsAttribute
         {
@@ -486,16 +510,6 @@ Describe "ArgumentCompletionsAttribute tests" -Tags "CI" {
 '@
         $cls = Add-Type -TypeDefinition $cmdletSrc -PassThru | Select-Object -First 1
         $testModule = Import-Module $cls.Assembly -PassThru
-
-        $testCasesScript = @(
-            @{ attributeName = "ArgumentCompletions"         ; cmdletName = "TestArgumentCompletionsAttribute"  },
-            @{ attributeName = "ArgumentCompletionsAttribute"; cmdletName = "TestArgumentCompletionsAttribute1" }
-        )
-
-        $testCasesCSharp = @(
-            @{ attributeName = "ArgumentCompletions"         ; cmdletName = "Get-ArgumentCompletions"  },
-            @{ attributeName = "ArgumentCompletionsAttribute"; cmdletName = "Get-ArgumentCompletions1" }
-        )
     }
 
     AfterAll {

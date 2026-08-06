@@ -60,30 +60,23 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
     }
 }
 
-Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnWindows') {
-    BeforeAll {
+$script:remoteSessionSkip = (! $IsWindows) -or !(Test-CanWriteToPsHome)
 
-        $skipTest = ! $IsWindows -or !(Test-CanWriteToPsHome)
-        if ($skipTest) {
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            return
-        }
+Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnWindows') -Skip:$script:remoteSessionSkip {
+    BeforeAll {
 
         try {
             Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
+            $script:remoteSessionEnabled = $true
         }
         catch {
             Write-Verbose -Verbose "exception: $_"
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            $skipTest = $true
+            $script:remoteSessionEnabled = $false
             return
         }
     }
 
     AfterAll {
-        if ($skipTest) {
-            Pop-DefaultParameterValueStack
-        }
     }
 
     It "Configuration name should be in the transcript header" {
@@ -109,31 +102,19 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
     }
 }
 
-Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
+Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') -Skip:$script:remoteSessionSkip {
     BeforeAll {
-
-        $skipTest = ! $IsWindows -or !(Test-CanWriteToPsHome)
-        if ($skipTest) {
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            return
-        }
 
         try {
             Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
         }
         catch {
             Write-Verbose -Verbose "Enable-PSRemoting failed: $($_.Message)"
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            $skipTest = $true
             return
         }
     }
 
     AfterAll {
-        if ($skipTest) {
-            Pop-DefaultParameterValueStack
-            return
-        }
     }
 
     It "Get-Help should work in JEA sessions" {
@@ -185,30 +166,45 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
     }
 }
 
-Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
-    BeforeAll {
+Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(-not $IsWindows) {
+    BeforeDiscovery {
+        $ParameterError = @(
+            @{
+                expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                title         = 'Cannot use InDisconnectedState and AsJob together'
+                testId        = 'InDisconnectedAndAsJob'
+            },
+            @{
+                expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                title         = 'Cannot use SessionName without InDisconnectedSession'
+                testId        = 'SessionNameWithoutInDisconnected'
+            },
+            @{
+                expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                title         = 'Cannot use Invoke-Command on a disconnected session'
+                testId        = 'DisconnectedSession'
+            }
+            @{
+                expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                title         = 'Cannot use Invoke-Command on a closed session'
+                testId        = 'ClosedSession'
+            }
+        )
+    }
 
-        $skipTest = ! $IsWindows
-        if ($skipTest) {
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            return
-        }
+    BeforeAll {
 
         try {
             Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
         }
         catch {
             Write-Verbose -Verbose "Enable-PSRemoting failed: $($_.Message)"
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            $skipTest = $true
             return
         }
 
         $configName = "PowerShell." + $PSVersionTable.GitCommitId
         $configuration = Get-PSSessionConfiguration -Name $configName -ErrorAction Ignore
         if ($null -eq $configuration) {
-            Push-DefaultParameterValueStack @{ "it:skip" = $true }
-            $skipTest = $true
             return
         }
 
@@ -217,46 +213,6 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         $closedSession = New-RemoteSession -ConfigurationName $endPoint -ComputerName localhost
         $closedSession.Runspace.Close()
         $openSession = New-RemoteSession -ConfigurationName $endPoint
-
-        $ParameterError = @(
-            @{
-                parameters    = @{
-                    'InDisconnectedSession' = $true
-                    'AsJob'                 = $true
-                    'ScriptBlock'           = {1}
-                    'ComputerName'          = 'localhost'
-                    'ConfigurationName'     = $endpoint
-                }
-                expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title         = 'Cannot use InDisconnectedState and AsJob together'
-            },
-            @{
-                parameters    = @{
-                    'ScriptBlock' = {1}
-                    'SessionName' = 'SomeSessionName'
-                }
-                expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title         = 'Cannot use SessionName without InDisconnectedSession'
-            },
-            @{
-                parameters    = @{
-                    'ScriptBlock' = { 1 }
-                    'Session'     = $disconnectedSession
-                    'ErrorAction' = 'Stop'
-                }
-                expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title         = 'Cannot use Invoke-Command on a disconnected session'
-            }
-            @{
-                parameters    = @{
-                    'ScriptBlock' = { 1 }
-                    'Session'     = $closedSession
-                    'ErrorAction' = 'Stop'
-                }
-                expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title         = 'Cannot use Invoke-Command on a closed session'
-            }
-        )
 
         function script:ValidateSessionInfo($session, $state)
         {
@@ -267,11 +223,6 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     AfterAll {
-        If ($skipTest) {
-            Pop-DefaultParameterValueStack
-            return
-        }
-
         if($IsWindows)
         {
             Remove-PSSession $disconnectedSession,$closedSession,$openSession -ErrorAction SilentlyContinue
@@ -322,7 +273,39 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It "<title>" -TestCases $ParameterError {
-        param($parameters, $expectedError)
+        param($testId, $expectedError)
+
+        $parameters = switch ($testId) {
+            'InDisconnectedAndAsJob' {
+                @{
+                    'InDisconnectedSession' = $true
+                    'AsJob'                 = $true
+                    'ScriptBlock'           = {1}
+                    'ComputerName'          = 'localhost'
+                    'ConfigurationName'     = $endpoint
+                }
+            }
+            'SessionNameWithoutInDisconnected' {
+                @{
+                    'ScriptBlock' = {1}
+                    'SessionName' = 'SomeSessionName'
+                }
+            }
+            'DisconnectedSession' {
+                @{
+                    'ScriptBlock' = { 1 }
+                    'Session'     = $disconnectedSession
+                    'ErrorAction' = 'Stop'
+                }
+            }
+            'ClosedSession' {
+                @{
+                    'ScriptBlock' = { 1 }
+                    'Session'     = $closedSession
+                    'ErrorAction' = 'Stop'
+                }
+            }
+        }
 
         { Invoke-Command @parameters } | Should -Throw -ErrorId $expectedError
     }

@@ -137,13 +137,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
 
     Context "Set global variable value in top-level session state" {
 
-        BeforeAll {
-
-            $testScript = @'
-            Get-GlobalVar
-            try { Test-WithGlobalVar } catch { $_.FullyQualifiedErrorId }
-'@
-
+        BeforeDiscovery {
             $testCases = @(
                 ## Assignment in language
                 @{
@@ -278,6 +272,15 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                     ExpectedOutput = "data section;ParameterArgumentValidationError,Test-Untrusted"
                 }
             )
+        }
+
+        BeforeAll {
+
+            $testScript = @'
+            Get-GlobalVar
+            try { Test-WithGlobalVar } catch { $_.FullyQualifiedErrorId }
+'@
+
         }
 
         It "<Name>" -TestCases $testCases {
@@ -530,6 +533,17 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
 
     Context "Validate trusted data for parameters of some built-in powershell cmdlets" {
 
+        BeforeDiscovery {
+            $testCases = @(
+                @{ Name = "test 'ValidateTrustedDataAttribute' on [Add-Type]";          Argument = '$globalVar = "Global-Value"; Test-AddType $globalVar';          ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.AddTypeCommand" }
+                @{ Name = "test 'ValidateTrustedDataAttribute' on [Invoke-Expression]"; Argument = '$globalVar = "Global-Value"; Test-InvokeExpression $globalVar'; ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeExpressionCommand" }
+                @{ Name = "test 'ValidateTrustedDataAttribute' on [New-Object]";        Argument = '$globalVar = "Global-Value"; Test-NewObject $globalVar';        ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.NewObjectCommand" }
+                @{ Name = "test 'ValidateTrustedDataAttribute' on [Foreach-Object]";    Argument = '$globalVar = "Global-Value"; Test-ForeachObject $globalVar';    ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ForeachObjectCommand" }
+                @{ Name = "test 'ValidateTrustedDataAttribute' on [Import-Module]";     Argument = '$globalVar = "Global-Value"; Test-ImportModule $globalVar';     ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ImportModuleCommand" }
+                @{ Name = "test 'ValidateTrustedDataAttribute' on [Start-Job]";         Argument = '$globalVar = {1+1}; Test-StartJob $globalVar';                  ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand" }
+            )
+        }
+
         BeforeAll {
             $ScriptTemplate = @'
             try {{
@@ -539,14 +553,6 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 $_.FullyQualifiedErrorId
             }}
 '@
-            $testCases = @(
-                @{ Name = "test 'ValidateTrustedDataAttribute' on [Add-Type]";          Argument = '$globalVar = "Global-Value"; Test-AddType $globalVar';          ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.AddTypeCommand" }
-                @{ Name = "test 'ValidateTrustedDataAttribute' on [Invoke-Expression]"; Argument = '$globalVar = "Global-Value"; Test-InvokeExpression $globalVar'; ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeExpressionCommand" }
-                @{ Name = "test 'ValidateTrustedDataAttribute' on [New-Object]";        Argument = '$globalVar = "Global-Value"; Test-NewObject $globalVar';        ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.NewObjectCommand" }
-                @{ Name = "test 'ValidateTrustedDataAttribute' on [Foreach-Object]";    Argument = '$globalVar = "Global-Value"; Test-ForeachObject $globalVar';    ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ForeachObjectCommand" }
-                @{ Name = "test 'ValidateTrustedDataAttribute' on [Import-Module]";     Argument = '$globalVar = "Global-Value"; Test-ImportModule $globalVar';     ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ImportModuleCommand" }
-                @{ Name = "test 'ValidateTrustedDataAttribute' on [Start-Job]";         Argument = '$globalVar = {1+1}; Test-StartJob $globalVar';                  ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand" }
-            )
         }
 
         It "<Name>" -TestCases $testCases {

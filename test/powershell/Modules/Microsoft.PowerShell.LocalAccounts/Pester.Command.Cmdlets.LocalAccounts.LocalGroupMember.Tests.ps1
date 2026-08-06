@@ -6,62 +6,75 @@
 
 return
 
-function IsWin10OrHigher
-{
-    $version = [system.environment]::osversion.version
-
-    return ($version.Major -ge 10)
+BeforeDiscovery {
+    #skip all tests on non-windows platform or when not running as admin
+    $isAdmin = $false
+    if ($IsWindows) {
+        $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    }
+    $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
 }
 
-function RemoveTestUsers
-{
-    param([string] $basename)
+BeforeAll {
+    function IsWin10OrHigher
+    {
+        $version = [system.environment]::osversion.version
 
-    $results = Get-LocalUser $basename*
-    foreach ($element in $results) {
-        Remove-LocalUser -SID $element.SID
+        return ($version.Major -ge 10)
     }
-}
 
-function RemoveTestGroups
-{
-    param([string] $basename)
+    function RemoveTestUsers
+    {
+        param([string] $basename)
 
-    $results = Get-LocalGroup $basename*
-    foreach ($element in $results) {
-        Remove-LocalGroup -SID $element.SID
+        $results = Get-LocalUser $basename*
+        foreach ($element in $results) {
+            Remove-LocalUser -SID $element.SID
+        }
     }
-}
 
-function VerifyFailingTest
-{
-    param(
-        [scriptblock] $sb,
-        [string] $expectedFqeid
-    )
+    function RemoveTestGroups
+    {
+        param([string] $basename)
 
-    $backupEAP = $script:ErrorActionPreference
-    $script:ErrorActionPreference = "Stop"
-
-    try {
-        & $sb
-        throw "Expected error: $expectedFqeid"
+        $results = Get-LocalGroup $basename*
+        foreach ($element in $results) {
+            Remove-LocalGroup -SID $element.SID
+        }
     }
-    catch {
-        $_.FullyQualifiedErrorId | Should -Be $expectedFqeid
-    }
-    finally {
-        $script:ErrorActionPreference = $backupEAP
-    }
-}
 
-try {
+    function VerifyFailingTest
+    {
+        param(
+            [scriptblock] $sb,
+            [string] $expectedFqeid
+        )
+
+        $backupEAP = $ErrorActionPreference
+        $ErrorActionPreference = "Stop"
+
+        try {
+            & $sb
+            throw "Expected error: $expectedFqeid"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should -Be $expectedFqeid
+        }
+        finally {
+            $ErrorActionPreference = $backupEAP
+        }
+    }
+
     #skip all tests on non-windows platform
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    $IsNotSkipped = ($IsWindows -eq $true);
-    $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
+    $isAdmin = $false
+    if ($IsWindows) {
+        $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    }
+    $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
+    $OptDomainPrefix="(.+\\)?"
+}
 
-    Describe "Verify Expected LocalGroupMember Cmdlets are present" -Tags "CI" {
+    Describe "Verify Expected LocalGroupMember Cmdlets are present" -Tags "CI" -Skip:(!$IsNotSkipped) {
 
         It "Test command presence" {
             $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
@@ -72,7 +85,7 @@ try {
         }
     }
 
-    Describe "Validate simple Add-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Add-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeEach {
             if ($IsNotSkipped) {
@@ -97,7 +110,7 @@ try {
         }
     }
 
-    Describe "Validate Add-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Add-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             $OptDomainPrefix="(.+\\)?"
@@ -245,7 +258,7 @@ try {
         }
     }
 
-    Describe "Validate simple Get-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Get-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeEach {
             if ($IsNotSkipped) {
@@ -277,7 +290,7 @@ try {
         }
     }
 
-    Describe "Validate Get-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Get-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             $OptDomainPrefix="(.+\\)?"
@@ -411,7 +424,7 @@ try {
         #TODO: 10.A valid user attempts to get membership from a group to which they don't have access
     }
 
-    Describe "Validate simple Remove-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Remove-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeEach {
             if ($IsNotSkipped) {
@@ -438,7 +451,7 @@ try {
         }
     }
 
-    Describe "Validate Remove-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Remove-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeEach {
             if ($IsNotSkipped) {
@@ -593,7 +606,3 @@ try {
             $result.Name -match ($OptDomainPrefix + "TestUserRemove2") | Should -BeTrue
         }
     }
-}
-finally {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
-}

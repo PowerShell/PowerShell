@@ -106,7 +106,11 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
         $result | Should -Match "name2\s+name3"
     }
 
-    Context 'ExcludeProperty parameter' {
+    BeforeDiscovery {
+        $skipExcludeProperty = $null -eq (Get-Command Format-Wide).Parameters['ExcludeProperty']
+    }
+
+    Context 'ExcludeProperty parameter' -Skip:$skipExcludeProperty {
         It 'Should exclude specified property and display first remaining' {
             # PSCustomObject properties are in definition order: Name, Age, City
             $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle' }

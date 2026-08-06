@@ -91,23 +91,24 @@ public class SMAAttributeTest$guid : PSCmdlet
 
     It "Can compile <sourceLanguage> files" -TestCases @(
         @{
-            type1 = "[Test.AddType.CSharpTest1$guid]"
-            type2 = "[Test.AddType.CSharpTest2$guid]"
-            file1 = $CSharpFile1
-            file2 = $CSharpFile2
             sourceLanguage = "CSharp"
         }
     ) {
-        param($type1, $type2, $file1, $file2, $sourceLanguage)
+        param($sourceLanguage)
+
+        $type1Name = "[Test.AddType.CSharpTest1$guid]"
+        $type2Name = "[Test.AddType.CSharpTest2$guid]"
+        $file1 = $CSharpFile1
+        $file2 = $CSharpFile2
 
         # The types shouldn't exist before compile the test code.
-        $type1 -as [type] | Should -BeNullOrEmpty
-        $type2 -as [type] | Should -BeNullOrEmpty
+        $type1Name -as [type] | Should -BeNullOrEmpty
+        $type2Name -as [type] | Should -BeNullOrEmpty
 
         $returnedTypes = Add-Type -Path $file1,$file2 -PassThru
 
-        $type1 = Invoke-Expression -Command $type1
-        $type2 = Invoke-Expression -Command $type2
+        $type1 = Invoke-Expression -Command $type1Name
+        $type2 = Invoke-Expression -Command $type2Name
 
         # We can compile, load and use new code.
         $type1::Add1(1, 2) | Should -Be 3

@@ -7,7 +7,7 @@ Describe "New-ModuleManifest basic tests" -tags "CI" {
         $modulePath = "$TestDrive/Modules/$moduleName"
         $manifestPath = Join-Path $modulePath "$moduleName.psd1"
 
-        New-Item -Path "$TestDrive/Modules/$moduleName" -ItemType Directory
+        New-Item -Path "$TestDrive/Modules/$moduleName" -ItemType Directory -Force
     }
 
     AfterEach {
@@ -69,21 +69,31 @@ Describe "New-ModuleManifest tests" -tags "CI" {
         $modulePath = "$TestDrive/Modules/$moduleName"
         $manifestPath = Join-Path $modulePath "$moduleName.psd1"
 
-        New-Item -Path "$TestDrive/Modules/$moduleName" -ItemType Directory
+        New-Item -Path "$TestDrive/Modules/$moduleName" -ItemType Directory -Force
 
         if ($IsWindows) {
             $ExpectedManifestBytes = @(35,13) # CR
         } else {
             $ExpectedManifestBytes = @(35,10) # LF
         }
+
+        function TestNewModuleManifestEncoding {
+            param ([byte[]]$expected)
+            New-ModuleManifest -Path $manifestPath
+            (Get-Content -AsByteStream -Path $manifestPath -TotalCount $expected.Length) -join ',' | Should -Be ($expected -join ',')
+        }
     }
 
     AfterEach {
-        Remove-Item -Path $manifestPath -Force -ErrorAction SilentlyContinue
+        if ($manifestPath) {
+            Remove-Item -Path $manifestPath -Force -ErrorAction SilentlyContinue
+        }
     }
 
     AfterAll {
-        Remove-Item -Path $modulePath -Recurse -Force -ErrorAction SilentlyContinue
+        if ($modulePath) {
+            Remove-Item -Path $modulePath -Recurse -Force -ErrorAction SilentlyContinue
+        }
     }
 
 
@@ -97,12 +107,6 @@ Describe "New-ModuleManifest tests" -tags "CI" {
         $module.PrivateData.PSData.IconUri | Should -BeExactly $absoluteUri
         $module.PrivateData.PSData.LicenseUri | Should -BeExactly $absoluteUri
         $module.PrivateData.PSData.ProjectUri | Should -BeExactly $absoluteUri
-    }
-
-    function TestNewModuleManifestEncoding {
-        param ([byte[]]$expected)
-        New-ModuleManifest -Path $manifestPath
-        (Get-Content -AsByteStream -Path $manifestPath -TotalCount $expected.Length) -join ',' | Should -Be ($expected -join ',')
     }
 
     It "Verify module manifest encoding" {

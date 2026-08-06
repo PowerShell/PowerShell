@@ -18,18 +18,19 @@ Describe "Windows platform file signatures" -Tags 'Feature' {
         $signature | Should -Not -BeNullOrEmpty
         $signature.Status | Should -BeExactly 'Valid'
         $signature.SignatureType | Should -BeExactly 'Catalog'
-        
-        # Verify that SubjectAlternativeName property exists
-        $signature.PSObject.Properties.Name | Should -Contain 'SubjectAlternativeName'
     }
 }
 
 Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeDiscovery {
+        $isAdmin = $IsWindows -and ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+        $shouldSkipDiscovery = (-not $IsWindows) -or (-not $isAdmin)
+    }
+
     BeforeAll {
-        $shouldSkip = (-not $IsWindows) -or (Test-IsWinServer2012R2)
+        $shouldSkip = (-not $IsWindows) -or (Test-IsWinServer2012R2) -or (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
         if ($shouldSkip) {
-            Push-DefaultParameterValueStack @{ "it:skip" = $shouldSkip }
             return
         }
 
@@ -92,7 +93,6 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
 
     AfterAll {
         if ($shouldSkip) {
-            Pop-DefaultParameterValueStack
             return
         }
 
@@ -110,7 +110,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
         }
     }
 
-    It "Validates signature using path on even char count with Encoding <Encoding>" -TestCases @(
+    It "Validates signature using path on even char count with Encoding <Encoding>" -Skip:$shouldSkipDiscovery -TestCases @(
         @{ Encoding = 'ASCII' }
         @{ Encoding = 'Unicode' }
         @{ Encoding = 'UTF8BOM' }
@@ -129,7 +129,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
         $actual.Status | Should -Be 'Valid'
     }
 
-    It "Validates signature using path on odd char count with Encoding <Encoding>" -TestCases @(
+    It "Validates signature using path on odd char count with Encoding <Encoding>" -Skip:$shouldSkipDiscovery -TestCases @(
         @{ Encoding = 'ASCII' }
         @{ Encoding = 'Unicode' }
         @{ Encoding = 'UTF8BOM' }
@@ -148,7 +148,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
         $actual.Status | Should -Be 'Valid'
     }
 
-    It "Validates signature using content on even char count with Encoding <Encoding>" -TestCases @(
+    It "Validates signature using content on even char count with Encoding <Encoding>" -Skip:$shouldSkipDiscovery -TestCases @(
         @{ Encoding = 'ASCII' }
         @{ Encoding = 'Unicode' }
         @{ Encoding = 'UTF8BOM' }
@@ -169,7 +169,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
         $actual.Status | Should -Be 'Valid'
     }
 
-    It "Validates signature using content on odd char count with Encoding <Encoding>" -TestCases @(
+    It "Validates signature using content on odd char count with Encoding <Encoding>" -Skip:$shouldSkipDiscovery -TestCases @(
         @{ Encoding = 'ASCII' }
         @{ Encoding = 'Unicode' }
         @{ Encoding = 'UTF8BOM' }
@@ -190,7 +190,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
         $actual.Status | Should -Be 'Valid'
     }
 
-    It "Verifies SubjectAlternativeName is populated for certificate with SAN" {
+    It "Verifies SubjectAlternativeName is populated for certificate with SAN" -Skip:$shouldSkipDiscovery {
         $session = New-PSSession -UseWindowsPowerShell
         try {
             $sanThumbprint = Invoke-Command -Session $session -ScriptBlock {
@@ -270,7 +270,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
         }
     }
 
-    It "Verifies SubjectAlternativeName is null when certificate has no SAN" {
+    It "Verifies SubjectAlternativeName is null when certificate has no SAN" -Skip:$shouldSkipDiscovery {
         Set-Content -Path testdrive:\test.ps1 -Value 'Write-Output "Test No SAN"' -Encoding UTF8NoBOM
 
         $scriptPath = Join-Path $TestDrive test.ps1

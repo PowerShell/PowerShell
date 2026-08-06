@@ -159,7 +159,7 @@ Describe "Adapter Tests" -tags "CI" {
     }
 
     Context "ForEach Magic Method Adapter Tests" {
-        It "Common ForEach magic method tests" -Pending:$true {
+        It "Common ForEach magic method tests" -Skip:$true {
         }
 
         It "ForEach magic method works for singletons" {
@@ -189,7 +189,7 @@ Describe "Adapter Tests" -tags "CI" {
         }
 
         # Pending: https://github.com/PowerShell/PowerShell/issues/6567
-        It "ForEach magic method works for dynamic (DLR) things" -Pending:$true {
+        It "ForEach magic method works for dynamic (DLR) things" -Skip:$true {
             Add-TestDynamicType
 
             $dynObj = [TestDynamic]::new()
@@ -214,7 +214,7 @@ Describe "Adapter Tests" -tags "CI" {
     }
 
     Context "Where Magic Method Adapter Tests" {
-        It "Common Where magic method tests" -Pending:$true {
+        It "Common Where magic method tests" -Skip:$true {
         }
 
         It "Where magic method works for singletons" {
@@ -266,8 +266,7 @@ Describe "Adapter Tests" -tags "CI" {
 }
 
 Describe "Adapter XML Tests" -tags "CI" {
-    BeforeAll {
-        [xml]$x  = "<root><data/></root>"
+    BeforeDiscovery {
         $testCases =
             @{ rval = @{testprop = 1}; value = 'a hash (psobject)' },
             @{ rval = $null;           value = 'a null (codemethod)' },
@@ -279,6 +278,10 @@ Describe "Adapter XML Tests" -tags "CI" {
             @{ rval = [PSObject]::AsPSObject("teststring"); value = 'a string (psobject wrapping)' },
             @{ rval = [PSObject]::AsPSObject([psobject]@("teststring1", "teststring2")); value = 'a string array (psobject wrapping)' },
             @{ rval = [PSObject]::AsPSObject(@(1,2)); value = 'int array (psobject wrapping)' }
+    }
+
+    BeforeAll {
+        [xml]$x  = "<root><data/></root>"
     }
 
     Context "Can set XML node property to non-string object" {
