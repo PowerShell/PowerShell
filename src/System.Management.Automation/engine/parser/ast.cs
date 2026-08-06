@@ -10688,6 +10688,16 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<string> Examples { get; internal set; }
 
         /// <summary>
+        /// The optional titles of each .EXAMPLE section, parallel to <see cref="Examples"/>.
+        /// Each entry corresponds to the example body at the same index. An entry is an empty
+        /// string when the example was declared without a title (the historical form
+        /// <c>.EXAMPLE</c> on its own line). When the inline form
+        /// <c>.EXAMPLE &lt;Title&gt;</c> is used, the trimmed title text is stored at the
+        /// matching index.
+        /// </summary>
+        public ReadOnlyCollection<string> ExampleTitles { get; internal set; }
+
+        /// <summary>
         /// The help content from all of the specified .INPUT sections.
         /// </summary>
         public ReadOnlyCollection<string> Inputs { get; internal set; }
@@ -10782,9 +10792,21 @@ namespace System.Management.Automation.Language
 
             for (int index = 0; index < Examples.Count; index++)
             {
-                var example = Examples[index];
-                sb.AppendLine(".EXAMPLE");
-                sb.AppendLine(example);
+                string title = (ExampleTitles != null && index < ExampleTitles.Count)
+                    ? ExampleTitles[index]
+                    : null;
+
+                if (!string.IsNullOrEmpty(title))
+                {
+                    sb.Append(".EXAMPLE ");
+                    sb.AppendLine(title);
+                }
+                else
+                {
+                    sb.AppendLine(".EXAMPLE");
+                }
+
+                sb.AppendLine(Examples[index]);
             }
 
             for (int index = 0; index < Links.Count; index++)
