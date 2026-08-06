@@ -8,7 +8,12 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.Diagnostics.EventLog" Version="11.0.0-preview.5.26302.115" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="11.0.0-preview.6.26359.118" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

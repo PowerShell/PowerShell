@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CmdletFormatInvalid" xml:space="preserve">
+    <value>Le nom de l’applet de commande « {0} » ne peut pas être validé, car son format est incorrect. Les noms d’applets de commande doivent inclure un verbe et un nom séparés par un « – », par exemple « Get-Process ».</value>
+  </data>
+  <data name="ParameterDeclaredInParameterSetMultipleTimes" xml:space="preserve">
+    <value>Le paramètre « {0} » est déclaré plusieurs fois dans le jeu de paramètres « {1} ».</value>
+  </data>
+  <data name="AliasDeclaredMultipleTimes" xml:space="preserve">
+    <value>Les alias « {0} » sont déclarés plusieurs fois.</value>
+  </data>
+  <data name="CompiledCommandParameterMemberMustBeFieldOrProperty" xml:space="preserve">
+    <value>Nous n’avons pas pu déclarer le paramètre. Les paramètres ne peuvent être déclarés que sur des champs et des propriétés.</value>
+  </data>
+  <data name="InvalidCmdletNameFormat" xml:space="preserve">
+    <value>Nous ne pouvons pas traiter le cmdlet. Un nom de cmdlet doit être constitué d’un verbe et d’un nom séparés par « – ».</value>
+  </data>
+  <data name="CommandNotFoundException" xml:space="preserve">
+    <value>Le terme « {0} » n’est pas reconnu comme nom d’applet de commande, d’une fonction, d’un fichier de script ou d’un programme exécutable.
+Vérifiez l’orthographe du nom ou, si un chemin d’accès a été inclus, vérifiez que le chemin d’accès est correct et réessayez.</value>
+  </data>
+  <data name="CmdletNotFoundException" xml:space="preserve">
+    <value>L’argument « {0} » n’est pas reconnu comme une applet de commande : {1}</value>
+  </data>
+  <data name="CmdletDoesNotDeriveFromCmdletType" xml:space="preserve">
+    <value>L’argument « {0} » n’est pas reconnu comme une applet de commande, peut-être parce qu’il ne dérive pas des classes Cmdlet ou PSCmdlet : {1}</value>
+  </data>
+  <data name="AliasNotResolvedException" xml:space="preserve">
+    <value>Impossible de résoudre l’alias « {0} », car il fait référence au terme « {1} », qui n’est pas reconnu comme une applet de commande, une fonction, un programme exécutable ou un fichier de script. Vérifiez le terme, puis réessayez.</value>
+  </data>
+  <data name="CommandNameNotCmdlet" xml:space="preserve">
+    <value>Le paramètre « {0} » avec la valeur « {1} » ne peut pas être traité, car il ne s’agit pas d’une applet de commande et ne peut pas être traité par le CommandProcessor.</value>
+  </data>
+  <data name="DuplicateCmdletName" xml:space="preserve">
+    <value>Une applet de commande nommée « {0} » existe déjà. Les Cmdlets ne doivent pas porter le même nom.</value>
+  </data>
+  <data name="DuplicateCmdletProviderName" xml:space="preserve">
+    <value>Un fournisseur d’applets de commande nommé « {0} » existe déjà. Les fournisseurs d’applets de commande doivent avoir des noms uniques.</value>
+  </data>
+  <data name="DuplicateAssemblyName" xml:space="preserve">
+    <value>Un assembly nommé « {0} » existe déjà. Les assemblys doivent avoir des noms uniques.</value>
+  </data>
+  <data name="DuplicateScriptName" xml:space="preserve">
+    <value>Un script nommé « {0} » existe déjà. Les scripts ne doivent pas porter le même nom.</value>
+  </data>
+  <data name="ScriptRequiresInvalidFormat" xml:space="preserve">
+    <value>Nous ne pouvons pas traiter l’instruction #requires car son format est incorrect.
+L’instruction #requires doit être dans l’un des formats suivants :
+ « #requires -shellid &lt;shellID&gt; »
+ « #requires -version &lt;major.minor&gt; »
+ « #requires -psedition &lt;edition&gt; »
+ « #requires -pssnapin &lt;psSnapInName&gt; [-version &lt;major.minor&gt;] »
+ « #requires -modules &lt;ModuleSpecification&gt; »
+ « #requires -runasadministrator »</value>
+  </data>
+  <data name="RequiresInterpreterNotCompatible" xml:space="preserve">
+    <value>Le script « {0} » ne peut pas être exécuté car il contient une instruction « #requires » avec un ID d’interpréteur de commandes de {1} incompatible avec l’interpréteur de commandes actuel. Pour exécuter ce script, vous devez utiliser l’interpréteur de commandes situé dans « {2} ».</value>
+  </data>
+  <data name="RequiresInterpreterNotCompatibleNoPath" xml:space="preserve">
+    <value>Le script « {0} » ne peut pas être exécuté car il contient une instruction « #requires » avec un ID d’interpréteur de commandes de {1} incompatible avec l’interpréteur de commandes actuel.</value>
+  </data>
+  <data name="RequiresPSVersionNotCompatible" xml:space="preserve">
+    <value>Le script « {0} » ne peut pas être exécuté, car il contient une instruction « #requires » pour PowerShell {1}. La version de PowerShell requise par le script ne correspond pas à la version en cours d’exécution de PowerShell {2}.</value>
+  </data>
+  <data name="RequiresPSEditionNotCompatible" xml:space="preserve">
+    <value>Le script « {0} » ne peut pas être exécuté, car il contient une instruction « #requires » pour les éditions PowerShell « {1} ». L’édition de PowerShell requise par le script ne correspond pas à l’édition de PowerShell {2} en cours d’exécution.</value>
+  </data>
+  <data name="RequiresMissingPSSnapIns" xml:space="preserve">
+    <value>Nous ne pouvons pas exécuter le script « {0} », car les composants logiciels enfichables suivants spécifiés par les instructions « #requires » du script sont manquants : {1}.</value>
+  </data>
+  <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
+    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
+  </data>
+  <data name="RequiresElevation" xml:space="preserve">
+    <value>Le script « {0} » ne peut pas être exécuté car il contient une instruction « #requires » pour une exécution en tant qu’administrateur(-trice). La session PowerShell actuelle n’est pas exécutée en tant qu’administrateur(-trice). Démarrez PowerShell en utilisant l’option Exécuter en tant qu’administrateur(-trice), puis essayez de relancer le script.</value>
+  </data>
+  <data name="PSSnapInNameVersion" xml:space="preserve">
+    <value>{0} (Version {1})</value>
+  </data>
+  <data name="CommandArgsOnlyForSingleCmdlet" xml:space="preserve">
+    <value>Nous n’avons pas pu récupérer la commande, car le paramètre ArgumentList ne peut être spécifié que lors de la récupération d’une seule applet de commande ou d’un seul script.</value>
+  </data>
+  <data name="ReservedParameterName" xml:space="preserve">
+    <value>Le nom du paramètre « {0} » est réservé à un usage futur.</value>
+  </data>
+  <data name="RequiresMissingModules" xml:space="preserve">
+    <value>Nous ne pouvons pas exécuter le script « {0} », car les modules suivants spécifiés par les instructions « #requires » du script sont manquants : {1}.</value>
+  </data>
+  <data name="CouldNotAutoImportMatchingModule" xml:space="preserve">
+    <value>La commande « {0} » a été trouvée dans le module « {1} », mais le module n’a pas pu être chargé. Pour plus d’informations, exécutez « Import-Module {1} ».</value>
+  </data>
+  <data name="CouldNotAutoImportMatchingModuleWithErrorMessage" xml:space="preserve">
+    <value>La commande « {0} » a été trouvée dans le module « {1} », mais le module n’a pas pu être chargé à cause de l’erreur suivante : [{2}]
+Pour plus d’informations, exécutez « Import-Module {1} ».</value>
+  </data>
+  <data name="CouldNotAutoImportModule" xml:space="preserve">
+    <value>Nous ne pouvons pas charger le module « {0} ». Pour plus d’informations, exécutez « Import-Module {0} ».</value>
+  </data>
+  <data name="CommandParameterNotFound" xml:space="preserve">
+    <value>Aucune commande correspondante n’inclut un paramètre nommé « {0} ».  Vérifiez l’orthographe du nom du paramètre, puis réessayez.</value>
+  </data>
+  <data name="DotSourceNotSupported" xml:space="preserve">
+    <value>Nous ne pouvons pas effectuer un dot-source sur cette commande, car elle a été définie dans un autre mode de langage. Pour appeler cette commande sans importer son contenu, omettez l’opérateur '.'.</value>
+  </data>
+  <data name="GetCommandShowCommandInfoParamError" xml:space="preserve">
+    <value>Les paramètres ShowCommandInfo et Syntax ne peuvent pas être spécifiés ensemble.</value>
+  </data>
+  <data name="ScriptDisabledWhenFeatureOn" xml:space="preserve">
+    <value>Cette commande de script est désactivée lorsque la fonctionnalité expérimentale « {0} » est activée.</value>
+  </data>
+  <data name="ScriptDisabledWhenFeatureOff" xml:space="preserve">
+    <value>Cette commande de script est désactivée lorsque la fonctionnalité expérimentale « {0} » est désactivée.</value>
+  </data>
+</root>

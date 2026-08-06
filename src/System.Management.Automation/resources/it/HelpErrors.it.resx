@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HelpNotFound" xml:space="preserve">
+    <value>Get-Help non è riuscito a trovare {0} in un file della Guida in questa sessione. Per scaricare gli argomenti della Guida aggiornati, digitare "Update-Help". Per ottenere assistenza online, cercare l'argomento della Guida nella libreria TechNet all'indirizzo https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+  </data>
+  <data name="HelpCategoryInvalid" xml:space="preserve">
+    <value>Non è possibile elaborare la categoria della Guida perché "{0}" non è una categoria della Guida valida.</value>
+  </data>
+  <data name="HelpFileLoadFailure" xml:space="preserve">
+    <value>Non è possibile caricare il file della Guida "{0}". Dettagli: {1}.</value>
+  </data>
+  <data name="HelpFileNotAccessible" xml:space="preserve">
+    <value>Non è possibile accedere al file della Guida "{0}" perché l'utente corrente non dispone dei diritti di accesso al file. Dettagli: {1}.</value>
+  </data>
+  <data name="HelpFileNotValid" xml:space="preserve">
+    <value>Il file della Guida "{0}" non è un documento XML valido. Dettagli: {1}.</value>
+  </data>
+  <data name="LoadHelpFileForTargetFailed" xml:space="preserve">
+    <value>Si è verificato un errore durante il caricamento del contenuto della Guida per {0} dal file {1}. Dettagli: {2}. Per scaricare gli argomenti della Guida aggiornati, eseguire il cmdlet Update-Help. Per ottenere assistenza online, cercare l'argomento della Guida nella libreria TechNet all'indirizzo https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+  </data>
+  <data name="ProviderLoadError" xml:space="preserve">
+    <value>Non è possibile caricare il provider "{0}". Dettagli: {1}.</value>
+  </data>
+  <data name="HelpLoadError" xml:space="preserve">
+    <value>Non è possibile caricare il file della Guida. Si sono verificati i seguenti errori {1} durante il caricamento del file della Guida "{0}".</value>
+  </data>
+  <data name="MamlInvalidChildNodeError" xml:space="preserve">
+    <value>Il nodo "{0}" non può avere "{1}" come nodo figlio. Percorso nodo: {2}.</value>
+  </data>
+  <data name="MamlInvalidChildNodeCountError" xml:space="preserve">
+    <value>Il nodo "{0}" può avere al massimo {2} nodi figlio di tipo "{1}". Percorso nodo: {3}.</value>
+  </data>
+  <data name="RegistryPathNotFound" xml:space="preserve">
+    <value>Non è possibile trovare la chiave del Registro di sistema: "{0}{1}"; verrà usato "{2}" per caricare i file della Guida.</value>
+  </data>
+  <data name="NoParmsFound" xml:space="preserve">
+    <value>Nessun parametro corrisponde ai criteri {0}.</value>
+  </data>
+  <data name="ParamNotSupported" xml:space="preserve">
+    <value>{0} non è supportato dalla categoria della Guida richiesta.</value>
+  </data>
+  <data name="NoURIFound" xml:space="preserve">
+    <value>La versione online di questo argomento della Guida non può essere visualizzata perché l'indirizzo Internet (URI) dell'argomento della Guida non è specificato nel codice del comando o nel file della Guida del comando.</value>
+  </data>
+  <data name="InvalidURI" xml:space="preserve">
+    <value>L'URI {0} specificato non è valido.</value>
+  </data>
+  <data name="CannotLaunchURI" xml:space="preserve">
+    <value>Non è possibile avviare un browser per visualizzare la Guida online. Nessun programma o browser è associato per aprire l'URI {0}.</value>
+  </data>
+  <data name="ProtocolNotSupported" xml:space="preserve">
+    <value>Il protocollo specificato nell'URI "{0}" non è supportato. Sono supportati solo i protocolli "{1}" e "{2}".</value>
+  </data>
+  <data name="MultipleOnlineTopicsNotSupported" xml:space="preserve">
+    <value>Sono stati trovati più argomenti della Guida. Usare un solo argomento della Guida con l'opzione -{0}.</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailable" xml:space="preserve">
+    <value>Non è possibile ottenere la Guida da uno spazio di esecuzione remoto perché lo spazio di esecuzione non è stato aperto.  Aprire lo spazio di esecuzione eseguendo un comando di comunicazione remota implicita, quindi provare di nuovo a eseguire il comando per ottenere la Guida.</value>
+  </data>
+  <data name="UpdatableHelpRequiresElevation" xml:space="preserve">
+    <value>Accesso negato. Il comando non è riuscito ad aggiornare gli argomenti della Guida per i moduli principali di PowerShell o per qualsiasi modulo nella directory $pshome\Modules.
+Per aggiornare questi argomenti della Guida, avviare PowerShell usando il comando "Esegui come Amministratore" e provare a eseguire di nuovo Update-Help.</value>
+  </data>
+  <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
+    <value>Per usare il {0}, assicurarsi che l'applicazione usi 'Microsoft.NET.Sdk.WindowsDesktop' come SDK del progetto e che sia disponibile il corrispondente assembly 'Microsoft.PowerShell.GraphicalHost'. ({1})</value>
+  </data>
+  <data name="RemotingNotSupportedForFeature" xml:space="preserve">
+    <value>{0} non funziona in una sessione remota.</value>
+  </data>
+  <data name="CircularDependencyInHelpForwarding" xml:space="preserve">
+    <value>ForwardHelpTargetName non può fare riferimento alla funzione stessa.</value>
+  </data>
+  <data name="NoNetworkCommands" xml:space="preserve">
+    <value>Non è possibile ottenere la Guida da una posizione di rete in una sessione con restrizioni.</value>
+  </data>
+</root>

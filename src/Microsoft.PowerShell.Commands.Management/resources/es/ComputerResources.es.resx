@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NotSupported" xml:space="preserve">
+    <value>Esta funcionalidad no se admite en este sistema operativo.</value>
+  </data>
+  <data name="NotEnabled" xml:space="preserve">
+    <value>No se pudo habilitar la unidad {0}.</value>
+  </data>
+  <data name="InvalidDrive" xml:space="preserve">
+    <value>El comando no puede activar la infraestructura del equipo de restauración en el equipo especificado porque la unidad proporcionada no es válida. Escriba una unidad válida en el parámetro Drive e inténtelo de nuevo.</value>
+  </data>
+  <data name="NoSystemDrive" xml:space="preserve">
+    <value>Incluir unidad del sistema en la lista de unidades.</value>
+  </data>
+  <data name="NotValidDrive" xml:space="preserve">
+    <value>El comando no puede desactivar la infraestructura del equipo de restauración porque la unidad proporcionada no es válida. Escriba una unidad válida en el parámetro Drive e inténtelo de nuevo.</value>
+  </data>
+  <data name="NotDisabled" xml:space="preserve">
+    <value>El comando no puede desactivar Restaurar sistema en la unidad {0}. Es posible que no tenga permisos suficientes para realizar esta operación.</value>
+  </data>
+  <data name="ServiceDisabled" xml:space="preserve">
+    <value>El servicio SystemRestore está deshabilitado.</value>
+  </data>
+  <data name="RestorePointNotCreated" xml:space="preserve">
+    <value>La infraestructura de restauración del sistema no puede crear un punto de restauración.</value>
+  </data>
+  <data name="RestoreFailed" xml:space="preserve">
+    <value>Error en el último intento de restaurar el equipo.</value>
+  </data>
+  <data name="RestoreSuccess" xml:space="preserve">
+    <value>El equipo se restauró al punto de restauración especificado.</value>
+  </data>
+  <data name="RestoreInterrupted" xml:space="preserve">
+    <value>Se interrumpió el último intento de restaurar el equipo.</value>
+  </data>
+  <data name="NoRestorePoint" xml:space="preserve">
+    <value>El comando no encuentra el punto de restauración "{0}". Compruebe el número de secuencia "{0}" e intente el comando de nuevo.</value>
+  </data>
+  <data name="DoubleComputerName" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="RestartcomputerFailed" xml:space="preserve">
+    <value>No se pudo reiniciar el equipo {0} con el siguiente mensaje de error: {1}.</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>Este comando no se puede ejecutar en el equipo de destino ("{1}") debido al siguiente error: {0}.{2}</value>
+  </data>
+  <data name="StopcomputerFailed" xml:space="preserve">
+    <value>No se pudo detener el equipo {0} con el siguiente mensaje de error: {1}.</value>
+  </data>
+  <data name="InvalidRestorePoint" xml:space="preserve">
+    <value>El comando no puede restaurar el equipo porque "{0}" no se ha establecido como punto de restauración válido. Escriba un punto de restauración válido en el parámetro RestorePoint e inténtelo de nuevo.</value>
+  </data>
+  <data name="RestartNeeded" xml:space="preserve">
+    <value>Los cambios surtirán efecto después de reiniciar el equipo {1}.</value>
+  </data>
+  <data name="RemoveComputerConfirm" xml:space="preserve">
+    <value>Después de abandonar el dominio, deberá conocer la contraseña de la cuenta de administrador local para iniciar sesión en este equipo. ¿Desea continuar?</value>
+  </data>
+  <data name="InvalidComputerNameFormat" xml:space="preserve">
+    <value>El siguiente nombre de equipo no es válido: {0}. Asegúrese de que el nombre del equipo no tenga más de 255 caracteres, que no contenga dos o más puntos consecutivos, que no comience con un punto, que no contenga solo caracteres numéricos y que no contenga ninguno de los siguientes caracteres:
+{{|}}~[\]^:; &lt;=&gt;?@!" #$%^`()+/,</value>
+  </data>
+  <data name="InvalidDomainNameFormat" xml:space="preserve">
+    <value>El dominio del nombre de equipo "{0}" no es válido. Asegúrese de que el dominio existe y de que el nombre es un nombre de dominio válido.</value>
+  </data>
+  <data name="ComputerNamesAreEqual" xml:space="preserve">
+    <value>El valor especificado para el parámetro NewComputerName es el mismo que el valor del parámetro ComputerName. Proporcione un valor diferente para el parámetro NewComputerName.</value>
+  </data>
+  <data name="ResetComputerMachinePassword" xml:space="preserve">
+    <value>"Se restableció la contraseña del canal seguro entre "{0}" y "{1}".</value>
+  </data>
+  <data name="SystemRestoreServiceDisabled" xml:space="preserve">
+    <value>Este comando no se puede ejecutar debido al siguiente error: no se puede iniciar el servicio porque está deshabilitado o no tiene dispositivos habilitados asociados.</value>
+  </data>
+  <data name="ProgressActivity" xml:space="preserve">
+    <value>Creando un punto de restauración del sistema...</value>
+  </data>
+  <data name="ProgressStatusCreatingRestorePoint" xml:space="preserve">
+    <value>Creando un punto de restauración del sistema... {0}% completado.</value>
+  </data>
+  <data name="ProgressStatusCompleted" xml:space="preserve">
+    <value>Completado.</value>
+  </data>
+  <data name="NetworkPathNotFound" xml:space="preserve">
+    <value>Pruebe las opciones siguientes y vuelva a ejecutar el comando.
+1. Compruebe que el equipo de destino (''{0}") se está ejecutando.
+2. Especifique el nombre completo del equipo de destino (''{0}").</value>
+  </data>
+  <data name="PrivilegeNotEnabled" xml:space="preserve">
+    <value>No se pudo reiniciar el equipo {0}. No se pueden habilitar derechos {1} de acceso para el proceso de llamada.</value>
+  </data>
+  <data name="RestartComputerAction" xml:space="preserve">
+    <value>Habilite la {0} y reinicie el equipo.</value>
+  </data>
+  <data name="LocalShutdownPrivilege" xml:space="preserve">
+    <value>Derechos de acceso de apagado local</value>
+  </data>
+  <data name="RemoteShutdownPrivilege" xml:space="preserve">
+    <value>Derechos de acceso de apagado remoto</value>
+  </data>
+  <data name="CannotWaitLocalComputer" xml:space="preserve">
+    <value>No se puede esperar a que se reinicie el equipo local. El equipo local se omite cuando se especifica el parámetro Wait.</value>
+  </data>
+  <data name="RestartComputerInvalidParameter" xml:space="preserve">
+    <value>Los parámetros Timeout, For y Delay solo son válidos cuando se especifica el parámetro Wait.</value>
+  </data>
+  <data name="RestartMultipleComputersActivity" xml:space="preserve">
+    <value> Reiniciando equipos...</value>
+  </data>
+  <data name="RestartSingleComputerActivity" xml:space="preserve">
+    <value> Reiniciando el equipo {0}</value>
+  </data>
+  <data name="WaitForMultipleComputers" xml:space="preserve">
+    <value>Completado: {0}/{1}.</value>
+  </data>
+  <data name="VerifyRebootStage" xml:space="preserve">
+    <value>Comprobando que se ha reiniciado el equipo...</value>
+  </data>
+  <data name="WaitForPowerShell" xml:space="preserve">
+    <value>Esperando la conectividad de PowerShell...</value>
+  </data>
+  <data name="WaitForRestartToBegin" xml:space="preserve">
+    <value>Esperando a que comience el reinicio...</value>
+  </data>
+  <data name="WaitForWinRM" xml:space="preserve">
+    <value>Esperando la conectividad de WinRM...</value>
+  </data>
+  <data name="WaitForWMI" xml:space="preserve">
+    <value>Esperando conectividad WMI...</value>
+  </data>
+  <data name="RestartComplete" xml:space="preserve">
+    <value>Se completó el reinicio</value>
+  </data>
+  <data name="NoSupportForCombinedServiceType" xml:space="preserve">
+    <value>Los tipos de servicio combinados no se admiten por ahora.</value>
+  </data>
+  <data name="CannotResolveComputerName" xml:space="preserve">
+    <value>El nombre del equipo {0} no se puede resolver con la excepción: {1}.</value>
+  </data>
+  <data name="IncorrectNewNameNumber" xml:space="preserve">
+    <value>El número de nombres nuevos no es igual al número de equipos de destino.</value>
+  </data>
+  <data name="InvalidNewName" xml:space="preserve">
+    <value>Omita el equipo "{0}" con el nuevo nombre v{1}" porque el nuevo nombre no es válido. El nuevo nombre de equipo especificado no tiene el formato correcto. Los nombres estándar pueden contener letras (a-z, A-Z), números (0-9) y guiones (-), pero sin espacios ni puntos (.). El nombre no puede constar por completo de dígitos y no puede tener más de 63 caracteres.</value>
+  </data>
+  <data name="NewNameIsOldName" xml:space="preserve">
+    <value>Omita el equipo "{0}" con el nuevo nombre "{1}" porque el nuevo nombre es el mismo que el nombre actual.</value>
+  </data>
+  <data name="ComputerNotInDomain" xml:space="preserve">
+    <value>No se puede quitar el equipo "{0}" porque no está en un dominio.</value>
+  </data>
+  <data name="FailToJoinWorkGroup" xml:space="preserve">
+    <value>No se pudo unir el equipo "{0}" al grupo de trabajo "{1}" con el siguiente mensaje de error: {2}</value>
+  </data>
+  <data name="NetworkDown" xml:space="preserve">
+    <value>No se pueden quitar equipos del dominio porque la red local está inactiva.</value>
+  </data>
+  <data name="FailToRename" xml:space="preserve">
+    <value>No se pudo cambiar el nombre del equipo "{0}" a "{1}" debido a la siguiente excepción: {2}.</value>
+  </data>
+  <data name="AddComputerActionDomain" xml:space="preserve">
+    <value>Unirse al dominio "{0}"</value>
+  </data>
+  <data name="AddComputerActionWorkgroup" xml:space="preserve">
+    <value>Unirse al grupo de trabajo "{0}"</value>
+  </data>
+  <data name="AddComputerToSameDomain" xml:space="preserve">
+    <value>No se puede agregar el equipo "{0}" al dominio "{1}" porque ya está en ese dominio.</value>
+  </data>
+  <data name="AddComputerToSameWorkgroup" xml:space="preserve">
+    <value>No se puede agregar el equipo "{0}" al grupo de trabajo "{1}" porque ya está en ese grupo de trabajo.</value>
+  </data>
+  <data name="FailToRenameAfterJoinWorkgroup" xml:space="preserve">
+    <value>El equipo "{0}" se unió correctamente al grupo de trabajo "{1}", pero no se pudo cambiar el nombre a "{2}" con el siguiente mensaje de error: {3}.</value>
+  </data>
+  <data name="FailToSwitchFromDomainToWorkgroup" xml:space="preserve">
+    <value>El equipo "{0}" se desinstaló correctamente del dominio ''{1}", pero no pudo unirse al grupo de trabajo "{2}" con el siguiente mensaje de error: {3}.</value>
+  </data>
+  <data name="FailToUnjoinDomain" xml:space="preserve">
+    <value>No se pudo quitar el equipo "{0}" del dominio "{1}" con el siguiente mensaje de error: {2}.</value>
+  </data>
+  <data name="FailToConnectToComputer" xml:space="preserve">
+    <value>No se puede establecer la conexión WMI con el equipo "{0}" con el siguiente mensaje de error: {1}.</value>
+  </data>
+  <data name="FailToJoinDomainFromWorkgroup" xml:space="preserve">
+    <value>El equipo "{0}" no pudo unirse al dominio '"{1}" desde su grupo de trabajo actual "{2}" con el siguiente mensaje de error: {3}.</value>
+  </data>
+  <data name="FailToJoinNewDomainAfterUnjoinOldDomain" xml:space="preserve">
+    <value>El equipo "{0}" se desinstaló correctamente del dominio ''{1}", pero no pudo unirse al nuevo dominio "{2}" con el siguiente mensaje de error: {3}.</value>
+  </data>
+  <data name="FailToRenameAfterJoinDomain" xml:space="preserve">
+    <value>El equipo "{0}" se unió correctamente al nuevo dominio ''{1}", pero al cambiar su nombre a "{2}" se produjo el siguiente mensaje de error: {3}.</value>
+  </data>
+  <data name="InvalidJoinOptions" xml:space="preserve">
+    <value>La marca "{0}" solo es válida si se especifica la marca ''{1}".</value>
+  </data>
+  <data name="CannotRenameMultipleComputers" xml:space="preserve">
+    <value>No se puede cambiar el nombre de varios equipos. El parámetro NewName solo es válido si se especifica un único equipo.</value>
+  </data>
+  <data name="CannotFindMachineAccountFromDomain" xml:space="preserve">
+    <value>No se encuentra la cuenta de equipo del equipo local en el dominio {0}.</value>
+  </data>
+  <data name="CannotFindMachineAccountFromServer" xml:space="preserve">
+    <value>No se encuentra la cuenta de equipo del equipo local desde el controlador de dominio {0}.</value>
+  </data>
+  <data name="FailToGetDomainInformation" xml:space="preserve">
+    <value>No se puede obtener información de dominio sobre el equipo local debido a la siguiente excepción: {0}.</value>
+  </data>
+  <data name="FailToResetPasswordOnDomain" xml:space="preserve">
+    <value>No se puede restablecer la contraseña del canal seguro para la cuenta de equipo en el dominio. Error en la operación con la siguiente excepción: {0}.</value>
+  </data>
+  <data name="FailToResetPasswordOnLocalMachine" xml:space="preserve">
+    <value>Error al restablecer la contraseña del canal seguro para el equipo local con el siguiente mensaje de error: {0}.</value>
+  </data>
+  <data name="NeedAdminPrivilegeToResetPassword" xml:space="preserve">
+    <value>Se requieren derechos de administrador para restablecer la contraseña del canal seguro en el equipo local. Acceso denegado.</value>
+  </data>
+  <data name="ResetComputerNotInDomain" xml:space="preserve">
+    <value>No se puede restablecer la contraseña del canal seguro para la cuenta del equipo local. El equipo local no forma parte actualmente de un dominio.</value>
+  </data>
+  <data name="TruncateNetBIOSName" xml:space="preserve">
+    <value>El nombre NetBIOS del equipo está limitado a 15 bytes, que en este caso son 15 caracteres. El nombre NetBIOS se acortará a "{0}", lo que puede provocar conflictos en la resolución de nombres NetBIOS. ¿Desea continuar?</value>
+  </data>
+  <data name="TruncateNetBIOSNameCaption" xml:space="preserve">
+    <value>El nombre NetBIOS se truncará.</value>
+  </data>
+  <data name="CannotResolveServerName" xml:space="preserve">
+    <value>No se puede resolver el nombre de servidor especificado {0}.</value>
+  </data>
+  <data name="CannotCreateRestorePointWarning" xml:space="preserve">
+    <value>No se puede crear un nuevo punto de restauración del sistema porque ya se ha creado uno en los últimos {0} minutos. La frecuencia de creación de puntos de restauración se puede cambiar creando el valor DWORD 'SystemRestorePointCreationFrequency' en la clave del Registro 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore'. El valor de esta clave del Registro indica el intervalo de tiempo necesario (en minutos) entre dos creaciones de puntos de restauración. El valor predeterminado es 1440 minutos (24 horas).</value>
+  </data>
+  <data name="CannotGetOperatingSystemObject" xml:space="preserve">
+    <value>No se puede recuperar el objeto WMI Win32_OperatingSystem.</value>
+  </data>
+  <data name="RestartComputerSkipped" xml:space="preserve">
+    <value>Se omite el equipo {0}. No se pudo recuperar su LastBootUpTime a través del servicio WMI con el siguiente mensaje de error: {1}.</value>
+  </data>
+  <data name="FailToTestSecureChannel" xml:space="preserve">
+    <value>No se puede comprobar el canal seguro para el equipo local. Error en la operación con la siguiente excepción: {0}.</value>
+  </data>
+  <data name="RepairSecureChannelFail" xml:space="preserve">
+    <value>Error al intentar reparar el canal seguro entre el equipo local y el dominio {0}.</value>
+  </data>
+  <data name="RepairSecureChannelSucceed" xml:space="preserve">
+    <value>El canal seguro entre el equipo local y el dominio {0} se reparó correctamente.</value>
+  </data>
+  <data name="SecureChannelAlive" xml:space="preserve">
+    <value>El canal seguro entre el equipo local y el dominio {0} está en buen estado.</value>
+  </data>
+  <data name="SecureChannelBroken" xml:space="preserve">
+    <value>El canal seguro entre el equipo local y el dominio {0} está roto.</value>
+  </data>
+  <data name="TestComputerNotInDomain" xml:space="preserve">
+    <value>No se puede comprobar la contraseña del canal seguro para el equipo local. El equipo local no forma parte actualmente de un dominio.</value>
+  </data>
+  <data name="SystemRestoreNotSupported" xml:space="preserve">
+    <value>No se puede realizar la operación porque las API de restauración del sistema no se admiten en la plataforma Advanced RISC Machine (ARM).</value>
+  </data>
+  <data name="TimeoutError" xml:space="preserve">
+    <value>El equipo no finalizó el reinicio dentro del período de tiempo de espera especificado.</value>
+  </data>
+  <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
+    <value>No se puede validar el intervalo de tiempo para la creación de puntos de restauración. No se pudo recuperar el último punto de restauración con el siguiente mensaje de error: {0}.</value>
+  </data>
+  <data name="InvalidParameterSetAsJob" xml:space="preserve">
+    <value>No se admite el conjunto de parámetros AsJob.</value>
+  </data>
+  <data name="InvalidParameterForCoreClr" xml:space="preserve">
+    <value>El parámetro {0} no es compatible con CoreCLR.</value>
+  </data>
+  <data name="ShutdownCommandNotFound" xml:space="preserve">
+    <value>No se encontró el comando nativo necesario "shutdown".</value>
+  </data>
+</root>

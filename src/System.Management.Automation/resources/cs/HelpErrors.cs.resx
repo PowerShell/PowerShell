@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HelpNotFound" xml:space="preserve">
+    <value>Get-Help v této relaci nenašel {0} v žádném souboru nápovědy. Aktualizovaná témata nápovědy stáhnete zadáním příkazu Update-Help. Online nápovědu získáte vyhledáním tématu nápovědy v knihovně TechNet na adrese https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+  </data>
+  <data name="HelpCategoryInvalid" xml:space="preserve">
+    <value>Kategorii nápovědy nejde zpracovat, protože {0} není platná kategorie nápovědy.</value>
+  </data>
+  <data name="HelpFileLoadFailure" xml:space="preserve">
+    <value>Soubor nápovědy {0} nejde načíst. Podrobnosti: {1}.</value>
+  </data>
+  <data name="HelpFileNotAccessible" xml:space="preserve">
+    <value>K souboru nápovědy {0} nejde získat přístup, protože aktuální uživatel nemá přístupová práva k souboru. Podrobnosti: {1}.</value>
+  </data>
+  <data name="HelpFileNotValid" xml:space="preserve">
+    <value>Soubor nápovědy {0} není platný dokument XML. Podrobnosti: {1}.</value>
+  </data>
+  <data name="LoadHelpFileForTargetFailed" xml:space="preserve">
+    <value>Při načítání obsahu nápovědy pro {0} ze souboru {1} došlo k chybě. Podrobnosti: {2}. Aktualizovaná témata nápovědy stáhnete spuštěním rutiny Update-Help. Online nápovědu získáte vyhledáním tématu nápovědy v knihovně TechNet na adrese https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+  </data>
+  <data name="ProviderLoadError" xml:space="preserve">
+    <value>Poskytovatele {0} nejde načíst. Podrobnosti: {1}.</value>
+  </data>
+  <data name="HelpLoadError" xml:space="preserve">
+    <value>Soubor nápovědy nejde načíst. Počet chyb: {1}. Došlo k nim při načítání souboru nápovědy {0}.</value>
+  </data>
+  <data name="MamlInvalidChildNodeError" xml:space="preserve">
+    <value>Uzel {0} nemůže mít jako podřízený uzel {1}. Cesta k uzlu: {2}.</value>
+  </data>
+  <data name="MamlInvalidChildNodeCountError" xml:space="preserve">
+    <value>Uzel {0} může mít nejvýše {2} podřízených uzlů typu {1}. Cesta k uzlu: {3}.</value>
+  </data>
+  <data name="RegistryPathNotFound" xml:space="preserve">
+    <value>Klíč registru se nepovedlo najít: {0}{1}. K načtení souborů nápovědy se použije {2}.</value>
+  </data>
+  <data name="NoParmsFound" xml:space="preserve">
+    <value>Kritériím {0} neodpovídá žádný parametr.</value>
+  </data>
+  <data name="ParamNotSupported" xml:space="preserve">
+    <value>Požadovaná kategorie nápovědy nepodporuje {0}.</value>
+  </data>
+  <data name="NoURIFound" xml:space="preserve">
+    <value>Online verzi tohoto tématu nápovědy nejde zobrazit, protože internetová adresa (URI) tématu není zadaná v kódu příkazu ani v souboru nápovědy k příkazu.</value>
+  </data>
+  <data name="InvalidURI" xml:space="preserve">
+    <value>Zadaný identifikátor URI {0} není platný.</value>
+  </data>
+  <data name="CannotLaunchURI" xml:space="preserve">
+    <value>Prohlížeč pro zobrazení online nápovědy se nepovedlo spustit. K otevření identifikátoru URI {0} není přidružený žádný program ani prohlížeč.</value>
+  </data>
+  <data name="ProtocolNotSupported" xml:space="preserve">
+    <value>Protokol zadaný v identifikátoru URI {0} není podporovaný. Podporují se jen protokoly {1} a {2}.</value>
+  </data>
+  <data name="MultipleOnlineTopicsNotSupported" xml:space="preserve">
+    <value>Našlo se několik témat nápovědy. S možností -{0} použijte jen jedno téma nápovědy.</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailable" xml:space="preserve">
+    <value>Nápovědu nejde získat ze vzdáleného prostředí runspace, protože toto prostředí ještě není otevřené.  Otevřete prostředí runspace spuštěním příkazu implicitní vzdálené komunikace a potom zkuste příkaz pro získání nápovědy spustit znovu.</value>
+  </data>
+  <data name="UpdatableHelpRequiresElevation" xml:space="preserve">
+    <value>Přístup je odepřený. Příkaz nemohl aktualizovat témata nápovědy pro základní moduly PowerShellu ani pro žádné moduly v adresáři $pshome\Modules.
+Pokud chcete tato témata nápovědy aktualizovat, spusťte PowerShell pomocí příkazu Spustit jako správce a zkuste Update-Help spustit znovu.</value>
+  </data>
+  <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
+    <value>Pokud chcete používat {0}, ujistěte se, že vaše aplikace používá jako sadu SDK projektu Microsoft.NET.Sdk.WindowsDesktop a že je k dispozici odpovídající sestavení Microsoft.PowerShell.GraphicalHost. ({1})</value>
+  </data>
+  <data name="RemotingNotSupportedForFeature" xml:space="preserve">
+    <value>{0} ve vzdálené relaci nefunguje.</value>
+  </data>
+  <data name="CircularDependencyInHelpForwarding" xml:space="preserve">
+    <value>ForwardHelpTargetName nemůže odkazovat na samotnou funkci.</value>
+  </data>
+  <data name="NoNetworkCommands" xml:space="preserve">
+    <value>V omezené relaci nejde získat nápovědu ze síťového umístění.</value>
+  </data>
+</root>
