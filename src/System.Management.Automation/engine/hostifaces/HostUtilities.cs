@@ -174,16 +174,27 @@ namespace System.Management.Automation
         /// <returns>The base path for all users profiles.</returns>
         private static string GetAllUsersFolderPath(string shellId)
         {
-            string folderPath = string.Empty;
-            try
+            string folderPath = Environment.GetEnvironmentVariable("POWERSHELL_COMMON_APPLICATION_DATA");
+            if (!string.IsNullOrEmpty(folderPath)) return folderPath;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                folderPath = Utils.GetApplicationBase(shellId);
-            }
-            catch (System.Security.SecurityException)
-            {
+                try
+                {
+                    return Utils.GetApplicationBase(shellId);
+                }
+                catch (System.Security.SecurityException)
+                {
+                    return string.Empty;
+                }
             }
 
-            return folderPath;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return "/Library/Application Support/PowerShell";
+            }
+
+            return "/etc/opt/powershell";
         }
         #endregion GetProfileCommands
 
