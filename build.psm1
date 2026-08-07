@@ -528,6 +528,7 @@ function Start-PSBuild {
             } elseif ([System.IO.File]::Exists($path)) {
                 [System.IO.File]::Delete($path)
             } else {
+                Write-Information "Removing directory '$path'."
                 [System.IO.Directory]::Delete($path, $true)
             }
         }
