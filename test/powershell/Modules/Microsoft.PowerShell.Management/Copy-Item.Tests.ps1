@@ -639,19 +639,11 @@ Describe "Validate Copy-Item Remotely" -Tags @('CI', 'RequireAdminOnWindows') {
 
 Describe "Validate Copy-Item error for target sessions not in FullLanguageMode." -Tags @('Feature', 'RequireAdminOnWindows') {
 
-    It "Copy-Item throws 'SessionIsNotInFullLanguageMode' error for a session in non-FullLanguageMode" -Pending {
-        ## A placeholder test to show that the real test is pending. Remove this once the real tests below are enabled.
-    }
-
     BeforeAll {
         # Keep track of the sessions.
         $testSessions = @{}
         # Keep track of the session names to be unregistered.
         $sessionToUnregister = @()
-
-        ## Test not validated yet. For now, make it do nothing.
-        $skipTestSuite = $true
-        if ($skipTestSuite) { return }
 
         $testDirectory = "TestDrive:\"
 
@@ -677,8 +669,8 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
             # Create the session.
             Write-Host "Creating pssession with '$languageMode' ..."
             New-PSSessionConfigurationFile -Path $configFilePath -SessionType Default -LanguageMode $languageMode
-            Register-PSSessionConfiguration -Name $sessionName -Path $configFilePath -Force | Out-Null
-            $testSession = New-PSSession -ConfigurationName $sessionName
+            Register-PSSessionConfiguration -Name $sessionName -Path $configFilePath -Force -ErrorAction Stop | Out-Null
+            $testSession = New-RemoteSession -ConfigurationName $sessionName
 
             # Validate that the session is opened.
             $testSession.State | Should -Be "Opened"
@@ -692,8 +684,6 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
     }
 
     AfterAll {
-        if ($skipTestSuite) { return }
-
         $testSessions.Values | Remove-PSSession -ErrorAction SilentlyContinue
 
         $sessionToUnregister | ForEach-Object {
