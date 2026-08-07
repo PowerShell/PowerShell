@@ -59,81 +59,6 @@ namespace Microsoft.PowerShell
         internal const string DECCKM_OFF = "\x1b[?1l";
 #endif
 
-        private static string GetPSExecutableHome()
-        {
-#if UNIX
-            const string pwshName = "pwsh";
-            const string dotnetToolPathSegment = "/.store/powershell/";
-#else
-            const string pwshName = "pwsh.exe";
-            const string dotnetToolPathSegment = @"\.store\powershell\";
-#endif
-
-            string psExePath = Environment.ProcessPath;
-            string psExeHome = Path.GetDirectoryName(psExePath);
-            string processName = Path.GetFileName(psExePath);
-
-            // Use 'Environment.ProcessPath' if it points to 'pwsh.exe' or 'pwsh'.
-            if (pwshName.Equals(processName, StringComparison.Ordinal))
-            {
-#if !UNIX
-                psExeHome = ResolveStablePathIfMsix(psExeHome);
-#endif
-                return psExeHome;
-            }
-
-            psExeHome = Utils.DefaultPowerShellAppBase;
-
-            int index = psExeHome.IndexOf(dotnetToolPathSegment, StringComparison.Ordinal);
-            if (index > 0)
-            {
-                // We're running PowerShell dotnet tool. In this case the real entry executable should be the 'pwsh'
-                // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', because
-                // the pwsh executable under $PSHOME is an x86-64 binary that won't work on non-x86/64 platforms.
-                return psExeHome[0..index];
-            }
-
-            return psExeHome;
-        }
-
-#if !UNIX
-        /// <summary>
-        /// Handle the MSIX package scenario where <paramref name="psExeHome"/> points to the MSIX package folder under "Program Files".
-        ///
-        /// That path contains a version string and will change with every update. Prepend that path to the PATH environment variable
-        /// caused a problem to the cmake-based build system, where cmake cached the path to 'pwsh.exe' when running for the 1st time
-        /// from the MSIX PowerShell. That cached path became invalid after the MSIX PowerShell got updated, which broke cmake.
-        ///
-        /// So, instead of using the "Program Files" package folder path, we need to use the path that contains the execution alias for
-        /// the specific MSIX package family name, e.g. %LOCALAPPDATA%\Microsoft\WindowsApps\Microsoft.PowerShell_8wekyb3d8bbwe.
-        /// </summary>
-        /// <param name="psExeHome"></param>
-        private static string ResolveStablePathIfMsix(string psExeHome)
-        {
-            const string msixPublisherSuffix = "_8wekyb3d8bbwe";
-            const string msixPackageBaseName = "Microsoft.PowerShell";
-
-            if (psExeHome.EndsWith(msixPublisherSuffix, StringComparison.Ordinal))
-            {
-                string programFileDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-                string prefix = $"{programFileDir}\\WindowsApps\\{msixPackageBaseName}";
-                if (psExeHome.StartsWith(prefix, StringComparison.Ordinal))
-                {
-                    int startIndex = prefix.Length;
-                    int underbarIndex = psExeHome.IndexOf('_', startIndex);
-                    if (underbarIndex > 0)
-                    {
-                        ReadOnlySpan<char> channelSuffix = psExeHome.AsSpan(startIndex, underbarIndex - startIndex);
-                        string localAppDataDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                        psExeHome = $"{localAppDataDir}\\Microsoft\\WindowsApps\\{msixPackageBaseName}{channelSuffix}{msixPublisherSuffix}";
-                    }
-                }
-            }
-
-            return psExeHome;
-        }
-#endif
-
         /// <summary>
         /// Internal Entry point in msh console host implementation.
         /// </summary>
@@ -445,6 +370,43 @@ namespace Microsoft.PowerShell
 
         private static readonly CommandLineParameterParser s_cpp = new CommandLineParameterParser();
 
+        private static string GetPSExecutableHome()
+        {
+#if UNIX
+            const string pwshName = "pwsh";
+            const string dotnetToolPathSegment = "/.store/powershell/";
+#else
+            const string pwshName = "pwsh.exe";
+            const string dotnetToolPathSegment = @"\.store\powershell\";
+#endif
+
+            string psExePath = Environment.ProcessPath;
+            string psExeHome = Path.GetDirectoryName(psExePath);
+            string processName = Path.GetFileName(psExePath);
+
+            // Use 'Environment.ProcessPath' if it points to 'pwsh.exe' or 'pwsh'.
+            if (pwshName.Equals(processName, StringComparison.Ordinal))
+            {
+#if !UNIX
+                psExeHome = ResolveStablePathIfMsix(psExeHome);
+#endif
+                return psExeHome;
+            }
+
+            psExeHome = Utils.DefaultPowerShellAppBase;
+
+            int index = psExeHome.IndexOf(dotnetToolPathSegment, StringComparison.Ordinal);
+            if (index > 0)
+            {
+                // We're running PowerShell dotnet tool. In this case the real entry executable should be the 'pwsh'
+                // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', because
+                // the pwsh executable under $PSHOME is an x86-64 binary that won't work on non-x86/64 platforms.
+                return psExeHome[0..index];
+            }
+
+            return psExeHome;
+        }
+
 #if UNIX
         /// <summary>
         /// The break handler for the program.  Dispatches a break event to the current Executor.
@@ -474,6 +436,42 @@ namespace Microsoft.PowerShell
             }
         }
 #else
+        /// <summary>
+        /// Handle the MSIX package scenario where <paramref name="psExeHome"/> points to the MSIX package folder under "Program Files".
+        ///
+        /// That path contains a version string and will change with every update. Prepend that path to the PATH environment variable
+        /// caused a problem to the cmake-based build system, where cmake cached the path to 'pwsh.exe' when running for the 1st time
+        /// from the MSIX PowerShell. That cached path became invalid after the MSIX PowerShell got updated, which broke cmake.
+        ///
+        /// So, instead of using the "Program Files" package folder path, we need to use the path that contains the execution alias for
+        /// the specific MSIX package family name, e.g. %LOCALAPPDATA%\Microsoft\WindowsApps\Microsoft.PowerShell_8wekyb3d8bbwe.
+        /// </summary>
+        /// <param name="psExeHome">Path to the directory that contains the pwsh executable.</param>
+        private static string ResolveStablePathIfMsix(string psExeHome)
+        {
+            const string msixPublisherSuffix = "_8wekyb3d8bbwe";
+            const string msixPackageBaseName = "Microsoft.PowerShell";
+
+            if (psExeHome.EndsWith(msixPublisherSuffix, StringComparison.Ordinal))
+            {
+                string programFileDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                string prefix = $"{programFileDir}\\WindowsApps\\{msixPackageBaseName}";
+                if (psExeHome.StartsWith(prefix, StringComparison.Ordinal))
+                {
+                    int startIndex = prefix.Length;
+                    int underbarIndex = psExeHome.IndexOf('_', startIndex);
+                    if (underbarIndex > 0)
+                    {
+                        ReadOnlySpan<char> channelSuffix = psExeHome.AsSpan(startIndex, underbarIndex - startIndex);
+                        string localAppDataDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                        psExeHome = $"{localAppDataDir}\\Microsoft\\WindowsApps\\{msixPackageBaseName}{channelSuffix}{msixPublisherSuffix}";
+                    }
+                }
+            }
+
+            return psExeHome;
+        }
+
         /// <summary>
         /// The break handler for the program.  Dispatches a break event to the current Executor.
         /// </summary>
