@@ -495,9 +495,10 @@ function Start-PSBuild {
         foreach ($line in git clean --dry-run -dX) {
             if (-not $line.StartsWith("Would remove ")) {
                 Write-Warning "Expected git clean --dry-run prefix 'Would remove' not found. The clean operation may be unreliable. The build script may need updating."
+            if (-not $line.StartsWith('Would remove ')) {
                 continue
             }
-            $path = Join-Path $PSScriptRoot $line.Substring("Would remove ".Length)
+            $path = Join-Path $PSScriptRoot $line.Substring('Would remove '.Length)
             Write-Verbose "Cleaning path '$path'..."
             # Visual Studio is Windows only.
             if ($path.Contains('\.vs\')) {
