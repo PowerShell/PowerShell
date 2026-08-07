@@ -42,6 +42,29 @@ try
             }
         }
 
+        It "Should support -Comment parameter" -Skip:(!$IsWindows) {
+            Set-TesthookResult -testhookName $stopTesthookResultName -value $defaultResultValue
+            $comment = "Testing comment"
+            Stop-Computer -Comment $comment -ErrorAction Stop | Should -BeNullOrEmpty
+        }
+
+        It "Should support -ShutdownDelaySec parameter" -Skip:(!$IsWindows) {
+            Set-TesthookResult -testhookName $stopTesthookResultName -value $defaultResultValue
+            $shutdownDelaySec = 30
+            Stop-Computer -ShutdownDelaySec $shutdownDelaySec -ErrorAction Stop | Should -BeNullOrEmpty
+        }
+
+        It "Should support Reason types" -Skip:(!$IsWindows) {
+            $ReasonList =  "Application", "Hardware", "OperatingSystem", "Other", "Power", "Software", "System", `
+            "BlueScreen", "Disk", "Environment", "Driver", "HotFix", "HotFixUninstall", "Unresponsive", "Installation", `
+                "Maintenance", "MMC", "NetworkConnectivity", "NetworkCard", "OtherDriver", "PowerSupply", "Processor", "Reconfigure", `
+                "SecurityIssue", "SecurityPatch","SecurityPatchUninstallation", "ServicePack", "ServicePackUninstallation", "TerminalServices", `
+                "Unstable", "Upgrade", "WMI"
+            foreach ( $reason in $ReasonList ) {
+                Stop-Computer -Reason $reason -ErrorAction Stop | Should -BeNullOrEmpty
+            }
+        }
+
         Context "Stop-Computer Error Conditions" {
             It "Should return the proper error when it occurs" {
                 Set-TesthookResult -testhookName $stopTesthookResultName -Value 0x300000
