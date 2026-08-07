@@ -491,50 +491,44 @@ function Start-PSBuild {
     function CleanLenient {
         [CmdletBinding()]
         param()
-        $failed = $false
-        # `git clean` may keep returning different sets of paths.
-        while (-not $failed -and (git clean --dry-run -dX | Select-Object -First 1)) {
-            # `git clean` will prompt if it can't unlink files, so we delete in PS to skip errors.
-            foreach ($line in git clean --dry-run -dX) {
-                if (-not $line.StartsWith("Would remove ")) {
-                    Write-Warning "Expected git clean --dry-run prefix 'Would remove' not found. The clean operation may be unreliable. The build script may need updating."
-                    continue
-                }
-                $path = Join-Path $PSScriptRoot $line.Substring("Would remove ".Length)
-                Write-Verbose "Cleaning path '$path'..."
-                # Visual Studio is Windows only.
-                if ($path.Contains('\.vs\')) {
-                    # VS may take locks on files while it's open. Skip them.
-                    if ([System.IO.Directory]::Exists($path)) {
-                        $failedDir = $false
-                        foreach ($filePath in [System.IO.Directory]::EnumerateFiles($path, "*.*", [System.IO.SearchOption]::AllDirectories)) {
-                            Write-Verbose "Removing file '$filePath'."
-                            try {
-                                [System.IO.File]::Delete($filePath)
-                            } catch {
-                                $failed = $true
-                                $failedDir = $true
-                                Write-Warning "Clean operation could not remove file '$filePath'."
-                            }
-                        }
-                        if (-not $failedDir) {
-                            Write-Information "Removing directory '$path'."
-                            [System.IO.Directory]::Delete($path, $true)
-                        }
-                    } else {
-                        Write-Verbose "Removing file '$path'."
+        # `git clean` will prompt if it can't unlink files, so we delete in PS to skip errors.
+        foreach ($line in git clean --dry-run -dX) {
+            if (-not $line.StartsWith("Would remove ")) {
+                Write-Warning "Expected git clean --dry-run prefix 'Would remove' not found. The clean operation may be unreliable. The build script may need updating."
+                continue
+            }
+            $path = Join-Path $PSScriptRoot $line.Substring("Would remove ".Length)
+            Write-Verbose "Cleaning path '$path'..."
+            # Visual Studio is Windows only.
+            if ($path.Contains('\.vs\')) {
+                # VS may take locks on files while it's open. Skip them.
+                if ([System.IO.Directory]::Exists($path)) {
+                    $failedDir = $false
+                    foreach ($filePath in [System.IO.Directory]::EnumerateFiles($path, "*.*", [System.IO.SearchOption]::AllDirectories)) {
+                        Write-Verbose "Removing file '$filePath'."
                         try {
-                            [System.IO.File]::Delete($path)
+                            [System.IO.File]::Delete($filePath)
                         } catch {
-                            $failed = $true
-                            Write-Warning "Clean operation could not remove file '$path'."
+                            $failedDir = $true
+                            Write-Warning "Clean operation could not remove file '$filePath'."
                         }
                     }
-                } elseif ([System.IO.File]::Exists($path)) {
-                    [System.IO.File]::Delete($path)
+                    if (-not $failedDir) {
+                        Write-Information "Removing directory '$path'."
+                        [System.IO.Directory]::Delete($path, $true)
+                    }
                 } else {
-                    [System.IO.Directory]::Delete($path, $true)
+                    Write-Verbose "Removing file '$path'."
+                    try {
+                        [System.IO.File]::Delete($path)
+                    } catch {
+                        Write-Warning "Clean operation could not remove file '$path'."
+                    }
                 }
+            } elseif ([System.IO.File]::Exists($path)) {
+                [System.IO.File]::Delete($path)
+            } else {
+                [System.IO.Directory]::Delete($path, $true)
             }
         }
     }
