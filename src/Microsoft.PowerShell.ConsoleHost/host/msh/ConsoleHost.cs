@@ -439,9 +439,9 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Handle the MSIX package scenario where <paramref name="psExeHome"/> points to the MSIX package folder under "Program Files".
         ///
-        /// That path contains a version string and will change with every update. Prepend that path to the PATH environment variable
-        /// caused a problem to the cmake-based build system, where cmake cached the path to 'pwsh.exe' when running for the 1st time
-        /// from the MSIX PowerShell. That cached path became invalid after the MSIX PowerShell got updated, which broke cmake.
+        /// That path contains a version string and will change with every update. Prepending that path to the PATH environment variable
+        /// caused a problem for CMake-based build systems: CMake cached the path to 'pwsh.exe' when running for the first time from the
+        /// MSIX PowerShell. That cached path became invalid after the MSIX PowerShell was updated, which broke CMake.
         ///
         /// So, instead of using the "Program Files" package folder path, we need to use the path that contains the execution alias for
         /// the specific MSIX package family name, e.g. %LOCALAPPDATA%\Microsoft\WindowsApps\Microsoft.PowerShell_8wekyb3d8bbwe.
