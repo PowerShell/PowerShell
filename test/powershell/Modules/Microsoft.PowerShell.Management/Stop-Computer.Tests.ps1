@@ -57,7 +57,7 @@ try
         It "Should support Reason types" -Skip:(!$IsWindows) {
             $ReasonList =  "Application", "Hardware", "OperatingSystem", "Other", "Power", "Software", "System", `
             "BlueScreen", "Disk", "Environment", "Driver", "HotFix", "HotFixUninstall", "Unresponsive", "Installation", `
-                "Maintenance", "MMC", "NetworkConnectivity", "NetworkCard", "Other", "OtherDriver", "PowerSupply", "Processor", "Reconfigure", `
+                "Maintenance", "MMC", "NetworkConnectivity", "NetworkCard", "OtherDriver", "PowerSupply", "Processor", "Reconfigure", `
                 "SecurityIssue", "SecurityPatch","SecurityPatchUninstallation", "ServicePack", "ServicePackUninstallation", "TerminalServices", `
                 "Unstable", "Upgrade", "WMI"
             foreach ( $reason in $ReasonList ) {

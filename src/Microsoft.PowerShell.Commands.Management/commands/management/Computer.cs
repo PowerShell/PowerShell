@@ -341,7 +341,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the reason for rebooting the computer.
         /// </summary>
         [Parameter]
-        public Reasons Reason { get; set; }
+        public Reasons Reason { get; set; } = Reasons.Other;
 
         /// <summary>
         /// Using Force in conjunction with Reboot on a
@@ -980,113 +980,7 @@ $result
 
             flags[0] = RestartDelaySec;
             flags[1] = Comment;
-            flags[2] = Reasons.Planned;
-
-            switch (Reason.ToString())
-            {
-                case "Application":
-                    flags[2] = Reasons.Application;
-                    break;
-                case "Planned":
-                    flags[2] = Reasons.Planned;
-                    break;
-                case "Hardware":
-                    flags[2] = Reasons.Hardware;
-                    break;
-                case "OperatingSystem":
-                    flags[2] = Reasons.OperatingSystem;
-                    break;
-                case "Power":
-                    flags[2] = Reasons.Power;
-                    break;
-                case "Software":
-                    flags[2] = Reasons.Software;
-                    break;
-                case "System":
-                    flags[2] = Reasons.System;
-                    break;
-                case "BlueScreen":
-                    flags[2] = Reasons.BlueScreen;
-                    break;
-                case "Disk":
-                    flags[2] = Reasons.Disk;
-                    break;
-                case "Environment":
-                    flags[2] = Reasons.Environment;
-                    break;
-                case "Driver":
-                    flags[2] = Reasons.Driver;
-                    break;
-                case "HotFix":
-                    flags[2] = Reasons.HotFix;
-                    break;
-                case "HotFixUninstall":
-                    flags[2] = Reasons.HotFixUninstall;
-                    break;
-                case "Unresponsive":
-                    flags[2] = Reasons.Unresponsive;
-                    break;
-                case "Installation":
-                    flags[2] = Reasons.Installation;
-                    break;
-                case "Maintenance":
-                    flags[2] = Reasons.Maintenance;
-                    break;
-                case "MMC":
-                    flags[2] = Reasons.MMC;
-                    break;
-                case "NetworkConnectivity":
-                    flags[2] = Reasons.NetworkConnectivity;
-                    break;
-                case "NetworkCard":
-                    flags[2] = Reasons.NetworkCard;
-                    break;
-                case "Other":
-                    flags[2] = Reasons.Other;
-                    break;
-                case "OtherDriver":
-                    flags[2] = Reasons.OtherDriver;
-                    break;
-                case "PowerSupply":
-                    flags[2] = Reasons.PowerSupply;
-                    break;
-                case "Processor":
-                    flags[2] = Reasons.Processor;
-                    break;
-                case "Reconfigure":
-                    flags[2] = Reasons.Reconfigure;
-                    break;
-                case "SecurityIssue":
-                    flags[2] = Reasons.SecurityIssue;
-                    break;
-                case "SecurityPatch":
-                    flags[2] = Reasons.SecurityPatch;
-                    break;
-                case "SecurityPatchUninstallation":
-                    flags[2] = Reasons.SecurityPatchUninstallation;
-                    break;
-                case "ServicePack":
-                    flags[2] = Reasons.ServicePack;
-                    break;
-                case "ServicePackUninstallation":
-                    flags[2] = Reasons.ServicePackUninstallation;
-                    break;
-                case "TerminalServices":
-                    flags[2] = Reasons.TerminalServices;
-                    break;
-                case "Unstable":
-                    flags[2] = Reasons.Unstable;
-                    break;
-                case "Upgrade":
-                    flags[2] = Reasons.Upgrade;
-                    break;
-                case "WMI":
-                    flags[2] = Reasons.WMI;
-                    break;
-                default:
-                    flags[2] = Reasons.Other;
-                    break;
-            }
+            flags[2] = Reason;
 
             if (Force)
             {
@@ -1488,7 +1382,7 @@ $result
         /// Gets or sets the reason for rebooting the computer.
         /// </summary>
         [Parameter]
-        public Reasons Reason { get; set; }
+        public Reasons Reason { get; set; } = Reasons.Other;
 
         /// <summary>
         /// Force the operation to take place if possible.
@@ -1521,113 +1415,7 @@ $result
             object[] flags = new object[] { 0, 0, 0, 1 };
             flags[0] = ShutdownDelaySec;
             flags[1] = Comment;
-            flags[2] = Reasons.Planned;
-
-            switch (Reason.ToString())
-            {
-                case "Application":
-                    flags[2] = Reasons.Application;
-                    break;
-                case "Planned":
-                    flags[2] = Reasons.Planned;
-                    break;                    
-                case "Hardware":
-                    flags[2] = Reasons.Hardware;
-                    break;
-                case "OperatingSystem":
-                    flags[2] = Reasons.OperatingSystem;
-                    break;
-                case "Power":
-                    flags[2] = Reasons.Power;
-                    break;
-                case "Software":
-                    flags[2] = Reasons.Software;
-                    break;
-                case "System":
-                    flags[2] = Reasons.System;
-                    break;
-                case "BlueScreen":
-                    flags[2] = Reasons.BlueScreen;
-                    break;
-                case "Disk":
-                    flags[2] = Reasons.Disk;
-                    break;
-                case "Environment":
-                    flags[2] = Reasons.Environment;
-                    break;
-                case "Driver":
-                    flags[2] = Reasons.Driver;
-                    break;
-                case "HotFix":
-                    flags[2] = Reasons.HotFix;
-                    break;
-                case "HotFixUninstall":
-                    flags[2] = Reasons.HotFixUninstall;
-                    break;
-                case "Unresponsive":
-                    flags[2] = Reasons.Unresponsive;
-                    break;
-                case "Installation":
-                    flags[2] = Reasons.Installation;
-                    break;
-                case "Maintenance":
-                    flags[2] = Reasons.Maintenance;
-                    break;
-                case "MMC":
-                    flags[2] = Reasons.MMC;
-                    break;
-                case "NetworkConnectivity":
-                    flags[2] = Reasons.NetworkConnectivity;
-                    break;
-                case "NetworkCard":
-                    flags[2] = Reasons.NetworkCard;
-                    break;
-                case "Other":
-                    flags[2] = Reasons.Other;
-                    break;
-                case "OtherDriver":
-                    flags[2] = Reasons.OtherDriver;
-                    break;
-                case "PowerSupply":
-                    flags[2] = Reasons.PowerSupply;
-                    break;
-                case "Processor":
-                    flags[2] = Reasons.Processor;
-                    break;
-                case "Reconfigure":
-                    flags[2] = Reasons.Reconfigure;
-                    break;
-                case "SecurityIssue":
-                    flags[2] = Reasons.SecurityIssue;
-                    break;
-                case "SecurityPatch":
-                    flags[2] = Reasons.SecurityPatch;
-                    break;
-                case "SecurityPatchUninstallation":
-                    flags[2] = Reasons.SecurityPatchUninstallation;
-                    break;
-                case "ServicePack":
-                    flags[2] = Reasons.ServicePack;
-                    break;
-                case "ServicePackUninstallation":
-                    flags[2] = Reasons.ServicePackUninstallation;
-                    break;
-                case "TerminalServices":
-                    flags[2] = Reasons.TerminalServices;
-                    break;
-                case "Unstable":
-                    flags[2] = Reasons.Unstable;
-                    break;
-                case "Upgrade":
-                    flags[2] = Reasons.Upgrade;
-                    break;
-                case "WMI":
-                    flags[2] = Reasons.WMI;
-                    break;
-                default:
-                    flags[2] = Reasons.Other;
-                    break;
-            }
+            flags[2] = Reason;
 
             if (Force.IsPresent)
             {
