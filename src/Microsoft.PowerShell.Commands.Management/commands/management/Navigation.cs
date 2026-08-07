@@ -2936,6 +2936,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private bool _passThrough;
 
+        private bool _destinationContainerCreated;
+
         #endregion Command data
 
         #region Command code
@@ -2979,6 +2981,105 @@ namespace Microsoft.PowerShell.Commands
             return results;
         }
 
+        private bool EnsureDestinationContainerForMultipleMoves(Collection<PathInfo> resolvedPaths)
+        {
+            if (_destinationContainerCreated || resolvedPaths.Count < 2)
+            {
+                return true;
+            }
+
+            CmdletProviderContext currentContext = CmdletProviderContext;
+            ProviderInfo destinationProvider;
+            PSDriveInfo destinationDrive;
+
+            try
+            {
+                _ = SessionState.Path.GetUnresolvedProviderPathFromPSPath(
+                    Destination,
+                    currentContext,
+                    out destinationProvider,
+                    out destinationDrive);
+            }
+            catch (PSNotSupportedException notSupported)
+            {
+                WritePathResolutionError(notSupported);
+                return false;
+            }
+            catch (DriveNotFoundException driveNotFound)
+            {
+                WritePathResolutionError(driveNotFound);
+                return false;
+            }
+            catch (ProviderNotFoundException providerNotFound)
+            {
+                WritePathResolutionError(providerNotFound);
+                return false;
+            }
+            catch (ItemNotFoundException pathNotFound)
+            {
+                WritePathResolutionError(pathNotFound);
+                return false;
+            }
+
+            if (!destinationProvider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            foreach (PathInfo resolvedPath in resolvedPaths)
+            {
+                if (!resolvedPath.Provider.Name.Equals(destinationProvider.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            if (InvokeProvider.Item.Exists(Destination, currentContext))
+            {
+                if (!InvokeProvider.Item.IsContainer(Destination, currentContext))
+                {
+                    ArgumentException argException =
+                        PSTraceSource.NewArgumentException(
+                            "Destination",
+                            SessionStateStrings.MoveItemPathMultipleDestinationNotContainer);
+
+                    WriteError(
+                        new ErrorRecord(
+                            argException,
+                            argException.GetType().FullName,
+                            ErrorCategory.InvalidArgument,
+                            Destination));
+
+                    return false;
+                }
+
+                return true;
+            }
+
+            string destinationRoot = destinationDrive != null ? destinationDrive.Root : string.Empty;
+            string parent = SessionState.Path.ParseParent(Destination, destinationRoot, currentContext);
+            if (!string.IsNullOrEmpty(parent) &&
+                (!InvokeProvider.Item.Exists(parent, currentContext) ||
+                 !InvokeProvider.Item.IsContainer(parent, currentContext)))
+            {
+                return true;
+            }
+
+            bool passThru = currentContext.PassThru;
+            try
+            {
+                currentContext.PassThru = false;
+                InvokeProvider.Item.New(Destination, null, "Directory", null, currentContext);
+            }
+            finally
+            {
+                currentContext.PassThru = passThru;
+            }
+
+            _destinationContainerCreated = true;
+            return true;
+        }
+
         /// <summary>
         /// Moves the specified item to the specified destination.
         /// </summary>
@@ -2993,6 +3094,10 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     Collection<PathInfo> resolvedPaths = GetResolvedPaths(path);
+                    if (!EnsureDestinationContainerForMultipleMoves(resolvedPaths))
+                    {
+                        continue;
+                    }
 
                     foreach (PathInfo resolvedPathInfo in resolvedPaths)
                     {
@@ -3156,6 +3261,25 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         #endregion Command code
+
+        private void WritePathResolutionError(Exception exception)
+        {
+            switch (exception)
+            {
+                case PSNotSupportedException notSupported:
+                    WriteError(new ErrorRecord(notSupported.ErrorRecord, notSupported));
+                    break;
+                case DriveNotFoundException driveNotFound:
+                    WriteError(new ErrorRecord(driveNotFound.ErrorRecord, driveNotFound));
+                    break;
+                case ProviderNotFoundException providerNotFound:
+                    WriteError(new ErrorRecord(providerNotFound.ErrorRecord, providerNotFound));
+                    break;
+                case ItemNotFoundException pathNotFound:
+                    WriteError(new ErrorRecord(pathNotFound.ErrorRecord, pathNotFound));
+                    break;
+            }
+        }
 
     }
 
