@@ -493,9 +493,8 @@ function Start-PSBuild {
         param()
         # `git clean` will prompt if it can't unlink files, so we delete in PS to skip errors.
         foreach ($line in git clean --dry-run -dX) {
-            if (-not $line.StartsWith("Would remove ")) {
-                Write-Warning "Expected git clean --dry-run prefix 'Would remove' not found. The clean operation may be unreliable. The build script may need updating."
             if (-not $line.StartsWith('Would remove ')) {
+                Write-Warning "Expected git clean --dry-run prefix 'Would remove ' not found. The clean operation may be unreliable. The build script may need updating."
                 continue
             }
             $path = Join-Path $PSScriptRoot $line.Substring('Would remove '.Length)
