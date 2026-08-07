@@ -2285,7 +2285,8 @@ namespace System.Management.Automation.Runspaces
                         StringUtil.Format(RemotingErrorIdStrings.KeyFileNotFound, this.KeyFilePath));
                 }
 
-                startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-i ""{this.KeyFilePath}"""));
+                startInfo.ArgumentList.Add("-i");
+                startInfo.ArgumentList.Add(this.KeyFilePath);
             }
 
             // pass "-l login_name" command line argument to ssh if UserName is set
@@ -2298,11 +2299,13 @@ namespace System.Management.Automation.Runspaces
                     // convert DOMAIN\user to user@DOMAIN
                     var domainName = parts[0];
                     var userName = parts[1];
-                    startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-l {userName}@{domainName}"));
+                    startInfo.ArgumentList.Add("-l");
+                    startInfo.ArgumentList.Add($"{userName}@{domainName}");
                 }
                 else
                 {
-                    startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-l {this.UserName}"));
+                    startInfo.ArgumentList.Add("-l");
+                    startInfo.ArgumentList.Add(this.UserName);
                 }
             }
 
@@ -2310,7 +2313,8 @@ namespace System.Management.Automation.Runspaces
             // if Port is not set, then ssh will use Port from ssh_config if defined else 22 by default
             if (this.Port != 0)
             {
-                startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-p {this.Port}"));
+                startInfo.ArgumentList.Add("-p");
+                startInfo.ArgumentList.Add(this.Port.ToString(CultureInfo.InvariantCulture));
             }
 
             // pass "-o option=value" command line argument to ssh if options are provided
@@ -2318,13 +2322,16 @@ namespace System.Management.Automation.Runspaces
             {
                 foreach (DictionaryEntry pair in this.Options)
                 {
-                    startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-o {pair.Key}={pair.Value}"));
+                    startInfo.ArgumentList.Add("-o");
+                    startInfo.ArgumentList.Add($"{pair.Key}={pair.Value}");
                 }
             }
 
             // pass "-s destination command" command line arguments to ssh where command is the subsystem to invoke on the destination
             // note that ssh expects IPv6 addresses to not be enclosed in square brackets so trim them if present
-            startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-s {this.ComputerName.TrimStart('[').TrimEnd(']')} {this.Subsystem}"));
+            startInfo.ArgumentList.Add("-s");
+            startInfo.ArgumentList.Add(this.ComputerName.TrimStart('[').TrimEnd(']'));
+            startInfo.ArgumentList.Add(this.Subsystem);
 
             startInfo.WorkingDirectory = Path.GetDirectoryName(filePath);
             startInfo.CreateNoWindow = true;
@@ -2414,7 +2421,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             string filename = startInfo.FileName;
-            string[] argv = ParseArgv(startInfo);
+            string[] argv = startInfo.ArgumentList.Prepend(filename).ToArray();
             string[] envp = CopyEnvVariables(startInfo);
             string cwd = !string.IsNullOrWhiteSpace(startInfo.WorkingDirectory) ? startInfo.WorkingDirectory : null;
 
@@ -2495,46 +2502,6 @@ namespace System.Management.Automation.Runspaces
             }
 
             return envp;
-        }
-
-        /// <summary>Converts the filename and arguments information from a ProcessStartInfo into an argv array.</summary>
-        /// <param name="psi">The ProcessStartInfo.</param>
-        /// <returns>The argv array.</returns>
-        private static string[] ParseArgv(ProcessStartInfo psi)
-        {
-            var argvList = new List<string>();
-            argvList.Add(psi.FileName);
-
-            var argsToParse = string.Join(' ', psi.ArgumentList).Trim();
-            var argsLength = argsToParse.Length;
-            for (int i = 0; i < argsLength; )
-            {
-                var iStart = i;
-
-                switch (argsToParse[i])
-                {
-                    case '"':
-                        // Special case for arguments within quotes
-                        // Just return argument value within the quotes
-                        while ((++i < argsLength) && argsToParse[i] != '"') { }
-                        if (iStart < argsLength - 1)
-                        {
-                            iStart++;
-                        }
-
-                        break;
-
-                    default:
-                        // Common case for parsing arguments with space character delimiter
-                        while ((++i < argsLength) && argsToParse[i] != ' ') { }
-                        break;
-                }
-
-                argvList.Add(argsToParse.Substring(iStart, (i - iStart)));
-                while ((++i < argsLength) && argsToParse[i] == ' ') { }
-            }
-
-            return argvList.ToArray();
         }
 
         internal static unsafe void CreateProcess(
@@ -2779,7 +2746,7 @@ namespace System.Management.Automation.Runspaces
                     CultureInfo.InvariantCulture,
                     @"""{0}"" {1}",
                     startInfo.FileName,
-                    string.Join(' ', startInfo.ArgumentList));
+                    JoinArguments(startInfo.ArgumentList));
 
                 lpStartupInfo.hStdInput = stdInPipeClient;
                 lpStartupInfo.hStdOutput = stdOutPipeClient;
@@ -2839,6 +2806,90 @@ namespace System.Management.Automation.Runspaces
                 lpStartupInfo.Dispose();
                 lpProcessInformation.Dispose();
             }
+        }
+
+        /// <summary>Joins the specified arguments into a single Windows command line.</summary>
+        /// <param name="arguments">The arguments to join.</param>
+        /// <returns>The flattened command line arguments.</returns>
+        private static string JoinArguments(ICollection<string> arguments)
+        {
+            var builder = new StringBuilder();
+            bool first = true;
+
+            foreach (string argument in arguments)
+            {
+                if (!first)
+                {
+                    builder.Append(' ');
+                }
+
+                if (argument == null
+                    || argument.Contains(' ')
+                    || argument.Contains('"')
+                    || argument.Contains('\t')
+                    || argument.Contains('\n')
+                    || argument.Contains('\r'))
+                {
+                    builder.Append(QuoteArgument(argument));
+                }
+                else
+                {
+                    builder.Append(argument);
+                }
+
+                first = false;
+            }
+
+            return builder.ToString();
+        }
+
+        /// <summary>Quotes a single argument for the flattened Windows CreateProcess command line.</summary>
+        /// <remarks>Handles backslashes in the argument with the following logic:
+        /// - before a normal character, preserve the run unchanged
+        /// - before a double-quote, double the run and add one more '\\' to escape the double-quote
+        /// - at the end of the argument, double the run so trailing '\\' survive the closing quote</remarks>
+        /// <param name="argument">The argument to quote.</param>
+        /// <returns>The quoted command line argument.</returns>
+        private static string QuoteArgument(string argument)
+        {
+            argument ??= string.Empty;
+
+            var builder = new StringBuilder(argument.Length + 2);
+            builder.Append('"');
+
+            int backslashCount = 0;
+            foreach (char character in argument)
+            {
+                if (character == '\\')
+                {
+                    backslashCount++;
+                    continue;
+                }
+
+                if (character == '"')
+                {
+                    builder.Append('\\', (backslashCount * 2) + 1);
+                    builder.Append(character);
+                    backslashCount = 0;
+                    continue;
+                }
+
+                if (backslashCount > 0)
+                {
+                    builder.Append('\\', backslashCount);
+                    backslashCount = 0;
+                }
+
+                builder.Append(character);
+            }
+
+            if (backslashCount > 0)
+            {
+                builder.Append('\\', backslashCount * 2);
+            }
+
+            builder.Append('"');
+            return builder.ToString();
         }
 
         private static SafeFileHandle GetNamedPipeHandle(string pipeName)
