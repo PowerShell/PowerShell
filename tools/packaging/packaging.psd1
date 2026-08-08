@@ -19,7 +19,6 @@
         'Start-PSPackage'
         'Test-PackageManifest'
         'Update-PSSignedBuildFolder'
-        'Test-Bom'
         'Get-MacOSPackageIdentifierInfo'
     )
     RootModule        = "packaging.psm1"

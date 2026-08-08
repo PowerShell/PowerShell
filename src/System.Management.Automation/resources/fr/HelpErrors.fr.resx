@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HelpNotFound" xml:space="preserve">
+    <value>Get-Help n’a pas pu trouver {0} dans un fichier d’Aide de cette session. Pour télécharger les rubriques d’Aide mises à jour, tapez : « Update-Help ». Pour obtenir de l’Aide en ligne, recherchez la rubrique d’Aide dans la bibliothèque TechNet à l’adresse https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+  </data>
+  <data name="HelpCategoryInvalid" xml:space="preserve">
+    <value>Nous ne pouvons pas traiter la catégorie d’Aide, car « {0} » n’est pas une catégorie d’Aide valide.</value>
+  </data>
+  <data name="HelpFileLoadFailure" xml:space="preserve">
+    <value>Nous ne pouvons pas charger le fichier d’Aide « {0} ». Détails: {1}.</value>
+  </data>
+  <data name="HelpFileNotAccessible" xml:space="preserve">
+    <value>Nous ne pouvons pas accéder au fichier d’Aide « {0} », car l’utilisateur(-trice) actuel(le) ne dispose pas des droits d’accès au fichier. Détails: {1}.</value>
+  </data>
+  <data name="HelpFileNotValid" xml:space="preserve">
+    <value>Le fichier d’Aide « {0} » n’est pas un document XML valide. Détails: {1}.</value>
+  </data>
+  <data name="LoadHelpFileForTargetFailed" xml:space="preserve">
+    <value>Une erreur s’est produite lors du chargement du contenu d’Aide pour {0} à partir du fichier {1}. Détails : {2}. Pour télécharger les rubriques d’Aide mises à jour, exécutez l’applet de commande Update-Help. Pour obtenir de l’Aide en ligne, recherchez la rubrique d’Aide dans la bibliothèque TechNet à l’adresse https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+  </data>
+  <data name="ProviderLoadError" xml:space="preserve">
+    <value>Le fournisseur « {0} » ne peut pas être chargé. Détails: {1}.</value>
+  </data>
+  <data name="HelpLoadError" xml:space="preserve">
+    <value>Nous ne pouvons pas charger le fichier d’Aide. Les erreurs de {1} suivantes se sont produites lors du chargement du fichier d’aide « {0} ».</value>
+  </data>
+  <data name="MamlInvalidChildNodeError" xml:space="preserve">
+    <value>Le nœud « {0} » ne peut pas avoir « {1} » comme nœud enfant. Chemin du nœud : {2}.</value>
+  </data>
+  <data name="MamlInvalidChildNodeCountError" xml:space="preserve">
+    <value>Le nœud « {0} » peut avoir un maximum de {2} nœuds enfants de type « {1} ». Chemin du nœud : {3}.</value>
+  </data>
+  <data name="RegistryPathNotFound" xml:space="preserve">
+    <value>Nous ne pouvons pas trouver la clé de Registre : « {0}{1} »; utilisation de « {2} » pour charger les fichiers d’Aide.</value>
+  </data>
+  <data name="NoParmsFound" xml:space="preserve">
+    <value>Aucun paramètre ne correspond aux critères {0}.</value>
+  </data>
+  <data name="ParamNotSupported" xml:space="preserve">
+    <value>{0} n’est pas pris en charge par la catégorie d’Aide demandée.</value>
+  </data>
+  <data name="NoURIFound" xml:space="preserve">
+    <value>Nous ne pouvons pas afficher la version en ligne de cette rubrique d’Aide, car l’adresse Internet (URI) de la rubrique d’Aide n’est pas spécifiée dans le code de la commande ou dans le fichier d’Aide de la commande.</value>
+  </data>
+  <data name="InvalidURI" xml:space="preserve">
+    <value>L'URI {0} spécifié est non valide.</value>
+  </data>
+  <data name="CannotLaunchURI" xml:space="preserve">
+    <value>Échec du démarrage d’un navigateur pour afficher l’Aide en ligne. Aucun programme ni navigateur n’est associé pour ouvrir l’URI {0}.</value>
+  </data>
+  <data name="ProtocolNotSupported" xml:space="preserve">
+    <value>Le protocole spécifié dans l’URI « {0} » n’est pas pris en charge. Seuls les protocoles « {1} » et « {2} » sont pris en charge.</value>
+  </data>
+  <data name="MultipleOnlineTopicsNotSupported" xml:space="preserve">
+    <value>Plusieurs rubriques d’Aide ont été trouvées. Utilisez une seule rubrique d’Aide avec l’option -{0}.</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailable" xml:space="preserve">
+    <value>Nous ne pouvons pas obtenir de l’Aide à partir d’un espace d’exécution distant, car l’espace d’exécution n’a pas été ouvert.  Ouvrez l’espace d’exécution en exécutant une commande de communication à distance implicite, puis essayez de nouveau d’exécuter la commande pour obtenir de l’Aide.</value>
+  </data>
+  <data name="UpdatableHelpRequiresElevation" xml:space="preserve">
+    <value>L'accès est refusé. La commande n’a pas pu mettre à jour les rubriques d’Aide pour les modules principaux de PowerShell ou pour l’un des modules du répertoire $pshome\Modules.
+Pour mettre à jour ces rubriques d’Aide, démarrez PowerShell à l’aide de la commande « Exécuter en tant qu’administrateur(-trice) », puis essayez d’exécuter Update-Help à nouveau.</value>
+  </data>
+  <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
+    <value>Pour utiliser le {0}, vérifiez que votre application utilise « Microsoft.NET.Sdk.WindowsDesktop » comme SDK du projet et que l’assembly correspondant « Microsoft.PowerShell.GraphicalHost » est disponible. ({1})</value>
+  </data>
+  <data name="RemotingNotSupportedForFeature" xml:space="preserve">
+    <value>{0} ne fonctionne pas dans une session à distance.</value>
+  </data>
+  <data name="CircularDependencyInHelpForwarding" xml:space="preserve">
+    <value>ForwardHelpTargetName ne peut pas faire référence à la fonction elle-même.</value>
+  </data>
+  <data name="NoNetworkCommands" xml:space="preserve">
+    <value>Nous ne pouvons pas obtenir de l’Aide à partir d’un emplacement réseau dans une session restreinte.</value>
+  </data>
+</root>

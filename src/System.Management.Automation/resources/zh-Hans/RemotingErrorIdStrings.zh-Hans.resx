@@ -1,0 +1,1735 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DefaultRemotingExceptionMessage" xml:space="preserve">
+    <value>出现类型为 "{0}" 的错误。</value>
+  </data>
+  <data name="OutOfMemory" xml:space="preserve">
+    <value>进程内存不足。</value>
+  </data>
+  <data name="UnsupportedOSForRemoteEnumeration" xml:space="preserve">
+    <value>使用 -ComputerName 的远程 PSSession 枚举仅在 Windows 上受支持，在 "{0}" 上不受支持。</value>
+  </data>
+  <data name="PipelineIdsDoNotMatch" xml:space="preserve">
+    <value>管道 ID "{0}" 与当前正在运行的管道的 InstanceId "{1}" 不匹配。</value>
+  </data>
+  <data name="PipelineNotFoundOnServer" xml:space="preserve">
+    <value>在服务器上找不到管道 ID "{0}"。</value>
+  </data>
+  <data name="PipelineStopped" xml:space="preserve">
+    <value>远程管道已停止。</value>
+  </data>
+  <data name="RunspaceAlreadyExists" xml:space="preserve">
+    <value>该会话已存在。不允许再次尝试使用相同的 InstanceId {0} 创建会话。</value>
+  </data>
+  <data name="RunspaceIdsDoNotMatch" xml:space="preserve">
+    <value>指定的客户端会话 InstanceId "{0}" 与现有会话的 InstanceId "{1}" 不匹配。</value>
+  </data>
+  <data name="RemoteRunspaceOpenFailed" xml:space="preserve">
+    <value>打开远程会话失败。</value>
+  </data>
+  <data name="RunspaceCannotBeFound" xml:space="preserve">
+    <value>找不到客户端 InstanceId 为 "{0}" 的指定远程会话。</value>
+  </data>
+  <data name="ResponsePromptIdCannotBeFound" xml:space="preserve">
+    <value>提示响应具有找不到的提示 ID "{0}"。</value>
+  </data>
+  <data name="RemoteHostCallFailed" xml:space="preserve">
+    <value>对 "{0}" 的远程主机调用失败。</value>
+  </data>
+  <data name="RemoteHostMethodNotImplemented" xml:space="preserve">
+    <value>未实现远程主机方法 {0}。</value>
+  </data>
+  <data name="RemoteHostDataEncodingNotSupported" xml:space="preserve">
+    <value>类型 {0} 不支持远程主机方法数据编码。</value>
+  </data>
+  <data name="RemoteHostDataDecodingNotSupported" xml:space="preserve">
+    <value>类型 {0} 不支持远程主机方法数据解码。</value>
+  </data>
+  <data name="NestedPipelineNotSupported" xml:space="preserve">
+    <value>不支持创建嵌套管道。</value>
+  </data>
+  <data name="RelativeUriForRunspacePathNotSupported" xml:space="preserve">
+    <value>创建远程会话时不支持相对 URI。</value>
+  </data>
+  <data name="RemoteHostDecodingFailed" xml:space="preserve">
+    <value>从远程主机解码数据时发生故障。网络数据中存在错误。</value>
+  </data>
+  <data name="MustBeAdminToOverrideThreadOptions" xml:space="preserve">
+    <value>只有管理员可以远程覆盖线程选项。</value>
+  </data>
+  <data name="RemoteHostPromptForCredentialModifiedCaption" xml:space="preserve">
+    <value>PowerShell 凭据请求: {0}</value>
+  </data>
+  <data name="RemoteHostPromptForCredentialModifiedMessage" xml:space="preserve">
+    <value>警告: 远程计算机 {0} 上的脚本或应用程序正在请求凭据。请仅在信任远程计算机以及请求凭据的应用程序或脚本时，输入凭据。
+
+{1}</value>
+  </data>
+  <data name="RemoteHostReadLineAsSecureStringPrompt" xml:space="preserve">
+    <value>远程计算机 {0} 上的脚本或应用程序要求安全地读取一行。请仅在以下情况下输入敏感信息(如凭据): 信任远程计算机以及请求此类信息的应用程序或脚本。</value>
+  </data>
+  <data name="RemoteHostGetBufferContents" xml:space="preserve">
+    <value>远程计算机 {0} 上的脚本或应用程序正在尝试读取 PowerShell 主机上的缓冲区内容。出于安全原因，不允许这样做；调用已取消。</value>
+  </data>
+  <data name="RemoteHostPromptSecureStringPrompt" xml:space="preserve">
+    <value>远程计算机 {0} 上的脚本或应用程序正在发送提示请求。出现提示时，请仅在信任远程计算机以及请求数据的应用程序或脚本时，输入敏感信息(如凭据或密码)。</value>
+  </data>
+  <data name="ReceivedUnsupportedRemoteHostCall" xml:space="preserve">
+    <value>收到不受支持的远程主机调用: {0}。</value>
+  </data>
+  <data name="ReceivedUnsupportedAction" xml:space="preserve">
+    <value>已收到远程处理数据，但以下操作不受支持: {0}。</value>
+  </data>
+  <data name="ReceivedUnsupportedDataType" xml:space="preserve">
+    <value>收到的远程处理数据具有不受支持的数据类型: {0}。</value>
+  </data>
+  <data name="MissingDestination" xml:space="preserve">
+    <value>远程处理数据缺少目标属性。</value>
+  </data>
+  <data name="MissingTarget" xml:space="preserve">
+    <value>远程处理数据缺少目标接口属性。</value>
+  </data>
+  <data name="MissingRunspaceId" xml:space="preserve">
+    <value>远程处理数据缺少 Session InstanceId 属性。</value>
+  </data>
+  <data name="MissingDataType" xml:space="preserve">
+    <value>远程处理数据缺少 RemotingDataType 属性。</value>
+  </data>
+  <data name="MissingCallId" xml:space="preserve">
+    <value>远程处理数据缺少 CallId 属性。</value>
+  </data>
+  <data name="MissingMethodName" xml:space="preserve">
+    <value>远程处理数据缺少 MethodName 属性。</value>
+  </data>
+  <data name="MissingIsStartFragment" xml:space="preserve">
+    <value>未为第一个片段设置 IsStartFragment 标志。</value>
+  </data>
+  <data name="MissingProperty" xml:space="preserve">
+    <value>远程处理数据缺少 {0} 属性。</value>
+  </data>
+  <data name="ObjectIdsNotMatching" xml:space="preserve">
+    <value>收到意外的 ObjectId。如果远程计算机未正确构造这些片段，或者数据可能已损坏或已更改，则可能会发生这种情况。</value>
+  </data>
+  <data name="ObjectIdCannotBeLessThanZero" xml:space="preserve">
+    <value>ObjectId 不能小于或等于 0。如果远程计算机未正确构造这些片段，或者未经授权的用户更改了数据，则可能会发生这种情况。</value>
+  </data>
+  <data name="FragmentIdsNotInSequence" xml:space="preserve">
+    <value>同一对象的 FragmentID 必须按顺序排列，每次递增 1。如果远程计算机未正确构造这些片段，则可能会发生这种情况。数据可能也已损坏或已更改。</value>
+  </data>
+  <data name="ObjectIsTooBig" xml:space="preserve">
+    <value>远程处理数据太大，无法基于片段进行重组。如果一个片段中的数据长度大于 Int32.Max，则可能会发生这种情况。如果未经授权的用户更改了数据，也可能会发生这种情况。</value>
+  </data>
+  <data name="MissingIsEndFragment" xml:space="preserve">
+    <value>未为最后一个片段设置 IsEndFragment 标志。如果远程计算机未正确构造这些片段，或者数据已损坏或已更改，则可能会发生这种情况。</value>
+  </data>
+  <data name="DeserializedObjectIsNull" xml:space="preserve">
+    <value>反序列化远程处理数据为 null。</value>
+  </data>
+  <data name="BlobLengthNotInRange" xml:space="preserve">
+    <value>片段 Blob 长度超出范围: {0}</value>
+  </data>
+  <data name="DecodingErrorForErrorRecord" xml:space="preserve">
+    <value>解码 ErrorRecord 时出错。</value>
+  </data>
+  <data name="DecodingErrorForPipelineStateInfo" xml:space="preserve">
+    <value>解码 PipelineStateInfo 时出错。</value>
+  </data>
+  <data name="DecodingErrorForRunspaceStateInfo" xml:space="preserve">
+    <value>解码 RunspaceStateInfo 时出错。</value>
+  </data>
+  <data name="ReceivedUnsupportedRemotingTargetInterfaceType" xml:space="preserve">
+    <value>收到不受支持的 RemotingTargetInterface 类型: {0}</value>
+  </data>
+  <data name="UnknownTargetClass" xml:space="preserve">
+    <value>在未知目标类上调用了远程主机方法: {0}</value>
+  </data>
+  <data name="MissingTargetClass" xml:space="preserve">
+    <value>在未指定目标类的情况下，调用了远程主机方法。</value>
+  </data>
+  <data name="DecodingErrorForRunspacePoolStateInfo" xml:space="preserve">
+    <value>解码 RunspacePoolStateInfo 时出错。</value>
+  </data>
+  <data name="DecodingErrorForMinRunspaces" xml:space="preserve">
+    <value>解码最小运行空间时出错。</value>
+  </data>
+  <data name="DecodingErrorForMaxRunspaces" xml:space="preserve">
+    <value>解码最大运行空间时出错。</value>
+  </data>
+  <data name="DecodingErrorForPowerShellStateInfo" xml:space="preserve">
+    <value>解码 PowerShellStateInfo 时出错。</value>
+  </data>
+  <data name="CantCastPropertyToExpectedType" xml:space="preserve">
+    <value>意外的 {0} 属性类型(应为 {1}，实际为 {2})。</value>
+  </data>
+  <data name="CantCastRemotingDataToPSObject" xml:space="preserve">
+    <value>意外的远程处理数据类型(应为 PSObject，实际为 {0})。</value>
+  </data>
+  <data name="CantCastCommandToPSObject" xml:space="preserve">
+    <value>意外的编码命令类型(应为 PSObject，实际为 {0})。</value>
+  </data>
+  <data name="CantCastParameterToPSObject" xml:space="preserve">
+    <value>意外的编码命令参数类型(应为 PSObject，实际为 {0})。</value>
+  </data>
+  <data name="NotEnoughHeaderForRemoteDataObject" xml:space="preserve">
+    <value>解码从远程计算机接收的数据时出错。要对从远程计算机接收的反序列化对象进行解码，至少需要 {0} 字节的数据。如果远程计算机未正确构造这些片段，或者数据已损坏或已更改，则可能会发生这种情况。</value>
+  </data>
+  <data name="RemotingDestinationNotForMe" xml:space="preserve">
+    <value>接收到的数据包并非发往已登录用户: 用户 = {0}，数据包目标 = {1}。</value>
+  </data>
+  <data name="ClientNegotiationTimeout" xml:space="preserve">
+    <value>客户端协商计时器已过期。协商超时间隔为 {0} 毫秒。</value>
+  </data>
+  <data name="ClientNegotiationFailed" xml:space="preserve">
+    <value>PowerShell 客户端不支持服务器协商的 {0} {1}。请确保服务器与 PowerShell 的内部版本 {2} 和协议版本 {3} 兼容。</value>
+  </data>
+  <data name="ClientNotFoundCapabilityProperties" xml:space="preserve">
+    <value>{0}。与服务器协商失败。请确保服务器与 PowerShell 的内部版本 {1} 和协议版本 {2} 兼容。</value>
+  </data>
+  <data name="ServerRequestedToCloseSession" xml:space="preserve">
+    <value>目标服务器已发送关闭会话的请求。</value>
+  </data>
+  <data name="ServerNegotiationFailed" xml:space="preserve">
+    <value>运行 PowerShell 的服务器不支持客户端计算机协商的 {0} {1}。请验证客户端计算机是否与 PowerShell 的内部版本 {2} 和协议版本 {3} 兼容。</value>
+  </data>
+  <data name="ServerConnectFailedOnNegotiation" xml:space="preserve">
+    <value>运行 PowerShell 的服务器不支持客户端计算机协商的 {0} {1} 上的连接操作。请确保客户端计算机与 PowerShell 的内部版本 {2} 和协议版本 {3} 兼容。</value>
+  </data>
+  <data name="ServerConnectFailedOnInputValidation" xml:space="preserve">
+    <value>运行 PowerShell 的服务器无法处理连接操作，因为找不到以下信息，或这些信息无效:“客户端功能”信息和“连接 RunspacePool”信息。</value>
+  </data>
+  <data name="ServerConnectFailedOnServerStateValidation" xml:space="preserve">
+    <value>运行 PowerShell 的服务器无法处理连接操作，因为该服务器尚未启动或正在关闭。</value>
+  </data>
+  <data name="ServerConnectFailedOnMismatchedRunspacePoolProperties" xml:space="preserve">
+    <value>运行 PowerShell 的服务器无法处理连接操作，因为服务器运行空间池属性与客户端计算机的指定属性不匹配。</value>
+  </data>
+  <data name="ServerNotFoundCapabilityProperties" xml:space="preserve">
+    <value>{0}。与客户端协商失败。请确保客户端与 PowerShell 的内部版本 {1} 和协议版本 {2} 兼容。</value>
+  </data>
+  <data name="ServerNegotiationTimeout" xml:space="preserve">
+    <value>服务器协商计时器已过期。协商超时间隔为 {0} 毫秒。</value>
+  </data>
+  <data name="ClientRequestedToCloseSession" xml:space="preserve">
+    <value>客户端计算机已发送关闭会话的请求。</value>
+  </data>
+  <data name="FatalErrorCausingClose" xml:space="preserve">
+    <value>发生 PowerShell 无法处理的错误。远程会话可能已结束。</value>
+  </data>
+  <data name="ClientKeyExchangeFailed" xml:space="preserve">
+    <value>服务器未在指定的超时期限内返回加密会话密钥。</value>
+  </data>
+  <data name="ServerKeyExchangeFailed" xml:space="preserve">
+    <value>客户端未在指定的超时期限内返回公钥。</value>
+  </data>
+  <data name="ConnectFailed" xml:space="preserve">
+    <value>连接尝试失败。</value>
+  </data>
+  <data name="CloseIsCalled" xml:space="preserve">
+    <value>正在尝试关闭会话。</value>
+  </data>
+  <data name="ForceClosed" xml:space="preserve">
+    <value>PowerShell 无法正确关闭远程会话。会话处于未定义状态，因为它在断开连接后未被打开或连接。PowerShell 将尝试在本地计算机上强制关闭该会话，但该会话可能不会在远程计算机上关闭。若要正确关闭远程会话，请先打开或连接该会话。</value>
+  </data>
+  <data name="CloseFailed" xml:space="preserve">
+    <value>无法关闭会话。</value>
+  </data>
+  <data name="CloseCompleted" xml:space="preserve">
+    <value>会话已关闭。</value>
+  </data>
+  <data name="UnsupportedWaitHandleType" xml:space="preserve">
+    <value>不支持 Wait 句柄类型 "{0}"。</value>
+  </data>
+  <data name="ReceivedDataStreamIsNotStdout" xml:space="preserve">
+    <value>接收的数据的流 ID 索引为 "{0}"。仅支持标准输出流 ID 索引 "0"。</value>
+  </data>
+  <data name="StdInIsNotOpen" xml:space="preserve">
+    <value>标准输入句柄未打开。</value>
+  </data>
+  <data name="NativeWriteFileFailed" xml:space="preserve">
+    <value>对 WriteFile 的本机 API 调用失败。错误代码为 {0}。</value>
+  </data>
+  <data name="NativeReadFileFailed" xml:space="preserve">
+    <value>对 ReadFile 的本机 API 调用失败。错误代码为 {0}。</value>
+  </data>
+  <data name="InvalidSchemeValue" xml:space="preserve">
+    <value>{0} 不是有效的架构值。可能的值为 "http" 和 "https"。</value>
+  </data>
+  <data name="ClientReceiveFailed" xml:space="preserve">
+    <value>客户端接收调用失败。</value>
+  </data>
+  <data name="ClientSendFailed" xml:space="preserve">
+    <value>客户端发送调用失败。</value>
+  </data>
+  <data name="CommandHandleIsNull" xml:space="preserve">
+    <value>从 WinRS API WSManRunShellCommand 返回的命令句柄为 null。</value>
+  </data>
+  <data name="StdInCannotBeSetToNoWait" xml:space="preserve">
+    <value>无法将标准输入句柄设置为 'no wait' 状态。系统错误代码为 {0}。</value>
+  </data>
+  <data name="PortIsOutOfRange" xml:space="preserve">
+    <value>端口号 {0} 不在有效值范围内。有效值的范围为 1 到 65535。</value>
+  </data>
+  <data name="ServerProcessExited" xml:space="preserve">
+    <value>已退出该服务器进程。</value>
+  </data>
+  <data name="CannotGetStdInHandle" xml:space="preserve">
+    <value>调用 Windows API GetStdHandle 来获取标准输入句柄时返回了错误代码: {0}。</value>
+  </data>
+  <data name="CannotGetStdOutHandle" xml:space="preserve">
+    <value>调用 Windows API GetStdHandle 来获取标准输出句柄时返回了错误代码: {0}。</value>
+  </data>
+  <data name="CannotGetStdErrHandle" xml:space="preserve">
+    <value>调用 Windows API GetStdHandle 来获取标准错误句柄时返回了错误代码: {0}。</value>
+  </data>
+  <data name="ConnectExFailed" xml:space="preserve">
+    <value>连接到远程服务器 {0} 失败。</value>
+  </data>
+  <data name="ConnectExCallBackError" xml:space="preserve">
+    <value>连接到远程服务器 {0} 失败，出现以下错误消息: {1}</value>
+  </data>
+  <data name="CloseExCallBackError" xml:space="preserve">
+    <value>关闭远程服务器 shell 实例失败，出现以下错误消息: {0}</value>
+  </data>
+  <data name="SendExFailed" xml:space="preserve">
+    <value>向远程服务器 {0} 发送数据失败。</value>
+  </data>
+  <data name="SendExCallBackError" xml:space="preserve">
+    <value>将数据发送到远程服务器 {0} 失败，出现以下错误消息: {1}</value>
+  </data>
+  <data name="ReceiveExFailed" xml:space="preserve">
+    <value>从远程服务器 {0} 接收数据失败。</value>
+  </data>
+  <data name="ReceiveExCallBackError" xml:space="preserve">
+    <value>从远程服务器 {0} 处理数据失败，出现以下错误消息: {1}</value>
+  </data>
+  <data name="RunShellCommandExFailed" xml:space="preserve">
+    <value>在远程服务器上启动命令失败。</value>
+  </data>
+  <data name="RunShellCommandExCallBackError" xml:space="preserve">
+    <value>在远程服务器上启动命令失败，出现以下错误消息: {0}</value>
+  </data>
+  <data name="ReconnectShellCommandExCallBackError" xml:space="preserve">
+    <value>重新连接到远程服务器上的命令失败，出现以下错误消息: {0}</value>
+  </data>
+  <data name="CommandSendExFailed" xml:space="preserve">
+    <value>向远程命令发送数据失败。</value>
+  </data>
+  <data name="CommandSendExCallBackError" xml:space="preserve">
+    <value>向远程命令发送数据失败，出现以下错误消息: {0}</value>
+  </data>
+  <data name="CommandReceiveExFailed" xml:space="preserve">
+    <value>接收远程命令的数据失败。</value>
+  </data>
+  <data name="CommandReceiveExCallBackError" xml:space="preserve">
+    <value>处理远程命令的数据失败，出现以下错误消息: {0}</value>
+  </data>
+  <data name="GeneralError" xml:space="preserve">
+    <value>调用方法 {1} 时出错，错误代码为 {0}。</value>
+  </data>
+  <data name="TroubleShootingHelpTopic" xml:space="preserve">
+    <value>{0} 有关详细信息，请参阅 about_Remote_Troubleshooting 帮助主题。</value>
+  </data>
+  <data name="DisconnectShellExFailed" xml:space="preserve">
+    <value>无法断开与远程服务器 {0} 的连接。</value>
+  </data>
+  <data name="DisconnectShellExCallBackErrr" xml:space="preserve">
+    <value>与远程服务器断开连接失败，出现以下错误消息: {0}</value>
+  </data>
+  <data name="ReconnectShellExFailed" xml:space="preserve">
+    <value>重新连接到远程服务器失败。</value>
+  </data>
+  <data name="ReconnectShellExCallBackErrr" xml:space="preserve">
+    <value>重新连接到远程服务器 {0} 失败，出现以下错误消息: {1}</value>
+  </data>
+  <data name="IPCTransportConnectError" xml:space="preserve">
+    <value>进程间通信(IPC)传输不支持连接操作。</value>
+  </data>
+  <data name="NonExistentInitialSessionStateProvider" xml:space="preserve">
+    <value>远程服务器上不存在 ID 为 {0} 的 EndpointConfiguration。请与 PowerShell 管理员或终结点配置的所有者或创建者联系。</value>
+  </data>
+  <data name="InitialSessionStateNull" xml:space="preserve">
+    <value>具有 {0} 标识符的 EndpointConfiguration 在远程计算机上未处于有效的初始会话状态。请与 PowerShell 管理员或终结点配置的所有者或创建者联系。</value>
+  </data>
+  <data name="MandatoryValueNotPresent" xml:space="preserve">
+    <value>未为 {1} 注册表项指定必需值 {0}。</value>
+  </data>
+  <data name="MandatoryValueNotInCorrectFormat" xml:space="preserve">
+    <value>注册表项 {1} 的必需值 {0} 格式不正确。预期格式为 'string'。</value>
+  </data>
+  <data name="StartupScriptNotCorrect" xml:space="preserve">
+    <value>"{0}" 必须指定以扩展名 ".ps1" 结尾的 PowerShell 脚本文件。</value>
+  </data>
+  <data name="DuplicateInitializationParameterFound" xml:space="preserve">
+    <value>{0} 参数已在 {1} 部分中指定。请与管理员联系，确保只指定一次 {0}。</value>
+  </data>
+  <data name="NoAttributesFoundForParamElement" xml:space="preserve">
+    <value>应为 "{2}" 元素中的 "{0}" 和 "{1}" 属性。</value>
+  </data>
+  <data name="AssemblyLoadAttributesNotFound" xml:space="preserve">
+    <value>必须在 "{2}" 部分中指定 "{0}" 和 "{1}"，才能动态加载程序集。</value>
+  </data>
+  <data name="UnableToLoadAssembly" xml:space="preserve">
+    <value>无法加载在 "{1}" 部分中指定的程序集 "{0}"。</value>
+  </data>
+  <data name="UnableToLoadType" xml:space="preserve">
+    <value>无法加载在 "{1}" 部分中指定的类型 "{0}"。</value>
+  </data>
+  <data name="TypeNeedsAssembly" xml:space="preserve">
+    <value>在 "{2}" 部分中，必须同时指定 "{0}" 和 "{1}"。</value>
+  </data>
+  <data name="RedirectedURINotWellFormatted" xml:space="preserve">
+    <value>目标 "{0}" 请求将连接重定向到 "{1}"。但是，"{1}" 不是格式正确的 URI。</value>
+  </data>
+  <data name="URIEndPointNotResolved" xml:space="preserve">
+    <value>{0}报告的重定向位置: {1}。</value>
+  </data>
+  <data name="URIRedirectWarningToHost" xml:space="preserve">
+    <value>连接已重定向到以下 URI: "{0}"</value>
+  </data>
+  <data name="URIRedirectionReported" xml:space="preserve">
+    <value>{0} 若要自动连接到重定向的 URI，请验证会话首选项变量 "{2}" 的 "{1}" 属性，并在 cmdlet 上使用 "{3}" 参数。</value>
+  </data>
+  <data name="ReceivedObjectSizeExceededMaximumClient" xml:space="preserve">
+    <value>从远程服务器接收的数据的当前反序列化对象大小超出了允许的最大对象大小。当前反序列化的对象大小为 {0}。允许的最大对象大小为 {1}。</value>
+  </data>
+  <data name="ReceivedDataSizeExceededMaximumClient" xml:space="preserve">
+    <value>从远程服务器接收的数据总量超出了允许的最大配额。允许的最大配额为 {0}。</value>
+  </data>
+  <data name="ReceivedObjectSizeExceededMaximumServer" xml:space="preserve">
+    <value>从远程客户端计算机接收的数据的当前反序列化对象大小超出了允许的最大对象大小。当前反序列化的对象大小为 {0}。允许的最大对象大小为 {1}。</value>
+  </data>
+  <data name="ReceivedDataSizeExceededMaximumServer" xml:space="preserve">
+    <value>从远程客户端接收到的数据总量超出了允许的最大配额。允许的最大配额为 {0}。</value>
+  </data>
+  <data name="StartupScriptThrewTerminatingError" xml:space="preserve">
+    <value>运行启动脚本时引发错误: {0}。</value>
+  </data>
+  <data name="RemoteRunspaceInfoHasDuplicates" xml:space="preserve">
+    <value>指定的 RemoteRunspaceInfo 对象具有重复项。</value>
+  </data>
+  <data name="RemoteRunspaceInfoLimitExceeded" xml:space="preserve">
+    <value>指定的 RemoteRunspaceInfo 对象已超过允许的最大限制。</value>
+  </data>
+  <data name="RemoteRunspaceOpenUnknownState" xml:space="preserve">
+    <value>打开远程会话失败，出现意外状态。状态 {0}。</value>
+  </data>
+  <data name="UriSpecifiedNotValid" xml:space="preserve">
+    <value>指定的 URI {0} 无效。</value>
+  </data>
+  <data name="RemoteRunspaceClosed" xml:space="preserve">
+    <value>URI {0} 的远程会话已关闭。</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailableForSpecifiedComputer" xml:space="preserve">
+    <value>远程会话不适用于 ComputerName {0}。</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailableForSpecifiedRunspaceId" xml:space="preserve">
+    <value>远程会话不可用于 {0}。</value>
+  </data>
+  <data name="StopPSJobWhatIfTarget" xml:space="preserve">
+    <value>远程命令: {0}，与 ID 为 "{1}" 的作业相关联。</value>
+  </data>
+  <data name="NewRunspaceAmbiguousAuthentication" xml:space="preserve">
+    <value>指定 {1} 时，无法指定 {0}。</value>
+  </data>
+  <data name="WildCardErrorFilePathParameter" xml:space="preserve">
+    <value>Wildcard characters are not supported for the FilePath parameter. Specify a path without wildcard characters.</value>
+  </data>
+  <data name="FilePathNotFromFileSystemProvider" xml:space="preserve">
+    <value>指定为 FilePath 参数值的路径不是来自 FileSystem 提供程序。</value>
+  </data>
+  <data name="FilePathShouldPS1Extension" xml:space="preserve">
+    <value>FilePath 参数的值必须是 PowerShell 脚本文件。输入扩展名为 .ps1 的文件的路径，然后重试该命令。</value>
+  </data>
+  <data name="InvalidComputerName" xml:space="preserve">
+    <value>一个或多个计算机名称无效。如果要传递 URI，请使用 -ConnectionUri 参数；或者也可以传递 URI 对象，而不是字符串。</value>
+  </data>
+  <data name="InvalidJobStateGeneral" xml:space="preserve">
+    <value>当前作业实例的状态对此操作无效。</value>
+  </data>
+  <data name="JobWithSpecifiedNameNotFound" xml:space="preserve">
+    <value>该命令找不到作业，因为找不到作业名称 {0}。请验证 Name 参数的值，然后重试该命令。</value>
+  </data>
+  <data name="JobWithSpecifiedInstanceIdNotFound" xml:space="preserve">
+    <value>该命令找不到具有实例标识符 {0} 的作业。请验证 InstanceId 参数的值，然后重试该命令。</value>
+  </data>
+  <data name="JobWithSpecifiedSessionIdNotFound" xml:space="preserve">
+    <value>该命令找不到作业 ID 为 {0} 的作业。请验证该 ID 参数的值，然后重试该命令。</value>
+  </data>
+  <data name="JobWithSpecifiedNameNotCompleted" xml:space="preserve">
+    <value>该命令无法移除具有作业 ID {0} 和名称 {1} 的作业，因为该作业尚未完成。若要移除该作业，请先将其停止或使用 Force 参数。</value>
+  </data>
+  <data name="JobWithSpecifiedSessionIdNotCompleted" xml:space="preserve">
+    <value>该命令无法移除作业 ID 为 {0} 的作业，因为该作业尚未完成。若要移除该作业，请先将其停止或使用 Force 参数。</value>
+  </data>
+  <data name="JobWithSpecifiedInstanceIdNotCompleted" xml:space="preserve">
+    <value>该命令无法移除作业 ID 为 {0} 且实例标识符为 {1} 的作业，因为该作业尚未完成。若要移除该作业，请先将其停止或使用 Force 参数。</value>
+  </data>
+  <data name="RemovePSJobWhatIfTarget" xml:space="preserve">
+    <value>远程命令: {0}，与 ID 为 "{1}" 的作业相关联。</value>
+  </data>
+  <data name="ComputerNameParamNotSupported" xml:space="preserve">
+    <value>该命令无法检索指定计算机的作业。ComputerName 参数只能用于通过 PowerShell 远程处理创建的作业。</value>
+  </data>
+  <data name="RunspaceParamNotSupported" xml:space="preserve">
+    <value>Session 参数只能与 PSRemotingJob 对象一起使用。</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailableForSpecifiedName" xml:space="preserve">
+    <value>具有名称 {0} 的远程会话不可用。</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailableForSpecifiedSessionId" xml:space="preserve">
+    <value>会话 ID 为 {0} 的远程会话不可用。</value>
+  </data>
+  <data name="ItemNotFoundInRepository" xml:space="preserve">
+    <value>{0} 不包含 ID 为 {1} 的项。</value>
+  </data>
+  <data name="CannotRemoveJob" xml:space="preserve">
+    <value>该命令无法移除该作业，因为它不存在或是子作业。子作业只能通过移除父作业来进行移除。</value>
+  </data>
+  <data name="CSCDoubleParameterOutOfRange" xml:space="preserve">
+    <value>{0} 不是参数 {1} 的有效值。该值必须大于或等于 0。</value>
+  </data>
+  <data name="ProxyAmbiguousAuthentication" xml:space="preserve">
+    <value>{0} 不能指定为代理身份验证机制。代理身份验证仅支持 {1}、{2} 或 {3}。</value>
+  </data>
+  <data name="ProxyCredentialWithoutAccess" xml:space="preserve">
+    <value>使用以下代理访问类型时，无法指定代理凭据: {0}。请指定其他访问类型，或者不指定代理凭据。</value>
+  </data>
+  <data name="WrongSessionOptionValue" xml:space="preserve">
+    <value>A {0} value must be specified for session option {1}.</value>
+  </data>
+  <data name="PushedRunspaceMustBeOpen" xml:space="preserve">
+    <value>会话必须处于打开状态。</value>
+  </data>
+  <data name="HostDoesNotSupportPushRunspace" xml:space="preserve">
+    <value>主机不支持 Enter-PSSession 和 Exit-PSSession。</value>
+  </data>
+  <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId" xml:space="preserve">
+    <value>找到会话 ID 为 {0} 的多个匹配项。</value>
+  </data>
+  <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId" xml:space="preserve">
+    <value>找到会话 ID 为 {0} 的多个匹配项。</value>
+  </data>
+  <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedName" xml:space="preserve">
+    <value>找到多个与名称 {0} 匹配的项。</value>
+  </data>
+  <data name="RemoteRunspaceDoesNotSupportPushRunspace" xml:space="preserve">
+    <value>Enter-PSSession 失败，因为远程会话不提供所需的命令。</value>
+  </data>
+  <data name="HostInNestedPrompt" xml:space="preserve">
+    <value>无法从嵌套提示符运行 Enter-PSSession。</value>
+  </data>
+  <data name="WsmanMaxRedirectionCountVariableDescription" xml:space="preserve">
+    <value>The maximum number of WS-Man URI redirections to allow while connecting to a remote computer</value>
+  </data>
+  <data name="PSDefaultSessionOptionDescription" xml:space="preserve">
+    <value>新远程会话的默认会话选项</value>
+  </data>
+  <data name="PSSessionConfigurationName" xml:space="preserve">
+    <value>将在远程计算机上加载的会话配置的名称</value>
+  </data>
+  <data name="PSSessionAppName" xml:space="preserve">
+    <value>将用于建立远程连接的 AppName</value>
+  </data>
+  <data name="PSSenderInfoDescription" xml:space="preserve">
+    <value>包含有关启动远程会话的远程用户的信息。此变量仅在远程会话中可用。</value>
+  </data>
+  <data name="CSCmdsTypeNeedsAssembly" xml:space="preserve">
+    <value>必须同时指定 "{0}" 和 "{1}"，或者两者都不指定。</value>
+  </data>
+  <data name="CSCmdsShellNotFound" xml:space="preserve">
+    <value>找不到会话配置 "{0}"。</value>
+  </data>
+  <data name="CSCmdsShellNotPowerShellBased" xml:space="preserve">
+    <value>会话配置 "{0}" 不是基于 PowerShell 的 shell。</value>
+  </data>
+  <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
+    <value>会话配置 "{0}" 是基于 PowerShell 的 shell。请使用 PowerShell 6+ 对其进行修改。</value>
+  </data>
+  <data name="CSCmdsWindowsPowerShellCoreNotModifiable" xml:space="preserve">
+    <value>会话配置 "{0}" 是基于 Windows PowerShell 的 shell。请使用 Windows PowerShell 进行修改。</value>
+  </data>
+  <data name="CustomShellNotFound" xml:space="preserve">
+    <value>没有与条件 "{0}" 匹配的会话配置。</value>
+  </data>
+  <data name="CSShouldProcessAction" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="CSShouldProcessTarget" xml:space="preserve">
+    <value>名称: {0}</value>
+  </data>
+  <data name="CSShouldProcessTargetAdminEnable" xml:space="preserve">
+    <value>名称: {0}。这使管理员能够在此计算机上远程运行 PowerShell 命令。</value>
+  </data>
+  <data name="NcsCannotDeleteFile" xml:space="preserve">
+    <value>无法删除临时文件 {0}。失败原因: {1}。</value>
+  </data>
+  <data name="NcsCannotDeleteFileAfterInstall" xml:space="preserve">
+    <value>已成功注册新的 shell，但 PowerShell 无法删除临时文件 {0}。失败原因: {1}。</value>
+  </data>
+  <data name="NcsCannotWritePluginContent" xml:space="preserve">
+    <value>无法将 shell 配置数据写入临时文件 {0} 中。失败原因: {1}。</value>
+  </data>
+  <data name="NcsScriptMessageV" xml:space="preserve">
+    <value>正在运行命令 "{0}" 以创建新的会话配置。</value>
+  </data>
+  <data name="NcsShouldProcessTargetSDDL" xml:space="preserve">
+    <value>名称: {0} SDDL: {1}。这使所选用户能够在此计算机上远程运行 PowerShell 命令。</value>
+  </data>
+  <data name="RcsScriptMessageV" xml:space="preserve">
+    <value>正在运行命令 "{0}" 以移除会话配置。</value>
+  </data>
+  <data name="GcsScriptMessageV" xml:space="preserve">
+    <value>正在运行命令 "{0}" 以获取基于 PowerShell 的会话配置。</value>
+  </data>
+  <data name="ScsScriptMessageV" xml:space="preserve">
+    <value>正在运行命令 "{0}" 以更新会话配置属性。</value>
+  </data>
+  <data name="ScsShouldProcessTargetSDDL" xml:space="preserve">
+    <value>名称: {0} SDDL: {1}</value>
+  </data>
+  <data name="EcsScriptMessageV" xml:space="preserve">
+    <value>正在运行命令 "{0}" 以启用会话配置。</value>
+  </data>
+  <data name="EcsWSManQCCaption" xml:space="preserve">
+    <value>WinRM 快速配置</value>
+  </data>
+  <data name="EcsWSManQCQuery" xml:space="preserve">
+    <value>正在运行命令 "{0}"，以使用 Windows 远程管理(WinRM)服务实现对此计算机的远程管理。
+ 这包括:
+    1. 启动或重新启动(如果已启动) WinRM 服务
+    2. 将 WinRM 服务启动类型设置为“自动”
+    3. 创建一个可接受任何 IP 地址上的请求的侦听器
+    4. 为 WS-Management 流量启用 Windows 防火墙入站规则例外(仅限 http)。
+
+是否要继续?</value>
+  </data>
+  <data name="EcsWSManShouldProcessDesc" xml:space="preserve">
+    <value>正在执行操作 "{0}"。</value>
+  </data>
+  <data name="EcsShouldProcessTarget" xml:space="preserve">
+    <value>名称: {0} SDDL: {1}。这使所选用户能够在此计算机上远程运行 PowerShell 命令。</value>
+  </data>
+  <data name="DcsScriptMessageV" xml:space="preserve">
+    <value>正在运行命令 "{0}" 以禁用会话配置。</value>
+  </data>
+  <data name="DcsShouldProcessTarget" xml:space="preserve">
+    <value>名称: {0} SDDL: {1}。这会拒绝所有人访问此会话配置。</value>
+  </data>
+  <data name="DcsWarningMessage" xml:space="preserve">
+    <value>禁用会话配置不会撤消 Enable-PSRemoting 或 Enable-PSSessionConfiguration cmdlet 所做的所有更改。你可能需要按照以下步骤手动撤消这些更改:
+    1. 停止并禁用 WinRM 服务。
+    2. 删除可接受任何 IP 地址上的请求的侦听器。
+    3. 禁用 WS-Management 通信的防火墙例外。
+    4. 将 LocalAccountTokenFilterPolicy 的值还原为 0，这会限制对计算机上 Administrators 组成员的远程访问。</value>
+  </data>
+  <data name="EDcsRequiresElevation" xml:space="preserve">
+    <value>访问被拒绝。若要运行此 cmdlet，请使用“以管理员身份运行”选项启动 PowerShell。</value>
+  </data>
+  <data name="RestartWSManServiceMessageV" xml:space="preserve">
+    <value>正在重启 WinRM 服务</value>
+  </data>
+  <data name="RestartWSManServiceAction" xml:space="preserve">
+    <value>"Restart-Service"</value>
+  </data>
+  <data name="RestartWSManServiceTarget" xml:space="preserve">
+    <value>名称: {0}</value>
+  </data>
+  <data name="RestartWSManRequiredShowUI" xml:space="preserve">
+    <value>必须重启 WinRM 服务，然后才能为 SecurityDescriptor 选项显示 UI。请重启 WinRM 服务，然后运行以下命令: "{0}"</value>
+  </data>
+  <data name="ERemotingCaption" xml:space="preserve">
+    <value>正在注册会话配置</value>
+  </data>
+  <data name="ERemotingQuery" xml:space="preserve">
+    <value>找不到会话配置 "{0}"。正在运行命令 "{1}" 以创建 "{0}" 会话配置。运行此命令将会重启 WinRM 服务。</value>
+  </data>
+  <data name="ShowUIAndSDDLCannotExist" xml:space="preserve">
+    <value>不能同时指定 "{0}" 和 "{1}" 参数。请指定 "{0}" 或 "{1}" 参数。</value>
+  </data>
+  <data name="RestartWinRMMessage" xml:space="preserve">
+    <value>此操作可能会重启 WinRM 服务。是否要继续?</value>
+  </data>
+  <data name="IPCUnknownNodeType" xml:space="preserve">
+    <value>无法处理节点类型为 "{0}" 的元素。仅支持 {1} 和 {2} 节点类型。</value>
+  </data>
+  <data name="IPCInsufficientDataforElement" xml:space="preserve">
+    <value>没有足够的数据可用于处理 {0} 元素。</value>
+  </data>
+  <data name="IPCWrongAttributeCountForDataElement" xml:space="preserve">
+    <value>{2} 元素中应只有两个名称为 "{0}" 和 "{1}" 的属性。</value>
+  </data>
+  <data name="IPCOnlyTextExpectedInDataElement" xml:space="preserve">
+    <value>{1} 元素中的节点类型 "{0}" 未知。{1} 元素中仅应有 "{2}" 节点类型。</value>
+  </data>
+  <data name="IPCWrongAttributeCountForElement" xml:space="preserve">
+    <value>{1} 元素中应只有一个名为 "{0}" 的属性。</value>
+  </data>
+  <data name="IPCUnknownElementReceived" xml:space="preserve">
+    <value>收到未知元素 "{0}"。如果远程进程异常关闭或结束，则可能会发生这种情况。</value>
+  </data>
+  <data name="IPCSupportsOnlyDefaultAuth" xml:space="preserve">
+    <value>不支持指定的身份验证机制 "{0}"。此操作仅支持 "{1}"。</value>
+  </data>
+  <data name="IPCPwshExecutableNotFound" xml:space="preserve">
+    <value>在 "{0}" 中找不到 pwsh 可执行文件。
+请注意，在 PowerShell 托管在其他应用程序中的情况下，设计上不支持 'Start-Job'。在这种情况下，建议改用 'ThreadJob' 模块。</value>
+  </data>
+  <data name="RunAs32NotSupported" xml:space="preserve">
+    <value>无法从 64 位 'pwsh' 安装启动 32 位 'pwsh' 进程。如果需要在 32 位进程中运行 PowerShell，请安装 32 位 'pwsh'。</value>
+  </data>
+  <data name="IPCServerProcessReportedError" xml:space="preserve">
+    <value>后台进程报告了一个错误，并显示以下消息: {0}。</value>
+  </data>
+  <data name="IPCServerProcessExited" xml:space="preserve">
+    <value>后台进程异常关闭或结束: {0}。</value>
+  </data>
+  <data name="IPCErrorProcessingServerData" xml:space="preserve">
+    <value>处理来自后台进程的数据时出错。报告的错误: {0}。</value>
+  </data>
+  <data name="IPCUnknownCommandGuid" xml:space="preserve">
+    <value>已收到具有标识符 {0} 的非活动命令的数据。收到的数据: {1}。</value>
+  </data>
+  <data name="IPCNoSignalForSession" xml:space="preserve">
+    <value>不支持向会话发送 {0} 消息。只能向命令发送 {0} 消息。</value>
+  </data>
+  <data name="IPCSignalTimedOut" xml:space="preserve">
+    <value>客户端未在指定时间间隔内收到关于信号操作的响应。当命令未及时响应 Stop 消息时，可能会发生这种情况。</value>
+  </data>
+  <data name="IPCCloseTimedOut" xml:space="preserve">
+    <value>客户端未在指定的时间间隔内收到关于 Close 操作的响应。当命令未及时响应 Stop 消息时，可能会发生这种情况。</value>
+  </data>
+  <data name="IPCExceptionLaunchingProcess" xml:space="preserve">
+    <value>启动后台进程时出错。报告的错误: {0}。</value>
+  </data>
+  <data name="ThrottlingJobChildAlreadyRunning" xml:space="preserve">
+    <value>ThrottlingJob.AddChildJob 方法仅接受处于 NotStarted 状态的子作业。</value>
+    <comment>{StrContains="ThrottlingJob.AddChildJob"}
+{StrContains="NotStarted"}</comment>
+  </data>
+  <data name="ThrottlingJobChildAddedAfterEndOfChildJobs" xml:space="preserve">
+    <value>调用 ThrottlingJob.EndOfChildJobs 方法后，无法调用 ThrottlingJob.AddChildJob 方法。</value>
+    <comment>{StrContains="ThrottlingJob.AddChildJob"}
+{StrContains="ThrottlingJob.EndOfChildJobs"}</comment>
+  </data>
+  <data name="ThrottlingJobStatusMessage" xml:space="preserve">
+    <value>已完成 {0}/{1}</value>
+    <comment>{0} is a placeholder for a number of completed child jobs
+{1} is a placeholder for a total number of child jobs</comment>
+  </data>
+  <data name="NestedPipelineMissingRunspace" xml:space="preserve">
+    <value>调用嵌套管道需要有效的运行空间。</value>
+  </data>
+  <data name="JobSourceAdapterError" xml:space="preserve">
+    <value>{1} 作业源适配器引发了异常，并显示以下消息: {0}</value>
+  </data>
+  <data name="PSVersionParameterOutOfRange" xml:space="preserve">
+    <value>值 {0} 对 {1} 参数无效。唯一允许的值为 5.1。</value>
+  </data>
+  <data name="BlockCannotBeUsedWithKeep" xml:space="preserve">
+    <value>不能在同一命令中同时使用 Wait 和 Keep 参数。</value>
+  </data>
+  <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
+    <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
+  </data>
+  <data name="PowerShellVersionNotSupported" xml:space="preserve">
+    <value>PowerShell 7+ 不支持 PowerShell 远程处理终结点版本控制。</value>
+  </data>
+  <data name="JobManagerRegistrationConstructorError" xml:space="preserve">
+    <value>无法实例化以下类型，因为其构造函数不是公共的: {0}。</value>
+  </data>
+  <data name="JobSourceAdapterNotFound" xml:space="preserve">
+    <value>无法执行作业操作(Create、Get 或 Remove)，因为未注册 JobDefinition 中指定的 JobSourceAdapter 类型。请使用显式调用或调用 Import-Module cmdlet，然后指定程序集，从而注册 JobSourceAdapter 类型。</value>
+  </data>
+  <data name="NewJobSpecificationError" xml:space="preserve">
+    <value>无法创建作业，因为 JobInvocationInfo 不包含 JobDefinition。请使用 JobDefinition 启动 JobInvocationInfo。</value>
+  </data>
+  <data name="InvalidJobStateSpecific" xml:space="preserve">
+    <value>当前作业实例的状态为 {0}。此状态对尝试的操作无效。{1}</value>
+  </data>
+  <data name="JobConnectFailed" xml:space="preserve">
+    <value>无法将作业 "{0}" 连接到远程服务器。</value>
+  </data>
+  <data name="RunspaceDisconnectFailed" xml:space="preserve">
+    <value>运行空间 ID = {0} 的 Disconnect-PSSession 操作失败。</value>
+  </data>
+  <data name="RunspaceConnectFailed" xml:space="preserve">
+    <value>会话 {0} 的连接操作失败。运行空间状态为 {1}，而不是 Opened。</value>
+  </data>
+  <data name="RunspaceQueryFailed" xml:space="preserve">
+    <value>计算机 "{0}" 的已断开连接的 PSSession 查询失败。</value>
+  </data>
+  <data name="RunspaceCannotBeConnected" xml:space="preserve">
+    <value>无法连接 PSSession "{0}"，因为它未处于断开连接状态或无法建立连接。</value>
+  </data>
+  <data name="RunspaceCannotBeConnectedForVMContainerSession" xml:space="preserve">
+    <value>目标 "{1}" 上的 PSSession "{0}" 不支持会话连接，因为目标计算机类型为 "{2}"。</value>
+  </data>
+  <data name="RunspaceCannotBeDisconnected" xml:space="preserve">
+    <value>无法断开 PSSession "{0}" 的连接，因为该会话未处于 Opened 状态。</value>
+  </data>
+  <data name="RunspaceCannotBeDisconnectedForVMContainerSession" xml:space="preserve">
+    <value>目标 "{1}" 上的 PSSession "{0}" 不支持会话断开连接，因为目标计算机类型为 "{2}"。</value>
+  </data>
+  <data name="RunspaceCannotBeReceivedForVMContainerSession" xml:space="preserve">
+    <value>Receive-PSSession 不支持目标 "{1}" 上的 PSSession "{0}"，因为目标计算机类型为 "{2}"。</value>
+  </data>
+  <data name="JobActionInvalidWithNullChild" xml:space="preserve">
+    <value>该命令无法完成，因为 ChildJobs 属性包含无效的值。</value>
+  </data>
+  <data name="JobSuspendNotSupported" xml:space="preserve">
+    <value>无法挂起 ID 为 {0} 的作业。某些作业类型不支持挂起作业。有关对挂起作业的支持的详细信息，请参阅关于作业类型的帮助主题。</value>
+  </data>
+  <data name="JobResumeNotSupported" xml:space="preserve">
+    <value>无法恢复 ID 为 {0} 的作业。某些作业类型不支持恢复作业。有关对恢复作业的支持的详细信息，请参阅关于作业类型的帮助主题。</value>
+  </data>
+  <data name="AsJobAndDisconnectedError" xml:space="preserve">
+    <value>在同一命令中，Invoke-Command cmdlet 不能同时与 AsJob 和 Disconnected 这两个参数一起使用。</value>
+  </data>
+  <data name="QueryForRunspacesFailed" xml:space="preserve">
+    <value>{0} 的远程会话查询失败，出现以下错误消息: {1}</value>
+  </data>
+  <data name="JobIdNotYetAssigned" xml:space="preserve">
+    <value>已尝试创建 ID 为 {0} 的作业。现在无法创建具有此 ID 的作业。请验证是否已在此计算机上分配过一次该 ID。</value>
+  </data>
+  <data name="JobSessionIdLessThanOne" xml:space="preserve">
+    <value>无法创建 ID 为 {0} 的作业；这不是有效的 ID。请为作业 ID 提供一个大于 0 的整数。</value>
+  </data>
+  <data name="JobIdentifierNull" xml:space="preserve">
+    <value>提供的 JobIdentifier 不得为 null。请提供有效的 JobIdentifier。</value>
+  </data>
+  <data name="JobBlockedSoWaitJobCannotContinue" xml:space="preserve">
+    <value>Wait-Job cmdlet 无法完成工作，因为一个或多个作业被阻止，正在等待用户交互。 请使用 Receive-Job cmdlet 处理交互式作业输出，然后重试。</value>
+  </data>
+  <data name="RemoveRunspaceNotConnected" xml:space="preserve">
+    <value>无法连接远程会话 {0}，因此无法将其从服务器中移除。将从服务器中移除客户端远程会话对象，但服务器上的远程会话状态未知。</value>
+  </data>
+  <data name="RunspaceDisconnectFailedWithReason" xml:space="preserve">
+    <value>运行空间 ID = {0} 的 Disconnect-PSSession 操作失败，原因如下: {1}</value>
+  </data>
+  <data name="StopJobNotConnected" xml:space="preserve">
+    <value>作业 "{0}" 无法连接到服务器，因此无法停止。</value>
+  </data>
+  <data name="SessionIdMatchFailed" xml:space="preserve">
+    <value>该命令找不到 InstanceId 值为 "{0}" 的 PSSession。</value>
+  </data>
+  <data name="SessionNameMatchFailed" xml:space="preserve">
+    <value>该命令找不到名为 "{0}" 的 PSSession。</value>
+  </data>
+  <data name="WinPERemotingNotSupported" xml:space="preserve">
+    <value>PowerShell remoting is not supported in the Windows Preinstallation Environment (WinPE).</value>
+  </data>
+  <data name="WinRMRequiresRestart" xml:space="preserve">
+    <value>Changes made by {0} cannot take effect until the WinRM service is restarted.</value>
+  </data>
+  <data name="WinRMRestartWarning" xml:space="preserve">
+    <value>{0} may need to restart the WinRM service if a configuration using this name has recently been unregistered, certain system data structures may still be cached. In that case, a restart of WinRM may be required.
+All WinRM sessions connected to PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
+  </data>
+  <data name="WinRMForceRestartWarning" xml:space="preserve">
+    <value>You are running in a remote session and have selected the Force option which means the WinRM service may restart.If the WinRM service restarts then this remote session will be terminated and you will need to create a new session to continue</value>
+  </data>
+  <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
+    <value>尝试保存标识符时，作业为 null。请指定一个作业，以保存其标识符。</value>
+  </data>
+  <data name="NoPowerShellForJob" xml:space="preserve">
+    <value>找不到此 PSSession 的正在运行的命令。</value>
+  </data>
+  <data name="NetFrameWorkV2NotInstalled" xml:space="preserve">
+    <value>未安装 Windows PowerShell 2.0 所需的 Microsoft .NET Framework 2.0。请安装 .NET Framework 2.0，然后重试。</value>
+  </data>
+  <data name="PipelineFailedWithoutReason" xml:space="preserve">
+    <value>远程管道失败。</value>
+  </data>
+  <data name="PipelineFailedWithReason" xml:space="preserve">
+    <value>由于以下原因，远程管道失败: {0}</value>
+  </data>
+  <data name="ResumeJobInvalidJobState" xml:space="preserve">
+    <value>无法恢复一个或多个作业，因为该状态对该操作无效。</value>
+  </data>
+  <data name="RemoteHostNullClientHost" xml:space="preserve">
+    <value>未为正在运行客户端方法的远程运行空间指定客户端计算机。</value>
+  </data>
+  <data name="DisableRemotingShouldProcessTarget" xml:space="preserve">
+    <value>名称: {0} SDDL: {1}。这会拒绝远程访问此会话配置。</value>
+  </data>
+  <data name="SetEnabledFalseTarget" xml:space="preserve">
+    <value>已启用: False。这会将 WS-Management 服务配置为拒绝连接请求。</value>
+  </data>
+  <data name="SetEnabledTrueTarget" xml:space="preserve">
+    <value>已启用: True。这会将 WS-Management 服务配置为接受连接请求。</value>
+  </data>
+  <data name="DISCAliasDefinitionsComment" xml:space="preserve">
+    <value>应用于会话时要定义的别名</value>
+  </data>
+  <data name="DISCAssembliesToLoadComment" xml:space="preserve">
+    <value>应用于会话时要加载的程序集</value>
+  </data>
+  <data name="DISCAuthorComment" xml:space="preserve">
+    <value>本文档的作者</value>
+  </data>
+  <data name="DISCCLRVersionComment" xml:space="preserve">
+    <value>应用于会话时要使用的 CLR 版本</value>
+  </data>
+  <data name="DISCCompanyNameComment" xml:space="preserve">
+    <value>与此文档关联的公司</value>
+  </data>
+  <data name="DISCCopyrightComment" xml:space="preserve">
+    <value>此文档的版权声明</value>
+  </data>
+  <data name="DISCDescriptionComment" xml:space="preserve">
+    <value>关于这些设置所提供的功能的说明</value>
+  </data>
+  <data name="DISCEnvironmentVariablesComment" xml:space="preserve">
+    <value>应用于会话时要定义的环境变量</value>
+  </data>
+  <data name="DISCExecutionPolicyComment" xml:space="preserve">
+    <value>应用于会话时要应用的执行策略</value>
+  </data>
+  <data name="DISCFormatsToProcessComment" xml:space="preserve">
+    <value>应用于会话时要加载的格式文件(.ps1xml)</value>
+  </data>
+  <data name="DISCFunctionDefinitionsComment" xml:space="preserve">
+    <value>应用于会话时要定义的函数</value>
+  </data>
+  <data name="DISCGUIDComment" xml:space="preserve">
+    <value>用于唯一标识此文档的 ID</value>
+  </data>
+  <data name="DISCInitialSessionStateComment" xml:space="preserve">
+    <value>会话类型默认应用于此会话配置。可以是 'RestrictedRemoteServer' (推荐)、'Empty' 或 'Default'</value>
+  </data>
+  <data name="DISCTranscriptDirectoryComment" xml:space="preserve">
+    <value>用于放置此会话配置的会话脚本的目录</value>
+  </data>
+  <data name="DISCRunAsVirtualAccountComment" xml:space="preserve">
+    <value>是否以计算机的(虚拟)管理员帐户的身份运行此会话配置</value>
+  </data>
+  <data name="DISCLanguageModeComment" xml:space="preserve">
+    <value>应用于会话时要应用的语言模式。可以是 'NoLanguage' (推荐)、'RestrictedLanguage'、'ConstrainedLanguage' 或 'FullLanguage'</value>
+  </data>
+  <data name="DISCModulesToImportComment" xml:space="preserve">
+    <value>应用于会话时要导入的模块</value>
+  </data>
+  <data name="DISCPowerShellVersionComment" xml:space="preserve">
+    <value>应用于会话时要使用的 PowerShell 引擎版本</value>
+  </data>
+  <data name="DISCProcessorArchitectureComment" xml:space="preserve">
+    <value>应用于会话时要使用的处理器体系结构</value>
+  </data>
+  <data name="DISCSchemaVersionComment" xml:space="preserve">
+    <value>此文档使用的架构版本号</value>
+  </data>
+  <data name="DISCScriptsToProcessComment" xml:space="preserve">
+    <value>应用于会话时要运行的脚本</value>
+  </data>
+  <data name="DISCTypesToAddComment" xml:space="preserve">
+    <value>应用于会话时要添加的类型</value>
+  </data>
+  <data name="DISCTypesToProcessComment" xml:space="preserve">
+    <value>应用于会话时要加载的类型文件(.ps1xml)</value>
+  </data>
+  <data name="DISCVariableDefinitionsComment" xml:space="preserve">
+    <value>应用于会话时要定义的变量</value>
+  </data>
+  <data name="DISCRoleDefinitionsComment" xml:space="preserve">
+    <value>用户角色(安全组)，以及应该在应用于会话时应用于这些角色的角色功能</value>
+  </data>
+  <data name="DISCVisibleAliasesComment" xml:space="preserve">
+    <value>应用于会话时要显示的别名</value>
+  </data>
+  <data name="DISCVisibleCmdletsComment" xml:space="preserve">
+    <value>应用于会话时要显示的 Cmdlet</value>
+  </data>
+  <data name="DISCCommandModificationSyntax" xml:space="preserve">
+    <value>无法分析 '{0}' 的可见命令定义。可见命令定义必须是具有 'Name' 和 'Parameters' 键的哈希表。'Parameters' 键的值必须是一个哈希表集合，其中必须包含 'Name' 键，并且还可以包含 'ValidateSet' 或 'ValidatePattern'。</value>
+  </data>
+  <data name="DISCVisibleFunctionsComment" xml:space="preserve">
+    <value>应用于会话时要显示的函数</value>
+  </data>
+  <data name="DISCVisibleProvidersComment" xml:space="preserve">
+    <value>应用到会话时要显示的提供程序</value>
+  </data>
+  <data name="DISCVisibleExternalCommandsComment" xml:space="preserve">
+    <value>应用于会话时要显示的外部命令(脚本和应用程序)</value>
+  </data>
+  <data name="InvalidPSSessionConfigurationFilePath" xml:space="preserve">
+    <value>PSSession 配置文件路径 '{0}' 无效。路径自变量必须解析为文件系统中具有 '.pssc' 扩展名的单个文件。请修复路径规范，然后重试。</value>
+  </data>
+  <data name="InvalidRoleCapabilityFilePath" xml:space="preserve">
+    <value>角色功能文件路径 '{0}' 无效。路径自变量必须解析为文件系统中具有 '.psrc' 扩展名的单个文件。请修复路径规范，然后重试。</value>
+  </data>
+  <data name="InvalidRoleEntry" xml:space="preserve">
+    <value>'Roles' 条目必须是哈希表，但实际为 {0}。</value>
+  </data>
+  <data name="InvalidRoleValue" xml:space="preserve">
+    <value>无法将 '{0}' 角色条目的值转换为哈希表。'Roles' 条目必须是以组名称为键的哈希表，其中每个键对应的值是包含该角色的会话配置属性的另一个哈希表。</value>
+  </data>
+  <data name="CouldNotFindRoleCapability" xml:space="preserve">
+    <value>找不到角色功能 '{0}'。角色功能必须是一个名为 '{1}' 的文件，且位于当前模块路径中某个模块内的 'RoleCapabilities' 目录中。</value>
+  </data>
+  <data name="InvalidRegisterPSSessionConfigurationModulePath" xml:space="preserve">
+    <value>找不到要导入的模块路径。ModulesToImport 参数 {0} 的值不存在或不是模块目录。请更正该值，然后重试该命令。</value>
+  </data>
+  <data name="PSSessionConfigurationFileNotFound" xml:space="preserve">
+    <value>未加载指定的配置文件 '{0}'，因为找不到有效的配置文件。</value>
+  </data>
+  <data name="RCAutoDisconnected" xml:space="preserve">
+    <value>计算机 {0} 已成功断开连接。</value>
+  </data>
+  <data name="RCAutoDisconnectingWarning" xml:space="preserve">
+    <value>到 {0} 的重新连接尝试失败。正在尝试断开会话连接...</value>
+  </data>
+  <data name="RCConnectionRetryAttempt" xml:space="preserve">
+    <value>正在尝试重新连接到 {0} ...</value>
+  </data>
+  <data name="RCInternalError" xml:space="preserve">
+    <value>到 {0} 的网络连接已丢失，且重新连接尝试失败。请修复该网络连接，并使用 Connect-PSSession 或 Receive-PSSession 重新进行连接。</value>
+  </data>
+  <data name="RCNetworkFailureDetected" xml:space="preserve">
+    <value>到 {0} 的网络连接已中断。正在尝试重新连接，最多等待 {1} 几分钟...</value>
+  </data>
+  <data name="RCReconnectSucceeded" xml:space="preserve">
+    <value>已还原到 {0} 的网络连接。</value>
+  </data>
+  <data name="AuthenticationMechanismRequiresCredential" xml:space="preserve">
+    <value>{0} 身份验证需要显式用户名和密码。 请使用 -Credential 参数指定用户名和密码，然后重试该命令。</value>
+  </data>
+  <data name="BasicAuthOverHttpNotSupported" xml:space="preserve">
+    <value>Unix 上不支持通过 HTTP 进行基本身份验证。</value>
+  </data>
+  <data name="StartJobDefinitionNotFound1" xml:space="preserve">
+    <value>找不到名为 {0} 的计划作业。</value>
+    <comment>{0} is the job definition name</comment>
+  </data>
+  <data name="StartJobManyDefNameMatches" xml:space="preserve">
+    <value>找到多个名为 {0} 的作业定义。请尝试在 Start-Job 中包含 -DefinitionType 参数，以便将作业定义的搜索范围缩小到单个作业源适配器。</value>
+  </data>
+  <data name="DISCMissingSchemaVersion" xml:space="preserve">
+    <value>配置文件中不存在成员 'SchemaVersion'。此成员必须存在并分配有 'n.n.n.n' 格式的版本号。请将缺少的成员添加到文件 {0} 中。</value>
+  </data>
+  <data name="DISCTypeMustBeString" xml:space="preserve">
+    <value>成员 '{0}' 必须是字符串。请在文件 {1} 中将该成员更改为正确类型。</value>
+  </data>
+  <data name="DISCTypeMustBeStringArray" xml:space="preserve">
+    <value>成员 '{0}' 必须是字符串数组。请在文件 {1} 中将该成员更改为正确类型。</value>
+  </data>
+  <data name="DISCTypeMustBeHashtable" xml:space="preserve">
+    <value>成员 '{0}' 必须是哈希表。请在文件 {1} 中将该成员更改为正确类型。</value>
+  </data>
+  <data name="DISCTypeMustBeHashtableArray" xml:space="preserve">
+    <value>成员 '{0}' 必须是哈希表数组。请在文件 {1} 中将该成员更改为正确类型。</value>
+  </data>
+  <data name="DISCInvalidKey" xml:space="preserve">
+    <value>成员 '{0}' 不是有效键。请在文件 {1} 中将该成员更改为有效键。</value>
+  </data>
+  <data name="DISCTypeMustBeValidEnum" xml:space="preserve">
+    <value>成员 '{0}' 必须是有效的枚举类型 "{1}"。有效的枚举值为 "{2}"。请在文件 {3} 中将该成员更改为正确类型。</value>
+  </data>
+  <data name="DISCErrorParsingConfigFile" xml:space="preserve">
+    <value>分析配置文件 {0} 时出错，出现以下错误消息: {1}</value>
+  </data>
+  <data name="WriteJobInResultsCannotBeUsedWithoutWait" xml:space="preserve">
+    <value>The -WriteJobInResults parameter cannot be used without the -Wait parameter</value>
+  </data>
+  <data name="DISCPathsMustBeAbsolute" xml:space="preserve">
+    <value>成员 '{0}' 不是绝对路径 {1}。请在文件 {2} 中将该成员更改为绝对路径。</value>
+  </data>
+  <data name="DISCTypeContainsInvalidKey" xml:space="preserve">
+    <value>成员 '{1}' 中的键 '{0}' 无效。请在文件 {2} 中更改该键。</value>
+  </data>
+  <data name="DISCTypeMustContainKey" xml:space="preserve">
+    <value>成员 '{0}' 必须包含所需的键 '{1}'。请将该键添加到文件 {2}。</value>
+  </data>
+  <data name="DISCInvalidExtension" xml:space="preserve">
+    <value>键 '{0}' 包含无效的扩展名 {1}。请指定以下列表中的扩展名: {{{2}}}。</value>
+  </data>
+  <data name="DISCKeyMustBeScriptBlock" xml:space="preserve">
+    <value>成员 '{1}' 中的键 '{0}' 必须是脚本块。请在文件 {2} 中将该键更改为正确类型。</value>
+  </data>
+  <data name="InvalidPSSessionConfigurationFile" xml:space="preserve">
+    <value>会话配置文件 {0} 无效。请指定有效的会话配置文件，然后重试该命令。</value>
+  </data>
+  <data name="RCProgressActivity" xml:space="preserve">
+    <value>网络连接中断</value>
+  </data>
+  <data name="RCProgressStatus" xml:space="preserve">
+    <value>正在尝试重新连接到 {0} ...</value>
+  </data>
+  <data name="RCDisconnectedJob" xml:space="preserve">
+    <value>已创建用于进行重新连接的作业 {0}。</value>
+  </data>
+  <data name="RCDisconnectSession" xml:space="preserve">
+    <value>已成功断开计算机 {2} 上实例 ID 为 {1} 的会话 {0}。</value>
+  </data>
+  <data name="RCDisconnectSessionCreated" xml:space="preserve">
+    <value>已创建具有实例 ID {1} 的会话 {0}，以便进行重新连接。</value>
+  </data>
+  <data name="SessionNameWithoutInvokeDisconnected" xml:space="preserve">
+    <value>SessionName 参数只能与 Disconnected 开关参数一起使用。</value>
+  </data>
+  <data name="SessionConnectFailed" xml:space="preserve">
+    <value>尝试连接 PSSession 时发生故障。</value>
+  </data>
+  <data name="VMSessionConnectFailed" xml:space="preserve">
+    <value>尝试连接到目标虚拟机时发生故障。</value>
+  </data>
+  <data name="ContainerSessionConnectFailed" xml:space="preserve">
+    <value>尝试连接到目标容器时发生故障。</value>
+  </data>
+  <data name="SessionNotAvailableForConnection" xml:space="preserve">
+    <value>PSSession 处于断开连接状态，且无法建立连接。</value>
+  </data>
+  <data name="HyperVModuleNotAvailable" xml:space="preserve">
+    <value>适用于 PowerShell 的 Hyper-V 模块在此计算机上不可用。</value>
+  </data>
+  <data name="CannotCreateProcessInContainer" xml:space="preserve">
+    <value>在 ID 为 {0} 的容器内启动 PowerShell 进程({1})失败，出现错误: {2}。</value>
+  </data>
+  <data name="ContainersFeatureNotEnabled" xml:space="preserve">
+    <value>此计算机上可能未启用“容器”功能。</value>
+  </data>
+  <data name="CannotTerminateProcessInContainer" xml:space="preserve">
+    <value>未能在 ID 为 {1} 的容器内终止 ID 为 {0} 的 PowerShell 进程。</value>
+  </data>
+  <data name="InvalidContainerId" xml:space="preserve">
+    <value>输入 ContainerId {0} 不存在，或者相应的容器未运行。</value>
+  </data>
+  <data name="InvalidVMId" xml:space="preserve">
+    <value>输入 VMId 参数未解析为单个虚拟机。</value>
+  </data>
+  <data name="InvalidVMIdNotSingle" xml:space="preserve">
+    <value>输入 VMId {0} 未解析为单个虚拟机。</value>
+  </data>
+  <data name="InvalidVMNameNoVM" xml:space="preserve">
+    <value>输入 VMName 参数未解析为任何虚拟机。</value>
+  </data>
+  <data name="InvalidVMNameMultipleVM" xml:space="preserve">
+    <value>输入 VMName 参数将解析为多个虚拟机。</value>
+  </data>
+  <data name="InvalidVMNameNotSingle" xml:space="preserve">
+    <value>输入 VMName {0} 未解析为单个虚拟机。</value>
+  </data>
+  <data name="InvalidVMState" xml:space="preserve">
+    <value>虚拟机 {0} 未处于正在运行状态。</value>
+  </data>
+  <data name="InvalidCredential" xml:space="preserve">
+    <value>凭据无效。</value>
+  </data>
+  <data name="InvalidUsername" xml:space="preserve">
+    <value>输入用户名不能为空。</value>
+  </data>
+  <data name="EnterPSSessionBrokenSession" xml:space="preserve">
+    <value>无法进入会话 {0}，因为它未处于断开连接状态或无法建立连接。使用 Get-PSSession -ComputerName {1} -InstanceId {2} 检索远程会话。</value>
+  </data>
+  <data name="EnterPSSessionDisconnected" xml:space="preserve">
+    <value>无法进入会话 {0}，因为它未处于断开连接状态或无法建立连接。请使用 Connect-PSSession 或 Receive-PSSession 重新建立连接。</value>
+  </data>
+  <data name="RCAutoDisconnectingError" xml:space="preserve">
+    <value>到 {0} 的网络连接已丢失，且重新连接尝试失败。请修复该网络连接，并使用 Connect-PSSession 或 Receive-PSSession 重新进行连接。</value>
+  </data>
+  <data name="RemoteSessionHyperVSocketClientConstructorSetSocketOptionFailure" xml:space="preserve">
+    <value>由于 SetSocketOption 失败，未能创建 RemoteSessionHyperVSocketClient 的实例。</value>
+  </data>
+  <data name="RemoteSessionHyperVSocketServerConstructorFailure" xml:space="preserve">
+    <value>未能创建 RemoteSessionHyperVSocketServer 的实例。</value>
+  </data>
+  <data name="StopCommandOnRetry" xml:space="preserve">
+    <value>已取消重新连接尝试。请修复该网络连接，并使用 Connect-PSSession 或 Receive-PSSession 重新进行连接。</value>
+  </data>
+  <data name="SuspendJobInvalidJobState" xml:space="preserve">
+    <value>无法挂起一个或多个作业，因为该状态对该操作无效。</value>
+  </data>
+  <data name="AutoRemoveCannotBeUsedWithoutWait" xml:space="preserve">
+    <value>如果没有 -Wait 参数，则不能使用 -AutoRemoveJob 参数</value>
+  </data>
+  <data name="InvalidConfigurationName" xml:space="preserve">
+    <value>WS-Management 服务无法处理该请求。在 {1} 计算机上的 WSMan: 驱动器中找不到 {0} 会话配置。有关详细信息，请参阅 about_Remote_Troubleshooting 帮助主题。</value>
+  </data>
+  <data name="BadRunspaceTypeForJob" xml:space="preserve">
+    <value>无法根据 {0} 规范创建作业，因为提供的运行空间不是本地运行空间。请使用本地运行空间重试，或指定 RunspaceMode 自变量。</value>
+  </data>
+  <data name="CannotDisconnectSessionWithInvalidIdleTimeout" xml:space="preserve">
+    <value>无法断开会话 {0}，因为指定的空闲超时值({1} 秒)大于允许的服务器最大值({2} 秒)或小于允许的最小值({3} 秒)。 请指定处于允许范围内的空闲超时值，然后重试。</value>
+    <comment>{0} is a placeholder for the session name
+{1} is a placeholder for the provided idletimeout value
+{2} is a placeholder for the maximum allowed idletimeout value
+{3} is a placeholder for the minimum allowed idletimeout value</comment>
+  </data>
+  <data name="InvalidIdleTimeoutOption" xml:space="preserve">
+    <value>指定的 IdleTimeout 会话选项({0} 秒)不是有效的时段。 请指定大于或等于允许的最小值({1} 秒)的 IdleTimeout 值。</value>
+    <comment>{0} is a placeholder for the provided idletimeout
+{1} is a placeholder for the minimum allowed idletimeout value</comment>
+  </data>
+  <data name="DISCVisibilityAndAutoLoadingCannotBeBothSpecified" xml:space="preserve">
+    <value>如果在会话配置文件中指定了 "{2}"、"{3}"、"{4}" 或 "{5}" 键，则不能存在 cmdlet "{0}" 或别名 "{1}"。</value>
+  </data>
+  <data name="InvalidConfigurationXMLAttribute" xml:space="preserve">
+    <value>“传输选项无效。仅当参数 "{1}" 设置为 true 时，参数 "{0}" 才能为非零值。</value>
+  </data>
+  <data name="DISCTypeMustBeStringOrHashtableArray" xml:space="preserve">
+    <value>成员 '{0}' 必须是由字符串或哈希表元素组成的数组。</value>
+  </data>
+  <data name="DISCTypeMustBeStringOrHashtableArrayInFile" xml:space="preserve">
+    <value>成员 '{0}' 必须是由字符串或哈希表元素组成的数组。请在文件 {1} 中将该成员更改为正确类型。</value>
+  </data>
+  <data name="StartJobDefinitionPathInvalidNotFSProvider" xml:space="preserve">
+    <value>无法检索作业定义 '{0}'，因为路径 '{1}' 引用了 '{2}' 提供程序路径。 请将该路径参数更改为文件系统路径。</value>
+    <comment>{0} is job definition name
+{1} is the user provided path
+{2} is the path provider</comment>
+  </data>
+  <data name="StartJobDefinitionPathInvalidNotSingle" xml:space="preserve">
+    <value>无法检索作业定义 '{0}'，因为路径 '{1}' 会解析为多个文件路径。 请更改路径参数，使其为单个路径。</value>
+    <comment>{0} is job definition name
+{1} is the user provided path</comment>
+  </data>
+  <data name="StartJobDefinitionNotFound2" xml:space="preserve">
+    <value>找不到类型为 {0}、名称为 {1} 的计划作业。</value>
+    <comment>{0} is the job definition type and {1} is the job definition name.</comment>
+  </data>
+  <data name="StartJobWorkingDirectoryNotFound" xml:space="preserve">
+    <value>找不到 WorkingDirectory 路径 {0}。</value>
+  </data>
+  <data name="CannotFindSessionForConnect" xml:space="preserve">
+    <value>无法连接到会话 {0}。 计算机 {1} 上不再存在该会话。</value>
+    <comment>{0} is the session name that cannot be found.
+{1} is the computer name where the session was.</comment>
+  </data>
+  <data name="RunspaceConnectFailedWithMessage" xml:space="preserve">
+    <value>会话 {0} 的连接操作失败，出现以下错误消息: {1}</value>
+  </data>
+  <data name="ForceCannotBeUsedWithoutWait" xml:space="preserve">
+    <value>如果没有 -Wait 参数，则无法使用 -Force 参数。</value>
+  </data>
+  <data name="JobSuspendedDisconnectedWaitWithForce" xml:space="preserve">
+    <value>一个或多个作业处于挂起或断开连接状态，无法在没有其他用户输入的情况下继续。 请指定 -Force 参数以继续，从而进入已完成、失败或已停止状态。</value>
+  </data>
+  <data name="RunAsSessionConfigurationSecurityWarning" xml:space="preserve">
+    <value>在 PowerShell 会话配置中启用 RunAs 时，Windows 安全模型无法在使用此终结点创建的不同用户会话之间强制实施安全边界。请验证 PowerShell 运行空间配置是否仅限于所需的一组 cmdlet 和功能。</value>
+  </data>
+  <data name="ForceSuspendJob" xml:space="preserve">
+    <value>通过添加 Force 参数，作业已成功挂起。</value>
+  </data>
+  <data name="InvalidPSSessionConfigurationFileErrorProcessing" xml:space="preserve">
+    <value>会话配置文件 {0} 无效。请指定有效的会话配置文件，然后重试该命令。分析配置文件时出错: {1}。</value>
+  </data>
+  <data name="ErrorParsingTheKeyInPSSessionConfigurationFile" xml:space="preserve">
+    <value>Register-PSSessionConfiguration: {1}. 会话配置文件中的 '{0}' 键包含无效的值。请更正该文件，然后重试该命令。</value>
+  </data>
+  <data name="EndpointDoesNotSupportDisconnect" xml:space="preserve">
+    <value>仅当远程计算机运行 PowerShell 3.0 或更高版本的 PowerShell 时，才支持断开连接的会话。</value>
+  </data>
+  <data name="ThrottlingJobFlowControlMemoryWarning" xml:space="preserve">
+    <value>cmdlet 的内存使用量已超出警告级别。若要避免这种情况，请尝试以下操作之一: 1) 降低 CIM 操作生成数据的速率(例如，通过将一个较低的值传递给 ThrottleLimit 参数)，2) 提高下游 cmdlet 使用数据的速率，3) 使用 Invoke-Command cmdlet 在服务器上运行整个管道。超过内存使用量警告级别的 cmdlet 是由以下命令行启动的: {0}</value>
+  </data>
+  <data name="EnableNetworkAccessWarning" xml:space="preserve">
+    <value>PSSession {0} 是使用 EnableNetworkAccess 参数创建的，只能从本地计算机重新连接。</value>
+  </data>
+  <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
+    <value>无法启动作业。此会话的语言模式与系统范围的语言模式不兼容。</value>
+  </data>
+  <data name="CannotCreateRunspaceInconsistentState" xml:space="preserve">
+    <value>无法创建运行空间。此配置的语言模式与系统范围的语言模式不兼容。</value>
+  </data>
+  <data name="CannotExitNestedPipeline" xml:space="preserve">
+    <value>无法退出嵌套管道，因为该管道未处于嵌套状态。</value>
+  </data>
+  <data name="PowerShellInvokerInvalidState" xml:space="preserve">
+    <value>PowerShell 服务器会话未处于运行嵌套命令的有效状态。 此会话中不能运行任何嵌套命令。</value>
+  </data>
+  <data name="CannotInvokeNestedCommandNestedCommandRunning" xml:space="preserve">
+    <value>无法在远程会话上调用嵌套命令，因为已有正在运行的嵌套命令。</value>
+  </data>
+  <data name="ServerSideNestedCommandInvokeFailed" xml:space="preserve">
+    <value>远程会话无法调用命令 {0}，出现错误: {1}。</value>
+  </data>
+  <data name="ReceivePSSessionInDebugMode" xml:space="preserve">
+    <value>远程会话命令当前已在调试器中停止。 请使用 Enter-PSSession cmdlet 以交互方式连接到远程会话，并自动进入控制台调试器。</value>
+  </data>
+  <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
+    <value>连接到的远程会话不支持远程调试。你必须连接到运行 PowerShell 4.0 或更高版本的远程计算机。</value>
+  </data>
+  <data name="ICMInvalidSessionState" xml:space="preserve">
+    <value>由于会话 {0}、{1}、{2} 的会话状态不等于 Open，你无法在该会话中运行命令。 会话状态为 {3}。</value>
+  </data>
+  <data name="ICMNoValidRunspaces" xml:space="preserve">
+    <value>未指定有效的会话。 请确保提供处于 Opened 状态且可用于运行命令的有效会话。</value>
+  </data>
+  <data name="ICMInvalidSessionAvailability" xml:space="preserve">
+    <value>会话 {0}、{1}、{2} 不可用于运行命令。 会话可用性为 {3}。</value>
+  </data>
+  <data name="JobActionInvalidWithNoChildJobs" xml:space="preserve">
+    <value>无法运行该命令，因为 ChildJobs 属性为空。</value>
+  </data>
+  <data name="CannotDebugJobNoHostDebugger" xml:space="preserve">
+    <value>无法调试作业，因为没有可用的 PowerShell 主机调试器。 请确保是在支持调试的主机中运行此命令。</value>
+  </data>
+  <data name="CannotFindJobWithId" xml:space="preserve">
+    <value>找不到 ID 为 {0} 的作业。</value>
+  </data>
+  <data name="CannotFindJobWithInstanceId" xml:space="preserve">
+    <value>找不到实例 ID 为 {0} 的作业。</value>
+  </data>
+  <data name="CannotFindJobWithName" xml:space="preserve">
+    <value>找不到名为 {0} 的作业。</value>
+  </data>
+  <data name="CannotDebugJobNoHostUI" xml:space="preserve">
+    <value>无法调试作业，因为没有可用的主机 UI。 请确保是在实现 PSHostUserInterface 的 PowerShell 主机中运行此命令。</value>
+  </data>
+  <data name="CannotDebugJobInvalidDebuggerMode" xml:space="preserve">
+    <value>无法调试作业，因为主机调试器模式设置为 None 或 Default。 主机调试器模式必须是 LocalScript 和/或 RemoteScript。</value>
+  </data>
+  <data name="FoundMultipleJobsWithId" xml:space="preserve">
+    <value>找到多个 ID 为 {0} 的作业。 Debug-Job 一次只能调试一个作业。</value>
+  </data>
+  <data name="FoundMultipleJobsWithName" xml:space="preserve">
+    <value>找到多个名为 {0} 的作业。 Debug-Job 一次只能调试一个作业。</value>
+  </data>
+  <data name="NamedPipeAlreadyListening" xml:space="preserve">
+    <value>用于进程附加的命名管道服务器侦听器已在运行。</value>
+  </data>
+  <data name="EnterPSHostProcessCantEnterSameProcess" xml:space="preserve">
+    <value>Enter-PSHostProcess 不支持进入它正在运行的同一个 PowerShell 会话。</value>
+  </data>
+  <data name="EnterPSHostProcessMultipleProcessesFoundWithName" xml:space="preserve">
+    <value>找到多个名为 {0} 的进程。使用进程 ID 指定要进入的单个进程。</value>
+  </data>
+  <data name="EnterPSHostProcessNoPowerShell" xml:space="preserve">
+    <value>无法进入 ID 为 '{0}' 的进程，因为它尚未加载 PowerShell 引擎，或者已禁用命名管道侦听器。</value>
+  </data>
+  <data name="EnterPSHostProcessNoProcessFoundWithId" xml:space="preserve">
+    <value>找不到 ID 为 {0} 的进程。</value>
+  </data>
+  <data name="EnterPSHostProcessNoProcessFoundWithName" xml:space="preserve">
+    <value>找不到名称为 {0} 的进程。</value>
+  </data>
+  <data name="EnterPSHostProcessNoNamedPipeFound" xml:space="preserve">
+    <value>找不到 CustomPipeName 为 {0} 的命名管道。</value>
+  </data>
+  <data name="CustomPipeNameTooLong" xml:space="preserve">
+    <value>无法处理该命令，因为指定的 pipeName 太长。此平台上的管道名称最长可包含 {0} 个字符。管道名称 '{1}' 包含 {2} 个字符。</value>
+  </data>
+  <data name="HostDoesNotSupportIASession" xml:space="preserve">
+    <value>当前主机不支持 Enter-PSHostProcess cmdlet。</value>
+  </data>
+  <data name="NamedPipeTransportProcessEnded" xml:space="preserve">
+    <value>“命名管道目标进程已结束。”</value>
+  </data>
+  <data name="HyperVSocketTransportProcessEnded" xml:space="preserve">
+    <value>“Hyper-V 套接字目标进程已结束。”</value>
+  </data>
+  <data name="EnterPSHostProcessPrompt" xml:space="preserve">
+    <value>{0}[进程:{1}]: {2}</value>
+  </data>
+  <data name="EnterVMSessionPrompt" xml:space="preserve">
+    <value>{0}[{1}]: {2}</value>
+  </data>
+  <data name="EnterPSHostProcessCannotConnectToProcess" xml:space="preserve">
+    <value>无法连接到进程 {1} 的应用程序域名 {0}。 错误: {2}。</value>
+  </data>
+  <data name="EnterPSHostProcessCannotConnectToPipe" xml:space="preserve">
+    <value>无法连接到名为 {0} 的管道。 错误: {1}。</value>
+  </data>
+  <data name="WSManPluginConnectNoNegotiationData" xml:space="preserve">
+    <value>PowerShell 插件无法处理 Connect 操作，因为所需的协商信息缺失或不完整。</value>
+  </data>
+  <data name="WSManPluginConnectOperationFailed" xml:space="preserve">
+    <value>PowerShell 插件未能处理连接操作。</value>
+  </data>
+  <data name="WSManPluginContextNotFound" xml:space="preserve">
+    <value>提供的插件上下文无效。</value>
+  </data>
+  <data name="WSManPluginInvalidArgSet" xml:space="preserve">
+    <value>Powershell 插件在处理 {0} 自变量时遇到严重错误。</value>
+  </data>
+  <data name="WSManPluginInvalidCommandContext" xml:space="preserve">
+    <value>提供的命令上下文无效。</value>
+  </data>
+  <data name="WSManPluginInvalidInputDataType" xml:space="preserve">
+    <value>提供的输入数据无效。仅支持 {0} 类型的输入数据。</value>
+  </data>
+  <data name="WSManPluginInvalidInputStream" xml:space="preserve">
+    <value>The supplied input stream is not valid. Only {0} is supported as input stream.</value>
+  </data>
+  <data name="WSManPluginInvalidOutputStream" xml:space="preserve">
+    <value>The supplied output stream set is not valid. Only {0} is supported as output stream.</value>
+  </data>
+  <data name="WSManPluginInvalidSenderDetails" xml:space="preserve">
+    <value>提供的 WSMAN_SENDER_DETAILS 无效。无法处理 null WSMAN_SENDER_DETAILS。</value>
+  </data>
+  <data name="WSManPluginInvalidShellContext" xml:space="preserve">
+    <value>The supplied shell context is not valid.</value>
+  </data>
+  <data name="WSManPluginManagedException" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="WSManPluginNullInvalidInput" xml:space="preserve">
+    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+  </data>
+  <data name="WSManPluginNullInvalidStreamSet" xml:space="preserve">
+    <value>NULL value is not allowed for input stream and output stream sets. {0} and {1} are the supported input and output streams.</value>
+  </data>
+  <data name="WSManPluginNullPluginContext" xml:space="preserve">
+    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+  </data>
+  <data name="WSManPluginNullShellContext" xml:space="preserve">
+    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+  </data>
+  <data name="WSManPluginOperationClose" xml:space="preserve">
+    <value>PowerShell plugin operation is shutting down. This may happen if the hosting service or application is shutting down.</value>
+  </data>
+  <data name="WSManPluginOptionNotUnderstood" xml:space="preserve">
+    <value>PowerShell plugin does not understand the option {0}. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+  </data>
+  <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
+    <value>客户端应提供具有名称 {0} 的选项。请确保客户端与 PowerShell 的内部版本 {1} 和协议版本 {2} 兼容。</value>
+  </data>
+  <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
+    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Powershell plugin does not support the protocol version {2} requested by client.&lt;/PSProtocolVersionError&gt;</value>
+  </data>
+  <data name="WSManPluginReportContextFailed" xml:space="preserve">
+    <value>Powershell plugin encountered a fatal error while reporting context to WSMan service.</value>
+  </data>
+  <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
+    <value>无法创建托管服务器会话。</value>
+  </data>
+  <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
+    <value>Powershell plugin encountered a fatal error registering a wait handle for shutdown notification.</value>
+  </data>
+  <data name="ServerDriverRemoteHostAlreadyPushed" xml:space="preserve">
+    <value>无法进入运行空间，因为已在此会话中推送了一个运行空间。</value>
+  </data>
+  <data name="ServerDriverRemoteHostNoDebuggerToPush" xml:space="preserve">
+    <value>无法进入运行空间，因为没有可用的服务器远程调试器。</value>
+  </data>
+  <data name="ServerDriverRemoteHostNotRemoteRunspace" xml:space="preserve">
+    <value>无法进入运行空间，因为它不是远程运行空间。</value>
+  </data>
+  <data name="RemoteTransportError" xml:space="preserve">
+    <value>远程传输错误: {0}</value>
+  </data>
+  <data name="CannotConnectContainerNamedPipe" xml:space="preserve">
+    <value>无法在容器中打开 PowerShell 的管道连接。错误代码: {0}。</value>
+  </data>
+  <data name="CannotCreateNamedPipe" xml:space="preserve">
+    <value>无法创建 PowerShell IPC 命名管道。错误代码: {0}。</value>
+  </data>
+  <data name="ConnectNamedPipeTimeout" xml:space="preserve">
+    <value>在与命名管道建立连接之前超时。</value>
+  </data>
+  <data name="WSManInitFailed" xml:space="preserve">
+    <value>WSMan 初始化失败，错误代码为: {0}。</value>
+  </data>
+  <data name="NamedPipeServerCannotStart" xml:space="preserve">
+    <value>无法在服务器模式下启动命名管道服务器。</value>
+  </data>
+  <data name="CouldNotResolveRoleDefinitionPrincipal" xml:space="preserve">
+    <value>无法授予对 '{0}' 的远程访问权限: '{1}'。已注册会话配置，但此组没有访问权限。若要解决此错误，请提供有效的组名称并重新注册会话配置。</value>
+  </data>
+  <data name="SessionConfigurationMustBeFileBased" xml:space="preserve">
+    <value>无法获取会话配置 '{0}' 的会话功能: 此配置未使用会话配置文件(.pssc)注册，例如使用由 New-PSSessionConfigurationFile cmdlet 创建的配置文件。</value>
+  </data>
+  <data name="CouldNotResolveUsername" xml:space="preserve">
+    <value>无法解析用户名 '{0}'。请验证用户名，然后重试。</value>
+  </data>
+  <data name="DISCRunAsVirtualAccountGroupsComment" xml:space="preserve">
+    <value>与计算机的(虚拟)管理员帐户关联的组</value>
+  </data>
+  <data name="CannotCreateConfiguredRunspace" xml:space="preserve">
+    <value>无法创建或打开配置会话 {0}。</value>
+  </data>
+  <data name="DISCEnforceInputParameterValidation" xml:space="preserve">
+    <value>强制执行脚本输入参数验证。指定 MountUserDrive 时会自动启用此功能。</value>
+  </data>
+  <data name="DISCMountUserDriveComment" xml:space="preserve">
+    <value>在会话中创建一个 'User' PSDrive，以便在文件系统提供程序不可见时搭配 Copy-Item 使用。</value>
+  </data>
+  <data name="DISCTypeMustBeBoolean" xml:space="preserve">
+    <value>成员 '{0}' 必须是布尔值。请在文件 {1} 中将该成员更改为正确类型。</value>
+  </data>
+  <data name="DISCTypeMustBeInteger" xml:space="preserve">
+    <value>成员 '{0}' 必须是整数。请在文件 {1} 中将该成员更改为正确类型。</value>
+  </data>
+  <data name="UserDriveProcessingThrewTerminatingError" xml:space="preserve">
+    <value>处理用户驱动器时出错 {0}。</value>
+  </data>
+  <data name="DISCUserDriveMaxSizeComment" xml:space="preserve">
+    <value>使用 MountUserDrive 参数创建的 User 驱动器的可选最大大小(以字节为单位)。User 驱动器的默认最大大小为 50MB。</value>
+  </data>
+  <data name="UserDriveCannotGetFileSystemProvider" xml:space="preserve">
+    <value>找不到文件系统提供程序。</value>
+  </data>
+  <data name="DISCGMSAComment" xml:space="preserve">
+    <value>用于运行该配置的组托管服务帐户名称</value>
+  </data>
+  <data name="InvalidGMSAName" xml:space="preserve">
+    <value>组托管服务帐户名称无效。帐户名称必须采用 'DomainName\UserName' 格式。</value>
+  </data>
+  <data name="DISCRequiredGroupsComment" xml:space="preserve">
+    <value>必须加入才能使用该会话的组帐户。</value>
+  </data>
+  <data name="BadSDDLMismatchedParens" xml:space="preserve">
+    <value>无法分析 sddl 字符串，因为其中包含不匹配的括号: {0}。</value>
+  </data>
+  <data name="RequiredGroupsHashMultipleKeys" xml:space="preserve">
+    <value>RequiredGroups 属性哈希表必须仅包含单个键。</value>
+  </data>
+  <data name="RequiredGroupsNotHashTable" xml:space="preserve">
+    <value>RequiredGroups 属性不采用名称/值对哈希表格式。 这必须是以下哈希表格式(使用 PowerShell 语法): RequiredGroups = @{ Or = 'Administrators' }。</value>
+  </data>
+  <data name="UnknownGroupMembershipKey" xml:space="preserve">
+    <value>必需组配置中的未知键。 必需组哈希表只能包含逻辑成员身份分组的 'And' 和 'Or' 哈希键。</value>
+  </data>
+  <data name="UnknownGroupMembershipValue" xml:space="preserve">
+    <value>必需组配置中的未知值。 必需组哈希表只能包含以下值: 组名称或其他逻辑哈希表。</value>
+  </data>
+  <data name="RequiredGroupsMalformedACE" xml:space="preserve">
+    <value>ACE {0} 格式不正确。 常规 ACE 必须正好有 6 个部分。</value>
+  </data>
+  <data name="InvalidUserDriveName" xml:space="preserve">
+    <value>无法创建会话用户驱动器，因为当前用户名包含无效的文件路径字符。</value>
+  </data>
+  <data name="InvalidRoleCapabilityKey" xml:space="preserve">
+    <value>无效的角色功能键: {0}。请确保角色功能名称拼写正确，并且是有效的会话配置属性。</value>
+  </data>
+  <data name="InvalidRoleCapabilityKeyType" xml:space="preserve">
+    <value>无效的角色功能键类型: {0}。角色功能键必须是标识有效会话配置属性的字符串。</value>
+  </data>
+  <data name="InvalidRoleKeyType" xml:space="preserve">
+    <value>无效的角色键类型: {0}。角色键必须是标识安全组的字符串。</value>
+  </data>
+  <data name="RemotingErrorNoLogonSessionExist" xml:space="preserve">
+    <value> 其他可能的原因:
+  -指定凭据中未包含域名或计算机名称，例如:DOMAIN\UserName 或 COMPUTER\UserName。</value>
+  </data>
+  <data name="CannotStartSSHClient" xml:space="preserve">
+    <value>未能启动远程处理连接所需的 SSH 客户端进程，出现错误: {0}。</value>
+  </data>
+  <data name="KeyFileNotFound" xml:space="preserve">
+    <value>找不到指定的密钥文件 {0}。</value>
+  </data>
+  <data name="SSHClientEndWithErrorMessage" xml:space="preserve">
+    <value>SSH 客户端会话已结束，出现错误消息: {0}</value>
+  </data>
+  <data name="SSHClientConnectTimeout" xml:space="preserve">
+    <value>SSH 连接尝试在超时({0} 秒)后失败。</value>
+  </data>
+  <data name="SSHClientConnectProcessTerminated" xml:space="preserve">
+    <value>
+SSH 客户端进程已在建立连接之前终止。</value>
+  </data>
+  <data name="MissingRequiredSSHParameter" xml:space="preserve">
+    <value>提供的 SSHConnection 哈希表缺少所需的 ComputerName 或 HostName 参数。</value>
+  </data>
+  <data name="InvalidSSHConnectionParameter" xml:space="preserve">
+    <value>提供的 SSHConnection 哈希表参数名称或元素为 null 或为空。</value>
+  </data>
+  <data name="UnknownSSHConnectionParameter" xml:space="preserve">
+    <value>提供的 SSHConnection 哈希表参数 {0} 不受支持。</value>
+  </data>
+  <data name="SSHConnectionDuplicateHostName" xml:space="preserve">
+    <value>提供的 SSHConnection 哈希表同时包含 ComputerName 和 HostName 参数。 你只能指定一个。</value>
+  </data>
+  <data name="SSHConnectionDuplicateKeyPath" xml:space="preserve">
+    <value>提供的 SSHConnection 哈希表同时包含 KeyFilePath 和 IdentityFilePath 参数。 你只能指定一个。</value>
+  </data>
+  <data name="CouldNotFindRoleCapabilityFile" xml:space="preserve">
+    <value>找不到所提供的角色功能文件 {0}。</value>
+  </data>
+  <data name="InvalidRoleCapabilityFileExtension" xml:space="preserve">
+    <value>提供的角色功能文件 {0} 没有所需的 .psrc 扩展名。</value>
+  </data>
+  <data name="SSHAbruptlyTerminated" xml:space="preserve">
+    <value>SSH 传输进程突然终止，导致此远程会话中断。</value>
+  </data>
+  <data name="InvalidProcessorArchitecture" xml:space="preserve">
+    <value>PowerShell 6+ 不支持 WOW64。二进制文件必须与处理器的体系结构匹配。</value>
+  </data>
+  <data name="WowComponentNotPresent" xml:space="preserve">
+    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
+  </data>
+  <data name="UnableToInstallPlugin" xml:space="preserve">
+    <value>无法将插件 {0} 安装到目录 {1}。</value>
+  </data>
+  <data name="PluginDllMissing" xml:space="preserve">
+    <value>PowerShell 缺少 WinRM 插件 DLL {0}。请运行 Enable-PSRemoting，然后重试此命令。</value>
+  </data>
+  <data name="WSManClientDllNotAvailable" xml:space="preserve">
+    <value>此参数集需要 WSMan，但未找到受支持的 WSMan 客户端库。WSMan 要么未安装，要么在此系统上不可用。</value>
+  </data>
+  <data name="ProcessExitInfo" xml:space="preserve">
+    <value>
+      退出代码: {0}
+      Stdout: '{1}'
+      Stderr: '{2}'
+    </value>
+  </data>
+  <data name="ProcessInfoNotRecoverable" xml:space="preserve">
+    <value>无法读取有关该进程的信息: '{0}'。</value>
+  </data>
+  <data name="CannotGetHostInteropTypes" xml:space="preserve">
+    <value>主机系统没有正确版本的 Hyper-V 架构。</value>
+  </data>
+  <data name="UnixOnlyHttpsWithoutSkipCACheckNotSupported" xml:space="preserve">
+    <value>Unix 上的 HTTPS 当前不支持 CA 或 CN 检查。如果你确定信任要连接的服务器以及中间的网络，请使用 PSSessionOption -SkipCACheck 和 -SkipCNCheck。</value>
+  </data>
+  <data name="PSCoreRemotingDisableWarning" xml:space="preserve">
+    <value>仅对 PowerShell 6+ 配置禁用了 PowerShell 远程处理，不会影响 Windows PowerShell 远程处理配置。请在 Windows PowerShell 中运行此 cmdlet，以影响所有 PowerShell 远程处理配置。
+</value>
+  </data>
+  <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
+    <value>仅对 PowerShell 6+ 配置启用了 PowerShell 远程处理，不会影响 Windows PowerShell 远程处理配置。请在 Windows PowerShell 中运行此 cmdlet，以影响所有 PowerShell 远程处理配置。</value>
+  </data>
+  <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
+    <value>由于已强制执行 AppLocker 或 Windows Defender 应用程序控制等应用程序控制策略，因此已禁用 Enter-PSHostProcess cmdlet。</value>
+  </data>
+  <data name="RemoteDebuggerError" xml:space="preserve">
+    <value>远程调试器异常: {0}，错误消息: {1}</value>
+  </data>
+  <data name="WindowsPowerShellNotPresent" xml:space="preserve">
+    <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
+  </data>
+  <data name="InvalidPSSessionArgument" xml:space="preserve">
+    <value>要创建的 Runspace 自变量必须是非 null RemoteRunspace 对象。</value>
+  </data>
+  <data name="DISCInvalidConfigKeyType" xml:space="preserve">
+    <value>会话配置哈希表包含无效的键类型。键应为字符串类型。</value>
+  </data>
+  <data name="DISCUnsupportedConfigName" xml:space="preserve">
+    <value>会话配置文件包含不受支持的配置选项: {0}。这是一个远程处理终结点配置选项，不适用于 PowerShell 会话状态。</value>
+  </data>
+  <data name="DISCUnknownConfigName" xml:space="preserve">
+    <value>会话配置文件包含未知的配置选项: {0}。</value>
+  </data>
+  <data name="WDACGetPowerShellLogTitle" xml:space="preserve">
+    <value>表达式计算可能失败</value>
+  </data>
+  <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
+    <value>基于脚本块创建 PowerShell 对象可能需要计算脚本块中的某些表达式。除非表达式表示常量值，否则在“受限语言”模式下，表达式计算会静默失败并返回 'null'。</value>
+  </data>
+  <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
+    <value>未能获取 Hyper-V VM 状态。该值的类型为 {0}，但应为 Microsoft.HyperV.PowerShell.VMState 或 System.String。</value>
+  </data>
+  <data name="HyperVInvalidResponse" xml:space="preserve">
+    <value>Hyper-V {0} 在连接协商期间发送了无效的 {1} 响应。</value>
+  </data>
+  <data name="HyperVNegotiationFailed" xml:space="preserve">
+    <value>协商与 Hyper-V 的安全连接失败。请确保主机和客机已使用所有相关的 Microsoft 更新进行更新。</value>
+  </data>
+</root>
