@@ -118,36 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidIdGetHistory" xml:space="preserve">
-    <value>The identifier {0} is not a valid value for a History identifier. Specify a positive number, and then try again.</value>
+    <value>{0} tanımlayıcısı, Geçmiş tanımlayıcısı için geçerli bir değer değil. Pozitif bir sayı belirtin ve sonra yeniden deneyin.</value>
   </data>
   <data name="NoHistoryForId" xml:space="preserve">
-    <value>Cannot locate the history for Id {0}.</value>
+    <value>{0} kimliği geçmişinin yeri belirlenemiyor.</value>
   </data>
   <data name="NoCountWithMultipleIds" xml:space="preserve">
-    <value>The count cannot be combined with multiple Ids.</value>
+    <value>Sayı, birden çok kimlikle birleştirilemez.</value>
   </data>
   <data name="NoHistoryForCommandline" xml:space="preserve">
-    <value>Cannot locate the history for command line {0}.</value>
+    <value>{0} komut satırının geçmişi bulunamıyor.</value>
   </data>
   <data name="NoLastHistoryEntryFound" xml:space="preserve">
-    <value>Cannot locate most recent history.</value>
+    <value>En son geçmişin yeri belirlenemiyor.</value>
   </data>
   <data name="InvokeHistoryLoopDetected" xml:space="preserve">
-    <value>The Invoke-History cmdlet is called repeatedly, in a loop.</value>
+    <value>Invoke-History cmdlet'i bir döngü içinde tekrar tekrar çağrılıyor.</value>
   </data>
   <data name="InvokeHistoryMultipleCommandsError" xml:space="preserve">
-    <value>Cannot process multiple history commands. You can only run a single command by using Invoke-History.</value>
+    <value>Birden çok geçmiş komutu işlenemiyor. Invoke-History kullanarak tek bir komut çalıştırabilirsiniz.</value>
   </data>
   <data name="AddHistoryInvalidInput" xml:space="preserve">
-    <value>Cannot add history because the input object has a format that is not valid.</value>
+    <value>Girdi nesnesinin biçimi geçerli olmadığı için geçmiş eklenemiyor.</value>
   </data>
   <data name="InvalidCountValue" xml:space="preserve">
-    <value>The identifier {0} is not valid. Specify a positive number, and then try again.</value>
+    <value>{0} tanımlayıcısı geçerli değil. Pozitif bir sayı belirtin ve sonra yeniden deneyin.</value>
   </data>
   <data name="ClearHistoryWarning" xml:space="preserve">
-    <value>This command will clear all the entries from the session history.</value>
+    <value>Bu komut, oturum geçmişindeki tüm girdileri temizler.</value>
   </data>
   <data name="NoCountWithMultipleCmdLine" xml:space="preserve">
-    <value>The count cannot be combined with multiple CommandLine parameters.</value>
+    <value>Sayı, birden çok CommandLine parametresiyle birleştirilemez.</value>
   </data>
 </root>

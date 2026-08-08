@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LessThanErrorTemplate" xml:space="preserve">
-    <value>"{0}" cannot be greater than or equal to "{1}".</value>
+    <value>„{0}“ musí být větší než {1} nebo se musí této hodnotě rovnat.</value>
   </data>
   <data name="NonPositiveNumberErrorTemplate" xml:space="preserve">
-    <value>"{0}" needs to be a positive number.</value>
+    <value>„{0}“ musí být kladné číslo.</value>
   </data>
   <data name="AllNullOrEmptyStringsErrorTemplate" xml:space="preserve">
-    <value>All strings are null or empty.</value>
+    <value>Všechny řetězce jsou null nebo prázdné.</value>
   </data>
 </root>

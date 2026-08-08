@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TranscriptionStarted" xml:space="preserve">
-    <value>Transcript started, output file is {0}</value>
+    <value>Rozpoczęto transkrypcję, plik wyjściowy to {0}</value>
   </data>
   <data name="TranscriptionStopped" xml:space="preserve">
-    <value>Transcript stopped, output file is {0}</value>
+    <value>Transkrypcja zatrzymana, plik wyjściowy jest {0}</value>
   </data>
   <data name="CannotStartTranscription" xml:space="preserve">
-    <value>Transcription cannot be started due to the error: {0}</value>
+    <value>Nie można rozpocząć transkrypcji z powodu błędu: {0}</value>
   </data>
   <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>The current provider ({0}) cannot open a file.</value>
+    <value>Bieżący dostawca ({0}) nie może otworzyć pliku.</value>
   </data>
   <data name="TranscriptFileReadOnly" xml:space="preserve">
-    <value>File {0} is read-only. Cannot write to this file. "Start-Transcript -Force" will clear the read-only attribute.</value>
+    <value>Plik {0} jest tylko do odczytu. Nie można zapisać w tym pliku. Polecenie „Start-Transcript -Force” spowoduje usunięcie atrybutu tylko do odczytu.</value>
   </data>
   <data name="MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>Nie można wykonać operacji, ponieważ ścieżka wskazuje na więcej niż jeden plik. To polecenie nie może działać na wielu plikach.</value>
   </data>
   <data name="TranscriptFileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>Plik {0} już istnieje i określono {1}.</value>
   </data>
   <data name="ErrorStoppingTranscript" xml:space="preserve">
-    <value>An error occurred stopping transcription: {0}</value>
+    <value>Wystąpił błąd podczas zatrzymywania transkrypcji: {0}</value>
   </data>
 </root>

@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LoadingOperationSystemInfo" xml:space="preserve">
-    <value>Loading operating system information</value>
+    <value>Ładowanie informacji o systemie operacyjnym</value>
   </data>
   <data name="LoadingHotPatchInfo" xml:space="preserve">
-    <value>Loading hot-patch information</value>
+    <value>Ładowanie informacji o poprawkach na gorąco</value>
   </data>
   <data name="LoadingRegistryInfo" xml:space="preserve">
-    <value>Loading registry information</value>
+    <value>Ładowanie informacji rejestru</value>
   </data>
   <data name="LoadingBiosInfo" xml:space="preserve">
-    <value>Loading BIOS information</value>
+    <value>Ładowanie informacji o systemie BIOS</value>
   </data>
   <data name="LoadingMotherboardInfo" xml:space="preserve">
-    <value>Loading motherboard information</value>
+    <value>Ładowanie informacji o płycie głównej</value>
   </data>
   <data name="LoadingComputerInfo" xml:space="preserve">
-    <value>Loading Computer information</value>
+    <value>Ładowanie informacji o komputerze</value>
   </data>
   <data name="LoadingProcessorInfo" xml:space="preserve">
-    <value>Loading processor information</value>
+    <value>Ładowanie informacji o procesorze</value>
   </data>
   <data name="LoadingNetworkAdapterInfo" xml:space="preserve">
-    <value>Loading network adapter information</value>
+    <value>Ładowanie informacji o karcie sieciowej</value>
   </data>
 </root>

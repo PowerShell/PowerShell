@@ -118,36 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidIdGetHistory" xml:space="preserve">
-    <value>The identifier {0} is not a valid value for a History identifier. Specify a positive number, and then try again.</value>
+    <value>識別子 {0} は、履歴の ID として有効な値ではありません。正の数を指定して、もう一度お試しください。</value>
   </data>
   <data name="NoHistoryForId" xml:space="preserve">
-    <value>Cannot locate the history for Id {0}.</value>
+    <value>ID {0} の履歴が見つかりません。</value>
   </data>
   <data name="NoCountWithMultipleIds" xml:space="preserve">
-    <value>The count cannot be combined with multiple Ids.</value>
+    <value>カウントを複数の ID と組み合わせることはできません。</value>
   </data>
   <data name="NoHistoryForCommandline" xml:space="preserve">
-    <value>Cannot locate the history for command line {0}.</value>
+    <value>コマンド ライン {0} の履歴が見つかりません。</value>
   </data>
   <data name="NoLastHistoryEntryFound" xml:space="preserve">
-    <value>Cannot locate most recent history.</value>
+    <value>最新の履歴が見つかりません。</value>
   </data>
   <data name="InvokeHistoryLoopDetected" xml:space="preserve">
-    <value>The Invoke-History cmdlet is called repeatedly, in a loop.</value>
+    <value>Invoke-History コマンドレットが、ループから繰り返し呼び出されています。</value>
   </data>
   <data name="InvokeHistoryMultipleCommandsError" xml:space="preserve">
-    <value>Cannot process multiple history commands. You can only run a single command by using Invoke-History.</value>
+    <value>複数の履歴コマンドは処理できません。Invoke-History を使用して実行できるコマンドは 1 つのみです。</value>
   </data>
   <data name="AddHistoryInvalidInput" xml:space="preserve">
-    <value>Cannot add history because the input object has a format that is not valid.</value>
+    <value>入力オブジェクトの形式が無効なため、履歴を追加できません。</value>
   </data>
   <data name="InvalidCountValue" xml:space="preserve">
-    <value>The identifier {0} is not valid. Specify a positive number, and then try again.</value>
+    <value>ID {0} は無効です。正の数を指定して、もう一度お試しください。</value>
   </data>
   <data name="ClearHistoryWarning" xml:space="preserve">
-    <value>This command will clear all the entries from the session history.</value>
+    <value>このコマンドは、セッション履歴のすべてのエントリをクリアします。</value>
   </data>
   <data name="NoCountWithMultipleCmdLine" xml:space="preserve">
-    <value>The count cannot be combined with multiple CommandLine parameters.</value>
+    <value>カウントを複数の CommandLine パラメーターと組み合わせることはできません。</value>
   </data>
 </root>

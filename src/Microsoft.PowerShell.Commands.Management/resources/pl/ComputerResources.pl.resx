@@ -118,276 +118,276 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NotSupported" xml:space="preserve">
-    <value>This functionality is not supported on this operating system.</value>
+    <value>Ta funkcja nie jest obsługiwana w tym systemie operacyjnym.</value>
   </data>
   <data name="NotEnabled" xml:space="preserve">
-    <value>Could not enable drive {0}.</value>
+    <value>Nie można włączyć dysku {0}.</value>
   </data>
   <data name="InvalidDrive" xml:space="preserve">
-    <value>The command cannot turn on the restore computer infrastructure on the specified computer because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>Polecenie nie może włączyć infrastruktury przywracania komputera na wskazanym komputerze, ponieważ podany dysk jest nieprawidłowy. Wprowadź prawidłowy dysk w parametrze Drive, a następnie spróbuj ponownie.</value>
   </data>
   <data name="NoSystemDrive" xml:space="preserve">
-    <value>Include System Drive in the list of Drives.</value>
+    <value>Uwzględnij dysk systemowy na liście dysków.</value>
   </data>
   <data name="NotValidDrive" xml:space="preserve">
-    <value>The command cannot turn off the restore computer infrastructure because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>Polecenie nie może wyłączyć infrastruktury przywracania komputera, ponieważ podany dysk jest nieprawidłowy. Wprowadź prawidłowy dysk w parametrze Drive, a następnie spróbuj ponownie.</value>
   </data>
   <data name="NotDisabled" xml:space="preserve">
-    <value>The command cannot disable System Restore on the {0} drive. You may not have sufficient permissions to perform this operation.</value>
+    <value>Polecenie nie może wyłączyć przywracania systemu na dysku {0}. Być może nie masz wystarczających uprawnień do wykonania tej operacji.</value>
   </data>
   <data name="ServiceDisabled" xml:space="preserve">
-    <value>SystemRestore service is disabled.</value>
+    <value>Usługa SystemRestore jest wyłączona.</value>
   </data>
   <data name="RestorePointNotCreated" xml:space="preserve">
-    <value>The system restore infrastructure cannot create a restore point.</value>
+    <value>Infrastruktura przywracania systemu nie może utworzyć punktu przywracania.</value>
   </data>
   <data name="RestoreFailed" xml:space="preserve">
-    <value>The last attempt to restore the computer failed.</value>
+    <value>Ostatnia próba przywrócenia komputera zakończyła się niepowodzeniem.</value>
   </data>
   <data name="RestoreSuccess" xml:space="preserve">
-    <value>The computer has been restored to the specified restore point.</value>
+    <value>Komputer został przywrócony do określonego punktu przywracania.</value>
   </data>
   <data name="RestoreInterrupted" xml:space="preserve">
-    <value>The last attempt to restore the computer was interrupted.</value>
+    <value>Ostatnia próba przywrócenia komputera została przerwana.</value>
   </data>
   <data name="NoRestorePoint" xml:space="preserve">
-    <value>The command cannot locate the "{0}" restore point. Verify the "{0}" sequence number, and then try the command again.</value>
+    <value>Polecenie nie może odnaleźć punktu przywracania „{0}”. Sprawdź numer sekwencyjny „{0}”, a następnie spróbuj ponownie uruchomić polecenie.</value>
   </data>
   <data name="DoubleComputerName" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
   <data name="RestartcomputerFailed" xml:space="preserve">
-    <value>Failed to restart the computer {0} with the following error message: {1}.</value>
+    <value>Nie można ponownie uruchomić komputera {0}. Komunikat o błędzie: {1}.</value>
   </data>
   <data name="OperationFailed" xml:space="preserve">
-    <value>This command cannot be run on target computer('{1}') due to following error: {0}.{2}</value>
+    <value>Nie można uruchomić tego polecenia na komputerze docelowym („{1}”) z powodu następującego błędu: {0}.{2}</value>
   </data>
   <data name="StopcomputerFailed" xml:space="preserve">
-    <value>Failed to stop the computer {0} with the following error message: {1}.</value>
+    <value>Nie można zatrzymać komputera {0}. Komunikat o błędzie: {1}.</value>
   </data>
   <data name="InvalidRestorePoint" xml:space="preserve">
-    <value>The command cannot restore the computer because "{0}" has not been set as valid restore point. Enter a valid restore point in the RestorePoint parameter, and then try again.</value>
+    <value>Polecenie nie może przywrócić komputera, ponieważ element „{0}” nie został ustawiony jako prawidłowy punkt przywracania. Wprowadź prawidłowy punkt przywracania w parametrze RestorePoint, a następnie spróbuj ponownie.</value>
   </data>
   <data name="RestartNeeded" xml:space="preserve">
-    <value>The changes will take effect after you restart the computer {1}.</value>
+    <value>Zmiany zaczną obowiązywać po ponownym uruchomieniu komputera {1}.</value>
   </data>
   <data name="RemoveComputerConfirm" xml:space="preserve">
-    <value>After you leave the domain, you will need to know the password of the local Administrator account to log onto this computer. Do you wish to continue?</value>
+    <value>Po opuszczeniu domeny trzeba będzie znać hasło konta administratora lokalnego, aby zalogować się na tym komputerze. Chcesz kontynuować?</value>
   </data>
   <data name="InvalidComputerNameFormat" xml:space="preserve">
-    <value>The following computer name is not valid: {0}. Make sure that the computer name is not longer than 255 characters, that it does not contain two or more consecutive dots, that it does not begin with a dot, that it does not contain only numeric characters, and that it does not contain any of the following characters:
+    <value>Następująca nazwa komputera jest nieprawidłowa: {0}. Upewnij się, że nazwa komputera nie jest dłuższa niż 255 znaków, nie zawiera dwóch lub więcej kropek następujących po sobie, nie zaczyna się od kropki, nie składa się wyłącznie ze znaków numerycznych i nie zawiera żadnego z następujących znaków:
 {{|}}~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
   </data>
   <data name="InvalidDomainNameFormat" xml:space="preserve">
-    <value>The domain in computer name '{0}' is not valid. Make sure that the domain exists and that the name is a valid domain name.</value>
+    <value>Domena w nazwie komputera „{0}” jest nieprawidłowa. Upewnij się, że domena istnieje i że jej nazwa jest prawidłową nazwą domeny.</value>
   </data>
   <data name="ComputerNamesAreEqual" xml:space="preserve">
-    <value>The value specified for the NewComputerName parameter is the same as the value of the ComputerName parameter. Provide a different value for the NewComputerName parameter.</value>
+    <value>Wartość określona dla parametru NewComputerName jest taka sama, jak wartość parametru ComputerName. Podaj inną wartość dla parametru NewComputerName.</value>
   </data>
   <data name="ResetComputerMachinePassword" xml:space="preserve">
-    <value>"The password of the secure channel between '{0}' and '{1}' has been reset."</value>
+    <value>„Hasło bezpiecznego kanału między „{0}” i „{1}: zostało zresetowane.”</value>
   </data>
   <data name="SystemRestoreServiceDisabled" xml:space="preserve">
-    <value>This command cannot be run due to the following error: the service cannot be started because it is disabled or does not have enabled devices associated with it.</value>
+    <value>Nie można uruchomić tego polecenia z powodu następującego błędu: nie można uruchomić usługi, ponieważ jest wyłączona lub nie ma włączonych skojarzonych z nią urządzeń.</value>
   </data>
   <data name="ProgressActivity" xml:space="preserve">
-    <value>Creating a system restore point ...</value>
+    <value>Trwa tworzenie punktu przywracania systemu ...</value>
   </data>
   <data name="ProgressStatusCreatingRestorePoint" xml:space="preserve">
-    <value>Creating a system restore point... {0}% Completed.</value>
+    <value>Trwa tworzenie punktu przywracania systemu... Ukończono {0}%.</value>
   </data>
   <data name="ProgressStatusCompleted" xml:space="preserve">
-    <value>Completed.</value>
+    <value>Ukończono.</value>
   </data>
   <data name="NetworkPathNotFound" xml:space="preserve">
-    <value>Try below options and Run the command again.
-1. Verify that the target computer('{0}') is running.
-2. Specify full computer name of the target computer('{0}').</value>
+    <value>Wypróbuj poniższe opcje i uruchom polecenie ponownie.
+1. Sprawdź, czy komputer docelowy („{0}”) jest uruchomiony.
+2. Określ pełną nazwę komputera docelowego („{0}”).</value>
   </data>
   <data name="PrivilegeNotEnabled" xml:space="preserve">
-    <value>Failed to restart the computer {0}. Access rights {1} cannot be enabled for the calling process.</value>
+    <value>Nie można ponownie uruchomić komputera {0}. Nie można włączyć uprawnień dostępu {1} dla procesu wywołującego.</value>
   </data>
   <data name="RestartComputerAction" xml:space="preserve">
-    <value>Enable the {0} and restart the computer.</value>
+    <value>Włącz {0} i uruchom ponownie komputer.</value>
   </data>
   <data name="LocalShutdownPrivilege" xml:space="preserve">
-    <value>Local shutdown access rights</value>
+    <value>Uprawnienia dostępu do lokalnego zamykania</value>
   </data>
   <data name="RemoteShutdownPrivilege" xml:space="preserve">
-    <value>Remote shutdown access rights</value>
+    <value>Uprawnienia dostępu do zdalnego zamykania</value>
   </data>
   <data name="CannotWaitLocalComputer" xml:space="preserve">
-    <value>Cannot wait for the local computer to restart. The local computer is ignored when the Wait parameter is specified.</value>
+    <value>Nie można czekać na ponowne uruchomienie komputera lokalnego. Komputer lokalny jest ignorowany, gdy określony jest parametr Wait.</value>
   </data>
   <data name="RestartComputerInvalidParameter" xml:space="preserve">
-    <value>The parameters Timeout, For, and Delay are valid only when the parameter Wait is specified.</value>
+    <value>Parametry Timeout, For i Delay są prawidłowe tylko wtedy, gdy określono parametr Wait.</value>
   </data>
   <data name="RestartMultipleComputersActivity" xml:space="preserve">
-    <value> Restarting computers...</value>
+    <value> Trwa ponowne uruchamianie komputerów...</value>
   </data>
   <data name="RestartSingleComputerActivity" xml:space="preserve">
-    <value> Restarting computer {0}</value>
+    <value> Ponowne uruchamianie komputera {0}</value>
   </data>
   <data name="WaitForMultipleComputers" xml:space="preserve">
-    <value>Completed: {0}/{1}.</value>
+    <value>Ukończono: {0}/{1}.</value>
   </data>
   <data name="VerifyRebootStage" xml:space="preserve">
-    <value>Verifying that the computer has been restarted...</value>
+    <value>Trwa weryfikowanie, czy komputer został uruchomiony ponownie...</value>
   </data>
   <data name="WaitForPowerShell" xml:space="preserve">
-    <value>Waiting for PowerShell connectivity...</value>
+    <value>Trwa oczekiwanie na łączność z programem PowerShell...</value>
   </data>
   <data name="WaitForRestartToBegin" xml:space="preserve">
-    <value>Waiting for the restart to begin...</value>
+    <value>Trwa oczekiwanie na ponowne uruchomienie...</value>
   </data>
   <data name="WaitForWinRM" xml:space="preserve">
-    <value>Waiting for WinRM connectivity...</value>
+    <value>Trwa oczekiwanie na połączenie z usługą WinRM...</value>
   </data>
   <data name="WaitForWMI" xml:space="preserve">
-    <value>Waiting for WMI connectivity...</value>
+    <value>Trwa oczekiwanie na połączenie z usługą WMI...</value>
   </data>
   <data name="RestartComplete" xml:space="preserve">
-    <value>Restart is complete</value>
+    <value>Ponowne uruchamianie zakończone</value>
   </data>
   <data name="NoSupportForCombinedServiceType" xml:space="preserve">
-    <value>The combined service types are not supported for now.</value>
+    <value>Połączone typy usług nie są obecnie obsługiwane.</value>
   </data>
   <data name="CannotResolveComputerName" xml:space="preserve">
-    <value>Computer name {0} cannot be resolved with the exception: {1}.</value>
+    <value>Nie można rozpoznać nazwy komputera {0} z powodu wyjątku: {1}.</value>
   </data>
   <data name="IncorrectNewNameNumber" xml:space="preserve">
-    <value>The number of new names is not equal to the number of target computers.</value>
+    <value>Liczba nowych nazw nie jest równa liczbie komputerów docelowych.</value>
   </data>
   <data name="InvalidNewName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is not valid. The new computer name entered is not properly formatted. Standard names may contain letters (a-z, A-Z), numbers (0-9), and hyphens (-), but no spaces or periods (.). The name may not consist entirely of digits, and may not be longer than 63 characters.</value>
+    <value>Pomiń komputer „{0}” z nową nazwą „{1}”, ponieważ nowa nazwa jest nieprawidłowa. Wprowadzona nowa nazwa komputera nie ma prawidłowego formatu. Nazwy standardowe mogą zawierać litery (a-z, A-Z), cyfry (0-9) i łączniki (-), ale nie mogą zawierać spacji ani kropek (.). Nazwa nie może składać się wyłącznie z cyfr i nie może być dłuższa niż 63 znaki.</value>
   </data>
   <data name="NewNameIsOldName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is the same as the current name.</value>
+    <value>Pomiń komputer „{0}” o nowej nazwie „{1}”, ponieważ nowa nazwa jest taka sama jak bieżąca.</value>
   </data>
   <data name="ComputerNotInDomain" xml:space="preserve">
-    <value>Cannot remove computer '{0}' because it is not in a domain.</value>
+    <value>Nie można usunąć komputera „{0}”, ponieważ nie znajduje się on w domenie.</value>
   </data>
   <data name="FailToJoinWorkGroup" xml:space="preserve">
-    <value>Failed to join computer '{0}' to workgroup '{1}' with the following error message: {2}</value>
+    <value>Nie można przyłączyć komputera „{0}” do grupy roboczej „{1}”. Komunikat o błędzie: {2}</value>
   </data>
   <data name="NetworkDown" xml:space="preserve">
-    <value>Cannot remove computer(s) from the domain because the local network is down.</value>
+    <value>Nie można usunąć komputerów z domeny, ponieważ sieć lokalna nie działa.</value>
   </data>
   <data name="FailToRename" xml:space="preserve">
-    <value>Fail to rename computer '{0}' to '{1}' due to the following exception: {2}.</value>
+    <value>Nie można zmienić nazwy komputera „{0}” na „{1}” z powodu następującego wyjątku: {2}.</value>
   </data>
   <data name="AddComputerActionDomain" xml:space="preserve">
-    <value>Join in domain '{0}'</value>
+    <value>Dołącz do domeny „{0}”</value>
   </data>
   <data name="AddComputerActionWorkgroup" xml:space="preserve">
-    <value>Join in workgroup '{0}'</value>
+    <value>Dołącz do grupy roboczej „{0}”</value>
   </data>
   <data name="AddComputerToSameDomain" xml:space="preserve">
-    <value>Cannot add computer '{0}' to domain '{1}' because it is already in that domain.</value>
+    <value>Nie można dodać komputera „{0}” do domeny „{1}”, ponieważ komputer już się w niej znajduje.</value>
   </data>
   <data name="AddComputerToSameWorkgroup" xml:space="preserve">
-    <value>Cannot add computer '{0}' to workgroup '{1}' because it is already in that workgroup.</value>
+    <value>Nie można dodać komputera „{0}” do grupy roboczej „{1}”, ponieważ komputer już do niej należy.</value>
   </data>
   <data name="FailToRenameAfterJoinWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' successfully joined the workgroup '{1}', but could not be renamed to '{2}' with the following error message: {3}.</value>
+    <value>Komputer „{0}” został z powodzeniem przyłączony do grupy roboczej „{1}”, ale nie można zmienić jego nazwy na „{2}”. Komunikat o błędzie: {3}.</value>
   </data>
   <data name="FailToSwitchFromDomainToWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from the domain '{1}', but it failed to join the workgroup '{2}' with the following error message: {3}.</value>
+    <value>Komputer „{0}” został za powodzeniem odłączony od domeny „{1}”, ale nie można przyłączyć go do grupy roboczej „{2}”. Komunikat o błędzie: {3}.</value>
   </data>
   <data name="FailToUnjoinDomain" xml:space="preserve">
-    <value>Failed to unjoin computer '{0}' from domain '{1}' with the following error message: {2}.</value>
+    <value>Nie można odłączyć komputera „{0}” od domeny „{1}” z powodu następującego komunikatu o błędzie: {2}.</value>
   </data>
   <data name="FailToConnectToComputer" xml:space="preserve">
-    <value>Cannot establish the WMI connection to the computer '{0}' with the following error message: {1}.</value>
+    <value>Nie można nawiązać połączenia WMI z komputerem „{0}”. Komunikat o błędzie: {1}.</value>
   </data>
   <data name="FailToJoinDomainFromWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' failed to join domain '{1}' from its current workgroup '{2}' with following error message: {3}.</value>
+    <value>Komputer „{0}” nie może dołączyć do domeny „{1}” z bieżącej grupy roboczej „{2}”. Komunikat o błędzie: {3}.</value>
   </data>
   <data name="FailToJoinNewDomainAfterUnjoinOldDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from domain '{1}', but failed to join the new domain '{2}' with the following error message: {3}.</value>
+    <value>Komputer „{0}” został z powodzeniem odłączony od domeny „{1}”, ale nie można go przyłączyć do nowej domeny „{2}”, a wyświetlony został następujący komunikat o błędzie: {3}.</value>
   </data>
   <data name="FailToRenameAfterJoinDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully joined to the new domain '{1}', but renaming it to '{2}' failed with the following error message: {3}.</value>
+    <value>Komputer „{0}” został z powodzeniem przyłączony do nowej domeny „{1}”, ale zmiana jego nazwy na „{2}” zakończyła się niepowodzeniem. Komunikat o błędzie: {3}.</value>
   </data>
   <data name="InvalidJoinOptions" xml:space="preserve">
-    <value>The flag '{0}' is valid only if flag '{1}' is specified.</value>
+    <value>Flaga „{0}” jest prawidłowa tylko wtedy, gdy określono flagę „{1}”.</value>
   </data>
   <data name="CannotRenameMultipleComputers" xml:space="preserve">
-    <value>Cannot rename multiple computers. The NewName parameter is valid only if a single computer is specified.</value>
+    <value>Nie można zmienić nazwy wielu komputerów. Parametr NewName jest prawidłowy tylko wtedy, gdy określono jeden komputer.</value>
   </data>
   <data name="CannotFindMachineAccountFromDomain" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer in the domain {0}.</value>
+    <value>Nie można odnaleźć konta komputera dla komputera lokalnego w domenie {0}.</value>
   </data>
   <data name="CannotFindMachineAccountFromServer" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer from the domain controller {0}.</value>
+    <value>Nie można odnaleźć konta komputera dla komputera lokalnego z kontrolera domeny {0}.</value>
   </data>
   <data name="FailToGetDomainInformation" xml:space="preserve">
-    <value>Cannot get domain information about the local computer because of the following exception: {0}.</value>
+    <value>Nie można uzyskać informacji o domenie dla komputera lokalnego z powodu następującego wyjątku: {0}.</value>
   </data>
   <data name="FailToResetPasswordOnDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the computer account in the domain. Operation failed with the following exception: {0}.</value>
+    <value>Nie można zresetować hasła bezpiecznego kanału dla konta komputera w domenie. Operacja zakończyła się niepowodzeniem z następującym wyjątkiem: {0}.</value>
   </data>
   <data name="FailToResetPasswordOnLocalMachine" xml:space="preserve">
-    <value>Resetting the secure channel password for the local computer failed with the following error message: {0}.</value>
+    <value>Resetowanie hasła bezpiecznego kanału dla komputera lokalnego zakończyło się niepowodzeniem. Komunikat o błędzie: {0}.</value>
   </data>
   <data name="NeedAdminPrivilegeToResetPassword" xml:space="preserve">
-    <value>Administrator rights are required to reset the secure channel password on the local computer. Access is denied.</value>
+    <value>Do zresetowania hasła bezpiecznego kanału na komputerze lokalnym są wymagane uprawnienia administratora. Odmowa dostępu.</value>
   </data>
   <data name="ResetComputerNotInDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the account of the local computer. The local computer is not currently part of a domain.</value>
+    <value>Nie można zresetować hasła bezpiecznego kanału dla konta komputera lokalnego. Komputer lokalny nie jest obecnie częścią domeny.</value>
   </data>
   <data name="TruncateNetBIOSName" xml:space="preserve">
-    <value>The NetBIOS name of the computer is limited to 15 bytes, which is 15 characters in this case. The NetBIOS name will be shortened to "{0}", which may cause conflicts under NetBIOS name resolution. Do you wish to continue?</value>
+    <value>Nazwa NetBIOS komputera jest ograniczona do 15 bajtów, co w tym przypadku oznacza 15 znaków. Nazwa NetBIOS zostanie skrócona do „{0}”, co może powodować konflikty związane z rozpoznawaniem nazw NetBIOS. Chcesz kontynuować?</value>
   </data>
   <data name="TruncateNetBIOSNameCaption" xml:space="preserve">
-    <value>NetBIOS name will be truncated.</value>
+    <value>Nazwa NetBIOS zostanie obcięta.</value>
   </data>
   <data name="CannotResolveServerName" xml:space="preserve">
-    <value>The specified server name {0} cannot be resolved.</value>
+    <value>Nie można rozwiązać podanej nazwy serwera {0}.</value>
   </data>
   <data name="CannotCreateRestorePointWarning" xml:space="preserve">
-    <value>A new system restore point cannot be created because one has already been created within the past {0} minutes. The frequency of restore point creation can be changed by creating the DWORD value 'SystemRestorePointCreationFrequency' under the registry key 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore'. The value of this registry key indicates the necessary time interval (in minutes) between two restore point creation. The default value is 1440 minutes (24 hours).</value>
+    <value>Nie można utworzyć nowego punktu przywracania systemu, ponieważ taki punkt został już utworzony w ciągu ostatnich minut {0}. Częstotliwość tworzenia punktów przywracania można zmienić, tworząc wartość DWORD „SystemRestorePointCreationFrequency” w kluczu rejestru „HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore”. Wartość tego klucza rejestru określa wymagany interwał czasu w minutach między dwoma punktami przywracania. Wartość domyślna wynosi 1440 minut (24 godziny).</value>
   </data>
   <data name="CannotGetOperatingSystemObject" xml:space="preserve">
-    <value>The Win32_OperatingSystem WMI object cannot be retrieved.</value>
+    <value>Nie można pobrać obiektu WMI Win32_OperatingSystem.</value>
   </data>
   <data name="RestartComputerSkipped" xml:space="preserve">
-    <value>The computer {0} is skipped. Fail to retrieve its LastBootUpTime via the WMI service with the following error message: {1}.</value>
+    <value>Komputer {0} jest pomijany. Nie można pobrać wartości LastBootUpTime za pośrednictwem usługi WMI przy użyciu następującego komunikatu o błędzie: {1}.</value>
   </data>
   <data name="FailToTestSecureChannel" xml:space="preserve">
-    <value>Cannot verify the secure channel for the local computer. Operation failed with the following exception: {0}.</value>
+    <value>Nie można zweryfikować bezpiecznego kanału dla komputera lokalnego. Operacja zakończyła się niepowodzeniem z następującym wyjątkiem: {0}.</value>
   </data>
   <data name="RepairSecureChannelFail" xml:space="preserve">
-    <value>The attempt to repair the secure channel between the local computer and the domain {0} has failed.</value>
+    <value>Próba naprawienia bezpiecznego kanału między komputerem lokalnym a domeną {0} zakończyła się niepowodzeniem.</value>
   </data>
   <data name="RepairSecureChannelSucceed" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} was successfully repaired.</value>
+    <value>Bezpieczny kanał między komputerem lokalnym a domeną {0} został z powodzeniem naprawiony.</value>
   </data>
   <data name="SecureChannelAlive" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is in good condition.</value>
+    <value>Bezpieczny kanał pomiędzy komputerem lokalnym a domeną {0} jest w dobrym stanie.</value>
   </data>
   <data name="SecureChannelBroken" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is broken.</value>
+    <value>Bezpieczny kanał pomiędzy komputerem lokalnym a domeną {0} jest uszkodzony.</value>
   </data>
   <data name="TestComputerNotInDomain" xml:space="preserve">
-    <value>Cannot verify the secure channel password for the local computer. The local computer is not currently part of a domain.</value>
+    <value>Nie można zweryfikować hasła bezpiecznego kanału dla komputera lokalnego. Komputer lokalny nie jest obecnie częścią domeny.</value>
   </data>
   <data name="SystemRestoreNotSupported" xml:space="preserve">
-    <value>The operation cannot be performed because the system restore APIs are not supported on the Advanced RISC Machine (ARM) platform.</value>
+    <value>Nie można wykonać operacji, ponieważ interfejsy API przywracania systemu nie są obsługiwane na platformie ARM (Advanced RISC Machine).</value>
   </data>
   <data name="TimeoutError" xml:space="preserve">
-    <value>The computer did not finish restarting within the specified time-out period.</value>
+    <value>Komputer nie został ponownie uruchomiony w określonym czasie.</value>
   </data>
   <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
-    <value>Cannot validate the time interval for restore point creation. It failed to retrieve the last restore point with the following error message: {0}.</value>
+    <value>Nie można sprawdzić interwału czasu tworzenia punktu przywracania. Nie można pobrać ostatniego punktu przywracania. Komunikat o błędzie: {0}.</value>
   </data>
   <data name="InvalidParameterSetAsJob" xml:space="preserve">
-    <value>The AsJob Parameter Set is not supported.</value>
+    <value>Zestaw parametrów AsJob nie jest obsługiwany.</value>
   </data>
   <data name="InvalidParameterForCoreClr" xml:space="preserve">
-    <value>The {0} parameter is not supported for CoreCLR.</value>
+    <value>Parametr {0} nie jest obsługiwany w przypadku środowiska CoreCLR.</value>
   </data>
   <data name="ShutdownCommandNotFound" xml:space="preserve">
-    <value>The required native command 'shutdown' was not found.</value>
+    <value>Nie znaleziono wymaganego polecenia natywnego „shutdown”.</value>
   </data>
 </root>

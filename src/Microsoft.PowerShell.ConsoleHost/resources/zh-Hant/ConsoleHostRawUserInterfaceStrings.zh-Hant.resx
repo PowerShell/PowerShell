@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CoordinateOutOfBufferErrorTemplate" xml:space="preserve">
-    <value>Cannot process the operation because the supplied coordinate is not valid. Specify a coordinate within the buffer area of {0}.</value>
+    <value>無法處理作業，因為提供的座標無效。請指定位於 {0} 緩衝區域內的座標。</value>
   </data>
   <data name="InvalidBufferSizeError" xml:space="preserve">
-    <value>Cannot set the buffer size because the size specified is too large or too small.</value>
+    <value>無法設定緩衝區大小，因為指定的大小太大或太小。</value>
   </data>
   <data name="InvalidConsoleColorError" xml:space="preserve">
-    <value>Cannot set the console color because the value specified is not valid. Specify a valid color as defined by the System.ConsoleColor type.</value>
+    <value>無法設定主控台色彩，因為指定的值無效。請指定 System.ConsoleColor 型別定義的有效色彩。</value>
   </data>
   <data name="InvalidCursorSizeError" xml:space="preserve">
-    <value>Cannot process CursorSize because the cursor size specified is not valid.</value>
+    <value>無法處理 CursorSize，因為指定的游標大小無效。</value>
   </data>
   <data name="InvalidReadKeyOptionsError" xml:space="preserve">
-    <value>Cannot read key options. To read options, set one or both of the following: IncludeKeyDown, IncludeKeyUp.</value>
+    <value>無法讀取索引鍵選項。若要讀取選項，請設定下列其中一個或兩個: IncludeKeyDown、IncludeKeyUp。</value>
   </data>
   <data name="InvalidRegionErrorTemplate" xml:space="preserve">
-    <value>{0} should be greater than or equal to {1}.</value>
+    <value>{0} 應大於或等於 {1}。</value>
   </data>
   <data name="InvalidXWindowPositionError" xml:space="preserve">
-    <value>Cannot use the specified Window X (column) position because it extends past the width of the screen buffer. Specify another X position, starting with 0 as the left most column of the buffer.</value>
+    <value>無法使用指定的 Window X (資料行) 位置，因為它超出螢幕緩衝區的寬度。請指定另一個 X 位置，從 0 作為緩衝區最左邊的資料行開始。</value>
   </data>
   <data name="InvalidYWindowPositionError" xml:space="preserve">
-    <value>Cannot use the specified Window Y (row) position because it extends past the height of the screen buffer. Specify another Y position, starting with 0 as the top-most row of the buffer.</value>
+    <value>無法使用指定的 Window Y (資料列) 位置，因為它超出螢幕緩衝區的高度。請指定另一個 Y 位置，從 0 作為緩衝區最上方的資料列開始。</value>
   </data>
   <data name="WindowWidthTooSmallError" xml:space="preserve">
-    <value>Window width cannot be less than 1.</value>
+    <value>視窗寬度不可小於 1。</value>
   </data>
   <data name="WindowHeightTooSmallError" xml:space="preserve">
-    <value>Window height must be at least 1.</value>
+    <value>視窗高度必須至少為 1。</value>
   </data>
   <data name="WindowWidthLargerThanBufferError" xml:space="preserve">
-    <value>Window cannot be wider than the screen buffer.</value>
+    <value>視窗寬度不能超過螢幕緩衝區。</value>
   </data>
   <data name="WindowHeightLargerThanBufferError" xml:space="preserve">
-    <value>Window cannot be taller than the screen buffer.</value>
+    <value>視窗高度不能超過螢幕緩衝區。</value>
   </data>
   <data name="WindowWidthTooLargeErrorTemplate" xml:space="preserve">
-    <value>Window cannot be wider than {0}.</value>
+    <value>視窗寬度不能超過 {0}。</value>
   </data>
   <data name="WindowHeightTooLargeErrorTemplate" xml:space="preserve">
-    <value>Window cannot be taller than {0}.</value>
+    <value>視窗高度不可超過 {0}。</value>
   </data>
   <data name="WindowTooNarrowError" xml:space="preserve">
-    <value>Window size is too narrow.</value>
+    <value>視窗大小太窄。</value>
   </data>
   <data name="WindowTooShortError" xml:space="preserve">
-    <value>Window size is too short.</value>
+    <value>視窗大小太短。</value>
   </data>
   <data name="WindowTitleTooShortError" xml:space="preserve">
-    <value>Window title cannot be empty.</value>
+    <value>視窗標題不可為空白。</value>
   </data>
   <data name="WindowTitleTooLongErrorTemplate" xml:space="preserve">
-    <value>Window title cannot be longer than {0} characters.</value>
+    <value>視窗標題長度不得超過 {0} 個字元。</value>
   </data>
   <data name="WindowTitleElevatedPrefix" xml:space="preserve">
-    <value>Administrator: </value>
+    <value>系統管理員:</value>
   </data>
 </root>

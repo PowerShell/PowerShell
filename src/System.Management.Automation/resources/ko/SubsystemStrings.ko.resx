@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MultipleRegistrationNotAllowed" xml:space="preserve">
-    <value>The subsystem '{0}' does not allow more than one implementation to be registered.</value>
+    <value>하위 시스템 '{0}'에서는 둘 이상의 구현 등록을 허용하지 않습니다.</value>
   </data>
   <data name="ImplementationAlreadyRegistered" xml:space="preserve">
-    <value>The implementation with Id '{0}' was already registered for the subsystem '{1}'.</value>
+    <value>ID가 '{0}'인 구현은 하위 시스템 '{1}'에 이미 등록되어 있습니다.</value>
   </data>
   <data name="UnregistrationNotAllowed" xml:space="preserve">
-    <value>The subsystem '{0}' does not allow the unregistration of an implementation.</value>
+    <value>하위 시스템 '{0}'에서는 구현 등록 취소를 허용하지 않습니다.</value>
   </data>
   <data name="NoImplementationRegistered" xml:space="preserve">
-    <value>No implementation was registered for the subsystem '{0}'.</value>
+    <value>하위 시스템 '{0}'에 대해 등록된 구현이 없습니다.</value>
   </data>
   <data name="ImplementationNotFound" xml:space="preserve">
-    <value>A registered implementation with the Id '{0}' was not found.</value>
+    <value>ID가 '{0}'인 등록된 구현을 찾을 수 없습니다.</value>
   </data>
   <data name="SubsystemTypeUnknown" xml:space="preserve">
-    <value>The specified subsystem type '{0}' is unknown.</value>
+    <value>지정한 하위 시스템 유형 '{0}'은(는) 알 수 없습니다.</value>
   </data>
   <data name="MustUseConcreteSubsystemType" xml:space="preserve">
-    <value>You must specify a concrete subsystem type instead of the base interface 'ISubsystem'.</value>
+    <value>기본 인터페이스 'ISubsystem' 대신 구체적인 하위 시스템 형식을 지정해야 합니다.</value>
   </data>
   <data name="SubsystemKindUnknown" xml:space="preserve">
-    <value>The specified subsystem kind '{0}' is unknown.</value>
+    <value>지정한 하위 시스템 종류 '{0}'은(는) 알 수 없습니다.</value>
   </data>
   <data name="ConcreteSubsystemNotImplemented" xml:space="preserve">
-    <value>For the target subsystem kind '{0}', the specified subsystem instance needs to implement the corresponding concrete interface or abstract class '{1}'.</value>
+    <value>대상 하위 시스템 종류 '{0}'의 경우, 지정된 하위 시스템 instance는 해당하는 구체적인 인터페이스나 추상 클래스 '{1}'을(를) 구현해야 합니다.</value>
   </data>
   <data name="InvalidSubsystemInfo" xml:space="preserve">
-    <value>The declared metadata for subsystem kind '{0}' is invalid. A subsystem that requires cmdlets or functions to be defined cannot allow multiple registrations because that would result in one implementation overwriting the commands defined by another implementation.</value>
+    <value>하위 시스템 종류 '{0}'에 대해 선언된 메타데이터가 올바르지 않습니다. cmdlet이나 함수를 정의해야 하는 하위 시스템은 여러 번 등록할 수 없습니다. 한 구현이 다른 구현에서 정의한 명령을 덮어쓰게 되기 때문입니다.</value>
   </data>
   <data name="EmptyImplementationId" xml:space="preserve">
-    <value>The 'Id' property of an implementation for the subsystem '{0}' cannot be an empty GUID.</value>
+    <value>하위 시스템 '{0}'에 대한 구현의 'Id' 속성은 빈 GUID일 수 없습니다.</value>
   </data>
   <data name="NullOrEmptyImplementationName" xml:space="preserve">
-    <value>The 'Name' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+    <value>하위 시스템 '{0}'에 대한 구현의 'Name' 속성은 null이거나 빈 문자열일 수 없습니다.</value>
   </data>
   <data name="NullOrEmptyImplementationDescription" xml:space="preserve">
-    <value>The 'Description' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+    <value>하위 시스템 '{0}'에 대한 구현의 'Description' 속성은 null이거나 빈 문자열일 수 없습니다.</value>
   </data>
 </root>

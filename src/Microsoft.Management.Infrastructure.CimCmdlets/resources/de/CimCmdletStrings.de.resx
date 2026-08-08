@@ -118,111 +118,111 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CimOperationCompleted" xml:space="preserve">
-    <value>Operation '{0}' complete.</value>
+    <value>Der Vorgang „{0}“ wurde abgeschlossen.</value>
     <comment>{0} is a placeholder for operation name. (i.e, GetCimInstance)</comment>
   </data>
   <data name="CimOperationNameCreateInstance" xml:space="preserve">
-    <value>Create CimInstance</value>
+    <value>CimInstance erstellen</value>
   </data>
   <data name="CimOperationNameDeleteInstance" xml:space="preserve">
-    <value>Delete CimInstance</value>
+    <value>CimInstance löschen</value>
   </data>
   <data name="CimOperationNameEnumerateAssociatedInstances" xml:space="preserve">
-    <value>Enumerate Associated CimInstances</value>
+    <value>Zugeordnete CimInstances auflisten</value>
   </data>
   <data name="CimOperationNameEnumerateClasses" xml:space="preserve">
-    <value>Enumerate CimClasses</value>
+    <value>CimClasses auflisten</value>
   </data>
   <data name="CimOperationNameEnumerateInstances" xml:space="preserve">
-    <value>Enumerate CimInstances</value>
+    <value>CimInstances auflisten</value>
   </data>
   <data name="CimOperationNameGetClass" xml:space="preserve">
-    <value>Get CimClass</value>
+    <value>CimClass abrufen</value>
   </data>
   <data name="CimOperationNameGetInstance" xml:space="preserve">
-    <value>Get CimInstance</value>
+    <value>CimInstance abrufen</value>
   </data>
   <data name="CimOperationNameInvokeMethod" xml:space="preserve">
-    <value>Invoke CimMethod</value>
+    <value>CimMethod aufrufen</value>
   </data>
   <data name="CimOperationNameModifyInstance" xml:space="preserve">
-    <value>Modify CimInstance</value>
+    <value>CimInstance ändern</value>
   </data>
   <data name="CimOperationNameQueryInstances" xml:space="preserve">
-    <value>Query CimInstances</value>
+    <value>CimInstances abfragen</value>
   </data>
   <data name="CimOperationNameSubscribeIndication" xml:space="preserve">
-    <value>Subscribe CimIndication</value>
+    <value>CimIndication abonnieren</value>
   </data>
   <data name="CimOperationStart" xml:space="preserve">
-    <value>Perform operation '{0}' with following parameters, '{1}'.</value>
+    <value>Führen Sie den Vorgang „{0}“ mit den folgenden Parametern aus: „{1}“.</value>
     <comment>{0} is a placeholder for operation name; {1} is a placeholder for parameters value</comment>
   </data>
   <data name="ConflictParameterWasSet" xml:space="preserve">
-    <value>Parameter '{0}' cannot be used with the parameter '{1}'.</value>
+    <value>Der Parameter „{0}“ kann nicht mit dem Parameter „{1}“ verwendet werden.</value>
     <comment>{0} is a placeholder for parameter name; {1} is a placeholder for another parameter name;</comment>
   </data>
   <data name="CouldNotFindCimsessionObject" xml:space="preserve">
-    <value>Could not find CimSession with the given {0} = {1}</value>
+    <value>CimSession mit der angegebenen {0} = {1} wurde nicht gefunden.</value>
     <comment>{0} is a placeholder for property name; {1} is a placeholder for property value.</comment>
   </data>
   <data name="CouldNotFindPropertyFromGivenClass" xml:space="preserve">
-    <value>Could not find the following properties from the given class {0}: {1}.</value>
+    <value>Die folgenden Eigenschaften konnten in der angegebenen Klasse „{0}“ nicht gefunden werden: {1}.</value>
     <comment>{0} is a placeholder for class name; {1} is a placeholder for list of property names.</comment>
   </data>
   <data name="CouldNotModifyReadonlyProperty" xml:space="preserve">
-    <value>Could not modify readonly property '{0}' of object '{1}'.</value>
+    <value>Die schreibgeschützte Eigenschaft „{0}“ des Objekts „{1}“ konnte nicht geändert werden.</value>
     <comment>{0} is a placeholder for propertyname; {1} is a placeholder for object string.</comment>
   </data>
   <data name="DefaultStatusDescription" xml:space="preserve">
-    <value>Default status description.</value>
+    <value>Standardstatusbeschreibung</value>
     <comment>N/A</comment>
   </data>
   <data name="DidNotResolveFile" xml:space="preserve">
-    <value>Cannot perform operation because the wildcard path {0} did not resolve to a file.</value>
+    <value>Der Vorgang kann nicht ausgeführt werden, da der Wildcardpfad „{0}“ nicht in eine Datei aufgelöst wurde.</value>
     <comment>{0} is a placeholder for a path</comment>
   </data>
   <data name="InvalidAuthenticationTypeWithNullCredential" xml:space="preserve">
-    <value>Authentication type '{0}' is invalid without credential. Only following authentication type are allowed without credential, '{1}', '{2}', '{3}', or '{4}'.</value>
+    <value>Der Authentifizierungstyp „{0}“ ist ohne Anmeldeinformationen ungültig. Ohne Anmeldeinformationen sind nur die folgenden Authentifizierungstypen zulässig: „{1}“, „{2}“, „{3}“ oder „{4}“.</value>
     <comment>{0} is a placeholder for authentication type. {1}-{4} are placeholders for authentication types.</comment>
   </data>
   <data name="InvalidMethod" xml:space="preserve">
-    <value>Can not find method '{0}' in class '{1}'.</value>
+    <value>Die Methode „{0}“ konnte in der Klasse „{1}“ nicht gefunden werden.</value>
     <comment>{0} is a placeholder for method name. {1} is a placeholders for class name.</comment>
   </data>
   <data name="InvalidMethodParameter" xml:space="preserve">
-    <value>Can not find Parameter '{0}' in method '{1}' of class '{2}'.</value>
+    <value>Der Parameter „{0}“ konnte in der Methode „{1}“ der Klasse „{2}“ nicht gefunden werden.</value>
     <comment>{0} is a placeholder for parameter name; {1} is a placeholder for method name; {2} is a placeholder for class name.</comment>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>Invalid operation. Current cmdlet already have operation created.</value>
+    <value>Ungültige Operation. Für das aktuelle Cmdlet wurde bereits ein Vorgang erstellt.</value>
     <comment>N/A</comment>
   </data>
   <data name="InvalidParameterValue" xml:space="preserve">
-    <value>Argument '{0}' contains characters that are not allowed in parameter '{1}'. Supply an argument that is valid and then try the command again.</value>
+    <value>Das Argument „{0}“ enthält Zeichen, die im Parameter „{1}“ nicht zulässig sind. Geben Sie ein gültiges Argument an, und wiederholen Sie dann den Befehl.</value>
     <comment>{0} stand for argument value, {1} stand for parameter name.</comment>
   </data>
   <data name="MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>Der Vorgang kann nicht ausgeführt werden, da der Pfad in mehrere Dateien aufgelöst wurde. Dieser Befehl kann nicht für mehrere Dateien verwendet werden.</value>
   </data>
   <data name="NullArgument" xml:space="preserve">
-    <value>Argument '{0}' can not be null.</value>
+    <value>Das Argument „{0}“ darf nicht NULL sein.</value>
     <comment>N/A</comment>
   </data>
   <data name="OperationInProgress" xml:space="preserve">
-    <value>CimSession proxy object already have operation in progress.</value>
+    <value>Für das CimSession-Proxyobjekt wird bereits ein Vorgang ausgeführt.</value>
     <comment>N/A</comment>
   </data>
   <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>Cannot open file because the current provider ({0}) cannot open a file.</value>
+    <value>Die Datei kann nicht geöffnet werden, da der aktuelle Anbieter ({0}) keine Datei öffnen kann.</value>
     <comment>{0} is a placeholder for PowerShell filesystem-like provider name (i.e. registry provider)</comment>
   </data>
   <data name="UnableToAddPropertyToInstance" xml:space="preserve">
-    <value>Unable to add property '{0}' to input object '{1}'. The class schema does not contain the property.</value>
+    <value>Die Eigenschaft „{0}“ kann dem Eingabeobjekt „{1}“ nicht hinzugefügt werden. Das Klassenschema enthält diese Eigenschaft nicht.</value>
     <comment>{0} stand for property name, {1} stand for cim instance path.</comment>
   </data>
   <data name="UnableToResolveParameterSetName" xml:space="preserve">
-    <value>Unable to resolve the parameter set name.</value>
+    <value>Der Name des Parametersatzes kann nicht aufgelöst werden.</value>
     <comment>N/A</comment>
   </data>
 </root>

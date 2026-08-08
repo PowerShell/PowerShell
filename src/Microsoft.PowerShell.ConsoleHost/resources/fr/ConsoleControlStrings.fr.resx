@@ -118,84 +118,84 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddBreakHandlerExceptionMessage" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred when adding a break handler. Contact Microsoft Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de l'ajout d'un gestionnaire d'interruption. Contactez Support Microsoft Services.</value>
   </data>
   <data name="RemoveBreakHandlerExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while trying to remove a break handler. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la tentative de suppression d'un gestionnaire d'interruption. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="GetInputModeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting input about the console handle. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la récupération des données concernant le descripteur de console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="GetActiveScreenBufferHandleExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while retrieving the handle for the active console output buffer. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la récupération du handle du tampon de sortie de la console active. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="GetModeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting the console mode. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de l'obtention du mode console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="SetModeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting the console mode. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la configuration du mode console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="ReadConsoleExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while reading characters from the console input buffer. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la lecture des caractères du tampon d'entrée de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="ReadConsoleInputExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while reading input records from the console input buffer. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la lecture des enregistrements d'entrée à partir du tampon d'entrée de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="PeekConsoleInputExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while reading the contents of the console input buffer. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la lecture du contenu du tampon d'entrée de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="GetNumberOfConsoleInputEventsExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting the number of events in the console input buffer. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la récupération du nombre d'événements dans la mémoire tampon d'entrée de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="FlushConsoleInputBufferExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while flushing the console input buffer. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la vidange du tampon d'entrée de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="GetConsoleScreenBufferInfoExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting console output buffer information. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la récupération des informations du tampon de sortie de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="SetConsoleScreenBufferSizeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting the console output buffer size. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la définition de la taille du tampon de sortie de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="WriteConsoleOutputExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while writing to the console output buffer. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de l'écriture dans le tampon de sortie de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="ReadConsoleOutputExceptionTemplate" xml:space="preserve">
-    <value>Win32 internal error "{0}" 0x{1:X} occurred while reading the console output buffer. Contact Microsoft Customer Support Services.</value>
+    <value>Erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la lecture du tampon de sortie de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="FillConsoleOutputCharacterExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while filling the console output buffer with characters. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors du remplissage du tampon de sortie de la console avec des caractères. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="FillConsoleOutputAttributeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while filling the console output buffer with attributes. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors du remplissage du tampon de sortie de la console avec des attributs. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="ScrollConsoleScreenBufferExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while scrolling the console output buffer. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors du défilement du tampon de sortie de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="SetConsoleWindowInfoExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting the console window information. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la définition des informations de la fenêtre de console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="GetLargestConsoleWindowSizeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting the largest console window size. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de l'obtention de la plus grande taille de fenêtre de console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="SetConsoleWindowTitleExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting the console window title. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la définition du titre de la fenêtre de console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="WriteConsoleExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while writing to the console output buffer at the current cursor position. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de l'écriture dans le tampon de sortie de la console à la position actuelle du curseur. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="SetConsoleTextAttributeExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting character attributes for the console output buffer. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la définition des attributs de caractères pour la mémoire tampon de sortie de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="GetConsoleCursorInfoExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting cursor information. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la récupération des informations du curseur. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="SetConsoleCursorInfoExceptionTemplate" xml:space="preserve">
-    <value>Win32 internal error "{0}" 0x{1:X} occurred while setting cursor information.Contact Microsoft Customer Support Services.</value>
+    <value>Erreur interne Win32 "{0}" 0x{1:X} lors de la définition des informations du curseur. Contactez le support technique Microsoft.</value>
   </data>
   <data name="GetConsoleFontInfoExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting console font information. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de la récupération des informations de police de la console. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
   <data name="SendKeyPressInputExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while sending keyboard input. Contact Microsoft Customer Support Services.</value>
+    <value>L'erreur interne Win32 "{0}" 0x{1:X} s'est produite lors de l'envoi de l'entrée clavier. Contactez le service d'assistance clientèle de Microsoft.</value>
   </data>
 </root>

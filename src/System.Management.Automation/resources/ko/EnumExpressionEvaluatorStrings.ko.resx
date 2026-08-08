@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EmptyInputString" xml:space="preserve">
-    <value>The input expression must not be empty. Specify at least one identifier name in each input expression. </value>
+    <value>입력 식은 비워 둘 수 없습니다. 각 입력 식에 하나 이상의 식별자 이름을 지정합니다. </value>
   </data>
   <data name="EmptyTokenString" xml:space="preserve">
-    <value>Unable to match an empty identifier name to a valid enumerator name. Specify one of the following enumerator names and retry: {0}.</value>
+    <value>빈 식별자 이름을 유효한 열거자 이름과 일치시킬 수 없습니다. 다음 열거자 이름 중 하나를 지정하고 다시 시도하세요. {0}.</value>
   </data>
   <data name="InvalidGenericType" xml:space="preserve">
-    <value>The generic type specified for the expression must represent an enum. Specify a valid enum type. </value>
+    <value>식에 지정된 제네릭 형식은 열거형을 나타내야 합니다. 유효한 열거형 형식을 지정하세요. </value>
   </data>
   <data name="MultipleEnumNameMatch" xml:space="preserve">
-    <value>The identifier name {0} cannot be processed because it is either too similar or identical to the following enumerator names: {1}. Use a more specific identifier name.</value>
+    <value>식별자 이름 {0}이(가) 다음 열거자 이름과 너무 유사하거나 동일하기 때문에 처리할 수 없습니다. {1}. 보다 구체적인 식별자 이름을 사용하세요.</value>
   </data>
   <data name="NoEnumNameMatch" xml:space="preserve">
-    <value>Unable to match the identifier name {0} to a valid enumerator name. Specify one of the following enumerator names and try again:
+    <value>식별자 이름 {0}을(를) 올바른 열거자 이름과 일치시킬 수 없습니다. 다음 열거자 이름 중 하나를 지정하고 다시 시도하세요.
 {1}</value>
   </data>
   <data name="NoIdentifierGroupingAllowed" xml:space="preserve">
-    <value>Use of parentheses is not valid in the expression because identifier grouping is not allowed. Try removing the parentheses, or if a subexpression is enclosed, try expanding the expression.</value>
+    <value>식별자 그룹화가 허용되지 않으므로 식에서 괄호를 사용할 수 없습니다. 괄호를 제거하거나 하위 식이 괄호로 묶인 경우 식을 확장해 보세요.</value>
   </data>
   <data name="SyntaxErrorBinaryOperatorExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. Only an OR (,) operator or AND (+) operator is expected after an identifier name.</value>
+    <value>예기치 않은 토큰으로 인해 식을 구문 분석할 수 없습니다. 식별자 이름 뒤에는 OR(,) 연산자 또는 AND(+) 연산자만 필요합니다.</value>
   </data>
   <data name="SyntaxErrorIdentifierExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token after a NOT (!) operator. An identifier name is expected after a NOT (!) operator.</value>
+    <value>NOT(!) 연산자 뒤에 예기치 않은 토큰이 있어서 식을 구문 분석할 수 없습니다. NOT(!) 연산자 뒤에 식별자 이름이 필요합니다.</value>
   </data>
   <data name="SyntaxErrorUnexpectedBinaryOperator" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. An identifier name or a NOT (!) operator is expected at the start of the expression, or after an OR (,) operator or an AND (+) operator. Also, an expression must not end with an OR (,), AND (+) or NOT (!) operator.</value>
+    <value>예기치 않은 토큰으로 인해 식을 구문 분석할 수 없습니다. 식 시작 시 또는 OR(,) 연산자 또는 AND(+) 연산자 뒤에 식별자 이름 또는 NOT(!) 연산자가 필요합니다. 또한 식은 OR(,), AND(+) 또는 NOT(!) 연산자로 끝나서는 안 됩니다.</value>
   </data>
 </root>

@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoProcessFoundForGivenName" xml:space="preserve">
-    <value>Cannot find a process with the name "{0}". Verify the process name and call the cmdlet again.</value>
+    <value>找不到名为“{0}”的进程。验证进程名称，然后再次调用该 cmdlet。</value>
   </data>
   <data name="RecommendIdTagForGivenName" xml:space="preserve">
-    <value>Cannot find a process with the name "{0}". Try running with -Id to search by Id of processes.</value>
+    <value>找不到名为“{0}”的进程。尝试使用 -Id 运行以按进程 ID 进行搜索。</value>
   </data>
   <data name="NoDebuggerFound" xml:space="preserve">
-    <value>This command cannot be run because the debugger cannot be attached to the process "{0} ({1})". Specify another process and Run your command.</value>
+    <value>无法运行此命令，因为无法将调试器附加到进程“{0} ({1})”。指定其他进程，然后运行命令。</value>
   </data>
   <data name="NoProcessFoundForGivenId" xml:space="preserve">
-    <value>Cannot find a process with the process identifier {1}.</value>
+    <value>找不到进程标识符为 {1} 的进程。</value>
   </data>
   <data name="CouldNotStopProcess" xml:space="preserve">
-    <value>Cannot stop process "{0} ({1})" because of the following error: {2}</value>
+    <value>由于以下错误，无法停止进程“{0} ({1})”: {2}</value>
   </data>
   <data name="ProcessNameForConfirmation" xml:space="preserve">
     <value>{0} ({1})</value>
@@ -139,96 +139,96 @@
     <value>{0} {1}</value>
   </data>
   <data name="CouldNotEnumerateModules" xml:space="preserve">
-    <value>Cannot enumerate the modules of the "{0}" process.</value>
+    <value>无法枚举“{0}”进程的模块。</value>
   </data>
   <data name="CouldNotEnumerateFileVer" xml:space="preserve">
-    <value>Cannot enumerate the file version information of the "{0}" process.</value>
+    <value>无法枚举“{0}”进程的文件版本信息。</value>
   </data>
   <data name="CouldNotEnumerateModuleFileVer" xml:space="preserve">
-    <value>Cannot enumerate the modules and the file version information of the "{0}" process.</value>
+    <value>无法枚举“{0}”进程的模块和文件版本信息。</value>
   </data>
   <data name="ConfirmStopProcess" xml:space="preserve">
-    <value>Are you sure you want to perform the Stop-Process operation on the following item: {0}({1})?</value>
+    <value>是否确实要对以下项执行停止进程操作: {0}({1})?</value>
   </data>
   <data name="UseShell" xml:space="preserve">
-    <value>The specified path is not a valid win32 application. Try again with the UseShellExecute.</value>
+    <value>指定的路径不是有效的 win32 应用程序。请使用 UseShellExecute 重试。</value>
   </data>
   <data name="ProcessIsNotTerminated" xml:space="preserve">
-    <value>This command stopped operation of "{0} ({1})" because of the following error: {2}.</value>
+    <value>由于以下错误，此命令已停止“{0} ({1})”的操作: {2}。</value>
   </data>
   <data name="RedirectionParams" xml:space="preserve">
-    <value>This command cannot be run because Redirection parameters cannot be used with UseShellExecute parameter</value>
+    <value>无法运行此命令，因为 Redirection 参数不能与 UseShellExecute 参数一起使用</value>
   </data>
   <data name="NoComputerNameWithFileVersion" xml:space="preserve">
-    <value>Exception getting "Modules" or "FileVersion": "This feature is not supported for remote computers.".</value>
+    <value>获取 "Modules" 或 "FileVersion" 时出现异常:“远程计算机不支持此功能。”。</value>
   </data>
   <data name="DebuggerError" xml:space="preserve">
-    <value>This command cannot attach the debugger to the process due to {0} because no default debugger is available.</value>
+    <value>此命令由于 {0} 无法将调试程序附加到进程，因为没有可用的默认调试程序。</value>
   </data>
   <data name="WaitOnIdleProcess" xml:space="preserve">
-    <value>This command stopped operation because it cannot wait on 'System Idle' process. Specify another process and Run your command again.</value>
+    <value>此命令已停止操作，因为它无法等待“系统空闲”进程。指定其他进程，然后再次运行命令。</value>
   </data>
   <data name="WaitOnItself" xml:space="preserve">
-    <value>This command stopped operation because it cannot wait on itself. Specify another process and Run your command again.</value>
+    <value>此命令已停止操作，因为它无法等待其自身。指定其他进程，然后再次运行命令。</value>
   </data>
   <data name="ProcessNotTerminated" xml:space="preserve">
-    <value>This command stopped operation because process "{0} ({1})" is not stopped in the specified time-out.</value>
+    <value>此命令已停止操作，因为进程“{0} ({1})”未在指定的超时内停止。</value>
   </data>
   <data name="InvalidStartProcess" xml:space="preserve">
-    <value>This command cannot be run due to the error: {0}</value>
+    <value>由于以下错误，无法运行此命令: {0}</value>
   </data>
   <data name="InvalidApplication" xml:space="preserve">
-    <value>This command cannot be run because the input "{0}" is not a valid Application.  Give a valid application and run your command again.</value>
+    <value>无法运行此命令，因为输入“{0}”不是有效的应用程序。 提供有效的应用程序，然后再次运行命令。</value>
   </data>
   <data name="InvalidInput" xml:space="preserve">
-    <value>This command cannot be run because either the parameter "{0}" has a value that is not valid or cannot be used with this command. Give a valid input and Run your command again.</value>
+    <value>无法运行此命令，因为参数“{0}”的值无效或无法与此命令一起使用。提供有效的输入，然后再次运行命令。</value>
   </data>
   <data name="DuplicateEntry" xml:space="preserve">
-    <value>This command cannot be run because "{0}" and "{1}" are same. Give different inputs and Run your command again.</value>
+    <value>无法运行此命令，因为“{0}”和“{1}”相同。提供不同的输入并再次运行命令。</value>
   </data>
   <data name="CannotStarttheProcess" xml:space="preserve">
-    <value>This command cannot be run completely because the system cannot find all the information required.</value>
+    <value>无法完整运行此命令，因为系统找不到所需的所有信息。</value>
   </data>
   <data name="FailedToCreateProcessObject" xml:space="preserve">
-    <value>Failed to retrieve the new process handle: "{0}". The Process object outputted may have some properties and methods that do not work properly.</value>
+    <value>未能检索新的进程句柄:“{0}”。输出的 Process 对象可能具有一些无法正常工作的属性和方法。</value>
   </data>
   <data name="InvalidUserError" xml:space="preserve">
-    <value>This command cannot be run due to error 1783. The possible cause of this error can be using of a non-existing user "{0}". Please give a valid user and run your command again.</value>
+    <value>由于错误 1783，无法运行此命令。此错误的可能原因可能是使用了不存在的用户“{0}”。请提供有效的用户，然后再次运行命令。</value>
   </data>
   <data name="JoinNetworkFailed" xml:space="preserve">
-    <value>Error adding '{0}' to the network: {1}</value>
+    <value>将“{0}”添加到网络时出错: {1}</value>
   </data>
   <data name="RemoveFailed" xml:space="preserve">
-    <value>Error removing '{0}' from the network: {1}</value>
+    <value>从网络中移除“{0}”时出错: {1}</value>
   </data>
   <data name="RenameFailed" xml:space="preserve">
-    <value>Error renaming '{0}': {1}</value>
+    <value>重命名“{0}”时出错: {1}</value>
   </data>
   <data name="ContradictParametersSpecified" xml:space="preserve">
-    <value>Parameters "{0}" and "{1}" cannot be specified at the same time.</value>
+    <value>不能同时指定参数“{0}”和“{1}”。</value>
   </data>
   <data name="CouldNotDebugProcess" xml:space="preserve">
-    <value>Cannot debug process "{0} ({1})" because of the following error: {2}</value>
+    <value>由于以下错误，无法调试进程“{0} ({1})”: {2}</value>
   </data>
   <data name="AttachDebuggerReturnCode2" xml:space="preserve">
     <value>用户无权访问请求的信息。</value>
   </data>
   <data name="AttachDebuggerReturnCode21" xml:space="preserve">
-    <value>The specified parameter is not valid.</value>
+    <value>指定的参数无效。</value>
   </data>
   <data name="AttachDebuggerReturnCode3" xml:space="preserve">
-    <value>The user does not have sufficient privilege.</value>
+    <value>用户权限不足。</value>
   </data>
   <data name="AttachDebuggerReturnCode8" xml:space="preserve">
-    <value>Unknown failure.</value>
+    <value>未知故障。</value>
   </data>
   <data name="AttachDebuggerReturnCode9" xml:space="preserve">
     <value>指定的路径不存在。</value>
   </data>
   <data name="ParameterNotSupported" xml:space="preserve">
-    <value>The parameter '{0}' is not supported for the cmdlet '{1}' on this edition of Windows.</value>
+    <value>此版本 Windows 上的 cmdlet“{1}”不支持参数“{0}”。</value>
   </data>
   <data name="ParameterNotSupportedOnPSEdition" xml:space="preserve">
-    <value>The parameter '{0}' is not supported for the cmdlet '{1}' on this edition of PowerShell.</value>
+    <value>此版本 PowerShell 上的 cmdlet“{1}”不支持参数“{0}”。</value>
   </data>
 </root>

@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Reason_DoNotRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted not to run this software now.</value>
+    <value>지금 이 소프트웨어를 실행하지 않도록 선택했기 때문에 File {0}을(를) 로드할 수 없습니다.</value>
   </data>
   <data name="Reason_NeverRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted never to run software from this publisher.</value>
+    <value>이 게시자의 소프트웨어를 다시는 실행하지 않기로 선택했기 때문에 File {0}을(를) 로드할 수 없습니다.</value>
   </data>
   <data name="Reason_NotTrusted" xml:space="preserve">
-    <value>File {0} is published by {1}. This publisher is explicitly not trusted on your system. The script will not run on the system. For more information, run the command "get-help about_signing".</value>
+    <value>File {0}은(는) {1}에서 게시되었습니다. 이 게시자는 시스템에서 명시적으로 신뢰되지 않습니다. 이 시스템에서는 스크립트가 실행되지 않습니다. 자세한 내용은 "get-help about_signing" 명령을 실행하세요.</value>
   </data>
   <data name="Reason_RestrictedMode" xml:space="preserve">
-    <value>File {0} cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.</value>
+    <value>이 시스템에서 스크립트 실행이 사용하지 않도록 설정되어 있으므로 File {0}을(를) 로드할 수 없습니다. 자세한 내용은 https://go.microsoft.com/fwlink/?LinkID=135170.의 about_Execution_Policies를 참조하세요.</value>
   </data>
   <data name="Reason_Unknown" xml:space="preserve">
-    <value>File {0} cannot be loaded. {1}.</value>
+    <value>파일 {0}은(는) 로드할 수 없습니다. {1}.</value>
   </data>
   <data name="Reason_DisallowedBySafer" xml:space="preserve">
-    <value>File {0} cannot be loaded because its operation is blocked by software restriction policies, such as those created by using Group Policy.</value>
+    <value>그룹 정책에서 만든 것과 같은 소프트웨어 제한 정책 때문에 작업이 차단되어 File {0}을(를) 로드할 수 없습니다.</value>
   </data>
   <data name="Reason_FileContentUnavailable" xml:space="preserve">
-    <value>File {0} cannot be loaded because its content could not be read.</value>
+    <value>콘텐츠를 읽을 수 없으므로 File {0}을(를) 로드할 수 없습니다.</value>
   </data>
   <data name="CertNotGoodForSigning" xml:space="preserve">
-    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+    <value>코드에 서명할 수 없습니다. 지정한 인증서는 코드 서명에 적합하지 않습니다.</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code. The TimeStamp server URL must be fully qualified, and in the format http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+    <value>코드에 서명할 수 없습니다. TimeStamp 서버 URL은 정규화된 형식이어야 하며, http://&lt;server url&gt; 또는 https://&lt;server url&gt; 형식이어야 합니다.</value>
   </data>
   <data name="InvalidHashAlgorithm" xml:space="preserve">
-    <value>Cannot sign code. The hash algorithm is not supported.</value>
+    <value>코드에 서명할 수 없습니다. 해시 알고리즘은 지원되지 않습니다.</value>
   </data>
   <data name="AuthenticodePromptCaption" xml:space="preserve">
-    <value>Do you want to run software from this untrusted publisher?</value>
+    <value>이 신뢰할 수 없는 게시자의 소프트웨어를 실행하시겠습니까?</value>
   </data>
   <data name="AuthenticodePromptText" xml:space="preserve">
-    <value>File {0} is published by {1} and is not trusted on your system. Only run scripts from trusted publishers.</value>
+    <value>File {0}은(는) {1}에서 게시되었으며 시스템에서 신뢰할 수 없습니다. 신뢰할 수 있는 게시자의 스크립트만 실행하세요.</value>
   </data>
   <data name="AuthenticodePromptText_UnknownPublisher" xml:space="preserve">
-    <value>Software {0} is published by an unknown publisher. It is recommended that you do not run this software.</value>
+    <value>알 수 없는 게시자가 Software {0}을(를) 게시했습니다. 이 소프트웨어는 실행하지 않는 것이 좋습니다.</value>
   </data>
   <data name="RemoteFilePromptCaption" xml:space="preserve">
-    <value>Security warning</value>
+    <value>보안 경고</value>
   </data>
   <data name="RemoteFilePromptText" xml:space="preserve">
-    <value>Run only scripts that you trust. While scripts from the internet can be useful, this script can potentially harm your computer. If you trust this script, use the Unblock-File cmdlet to allow the script to run without this warning message. Do you want to run {0}?</value>
+    <value>신뢰하는 스크립트만 실행합니다. 인터넷에서 받은 스크립트는 유용할 수 있지만, 이 스크립트는 컴퓨터에 해를 끼칠 수 있습니다. 이 스크립트를 신뢰하면 Unblock-File cmdlet을 사용해 이 경고 메시지 없이 스크립트가 실행되도록 허용하세요. {0}을(를) 실행하시겠습니까?</value>
   </data>
   <data name="Choice_NeverRun" xml:space="preserve">
-    <value>Ne&amp;ver run</value>
+    <value>Ne&amp;ver 실행 안 함</value>
   </data>
   <data name="Choice_NeverRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and do not prompt me to run this script in future. Future attempts to run this script will result in a silent failure.</value>
+    <value>지금은 이 게시자의 스크립트를 실행하지 말고, 앞으로도 이 스크립트를 실행할지 묻지 마세요. 나중에 이 스크립트를 실행하려고 하면 오류 메시지 없이 실패합니다.</value>
   </data>
   <data name="Choice_DoNotRun" xml:space="preserve">
-    <value>&amp;Do not run</value>
+    <value>실행 안 함(&amp;D)</value>
   </data>
   <data name="Choice_DoNotRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>지금은 이 게시자의 스크립트를 실행하지 말고, 앞으로도 이 스크립트를 실행할지 계속 묻도록 하세요.</value>
   </data>
   <data name="Choice_RunOnce" xml:space="preserve">
-    <value>&amp;Run once</value>
+    <value>한 번 실행(&amp;R)</value>
   </data>
   <data name="Choice_RunOnce_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>이 게시자의 스크립트를 지금 실행하고, 앞으로도 이 스크립트를 실행할지 계속 묻도록 하세요.</value>
   </data>
   <data name="Choice_AlwaysRun" xml:space="preserve">
-    <value>&amp;Always run</value>
+    <value>항상 실행(&amp;A)</value>
   </data>
   <data name="Choice_AlwaysRun_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and do not prompt me to run this script in the future.</value>
+    <value>이 게시자의 스크립트를 지금 실행하고, 앞으로는 이 스크립트를 실행할지 묻지 마세요.</value>
   </data>
   <data name="Choice_Suspend" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>일시 중단(&amp;S)</value>
   </data>
   <data name="Choice_Suspend_Help" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type exit to resume operation when you are done.</value>
+    <value>현재 파이프라인을 일시 중지하고 명령 프롬프트로 돌아갑니다. 작업을 마치면 exit를 입력해 다시 시작하세요.</value>
   </data>
 </root>

@@ -45,10 +45,6 @@
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <!-- exclude code of source generators from compilation and IDEs (e.g. vscode and visual studio) -->
     <Compile Remove="SourceGenerators\**\*.cs" />
@@ -71,5 +67,11 @@
 
   <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
     <Compile Remove="engine\Interop\Unix\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

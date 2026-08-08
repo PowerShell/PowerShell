@@ -118,1259 +118,1259 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TypeNotFound" xml:space="preserve">
-    <value>Unable to find type [{0}].</value>
+    <value>找不到型別 [{0}]。</value>
   </data>
   <data name="TypeNotFoundWithMessage" xml:space="preserve">
-    <value>Unable to find type [{0}]. Details: {1}</value>
+    <value>找不到型別 [{0}]。詳細資料: {1}</value>
   </data>
   <data name="IncompleteString" xml:space="preserve">
-    <value>Incomplete string token.</value>
+    <value>字串語彙基元不完整。</value>
   </data>
   <data name="InvalidUnicodeEscapeSequence" xml:space="preserve">
     <value>The Unicode escape sequence is not valid. A valid sequence is `u{ followed by one to six hex digits and a closing '}'.</value>
   </data>
   <data name="InvalidUnicodeEscapeSequenceValue" xml:space="preserve">
-    <value>The Unicode escape sequence value is out of range. The maximum value is 0x10FFFF.</value>
+    <value>Unicode 逸出序列值超出範圍。最大值為 0x10FFFF。</value>
   </data>
   <data name="MissingUnicodeEscapeSequenceTerminator" xml:space="preserve">
-    <value>The Unicode escape sequence is missing the closing '}'.</value>
+    <value>Unicode 逸出序列缺少結尾 '}'。</value>
   </data>
   <data name="TooManyDigitsInUnicodeEscapeSequence" xml:space="preserve">
-    <value>The Unicode escape sequence contains more than the maximum of six hex digits between braces.</value>
+    <value>Unicode 逸出序列在大括號之間包含超過六個十六進位數字。</value>
   </data>
   <data name="ReferenceNeedsToBeByItselfInTypeConstraint" xml:space="preserve">
-    <value>Cannot use [ref] with other types in a type constraint.</value>
+    <value>無法在類型條件約束中將 [ref] 與其他類型一起使用。</value>
   </data>
   <data name="ReferenceNeedsToBeLastTypeInTypeConversion" xml:space="preserve">
-    <value>[ref] can only be the final type in type conversion sequence.</value>
+    <value>[ref] 只能是類型轉換序列中的最後一個類型。</value>
   </data>
   <data name="ReferenceNeedsToBeByItselfInTypeSequence" xml:space="preserve">
-    <value>Cannot have two occurrences of [ref] in a type sequence.</value>
+    <value>類型序列中不能有兩個 [ref]。</value>
   </data>
   <data name="BadNumericConstant" xml:space="preserve">
-    <value>The numeric constant {0} is not valid.</value>
+    <value>數值常數 {0} 無效。</value>
   </data>
   <data name="InvalidRegularExpression" xml:space="preserve">
-    <value>The regular expression pattern {0} is not valid.</value>
+    <value>規則運算式模式 {0} 無效。</value>
   </data>
   <data name="EmptyVariableReference" xml:space="preserve">
-    <value>An empty ${} variable reference was found. A name is required inside the braces.</value>
+    <value>找到空白的 ${} 變數參考。大括號內需要名稱。</value>
   </data>
   <data name="InvalidVariableReference" xml:space="preserve">
-    <value>Variable reference is not valid. '$' was not followed by a valid variable name character. Consider using ${} to delimit the name.</value>
+    <value>變數參考無效。'$' 後面沒有接有效的變數名稱字元。請考慮使用 ${} 來界定名稱。</value>
   </data>
   <data name="InvokeMethodOnNull" xml:space="preserve">
-    <value>You cannot call a method on a null-valued expression.</value>
+    <value>您無法在 null 值運算式上呼叫方法。</value>
   </data>
   <data name="MethodNotFound" xml:space="preserve">
-    <value>Method invocation failed because [{0}] does not contain a method named '{1}'.</value>
+    <value>方法叫用失敗，因為 [{0}] 不包含名為 '{1}' 的方法。</value>
   </data>
   <data name="ParameterizedPropertyAssignmentFailed" xml:space="preserve">
-    <value>Assignment failed because [{0}] does not contain a property '{1}()' that can be set.</value>
+    <value>指派失敗，因為 [{0}] 不包含可設定的屬性 '{1}()'。</value>
   </data>
   <data name="UnexpectedToken" xml:space="preserve">
-    <value>Unexpected token '{0}' in expression or statement.</value>
+    <value>運算式或陳述式中有未預期的語彙基元 '{0}'。</value>
   </data>
   <data name="SplattingNotPermitted" xml:space="preserve">
-    <value>The splatting operator '@' cannot be used to reference variables in an expression. '@{0}' can be used only as an argument to a command. To reference variables in an expression use '${0}'.</value>
+    <value>展開運算子 '@' 不能用來參考運算式中的變數。'@{0}' 只能做為命令的引數。若要在運算式中參考變數，請使用 '${0}'。</value>
   </data>
   <data name="InvalidParameter" xml:space="preserve">
-    <value>Parameter '{0}' is not valid</value>
+    <value>參數 '{0}' 無效</value>
   </data>
   <data name="MissingExpression" xml:space="preserve">
-    <value>Missing expression after '{0}' in pipeline element.</value>
+    <value>管線元素中 '{0}' 後缺少運算式。</value>
   </data>
   <data name="BadExpression" xml:space="preserve">
-    <value>The expression after '{0}' in a pipeline element produced an object that was not valid. It must result in a command name, a script block, or a CommandInfo object.</value>
+    <value>管線元素中 '{0}' 後面的運算式產生了無效的物件。它必須是命令名稱、指令碼區塊，或 CommandInfo 物件。</value>
   </data>
   <data name="ParameterRequiresArgument" xml:space="preserve">
-    <value>Parameter {0} requires an argument.</value>
+    <value>參數 {0} 需要引數。</value>
   </data>
   <data name="ParameterCannotHaveArgument" xml:space="preserve">
-    <value>Parameter {0} cannot have an argument.</value>
+    <value>參數 {0} 不能有引數。</value>
   </data>
   <data name="DuplicateFormalParameter" xml:space="preserve">
-    <value>Duplicate parameter ${0} in parameter list.</value>
+    <value>參數清單中有重複的參數 ${0}。</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
-    <value>Missing argument in parameter list.</value>
+    <value>參數清單中缺少引數。</value>
   </data>
   <data name="SplattingNotPermittedInArgumentList" xml:space="preserve">
-    <value>Splatted variables like '@{0}' cannot be part of a comma-separated list of arguments.</value>
+    <value>像 '@{0}' 這類已展開的變數不能是逗點分隔的引數清單的一部分。</value>
   </data>
   <data name="MissingFileSpecification" xml:space="preserve">
-    <value>Missing file specification after redirection operator.</value>
+    <value>重新導向運算子後面缺少檔案規格。</value>
   </data>
   <data name="RedirectionNotSupported" xml:space="preserve">
-    <value>The '{0}' operator is reserved for future use.</value>
+    <value>'{0}' 運算子已保留供未來使用。</value>
   </data>
   <data name="RedirectionFailed" xml:space="preserve">
-    <value>Redirection to '{0}' failed: {1}</value>
+    <value>重新導向至 '{0}' 失敗: {1}</value>
   </data>
   <data name="ExpressionsMustBeFirstInPipeline" xml:space="preserve">
-    <value>Expressions are only allowed as the first element of a pipeline.</value>
+    <value>運算式只允許作為管線的第一個元素。</value>
   </data>
   <data name="EmptyPipeElement" xml:space="preserve">
-    <value>An empty pipe element is not allowed.</value>
+    <value>不允許空白管道元素。</value>
   </data>
   <data name="InvalidLeftHandSide" xml:space="preserve">
-    <value>The assignment expression is not valid. The input to an assignment operator must be an object that is able to accept assignments, such as a variable or a property.</value>
+    <value>指派運算式無效。指派運算子的輸入必須是可接受指派的物件，例如變數或屬性。</value>
   </data>
   <data name="AddHashTableToNonHashTable" xml:space="preserve">
-    <value>A hash table can only be added to another hash table.</value>
+    <value>只能將雜湊表新增至另一個雜湊表。</value>
   </data>
   <data name="IsOperatorRequiresType" xml:space="preserve">
-    <value>The right operand of '-is' must be a type.</value>
+    <value>'-is' 的右運算元必須是類型。</value>
   </data>
   <data name="AsOperatorRequiresType" xml:space="preserve">
-    <value>The right operand of '-as' must be a type.</value>
+    <value>'-as' 的右運算元必須是類型。</value>
   </data>
   <data name="FormatError" xml:space="preserve">
-    <value>Error formatting a string: {0}.</value>
+    <value>格式化字串時發生錯誤: {0}。</value>
   </data>
   <data name="BadOperatorArgument" xml:space="preserve">
-    <value>The argument to operator '{0}' is not valid: {1}.</value>
+    <value>運算子 '{0}' 的引數無效: {1}。</value>
   </data>
   <data name="OperatorFailed" xml:space="preserve">
-    <value>The '{0}' operator failed: {1}.</value>
+    <value>'{0}' 運算子失敗: {1}。</value>
   </data>
   <data name="BadReplaceArgument" xml:space="preserve">
-    <value>The {0} operator allows only two elements to follow it, not {1}.</value>
+    <value>{0} 運算子後面只允許兩個元素，非 {1}。</value>
   </data>
   <data name="ExpectedValueExpression" xml:space="preserve">
-    <value>You must provide a value expression following the '{0}' operator.</value>
+    <value>您必須在 '{0}' 運算子後提供值運算式。</value>
   </data>
   <data name="OperatorRequiresVariableOrProperty" xml:space="preserve">
-    <value>The '{0}' operator works only on variables or on properties.</value>
+    <value>'{0}' 運算子只能用於變數或屬性。</value>
   </data>
   <data name="OrderedAttributeOnlyOnHashLiteralNode" xml:space="preserve">
-    <value>The {0} attribute can be specified only on a hash literal node.</value>
+    <value>只能在雜湊常值節點上指定 {0} 屬性。</value>
   </data>
   <data name="MissingArrayIndexExpression" xml:space="preserve">
-    <value>Array index expression is missing or not valid.</value>
+    <value>陣列索引運算式缺少或無效。</value>
   </data>
   <data name="MissingPropertyName" xml:space="preserve">
-    <value>Missing property name after reference operator.</value>
+    <value>參考運算子後面缺少屬性名稱。</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property '{0}' cannot be found on this object. Verify that the property exists and can be set.</value>
+    <value>在這個物件上找不到屬性 '{0}'。請確認屬性存在且可設定。</value>
   </data>
   <data name="PropertyNotFoundStrict" xml:space="preserve">
-    <value>The property '{0}' cannot be found on this object. Verify that the property exists.</value>
+    <value>在這個物件上找不到屬性 '{0}'。驗證屬性存在。</value>
   </data>
   <data name="NullArrayIndex" xml:space="preserve">
-    <value>Index operation failed; the array index evaluated to null.</value>
+    <value>索引作業失敗；陣列索引的評估結果為 Null。</value>
   </data>
   <data name="NullArray" xml:space="preserve">
-    <value>Cannot index into a null array.</value>
+    <value>無法為 null 陣列編製索引。</value>
   </data>
   <data name="CannotIndex" xml:space="preserve">
-    <value>Unable to index into an object of type "{0}".</value>
+    <value>無法為類型 "{0}" 的物件編入索引。</value>
   </data>
   <data name="CannotIndexWithByRefLikeReturnType" xml:space="preserve">
-    <value>Unable to index into an object of type "{0}" with the ByRef-like return type "{1}". ByRef-like types are not supported in PowerShell.</value>
+    <value>無法使用 ByRef 類型傳回類型 "{0}"，對類型為 "{1}" 的物件進行索引。PowerShell 不支援 ByRef 類型。</value>
   </data>
   <data name="ArrayHasTooManyDimensions" xml:space="preserve">
-    <value>The array has too many dimensions: {0}. The number of dimensions for an array must be less than or equal to 32.</value>
+    <value>陣列的維度太多: {0}。陣列的維度數目必須小於或等於 32。</value>
   </data>
   <data name="ArraySliceAssignmentFailed" xml:space="preserve">
-    <value>Array assignment to [{0}] failed because assignment to slices is not supported.</value>
+    <value>因為不支援對分段指派，所以無法將陣列指派給 [{0}]。</value>
   </data>
   <data name="NeedMultidimensionalIndex" xml:space="preserve">
-    <value>You cannot index into a {0} dimensional array with index [{1}].</value>
+    <value>您無法使用索引 [{0}] 索引編製 {1} 維度陣列。</value>
   </data>
   <data name="IndexOutOfRange" xml:space="preserve">
-    <value>Array assignment failed because index '{0}' was out of range.</value>
+    <value>陣列指派失敗，因為索引 '{0}' 超出範圍。</value>
   </data>
   <data name="MissingExpressionAfterToken" xml:space="preserve">
-    <value>Missing expression after '{0}'.</value>
+    <value>'{0}' 後面缺少運算式。</value>
   </data>
   <data name="IncompleteDollarVariableReference" xml:space="preserve">
-    <value>${{variable}} reference starting is missing the closing '}}'.</value>
+    <value>${{variable}} 參考開頭缺少結尾 '}}'。</value>
   </data>
   <data name="IncompleteDollarSubexpressionReference" xml:space="preserve">
-    <value>$(subexpression) is missing the closing ')'.</value>
+    <value>$(subexpression) 缺少結尾的 ')'。</value>
   </data>
   <data name="UnexpectedUnaryOperator" xml:space="preserve">
-    <value>Internal error - unexpected unary operator {0}.</value>
+    <value>內部錯誤 - 未預期的一元運算子 {0}。</value>
   </data>
   <data name="NonExistingVariableReference" xml:space="preserve">
-    <value>[ref] cannot be applied to a variable that does not exist.</value>
+    <value>[ref] 無法套用至不存在的變數。</value>
   </data>
   <data name="VariableIsUndefined" xml:space="preserve">
-    <value>The variable '${0}' cannot be retrieved because it has not been set.</value>
+    <value>無法擷取變數 '${0}'，因為它尚未設定。</value>
   </data>
   <data name="DuplicateKeyInHashLiteral" xml:space="preserve">
-    <value>Duplicate keys '{0}' are not allowed in hash literals.</value>
+    <value>雜湊常值中不允許重複的索引鍵 '{0}'。</value>
   </data>
   <data name="DuplicateNamedArgument" xml:space="preserve">
-    <value>Duplicate named arguments '{0}' are not allowed.</value>
+    <value>不允許重複的具名引數 '{0}'。</value>
   </data>
   <data name="OperatorRequiresNumber" xml:space="preserve">
-    <value>The '{0}' operator works only on numbers. The operand is a '{1}'.</value>
+    <value>'{0}' 運算子只能用於數字。運算元是 '{1}'。</value>
   </data>
   <data name="ExpectedExpression" xml:space="preserve">
-    <value>An expression was expected after '('.</value>
+    <value>'(' 後必須是運算式。</value>
   </data>
   <data name="MissingEqualsInHashLiteral" xml:space="preserve">
-    <value>Missing '=' operator after key in hash literal.</value>
+    <value>雜湊常值中的索引鍵後面缺少 '=' 運算子。</value>
   </data>
   <data name="MissingStatementInHashLiteral" xml:space="preserve">
-    <value>Missing statement after '=' in hash literal.</value>
+    <value>雜湊常值中的 '=' 後面遺漏陳述式。</value>
   </data>
   <data name="MissingExpressionInNamedArgument" xml:space="preserve">
-    <value>Missing statement after '=' in named argument.</value>
+    <value>具名引數中 '=' 後面缺少陳述式。</value>
   </data>
   <data name="MissingPropertyTerminator" xml:space="preserve">
-    <value>Missing ';' or end-of-line in property definition.</value>
+    <value>屬性定義中缺少 ';' 或行尾。</value>
   </data>
   <data name="MissingExpressionAfterOperator" xml:space="preserve">
-    <value>Missing expression after unary operator '{0}'.</value>
+    <value>一元運算子 '{0}' 後面缺少運算式。</value>
   </data>
   <data name="IfStatementMissingCondition" xml:space="preserve">
-    <value>Missing condition in if statement after '{0} ('.</value>
+    <value>if 陳述式中，'{0} (' 後面缺少條件。</value>
   </data>
   <data name="MissingStatementBlock" xml:space="preserve">
-    <value>Missing statement block after {0} ( condition ).</value>
+    <value>{0} (條件) 後面缺少陳述式區塊。</value>
   </data>
   <data name="MissingStatementBlockAfterElse" xml:space="preserve">
-    <value>Missing statement block after 'else' keyword.</value>
+    <value>'else' 關鍵字後面缺少陳述式區塊。</value>
   </data>
   <data name="FileReadError" xml:space="preserve">
-    <value>The file could not be read: {0}.</value>
+    <value>無法讀取檔案: {0}。</value>
   </data>
   <data name="FileOpenError" xml:space="preserve">
-    <value>The current provider ({0}) cannot open a file.</value>
+    <value>目前的提供者 ({0}) 無法開啟檔案。</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>No files matching '{0}' were found.</value>
+    <value>找不到符合 '{0}' 的檔案。</value>
   </data>
   <data name="AmbiguousPath" xml:space="preserve">
-    <value>The path cannot be processed because it resolved to more than one file; only one file at a time can be processed.</value>
+    <value>無法處理路徑，因為它解析成超過一個檔案；一次只能處理一個檔案。</value>
   </data>
   <data name="KeywordParameterReservedForFutureUse" xml:space="preserve">
-    <value>The {0} '-{1}' parameter is reserved for future use.</value>
+    <value>{0} '-{1}' 參數保留給未來使用。</value>
   </data>
   <data name="MissingFilenameOption" xml:space="preserve">
-    <value>Cannot process the 'switch' statement because of a missing file name argument to the -file option.</value>
+    <value>無法處理 'switch' 陳述式，因為 -file 選項缺少檔案名稱引數。</value>
   </data>
   <data name="InvalidFilenameOption" xml:space="preserve">
-    <value>The file name argument to -file in the switch statement is not valid.</value>
+    <value>switch 陳述式中 -file 的檔案名稱引數無效。</value>
   </data>
   <data name="InvalidSwitchFlag" xml:space="preserve">
-    <value>The parameter {0} is not valid for the switch statement.</value>
+    <value>參數 {0} 對 switch 陳述式無效。</value>
   </data>
   <data name="InvalidForeachFlag" xml:space="preserve">
-    <value>The parameter {0} is not valid for the foreach statement.</value>
+    <value>參數 {0} 對 foreach 陳述式無效。</value>
   </data>
   <data name="PipelineValueRequired" xml:space="preserve">
-    <value>A switch statement must have one of the following:  '-file file_name' or '( expression )'.</value>
+    <value>switch 陳述式必須具有下列其中一項： '-file file_name' 或 '( expression )'。</value>
   </data>
   <data name="MissingSwitchConditionExpression" xml:space="preserve">
-    <value>Missing condition in switch statement clause.</value>
+    <value>switch 陳述式子句中缺少條件。</value>
   </data>
   <data name="MultipleSwitchDefaultClauses" xml:space="preserve">
-    <value>A switch statement can have only one default clause.</value>
+    <value>switch 陳述式只能有一個 default 子句。</value>
   </data>
   <data name="MissingSwitchStatementClause" xml:space="preserve">
-    <value>Missing statement block in switch statement clause.</value>
+    <value>switch 陳述式子句中缺少陳述式區塊。</value>
   </data>
   <data name="MissingForeachExpression" xml:space="preserve">
-    <value>Missing expression in foreach loop.
-The correct form is: foreach ($a in $b) {...}</value>
+    <value>foreach 迴圈中缺少運算式。
+正確格式為: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingForeachStatement" xml:space="preserve">
-    <value>Missing statement body in foreach loop.
-The correct form is: foreach ($a in $b) {...}</value>
+    <value>foreach 迴圈中缺少陳述式主體。
+正確格式為: foreach ($a in $b) {...}</value>
   </data>
   <data name="OnlyOneParameterListAllowed" xml:space="preserve">
-    <value>The param statement cannot be used if arguments were specified in the function declaration.</value>
+    <value>如果在函式宣告中指定了引數，就不能使用 param 陳述式。</value>
   </data>
   <data name="NotADefinedOperationForType" xml:space="preserve">
-    <value>The operation '[{0}] {1} [{2}]' is not defined.</value>
+    <value>未定義作業 '[{0}] {1} [{2}]'。</value>
   </data>
   <data name="BadEnumeration" xml:space="preserve">
-    <value>An error occurred while enumerating through a collection: {0}.</value>
+    <value>透過集合列舉時發生錯誤: {0}。</value>
   </data>
   <data name="COMException" xml:space="preserve">
-    <value>An unhandled COM interop exception occurred: {0}</value>
+    <value>發生未處理的 COM Interop 例外狀況: {0}</value>
   </data>
   <data name="InvalidComObjectException" xml:space="preserve">
-    <value>A COM object was accessed after it was already released: {0}</value>
+    <value>COM 物件在釋放後又被存取: {0}</value>
   </data>
   <data name="ScriptTooComplicated" xml:space="preserve">
-    <value>Processing was stopped because the script is too complex.</value>
+    <value>已停止處理，因為指令碼太複雜。</value>
   </data>
   <data name="ScriptsNotAllowed" xml:space="preserve">
-    <value>The syntax is not supported by this runspace. This can occur if the runspace is in no-language mode.</value>
+    <value>此 Runspace 不支援此語法。如果 Runspace 處於無語言模式，就會發生這種情況。</value>
   </data>
   <data name="InvalidSplitOptionCombination" xml:space="preserve">
-    <value>The combination of options with the -split operator is not valid.</value>
+    <value>選項與 -split 運算子的組合無效。</value>
   </data>
   <data name="InvalidSplitOptionWithPredicate" xml:space="preserve">
-    <value>Options are not allowed on the -split operator with a predicate.</value>
+    <value>具有述詞的 -split 運算子不允許使用選項。</value>
   </data>
   <data name="InvalidEndOfLine" xml:space="preserve">
-    <value>The token '{0}' is not a valid statement separator in this version.</value>
+    <value>在此版本中，語彙基元 '{0}' 不是有效的陳述式分隔符號。</value>
   </data>
   <data name="ReservedKeywordNotAllowed" xml:space="preserve">
-    <value>The '{0}' keyword is not supported in this version of the language.</value>
+    <value>此語言版本不支援 '{0}' 關鍵字。</value>
   </data>
   <data name="MissingExpressionAfterKeyword" xml:space="preserve">
-    <value>Missing expression after '{0}' in loop.</value>
+    <value>迴圈中的 '{0}' 後面缺少運算式。</value>
   </data>
   <data name="MissingLoopStatement" xml:space="preserve">
-    <value>Missing statement body in {0} loop.</value>
+    <value>{0} 迴圈中缺少陳述式主體。</value>
   </data>
   <data name="MissingTrapStatement" xml:space="preserve">
-    <value>The 'trap' statement was incomplete. A trap statement requires a body.</value>
+    <value>'trap' 陳述式不完整。trap 陳述式需要主體。</value>
   </data>
   <data name="MissingTryStatement" xml:space="preserve">
-    <value>Incomplete 'try' statement. A try statement requires a body.</value>
+    <value>不完整的 'try' 陳述式。try 陳述式需要主體。</value>
   </data>
   <data name="InvalidFunctionParameter" xml:space="preserve">
-    <value>Parameter declarations are a comma-separated list of variable names with optional initializer expressions.</value>
+    <value>參數宣告是以逗號分隔的變數名稱清單，並可包含選擇性的初始設定運算式。</value>
   </data>
   <data name="MissingFunctionBody" xml:space="preserve">
-    <value>Missing function body in function declaration.</value>
+    <value>函式宣告中遺漏函式主體。</value>
   </data>
   <data name="DuplicateScriptCommandClause" xml:space="preserve">
-    <value>Script command clause '{0}' has already been defined.</value>
+    <value>指令碼命令子句 '{0}' 已經定義。</value>
   </data>
   <data name="MissingNamedBlocks" xml:space="preserve">
-    <value>unexpected token '{0}', expected 'begin', 'process', 'end', 'clean', or 'dynamicparam'.</value>
+    <value>未預期的語彙基元 '{0}'，預期為 'begin'、'process'、'end'、'clean' 或 'dynamicparam'。</value>
   </data>
   <data name="MissingEndCurlyBrace" xml:space="preserve">
-    <value>Missing closing '}' in statement block or type definition.</value>
+    <value>陳述式區塊或類型定義中缺少結尾 '}'。</value>
   </data>
   <data name="MissingEndParenthesisInMethodCall" xml:space="preserve">
-    <value>Missing ')' in method call.</value>
+    <value>方法呼叫中缺少 ')'。</value>
   </data>
   <data name="MissingEndSquareBracket" xml:space="preserve">
-    <value>Missing ']' after array index expression.</value>
+    <value>陣列索引運算式後面缺少 ']'。</value>
   </data>
   <data name="MissingEndParenthesisInExpression" xml:space="preserve">
-    <value>Missing closing ')' in expression.</value>
+    <value>子運算式中缺少結尾 ')'。</value>
   </data>
   <data name="MissingEndParenthesisInSubexpression" xml:space="preserve">
-    <value>Missing closing ')' in subexpression.</value>
+    <value>子運算式中缺少結尾 ')'。</value>
   </data>
   <data name="MissingOpenParenthesisInIfStatement" xml:space="preserve">
-    <value>Missing '(' after '{0}' in if statement.</value>
+    <value>if 陳述式中，'{0}' 後面缺少 '('。</value>
   </data>
   <data name="MissingEndParenthesisInSwitchStatement" xml:space="preserve">
-    <value>Missing ')' after expression in switch statement.</value>
+    <value>switch 陳述式中的運算式後面缺少 ')'。</value>
   </data>
   <data name="MissingCurlyBraceInSwitchStatement" xml:space="preserve">
-    <value>Missing '{' in switch statement.</value>
+    <value>switch 陳述式中缺少 '{'。</value>
   </data>
   <data name="MissingVariableNameAfterForeach" xml:space="preserve">
-    <value>Missing variable name after foreach.
-The correct form is: foreach ($a in $b) {...}</value>
+    <value>foreach 後面缺少變數名稱。
+正確格式為: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingInInForeach" xml:space="preserve">
-    <value>Missing 'in' after variable in foreach loop.
-The correct form is: foreach ($a in $b) {...}</value>
+    <value>foreach 迴圈中的變數後面缺少 'in'。
+正確格式為: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingEndParenthesisAfterForeach" xml:space="preserve">
-    <value>Missing closing ')' after expression part of foreach loop.
-The correct form is: foreach ($a in $b) {...}</value>
+    <value>foreach 迴圈的運算式部分後面缺少右括號 ')'。
+正確格式為: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingOpenParenthesisAfterKeyword" xml:space="preserve">
-    <value>Missing opening '(' after keyword '{0}'.</value>
+    <value>關鍵字 '{0}' 後面缺少開頭 '('。</value>
   </data>
   <data name="MissingWhileOrUntilInDoWhile" xml:space="preserve">
-    <value>Missing while or until keyword in do loop.</value>
+    <value>do 迴圈中缺少 while 或 until 關鍵字。</value>
   </data>
   <data name="MissingEndParenthesisAfterStatement" xml:space="preserve">
-    <value>Missing closing ')' after expression in '{0}' statement.</value>
+    <value>'{0}' 陳述式中的運算式後面缺少右括號 ')'。</value>
   </data>
   <data name="MissingNameAfterKeyword" xml:space="preserve">
-    <value>Missing name after {0} keyword.</value>
+    <value>關鍵字 {0} 後面缺少名稱。</value>
   </data>
   <data name="MissingEndParenthesisInFunctionParameterList" xml:space="preserve">
-    <value>Missing ')' in function parameter list.</value>
+    <value>函式參數清單中缺少 ')'。</value>
   </data>
   <data name="BackupParserMessage" xml:space="preserve">
-    <value>An error '{0}' occurred while processing this script. Text describing this error could not be loaded.</value>
+    <value>處理此指令碼時發生錯誤 '{0}'。無法載入描述此錯誤的文字。</value>
   </data>
   <data name="BackupParserMessageWithException" xml:space="preserve">
-    <value>An error '{0}' occurred while processing this script. Text describing this error could not be loaded due to error '{1}'.</value>
+    <value>處理此指令碼時發生錯誤 '{0}'。由於錯誤 '{1}'，所以無法載入描述此錯誤的文字。</value>
   </data>
   <data name="ScriptBlockDelegateInvokedFromWrongThread" xml:space="preserve">
-    <value>There is no Runspace available to run scripts in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The script block you attempted to invoke was: {0}</value>
+    <value>沒有可用的 Runspace 可在此執行緒中執行指令碼。您可以在 System.Management.Automation.Runspaces.Runspace 類型的 DefaultRunspace 屬性中提供一個。您嘗試叫用的指令碼區塊為: {0}</value>
   </data>
   <data name="UnrecognizedToken" xml:space="preserve">
-    <value>Unrecognized token in source text.</value>
+    <value>來源文字中有無法辨識的語彙基元。</value>
   </data>
   <data name="ExceptionActionPromptCaption" xml:space="preserve">
-    <value>Action to take for this exception:</value>
+    <value>針對此例外狀況要採取的動作:</value>
   </data>
   <data name="ContinueLabel" xml:space="preserve">
-    <value>&amp;Continue</value>
+    <value>繼續(&amp;C)</value>
   </data>
   <data name="ContinueHelpMessage" xml:space="preserve">
-    <value>Report the error then continue with the next script statement.</value>
+    <value>回報錯誤，然後繼續執行下一個指令碼陳述式。</value>
   </data>
   <data name="SilentlyContinueLabel" xml:space="preserve">
-    <value>S&amp;ilently Continue</value>
+    <value>以無訊息方式繼續(&amp;I)</value>
   </data>
   <data name="SilentlyContinueHelpMessage" xml:space="preserve">
-    <value>Do not report this error, just continue with the next script statement.</value>
+    <value>請勿回報此錯誤，請直接繼續執行下一個指令碼陳述式。</value>
   </data>
   <data name="BreakLabel" xml:space="preserve">
-    <value>&amp;Break</value>
+    <value>中斷(&amp;B)</value>
   </data>
   <data name="BreakHelpMessage" xml:space="preserve">
-    <value>Do not continue processing, throw the exception instead.</value>
+    <value>不要繼續處理，改為擲回例外狀況。</value>
   </data>
   <data name="SuspendLabel" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>暫止(&amp;S)</value>
   </data>
   <data name="SuspendHelpMessage" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type exit to resume operation when you are done.</value>
+    <value>暫停目前的管線並返回命令提示字元。完成後，輸入 exit 以繼續作業。</value>
   </data>
   <data name="CantActivateDocumentInPipeline" xml:space="preserve">
-    <value>Cannot run a document in the middle of a pipeline: {0}.</value>
+    <value>無法在管線中間執行文件: {0}。</value>
   </data>
   <data name="ProgramFailedToExecute" xml:space="preserve">
-    <value>Program '{0}' failed to run: {1}{2}.</value>
+    <value>程式 '{0}' 無法執行: {1}{2}。</value>
   </data>
   <data name="CantInvokeInBinaryModule" xml:space="preserve">
-    <value>Cannot use '&amp;' to invoke in the context of binary module '{0}'. Specify a non-binary module after the '&amp;' and try the operation again.</value>
+    <value>無法在二進位模組 '{0}' 的內容中使用 '&amp;' 叫用。請在 '&amp;' 後面指定非二進位模組，然後再試一次。</value>
   </data>
   <data name="CantInvokeInNonImportedModule" xml:space="preserve">
-    <value>Cannot use '&amp;' to invoke in the context of module '{0}' because it is not imported. Import the module '{0}' and try the operation again.</value>
+    <value>無法在模組 '{0}' 的內容中使用 '&amp;' 來叫用，因為該模組尚未匯入。請匯入模組 '{0}'，然後再次嘗試此操作。</value>
   </data>
   <data name="TokenAfterEndOfValidScriptText" xml:space="preserve">
-    <value>Executable script code found in signature block.</value>
+    <value>在簽章區塊中找到可執行的指令碼程式碼。</value>
   </data>
   <data name="TextForWordLine" xml:space="preserve">
-    <value>line</value>
+    <value>行</value>
   </data>
   <data name="TextForPositionMessage" xml:space="preserve">
-    <value>At {0}:{1} char:{2}
+    <value>位於 {0}:{1} char:{2}
 + {3}</value>
   </data>
   <data name="TraceScriptLineMessage" xml:space="preserve">
     <value>{0,4}+ {1}</value>
   </data>
   <data name="TraceVariableAssignment" xml:space="preserve">
-    <value>    ! SET ${0} = '{1}'.</value>
+    <value>    ! SET ${0} = '{1}'。</value>
   </data>
   <data name="TraceEnteringFunction" xml:space="preserve">
-    <value>    ! CALL function '{0}'</value>
+    <value>    ! CALL 函式 '{0}'</value>
   </data>
   <data name="TraceEnteringFunctionDefinedInFile" xml:space="preserve">
-    <value>    ! CALL function '{0}'  (defined in file '{1}')</value>
+    <value>    ! CALL 函式 '{0}' (定義於檔案 '{1}')</value>
   </data>
   <data name="TraceMethodCall" xml:space="preserve">
-    <value>    ! CALL method '{0}'</value>
+    <value>    ! CALL 方法 '{0}'</value>
   </data>
   <data name="TerminatorExpectedAtEndOfString" xml:space="preserve">
-    <value>The string is missing the terminator: {0}.</value>
+    <value>字串缺少結尾字元: {0}。</value>
   </data>
   <data name="WhitespaceBeforeHereStringFooter" xml:space="preserve">
-    <value>White space is not allowed before the string terminator.</value>
+    <value>字串結束字元前不允許有空白字元。</value>
   </data>
   <data name="EndSquareBracketExpectedAtEndOfType" xml:space="preserve">
-    <value>Missing ] at end of type token.</value>
+    <value>類型語彙基元結尾處缺少 ]。</value>
   </data>
   <data name="OpenBraceNeedsToBeBackTickedInVariableName" xml:space="preserve">
-    <value>Use `{ instead of { in variable names.</value>
+    <value>變數名稱中請使用 `{，不要使用 {。</value>
   </data>
   <data name="MissingStatementBlockForDataSection" xml:space="preserve">
-    <value>The Data section is missing its statement block.</value>
+    <value>Data 區段缺少陳述式區塊。</value>
   </data>
   <data name="InvalidParameterForDataSectionStatement" xml:space="preserve">
-    <value>The "{0}" parameter of the Data section is not valid. The valid Data section parameter is SupportedCommand.</value>
+    <value>Data 區段的 "{0}" 參數無效。有效的 Data 區段參數為 SupportedCommand。</value>
   </data>
   <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>Array references are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許陣列參考。</value>
   </data>
   <data name="AssignmentStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Assignment statements are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許 Assignment 陳述式。</value>
   </data>
   <data name="RedirectionNotSupportedInDataSection" xml:space="preserve">
-    <value>Redirection is not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許重新導向。</value>
   </data>
   <data name="DoWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Do and While statements are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許 Do 和 While 陳述式。</value>
   </data>
   <data name="ExpandableStringNotSupportedInDataSection" xml:space="preserve">
-    <value>Expandable strings are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許可擴充字串。</value>
   </data>
   <data name="OperatorNotSupportedInDataSection" xml:space="preserve">
-    <value>The '{0}' operator is not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許 '{0}' 運算子。</value>
   </data>
   <data name="TrapStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Trap statement is not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許 Trap 陳述式。</value>
   </data>
   <data name="TryStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Try statement is not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許 Try 陳述式。</value>
   </data>
   <data name="FlowControlStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Flow control statements such as Break, Continue, Return, Exit, and Throw are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式中或 Data 區段中不允許流程控制陳述式，例如 Break、Continue、Return、Exit 和 Throw。</value>
   </data>
   <data name="ForeachStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Foreach statements are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許 Foreach 陳述式。</value>
   </data>
   <data name="ForWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>For and While statements are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許 For 和 While 陳述式。</value>
   </data>
   <data name="FunctionDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>Function declarations are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許函式宣告。</value>
   </data>
   <data name="MethodCallNotSupportedInDataSection" xml:space="preserve">
-    <value>Method calls are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許方法呼叫。</value>
   </data>
   <data name="ParameterDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>Parameter declarations are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許參數宣告。</value>
   </data>
   <data name="PropertyReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>Property references are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許屬性參考。</value>
   </data>
   <data name="ScriptBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>Script block literals are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許指令碼區塊文字。</value>
   </data>
   <data name="SwitchStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The switch statement is not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許 switch 陳述式。</value>
   </data>
   <data name="VariableReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>A variable that cannot be referenced in restricted language mode or a Data section is being referenced. Variables that can be referenced include the following: {0}.</value>
+    <value>正在參考無法在限制語言模式或 Data 區段中參考的變數。可參考的變數包括下列項目: {0}。</value>
   </data>
   <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
-    <value>The command '{0}' is not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許命令 '{0}'。</value>
   </data>
   <data name="DataSectionStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The data statement is not allowed in restricted language mode or another Data section.</value>
+    <value>限制語言模式或其他 Data 區段中不允許資料陳述式。</value>
   </data>
   <data name="MissingValueForSupportedCommandInDataSectionStatement" xml:space="preserve">
-    <value>The SupportedCommand parameter of the Data section is missing a value. Supply a cmdlet or function name to the parameter.</value>
+    <value>Data 區段的 SupportedCommand 參數缺少值。請為該參數提供 Cmdlet 或函數名稱。</value>
   </data>
   <data name="InvalidScriptBlockInDataSection" xml:space="preserve">
-    <value>A Begin statement block, Process statement block, or parameter statement is not allowed in a Data section.</value>
+    <value>Data 區段中不允許 Begin 陳述式區塊、Process 陳述式區塊或參數陳述式。</value>
   </data>
   <data name="StringMultiplyToolongInDataSection" xml:space="preserve">
-    <value>String multiplication results with more than "{0}" characters are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許超過 "{0}" 個字元的字串乘法結果。</value>
   </data>
   <data name="ArrayMultiplyToolongInDataSection" xml:space="preserve">
-    <value>Array multiplication resulting in more than {0} elements is not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式中或 Data 區段中不允許陣列相乘導致超過 {0} 個元素。</value>
   </data>
   <data name="DotSourcingNotSupportedInDataSection" xml:space="preserve">
-    <value>Dot sourcing is not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許點來源。</value>
   </data>
   <data name="ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock" xml:space="preserve">
-    <value>Attribute argument must be a constant or a script block.</value>
+    <value>屬性引數必須是常數或指令碼區塊。</value>
   </data>
   <data name="CustomAttributeTypeNotFound" xml:space="preserve">
-    <value>Cannot find the type for custom attribute '{0}'. Make sure that the assembly that contains this type is loaded.</value>
+    <value>找不到自訂屬性 '{0}' 的類型。確認已經載入包含此類型的組件。</value>
   </data>
   <data name="PropertyNotFoundForType" xml:space="preserve">
-    <value>Property '{0}' cannot be found for type '{1}'.</value>
+    <value>找不到類型 '{1}' 的屬性 '{0}'。</value>
   </data>
   <data name="UnexpectedAttribute" xml:space="preserve">
-    <value>Unexpected attribute '{0}'.</value>
+    <value>未預期的屬性 '{0}'。</value>
   </data>
   <data name="EndSquareBracketExpectedAtEndOfAttribute" xml:space="preserve">
-    <value>Missing ] at end of attribute or type literal.</value>
+    <value>屬性或類型常值結尾缺少 ]。</value>
   </data>
   <data name="StrictModeFunctionCallWithParens" xml:space="preserve">
-    <value>The function or command was called as if it were a method. Parameters should be separated by spaces. For information about parameters, see the about_Parameters Help topic.</value>
+    <value>呼叫函式或命令時，彷彿它是方法。參數應該以空格分隔。如需參數的相關資訊，請參閱 about_Parameters 說明主題。</value>
   </data>
   <data name="MissingTryStatementBlock" xml:space="preserve">
-    <value>The Try statement is missing its statement block.</value>
+    <value>Try 陳述式缺少陳述式區塊。</value>
   </data>
   <data name="MissingCatchOrFinally" xml:space="preserve">
-    <value>The Try statement is missing its Catch or Finally block.</value>
+    <value>Try 陳述式缺少 Catch 或 Finally 區塊。</value>
   </data>
   <data name="MissingCatchHandlerBlock" xml:space="preserve">
-    <value>The Catch block is missing its statement block.</value>
+    <value>Catch 區塊缺少陳述式區塊。</value>
   </data>
   <data name="MissingFinallyStatementBlock" xml:space="preserve">
-    <value>The Finally block is missing its statement block.</value>
+    <value>Finally 區塊缺少陳述式區塊。</value>
   </data>
   <data name="ExceptionTypeAlreadyCaught" xml:space="preserve">
-    <value>Exception type {0} is already handled by a previous handler.</value>
+    <value>例外狀況類型 {0} 已由先前的處理常式處理。</value>
   </data>
   <data name="EmptyCatchNotLast" xml:space="preserve">
-    <value>Catch block must be the last catch block.</value>
+    <value>Catch 區塊必須是最後一個 Catch 區塊。</value>
   </data>
   <data name="MissingTypeLiteralToken" xml:space="preserve">
-    <value>Missing type literal.</value>
+    <value>缺少類型常值。</value>
   </data>
   <data name="MissingTerminatorMultiLineComment" xml:space="preserve">
-    <value>The terminator '#&gt;' is missing from the multiline comment.</value>
+    <value>多行註解中缺少結尾字元 '#&gt;'。</value>
   </data>
   <data name="UnexpectedCharactersAfterHereStringHeader" xml:space="preserve">
-    <value>No characters are allowed after a here-string header but before the end of the line.</value>
+    <value>here-string 標頭之後、行尾之前不可有任何字元。</value>
   </data>
   <data name="ErrorCollection" xml:space="preserve">
-    <value>Parser errors were detected.</value>
+    <value>已偵測到剖析器錯誤。</value>
   </data>
   <data name="MissingNamedStatementBlock" xml:space="preserve">
-    <value>Missing statement block after '{0}'.</value>
+    <value>'{0}' 後面缺少陳述式區塊。</value>
   </data>
   <data name="TypeNotAllowedBeforeParam" xml:space="preserve">
-    <value>Unexpected type [{0}] was found in the parameter statement.</value>
+    <value>在參數陳述式中找到非預期的類型 [{0}]。</value>
   </data>
   <data name="TypeNotAllowedBeforeStatement" xml:space="preserve">
-    <value>Unexpected type [{0}] was found before statement.</value>
+    <value>在陳述式之前找到非預期的類型 [{0}]。</value>
   </data>
   <data name="InvalidNullKey" xml:space="preserve">
-    <value>A null key is not allowed in a hash literal.</value>
+    <value>雜湊常值中不允許使用 null 索引鍵。</value>
   </data>
   <data name="AttributeNotSupportedInDataSection" xml:space="preserve">
-    <value>Attributes are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許屬性。</value>
   </data>
   <data name="TypeNotAllowedInDataSection" xml:space="preserve">
-    <value>The type {0} is not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許類型 {0}。</value>
   </data>
   <data name="PropertyIsReadOnly" xml:space="preserve">
-    <value>'{0}' is a ReadOnly property.</value>
+    <value>'{0}' 是唯讀屬性。</value>
   </data>
   <data name="MissingAssemblyNameSpecification" xml:space="preserve">
-    <value>The type name is missing the assembly name specification.</value>
+    <value>類型名稱缺少組件名稱規格。</value>
   </data>
   <data name="ControlLeavingFinally" xml:space="preserve">
-    <value>Flow of control cannot leave a Finally block.</value>
+    <value>控制流程不可離開 Finally 區塊。</value>
   </data>
   <data name="UnrecoverableParserError" xml:space="preserve">
-    <value>Unrecoverable error in PowerShell.</value>
+    <value>PowerShell 中發生無法復原的錯誤。</value>
   </data>
   <data name="AstIsReused" xml:space="preserve">
-    <value>An AST cannot be used as the child of more than one AST. To use this AST in another AST, call the Copy() method and use its result.</value>
+    <value>AST 不能作為另一個 AST 的子系。若要在另一個 AST 中使用這個 AST，請呼叫 Copy() 方法，並使用其結果。</value>
   </data>
   <data name="InvalidUsingExpression" xml:space="preserve">
-    <value>Expression is not allowed in a Using expression.</value>
+    <value>Using 運算式中不允許運算式。</value>
   </data>
   <data name="UsingWithoutInvokeCommand" xml:space="preserve">
-    <value>A Using variable cannot be retrieved. A Using variable can be used only with Invoke-Command, Start-Job, or InlineScript in the script workflow. When it is used with Invoke-Command, the Using variable is valid only if the script block is invoked on a remote computer.</value>
+    <value>無法擷取 Using 變數。Using 變數只能搭配 Invoke-Command、Start-Job 或指令碼工作流程中的 InlineScript 使用。搭配 Invoke-Command 使用時，只有在遠端電腦上叫用指令碼區塊時，Using 變數才有效。</value>
   </data>
   <data name="InvalidBracedVariableReference" xml:space="preserve">
-    <value>Variable reference is not valid. The variable name is missing.</value>
+    <value>變數參照無效。缺少變數名稱。</value>
   </data>
   <data name="InvalidVariableReferenceWithDrive" xml:space="preserve">
-    <value>Variable reference is not valid. ':' was not followed by a valid variable name character. Consider using ${} to delimit the name.</value>
+    <value>變數參考無效。':' 後面沒有接有效的變數名稱字元。請考慮使用 ${} 來界定名稱。</value>
   </data>
   <data name="TooManyErrors" xml:space="preserve">
-    <value>Not all parse errors were reported.  Correct the reported errors and try again.</value>
+    <value>並非所有剖析錯誤都已回報。 請更正已回報的錯誤，然後再試一次。</value>
   </data>
   <data name="MissingTypename" xml:space="preserve">
-    <value>Missing type name after '['.</value>
+    <value>'[' 後缺少類型名稱。</value>
   </data>
   <data name="AllStream" xml:space="preserve">
-    <value>* stream</value>
+    <value>* 串流</value>
   </data>
   <data name="DebugStream" xml:space="preserve">
-    <value>debug stream</value>
+    <value>偵錯資料流</value>
   </data>
   <data name="ErrorStream" xml:space="preserve">
-    <value>error stream</value>
+    <value>錯誤資料流</value>
   </data>
   <data name="OutputStream" xml:space="preserve">
-    <value>output stream</value>
+    <value>輸出資料流</value>
   </data>
   <data name="StreamAlreadyRedirected" xml:space="preserve">
-    <value>The {0} for this command is already redirected.</value>
+    <value>此命令的 {0} 已重新導向。</value>
   </data>
   <data name="VerboseStream" xml:space="preserve">
-    <value>verbose stream</value>
+    <value>詳細資訊資料流</value>
   </data>
   <data name="WarningStream" xml:space="preserve">
-    <value>warning stream</value>
+    <value>警告資料流</value>
   </data>
   <data name="MissingStatementAfterKeyword" xml:space="preserve">
-    <value>Missing statement body after keyword '{0}'.</value>
+    <value>關鍵字 '{0}' 後面缺少陳述式主體。</value>
   </data>
   <data name="ParallelAndSequenceBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>Parallel and sequence blocks are not allowed in restricted language mode or a Data section.</value>
+    <value>限制語言模式或 Data 區段中不允許平行和循序區塊。</value>
   </data>
   <data name="UnexpectedKeyword" xml:space="preserve">
-    <value>Unexpected keyword '{0}'.</value>
+    <value>未預期的關鍵字 '{0}'。</value>
   </data>
   <data name="VoidTypeConstraintNotAllowed" xml:space="preserve">
-    <value>[void] cannot be used as a parameter type, or on the left side of an assignment.</value>
+    <value>[void] 不能做為參數類型使用，或用在指派的左側。</value>
   </data>
   <data name="CannotInvoke" xml:space="preserve">
-    <value>The method cannot be invoked.</value>
+    <value>無法叫用此方法。</value>
   </data>
   <data name="HashtableToObjectConversionNotSupportedInDataSection" xml:space="preserve">
-    <value>Cannot convert hashtable to an object of the following type: {0}. Hashtable-to-Object conversion is not supported in restricted language mode or a Data section.</value>
+    <value>無法將雜湊表轉換為下列類型的物件: {0}。限制語言模式中或 Data 區段不支援 Hashtable-to-Object 轉換。</value>
   </data>
   <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
-    <value>Argument must be constant.</value>
+    <value>引數必須是常數。</value>
   </data>
   <data name="RequiresInvalidStringArgument" xml:space="preserve">
-    <value>The argument for the {0} parameter is not valid. Specify a valid string argument.</value>
+    <value>{0} 參數的引數無效。請指定有效的字串引數。</value>
   </data>
   <data name="RequiresModuleInvalid" xml:space="preserve">
-    <value>The argument for the Module parameter is not valid. {0}</value>
+    <value>Module 參數的引數無效。{0}</value>
   </data>
   <data name="RequiresVersionInvalid" xml:space="preserve">
-    <value>The argument for the Version parameter is not valid. Specify a valid PowerShell version, in the format major.minor version.</value>
+    <value>Version 參數的引數無效。請指定有效的 PowerShell 版本，格式為 major.minor 版本。</value>
   </data>
   <data name="RequiresPSEditionInvalid" xml:space="preserve">
-    <value>The argument for the {0} parameter is not valid. Specify a valid PowerShell edition.</value>
+    <value>{0} 參數的引數無效。請指定有效的 PowerShell 版本。</value>
   </data>
   <data name="RequiresPSEditionValueIsAlreadySpecified" xml:space="preserve">
-    <value>The argument for the {0} parameter contains duplicate values. Do not specify duplicate PowerShell edition values.</value>
+    <value>{0} 參數的引數包含重複的值。請勿指定重複的 PowerShell 版本值。</value>
   </data>
   <data name="WildCardModuleNameError" xml:space="preserve">
-    <value>Wildcard characters are not supported for module names.</value>
+    <value>模組名稱不支援萬用字元。</value>
   </data>
   <data name="InvokeMethodConstrainedLanguage" xml:space="preserve">
-    <value>Cannot invoke method. Method invocation is supported only on core types in this language mode.</value>
+    <value>無法叫用方法。僅在此語言模式的核心類型上才支援方法叫用。</value>
   </data>
   <data name="PropertySetConstrainedLanguage" xml:space="preserve">
-    <value>Cannot set property. Property setting is supported only on core types in this language mode.</value>
+    <value>無法設定屬性。僅在此語言模式的核心類型上才支援屬性設定。</value>
   </data>
   <data name="ConfigurationInvalidPropertyName" xml:space="preserve">
-    <value>An attribute name for resource '{0}' was found that is not valid. An attribute name must be a simple string, and cannot contain variables or expressions. Replace '{1}' with a simple string.</value>
+    <value>找到資源 '{0}' 的無效屬性名稱。屬性名稱必須是簡單字串，而且不能包含變數或運算式。請以簡單字串取代 '{1}'。</value>
   </data>
   <data name="InvalidInstanceProperty" xml:space="preserve">
-    <value>The member '{0}' is not valid. Valid members are
-'{1}'.</value>
+    <value>成員 '{0}' 無效。有效的成員為
+'{1}'。</value>
   </data>
   <data name="MissingBraceInObjectDefinition" xml:space="preserve">
-    <value>Missing '{' in object definition.</value>
+    <value>物件定義中缺少 '{'。</value>
   </data>
   <data name="RequiredNameOrExpressionMissing" xml:space="preserve">
-    <value>A required name or expression was missing.</value>
+    <value>缺少必要的名稱或運算式。</value>
   </data>
   <data name="SchemaFileNotFound" xml:space="preserve">
-    <value>The schema file {0} was not found. Verify that any modules specified in a configuration statement contain a schema.mof file, and then try running the script again.</value>
+    <value>找不到結構描述檔案 {0}。請確認組態陳述式中指定的任何模組都包含 schema.mof 檔案，然後再次嘗試執行指令碼。</value>
   </data>
   <data name="DataSectionAllowedCommandDisallowed" xml:space="preserve">
-    <value>Cannot define data section. Definition of additional supported commands is not supported in this language mode.</value>
+    <value>無法定義資料區段。此語言模式不支援定義額外支援的命令。</value>
   </data>
   <data name="MissingCurlyInConfigurationStatement" xml:space="preserve">
-    <value>Missing '{' in configuration statement.</value>
+    <value>組態陳述式中缺少 '{'。</value>
   </data>
   <data name="ExceptionParsingMOFFile" xml:space="preserve">
-    <value>Exception parsing MOF file '{0}':{1}.</value>
+    <value>剖析 MOF 檔案 '{0}' 時發生例外狀況:{1}。</value>
   </data>
   <data name="MissingConfigurationName" xml:space="preserve">
-    <value>The name for the configuration is missing. Provide the missing name as a simple name, string, or string-valued expression.</value>
+    <value>缺少設定的名稱。請以簡單名稱、字串或字串值運算式提供缺少的名稱。</value>
   </data>
   <data name="ModuleNotFoundDuringParse" xml:space="preserve">
-    <value>Could not find the module '{0}'.</value>
+    <value>找不到此模組 '{0}'。</value>
   </data>
   <data name="MultipleModuleEntriesFoundDuringParse" xml:space="preserve">
-    <value>Multiple versions of the module '{0}' were found. You can run 'Get-Module -ListAvailable -FullyQualifiedName {0}' to see available versions on the system, and then use the fully qualified name '@{{ModuleName="{0}"; RequiredVersion="Version"}}'.</value>
+    <value>找到模組 '{0}' 的多個版本。您可以執行 'Get-Module -ListAvailable -FullyQualifiedName {0}' 來查看系統上的可用版本，然後使用完整名稱 '@{{ModuleName="{0}"; RequiredVersion="Version"}}'。</value>
   </data>
   <data name="MissingThrottleLimit" xml:space="preserve">
-    <value>The ThrottleLimit parameter of the foreach statement is missing a value. Supply a throttle limit to the parameter.</value>
+    <value>foreach 陳述式的 ThrottleLimit 參數缺少值。請為該參數提供節流限制。</value>
     <comment>'ThrottleLimit' must not be localized.</comment>
   </data>
   <data name="ThrottleLimitRequiresParallelFlag" xml:space="preserve">
-    <value>The ThrottleLimit parameter is only supported on foreach statements that use the Parallel parameter.</value>
+    <value>只有使用 Parallel 參數的 foreach 陳述式支援 ThrottleLimit 參數。</value>
     <comment>'ThrottleLimit' and 'Parallel' must not be localized.</comment>
   </data>
   <data name="ConfigurationBodyEmpty" xml:space="preserve">
-    <value>The configuration block results were null or empty. Verify that configurations were defined in the block.</value>
+    <value>設定區塊結果為 null 或空白。請確認已在區塊中定義設定。</value>
   </data>
   <data name="UnexpectedNameForType" xml:space="preserve">
-    <value>The '{0}' resource can only be used once per configuration, and therefore cannot have a name. Remove '{1}', and then run the script again.</value>
+    <value>每個組態只能使用一次 '{0}' 資源，因此不能有名稱。請移除 '{1}'，然後再次執行指令碼。</value>
   </data>
   <data name="IncompletePropertyAssignmentBlock" xml:space="preserve">
-    <value>There is an incomplete property assignment block in the instance definition.</value>
+    <value>執行個體定義中有不完整的屬性指派區塊。</value>
   </data>
   <data name="MissingEqualsInPropertyAssignmentBlock" xml:space="preserve">
-    <value>Missing '=' operator after key in property assignment.</value>
+    <value>屬性指派中的索引鍵後面缺少 '=' 運算子。</value>
   </data>
   <data name="DuplicatePropertyInInstanceDefinition" xml:space="preserve">
-    <value>Duplicate property assignments are not allowed in an instance definition.</value>
+    <value>執行個體定義中不允許重複的屬性指派。</value>
   </data>
   <data name="DuplicateCimClassDefinition" xml:space="preserve">
-    <value>A second CIM class definition for '{0}' was found while processing the schema file '{1}'. This class was already defined in the file(s) '{2}'. Remove the redundant definition, and then try again.</value>
+    <value>處理架構檔案 '{0}' 時，找到 '{1}' 的第二個 CIM 類別定義。這個類別已在檔案 '{2}' 中定義。請移除多餘的定義，然後再試一次。</value>
   </data>
   <data name="DuplicateKeywordDefinition" xml:space="preserve">
-    <value>Resource name '{0}' is already being used by another Resource or Configuration.</value>
+    <value>資源名稱 '{0}' 已由其他資源或組態使用。</value>
   </data>
   <data name="ClassNameNotSameAsDefiningFile" xml:space="preserve">
-    <value>The class name '{0}' does not match '{1}', the name of the file in which it is defined. Rename either the file name to match the class name or vice versa</value>
+    <value>類別名稱 '{0}' 與定義它的檔案名稱 '{1}' 不符。請重新命名檔案以符合類別名稱，或重新命名類別名稱以符合檔案名稱</value>
   </data>
   <data name="DuplicateResourceIdInNodeStatement" xml:space="preserve">
-    <value>A duplicate resource identifier '{0}' was found while processing the specification for node '{1}'. Change the name of this resource so that it is unique within the node specification.</value>
+    <value>處理節點 '{0}' 的規格時發現重複的資源識別碼 '{1}'。請變更此資源的名稱，使其在節點規格中具有唯一性。</value>
   </data>
   <data name="UnexpectedTokenInDynamicKeyword" xml:space="preserve">
-    <value>There is no whitespace between the name and the scriptblock in dynamic keyword '{0}' body statement.</value>
+    <value>動態關鍵字 '{0}' 的 body 陳述式中，名稱與指令碼區塊之間沒有空白字元。</value>
   </data>
   <data name="EmptyFunctionNameInFunctionDefinitionDictionary" xml:space="preserve">
-    <value>The key property for an entry in the dictionary of functions to define cannot be empty because the key property is used as the function name. Specify a non-empty string as the value of the key property, and then try the operation again.</value>
+    <value>要在函式字典中定義的項目，其 key 屬性不可為空白，因為該 key 屬性會用作函式名稱。請指定非空白字串作為 key 屬性的值，然後再次嘗試操作。</value>
   </data>
   <data name="GetBadlyFormedRequiredResourceId" xml:space="preserve">
-    <value>The format of the resource reference '{0}' in the Requires list for resource '{1}' is not valid. A required resource name should be in the format '[&lt;typename&gt;]&lt;name&gt;', with alphanumeric characters, spaces, '_', '-', '.' and '\'.</value>
+    <value>資源 '{1}' 的 Requires 清單中的資源參考 '{0}' 格式無效。必要的資源名稱格式應為 '[&lt;typename&gt;]&lt;name&gt;'，且只能包含英數字元、空格、'_'、'-'、'.' 和 '\'。</value>
     <comment>The capitalized word Requires should not be localized. The words &lt;typename&gt; and &lt;name&gt; should be localized but the &lt;&gt; characters must be preserved.</comment>
   </data>
   <data name="GetBadlyFormedExclusiveResourceId" xml:space="preserve">
-    <value>The format of the resource reference '{0}' in the exclusive list for resource '{1}' is not valid. An exclusive resource name should be in the format '&lt;typename&gt;\&lt;name&gt;', with no spaces.</value>
+    <value>資源 '{1}' 的獨佔清單中的資源參考 '{0}' 格式無效。獨佔資源名稱的格式應為 '&lt;typename&gt;\&lt;name&gt;'，且不得包含空格。</value>
   </data>
   <data name="GetPullModeNeedConfigurationSource" xml:space="preserve">
-    <value>The PartialConfiguration '{0}' is set to pull mode which requires a ConfigurationSource property.</value>
+    <value>PartialConfiguration '{0}' 設定為提取模式，這需要 ConfigurationSource 屬性。</value>
   </data>
   <data name="NullEntryInVariablesDefinitionList" xml:space="preserve">
-    <value>A null entry was found in the list of variable entries to create in the script block scope. Remove the entry at index {0}, or replace it with a non-null entry, and then try again.</value>
+    <value>要在指令碼區塊範圍中建立的變數項目清單中找到 null 項目。請移除索引 {0} 的項目，或以非 null 項目取代，然後再試一次。</value>
   </data>
   <data name="NullFunctionBodyInFunctionDefinitionDictionary" xml:space="preserve">
-    <value>The script block that defines function '{0}' cannot be null or empty. Provide a non-empty script block in the function definition dictionary, and then try the operation again.</value>
+    <value>定義函式 '{0}' 的指令碼區塊不可為 null 或空白。請在函式定義字典中提供非空白的指令碼區塊，然後再次嘗試操作。</value>
   </data>
   <data name="ImportDscResourceNeedParams" xml:space="preserve">
-    <value>The syntax of the Import-DscResource dynamic keyword is:
+    <value>Import-DscResource 動態關鍵字的語法如下: 
 
-Import-DscResource  [-Name &lt;ResourceName(s)&gt;]  [-ModuleName  &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;].
+Import-DscResource  [-Name &lt;ResourceName(s)&gt;]  [-ModuleName  &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;]。
 
-Name          : Names of one or more resources to import.
-ModuleName    : Module names or ModuleSpecification objects of one or more modules to import.
-ModuleVersion : Version of module to import. If used, ModuleName must represent only one module by name.</value>
+名稱          : 要匯入之一個或多個資源的名稱。
+ModuleName    : 要匯入之一個或多個模組的名稱或 ModuleSpecification 物件。
+ModuleVersion: 要匯入的模組版本。如果使用這個參數，ModuleName 必須只依名稱代表一個模組。</value>
   </data>
   <data name="ImportDscResourceMultipleModulesNotSupportedWithName" xml:space="preserve">
-    <value>Import-DscResource dynamic keyword supports only one module when Name parameter is specified.</value>
+    <value>如果指定 Name 參數，Import-DscResource 動態關鍵字只支援一個模組。</value>
   </data>
   <data name="ImportDscResourcePositionalParamsNotSupported" xml:space="preserve">
-    <value>Positional parameters are not supported for the Import-DscResource dynamic keyword. The syntax of Import-DscResource dynamic keyword is: "Import-DscResource  [-Name &lt;ResourceName(s)&gt;] [-ModuleName &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;]</value>
+    <value>Import-DscResource 動態關鍵字不支援位置參數。Import-DscResource 動態關鍵字的語法是："Import-DscResource [-Name &lt;ResourceName(s)&gt;] [-ModuleName &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;]</value>
   </data>
   <data name="DscResourcesNotFoundDuringParsing" xml:space="preserve">
-    <value>Unable to load resource '{0}': Resource not found.</value>
+    <value>無法載入資源 '{0}': 找不到資源。</value>
   </data>
   <data name="ConfigurationNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>Configuration keyword is not allowed in constrainedLanguage mode.</value>
+    <value>ConstrainedLanguage 模式中不允許使用 Configuration 關鍵字。</value>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
-    <value>The configuration name '{0}' is not valid. Standard names may only contain letters (a-z, A-Z), numbers (0-9), period (.), hyphen (-) and underscore (_). The name may not be null or empty, and should start with a letter.</value>
+    <value>設定名稱 '{0}' 無效。Standard 名稱只能包含字母 (a-z、A-Z)、數字 (0-9)、句點 (.)、連字號 (-) 和底線 (_)。名稱不可為 null 或空白，且應以字母開頭。</value>
   </data>
   <data name="UnsupportedNamedBlockInConfiguration" xml:space="preserve">
-    <value>Configuration only supports the End block in its body. Begin, Process and DynamicParam blocks are not allowed in a configuration.</value>
+    <value>組態的主體只支援 End 區塊。組態中不允許 Begin、Process 和 DynamicParam 區塊。</value>
   </data>
   <data name="CimDeserializationError" xml:space="preserve">
-    <value>Cim deserializer threw an error when deserializing file {0}.</value>
+    <value>還原序列化檔案 {0} 時，CIM 還原序列化程式擲回錯誤。</value>
   </data>
   <data name="InvalidValueForProperty" xml:space="preserve">
-    <value>'{0}' is not a valid value for property '{1}' on class '{2}'. Please change the value to one of the following strings: {3}.</value>
+    <value>'{0}' 對類別 '{2}' 上的屬性 '{1}' 來說，並非有效的值。請將值變更為下列其中一個字串: {3}。</value>
   </data>
   <data name="UnsupportedValueForProperty" xml:space="preserve">
-    <value>At least one of the values '{0}' is not supported or valid for property '{1}' on class '{2}'. Please specify only supported values:
-{3}.</value>
+    <value>在類別 '{2}' 上，屬性 '{1}' 的值 '{0}' 至少有一個不受支援或無效。請只指定支援的值:
+{3}。</value>
   </data>
   <data name="MissingValueForMandatoryProperty" xml:space="preserve">
-    <value>Resource '{0}' requires that a value of type '{1}' be provided for property '{2}'.</value>
+    <value>資源 '{0}' 要求為屬性 '{2}' 提供類型為 '{1}' 的值。</value>
   </data>
   <data name="ValueNotInRange" xml:space="preserve">
-    <value>Property '{0}' of Resource '{1}' has value '{2}' which is not between valid range '{3}' and '{4}'.</value>
+    <value>資源 '{1}' 的屬性 '{0}' 的值 '{2}' 不在有效範圍 '{3}' 到 '{4}' 之間。</value>
   </data>
   <data name="CannotLoadPowerShellDataFile" xml:space="preserve">
-    <value>Failed to load the PowerShell data file '{0}' with the following error:
+    <value>無法載入 PowerShell 資料檔案 '{0}'，發生下列錯誤:
 {1}</value>
   </data>
   <data name="CannotResolvePowerShellDataFilePath" xml:space="preserve">
-    <value>Cannot resolve the path '{0}' to a single .psd1 file.</value>
+    <value>無法將路徑 '{0}' 解析為單一 .psd1 檔案。</value>
   </data>
   <data name="InvalidPowerShellDataFile" xml:space="preserve">
-    <value>The PowerShell data file '{0}' is invalid since it cannot be evaluated into a Hashtable object.</value>
+    <value>PowerShell 資料檔案 '{0}' 無效，因為無法將它評估為 Hashtable 物件。</value>
   </data>
   <data name="ConfigurationNotAllowedOnWinPE" xml:space="preserve">
-    <value>Configuration is not supported on WinPE.</value>
+    <value>WinPE 不支援設定。</value>
   </data>
   <data name="EmptyExpressionRequiresANonDefaultMode" xml:space="preserve">
-    <value>If the expression passed to the Where() operator is null then you must specify a non-Default value for the selection mode argument. Please change the value of the mode argument to a value other than Default and try running your script again.</value>
+    <value>如果傳遞給 Where() 運算子的運算式是 null，您必須為選取模式引數指定非 Default 的值。請將模式引數的值變更為 Default 以外的值，然後再試一次。</value>
   </data>
   <data name="ForEachBadGenericConversionTypeSpecified" xml:space="preserve">
-    <value>The generic collection type [{0}] passed to ForEach() has too many type arguments. Please change the specified type to be a generic collection with only one type argument then try running your script again.</value>
+    <value>傳遞給 ForEach() 的泛型集合類型 [{0}] 有太多型別引數。請將指定的型別變更為只有一個型別引數的泛型集合，然後再次嘗試執行您的指令碼。</value>
   </data>
   <data name="ForEachTypeConversionFailed" xml:space="preserve">
-    <value>Unable to convert input to the target type [{0}] passed to the ForEach() operator. Please check the specified type and try running your script again.</value>
+    <value>無法將輸入轉換成傳遞至 ForEach() 運算子的目標類型 [{0}]。請檢查指定的類型，然後再次嘗試執行您的指令碼。</value>
   </data>
   <data name="ForEachNotSupportCleanBlock" xml:space="preserve">
-    <value>Script block with a 'clean' block is not supported by the 'ForEach' method.</value>
+    <value>'ForEach' 方法不支援具有 'clean' 區塊的指令碼區塊。</value>
   </data>
   <data name="NumberToReturnMustBeGreaterThanZero" xml:space="preserve">
-    <value>The 'numberToReturn' value provided to the third argument of the Where() operator must be greater than zero. Please correct the argument's value and try running your script again.</value>
+    <value>提供給 Where() 運算子第三個引數的 'numberToReturn' 值必須大於零。請更正引數值，然後再次執行您的指令碼。</value>
   </data>
   <data name="RedirectionStreamCanOnlyMergeToOutputStream" xml:space="preserve">
-    <value>Redirection only allows another stream to be merged with the output stream. Please correct the redirection operation to merge into the output stream then try running your script again.</value>
+    <value>重新導向只允許將另一個資料流與輸出資料流合併。請更正重新導向作業，將其合併到輸出資料流，然後再次嘗試執行您的指令碼。</value>
   </data>
   <data name="ForEachNonexistentMemberReference" xml:space="preserve">
-    <value>The ForEach() operator could not find a member '{0}' on the target object. Please verify that the named member exists and then try running your script again.</value>
+    <value>ForEach() 運算子在目標物件上找不到成員 '{0}'。請確認具名成員存在，然後再次嘗試執行您的指令碼。</value>
   </data>
   <data name="UnsupportedReservedKeyword" xml:space="preserve">
-    <value>The '{0}' keyword is not supported in this version of the language.</value>
+    <value>此語言版本不支援 '{0}' 關鍵字。</value>
   </data>
   <data name="UnsupportedReservedProperty" xml:space="preserve">
-    <value>The '{0}' property is not supported in this version of the language.</value>
+    <value>此語言版本不支援 '{0}' 屬性。</value>
   </data>
   <data name="DuplicateQualifier" xml:space="preserve">
-    <value>Duplicate '{0}' qualifier</value>
+    <value>重複的 '{0}' 限定詞</value>
   </data>
   <data name="ModifiersCannotBeCombined" xml:space="preserve">
-    <value>Modifier '{0}' cannot be combined with '{1}'</value>
+    <value>修飾元 '{0}' 無法和 '{1}' 相結合</value>
   </data>
   <data name="MissingUsingStatementDirective" xml:space="preserve">
-    <value>Missing using directive</value>
+    <value>缺少 using 指示詞</value>
   </data>
   <data name="MissingNamespaceAlias" xml:space="preserve">
-    <value>Missing namespace alias</value>
+    <value>缺少命名空間別名</value>
   </data>
   <data name="MissingEqualsInUsingAlias" xml:space="preserve">
-    <value>Missing '=' operator</value>
+    <value>缺少 '=' 運算子</value>
   </data>
   <data name="MissingUsingItemName" xml:space="preserve">
-    <value>Missing using name</value>
+    <value>缺少 using 名稱</value>
   </data>
   <data name="VariableNotLocal" xml:space="preserve">
-    <value>Variable is not assigned in the method.</value>
+    <value>方法中未指派變數。</value>
   </data>
   <data name="IncompleteMemberDefinition" xml:space="preserve">
-    <value>Missing a property name or method definition.</value>
+    <value>缺少屬性名稱或方法定義。</value>
   </data>
   <data name="MemberAlreadyDefined" xml:space="preserve">
-    <value>The member '{0}' is already defined.</value>
+    <value>成員 '{0}' 已遭拒。</value>
   </data>
   <data name="TooManyTypes" xml:space="preserve">
-    <value>Only one type may be specified on class members.</value>
+    <value>只能在類別成員上指定一個類型。</value>
   </data>
   <data name="TypeCreationError" xml:space="preserve">
-    <value>Error during creation of type "{0}". Error message:
+    <value>建立類型 "{0}" 期間發生錯誤。錯誤訊息: 
 {1}</value>
   </data>
   <data name="CannotConvertValue" xml:space="preserve">
-    <value>Cannot convert the value to type "{0}".</value>
+    <value>無法將值轉換成類型 "{0}"。</value>
   </data>
   <data name="PropertyNotFoundForAttribute" xml:space="preserve">
-    <value>Property '{0}' cannot be found for attribute '{1}'. Specify one of the following properties: {2}.</value>
+    <value>找不到屬性 '{1}' 的屬性 '{0}'。請指定下列其中一個屬性: {2}。</value>
   </data>
   <data name="AttributeNotAllowedOnDeclaration" xml:space="preserve">
-    <value>Attribute '{0}' is not valid on this declaration. It is valid on '{1}' declarations only.</value>
+    <value>屬性 '{0}' 在此宣告上無效。其僅在 '{1}' 宣告上有效。</value>
   </data>
   <data name="ParameterAttributeArgumentNeedsToBeConstant" xml:space="preserve">
-    <value>Attribute argument must be a constant.</value>
+    <value>屬性引數必須是常數。</value>
   </data>
   <data name="ResourceNotDefined" xml:space="preserve">
-    <value>Undefined DSC resource '{0}'. Use Import-DSCResource to import the resource.</value>
+    <value>未定義的 DSC 資源 '{0}'。請使用 Import-DSCResource 匯入資源。</value>
   </data>
   <data name="DynamicKeywordPreParseException" xml:space="preserve">
-    <value>Exception occurred when pre-parsing dynamic keyword '{0}' with details '{1}'.</value>
+    <value>在預先剖析動態關鍵字 '{0}' 時發生例外狀況，詳細資料為 '{1}'。</value>
   </data>
   <data name="DynamicKeywordPostParseException" xml:space="preserve">
-    <value>Exception occurred when post-parsing dynamic keyword '{0}' with details '{1}'.</value>
+    <value>對動態關鍵字 '{0}' 進行後續剖析時發生例外狀況，詳細資料為 '{1}'。</value>
   </data>
   <data name="WorkflowNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Workflow is not supported in PowerShell 6+.</value>
+    <value>PowerShell 6+ 不支援工作流程。</value>
   </data>
   <data name="MetaConfigurationUsedInRegularConfig" xml:space="preserve">
-    <value>Meta Configuration resource {0} is not allowed in the regular configuration. Use meta configuration resources in a configuration with [DscLocalConfigurationManager()] attribute.</value>
+    <value>一般設定中不允許中繼設定資源 {0}。請在具有 [DscLocalConfigurationManager()] 屬性的設定中使用中繼設定資源。</value>
   </data>
   <data name="RegularResourceUsedInMetaConfig" xml:space="preserve">
-    <value>Regular DSC resource {0} is not allowed in the meta configuration. </value>
+    <value>中繼設定中不允許一般 DSC 資源 {0}。</value>
   </data>
   <data name="GetSteppablePipelineFromWrongThread" xml:space="preserve">
-    <value>There is no Runspace available to get and run the SteppablePipeline in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The script block you attempted to get SteppablePipeline from was: {0}</value>
+    <value>這個執行緒中沒有可用的 Runspace 可供取得及執行 SteppablePipeline。您可以在 System.Management.Automation.Runspaces.Runspace 類型的 DefaultRunspace 屬性中提供一個。您嘗試從中取得 SteppablePipeline 的指令碼區塊為: {0}</value>
   </data>
   <data name="AmbiguousConversion" xml:space="preserve">
-    <value>There are valid conversions from {0} to {1}.</value>
+    <value>從 {0} 到 {1} 是有效的轉換。</value>
   </data>
   <data name="CannotCall" xml:space="preserve">
-    <value>Cannot perform call.</value>
+    <value>無法執行呼叫。</value>
   </data>
   <data name="CannotRetrieveTypeInformation" xml:space="preserve">
-    <value>Cannot retrieve type information.</value>
+    <value>無法擷取類型資訊。</value>
   </data>
   <data name="CouldNotGetDispId" xml:space="preserve">
-    <value>Could not get dispatch ID for {0} (error: {1}).</value>
+    <value>無法取得 {0} 的分派識別碼 (錯誤: {1})。</value>
   </data>
   <data name="DispBadParamCount" xml:space="preserve">
-    <value>Cannot find an overload for "{0}" and the argument count: "{1}"</value>
+    <value>找不到 "{0}" 與引數計數 "{1}" 的多載</value>
   </data>
   <data name="DispMemberNotFound" xml:space="preserve">
-    <value>Error while invoking {0}. Could not find member.</value>
+    <value>叫用 {0} 時發生錯誤。找不到成員。</value>
   </data>
   <data name="DispNoNamedArgs" xml:space="preserve">
-    <value>Error while invoking {0}. Named arguments are not supported.</value>
+    <value>叫用 {0} 時發生錯誤。不支援具名引數。</value>
   </data>
   <data name="DispOverflow" xml:space="preserve">
-    <value>Error while invoking {0}. Overflow detected.</value>
+    <value>叫用 {0} 時發生錯誤。偵測到溢位。</value>
   </data>
   <data name="DispParamNotOptional" xml:space="preserve">
-    <value>Error while invoking {0}. A required parameter was omitted.</value>
+    <value>叫用 {0} 時發生錯誤。缺少必要參數。</value>
   </data>
   <data name="DispTypeMismatch" xml:space="preserve">
-    <value>Exception setting "{0}": Cannot convert the "{1}" value of type "{2}" to type "{3}".</value>
+    <value>設定 "{0}" 時發生例外狀況: 無法將類型為 "{1}" 的值 "{2}" 轉換成類型 "{3}"。</value>
   </data>
   <data name="GetIDsOfNamesInvalid" xml:space="preserve">
-    <value>IDispatch::GetIDsOfNames behaved unexpectedly for {0}.</value>
+    <value>IDispatch::GetIDsOfNames 的表現出乎 {0} 的意料。</value>
   </data>
   <data name="SetComObjectDataFailed" xml:space="preserve">
-    <value>Marshal.SetComObjectData failed.</value>
+    <value>Marshal.SetComObjectData 失敗。</value>
   </data>
   <data name="UnexpectedVarEnum" xml:space="preserve">
-    <value>Unexpected VarEnum {0}.</value>
+    <value>未預期的 VarEnum {0}。</value>
   </data>
   <data name="UnsupportedHandlerType" xml:space="preserve">
-    <value>Attempting to pass an event handler of an unsupported type.</value>
+    <value>正在嘗試傳遞不支援的類型的事件處理常式。</value>
   </data>
   <data name="ConfigurationNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Configuration keyword is not supported in PowerShell 6+.</value>
+    <value>PowerShell 6+ 中不支援 Configuration 關鍵字。</value>
   </data>
   <data name="MethodHasCodePathNotReturn" xml:space="preserve">
-    <value>Not all code path returns value within method.</value>
+    <value>方法中的所有程式碼路徑都沒有傳回值。</value>
   </data>
   <data name="VoidMethodHasReturn" xml:space="preserve">
-    <value>Invalid return statement within void method.</value>
+    <value>void 方法中的 return 陳述式無效。</value>
   </data>
   <data name="NonVoidMethodMissingReturnValue" xml:space="preserve">
-    <value>Invalid return statement within non-void method.</value>
+    <value>非 void 方法中的 return 陳述式無效。</value>
   </data>
   <data name="MissingTypeBody" xml:space="preserve">
-    <value>Missing '{0}' body in '{0}' declaration.</value>
+    <value>'{0}' 宣告中缺少 '{0}' 主體。</value>
   </data>
   <data name="CycleInEnumInitializers" xml:space="preserve">
-    <value>Cannot define enum because of a cycle in the initialization expressions.</value>
+    <value>無法定義列舉，因為初始化運算式中有循環。</value>
   </data>
   <data name="EnumeratorValueOutOfBounds" xml:space="preserve">
-    <value>Enumerator value is either too large or too small for {0}.</value>
+    <value>{0} 的列舉程式值太大或太小。</value>
   </data>
   <data name="EnumeratorValueMustBeConstant" xml:space="preserve">
-    <value>Enumerator value must be a constant value.</value>
+    <value>列舉值必須是常數值。</value>
   </data>
   <data name="DynamicKeywordSemanticCheckException" xml:space="preserve">
-    <value>Exception occurred when performing semantic check for dynamic keyword '{0}' with details '{1}'.</value>
+    <value>在執行動態關鍵字 '{0}' 的語意檢查時發生例外狀況，詳細資料為 '{1}'。</value>
   </data>
   <data name="UnsupportedPropertyTypeOfDSCResourceClass" xml:space="preserve">
-    <value>The '{0}' property with type '{1}' of DSC resource class '{2}' is not supported.</value>
+    <value>DSC 資源類別 '{2}' 中類型為 '{1}' 的 '{0}' 屬性不支援。</value>
   </data>
   <data name="MissingMethodParameterList" xml:space="preserve">
-    <value>Missing '(' in class method parameter list.</value>
+    <value>類別方法參數清單中缺少 '('。</value>
   </data>
   <data name="NamedBlockNotAllowedInMethod" xml:space="preserve">
-    <value>A named block is not allowed in a class method.</value>
+    <value>類別方法中不允許具名區塊。</value>
   </data>
   <data name="ParamBlockNotAllowedInMethod" xml:space="preserve">
-    <value>A param block is not allowed in a class method.</value>
+    <value>類別方法中不允許參數區塊。</value>
   </data>
   <data name="SealedBaseClass" xml:space="preserve">
-    <value>Cannot inherit from sealed class '{0}'.</value>
+    <value>無法繼承密封類別 '{0}'。</value>
   </data>
   <data name="TypeNameExpected" xml:space="preserve">
-    <value>Type name expected.</value>
+    <value>預期的類型名稱。</value>
   </data>
   <data name="InvalidUnderlyingType" xml:space="preserve">
-    <value>'{0}' is not a valid underlying type for enums. Expected a builtin integral type (one of byte, sbyte, short, ushort, int, uint, long or ulong)</value>
+    <value>'{0}' 不是列舉的有效基礎類型。必須是內建整數型別 (byte、sbyte、short、ushort、int、uint、long 或 ulong)</value>
   </data>
   <data name="InterfaceNameExpected" xml:space="preserve">
-    <value>'{0}': Interface name expected.</value>
+    <value>'{0}': 必須指定介面名稱。</value>
   </data>
   <data name="BaseClassNoDefaultCtor" xml:space="preserve">
-    <value>Base class '{0}' does not contain a parameterless constructor.</value>
+    <value>基底類別 '{0}' 不包含無參數的建構函式。</value>
   </data>
   <data name="SubtypeArray" xml:space="preserve">
-    <value>Invalid base type '{0}'. Base type cannot be an array.</value>
+    <value>基底類型 '{0}' 無效。基底類型不可為陣列。</value>
   </data>
   <data name="SubtypeUnclosedGeneric" xml:space="preserve">
-    <value>Invalid base type '{0}'. Base type cannot be a generic with unspecified parameters.</value>
+    <value>基底類型 '{0}' 無效。基底類型不能是未指定參數的泛型。</value>
   </data>
   <data name="MissingBaseCtorCall" xml:space="preserve">
-    <value>Missing 'base' after ':' in a base class constructor call.</value>
+    <value>基底類別建構函式呼叫中的 ':' 後面缺少 'base'。</value>
   </data>
   <data name="ConstructorCantHaveReturnType" xml:space="preserve">
-    <value>A constructor cannot specify a return type.</value>
+    <value>建構函式不能指定傳回類型。</value>
   </data>
   <data name="DscResourceMissingDefaultConstructor" xml:space="preserve">
-    <value>The DSC resource '{0}' has no default constructor.</value>
+    <value>DSC 資源 '{0}' 沒有預設建構函式。</value>
   </data>
   <data name="DscResourceMissingGetMethod" xml:space="preserve">
-    <value>The DSC resource '{0}' is missing a Get method that returns [{0}] and accepts no parameters.</value>
+    <value>DSC 資源 '{0}' 缺少 Get 方法。此方法必須傳回 [{0}]，且不接受任何參數。</value>
   </data>
   <data name="DscResourceMissingKeyProperty" xml:space="preserve">
-    <value>The DSC resource '{0}' must have at least one key property (using the syntax [DscProperty(Key)].)</value>
+    <value>DSC 資源 '{0}' 必須至少有一個索引鍵屬性 (使用 [DscProperty(Key)] 語法。)</value>
   </data>
   <data name="DscResourceMissingSetMethod" xml:space="preserve">
-    <value>The DSC resource '{0}' is missing a Set method that returns [void] and accepts no parameters.</value>
+    <value>DSC 資源 '{0}' 缺少 Set 方法。此方法必須傳回 [void]，且不接受任何參數。</value>
   </data>
   <data name="DscResourceMissingTestMethod" xml:space="preserve">
-    <value>The DSC resource '{0}' is missing a Test method that returns [bool] and accepts no parameters.</value>
+    <value>DSC 資源 '{0}' 缺少 Test 方法。此方法必須傳回 [bool]，且不接受任何參數。</value>
   </data>
   <data name="StaticConstructorCantHaveParameters" xml:space="preserve">
-    <value>A static constructor cannot have any parameters.</value>
+    <value>靜態建構函式不能有任何參數。</value>
   </data>
   <data name="TypeNotAllowedForProperty" xml:space="preserve">
-    <value>The type '{0}' is not allowed on a property.</value>
+    <value>屬性不允許類型 '{0}'。</value>
   </data>
   <data name="TypeNotAllowedForParameter" xml:space="preserve">
-    <value>The type '{0}' is not allowed on a parameter.</value>
+    <value>參數不允許類型 '{0}'。</value>
   </data>
   <data name="NonStaticMemberAccessInStaticMember" xml:space="preserve">
-    <value>Cannot access the non-static member '{0}' in a static method or initializer of a static property.</value>
+    <value>在靜態方法或靜態屬性的初始設定式中，無法存取非靜態成員 '{0}'。</value>
   </data>
   <data name="FailToParseModuleScriptFile" xml:space="preserve">
-    <value>Failed to parse module script file '{0}' with error
-'{1}'.</value>
+    <value>無法剖析模組指令碼檔案 '{0}'，發生錯誤
+'{1}'。</value>
   </data>
   <data name="CantActivateDocumentInPowerShellCore" xml:space="preserve">
-    <value>Cannot run a document in PowerShell: {0}.</value>
+    <value>無法在 PowerShell 中執行文件: {0}。</value>
   </data>
   <data name="MultipleTypeConstraintsOnMethodParam" xml:space="preserve">
-    <value>Multiple type constraints are not allowed on a method parameter.</value>
+    <value>方法參數上不允許多重類型條件約束。</value>
   </data>
   <data name="ScriptContainedMaliciousContent" xml:space="preserve">
-    <value>This script contains malicious content and has been blocked by your antivirus software.</value>
+    <value>此指令碼包含惡意內容，已被您的防毒軟體封鎖。</value>
   </data>
   <data name="InvalidLocalConfigurationManagerProperty" xml:space="preserve">
-    <value>'{0}' cannot be specified in LocalConfigurationManager resource. Please switch to Settings instead or use only following values: {1}.</value>
+    <value>無法在 LocalConfigurationManager 資源中指定 '{0}'。請改為切換至 [設定]，或僅使用下列值: {1}。</value>
   </data>
   <data name="PropertyInGenericType" xml:space="preserve">
-    <value>'{0}' is defined in a generic type.</value>
+    <value>'{0}' 是在泛型類型中定義的。</value>
   </data>
   <data name="AmbiguousTypeReference" xml:space="preserve">
-    <value>Type name '{0}' is ambiguous, it could be '{1}' or '{2}'.</value>
+    <value>類型名稱 '{0}' 不明確，可能是 '{1}' 或 '{2}'。</value>
   </data>
   <data name="UsingMustBeAtStartOfScript" xml:space="preserve">
-    <value>A 'using' statement must appear before any other statements in a script.</value>
+    <value>'using' 陳述式必須出現在指令碼中任何其他陳述式之前。</value>
   </data>
   <data name="UsingStatementNotSupported" xml:space="preserve">
-    <value>This syntax of the 'using' statement is not supported.</value>
+    <value>不支援此 'using' 陳述式語法。</value>
   </data>
   <data name="InvalidNamespaceValue" xml:space="preserve">
-    <value>The specified namespace in the 'using' statement contains invalid characters.</value>
+    <value>'using' 陳述式中指定的命名空間包含無效的字元。</value>
   </data>
   <data name="InformationStream" xml:space="preserve">
-    <value>information stream</value>
+    <value>資訊流</value>
   </data>
   <data name="DscResourceInvalidKeyProperty" xml:space="preserve">
-    <value>Invalid key property. The key property must be of [string], signed/unsigned integer, or Enum types.</value>
+    <value>無效的索引鍵屬性。索引鍵屬性必須是 [string]、帶正負號或不帶正負號的整數，或列舉類型。</value>
   </data>
   <data name="DscResourceInvalidGetMethod" xml:space="preserve">
-    <value>Invalid Get method. Get method must return [{0}] and accepts no parameters.</value>
+    <value>無效的 Get 方法。Get 方法必須傳回 [{0}]，且不接受任何參數。</value>
   </data>
   <data name="ErrorLoadingAssembly" xml:space="preserve">
     <value>無法載入組件 '{0}'。</value>
   </data>
   <data name="CannotLoadAssemblyFromUncPath" xml:space="preserve">
-    <value>Cannot use assembly with an UNC path: '{0}'.</value>
+    <value>無法使用 UNC 路徑為 '{0}' 的組件。</value>
   </data>
   <data name="CannotLoadAssemblyWithUriSchema" xml:space="preserve">
-    <value>Cannot use assembly with uri schema '{0}'.</value>
+    <value>無法使用 URI 結構描述為 '{0}' 的組件。</value>
   </data>
   <data name="MissingStatementTerminator" xml:space="preserve">
-    <value>Missing a newline or semicolon.</value>
+    <value>缺少新行或分號。</value>
   </data>
   <data name="MissingThis" xml:space="preserve">
-    <value>Cannot assign property, use '{0}{1}'.</value>
+    <value>無法指派屬性，請使用 '{0}{1}'。</value>
   </data>
   <data name="InvalidValueForUsingItemName" xml:space="preserve">
-    <value>'{0}' is not a valid value for using name.</value>
+    <value>'{0}' 不是使用名稱的有效值。</value>
   </data>
   <data name="MissingTypeInStaticPropertyAssignment" xml:space="preserve">
-    <value>Cannot assign property, use '{0}{1}'.</value>
+    <value>無法指派屬性，請使用 '{0}{1}'。</value>
   </data>
   <data name="DebugModeShouldHaveOneValue" xml:space="preserve">
-    <value>DebugMode should only have one value.</value>
+    <value>DebugMode 應該只有一個值。</value>
   </data>
   <data name="LabelNotFound" xml:space="preserve">
-    <value>Label '{0}' not found inside the method.</value>
+    <value>在方法內找不到標籤 '{0}'。</value>
   </data>
   <data name="ConvertCimPropertyToObjectPropertyFailed" xml:space="preserve">
-    <value>Failed to convert the value of CimProperty {0} to the property value of class {1}.</value>
+    <value>無法將 CimProperty {0} 的值轉換成類別 {1} 的屬性值。</value>
   </data>
   <data name="ExpectArrayTypeOfPropertyInPSClass" xml:space="preserve">
-    <value>Property {0} of PowerShell class {1} is not declared as array type, but defined in its configuration instance as instance array type.</value>
+    <value>PowerShell 類別的屬性 {0} {1} 未宣告為陣列類型，但在其設定執行個體中定義為執行個體陣列類型。</value>
   </data>
   <data name="InstantiatePSClassObjectFailed" xml:space="preserve">
-    <value>Failed to create an object of PowerShell class {0}.</value>
+    <value>無法建立 PowerShell 類別 {0} 的物件。</value>
   </data>
   <data name="InvalidHashtable" xml:space="preserve">
-    <value>The hashtable supplied to the Desired State Configuration resource {0} is not valid. The key or value cannot be null or empty.</value>
+    <value>提供給 Desired State Configuration 資源 {0} 的雜湊表無效。金鑰或值不可為 null 或空白。</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>The username supplied to the Desired State Configuration resource {0} is not valid. The username cannot be null or empty.</value>
+    <value>提供給 Desired State Configuration 資源 {0} 的使用者名稱無效。使用者名稱不可是 Null 或空白。</value>
   </data>
   <data name="InvalidUserName" xml:space="preserve">
-    <value>The username supplied to the Desired State Configuration resource {0} is not valid. The username cannot be null or empty.</value>
+    <value>提供給 Desired State Configuration 資源 {0} 的使用者名稱無效。使用者名稱不可是 Null 或空白。</value>
   </data>
   <data name="PropertyNotDeclaredInPSClass" xml:space="preserve">
-    <value>Property {0} is not declared in PowerShell class {1}, but defined in its configuration instance.</value>
+    <value>屬性 {0} 未在 PowerShell 類別 {1} 中宣告，但已在其設定執行個體中定義。</value>
   </data>
   <data name="DisabledRefreshModeNotValidForPartialConfig" xml:space="preserve">
-    <value>PartialConfiguration '{0}' has a Refresh Mode set to Disabled which is not a valid mode for Partial Configurations. Use Pull or Push refresh mode. </value>
+    <value>PartialConfiguration '{0}' 的重新整理模式設為 Disabled，這不是部分設定的有效模式。請使用 Pull 或 Push 重新整理模式。</value>
   </data>
   <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
-    <value>Cannot create type. Only core types are supported in this language mode.</value>
+    <value>無法建立類型。此語言模式只支援核心類型。</value>
   </data>
   <data name="ImportDscResourceInsideNode" xml:space="preserve">
-    <value>Import-DscResource cannot be specified inside of Node context</value>
+    <value>無法在 Node 內容內指定 Import-DscResource</value>
   </data>
   <data name="DefaultAllowedVariablesInDataSection" xml:space="preserve">
-    <value>$PSCulture, $PSUICulture, $true, $false, $null</value>
+    <value>$PSCulture、$PSUICulture、$true、$false、$null</value>
   </data>
   <data name="AssignmentStatementToAutomaticNotSupported" xml:space="preserve">
-    <value>Cannot assign automatic variable '{0}' with type '{1}'</value>
+    <value>無法將類型為 '{1}' 的值指派給自動變數 '{0}'</value>
   </data>
   <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
-    <value>Conflict in using PsDscRunAsCredential for Resource {0} because it already specifies PsDscRunAsCredential value. We can only use one PsDscRunAsCredential for the composite resource. </value>
+    <value>將 PsDscRunAsCredential 用於資源 {0} 時發生衝突，因為它已指定 PsDscRunAsCredential 值。複合資源只能使用一個 PsDscRunAsCredential。</value>
   </data>
   <data name="PsDscMissingSchemaStore" xml:space="preserve">
-    <value>Unable to find DSC schema store at "{0}". Please ensure PSDesiredStateConfiguration v3 module is installed.</value>
+    <value>在 "{0}" 找不到 DSC 結構描述存放區。請確定已安裝 PSDesiredStateConfiguration v3 模組。</value>
   </data>
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="ScriptHasAdminBlockedContent" xml:space="preserve">
-    <value>This script contains content that has been flagged as suspicious through a policy setting and has been blocked with error code {0}. Contact your administrator for more information.</value>
+    <value>此指令碼包含的內容已透過原則設定標示為可疑，並已遭封鎖，錯誤碼為 {0}。如需詳細資訊，請連絡系統管理員。</value>
   </data>
   <data name="CantInvokeCallOperatorAcrossLanguageBoundaries" xml:space="preserve">
-    <value>Cannot use '&amp;' or '.' operators to invoke a module scope command across language boundaries.</value>
+    <value>無法使用 '&amp;' 或 '.' 運算子，跨語言界限叫用模組範圍命令。</value>
   </data>
   <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>Class keyword is not allowed in ConstrainedLanguage mode.</value>
+    <value>ConstrainedLanguage 模式中不允許使用 Class 關鍵字。</value>
   </data>
   <data name="MissingColonInTernaryExpression" xml:space="preserve">
-    <value>Missing ':' in the ternary expression.</value>
+    <value>三元運算式中遺漏 ':'。</value>
   </data>
   <data name="EmptyPipelineChainElement" xml:space="preserve">
-    <value>A pipeline chain operator must be followed by a pipeline.</value>
+    <value>管線鏈結運算子後面必須接著管線。</value>
   </data>
   <data name="BackgroundOperatorInPipelineChain" xml:space="preserve">
-    <value>Background operators can only be used at the end of a pipeline chain.</value>
+    <value>背景運算子只能用在管線鏈結的結尾。</value>
   </data>
   <data name="InvokingCleanBlockNotSupported" xml:space="preserve">
-    <value>Directly invoking the 'clean' block of a script block is not supported.</value>
+    <value>不支援直接叫用指令碼區塊的 'clean' 區塊。</value>
   </data>
   <data name="WDACParserConfigKeywordLogTitle" xml:space="preserve">
-    <value>Parser Configuration Keyword</value>
+    <value>剖析器組態關鍵字</value>
   </data>
   <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
-    <value>The Configuration keyword will not be allowed in Constrained Language mode for untrusted script.</value>
+    <value>在 Constrained Language 模式中，不受信任的指令碼不允許使用 Configuration 關鍵字。</value>
   </data>
   <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
-    <value>Parser Class Keyword</value>
+    <value>剖析器類別關鍵字</value>
   </data>
   <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
-    <value>The Class keyword will not be allowed in Constrained Language mode for untrusted script.</value>
+    <value>在 Constrained Language 模式中，不受信任的指令碼不允許使用 Class 關鍵字。</value>
   </data>
   <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
-    <value>Parser Data Section SupportedCommand</value>
+    <value>剖析器資料區段 SupportedCommand</value>
   </data>
   <data name="WDACParserDSSupportedCommandLogMessage" xml:space="preserve">
-    <value>The Data Section that includes the SupportedCommand parameter would be disallowed in Constrained Language mode for untrusted script.</value>
+    <value>對於不受信任的指令碼，在 Constrained Language 模式中不允許包含 SupportedCommand 參數的 Data 區段。</value>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogTitle" xml:space="preserve">
-    <value>Module Scope Call Operator</value>
+    <value>模組範圍呼叫運算子</value>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogMessage" xml:space="preserve">
-    <value>The module scope call operator will be denied in Constrained Language mode.</value>
+    <value>在 Constrained Language 模式中，模組範圍呼叫運算子將會被拒絕。</value>
   </data>
   <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
-    <value>ForEach Keyword Method Invocation</value>
+    <value>ForEach 關鍵字方法呼叫</value>
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
-    <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in Constrained Language mode.</value>
+    <value>在 Constrained Language 模式中執行時，ForEach 關鍵字會使 '{0}' 反覆項目項目方法叫用失敗。</value>
   </data>
   <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
-    <value>Expression Evaluation May Fail</value>
+    <value>運算式評估可能失敗</value>
   </data>
   <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
-    <value>Creating a steppable pipeline from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in Constrained Language mode, unless the expression represents a constant value.</value>
+    <value>從指令碼區塊建立可逐步執行管線可能需要評估指令碼區塊中的一些運算式。除非運算式代表常數值，否則在受限語言模式下，運算式評估會悄悄失敗，並傳回 'null'。</value>
   </data>
   <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">
-    <value>Configuration keyword is not supported on ARM64 processors.</value>
+    <value>ARM64 處理器不支援 Configuration 關鍵字。</value>
   </data>
 </root>
