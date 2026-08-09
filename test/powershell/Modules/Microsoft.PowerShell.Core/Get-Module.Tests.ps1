@@ -351,6 +351,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             $actual[0].Path | Should -BeExactly (Join-Path $pwd $path)
         }
     }
+
+    Context 'When argument contains wildcards' {
+    }
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is relative-rooted' -Tags "CI" {
