@@ -424,6 +424,13 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
 
             Remove-Item $inPSModulePathLooseFilePath
         }
+
+        It 'returns existing manifest modules under $env:PSModulePath when using the -Name parameter' {
+            $actual = Get-Module -ListAvailable -Name "$psModulePath\existing*"
+            $actual | Should -HaveCount 2
+            $actual[0].Path | Should -BeExactly "$psModulePath\existing\0.0.1\existing.psd1"
+            $actual[1].Path | Should -BeExactly "$psModulePath\existing2\0.0.1\existing2.psd1"
+        }
     }
 }
 
