@@ -332,6 +332,13 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
             Remove-Item $inPSModulePathLooseFilePath
             Remove-Item $inPSModulePathLooseFilePathPwd
         }
+
+        # TODO: This looks like a bug.
+        It 'wrongly writes error instead of returning module information for existing script module under $env:PSModulePath using basename' {
+            Test-Path "$psModulePath\loose.psm1" | Should -BeTrue
+            { Get-Module -ListAvailable -Name "$psModulePath\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+            { Get-Module -ListAvailable -FullyQualifiedName "$psModulePath\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+        }
     }
 }
 
