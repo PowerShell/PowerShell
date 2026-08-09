@@ -368,6 +368,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         Get-Module -ListAvailable -FullyQualifiedName ignore | Should -Be $null
         Get-Module -ListAvailable -Name ignore | Should -Be $null
     }
+
+    Context 'When path value has PS module extension, such as ''name.psm1''' {
+    }
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is home-rooted' -Tags "CI" {
