@@ -280,6 +280,9 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     }
 }
 
+Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is module name or filename-like' -Tags "CI" {
+}
+
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is home-rooted' -Tags "CI" {
     It 'wrongly does not expand ''~'' to $HOME' {
         $path = Join-Path ~ missing.psm1
