@@ -280,6 +280,9 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     }
 }
 
+Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argument is relative-rooted' -Tags "CI" {
+}
+
 Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
     BeforeAll {
         $psModulePath = ($env:PSModulePath -split ';')[0]
