@@ -391,6 +391,12 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             $actual[0].Path | Should -BeExactly (Join-Path $HOME existing 0.0.1, existing.psd1)
             $actual[1].Path | Should -BeExactly (Join-Path $HOME existing2 0.0.1, existing2.psd1)
         }
+
+        # TODO: This looks like a bug.
+        It 'wrongly returns $null for existing manifest modules when using the -FullyQualifiedName parameter' {
+            $actual = Get-Module -ListAvailable -FullyQualifiedName (Join-Path ~ existing*)
+            $actual | Should -Be $null
+        }
     }
 }
 
