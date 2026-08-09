@@ -437,6 +437,13 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
             $actual = Get-Module -ListAvailable -FullyQualifiedName "$psModulePath\existing*"
             $actual | Should -Be $null
         }
+
+        It 'returns existing manifest modules when using the -Name parameter' {
+            $actual = Get-Module -ListAvailable -Name "$pwd\existing*"
+            $actual | Should -HaveCount 2
+            $actual[0].Path | Should -BeExactly "$pwd\existing\0.0.1\existing.psd1"
+            $actual[1].Path | Should -BeExactly "$pwd\existing2\0.0.1\existing2.psd1"
+        }
     }
 }
 
