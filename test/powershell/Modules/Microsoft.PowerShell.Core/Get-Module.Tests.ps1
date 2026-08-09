@@ -363,6 +363,11 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         Get-Module -ListAvailable -FullyQualifiedName existing | ForEach-Object Path | Should -BeExactly (Join-Path $env:PSModulePath existing '0.0.1','existing.psd1')
         Get-Module -ListAvailable -Name existing | ForEach-Object Path | Should -BeExactly (Join-Path $env:PSModulePath existing '0.0.1','existing.psd1')
     }
+
+    It 'ignores module at current directory' {
+        Get-Module -ListAvailable -FullyQualifiedName ignore | Should -Be $null
+        Get-Module -ListAvailable -Name ignore | Should -Be $null
+    }
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is home-rooted' -Tags "CI" {
