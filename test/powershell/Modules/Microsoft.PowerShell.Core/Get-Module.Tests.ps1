@@ -281,6 +281,14 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is home-rooted' -Tags "CI" {
+    It 'wrongly does not expand ''~'' to $HOME' {
+        $path = Join-Path ~ missing.psm1
+        Test-Path $path | Should -BeFalse
+
+        Get-Module -ListAvailable -Name $path | ForEach-Object Path | Should -BeExactly (Join-Path $HOME missing.psm1)
+        # TODO: This is a bug.
+        Get-Module -ListAvailable -FullyQualifiedName $path | ForEach-Object Path | Should -BeExactly (Join-Path $pwd $path)
+    }
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is relative-rooted' -Tags "CI" {
