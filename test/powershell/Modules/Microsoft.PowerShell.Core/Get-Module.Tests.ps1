@@ -382,6 +382,15 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
 
             Remove-Item $inHomeLooseFilePath
         }
+
+        It 'returns existing manifest modules when using the -Name parameter' {
+            $name = Join-Path ~ existing*
+
+            $actual = Get-Module -ListAvailable -Name $name
+            $actual | Should -HaveCount 2
+            $actual[0].Path | Should -BeExactly (Join-Path $HOME existing 0.0.1, existing.psd1)
+            $actual[1].Path | Should -BeExactly (Join-Path $HOME existing2 0.0.1, existing2.psd1)
+        }
     }
 }
 
