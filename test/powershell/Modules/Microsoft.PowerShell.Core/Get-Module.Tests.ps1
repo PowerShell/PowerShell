@@ -397,6 +397,12 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             $actual = Get-Module -ListAvailable -FullyQualifiedName (Join-Path ~ existing*)
             $actual | Should -Be $null
         }
+
+        It 'returns module information for existing script module' {
+            $actual = Get-Module -ListAvailable -Name (Join-Path ~ loose*)
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly (Join-Path $HOME loose.psm1)
+        }
     }
 }
 
