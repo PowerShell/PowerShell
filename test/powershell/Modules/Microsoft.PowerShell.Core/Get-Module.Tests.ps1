@@ -310,6 +310,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         $err = { Get-Module -ListAvailable -FullyQualifiedName $name -ErrorAction Stop } | Should -Throw -PassThru
         $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
     }
+
+    Context 'Locating existing script module' {
+    }
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is relative-rooted' -Tags "CI" {
