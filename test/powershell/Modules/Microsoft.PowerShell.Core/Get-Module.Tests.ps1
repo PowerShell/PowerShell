@@ -291,6 +291,13 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
         Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
     }
+
+    It 'wrongly returns module information instead of $null or error for missing script module under $env:PSModulePath' {
+        $path = [System.IO.Path]::GetFullPath("$psModulePath\missing.psm1")
+        Test-Path $path | Should -BeFalse
+        Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+        Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+    }
 }
 
 Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
