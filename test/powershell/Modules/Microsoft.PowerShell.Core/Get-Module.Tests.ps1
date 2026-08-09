@@ -346,6 +346,18 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
             { Get-Module -ListAvailable -Name "$pwd\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
             { Get-Module -ListAvailable -FullyQualifiedName "$pwd\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
         }
+
+        It 'returns module information for existing script module using file name' {
+            Test-Path "$pwd\loose.psm1" | Should -BeTrue
+
+            $actual = Get-Module -ListAvailable -Name "$pwd\loose.psm1"
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly "$pwd\loose.psm1"
+
+            $actual = Get-Module -ListAvailable -FullyQualifiedName "$pwd\loose.psm1"
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly "$pwd\loose.psm1"
+        }
     }
 }
 
