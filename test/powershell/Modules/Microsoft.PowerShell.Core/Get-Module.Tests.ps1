@@ -339,6 +339,13 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
             { Get-Module -ListAvailable -Name "$psModulePath\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
             { Get-Module -ListAvailable -FullyQualifiedName "$psModulePath\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
         }
+
+        # TODO: This looks like a bug.
+        It 'wrongly writes error instead of returning module information for existing script module using basename' {
+            Test-Path "$pwd\loose.psm1" | Should -BeTrue
+            { Get-Module -ListAvailable -Name "$pwd\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+            { Get-Module -ListAvailable -FullyQualifiedName "$pwd\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+        }
     }
 }
 
