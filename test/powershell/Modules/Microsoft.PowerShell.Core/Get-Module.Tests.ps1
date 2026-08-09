@@ -444,6 +444,12 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
             $actual[0].Path | Should -BeExactly "$pwd\existing\0.0.1\existing.psd1"
             $actual[1].Path | Should -BeExactly "$pwd\existing2\0.0.1\existing2.psd1"
         }
+
+        # TODO: This looks like a bug.
+        It 'wrongly returns $null for existing manifest modules when using the -FullyQualifiedName parameter' {
+            $actual = Get-Module -ListAvailable -FullyQualifiedName "$pwd\existing*"
+            $actual | Should -Be $null
+        }
     }
 }
 
