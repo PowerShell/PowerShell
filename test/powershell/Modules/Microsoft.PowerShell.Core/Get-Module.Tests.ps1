@@ -281,6 +281,88 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is module name or filename-like' -Tags "CI" {
+    BeforeAll {
+        $oldPSModulePath = $env:PSModulePath
+        $env:PSModulePath = New-Item -ItemType Directory (Join-Path $TestDrive modules)
+
+        # Manifest modules under $env:PSModulePath
+        #
+        # Versioned, manifest
+        $inPSModulePathWithManifestFileName = 'existing'
+        $inPSModulePatWithManifestDirectory = Join-Path $env:PSModulePath $inPSModulePathWithManifestFileName '0.0.1'
+        $inPSModulePathWithManifestFilePath = Join-Path $inPSModulePatWithManifestDirectory "$inPSModulePathWithManifestFileName.psm1"
+        New-Item -ItemType File -Force $inPSModulePathWithManifestFilePath > $null
+        New-ModuleManifest -Path (Join-Path $inPSModulePatWithManifestDirectory "$inPSModulePathWithManifestFileName.psd1")
+        #
+        # Versioned, manifest
+        $inPSModulePathWithManifestFileName2 = 'existing2'
+        $inPSModulePatWithManifestDirectory2 = Join-Path $env:PSModulePath $inPSModulePathWithManifestFileName2 '0.0.1'
+        $inPSModulePathWithManifestFilePath2 = Join-Path $inPSModulePatWithManifestDirectory2 "$inPSModulePathWithManifestFileName2.psm1"
+        New-Item -ItemType File -Force $inPSModulePathWithManifestFilePath2 > $null
+        New-ModuleManifest -Path (Join-Path $inPSModulePatWithManifestDirectory2 "$inPSModulePathWithManifestFileName2.psd1")
+        #
+        # Versioned, manifest, multiple components in name
+        $inPSModulePathWithManifestWithPathLikeNameFileName = 'existing.xxx'
+        $inPsModulePathWithManifestWithPathLikeNameDirectory = Join-Path $env:PSModulePath $inPSModulePathWithManifestWithPathLikeNameFileName '0.0.1'
+        $inPsModulePathWithManifestWithPathLikeNameFilePath = Join-Path $inPsModulePathWithManifestWithPathLikeNameDirectory "$inPSModulePathWithManifestWithPathLikeNameFileName.psm1"
+        New-Item -ItemType File -Force $inPsModulePathWithManifestWithPathLikeNameFilePath > $null
+        New-ModuleManifest -Path (Join-Path $inPsModulePathWithManifestWithPathLikeNameDirectory "$inPSModulePathWithManifestWithPathLikeNameFileName.psd1")
+        #
+        # Versioned, manifest, multiple components in name, name ending with PS module extension
+        $inPSModulePathWithManifestWithPathLikeNameAsPSExtensionFileName = 'existing.psm1'
+        $inPSModulePathWithManifestWithPathLikeNameAsPSExtensionDirectory = Join-Path $env:PSModulePath $inPSModulePathWithManifestWithPathLikeNameAsPSExtensionFileName '0.0.1'
+        $inPSModulePathWithManifestWithPathLikeNameAsPSExtensionFilePath = Join-Path $inPSModulePathWithManifestWithPathLikeNameAsPSExtensionDirectory "$inPSModulePathWithManifestWithPathLikeNameAsPSExtensionFileName.psm1"
+        New-Item -ItemType File -Force $inPSModulePathWithManifestWithPathLikeNameAsPSExtensionFilePath > $null
+        New-ModuleManifest -Path (Join-Path $inPSModulePathWithManifestWithPathLikeNameAsPSExtensionDirectory "$inPSModulePathWithManifestWithPathLikeNameAsPSExtensionFileName.psd1")
+
+        # Script modules
+        #
+        # Under $env:PSModulePath. TODO: Is this a supported scenario?
+        $inPSModulePathLooseFilePath = Join-Path $env:PSModulePath 'existing-loose.psm1'
+        New-Item -ItemType File -Force $inPSModulePathLooseFilePath > $null
+        #
+        # Under $env:PSModulePath, multiple components in name. TODO: Is this a supported scenario?
+        $inPSModulePathLooseWithPathLikeFilePath = Join-Path $env:PSModulePath "existing-loose.xxx.psm1"
+        New-Item -ItemType File -Force $inPSModulePathLooseWithPathLikeFilePath > $null
+        #
+        # Under $env:PSModulePath, multiple components in name, name ending with PS module extension. TODO: Is this a supported scenario?
+        $inPSModulePathLooseWithPathLikeNameAsPSExtensionFilePath = Join-Path $env:PSModulePath "existing.psm1.psm1"
+        New-Item -ItemType File -Force $inPSModulePathLooseWithPathLikeNameAsPSExtensionFilePath > $null
+        #
+        # In working directory
+        $inWorkingDirectoryLooseFilePath = Join-Path . existing.psm1
+        New-Item -ItemType File -Force $inWorkingDirectoryLooseFilePath > $null
+        #
+        # In parent directory
+        $inParentDirectoryLooseFilePath = Join-Path .. existing.psm1
+        New-Item -ItemType File -Force $inParentDirectoryLooseFilePath > $null
+        #
+        # In working directory, ignored
+        'function foo { "_" }' > (Join-Path $pwd ignore.psm1)
+        'function foo { "_" }' > (Join-Path $pwd ignore.psm1.psm1)
+    }
+
+    AfterAll {
+        $env:PSModulePath = $oldPSModulePath
+
+        Remove-Item -ErrorAction Stop -Force -Recurse $inPSModulePatWithManifestDirectory
+        Remove-Item -ErrorAction Stop -Force -Recurse $inPSModulePatWithManifestDirectory2
+        Remove-Item -ErrorAction Stop -Force -Recurse $inPsModulePathWithManifestWithPathLikeNameDirectory
+        Remove-Item -ErrorAction Stop -Force -Recurse $inPSModulePathWithManifestWithPathLikeNameAsPSExtensionDirectory
+
+        Remove-Item -ErrorAction Stop $inPSModulePathLooseFilePath
+        Remove-Item -ErrorAction Stop $inPSModulePathLooseWithPathLikeFilePath
+        Remove-Item -ErrorAction Stop $inPSModulePathLooseWithPathLikeNameAsPSExtensionFilePath
+        Remove-Item -ErrorAction Stop $inWorkingDirectoryLooseFilePath
+        Remove-Item -ErrorAction Stop $inParentDirectoryLooseFilePath
+        Remove-Item -ErrorAction Stop ignore.psm1
+        Remove-Item -ErrorAction Stop ignore.psm1.psm1
+    }
+
+    It 'returns module information for manifest module' {
+        Get-Module -ListAvailable -FullyQualifiedName existing | ForEach-Object Path | Should -BeExactly (Join-Path $env:PSModulePath existing '0.0.1','existing.psd1')
+        Get-Module -ListAvailable -Name existing | ForEach-Object Path | Should -BeExactly (Join-Path $env:PSModulePath existing '0.0.1','existing.psd1')
+    }
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is home-rooted' -Tags "CI" {
