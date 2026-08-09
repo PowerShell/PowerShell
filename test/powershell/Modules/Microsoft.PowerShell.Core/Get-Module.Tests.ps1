@@ -312,6 +312,16 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
     }
 
     Context 'Locating existing script module' {
+        BeforeAll {
+            # Script modules
+            #
+            $inHomeLooseFilePath = Join-Path $HOME loose.psm1
+            New-Item -ItemType File -Force $inHomeLooseFilePath > $null
+        }
+
+        AfterAll {
+            Remove-Item $inHomeLooseFilePath
+        }
     }
 }
 
