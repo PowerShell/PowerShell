@@ -284,6 +284,13 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
     BeforeAll {
         $psModulePath = ($env:PSModulePath -split ';')[0]
     }
+
+    It 'wrongly returns module information instead of $null or error for missing script module' {
+        $path = [System.IO.Path]::GetFullPath("$pwd\missing.psm1")
+        Test-Path $path | Should -BeFalse
+        Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+        Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+    }
 }
 
 Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
