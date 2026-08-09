@@ -370,6 +370,11 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
     }
 
     Context 'When path value has PS module extension, such as ''name.psm1''' {
+        # Because non-rooted/non-relative-rooted paths MUST be resolved to modules under $env:PSModulePath.
+        It 'ignores module at current directory' {
+            Get-Module -ListAvailable -FullyQualifiedName ignore.psm1 | Should -Be $null
+            Get-Module -ListAvailable -Name ignore.psm1 | Should -Be $null
+        }
     }
 }
 
