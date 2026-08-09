@@ -298,6 +298,13 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
         Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
     }
+
+    It 'writes error for missing manifest module' {
+        $path = [System.IO.Path]::GetFullPath("$pwd\missing")
+        Test-Path $path | Should -BeFalse
+        { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+        { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+    }
 }
 
 Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
