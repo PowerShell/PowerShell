@@ -322,6 +322,20 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         AfterAll {
             Remove-Item $inHomeLooseFilePath
         }
+
+        # TODO: This looks like a bug.
+        It 'wrongly writes error instead of returning module information for existing script module using basename' {
+            $path = Join-Path ~ loose.psm1
+            Test-Path $path | Should -BeTrue
+
+            $name = Join-Path ~ loose
+
+            $err = { Get-Module -ListAvailable -Name $name -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+            $err = { Get-Module -ListAvailable -FullyQualifiedName $name -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+        }
     }
 }
 
