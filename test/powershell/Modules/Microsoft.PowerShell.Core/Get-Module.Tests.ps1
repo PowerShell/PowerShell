@@ -280,6 +280,9 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     }
 }
 
+Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
+}
+
 Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
     BeforeAll {
         $moduleName = 'Banana'
