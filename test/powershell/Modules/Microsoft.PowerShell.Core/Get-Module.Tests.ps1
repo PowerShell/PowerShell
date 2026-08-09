@@ -314,6 +314,24 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
     }
 
     Context 'Locating existing script module' {
+        BeforeAll {
+            $psModulePath = ($env:PSModulePath -split ';')[0]
+
+            # Script modules
+            #
+            # Under $env:PSModulePath. TODO: Is this a supported scenario?
+            $inPSModulePathLooseFilePath = Join-Path $psModulePath 'loose.psm1'
+            New-Item -ItemType File -Force $inPSModulePathLooseFilePath > $null
+            #
+            # Under $pwd
+            $inPSModulePathLooseFilePathPwd = Join-Path $pwd 'loose.psm1'
+            New-Item -ItemType File -Force $inPSModulePathLooseFilePathPwd > $null
+        }
+
+        AfterAll {
+            Remove-Item $inPSModulePathLooseFilePath
+            Remove-Item $inPSModulePathLooseFilePathPwd
+        }
     }
 }
 
