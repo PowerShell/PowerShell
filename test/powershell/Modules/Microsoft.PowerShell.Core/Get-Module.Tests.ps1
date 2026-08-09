@@ -358,6 +358,18 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
             $actual | Should -HaveCount 1
             $actual[0].Path | Should -BeExactly "$pwd\loose.psm1"
         }
+
+        It 'returns module information for existing script module under $env:PSModulePath using file name' {
+            Test-Path "$psModulePath\loose.psm1" | Should -BeTrue
+
+            $actual = Get-Module -ListAvailable -Name "$psModulePath\loose.psm1"
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly "$psModulePath\loose.psm1"
+
+            $actual = Get-Module -ListAvailable -FullyQualifiedName "$psModulePath\loose.psm1"
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly "$psModulePath\loose.psm1"
+        }
     }
 }
 
