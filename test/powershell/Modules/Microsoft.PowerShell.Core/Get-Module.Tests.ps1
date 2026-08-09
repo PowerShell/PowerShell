@@ -297,6 +297,19 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
     }
+
+    It 'writes error for missing manifest module' {
+        $path = Join-Path ~ missing.psm1
+        Test-Path $path | Should -BeFalse
+
+        $name = Join-Path ~ missing
+
+        $err = { Get-Module -ListAvailable -Name $name -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+        $err = { Get-Module -ListAvailable -FullyQualifiedName $name -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+    }
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is relative-rooted' -Tags "CI" {
