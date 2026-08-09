@@ -353,6 +353,35 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
     }
 
     Context 'When argument contains wildcards' {
+        BeforeAll {
+            # Manifest modules under '~'
+            #
+            # Versioned, manifest
+            $inHomeWithManifestFileName = 'existing'
+            $inHomeWithManifestDirectory = Join-Path '~' $inHomeWithManifestFileName '0.0.1'
+            $inHomeWithManifestFilePath = Join-Path $inHomeWithManifestDirectory "$inHomeWithManifestFileName.psm1"
+            New-Item -ItemType File -Force $inHomeWithManifestFilePath > $null
+            New-ModuleManifest -Path (Join-Path $inHomeWithManifestDirectory "$inHomeWithManifestFileName.psd1")
+            #
+            # Versioned, manifest
+            $inHomeWithManifestFileName2 = 'existing2'
+            $inHomeWithManifestDirectory2 = Join-Path '~' $inHomeWithManifestFileName2 '0.0.1'
+            $inHomeWithManifestFilePath2 = Join-Path $inHomeWithManifestDirectory2 "$inHomeWithManifestFileName2.psm1"
+            New-Item -ItemType File -Force $inHomeWithManifestFilePath2 > $null
+            New-ModuleManifest -Path (Join-Path $inHomeWithManifestDirectory2 "$inHomeWithManifestFileName2.psd1")
+
+            # Script modules under '~'
+            #
+            $inHomeLooseFilePath = Join-Path '~' 'loose.psm1'
+            New-Item -ItemType File -Force $inHomeLooseFilePath > $null
+        }
+
+        AfterAll {
+            Remove-Item -Force -Recurse $inHomeWithManifestDirectory
+            Remove-Item -Force -Recurse $inHomeWithManifestDirectory2
+
+            Remove-Item $inHomeLooseFilePath
+        }
     }
 }
 
