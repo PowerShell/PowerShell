@@ -371,6 +371,9 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
             $actual[0].Path | Should -BeExactly "$psModulePath\loose.psm1"
         }
     }
+
+    Context 'When argument contains wildcards' {
+    }
 }
 
 Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
