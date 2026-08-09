@@ -280,6 +280,9 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     }
 }
 
+Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is home-rooted' -Tags "CI" {
+}
+
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is relative-rooted' -Tags "CI" {
     It 'wrongly returns module information instead of $null or error for missing script module' {
         $path1 = Join-Path . missing.psm1
