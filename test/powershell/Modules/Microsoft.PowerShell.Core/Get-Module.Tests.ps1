@@ -286,28 +286,28 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
     }
 
     It 'wrongly returns module information instead of $null or error for missing script module' {
-        $path = [System.IO.Path]::GetFullPath("$pwd\missing.psm1")
+        $path = [System.IO.Path]::GetFullPath((Join-Path $pwd missing.psm1))
         Test-Path $path | Should -BeFalse
         Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
     }
 
     It 'wrongly returns module information instead of $null or error for missing script module under $env:PSModulePath' {
-        $path = [System.IO.Path]::GetFullPath("$psModulePath\missing.psm1")
+        $path = [System.IO.Path]::GetFullPath((Join-Path $psModulePath missing.psm1))
         Test-Path $path | Should -BeFalse
         Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
     }
 
     It 'writes error for missing manifest module' {
-        $path = [System.IO.Path]::GetFullPath("$pwd\missing")
+        $path = [System.IO.Path]::GetFullPath((Join-Path $pwd missing))
         Test-Path $path | Should -BeFalse
         { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
         { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
     }
 
     It 'writes error for missing manifest module under $env:PSModulePath' {
-        $path = [System.IO.Path]::GetFullPath("$psModulePath\missing")
+        $path = [System.IO.Path]::GetFullPath((Join-Path $psModulePath missing))
         Test-Path $path | Should -BeFalse
         { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
         { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
@@ -335,16 +335,16 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
 
         # TODO: This looks like a bug.
         It 'wrongly writes error instead of returning module information for existing script module under $env:PSModulePath using basename' {
-            Test-Path "$psModulePath\loose.psm1" | Should -BeTrue
-            { Get-Module -ListAvailable -Name "$psModulePath\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
-            { Get-Module -ListAvailable -FullyQualifiedName "$psModulePath\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+            Test-Path (Join-Path $psModulePath loose.psm1) | Should -BeTrue
+            { Get-Module -ListAvailable -Name (Join-Path $psModulePath loose) -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+            { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $psModulePath loose) -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
         }
 
         # TODO: This looks like a bug.
         It 'wrongly writes error instead of returning module information for existing script module using basename' {
-            Test-Path "$pwd\loose.psm1" | Should -BeTrue
-            { Get-Module -ListAvailable -Name "$pwd\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
-            { Get-Module -ListAvailable -FullyQualifiedName "$pwd\loose" -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+            Test-Path (Join-Path $pwd loose.psm1) | Should -BeTrue
+            { Get-Module -ListAvailable -Name (Join-Path $pwd loose) -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+            { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $pwd loose) -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
         }
     }
 }
