@@ -81,8 +81,7 @@ steps:
 
         Write-Verbose -Verbose "Setting VSS_NUGET_EXTERNAL_FEED_ENDPOINTS environment variable"
 
-        $vstsCommandString = "vso[task.setvariable variable=VSS_NUGET_EXTERNAL_FEED_ENDPOINTS]$VSS_NUGET_EXTERNAL_FEED_ENDPOINTS"
-        Write-Host "##$vstsCommandString"
+        Write-Host "##vso[task.setvariable variable=VSS_NUGET_EXTERNAL_FEED_ENDPOINTS;issecret=true]$VSS_NUGET_EXTERNAL_FEED_ENDPOINTS"
       }
       else
       {
