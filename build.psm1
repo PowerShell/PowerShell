@@ -2639,7 +2639,14 @@ function Get-DotnetEarlyAccess {
     $fileName | ForEach-Object {
         $destFile = "$DestinationPath/$_"
         Write-Verbose -Verbose "Downloading $_ from $baseUrl/$DOTNET_RUNTIME_VERSION to $destFile"
-        Invoke-WebRequest -Uri "$baseUrl/$DOTNET_RUNTIME_VERSION/$_$DOTNET_PRIVATE_SAS" -OutFile $destFile
+
+        try {
+            Invoke-WebRequest -Uri "$baseUrl/$DOTNET_RUNTIME_VERSION/$_$DOTNET_PRIVATE_SAS" -OutFile $destFile -RetryIntervalSec 5 -MaximumRetryCount 3
+        }
+        catch {
+            Write-Error "Failed to download $_ from $baseUrl/$DOTNET_RUNTIME_VERSION"
+            throw
+        }
     }
 }
 
