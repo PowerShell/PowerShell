@@ -283,7 +283,7 @@ function Start-PSPackage {
         } elseif ($Environment.IsMacOS) {
             "osxpkg", "tar"
         } elseif ($Environment.IsWindows) {
-            "zip", "msix"
+            "msi", "msix"
         }
         Write-Warning "-Type was not specified, continuing with $Type!"
     }
