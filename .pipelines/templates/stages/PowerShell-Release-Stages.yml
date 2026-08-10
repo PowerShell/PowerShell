@@ -36,7 +36,13 @@ stages:
       parameters:
         DotnetRuntimeVersion: ${{ parameters.DOTNET_RUNTIME_VERSION }}
         DotnetSdkVersion: ${{ parameters.DOTNET_SDK_VERSION }}
-
+  - ${{ else }}:
+    - job: skip_download_dotnet_early_access
+      displayName: 'Skip early access .NET download'
+      pool:
+        type: windows
+      steps:
+      - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET download.'
 - stage: validateSdk
   displayName: 'Validate SDK'
   dependsOn: [downloadDotnetEarlyAccess]
