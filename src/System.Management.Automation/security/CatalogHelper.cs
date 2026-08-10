@@ -147,6 +147,20 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Emit an advisory warning when a catalog uses a weak (pre-v2 / SHA-1) version.
+        /// Advisory only: by design this does NOT fail validation - Status stays Valid for
+        /// compatibility. Automation should check CatalogInformation.HashAlgorithm to detect
+        /// SHA-1 programmatically.
+        /// </summary>
+        private static void WarnIfLegacyCatalogVersion(string catalogFilePath, int catalogVersion)
+        {
+            if (catalogVersion < 2)
+            {
+                _cmdlet.WriteWarning(StringUtil.Format(CatalogStrings.WeakCatalogHashAlgorithm, catalogFilePath, catalogVersion));
+            }
+        }
+
+        /// <summary>
         /// Generate the Catalog Definition File representing files and folders.
         /// </summary>
         /// <param name="Path">Path of expected output .cdf file.</param>
@@ -330,6 +344,8 @@ namespace System.Management.Automation
         {
             _cmdlet = cmdlet;
             string hashAlgorithm = GetCatalogHashAlgorithm(catalogVersion);
+
+            WarnIfLegacyCatalogVersion(catalogFilePath, catalogVersion);
 
             if (!string.IsNullOrEmpty(hashAlgorithm))
             {
@@ -732,6 +748,8 @@ namespace System.Management.Automation
             int catalogVersion = 0;
             Dictionary<string, string> catalogHashes = GetHashesFromCatalog(catalogFilePath, excludedPatterns, out catalogVersion);
             string hashAlgorithm = GetCatalogHashAlgorithm(catalogVersion);
+
+            WarnIfLegacyCatalogVersion(catalogFilePath, catalogVersion);
 
             if (!string.IsNullOrEmpty(hashAlgorithm))
             {
