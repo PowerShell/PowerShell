@@ -920,7 +920,7 @@ function Switch-PSNugetConfig {
     }
 
     $dotnetSdk = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2'; Name = 'dotnet' }
-    $gallery = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-psgallery/nuget/v2'; Name = 'psgallery' }
+    $gallery = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/powershell-psgallery/nuget/v2'; Name = 'psgallery' }
     $nugetorg = [NugetPackageSource] @{Url = 'https://api.nuget.org/v3/index.json'; Name = 'nuget.org' }
     if ( $Source -eq 'Public') {
         New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/" @extraParams
