@@ -151,7 +151,7 @@
     <value>Catalog version is not valid. We only support catalog version {0} and version {1}.</value>
   </data>
   <data name="WeakCatalogHashAlgorithm" xml:space="preserve">
-    <value>Catalog '{0}' uses version {1}. Catalog version 2 is recommended. Consider regenerating this catalog with -CatalogVersion 2.</value>
+    <value>'{0}' is a version 1 catalog that uses SHA1. Consider regenerating this catalog with -CatalogVersion 2.</value>
   </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
     <value>Unable to open catalog definition file.</value>
