@@ -33,7 +33,13 @@ stages:
       parameters:
         DotnetRuntimeVersion: ${{ parameters.DOTNET_RUNTIME_VERSION }}
         DotnetSdkVersion: ${{ parameters.DOTNET_SDK_VERSION }}
-
+  - ${{ else }}:
+    - job: skip_early_dotnet
+      displayName: 'Skip early access .NET setup'
+      pool:
+        type: windows
+      steps:
+      - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET setup.'
 - stage: mac_package
   displayName: 'macOS Pkg+Sign'
   dependsOn: [EarlyDotnet]
