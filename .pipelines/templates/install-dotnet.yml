@@ -38,7 +38,7 @@ steps:
 
   - task: DownloadPipelineArtifact@2
     displayName: "Download dotnet-packages artifact"
-    condition: or(eq(variables['ISEARLYACCESS'], 'true'), eq(variables['ISEARLYACCESS'], 'True'))
+    condition: eq(variables['ISEARLYACCESS'], 'true')
     inputs:
       artifactName: 'dotnet-packages'
       targetPath: '$(Pipeline.Workspace)/dotnet-packages'
