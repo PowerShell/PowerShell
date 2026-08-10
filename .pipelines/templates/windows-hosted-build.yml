@@ -2,6 +2,7 @@ parameters:
   Architecture: 'x64'
   BuildConfiguration: 'release'
   JobName: 'build_windows'
+  dotnetArch: 'win-x64'
 
 jobs:
 - job: build_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
@@ -62,6 +63,8 @@ jobs:
       Language: csharp
 
   - template: /.pipelines/templates/install-dotnet.yml@self
+    parameters:
+      architecture: ${{ parameters.dotnetArch }}
 
   - pwsh: |
       $runtime = switch ($env:Architecture)
