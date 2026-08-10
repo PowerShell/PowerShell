@@ -280,7 +280,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     }
 }
 
-Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
+Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
     BeforeAll {
         $psModulePath = ($env:PSModulePath -split [System.IO.Path]::PathSeparator)[0]
     }
