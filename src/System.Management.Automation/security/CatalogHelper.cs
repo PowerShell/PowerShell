@@ -147,14 +147,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Emit an advisory warning when a catalog uses a weak (pre-v2 / SHA-1) version.
-        /// Advisory only: by design this does NOT fail validation - Status stays Valid for
-        /// compatibility. Automation should check CatalogInformation.HashAlgorithm to detect
-        /// SHA-1 programmatically.
+        /// Emit an advisory warning when using legacy catalog version 1 (SHA-1).
+        /// Advisory only: does not fail catalog generation/validation for compatibility.
+        /// Automation validating catalogs can check CatalogInformation.HashAlgorithm (Test-FileCatalog -Detailed)
+        /// to detect SHA-1 programmatically.
         /// </summary>
         private static void WarnIfLegacyCatalogVersion(string catalogFilePath, int catalogVersion)
         {
-            if (catalogVersion < 2)
+            if (catalogVersion == 1)
             {
                 _cmdlet.WriteWarning(StringUtil.Format(CatalogStrings.WeakCatalogHashAlgorithm, catalogFilePath, catalogVersion));
             }
