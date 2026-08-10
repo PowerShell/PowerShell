@@ -1632,8 +1632,24 @@ namespace System.Management.Automation
 
             _currentMatch = null;
             _currentState = SearchState.SearchingAliases;
-            _matchingAlias = null;
-            _matchingCmdlet = null;
+
+            if (_matchingAlias != null)
+            {
+                _matchingAlias.Dispose();
+                _matchingAlias = null;
+            }
+
+            if (_matchingCmdlet != null)
+            {
+                _matchingCmdlet.Dispose();
+                _matchingCmdlet = null;
+            }
+
+            if (_matchingFunctionEnumerator != null)
+            {
+                _matchingFunctionEnumerator.Dispose();
+                _matchingFunctionEnumerator = null;
+            }
         }
 
         internal CommandOrigin CommandOrigin
