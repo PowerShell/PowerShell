@@ -127,53 +127,6 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// The directory path where the currently running pwsh executable is located.
-        /// </summary>
-        private static readonly string _psExeHome;
-
-        static CommandDiscovery()
-        {
-#if UNIX
-            string pwshName = "pwsh";
-#else
-            string pwshName = "pwsh.exe";
-#endif
-
-            string processPath = Environment.ProcessPath;
-            if (pwshName.Equals(Path.GetFileName(processPath), StringComparison.Ordinal))
-            {
-                // Use 'Environment.ProcessPath' if it points to 'pwsh.exe' or 'pwsh'.
-                _psExeHome = Path.GetDirectoryName(processPath);
-                return;
-            }
-
-            // We need to handle 3 cases here:
-            //  - We are running from PowerShell dotnet global tool ('ProcessPath' points to 'dotnet' in this case).
-            //  - We are running from an application that hosts PowerShell via NuGet packages.
-            //  - Rare case where we are running from pwsh, but 'ProcessPath' somehow doesn't point to it.
-            _psExeHome = Utils.DefaultPowerShellAppBase;
-
-            // Check if the pwsh executable exists in pshome.
-            string exePath = Path.Combine(_psExeHome, pwshName);
-            if (!File.Exists(exePath))
-            {
-                // This means PowerShell is being hosted via NuGet packages.
-                _psExeHome = null;
-                return;
-            }
-
-            string dotnetToolPathSegment = string.Format("{0}.store{0}powershell{0}", Path.DirectorySeparatorChar);
-            int index = _psExeHome.IndexOf(dotnetToolPathSegment, StringComparison.Ordinal);
-            if (index > 0)
-            {
-                // We're running PowerShell global tool. In this case the real entry executable should be the 'pwsh'
-                // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', because
-                // the pwsh executable under $PSHOME is an x86-64 binary that won't work on non-x86/64 platforms.
-                _psExeHome = _psExeHome[0..index];
-            }
-        }
-
-        /// <summary>
         /// Default constructor...
         /// </summary>
         /// <exception cref="ArgumentNullException">
@@ -1257,36 +1210,17 @@ namespace System.Management.Automation
                 _pathCacheKey = null;
                 _cachedLookupPaths = null;
 
-                bool isPwshExe = _psExeHome is not null;
-                discoveryTracer.WriteLine(isPwshExe
-                    ? "PWSH scenario: Prepend PWSH-EXE home directory to searching paths."
-                    : "NuGet Package scenario: Use PATH as is.");
-
                 if (path is null)
                 {
                     // Cache an empty collection when PATH is null (unset).
                     _cachedLookupPaths = new LookupPathCollection();
-                    if (isPwshExe)
-                    {
-                        // Add '_psExeHome' when we are executing from a pwsh executable.
-                        _cachedLookupPaths.Add(_psExeHome);
-                    }
                 }
                 else
                 {
                     // Tokenize the path and cache it
                     _pathCacheKey = path;
                     string[] tokenizedPath = _pathCacheKey.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
-
-                    List<string> pathList = new(capacity: tokenizedPath.Length + 1);
-                    ReadOnlySpan<char> psHomeSpan = default;
-
-                    if (isPwshExe)
-                    {
-                        // Add '_psExeHome' to the front of the path list so that calling `pwsh` within `pwsh` always starts the same running version.
-                        pathList.Add(_psExeHome);
-                        psHomeSpan = _psExeHome.AsSpan().TrimEnd(Path.DirectorySeparatorChar);
-                    }
+                    List<string> pathList = new(capacity: tokenizedPath.Length);
 
                     foreach (string directory in tokenizedPath)
                     {
@@ -1303,17 +1237,7 @@ namespace System.Management.Automation
                             }
                             else if (tempDir[1] == Path.DirectorySeparatorChar)
                             {
-                                tempDir = $"{homeDir}{Path.DirectorySeparatorChar}{tempDir.Substring(2)}";
-                            }
-                        }
-
-                        // Skip the duplicate path if it is the same as '_psExeHome' and we are running from a pwsh executable.
-                        if (isPwshExe && tempDir.Length >= psHomeSpan.Length)
-                        {
-                            ReadOnlySpan<char> tempDirSpan = tempDir.AsSpan().TrimEnd(Path.DirectorySeparatorChar);
-                            if (psHomeSpan.Equals(tempDirSpan, StringComparison.OrdinalIgnoreCase))
-                            {
-                                continue;
+                                tempDir = $"{homeDir}{Path.DirectorySeparatorChar}{tempDir.AsSpan(2)}";
                             }
                         }
 
