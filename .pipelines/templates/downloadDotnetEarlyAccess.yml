@@ -1,0 +1,59 @@
+parameters:
+- name: DotnetRuntimeVersion
+  type: string
+- name: DotnetSdkVersion
+  type: string
+
+jobs:
+- job: download_dotnet_early_access
+  displayName: Download DotNet Early Access
+  variables:
+  - group: dotnet-early-access
+  - name: DOTNET_RUNTIME_VERSION
+    value: ${{ parameters.DotnetRuntimeVersion }}
+  - name: DOTNET_SDK_VERSION
+    value: ${{ parameters.DotnetSdkVersion }}
+  - name: destinationPath
+    value: '$(Build.ArtifactStagingDirectory)/pkgs'
+
+  pool:
+    name: PowerShell1ES
+    type: windows
+    isCustom: true
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - pwsh: |
+      Get-ChildItem Env: | Out-String -Width 9999 -Stream | Write-Verbose -Verbose
+    displayName: Capture environment
+
+  - task: AzurePowerShell@5
+    inputs:
+      azureSubscription: powershell-net-early-access
+      azurePowerShellVersion: LatestVersion
+      ScriptType: InlineScript
+      pwsh: true
+      inline: |
+        $DOTNET_PRIVATE_SAS = Get-AzKeyVaultSecret -VaultName $env:DOTNET_AZ_KV_NAME -Name $env:DOTNET_AZ_SECRET_NAME -AsPlainText
+
+        Write-Verbose -Message "DOTNET_PRIVATE_SAS acquired" -Verbose
+
+        Import-Module "$env:BUILD_SOURCESDIRECTORY/build.psm1" -Force
+
+        if (-not (Test-Path '$(destinationPath)'))
+        {
+            New-Item -ItemType Directory -Path '$(destinationPath)' -Force -Verbose | Out-Null
+        }
+
+        Get-DotnetEarlyAccess -DestinationPath '$(destinationPath)' -Architecture all -DOTNET_PRIVATE_SAS $DOTNET_PRIVATE_SAS
+
+        Get-ChildItem -Path '$(destinationPath)' -Recurse | ForEach-Object {
+            Write-Verbose -verbose "Uploading $($_.FullName) to 'dotnet-packages'"
+            Write-Host "##vso[artifact.upload containerfolder=dotnet-packages;artifactname=dotnet-packages]$($_.FullName)"
+        }
+
+    displayName: 'Download DotNet Early Access'
