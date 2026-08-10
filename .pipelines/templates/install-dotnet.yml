@@ -37,14 +37,13 @@ steps:
       ob_restore_phase: ${{ parameters.ob_restore_phase }}
 
   - task: DownloadPipelineArtifact@2
+    displayName: "Download dotnet-packages artifact"
+    condition: or(eq(variables['ISEARLYACCESS'], 'true'), eq(variables['ISEARLYACCESS'], 'True'))
     inputs:
       artifactName: 'dotnet-packages'
       targetPath: '$(Pipeline.Workspace)/dotnet-packages'
-      displayName: "Download dotnet-packages artifact"
-      condition: eq(variables['ISEARLYACCESS'], 'true')
     env:
       ob_restore_phase: ${{ parameters.ob_restore_phase }}
-
   - pwsh: |
       $arch = '${{ parameters.architecture }}'
       $sdkFilePattern = "dotnet-sdk-*-${arch}.*"
