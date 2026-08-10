@@ -302,15 +302,23 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
     It 'writes error for missing manifest module' {
         $path = [System.IO.Path]::GetFullPath((Join-Path $pwd missing))
         Test-Path $path | Should -BeFalse
-        { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
-        { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+
+        $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+        $err = { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
     }
 
     It 'writes error for missing manifest module under $env:PSModulePath' {
         $path = [System.IO.Path]::GetFullPath((Join-Path $psModulePath missing))
         Test-Path $path | Should -BeFalse
-        { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
-        { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+
+        $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+        $err = { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
     }
 
     Context 'Locating existing script module' {
@@ -336,15 +344,23 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
         # TODO: This looks like a bug.
         It 'wrongly writes error instead of returning module information for existing script module under $env:PSModulePath using basename' {
             Test-Path (Join-Path $psModulePath loose.psm1) | Should -BeTrue
-            { Get-Module -ListAvailable -Name (Join-Path $psModulePath loose) -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
-            { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $psModulePath loose) -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+
+            $err = { Get-Module -ListAvailable -Name (Join-Path $psModulePath loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+            $err = { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $psModulePath loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
         }
 
         # TODO: This looks like a bug.
         It 'wrongly writes error instead of returning module information for existing script module using basename' {
             Test-Path (Join-Path $pwd loose.psm1) | Should -BeTrue
-            { Get-Module -ListAvailable -Name (Join-Path $pwd loose) -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
-            { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $pwd loose) -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+
+            $err = { Get-Module -ListAvailable -Name (Join-Path $pwd loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+            $err = { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $pwd loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
         }
     }
 }
