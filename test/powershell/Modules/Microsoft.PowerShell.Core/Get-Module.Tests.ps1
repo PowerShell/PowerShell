@@ -282,7 +282,13 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
     BeforeAll {
-        $psModulePath = ($env:PSModulePath -split [System.IO.Path]::PathSeparator)[0]
+        $oldPSModulePath = $env:PSModulePath
+        $psModulePath = New-Item -ItemType Directory (Join-Path $TestDrive modules)
+        $env:PSModulePath = $psModulePath
+    }
+
+    AfterAll {
+        $env:PSModulePath = $oldPSModulePath
     }
 
     It 'wrongly returns module information instead of $null or error for missing script module' {
