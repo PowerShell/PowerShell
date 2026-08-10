@@ -784,10 +784,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.Archive/*.cat",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Modules/Microsoft.PowerShell.Archive/*.ps?1",
     "FileType": "NonProduct"
   },
@@ -881,6 +877,10 @@
   },
   {
     "Pattern": "Modules/ThreadJob/*.psd1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.Archive\\.signature.p7s",
     "FileType": "NonProduct"
   },
   {
