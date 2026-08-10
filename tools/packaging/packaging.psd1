@@ -10,8 +10,6 @@
         'Compress-ExePackageEngine'
         'Expand-ExePackageEngine'
         'Expand-PSSignedBuild'
-        'Invoke-AzDevOpsLinuxPackageBuild'
-        'Invoke-AzDevOpsLinuxPackageCreation'
         'New-DotnetSdkContainerFxdPackage'
         'New-ExePackage'
         'Start-PrepForGlobalToolNupkg'
