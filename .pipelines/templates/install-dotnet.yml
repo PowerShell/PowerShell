@@ -32,7 +32,7 @@ steps:
 
     displayName: 'Install dotnet SDK'
     workingDirectory: $(RepoRoot)
-    condition: ne(variables['ISEARLYACCESS'], 'true')
+    condition: and(ne(variables['ISEARLYACCESS'], 'true'), ne(variables['ISEARLYACCESS'], 'True'))
     env:
       ob_restore_phase: ${{ parameters.ob_restore_phase }}
 
