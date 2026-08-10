@@ -29,6 +29,25 @@ parameters:
     displayName: Debugging - Enable CodeQL and set cadence to 1 hour
     type: boolean
     default: false
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: EarlyAccessFeed
+    displayName: Early Access Feed
+    type: string
+    default: 'net10'
+    values:
+      - 'net8'
+      - 'net9'
+      - 'net10'
+  - name: DOTNET_RUNTIME_VERSION
+    displayName: Runtime version of early access build
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    displayName: SDK version of early access build
+    type: string
+    default: ' '
 
 name: bins-$(BUILD.SOURCEBRANCHNAME)-prod-$(Build.BuildId)
 
@@ -52,6 +71,8 @@ variables:
       SKIP_SIGNING: ${{ parameters.SKIP_SIGNING }}
       ENABLE_MSBUILD_BINLOGS: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
       FORCE_CODEQL: ${{ parameters.FORCE_CODEQL }}
+      EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
 
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
@@ -96,3 +117,7 @@ extends:
         RUN_WINDOWS: ${{ parameters.RUN_WINDOWS }}
         RUN_TEST_AND_RELEASE: ${{ parameters.RUN_TEST_AND_RELEASE }}
         OfficialBuild: true
+        DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+        DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+        EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
+        IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
