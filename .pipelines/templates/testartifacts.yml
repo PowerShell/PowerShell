@@ -33,6 +33,8 @@ jobs:
       ob_restore_phase: true
 
   - template: /.pipelines/templates/install-dotnet.yml@self
+    parameters:
+      architecture: 'win-x64'
 
   - pwsh: |
       New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force
@@ -96,6 +98,8 @@ jobs:
       ob_restore_phase: true
 
   - template: /.pipelines/templates/install-dotnet.yml@self
+    parameters:
+      architecture: 'linux-x64'
 
   - pwsh: |
       New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force

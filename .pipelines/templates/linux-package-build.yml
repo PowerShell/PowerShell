@@ -3,6 +3,7 @@ parameters:
   signedDrop: 'drop_linux_sign_linux_x64'
   packageType: deb
   jobName: 'deb'
+  dotnetArch: 'linux-x64'
 
 jobs:
 - job: ${{ parameters.jobName }}
@@ -95,6 +96,8 @@ jobs:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - template: /.pipelines/templates/install-dotnet.yml@self
+    parameters:
+      architecture: ${{ parameters.dotnetArch }}
 
   - pwsh: |
       $packageType = '$(PackageType)'

@@ -1,5 +1,6 @@
 parameters:
   buildArchitecture: 'x64'
+  dotnetArch: 'osx-x64'
 jobs:
 - job: build_macOS_${{ parameters.buildArchitecture }}
   displayName: Build macOS ${{ parameters.buildArchitecture }}
@@ -39,6 +40,8 @@ jobs:
 
     ## We cross compile for arm64, so the arch is always x64
   - template: /.pipelines/templates/install-dotnet.yml@self
+    parameters:
+      architecture: ${{ parameters.dotnetArch }}
 
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
