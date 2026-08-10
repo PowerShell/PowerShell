@@ -156,7 +156,7 @@ namespace System.Management.Automation
         {
             if (catalogVersion == 1)
             {
-                _cmdlet.WriteWarning(StringUtil.Format(CatalogStrings.WeakCatalogHashAlgorithm, catalogFilePath, catalogVersion));
+                _cmdlet.WriteWarning(StringUtil.Format(CatalogStrings.WeakCatalogHashAlgorithm, catalogFilePath));
             }
         }
 
