@@ -1,5 +1,9 @@
 # Preview Changelog
 
+## [7.7.0-preview.4]
+
+[7.7.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.7.0-preview.3...v7.7.0-preview.4
+
 ## [7.7.0-preview.3]
 
 ### General Cmdlet Updates and Fixes
