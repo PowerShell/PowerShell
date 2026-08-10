@@ -282,7 +282,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
 Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
     BeforeAll {
-        $psModulePath = ($env:PSModulePath -split ';')[0]
+        $psModulePath = ($env:PSModulePath -split [System.IO.Path]::PathSeparator)[0]
     }
 
     It 'wrongly returns module information instead of $null or error for missing script module' {
@@ -315,7 +315,7 @@ Describe 'Get-Module -ListAvaiable -(FullyQualifiedName|Name) <path> when argume
 
     Context 'Locating existing script module' {
         BeforeAll {
-            $psModulePath = ($env:PSModulePath -split ';')[0]
+            $psModulePath = ($env:PSModulePath -split [System.IO.Path]::PathSeparator)[0]
 
             # Script modules
             #
