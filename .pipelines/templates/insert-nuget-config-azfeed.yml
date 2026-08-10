@@ -68,7 +68,7 @@ steps:
             'net10' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-10-early-access/nuget/v3/index.json' }
             default { throw "Unknown early access feed URL: $earlyAccessFeed" }
         }
-      $galleryRepoUri = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/powershell-psgallery/nuget/v2'
+      $galleryRepoUri = 'https://www.powershellgallery.com/api/v2'
 
       Write-Verbose -Verbose "ADORepoUri == $ADORepoUri"
 
