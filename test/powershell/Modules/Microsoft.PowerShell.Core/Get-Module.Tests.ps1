@@ -338,13 +338,13 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             New-Item -ItemType File -Force $inPSModulePathLooseFilePath > $null
             #
             # Under $pwd
-            $inPSModulePathLooseFilePathPwd = Join-Path $pwd 'loose.psm1'
-            New-Item -ItemType File -Force $inPSModulePathLooseFilePathPwd > $null
+            $inCwdLooseFilePath = Join-Path $pwd 'loose.psm1'
+            New-Item -ItemType File -Force $inCwdLooseFilePath > $null
         }
 
         AfterAll {
             Remove-Item $inPSModulePathLooseFilePath
-            Remove-Item $inPSModulePathLooseFilePathPwd
+            Remove-Item $inCwdLooseFilePath
         }
 
         # TODO: This looks like a bug.
