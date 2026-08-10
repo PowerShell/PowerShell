@@ -288,4 +288,10 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         }
     }
 
+    Context "MSRC case fixes" {
+        It "Injection in 'Verb' is invalid should be blocked" @ItSkipOrPending {
+            $invalid_verb_module = Join-Path -Path $PSScriptRoot -ChildPath assets -AdditionalChildPath invalid_verb
+            { Import-Module $invalid_verb_module } | Should -Throw -ErrorId "System.Xml.XmlException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+        }
+    }
 }

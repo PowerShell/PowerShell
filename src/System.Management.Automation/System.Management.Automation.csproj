@@ -78,6 +78,8 @@
     <Compile Remove="gen\ErrorPackageRemoting.cs" />
     <Compile Remove="gen\EventResource.cs" />
 
+    <EmbeddedResource Include="cimSupport\cmdletization\xml\cmdlets-over-objects.xsd" LogicalName="cmdlets-over-objects.xsd" />
+
     <EmbeddedResource Remove="resources\CoreMshSnapinResources.resx" />
     <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
   </ItemGroup>
