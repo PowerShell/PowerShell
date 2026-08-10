@@ -329,7 +329,7 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
 
     Context 'Locating existing script module' {
         BeforeAll {
-            $psModulePath = ($env:PSModulePath -split [System.IO.Path]::PathSeparator)[0]
+            $psModulePath = $env:PSModulePath
 
             # Script modules
             #
