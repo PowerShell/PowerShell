@@ -427,6 +427,13 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         }
 
         Context 'Resolves to loose module under $env:PSModule' {
+            # Unclear whether only manifest modules are discovered under $env:PSModulePath.
+            It 'wrongly/correctly returns $null instead of module information' {
+                $path = Join-Path $env:PSModulePath existing-loose.xxx.psm1
+                Test-Path $path | Should -BeTrue
+
+                Get-Module -ListAvailable -FullyQualifiedName existing-loose.xxx | Should -Be $null
+            }
         }
     }
 }
