@@ -196,6 +196,8 @@ jobs:
       }
 
       if ($packageTypes -contains 'zip' -or $packageTypes -like 'fxdependent*' -or $packageTypes -like 'min-size*') {
+        $zipPkgNameFilter = "powershell-*.zip"
+        $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
         Write-Verbose -Verbose "signed zipPkgPath: $zipPkgPath"
         Copy-Item -Path $zipPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
       }
