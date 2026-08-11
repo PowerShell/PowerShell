@@ -412,6 +412,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             }
         }
     }
+
+    Context 'When path value has unknown extension, such as ''name.xxx''' {
+    }
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is home-rooted' -Tags "CI" {
