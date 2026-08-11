@@ -398,6 +398,61 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
     }
 
     Context 'When argument contains wildcards' {
+        BeforeAll {
+            # Manifest modules under $env:PSModulePath
+            #
+            # Versioned, manifest
+            $inPSModulePathWithManifestFileName = 'existing'
+            $inPSModulePatWithManifestDirectory = Join-Path $env:PSModulePath $inPSModulePathWithManifestFileName '0.0.1'
+            $inPSModulePathWithManifestFilePath = Join-Path $inPSModulePatWithManifestDirectory "$inPSModulePathWithManifestFileName.psm1"
+            New-Item -ItemType File -Force $inPSModulePathWithManifestFilePath > $null
+            New-ModuleManifest -Path (Join-Path $inPSModulePatWithManifestDirectory "$inPSModulePathWithManifestFileName.psd1")
+            #
+            # Versioned, manifest
+            $inPSModulePathWithManifestFileName2 = 'existing2'
+            $inPSModulePatWithManifestDirectory2 = Join-Path $env:PSModulePath $inPSModulePathWithManifestFileName2 '0.0.1'
+            $inPSModulePathWithManifestFilePath2 = Join-Path $inPSModulePatWithManifestDirectory2 "$inPSModulePathWithManifestFileName2.psm1"
+            New-Item -ItemType File -Force $inPSModulePathWithManifestFilePath2 > $null
+            New-ModuleManifest -Path (Join-Path $inPSModulePatWithManifestDirectory2 "$inPSModulePathWithManifestFileName2.psd1")
+
+            # Manifest modules under $pwd
+            #
+            # Versioned, manifest
+            $inCwdhWithManifestFileName = 'existing'
+            $inCwdWithManifestDirectory = Join-Path $pwd $inCwdhWithManifestFileName '0.0.1'
+            $inCwdWithManifestFilePath = Join-Path $inCwdWithManifestDirectory "$inCwdhWithManifestFileName.psm1"
+            New-Item -ItemType File -Force $inCwdWithManifestFilePath > $null
+            New-ModuleManifest -Path (Join-Path $inCwdWithManifestDirectory "$inCwdhWithManifestFileName.psd1")
+            #
+            # Versioned, manifest
+            $inCwdWithManifestFileName2 = 'existing2'
+            $inCwdWithManifestDirectory2 = Join-Path $pwd $inCwdWithManifestFileName2 '0.0.1'
+            $inCwdWithManifestFilePath2 = Join-Path $inCwdWithManifestDirectory2 "$inCwdWithManifestFileName2.psm1"
+            New-Item -ItemType File -Force $inCwdWithManifestFilePath2 > $null
+            New-ModuleManifest -Path (Join-Path $inCwdWithManifestDirectory2 "$inCwdWithManifestFileName2.psd1")
+
+            # Script modules
+            #
+            # Under $env:PSModulePath. TODO: Is this a supported scenario?
+            $inPSModulePathLooseFilePath = Join-Path $env:PSModulePath 'loose.psm1'
+            New-Item -ItemType File -Force $inPSModulePathLooseFilePath > $null
+            #
+            #
+            # Under $pwd
+            $inCwdFilePath = Join-Path $pwd 'loose.psm1'
+            New-Item -ItemType File -Force $inCwdFilePath > $null
+        }
+
+        AfterAll {
+            Remove-Item -Force -Recurse $inPSModulePatWithManifestDirectory
+            Remove-Item -Force -Recurse $inPSModulePatWithManifestDirectory2
+
+            Remove-Item -Force -Recurse $inCwdWithManifestDirectory
+            Remove-Item -Force -Recurse $inCwdWithManifestDirectory2
+
+            Remove-Item $inPSModulePathLooseFilePath
+            Remove-Item $inCwdFilePath
+        }
     }
 }
 
