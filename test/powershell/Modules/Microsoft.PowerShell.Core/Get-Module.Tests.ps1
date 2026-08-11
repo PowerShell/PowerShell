@@ -439,6 +439,16 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             $actual = Get-Module -ListAvailable -FullyQualifiedName '..\existing*'
             $actual | Should -Be $null
         }
+
+        It 'returns module information for existing script module' {
+            $actual = Get-Module -ListAvailable -Name '.\loose*'
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly ([System.IO.Path]::GetFullPath('.\loose.psm1'))
+
+            $actual = Get-Module -ListAvailable -FullyQualifiedName '..\loose*'
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly ([System.IO.Path]::GetFullPath('..\loose.psm1'))
+        }
     }
 }
 
