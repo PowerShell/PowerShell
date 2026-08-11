@@ -100,9 +100,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      $noExeRuntimes = @('fxdependent', 'fxdependentWinDesktop', 'minsize')
-
-      if ($runtime -in $noExeRuntimes) {
+      if ($runtime -notin @('x64', 'x86', 'arm64')) {
         Write-Verbose -Verbose "No EXE generated for $runtime"
         return
       }
@@ -140,9 +138,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      $noExeRuntimes = @('fxdependent', 'fxdependentWinDesktop', 'minsize')
-
-      if ($runtime -in $noExeRuntimes) {
+      if ($runtime -notin @('x64', 'x86', 'arm64')) {
         Write-Verbose -Verbose "No EXE generated for $runtime"
         return
       }
