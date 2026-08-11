@@ -457,6 +457,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
                 $actual = Get-Module -ListAvailable -FullyQualifiedName ignore*
                 $actual | Should -Be $null
             }
+
+            Context 'Resolves to existing script modules' {
+            }
         }
     }
 }
