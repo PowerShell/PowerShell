@@ -118,147 +118,147 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="VariableBreakpointString" xml:space="preserve">
-    <value>Variable breakpoint on '${0}' ({1} access)</value>
+    <value>'${0}' üzerinde değişken kesme noktası ({1} erişimi)</value>
   </data>
   <data name="VariableScriptBreakpointString" xml:space="preserve">
-    <value>Variable breakpoint on '{0}:${1}' ({2} access)</value>
+    <value>'{0}:${1}' üzerinde değişken kesme noktası ({2} erişimi)</value>
   </data>
   <data name="LineBreakpointString" xml:space="preserve">
-    <value>Line breakpoint on '{0}:{1}'</value>
+    <value>'{0}:{1}' üzerinde satır kesme noktası</value>
   </data>
   <data name="StatementBreakpointString" xml:space="preserve">
-    <value>Line breakpoint on '{0}:{1}, {2}'</value>
+    <value>'{0}:{1}, {2}' üzerinde satır kesme noktası</value>
   </data>
   <data name="CommandBreakpointString" xml:space="preserve">
-    <value>Command breakpoint on '{0}'</value>
+    <value>'{0}' üzerinde komut kesme noktası</value>
   </data>
   <data name="CommandScriptBreakpointString" xml:space="preserve">
-    <value>Command breakpoint on '{0}:{1}'</value>
+    <value>'{0}:{1}' üzerinde komut kesme noktası</value>
   </data>
   <data name="WarningBreakpointWillNotBeHit" xml:space="preserve">
-    <value>Breakpoint {0} will not be hit</value>
+    <value>{0} kesme noktasına isabet edilmeyecek</value>
   </data>
   <data name="StepHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Single step (step into functions, scripts, etc.)</value>
+    <value> {0}, {1,-16} Tek adım (işlevlere, betiklere vb. gir)</value>
   </data>
   <data name="StepOverHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Step to next statement (step over functions, scripts, etc.)</value>
+    <value> {0}, {1,-16} Sonraki deyime geç (işlevlerin, betiklerin vb. üzerinden adımla)</value>
   </data>
   <data name="StepOutHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Step out of the current function, script, etc.</value>
+    <value> {0}, {1,-16} Geçerli işlevin, betiğin vb. dışına çık.</value>
   </data>
   <data name="ContinueHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Continue operation</value>
+    <value> {0}, {1,-16} İşlemi sürdür</value>
   </data>
   <data name="StopHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Stop operation and exit the debugger</value>
+    <value> {0}, {1,-16} İşlemi durdur ve hata ayıklayıcıdan çık</value>
   </data>
   <data name="GetStackTraceHelp" xml:space="preserve">
-    <value> {0}, Get-PSCallStack Display call stack</value>
+    <value> {0}, Get-PSCallStack Çağrı yığınını görüntüle</value>
   </data>
   <data name="ListHelp" xml:space="preserve">
-    <value> {0}, {1,-16} List source code for the current script.  </value>
+    <value> {0}, {1,-16} Geçerli betik için kaynak kodu listele.  </value>
   </data>
   <data name="AdditionalListHelp1" xml:space="preserve">
-    <value>                     Use "list" to start from the current line, "list &lt;m&gt;"  </value>
+    <value>                     Geçerli satırdan başlamak için "list" kullanın, "list &lt;m&gt;"  </value>
   </data>
   <data name="AdditionalListHelp2" xml:space="preserve">
-    <value>                     to start from line &lt;m&gt;, and "list &lt;m&gt; &lt;n&gt;" to list &lt;n&gt; </value>
+    <value>                     &lt;m&gt; satırından başlamak için ve &lt;n&gt; öğesini listelemek için "list &lt;m&gt; &lt;n&gt;" </value>
   </data>
   <data name="AdditionalListHelp3" xml:space="preserve">
-    <value>                     lines starting from line &lt;m&gt;</value>
+    <value>                     &lt;m&gt; satırından başlayarak</value>
   </data>
   <data name="EnterHelp" xml:space="preserve">
-    <value> &lt;enter&gt;             Repeat last command if it was {0}, {1} or {2}</value>
+    <value> &lt;enter&gt;             Son komut {0}, {1} veya {2} ise tekrarla</value>
   </data>
   <data name="HelpCommandHelp" xml:space="preserve">
-    <value> {0}, {1,-16} displays this help message.</value>
+    <value> {0}, {1,-16} bu yardım iletisini görüntüler.</value>
   </data>
   <data name="PromptHelp" xml:space="preserve">
-    <value>For instructions about how to customize your debugger prompt, type "help about_prompt".</value>
+    <value>Hata ayıklayıcı isteminizi özelleştirmeyle ilgili yönergeler için "help about_prompt" yazın.</value>
   </data>
   <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
     <value>
-The current session does not support debugging; operation will continue.
+Geçerli oturum hata ayıklamayı desteklemiyor; işlem devam edecek.
 
 </value>
   </data>
   <data name="LocationFormat" xml:space="preserve">
-    <value>{0}: line {1}</value>
+    <value>{0}: satır {1}</value>
   </data>
   <data name="NoSourceCode" xml:space="preserve">
-    <value>There is no source code available.</value>
+    <value>Kullanılabilir kaynak kodu yok.</value>
   </data>
   <data name="BadStartFormat" xml:space="preserve">
-    <value>The starting line must be a positive integer no greater than {0}</value>
+    <value>Başlangıç satırı, {0} değerinden büyük olmayan pozitif bir tam sayı olmalıdır</value>
   </data>
   <data name="BadCountFormat" xml:space="preserve">
-    <value>The line count must be a positive integer.</value>
+    <value>Satır sayısı pozitif bir tamsayı olmalıdır.</value>
   </data>
   <data name="NoFile" xml:space="preserve">
-    <value>&lt;No file&gt;</value>
+    <value>&lt;Dosya yok&gt;</value>
   </data>
   <data name="StackTraceFormat" xml:space="preserve">
-    <value>at {0}, {1}: line {2}</value>
+    <value>{0} konumunda, {1}: satır {2}</value>
   </data>
   <data name="CannotProcessDebuggerCommandNotStopped" xml:space="preserve">
-    <value>The debugger cannot process commands unless it is in the Stopped state.</value>
+    <value>Hata ayıklayıcı, Durduruldu durumunda olmadığı sürece komutları işleyemez.</value>
   </data>
   <data name="CannotSetDebuggerAction" xml:space="preserve">
-    <value>SetDebugAction is not implemented for the local script debugger.</value>
+    <value>SetDebugAction yerel betik hata ayıklayıcısı için uygulanmadı.</value>
   </data>
   <data name="CannotSetRemoteDebuggerAction" xml:space="preserve">
-    <value>The debugger cannot set a resume action because the debugger in the remote session is not in a Stopped state.</value>
+    <value>Uzak oturumdaki hata ayıklayıcı Durduruldu durumunda olmadığından, hata ayıklayıcısı bir sürdürme eylemi ayarlayamıyor.</value>
   </data>
   <data name="CannotStartJobDebuggingDebuggerBusy" xml:space="preserve">
-    <value>The job cannot be debugged because the debugger is currently busy.</value>
+    <value>Hata ayıklayıcısı şu anda meşgul olduğundan işte hata ayıklanamıyor.</value>
   </data>
   <data name="NoDebuggableJobsFound" xml:space="preserve">
-    <value>The provided job and all child jobs were examined but no jobs were found that could be debugged.  In order to debug a job or child job the job must support debugging and also be in a running state.</value>
+    <value>Sağlanan iş ve tüm alt işler incelendi ancak hata ayıklanabilecek iş bulunamadı.  Bir iş veya alt işte hata ayıklamak için işin hata ayıklamayı desteklemesi ve çalışır durumda olması gerekir.</value>
   </data>
   <data name="CannotEnableDebuggerSteppingInvalidMode" xml:space="preserve">
-    <value>The debugger cannot be enabled for step mode because the debugger is turned off with debug mode set to None.</value>
+    <value>Hata ayıklayıcı, hata ayıklama modu None olarak ayarlandığında kapalı olduğu için adım modu için etkinleştirilemiyor.</value>
   </data>
   <data name="RunspaceDebuggingDebuggerBusy" xml:space="preserve">
-    <value>The Runspace cannot be debugged because the host debugger is currently busy.</value>
+    <value>Konak hata ayıklayıcısı şu anda meşgul olduğundan Çalışma alanında hata ayıklanamıyor.</value>
   </data>
   <data name="RunspaceDebuggingDebuggerIsOff" xml:space="preserve">
-    <value>Cannot debug Runspace. The Runspace debugger is currently turned off (DebugMode is 'None').</value>
+    <value>Çalışma alanında hata ayıklanamıyor. Çalışma alanı hata ayıklayıcısı şu anda kapalı (DebugMode değeri 'None').</value>
   </data>
   <data name="RunspaceDebuggingInvalidRunspaceState" xml:space="preserve">
-    <value>Cannot debug a Runspace that is not in the Opened state. This Runspace state is {0}.</value>
+    <value>Açık durumda olmayan bir Çalışma alanında hata ayıklanamıyor. Bu Çalışma alanının durumu {0}.</value>
   </data>
   <data name="RunspaceDebuggingNoRunspaceDebugger" xml:space="preserve">
-    <value>Cannot debug Runspace. The Runspace {0} has no associated debugger.</value>
+    <value>Çalışma alanında hata ayıklanamıyor. Çalışma alanı {0} ile ilişkili bir hata ayıklayıcı yok.</value>
   </data>
   <data name="RemoteServerDebuggerAlreadyPushed" xml:space="preserve">
-    <value>The debugger is already overridden.</value>
+    <value>Hata ayıklayıcı zaten geçersiz kılınmış.</value>
   </data>
   <data name="RemoteServerDebuggerCannotPushSelf" xml:space="preserve">
-    <value>Cannot push a debugger object onto itself.</value>
+    <value>Hata ayıklayıcı nesnesi kendisi üzerine gönderilemez.</value>
   </data>
   <data name="CommandNotSupportedForRemoteUseInServerDebugger" xml:space="preserve">
-    <value>The {0} command is not supported for remote use in the version of PowerShell that is running in the remote runspace.</value>
+    <value>{0} komutu, uzak çalışma alanında çalışan PowerShell sürümünde uzak kullanım için desteklenmiyor.</value>
   </data>
   <data name="NestedRunspaceDebuggerPromptProcessName" xml:space="preserve">
-    <value>Process</value>
+    <value>İşlem</value>
   </data>
   <data name="DetachHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Continue operation and detach the debugger.</value>
+    <value> {0}, {1,-16} İşleme devam et ve hata ayıklayıcıyı ayır.</value>
   </data>
   <data name="InvalidDetachCommand" xml:space="preserve">
-    <value>The debugger detach command is not applicable.  The detach command only applies when debugging jobs and runspaces with the Debug-Job or Debug-Runspace cmdlets.</value>
+    <value>Hata ayıklayıcı ayırma komutu uygulanamaz.  Ayırma komutu yalnızca Debug-Job veya Debug-Runspace cmdlet'leriyle işlerde ve çalışma alanlarında hata ayıklanırken geçerlidir.</value>
   </data>
   <data name="InvalidRunspaceId" xml:space="preserve">
-    <value>Invalid runspace id: {0}</value>
+    <value>Geçersiz çalışma alanı kimliği: {0}</value>
   </data>
   <data name="UnableToGetRunspace" xml:space="preserve">
-    <value>Unable to get Runspace.</value>
+    <value>Çalışma alanı alınamıyor.</value>
   </data>
   <data name="BreakpointOrBreakpointListNotSpecified" xml:space="preserve">
-    <value>Breakpoint or BreakpointList must be specified.</value>
+    <value>Breakpoint veya BreakpointList belirtilmelidir.</value>
   </data>
   <data name="BreakpointListContainedANonBreakpoint" xml:space="preserve">
-    <value>The BreakpointList contained an item that was not a breakpoint.</value>
+    <value>BreakpointList, kesme noktası olmayan bir öğe içeriyordu.</value>
   </data>
 </root>
