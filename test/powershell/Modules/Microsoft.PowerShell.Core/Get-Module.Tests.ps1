@@ -401,6 +401,15 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         }
 
         Context 'Resolves to non-existing loose or versioned module under $env:PSModulePath' {
+            It 'wrongly returns $null instead of error' {
+                $path1 = Join-Path $env:PSModulePath missing.psm1
+                $path2 = Join-Path $env:PSModulePath missing.psm1 *, missing.psm1
+                Test-Path $path1 | Should -BeFalse
+                Test-Path $path2 | Should -BeFalse
+
+                Get-Module -ListAvailable -FullyQualifiedName missing.psm1 | Should -Be $null
+                Get-Module -ListAvailable -Name missing.psm1 | Should -Be $null
+            }
         }
     }
 }
