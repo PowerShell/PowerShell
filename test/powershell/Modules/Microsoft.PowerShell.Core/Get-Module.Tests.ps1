@@ -471,6 +471,18 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             $actual = Get-Module -ListAvailable -FullyQualifiedName (Join-Path $env:PSModulePath 'existing*')
             $actual | Should -Be $null
         }
+
+        It 'returns existing manifest modules when using the -Name parameter' {
+            $moduleManifestPath1 = Join-Path $pwd existing 0.0.1,existing.psd1
+            $moduleManifestPath2 = Join-Path $pwd existing2 0.0.1,existing2.psd1
+            Test-Path $moduleManifestPath1 | Should -BeTrue
+            Test-Path $moduleManifestPath2 | Should -BeTrue
+
+            $actual = Get-Module -ListAvailable -Name (Join-Path $pwd 'existing*')
+            $actual | Should -HaveCount 2
+            $actual[0].Path | Should -BeExactly $moduleManifestPath1
+            $actual[1].Path | Should -BeExactly $moduleManifestPath2
+        }
     }
 }
 
