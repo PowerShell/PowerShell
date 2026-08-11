@@ -100,7 +100,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      if ($runtime -like '*fxdependent*' -or $runtime -like '*minsize*') {
+      if ($runtime -notin @('x64', 'x86', 'arm64')) {
         Write-Verbose -Verbose "No EXE generated for $runtime"
         return
       }
@@ -138,7 +138,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      if ($runtime -like '*fxdependent*' -or $runtime -like '*minsize*') {
+      if ($runtime -notin @('x64', 'x86', 'arm64')) {
         Write-Verbose -Verbose "No EXE generated for $runtime"
         return
       }
