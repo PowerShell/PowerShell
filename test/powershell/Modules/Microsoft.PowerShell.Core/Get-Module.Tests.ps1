@@ -292,6 +292,18 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         Get-Module -ListAvailable -FullyQualifiedName $path1 | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         Get-Module -ListAvailable -FullyQualifiedName $path2 | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
     }
+
+    It 'writes error for missing manifest module' {
+        $path1 = Join-Path . missing
+        $path2 = Join-Path .. missing
+        Test-Path $path1 | Should -BeFalse
+        Test-Path $path2 | Should -BeFalse
+
+        { Get-Module -ListAvailable -Name $path1 -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+        { Get-Module -ListAvailable -Name $path2 -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+        { Get-Module -ListAvailable -FullyQualifiedName $path1 -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+        { Get-Module -ListAvailable -FullyQualifiedName $path2 -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
+    }
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
