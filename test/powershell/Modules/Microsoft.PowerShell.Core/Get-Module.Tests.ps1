@@ -469,6 +469,21 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             }
 
             Context 'Resolves to existing manifest modules' {
+                It 'returns modules' {
+                    $actual = Get-Module -ListAvailable -Name existing*
+                    $actual | Should -HaveCount 4
+                    $actual[0].Name | Should -BeExactly existing
+                    $actual[1].Name | Should -BeExactly existing.psm1
+                    $actual[2].Name | Should -BeExactly existing.xxx
+                    $actual[3].Name | Should -BeExactly existing2
+
+                    $actual = Get-Module -ListAvailable -FullyQualifiedName existing*
+                    $actual | Should -HaveCount 4
+                    $actual[0].Name | Should -BeExactly existing
+                    $actual[1].Name | Should -BeExactly existing.psm1
+                    $actual[2].Name | Should -BeExactly existing.xxx
+                    $actual[3].Name | Should -BeExactly existing2
+                }
             }
         }
     }
