@@ -437,6 +437,14 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         }
 
         Context 'Resolves to manifest module under $env:PSModule' {
+            # Unclear whether only manifest modules are discovered under $env:PSModulePath.
+            It 'returns module information' {
+                $path = Join-Path $env:PSModulePath existing.xxx 0.0.1, existing.xxx.psm1
+                Test-Path $path | Should -BeTrue
+
+                Get-Module -ListAvailable -FullyQualifiedName existing.xxx | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+                Get-Module -ListAvailable -Name existing.xxx | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+            }
         }
     }
 }
