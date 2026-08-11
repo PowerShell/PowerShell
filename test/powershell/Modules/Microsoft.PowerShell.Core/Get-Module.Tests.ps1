@@ -375,6 +375,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             Get-Module -ListAvailable -FullyQualifiedName ignore.psm1 | Should -Be $null
             Get-Module -ListAvailable -Name ignore.psm1 | Should -Be $null
         }
+
+        Context 'Resolves to module under $env:PSModulePath' {
+        }
     }
 }
 
