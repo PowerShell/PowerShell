@@ -1207,10 +1207,10 @@ namespace System.Management.Automation
 
             if (!isPathCacheValid)
             {
-                _pathCacheKey = null;
+                _pathCacheKey = path;
                 _cachedLookupPaths = null;
 
-                if (path is null)
+                if (string.IsNullOrEmpty(path))
                 {
                     // Cache an empty collection when PATH is null (unset).
                     _cachedLookupPaths = new List<string>();
@@ -1218,7 +1218,6 @@ namespace System.Management.Automation
                 else
                 {
                     // Tokenize the path and cache it
-                    _pathCacheKey = path;
                     string[] tokenizedPath = _pathCacheKey.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
                     _cachedLookupPaths = new List<string>(capacity: tokenizedPath.Length);
 
@@ -1227,16 +1226,17 @@ namespace System.Management.Automation
                         string tempDir = directory.Trim();
                         if (tempDir.StartsWith('~'))
                         {
-                            string homeDir = Environment.GetFolderPath(
-                                Environment.SpecialFolder.UserProfile,
-                                Environment.SpecialFolderOption.DoNotVerify);
-
                             if (tempDir.Length is 1)
                             {
-                                tempDir = homeDir;
+                                tempDir = Environment.GetFolderPath(
+                                    Environment.SpecialFolder.UserProfile,
+                                    Environment.SpecialFolderOption.DoNotVerify);
                             }
                             else if (tempDir[1] == Path.DirectorySeparatorChar)
                             {
+                                string homeDir = Environment.GetFolderPath(
+                                    Environment.SpecialFolder.UserProfile,
+                                    Environment.SpecialFolderOption.DoNotVerify);
                                 tempDir = $"{homeDir}{Path.DirectorySeparatorChar}{tempDir.AsSpan(2)}";
                             }
                         }

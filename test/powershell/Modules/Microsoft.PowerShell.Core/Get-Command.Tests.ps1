@@ -311,18 +311,18 @@ Describe "Test relative path in PATH env var" -Tags "CI" {
         $env:PATH = ".${dirSep}tools${pathSep}$env:PATH"
 
         $result = Get-Command "hello.ps1" -ErrorAction silentlycontinue
-        $result | Should -Not -Be $null -Because "CWD is $subDir1, so '.${dirSep}tools' in PATH should be resolved to '$toolsUnderSubDir1', which contains 'hello.ps1'"
+        $result | Should -Not -BeNullOrEmpty -Because "CWD is $subDir1, so '.${dirSep}tools' in PATH should be resolved to '$toolsUnderSubDir1', which contains 'hello.ps1'"
         $result.Path | Should -BeExactly $helloScript
 
         $result = Get-Command "bye.ps1" -ErrorAction silentlycontinue
-        $result | Should -Be $null -Because "'bye.ps1' is not in '$toolsUnderSubDir1'"
+        $result | Should -BeNullOrEmpty -Because "'bye.ps1' is not in '$toolsUnderSubDir1'"
 
         Set-Location $subDir2
         $result = Get-Command "hello.ps1" -ErrorAction silentlycontinue
-        $result | Should -Be $null -Because "CWD is $subDir2, so '.${dirSep}tools' in PATH should be resolved to '$toolsUnderSubDir2', which contains 'bye.ps1'"
+        $result | Should -BeNullOrEmpty -Because "CWD is $subDir2, so '.${dirSep}tools' in PATH should be resolved to '$toolsUnderSubDir2', which contains 'bye.ps1'"
 
         $result = Get-Command "bye.ps1" -ErrorAction silentlycontinue
-        $result | Should -Not -Be $null
+        $result | Should -Not -BeNullOrEmpty
         $result.Path | Should -BeExactly $byeScript
     }
 }
