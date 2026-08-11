@@ -377,6 +377,13 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         }
 
         Context 'Resolves to module under $env:PSModulePath' {
+            # Unclear whether this is correct behavior. Are loose modules allowed under $env:PSModulePath?
+            # Could resolve to:
+            #   - 'existing-loose.psm1' loose module
+            It 'wrongly/correctly returns $null instead of module information for loose module' {
+                Get-Module -ListAvailable -FullyQualifiedName existing-loose.psm1 | Should -Be $null
+                Get-Module -ListAvailable -Name existing-loose.psm1 | Should -Be $null
+            }
         }
     }
 }
