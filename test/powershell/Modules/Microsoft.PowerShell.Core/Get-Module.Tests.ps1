@@ -435,6 +435,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
                 Get-Module -ListAvailable -FullyQualifiedName existing-loose.xxx | Should -Be $null
             }
         }
+
+        Context 'Resolves to manifest module under $env:PSModule' {
+        }
     }
 }
 
