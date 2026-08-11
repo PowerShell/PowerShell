@@ -304,6 +304,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         { Get-Module -ListAvailable -FullyQualifiedName $path1 -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
         { Get-Module -ListAvailable -FullyQualifiedName $path2 -ErrorAction Stop } | Should -Throw -Because '*Update the Name parameter*'
     }
+
+    Context 'Locating existing script module' {
+    }
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
