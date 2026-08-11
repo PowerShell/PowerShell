@@ -369,6 +369,19 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
             $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
         }
+
+        It 'returns module information for existing script module using file name' {
+            $path = Join-Path $pwd loose.psm1
+            Test-Path $path | Should -BeTrue
+
+            $actual = Get-Module -ListAvailable -Name $path
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly $path
+
+            $actual = Get-Module -ListAvailable -FullyQualifiedName $path
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly $path
+        }
     }
 }
 
