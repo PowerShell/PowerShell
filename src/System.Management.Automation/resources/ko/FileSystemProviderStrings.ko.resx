@@ -118,240 +118,240 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvokeItemAction" xml:space="preserve">
-    <value>Invoke Item</value>
+    <value>항목 호출</value>
   </data>
   <data name="InvokeItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>항목: {0}</value>
   </data>
   <data name="RemoveItemActionFile" xml:space="preserve">
-    <value>Remove File</value>
+    <value>파일 제거</value>
   </data>
   <data name="RemoveItemActionDirectory" xml:space="preserve">
-    <value>Remove Directory</value>
+    <value>디렉터리 제거</value>
   </data>
   <data name="CopyItemActionFile" xml:space="preserve">
-    <value>Copy File</value>
+    <value>파일 복사</value>
   </data>
   <data name="CopyItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>항목: {0} 대상: {1}</value>
   </data>
   <data name="CopyItemActionDirectory" xml:space="preserve">
-    <value>Copy Directory</value>
+    <value>디렉터리 복사</value>
   </data>
   <data name="RenameItemActionFile" xml:space="preserve">
-    <value>Rename File</value>
+    <value>파일 이름 바꾸기</value>
   </data>
   <data name="RenameItemActionDirectory" xml:space="preserve">
-    <value>Rename Directory</value>
+    <value>디렉터리 이름 바꾸기</value>
   </data>
   <data name="RenameItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>항목: {0} 대상: {1}</value>
   </data>
   <data name="MoveItemActionFile" xml:space="preserve">
-    <value>Move File</value>
+    <value>파일 이동</value>
   </data>
   <data name="MoveItemActionDirectory" xml:space="preserve">
-    <value>Move Directory</value>
+    <value>디렉터리 이동</value>
   </data>
   <data name="MoveItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>항목: {0} 대상: {1}</value>
   </data>
   <data name="SetPropertyActionFile" xml:space="preserve">
-    <value>Set Property File</value>
+    <value>속성 파일 설정</value>
   </data>
   <data name="SetPropertyActionDirectory" xml:space="preserve">
-    <value>Set Property Directory</value>
+    <value>속성 Directory 설정</value>
   </data>
   <data name="SetPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1} Value: {2}</value>
+    <value>항목: {0} 속성: {1} 값: {2}</value>
   </data>
   <data name="ClearPropertyActionFile" xml:space="preserve">
-    <value>Clear Property File</value>
+    <value>속성 파일 지우기</value>
   </data>
   <data name="ClearPropertyActionDirectory" xml:space="preserve">
-    <value>Clear Property Directory</value>
+    <value>속성 디렉터리 지우기</value>
   </data>
   <data name="ClearPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>항목: {0} 속성: {1}</value>
   </data>
   <data name="NewItemActionFile" xml:space="preserve">
-    <value>Create File</value>
+    <value>파일 생성</value>
   </data>
   <data name="NewItemActionDirectory" xml:space="preserve">
-    <value>Create Directory</value>
+    <value>디렉토리 생성</value>
   </data>
   <data name="NewItemActionTemplate" xml:space="preserve">
-    <value>Destination: {0}</value>
+    <value>대상: {0}</value>
   </data>
   <data name="ClearContentActionFile" xml:space="preserve">
-    <value>Clear Content</value>
+    <value>콘텐츠 지우기</value>
   </data>
   <data name="ClearContentesourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>항목: {0}</value>
   </data>
   <data name="ItemNotFound" xml:space="preserve">
-    <value>Could not find item {0}.</value>
+    <value>{0} 항목을 찾을 수 없습니다.</value>
   </data>
   <data name="CannotRemoveItem" xml:space="preserve">
-    <value>Cannot remove item {0}: {1}</value>
+    <value>{0} 항목을 제거할 수 없습니다. {1}</value>
   </data>
   <data name="CannotRestoreAttributes" xml:space="preserve">
-    <value>Cannot restore attributes on item {0}: {1}</value>
+    <value>항목 {0}의 속성을 복원할 수 없습니다. {1}</value>
   </data>
   <data name="ItemDoesNotExist" xml:space="preserve">
-    <value>An object at the specified path {0} does not exist.</value>
+    <value>지정한 경로 {0}에 개체가 없습니다.</value>
   </data>
   <data name="DirectoryNotEmpty" xml:space="preserve">
-    <value>Directory {0} cannot be removed because it is not empty.</value>
+    <value>디렉터리 {0}은(는) 비어 있지 않으므로 제거할 수 없습니다.</value>
   </data>
   <data name="UnknownType" xml:space="preserve">
-    <value>The type is not a known type for the file system. Only "file","directory" or "symboliclink" can be specified.</value>
+    <value>알 수 없는 파일 시스템 형식입니다. "file", "directory" 또는 "symboliclink"만 지정할 수 있습니다.</value>
   </data>
   <data name="PathOutSideBasePath" xml:space="preserve">
-    <value>Cannot process the path because the specified path refers to an item that is outside the basePath.</value>
+    <value>지정한 경로가 basePath 밖의 항목을 가리키므로 경로를 처리할 수 없습니다.</value>
   </data>
   <data name="DriveRootError" xml:space="preserve">
-    <value>The specified drive root "{0}" either does not exist, or it is not a folder.</value>
+    <value>지정한 드라이브 루트 "{0}"이(가) 없거나 폴더가 아닙니다.</value>
   </data>
   <data name="DirectoryExist" xml:space="preserve">
-    <value>An item with the specified name {0} already exists.</value>
+    <value>지정된 이름의 {0} 파일이 이미 있습니다.</value>
   </data>
   <data name="DelimiterError" xml:space="preserve">
-    <value>A delimiter cannot be specified when reading the stream one byte at a time.</value>
+    <value>스트림을 한 번에 1바이트씩 읽을 때는 구분 기호를 지정할 수 없습니다.</value>
   </data>
   <data name="CopyError" xml:space="preserve">
-    <value>Cannot overwrite the item {0} with itself.</value>
+    <value>항목 {0}을(를) 자체로 덮어쓸 수 없습니다.</value>
   </data>
   <data name="RenameError" xml:space="preserve">
-    <value>Cannot rename the specified target, because it represents a path or device name.</value>
+    <value>지정한 대상은 경로 또는 디바이스 이름을 나타내므로 이름을 바꿀 수 없습니다.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property {0} does not exist or was not found.</value>
+    <value>속성 {0}이(가) 없거나 찾을 수 없습니다.</value>
   </data>
   <data name="PermissionError" xml:space="preserve">
-    <value>You do not have sufficient access rights to perform this operation or the item is hidden, system, or read only.</value>
+    <value>이 작업을 수행할 수 있는 액세스 권한이 없거나, 항목이 숨김, 시스템 또는 읽기 전용입니다.</value>
   </data>
   <data name="AttributesNotSupported" xml:space="preserve">
-    <value>The attribute cannot be set because attributes are not supported. Only the following attributes can be set: Archive, Hidden, Normal, ReadOnly, or System.</value>
+    <value>특성을 지원하지 않으므로 특성을 설정할 수 없습니다. Archive, Hidden, Normal, ReadOnly 또는 System 특성만 설정할 수 있습니다.</value>
   </data>
   <data name="CannotClearProperty" xml:space="preserve">
-    <value>The property cannot be cleared because the property is not supported. Only the Attributes property can be cleared.</value>
+    <value>지원되지 않는 속성이므로 속성을 지울 수 없습니다. Attributes 속성만 지울 수 있습니다.</value>
   </data>
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
-    <value>Cannot process path '{0}' because the target represents a reserved device name.</value>
+    <value>대상이 예약된 디바이스 이름을 나타내므로 경로 '{0}'을(를) 처리할 수 없습니다.</value>
   </data>
   <data name="EncodingNotUsed" xml:space="preserve">
-    <value>Encoding not used when '-AsByteStream' specified.</value>
+    <value>'-AsByteStream'이 지정되면 인코딩은 사용되지 않습니다.</value>
   </data>
   <data name="ByteEncodingError" xml:space="preserve">
-    <value>Cannot proceed with byte encoding. When using byte encoding the content must be of type byte.</value>
+    <value>바이트 인코딩을 계속할 수 없습니다. 바이트 인코딩을 사용할 때 콘텐츠는 바이트 형식이어야 합니다.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>Cannot process the file because the file {0} was not found.</value>
+    <value>파일 {0}을(를) 찾을 수 없어서 파일을 처리할 수 없습니다.</value>
   </data>
   <data name="DirectoryDisplayGrouping" xml:space="preserve">
-    <value>    Directory: </value>
+    <value>    디렉터리: </value>
   </data>
   <data name="ReadBackward_Encoding_NotSupport" xml:space="preserve">
-    <value>Cannot detect the encoding of the file. The specified encoding {0} is not supported when the content is read in reverse.</value>
+    <value>파일 인코딩을 검색할 수 없습니다. 콘텐츠를 역방향으로 읽을 때는 지정한 인코딩 {0}을(를) 지원하지 않습니다.</value>
   </data>
   <data name="AlternateDataStreamNotFound" xml:space="preserve">
-    <value>Could not open the alternate data stream '{0}' of the file '{1}'.</value>
+    <value>파일 '{0}'의 대체 데이터 스트림 '{1}'을(를) 열 수 없습니다.</value>
   </data>
   <data name="StreamAction" xml:space="preserve">
-    <value>Stream '{0}' of file '{1}'.</value>
+    <value>파일 '{1}'의 스트림 '{0}'입니다.</value>
   </data>
   <data name="RawAndWaitCannotCoexist" xml:space="preserve">
-    <value>The Raw and Wait parameters cannot be specified in the same command.</value>
+    <value>Raw 및 Wait 매개 변수는 같은 명령에서 함께 지정할 수 없습니다.</value>
   </data>
   <data name="InvalidDriveName" xml:space="preserve">
-    <value>To use the Persist switch parameter, the drive name must be supported by the operating system (for example, drive letters A-Z).</value>
+    <value>Persist 스위치 매개 변수를 사용하려면 드라이브 이름이 운영 체제에서 지원되어야 합니다. 예를 들어 A-Z 드라이브 문자를 사용할 수 있습니다.</value>
   </data>
   <data name="PersistNotSupported" xml:space="preserve">
-    <value>When you use the Persist parameter, the root must be a file system location on a remote computer.</value>
+    <value>Persist 매개 변수를 사용할 때 루트는 원격 컴퓨터의 파일 시스템 위치여야 합니다.</value>
   </data>
   <data name="NoFirstLastWaitForRaw" xml:space="preserve">
-    <value>The '{0}' and '{1}' parameters cannot be specified in the same command.</value>
+    <value>'{0}' 매개 변수와 '{1}' 매개 변수는 같은 명령에서 함께 지정할 수 없습니다.</value>
   </data>
   <data name="ItemNotDirectory" xml:space="preserve">
-    <value>A directory is required for the operation. The item '{0}' is not a directory.</value>
+    <value>작업에 사용할 디렉터리가 필요합니다. '{0}' 항목은 디렉터리가 아닙니다.</value>
   </data>
   <data name="NewItemActionJunction" xml:space="preserve">
-    <value>Create Junction</value>
+    <value>접합 만들기</value>
   </data>
   <data name="NewItemActionSymbolicLink" xml:space="preserve">
-    <value>Create Symbolic Link</value>
+    <value>바로 가기 링크 만들기</value>
   </data>
   <data name="ElevationRequired" xml:space="preserve">
-    <value>Administrator privilege required for this operation.</value>
+    <value>이 작업에는 관리자 권한이 필요합니다.</value>
   </data>
   <data name="NewItemActionHardLink" xml:space="preserve">
-    <value>Create Hard Link</value>
+    <value>하드 링크 만들기</value>
   </data>
   <data name="ItemNotFile" xml:space="preserve">
-    <value>A file is required for the operation. The item '{0}' is not a file.</value>
+    <value>작업에 사용할 파일이 필요합니다. '{0}' 항목은 파일이 아닙니다.</value>
   </data>
   <data name="HardLinkNotSupported" xml:space="preserve">
-    <value>Hard links are not supported for the specified path.</value>
+    <value>지정한 경로에서는 하드 링크를 지원하지 않습니다.</value>
   </data>
   <data name="SymbolicLinkNotSupported" xml:space="preserve">
-    <value>Symbolic links are not supported for the specified path.</value>
+    <value>지정한 경로에서는 기호 링크를 지원하지 않습니다.</value>
   </data>
   <data name="CopyItemRemotelyProgressActivity" xml:space="preserve">
     <value>{1}에 {0} 복사</value>
   </data>
   <data name="CopyItemRemoteDestinationIsFile" xml:space="preserve">
-    <value>Destination path {0} is a file that already exists on the target destination.</value>
+    <value>대상 경로 {0}은(는) 대상 위치에 이미 있는 파일입니다.</value>
   </data>
   <data name="CopyItemRemotelyFailed" xml:space="preserve">
-    <value>Failed to copy file {0} to remote target destination.</value>
+    <value>파일 {0}을(를) 원격 대상 위치에 복사하지 못했습니다.</value>
   </data>
   <data name="CopyItemRemotelyStatusDescription" xml:space="preserve">
     <value>{0}에서 {1}(으)로</value>
   </data>
   <data name="CopyItemRemotelyDestinationIsFile" xml:space="preserve">
-    <value>Cannot copy a directory '{0}' to file '{0}'</value>
+    <value>디렉터리 '{0}'을(를) 파일 '{0}'에 복사할 수 없습니다.</value>
   </data>
   <data name="CopyItemRemotelyFailedToGetDirectoryChildItems" xml:space="preserve">
-    <value>Failed to get directory {0} child items.</value>
+    <value>디렉터리 {0}의 자식 항목을 가져오지 못했습니다.</value>
   </data>
   <data name="CopyItemRemotelyFailedToReadFile" xml:space="preserve">
-    <value>Failed to read remote file '{0}'.</value>
+    <value>원격 파일 '{0}'을(를) 읽지 못했습니다.</value>
   </data>
   <data name="CopyItemRemotelyFailedToValidateIfDestinationIsFile" xml:space="preserve">
-    <value>Cannot validate if remote destination {0} is a file.</value>
+    <value>원격 대상 {0}이(가) 파일인지 확인할 수 없습니다.</value>
   </data>
   <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
-    <value>Failed to create directory '{0}' on remote destination.</value>
+    <value>원격 대상에서 '{0}' 디렉터리를 만들지 못했습니다.</value>
   </data>
   <data name="DriveMaxSizeError" xml:space="preserve">
-    <value>Maximum size for drive has been exceeded: {0}.</value>
+    <value>드라이브의 최대 크기를 초과했습니다. {0}.</value>
   </data>
   <data name="SymlinkItemExists" xml:space="preserve">
-    <value>Cannot create link because the path already exists: {0}.</value>
+    <value>경로가 이미 있으므로 링크를 만들 수 없습니다. {0}.</value>
   </data>
   <data name="AlreadyListedDirectory" xml:space="preserve">
-    <value>Skip already-visited directory {0}.</value>
+    <value>이미 방문한 Directory {0}을(를) 건너뜁니다.</value>
   </data>
   <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
-    <value>Destination path cannot be a subdirectory of the source or the source itself: {0}.</value>
+    <value>대상 경로는 원본 또는 원본 자체의 하위 디렉터리일 수 없습니다. {0}.</value>
   </data>
   <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
-    <value>The target and path cannot be the same.</value>
+    <value>대상과 경로는 같을 수 없습니다.</value>
   </data>
   <data name="CopyingLocalFileActivity" xml:space="preserve">
-    <value>Copied {0} of {1} files</value>
+    <value>파일 {0}개 중 {1}개를 복사함</value>
   </data>
   <data name="CopyingLocalBytesStatus" xml:space="preserve">
-    <value>{0} of {1} ({2:0.0} MB/s)</value>
+    <value>{0}개 중 {1}개({2:0.0} MB/s)</value>
   </data>
   <data name="RemovingLocalFileActivity" xml:space="preserve">
-    <value>Removed {0} of {1} files</value>
+    <value>파일 {0}개 중 {1}개를 제거함</value>
   </data>
   <data name="RemovingLocalBytesStatus" xml:space="preserve">
-    <value>{0} of {1} ({2:0.0} MB/s)</value>
+    <value>{0}개 중 {1}개({2:0.0} MB/s)</value>
   </data>
   <data name="JunctionAbsolutePath" xml:space="preserve">
-    <value>Creating a junction requires an absolute path for the target.</value>
+    <value>정션을 만들려면 대상에 절대 경로가 필요합니다.</value>
   </data>
 </root>
