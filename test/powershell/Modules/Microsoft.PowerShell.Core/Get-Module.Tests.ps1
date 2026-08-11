@@ -415,6 +415,15 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
 
     Context 'When path value has unknown extension, such as ''name.xxx''' {
         Context 'Resolves to non-existing loose or versioned module under $env:PSModulePath' {
+            It 'wrongly returns $null instead of error' {
+                $path1 = Join-Path $env:PSModulePath missing.xxx.psm1
+                $path2 = Join-Path $env:PSModulePath missing *, missing.xxx.psm1
+                Test-Path $path1 | Should -BeFalse
+                Test-Path $path2 | Should -BeFalse
+
+                Get-Module -ListAvailable -FullyQualifiedName missing.xxx | Should -Be $null
+                Get-Module -ListAvailable -Name missing.xxx | Should -Be $null
+            }
         }
     }
 }
