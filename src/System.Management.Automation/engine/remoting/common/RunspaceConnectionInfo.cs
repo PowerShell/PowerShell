@@ -14,6 +14,7 @@ using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Tracing;
 using System.Net;
+using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
