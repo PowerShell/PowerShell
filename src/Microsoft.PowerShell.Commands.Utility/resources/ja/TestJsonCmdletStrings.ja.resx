@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidJsonSchema" xml:space="preserve">
-    <value>Cannot parse the JSON schema.</value>
+    <value>JSON スキーマを解析できません。</value>
   </data>
   <data name="InvalidJson" xml:space="preserve">
-    <value>Cannot parse the JSON.</value>
+    <value>JSON を解析できません。</value>
   </data>
   <data name="InvalidJsonAgainstSchemaDetailed" xml:space="preserve">
-    <value>The JSON is not valid with the schema: {0} at '{1}'</value>
+    <value>JSON は '{1}' のスキーマ {0} で無効です</value>
   </data>
   <data name="JsonSchemaFileOpenFailure" xml:space="preserve">
-    <value>Can not open JSON schema file: {0}</value>
+    <value>JSON スキーマ ファイルを開けません: {0}</value>
   </data>
   <data name="InvalidUriScheme" xml:space="preserve">
-    <value>URI scheme '{0}' is not supported. Only HTTP(S) and local file system URIs are allowed.</value>
+    <value>URI スキーム '{0}' はサポートされていません。HTTP(S) およびローカル ファイル システムの URI のみが許可されています。</value>
   </data>
 </root>
