@@ -487,6 +487,13 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             }
 
             Context 'Resolves to non-existing modules' {
+                It 'wrongly/correctly returns $null' {
+                    $actual = Get-Module -ListAvailable -Name missing*
+                    $actual | Should -Be $null
+
+                    $actual = Get-Module -ListAvailable -FullyQualifiedName missing*
+                    $actual | Should -Be $null
+                }
             }
         }
     }
