@@ -351,22 +351,24 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         # TODO: This looks like a bug.
         It 'wrongly writes error instead of returning module information for existing script module under $env:PSModulePath using basename' {
             Test-Path (Join-Path $env:PSModulePath loose.psm1) | Should -BeTrue
+            $path = Join-Path $env:PSModulePath loose
 
-            $err = { Get-Module -ListAvailable -Name (Join-Path $env:PSModulePath loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err = { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -PassThru
             $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
 
-            $err = { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $env:PSModulePath loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
             $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
         }
 
         # TODO: This looks like a bug.
         It 'wrongly writes error instead of returning module information for existing script module using basename' {
             Test-Path (Join-Path $pwd loose.psm1) | Should -BeTrue
+            $path = Join-Path $pwd loose
 
-            $err = { Get-Module -ListAvailable -Name (Join-Path $pwd loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err = { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -PassThru
             $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
 
-            $err = { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $pwd loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
             $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
         }
     }
