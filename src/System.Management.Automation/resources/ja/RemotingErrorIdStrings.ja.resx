@@ -1471,7 +1471,7 @@ Microsoft.PowerShell や Register-PSSessionConfiguration コマンドレット�
     <value>指定された出力ストリーム セットが無効です。{0} のみが出力ストリームとしてサポートされます。</value>
   </data>
   <data name="WSManPluginInvalidSenderDetails" xml:space="preserve">
-    <value>The supplied WSMAN_SENDER_DETAILS is not valid. Cannot process null WSMAN_SENDER_DETAILS.</value>
+    <value>指定された WSMAN_SENDER_DETAILS は無効です。null 値の WSMAN_SENDER_DETAILS を処理できません。</value>
   </data>
   <data name="WSManPluginInvalidShellContext" xml:space="preserve">
     <value>指定されたシェル コンテキストが無効です。</value>
@@ -1498,7 +1498,7 @@ Microsoft.PowerShell や Register-PSSessionConfiguration コマンドレット�
     <value>PowerShell プラグインは、オプション {0} を理解していません。クライアントがビルド {1} および PowerShell のプロトコル バージョン {2} と互換性があることを確認します。</value>
   </data>
   <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
-    <value>An option with name {0} is expected from the client. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>{0} という名前のオプションがクライアントに必要です。クライアントがビルド {1} および PowerShell のプロトコル バージョン {2} と互換性があることを確認します。</value>
   </data>
   <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
     <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Powershell プラグインは、クライアントによって要求されたプロトコル バージョン {2} をサポートしていません。&lt;/PSProtocolVersionError&gt;</value>
@@ -1507,7 +1507,7 @@ Microsoft.PowerShell や Register-PSSessionConfiguration コマンドレット�
     <value>WSMan サービスへのコンテキストの報告中に、Powershell プラグインで致命的なエラーが発生しました。</value>
   </data>
   <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
-    <value>Unable to create managed server session.</value>
+    <value>マネージド サーバー セッションを作成できません。</value>
   </data>
   <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
     <value>PowerShell プラグインで、シャットダウン通知の待機ハンドルの登録中に致命的なエラーが発生しました。</value>
