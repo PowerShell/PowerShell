@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoProcessFoundForGivenName" xml:space="preserve">
-    <value>Cannot find a process with the name "{0}". Verify the process name and call the cmdlet again.</value>
+    <value>Es wurde kein Prozess mit dem Namen „{0}“ gefunden. Überprüfen Sie den Prozessnamen, und rufen Sie das Cmdlet erneut auf.</value>
   </data>
   <data name="RecommendIdTagForGivenName" xml:space="preserve">
-    <value>Cannot find a process with the name "{0}". Try running with -Id to search by Id of processes.</value>
+    <value>Es wurde kein Prozess mit dem Namen „{0}“ gefunden. Führen Sie den Befehl mit -Id aus, um nach der ID der Prozesse zu suchen.</value>
   </data>
   <data name="NoDebuggerFound" xml:space="preserve">
-    <value>This command cannot be run because the debugger cannot be attached to the process "{0} ({1})". Specify another process and Run your command.</value>
+    <value>Dieser Befehl kann nicht ausgeführt werden, da der Debugger nicht an den Prozess „{0} ({1})“ angefügt werden kann. Geben Sie einen anderen Prozess an, und führen Sie den Befehl aus.</value>
   </data>
   <data name="NoProcessFoundForGivenId" xml:space="preserve">
-    <value>Cannot find a process with the process identifier {1}.</value>
+    <value>Es wurde kein Prozess mit der Prozess-ID „{1}“ gefunden.</value>
   </data>
   <data name="CouldNotStopProcess" xml:space="preserve">
-    <value>Cannot stop process "{0} ({1})" because of the following error: {2}</value>
+    <value>Der Prozess „{0} ({1})“ kann aufgrund des folgenden Fehlers nicht beendet werden: {2}</value>
   </data>
   <data name="ProcessNameForConfirmation" xml:space="preserve">
     <value>{0} ({1})</value>
@@ -139,96 +139,96 @@
     <value>{0} {1}</value>
   </data>
   <data name="CouldNotEnumerateModules" xml:space="preserve">
-    <value>Cannot enumerate the modules of the "{0}" process.</value>
+    <value>Die Module des Prozesses „{0}“ können nicht aufgelistet werden.</value>
   </data>
   <data name="CouldNotEnumerateFileVer" xml:space="preserve">
-    <value>Cannot enumerate the file version information of the "{0}" process.</value>
+    <value>Die Dateiversionsinformationen des Prozesses „{0}“ können nicht aufgezählt werden.</value>
   </data>
   <data name="CouldNotEnumerateModuleFileVer" xml:space="preserve">
-    <value>Cannot enumerate the modules and the file version information of the "{0}" process.</value>
+    <value>Die Module und die Dateiversionsinformationen des Prozesses „{0}“ können nicht aufgezählt werden.</value>
   </data>
   <data name="ConfirmStopProcess" xml:space="preserve">
-    <value>Are you sure you want to perform the Stop-Process operation on the following item: {0}({1})?</value>
+    <value>Möchten Sie den Stop-Process-Vorgang für das folgende Element ausführen: {0}({1})?</value>
   </data>
   <data name="UseShell" xml:space="preserve">
-    <value>The specified path is not a valid win32 application. Try again with the UseShellExecute.</value>
+    <value>Der angegebene Pfad ist keine gültige win32-Anwendung. Wiederholen Sie den Vorgang mit UseShellExecute.</value>
   </data>
   <data name="ProcessIsNotTerminated" xml:space="preserve">
-    <value>This command stopped operation of "{0} ({1})" because of the following error: {2}.</value>
+    <value>Dieser Befehl hat den Vorgang von „{0} ({1})“ aufgrund des folgenden Fehlers beendet: {2}.</value>
   </data>
   <data name="RedirectionParams" xml:space="preserve">
-    <value>This command cannot be run because Redirection parameters cannot be used with UseShellExecute parameter</value>
+    <value>Dieser Befehl kann nicht ausgeführt werden, da Umleitungsparameter nicht zusammen mit dem Parameter UseShellExecute verwendet werden können.</value>
   </data>
   <data name="NoComputerNameWithFileVersion" xml:space="preserve">
-    <value>Exception getting "Modules" or "FileVersion": "This feature is not supported for remote computers.".</value>
+    <value>Ausnahme beim Abrufen von „Modules“ oder „FileVersion“: „This feature is not supported for remote computers.“.</value>
   </data>
   <data name="DebuggerError" xml:space="preserve">
-    <value>This command cannot attach the debugger to the process due to {0} because no default debugger is available.</value>
+    <value>Dieser Befehl kann den Debugger nicht an den Prozess anfügen, da „{0}“ kein Standarddebugger verfügbar ist.</value>
   </data>
   <data name="WaitOnIdleProcess" xml:space="preserve">
-    <value>This command stopped operation because it cannot wait on 'System Idle' process. Specify another process and Run your command again.</value>
+    <value>Dieser Befehl hat den Vorgang beendet, da er nicht auf den Prozess „System Idle“ (System im Leerlauf) warten kann. Geben Sie einen anderen Prozess an, und führen Sie den Befehl erneut aus.</value>
   </data>
   <data name="WaitOnItself" xml:space="preserve">
-    <value>This command stopped operation because it cannot wait on itself. Specify another process and Run your command again.</value>
+    <value>Dieser Befehl hat den Vorgang beendet, da er nicht auf sich selbst warten kann. Geben Sie einen anderen Prozess an, und führen Sie den Befehl erneut aus.</value>
   </data>
   <data name="ProcessNotTerminated" xml:space="preserve">
-    <value>This command stopped operation because process "{0} ({1})" is not stopped in the specified time-out.</value>
+    <value>Dieser Befehl hat den Vorgang beendet, da der Prozess „{0} ({1})“ nicht innerhalb der angegebenen Zeitüberschreitung beendet wurde.</value>
   </data>
   <data name="InvalidStartProcess" xml:space="preserve">
-    <value>This command cannot be run due to the error: {0}</value>
+    <value>Dieser Befehl kann aufgrund des folgenden Fehlers nicht ausgeführt werden: {0}</value>
   </data>
   <data name="InvalidApplication" xml:space="preserve">
-    <value>This command cannot be run because the input "{0}" is not a valid Application.  Give a valid application and run your command again.</value>
+    <value>Dieser Befehl kann nicht ausgeführt werden, da die Eingabe „{0}“ keine gültige Anwendung ist.  Geben Sie eine gültige Anwendung an, und führen Sie den Befehl erneut aus.</value>
   </data>
   <data name="InvalidInput" xml:space="preserve">
-    <value>This command cannot be run because either the parameter "{0}" has a value that is not valid or cannot be used with this command. Give a valid input and Run your command again.</value>
+    <value>Dieser Befehl kann nicht ausgeführt werden, da der Parameter „{0}“ einen ungültigen Wert hat oder nicht mit diesem Befehl verwendet werden kann. Geben Sie eine gültige Eingabe ein, und führen Sie den Befehl erneut aus.</value>
   </data>
   <data name="DuplicateEntry" xml:space="preserve">
-    <value>This command cannot be run because "{0}" and "{1}" are same. Give different inputs and Run your command again.</value>
+    <value>Dieser Befehl kann nicht ausgeführt werden, da „{0}“ und „{1}“ identisch sind. Geben Sie unterschiedliche Eingaben an, und führen Sie den Befehl erneut aus.</value>
   </data>
   <data name="CannotStarttheProcess" xml:space="preserve">
-    <value>This command cannot be run completely because the system cannot find all the information required.</value>
+    <value>Dieser Befehl kann nicht vollständig ausgeführt werden, da das System nicht alle erforderlichen Informationen finden kann.</value>
   </data>
   <data name="FailedToCreateProcessObject" xml:space="preserve">
-    <value>Failed to retrieve the new process handle: "{0}". The Process object outputted may have some properties and methods that do not work properly.</value>
+    <value>Beim Abrufen des neuen Prozesshandles ist ein Fehler aufgetreten: „{0}“. Das ausgegebene Process-Objekt verfügt möglicherweise über einige Eigenschaften und Methoden, die nicht ordnungsgemäß funktionieren.</value>
   </data>
   <data name="InvalidUserError" xml:space="preserve">
-    <value>This command cannot be run due to error 1783. The possible cause of this error can be using of a non-existing user "{0}". Please give a valid user and run your command again.</value>
+    <value>Dieser Befehl kann aufgrund des Fehlers 1783 nicht ausgeführt werden. Eine mögliche Ursache für diesen Fehler ist die Verwendung des nicht vorhandenen Benutzers „{0}“. Geben Sie einen gültigen Benutzer an, und führen Sie den Befehl erneut aus.</value>
   </data>
   <data name="JoinNetworkFailed" xml:space="preserve">
-    <value>Error adding '{0}' to the network: {1}</value>
+    <value>Fehler beim Hinzufügen von „{0}“ zum Netzwerk: {1}</value>
   </data>
   <data name="RemoveFailed" xml:space="preserve">
-    <value>Error removing '{0}' from the network: {1}</value>
+    <value>Fehler beim Entfernen von „{0}“ aus dem Netzwerk: {1}</value>
   </data>
   <data name="RenameFailed" xml:space="preserve">
-    <value>Error renaming '{0}': {1}</value>
+    <value>Fehler beim Umbenennen von „{0}“: {1}</value>
   </data>
   <data name="ContradictParametersSpecified" xml:space="preserve">
-    <value>Parameters "{0}" and "{1}" cannot be specified at the same time.</value>
+    <value>Die Parameter „{0}“ und „{1}“ können nicht gleichzeitig festgelegt werden.</value>
   </data>
   <data name="CouldNotDebugProcess" xml:space="preserve">
-    <value>Cannot debug process "{0} ({1})" because of the following error: {2}</value>
+    <value>Der Prozess „{0} ({1})“ kann aufgrund des folgenden Fehlers nicht debuggen werden: {2}</value>
   </data>
   <data name="AttachDebuggerReturnCode2" xml:space="preserve">
     <value>Der Benutzer besitzt keinen Zugriff auf die angeforderten Informationen.</value>
   </data>
   <data name="AttachDebuggerReturnCode21" xml:space="preserve">
-    <value>The specified parameter is not valid.</value>
+    <value>Der angegebene Parameter ist ungültig.</value>
   </data>
   <data name="AttachDebuggerReturnCode3" xml:space="preserve">
-    <value>The user does not have sufficient privilege.</value>
+    <value>Der Benutzer verfügt nicht über ausreichende Berechtigungen.</value>
   </data>
   <data name="AttachDebuggerReturnCode8" xml:space="preserve">
-    <value>Unknown failure.</value>
+    <value>Unbekannter Fehler.</value>
   </data>
   <data name="AttachDebuggerReturnCode9" xml:space="preserve">
     <value>Der angegebene Pfad ist nicht vorhanden.</value>
   </data>
   <data name="ParameterNotSupported" xml:space="preserve">
-    <value>The parameter '{0}' is not supported for the cmdlet '{1}' on this edition of Windows.</value>
+    <value>Der Parameter „{0}“ wird für das Cmdlet „{1}“ in dieser Windows-Edition nicht unterstützt.</value>
   </data>
   <data name="ParameterNotSupportedOnPSEdition" xml:space="preserve">
-    <value>The parameter '{0}' is not supported for the cmdlet '{1}' on this edition of PowerShell.</value>
+    <value>Der Parameter „{0}“ wird für das Cmdlet „{1}“ in dieser PowerShell-Edition nicht unterstützt.</value>
   </data>
 </root>
