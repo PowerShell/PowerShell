@@ -414,6 +414,8 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
     }
 
     Context 'When path value has unknown extension, such as ''name.xxx''' {
+        Context 'Resolves to non-existing loose or versioned module under $env:PSModulePath' {
+        }
     }
 }
 
