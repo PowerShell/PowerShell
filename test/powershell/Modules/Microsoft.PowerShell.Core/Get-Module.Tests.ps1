@@ -459,6 +459,13 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             }
 
             Context 'Resolves to existing script modules' {
+                It 'wrongly/correctly returns $null' {
+                    $actual = Get-Module -ListAvailable -Name existing-loose*
+                    $actual | Should -Be $null
+
+                    $actual = Get-Module -ListAvailable -FullyQualifiedName existing-loose*
+                    $actual | Should -Be $null
+                }
             }
         }
     }
