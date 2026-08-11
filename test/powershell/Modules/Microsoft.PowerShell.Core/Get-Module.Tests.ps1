@@ -425,6 +425,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
                 Get-Module -ListAvailable -Name missing.xxx | Should -Be $null
             }
         }
+
+        Context 'Resolves to loose module under $env:PSModule' {
+        }
     }
 }
 
