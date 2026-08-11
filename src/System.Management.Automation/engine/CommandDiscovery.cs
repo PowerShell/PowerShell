@@ -1212,7 +1212,7 @@ namespace System.Management.Automation
 
                 if (string.IsNullOrEmpty(path))
                 {
-                    // Cache an empty collection when PATH is null (unset).
+                    // Cache an empty collection when PATH is null (unset) or an empty string.
                     _cachedLookupPaths = new List<string>();
                 }
                 else
