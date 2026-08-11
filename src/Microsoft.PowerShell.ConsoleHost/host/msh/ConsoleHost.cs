@@ -443,8 +443,9 @@ namespace Microsoft.PowerShell
         /// caused a problem for CMake-based build systems: CMake cached the path to 'pwsh.exe' when running for the first time from the
         /// MSIX PowerShell. That cached path became invalid after the MSIX PowerShell was updated, which broke CMake.
         ///
-        /// So, instead of using the "Program Files" package folder path, we need to use the path that contains the execution alias for
-        /// the specific MSIX package family name, e.g. %LOCALAPPDATA%\Microsoft\WindowsApps\Microsoft.PowerShell_8wekyb3d8bbwe.
+        /// So, instead of using the "Program Files" package folder path, we need to use the stable path that contains the execution alias
+        /// for the specific MSIX package, e.g. use "%LOCALAPPDATA%\Microsoft\WindowsApps\Microsoft.PowerShell_8wekyb3d8bbwe" instead of
+        /// "%ProgramFiles%\WindowsApps\Microsoft.PowerShell_7.x.x.0_x64__8wekyb3d8bbwe".
         /// </summary>
         /// <param name="psExeHome">Path to the directory that contains the pwsh executable.</param>
         private static string ResolveStablePathIfMsix(string psExeHome)
@@ -454,7 +455,10 @@ namespace Microsoft.PowerShell
 
             if (psExeHome.EndsWith(msixPublisherSuffix, StringComparison.Ordinal))
             {
-                string programFileDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                string programFileDir = Environment.GetFolderPath(
+                    Environment.SpecialFolder.ProgramFiles,
+                    Environment.SpecialFolderOption.DoNotVerify);
+
                 string prefix = $"{programFileDir}\\WindowsApps\\{msixPackageBaseName}";
                 if (psExeHome.StartsWith(prefix, StringComparison.Ordinal))
                 {
@@ -463,7 +467,10 @@ namespace Microsoft.PowerShell
                     if (underbarIndex > 0)
                     {
                         ReadOnlySpan<char> channelSuffix = psExeHome.AsSpan(startIndex, underbarIndex - startIndex);
-                        string localAppDataDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                        string localAppDataDir = Environment.GetFolderPath(
+                            Environment.SpecialFolder.LocalApplicationData,
+                            Environment.SpecialFolderOption.DoNotVerify);
+
                         psExeHome = $"{localAppDataDir}\\Microsoft\\WindowsApps\\{msixPackageBaseName}{channelSuffix}{msixPublisherSuffix}";
                     }
                 }
