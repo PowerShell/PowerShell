@@ -365,6 +365,59 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
     }
 
     Context 'When argument contains wildcards' {
+        BeforeAll {
+            # Manifest modules under '.'
+            #
+            # Versioned, manifest
+            $inCwdWithManifestFileName = 'existing'
+            $inCwdWithManifestDirectory = Join-Path '.' $inCwdWithManifestFileName '0.0.1'
+            $inCwdWithManifestFilePath = Join-Path $inCwdWithManifestDirectory "$inCwdWithManifestFileName.psm1"
+            New-Item -ItemType File -Force $inCwdWithManifestFilePath > $null
+            New-ModuleManifest -Path (Join-Path $inCwdWithManifestDirectory "$inCwdWithManifestFileName.psd1")
+            #
+            # Versioned, manifest
+            $inCwdWithManifestFileName2 = 'existing2'
+            $inCwdWithManifestDirectory2 = Join-Path '.' $inCwdWithManifestFileName2 '0.0.1'
+            $inCwdWithManifestFilePath2 = Join-Path $inCwdWithManifestDirectory2 "$inCwdWithManifestFileName2.psm1"
+            New-Item -ItemType File -Force $inCwdWithManifestFilePath2 > $null
+            New-ModuleManifest -Path (Join-Path $inCwdWithManifestDirectory2 "$inCwdWithManifestFileName2.psd1")
+
+            # Manifest modules under '..'
+            #
+            # Versioned, manifest
+            $inParentWithManifestFileName = 'existing'
+            $inParentWithManifestDirectory = Join-Path '..' $inParentWithManifestFileName '0.0.1'
+            $inParentWithManifestFilePath = Join-Path $inParentWithManifestDirectory "$inParentWithManifestFileName.psm1"
+            New-Item -ItemType File -Force $inParentWithManifestFilePath > $null
+            New-ModuleManifest -Path (Join-Path $inParentWithManifestDirectory "$inParentWithManifestFileName.psd1")
+            #
+            # Versioned, manifest
+            $inParentWithManifestFileName2 = 'existing2'
+            $inParentWithManifestDirectory2 = Join-Path '..' $inParentWithManifestFileName2 '0.0.1'
+            $inParentWithManifestFilePath2 = Join-Path $inParentWithManifestDirectory2 "$inParentWithManifestFileName2.psm1"
+            New-Item -ItemType File -Force $inParentWithManifestFilePath2 > $null
+            New-ModuleManifest -Path (Join-Path $inParentWithManifestDirectory2 "$inParentWithManifestFileName2.psd1")
+
+            # Script modules under '.' and '..'
+            #
+            # Under '.'
+            $inCwdLooseFilePath = Join-Path '.' 'loose.psm1'
+            New-Item -ItemType File -Force $inCwdLooseFilePath > $null
+            #
+            # Under '..'
+            $inParentLooseFilePath = Join-Path '..' 'loose.psm1'
+            New-Item -ItemType File -Force $inParentLooseFilePath > $null
+        }
+
+        AfterAll {
+            Remove-Item -Force -Recurse $inCwdWithManifestDirectory
+            Remove-Item -Force -Recurse $inCwdWithManifestDirectory2
+
+            Remove-Item -Force -Recurse $inParentWithManifestDirectory
+            Remove-Item -Force -Recurse $inParentWithManifestDirectory2
+
+            Remove-Item $inCwdLooseFilePath
+        }
     }
 }
 
