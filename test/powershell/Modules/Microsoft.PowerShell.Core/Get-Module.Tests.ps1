@@ -283,8 +283,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
     BeforeAll {
         $oldPSModulePath = $env:PSModulePath
-        $psModulePath = New-Item -ItemType Directory (Join-Path $TestDrive modules)
-        $env:PSModulePath = $psModulePath
+        $env:PSModulePath = New-Item -ItemType Directory (Join-Path $TestDrive modules)
     }
 
     AfterAll {
@@ -299,7 +298,7 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
     }
 
     It 'wrongly returns module information instead of $null or error for missing script module under $env:PSModulePath' {
-        $path = [System.IO.Path]::GetFullPath((Join-Path $psModulePath missing.psm1))
+        $path = [System.IO.Path]::GetFullPath((Join-Path $env:PSModulePath missing.psm1))
         Test-Path $path | Should -BeFalse
         Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
@@ -317,7 +316,7 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
     }
 
     It 'writes error for missing manifest module under $env:PSModulePath' {
-        $path = [System.IO.Path]::GetFullPath((Join-Path $psModulePath missing))
+        $path = [System.IO.Path]::GetFullPath((Join-Path $env:PSModulePath missing))
         Test-Path $path | Should -BeFalse
 
         $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
@@ -329,12 +328,12 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
 
     Context 'Locating existing script module' {
         BeforeAll {
-            $psModulePath = $env:PSModulePath
+            $env:PSModulePath = $env:PSModulePath
 
             # Script modules
             #
             # Under $env:PSModulePath. TODO: Is this a supported scenario?
-            $inPSModulePathLooseFilePath = Join-Path $psModulePath 'loose.psm1'
+            $inPSModulePathLooseFilePath = Join-Path $env:PSModulePath 'loose.psm1'
             New-Item -ItemType File -Force $inPSModulePathLooseFilePath > $null
             #
             # Under $pwd
@@ -349,12 +348,12 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
 
         # TODO: This looks like a bug.
         It 'wrongly writes error instead of returning module information for existing script module under $env:PSModulePath using basename' {
-            Test-Path (Join-Path $psModulePath loose.psm1) | Should -BeTrue
+            Test-Path (Join-Path $env:PSModulePath loose.psm1) | Should -BeTrue
 
-            $err = { Get-Module -ListAvailable -Name (Join-Path $psModulePath loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err = { Get-Module -ListAvailable -Name (Join-Path $env:PSModulePath loose) -ErrorAction Stop } | Should -Throw -PassThru
             $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
 
-            $err = { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $psModulePath loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err = { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $env:PSModulePath loose) -ErrorAction Stop } | Should -Throw -PassThru
             $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
         }
 
