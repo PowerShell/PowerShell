@@ -446,6 +446,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
                 Get-Module -ListAvailable -Name existing.xxx | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
             }
         }
+
+        Context 'When argument has wildcards' {
+        }
     }
 }
 
