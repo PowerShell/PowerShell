@@ -392,6 +392,12 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
                 Get-Module -ListAvailable -FullyQualifiedName existing2.psm1 | Should -Be $null
                 Get-Module -ListAvailable -Name existing2.psm1 | Should -Be $null
             }
+
+            # Finds manifest module 'existing.psm1.psm1'. TODO: Is that correct?
+            It 'wrongly/correctly returns module information for versioned module ending with PS extension' {
+                Get-Module -ListAvailable -FullyQualifiedName existing.psm1 | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+                Get-Module -ListAvailable -Name existing.psm1 | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+            }
         }
     }
 }
