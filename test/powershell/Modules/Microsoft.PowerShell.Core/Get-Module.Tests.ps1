@@ -448,6 +448,15 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
         }
 
         Context 'When argument has wildcards' {
+            It 'ignores existing script modules in working directory' {
+                Join-Path $pwd ignore.psm1 | Should -BeTrue
+
+                $actual = Get-Module -ListAvailable -Name ignore*
+                $actual | Should -Be $null
+
+                $actual = Get-Module -ListAvailable -FullyQualifiedName ignore*
+                $actual | Should -Be $null
+            }
         }
     }
 }
