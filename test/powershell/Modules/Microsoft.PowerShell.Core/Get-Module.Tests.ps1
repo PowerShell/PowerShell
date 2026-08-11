@@ -467,6 +467,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
                     $actual | Should -Be $null
                 }
             }
+
+            Context 'Resolves to existing manifest modules' {
+            }
         }
     }
 }
