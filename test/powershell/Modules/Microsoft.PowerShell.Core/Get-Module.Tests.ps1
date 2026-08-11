@@ -396,6 +396,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
             $actual[0].Path | Should -BeExactly $path
         }
     }
+
+    Context 'When argument contains wildcards' {
+    }
 }
 
 Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
