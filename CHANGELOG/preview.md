@@ -1,5 +1,67 @@
 # Preview Changelog
 
+## [7.7.0-preview.4]
+
+### Engine Updates and Fixes
+
+- Add support for new WLDP setting `EnableFileOnlyEntry` (#26752)
+- Fix the dot-sourcing behavior of `pwsh -file` for advanced-function scripts (#27727)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+
+</summary>
+
+<ul>
+<li>Remove <code>Test-Bom</code> and the boms JSON files (#27726)</li>
+</ul>
+
+</details>
+
+### Tests
+
+- Fix TimeZone test with duplicate names (#27525) (Thanks @KirtiRamchandani!)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+
+</summary>
+
+<ul>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2670960 (#27802)</li>
+<li>Use .NET SDK and NuGet feed early access for build, package and release pipelines (#27795)</li>
+<li>Update Microsoft.PowerShell.Archive version to 1.2.6 (#27784)</li>
+<li>PMC: Remove EOL debian12 distribution for v7.7.0 preview (#27763)</li>
+<li>PMC: Add Ubuntu 26.04 distribution for v7.7.0 (#27765)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2661935 (#27766)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2660148 (#27752)</li>
+<li>Update the manifest resource names for the localized resources embedded in satellite assemblies (#27756)</li>
+<li>Update <code>LocProject.json</code> to list each English resource file directly (#27751)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2652124 (#27736)</li>
+<li>Fix min-size package and ship localized resources only for MSIX packages (#27725)</li>
+<li>Fix the W3C URIs in <code>.resx</code> resource files (#27729)</li>
+<li>Update <code>metadata.json</code> for July releases (#27704)</li>
+<li>Prepare for onboarding PowerShell to the Native2Native localization pipeline (#27667)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update changelogs for v7.4.18, v7.5.9, and v7.6.4 (#27707)
+
+[7.7.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.7.0-preview.3...v7.7.0-preview.4
+
 ## [7.7.0-preview.3]
 
 ### General Cmdlet Updates and Fixes
