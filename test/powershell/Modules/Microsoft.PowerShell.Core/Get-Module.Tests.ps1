@@ -485,6 +485,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
                     $actual[3].Name | Should -BeExactly existing2
                 }
             }
+
+            Context 'Resolves to non-existing modules' {
+            }
         }
     }
 }
