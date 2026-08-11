@@ -281,6 +281,17 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is relative-rooted' -Tags "CI" {
+    It 'wrongly returns module information instead of $null or error for missing script module' {
+        $path1 = Join-Path . missing.psm1
+        $path2 = Join-Path .. missing.psm1
+        Test-Path $path1 | Should -BeFalse
+        Test-Path $path2 | Should -BeFalse
+
+        Get-Module -ListAvailable -Name $path1 | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+        Get-Module -ListAvailable -Name $path2 | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+        Get-Module -ListAvailable -FullyQualifiedName $path1 | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+        Get-Module -ListAvailable -FullyQualifiedName $path2 | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+    }
 }
 
 Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
