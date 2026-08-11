@@ -118,63 +118,63 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LineLessThanOne" xml:space="preserve">
-    <value>Line cannot be less than 1.</value>
+    <value>Řádek nemůže být menší než 1.</value>
   </data>
   <data name="BreakpointIdNotFound" xml:space="preserve">
-    <value>There is no breakpoint with ID '{0}'.</value>
+    <value>Zarážka s ID {0} neexistuje.</value>
   </data>
   <data name="FileDoesNotExist" xml:space="preserve">
     <value>Soubor {0} neexistuje.</value>
   </data>
   <data name="WrongExtension" xml:space="preserve">
-    <value>Cannot set breakpoint on file '{0}'; only *.ps1 and *.psm1 files are valid.</value>
+    <value>V souboru {0} nelze nastavit zarážku. Platné jsou pouze soubory *.ps1 a *.psm1.</value>
   </data>
   <data name="RemoteDebuggerNotSupported" xml:space="preserve">
-    <value>Debugging is not supported on remote sessions.</value>
+    <value>Ladění není ve vzdálených relacích podporováno.</value>
   </data>
   <data name="CannotSetBreakpointInconsistentLanguageMode" xml:space="preserve">
-    <value>Cannot set breakpoint. The language mode for this session is incompatible with the system-wide language mode.</value>
+    <value>Nelze nastavit zarážku. Jazykový režim této relace není kompatibilní se systémovým jazykovým režimem.</value>
   </data>
   <data name="RemoteDebuggerNotSupportedInHost" xml:space="preserve">
-    <value>Breakpoints cannot be set in the remote session because remote debugging is not supported by the current host.</value>
+    <value>Zarážky nelze nastavit ve vzdálené relaci, protože aktuální hostitel nepodporuje vzdálené ladění.</value>
   </data>
   <data name="RunspaceDebuggingCannotDebugDefaultRunspace" xml:space="preserve">
-    <value>You cannot debug the default host Runspace using this cmdlet. To debug the default Runspace use the normal debugging commands from the host.</value>
+    <value>Pomocí této rutiny nelze ladit výchozí hostitelské prostředí runspace. Chcete-li ladit výchozí prostředí runspace, použijte běžné příkazy ladění hostitele.</value>
   </data>
   <data name="RunspaceDebuggingNoHostRunspaceOrDebugger" xml:space="preserve">
-    <value>Cannot debug Runspace. The host has no debugger. Try debugging the Runspace inside the PowerShell console or with Visual Studio Code, both of which have built-in debuggers.</value>
+    <value>Nelze ladit prostředí runspace. Hostitel nemá ladicí program. Zkuste ladit prostředí runspace v konzole PowerShellu nebo ve Visual Studio Code, které mají integrované ladicí programy.</value>
   </data>
   <data name="RunspaceDebuggingNoHost" xml:space="preserve">
-    <value>Cannot debug Runspace. There is no host or host UI. The debugger requires a host and host UI for debugging.</value>
+    <value>Nelze ladit prostředí runspace. Hostitel nebo jeho uživatelské rozhraní nejsou k dispozici. Ladicí program vyžaduje hostitele a uživatelské rozhraní hostitele.</value>
   </data>
   <data name="RunspaceDebuggingTooManyRunspacesFound" xml:space="preserve">
-    <value>More than one Runspace was found. Only one Runspace can be debugged at a time.</value>
+    <value>Bylo nalezeno více než jedno prostředí runspace. Současně lze ladit pouze jedno prostředí runspace.</value>
   </data>
   <data name="RunspaceDebuggingEndSession" xml:space="preserve">
-    <value>To end the debugging session type the 'Detach' command at the debugger prompt, or type 'Ctrl+C' otherwise.</value>
+    <value>Chcete-li ukončit relaci ladění, zadejte na příkazovém řádku ladicího programu příkaz Detach, případně stiskněte Ctrl+C.</value>
   </data>
   <data name="RunspaceDebuggingScriptCompleted" xml:space="preserve">
-    <value>Command or script completed.</value>
+    <value>Příkaz nebo skript byl dokončen.</value>
   </data>
   <data name="RunspaceDebuggingStarted" xml:space="preserve">
-    <value>Debugging Runspace: {0}</value>
+    <value>Laděné prostředí runspace: {0}</value>
   </data>
   <data name="RunspaceOptionInvalidRunspaceState" xml:space="preserve">
-    <value>Cannot set debug options on Runspace {0} because it is not in the Opened state.</value>
+    <value>Možnosti ladění prostředí runspace {0} nelze nastavit, protože není ve stavu Opened (Otevřeno).</value>
   </data>
   <data name="PersistDebugPreferenceFailure" xml:space="preserve">
-    <value>Failed to persist debug options for Process {0}.</value>
+    <value>Možnosti ladění pro proces {0} se nepodařilo trvale uložit.</value>
   </data>
   <data name="RunspaceOptionNoDebugger" xml:space="preserve">
-    <value>No debugger was found for Runspace {0}.</value>
+    <value>Pro prostředí runspace {0} nebyl nalezen žádný ladicí program.</value>
   </data>
   <data name="RunspaceDebuggingNoRunspaceFound" xml:space="preserve">
-    <value>No Runspace was found.</value>
+    <value>Nebylo nalezeno žádné prostředí runspace.</value>
   </data>
   <data name="DebugBreakMessage" xml:space="preserve">
-    <value>Wait-Debugger called on line {0} in {1}.</value>
+    <value>Rutina Wait-Debugger byla volána na řádku {0} v {1}.</value>
   </data>
   <data name="RunspaceInstanceIdNotFound" xml:space="preserve">
-    <value>A breakpoint associated with another runspace cannot be updated because there is no runspace with instance ID '{0}'.</value>
+    <value>Zarážku přidruženou k jinému prostředí runspace nelze aktualizovat, protože neexistuje žádné prostředí runspace s ID instance {0}.</value>
   </data>
 </root>
