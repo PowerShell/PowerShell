@@ -384,6 +384,14 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
                 Get-Module -ListAvailable -FullyQualifiedName existing-loose.psm1 | Should -Be $null
                 Get-Module -ListAvailable -Name existing-loose.psm1 | Should -Be $null
             }
+
+            # Unclear whether this is correct behavior. Are loose modules allowed under $env:PSModulePath?.
+            # Could resolve to:
+            #   - 'existing2' manifest module
+            It 'wrongly/correctly returns $null instead of module information for versioned module' {
+                Get-Module -ListAvailable -FullyQualifiedName existing2.psm1 | Should -Be $null
+                Get-Module -ListAvailable -Name existing2.psm1 | Should -Be $null
+            }
         }
     }
 }
