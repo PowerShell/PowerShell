@@ -330,8 +330,6 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
 
     Context 'Locating existing script module' {
         BeforeAll {
-            $env:PSModulePath = $env:PSModulePath
-
             # Script modules
             #
             # Under $env:PSModulePath. TODO: Is this a supported scenario?
