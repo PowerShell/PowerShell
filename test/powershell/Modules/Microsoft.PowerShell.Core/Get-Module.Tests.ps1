@@ -399,6 +399,9 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
                 Get-Module -ListAvailable -Name existing.psm1 | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
             }
         }
+
+        Context 'Resolves to non-existing loose or versioned module under $env:PSModulePath' {
+        }
     }
 }
 
