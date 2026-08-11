@@ -418,6 +418,18 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
 
             Remove-Item $inCwdLooseFilePath
         }
+
+        It 'returns existing manifest modules when using the -Name parameter' {
+            $actual = Get-Module -ListAvailable -Name '.\existing*'
+            $actual | Should -HaveCount 2
+            $actual[0].Path | Should -BeExactly ([System.IO.Path]::GetFullPath('.\existing\0.0.1\existing.psd1'))
+            $actual[1].Path | Should -BeExactly ([System.IO.Path]::GetFullPath('.\existing2\0.0.1\existing2.psd1'))
+
+            $actual = Get-Module -ListAvailable -Name '..\existing*'
+            $actual | Should -HaveCount 2
+            $actual[0].Path | Should -BeExactly ([System.IO.Path]::GetFullPath('..\existing\0.0.1\existing.psd1'))
+            $actual[1].Path | Should -BeExactly ([System.IO.Path]::GetFullPath('..\existing2\0.0.1\existing2.psd1'))
+        }
     }
 }
 
