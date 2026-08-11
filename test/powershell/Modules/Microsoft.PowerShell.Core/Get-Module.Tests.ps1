@@ -293,6 +293,7 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
     It 'wrongly returns module information instead of $null or error for missing script module' {
         $path = [System.IO.Path]::GetFullPath((Join-Path $pwd missing.psm1))
         Test-Path $path | Should -BeFalse
+
         Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
     }
@@ -300,6 +301,7 @@ Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argum
     It 'wrongly returns module information instead of $null or error for missing script module under $env:PSModulePath' {
         $path = [System.IO.Path]::GetFullPath((Join-Path $env:PSModulePath missing.psm1))
         Test-Path $path | Should -BeFalse
+
         Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
         Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
     }
