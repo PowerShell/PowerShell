@@ -13,8 +13,10 @@ jobs:
     value: ${{ parameters.DotnetRuntimeVersion }}
   - name: DOTNET_SDK_VERSION
     value: ${{ parameters.DotnetSdkVersion }}
-  - name: destinationPath
+  - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/pkgs'
+  - name: destinationPath
+    value: '$(ob_outputDirectory)'
 
   pool:
     name: PowerShell1ES
