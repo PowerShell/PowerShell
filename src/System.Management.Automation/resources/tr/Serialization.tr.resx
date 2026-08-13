@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AttributeExpected" xml:space="preserve">
-    <value>{0} attribute was expected.</value>
+    <value>{0} özniteliği bekleniyordu.</value>
   </data>
   <data name="InvalidElementTag" xml:space="preserve">
-    <value>{0} XML tag is not recognized.</value>
+    <value>{0} XML etiketi tanınmıyor.</value>
   </data>
   <data name="InvalidReferenceId" xml:space="preserve">
-    <value>No object found for referenceId {0}</value>
+    <value>{0} başvurusu için nesne bulunamadı.</value>
   </data>
   <data name="InvalidDictionaryKeyName" xml:space="preserve">
-    <value>Name attribute for dictionary key is incorrectly specified.</value>
+    <value>Sözlük anahtarı için ad özniteliği yanlış belirtilmiş.</value>
   </data>
   <data name="InvalidDictionaryValueName" xml:space="preserve">
-    <value>Name attribute for dictionary value is incorrectly specified.</value>
+    <value>Sözlük değeri için ad özniteliği yanlış belirtilmiş.</value>
   </data>
   <data name="InvalidVersion" xml:space="preserve">
-    <value>Version of PSObject is not valid.</value>
+    <value>PSObject sürümü geçersiz.</value>
   </data>
   <data name="UnexpectedVersion" xml:space="preserve">
-    <value>Version of incoming PSObject is {0}. Expected value is 1.</value>
+    <value>Gelen PSObject sürümü {0}. Beklenen değer 1.</value>
   </data>
   <data name="InvalidTypeHierarchyReferenceId" xml:space="preserve">
-    <value>Cannot process names because no TypeNames were found for referenceId {0}.</value>
+    <value>{0} başvurusu için TypeName bulunamadığından adlar işlenemiyor.</value>
   </data>
   <data name="DepthOfOneRequired" xml:space="preserve">
-    <value>Value of depth parameter must be greater than or equal to 1.</value>
+    <value>depth parametresinin değeri 1’den büyük veya 1’e eşit olmalıdır.</value>
   </data>
   <data name="InvalidNodeType" xml:space="preserve">
-    <value>Current Node type is {0}. Expected type is {1}.</value>
+    <value>Geçerli Düğüm türü {0}. Beklenen tür: {1}.</value>
   </data>
   <data name="DictionaryKeyNotSpecified" xml:space="preserve">
-    <value>Key for dictionary entry is not specified.</value>
+    <value>Sözlük girdisinin anahtarı belirtilmedi.</value>
   </data>
   <data name="DictionaryValueNotSpecified" xml:space="preserve">
-    <value>Value for dictionary entry is not specified.</value>
+    <value>Sözlük girdisi için değer belirtilmemiş.</value>
   </data>
   <data name="ReadCalledAfterDone" xml:space="preserve">
-    <value>There are no more objects to deserialize.</value>
+    <value>Seri durumdan çıkarılacak başka nesne yok.</value>
   </data>
   <data name="NullAsDictionaryKey" xml:space="preserve">
-    <value>Null is specified as dictionary key.</value>
+    <value>Null, sözlük anahtarı olarak belirtilmiştir.</value>
   </data>
   <data name="InvalidPrimitiveType" xml:space="preserve">
-    <value>The contents of the {0} primitive type are not valid.</value>
+    <value>{0} ilkel türünün içeriği geçersiz.</value>
   </data>
   <data name="DeserializationTooDeep" xml:space="preserve">
-    <value>Serialized XML is nested too deeply.</value>
+    <value>Serileştirilmiş XML çok derine yuvalanmış.</value>
   </data>
   <data name="Stopping" xml:space="preserve">
-    <value>Serializer was closed.</value>
+    <value>Serileştirici kapatıldı.</value>
   </data>
   <data name="DeserializationMemoryQuota" xml:space="preserve">
-    <value>The data in the command exceeded the maximum size that is allowed by the session configuration. The allowed maximum is {0} MB. Change the input, use a different session configuration, or change the "{1}" and "{2}" properties of the session configuration on the remote computer.</value>
+    <value>Komuttaki veri, oturum yapılandırmasının izin verdiği en büyük boyutu aştı. İzin verilen en büyük değer {0} MB'dir. Girişi değiştirin, farklı bir oturum yapılandırması kullanın veya uzak bilgisayardaki oturum yapılandırmasının "{1}" ve "{2}" özelliklerini değiştirin.</value>
   </data>
   <data name="DeserializeSecureStringFailed" xml:space="preserve">
-    <value>Deserialization of encrypted secure string failed</value>
+    <value>Şifrelenmiş güvenli dize seri durumundan çıkarılamadı.</value>
   </data>
   <data name="PrimitiveHashtableInvalidKey" xml:space="preserve">
-    <value>The key type {0} is not valid. The PSPrimitiveDictionary class accepts only keys of the type System.String.</value>
+    <value>{0} anahtar türü geçersiz. PSPrimitiveDictionary sınıfı yalnızca System.String türündeki anahtarları kabul eder.</value>
   </data>
   <data name="PrimitiveHashtableInvalidValue" xml:space="preserve">
-    <value>The type of the value {0} is not valid. The PSPrimitiveDictionary class accepts only values of types that are fully serializable over PowerShell remoting. See the Help topic about_Remoting for a list of fully-serializable types.</value>
+    <value>{0} değerinin türü geçerli değil. PSPrimitiveDictionary sınıfı, Windows PowerShell uzak iletişimi üzerinden tam olarak seri durumuna alınabilir türlerdeki değerleri yalnızca kabul eder. Tam olarak seri durumuna alınabilir türlerin bir listesi için about_Remoting Yardım konusuna bakın.</value>
   </data>
   <data name="InvalidKey" xml:space="preserve">
-    <value>Could not decrypt data. The data was not encrypted with this key.</value>
+    <value>Verinin şifresi çözülemedi. Veri bu anahtarla şifrelenmedi.</value>
   </data>
   <data name="InvalidEncryptedString" xml:space="preserve">
-    <value>The parameter value "{0}" is not a valid encrypted string.</value>
+    <value>“{0}” parametre değeri geçerli bir şifrelenmiş dize değil.</value>
   </data>
   <data name="InvalidKeyLength" xml:space="preserve">
-    <value>The specified {0} is not valid. Valid {0} length settings are either 128 bits, 192 bits, or 256 bits.</value>
+    <value>Belirtilen {0} geçerli değil. Geçerli {0} uzunluk ayarları 128 bit, 192 bit veya 256 bittir.</value>
   </data>
   <data name="DeserializeSecureStringNotSupported" xml:space="preserve">
-    <value>Deserialization of SecureString is currently only supported on Windows.</value>
+    <value>SecureString'in seri durumdan çıkarılması şu anda yalnızca Windows'ta destekleniyor.</value>
   </data>
 </root>

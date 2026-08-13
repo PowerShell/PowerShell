@@ -118,24 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ArgumentIllegalEnvVarName" xml:space="preserve">
-    <value>Environment variable name cannot contain equal character.</value>
+    <value>环境变量名不能包含等号字符。</value>
   </data>
   <data name="ArgumentLongEnvVarValue" xml:space="preserve">
-    <value>Environment variable name or value is too long.</value>
+    <value>环境变量名称或值太长。</value>
   </data>
   <data name="ArgumentStringFirstCharIsZero" xml:space="preserve">
-    <value>The first char in the string is the null character.</value>
+    <value>字符串中的第一个字符是空字符。</value>
   </data>
   <data name="ArgumentStringZeroLength" xml:space="preserve">
-    <value>String cannot be of zero length.</value>
+    <value>字符串长度不能为零。</value>
   </data>
   <data name="CannotGetComputerName" xml:space="preserve">
-    <value>Computer name could not be obtained.</value>
+    <value>无法获取计算机名称。</value>
   </data>
   <data name="CannotGetDomainName" xml:space="preserve">
-    <value>Current user's domain name could not be obtained.</value>
+    <value>无法获取当前用户的域名。</value>
   </data>
   <data name="UnknownErrorNumber" xml:space="preserve">
-    <value>Unknown error "{0}".</value>
+    <value>未知错误: {0}。</value>
   </data>
 </root>

@@ -118,289 +118,289 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MemberAlreadyPresent" xml:space="preserve">
-    <value>The member "{0}" is already present.</value>
+    <value>成员 {0} 已存在。</value>
   </data>
   <data name="MemberAlreadyPresentFromTypesXml" xml:space="preserve">
-    <value>The member "{0}" is already present from the extended type data file.</value>
+    <value>扩展类型数据文件中已存在成员“{0}”。</value>
   </data>
   <data name="MemberNotPresent" xml:space="preserve">
-    <value>The member "{0}" is not present.</value>
+    <value>成员“{0}”不存在。</value>
   </data>
   <data name="ExceptionWhenSetting" xml:space="preserve">
-    <value>Exception setting "{0}": "{1}"</value>
+    <value>设置“{0}”时出现异常：“{1}”</value>
   </data>
   <data name="ExceptionWhenGetting" xml:space="preserve">
-    <value>Exception getting "{0}": "{1}"</value>
+    <value>获取“{0}”时出现异常:“{1}”</value>
   </data>
   <data name="EnumerationException" xml:space="preserve">
-    <value>The following exception occurred while trying to enumerate the collection: "{0}".</value>
+    <value>尝试枚举集合时发生以下异常:“{0}”。</value>
   </data>
   <data name="AccessMemberOutsidePSObject" xml:space="preserve">
-    <value>Cannot access member "{0}" outside of a PSObject.</value>
+    <value>无法访问 PSObject 外部的成员“{0}”。</value>
   </data>
   <data name="ChangeStaticMember" xml:space="preserve">
-    <value>Cannot change the member created from the type configuration: "{0}".</value>
+    <value>无法更改从类型配置创建的成员:“{0}”。</value>
   </data>
   <data name="ReservedMemberName" xml:space="preserve">
-    <value>The member name "{0}" is reserved.</value>
+    <value>成员名称“{0}”为保留名称。</value>
   </data>
   <data name="CannotChangeReservedMember" xml:space="preserve">
-    <value>"{0}" cannot be changed.</value>
+    <value>无法更改“{0}”。</value>
   </data>
   <data name="MethodInvocationException" xml:space="preserve">
-    <value>Exception calling "{0}" with "{1}" argument(s): "{2}"</value>
+    <value>调用“{0}”并传入“{1}”个参数时发生异常：“{2}”</value>
   </data>
   <data name="CopyToInvocationException" xml:space="preserve">
-    <value>An exception was thrown when trying to call "{0}" to extract the contents of an object of type "{1}": "{2}"</value>
+    <value>尝试调用“{0}”以提取类型为“{1}”的对象的内容时引发了异常：“{2}”</value>
   </data>
   <data name="MethodArgumentCountException" xml:space="preserve">
-    <value>Cannot find an overload for "{0}" and the argument count: "{1}".</value>
+    <value>找不到“{0}”的参数计数为“{1}”的重载。</value>
   </data>
   <data name="MethodGenericArgumentCountException" xml:space="preserve">
-    <value>Could not find a suitable generic method overload for "{0}" with "{1}" type parameters, and the argument count: "{2}".</value>
+    <value>对于类型参数“{0}”和参数计数“{1}”的“{2}”，找不到合适的泛型方法重载。</value>
   </data>
   <data name="MethodAmbiguousException" xml:space="preserve">
-    <value>Multiple ambiguous overloads found for "{0}" and the argument count: "{1}".</value>
+    <value>为“{0}”和参数计数“{1}”找到了多个不明确的重载。</value>
   </data>
   <data name="MethodArgumentConversionException" xml:space="preserve">
-    <value>Cannot convert argument "{0}", with value: "{1}", for "{2}" to type "{3}": "{4}"</value>
+    <value>无法将参数“{0}”转换为类型“{1}”，其值为“{2}”，用于“{3}”：“{4}”</value>
   </data>
   <data name="GetWithoutGetterException" xml:space="preserve">
-    <value>Get accessor for property "{0}" is unavailable.</value>
+    <value>属性“{0}”的 Get 访问器不可用。</value>
   </data>
   <data name="SetWithoutSetterException" xml:space="preserve">
-    <value>Set accessor for property "{0}" is unavailable.</value>
+    <value>属性“{0}”的 Set 访问器不可用。</value>
   </data>
   <data name="CodePropertySetterFormat" xml:space="preserve">
-    <value>The setter method should be public, void, static, and have two parameters. The first parameter should be of the type PSObject. A second parameter is required if a getter method is also available, and should have the same type as the return type for the getter method.</value>
+    <value>setter 方法应为 public、void、static，并具有两个参数。第一个参数应为 PSObject 类型。如果 getter 方法也可用，则需要第二个参数，并且其类型应与 getter 方法的返回类型相同。</value>
   </data>
   <data name="CodePropertyGetterFormat" xml:space="preserve">
-    <value>The getter method should be public, not void, static, and have one parameter of the type PSObject.</value>
+    <value>getter 方法应为 public、非 void、static，并且只有一个 PSObject 类型的参数。</value>
   </data>
   <data name="CodePropertyGetterAndSetterNull" xml:space="preserve">
-    <value>CodeProperty should use a getter or setter method.</value>
+    <value>CodeProperty 应使用 getter 或 setter 方法。</value>
   </data>
   <data name="CodeMethodMethodFormat" xml:space="preserve">
-    <value>Cannot create a code method because of the method format. The method should be public, static, and have one parameter of type PSObject.</value>
+    <value>由于方法格式问题，无法创建代码方法。该方法应为 public、static，并且只有一个 PSObject 类型的参数。</value>
   </data>
   <data name="CycleInAlias" xml:space="preserve">
-    <value>The alias with name "{0}" contains a cycle.</value>
+    <value>别名名为“{0}”的别名包含循环。</value>
   </data>
   <data name="InvalidCastException" xml:space="preserve">
-    <value>Cannot convert the "{0}" value of type "{1}" to type "{2}".</value>
+    <value>无法将类型“{0}”的“{1}”值转换为类型“{2}”。</value>
   </data>
   <data name="InvalidCastExceptionWithoutValue" xml:space="preserve">
-    <value>Cannot convert the value of type "{0}" to type "{1}".</value>
+    <value>无法将类型“{0}”的值转换为类型“{1}”。</value>
   </data>
   <data name="InvalidCastExceptionWithInnerException" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}". Error: "{2}"</value>
+    <value>无法将值 "{0}" 转换为类型 "{1}"。错误:“{2}”</value>
   </data>
   <data name="InvalidCastExceptionEnumerationNoFlagAndComma" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}" because no commas are allowed for this enumeration.</value>
+    <value>无法将值“{0}”转换为类型“{1}”，因为此枚举不允许使用逗号。</value>
   </data>
   <data name="InvalidCastExceptionEnumerationNoValue" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}" due to enumeration values that are not valid. Specify one of the following enumeration values and try again. The possible enumeration values are "{2}".</value>
+    <value>由于枚举值无效，无法将值“{0}”转换为类型“{1}”。请指定以下枚举值之一，然后重试。可用的枚举值为“{2}”。</value>
   </data>
   <data name="InvalidCastExceptionEnumerationNull" xml:space="preserve">
-    <value>Cannot convert null to type "{0}" due to enumeration values that are not valid. Specify one of the following enumeration values and try again. The possible enumeration values are "{1}".</value>
+    <value>由于枚举值无效，无法将 null 转换为类型“{0}”。请指定以下枚举值之一，然后重试。可用的枚举值为“{1}”。</value>
   </data>
   <data name="InvalidCastFromNull" xml:space="preserve">
-    <value>Cannot convert null to type "{0}".</value>
+    <value>无法将 null 转换为类型“{0}”。</value>
   </data>
   <data name="InvalidCastExceptionNoStringForConversion" xml:space="preserve">
-    <value>Cannot convert value to type "{0}".  Error: "{1}"</value>
+    <value>无法将值转换为类型 "{0}"。 错误:“{1}”</value>
   </data>
   <data name="InvalidCastCannotRetrieveString" xml:space="preserve">
-    <value>Cannot convert value to type System.String.</value>
+    <value>无法将值转换为 System.String 类型。</value>
   </data>
   <data name="ReferenceTypeExpected" xml:space="preserve">
-    <value>Reference type is expected in argument.</value>
+    <value>参数中应为引用类型。</value>
   </data>
   <data name="NotIcomparable" xml:space="preserve">
-    <value>Cannot compare "{0}" because it is not IComparable.</value>
+    <value>无法比较“{0}”，因为它不是 IComparable。</value>
   </data>
   <data name="ComparisonFailure" xml:space="preserve">
-    <value>Could not compare "{0}" to "{1}". Error: "{2}"</value>
+    <value>无法将“{0}”与“{1}”进行比较。错误:“{2}”</value>
   </data>
   <data name="NotTheSameTypeOrNotIcomparable" xml:space="preserve">
-    <value>Cannot compare "{0}" to "{1}" because the objects are not the same type or the object "{0}" does not implement "{2}".</value>
+    <value>无法将“{0}”与“{1}”进行比较，因为对象不是同一类型，或者对象“{0}”未实现“{2}”。</value>
   </data>
   <data name="InvalidCastExceptionEnumerationMoreThanOneValue" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}" because at least two matches were found ({2}, {3}) and only one match is allowed for this enumeration.</value>
+    <value>无法将值“{0}”转换为类型“{1}”，因为至少找到两个匹配项({2}、 {3})，而此枚举只允许一个匹配项。</value>
   </data>
   <data name="InvalidCastExceptionForBooleanArgumentValue" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}". Boolean parameters accept only Boolean values and numbers, such as $True, $False, 1 or 0.</value>
+    <value>无法将值 "{0}" 转换为类型 "{1}"。布尔参数只接受布尔值和数字，例如 $True、$False、1 或 0。</value>
   </data>
   <data name="WriteOnlyProperty" xml:space="preserve">
-    <value>Cannot get property value because "{0}" is a write-only property.</value>
+    <value>无法获取属性值，因为“{0}”是只写属性。</value>
   </data>
   <data name="ReadOnlyProperty" xml:space="preserve">
-    <value>"{0}" is a ReadOnly property.</value>
+    <value>“{0}”是 ReadOnly 属性。</value>
   </data>
   <data name="XmlNodeSetShouldBeAString" xml:space="preserve">
-    <value>Cannot set "{0}" because only strings can be used as values to set XmlNode properties.</value>
+    <value>无法设置“{0}”，因为只有字符串才能用作值来设置 XmlNode 属性。</value>
   </data>
   <data name="XmlNodeSetRestrictions" xml:space="preserve">
-    <value>Cannot set "{0}" because only unique attributes or unique non-attributed leaf nodes can be set.</value>
+    <value>无法设置“{0}”，因为只能设置唯一属性或唯一的非属性化叶节点。</value>
   </data>
   <data name="CannotAddPropertyOrMethod" xml:space="preserve">
-    <value>A PSProperty or PSMethod object cannot be added to this collection.</value>
+    <value>无法将 PSProperty 或 PSMethod 对象添加到此集合。</value>
   </data>
   <data name="TypesXmlError" xml:space="preserve">
-    <value>The following error occurred while loading the extended type data file: {0}</value>
+    <value>加载扩展类型数据文件时出现以下错误： {0}</value>
   </data>
   <data name="ToStringException" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string: "{0}"</value>
+    <value>检索字符串时发生以下异常：“{0}”</value>
   </data>
   <data name="NotAClsCompliantFieldProperty" xml:space="preserve">
-    <value>The field or property: "{0}" for type: "{1}" differs only in letter casing from the field or property: "{2}". The type must be Common Language Specification (CLS) compliant.</value>
+    <value>类型“{0}”的字段或属性“{1}”仅在字母大小写上与字段或属性“{2}”不同。类型必须符合公共语言规范 (CLS)。</value>
   </data>
   <data name="ExceptionRetrievingTypeNameHierarchy" xml:space="preserve">
-    <value>The following exception occurred while retrieving the type name hierarchy: "{0}".</value>
+    <value>检索类型名称层次结构时发生以下异常：“{0}”。</value>
   </data>
   <data name="ExceptionGettingMember" xml:space="preserve">
-    <value>The following exception occurred while retrieving member "{1}": "{0}"</value>
+    <value>检索成员“{1}”时发生以下异常：“{0}”</value>
   </data>
   <data name="ExceptionGettingMembers" xml:space="preserve">
-    <value>The following exception occurred while retrieving members: "{0}"</value>
+    <value>检索成员时发生以下异常：“{0}”</value>
   </data>
   <data name="ExceptionRetrievingPropertyReadState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the read state for property "{1}": "{0}"</value>
+    <value>检索属性“{1}”的读取状态时发生以下异常: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingPropertyWriteState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the write state for property "{1}": "{0}"</value>
+    <value>检索属性“{1}”的写入状态时发生以下异常：“{0}”</value>
   </data>
   <data name="ExceptionRetrievingPropertyType" xml:space="preserve">
-    <value>The following exception occurred while retrieving the type for property "{1}": "{0}"</value>
+    <value>检索属性“{1}”的类型时发生以下异常：“{0}”</value>
   </data>
   <data name="ExceptionRetrievingPropertyString" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string representation for property "{1}" : "{0}"</value>
+    <value>检索属性“{1}”的字符串表示形式时发生以下异常：“{0}”</value>
   </data>
   <data name="ExceptionRetrievingPropertyAttributes" xml:space="preserve">
-    <value>The following exception occurred while retrieving the attributes for property "{1}": "{0}"</value>
+    <value>检索属性“{1}”的属性时发生以下异常：“{0}”</value>
   </data>
   <data name="ExceptionRetrievingMethodDefinitions" xml:space="preserve">
-    <value>The following exception occurred while retrieving the definitions for method "{1}": "{0}"</value>
+    <value>检索方法“{1}”的定义时发生以下异常:“{0}”</value>
   </data>
   <data name="ExceptionRetrievingMethodString" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string representation for method "{1}": "{0}"</value>
+    <value>检索方法“{1}”的字符串表示形式时发生以下异常：“{0}”</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertytype" xml:space="preserve">
-    <value>The following exception occurred while retrieving the type for parameterized property "{1}": "{0}"</value>
+    <value>检索参数化属性“{1}”的类型时发生以下异常:“{0}”</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyReadState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the read state for parameterized property "{1}": "{0}"</value>
+    <value>检索参数化属性“{1}”的读取状态时发生以下异常：“{0}”</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyWriteState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the write state for parameterized property "{1}": "{0}"</value>
+    <value>检索参数化属性“{1}”的写入状态时发生以下异常：“{0}”</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyDefinitions" xml:space="preserve">
-    <value>The following exception occurred while retrieving the definitions for parameterized property "{1}": "{0}"</value>
+    <value>检索参数化属性“{1}”的定义时发生以下异常:“{0}”</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyString" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string representation for parameterized property "{1}": "{0}"</value>
+    <value>检索参数化属性“{1}”的字符串表示形式时发生以下异常:“{0}”</value>
   </data>
   <data name="CannotSetValueForMemberType" xml:space="preserve">
-    <value>Cannot set the Value property for PSMemberInfo object of type "{0}".</value>
+    <value>无法为类型为“{0}”的 PSMemberInfo 对象设置 Value 属性。</value>
   </data>
   <data name="NonRefArgumentToRefParameter" xml:space="preserve">
-    <value>Argument: '{0}' should be a {1}. Use {2}.</value>
+    <value>参数“{0}”应为 {1}。使用 {2}。</value>
   </data>
   <data name="RefArgumentToNonRefParameter" xml:space="preserve">
-    <value>Argument: '{0}' should not be a {1}. Do not use {2}.</value>
+    <value>参数“{0}”不应为 {1}。请勿使用 {2}。</value>
   </data>
   <data name="PropertyNotFoundInTypeDescriptor" xml:space="preserve">
     <value>找不到属性“{0}”。</value>
   </data>
   <data name="InvalidComponent" xml:space="preserve">
-    <value>Cannot get or set the property value. The "{0}" argument should be of type "{1}" or "{2}".</value>
+    <value>无法获取或设置属性值。“{0}”参数应为“{1}”或“{2}”类型。</value>
   </data>
   <data name="CannotSetNonManagementObject" xml:space="preserve">
-    <value>Cannot set the value for property "{0}" because the object has type "{1}" instead of "{2}".</value>
+    <value>无法设置属性“{0}”的值，因为对象的类型为“{1}”，而不是“{2}”。</value>
   </data>
   <data name="WMIMethodInvocationException" xml:space="preserve">
-    <value>Exception calling "{0}" : "{1}"</value>
+    <value>调用“{0}”时出现异常:“{1}”</value>
   </data>
   <data name="InvalidWMIClassPath" xml:space="preserve">
-    <value>{0} is not a valid class path.</value>
+    <value>{0} 不是有效的类路径。</value>
   </data>
   <data name="InvalidWMIPath" xml:space="preserve">
     <value>{0} 不是有效的路径。</value>
   </data>
   <data name="PropertyIsSettableError" xml:space="preserve">
-    <value>The adapter cannot determine whether property "{0}" can be changed.</value>
+    <value>适配器无法确定属性“{0}”是否可以更改。</value>
   </data>
   <data name="PropertyIsGettableError" xml:space="preserve">
-    <value>The adapter cannot determine whether property "{0}" is gettable.</value>
+    <value>适配器无法确定属性“{0}”是否可读写。</value>
   </data>
   <data name="PropertyGetError" xml:space="preserve">
-    <value>The adapter cannot get the value of property "{0}".</value>
+    <value>适配器无法获取属性“{0}”的值。</value>
   </data>
   <data name="PropertySetError" xml:space="preserve">
-    <value>The adapter cannot set the value of property "{0}".</value>
+    <value>适配器无法设置属性“{0}”的值。</value>
   </data>
   <data name="PropertyTypeError" xml:space="preserve">
-    <value>The adapter cannot get the type of property "{0}".</value>
+    <value>适配器无法获取属性“{0}”的类型。</value>
   </data>
   <data name="GetTypeNameHierarchyError" xml:space="preserve">
-    <value>The adapter cannot get the type hierarchy of "{0}".</value>
+    <value>适配器无法获取“{0}”的类型层次结构。</value>
   </data>
   <data name="GetProperties" xml:space="preserve">
-    <value>The adapter cannot get the properties of "{0}".</value>
+    <value>适配器无法获取“{0}”的属性。</value>
   </data>
   <data name="GetProperty" xml:space="preserve">
-    <value>The adapter cannot get property "{0}" for "{1}".</value>
+    <value>适配器无法获取“{0}”的属性“{1}”。</value>
   </data>
   <data name="NullReturnValueError" xml:space="preserve">
-    <value>"{0}" returned a null value.</value>
+    <value>“{0}”返回了 null 值。</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property '{0}' was not found for the '{1}' object. The settable properties are: {2}.</value>
+    <value>找不到“{0}”对象的属性“{1}”。可设置的属性为: {2}。</value>
   </data>
   <data name="NoSettableProperty" xml:space="preserve">
-    <value>The property '{0}' was not found for the '{1}' object. There is no settable property available.</value>
+    <value>找不到“{0}”对象的属性“{1}”。没有可设置的属性。</value>
   </data>
   <data name="ObjectCreationError" xml:space="preserve">
-    <value>Cannot create object of type "{0}". {1}</value>
+    <value>无法创建类型“{0}”的对象。 {1}</value>
   </data>
   <data name="CannotInvokeStaticMethodOnUninstantiatedGenericType" xml:space="preserve">
-    <value>Cannot invoke static methods or access static properties on the open generic type {0}.  Specify the type parameters and retry.  For example, instead of [System.Collections.Generic.HashSet``1]::CreateSetComparer() use [System.Collections.Generic.HashSet[int]]::CreateSetComparer().</value>
+    <value>无法在开放泛型类型 {0}上调用静态方法或访问静态属性。 请指定类型参数，然后重试。 例如，请使用 [System.Collections.Generic.HashSet[int]]::CreateSetComparer()，而不是 [System.Collections.Generic.HashSet``1]::CreateSetComparer()。</value>
     <comment>Error message shown when somebody tries to access a property or invoke a static method on an uninstantiated generic type:
 PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
 
 {0} is a placeholder for a type name (for example: System.Collections.Generic.Comparer`1)</comment>
   </data>
   <data name="ExceptionConstructingAttribute" xml:space="preserve">
-    <value>The following exception occurred while constructing the attribute "{1}": "{0}"</value>
+    <value>构造属性“{1}”时发生以下异常:“{0}”</value>
   </data>
   <data name="CannotConvertValueToStringArray" xml:space="preserve">
-    <value>The value "{0}" cannot be converted to a string array.</value>
+    <value>无法将值“{0}”转换为字符串数组。</value>
   </data>
   <data name="InvalidCastExceptionNonCoreType" xml:space="preserve">
-    <value>Cannot convert value to type "{0}". Only core types are supported in this language mode.</value>
+    <value>无法将值转换为类型 "{0}"。此语言模式仅支持核心类型。</value>
   </data>
   <data name="InvalidCastToByRefLikeType" xml:space="preserve">
-    <value>Cannot convert to the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
+    <value>无法转换为类似 ByRef 的类型“{0}”。PowerShell 不支持类似 ByRef 的类型。</value>
   </data>
   <data name="CannotAccessByRefLikePropertyOrField" xml:space="preserve">
-    <value>Cannot get or set the property or field "{0}" of the ByRef-like type "{1}". ByRef-like types are not supported in PowerShell.</value>
+    <value>无法获取或设置 ByRef-like 类型“{0}”的属性或字段“{1}”。PowerShell 不支持类似 ByRef 的类型。</value>
   </data>
   <data name="CannotCallMethodWithByRefLikeReturnType" xml:space="preserve">
-    <value>Cannot invoke the method "{0}" of the ByRef-like return type "{1}". ByRef-like types are not supported in PowerShell.</value>
+    <value>无法调用 ByRef-like 返回类型“{0}”的方法“{1}”。PowerShell 不支持类似 ByRef 的类型。</value>
   </data>
   <data name="CannotInstantiateBoxedByRefLikeType" xml:space="preserve">
-    <value>Cannot create an instance of the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
+    <value>无法创建 ByRef-like 类型“{0}”的实例。PowerShell 不支持类似 ByRef 的类型。</value>
   </data>
   <data name="WDACHashTypeLogTitle" xml:space="preserve">
-    <value>Extended Type System Hashtable Conversion</value>
+    <value>扩展类型系统哈希表转换</value>
   </data>
   <data name="WDACHashTypeLogMessage" xml:space="preserve">
-    <value>Type conversion from HashTable to '{0}' will not be allowed in ConstrainedLanguage mode.</value>
+    <value>在 ConstrainedLanguage 模式下，不允许将类型从 HashTable 转换为“{0}”。</value>
   </data>
   <data name="WDACTypeConversionLogTitle" xml:space="preserve">
-    <value>Extended Type System Hashtable Conversion</value>
+    <value>扩展类型系统哈希表转换</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
-    <value>Type conversion from '{0}' to '{1}' will not be allowed in ConstrainedLanguage mode.</value>
+    <value>在 ConstrainedLanguage 模式下，不允许将类型从“{0}”转换为“{1}”。</value>
   </data>
 </root>
