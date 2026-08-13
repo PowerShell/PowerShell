@@ -7,22 +7,6 @@
 - Add support for new WLDP setting `EnableFileOnlyEntry` (#26752)
 - Fix the dot-sourcing behavior of `pwsh -file` for advanced-function scripts (#27727)
 
-### Code Cleanup
-
-<details>
-
-<summary>
-
-<p>We thank the following contributors!</p>
-
-</summary>
-
-<ul>
-<li>Remove <code>Test-Bom</code> and the boms JSON files (#27726)</li>
-</ul>
-
-</details>
-
 ### Tests
 
 - Fix TimeZone test with duplicate names (#27525) (Thanks @KirtiRamchandani!)
@@ -33,7 +17,7 @@
 
 <summary>
 
-<p>We thank the following contributors!</p>
+<p>Stay with .NET SDK 11.0.100-preview.6</p>
 
 </summary>
 
@@ -49,6 +33,7 @@
 <li>Update the manifest resource names for the localized resources embedded in satellite assemblies (#27756)</li>
 <li>Update <code>LocProject.json</code> to list each English resource file directly (#27751)</li>
 <li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2652124 (#27736)</li>
+<li>Remove the <code>Test-Bom</code> function and the boms JSON files (#27726)</li>
 <li>Fix min-size package and ship localized resources only for MSIX packages (#27725)</li>
 <li>Fix the W3C URIs in <code>.resx</code> resource files (#27729)</li>
 <li>Update <code>metadata.json</code> for July releases (#27704)</li>
