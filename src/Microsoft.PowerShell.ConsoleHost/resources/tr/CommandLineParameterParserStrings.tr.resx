@@ -229,12 +229,12 @@ Valid formats are:
     <value>An argument is required to be supplied to the '{0}' parameter.</value>
   </data>
   <data name="FileOnlyEntryRequired" xml:space="preserve">
-    <value>The parameter "-File" is required by policy.</value>
+    <value>"-File" parametresi ilke tarafından zorunlu kılınıyor.</value>
   </data>
   <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
-    <value>The parameter "-NoExit" is disallowed by policy.</value>
+    <value>"-NoExit" parametresine ilke tarafından izin verilmiyor.</value>
   </data>
   <data name="FileOnlyEntryServerMode" xml:space="preserve">
-    <value>Server mode is disallowed by policy.</value>
+    <value>Sunucu moduna ilke tarafından izin verilmiyor.</value>
   </data>
 </root>
