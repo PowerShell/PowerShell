@@ -1471,7 +1471,7 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
     <value>Переданный набор потоков вывода недопустим. В качестве потока вывода поддерживается только {0}.</value>
   </data>
   <data name="WSManPluginInvalidSenderDetails" xml:space="preserve">
-    <value>The supplied WSMAN_SENDER_DETAILS is not valid. Cannot process null WSMAN_SENDER_DETAILS.</value>
+    <value>Предоставленные данные WSMAN_SENDER_DETAILS недействительны. Не удается обработать значение WSMAN_SENDER_DETAILS, равное нулю.</value>
   </data>
   <data name="WSManPluginInvalidShellContext" xml:space="preserve">
     <value>Указанный контекст оболочки недействителен.</value>
@@ -1498,7 +1498,7 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
     <value>Подключаемый модуль PowerShell не распознает параметр {0}. Убедитесь, что клиент совместим с сборкой {1} и версией протокола {2} PowerShell.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
-    <value>An option with name {0} is expected from the client. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>От клиента ожидается параметр с именем {0}. Убедитесь, что клиент совместим с сборкой {1} и версией протокола {2} PowerShell.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
     <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Подключаемый модуль PowerShell не поддерживает версию протокола {2}, запрошенную клиентом.&lt;/PSProtocolVersionError&gt;</value>
@@ -1507,7 +1507,7 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
     <value>При передаче контекста службе WSMan в подключаемом модуле PowerShell произошла неустранимая ошибка.</value>
   </data>
   <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
-    <value>Unable to create managed server session.</value>
+    <value>Не удалось создать сеанс управляемого сервера.</value>
   </data>
   <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
     <value>При регистрации дескриптора ожидания для уведомления о завершении работы в подключаемом модуле PowerShell произошла неустранимая ошибка.</value>

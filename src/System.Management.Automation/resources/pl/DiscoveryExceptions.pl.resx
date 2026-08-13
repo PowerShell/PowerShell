@@ -186,7 +186,7 @@ Instrukcja #requires musi mieć jeden z następujących formatów:
     <value>Nie można uruchomić skryptu „{0}”, ponieważ brakuje następujących przystawek określonych przez instrukcje „#requires” skryptu: {1}.</value>
   </data>
   <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
-    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
+    <value>Instrukcja #requires określiła tylko identyfikator shellID. Instrukcje #Requires muszą określać wymaganą przystawkę programu PowerShell podczas uruchamiania w programie PowerShell.</value>
   </data>
   <data name="RequiresElevation" xml:space="preserve">
     <value>Nie można uruchomić skryptu „{0}”, ponieważ zawiera on instrukcję „#requires” służącą do uruchamiania jako administrator. Bieżąca sesja programu PowerShell nie jest uruchomiona jako administrator. Uruchom program PowerShell przy użyciu opcji Uruchom jako administrator, a następnie spróbuj ponownie uruchomić skrypt.</value>

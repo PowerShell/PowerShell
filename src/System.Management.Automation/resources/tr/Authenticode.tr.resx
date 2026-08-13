@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Reason_DoNotRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted not to run this software now.</value>
+    <value>Bu yazılımı şimdi çalıştırmamayı seçtiğiniz için dosya {0} yüklenemiyor.</value>
   </data>
   <data name="Reason_NeverRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted never to run software from this publisher.</value>
+    <value>Bu yayımcının yazılımını hiçbir zaman çalıştırmamayı seçtiğiniz için dosya {0} yüklenemiyor.</value>
   </data>
   <data name="Reason_NotTrusted" xml:space="preserve">
-    <value>File {0} is published by {1}. This publisher is explicitly not trusted on your system. The script will not run on the system. For more information, run the command "get-help about_signing".</value>
+    <value>Dosya {0}, {1} tarafından yayımlanmış. Bu yayımcıya sisteminizde açıkça güvenilmiyor. Betik sistemde çalıştırılmayacak. Daha fazla bilgi için "get-help about_signing" komutunu çalıştırın.</value>
   </data>
   <data name="Reason_RestrictedMode" xml:space="preserve">
-    <value>File {0} cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.</value>
+    <value>Bu sistemde betiklerin çalıştırılması devre dışı bırakıldığından dosya {0} yüklenemiyor. Daha fazla bilgi için https://go.microsoft.com/fwlink/?LinkID=135170 adresindeki about_Execution_Policies sayfasına bakın.</value>
   </data>
   <data name="Reason_Unknown" xml:space="preserve">
-    <value>File {0} cannot be loaded. {1}.</value>
+    <value>Dosya {0} yüklenemiyor. {1}.</value>
   </data>
   <data name="Reason_DisallowedBySafer" xml:space="preserve">
-    <value>File {0} cannot be loaded because its operation is blocked by software restriction policies, such as those created by using Group Policy.</value>
+    <value>İşlemi, Grup İlkesi kullanılarak oluşturulanlar gibi yazılım kısıtlama ilkeleri tarafından engellendiğinden dosya {0} yüklenemiyor.</value>
   </data>
   <data name="Reason_FileContentUnavailable" xml:space="preserve">
-    <value>File {0} cannot be loaded because its content could not be read.</value>
+    <value>İçeriği okunamadığından dosya {0} yüklenemiyor.</value>
   </data>
   <data name="CertNotGoodForSigning" xml:space="preserve">
-    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+    <value>Kod imzalanamıyor. Belirtilen sertifika kod imzalama için uygun değil.</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code. The TimeStamp server URL must be fully qualified, and in the format http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+    <value>Kod imzalanamıyor. Zaman damgası sunucusu URL'si tam olarak belirtilmeli ve http://&lt;server url&gt; veya https://&lt;server url&gt; biçiminde olmalıdır.</value>
   </data>
   <data name="InvalidHashAlgorithm" xml:space="preserve">
-    <value>Cannot sign code. The hash algorithm is not supported.</value>
+    <value>Kod imzalanamıyor. Karma algoritması desteklenmiyor.</value>
   </data>
   <data name="AuthenticodePromptCaption" xml:space="preserve">
-    <value>Do you want to run software from this untrusted publisher?</value>
+    <value>Bu güvenilmeyen yayımcının yazılımını çalıştırmak istiyor musunuz?</value>
   </data>
   <data name="AuthenticodePromptText" xml:space="preserve">
-    <value>File {0} is published by {1} and is not trusted on your system. Only run scripts from trusted publishers.</value>
+    <value>Dosya {0}, {1} tarafından yayımlanmış ve sisteminizde dosyaya güvenilmiyor. Yalnızca güvenilir yayımcıların betiklerini çalıştırın.</value>
   </data>
   <data name="AuthenticodePromptText_UnknownPublisher" xml:space="preserve">
-    <value>Software {0} is published by an unknown publisher. It is recommended that you do not run this software.</value>
+    <value>Yazılım {0} bilinmeyen bir yayımcı tarafından yayımlanmış. Bu yazılımı çalıştırmamanız önerilir.</value>
   </data>
   <data name="RemoteFilePromptCaption" xml:space="preserve">
-    <value>Security warning</value>
+    <value>Güvenlik uyarısı</value>
   </data>
   <data name="RemoteFilePromptText" xml:space="preserve">
-    <value>Run only scripts that you trust. While scripts from the internet can be useful, this script can potentially harm your computer. If you trust this script, use the Unblock-File cmdlet to allow the script to run without this warning message. Do you want to run {0}?</value>
+    <value>Yalnızca güvendiğiniz betikleri çalıştırın. İnternet'ten gelen betikler kullanışlı olabildiği gibi bilgisayarınıza zarar da verebilir. Bu betiğe güveniyorsanız betiğin bu uyarı iletisi olmadan çalışmasına izin vermek için Unblock-File cmdlet'ini kullanın. {0} betiğini çalıştırmak istiyor musunuz?</value>
   </data>
   <data name="Choice_NeverRun" xml:space="preserve">
-    <value>Ne&amp;ver run</value>
+    <value>Hiçb&amp;ir zaman çalıştırma</value>
   </data>
   <data name="Choice_NeverRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and do not prompt me to run this script in future. Future attempts to run this script will result in a silent failure.</value>
+    <value>Bu yayımcının betiğini şimdi çalıştırma ve gelecekte bu betiği çalıştırmam için bana sorma. Gelecekte bu betiği çalıştırma girişimleri sessizce başarısız olur.</value>
   </data>
   <data name="Choice_DoNotRun" xml:space="preserve">
-    <value>&amp;Do not run</value>
+    <value>Ç&amp;alıştırma</value>
   </data>
   <data name="Choice_DoNotRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>Bu yayımcının betiğini şimdi çalıştırma ve gelecekte bu betiği çalıştırmam için bana sormaya devam et.</value>
   </data>
   <data name="Choice_RunOnce" xml:space="preserve">
-    <value>&amp;Run once</value>
+    <value>&amp;Bir kez çalıştır</value>
   </data>
   <data name="Choice_RunOnce_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>Bu yayımcının betiğini şimdi çalıştır ve gelecekte bu betiği çalıştırmam için bana sormaya devam et.</value>
   </data>
   <data name="Choice_AlwaysRun" xml:space="preserve">
-    <value>&amp;Always run</value>
+    <value>&amp;Her zaman çalıştır</value>
   </data>
   <data name="Choice_AlwaysRun_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and do not prompt me to run this script in the future.</value>
+    <value>Bu yayımcının betiğini şimdi çalıştır ve gelecekte bu betiği çalıştırmam için bana sorma.</value>
   </data>
   <data name="Choice_Suspend" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>&amp;Askıya Al</value>
   </data>
   <data name="Choice_Suspend_Help" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type exit to resume operation when you are done.</value>
+    <value>Geçerli işlem hattını duraklatın ve komut istemine dönün. İşiniz bittiğinde işlemi sürdürmek için exit yazın.</value>
   </data>
 </root>

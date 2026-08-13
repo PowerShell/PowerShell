@@ -118,154 +118,154 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
-    <value>The tab completion result cannot be properly deserialized because the remote runspace does not contain a TypeTable instance.</value>
+    <value>Das Ergebnis der TAB-Vervollständigung kann nicht ordnungsgemäß deserialisiert werden, da der Remotesitzungsbereich keine TypeTable-Instanz enthält.</value>
   </data>
   <data name="NoAccessToProperties" xml:space="preserve">
-    <value>Cannot access properties on a null instance of the type CompletionResult.</value>
+    <value>Auf Eigenschaften einer NULL-Instanz vom Typ CompletionResult kann nicht zugegriffen werden.</value>
   </data>
   <data name="bnotOperatorDescription" xml:space="preserve">
-    <value>Bitwise NOT</value>
+    <value>Bitweises NOT</value>
   </data>
   <data name="notOperatorDescription" xml:space="preserve">
-    <value>Logical not. Negates the statement that follows it.</value>
+    <value>Logisches "Nicht" Negiert die darauf folgende Anweisung.</value>
   </data>
   <data name="eqOperatorDescription" xml:space="preserve">
-    <value>Equal to - case insensitive. When the left operand is a collection, returns values from the collection that equal the right operand, otherwise returns TRUE if the left operand equals the right operand.</value>
+    <value>Gleich – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die gleich dem rechten Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand gleich dem rechten Operand ist.</value>
   </data>
   <data name="ieqOperatorDescription" xml:space="preserve">
-    <value>Equal to - case insensitive. When the left operand is a collection, returns values from the collection that equal the right operand, otherwise returns TRUE if the left operand equals the right operand.</value>
+    <value>Gleich – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die gleich dem rechten Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand gleich dem rechten Operand ist.</value>
   </data>
   <data name="ceqOperatorDescription" xml:space="preserve">
-    <value>Equal to - case sensitive. When the left operand is a collection, returns values from the collection that equal the right operand, otherwise returns TRUE if the left operand equals the right operand.</value>
+    <value>Gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die gleich dem rechten Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand gleich dem rechten Operand ist.</value>
   </data>
   <data name="neOperatorDescription" xml:space="preserve">
-    <value>Not equal to - case insensitive. When the left operand is a collection, returns values from the collection that do not equal the right operand, otherwise returns TRUE if the left operand does not equal the right operand.</value>
+    <value>Ungleich – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="ineOperatorDescription" xml:space="preserve">
-    <value>Not equal to - case insensitive. When the left operand is a collection, returns values from the collection that do not equal the right operand, otherwise returns TRUE if the left operand does not equal the right operand.</value>
+    <value>Ungleich – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="cneOperatorDescription" xml:space="preserve">
-    <value>Not equal to - case sensitive. When the left operand is a collection, returns values from the collection that do not equal the right operand, otherwise returns TRUE if the left operand does not equal the right operand.</value>
+    <value>Ungleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="geOperatorDescription" xml:space="preserve">
-    <value>Greater than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are greater than or equal to the right operand, otherwise returns TRUE if the left operand is greater than or equal to the right operand.</value>
+    <value>Größer als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die größer oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand größer oder gleich dem rechten Operanden ist.</value>
   </data>
   <data name="igeOperatorDescription" xml:space="preserve">
-    <value>Greater than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are greater than or equal to the right operand, otherwise returns TRUE if the left operand is greater than or equal to the right operand.</value>
+    <value>Größer als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die größer oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand größer oder gleich dem rechten Operanden ist.</value>
   </data>
   <data name="cgeOperatorDescription" xml:space="preserve">
-    <value>Greater than or equal to - case sensitive. When the left operand is a collection, returns values from the collection that are greater than or equal to the right operand, otherwise returns TRUE if the left operand is greater than or equal to the right operand.</value>
+    <value>Größer als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die größer oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand größer oder gleich dem rechten Operanden ist.</value>
   </data>
   <data name="gtOperatorDescription" xml:space="preserve">
-    <value>Greater than - case insensitive. When the left operand is a collection, returns values from the collection that are greater than the right operand, otherwise returns TRUE if the left operand is greater than the right operand.</value>
+    <value>Größer als – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die größer als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand größer als der rechte Operand ist.</value>
   </data>
   <data name="igtOperatorDescription" xml:space="preserve">
-    <value>Greater than - case insensitive. When the left operand is a collection, returns values from the collection that are greater than the right operand, otherwise returns TRUE if the left operand is greater than the right operand.</value>
+    <value>Größer als – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die größer als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand größer als der rechte Operand ist.</value>
   </data>
   <data name="cgtOperatorDescription" xml:space="preserve">
-    <value>Greater than - case sensitive. When the left operand is a collection, returns values from the collection that are greater than the right operand, otherwise returns TRUE if the left operand is greater than the right operand.</value>
+    <value>Größer als – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die größer als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand größer als der rechte Operand ist.</value>
   </data>
   <data name="ltOperatorDescription" xml:space="preserve">
-    <value>Less than - case insensitive. When the left operand is a collection, returns values from the collection that are less than the right operand, otherwise returns TRUE if the left operand is less than the right operand.</value>
+    <value>Kleiner als – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die kleiner als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand kleiner als der rechte Operand ist.</value>
   </data>
   <data name="iltOperatorDescription" xml:space="preserve">
-    <value>Less than - case insensitive. When the left operand is a collection, returns values from the collection that are less than the right operand, otherwise returns TRUE if the left operand is less than the right operand.</value>
+    <value>Kleiner als – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die kleiner als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand kleiner als der rechte Operand ist.</value>
   </data>
   <data name="cltOperatorDescription" xml:space="preserve">
-    <value>Less than - case sensitive. When the left operand is a collection, returns values from the collection that are less than the right operand, otherwise returns TRUE if the left operand is less than the right operand.</value>
+    <value>Kleiner als – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die kleiner als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand kleiner als der rechte Operand ist.</value>
   </data>
   <data name="leOperatorDescription" xml:space="preserve">
-    <value>Less than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are less than or equal to the right operand, otherwise returns TRUE if the left operand is less than or equal to the right operand.</value>
+    <value>Kleiner als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die kleiner oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand kleiner oder gleich dem rechten Operanden ist.</value>
   </data>
   <data name="ileOperatorDescription" xml:space="preserve">
-    <value>Less than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are less than or equal to the right operand, otherwise returns TRUE if the left operand is less than or equal to the right operand.</value>
+    <value>Kleiner als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die kleiner oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand kleiner oder gleich dem rechten Operanden ist.</value>
   </data>
   <data name="cleOperatorDescription" xml:space="preserve">
-    <value>Less than or equal to - case sensitive. When the left operand is a collection, returns values from the collection that are less than or equal to the right operand, otherwise returns TRUE if the left operand is less than or equal to the right operand.</value>
+    <value>Kleiner als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die kleiner oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand kleiner oder gleich dem rechten Operanden ist.</value>
   </data>
   <data name="likeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="ilikeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="clikeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case sensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="notlikeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="inotlikeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="cnotlikeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case sensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="matchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="imatchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="cmatchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case sensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="notmatchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="inotmatchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="cnotmatchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case sensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
   </data>
   <data name="replaceOperatorDescription" xml:space="preserve">
-    <value>Replace operator - case insensitive. Changes the left operand. Example: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+    <value>Ersetzungsoperator – Groß-/Kleinschreibung nicht beachten. Ändert den linken Operanden. Beispiel: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
   </data>
   <data name="ireplaceOperatorDescription" xml:space="preserve">
-    <value>Replace operator - case insensitive. Changes the left operand. Example: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+    <value>Ersetzungsoperator – Groß-/Kleinschreibung nicht beachten. Ändert den linken Operanden. Beispiel: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
   </data>
   <data name="creplaceOperatorDescription" xml:space="preserve">
-    <value>Replace operator - case sensitive. Changes the left operand. Example: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+    <value>Ersetzungsoperator – Groß-/Kleinschreibung beachten. Ändert den linken Operanden. Beispiel: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
   </data>
   <data name="containsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (rechter Operand) genau mit mindestens einem der Werte im linken Operanden übereinstimmt.</value>
   </data>
   <data name="icontainsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (rechter Operand) genau mit mindestens einem der Werte im linken Operanden übereinstimmt.</value>
   </data>
   <data name="ccontainsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case sensitive. Returns TRUE only when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung beachten. Gibt nur TRUE zurück, wenn der Testwert (rechter Operand) genau mit mindestens einem der Werte im linken Operanden übereinstimmt.</value>
   </data>
   <data name="notcontainsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches none of the values in the left operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (rechter Operand) genau mit keinem der Werte im linken Operanden übereinstimmt.</value>
   </data>
   <data name="inotcontainsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches none of the values in the left operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (rechter Operand) genau mit keinem der Werte im linken Operanden übereinstimmt.</value>
   </data>
   <data name="cnotcontainsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case sensitive. Returns TRUE when the test value (right operand) exactly matches none of the values in the left operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung beachten. Gibt TRUE zurück, wenn der Testwert (rechter Operand) genau mit keinem der Werte im linken Operanden übereinstimmt.</value>
   </data>
   <data name="inOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (left operand) exactly matches at least one of the values in the right operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit mindestens einem der Werte im rechten Operanden übereinstimmt.</value>
   </data>
   <data name="iinOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (left operand) exactly matches at least one of the values in the right operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit mindestens einem der Werte im rechten Operanden übereinstimmt.</value>
   </data>
   <data name="cinOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case sensitive. Returns TRUE when the test value (left operand) exactly matches at least one of the values in the right operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit mindestens einem der Werte im rechten Operanden übereinstimmt.</value>
   </data>
   <data name="notinOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case sensitive. Returns TRUE when the test value (left operand) exactly matches none of the values in the right operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit keinem der Werte im rechten Operanden übereinstimmt.</value>
   </data>
   <data name="inotinOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (left operand) exactly matches none of the values in the right operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit keinem der Werte im rechten Operanden übereinstimmt.</value>
   </data>
   <data name="cnotinOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case sensitive. Returns TRUE when the test value (left operand) exactly matches none of the values in the right operand.</value>
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit keinem der Werte im rechten Operanden übereinstimmt.</value>
   </data>
   <data name="splitOperatorDescription" xml:space="preserve">
-    <value>Split - case insensitive. Split one or more strings into substrings.
+    <value>Teilen – Groß-/Kleinschreibung nicht beachten. Teilt eine oder mehrere Zeichenfolgen in Teilzeichenfolgen auf.
 -Split &lt;String&gt;
 
 &lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
@@ -273,7 +273,7 @@
 &lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
   </data>
   <data name="isplitOperatorDescription" xml:space="preserve">
-    <value>Split - case insensitive. Split one or more strings into substrings.
+    <value>Teilen – Groß-/Kleinschreibung nicht beachten. Teilt eine oder mehrere Zeichenfolgen in Teilzeichenfolgen auf.
 -Split &lt;String&gt;
 
 &lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
@@ -281,7 +281,7 @@
 &lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
   </data>
   <data name="csplitOperatorDescription" xml:space="preserve">
-    <value>Split - case sensitive. Split one or more strings into substrings.
+    <value>Split – Groß-/Kleinschreibung beachten. Teilt eine oder mehrere Zeichenfolgen in Teilzeichenfolgen auf.
 -Split &lt;String&gt;
 
 &lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
@@ -289,103 +289,103 @@
 &lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
   </data>
   <data name="isnotOperatorDescription" xml:space="preserve">
-    <value>Returns TRUE when the left operand is not an instance of the specified .NET Framework type (right operand).</value>
+    <value>Gibt TRUE zurück, wenn der linke Operand keine Instanz des angegebenen .NET Framework-Typs (rechter Operand) ist.</value>
   </data>
   <data name="isOperatorDescription" xml:space="preserve">
-    <value>Returns TRUE when the left operand is an instance of the specified .NET Framework type (right operand).</value>
+    <value>Gibt TRUE zurück, wenn der linke Operand eine Instanz des angegebenen .NET Framework-Typs (rechter Operand) ist.</value>
   </data>
   <data name="asOperatorDescription" xml:space="preserve">
-    <value>Converts the left operand to the specified .NET Framework type (right operand).</value>
+    <value>Konvertiert den linken Operanden in den angegebenen .NET Framework-Typ (rechter Operand).</value>
   </data>
   <data name="fOperatorDescription" xml:space="preserve">
-    <value>Formats strings by using the format method of string objects.</value>
+    <value>Formatiert Zeichenfolgen mithilfe der Formatmethode von Zeichenfolgenobjekten.</value>
   </data>
   <data name="andOperatorDescription" xml:space="preserve">
-    <value>Logical and. Returns TRUE when both statements are TRUE.</value>
+    <value>Logisches "Und" Gibt TRUE zurück, wenn beide Anweisungen TRUE sind.</value>
   </data>
   <data name="bandOperatorDescription" xml:space="preserve">
-    <value>Bitwise AND</value>
+    <value>Bitweises AND</value>
   </data>
   <data name="orOperatorDescription" xml:space="preserve">
-    <value>Logical or. TRUE when either or both statements are TRUE.</value>
+    <value>Logisches "Oder" TRUE, wenn eine oder beide Anweisungen TRUE sind.</value>
   </data>
   <data name="borOperatorDescription" xml:space="preserve">
-    <value>Bitwise OR (inclusive)</value>
+    <value>Bitweises OR (inklusiv)</value>
   </data>
   <data name="xorOperatorDescription" xml:space="preserve">
-    <value>Logical exclusive or. Returns TRUE when one of the statements is TRUE and the other is FALSE.</value>
+    <value>Logisches XODER. Gibt TRUE zurück, wenn eine der Anweisungen TRUE und die andere FALSE ist.</value>
   </data>
   <data name="bxorOperatorDescription" xml:space="preserve">
-    <value>Bitwise OR (exclusive)</value>
+    <value>Bitweises OR (exklusiv)</value>
   </data>
   <data name="joinOperatorDescription" xml:space="preserve">
-    <value>Join - combine multiple strings into a single string.
+    <value>Verknüpfen – mehrere Zeichenfolgen zu einer einzelnen Zeichenfolge kombinieren.
 -Join &lt;String[]&gt;
 &lt;String[]&gt; -Join &lt;Delimiter&gt;</value>
   </data>
   <data name="shlOperatorDescription" xml:space="preserve">
-    <value>Shift Left bit operator. Inserts zero in right-most bit position.</value>
+    <value>Bitoperator „Nach links verschieben“. Fügt an der ganz rechten Bitposition eine Null ein.</value>
   </data>
   <data name="shrOperatorDescription" xml:space="preserve">
-    <value>Shift Right bit operator. Inserts zero in the left-most bit position. For signed values, sign bit is preserved.</value>
+    <value>Bitoperator „Nach rechts verschieben“. Fügt an der ganz linken Bitposition eine Null ein. Bei vorzeichenbehafteten Werten bleibt das Vorzeichenbit erhalten.</value>
   </data>
   <data name="NameHashtableKeyDescription" xml:space="preserve">
     <value>[string]
-Specifies the name of the property being created.</value>
+Gibt den Namen der Eigenschaft an.</value>
   </data>
   <data name="LabelHashtableKeyDescription" xml:space="preserve">
     <value>[string]
-Specifies the name of the property being created.</value>
+Gibt den Namen der Eigenschaft an.</value>
   </data>
   <data name="ExpressionHashtableKeyDescription" xml:space="preserve">
     <value>[scriptblock]
-A script block used to calculate the value of the new property.</value>
+Ein Skriptblock zum Berechnen des Werts der neuen Eigenschaft.</value>
   </data>
   <data name="AlignmentHashtableKeyDescription" xml:space="preserve">
     <value>[string]
-Define how the values are displayed in a column.
-Valid values are 'left', 'center', or 'right'.</value>
+Gibt an, wie die Werte in einer Spalte angezeigt werden.
+Gültige Werte sind „left“, „center“ oder „right“.</value>
   </data>
   <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
     <value>[string]
-Specifies a format string that defines how the value is formatted for output.</value>
+Gibt eine Formatzeichenfolge an, die definiert, wie der Wert für die Ausgabe formatiert wird.</value>
   </data>
   <data name="WidthHashtableKeyDescription" xml:space="preserve">
     <value>[int]
-Specifies the maximum column width in a table when the value is displayed.
-The value must be greater than 0.</value>
+Gibt die maximale Spaltenbreite in einer Tabelle an, wenn der Wert angezeigt wird.
+Der Wert muss größer als 0 sein.</value>
   </data>
   <data name="DepthHashtableKeyDescription" xml:space="preserve">
     <value>[int]
-The depth key specifies the depth of expansion per property.</value>
+Der Tiefenschlüssel gibt die Tiefe der Erweiterung pro Eigenschaft an.</value>
   </data>
   <data name="AscendingHashtableKeyDescription" xml:space="preserve">
     <value>[bool]
-Specifies the order of sorting for one or more properties.</value>
+Gibt die Sortierreihenfolge für eine oder mehrere Eigenschaften an.</value>
   </data>
   <data name="DescendingHashtableKeyDescription" xml:space="preserve">
     <value>[bool]
-Specifies the order of sorting for one or more properties.</value>
+Gibt die Sortierreihenfolge für eine oder mehrere Eigenschaften an.</value>
   </data>
   <data name="LogNameHashtableKeyDescription" xml:space="preserve">
     <value>[String[]]
-Specifies the log names to get events from.
-Supports wildcards.</value>
+Gibt die Protokollnamen an, aus denen Ereignisse abgerufen werden sollen.
+Unterstützt Platzhalter.</value>
   </data>
   <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
     <value>[String[]]
-Specifies the event log providers to get events from.
-Supports wildcards.</value>
+Gibt die Ereignisprotokollanbieter an, von denen Ereignisse abgerufen werden sollen.
+Unterstützt Platzhalter.</value>
   </data>
   <data name="PathHashtableKeyDescription" xml:space="preserve">
     <value>[String[]]
-Specifies file paths to log files to get events from.
-Valid file formats are: .etl, .evt, and .evtx</value>
+Gibt Dateipfade zu Protokolldateien an, aus denen Ereignisse abgerufen werden sollen.
+Gültige Dateiformate sind .etl, .evt und .evtx</value>
   </data>
   <data name="KeywordsHashtableKeyDescription" xml:space="preserve">
     <value>[Long[]]
-Selects events with the specified keyword bitmasks.
-The following are standard keywords:
+Wählt Ereignisse mit der angegebenen Schlüsselwortbitmaske aus.
+Im Folgenden sind die Standardschlüsselwörter aufgeführt:
 4503599627370496: AuditFailure
 9007199254740992: AuditSuccess
 4503599627370496: CorrelationHint
@@ -398,213 +398,213 @@ The following are standard keywords:
   </data>
   <data name="IDHashtableKeyDescription" xml:space="preserve">
     <value>[int[]]
-Selects events with the specified event IDs.</value>
+Wählt Ereignisse mit den angegebenen Ereignis-IDs aus.</value>
   </data>
   <data name="LevelHashtableKeyDescription" xml:space="preserve">
     <value>[int[]]
-Selects events with the specified log levels.
-The following log levels are valid:
-1: Critical
-2: Error
-3: Warning
+Wählt Ereignisse mit den angegebenen Protokollebenen aus.
+Die folgenden Protokollebenen sind gültig:
+1: Kritisch
+2: Fehler
+3: Warnung
 4: Informational
-5: Verbose</value>
+5: Ausführlich</value>
   </data>
   <data name="StartTimeHashtableKeyDescription" xml:space="preserve">
     <value>[datetime]
-Selects events created after the specified date and time.</value>
+Wählt Ereignisse aus, die nach dem angegebenen Datum und der angegebenen Uhrzeit erstellt wurden.</value>
   </data>
   <data name="EndTimeHashtableKeyDescription" xml:space="preserve">
     <value>[datetime]
-Selects events created before the specified date and time.</value>
+Wählt Ereignisse aus, die vor dem angegebenen Datum und der angegebenen Uhrzeit erstellt wurden.</value>
   </data>
   <data name="UserIDHashtableKeyDescription" xml:space="preserve">
     <value>[string]
-Selects events generated by the specified user.
-This can either be a string representation of a SID or a domain and username in the format DOMAIN\USERNAME or USERNAME@DOMAIN</value>
+Wählt Ereignisse aus, die vom angegebenen Benutzer generiert wurden.
+Dies kann entweder eine Zeichenfolgendarstellung einer SID oder eine Domäne und ein Benutzername im Format DOMÄNE\BENUTZERNAME oder USERNAME@DOMAIN sein.</value>
   </data>
   <data name="DataHashtableKeyDescription" xml:space="preserve">
     <value>[string[]]
-Selects events with any of the specified values in the EventData section.</value>
+Wählt Ereignisse mit einem der angegebenen Werte im Abschnitt „EventData“ aus.</value>
   </data>
   <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
     <value>[hashtable]
-Excludes events that match the values specified in the hashtable.</value>
+Schließt Ereignisse aus, die mit den in der Hashtabelle angegebenen Werten übereinstimmen.</value>
   </data>
   <data name="RequiresModulesParameterDescription" xml:space="preserve">
-    <value>[string] or [hashtable]
-Specifies an array of PowerShell modules that the script requires.
-Each element can either be a string with the module name as value or a hashtable with the following keys:
-Name: Name of the module
-GUID: GUID of the module
-One of the following:
-ModuleVersion: Specifies a minimum acceptable version of the module.
-RequiredVersion: Specifies an exact, required version of the module.
-MaximumVersion: Specifies the maximum acceptable version of the module.</value>
+    <value>[string] oder [hashtable]
+Gibt ein Array von PowerShell-Modulen an, die das Skript erfordert.
+Jedes Element kann entweder eine Zeichenfolge mit dem Modulnamen als Wert oder eine Hashtabelle mit den folgenden Schlüsseln sein:
+Name: Der Name des Moduls
+GUID: GUID des Moduls
+Eine der folgenden Optionen:
+ModuleVersion: Gibt eine minimal zulässige Version des Moduls an.
+RequiredVersion: Gibt eine exakte, erforderliche Version des Moduls an.
+MaximumVersion: Gibt die maximal zulässige Version des Moduls an.</value>
   </data>
   <data name="RequiresPSEditionParameterDescription" xml:space="preserve">
     <value>[string]
-Specifies a PowerShell edition that the script requires.
-Valid values are "Core" and "Desktop"</value>
+Gibt eine PowerShell-Edition an, die das Skript erfordert.
+Gültige Werte sind „Core“ und „Desktop“.</value>
   </data>
   <data name="RequiresRunAsAdministratorParameterDescription" xml:space="preserve">
     <value>[switch]
-Specifies that PowerShell must be running as administrator on Windows.
-This must be the last parameter on the #requires statement line.</value>
+Gibt an, dass PowerShell unter Windows als Admin ausgeführt werden muss.
+Dies muss der letzte Parameter in der Zeile mit der #requires-Anweisung sein.</value>
   </data>
   <data name="RequiresVersionParameterDescription" xml:space="preserve">
     <value>[version]
-Specifies the minimum version of PowerShell that the script requires.</value>
+Gibt die mindestens erforderliche PowerShell-Version für das Skript an.</value>
   </data>
   <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
-    <value>Specifies that the script requires PowerShell 7+ to run.</value>
+    <value>Gibt an, dass für die Ausführung des Skripts PowerShell 7+ erforderlich ist.</value>
   </data>
   <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
-    <value>Specifies that the script requires Windows PowerShell 5.1 to run.</value>
+    <value>Gibt an, dass für die Ausführung des Skripts Windows PowerShell 5.1 erforderlich ist.</value>
   </data>
   <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
     <value>[string]
-Required. Specifies the module name.</value>
+Obligatorisch Gibt den Namen des Moduls an.</value>
   </data>
   <data name="RequiresModuleSpecGUIDDescription" xml:space="preserve">
     <value>[string]
-Optional. Specifies the GUID of the module.</value>
+Optional Gibt den GUID des Moduls an.</value>
   </data>
   <data name="RequiresModuleSpecModuleVersionDescription" xml:space="preserve">
     <value>[string]
-Specifies a minimum acceptable version of the module.</value>
+Gibt eine minimal zulässige Version des Moduls an.</value>
   </data>
   <data name="RequiresModuleSpecRequiredVersionDescription" xml:space="preserve">
     <value>[string]
-Specifies an exact, required version of the module.</value>
+Gibt eine exakte, erforderliche Version des Moduls an.</value>
   </data>
   <data name="RequiresModuleSpecMaximumVersionDescription" xml:space="preserve">
     <value>[string]
-Specifies the maximum acceptable version of the module.</value>
+Gibt die maximal zulässige Version des Moduls an.</value>
   </data>
   <data name="CommentHelpSYNOPSISKeywordDescription" xml:space="preserve">
-    <value>A brief description of the function or script.
-This keyword can be used only once in each topic.</value>
+    <value>Eine kurze Beschreibung der Funktion oder des Skripts.
+Dieses Schlüsselwort kann nur einmal für jeden Inhalt verwendet werden.</value>
   </data>
   <data name="CommentHelpDESCRIPTIONKeywordDescription" xml:space="preserve">
-    <value>A detailed description of the function or script.
-This keyword can be used only once in each topic.</value>
+    <value>Eine detaillierte Beschreibung der Funktion oder des Skripts.
+Dieses Schlüsselwort kann nur einmal für jeden Inhalt verwendet werden.</value>
   </data>
   <data name="CommentHelpPARAMETERKeywordDescription" xml:space="preserve">
     <value>.PARAMETER  &lt;Parameter-Name&gt;
-The description of a parameter.
-Add a .PARAMETER keyword for each parameter in the function or script syntax.</value>
+Die Beschreibung eines Parameters.
+Fügen Sie für jeden Parameter in der Funktions- oder Skriptsyntax ein .PARAMETER-Schlüsselwort hinzu.</value>
   </data>
   <data name="CommentHelpEXAMPLEKeywordDescription" xml:space="preserve">
-    <value>A sample command that uses the function or script, optionally followed by sample output and a description.
-Repeat this keyword for each example.</value>
+    <value>Ein Beispielbefehl, der die Funktion oder das Skript verwendet, optional gefolgt von einer Beispielausgabe und einer Beschreibung.
+Wiederholen Sie dieses Schlüsselwort für jedes Beispiel.</value>
   </data>
   <data name="CommentHelpINPUTSKeywordDescription" xml:space="preserve">
-    <value>The .NET types of objects that can be piped to the function or script.
-You can also include a description of the input objects.</value>
+    <value>Die .NET-Typen von Objekten, die an die Funktion oder das Skript weitergeleitet werden können.
+Sie können auch eine Beschreibung der Eingabeobjekte einschließen.</value>
   </data>
   <data name="CommentHelpOUTPUTSKeywordDescription" xml:space="preserve">
-    <value>The .NET type of the objects that the cmdlet returns.
-You can also include a description of the returned objects.</value>
+    <value>Der .NET-Typ der Objekte, die vom Cmdlet zurückgegeben werden.
+Sie können auch eine Beschreibung der zurückgegebenen Objekte einschließen.</value>
   </data>
   <data name="CommentHelpNOTESKeywordDescription" xml:space="preserve">
-    <value>Additional information about the function or script.</value>
+    <value>Zusätzliche Informationen zur Funktion oder zum Skript.</value>
   </data>
   <data name="CommentHelpLINKKeywordDescription" xml:space="preserve">
-    <value>The name of a related topic.
-Repeat the .LINK keyword for each related topic.
-The .Link keyword content can also include a URI to an online version of the same help topic.</value>
+    <value>Der Name eines verwandten Themas.
+Wiederholen Sie das Schlüsselwort .LINK für jedes verwandte Thema.
+Der Inhalt des .LINK-Schlüsselworts kann auch einen URI zu einer Onlineversion des Hilfethemas enthalten.</value>
   </data>
   <data name="CommentHelpCOMPONENTKeywordDescription" xml:space="preserve">
-    <value>The name of the technology or feature that the function or script uses, or to which it is related.</value>
+    <value>Der Name der Technologie oder des Features, die bzw. das von der Funktion oder dem Skript verwendet wird oder mit dem bzw. der es verknüpft ist.</value>
   </data>
   <data name="CommentHelpROLEKeywordDescription" xml:space="preserve">
-    <value>The name of the user role for the help topic.</value>
+    <value>Der Name der Benutzerrolle für das Hilfethema.</value>
   </data>
   <data name="CommentHelpFUNCTIONALITYKeywordDescription" xml:space="preserve">
-    <value>The keywords that describe the intended use of the function.</value>
+    <value>Die Schlüsselwörter, die die beabsichtigte Verwendung der Funktion beschreiben.</value>
   </data>
   <data name="CommentHelpFORWARDHELPTARGETNAMEKeywordDescription" xml:space="preserve">
     <value>.FORWARDHELPTARGETNAME &lt;Command-Name&gt;
-Redirects to the help topic for the specified command.</value>
+Leitet zum Hilfethema für den angegebenen Befehl um.</value>
   </data>
   <data name="CommentHelpFORWARDHELPCATEGORYKeywordDescription" xml:space="preserve">
     <value>.FORWARDHELPCATEGORY &lt;Category&gt;
-Specifies the help category of the item in .ForwardHelpTargetName</value>
+Dieser Befehl gibt die Hilfekategorie des Elements in ForwardHelpTargetName an.</value>
   </data>
   <data name="CommentHelpREMOTEHELPRUNSPACEKeywordDescription" xml:space="preserve">
     <value>.REMOTEHELPRUNSPACE &lt;PSSession-variable&gt;
-Specifies a session that contains the help topic.
-Enter a variable that contains a PSSession object.</value>
+Gibt eine Sitzung an, die das Hilfethema enthält.
+Geben Sie eine Variable ein, die ein PSSession-Objekt enthält.</value>
   </data>
   <data name="CommentHelpEXTERNALHELPKeywordDescription" xml:space="preserve">
     <value>.EXTERNALHELP &lt;XML Help File&gt;
-The .ExternalHelp keyword is required when a function or script is documented in XML files.</value>
+Das Schlüsselwort .ExternalHelp ist erforderlich, wenn eine Funktion oder ein Skript in XML-Dateien dokumentiert ist.</value>
   </data>
   <data name="AssemblyKeywordDescription" xml:space="preserve">
-    <value>Specifies the path to a .NET assembly to load.
+    <value>Gibt den Pfad zu einer .NET-Assembly an, die geladen werden soll.
 
 using assembly &lt;.NET-assembly-path&gt;</value>
   </data>
   <data name="ModuleKeywordDescription" xml:space="preserve">
-    <value>Specifies a PowerShell module to load classes from.
+    <value>Gibt ein PowerShell-Modul an, aus dem Klassen geladen werden.
 
 using module &lt;ModuleName or Path&gt;
 
 using module &lt;ModuleSpecification hashtable&gt;</value>
   </data>
   <data name="NamespaceKeywordDescription" xml:space="preserve">
-    <value>Specifies a .NET namespace to resolve types from or a namespace alias.
+    <value>Gibt einen .NET-Namespace an, aus dem Typen aufgelöst werden sollen, oder einen Namespacealias.
 
 using namespace &lt;.NET-namespace&gt;
 
 using namespace &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
   </data>
   <data name="TypeKeywordDescription" xml:space="preserve">
-    <value>Specifies an alias for a .NET Type.
+    <value>Gibt einen Alias für einen .NET-Typ an.
 
 using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
   </data>
   <data name="RegistryStringToolTip" xml:space="preserve">
-    <value>A normal string.</value>
+    <value>Eine normale Zeichenfolge.</value>
   </data>
   <data name="RegistryExpandStringToolTip" xml:space="preserve">
-    <value>A string that contains unexpanded references to environment variables that are expanded when the value is retrieved.</value>
+    <value>Eine Zeichenfolge, die nicht erweiterte Verweise auf Umgebungsvariablen enthält, die beim Abrufen des Werts erweitert werden.</value>
   </data>
   <data name="RegistryBinaryToolTip" xml:space="preserve">
-    <value>Binary data in any form.</value>
+    <value>Binärdaten in beliebiger Form.</value>
   </data>
   <data name="RegistryDWordToolTip" xml:space="preserve">
-    <value>A 32-bit binary number.</value>
+    <value>Eine 32-Bit-Binärzahl.</value>
   </data>
   <data name="RegistryMultiStringToolTip" xml:space="preserve">
-    <value>An array of strings.</value>
+    <value>Ein Array der Zeichenfolgen.</value>
   </data>
   <data name="RegistryQWordToolTip" xml:space="preserve">
-    <value>A 64-bit binary number.</value>
+    <value>Eine 64-Bit-Binärzahl.</value>
   </data>
   <data name="RegistryUnknownToolTip" xml:space="preserve">
-    <value>An unsupported registry data type.</value>
+    <value>Ein nicht unterstützter Registrierungsdatentyp.</value>
   </data>
   <data name="SeparatorCommaToolTip" xml:space="preserve">
-    <value>',' - Comma</value>
+    <value>',' – Komma</value>
   </data>
   <data name="SeparatorCommaSpaceToolTip" xml:space="preserve">
-    <value>', ' - Comma-Space</value>
+    <value>', ' – Komma-Leerzeichen</value>
   </data>
   <data name="SeparatorSemiColonToolTip" xml:space="preserve">
-    <value>';' - Semi-Colon</value>
+    <value>';' – Semikolon</value>
   </data>
   <data name="SeparatorSemiColonSpaceToolTip" xml:space="preserve">
-    <value>'; ' - Semi-Colon-Space</value>
+    <value>'; ' – Semikolon-Leerzeichen</value>
   </data>
   <data name="SeparatorNewlineToolTip" xml:space="preserve">
-    <value>{0} - Newline</value>
+    <value>{0} – Zeilenumbruch</value>
   </data>
   <data name="SeparatorDashToolTip" xml:space="preserve">
-    <value>'-' - Dash</value>
+    <value>'-' – Gedankenstrich</value>
   </data>
   <data name="SeparatorSpaceToolTip" xml:space="preserve">
-    <value>' ' - Space</value>
+    <value>' ' – Leerzeichen</value>
   </data>
 </root>

@@ -549,7 +549,7 @@
     <value>A {0} cannot be specified when {1} is specified.</value>
   </data>
   <data name="WildCardErrorFilePathParameter" xml:space="preserve">
-    <value>Wildcard characters are not supported for the FilePath parameter. Specify a path without wildcard characters.</value>
+    <value>Symbole wieloznaczne nie są obsługiwane dla parametru FilePath. Określ ścieżkę bez symboli wieloznacznych.</value>
   </data>
   <data name="FilePathNotFromFileSystemProvider" xml:space="preserve">
     <value>The path specified as the value of the FilePath parameter is not from the FileSystem provider.</value>
@@ -612,7 +612,7 @@
     <value>Proxy credentials cannot be specified when using the following proxy access type: {0}. Either specify a different access type, or do not specify proxy credentials.</value>
   </data>
   <data name="WrongSessionOptionValue" xml:space="preserve">
-    <value>A {0} value must be specified for session option {1}.</value>
+    <value>Należy określić wartość {0} dla opcji sesji {1}.</value>
   </data>
   <data name="PushedRunspaceMustBeOpen" xml:space="preserve">
     <value>Session must be open.</value>
@@ -636,7 +636,7 @@
     <value>You cannot run Enter-PSSession from a nested prompt.</value>
   </data>
   <data name="WsmanMaxRedirectionCountVariableDescription" xml:space="preserve">
-    <value>The maximum number of WS-Man URI redirections to allow while connecting to a remote computer</value>
+    <value>Maksymalna liczba przekierowań identyfikatora URI WS-Man dozwolonych podczas łączenia się z komputerem zdalnym</value>
   </data>
   <data name="PSDefaultSessionOptionDescription" xml:space="preserve">
     <value>Default session options for new remote sessions</value>
@@ -846,7 +846,7 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
     <value>The Wait and Keep parameters cannot be used together in the same command.</value>
   </data>
   <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
+    <value>Nie można użyć parametru WriteEvents bez parametru Wait.</value>
   </data>
   <data name="PowerShellVersionNotSupported" xml:space="preserve">
     <value>PowerShell remoting endpoint versioning is not supported on PowerShell 7+.</value>
@@ -933,17 +933,17 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
     <value>The command cannot find a PSSession that has the name "{0}".</value>
   </data>
   <data name="WinPERemotingNotSupported" xml:space="preserve">
-    <value>PowerShell remoting is not supported in the Windows Preinstallation Environment (WinPE).</value>
+    <value>Komunikacja zdalna programu PowerShell nie jest obsługiwana w środowisku preinstalacji systemu Windows (WinPE).</value>
   </data>
   <data name="WinRMRequiresRestart" xml:space="preserve">
-    <value>Changes made by {0} cannot take effect until the WinRM service is restarted.</value>
+    <value>Zmiany wprowadzone przez {0} nie zaczną obowiązywać, dopóki usługa WinRM nie zostanie ponownie uruchomiona.</value>
   </data>
   <data name="WinRMRestartWarning" xml:space="preserve">
-    <value>{0} may need to restart the WinRM service if a configuration using this name has recently been unregistered, certain system data structures may still be cached. In that case, a restart of WinRM may be required.
-All WinRM sessions connected to PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
+    <value>{0} Może być konieczne ponowne uruchomienie usługi WinRM, jeśli konfiguracja używająca tej nazwy została niedawno wyrejestrowana, ponieważ niektóre struktury danych systemowych mogą być nadal buforowane. W takim przypadku może być wymagane ponowne uruchomienie usługi WinRM.
+Wszystkie sesje WinRM połączone z konfiguracjami sesji programu PowerShell, takimi jak Microsoft.PowerShell, oraz konfiguracjami sesji utworzonymi za pomocą polecenia cmdlet Register-PSSessionConfiguration, zostaną rozłączone.</value>
   </data>
   <data name="WinRMForceRestartWarning" xml:space="preserve">
-    <value>You are running in a remote session and have selected the Force option which means the WinRM service may restart.If the WinRM service restarts then this remote session will be terminated and you will need to create a new session to continue</value>
+    <value>Korzystasz z sesji zdalnej i wybrano opcję Wymuś, co oznacza, że usługa WinRM może zostać ponownie uruchomiona. Jeśli usługa WinRM zostanie ponownie uruchomiona, ta sesja zdalna zostanie zakończona i aby kontynuować, trzeba będzie utworzyć nową sesję</value>
   </data>
   <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
     <value>The job was null when trying to save identifiers. Specify a job to save its identifiers.</value>
@@ -1145,7 +1145,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>Error parsing configuration file {0} with the following message: {1}</value>
   </data>
   <data name="WriteJobInResultsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -WriteJobInResults parameter cannot be used without the -Wait parameter</value>
+    <value>Parametru -WriteJobInResults nie można użyć bez parametru -Wait</value>
   </data>
   <data name="DISCPathsMustBeAbsolute" xml:space="preserve">
     <value>The member '{0}' is not an absolute path {1}. Change the member to an absolute path in the file {2}.</value>
@@ -1465,52 +1465,52 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>The supplied input data is not valid. Only input data of type {0} is supported.</value>
   </data>
   <data name="WSManPluginInvalidInputStream" xml:space="preserve">
-    <value>The supplied input stream is not valid. Only {0} is supported as input stream.</value>
+    <value>Podany strumień wejściowy jest nieprawidłowy. Jako strumień wejściowy jest obsługiwany tylko {0}.</value>
   </data>
   <data name="WSManPluginInvalidOutputStream" xml:space="preserve">
-    <value>The supplied output stream set is not valid. Only {0} is supported as output stream.</value>
+    <value>Podany zestaw strumieni wyjściowych jest nieprawidłowy. Jako strumień wyjściowy obsługiwana jest tylko {0}.</value>
   </data>
   <data name="WSManPluginInvalidSenderDetails" xml:space="preserve">
-    <value>The supplied WSMAN_SENDER_DETAILS is not valid. Cannot process null WSMAN_SENDER_DETAILS.</value>
+    <value>Podany WSMAN_SENDER_DETAILS jest nieprawidłowy. Nie można przetworzyć WSMAN_SENDER_DETAILS o wartości null.</value>
   </data>
   <data name="WSManPluginInvalidShellContext" xml:space="preserve">
-    <value>The supplied shell context is not valid.</value>
+    <value>Podany kontekst powłoki jest nieprawidłowy.</value>
   </data>
   <data name="WSManPluginManagedException" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="WSManPluginNullInvalidInput" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>Wartość NULL nie jest dozwolona dla {0} w metodzie wtyczki {1}.</value>
   </data>
   <data name="WSManPluginNullInvalidStreamSet" xml:space="preserve">
-    <value>NULL value is not allowed for input stream and output stream sets. {0} and {1} are the supported input and output streams.</value>
+    <value>Wartość NULL nie jest dozwolona dla zestawów strumieni wejściowych i wyjściowych. {0} i {1} są obsługiwanymi strumieniami wejściowymi i wyjściowymi.</value>
   </data>
   <data name="WSManPluginNullPluginContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>Wartość NULL nie jest dozwolona dla {0} w metodzie wtyczki {1}.</value>
   </data>
   <data name="WSManPluginNullShellContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>Wartość NULL nie jest dozwolona dla {0} w metodzie wtyczki {1}.</value>
   </data>
   <data name="WSManPluginOperationClose" xml:space="preserve">
-    <value>PowerShell plugin operation is shutting down. This may happen if the hosting service or application is shutting down.</value>
+    <value>Trwa zamykanie operacji wtyczki programu PowerShell. Może się tak zdarzyć, jeśli usługa hostująca lub aplikacja jest zamykana.</value>
   </data>
   <data name="WSManPluginOptionNotUnderstood" xml:space="preserve">
-    <value>PowerShell plugin does not understand the option {0}. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>Wtyczka programu PowerShell nie rozumie opcji {0}. Upewnij się, że klient jest zgodny z kompilacją {1} i wersją protokołu {2} programu PowerShell.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
-    <value>An option with name {0} is expected from the client. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>Oczekiwana jest opcja o nazwie {0} od klienta. Upewnij się, że klient jest zgodny z kompilacją {1} i wersją protokołu {2} programu PowerShell.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
-    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Powershell plugin does not support the protocol version {2} requested by client.&lt;/PSProtocolVersionError&gt;</value>
+    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Wtyczka programu PowerShell nie obsługuje wersji protokołu {2} żądanej przez klienta.&lt;/PSProtocolVersionError&gt;</value>
   </data>
   <data name="WSManPluginReportContextFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error while reporting context to WSMan service.</value>
+    <value>Wtyczka programu PowerShell napotkała błąd krytyczny podczas raportowania kontekstu do usługi WSMan.</value>
   </data>
   <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
-    <value>Unable to create managed server session.</value>
+    <value>Nie można utworzyć zarządzanej sesji serwera.</value>
   </data>
   <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error registering a wait handle for shutdown notification.</value>
+    <value>Wtyczka programu PowerShell napotkała błąd krytyczny podczas rejestrowania dojścia oczekiwania dla powiadomienia o zamknięciu.</value>
   </data>
   <data name="ServerDriverRemoteHostAlreadyPushed" xml:space="preserve">
     <value>Cannot enter Runspace because a Runspace is already pushed in this session.</value>
@@ -1662,7 +1662,7 @@ SSH client process terminated before connection could be established.</value>
     <value>PowerShell 6+ does not support WOW64. The binary must match the architecture of the processor.</value>
   </data>
   <data name="WowComponentNotPresent" xml:space="preserve">
-    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
+    <value>Nie znaleziono pliku wykonywalnego „{0}”. Sprawdź, czy funkcja WOW64 jest zainstalowana.</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
     <value>Unable to install plugin {0} to directory {1}.</value>
@@ -1703,7 +1703,7 @@ SSH client process terminated before connection could be established.</value>
     <value>Remote debugger exception: {0}, error message: {1}</value>
   </data>
   <data name="WindowsPowerShellNotPresent" xml:space="preserve">
-    <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
+    <value>Nie można utworzyć procesu programu Windows PowerShell, ponieważ na tym komputerze nie można znaleźć programu Windows PowerShell.</value>
   </data>
   <data name="InvalidPSSessionArgument" xml:space="preserve">
     <value>The Runspace argument to Create must be a non-null RemoteRunspace object.</value>
