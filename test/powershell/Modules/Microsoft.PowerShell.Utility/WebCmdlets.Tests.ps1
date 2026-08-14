@@ -1376,10 +1376,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-WebRequest detects charset meta value when the ContentType header does not define it." {
             $query = @{
                 contenttype = 'text/html'
-                body        = '<html><head><meta charset="Unicode"></head></html>'
+                body        = '<html><head><meta charset="latin1"></head></html>'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -1390,10 +1390,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-WebRequest detects charset meta value when newlines are encountered in the element." {
             $query = @{
                 contenttype = 'text/html'
-                body        = "<html>`n    <head>`n        <meta`n            charset=`"Unicode`"`n            >`n    </head>`n</html>"
+                body        = "<html>`n    <head>`n        <meta`n            charset=`"latin1`"`n            >`n    </head>`n</html>"
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -1404,10 +1404,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-WebRequest detects charset meta value when the attribute value is unquoted." {
             $query = @{
                 contenttype = 'text/html'
-                body        = '<html><head><meta charset = Unicode></head></html>'
+                body        = '<html><head><meta charset = latin1></head></html>'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -1418,10 +1418,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value when the ContentType header does not define it." {
             $query = @{
                 contenttype = 'text/html'
-                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Unicode`">`n</head>`n</html>"
+                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=latin1`">`n</head>`n</html>"
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -1432,10 +1432,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value newlines are encountered in the element." {
             $query = @{
                 contenttype = 'text/html'
-                body        = "<html><head>`n<meta`n    http-equiv=`"content-type`"`n    content=`"text/html; charset=Unicode`">`n</head>`n</html>"
+                body        = "<html><head>`n<meta`n    http-equiv=`"content-type`"`n    content=`"text/html; charset=latin1`">`n</head>`n</html>"
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -1460,12 +1460,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         It "Verifies Invoke-WebRequest honors non-utf8 charsets in the Content-Type header" {
             $query = @{
-                contenttype = 'text/html; charset=utf-16'
+                contenttype = 'text/html; charset=latin1'
                 body        = '<html><head><meta charset="utf-32"></head></html>'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
             # NOTE: meta charset should be ignored
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('utf-16')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -1491,6 +1491,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $query = @{
                 contenttype = 'text/html'
                 body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $expectedEncoding = [System.Text.Encoding]::UTF8
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
+
+            $response.Error | Should -BeNullOrEmpty
+            $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
+        }
+
+        It "Verifies Invoke-WebRequest defaults to UTF-8 when an UTF-8/ASCII incompatible charset is declared" {
+            $query = @{
+                contenttype = 'text/html'
+                body        = '<html><head><meta charset="utf-16"></head></html>'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::UTF8
@@ -3712,10 +3726,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-RestMethod detects charset meta value when the ContentType header does not define it." {
             $query = @{
                 contenttype = 'text/html'
-                body        = '<html><head><meta charset="Unicode"></head></html>'
+                body        = '<html><head><meta charset="latin1"></head></html>'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -3725,10 +3739,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-WebRequest detects charset meta value when newlines are encountered in the element." {
             $query = @{
                 contenttype = 'text/html'
-                body        = "<html>`n    <head>`n        <meta`n            charset=`"Unicode`"`n            >`n    </head>`n</html>"
+                body        = "<html>`n    <head>`n        <meta`n            charset=`"latin1`"`n            >`n    </head>`n</html>"
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -3738,10 +3752,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-RestMethod detects charset meta value when the attribute value is unquoted." {
             $query = @{
                 contenttype = 'text/html'
-                body        = '<html><head><meta charset = Unicode></head></html>'
+                body        = '<html><head><meta charset = latin1></head></html>'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -3751,10 +3765,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-RestMethod detects http-equiv charset meta value when the ContentType header does not define it." {
             $query = @{
                 contenttype = 'text/html'
-                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Unicode`">`n</head>`n</html>"
+                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=latin1`">`n</head>`n</html>"
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -3764,10 +3778,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-RestMethod detects http-equiv charset meta value newlines are encountered in the element." {
             $query = @{
                 contenttype = 'text/html'
-                body        = "<html><head>`n<meta`n    http-equiv=`"content-type`"`n    content=`"text/html; charset=Unicode`">`n</head>`n</html>`n"
+                body        = "<html><head>`n<meta`n    http-equiv=`"content-type`"`n    content=`"text/html; charset=latin1`">`n</head>`n</html>`n"
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -3790,12 +3804,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         It "Verifies Invoke-RestMethod honors non-utf8 charsets in the Content-Type header" {
             $query = @{
-                contenttype = 'text/html; charset=utf-16'
+                contenttype = 'text/html; charset=latin1'
                 body        = '<html><head><meta charset="utf-32"></head></html>'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
             # NOTE: meta charset should be ignored
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('utf-16')
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('latin1')
             $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
@@ -3819,6 +3833,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $query = @{
                 contenttype = 'text/html'
                 body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $expectedEncoding = [System.Text.Encoding]::UTF8
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
+
+            $response.Error | Should -BeNullOrEmpty
+            $response.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
+        }
+
+        It "Verifies Invoke-RestMethod defaults to UTF-8 when an UTF-8/ASCII incompatible charset is declared" {
+            $query = @{
+                contenttype = 'text/html'
+                body        = '<html><head><meta charset="utf-16"></head></html>'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::UTF8
