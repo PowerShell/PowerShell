@@ -18,4 +18,10 @@ Describe "Get-Location" -Tags "CI" {
     It "Should do exactly the same thing as its alias" {
 	(pwd).Path | Should -BeExactly (Get-Location).Path
     }
+
+    It "Should return current location when -Stack:`$false is specified" {
+        $result = Get-Location -Stack:$false
+        $result | Should -BeOfType System.Management.Automation.PathInfo
+        $result.Path | Should -BeExactly (Get-Location).Path
+    }
 }
