@@ -141,11 +141,18 @@ Describe "Test-Path" -Tags "CI" {
     }
 
     It 'Windows paths should be inavlid: <variant>' -Skip:(!$IsWindows) -TestCases @(
-        @{ variant = "wildcard"; path = "C:\Program Files\foo*" }
-        @{ variant = "pipe symbol"; path = "C:\Program Files|p\foo" }
-        @{ variant = "null char"; path = "C:\Win`u{0000}dows\System32" }
+        @{ variant = "wildcard" }
+        @{ variant = "pipe symbol" }
+        @{ variant = "null char" }
     ) {
-        param($path)
+        param($variant)
+        # Build path inside the test body so embedded NUL characters never appear in TestCases data
+        # that Pester serializes into the test name attribute (which breaks the NUnit XML report).
+        $path = switch ($variant) {
+            "wildcard"    { "C:\Program Files\foo*" }
+            "pipe symbol" { "C:\Program Files|p\foo" }
+            "null char"   { "C:\Win`u{0000}dows\System32" }
+        }
         Test-Path -Path $path -IsValid | Should -BeFalse
     }
 
@@ -163,10 +170,16 @@ Describe "Test-Path" -Tags "CI" {
     }
 
     It 'Unix paths should be invalid: <variant>' -Skip:($IsWindows) -TestCases @(
-        @{ variant = "null in path"; path = "/usr/bi`u{0000}n/test" }
-        @{ variant = "null in filename"; path = "/usr/bin/t`u{0000}est" }
+        @{ variant = "null in path" }
+        @{ variant = "null in filename" }
     ) {
-        param($path)
+        param($variant)
+        # Build path inside the test body so embedded NUL characters never appear in TestCases data
+        # that Pester serializes into the test name attribute (which breaks the NUnit XML report).
+        $path = switch ($variant) {
+            "null in path"     { "/usr/bi`u{0000}n/test" }
+            "null in filename" { "/usr/bin/t`u{0000}est" }
+        }
         Test-Path -Path $path -IsValid | Should -BeFalse
     }
 

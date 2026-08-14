@@ -7,8 +7,7 @@ Describe "Type accelerators" -Tags "CI" {
         $TypeAccelerators = $TypeAcceleratorsType::Get
     }
     Context 'BuiltIn Accelerators' {
-        BeforeAll {
-
+        BeforeDiscovery {
             $TypeAcceleratorTestCases = @(
                 @{
                     Accelerator = 'Alias'
@@ -415,15 +414,6 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.Language.NoRunspaceAffinityAttribute]
                 }
             )
-
-            if ( !$IsWindows )
-            {
-                $totalAccelerators = 102
-            }
-            else
-            {
-                $totalAccelerators = 107
-
                 $extraFullPSAcceleratorTestCases = @(
                     @{
                         Accelerator = 'adsi'
@@ -446,6 +436,18 @@ Describe "Type accelerators" -Tags "CI" {
                         Type        = [System.Management.ManagementObjectSearcher]
                     }
                 )
+        }
+
+        BeforeAll {
+
+            if ( !$IsWindows )
+            {
+                $totalAccelerators = 102
+            }
+            else
+            {
+                $totalAccelerators = 107
+
             }
         }
 

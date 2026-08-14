@@ -1,17 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-Table" -Tags "CI" {
-    BeforeAll {
-        if ($null -ne $PSStyle) {
-            $outputRendering = $PSStyle.OutputRendering
-            $PSStyle.OutputRendering = 'plaintext'
-        }
+    BeforeDiscovery {
         $noConsole = $true
         try {
             if ([Console]::WindowHeight -ne 0) {
                 $noConsole = $false
             }
         } catch {
+        }
+    }
+
+    BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
         }
     }
 
@@ -62,7 +65,7 @@ Describe "Format-Table" -Tags "CI" {
         }
 
         # Pending on issue#888
-        It "Format-Table with Zero Count should work" -Pending {
+        It "Format-Table with Zero Count should work" -Skip {
                 $FormatEnumerationLimit = 0
                 $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result | Out-String
@@ -91,7 +94,7 @@ Describe "Format-Table" -Tags "CI" {
         }
 
         # Pending on issue#888
-        It "Format-Table with Bogus Count should throw Exception" -Pending {
+        It "Format-Table with Bogus Count should throw Exception" -Skip {
                 $FormatEnumerationLimit = "abc"
                 $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result|Out-String
@@ -99,7 +102,7 @@ Describe "Format-Table" -Tags "CI" {
         }
 
         # Pending on issue#888
-        It "Format-Table with Var Deleted should throw Exception" -Pending {
+        It "Format-Table with Var Deleted should throw Exception" -Skip {
                 $FormatEnumerationLimit = 2
                 Remove-Variable FormatEnumerationLimit
                 $result = Format-Table -InputObject @{'test'= 1, 2}
@@ -954,7 +957,7 @@ Describe 'Table color tests' -Tag 'CI' {
         $actual | Should -BeExactly $expected
     }
 
-    Context 'ExcludeProperty parameter' {
+    Context 'ExcludeProperty parameter' -Skip:(-not (Get-Command Format-Table).Parameters.ContainsKey('ExcludeProperty')) {
         It 'Should exclude specified properties' {
             $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle' }
             $result = $obj | Format-Table -ExcludeProperty Age | Out-String

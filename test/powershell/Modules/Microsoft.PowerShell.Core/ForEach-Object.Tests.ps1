@@ -31,7 +31,7 @@ Describe "ForEach-Object" -Tags "CI" {
     }
 
     It "Foreach-Object should execute script block in the module scope if specified" {
-        { 1 | ForEach-Object { Zoo } } | Should -Throw -ErrorId "CommandNotFoundException"
+        { 1 | ForEach-Object { Zoo } } | Should -Throw -ErrorId "CommandNotFoundException,*"
 
         $m = Get-Module ForEachObjectTest
         1 | & $m ForEach-Object { Zoo } | Should -BeExactly "ForEachObjectTest-Zoo"

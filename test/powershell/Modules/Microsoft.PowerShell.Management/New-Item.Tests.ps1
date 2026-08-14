@@ -3,45 +3,49 @@
 
 Import-Module HelpersCommon
 
-function Clean-State
-{
-    if (Test-Path $FullyQualifiedLink)
+BeforeAll {
+    function Clean-State
     {
-        Remove-Item $FullyQualifiedLink -Force
-    }
+        if (Test-Path $FullyQualifiedLink)
+        {
+            Remove-Item $FullyQualifiedLink -Force
+        }
 
-    if (Test-Path $FullyQualifiedFile)
-    {
-        Remove-Item $FullyQualifiedFile -Force
-    }
+        if (Test-Path $FullyQualifiedFile)
+        {
+            Remove-Item $FullyQualifiedFile -Force
+        }
 
-    if ($FullyQualifiedFileInFolder -and (Test-Path $FullyQualifiedFileInFolder))
-    {
-        Remove-Item $FullyQualifiedFileInFolder -Force
-    }
+        if ($FullyQualifiedFileInFolder -and (Test-Path $FullyQualifiedFileInFolder))
+        {
+            Remove-Item $FullyQualifiedFileInFolder -Force
+        }
 
-    if ($FullyQualifiedSubFolder -and (Test-Path $FullyQualifiedSubFolder))
-    {
-        Remove-Item $FullyQualifiedSubFolder -Force
-    }
+        if ($FullyQualifiedSubFolder -and (Test-Path $FullyQualifiedSubFolder))
+        {
+            Remove-Item $FullyQualifiedSubFolder -Force
+        }
 
-    if (Test-Path $FullyQualifiedFolder)
-    {
-        Remove-Item $FullyQualifiedFolder -Force
+        if (Test-Path $FullyQualifiedFolder)
+        {
+            Remove-Item $FullyQualifiedFolder -Force
+        }
     }
 }
 
 Describe "New-Item" -Tags "CI" {
-    $tmpDirectory               = $TestDrive
-    $testfile                   = "testfile.txt"
-    $testfolder                 = "newDirectory"
-    $testsubfolder              = "newSubDirectory"
-    $testlink                   = "testlink"
-    $FullyQualifiedFile         = Join-Path -Path $tmpDirectory -ChildPath $testfile
-    $FullyQualifiedFolder       = Join-Path -Path $tmpDirectory -ChildPath $testfolder
-    $FullyQualifiedLink         = Join-Path -Path $tmpDirectory -ChildPath $testlink
-    $FullyQualifiedSubFolder    = Join-Path -Path $FullyQualifiedFolder -ChildPath $testsubfolder
-    $FullyQualifiedFileInFolder = Join-Path -Path $FullyQualifiedFolder -ChildPath $testfile
+    BeforeAll {
+        $tmpDirectory               = $TestDrive
+        $testfile                   = "testfile.txt"
+        $testfolder                 = "newDirectory"
+        $testsubfolder              = "newSubDirectory"
+        $testlink                   = "testlink"
+        $FullyQualifiedFile         = Join-Path -Path $tmpDirectory -ChildPath $testfile
+        $FullyQualifiedFolder       = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+        $FullyQualifiedLink         = Join-Path -Path $tmpDirectory -ChildPath $testlink
+        $FullyQualifiedSubFolder    = Join-Path -Path $FullyQualifiedFolder -ChildPath $testsubfolder
+        $FullyQualifiedFileInFolder = Join-Path -Path $FullyQualifiedFolder -ChildPath $testfile
+    }
 
 
     BeforeEach {
@@ -199,15 +203,17 @@ Describe "New-Item" -Tags "CI" {
 # In the default windows setup, Admin user has this priveledge, but regular users don't.
 
 Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
-    $tmpDirectory         = $TestDrive
-    $testfile             = "testfile.txt"
-    $testfolder           = "newDirectory"
-    $testlink             = "testlink"
-    $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
-    $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
-    $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
-    $SymLinkMask          = [System.IO.FileAttributes]::ReparsePoint
-    $DirLinkMask          = $SymLinkMask -bor [System.IO.FileAttributes]::Directory
+    BeforeAll {
+        $tmpDirectory         = $TestDrive
+        $testfile             = "testfile.txt"
+        $testfolder           = "newDirectory"
+        $testlink             = "testlink"
+        $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
+        $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+        $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
+        $SymLinkMask          = [System.IO.FileAttributes]::ReparsePoint
+        $DirLinkMask          = $SymLinkMask -bor [System.IO.FileAttributes]::Directory
+    }
 
     BeforeEach {
         Clean-State
@@ -322,6 +328,13 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
 }
 
 Describe "New-Item with links fails for non elevated user if developer mode not enabled on Windows." -Tags "CI" {
+    BeforeDiscovery {
+        # Pester 5: -Skip expressions are evaluated at discovery time, so $developerMode must be set here.
+        $developerModeEnabled = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
+        $minBuildRequired     = [System.Environment]::OSVersion.Version -ge "10.0.14972"
+        $developerMode        = $developerModeEnabled -and $minBuildRequired
+    }
+
     BeforeAll {
         # on macOS, the /tmp directory is a symlink, so we'll resolve it here
         $TestPath = $TestDrive
@@ -340,9 +353,6 @@ Describe "New-Item with links fails for non elevated user if developer mode not 
         $testlink             = "testlink"
         $FullyQualifiedFile   = Join-Path -Path $TestPath -ChildPath $testfile
         $TestFilePath         = Join-Path -Path $TestPath -ChildPath $testlink
-        $developerModeEnabled = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
-        $minBuildRequired     = [System.Environment]::OSVersion.Version -ge "10.0.14972"
-        $developerMode = $developerModeEnabled -and $minBuildRequired
     }
 
     AfterEach {

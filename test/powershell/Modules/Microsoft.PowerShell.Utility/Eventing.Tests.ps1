@@ -10,7 +10,7 @@ Describe "Event Subscriber Tests" -Tags "Feature" {
     }
 
     # can't let this case to work
-    It "Register an event with no action, trigger it and wait for it to be raised." -Pending:$true{
+    It "Register an event with no action, trigger it and wait for it to be raised." -Skip:$true{
         Get-EventSubscriber | Should -BeNullOrEmpty
         $messageData = New-Object psobject
         $job = Start-Job { Start-Sleep -Seconds 5; 1..5 }

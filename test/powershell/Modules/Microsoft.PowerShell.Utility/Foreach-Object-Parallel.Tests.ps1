@@ -379,8 +379,8 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         finally
         {
             Set-Location -Path $oldLocation
-            if ($drive -is [System.IO.DirectoryInfo]) {
-                $drive | Remove-Item -Force
+            if ($wildcardName -is [System.IO.DirectoryInfo]) {
+                Remove-Item -LiteralPath $wildcardName.FullName -Force -Recurse
             }
         }
     }
@@ -402,9 +402,7 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
 
 Describe 'ForEach-Object -Parallel common parameters' -Tags 'CI' {
 
-    BeforeAll {
-
-        # Test cases
+    BeforeDiscovery {
         $TestCasesNotSupportedCommonParameters = @(
             @{
                 testName    = 'Verifies that ErrorAction common parameter is not supported'
@@ -423,7 +421,6 @@ Describe 'ForEach-Object -Parallel common parameters' -Tags 'CI' {
                 scriptBlock = { 1..1 | ForEach-Object -Parallel { "Hello" } -PipelineVariable pipeVar }
             }
         )
-
         $TestCasesForSupportedCommonParameters = @(
             @{
                 testName       = 'Verifies ErrorVariable common parameter'

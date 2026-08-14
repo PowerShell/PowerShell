@@ -1,19 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "TestWSMan tests" -Tags 'Feature','RequireAdminOnWindows' {
+Describe "TestWSMan tests" -Tags 'Feature','RequireAdminOnWindows' -Skip:(-not $IsWindows) {
 
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ( !$IsWindows ) {
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-        else {
-            $testWsman = [Microsoft.WSMan.Management.TestWSManCommand]::new()
-        }
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        $testWsman = [Microsoft.WSMan.Management.TestWSManCommand]::new()
     }
 
     It "TestWSmanCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(

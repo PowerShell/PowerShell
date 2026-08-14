@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'ConvertTo-Json' -tags "CI" {
+    BeforeDiscovery {
+        $newline = [System.Environment]::NewLine
+    }
+
     BeforeAll {
         $newline = [System.Environment]::NewLine
     }
@@ -21,7 +25,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $jsonFormat | Should -Match '"TestValue3": 99999'
     }
 
-	It "StopProcessing should succeed" -Pending:$true {
+	It "StopProcessing should succeed" -Skip:$true {
         $ps = [PowerShell]::Create()
         $null = $ps.AddScript({
             $obj = [PSCustomObject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}

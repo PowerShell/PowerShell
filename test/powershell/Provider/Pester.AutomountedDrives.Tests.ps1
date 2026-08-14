@@ -6,32 +6,37 @@
  # used for validating automounted PowerShell drives.
  ############################################################################################>
 $script:TestSourceRoot = $PSScriptRoot
-Describe "Test suite for validating automounted PowerShell drives" -Tags @('Feature', 'Slow', 'RequireAdminOnWindows') {
+
+BeforeDiscovery {
+    $SubstNotFound = $true
+    $VHDToolsNotFound = $true
+    if ($IsWindows) {
+        $SubstNotFound = $false
+        try { $null = subst.exe } catch { $SubstNotFound = $true }
+
+        try {
+            $tmpVhdPath = Join-Path ([System.IO.Path]::GetTempPath()) "TestProbeVHD_$([guid]::NewGuid()).vhd"
+            New-VHD -Path $tmpVhdPath -SizeBytes 5mb -Dynamic -ErrorAction Stop | Out-Null
+            Remove-Item $tmpVhdPath -ErrorAction SilentlyContinue
+            $VHDToolsNotFound = (Get-Module Hyper-V).PrivateData.ImplicitRemoting -eq $true
+            Remove-Module Hyper-V -ErrorAction SilentlyContinue
+        }
+        catch
+        { $VHDToolsNotFound = $true }
+    }
+}
+
+Describe "Test suite for validating automounted PowerShell drives" -Tags @('Feature', 'Slow', 'RequireAdminOnWindows') -Skip:(-not $IsWindows) {
 
     BeforeAll {
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
 
-        $AutomountVHDDriveScriptPath = Join-Path $script:TestSourceRoot 'AutomountVHDDrive.ps1'
+        $AutomountVHDDriveScriptPath = Join-Path $PSScriptRoot 'AutomountVHDDrive.ps1'
         $vhdPath = Join-Path $TestDrive 'TestAutomountVHD.vhd'
 
-        $AutomountSubstDriveScriptPath = Join-Path $script:TestSourceRoot 'AutomountSubstDrive.ps1'
+        $AutomountSubstDriveScriptPath = Join-Path $PSScriptRoot 'AutomountSubstDrive.ps1'
         $substDir = Join-Path (Join-Path $TestDrive 'TestAutomountSubstDrive') 'TestDriveRoot'
         New-Item $substDir -ItemType Directory -Force | Out-Null
-
-        $SubstNotFound = $false
-        try { subst.exe } catch { $SubstNotFound = $true }
-
-        $VHDToolsNotFound = $false
-        try
-        {
-            $tmpVhdPath = Join-Path $TestDrive 'TestVHD.vhd'
-            New-VHD -Path $tmpVhdPath -SizeBytes 5mb -Dynamic -ErrorAction Stop
-            Remove-Item $tmpVhdPath
-            $VHDToolsNotFound = (Get-Module Hyper-V).PrivateData.ImplicitRemoting -eq $true
-            Remove-Module Hyper-V
-        }
-        catch
-        { $VHDToolsNotFound = $true }
     }
 
     Context "Validating automounting FileSystem drives" {

@@ -9,49 +9,59 @@ param()
 
 return
 
-Set-Variable dateInFuture -Option Constant -Value "12/12/2036 09:00"
-Set-Variable dateInPast -Option Constant -Value "12/12/2010 09:00"
-Set-Variable dateInvalid -Option Constant -Value "12/12/2016 25:00"
-
-function RemoveTestUsers
-{
-    param([string] $basename)
-
-    $results = Get-LocalUser $basename*
-    foreach ($element in $results) {
-        Remove-LocalUser -SID $element.SID
+BeforeDiscovery {
+    #skip all tests on non-windows platform or when not running as admin
+    $isAdmin = $false
+    if ($IsWindows) {
+        $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     }
+    $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
 }
 
-function VerifyFailingTest
-{
-    param(
-        [scriptblock] $sb,
-        [string] $expectedFqeid
-    )
+BeforeAll {
+    $dateInFuture = "12/12/2036 09:00"
+    $dateInPast = "12/12/2010 09:00"
+    $dateInvalid = "12/12/2016 25:00"
 
-    $backupEAP = $script:ErrorActionPreference
-    $script:ErrorActionPreference = "Stop"
+    function RemoveTestUsers
+    {
+        param([string] $basename)
 
-    try {
-        & $sb
-        throw "Expected error: $expectedFqeid"
+        $results = Get-LocalUser $basename*
+        foreach ($element in $results) {
+            Remove-LocalUser -SID $element.SID
+        }
     }
-    catch {
-        $_.FullyQualifiedErrorId | Should -Be $expectedFqeid
+
+    function VerifyFailingTest
+    {
+        param(
+            [scriptblock] $sb,
+            [string] $expectedFqeid
+        )
+
+        $backupEAP = $ErrorActionPreference
+        $ErrorActionPreference = "Stop"
+
+        try {
+            & $sb
+            throw "Expected error: $expectedFqeid"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should -Be $expectedFqeid
+        }
+        finally {
+            $ErrorActionPreference = $backupEAP
+        }
     }
-    finally {
-        $script:ErrorActionPreference = $backupEAP
+    $isAdmin = $false
+    if ($IsWindows) {
+        $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     }
+    $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
 }
 
-try {
-    #skip all tests on non-windows platform
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    $IsNotSkipped = ($IsWindows -eq $true);
-    $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
-
-    Describe "Verify Expected LocalUser Cmdlets are present" -Tags 'CI' {
+    Describe "Verify Expected LocalUser Cmdlets are present" -Tags 'CI' -Skip:(!$IsNotSkipped) {
 
         It "Test command presence" {
             $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
@@ -66,7 +76,7 @@ try {
         }
     }
 
-    Describe "Verify Expected LocalUser Aliases are present" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Verify Expected LocalUser Aliases are present" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         It "Test command presence" {
             $result = Get-Alias | ForEach-Object { if ($_.Source -eq "Microsoft.PowerShell.LocalAccounts") {$_}}
@@ -89,7 +99,7 @@ try {
         }
     }
 
-    Describe "Validate simple New-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple New-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         AfterEach {
             if ($IsNotSkipped) {
@@ -108,7 +118,7 @@ try {
         }
     }
 
-    Describe "Validate New-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate New-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         AfterEach {
             if ($IsNotSkipped) {
@@ -403,7 +413,7 @@ try {
         }
     }
 
-    Describe "Validate simple Get-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Get-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -427,7 +437,7 @@ try {
         }
     }
 
-    Describe "Validate Get-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Get-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -572,7 +582,7 @@ try {
         }
     }
 
-    Describe "Validate simple Set-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Set-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -602,7 +612,7 @@ try {
         }
     }
 
-    Describe "Validate Set-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Set-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -824,7 +834,7 @@ try {
         }
     }
 
-    Describe "Validate simple Rename-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Rename-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -854,7 +864,7 @@ try {
         }
     }
 
-    Describe "Validate Rename-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Rename-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1005,7 +1015,7 @@ try {
         }
     }
 
-    Describe "Validate simple Remove-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Remove-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1044,7 +1054,7 @@ try {
         }
     }
 
-    Describe "Validate Remove-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Remove-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1218,7 +1228,7 @@ try {
         }
     }
 
-    Describe "Validate simple Enable-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Enable-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1248,7 +1258,7 @@ try {
         }
     }
 
-    Describe "Validate Enable-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Enable-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1389,7 +1399,7 @@ try {
         }
     }
 
-    Describe "Validate simple Disable-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
+    Describe "Validate simple Disable-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1419,7 +1429,7 @@ try {
         }
     }
 
-    Describe "Validate Disable-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Disable-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:(!$IsNotSkipped) {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1556,7 +1566,3 @@ try {
             $getResult.Enabled | Should -BeFalse
         }
     }
-}
-finally {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
-}

@@ -1,59 +1,38 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
+
+$script:skipRemoteGetModule = (-not $IsWindows) -or (Test-IsWinWow64)
+
+Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' -Skip:$script:skipRemoteGetModule {
 
     BeforeAll {
-        $pendingTest = (Test-IsWinWow64)
-        $skipTest = !$IsWindows
-
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-
-        if ($pendingTest -or $skipTest)
-        {
-            if ($skipTest)
-            {
-                $PSDefaultParameterValues["it:skip"] = $true
-            }
-            elseif ($pendingTest)
-            {
-                $PSDefaultParameterValues["it:pending"] = $true
-            }
-
-            return
-        }
-
         $pssession = New-RemoteSession
         # pending https://github.com/PowerShell/PowerShell/issues/4819
         # $cimsession = New-RemoteSession -CimSession
     }
 
     AfterAll {
-
-        if ($pendingTest -or $skipTest)
-        {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
-            return
-        }
-
-        if ($pssession -ne $null) { Remove-PSSession $pssession -ErrorAction SilentlyContinue }
+        if ($null -ne $pssession) { Remove-PSSession $pssession -ErrorAction SilentlyContinue }
     }
 
     It "Get-Module fails if not using -ListAvailable with '<parameter>'" -TestCases @(
-        @{parameter="PSSession" ; value=$pssession}
+        @{parameter="PSSession"; usePSSession=$true}
         # @{parameter="CIMSession"; value=$cimsession}
     ) {
-        param($parameter, $value)
+        param($parameter, $usePSSession)
+        $value = if ($usePSSession) { $pssession } else { $null }
         $parameters = @{$parameter=$value}
         { Get-Module @parameters -ErrorAction Stop } | Should -Throw -ErrorId "RemoteDiscoveryWorksOnlyInListAvailableMode,Microsoft.PowerShell.Commands.GetModuleCommand"
     }
 
-    It "Get-Module succeeds using -ListAvailable with '<parameter>'" -TestCases @(
-        @{parameter="PSSession" ; value=$pssession},
-        @{parameter="PSSession" ; value=$pssession ; name="Pester"}
+    It "Get-Module succeeds using -ListAvailable with '<parameter>' name=<name>" -TestCases @(
+        @{parameter="PSSession"; usePSSession=$true; name=$null},
+        @{parameter="PSSession"; usePSSession=$true; name="Pester"}
         # @{parameter="CIMSession"; value=$cimsession},
         # @{parameter="CIMSession"; value=$cimsession; name="pESTER"}
     ) {
-        param($parameter, $value, $name)
+        param($parameter, $usePSSession, $name)
+        $value = if ($usePSSession) { $pssession } else { $null }
         $parameters = @{$parameter=$value; ListAvailable=$true; Refresh=$true}
         if ($name) {
             $parameters += @{name=$name}
@@ -73,15 +52,16 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
         @{parameter = "PSEdition"         ; value = "foo"},
         @{parameter = "Refresh"           ; value = $true},
         @{parameter = "Refresh"           ; value = $false},
-        @{parameter = "PSSession"         ; value = $pssession},
+        @{parameter = "PSSession"         ; usePSSession = $true},
         # @{parameter = "CimSession"        ; value = $cimsession},
         @{parameter = "CimResourceUri"    ; value = "http://foo/"},
         @{parameter = "CimNamespace"      ; value = "foo"},
         @{parameter = "PSEdition"         ; value = "Core"},
         @{parameter = "PSEdition"         ; value = "Desktop"}
         ) {
-        param($parameter, $value)
+        param($parameter, $value, $usePSSession)
 
+        if ($usePSSession) { $value = $pssession }
         $getModuleCommand = [Microsoft.PowerShell.Commands.GetModuleCommand]::new()
         $getModuleCommand.$parameter = $value
         if ($parameter -eq "FullyQualifiedName") {
@@ -102,7 +82,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
         Compare-Object $module ($module | Get-Module) | Should -BeNullOrEmpty
     }
 
-    It "New-CimSession works" -Pending {
+    It "New-CimSession works" -Skip {
         # enable all CimSession tests once https://github.com/PowerShell/PowerShell/issues/4819 is fixed
     }
 }
