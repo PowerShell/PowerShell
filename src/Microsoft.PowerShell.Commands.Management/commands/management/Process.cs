@@ -1895,11 +1895,20 @@ namespace Microsoft.PowerShell.Commands
             // Path = Mandatory parameter -> Will not be empty.
             try
             {
-                CommandInfo cmdinfo = CommandDiscovery.LookupCommandInfo(
-                    FilePath, CommandTypes.Application | CommandTypes.ExternalScript,
-                    SearchResolutionOptions.None, CommandOrigin.Internal, this.Context);
+#if !UNIX
+                if (FilePath.StartsWith("shell:", StringComparison.OrdinalIgnoreCase))
+                {
+                    startInfo.FileName = FilePath;
+                }
+                else
+#endif
+                {
+                    CommandInfo cmdinfo = CommandDiscovery.LookupCommandInfo(
+                        FilePath, CommandTypes.Application | CommandTypes.ExternalScript,
+                        SearchResolutionOptions.None, CommandOrigin.Internal, this.Context);
 
-                startInfo.FileName = cmdinfo.Definition;
+                    startInfo.FileName = cmdinfo.Definition;
+                }
             }
             catch (CommandNotFoundException)
             {
