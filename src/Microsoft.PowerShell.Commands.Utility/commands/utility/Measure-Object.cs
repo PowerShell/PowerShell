@@ -775,10 +775,10 @@ namespace Microsoft.PowerShell.Commands
             if (_measureStandardDeviation && stat.count > 1)
             {
                 // Based off of iterative method of calculating variance on
-                // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
+                // "https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm"
                 double avgPrevious = stat.sumPrevious / (stat.count - 1);
-                stat.variance *= (stat.count - 2.0) / (stat.count - 1);
-                stat.variance += (numValue - avgPrevious) * (numValue - avgPrevious) / stat.count;
+                double avg = stat.sum / stat.count;
+                stat.variance += (((numValue - avgPrevious) * (numValue - avg)) - stat.variance) / stat.count;
             }
         }
 
