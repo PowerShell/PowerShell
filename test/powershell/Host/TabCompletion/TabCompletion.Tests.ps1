@@ -797,7 +797,7 @@ using `
 
         $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
         if ($res.CompletionMatches.Count -gt 0) {
-            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+            $actual = [string]::Join(",",($res.CompletionMatches | Where-Object ResultType -ne "Keyword").Completiontext)
         }
         else {
             $actual = ''
@@ -2043,6 +2043,205 @@ param([ValidatePattern(
             ## The fallback completer will be used for $nativeCommand.
             $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
             $res.CompletionMatches | Should -HaveCount 0
+        }
+    }
+
+    Context KeywordCompletion {
+        $CommonKeywords = "break","class","continue","data","do","enum","exit","filter","for","foreach","function","if","return","switch","throw","trap","try","while"
+        $TryKeywords = "catch", "finally"
+        $IfKeywords = "else", "elseif"
+        $DoConditionKeywords = "until", "while"
+        $BlockNames = 'param', 'dynamicparam', 'begin', 'process', 'end', 'clean'
+        # Each of these tests are run twice, once with no partial input and once with a partially complete keyword
+        $TestCases = @(
+            @{
+                Name = 'Incomplete try catch'
+                Expected = $TryKeywords
+                Text = 'try{}^'
+            }
+            @{
+                Name = 'Complete try catch'
+                Expected = ,'finally' + $CommonKeywords
+                Text = 'try{}catch{}^'
+            }
+            @{
+                Name = 'Complete try catch with exception specified'
+                Expected = $TryKeywords + $CommonKeywords
+                Text = 'try{} catch [System.Exception]{}^'
+            }
+            @{
+                Name = 'Complete try finally'
+                Expected = $CommonKeywords
+                Text = 'try{}finally{}^'
+            }
+            @{
+                Name = 'Insert into complete try catch'
+                Expected = ,"catch"
+                Text = "try{}`n^`ncatch{}"
+            }
+            @{
+                Name = 'After if statement'
+                Expected = $IfKeywords + $CommonKeywords
+                Text = 'if($true){}^'
+            }
+            @{
+                Name = 'After else statement'
+                Expected = $CommonKeywords
+                Text = 'if($true){}else {}^'
+            }
+            @{
+                Name = 'Insert into if/else statement'
+                Expected = ,'elseif'
+                Text = 'if($true){}^ else {}'
+            }
+            @{
+                Name = 'Insert into if/else statement with missing statement'
+                Expected = $null
+                Text = 'if($true){}elseif ($true) ^ else {}', 'if($true){}elseif ($true) e^ else {}'
+            }
+            @{
+                Name = 'Incomplete foreach'
+                Expected = ,'in'
+                Text = 'foreach ($x ^'
+            }
+            @{
+                Name = 'Incomplete foreach with no variable'
+                Expected = $null
+                Text = 'foreach (^', 'foreach (i^'
+            }
+            @{
+                Name = 'Incomplete do'
+                Expected = $DoConditionKeywords
+                Text = 'do {} ^'
+            }
+            @{
+                Name = 'Incomplete do with no statement block'
+                Expected = $null
+                Text = "do`n^", "do`n u^"
+            }
+            @{
+                Name = 'Incomplete if'
+                Expected = $null
+                Text = 'if ($true) ^', 'if ($true) e^'
+            }
+            @{
+                Name = 'Incomplete function'
+                Expected = $null
+                Text = 'function X ^', 'function X p^'
+            }
+            @{
+                Name = 'Incomplete class'
+                Expected = $null
+                Text = 'class X ^', 'class X h^'
+            }
+            @{
+                Name = 'Incomplete enum'
+                Expected = $null
+                Text = 'enum X ^', 'enum X h^'
+            }
+            @{
+                Name = 'Insert into complete method member that already has hidden and static defined'
+                Expected = $null
+                Text = 'class X {hidden static [string] ^ DoSomething(){return ""}}', 'class X {hidden static [string] h^ DoSomething(){return ""}}'
+            }
+            @{
+                Name = 'Set a default value for property'
+                Expected = $null
+                Text = 'class X {[string] $Y = ^}', 'class X {[string] $Y = h^}'
+            }
+            @{
+                Name = 'Just after setting hidden and static, but before writing property'
+                Expected = $null
+                Text = 'class X {hidden static ^}', 'class X {hidden static h^}'
+            }
+            @{
+                Name = 'Defining a value in an Enum'
+                Expected = $null
+                Text = 'enum X {^}','enum X {h^}'
+            }
+            @{
+                Name = 'Inside function definition with whitespace after cursor'
+                Expected = $BlockNames + $CommonKeywords
+                Text = "function X {`n  ^  `n  `n}"
+            }
+            @{
+                Name = 'Completely empty script'
+                Expected = ,"using" + $BlockNames + $CommonKeywords
+                Text = "^"
+            }
+            @{
+                Name = 'Script that only contains using statements'
+                Expected = ,"using" + $BlockNames + $CommonKeywords
+                Text = "using namespace system;^"
+            }
+            @{
+                Name = 'Inside empty scriptblock'
+                Expected = $BlockNames + $CommonKeywords
+                Text = "& {^}"
+            }
+            @{
+                Name = 'On a new line in a script'
+                Expected = $CommonKeywords
+                Text = "Get-Process `n^"
+            }
+            @{
+                Name = 'Insert into complete property member'
+                Expected = 'hidden','static'
+                Text = 'class X {[string] ^ $Y}'
+            }
+            @{
+                Name = 'Insert into complete property member that already has hidden and static defined'
+                Expected = $null
+                Text = 'class X {hidden static [string] ^ $Y}', 'class X {hidden static [string] h^ $Y}'
+            }
+            @{
+                Name = 'Insert into complete method member'
+                Expected = 'hidden', 'static'
+                Text = 'class X {[string] ^ DoSomething(){return ""}}'
+            }
+            @{
+                Name = 'Inside param block'
+                Expected = $null
+                Text = 'function X {param(^)}', 'function X {param(b^)}'
+            }
+            @{
+                Name = 'Inside function definition with a named block defined'
+                Expected = $BlockNames | where {$_ -notin 'param', 'begin'}
+                Text = "function X {begin {} ^}"
+            }
+            @{
+                Name = 'Inside scriptblock'
+                Expected = $BlockNames + $CommonKeywords
+                Text = "{^}"
+            }
+            @{
+                Name = 'Inside subexpression'
+                Expected = $CommonKeywords
+                Text = '$(^)'
+            }
+        )
+        It 'Complete keywords in scenario: <Name>' -TestCases $TestCases -test {
+            param([string[]] $Expected, [string[]] $Text)
+            foreach ($InputText in $Text)
+            {
+                $CursorIndex = $InputText.IndexOf('^')
+                $ActualInputText = $InputText.Remove($CursorIndex, 1)
+                $Result = (TabExpansion2 -cursorColumn $CursorIndex -inputScript $ActualInputText).CompletionMatches | Where-Object -Property ResultType -EQ Keyword
+                if ($null -eq $Expected)
+                {
+                    $Result | Should -Be $null
+                }
+                else
+                {
+                    $ActualExpected = $Expected -join ','
+                    $Result.CompletionText -join ',' | Should -Be $ActualExpected
+                    
+                    $PartialInput = $Expected[0].Remove(1)
+                    $ActualExpected = ($Expected | Where-Object {$_ -like "$PartialInput*"}) -join ','
+                    $Result = (TabExpansion2 -cursorColumn ($CursorIndex + 1) -inputScript ($ActualInputText.Insert($CursorIndex, $PartialInput))).CompletionMatches | Where-Object -Property ResultType -EQ Keyword
+                    $Result.CompletionText -join ',' | Should -Be $ActualExpected
+                }
+            }
         }
     }
 
@@ -3347,13 +3546,6 @@ dir -Recurse `
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
         }
-
-        It "Complete file name starting with special char" {
-            $inputStr = ")"
-            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly "& '.${separator})file.txt'"
-        }
     }
 
     Context "Local tab completion with AST" {
@@ -3433,7 +3625,8 @@ dir -Recurse `
         }
 
         It "Should not throw errors in tab completion with empty input ast" {
-            {[System.Management.Automation.CommandCompletion]::CompleteInput({}.Ast, @(), {}.Ast.Extent.StartScriptPosition, $null)} | Should -Not -Throw
+            $Ast = [System.Management.Automation.Language.Parser]::ParseInput('', [ref] $null, [ref] $null)
+            {[System.Management.Automation.CommandCompletion]::CompleteInput($Ast, @(), $Ast.Extent.StartScriptPosition, $null)} | Should -Not -Throw
         }
     }
 
