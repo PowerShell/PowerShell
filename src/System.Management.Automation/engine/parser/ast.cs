@@ -3037,8 +3037,8 @@ namespace System.Management.Automation.Language
         public override Ast Copy()
         {
             var copy = Alias != null
-                ? new UsingStatementAst(Extent, UsingStatementKind, Name, Alias)
-                : new UsingStatementAst(Extent, UsingStatementKind, Name);
+                ? new UsingStatementAst(Extent, UsingStatementKind, (StringConstantExpressionAst)Name.Copy(), (StringConstantExpressionAst)Alias.Copy())
+                : new UsingStatementAst(Extent, UsingStatementKind, (StringConstantExpressionAst)Name.Copy());
             copy.ModuleInfo = ModuleInfo;
 
             return copy;
