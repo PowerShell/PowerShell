@@ -1009,8 +1009,7 @@ namespace System.Management.Automation
         /// The origin of the caller of this API
         /// </param>
         /// <returns>
-        /// A PSVariable object if <paramref name="variablePath"/> refers to a variable.
-        /// An PSObject if <paramref name="variablePath"/> refers to a provider path.
+        /// The resulting <see cref="PSVariable"/> for <paramref name="variable"/>, or null.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variable"/> is null.
@@ -1018,7 +1017,7 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
         /// </exception>
-        internal object SetVariable(PSVariable variable, bool force, CommandOrigin origin)
+        internal PSVariable SetVariable(PSVariable variable, bool force, CommandOrigin origin)
         {
             if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
@@ -1098,8 +1097,7 @@ namespace System.Management.Automation
         /// The origin of the caller
         /// </param>
         /// <returns>
-        /// A PSVariable object if <paramref name="variablePath"/> refers to a variable.
-        /// An PSObject if <paramref name="variablePath"/> refers to a provider path.
+        /// The resulting <see cref="PSVariable"/> for <paramref name="variablePath"/>, or null.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variablePath"/> is null.
@@ -1120,14 +1118,14 @@ namespace System.Management.Automation
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        internal object SetVariable(
+        internal PSVariable SetVariable(
             VariablePath variablePath,
             object newValue,
             bool asValue,
             bool force,
             CommandOrigin origin)
         {
-            object result = null;
+            PSVariable result = null;
             if (variablePath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
@@ -1184,7 +1182,7 @@ namespace System.Management.Automation
                 // There is probably a more efficient way to do this.
 
                 GetVariableValue(variablePath, out context, out scope);
-#if true
+
                 // PSVariable get/set is the get/set of content in the provider
 
                 Collection<IContentWriter> writers = null;
@@ -1330,26 +1328,6 @@ namespace System.Management.Automation
                 {
                     writer.Close();
                 }
-#else
-                    if (context != null)
-                    {
-                        context.Force = force;
-                        SetItem (variablePath.LookupPath.ToString (), newValue, context);
-
-                        context.ThrowFirstErrorOrDoNothing(true);
-                    }
-                    else
-                    {
-                        Collection<PSObject> setItemResult =
-                            SetItem (variablePath.LookupPath.ToString (), newValue);
-
-                        if (setItemResult != null &&
-                            setItemResult.Count > 0)
-                        {
-                            result = setItemResult[0];
-                        }
-                    }
-#endif
             }
 
             return result;
