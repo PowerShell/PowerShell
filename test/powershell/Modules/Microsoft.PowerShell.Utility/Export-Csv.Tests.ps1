@@ -23,7 +23,62 @@ Describe "Export-Csv" -Tags "CI" {
     }
 
     It "Should throw if an output file isn't specified" {
-        { $testObject | Export-Csv -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyPathAndLiteralPath,Microsoft.PowerShell.Commands.ExportCsvCommand"
+        { $testObject | Export-Csv -ErrorAction Stop } | Should -Throw
+    }
+
+    It "Should throw if both Path and LiteralPath are specified" {
+        { $testObject | Export-Csv -Path $testCsv -LiteralPath $testCsv -ErrorAction Stop } | Should -Throw -ErrorId "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ExportCsvCommand"
+    }
+
+    It "Should support -LiteralPath parameter with -Delimiter" {
+        $testObject | Export-Csv -LiteralPath $testCsv -Delimiter ';'
+        $results = Import-Csv -Path $testCsv -Delimiter ';'
+
+        $results | Should -HaveCount 3
+    }
+
+    It "Should support -LiteralPath parameter with -UseCulture" {
+        $testObject | Export-Csv -LiteralPath $testCsv -UseCulture
+        $results = Import-Csv -Path $testCsv -UseCulture
+
+        $results | Should -HaveCount 3
+    }
+
+    It "Should support -LiteralPath parameter with literal brackets" {
+        $bracketCsv = Join-Path -Path $TestDrive -ChildPath "[output].csv"
+        try {
+            $testObject | Export-Csv -LiteralPath $bracketCsv
+            Test-Path -LiteralPath $bracketCsv | Should -BeTrue
+            $results = Import-Csv -LiteralPath $bracketCsv
+            $results | Should -HaveCount 3
+        } finally {
+            Remove-Item -LiteralPath $bracketCsv -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Should have correct parameter set metadata" {
+        $cmd = Get-Command Export-Csv
+
+        $pathParam = $cmd.Parameters['Path']
+        $pathSets = $pathParam.Attributes.Where({ $_.TypeId.Name -eq 'ParameterAttribute' -and $_.Mandatory }).ParameterSetName
+        $pathSets | Should -Contain 'Path'
+        $pathSets.Count | Should -Be 1
+
+        $literalPathParam = $cmd.Parameters['LiteralPath']
+        $literalPathSets = $literalPathParam.Attributes.Where({ $_.TypeId.Name -eq 'ParameterAttribute' -and $_.Mandatory }).ParameterSetName
+        $literalPathSets | Should -Contain 'LiteralPath'
+        $literalPathSets.Count | Should -Be 1
+    }
+
+    It "Should support -LiteralPath parameter alone" {
+        $testObject | Export-Csv -LiteralPath $testCsv
+        $results = Import-Csv -Path $testCsv
+        $results | Should -HaveCount 3
+    }
+
+    It "Should throw if -Delimiter and -UseCulture are both specified" {
+        { $testObject | Export-Csv -Path $testCsv -Delimiter ';' -UseCulture -ErrorAction Stop } |
+            Should -Throw -ErrorId "CannotSpecifyDelimiterAndUseCulture,Microsoft.PowerShell.Commands.ExportCsvCommand"
     }
 
     It "Should be a string when exporting via pipe" {
