@@ -2213,6 +2213,23 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.StatusCode | Should -Be 416
             $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes */$referenceFileSize"
         }
+
+        It "Invoke-WebRequest -Resume treats 416 without Content-Range as a completed download" {
+            # Download the entire file
+            $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'MissingContentRange'
+            $null = Invoke-WebRequest -Uri $uri -OutFile $outFile
+            $fileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
+
+            $response = Invoke-WebRequest -Uri $uri -OutFile $outFile -Resume -PassThru
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            $response.Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $response.Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$fileSize-"
+            $response.StatusCode | Should -Be 416
+            $response.Headers.ContainsKey('Content-Range') | Should -BeFalse
+        }
     }
 
     Context "Invoke-WebRequest retry tests" {
@@ -4243,6 +4260,22 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
             $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$fileSize-"
             $Headers.'Content-Range'[0] | Should -BeExactly "bytes */$referenceFileSize"
+        }
+
+        It "Invoke-RestMethod -Resume treats 416 without Content-Range as a completed download" {
+            # Download the entire file
+            $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'MissingContentRange'
+            $null = Invoke-RestMethod -Uri $uri -OutFile $outFile
+            $fileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
+
+            Invoke-RestMethod -Uri $uri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$fileSize-"
+            $Headers.ContainsKey('Content-Range') | Should -BeFalse
         }
     }
 
