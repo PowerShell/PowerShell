@@ -118,115 +118,115 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandAlreadySpecified" xml:space="preserve">
-    <value>Cannot process command because a command is already specified with -Command, -CommandWithArgs, or -EncodedCommand.</value>
+    <value>無法處理命令，因為已使用 -Command、-CommandWithArgs 或 -EncodedCommand 指定命令。</value>
   </data>
   <data name="MissingCommandParameter" xml:space="preserve">
-    <value>Cannot process the command because of a missing parameter. A command must follow -Command.</value>
+    <value>無法處理命令，因為缺少參數。命令必須接在 -Command 後面。</value>
   </data>
   <data name="UnknownParameter" xml:space="preserve">
-    <value>Unrecognized parameter: '{0}'.</value>
+    <value>無法辨識的參數: '{0}'。</value>
   </data>
   <data name="TooManyParametersToCommand" xml:space="preserve">
-    <value>'-' was specified with the -Command parameter; no other arguments to -Command are permitted.</value>
+    <value>已使用 -Command 參數指定 '-'; -Command 不允許其他引數。</value>
   </data>
   <data name="StdinNotRedirected" xml:space="preserve">
-    <value>'-' was specified as the argument to -Command but standard input has not been redirected for this process.</value>
+    <value>已指定 '-' 作為 -Command 的引數，但此處理序的標準輸入尚未重新導向。</value>
   </data>
   <data name="MissingOutputFormatParameter" xml:space="preserve">
-    <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter.
-Specify one of the following formats for this parameter:
+    <value>無法執行命令，因為未為 OutputFormat 參數提供引數。
+請為此參數指定下列其中一種格式: 
 {0}</value>
   </data>
   <data name="MissingInputFormatParameter" xml:space="preserve">
-    <value>Cannot process the command because the -InputFormat parameter requires an argument. Specify a valid format argument for this parameter.
-Valid formats are:
+    <value>無法處理命令，因為 -InputFormat 參數需要引數。請為此參數指定有效的格式引數。
+有效的格式為:
 {0}</value>
   </data>
   <data name="BadFormatParameterValue" xml:space="preserve">
-    <value>Cannot process the command because of an incorrect parameter value. "{0}" is not a valid format.
-Valid formats are:
+    <value>無法處理命令，因為參數值不正確。"{0}" 不是有效的格式。
+有效的格式為:
 {1}</value>
   </data>
   <data name="ArgsAlreadySpecified" xml:space="preserve">
-    <value>Cannot process the command because arguments to -Command or -EncodedCommand have already been specified with -EncodedArguments.</value>
+    <value>無法處理命令，因為 -Command 或 -EncodedCommand 的引數已透過 -EncodedArguments 指定。</value>
   </data>
   <data name="MissingArgsValue" xml:space="preserve">
-    <value>Cannot process the command because -EncodedArguments requires a value. Specify a value for the -EncodedArguments parameter.</value>
+    <value>無法處理命令，因為 -EncodedArguments 需要值。請為 -EncodedArguments 參數指定值。</value>
   </data>
   <data name="MissingFileArgument" xml:space="preserve">
-    <value>The command cannot be run because the File parameter requires a file path. Supply a path for the File parameter and then try the command again.</value>
+    <value>無法執行命令，因為 File 參數需要檔案路徑。請為 File 參數提供路徑，然後再試一次。</value>
   </data>
   <data name="MissingWindowStyleArgument" xml:space="preserve">
-    <value>Cannot process the command because -WindowStyle requires an argument that is normal, hidden, minimized or maximized. Specify one of these argument values and try again.</value>
+    <value>無法處理命令，因為 -WindowStyle 需要 normal、hidden、minimized 或 maximized 的引數。請指定其中一個引數值，然後再試一次。</value>
   </data>
   <data name="InvalidFileArgument" xml:space="preserve">
-    <value>Processing -File '{0}' failed: {1} Specify a valid path for the -File parameter.</value>
+    <value>處理 -File '{0}' 失敗: {1} 請為 -File 參數指定有效的路徑。</value>
   </data>
   <data name="InvalidWindowStyleArgument" xml:space="preserve">
-    <value>Processing -WindowStyle '{0}' failed: {1}.</value>
+    <value>處理 -WindowStyle '{0}' 時失敗: {1}。</value>
   </data>
   <data name="InvalidFileArgumentExtension" xml:space="preserve">
-    <value>Processing -File '{0}' failed because the file does not have a '.ps1' extension. Specify a valid PowerShell script file name, and then try again.</value>
+    <value>處理 -File '{0}' 失敗，因為檔案沒有 '.ps1' 副檔名。請指定有效的 PowerShell 指令檔名稱，然後再試一次。</value>
   </data>
   <data name="ArgumentFileDoesNotExist" xml:space="preserve">
-    <value>The argument '{0}' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>引數 '{0}' 無法辨識為指令碼檔案名稱。請檢查名稱拼字，如果名稱含有路徑，請確認路徑正確，然後再試一次。</value>
   </data>
   <data name="BadArgsValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedArguments is not properly encoded. The value must be Base64 encoded.</value>
+    <value>無法處理命令，因為以 -EncodedArguments 指定的值未正確編碼。該值必須採用 Base64 編碼。</value>
   </data>
   <data name="BadCommandValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedCommand is not properly encoded. The value must be Base64 encoded.</value>
+    <value>無法處理命令，因為以 -EncodedCommand 指定的值未正確編碼。該值必須採用 Base64 編碼。</value>
   </data>
   <data name="MissingExecutionPolicyParameter" xml:space="preserve">
-    <value>Cannot process the execution policy because of a missing policy name. A policy name must follow -ExecutionPolicy.</value>
+    <value>無法處理執行原則，因為缺少原則名稱。原則名稱必須接在 -ExecutionPolicy 後面。</value>
   </data>
   <data name="MtaStaMutuallyExclusive" xml:space="preserve">
-    <value>Cannot process the command because -STA and -MTA are both specified. Specify either -STA or -MTA.</value>
+    <value>無法處理命令，因為同時指定了 -STA 和 -MTA。請擇一指定 -STA 或 -MTA。</value>
   </data>
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationName requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+    <value>無法處理命令，因為 -ConfigurationName 需要一個為遠端端點設定名稱的引數。請指定此引數，然後再試一次。</value>
   </data>
   <data name="MissingConfigurationFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationFile requires an argument that is a session configuration (.pssc) file path. Specify this argument and try again.</value>
+    <value>無法處理命令，因為 -ConfigurationFile 需要一個為工作階段設定 (.pssc) 檔案路徑的引數。請指定此引數，然後再試一次。</value>
   </data>
   <data name="MissingCustomPipeNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName requires an argument that is a name of the pipe you want to use. Specify this argument and try again.</value>
+    <value>無法處理命令，因為 -CustomPipeName 需要一個是您所想要使用之管道名稱的引數。請指定此引數，然後再試一次。</value>
   </data>
   <data name="CustomPipeNameTooLong" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+    <value>無法處理命令，因為指定的 -CustomPipeName 太長。此平台上的管道名稱長度最多可為 {0} 個字元。您的管道名稱 '{1}' 長度為 {2} 個字元。</value>
   </data>
   <data name="MissingSettingsFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -SettingsFile requires an argument that is a file path.</value>
+    <value>無法處理命令，因為 -SettingsFile 需要一個為檔案路徑的引數。</value>
   </data>
   <data name="InvalidSettingsFileArgument" xml:space="preserve">
-    <value>Processing -SettingsFile '{0}' failed: {1}. Specify a valid path for the -SettingsFile parameter.</value>
+    <value>處理 -SettingsFile '{0}' 失敗: {1}。請為 -SettingsFile 參數指定有效的路徑。</value>
   </data>
   <data name="SettingsFileNotExists" xml:space="preserve">
-    <value>The argument '{0}' passed to the -SettingsFile does not exist. Provide the path to an existing json file as an argument to the -SettingsFile parameter.</value>
+    <value>傳遞給 -SettingsFile 的引數 '{0}' 不存在。請將現有 JSON 檔案的路徑指定為 -SettingsFile 參數的引數。</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
-    <value>Invalid argument '{0}', did you mean:</value>
+    <value>引數 '{0}' 無效，您是否指的是:</value>
   </data>
   <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
-    <value>Parameter -WindowStyle is not implemented on this platform.</value>
+    <value>參數 -WindowStyle 未在此平台上實作。</value>
   </data>
   <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
-    <value>Cannot process the command because -WorkingDirectory requires an argument that is a directory path.</value>
+    <value>無法處理命令，因為 -WorkingDirectory 需要一個目錄路徑作為引數。</value>
   </data>
   <data name="MTANotImplemented" xml:space="preserve">
-    <value>Parameter -MTA is not supported on this platform.</value>
+    <value>此平台上不支援參數 -MTA。</value>
   </data>
   <data name="STANotImplemented" xml:space="preserve">
-    <value>Parameter -STA is not supported on this platform.</value>
+    <value>此平台上不支援參數 -STA。</value>
   </data>
   <data name="NullElementInArgs" xml:space="preserve">
-    <value>The specified arguments must not contain null elements.</value>
+    <value>指定的引數不得包含 null 元素。</value>
   </data>
   <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
-    <value>Invalid ExecutionPolicy value '{0}'.</value>
+    <value>無效的 ExecutionPolicy 值 '{0}'。</value>
   </data>
   <data name="MissingMandatoryArgument" xml:space="preserve">
-    <value>An argument is required to be supplied to the '{0}' parameter.</value>
+    <value>必須為 '{0}' 參數提供引數。</value>
   </data>
   <data name="FileOnlyEntryRequired" xml:space="preserve">
     <value>此原則需要參數 "-File"。</value>
