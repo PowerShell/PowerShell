@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="VariableBreakpointString" xml:space="preserve">
+    <value>'${0}' の変数ブレークポイント ({1} アクセス)</value>
+  </data>
+  <data name="VariableScriptBreakpointString" xml:space="preserve">
+    <value>'{0}:${1}' の変数ブレークポイント ({2} アクセス)</value>
+  </data>
+  <data name="LineBreakpointString" xml:space="preserve">
+    <value>'{0}:{1}' の行ブレークポイント</value>
+  </data>
+  <data name="StatementBreakpointString" xml:space="preserve">
+    <value>'{0}:{1}, {2}' の行ブレークポイント</value>
+  </data>
+  <data name="CommandBreakpointString" xml:space="preserve">
+    <value>'{0}' 上のコマンド ブレークポイント</value>
+  </data>
+  <data name="CommandScriptBreakpointString" xml:space="preserve">
+    <value>コマンドのブレークポイント '{0}:'{1}'</value>
+  </data>
+  <data name="WarningBreakpointWillNotBeHit" xml:space="preserve">
+    <value>ブレークポイント {0} にヒットしません</value>
+  </data>
+  <data name="StepHelp" xml:space="preserve">
+    <value> {0}、{1,-16} 単一ステップ (関数、スクリプトなどにステップイン)</value>
+  </data>
+  <data name="StepOverHelp" xml:space="preserve">
+    <value> {0}、{1,-16} 次のステートメントへのステップ (関数、スクリプトなどをステップ オーバー)</value>
+  </data>
+  <data name="StepOutHelp" xml:space="preserve">
+    <value> {0}、{1,-16} 現在の関数、スクリプトなどをステップ アウトします。</value>
+  </data>
+  <data name="ContinueHelp" xml:space="preserve">
+    <value> {0}、{1,-16} 操作の続行</value>
+  </data>
+  <data name="StopHelp" xml:space="preserve">
+    <value> {0}、{1,-16} 操作を停止してデバッガーを終了する</value>
+  </data>
+  <data name="GetStackTraceHelp" xml:space="preserve">
+    <value> {0}、Get-PSCallStack 表示呼び出し履歴</value>
+  </data>
+  <data name="ListHelp" xml:space="preserve">
+    <value> {0}、{1,-16} 現在のスクリプトのソース コードを一覧表示します。 </value>
+  </data>
+  <data name="AdditionalListHelp1" xml:space="preserve">
+    <value>                     "list" を使用して、現在の行 "list &lt;m&gt;" から開始します  </value>
+  </data>
+  <data name="AdditionalListHelp2" xml:space="preserve">
+    <value>                     行 &lt;m&gt; から開始し、"list &lt;m&gt; &lt;n&gt;" を使用して &lt;n&gt; をリストします </value>
+  </data>
+  <data name="AdditionalListHelp3" xml:space="preserve">
+    <value>                     行 &lt;m&gt; から始まる行</value>
+  </data>
+  <data name="EnterHelp" xml:space="preserve">
+    <value> &lt;enter&gt;             最後のコマンドが {0}、{1}、または {2}</value>
+  </data>
+  <data name="HelpCommandHelp" xml:space="preserve">
+    <value> {0}、{1,-16} はヘルプ メッセージを表示します。</value>
+  </data>
+  <data name="PromptHelp" xml:space="preserve">
+    <value>デバッガー プロンプトをカスタマイズする方法については、「help about_prompt」と入力してください。</value>
+  </data>
+  <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
+    <value>
+現在のセッションはデバッグをサポートしていません。操作は続行されます。
+
+</value>
+  </data>
+  <data name="LocationFormat" xml:space="preserve">
+    <value>{0}: 行 {1}</value>
+  </data>
+  <data name="NoSourceCode" xml:space="preserve">
+    <value>使用できるソース コードはありません。</value>
+  </data>
+  <data name="BadStartFormat" xml:space="preserve">
+    <value>開始行は {0} 以下の正の整数である必要があります</value>
+  </data>
+  <data name="BadCountFormat" xml:space="preserve">
+    <value>行数は正の整数でなければなりません。</value>
+  </data>
+  <data name="NoFile" xml:space="preserve">
+    <value>&lt;No file&gt;</value>
+  </data>
+  <data name="StackTraceFormat" xml:space="preserve">
+    <value>{0}、{1}: 行 {2} で</value>
+  </data>
+  <data name="CannotProcessDebuggerCommandNotStopped" xml:space="preserve">
+    <value>デバッガーは、停止状態でない限り、コマンドを処理できません。</value>
+  </data>
+  <data name="CannotSetDebuggerAction" xml:space="preserve">
+    <value>SetDebugAction は、ローカル スクリプト デバッガーには実装されていません。</value>
+  </data>
+  <data name="CannotSetRemoteDebuggerAction" xml:space="preserve">
+    <value>リモート セッションのデバッガーが停止状態ではないため、デバッガーは再開アクションを設定できません。</value>
+  </data>
+  <data name="CannotStartJobDebuggingDebuggerBusy" xml:space="preserve">
+    <value>デバッガーが現在ビジー状態であるため、ジョブをデバッグできません。</value>
+  </data>
+  <data name="NoDebuggableJobsFound" xml:space="preserve">
+    <value>指定されたジョブとすべての子ジョブが調べられましたが、デバッグ可能なジョブは見つかりませんでした。 ジョブまたは子ジョブをデバッグするには、ジョブがデバッグをサポートし、実行中の状態である必要があります。</value>
+  </data>
+  <data name="CannotEnableDebuggerSteppingInvalidMode" xml:space="preserve">
+    <value>デバッグ モードが "なし" に設定された状態でデバッガーがオフになっているため、ステップ モードに対してデバッガーを有効にできません。</value>
+  </data>
+  <data name="RunspaceDebuggingDebuggerBusy" xml:space="preserve">
+    <value>ホスト デバッガーが現在ビジー状態であるため、実行空間をデバッグできません。</value>
+  </data>
+  <data name="RunspaceDebuggingDebuggerIsOff" xml:space="preserve">
+    <value>実行空間をデバッグできません。実行空間デバッガーは現在オフになっています (DebugMode は 'None' です)。</value>
+  </data>
+  <data name="RunspaceDebuggingInvalidRunspaceState" xml:space="preserve">
+    <value>Opened 状態ではない実行空間をデバッグできません。この実行空間の状態は {0}。</value>
+  </data>
+  <data name="RunspaceDebuggingNoRunspaceDebugger" xml:space="preserve">
+    <value>実行空間をデバッグできません。Runspace {0} には、デバッガーが関連付けされていません。</value>
+  </data>
+  <data name="RemoteServerDebuggerAlreadyPushed" xml:space="preserve">
+    <value>デバッガーは既にオーバーライドされています。</value>
+  </data>
+  <data name="RemoteServerDebuggerCannotPushSelf" xml:space="preserve">
+    <value>デバッガー オブジェクトをそれ自体にプッシュすることはできません。</value>
+  </data>
+  <data name="CommandNotSupportedForRemoteUseInServerDebugger" xml:space="preserve">
+    <value>{0} コマンドは、リモート実行空間で実行されている PowerShell のバージョンでのリモート使用ではサポートされていません。</value>
+  </data>
+  <data name="NestedRunspaceDebuggerPromptProcessName" xml:space="preserve">
+    <value>プロセス</value>
+  </data>
+  <data name="DetachHelp" xml:space="preserve">
+    <value> {0}、{1,-16} 操作を続行し、デバッガーをデタッチします。</value>
+  </data>
+  <data name="InvalidDetachCommand" xml:space="preserve">
+    <value>デバッガーのデタッチ コマンドは適用できません。 detach コマンドは、Debug-Job コマンドレットまたは Debug-Runspace コマンドレットを使用してジョブと実行空間をデバッグする場合にのみ適用されます。</value>
+  </data>
+  <data name="InvalidRunspaceId" xml:space="preserve">
+    <value>実行空間 ID が無効です: {0}</value>
+  </data>
+  <data name="UnableToGetRunspace" xml:space="preserve">
+    <value>実行空間を取得できません。</value>
+  </data>
+  <data name="BreakpointOrBreakpointListNotSpecified" xml:space="preserve">
+    <value>ブレークポイントまたは BreakpointList を指定する必要があります。</value>
+  </data>
+  <data name="BreakpointListContainedANonBreakpoint" xml:space="preserve">
+    <value>BreakpointList にブレークポイントではない項目が含まれていました。</value>
+  </data>
+</root>

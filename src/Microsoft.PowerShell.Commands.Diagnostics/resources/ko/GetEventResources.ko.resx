@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CounterNotALogFile" xml:space="preserve">
+    <value>{0} 파일에 필요한 파일 이름 확장명이 없습니다. Path 매개 변수를 사용할 때는 .blg, .csv 또는 .tsv 파일만 지정하세요.</value>
+  </data>
+  <data name="CounterApiError" xml:space="preserve">
+    <value>내부 성능 카운터 API 호출에 실패했습니다. 오류: {0:x8}.</value>
+  </data>
+  <data name="LogProviderOrPathNeeded" xml:space="preserve">
+    <value>하나 이상의 Log, Provider 또는 Path 키-값 쌍을 지정해야 합니다.</value>
+  </data>
+  <data name="NoMatchingProvidersFound" xml:space="preserve">
+    <value>{0} 컴퓨터에 "{1}"와(과) 일치하는 이벤트 공급자가 없습니다.</value>
+  </data>
+  <data name="NullNotAllowedInHashtable" xml:space="preserve">
+    <value>{0} 해시 테이블 키에 null 값이 있습니다. null 값은 허용되지 않습니다.</value>
+  </data>
+  <data name="QueryTrace" xml:space="preserve">
+    <value>다음 구조화된 쿼리를 생성했습니다. 
+{0}.</value>
+  </data>
+  <data name="ProviderLogLink" xml:space="preserve">
+    <value>{0} 공급자는 {1} 로그에 이벤트를 씁니다.</value>
+  </data>
+  <data name="CounterInvalidDateRange" xml:space="preserve">
+    <value>StartTime 매개 변수 값은 EndTime 매개 변수 값보다 작아야 합니다.</value>
+  </data>
+  <data name="NoMatchingLogsFound" xml:space="preserve">
+    <value>{0} 컴퓨터에 "{1}"와(과) 일치하는 이벤트 로그가 없습니다.</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="CounterCircularNoMaxSize" xml:space="preserve">
+    <value>MaxSize 매개 변수도 지정하지 않으면 Circular 매개 변수는 무시됩니다.</value>
+  </data>
+  <data name="FileOpenFailed" xml:space="preserve">
+    <value>쓰기용으로 {0} 파일을 열 수 없습니다.</value>
+  </data>
+  <data name="KeywordLongExpected" xml:space="preserve">
+    <value>키워드에 대해 값 '{0}'이(가) 잘못 지정되었습니다.</value>
+  </data>
+  <data name="CounterExportSampleNotInInitialSet" xml:space="preserve">
+    <value>첫 번째 샘플 집합의 일부가 아니므로 {0} 성능 카운터를 {1} 파일로 내보낼 수 없습니다.</value>
+  </data>
+  <data name="NoMatchingEventsFound" xml:space="preserve">
+    <value>지정한 선택 조건과 일치하는 이벤트를 찾을 수 없습니다.</value>
+  </data>
+  <data name="CounterPathTranslationFailed" xml:space="preserve">
+    <value>이 명령의 기본값을 적용하지 못했습니다. 오류: {0:x8}.</value>
+  </data>
+  <data name="CounterNoMixedLogTypes" xml:space="preserve">
+    <value>같은 명령에서 서로 다른 형식의 성능 로그 파일을 가져올 수 없습니다.  Path 매개 변수에는 한 가지 형식의 파일만 지정하세요.</value>
+  </data>
+  <data name="NotAFileSystemPath" xml:space="preserve">
+    <value>{0} 경로가 올바른 로그 파일 경로가 아닌 것 같습니다. 올바른 파일 시스템 경로를 지정하세요.</value>
+  </data>
+  <data name="EventIdNotSpecified" xml:space="preserve">
+    <value>유효한 이벤트 ID를 지정해야 합니다.</value>
+  </data>
+  <data name="ProviderMetadataUnavailable" xml:space="preserve">
+    <value>{0} 제공자에 대한 정보를 검색할 수 없습니다. 오류: {1}.</value>
+  </data>
+  <data name="SpecifyOldestForLog" xml:space="preserve">
+    <value>{0} 이벤트 로그는 분석 또는 디버그 로그이므로 앞으로의 시간 순서로만 읽을 수 있습니다. {0} 이벤트 로그의 이벤트를 보려면 명령에서 Oldest 매개 변수를 사용하세요.</value>
+  </data>
+  <data name="ExportDestPathAmbiguous" xml:space="preserve">
+    <value>다음 내보내기 대상 경로가 모호합니다. {0}</value>
+  </data>
+  <data name="CounterPathIsInvalid" xml:space="preserve">
+    <value>{0} 성능 카운터 경로가 유효하지 않습니다.</value>
+  </data>
+  <data name="CounterSampleDataInvalid" xml:space="preserve">
+    <value>성능 카운터 샘플 중 하나의 데이터가 올바르지 않습니다. 각 PerformanceCounterSample 개체의 Status 속성을 열어 유효한 데이터가 포함되어 있는지 확인하세요.</value>
+  </data>
+  <data name="PayloadMismatch" xml:space="preserve">
+    <value>제공된 페이로드가 이벤트 ID {0}에 대해 정의된 템플릿과 일치하지 않습니다.
+정의된 템플릿은 다음과 같습니다. 
+{1}</value>
+  </data>
+  <data name="NoMatchingCounterSetsFound" xml:space="preserve">
+    <value>{0} 컴퓨터에서 다음과 일치하는 성능 카운터 집합을 찾을 수 없습니다. {1}.</value>
+  </data>
+  <data name="CounterPathsInFilesInvalid" xml:space="preserve">
+    <value>파일에서 유효한 카운터 경로를 찾을 수 없습니다.</value>
+  </data>
+  <data name="FileCreateFailed" xml:space="preserve">
+    <value>{0} 파일을 만들 수 없습니다. 경로가 올바른지 확인하세요.</value>
+  </data>
+  <data name="NoCounterSetsOnComputer" xml:space="preserve">
+    <value>{0} 컴퓨터에서 성능 카운터 집합을 찾을 수 없습니다. 오류 {1:x8}. {0} 컴퓨터가 있는지, 검색 가능한지, 그리고 해당 컴퓨터에서 성능 카운터 데이터를 볼 수 있는 권한이 충분한지 확인하세요.</value>
+  </data>
+  <data name="IncorrectEventId" xml:space="preserve">
+    <value>공급자 {1}에 대해 ID {0}(으)로 정의된 이벤트가 없으므로 이벤트를 쓸 수 없습니다.  오류를 수정하고 다시 시도하세요.</value>
+  </data>
+  <data name="InvalidContext" xml:space="preserve">
+    <value>{0} Context 키-값이 올바른 SID 또는 NT 계정 이름이 아닙니다.</value>
+  </data>
+  <data name="IncorrectEventVersion" xml:space="preserve">
+    <value>이벤트 {1}에 대해 지정한 버전 {0}이(가) 공급자 {2}에 대해 정의되어 있지 않아 이벤트를 쓸 수 없습니다.  버전을 수정하고 다시 시도하세요.</value>
+  </data>
+  <data name="Counter32FileLimit" xml:space="preserve">
+    <value>각 명령에서 .blg 카운터 로그 파일을 32개 이상 가져올 수 없습니다.</value>
+  </data>
+  <data name="SpecifiedProvidersDontWriteToLog" xml:space="preserve">
+    <value>지정된 공급자는 {0} 로그에 이벤트를 쓰지 않습니다. 이 로그는 무시됩니다.</value>
+  </data>
+  <data name="InvalidSIDFormat" xml:space="preserve">
+    <value>다음 값은 유효한 보안 식별자(SID) 형식이 아닙니다. {0} 유효한 SID를 입력하세요(예: S-1-5-32-544).</value>
+  </data>
+  <data name="NoProviderFound" xml:space="preserve">
+    <value>이름이 {0}인 공급자를 찾을 수 없습니다.</value>
+  </data>
+  <data name="CounterSetEnumAccessDenied" xml:space="preserve">
+    <value>액세스가 거부되어 {0} 성능 카운터 집합에 대한 정보를 검색할 수 없습니다.</value>
+  </data>
+  <data name="VersionNotSpecified" xml:space="preserve">
+    <value>공급자 {0}에 대해 ID {1}이(가) 여러 개 정의되어 있어 이벤트를 쓸 수 없습니다.  이벤트의 버전을 지정한 후 다시 시도하세요.</value>
+  </data>
+  <data name="SpecifyOldestForEtlEvt" xml:space="preserve">
+    <value>{0} 이벤트 로그 파일은 .etl 또는 .evt 파일이므로 앞으로의 시간 순서로만 읽을 수 있습니다. {0} 이벤트 로그의 이벤트를 보려면 명령에서 Oldest 매개 변수를 사용하세요.</value>
+  </data>
+  <data name="ProviderNotSpecified" xml:space="preserve">
+    <value>제공자 이름을 지정해야 합니다.</value>
+  </data>
+  <data name="NotALogFile" xml:space="preserve">
+    <value>{0} 파일이 올바른 로그 파일이 아닌 것 같습니다. Path 매개 변수 값으로는 .evtx, .etl 또는 .evt 파일만 지정하세요.</value>
+  </data>
+  <data name="CounterPathInvalidOrNotInFile" xml:space="preserve">
+    <value>{0} 성능 카운터 경로가 유효하지 않거나 다음 파일에 없습니다. {1}.</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>타임스탬프</value>
+  </data>
+  <data name="DateTimeExpected" xml:space="preserve">
+    <value>다음 값은 올바른 DateTime 형식이 아닙니다. {0}.</value>
+  </data>
+  <data name="LogInfoUnavailable" xml:space="preserve">
+    <value>'{0}' 로그에 액세스하려면 상승된 사용자 권한으로 PowerShell을 시작하세요.  오류: {1}</value>
+  </data>
+  <data name="LogInfoNoAccess" xml:space="preserve">
+    <value>로그 액세스가 거부됨: {0}</value>
+  </data>
+  <data name="SuggestElevation" xml:space="preserve">
+    <value>상승된 사용자 권한으로 PowerShell을 시작합니다.</value>
+  </data>
+  <data name="NoEventMessage" xml:space="preserve">
+    <value>이벤트 메시지 텍스트를 검색할 수 없습니다.</value>
+  </data>
+  <data name="CounterFileExists" xml:space="preserve">
+    <value>{0} 파일이 이미 있습니다. 이 파일을 덮어쓰려면 Export-Counter 명령에서 Force 매개 변수를 사용하세요.</value>
+  </data>
+  <data name="CounterContinuousOrMaxSamples" xml:space="preserve">
+    <value>Continuous 매개 변수와 MaxSamples 매개 변수는 같은 명령에서 함께 사용할 수 없습니다.</value>
+  </data>
+  <data name="ExportCtrWin7Required" xml:space="preserve">
+    <value>이 cmdlet은 Microsoft Windows 7 이상에서만 실행할 수 있습니다.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>이 PowerShell 스냅인에는 Windows 이벤트 및 성능 카운터 cmdlet이 포함되어 있습니다.</value>
+  </data>
+  <data name="NoMatchingCounterSetsInFile" xml:space="preserve">
+    <value>{0} 파일에서 다음과 일치하는 성능 카운터 집합을 찾을 수 없습니다. {1}</value>
+  </data>
+  <data name="LogsAndProvidersDontOverlap" xml:space="preserve">
+    <value>지정된 공급자는 지정된 로그에 이벤트를 쓰지 않습니다.</value>
+  </data>
+  <data name="CookedValues" xml:space="preserve">
+    <value>가공된 값</value>
+  </data>
+  <data name="Counter1FileLimit" xml:space="preserve">
+    <value>각 명령에서 쉼표로 구분된(.csv) 또는 탭으로 구분된(.tsv) 성능 카운터 파일을 두 개 이상 가져올 수 없습니다.</value>
+  </data>
+  <data name="LogCountLimitExceeded" xml:space="preserve">
+    <value>로그 수({0})가 Windows 이벤트 로그 API 제한({1})을 초과했습니다. 더 적은 로그 이름을 반환하도록 필터를 조정하세요.</value>
+  </data>
+  <data name="ListLogParamHelp" xml:space="preserve">
+    <value>이벤트 로그를 지정합니다. 와일드카드를 사용할 수 있습니다.</value>
+  </data>
+  <data name="GetLogParamHelp" xml:space="preserve">
+    <value>이 cmdlet이 이벤트를 가져오는 이벤트 로그를 지정합니다. 와일드카드를 사용할 수 있습니다.</value>
+  </data>
+  <data name="ListProviderParamHelp" xml:space="preserve">
+    <value>이 cmdlet이 가져오는 이벤트 로그 공급자를 지정합니다.</value>
+  </data>
+  <data name="GetProviderParamHelp" xml:space="preserve">
+    <value>이 cmdlet이 이벤트를 가져오는 이벤트 로그 공급자를 지정합니다.</value>
+  </data>
+  <data name="PathParamHelp" xml:space="preserve">
+    <value>이 cmdlet이 이벤트를 가져오는 이벤트 로그 파일의 경로를 지정합니다.</value>
+  </data>
+  <data name="MaxEventsParamHelp" xml:space="preserve">
+    <value>반환되는 최대 이벤트 수를 지정합니다.</value>
+  </data>
+  <data name="ComputerNameParamHelp" xml:space="preserve">
+    <value>이 cmdlet이 데이터를 가져오는 컴퓨터의 이름을 지정합니다.</value>
+  </data>
+</root>

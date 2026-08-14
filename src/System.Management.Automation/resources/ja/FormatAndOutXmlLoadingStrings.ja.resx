@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AttributesNotAllowed" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: XML 要素 {2} では属性が許可されていません。</value>
+  </data>
+  <data name="NoChildrenAllowed" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ノード {2} に子オブジェクトを含めることはできません。</value>
+  </data>
+  <data name="InvalidNode" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} が無効です。</value>
+  </data>
+  <data name="NoDefaultShapeEntry" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 既定の {2} が少なくとも 1 つ必要です。</value>
+  </data>
+  <data name="TooManyDefaultShapeEntry" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 既定の {2} が複数存在することはできません。</value>
+  </data>
+  <data name="NullControlName" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: コントロール名を null 値または空にすることはできません。</value>
+  </data>
+  <data name="InvalidControlForOutOfBandView" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 帯域外ビューには CustomControl または ListControl のみを含めることができます。</value>
+  </data>
+  <data name="OutOfBandGroupByConflict" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 帯域外ビューに GroupBy を含めることはできません。</value>
+  </data>
+  <data name="ViewNotLoaded" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ビューを読み込めません。</value>
+  </data>
+  <data name="InvalidAlignmentValue" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: "{2}" は有効なアラインメント値ではありません。</value>
+  </data>
+  <data name="ExpectPositiveInteger" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 正の整数が必要です。</value>
+  </data>
+  <data name="InvalidColumnHeader" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 列ヘッダー定義が無効です。すべてのヘッダーが破棄されます。</value>
+  </data>
+  <data name="IncorrectRowItemCount" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 行項目数 = 代替セット # {3} の{2} が、既定の行項目数 = {4} と一致しません。</value>
+  </data>
+  <data name="IncorrectHeaderItemCount" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ヘッダー項目数 = {2} が既定の行項目数 = {3} と一致しません。</value>
+  </data>
+  <data name="NoListViewItem" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 少なくとも 1 つのリスト ビュー項目を指定する必要があります。</value>
+  </data>
+  <data name="InvalidPropertyEntry" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: プロパティ エントリが無効です。</value>
+  </data>
+  <data name="NoDefinitionList" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 定義リストがありません。</value>
+  </data>
+  <data name="ExpectBoolean" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ブール値が必要です。</value>
+  </data>
+  <data name="ExpectNaturalNumber" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 負でない整数が必要です。</value>
+  </data>
+  <data name="ExpectInteger" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 整数が必要です。</value>
+  </data>
+  <data name="MissingInnerText" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 内部テキスト値がありません。</value>
+  </data>
+  <data name="EmptyCustomControlList" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: カスタム コントロール トークン リストを空にすることはできません。</value>
+  </data>
+  <data name="LoadTagFailed" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} が読み込めませんでした。</value>
+  </data>
+  <data name="NodeWithoutExpression" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました。式がないと {2} を指定できません。</value>
+  </data>
+  <data name="NodeWithExpression" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} を式で指定することはできません。</value>
+  </data>
+  <data name="NoFormatString" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 書式指定文字列がありません。</value>
+  </data>
+  <data name="NoScriptBlockText" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: スクリプト ブロックのテキストがありません。</value>
+  </data>
+  <data name="NoProperty" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: プロパティがありません。</value>
+  </data>
+  <data name="InvalidScriptBlock" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: スクリプト ブロック "{2}" が無効です。</value>
+  </data>
+  <data name="StringResourceNotFound" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: アセンブリ {4} のリソース {3} から文字列 {2} が見つかりません。</value>
+  </data>
+  <data name="ResourceNotFound" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: アセンブリ {3} のリソース {2} が見つかりません。</value>
+  </data>
+  <data name="AssemblyNotFound" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: アセンブリ {2} が見つかりません。</value>
+  </data>
+  <data name="NonXmlElementNode" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ノードは XmlElement である必要があります。</value>
+  </data>
+  <data name="ExpectExpression" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 式が必要です。</value>
+  </data>
+  <data name="ControlLabelWithoutExpression" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 式がないと、コントロールまたはラベルを持つことができません。</value>
+  </data>
+  <data name="ControlAndLabel" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: コントロールとラベルを同時に持つことはできません。</value>
+  </data>
+  <data name="SelectionSetNameAndTypeName" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: SelectionSetName と TypeName を同時に指定することはできません。</value>
+  </data>
+  <data name="EmptyAppliesTo" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ビューを適用するための型または条件が指定されていません。</value>
+  </data>
+  <data name="InvalidNodeValue" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} 値が無効です。</value>
+  </data>
+  <data name="DuplicatedNode" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: 重複するノードが存在します。</value>
+  </data>
+  <data name="MutuallyExclusiveNode" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} と {3} は相互に排他的です。</value>
+  </data>
+  <data name="ThreeMutuallyExclusiveNode" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2}、{3}、{4} は相互に排他的です。</value>
+  </data>
+  <data name="UnknownNode" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} は不明なノードです。</value>
+  </data>
+  <data name="UnknownAttribute" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} は不明な属性です。</value>
+  </data>
+  <data name="MissingAttribute" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} 属性がありません。</value>
+  </data>
+  <data name="MissingNode" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ノード {2} がありません。</value>
+  </data>
+  <data name="MissingNodeFromList" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: ノードが {2} に見つかりません。</value>
+  </data>
+  <data name="EmptyNode" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} は空のノードです。</value>
+  </data>
+  <data name="EmptyAttribute" xml:space="preserve">
+    <value>ファイル {1} の XPath {0} でエラーが発生しました: {2} は空の属性です。</value>
+  </data>
+  <data name="ErrorInFile" xml:space="preserve">
+    <value>ファイル {0} でエラーが発生しました: {1}</value>
+  </data>
+  <data name="TooManyErrors" xml:space="preserve">
+    <value>ファイル {0} にエラーが多すぎます。</value>
+  </data>
+  <data name="FormatLoadingErrors" xml:space="preserve">
+    <value>フォーマット データ ファイルの読み込み中にエラーが発生しました: {0}</value>
+  </data>
+  <data name="AssemblyInGAC" xml:space="preserve">
+    <value>(グローバル アセンブリ キャッシュ) {0}</value>
+  </data>
+  <data name="MshSnapinQualifiedError" xml:space="preserve">
+    <value>{0}、{1}</value>
+  </data>
+  <data name="FormatFileNotRooted" xml:space="preserve">
+    <value>パス {0} は完全修飾パスではありません。完全修飾形式のファイル パスを指定します。</value>
+  </data>
+  <data name="SharedFormatTableCannotBeUpdated" xml:space="preserve">
+    <value>FormatTable が実行空間の外部に作成されている可能性があるため、FormatTable を更新できません。</value>
+  </data>
+  <data name="FormatTableLoadErrors" xml:space="preserve">
+    <value>FormatTable の読み込み中にエラーが発生しました。"Errors" プロパティの内容を表示して、詳細なエラー メッセージを取得します。</value>
+  </data>
+  <data name="ErrorInFormattingData" xml:space="preserve">
+    <value>データ "{0}" の書式設定中にエラーが発生しました: {1}</value>
+  </data>
+  <data name="IncorrectHeaderItemCountInFormattingData" xml:space="preserve">
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: ヘッダー項目数 = {2} が既定の行項目数 = {3} と一致しません。</value>
+  </data>
+  <data name="InvalidFormattingData" xml:space="preserve">
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: データ "{2}" の書式設定が無効です。</value>
+  </data>
+  <data name="InvalidScriptBlockInFormattingData" xml:space="preserve">
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: スクリプト ブロック "{2}" が無効です。</value>
+  </data>
+  <data name="LoadTagFailedInFormattingData" xml:space="preserve">
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: {2} が読み込めませんでした。</value>
+  </data>
+  <data name="MultipleRowEntriesFoundInFormattingData" xml:space="preserve">
+    <value>インデックス {1} で型名が {0} のビュー データでエラーが発生しました: TableControl に含める {2} は 1 つだけです。</value>
+  </data>
+  <data name="NoDefaultShapeEntryInFormattingData" xml:space="preserve">
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: 既定の {2} が少なくとも 1 つ必要です。</value>
+  </data>
+  <data name="NoListViewItemInFormattingData" xml:space="preserve">
+    <value>インデックス {1} で型名 {0} のビュー データでエラーが発生しました: 少なくとも 1 つのリスト ビュー項目を指定する必要があります。</value>
+  </data>
+  <data name="TooManyDefaultShapeEntryInFormattingData" xml:space="preserve">
+    <value>インデックス {1} で型名が {0} のビュー データでエラーが発生しました: 既定の {2} が複数存在することはできません。</value>
+  </data>
+  <data name="TooManyErrorsInFormattingData" xml:space="preserve">
+    <value>型 "{0}" の書式設定データにエラーが多すぎます。</value>
+  </data>
+  <data name="FormatTableCannotCoExist" xml:space="preserve">
+    <value>共有フォーマット テーブルを複数のエントリで更新することはできません。</value>
+  </data>
+</root>

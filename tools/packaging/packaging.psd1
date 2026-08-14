@@ -8,8 +8,6 @@
     CmdletsToExport   = @()
     FunctionsToExport = @(
         'Expand-PSSignedBuild'
-        'Invoke-AzDevOpsLinuxPackageBuild'
-        'Invoke-AzDevOpsLinuxPackageCreation'
         'New-DotnetSdkContainerFxdPackage'
         'Start-PrepForGlobalToolNupkg'
         'New-GlobalToolNupkgSource'
@@ -21,7 +19,6 @@
         'Start-PSPackage'
         'Test-PackageManifest'
         'Update-PSSignedBuildFolder'
-        'Test-Bom'
         'Get-MacOSPackageIdentifierInfo'
     )
     RootModule        = "packaging.psm1"

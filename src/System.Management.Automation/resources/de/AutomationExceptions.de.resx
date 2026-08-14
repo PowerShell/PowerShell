@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Argument" xml:space="preserve">
+    <value>Das Argument kann nicht verarbeitet werden, da der Wert des Arguments „{0}“ ungültig ist. Ändern Sie den Wert des Arguments „{0}“ und führen Sie den Vorgang erneut aus.</value>
+  </data>
+  <data name="InvalidScopeIdArgument" xml:space="preserve">
+    <value>Das Argument kann nicht verarbeitet werden, da der Wert des Parameters „{0}“ ungültig ist. Gültige Werte sind Global, Local oder Script oder eine Zahl relativ zum aktuellen Bereich (0 bis zur Anzahl der Bereiche, wobei 0 der aktuelle Bereich und 1 der übergeordnete Bereich ist). Ändern Sie den Wert des Parameters „{0}“, und führen Sie den Vorgang erneut aus.</value>
+  </data>
+  <data name="ArgumentNull" xml:space="preserve">
+    <value>Das Argument kann nicht verarbeitet werden, da der Wert des Arguments „{0}“ NULL ist. Ändern Sie den Wert des Arguments „{0}“ in einen Wert ungleich NULL.</value>
+  </data>
+  <data name="ArgumentOutOfRange" xml:space="preserve">
+    <value>Das Argument kann nicht verarbeitet werden, da der Wert des Arguments „{0}“ außerhalb des Bereichs ist. Ändern Sie das Argument „{0}“ in einen Wert, der innerhalb des zulässigen Bereichs liegt.</value>
+  </data>
+  <data name="InvalidOperation" xml:space="preserve">
+    <value>Der Vorgang kann nicht ausgeführt werden, da der Vorgang „{0}“ ungültig ist. Entfernen Sie den Vorgang „{0}“, oder untersuchen Sie, warum er ungültig ist.</value>
+  </data>
+  <data name="NotImplemented" xml:space="preserve">
+    <value>Der Vorgang kann nicht ausgeführt werden, da der Vorgang „{0}“ nicht implementiert ist.</value>
+  </data>
+  <data name="NotSupported" xml:space="preserve">
+    <value>Der Vorgang kann nicht ausgeführt werden, da der Vorgang „{0}“ nicht unterstützt wird.</value>
+  </data>
+  <data name="ObjectDisposed" xml:space="preserve">
+    <value>Der Vorgang kann nicht ausgeführt werden, da das Objekt „{0}“ bereits verworfen wurde.</value>
+  </data>
+  <data name="ScriptBlockInvokeOnOneClauseOnly" xml:space="preserve">
+    <value>Der Skriptblock kann nicht aufgerufen werden, da er mehr als eine Klausel enthält. Die Invoke()-Methode kann nur für Skriptblöcke verwendet werden, die eine einzelne Klausel enthalten.</value>
+  </data>
+  <data name="CanConvertOneClauseOnly" xml:space="preserve">
+    <value>Der Skriptblock kann nicht konvertiert werden, da er mehr als eine Klausel enthält. Ausdrücke oder Kontrollstrukturen sind nicht zulässig. Stellen Sie sicher, dass der Skriptblock genau eine Pipeline oder genau einen Befehl enthält.</value>
+  </data>
+  <data name="CantConvertEmptyPipeline" xml:space="preserve">
+    <value>Ein leerer Skriptblock kann nicht konvertiert werden. Stellen Sie sicher, dass der Skriptblock genau eine Pipeline oder genau einen Befehl enthält.</value>
+  </data>
+  <data name="CanOnlyConvertOnePipeline" xml:space="preserve">
+    <value>Nur ein Skriptblock, der genau eine Pipeline oder genau einen Befehl enthält, kann konvertiert werden. Ausdrücke oder Kontrollstrukturen sind nicht zulässig. Stellen Sie sicher, dass der Skriptblock genau eine Pipeline oder genau einen Befehl enthält.</value>
+  </data>
+  <data name="CantConvertScriptBlockWithTrap" xml:space="preserve">
+    <value>Ein Skriptblock, der eine trap-Anweisung auf oberster Ebene enthält, kann nicht konvertiert werden.</value>
+  </data>
+  <data name="CantConvertWithUndeclaredVariables" xml:space="preserve">
+    <value>Für einen ScriptBlock kann kein PowerShell-Objekt generiert werden, wenn Variablen dereferenziert werden, die im param(...)-Block nicht deklariert sind.  Name der nicht deklarierten Variablen: {0}.</value>
+  </data>
+  <data name="CantConvertWithNonConstantExpression" xml:space="preserve">
+    <value>Für einen ScriptBlock kann kein PowerShell-Objekt generiert werden, wenn nicht konstante Ausdrücke ausgewertet werden. Nicht konstanter Ausdruck: {0}.</value>
+  </data>
+  <data name="CantConvertWithDynamicExpression" xml:space="preserve">
+    <value>Für einen ScriptBlock kann kein PowerShell-Objekt generiert werden, wenn dynamische Ausdrücke ausgewertet werden. Dynamischer Ausdruck: {0}.</value>
+  </data>
+  <data name="CantConvertWithScriptBlocks" xml:space="preserve">
+    <value>Für einen ScriptBlock kann kein PowerShell-Objekt generiert werden, wenn andere Skriptblöcke innerhalb von Argumentwerten übergeben werden sollen.</value>
+  </data>
+  <data name="CantConvertWithCommandInvocations" xml:space="preserve">
+    <value>Für einen ScriptBlock kann kein PowerShell-Objekt generiert werden, wenn Pipelines, Befehle oder Funktionen aufgerufen werden, um Argumente der Hauptpipeline auszuwerten.</value>
+  </data>
+  <data name="CantConvertWithDotSourcing" xml:space="preserve">
+    <value>Für einen ScriptBlock kann kein PowerShell-Objekt generiert werden, der Dot-Sourcing verwendet.</value>
+  </data>
+  <data name="CantConvertWithScriptBlockInvocation" xml:space="preserve">
+    <value>Für einen ScriptBlock, der andere Skriptblöcke aufruft, kann kein PowerShell-Objekt generiert werden.</value>
+  </data>
+  <data name="CanConvertOneOutputErrorRedir" xml:space="preserve">
+    <value>Der Skriptblock kann nicht in ein PowerShell-Objekt konvertiert werden, da er unzulässige Umleitungsoperatoren enthält.</value>
+  </data>
+  <data name="CantConvertScriptBlockWithNoContext" xml:space="preserve">
+    <value>Für einen ScriptBlock kann kein PowerShell-Objekt generiert werden, da kein zugeordneter Vorgangskontext vorhanden ist.</value>
+  </data>
+  <data name="HaltCommandException" xml:space="preserve">
+    <value>Der Befehl wurde vom Benutzer abgebrochen.</value>
+  </data>
+  <data name="DynamicParametersWrongType" xml:space="preserve">
+    <value>Das Objekt „{0}“ hat den falschen Typ, um vom dynamicparam-Block zurückgegeben zu werden. Der dynamicparam-Block muss entweder $null oder ein Objekt vom Typ [System.Management.Automation.RuntimeDefinedParameterDictionary] zurückgeben.</value>
+  </data>
+  <data name="CantConvertScriptBlockToOpenGenericType" xml:space="preserve">
+    <value>Der Skriptblock kann nicht in einen offenen generischen Typ konvertiert werden. Definieren Sie einen geeigneten geschlossenen generischen Typ, und wiederholen Sie den Vorgang.</value>
+  </data>
+  <data name="CantConvertPipelineStartsWithExpression" xml:space="preserve">
+    <value>Für einen ScriptBlock kann kein PowerShell-Objekt generiert werden, wenn eine Pipeline mit einem Ausdruck gestartet wird.</value>
+  </data>
+  <data name="UsingVariableIsUndefined" xml:space="preserve">
+    <value>Der Wert der Using-Variablen „$using:{0}“ kann nicht abgerufen werden, da er in der lokalen Sitzung nicht festgelegt wurde.</value>
+  </data>
+  <data name="CantGetUsingExpressionValueWithSpecifiedVariableDictionary" xml:space="preserve">
+    <value>Der Wert des Using-Ausdrucks „{0}“ im angegebenen Variablenwörterbuch kann nicht abgerufen werden. Beim Erstellen einer PowerShell-Instanz aus einem Skriptblock darf der Using-Ausdruck keinen Indizierungsvorgang oder Memberzugriff enthalten.</value>
+  </data>
+  <data name="WDACCompiledScriptBlockLogTitle" xml:space="preserve">
+    <value>Punktquellen des kompilierten Skriptblocks</value>
+  </data>
+  <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
+    <value>Der Aufruf des Skriptblocks „{0}“ im aktuellen Bereich ist im eingeschränkten Sprachmodus nicht zulässig. Skriptsprachmodus: {1}, Kontextsprachmodus: {2}.</value>
+  </data>
+</root>

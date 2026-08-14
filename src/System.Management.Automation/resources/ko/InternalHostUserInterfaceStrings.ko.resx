@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WriteDebugLineStoppedError" xml:space="preserve">
+    <value>DebugPreference 변수의 값이 'Stop'이므로 WriteDebug를 중지했습니다.</value>
+  </data>
+  <data name="UnsupportedPreferenceError" xml:space="preserve">
+    <value>값 {0}은(는) 지원되는 ActionPreference 값이 아닙니다.</value>
+  </data>
+  <data name="PromptEmptyDescriptionsError" xml:space="preserve">
+    <value>"{0}" 매개 변수에는 값이 하나 이상 있어야 합니다.</value>
+  </data>
+  <data name="ShouldContinueYesLabel" xml:space="preserve">
+    <value>예(&amp;Y)</value>
+  </data>
+  <data name="ShouldContinueYesHelp" xml:space="preserve">
+    <value>계속.</value>
+  </data>
+  <data name="ShouldContinueYesToAllLabel" xml:space="preserve">
+    <value>모두 예(&amp;A)</value>
+  </data>
+  <data name="ShouldContinueYesToAllHelp" xml:space="preserve">
+    <value>계속하고 이 세션에서 계속할지 다시 묻지 않습니다.</value>
+  </data>
+  <data name="ShouldContinueNoLabel" xml:space="preserve">
+    <value>아니요(&amp;N)</value>
+  </data>
+  <data name="ShouldContinueNoHelp" xml:space="preserve">
+    <value>오류로 작업을 종료합니다.</value>
+  </data>
+  <data name="ShouldContinueNoToAllLabel" xml:space="preserve">
+    <value>모두 아니요(&amp;L)</value>
+  </data>
+  <data name="ShouldContinueNoToAllHelp" xml:space="preserve">
+    <value>오류로 작업을 종료합니다. 이 세션에서는 작업을 다시 시작하도록 요청하지 않습니다.</value>
+  </data>
+  <data name="ShouldContinueSuspendLabel" xml:space="preserve">
+    <value>일시 중단(&amp;S)</value>
+  </data>
+  <data name="ShouldContinueSuspendHelp" xml:space="preserve">
+    <value>현재 작업을 일시 중지하고 명령 프롬프트로 이동합니다. 일시 중지된 작업을 다시 시작하려면 "exit"를 입력하세요.</value>
+  </data>
+  <data name="ShouldContinuePromptMessage" xml:space="preserve">
+    <value>이 작업을 계속하시겠습니까?</value>
+  </data>
+  <data name="DefaultChoice" xml:space="preserve">
+    <value>(기본값은 "{0}"입니다.)</value>
+  </data>
+  <data name="DefaultChoicesForMultipleChoices" xml:space="preserve">
+    <value>(기본 선택 항목은 {0}입니다.)</value>
+  </data>
+  <data name="ChoiceMessage" xml:space="preserve">
+    <value>선택[{0}]: </value>
+  </data>
+  <data name="EmptyChoicesError" xml:space="preserve">
+    <value>"{0}"에는 요소가 하나 이상 있어야 합니다.</value>
+  </data>
+  <data name="InvalidDefaultChoiceForMultipleSelection" xml:space="preserve">
+    <value>"{0}"은(는) "{1}"의 유효한 인덱스여야 합니다. "{2}"은(는) 유효한 인덱스가 아닙니다.</value>
+  </data>
+  <data name="InvalidChoiceHotKeyError" xml:space="preserve">
+    <value>물음표("?")는 바로 가기 키로 사용할 수 없으므로 바로 가기 키를 처리할 수 없습니다.</value>
+  </data>
+  <data name="VerboseFormatString" xml:space="preserve">
+    <value>자세한 정보: {0}</value>
+  </data>
+  <data name="WarningFormatString" xml:space="preserve">
+    <value>경고: {0}</value>
+  </data>
+  <data name="DebugFormatString" xml:space="preserve">
+    <value>디버그: {0}</value>
+  </data>
+  <data name="HostNotTranscribing" xml:space="preserve">
+    <value>호스트가 현재 전사 중이 아닙니다.</value>
+  </data>
+  <data name="CommandStartTime" xml:space="preserve">
+    <value>명령 시작 시간: {0}</value>
+  </data>
+  <data name="TranscriptPrologue" xml:space="preserve">
+    <value>**********************
+PowerShell 기록 시작
+시작 시간: {0:yyyyMMddHHmmss}
+사용자 이름: {1}
+실행 사용자: {2}
+구성 이름: {3}
+컴퓨터: {4} ({5})
+호스트 애플리케이션: {6}
+프로세스 ID: {7}
+{8}
+**********************</value>
+  </data>
+  <data name="MinimalTranscriptPrologue" xml:space="preserve">
+    <value>**********************
+PowerShell 기록 시작
+시작 시간: {0:yyyyMMddHHmmss}
+**********************</value>
+  </data>
+  <data name="TranscriptEpilogue" xml:space="preserve">
+    <value>**********************
+PowerShell 기록 끝
+종료 시간: {0:yyyyMMddHHmmss}
+**********************</value>
+  </data>
+  <data name="InvalidTranscriptFilePath" xml:space="preserve">
+    <value>파일 경로 {0}은(는) 디렉터리로 확인됩니다.</value>
+  </data>
+</root>

@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ErrorMalformedDataFromRemoteCommand" xml:space="preserve">
+    <value>リモート {0} コマンドによって返されるデータの形式が正しくありません。</value>
+  </data>
+  <data name="ErrorRequiredRemoteCommandNotFound" xml:space="preserve">
+    <value>{0} コマンドレットには、リモート セッションで Get-Command、Get-FormatData、Select-Object の各コマンドが必要です。次のコマンドが使用されますが、Get-Help と Measure-Object は省略可能です。リモート セッションに必要なコマンドが含まれていることを確認してから、もう一度やり直してください。</value>
+  </data>
+  <data name="ErrorFromRemoteCommand" xml:space="preserve">
+    <value>リモート セッションで {0} コマンドを実行すると、次のエラーが報告されました: {1}。</value>
+  </data>
+  <data name="ErrorNoResultsFromRemoteEnd" xml:space="preserve">
+    <value>リモート セッションで {0} コマンドを実行しても結果が返されませんでした。</value>
+  </data>
+  <data name="ErrorNoRunspaceForThisModule" xml:space="preserve">
+    <value>この暗黙的なリモート処理モジュールに関連付けられているセッションはありません。</value>
+  </data>
+  <data name="ErrorCouldntResolveAlias" xml:space="preserve">
+    <value>リモート エイリアス '{0}' を解決できませんでした。</value>
+  </data>
+  <data name="ErrorSkippedNonRequestedCommand" xml:space="preserve">
+    <value>名前が "Name" パラメーターの値と一致しなかったため、'{0}' コマンドのプロキシの作成はスキップされました。</value>
+  </data>
+  <data name="ErrorSkippedNonRequestedTypeDefinition" xml:space="preserve">
+    <value>'{0}' 型の名前が FormatTypeName パラメーターの値と一致しなかったため、拡張型定義はスキップされました。</value>
+  </data>
+  <data name="ErrorSkippedUnsafeCommandName" xml:space="preserve">
+    <value>PowerShell がコマンド名の安全性を確認できなかったため、'{0}' コマンドのプロキシの作成はスキップされました。</value>
+  </data>
+  <data name="ErrorCommandSkippedBecauseOfShadowing" xml:space="preserve">
+    <value>次のコマンドのプロキシの作成はスキップされました: '{0}'。これは既存のローカル コマンドをシャドウするためです。 既存のローカル コマンドをシャドウする場合は、AllowClobber パラメーターを使用します。</value>
+  </data>
+  <data name="ErrorNoCommandsImportedBecauseOfSkipping" xml:space="preserve">
+    <value>要求されたすべてのリモート コマンドが既存のローカル コマンドをシャドウするため、コマンド プロキシは作成されていません。 既存のローカル コマンドをシャドウする場合は、AllowClobber パラメーターを使用します。</value>
+  </data>
+  <data name="ProxyModuleDescription" xml:space="preserve">
+    <value>{0} の暗黙的なリモート処理</value>
+  </data>
+  <data name="EventSourceIdentifier" xml:space="preserve">
+    <value>暗黙的なリモート処理イベント (セッション ID: {0}; イベント ハンドラー ID: {1})</value>
+  </data>
+  <data name="ModuleHeaderTitle" xml:space="preserve">
+    <value>暗黙的なリモート処理モジュール</value>
+  </data>
+  <data name="ModuleHeaderDate" xml:space="preserve">
+    <value>{0} に生成</value>
+  </data>
+  <data name="ModuleHeaderCommand" xml:space="preserve">
+    <value>{0} コマンドレットごと</value>
+  </data>
+  <data name="ModuleHeaderCommandLine" xml:space="preserve">
+    <value>次のコマンドラインで起動されました: {0}</value>
+  </data>
+  <data name="ModuleHeaderRunspaceOverrideParameter" xml:space="preserve">
+    <value>このプロキシ モジュールが動作するセッションを指定するために使用できる省略可能なパラメーター</value>
+  </data>
+  <data name="CreateNewRunspaceMessageTemplate" xml:space="preserve">
+    <value>"{{0}}" コマンドの暗黙的なリモート処理のための新しいセッションを作成しています...</value>
+  </data>
+  <data name="ProxyRunspaceNameTemplate" xml:space="preserve">
+    <value>{{0}} での暗黙的なリモート処理モジュールのセッション</value>
+  </data>
+  <data name="ProgressActivity" xml:space="preserve">
+    <value>暗黙的なリモート処理モジュールを作成しています...</value>
+  </data>
+  <data name="ProgressStatusGetCommandStart" xml:space="preserve">
+    <value>リモート セッションからコマンド情報を取得しています...</value>
+  </data>
+  <data name="ProgressStatusGetCommandProgress" xml:space="preserve">
+    <value>リモート セッションからコマンド情報を取得しています... {0} 受信したコマンド</value>
+  </data>
+  <data name="ProgressStatusGetFormatDataStart" xml:space="preserve">
+    <value>リモート セッションから書式設定と出力情報を取得しています...</value>
+  </data>
+  <data name="ProgressStatusGetFormatDataProgress" xml:space="preserve">
+    <value>リモート セッションから書式設定と出力情報を取得しています... {0} 受信したオブジェクト</value>
+  </data>
+  <data name="ProgressStatusCompleted" xml:space="preserve">
+    <value>完了しました。</value>
+  </data>
+  <data name="CredentialRequestTitle" xml:space="preserve">
+    <value>PowerShell 資格情報の要求</value>
+  </data>
+  <data name="CredentialRequestBody" xml:space="preserve">
+    <value>{0} の資格情報を入力してください。</value>
+  </data>
+  <data name="ProxyCredentialRequestBody" xml:space="preserve">
+    <value>次の接続に使用する HTTP プロキシ資格情報を入力します: {0}</value>
+  </data>
+  <data name="WarningMismatchedImplicitRemotingHash" xml:space="preserve">
+    <value>新しいリモート セッションで使用できるコマンドは、暗黙的なリモート処理モジュールの作成時に使用できるコマンドとは異なります。 Export-PSSession コマンドレットを使用して、モジュールをもう一度作成することを検討してください。</value>
+  </data>
+  <data name="CertificateNeeded" xml:space="preserve">
+    <value>実行中のスクリプトがこのシステムで無効になっているため、ファイルを読み込めません。ファイルの署名に使用する有効な証明書を指定します。</value>
+  </data>
+  <data name="InvalidSigningOperation" xml:space="preserve">
+    <value>ファイル {0} を署名できませんでした。</value>
+  </data>
+</root>

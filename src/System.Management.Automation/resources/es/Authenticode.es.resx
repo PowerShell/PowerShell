@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Reason_DoNotRun" xml:space="preserve">
+    <value>No se puede cargar el archivo {0} porque optó por no ejecutar este software ahora.</value>
+  </data>
+  <data name="Reason_NeverRun" xml:space="preserve">
+    <value>No se puede cargar el archivo {0} porque optó por no ejecutar nunca software desde este publicador.</value>
+  </data>
+  <data name="Reason_NotTrusted" xml:space="preserve">
+    <value>El archivo {0} está publicado por {1}. Este editor no es de confianza explícita en el sistema. El script no se ejecutará en el sistema. Para obtener más información, ejecute el comando "get-help about_signing".</value>
+  </data>
+  <data name="Reason_RestrictedMode" xml:space="preserve">
+    <value>El archivo {0} no se puede cargar porque la ejecución de scripts está deshabilitada en este sistema. Para obtener más información, consulte about_Execution_Policies en https://go.microsoft.com/fwlink/?LinkID=135170.</value>
+  </data>
+  <data name="Reason_Unknown" xml:space="preserve">
+    <value>El archivo {0} no se puede cargar {1}.</value>
+  </data>
+  <data name="Reason_DisallowedBySafer" xml:space="preserve">
+    <value>No se puede cargar el archivo {0} porque su operación está bloqueada por directivas de restricción de software, como las creadas mediante directiva de grupo.</value>
+  </data>
+  <data name="Reason_FileContentUnavailable" xml:space="preserve">
+    <value>No se puede cargar el archivo {0} porque no se pudo leer su contenido.</value>
+  </data>
+  <data name="CertNotGoodForSigning" xml:space="preserve">
+    <value>No se puede firmar el código. El certificado especificado no es adecuado para la firma de código.</value>
+  </data>
+  <data name="TimeStampUrlRequired" xml:space="preserve">
+    <value>No se puede firmar el código. La dirección URL del servidor de marca de tiempo debe ser completa y tener el formato http://&lt;server url&gt; o https://&lt;server url&gt;.</value>
+  </data>
+  <data name="InvalidHashAlgorithm" xml:space="preserve">
+    <value>No se puede firmar el código. No se admite el algoritmo hash.</value>
+  </data>
+  <data name="AuthenticodePromptCaption" xml:space="preserve">
+    <value>¿Desea ejecutar software de este editor que no es de confianza?</value>
+  </data>
+  <data name="AuthenticodePromptText" xml:space="preserve">
+    <value>El archivo {0} está publicado por {1} y no es de confianza en su sistema. Ejecute solo scripts de editores de confianza.</value>
+  </data>
+  <data name="AuthenticodePromptText_UnknownPublisher" xml:space="preserve">
+    <value>Un editor desconocido publica el software {0}. Se recomienda no ejecutar este software.</value>
+  </data>
+  <data name="RemoteFilePromptCaption" xml:space="preserve">
+    <value>Advertencia de seguridad</value>
+  </data>
+  <data name="RemoteFilePromptText" xml:space="preserve">
+    <value>Ejecute solo los scripts en los que confíe. Aunque los scripts de Internet pueden ser útiles, este script puede dañar el equipo. Si confía en este script, use el cmdlet Unblock-File para permitir que se ejecute sin mostrar este mensaje de advertencia. ¿Desea ejecutar {0}?</value>
+  </data>
+  <data name="Choice_NeverRun" xml:space="preserve">
+    <value>Nunc&amp;a ejecutar</value>
+  </data>
+  <data name="Choice_NeverRun_Help" xml:space="preserve">
+    <value>No ejecute el script de este publicador ahora y no me pida que lo ejecute en el futuro. Los intentos futuros de ejecutar este script producirán un error silencioso.</value>
+  </data>
+  <data name="Choice_DoNotRun" xml:space="preserve">
+    <value>&amp;No ejecutar</value>
+  </data>
+  <data name="Choice_DoNotRun_Help" xml:space="preserve">
+    <value>No ejecute ahora el script de este editor y siga preguntándome si deseo ejecutarlo en el futuro.</value>
+  </data>
+  <data name="Choice_RunOnce" xml:space="preserve">
+    <value>&amp;Ejecutar una vez</value>
+  </data>
+  <data name="Choice_RunOnce_Help" xml:space="preserve">
+    <value>Ejecute el script de este editor ahora y siga preguntándome si deseo ejecutar este script en el futuro.</value>
+  </data>
+  <data name="Choice_AlwaysRun" xml:space="preserve">
+    <value>&amp;Ejecutar siempre</value>
+  </data>
+  <data name="Choice_AlwaysRun_Help" xml:space="preserve">
+    <value>Ejecute ahora el script de este publicador y no me pida que lo ejecute en el futuro.</value>
+  </data>
+  <data name="Choice_Suspend" xml:space="preserve">
+    <value>&amp;Suspender</value>
+  </data>
+  <data name="Choice_Suspend_Help" xml:space="preserve">
+    <value>Ponga en pausa la canalización actual y vuelva al símbolo del sistema. Escriba salir para reanudar la operación cuando haya terminado.</value>
+  </data>
+</root>

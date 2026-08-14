@@ -1,0 +1,657 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidProviderInfo" xml:space="preserve">
+    <value>Невозможно обработать возвращенные сведения, так как сведения, возвращенные методом Start поставщика, относятся к поставщику, отличному от переданного.</value>
+  </data>
+  <data name="InvalidProviderInfoNull" xml:space="preserve">
+    <value>Невозможно обработать возвращенные сведения, так как сведения, возвращенные методом Start поставщика, имеют значение null.</value>
+  </data>
+  <data name="GetItemProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию GetItem с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="GetItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции GetItem для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="SetItemProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию SetItem с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="SetItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции SetItem для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="ClearItemProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию ClearItem с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="InvokeDefaultActionProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию InvokeDefaultAction с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="InvokeDefaultActionDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции InvokeDefaultAction для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="ItemExistsProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию ItemExists с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="ItemExistsDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции ItemExists для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="IsValidPathProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию IsValidPath с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="IsItemContainerProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию IsItemContainer с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="RemoveItemProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию RemoveItem с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="GetChildrenProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию GetChildItems с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="GetChildrenDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции GetChildItems для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="GetChildNamesProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию GetChildNames с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="GetChildNamesDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции GetChildNames для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="RenameItemProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию RenameItem с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="RenameItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции RenameItem для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="NewItemProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию NewItem с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="NewItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции NewItem для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="HasChildItemsProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию HasChildItems с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="CopyItemProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию CopyItem с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="CopyItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции CopyItem для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="GetParentPathProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию GetParentPath с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="NormalizeRelativePathProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию NormalizeRelativePath с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="MakePathProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию MakePath с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="GetChildNameProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию GetChildName с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="MoveItemProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию MoveItem с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="MoveItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции MoveItem для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="GetPropertyProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию GetProperty с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="GetPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции GetProperty для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="SetPropertyProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию SetProperty с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="SetPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции SetProperty для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="ClearPropertyProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию ClearProperty с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="ClearPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции ClearProperty для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="NewPropertyProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию NewProperty с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="NewPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции NewProperty для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="RemovePropertyProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию RemoveProperty с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="RemovePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции RemoveProperty для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="CopyPropertyProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию CopyProperty с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="CopyPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции CopyProperty для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="MovePropertyProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию MoveProperty с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="MovePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции MoveProperty для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="RenamePropertyProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию RenameProperty с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="RenamePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для RenameProperty для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="GetContentReaderProviderException" xml:space="preserve">
+    <value>Не удается получить средство чтения содержимого для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="GetContentReaderDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции GetContentReader для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="GetContentWriterProviderException" xml:space="preserve">
+    <value>Не удается получить модуль записи содержимого для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="GetContentWriterDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции GetContentWriter для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="GetContainerContentException" xml:space="preserve">
+    <value>Не удается получить содержимое, так как это каталог: "{0}". Вместо этого используйте "Get-ChildItem".</value>
+  </data>
+  <data name="WriteContainerContentException" xml:space="preserve">
+    <value>Не удалось записать содержимое, так как это каталог: "{0}".</value>
+  </data>
+  <data name="LocationUndoStackIsEmpty" xml:space="preserve">
+    <value>Не осталось журнала расположений, чтобы перейти назад.</value>
+  </data>
+  <data name="LocationRedoStackIsEmpty" xml:space="preserve">
+    <value>Не осталось журнала расположений, чтобы перейти вперед.</value>
+  </data>
+  <data name="BoundedStackIsEmpty" xml:space="preserve">
+    <value>Элемент BoundedStack пустой.</value>
+  </data>
+  <data name="ClearContentProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию ClearContent с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="ClearDirectoryContent" xml:space="preserve">
+    <value>Не удается очистить содержимое "{0}", так как это каталог. Clear-Content поддерживается только для файлов.</value>
+  </data>
+  <data name="ClearContentDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для операции ClearContent для поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="GetSecurityDescriptorProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию GetSecurityDescriptor с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="SetSecurityDescriptorProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию SetSecurityDescriptor с поставщиком "{0}" для пути "{1}" не удалась. {2}</value>
+  </data>
+  <data name="ProviderStartException" xml:space="preserve">
+    <value>Попытка выполнить операцию Start с поставщиком "{0}" не удалась. {1}</value>
+  </data>
+  <data name="InitializeDefaultDrivesException" xml:space="preserve">
+    <value>Попытка выполнить операцию InitializeDefaultDrives с поставщиком "{0}" не удалась.</value>
+  </data>
+  <data name="NewDriveProviderException" xml:space="preserve">
+    <value>Попытка выполнить операцию NewDrive с поставщиком "{0}" для диска с корнем "{1}" не удалась. {2}</value>
+  </data>
+  <data name="NewDriveDynamicParametersProviderException" xml:space="preserve">
+    <value>Не удается получить динамические параметры для NewDrive для поставщика "{0}". {1}</value>
+  </data>
+  <data name="RemoveDriveProviderException" xml:space="preserve">
+    <value>Сбой вызова RemoveDrive с поставщиком "{0}". {1}</value>
+  </data>
+  <data name="DriveRemovalPreventedByProvider" xml:space="preserve">
+    <value>Невозможно удалить диск "{0}", так как это запрещено поставщиком "{1}".</value>
+  </data>
+  <data name="NormalizeRelativePathOutsideBase" xml:space="preserve">
+    <value>Путь "{0}" указывал на элемент, расположенный за пределами базы '{1}'.</value>
+  </data>
+  <data name="ProviderSeekError" xml:space="preserve">
+    <value>Сбой вызова Seek в модуле записи содержимого поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="ProviderContentCloseError" xml:space="preserve">
+    <value>Сбой вызова Close в модуле чтения или записи содержимого поставщика "{0}" для пути "{1}". {2}</value>
+  </data>
+  <data name="ProviderContentReadError" xml:space="preserve">
+    <value>Сбой вызова Read в модуле чтения содержимого поставщика "{0}" для пути "{1}". {2}</value>
+  </data>
+  <data name="ProviderContentWriteError" xml:space="preserve">
+    <value>Сбой вызова Write в модуле записи содержимого поставщика "{0}" на пути "{1}". {2}</value>
+  </data>
+  <data name="ProviderCannotBeUsedAsVariable" xml:space="preserve">
+    <value>Поставщик "{0}" нельзя использовать для получения или задания данных с помощью синтаксиса переменных. {2}</value>
+  </data>
+  <data name="ProviderVariableSyntaxInvalid" xml:space="preserve">
+    <value>Синтаксис переменных нельзя использовать для получения или задания данных в поставщике. {2}</value>
+  </data>
+  <data name="AliasNotWritable" xml:space="preserve">
+    <value>Псевдоним не подлежит записи, так как псевдоним {0} является константой или доступен только для чтения, и запись в него не может быть выполнена.</value>
+  </data>
+  <data name="FunctionNotWritable" xml:space="preserve">
+    <value>Невозможно записать в функцию {0}, так как она доступна только для чтения или является константой.</value>
+  </data>
+  <data name="VariableNotWritable" xml:space="preserve">
+    <value>Невозможно перезаписать переменную {0}, так как она доступна только для чтения или является константой.</value>
+  </data>
+  <data name="VariableIsPrivate" xml:space="preserve">
+    <value>Невозможно получить доступ к переменной "${0}", так как это частная переменная.</value>
+  </data>
+  <data name="NamedCommandIsPrivate" xml:space="preserve">
+    <value>Невозможно получить доступ к команде "{0}", так как это частная команда.</value>
+  </data>
+  <data name="CommandIsPrivate" xml:space="preserve">
+    <value>Невозможно получить доступ к команде, так как это частная команда.</value>
+  </data>
+  <data name="ResourceIsPrivate" xml:space="preserve">
+    <value>Невозможно получить доступ к ресурсу состояния сеанса, так как это частный ресурс. </value>
+  </data>
+  <data name="AliasNotRemovable" xml:space="preserve">
+    <value>Псевдоним не был удален, так как псевдоним {0} является константой или доступен только для чтения.</value>
+  </data>
+  <data name="FunctionNotRemovable" xml:space="preserve">
+    <value>Невозможно удалить функцию {0}, так как она является константой.</value>
+  </data>
+  <data name="VariableNotRemovable" xml:space="preserve">
+    <value>Невозможно удалить переменную {0}, так как она является константой или доступна только для чтения. Если переменная доступна только для чтения, повторите операцию, указав параметр Force.</value>
+  </data>
+  <data name="AliasIsConstant" xml:space="preserve">
+    <value>Невозможно изменить псевдоним {0}, так как он является константой.</value>
+  </data>
+  <data name="AliasIsReadOnly" xml:space="preserve">
+    <value>Псевдоним {0} нельзя изменить, поскольку он доступен только для чтения.</value>
+  </data>
+  <data name="FunctionIsConstant" xml:space="preserve">
+    <value>Невозможно изменить функцию {0}, так как она является константой.</value>
+  </data>
+  <data name="FunctionIsReadOnly" xml:space="preserve">
+    <value>Невозможно изменить функцию {0}, так как она доступна только для чтения.</value>
+  </data>
+  <data name="AliasCannotBeMadeConstant" xml:space="preserve">
+    <value>После создания псевдоним {0} нельзя сделать константой. Псевдонимы можно делать константами только при создании.</value>
+  </data>
+  <data name="FunctionCannotBeMadeConstant" xml:space="preserve">
+    <value>Существующую функцию {0} нельзя сделать константой. Функции можно делать константами только при создании.</value>
+  </data>
+  <data name="VariableCannotBeMadeConstant" xml:space="preserve">
+    <value>Существующую переменную {0} нельзя сделать константой. Переменные можно сделать константами только при создании.</value>
+  </data>
+  <data name="AliasAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>Параметр AllScope нельзя удалить из псевдонима "{0}".</value>
+  </data>
+  <data name="FunctionAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>Параметр AllScope нельзя удалить из функции "{0}".</value>
+  </data>
+  <data name="VariableAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>Параметр AllScope нельзя удалить из переменной "{0}".</value>
+  </data>
+  <data name="ScopedFunctionMustHaveName" xml:space="preserve">
+    <value>Определение функции "{0}" содержало квалификатор области, но не содержало имени функции.</value>
+  </data>
+  <data name="RemoveDrivesBeforeRemovingProvider" xml:space="preserve">
+    <value>Не удается удалить поставщика {0}. Перед удалением поставщика {0} необходимо удалить все диски, связанные с поставщиком {0}.</value>
+  </data>
+  <data name="DriveNameIllegalCharacters" xml:space="preserve">
+    <value>Невозможно обработать имя диска, так как оно содержит один или несколько следующих недопустимых символов: ; ~ / \ . :</value>
+  </data>
+  <data name="NewDriveProviderFailed" xml:space="preserve">
+    <value>Не удалось создать новый диск, так как поставщик не разрешает создание нового диска.</value>
+  </data>
+  <data name="StackNameResolvedToMultiple" xml:space="preserve">
+    <value>Указанное значение "{0}" разрешено в более чем один стек расположений.</value>
+  </data>
+  <data name="StackNotFound" xml:space="preserve">
+    <value>Не удается найти стек расположений "{0}". Он не существует или не является контейнером.</value>
+  </data>
+  <data name="PathNotFound" xml:space="preserve">
+    <value>не удается найти путь "{0}", поскольку он не существует.</value>
+  </data>
+  <data name="AliasNotFound" xml:space="preserve">
+    <value>Невозможно найти псевдоним, так как псевдоним "{0}" не существует.</value>
+  </data>
+  <data name="PathResolvedToMultiple" xml:space="preserve">
+    <value>Невозможно задать расположение, так как путь "{0}" был разрешен в несколько контейнеров. Можно задать расположение только для одного контейнера за раз.</value>
+  </data>
+  <data name="VariablePathResolvedToMultiple" xml:space="preserve">
+    <value>Невозможно обработать переменную, так как путь к переменной "{0}" разрешается в несколько элементов. Получать или задавать значение переменной можно только для одного элемента за раз.</value>
+  </data>
+  <data name="DriveNotFound" xml:space="preserve">
+    <value>Не удается найти диск. Диск с именем "{0}" не существует.</value>
+  </data>
+  <data name="ProviderNotFound" xml:space="preserve">
+    <value>Не удается найти поставщика с именем "{0}".</value>
+  </data>
+  <data name="ProviderNotFoundBadFormat" xml:space="preserve">
+    <value>Не удается найти поставщика с именем "{0}". Имя указано в неправильном формате. Имя поставщика может содержать только буквенно-цифровые символы или имя оснастки PowerShell, за которым следует один символ "\", а затем буквенно-цифровые символы.</value>
+  </data>
+  <data name="ProviderNameAmbiguous" xml:space="preserve">
+    <value>"{0}" разрешается в несколько имен поставщиков. Возможные совпадения:{1}.</value>
+  </data>
+  <data name="ProviderNotFoundInAssembly" xml:space="preserve">
+    <value>Произошла ошибка при попытке создать экземпляр поставщика. Имя типа поставщика "{0}" не найдено в сборке.</value>
+  </data>
+  <data name="ProviderNameNotValid" xml:space="preserve">
+    <value>Указанное имя поставщика "{0}" нельзя использовать, так как оно содержит один или несколько следующих недопустимых символов: \ [ ] ? * :</value>
+  </data>
+  <data name="ProviderCtorException" xml:space="preserve">
+    <value>Произошла ошибка при попытке создать экземпляр поставщика "{0}". {1} </value>
+  </data>
+  <data name="VariableNotFound" xml:space="preserve">
+    <value>Не удается найти переменную с именем "{0}".</value>
+  </data>
+  <data name="TraceSourceNotFound" xml:space="preserve">
+    <value>Не удается найти источник трассировки с именем "{0}".</value>
+  </data>
+  <data name="DriveAlreadyExists" xml:space="preserve">
+    <value>Диск с именем "{0}" уже существует.</value>
+  </data>
+  <data name="VariableAlreadyExists" xml:space="preserve">
+    <value>Переменная с именем "{0}" уже существует.</value>
+  </data>
+  <data name="AliasAlreadyExists" xml:space="preserve">
+    <value>Псевдоним недопустим, так как псевдоним с именем "{0}" уже существует.</value>
+  </data>
+  <data name="CmdletProviderAlreadyExists" xml:space="preserve">
+    <value>Невозможно зарегистрировать поставщика командлетов, так как поставщик командлетов с именем "{0}" уже существует.</value>
+  </data>
+  <data name="MustBeFileSystemPath" xml:space="preserve">
+    <value>Путь не указывал на путь файловой системы.</value>
+  </data>
+  <data name="GlobalScopeCannotRemove" xml:space="preserve">
+    <value>Нельзя удалить глобальную область.</value>
+  </data>
+  <data name="ScopeIDExceedsAvailableScopes" xml:space="preserve">
+    <value>Число области "{0}" превышает количество активных областей.</value>
+  </data>
+  <data name="OnlyAbleToComparePSDriveInfo" xml:space="preserve">
+    <value>Невозможно сравнить PSDriveInfo. Экземпляр PSDriveInfo можно сравнивать только с другим экземпляром PSDriveInfo.</value>
+  </data>
+  <data name="OutputStreamingNotEnabled" xml:space="preserve">
+    <value>Поставщик командлетов не может передавать результаты в виде потока, так как не указан командлет, через который следует передавать выходные данные.</value>
+  </data>
+  <data name="ErrorStreamingNotEnabled" xml:space="preserve">
+    <value>Поставщик командлетов не может передавать результаты в виде потока, так как не указан командлет, через который следует передавать ошибку.</value>
+  </data>
+  <data name="HomePathNotSet" xml:space="preserve">
+    <value>Не задано домашнее расположение для этого поставщика. Чтобы задать домашнее расположение, вызовите "(get-psprovider '{0}').Home = 'path'".</value>
+  </data>
+  <data name="NotProviderQualifiedPath" xml:space="preserve">
+    <value>Неправильный формат пути. Пути поставщика должны содержать идентификатор поставщика, за которым следует "::", а затем путь, относящийся к конкретному поставщику.</value>
+  </data>
+  <data name="MovePropertyDestinationResolveToSingle" xml:space="preserve">
+    <value>Невозможно переместить элемент, так как путь назначения может быть разрешено только в один путь.</value>
+  </data>
+  <data name="MoveItemSourceAndDestinationNotSameProvider" xml:space="preserve">
+    <value>Невозможно переместить элемент, так как исходный путь и путь назначения не были разрешены в одинаковый поставщик.</value>
+  </data>
+  <data name="MoveItemPathMultipleDestinationNotContainer" xml:space="preserve">
+    <value>Невозможно переместить элемент, так как исходный путь указывает на один или несколько элементов, а путь назначения не является контейнером. Убедитесь, что путь назначения является контейнером, и повторите попытку.</value>
+  </data>
+  <data name="MoveItemOneDestination" xml:space="preserve">
+    <value>Невозможно переместить элемент, так как назначение разрешено в несколько путей. Укажите путь назначения, который разрешается в одно назначение, и повторите попытку.</value>
+  </data>
+  <data name="CopyContainerItemToLeafError" xml:space="preserve">
+    <value>Невозможно скопировать контейнер в существующий конечный элемент.</value>
+  </data>
+  <data name="CopyContainerToContainerWithoutRecurseOrContainer" xml:space="preserve">
+    <value>Невозможно скопировать контейнер в другой контейнер. Параметр -Recurse или -Container не указан.</value>
+  </data>
+  <data name="CopyItemSourceAndDestinationNotSameProvider" xml:space="preserve">
+    <value>Исходный путь и путь назначения не разрешились в одинаковый поставщик.</value>
+  </data>
+  <data name="RenameMultipleItemError" xml:space="preserve">
+    <value>Невозможно переименовать элемент, так как путь разрешен в несколько элементов. Можно переименовать только один элемент за раз.</value>
+  </data>
+  <data name="ProviderImplementationInconsistent" xml:space="preserve">
+    <value>Поставщик "{0}" нельзя использовать для разрешения пути "{1}" из-за ошибки в поставщике.</value>
+  </data>
+  <data name="IContentCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Невозможно использовать интерфейс. Интерфейс IContentCmdletProvider не реализован этим поставщиком.</value>
+  </data>
+  <data name="IPropertyCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Невозможно использовать интерфейс. Интерфейс IPropertyCmdletProvider не поддерживается этим поставщиком.</value>
+  </data>
+  <data name="IDynamicPropertyCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Невозможно использовать интерфейс. Интерфейс IDynamicPropertyCmdletProvider не реализован этим поставщиком.</value>
+  </data>
+  <data name="NavigationCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Методы NavigationCmdletProvider не поддерживаются этим поставщиком.</value>
+  </data>
+  <data name="ContainerCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Методы поставщика не обработаны. Методы ContainerCmdletProvider не поддерживаются этим поставщиком.</value>
+  </data>
+  <data name="ItemCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Невозможно вызвать методы. Методы ItemCmdletProvider не поддерживаются этим поставщиком.</value>
+  </data>
+  <data name="DriveCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Методы DriveCmdletProvider не поддерживаются этим поставщиком.</value>
+  </data>
+  <data name="CmdletProvider_NotSupported" xml:space="preserve">
+    <value>Операция поставщика остановлена, так как этот поставщик не поддерживает ее.</value>
+  </data>
+  <data name="CmdletProvider_NotSupportedRecursionDepth" xml:space="preserve">
+    <value>Операция поставщика остановлена, так как поставщик не поддерживает параметр "Depth".</value>
+  </data>
+  <data name="IContent_Seek_NotSupported" xml:space="preserve">
+    <value>Невозможно вызвать метод. Метод Seek для содержимого не поддерживается этим поставщиком.</value>
+  </data>
+  <data name="IContent_Clear_NotSupported" xml:space="preserve">
+    <value>Не удается выполнить операцию ClearContent. Операция ClearContent не поддерживается этим поставщиком.</value>
+  </data>
+  <data name="Credentials_NotSupported" xml:space="preserve">
+    <value>Поставщик не поддерживает использование учетных данных. Повторите операцию, не указывая учетные данные.</value>
+  </data>
+  <data name="FileSystemProviderCredentials_NotSupported" xml:space="preserve">
+    <value>Поставщик FileSystem поддерживает учетные данные только в командлете New-PSDrive. Повторите операцию, не указывая учетные данные.</value>
+  </data>
+  <data name="Transactions_NotSupported" xml:space="preserve">
+    <value>Поставщик не поддерживает транзакции. Выполните операцию еще раз без параметра -UseTransaction.</value>
+  </data>
+  <data name="Filter_NotSupported" xml:space="preserve">
+    <value>Невозможно вызвать метод. Поставщик не поддерживает использование фильтров.</value>
+  </data>
+  <data name="NewDriveCredentials_NotSupported" xml:space="preserve">
+    <value>Не удается создать диск. Поставщик не поддерживает использование учетных данных.</value>
+  </data>
+  <data name="NewItemAlreadyExists" xml:space="preserve">
+    <value>Элемент в пути "{0}" уже существует.</value>
+  </data>
+  <data name="CopyItemDoesntExist" xml:space="preserve">
+    <value>Невозможно скопировать элемент. Элемент на пути "{0}" не существует.</value>
+  </data>
+  <data name="RenameItemDoesntExist" xml:space="preserve">
+    <value>Элемент на пути "{0}" не существует.</value>
+  </data>
+  <data name="AliasDriveDescription" xml:space="preserve">
+    <value>Диск, содержащий представление псевдонимов, хранящихся в состоянии сеанса</value>
+  </data>
+  <data name="EnvironmentDriveDescription" xml:space="preserve">
+    <value>Диск, содержащий представление переменных сред процесса</value>
+  </data>
+  <data name="FunctionDriveDescription" xml:space="preserve">
+    <value>Диск, содержащий представление функций, хранящихся в состоянии сеанса</value>
+  </data>
+  <data name="VariableDriveDescription" xml:space="preserve">
+    <value>Диск, содержащий представление тех переменных, которые хранятся в состоянии сеанса</value>
+  </data>
+  <data name="TempDriveDescription" xml:space="preserve">
+    <value>Диск, сопоставляемый с путем к временному каталогу текущего пользователя</value>
+  </data>
+  <data name="NewLinkTargetNotSpecified" xml:space="preserve">
+    <value>Невозможно создать связь "{0}", так как не указано целевое значение.</value>
+  </data>
+  <data name="DollarNullDescription" xml:space="preserve">
+    <value>Ссылки на переменную null всегда возвращают значение null. Присваивания не имеют эффекта.</value>
+  </data>
+  <data name="MaxHistoryCountDescription" xml:space="preserve">
+    <value>Максимальное число объектов журнала, сохраняемых в сеансе</value>
+  </data>
+  <data name="CannotRenameFunction" xml:space="preserve">
+    <value>Невозможно переименовать функцию, так как функция {0} доступна только для чтения или является константой.</value>
+  </data>
+  <data name="CannotRenameAlias" xml:space="preserve">
+    <value>Невозможно переименовать псевдоним, так как псевдоним {0} доступен только для чтения или является константой.</value>
+  </data>
+  <data name="CannotRenameVariable" xml:space="preserve">
+    <value>Невозможно переименовать переменную, так как переменная {0} доступна только для чтения или является константой.</value>
+  </data>
+  <data name="VariableOptionsNotSettable" xml:space="preserve">
+    <value>Не удается задать параметры для локальной переменной {0}. Используйте New-Variable, чтобы создать переменную, для которой можно задать параметры.</value>
+  </data>
+  <data name="CmdletIsReadOnly" xml:space="preserve">
+    <value>Командлет {0} нельзя изменить, поскольку он доступен только для чтения.</value>
+  </data>
+  <data name="VariableNotRemovableRare" xml:space="preserve">
+    <value>Невозможно удалить переменную {0}, так как она оптимизирована и не подлежит удалению. Попробуйте использовать командлет Remove-Variable (без псевдонимов) или вызвать с использованием точки команду, которую используете для удаления переменной.</value>
+  </data>
+  <data name="VariableNotWritableRare" xml:space="preserve">
+    <value>Невозможно перезаписать переменную {0}, так как она была оптимизирована. Попробуйте использовать командлет New-Variable или Set-Variable (без псевдонимов) либо вызвать, с использованием точки, команду, которой задаете переменную.</value>
+  </data>
+  <data name="GetContent_TailAndHeadCannotCoexist" xml:space="preserve">
+    <value>Параметры {0} и {1} нельзя использовать вместе. Укажите только один из этих параметров.</value>
+  </data>
+  <data name="GetContent_TailNotSupported" xml:space="preserve">
+    <value>Параметр Tail сейчас поддерживается только для поставщика FileSystem.</value>
+  </data>
+  <data name="AliasWithCommandNameAlreadyExists" xml:space="preserve">
+    <value>Псевдоним недопустим, так как команда с именем "{0}" и типом команды "{1}" уже существует.</value>
+  </data>
+  <data name="CanNotRun" xml:space="preserve">
+    <value>Не удается запустить программное обеспечение. Разрешение отклонено.</value>
+  </data>
+  <data name="CopyItemFromSessionToSession" xml:space="preserve">
+    <value>Параметры "-{0}" и "-{1}" являются взаимоисключающими, то есть не могут быть указаны одновременно.</value>
+  </data>
+  <data name="CopyItemRemotelyPathIsNotAbsolute" xml:space="preserve">
+    <value>Путь "{0}" недопустим. В операциях удаленного копирования поддерживаются только абсолютные пути.</value>
+  </data>
+  <data name="CopyItemValidateRemotePath" xml:space="preserve">
+    <value>Невозможно проверить удаленный путь "{0}".</value>
+  </data>
+  <data name="CopyItemSessionProperties" xml:space="preserve">
+    <value>Невозможно выполнить операцию, так как для сеанса {0} задано значение {1}.</value>
+  </data>
+  <data name="CopyItemRemotelyPathIsNullOrEmpty" xml:space="preserve">
+    <value>Параметр "{0}" не может быть пустым или иметь значение null.</value>
+  </data>
+  <data name="WDACSessionStateVarLogTitle" xml:space="preserve">
+    <value>Переменные состояния сеанса</value>
+  </data>
+  <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
+    <value>В режиме ConstrainedLanguage будет запрещено устанавливать или изменять значение AllScope для области переменной "{0}".</value>
+  </data>
+</root>

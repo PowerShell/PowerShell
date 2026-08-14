@@ -88,14 +88,15 @@ jobs:
         'arm64' { @('zip', 'msix') }
         'fxdependent' { 'fxdependent' }
         'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
-        'minsize' { 'min-size' }
+        'x64_minsize' { 'min-size-x64' }
+        'arm64_minsize' { 'min-size-arm64' }
       }
 
       if (-not (Test-Path $(ob_outputDirectory))) {
         New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
       }
 
-      if ($packageTypes -contains 'zip' -or $packageTypes -contains 'fxdependent' -or $packageTypes -contains 'min-size' -or $packageTypes -contains 'fxdependent-win-desktop') {
+      if ($packageTypes -contains 'zip' -or $packageTypes -like 'fxdependent*' -or $packageTypes -like 'min-size*') {
         $zipPkgNameFilter = "powershell-*.zip"
         $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
         Write-Verbose -Verbose "signed zipPkgPath: $zipPkgPath"

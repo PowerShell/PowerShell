@@ -2,6 +2,7 @@ parameters:
   Runtime: 'linux-x64'
   BuildConfiguration: 'release'
   JobName: 'build_linux'
+  dotnetArch: 'linux-x64'
 
 jobs:
 - job: build_${{ parameters.JobName }}
@@ -63,6 +64,8 @@ jobs:
       Language: csharp
 
   - template: /.pipelines/templates/install-dotnet.yml@self
+    parameters:
+      architecture: ${{ parameters.dotnetArch }}
 
   - pwsh: |
       $runtime = $env:RUNTIME
