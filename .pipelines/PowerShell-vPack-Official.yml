@@ -62,6 +62,8 @@ extends:
 
     globalSdl:
       useCustomPolicy: true # for signing code
+      codeSignValidation:
+        policyFile: $(Build.SourcesDirectory)\.config\codesignpolicy.xml
       disableLegacyManifest: true
       # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
       armory:

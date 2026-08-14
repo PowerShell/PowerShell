@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SiPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:schemas-microsoft-com:sipolicy">
+  <VersionEx>10.3.0.0</VersionEx>
+  <PolicyTypeID>{A244370E-44C9-4C06-B551-F6016E563076}</PolicyTypeID>
+  <PlatformID>{2E07F7E4-194C-4D20-B7C9-6F44A6C5A234}</PlatformID>
+  <Rules>
+    <Rule>
+      <Option>Enabled:Inherit Default Policy</Option>
+    </Rule>
+  </Rules>
+  <EKUs>
+    <EKU ID="ID_EKU_WINDOWS" Value="010A2B0601040182370A0306" FriendlyName="Windows EKU - 1.3.6.1.4.1.311.10.3.6" />
+    <EKU ID="ID_EKU_WHQL" Value="010A2B0601040182370A0305" FriendlyName="WHQL EKU - 1.3.6.1.4.1.311.10.3.5" />
+    <EKU ID="ID_EKU_ELAM" Value="010A2B0601040182373D0401" FriendlyName="Early Launch AntiMalware EKU - 1.3.6.1.4.1.311.61.4.1" />
+    <EKU ID="ID_EKU_HAL_EXT" Value="010A2B0601040182373D0501" FriendlyName="Hardware Abstraction Layer EKU - 1.3.6.1.4.1.311.61.5.1" />
+    <EKU ID="ID_EKU_RT_EXT" Value="010A2B0601040182370A0315" FriendlyName="Windows RT EKU - 1.3.6.1.4.1.311.10.3.21" />
+    <EKU ID="ID_EKU_STORE" Value="010A2B0601040182374C0301" FriendlyName="Windows Store EKU - 1.3.6.1.4.1.311.76.3.1" />
+    <EKU ID="ID_EKU_DCODEGEN" Value="010A2B0601040182374C0501" FriendlyName="Dynamic Code Generation EKU - 1.3.6.1.4.1.311.76.5.1" />
+    <EKU ID="ID_EKU_AM" Value="010A2B0601040182374C0B01" FriendlyName="AntiMalware EKU - 1.3.6.1.4.1.311.76.11.1" />
+    <EKU ID="ID_EKU_ENCLAVE" Value="010A2B0601040182370A032A" FriendlyName="Enclave EKU - 1.3.6.1.4.1.311.10.3.42" />
+  </EKUs>
+  <FileRules>
+    <FileAttrib ID="ID_FILEATTRIB_REFRESH_POLICY" FriendlyName="RefreshPolicy.exe FileAttribute" FileName="RefreshPolicy.exe" MinimumFileVersion="10.0.19042.0" />
+  </FileRules>
+  <Signers>
+    <Signer Name="Windows Internal Build Tools PCA 2020" ID="ID_SIGNER_S_14">
+      <CertRoot Type="TBS" Value="0B0692273CF07E96C7A9EC4177E3044368B383CBF8E03BAC215C3E3BC5C203482262169804ACD1F473C57C2831A3F191" />
+      <CertPublisher Value="Windows Internal Build Tools CodeSign" />
+    </Signer>
+    <Signer Name="Microsoft Windows Third Party Component CA 2013" ID="ID_SIGNER_S_11">
+      <CertRoot Type="TBS" Value="C55EE44C6DE86FA9AC3FC90F84EF0D4A6CAD5AAC6A112047C88B997E7547AED1" />
+      <CertPublisher Value="Microsoft Windows Software Compatibility Publisher" />
+    </Signer>
+    <Signer Name="Microsoft Code Signing PCA 2024" ID="ID_SIGNER_S_12">
+      <CertRoot Type="TBS" Value="B52C1E712CF71D080614DDF95F8258BE0738C0722BD8A55F0AF4361BACEE35B6D73DCACB1B9DE10B5FD28508A3A50EAE" />
+      <CertPublisher Value="Microsoft 3rd Party Application Component" />
+    </Signer>
+    <Signer Name="Microsoft Code Signing PCA 2011" ID="ID_SIGNER_S_13">
+      <CertRoot Type="TBS" Value="F6F717A43AD9ABDDC8CEFDDE1C505462535E7D1307E630F9544A2D14FE8BF26E" />
+      <CertPublisher Value="Microsoft Corporation" />
+    </Signer>
+    <Signer Name="Microsoft Windows Code Signing PCA 2024" ID="ID_SIGNER_S_8">
+      <CertRoot Type="TBS" Value="C64CE3455898F871D11C14DA412AAC58FA2022D4213D8AC05F8DD6909B2FB0FCC76C19A1913DF5BC0CB1662229AD15D1" />
+      <CertPublisher Value="Microsoft Corporation" />
+    </Signer>
+    <Signer Name="Microsoft Code Signing PCA 2024" ID="ID_SIGNER_S_9">
+      <CertRoot Type="TBS" Value="B52C1E712CF71D080614DDF95F8258BE0738C0722BD8A55F0AF4361BACEE35B6D73DCACB1B9DE10B5FD28508A3A50EAE" />
+      <CertPublisher Value="Microsoft 3rd Party Application Component" />
+    </Signer>
+    <Signer Name="Microsoft Windows Production PCA 2011" ID="ID_SIGNER_S_10">
+      <CertRoot Type="TBS" Value="4E80BE107C860DE896384B3EFF50504DC2D76AC7151DF3102A4450637A032146" />
+      <CertPublisher Value="Microsoft Windows" />
+    </Signer>
+    <Signer Name="Microsoft Windows Code Signing PCA 2024" ID="ID_SIGNER_S_6">
+      <CertRoot Type="TBS" Value="C64CE3455898F871D11C14DA412AAC58FA2022D4213D8AC05F8DD6909B2FB0FCC76C19A1913DF5BC0CB1662229AD15D1" />
+      <CertPublisher Value=".NET DAC" />
+    </Signer>
+    <Signer Name="Microsoft Code Signing PCA 2024" ID="ID_SIGNER_S_7">
+      <CertRoot Type="TBS" Value="B52C1E712CF71D080614DDF95F8258BE0738C0722BD8A55F0AF4361BACEE35B6D73DCACB1B9DE10B5FD28508A3A50EAE" />
+      <CertPublisher Value="Microsoft 3rd Party Application Component" />
+    </Signer>
+    <Signer Name="Microsoft Code Signing PCA" ID="ID_SIGNER_S_4">
+      <CertRoot Type="TBS" Value="27543A3F7612DE2261C7228321722402F63A07DE" />
+      <CertPublisher Value="Microsoft Corporation" />
+    </Signer>
+    <Signer Name="Microsoft Code Signing PCA 2011" ID="ID_SIGNER_S_5">
+      <CertRoot Type="TBS" Value="F6F717A43AD9ABDDC8CEFDDE1C505462535E7D1307E630F9544A2D14FE8BF26E" />
+      <CertPublisher Value="Microsoft Corporation" />
+    </Signer>
+    <Signer Name="Microsoft Code Signing PCA 2011" ID="ID_SIGNER_S_2">
+      <CertRoot Type="TBS" Value="F6F717A43AD9ABDDC8CEFDDE1C505462535E7D1307E630F9544A2D14FE8BF26E" />
+      <CertPublisher Value="Microsoft Corporation" />
+    </Signer>
+    <Signer Name="Microsoft Code Signing PCA 2011" ID="ID_SIGNER_S_3">
+      <CertRoot Type="TBS" Value="F6F717A43AD9ABDDC8CEFDDE1C505462535E7D1307E630F9544A2D14FE8BF26E" />
+      <CertPublisher Value="Microsoft Corporation" />
+    </Signer>
+    <Signer Name="Microsoft Code Signing PCA 2010" ID="ID_SIGNER_S_1">
+      <CertRoot Type="TBS" Value="121AF4B922A74247EA49DF50DE37609CC1451A1FE06B2CB7E1E079B492BD8195" />
+      <CertPublisher Value="Microsoft Corporation" />
+    </Signer>
+    <Signer Name="Microsoft Code Signing PCA 2024" ID="ID_SIGNER_S_0">
+      <CertRoot Type="TBS" Value="B52C1E712CF71D080614DDF95F8258BE0738C0722BD8A55F0AF4361BACEE35B6D73DCACB1B9DE10B5FD28508A3A50EAE" />
+      <CertPublisher Value=".NET" />
+    </Signer>
+  </Signers>
+  <SigningScenarios>
+    <SigningScenario ID="ID_SIGNINGSCENARIO_KMCI" FriendlyName="Kernel Mode Signing Scenario" Value="131">
+      <ProductSigners>
+        <AllowedSigners>
+          <AllowedSigner SignerId="ID_SIGNER_S_14" />
+          <AllowedSigner SignerId="ID_SIGNER_S_11" />
+          <AllowedSigner SignerId="ID_SIGNER_S_12" />
+          <AllowedSigner SignerId="ID_SIGNER_S_13" />
+          <AllowedSigner SignerId="ID_SIGNER_S_8" />
+          <AllowedSigner SignerId="ID_SIGNER_S_9" />
+          <AllowedSigner SignerId="ID_SIGNER_S_10" />
+          <AllowedSigner SignerId="ID_SIGNER_S_6" />
+          <AllowedSigner SignerId="ID_SIGNER_S_7" />
+          <AllowedSigner SignerId="ID_SIGNER_S_4" />
+          <AllowedSigner SignerId="ID_SIGNER_S_5" />
+          <AllowedSigner SignerId="ID_SIGNER_S_2" />
+          <AllowedSigner SignerId="ID_SIGNER_S_3" />
+          <AllowedSigner SignerId="ID_SIGNER_S_1" />
+          <AllowedSigner SignerId="ID_SIGNER_S_0" />
+        </AllowedSigners>
+      </ProductSigners>
+    </SigningScenario>
+    <SigningScenario ID="ID_SIGNINGSCENARIO_UMCI" FriendlyName="User Mode Signing Scenario" Value="12">
+      <ProductSigners />
+    </SigningScenario>
+  </SigningScenarios>
+  <UpdatePolicySigners />
+  <HvciOptions>0</HvciOptions>
+  <Settings>
+    <Setting Provider="PolicyInfo" Key="Information" ValueName="Name">
+      <Value>
+        <String>CodeSignCustomPolicy_2026-08-14</String>
+      </Value>
+    </Setting>
+    <Setting Provider="PolicyInfo" Key="Information" ValueName="Id">
+      <Value>
+        <String>2026-08-14</String>
+      </Value>
+    </Setting>
+  </Settings>
+</SiPolicy>
