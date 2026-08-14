@@ -949,28 +949,14 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// Public interface for dispose.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Release all resources.
-        /// </summary>
-        /// <param name="disposing">If true, release all managed resources.</param>
-        public void Dispose(bool disposing)
-        {
-            if (disposing)
+            if (RemoteSession != null)
             {
-                if (RemoteSession != null)
-                {
-                    ((ClientRemoteSessionImpl)RemoteSession).Dispose();
-                    RemoteSession = null;
-                }
+                ((ClientRemoteSessionImpl)RemoteSession).Dispose();
+                RemoteSession = null;
             }
         }
 
