@@ -127,7 +127,7 @@ namespace System.Management.Automation.Remoting
 
             set
             {
-                _ignoreStop = true;
+                _ignoreStop = value;
             }
         }
 
