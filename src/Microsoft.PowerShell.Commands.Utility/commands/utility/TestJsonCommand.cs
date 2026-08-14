@@ -264,19 +264,11 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_jschema != null)
                 {
-                    EvaluationResults evaluationResults = _jschema.Evaluate(parsedJson, new EvaluationOptions { OutputFormat = OutputFormat.List });
+                    EvaluationResults evaluationResults = _jschema.Evaluate(parsedJson, new EvaluationOptions { OutputFormat = OutputFormat.Hierarchical });
                     result = evaluationResults.IsValid;
                     if (!result)
                     {
-                        HandleValidationErrors(evaluationResults);
-
-                        if (evaluationResults.HasDetails)
-                        {
-                            foreach (var nestedResult in evaluationResults.Details)
-                            {
-                                HandleValidationErrors(nestedResult);
-                            }
-                        }
+                        ReportValidationErrors(evaluationResults);
                     }
                 }
             }
@@ -296,6 +288,33 @@ namespace Microsoft.PowerShell.Commands
             }
 
             WriteObject(result);
+        }
+
+        /// <summary>
+        /// Recursively reports validation errors from hierarchical evaluation results.
+        /// Skips nodes (and their children) where IsValid is true to avoid false positives
+        /// from constructs like OneOf or AnyOf.
+        /// </summary>
+        /// <param name="evaluationResult">The evaluation result to process.</param>
+        private void ReportValidationErrors(EvaluationResults evaluationResult)
+        {
+            // Skip this node and all children if validation passed
+            if (evaluationResult.IsValid)
+            {
+                return;
+            }
+
+            // Report errors at this level
+            HandleValidationErrors(evaluationResult);
+
+            // Recursively process child results
+            if (evaluationResult.HasDetails)
+            {
+                foreach (var nestedResult in evaluationResult.Details)
+                {
+                    ReportValidationErrors(nestedResult);
+                }
+            }
         }
 
         private void HandleValidationErrors(EvaluationResults evaluationResult)

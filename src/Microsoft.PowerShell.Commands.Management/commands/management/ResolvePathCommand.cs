@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public string RelativeBasePath
-        { 
+        {
             get
             {
                 return _relativeBasePath;

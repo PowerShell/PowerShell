@@ -14,9 +14,9 @@ namespace BenchmarkDotNet.Extensions
     public class TooManyTestCasesValidator : IValidator
     {
         private const int Limit = 16;
-        
+
         public static readonly IValidator FailOnError = new TooManyTestCasesValidator();
-        
+
         public bool TreatsWarningsAsErrors => true;
 
         public IEnumerable<ValidationError> Validate(ValidationParameters validationParameters)

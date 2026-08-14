@@ -20,7 +20,7 @@ namespace TestExe
         System = 2,
     }
 
-    internal class TestExe
+    internal sealed class TestExe
     {
         private static int Main(string[] args)
         {

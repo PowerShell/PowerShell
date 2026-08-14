@@ -16,7 +16,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             PSObject so, TypeInfoDataBase db, FormattingCommandLineParameters parameters)
         {
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
-            this.inputParameters = parameters;
         }
 
         internal override FormatStartData GenerateStartData(PSObject so)
@@ -40,7 +39,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ComplexViewEntry GenerateComplexViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
             ComplexViewObjectBrowser browser = new ComplexViewObjectBrowser(this.ErrorManager, this.expressionFactory, enumerationLimit);
-            return browser.GenerateView(so, this.inputParameters);
+            return browser.GenerateView(so, this.parameters);
         }
 
         private ComplexViewEntry GenerateComplexViewEntryFromDataBaseInfo(PSObject so, int enumerationLimit)
@@ -425,17 +424,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// of the object.
         /// </summary>
         /// <param name="so">Object to process.</param>
-        /// <param name="inputParameters">Parameters from the command line.</param>
+        /// <param name="parameters">Parameters from the command line.</param>
         /// <returns>Complex view entry to send to the output command.</returns>
-        internal ComplexViewEntry GenerateView(PSObject so, FormattingCommandLineParameters inputParameters)
+        internal ComplexViewEntry GenerateView(PSObject so, FormattingCommandLineParameters parameters)
         {
-            _complexSpecificParameters = (ComplexSpecificParameters)inputParameters.shapeParameters;
+            _parameters = parameters;
+            _complexSpecificParameters = (ComplexSpecificParameters)parameters.shapeParameters;
 
             int maxDepth = _complexSpecificParameters.maxDepth;
             TraversalInfo level = new TraversalInfo(0, maxDepth);
 
             List<MshParameter> mshParameterList = null;
-            mshParameterList = inputParameters.mshParameterList;
+            mshParameterList = parameters.mshParameterList;
 
             // create a top level entry as root of the tree
             ComplexViewEntry cve = new ComplexViewEntry();
@@ -512,6 +512,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // resolve the names of the properties
             List<MshResolvedExpressionParameterAssociation> activeAssociationList =
                         AssociationManager.SetupActiveProperties(parameterList, so, _expressionFactory);
+
+            // Apply ExcludeProperty filter using the centralized method
+            activeAssociationList = ViewGenerator.ApplyExcludeFilter(activeAssociationList, _parameters?.excludePropertyFilter);
 
             // create a format entry
             FormatEntry fe = new FormatEntry();
@@ -758,6 +761,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return feFrame.formatValueList;
         }
 
+        private FormattingCommandLineParameters _parameters;
         private ComplexSpecificParameters _complexSpecificParameters;
 
         /// <summary>

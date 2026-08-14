@@ -1,31 +1,56 @@
 trigger: none
+pr: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
 - name: 'createVPack'
   displayName: 'Create and Submit VPack'
   type: boolean
   default: true
-- name: 'debug'
-  displayName: 'Enable debug output'
-  type: boolean
-  default: false
 - name: 'ReleaseTagVar'
   type: string
   displayName: 'Release Tag Var:'
   default: 'fromBranch'
+- name: 'debug'
+  displayName: 'Enable debug output'
+  type: boolean
+  default: false
+- name: netiso
+  displayName: "Network Isolation Policy"
+  type: string
+  values:
+    - KS4
+    - R1
+    - Netlock
+  default: "R1"
 
-name: msixbundle_vPack_$(date:yyMM).$(date:dd)$(rev:rrr)
+name: msixbundle_vPack_$(Build.SourceBranchName)_Prod.True_Create.${{ parameters.createVPack }}_$(date:yyyyMMdd).$(rev:rr)
 
 variables:
-  CDP_DEFINITION_BUILD_COUNT: $[counter('', 0)]
-  system.debug: ${{ parameters.debug }}
-  BuildSolution: $(Build.SourcesDirectory)\dirs.proj
-  ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
-  BuildConfiguration: Release
-  WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest'
-  Codeql.Enabled: false  #  pipeline is not building artifacts; it repackages existing artifacts into a vpack
-  DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  POWERSHELL_TELEMETRY_OPTOUT: 1
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)]
+  - name: system.debug
+    value: ${{ parameters.debug }}
+  - name: BuildSolution
+    value: $(Build.SourcesDirectory)\dirs.proj
+  - name: BuildConfiguration
+    value: Release
+  - name: WindowsContainerImage
+    value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
+  - name: Codeql.Enabled
+    value: false  #  pipeline is not building artifacts; it repackages existing artifacts into a vpack
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+  - name: nugetMultiFeedWarnLevel
+    value: none
+  - name: ReleaseTagVar
+    value: ${{ parameters.ReleaseTagVar }}
+  - name: netiso
+    value: ${{ parameters.netiso }}
+  - group: certificate_logical_to_actual # used within signing task
+  - group: MSIXSigningProfile
+  - group: msixTools
 
 resources:
   repositories:
@@ -34,24 +59,17 @@ resources:
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
 
-  pipelines:
-    - pipeline: PSPackagesOfficial
-      source: 'PowerShell-Packages-Official'
-      trigger:
-        branches:
-          include:
-            - master
-            - releases/*
-
 extends:
   template: v2/Microsoft.Official.yml@onebranchTemplates
   parameters:
     platform:
       name: 'windows_undocked' # windows undocked
-
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+        Network: ${{ variables.netiso }}
     cloudvault:
       enabled: false
-
     globalSdl:
       useCustomPolicy: true # for signing code
       disableLegacyManifest: true
@@ -75,72 +93,322 @@ extends:
       tsaOptionsFile: .config/tsaoptions.json
 
     stages:
-    - stage: build
+    - stage: Build_MSIX_Package
+      displayName: 'Build and create MSIX packages'
+      dependsOn: []
       jobs:
-      - job: main
+      - job: Build
         pool:
           type: windows
 
+        strategy:
+          matrix:
+            x64:
+              Architecture: x64
+            arm64:
+              Architecture: arm64
+
         variables:
+          ArtifactPlatform: 'windows'
           ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
-          ob_createvpack_enabled: ${{ parameters.createVPack }}
-          ob_createvpack_packagename: 'PowerShell.app'
-          ob_createvpack_owneralias: 'dongbow'
-          ob_createvpack_description: 'VPack for the PowerShell Application'
-          ob_createvpack_targetDestinationDirectory: '$(Destination)'
-          ob_createvpack_propsFile: false
-          ob_createvpack_provData: true
-          ob_createvpack_metadata: '$(Build.SourceVersion)'
-          ob_createvpack_versionAs: string
-          ob_createvpack_version: '$(version)'
-          ob_createvpack_verbose: true
+          ob_artifactBaseName: drop_build_$(Architecture)
 
         steps:
-          - template: .pipelines/templates/SetVersionVariables.yml@self
-            parameters:
-              ReleaseTagVar: $(ReleaseTagVar)
-              UseJson: no
+        - checkout: self
+          displayName: Checkout source code - during restore
+          clean: true
+          path: s  ## $(Build.SourcesDirectory) is at '$(Pipeline.Workspace)\s', so we need to check out repo to the 's' folder.
+          env:
+            ob_restore_phase: true
 
-          - pwsh: |
-              Write-Verbose -Verbose 'PowerShell Version: $(version)'
-              if('$(version)' -match '-') {
-                  throw "Don't release a preview build msixbundle package"
+        # The env variable 'ReleaseTagVar' will be updated in this step.
+        - template: /.pipelines/templates/SetVersionVariables.yml@self
+          parameters:
+            ReleaseTagVar: $(ReleaseTagVar)
+            CreateJson: yes
+
+        - pwsh: |
+            $releaseTag = '$(ReleaseTagVar)'
+            if ($releaseTag -match '-') {
+                throw "Never release msixbundle vpack for a preview build. Current version: $releaseTag"
+            }
+
+            # Check if release tag matches the expected format v#.#.#
+            $matched = $releaseTag -match '^v\d+\.(\d+)\.\d+$'
+            if (-not $matched) {
+                throw "Release tag must be in the format v#.#.#, such as 'v7.4.3'. Current version: $releaseTag"
+            }
+          displayName: Stop any preview release
+          env:
+            ob_restore_phase: true
+
+        ### START BUILD ###
+
+        # Clone the checked out PowerShell repo to '/PowerShell' and set the variable 'PowerShellRoot'.
+        - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+
+        - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+          parameters:
+            repoRoot: $(PowerShellRoot)
+
+        # Add CodeQL Init task right before your 'Build' step.
+        - task: CodeQL3000Init@0
+          env:
+            ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+          inputs:
+            Enabled: true
+            # AnalyzeInPipeline: false = upload results
+            # AnalyzeInPipeline: true = do not upload results
+            AnalyzeInPipeline: false
+            Language: csharp
+
+        - template: /.pipelines/templates/install-dotnet.yml@self
+
+        - pwsh: |
+            $runtime = switch ($env:Architecture)
+              {
+                "x64" { "win7-x64" }
+                "arm64" { "win-arm64" }
               }
-            displayName: Stop any preview release
 
-          - download: PSPackagesOfficial
-            artifact: 'drop_msixbundle_CreateMSIXBundle'
-            displayName: Download package
+            $vstsCommandString = "vso[task.setvariable variable=Runtime]$runtime"
+            Write-Host ("sending " + $vstsCommandString)
+            Write-Host "##$vstsCommandString"
 
-          - pwsh: |
-              $payloadDir = '$(Pipeline.Workspace)\PSPackagesOfficial\drop_msixbundle_CreateMSIXBundle'
-              Get-ChildItem $payloadDir -Recurse | Out-String -Width 150
-              $vstsCommandString = "vso[task.setvariable variable=PayloadDir]$payloadDir"
-              Write-Host "sending " + $vstsCommandString
-              Write-Host "##$vstsCommandString"
-            displayName: 'Capture Artifact Listing'
+            Write-Verbose -Message "Building PowerShell with Runtime: $runtime for '$env:BuildConfiguration' configuration"
+            Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+            $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(Pipeline.Workspace)/Symbols_$(Architecture) -Force
 
-          - pwsh: |
-              $bundlePackage = Get-ChildItem '$(PayloadDir)\*.msixbundle'
-              Write-Verbose -Verbose ("MSIX bundle package: " + $bundlePackage.FullName -join ', ')
-              if ($bundlePackage.Count -ne 1) {
-                  throw "Expected to find 1 MSIX bundle package, but found $($bundlePackage.Count)"
+            Start-PSBootstrap -Scenario Package
+            $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
+
+            Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath -Clean -PSModuleRestore -ReleaseTag $(ReleaseTagVar)
+
+            $refFolderPath = Join-Path $buildWithSymbolsPath 'ref'
+            Write-Verbose -Verbose "refFolderPath: $refFolderPath"
+            $outputPath = Join-Path '$(ob_outputDirectory)' 'psoptions'
+            $null = New-Item -ItemType Directory -Path $outputPath -Force
+            $psOptPath = "$outputPath/psoptions.json"
+            Save-PSOptions -PSOptionsPath $psOptPath
+
+            Write-Verbose -Verbose "Verifying pdbs exist in build folder"
+            $pdbs = Get-ChildItem -Path $buildWithSymbolsPath -Recurse -Filter *.pdb
+            if ($pdbs.Count -eq 0) {
+              throw "No pdbs found in build folder"
+            }
+            else {
+              Write-Verbose -Verbose "Found $($pdbs.Count) pdbs in build folder"
+              $pdbs | ForEach-Object {
+                Write-Verbose -Verbose "Pdb: $($_.FullName)"
               }
 
-              if (-not (Test-Path '$(ob_outputDirectory)' -PathType Container)) {
-                  $null = New-Item '$(ob_outputDirectory)' -ItemType Directory -ErrorAction Stop
-              }
+              $pdbs | Compress-Archive -DestinationPath '$(ob_outputDirectory)\symbols-$(Architecture).zip' -Update
+            }
 
-              $targetPath = Join-Path '$(ob_outputDirectory)' 'Microsoft.PowerShell_8wekyb3d8bbwe.msixbundle'
-              Copy-Item -Verbose -Path $bundlePackage.FullName -Destination $targetPath
-            displayName: 'Stage msixbundle for vpack'
+            Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
+          displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols folder'
+          env:
+            ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
-          - pwsh: |
-              Write-Verbose "VPack Version: $(ob_createvpack_version)" -Verbose
-              $vpackFiles = Get-ChildItem -Path $(ob_outputDirectory)\* -Recurse
-              if($vpackFiles.Count -eq 0) {
-                  throw "No files found in $(ob_outputDirectory)"
-              }
-              $vpackFiles | Out-String -Width 150
-            displayName: Debug Output Directory and Version
-            condition: succeededOrFailed()
+        # Add CodeQL Finalize task right after your 'Build' step.
+        - task: CodeQL3000Finalize@0
+          env:
+            ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+
+        - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+          displayName: 'Component Detection'
+          inputs:
+            sourceScanPath: '$(PowerShellRoot)\src'
+            ob_restore_phase: true
+
+        # The signed files will be put in '$(ob_outputDirectory)\Signed-$(Runtime)' after this step.
+        - template: /.pipelines/templates/obp-file-signing.yml@self
+          parameters:
+            binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
+            OfficialBuild: true
+
+        ### END OF BUILD ###
+
+        - pwsh: |
+            Get-ChildItem -Path '$(ob_outputDirectory)\Signed-$(Runtime)' -Recurse | Out-String -Width 9999
+          displayName: Capture signed files
+          condition: succeededOrFailed()
+
+        - pwsh: |
+            Get-ChildItem -Path env: | Out-String -Width 9999
+          displayName: Capture Environment
+          condition: succeededOrFailed()
+
+        ### START Packaging ###
+
+        - template: /.pipelines/templates/shouldSign.yml@self
+          parameters:
+            ob_restore_phase: false
+
+        - pwsh: |
+            Write-Verbose -Verbose "runtime = '$(Runtime)'"
+            Write-Verbose -Verbose "RepoRoot = '$(PowerShellRoot)'"
+
+            $runtime = '$(Runtime)'
+            $repoRoot = '$(PowerShellRoot)'
+            Import-Module "$repoRoot\build.psm1"
+            Import-Module "$repoRoot\tools\packaging"
+
+            Find-Dotnet
+
+            $signedFilesPath = '$(ob_outputDirectory)\Signed-$(Runtime)'
+            $psoptionsFilePath = '$(ob_outputDirectory)\psoptions\psoptions.json'
+
+            Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
+            Write-Verbose -Verbose "psoptionsFilePath: $psoptionsFilePath"
+
+            Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
+            if (-not (Test-Path $signedFilesPath\pwsh.exe)) {
+                throw "pwsh.exe not found in $signedFilesPath"
+            }
+
+            Write-Verbose -Message "Restoring PSOptions from $psoptionsFilePath" -Verbose
+
+            Restore-PSOptions -PSOptionsPath "$psoptionsFilePath"
+            Get-PSOptions | Write-Verbose -Verbose
+
+            $metadata = Get-Content "$repoRoot\tools\metadata.json" -Raw | ConvertFrom-Json
+            Write-Verbose -Verbose "metadata:"
+            $metadata | Out-String | Write-Verbose -Verbose
+
+            $publishLTS = $metadata.LTSRelease.PublishToChannels
+            $publishStable = $metadata.StableRelease.PublishToChannels
+
+            Write-Verbose -Verbose "Publish LTS: $publishLTS"
+            Write-Verbose -Verbose "Publish Stable: $publishStable"
+
+            if (-not $publishLTS -and -not $publishStable) {
+                throw "metadata.json indicates no channels to publish to."
+            }
+
+            ## Generated packages are placed in the current directory by default.
+            Set-Location $repoRoot
+            Start-PSPackage -Type msix -SkipReleaseChecks -WindowsRuntime $runtime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$publishLTS
+
+            if ($publishLTS -and $publishStable) {
+                $enabledChannels = "LTS,Stable"
+                Write-Verbose -Verbose "Publish to both LTS and Stable channels. Building additional Stable MSIX."
+                Start-PSPackage -Type msix -SkipReleaseChecks -WindowsRuntime $runtime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+            }
+
+            $msixPkgNameFilter = "PowerShell*.msix"
+            $msixPkgFile = Get-ChildItem -Path $repoRoot -Filter $msixPkgNameFilter -Recurse -File | ForEach-Object FullName
+            Write-Verbose -Verbose "Unsigned msix package(s): $msixPkgFile"
+
+            $pkgDir = '$(ob_outputDirectory)\pkgs'
+            $null = New-Item -ItemType Directory -Path $pkgDir -Force
+            Copy-Item -Path $msixPkgFile -Destination $pkgDir -Force -Verbose
+
+            if (-not $enabledChannels) {
+                $enabledChannels = $publishLTS ? 'LTS' : ($publishStable ? 'Stable' : 'None')
+            }
+
+            ## Create an output variable for the enabled channels so that downstream stages can use it.
+            $vstsCommandString = "vso[task.setvariable variable=EnabledChannels;isOutput=true]$enabledChannels"
+            Write-Host ("sending " + $vstsCommandString)
+            Write-Host "##$vstsCommandString"
+          name: BuildMSIXPackage
+          displayName: 'Build MSIX Package (Unsigned)'
+
+        ### END OF Packaging ###
+
+        - pwsh: |
+            Get-ChildItem -Path '$(ob_outputDirectory)\pkgs' -Recurse
+          displayName: 'List Unsigned Package'
+
+        - pwsh: |
+            $signedFilesPath = '$(ob_outputDirectory)\Signed-$(Runtime)'
+            Remove-Item -Path $signedFilesPath -Recurse -Force -Verbose
+          displayName: 'Remove Signed-$(Runtime) folder'
+
+    - stage: Pack_MSIXBundle_And_Sign
+      displayName: 'Pack and sign MSIXBundle'
+      dependsOn: [Build_MSIX_Package]
+
+      variables:
+        EnabledChannels: $[ stageDependencies.Build_MSIX_Package.Build.outputs['x64.BuildMSIXPackage.EnabledChannels'] ]
+
+      jobs:
+      - template: /.pipelines/templates/create-msixbundle-vpack.yml@self
+        parameters:
+          Channel: 'LTS'
+          createVPack: ${{ parameters.createVPack }}
+
+      - template: /.pipelines/templates/create-msixbundle-vpack.yml@self
+        parameters:
+          Channel: 'Stable'
+          createVPack: ${{ parameters.createVPack }}
+
+    - stage: Publish_Symbols
+      displayName: 'Publish Symbols'
+      dependsOn: [Pack_MSIXBundle_And_Sign]
+      jobs:
+      - job: PublishSymbols
+        pool:
+          type: windows
+        variables:
+          ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
+
+        steps:
+        - checkout: self
+          displayName: Checkout source code - during restore
+          clean: true
+          path: s  ## $(Build.SourcesDirectory) is at '$(Pipeline.Workspace)\s', so we need to check out repo to the 's' folder.
+          env:
+            ob_restore_phase: true
+
+        - pwsh: |
+            Get-ChildItem Env: | Out-String -Width 9999
+          displayName: 'Capture Environment Variables'
+
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            artifactName: drop_build_x64
+            itemPattern: |
+              **/symbols-*.zip
+            targetPath: '$(Build.ArtifactStagingDirectory)\downloads'
+          displayName: Download symbols for x64
+
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            artifactName: drop_build_arm64
+            itemPattern: |
+              **/symbols-*.zip
+            targetPath: '$(Build.ArtifactStagingDirectory)\downloads'
+          displayName: Download symbols for arm64
+
+        - pwsh: |
+            $downloadDir = '$(Build.ArtifactStagingDirectory)\downloads'
+            Write-Verbose -Verbose "Enumerating $downloadDir"
+            $downloadedArtifacts = Get-ChildItem -Path $downloadDir -Recurse -Filter 'symbols-*.zip'
+            $downloadedArtifacts | Out-String -Width 9999
+
+            $expandedRoot = New-Item -Path "$(Pipeline.Workspace)\expanded" -ItemType Directory -Verbose
+            $downloadedArtifacts | ForEach-Object {
+                $expandDir = Join-Path $expandedRoot $_.BaseName
+                Write-Verbose -Verbose "Expanding $($_.FullName) to $expandDir"
+                $null = New-Item -Path $expandDir -ItemType Directory -Verbose
+                Expand-Archive -Path $_.FullName -DestinationPath $expandDir -Force
+            }
+
+            Write-Verbose -Verbose "Enumerating $expandedRoot"
+            Get-ChildItem -Path $expandedRoot -Recurse | Out-String -Width 9999
+            $vstsCommandString = "vso[task.setvariable variable=SymbolsPath]$expandedRoot"
+            Write-Verbose -Message "$vstsCommandString" -Verbose
+            Write-Host -Object "##$vstsCommandString"
+          displayName: Expand and capture symbols folders
+
+        - task: PublishSymbols@2
+          condition: and(succeeded(), ${{ parameters.createVPack }})
+          inputs:
+            symbolsFolder: '$(SymbolsPath)'
+            searchPattern: '**/*.pdb'
+            indexSources: false
+            publishSymbols: true
+            symbolServerType: TeamServices
+            detailedLog: true

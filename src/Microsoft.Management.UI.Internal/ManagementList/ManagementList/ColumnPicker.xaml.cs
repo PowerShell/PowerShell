@@ -60,7 +60,7 @@ namespace Microsoft.Management.UI.Internal
             : this()
         {
             ArgumentNullException.ThrowIfNull(columns);
-            
+
             ArgumentNullException.ThrowIfNull(availableColumns);
 
             // Add visible columns to Selected list, preserving order

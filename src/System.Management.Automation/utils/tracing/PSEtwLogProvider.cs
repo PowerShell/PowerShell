@@ -132,7 +132,7 @@ namespace System.Management.Automation.Tracing
                         }
                         else
                         {
-                            // When state is Start log the CommandLine which has arguments for completeness. 
+                            // When state is Start log the CommandLine which has arguments for completeness.
                             payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext.CommandLine, newState.ToString()));
                         }
                     }

@@ -1,0 +1,406 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MemberAlreadyPresent" xml:space="preserve">
+    <value>成員 "{0}" 已經存在。</value>
+  </data>
+  <data name="MemberAlreadyPresentFromTypesXml" xml:space="preserve">
+    <value>延伸類型資料檔案中已經有成員 "{0}"。</value>
+  </data>
+  <data name="MemberNotPresent" xml:space="preserve">
+    <value>成員 "{0}" 不存在。</value>
+  </data>
+  <data name="ExceptionWhenSetting" xml:space="preserve">
+    <value>例外狀況設定 "{0}": "{1}"</value>
+  </data>
+  <data name="ExceptionWhenGetting" xml:space="preserve">
+    <value>取得 "{0}" 時發生例外狀況: "{1}"</value>
+  </data>
+  <data name="EnumerationException" xml:space="preserve">
+    <value>嘗試列舉集合時發生下列例外狀況: “{0}”。</value>
+  </data>
+  <data name="AccessMemberOutsidePSObject" xml:space="preserve">
+    <value>無法存取 PSObject 之外的成員 "{0}"。</value>
+  </data>
+  <data name="ChangeStaticMember" xml:space="preserve">
+    <value>無法變更從類型設定建立的成員:“{0}”。</value>
+  </data>
+  <data name="ReservedMemberName" xml:space="preserve">
+    <value>已保留成員名稱 “{0}”。</value>
+  </data>
+  <data name="CannotChangeReservedMember" xml:space="preserve">
+    <value>無法變更 "{0}"。</value>
+  </data>
+  <data name="MethodInvocationException" xml:space="preserve">
+    <value>使用 "{1}" 引數: "{2}" 呼叫 “{0}” 時發生例外狀況</value>
+  </data>
+  <data name="CopyToInvocationException" xml:space="preserve">
+    <value>嘗試呼叫 “{0}” 以擷取 “{1}” 類型的物件內容時擲回例外狀況: "{2}"</value>
+  </data>
+  <data name="MethodArgumentCountException" xml:space="preserve">
+    <value>找不到適用於 "{0}" 的多載且引數計數為 "{1}"。</value>
+  </data>
+  <data name="MethodGenericArgumentCountException" xml:space="preserve">
+    <value>對於具 "{1}" 類型參數的 "{0}"，找不到合適的泛型方法多載，且引數計數為 "{2}"。</value>
+  </data>
+  <data name="MethodAmbiguousException" xml:space="preserve">
+    <value>找到適用於 “{0}” 的多個不明確多載，且引數計數為 “{1}”。</value>
+  </data>
+  <data name="MethodArgumentConversionException" xml:space="preserve">
+    <value>無法將適用於 “{2}” 的引數 "{0}" (值為 "{1}") 轉換為 "{3}" 類型: "{4}"</value>
+  </data>
+  <data name="GetWithoutGetterException" xml:space="preserve">
+    <value>無法取得屬性 “{0}” 的存取子。</value>
+  </data>
+  <data name="SetWithoutSetterException" xml:space="preserve">
+    <value>無法設定屬性 “{0}” 的存取子。</value>
+  </data>
+  <data name="CodePropertySetterFormat" xml:space="preserve">
+    <value>Setter 方法應為公用、無效、靜態，且具有兩個參數。第一個參數應為 PSObject 類型。如果 getter 方法也可用，則第二個參數為必要，且其類型應該與 getter 方法的傳回類型相同。</value>
+  </data>
+  <data name="CodePropertyGetterFormat" xml:space="preserve">
+    <value>Getter 方法應為公用，非無效、靜態，且具有一個 PSObject 類型的參數。</value>
+  </data>
+  <data name="CodePropertyGetterAndSetterNull" xml:space="preserve">
+    <value>CodeProperty 應該使用 getter 或 setter 方法。</value>
+  </data>
+  <data name="CodeMethodMethodFormat" xml:space="preserve">
+    <value>因為方法格式，無法建立程式碼方法。此方法應為公用、靜態，且具有一個 PSObject 類型的參數。</value>
+  </data>
+  <data name="CycleInAlias" xml:space="preserve">
+    <value>名稱為 “{0}” 的別名包含循環。</value>
+  </data>
+  <data name="InvalidCastException" xml:space="preserve">
+    <value>無法將 "{1}" 類型的 "{0}" 值轉換為 "{2}" 類型。</value>
+  </data>
+  <data name="InvalidCastExceptionWithoutValue" xml:space="preserve">
+    <value>無法將 "{0}" 類型的值轉換為 "{1}" 類型。</value>
+  </data>
+  <data name="InvalidCastExceptionWithInnerException" xml:space="preserve">
+    <value>無法將值 "{0}" 轉換為 "{1}" 類型。錯誤: "{2}"</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationNoFlagAndComma" xml:space="preserve">
+    <value>無法將值 “{0}” 轉換為 “{1}” 類型，因為此列舉不允許使用逗號。</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationNoValue" xml:space="preserve">
+    <value>由於列舉值無效，因此無法將值 "{0}" 轉換為 “{1}” 類型。指定下列其中一個列舉值，然後再試一次。可能的列舉值為 “{2}”。</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationNull" xml:space="preserve">
+    <value>由於列舉值無效，因此無法將 null 轉換為 “{0}” 類型。指定下列其中一個列舉值，然後再試一次。可能的列舉值為 “{1}”。</value>
+  </data>
+  <data name="InvalidCastFromNull" xml:space="preserve">
+    <value>無法將 null 轉換為 "{0}" 類型。</value>
+  </data>
+  <data name="InvalidCastExceptionNoStringForConversion" xml:space="preserve">
+    <value>無法將值轉換為 "{0}" 類型。 錯誤: "{1}"</value>
+  </data>
+  <data name="InvalidCastCannotRetrieveString" xml:space="preserve">
+    <value>無法將值轉換為 System.String 類型。</value>
+  </data>
+  <data name="ReferenceTypeExpected" xml:space="preserve">
+    <value>引數中預期有參考類型。</value>
+  </data>
+  <data name="NotIcomparable" xml:space="preserve">
+    <value>無法比較 “{0}”，因為它不是 IComparable。</value>
+  </data>
+  <data name="ComparisonFailure" xml:space="preserve">
+    <value>無法比較 "{0}" 與 "{1}"。錯誤: "{2}"</value>
+  </data>
+  <data name="NotTheSameTypeOrNotIcomparable" xml:space="preserve">
+    <value>無法比較 “{0}” 與 “{1}”，因為物件不是相同的類型或物件 “{0}” 未實作 “{2}“。</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationMoreThanOneValue" xml:space="preserve">
+    <value>無法將值 “{0}” 轉換為 “{1}”類型，因為找到至少兩個相符項目 ({2}、{3})，而且此列舉只允許一個相符項目。</value>
+  </data>
+  <data name="InvalidCastExceptionForBooleanArgumentValue" xml:space="preserve">
+    <value>無法將值 "{0}" 轉換為 "{1}" 類型。布林值參數只接受布林值和數字，例如 $True、$False、1 或 0。</value>
+  </data>
+  <data name="WriteOnlyProperty" xml:space="preserve">
+    <value>無法取得屬性值，因為 “{0}” 是僅限寫入的屬性。</value>
+  </data>
+  <data name="ReadOnlyProperty" xml:space="preserve">
+    <value>"{0}" 是唯讀屬性。</value>
+  </data>
+  <data name="XmlNodeSetShouldBeAString" xml:space="preserve">
+    <value>無法設定 "{0}"，因為只能使用字串做為值來設定 XmlNode 屬性。</value>
+  </data>
+  <data name="XmlNodeSetRestrictions" xml:space="preserve">
+    <value>無法設定“{0}”，因為只能設定唯一屬性或唯一非屬性分頁節點。</value>
+  </data>
+  <data name="CannotAddPropertyOrMethod" xml:space="preserve">
+    <value>PSProperty 或 PSMethod 物件無法新增到此集合。</value>
+  </data>
+  <data name="TypesXmlError" xml:space="preserve">
+    <value>載入延伸類型資料檔案時發生下列錯誤: {0}</value>
+  </data>
+  <data name="ToStringException" xml:space="preserve">
+    <value>在擷取字串時發生下列例外狀況: “{0}”</value>
+  </data>
+  <data name="NotAClsCompliantFieldProperty" xml:space="preserve">
+    <value>類型 “{1}” 的欄位或屬性 “{0}” 只與欄位或屬性 “{2}” 的字母大小寫不同。此類型必須符合通用語言規格 (CLS) 規範。</value>
+  </data>
+  <data name="ExceptionRetrievingTypeNameHierarchy" xml:space="preserve">
+    <value>擷取類型名稱階層時發生下列例外狀況: "{0}"。</value>
+  </data>
+  <data name="ExceptionGettingMember" xml:space="preserve">
+    <value>在擷取成員 "{1}" 時發生下列例外狀況: "{0}"</value>
+  </data>
+  <data name="ExceptionGettingMembers" xml:space="preserve">
+    <value>在擷取成員時發生下列例外狀況: “{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyReadState" xml:space="preserve">
+    <value>擷取屬性 "{1}" 的讀取狀態時發生下列例外狀況: "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyWriteState" xml:space="preserve">
+    <value>擷取屬性 "{1}" 的寫入狀態時發生下列例外狀況: "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyType" xml:space="preserve">
+    <value>擷取屬性 "{1}" 的類型時發生下列例外狀況: "{0}"。</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyString" xml:space="preserve">
+    <value>擷取屬性 "{1}" 的字串表示法時發生下列例外狀況: "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyAttributes" xml:space="preserve">
+    <value>針對屬性 (Property) "{1}" 擷取屬性 (Attribute) 時發生下列例外狀況: "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingMethodDefinitions" xml:space="preserve">
+    <value>擷取方法 "{1}" 的定義時發生下列例外狀況: “{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingMethodString" xml:space="preserve">
+    <value>擷取方法 "{1}" 的字串表示法時發生下列例外狀況: "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertytype" xml:space="preserve">
+    <value>擷取參數化屬性 "{1}" 的類型時發生下列例外狀況: “{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyReadState" xml:space="preserve">
+    <value>擷取參數化屬性 "{1}" 的讀取狀態時發生下列例外狀況: “{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyWriteState" xml:space="preserve">
+    <value>擷取參數化屬性 "{1}" 的寫入狀態時發生下列例外狀況: “{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyDefinitions" xml:space="preserve">
+    <value>擷取參數化屬性 "{1}" 的定義時發生下列例外狀況: “{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyString" xml:space="preserve">
+    <value>擷取參數化屬性 "{1}" 的字串表示法時發生下列例外狀況: "{0}"</value>
+  </data>
+  <data name="CannotSetValueForMemberType" xml:space="preserve">
+    <value>無法為 "{0}" 類型的 PSMemberInfo 物件設定 Value 屬性。</value>
+  </data>
+  <data name="NonRefArgumentToRefParameter" xml:space="preserve">
+    <value>引數 '{0}' 應為 {1}。使用 {2}。</value>
+  </data>
+  <data name="RefArgumentToNonRefParameter" xml:space="preserve">
+    <value>引數 '{0}' 不應該是 {1}。請勿使用 {2}。</value>
+  </data>
+  <data name="PropertyNotFoundInTypeDescriptor" xml:space="preserve">
+    <value>找不到屬性 "{0}"。</value>
+  </data>
+  <data name="InvalidComponent" xml:space="preserve">
+    <value>無法取得或設定屬性值。"{0}" 引數的類型應為 "{1}" 或 "{2}"。</value>
+  </data>
+  <data name="CannotSetNonManagementObject" xml:space="preserve">
+    <value>無法設定屬性 “{0}”的值，因為物件的類型是 “{1}” 而不是 “{2}”。</value>
+  </data>
+  <data name="WMIMethodInvocationException" xml:space="preserve">
+    <value>呼叫 “{0}” 時發生例外狀況: “{1}”</value>
+  </data>
+  <data name="InvalidWMIClassPath" xml:space="preserve">
+    <value>{0} 不是有效的類別路徑。</value>
+  </data>
+  <data name="InvalidWMIPath" xml:space="preserve">
+    <value>{0} 不是有效的路徑。</value>
+  </data>
+  <data name="PropertyIsSettableError" xml:space="preserve">
+    <value>配接器無法判斷是否可變更屬性 “{0}”。</value>
+  </data>
+  <data name="PropertyIsGettableError" xml:space="preserve">
+    <value>配接器無法判斷是否可取得屬性 “{0}”。</value>
+  </data>
+  <data name="PropertyGetError" xml:space="preserve">
+    <value>配接器無法取得屬性 “{0}” 的值。</value>
+  </data>
+  <data name="PropertySetError" xml:space="preserve">
+    <value>配接器無法設定屬性 “{0}” 的值。</value>
+  </data>
+  <data name="PropertyTypeError" xml:space="preserve">
+    <value>配接器無法取得屬性 “{0}” 的類型。</value>
+  </data>
+  <data name="GetTypeNameHierarchyError" xml:space="preserve">
+    <value>配接器無法取得 “{0}” 的類型階層。</value>
+  </data>
+  <data name="GetProperties" xml:space="preserve">
+    <value>配接器無法取得 “{0}” 的屬性。</value>
+  </data>
+  <data name="GetProperty" xml:space="preserve">
+    <value>配接器無法取得 “{1}” 的屬性 “{0}”。</value>
+  </data>
+  <data name="NullReturnValueError" xml:space="preserve">
+    <value>"{0}" 傳回了 Null 值。</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>找不到 '{1}' 物件的屬性 '{0}'。可設定的屬性為: {2}。</value>
+  </data>
+  <data name="NoSettableProperty" xml:space="preserve">
+    <value>找不到 '{1}' 物件的屬性 '{0}'。沒有可設定的屬性可用。</value>
+  </data>
+  <data name="ObjectCreationError" xml:space="preserve">
+    <value>無法建立 "{0}" 類型的物件。{1}</value>
+  </data>
+  <data name="CannotInvokeStaticMethodOnUninstantiatedGenericType" xml:space="preserve">
+    <value>無法叫用靜態方法或存取開放泛型類型 {0} 上的靜態屬性。 指定類型參數，然後重試。 例如，不使用 [System.Collections.Generic.HashSet``1]::CreateSetComparer()，而使用 [System.Collections.Generic.HashSet[int]]::CreateSetComparer()。</value>
+    <comment>Error message shown when somebody tries to access a property or invoke a static method on an uninstantiated generic type:
+PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
+
+{0} is a placeholder for a type name (for example: System.Collections.Generic.Comparer`1)</comment>
+  </data>
+  <data name="ExceptionConstructingAttribute" xml:space="preserve">
+    <value>建構屬性 “{1}” 時發生下列例外狀況: "{0}"</value>
+  </data>
+  <data name="CannotConvertValueToStringArray" xml:space="preserve">
+    <value>值 "{0}" 無法轉換為字串陣列。</value>
+  </data>
+  <data name="InvalidCastExceptionNonCoreType" xml:space="preserve">
+    <value>無法將值轉換為 "{0}" 類型。此語言模式只支援核心類型。</value>
+  </data>
+  <data name="InvalidCastToByRefLikeType" xml:space="preserve">
+    <value>無法轉換為類似 ByRef 的類型 “{0}”。PowerShell 不支援 ByRef 類型。</value>
+  </data>
+  <data name="CannotAccessByRefLikePropertyOrField" xml:space="preserve">
+    <value>無法取得或設定類似 ByRef 類型 “{1}” 的屬性或欄位 “{0}”。PowerShell 不支援 ByRef 類型。</value>
+  </data>
+  <data name="CannotCallMethodWithByRefLikeReturnType" xml:space="preserve">
+    <value>無法叫用類似 ByRef 傳回類型 "{1}" 的方法 "{0}"。PowerShell 不支援 ByRef 類型。</value>
+  </data>
+  <data name="CannotInstantiateBoxedByRefLikeType" xml:space="preserve">
+    <value>無法建立類似 ByRef 類型 “{0}” 的執行個體。PowerShell 不支援 ByRef 類型。</value>
+  </data>
+  <data name="WDACHashTypeLogTitle" xml:space="preserve">
+    <value>延伸類型系統雜湊表轉換</value>
+  </data>
+  <data name="WDACHashTypeLogMessage" xml:space="preserve">
+    <value>ConstrainedLanguage 模式不允許類型從 HashTable 轉換為 '{0}'。</value>
+  </data>
+  <data name="WDACTypeConversionLogTitle" xml:space="preserve">
+    <value>延伸類型系統雜湊表轉換</value>
+  </data>
+  <data name="WDACTypeConversionLogMessage" xml:space="preserve">
+    <value>ConstrainedLanguage 模式不允許類型從 '{0}' 轉換為 '{1}'。</value>
+  </data>
+</root>

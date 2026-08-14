@@ -3,6 +3,9 @@
 # Areas are not limited to the filters defined in this file
 # First, let's start with areas with no filters or paths
 
+# Default
+* @PowerShell/powershell-maintainers
+
 # Area: Performance
 # @adityapatwardhan 
 

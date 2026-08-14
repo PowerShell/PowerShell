@@ -569,7 +569,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    if (!(expectedPropertyValue is IComparable expectedComparable))
+                    if (expectedPropertyValue is not IComparable expectedComparable)
                     {
                         return false;
                     }
@@ -604,7 +604,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    if (!(actualPropertyValue is IComparable actualComparable))
+                    if (actualPropertyValue is not IComparable actualComparable)
                     {
                         return false;
                     }

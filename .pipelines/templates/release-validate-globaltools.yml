@@ -1,10 +1,33 @@
 parameters:
-  jobName: ""
-  displayName: ""
-  jobtype: "windows"
-  globalToolExeName: 'pwsh.exe'
-  globalToolPackageName: 'PowerShell.Windows.x64'
-
+  - name: jobName
+    type: string
+    default: ""
+  - name: displayName
+    type: string
+    default: ""
+  - name: jobtype
+    type: string
+    default: "windows"
+  - name: globalToolExeName
+    type: string
+    default: 'pwsh.exe'
+  - name: globalToolPackageName
+    type: string
+    default: 'PowerShell.Windows.x64'
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: DOTNET_RUNTIME_VERSION
+    displayName: Runtime version of early access build
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    displayName: SDK version of early access build
+    type: string
+    default: ' '
+  - name: dotnetArch
+    type: string
+    default: 'win-x64'
 
 jobs:
 - job: ${{ parameters.jobName }}
@@ -19,6 +42,8 @@ jobs:
       value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
     - name: ob_sdl_tsa_configFile
       value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - name: ISEARLYACCESS
+      value: ${{ parameters.IsEarlyAccess }}
 
   steps:
     - checkout: self
@@ -38,15 +63,16 @@ jobs:
         Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg" -Recurse
       displayName: 'Capture Downloaded Artifacts'
 
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk'
-      inputs:
-        useGlobalJson: true
-        packageType: 'sdk'
-        workingDirectory: $(REPOROOT)
+    - template: /.pipelines/templates/install-dotnet.yml@self
+      parameters:
+        architecture: ${{ parameters.dotnetArch }}
+        ob_restore_phase: false
 
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
+
+        Import-Module "$repoRoot/build.psm1" -Force -Verbose
+        Start-PSBootstrap -Scenario Dotnet
 
         $toolPath = New-Item -ItemType Directory "$(System.DefaultWorkingDirectory)/toolPath" | Select-Object -ExpandProperty FullName
 
@@ -79,6 +105,9 @@ jobs:
 
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
+
+        Import-Module "$repoRoot/build.psm1" -Force -Verbose
+        Start-PSBootstrap -Scenario Dotnet
 
         $exeName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
 

@@ -1,0 +1,687 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ModuleNotFound" xml:space="preserve">
+    <value>指定されたモジュール '{0}' は、モジュール ディレクトリに有効なモジュール ファイルが見つからなかったため読み込まれませんでした。</value>
+  </data>
+  <data name="ModuleWithVersionNotFound" xml:space="preserve">
+    <value>バージョン '{1}' で指定されたモジュール '{0}' は、モジュール ディレクトリに有効なモジュール ファイルが見つからなかったため読み込まれませんでした。</value>
+  </data>
+  <data name="MaximumVersionFormatIncorrect" xml:space="preserve">
+    <value>指定された MaximumVersion '{0}' が正しくありません。'*' を使用している場合、MaximumVersion は 1 つの '*' のみをサポートし、常に MaximumVersion の末尾に配置する必要があります。</value>
+  </data>
+  <data name="MaximumVersionNotFound" xml:space="preserve">
+    <value>MinimumVersion '{1}' で指定されたモジュール '{0}' は、モジュール ディレクトリに有効なモジュール ファイルが見つからなかったため読み込まれませんでした。</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionNotFound" xml:space="preserve">
+    <value>MinimumVersion '{1}' および MaximumVersion '{2}' で指定されたモジュール '{0}' は、モジュール ディレクトリに有効なモジュール ファイルが見つからなかったため読み込まれませんでした。</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionInvalidRange" xml:space="preserve">
+    <value>MinimumVersion '{0}' は MaximumVersion '{1}'より大きくすることはできません。</value>
+  </data>
+  <data name="ModuleAssemblyFound" xml:space="preserve">
+    <value>アセンブリ '{0}' は読み込まれませんでした。その名前のアセンブリが見つかりませんでした。アセンブリ名を確認してから、もう一度やり直してください。</value>
+  </data>
+  <data name="ManifestMemberNotFound" xml:space="preserve">
+    <value>モジュール マニフェスト '{2}' のフィールド '{1}' にリストされている '{0}' を処理するモジュールは、モジュール ディレクトリに有効なモジュールが見つからなかったため、処理されませんでした。</value>
+  </data>
+  <data name="CantUseAsCustomObjectWithBinaryModule" xml:space="preserve">
+    <value>-AsCustomObject パラメーターはスクリプト モジュールでのみ使用できるため、モジュール '{0}' に対してカスタム オブジェクトが返されませんでした。</value>
+  </data>
+  <data name="InvalidModuleManifest" xml:space="preserve">
+    <value>モジュール マニフェスト '{0}' は有効な PowerShell モジュール マニフェスト ファイルではないため、処理できませんでした。許可されていない要素を削除します: {1}</value>
+  </data>
+  <data name="EmptyModuleManifest" xml:space="preserve">
+    <value>モジュール マニフェスト ファイル '{0}' を処理しても、有効なマニフェスト オブジェクトが生成されませんでした。有効な PowerShell モジュール マニフェストを含むようにファイルを更新してください。有効なマニフェストは、New-ModuleManifest コマンドレットを使用して作成できます。</value>
+  </data>
+  <data name="InvalidModuleManifestMember" xml:space="preserve">
+    <value>'{0}' モジュールは、マニフェストに無効なメンバーが 1 つ以上含まれているため、インポートできません。有効なマニフェスト メンバーは ({1}) です。無効なメンバー ({2}) を削除してから、モジュールのインポートを再試行してください。</value>
+  </data>
+  <data name="InvalidModuleSpecificationMember" xml:space="preserve">
+    <value>モジュールを記述するハッシュタグに 1 つ以上の無効なメンバーが含まれています。有効なメンバーは ({0}) です。無効なメンバー ({1}) を削除してから、もう一度やり直してください。</value>
+  </data>
+  <data name="ModuleTooDeeplyNested" xml:space="preserve">
+    <value>モジュールの入れ子の制限を超えたため、モジュール '{0}' を読み込めません。モジュールは、{1} レベルにのみ入れ子にできます。モジュールを読み込む順序を評価して変更し、入れ子の制限を超えないようにしてから、スクリプトを再実行してください。</value>
+  </data>
+  <data name="ModuleManifestMissingModuleVersion" xml:space="preserve">
+    <value>メンバー 'ModuleVersion' はモジュール マニフェストに存在しません。このメンバーは存在する必要があり、'n.n.n.n' という形式のバージョン番号が割り当てられている必要があります。見つからないメンバーをファイル '{0}' に追加してください。</value>
+  </data>
+  <data name="ModuleManifestInvalidValue" xml:space="preserve">
+    <value>モジュール マニフェスト ファイル '{2}' のメンバー '{0}' が無効です: {1}</value>
+  </data>
+  <data name="ModuleManifestInsufficientModuleVersion" xml:space="preserve">
+    <value>モジュール '{1}' のバージョン '{0}' は、必要な最小バージョン '{2}' を満たしていません。バージョン番号がサポートされていることを確認してから、モジュールの読み込みを再試行してください。</value>
+  </data>
+  <data name="ModuleManifestInsufficientPowerShellVersion" xml:space="preserve">
+    <value>このコンピューターの PowerShell のバージョンは '{0}' です。モジュール '{1}' を実行するには、PowerShell の最小バージョン '{2}' が必要です。最低限必要なバージョンの PowerShell がインストールされていることを確認してから、もう一度やり直してください。</value>
+  </data>
+  <data name="ModuleManifestNestedModulesCantGoWithModuleToProcess" xml:space="preserve">
+    <value>モジュール マニフェスト メンバー 'NestedModules' は、'ModuleToProcess' メンバーがバイナリ モジュールの場合は使用できません。'{0}' でモジュール マニフェスト ファイルを編集してから、もう一度やり直してください。</value>
+  </data>
+  <data name="ModuleManifestInvalidManifestMember" xml:space="preserve">
+    <value>モジュール マニフェストのメンバー '{0}' が無効です: {1}。'{2}' ファイルのこのフィールドに有効な値が指定されていることを確認します。</value>
+  </data>
+  <data name="InvalidModuleManifestPath" xml:space="preserve">
+    <value>モジュール マニフェスト パス '{0}' が無効です。"Path" 引数の値は、拡張子が '.psd1' の 1 つのファイルに解決される必要があります。有効な psd1 ファイルを指すように "Path" 引数の値を変更してから、もう一度やり直してください。</value>
+  </data>
+  <data name="InvalidModuleManifestVersion" xml:space="preserve">
+    <value>モジュール マニフェスト '{0}' の ModuleVersion キーは、'{2}' のバージョン フォルダー名と一致しないモジュール バージョン '{1}' を指定します。バージョン フォルダー名と一致するように ModuleVersion キーの値を変更します。</value>
+  </data>
+  <data name="InvalidNestedModuleinModuleManifest" xml:space="preserve">
+    <value>モジュール マニフェスト '{1}' で指定された NestedModule エントリ '{0}' が無効です。有効な値でこのエントリを更新した後、もう一度お試しください。</value>
+  </data>
+  <data name="InvalidRequiredAssembliesInModuleManifest" xml:space="preserve">
+    <value>モジュール マニフェスト '{1}' で指定された RequiredAssemblies エントリ '{0}' が無効です。有効な値でこのエントリを更新した後、もう一度お試しください。</value>
+  </data>
+  <data name="InvalidFilePathinModuleManifest" xml:space="preserve">
+    <value>モジュール マニフェスト '{1}' で指定された FileList エントリ '{0}' が無効です。有効な値でこのエントリを更新した後、もう一度お試しください。</value>
+  </data>
+  <data name="InvalidRequiredModulesinModuleManifest" xml:space="preserve">
+    <value>モジュール マニフェスト '{1}' で指定された RequiredModules エントリ '{0}' が無効です。有効な値でこのエントリを更新した後、もう一度お試しください。</value>
+  </data>
+  <data name="InvalidModuleListinModuleManifest" xml:space="preserve">
+    <value>モジュール マニフェスト '{1}' で指定された ModuleList エントリ '{0}' が無効です。有効な値でこのエントリを更新した後、もう一度お試しください。</value>
+  </data>
+  <data name="InvalidPowerShellVersionInModuleManifest" xml:space="preserve">
+    <value>モジュール マニフェスト '{0}' は、PowerShell バージョン '5.1' 以降でのみサポートされている CompatiblePSEditions キーで指定されています。PowerShellVersion キーの値を '5.1' 以上に更新してから、もう一度やり直してください。</value>
+  </data>
+  <data name="DuplicateEntriesInCompatiblePSEditions" xml:space="preserve">
+    <value>CompatiblePSEditions に指定された値 '{0}' に重複する PowerShell Edition 名が含まれています。重複する PowerShell Edition 名を削除した後、もう一度お試しください。</value>
+  </data>
+  <data name="ModuleVersionEqualsToVersionFolder" xml:space="preserve">
+    <value>ModuleVersion キーで指定されたバージョンは、バージョン フォルダー名と同じです。</value>
+  </data>
+  <data name="SkippingInvalidModuleVersionFolder" xml:space="preserve">
+    <value>有効なモジュール マニフェスト ファイルがないため、[モジュール {1}] の [バージョン] フォルダー {0} をスキップしています。</value>
+  </data>
+  <data name="RequiredModuleMissingModuleName" xml:space="preserve">
+    <value>'ModuleName' メンバーは、このモジュールを記述するハッシュテーブルに存在しません。</value>
+  </data>
+  <data name="RequiredModuleMissingModuleVersion" xml:space="preserve">
+    <value>'ModuleVersion' メンバー、'MaximumVersion' メンバー、'RequiredVersion' メンバーは、このモジュールを記述するハッシュテーブルに存在しません。これら 3 つのメンバーのいずれかが存在し、'n.n.n.n' という形式のバージョン番号が割り当てられている必要があります。</value>
+  </data>
+  <data name="RequiredModuleNotLoaded" xml:space="preserve">
+    <value>必要なモジュール '{1}' が読み込まれていません。モジュールを読み込むか、ファイル '{0}' の 'RequiredModules' からモジュールを削除します。</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongGuid" xml:space="preserve">
+    <value>GUID '{2}' の必要なモジュール '{1}' は読み込まれていません。モジュールを読み込むか、ファイル '{0}' の 'RequiredModules' からモジュールを削除します。</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongVersion" xml:space="preserve">
+    <value>バージョン '{2}' の必要なモジュール '{1}' は読み込まれていません。モジュールを読み込むか、ファイル '{0}' の 'RequiredModules' からモジュールを削除します。</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMaximumVersion" xml:space="preserve">
+    <value>MaximumVersion '{2}' の必要なモジュール '{1}' は読み込まれていません。モジュールを読み込むか、ファイル '{0}' の 'RequiredModules' からモジュールを削除します。</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion" xml:space="preserve">
+    <value>MinimumVersion '{2}' および MaximumVersion '{3}' の必須モジュール '{1}' は読み込まれていません。モジュールを読み込むか、ファイル '{0}' の 'RequiredModules' からモジュールを削除します。</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleVersion" xml:space="preserve">
+    <value>モジュール '{0}' が ModuleVersion '{1}' で見つかりません。</value>
+  </data>
+  <data name="RequiredModuleNotFoundRequiredVersion" xml:space="preserve">
+    <value>RequiredVersion '{1}' のモジュール '{0}' が見つかりません。</value>
+  </data>
+  <data name="RequiredModuleNotFoundMaximumVersion" xml:space="preserve">
+    <value>モジュール '{0}' が MaximumVersion '{1}' で見つかりません。</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleAndMaximumVersion" xml:space="preserve">
+    <value>ModuleVersion '{1}' および MaximumVersion '{2}' のモジュール '{0}' が見つかりません。</value>
+  </data>
+  <data name="RequiredModuleNotFoundWithoutVersion" xml:space="preserve">
+    <value>モジュール '{0}' が見つかりません。</value>
+  </data>
+  <data name="NoModulesRemoved" xml:space="preserve">
+    <value>モジュールは削除されませんでした。削除するモジュールの仕様が正しいことと、それらのモジュールが実行空間に存在することを確認してください。</value>
+  </data>
+  <data name="UnableToRemoveModuleMember" xml:space="preserve">
+    <value>モジュール '{1}' からインポートされた '{0}' メンバーは、次の理由により削除できません: {2}</value>
+  </data>
+  <data name="ModuleIsReadOnly" xml:space="preserve">
+    <value>モジュール '{0}' は読み取り専用であるため、削除できません。Force パラメーターをコマンドに追加して、読み取り専用モジュールを削除します。</value>
+  </data>
+  <data name="ModuleIsConstant" xml:space="preserve">
+    <value>モジュール '{0}' は 'constant' としてマークされているため、削除できません。モジュールが 'constant' とマークされている場合、モジュールを削除できません。</value>
+  </data>
+  <data name="ModuleIsRequired" xml:space="preserve">
+    <value>モジュール '{0}' は '{1}' で必要なため削除できません。Force パラメーターをコマンドに追加して、このモジュールを削除します。</value>
+  </data>
+  <data name="CanOnlyBeUsedFromWithinAModule" xml:space="preserve">
+    <value>Export-ModuleMember コマンドレットは、モジュール内からのみ呼び出すことができます。</value>
+  </data>
+  <data name="InvalidModuleExtension" xml:space="preserve">
+    <value>拡張機能 '{0}' は有効なモジュール拡張機能ではありません。サポートされているモジュール拡張機能は、'.dll'、'.ps1'、'.psm1'、'.psd1'、.cdxml' です。拡張子を修正してから、ファイル '{1}' をもう一度追加してみてください。</value>
+  </data>
+  <data name="InvalidOperationOnBinaryModule" xml:space="preserve">
+    <value>この操作はバイナリ モジュールでは実行できません。スクリプト モジュールでのみ実行できます。</value>
+  </data>
+  <data name="ScriptsToProcessIncorrectExtension" xml:space="preserve">
+    <value>ファイル '{0}' には拡張子 '.ps1' がないため、使用できません。</value>
+  </data>
+  <data name="DefaultCompanyName" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="DefaultCopyrightMessage" xml:space="preserve">
+    <value>(c) {0}.All rights reserved.</value>
+  </data>
+  <data name="RemovingImportedFunction" xml:space="preserve">
+    <value>インポートされた "{0}" 関数を削除しています。</value>
+  </data>
+  <data name="RemovingImportedAlias" xml:space="preserve">
+    <value>インポートされた "{0}" エイリアスを削除しています。</value>
+  </data>
+  <data name="RemovingImportedVariable" xml:space="preserve">
+    <value>インポートされた "{0}" 変数を削除しています。</value>
+  </data>
+  <data name="LoadingModule" xml:space="preserve">
+    <value>パス '{0}' からモジュールを読み込んでいます。</value>
+  </data>
+  <data name="LoadingFile" xml:space="preserve">
+    <value>'{0}' をパス '{1}' から読み込んでいます。</value>
+  </data>
+  <data name="DottingScriptFile" xml:space="preserve">
+    <value>スクリプト ファイル '{0}' をドットソーシングしています。</value>
+  </data>
+  <data name="ImportingFunction" xml:space="preserve">
+    <value>関数 '{0}' をインポートしています。</value>
+  </data>
+  <data name="ImportingCmdlet" xml:space="preserve">
+    <value>コマンドレット '{0}' をインポートしています。</value>
+  </data>
+  <data name="ImportingAlias" xml:space="preserve">
+    <value>エイリアス '{0}' をインポートしています。</value>
+  </data>
+  <data name="ImportingVariable" xml:space="preserve">
+    <value>変数 '{0}' をインポートしています。</value>
+  </data>
+  <data name="ExportingCmdlet" xml:space="preserve">
+    <value>コマンドレット '{0}' をエクスポートしています。</value>
+  </data>
+  <data name="ExportingFunction" xml:space="preserve">
+    <value>関数 '{0}' をエクスポートしています。</value>
+  </data>
+  <data name="ExportingAlias" xml:space="preserve">
+    <value>エイリアス '{0}' をエクスポートしています。</value>
+  </data>
+  <data name="ExportingVariable" xml:space="preserve">
+    <value>変数 '{0}' をエクスポートしています。</value>
+  </data>
+  <data name="ImportingNonStandardVerb" xml:space="preserve">
+    <value>モジュール '{0}' からインポートされたコマンドの名前には、検出不能になる可能性のある未承認の動詞が含まれています。未承認の動詞を含むコマンドを見つけるには、Verbose パラメーターを指定して Import-Module コマンドをもう一度実行します。承認された動詞の一覧については、「Get-Verb」と入力します。</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerbose" xml:space="preserve">
+    <value>'{1}' モジュールの '{0}' コマンドがインポートされましたが、その名前に承認済みの動詞が含まれていないため、見つけにくい場合があります。承認された動詞の一覧については、「Get-Verb」と入力します。</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerboseSuggestion" xml:space="preserve">
+    <value>'{2}' モジュールの '{0}' コマンドがインポートされましたが、その名前に承認済みの動詞が含まれていないため、見つけにくい場合があります。推奨される代替動詞は "{1}" です。</value>
+  </data>
+  <data name="ImportingNonStandardNoun" xml:space="preserve">
+    <value>一部のインポートされたコマンド名には、次の制限文字が 1 つ以上含まれています: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ;: " ' &lt; &gt; | ?@ ` * % + = ~</value>
+  </data>
+  <data name="ImportingNonStandardNounVerbose" xml:space="preserve">
+    <value>モジュール '{1}' のコマンド名 '{0}' には、次の制限文字が 1 つ以上含まれています: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ;: " ' &lt; &gt; | ?@ ` * % + = ~</value>
+  </data>
+  <data name="CreatingModuleManifestFile" xml:space="preserve">
+    <value>"{0}" モジュール マニフェスト ファイルを作成しています。</value>
+  </data>
+  <data name="ConfirmRemoveModule" xml:space="preserve">
+    <value>{0} (パス: '{1}')</value>
+  </data>
+  <data name="InvalidProcessorArchitecture" xml:space="preserve">
+    <value>現在のプロセッサ アーキテクチャは {0} です。モジュール '{1}' には、次のアーキテクチャが必要です: {2}。</value>
+  </data>
+  <data name="InvalidPowerShellHostName" xml:space="preserve">
+    <value>現在の PowerShell ホストの名前は '{0}' です。モジュール '{1}' には、次の PowerShell ホストが必要です: '{2}'。</value>
+  </data>
+  <data name="InvalidPowerShellHostVersion" xml:space="preserve">
+    <value>現在の PowerShell ホストは '{0}' (バージョン {1}) です。モジュール '{2}' を実行するには、PowerShell ホストの最小バージョン '{3}' が必要です。</value>
+  </data>
+  <data name="ManifestHeaderLine1" xml:space="preserve">
+    <value>モジュール '{0}' のモジュール マニフェスト</value>
+  </data>
+  <data name="ManifestHeaderLine2" xml:space="preserve">
+    <value>生成元: {0}</value>
+  </data>
+  <data name="ManifestHeaderLine3" xml:space="preserve">
+    <value>生成日: {0}</value>
+  </data>
+  <data name="RootModule" xml:space="preserve">
+    <value>このマニフェストに関連付けられているスクリプト モジュールまたはバイナリ モジュール ファイル。</value>
+  </data>
+  <data name="NestedModules" xml:space="preserve">
+    <value>RootModule/ModuleToProcess で指定されたモジュールの入れ子になったモジュールとしてインポートするモジュール</value>
+  </data>
+  <data name="GUID" xml:space="preserve">
+    <value>このモジュールを一意に識別するために使用される ID</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>このモジュールの作成者</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>このモジュールの会社またはベンダー</value>
+  </data>
+  <data name="Copyright" xml:space="preserve">
+    <value>このモジュールの著作権に関する声明</value>
+  </data>
+  <data name="ModuleVersion" xml:space="preserve">
+    <value>このモジュールのバージョン番号。</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>このモジュールによって提供される機能の説明</value>
+  </data>
+  <data name="PowerShellVersion" xml:space="preserve">
+    <value>このモジュールで必要な PowerShell エンジンの最小バージョン</value>
+  </data>
+  <data name="CLRVersion" xml:space="preserve">
+    <value>このモジュールに必要な共通言語ランタイム (CLR) の最小バージョン。{0}</value>
+  </data>
+  <data name="RequiredModules" xml:space="preserve">
+    <value>このモジュールをインポートする前にグローバル環境にインポートする必要があるモジュール</value>
+  </data>
+  <data name="ScriptsToProcess" xml:space="preserve">
+    <value>このモジュールをインポートする前に呼び出し元の環境で実行されるスクリプト ファイル (.ps1)。</value>
+  </data>
+  <data name="TypesToProcess" xml:space="preserve">
+    <value>このモジュールのインポート時に読み込まれる型ファイル (.ps1xml)</value>
+  </data>
+  <data name="FormatsToProcess" xml:space="preserve">
+    <value>このモジュールのインポート時に読み込まれるフォーマット ファイル (.ps1xml)</value>
+  </data>
+  <data name="RequiredAssemblies" xml:space="preserve">
+    <value>このモジュールをインポートする前に読み込む必要があるアセンブリ</value>
+  </data>
+  <data name="FileList" xml:space="preserve">
+    <value>このモジュールでパッケージ化されたすべてのファイルの一覧</value>
+  </data>
+  <data name="PrivateData" xml:space="preserve">
+    <value>RootModule/ModuleToProcess で指定されたモジュールに渡す非公開データ。これには、PowerShell で使用される追加のモジュール メタデータを含む PSData ハッシュテーブルも含まれる場合があります。</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>このモジュールに適用されるタグ。これらは、オンライン ギャラリーでのモジュール検出に役立ちます。</value>
+  </data>
+  <data name="ProjectUri" xml:space="preserve">
+    <value>このプロジェクトのメイン Web サイトの URL。</value>
+  </data>
+  <data name="LicenseUri" xml:space="preserve">
+    <value>このモジュールのライセンスの URL。</value>
+  </data>
+  <data name="IconUri" xml:space="preserve">
+    <value>このモジュールを表すアイコンの URL。</value>
+  </data>
+  <data name="ReleaseNotes" xml:space="preserve">
+    <value>このモジュールの ReleaseNotes</value>
+  </data>
+  <data name="Prerelease" xml:space="preserve">
+    <value>このモジュールのプレリリース文字列</value>
+  </data>
+  <data name="RequireLicenseAcceptance" xml:space="preserve">
+    <value>モジュールがインストール/更新/保存に明示的なユーザーの同意を必要とするかどうかを示すフラグ</value>
+  </data>
+  <data name="ExternalModuleDependencies" xml:space="preserve">
+    <value>このモジュールの外部依存モジュール</value>
+  </data>
+  <data name="EndOfManifestHashTable" xml:space="preserve">
+    <value>{0} ハッシュテーブルの終わり</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableError" xml:space="preserve">
+    <value>PrivateData パラメーター値は、次のパラメーター値 Tags、ProjectUri、LicenseUri、IconUri、または ReleaseNotes を含むモジュール マニフェストを作成するためのハッシュ テーブルである必要があります。Tags、ProjectUri、LicenseUri、IconUri、または ReleaseNotes パラメーター値を削除するか、PrivateData の内容をハッシュテーブルにラップします。</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableWarning" xml:space="preserve">
+    <value>PrivateData はハッシュテーブルとして定義する必要がありますが、このモジュール マニフェストではこれをオブジェクトとして定義します。PrivateData の内容をハッシュテーブルにラップすることを検討してください。これにより、後で Tags、ProjectUri、LicenseUri、IconUri、ReleaseNotes の各プロパティをモジュール マニフェストに追加できます。</value>
+  </data>
+  <data name="InvalidParameterValue" xml:space="preserve">
+    <value>指定された値 '{0}' は無効です。有効な値でもう一度お試しください。</value>
+  </data>
+  <data name="FunctionsToExport" xml:space="preserve">
+    <value>このモジュールからエクスポートする関数は、最適なパフォーマンスを得るためにワイルドカードを使用せず、エントリを削除しないでください。エクスポートする関数がない場合は空の配列を使用します。</value>
+  </data>
+  <data name="AliasesToExport" xml:space="preserve">
+    <value>このモジュールからエクスポートするエイリアスは、最適なパフォーマンスを得るためにワイルドカードを使用せず、エントリを削除しないでください。エクスポートするエイリアスがない場合は空の配列を使用します。</value>
+  </data>
+  <data name="CmdletsToExport" xml:space="preserve">
+    <value>このモジュールからエクスポートするコマンドレットは、最適なパフォーマンスを得るためにワイルドカードを使用せず、エントリを削除しないでください。エクスポートするコマンドレットがない場合は空の配列を使用します。</value>
+  </data>
+  <data name="VariablesToExport" xml:space="preserve">
+    <value>このモジュールからエクスポートする変数</value>
+  </data>
+  <data name="DscResourcesToExport" xml:space="preserve">
+    <value>このモジュールからエクスポートする DSC リソース</value>
+  </data>
+  <data name="CompatiblePSEditions" xml:space="preserve">
+    <value>サポートされている PSEditions</value>
+  </data>
+  <data name="ProcessorArchitecture" xml:space="preserve">
+    <value>このモジュールで必要なプロセッサ アーキテクチャ (なし、X86、Amd64)</value>
+  </data>
+  <data name="ModuleList" xml:space="preserve">
+    <value>このモジュールでパッケージ化されたすべてのモジュールの一覧</value>
+  </data>
+  <data name="DotNetFrameworkVersion" xml:space="preserve">
+    <value>このモジュールで必要な Microsoft .NET Framework の最小バージョン。{0}</value>
+  </data>
+  <data name="PowerShellHostName" xml:space="preserve">
+    <value>このモジュールで必要な PowerShell ホストの名前</value>
+  </data>
+  <data name="PowerShellHostVersion" xml:space="preserve">
+    <value>このモジュールで必要な PowerShell ホストの最小バージョン</value>
+  </data>
+  <data name="HelpInfoURI" xml:space="preserve">
+    <value>このモジュールの HelpInfo の URI</value>
+  </data>
+  <data name="ModuleDriveInUse" xml:space="preserve">
+    <value>{0} モジュールは現在の PowerShell セッションで PSDrive を提供しているため、モジュールは削除されませんでした。現在の PSDrive プロバイダーを変更してから、モジュールを削除し直してください。</value>
+  </data>
+  <data name="ImportModuleNoClobberForCmdlet" xml:space="preserve">
+    <value>現在のスコープに同じ名前のメンバーが存在するため、コマンドレット '{0}' はインポートされませんでした。</value>
+  </data>
+  <data name="ImportModuleNoClobberForAlias" xml:space="preserve">
+    <value>現在のスコープに同じ名前のメンバーが存在するため、エイリアス '{0}' はインポートされませんでした。</value>
+  </data>
+  <data name="ImportModuleNoClobberForFunction" xml:space="preserve">
+    <value>現在のスコープに同じ名前のメンバーが存在するため、関数 '{0}' はインポートされませんでした。</value>
+  </data>
+  <data name="ImportModuleNoClobberForVariable" xml:space="preserve">
+    <value>現在のスコープに同じ名前のメンバーが存在するため、変数 '{0}' はインポートされませんでした。</value>
+  </data>
+  <data name="WildCardNotAllowedInModuleToProcessAndInNestedModules" xml:space="preserve">
+    <value>ワイルドカード文字は、モジュール マニフェスト '{0}' のメンバー 'ModuleToProcess'、'RootModule'、または 'NestedModules' では使用できません。</value>
+  </data>
+  <data name="CoreModuleCannotBeRemoved" xml:space="preserve">
+    <value>モジュール '{0}' は PowerShell のコア モジュールです。Force パラメーターをコマンドに追加して、コア モジュールを削除します。</value>
+  </data>
+  <data name="ModuleManifestCannotContainBothModuleToProcessAndRootModule" xml:space="preserve">
+    <value>モジュール マニフェストに 'ModuleToProcess' メンバーと 'RootModule' メンバーの両方を含めることはできません。モジュール マニフェスト ファイルを変更して、'{0}' にあるこれらのメンバーのいずれかを削除してから、もう一度やり直してください。</value>
+  </data>
+  <data name="ModuleToProcessFieldDeprecated" xml:space="preserve">
+    <value>モジュール マニフェスト メンバー 'ModuleToProcess' は非推奨になりました。代わりに 'RootModule' メンバーを使用してください。</value>
+  </data>
+  <data name="DefaultCommandPrefix" xml:space="preserve">
+    <value>このモジュールからエクスポートされたコマンドの既定のプレフィックス。Import-Module -Prefix を使用して既定のプレフィックスをオーバーライドします。</value>
+  </data>
+  <data name="GlobalAndScopeParameterCannotBeSpecifiedTogether" xml:space="preserve">
+    <value>'Global' パラメーターと 'Scope' パラメーターを同時に指定することはできません。これらのパラメーターのいずれかを削除してから、コマンドを再実行してください。</value>
+  </data>
+  <data name="RequiredModulesCyclicDependency" xml:space="preserve">
+    <value>必要なモジュール '{0}' が読み込まれていません。モジュール '{0}' のモジュール マニフェスト '{2}' に、循環依存関係を指す requiredModule '{1}' があります。</value>
+  </data>
+  <data name="RequiredModuleNotFound" xml:space="preserve">
+    <value>必要なモジュール '{0}' は、モジュール ディレクトリに有効なモジュール ファイルが見つからなかったため読み込まれませんでした。</value>
+  </data>
+  <data name="MixedModuleOverCimSessionWarning" xml:space="preserve">
+    <value>モジュール {0} の一部のコマンドを CimSession 経由でインポートすることはできません。すべてのコマンドを取得するには、リモート サーバーで PowerShell リモート管理が有効になっていることを確認してから、Import-Module コマンドレットに PSSession パラメーターを追加してみてください。</value>
+  </data>
+  <data name="WinCompatModuleWarning" xml:space="preserve">
+    <value>モジュール {0} は、{1} リモート処理セッションを使用してWindows PowerShell に読み込まれます。このモジュールからのコマンドの入力と出力はすべて逆シリアル化されるオブジェクトであることに注意してください。このモジュールを PowerShell に読み込む場合は、'Import-Module -SkipEditionCheck' 構文を使用してください。</value>
+  </data>
+  <data name="WinCompatRequredVersionError" xml:space="preserve">
+    <value>Windows PowerShell のバージョン {0} を検出しました。Windows PowerShell 互換性機能を使用してモジュールを読み込むには、Windows PowerShell 5.1 が必要です。https://aka.ms/WMF5Download から Windows Management Framework (WMF) 5.1 をインストールして、この機能を有効にしてください。</value>
+  </data>
+  <data name="WinCompatModuleInDenyList" xml:space="preserve">
+    <value>モジュール '{0}' は、PowerShell 構成ファイルの 'WindowsPowerShellCompatibilityModuleDenyList' 設定によって Windows PowerShell 互換性機能を使用して読み込むことがブロックされています。</value>
+  </data>
+  <data name="PsModuleOverCimSessionError" xml:space="preserve">
+    <value>モジュール {0} を CimSession 経由でインポートすることはできません。Import-Module コマンドレットの PSSession パラメーターを使用してみてください。</value>
+  </data>
+  <data name="InvalidProcessorArchitectureInManifest" xml:space="preserve">
+    <value>{0} のプロセッサ アーキテクチャ値はサポートされていません。New-ModuleManifest コマンドをもう一度実行し、プロセッサ アーキテクチャでサポートされている列挙値 (None、MSIL、X86、Amd64、Arm) のいずれかを指定します</value>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyInListAvailableMode" xml:space="preserve">
+    <value>リモート コンピューターに対して Get-Module コマンドレットを実行すると、使用可能なモジュールのみを一覧表示できます。ListAvailable パラメーターをコマンドに追加してから、もう一度やり直してください。</value>
+  </data>
+  <data name="ModuleLoadedAsASnapin" xml:space="preserve">
+    <value>'{0}' スナップインが既にインポートされているため、'{0}' モジュールはインポートされませんでした。</value>
+  </data>
+  <data name="WildCardNotAllowedInRequiredAssemblies" xml:space="preserve">
+    <value>ワイルドカード文字は、モジュール マニフェスト '{0}' のメンバー 'RequiredAssemblies' では使用できません。</value>
+  </data>
+  <data name="CmdletizationDoesSupportRexportingNestedModules" xml:space="preserve">
+    <value>{1} の {0} キーの値が {2} であり、モジュールに入れ子になったモジュールがあります。CDXML ファイルがルート モジュールの場合、入れ子になったモジュール内のコマンドをエクスポートできないため、Import-Module コマンドは失敗します。CDXML ファイルを NestedModules キーに移動し、コマンドを再試行してください。</value>
+    <comment>{0} is equal to either ModuleToProcess or RootModule
+{1} is a placeholder for a file path to psd1 file
+{2} is a placeholder for a file path to cdxml file</comment>
+  </data>
+  <data name="RemoteDiscoveryRemotePsrpCommandFailed" xml:space="preserve">
+    <value>リモート コマンドからのエラー: {0}: {{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToGenerateProxyForRemoteModule" xml:space="preserve">
+    <value>リモート モジュール '{0}' のプロキシを生成できませんでした。{{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToProcessRemoteModule" xml:space="preserve">
+    <value>リモート モジュール {0} を処理できませんでした。{1}</value>
+  </data>
+  <data name="RemoteDiscoveryFailureFromDiscoveryProvider" xml:space="preserve">
+    <value>リモート CimSession からモジュール データを受信できませんでした。{0}</value>
+  </data>
+  <data name="RequiredModuleNotFoundWrongGuidVersion" xml:space="preserve">
+    <value>有効なモジュール ファイルがモジュール ディレクトリに見つからなかったため、GUID '{1}' およびバージョン '{2}' の必要なモジュール '{0}' は読み込まれませんでした。</value>
+  </data>
+  <data name="RemoteDiscoveryProviderNotFound" xml:space="preserve">
+    <value>モジュール検出用の CIM プロバイダーが CIM サーバーで見つかりませんでした。{0}</value>
+    <comment>{0} is a placeholder for a more detailed error message</comment>
+  </data>
+  <data name="CannotDetectNetFrameworkVersion" xml:space="preserve">
+    <value>Microsoft .NET Framework のバージョン {0} は、許可されているバージョンの一覧に含まれていないため確認できません。</value>
+  </data>
+  <data name="ScriptAnalysisModule" xml:space="preserve">
+    <value>{0} を分析しています。</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="ScriptAnalysisPreparing" xml:space="preserve">
+    <value>初めて使用するモジュールを準備しています。</value>
+  </data>
+  <data name="DeterminingAvailableModules" xml:space="preserve">
+    <value>使用可能なモジュールを検索しています</value>
+  </data>
+  <data name="SearchingUncShare" xml:space="preserve">
+    <value>UNC 共有 {0} を検索しています。</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>リモート コンピューターに対する Get-Module コマンドレットの実行は、パスを含まないモジュール名に対してのみ実行できます。Name パラメーターには、次の要素 '{0}' があります。これはパスに解決されます。Name パラメーターを更新してパス要素を持たないようにしてから、もう一度やり直してください。</value>
+  </data>
+  <data name="ModuleDiscoveryForLoadedModulesWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>ListAvailable パラメーターを指定せずに Get-Module コマンドレットを実行することは、パスを含むモジュール名ではサポートされていません。Name パラメーターには、次の要素 '{0}' があります。これはパスに解決されます。Name パラメーターを更新してパス要素を持たないようにしてから、もう一度やり直してください。</value>
+  </data>
+  <data name="ModuleNotFoundForGetModule" xml:space="preserve">
+    <value>指定されたモジュール '{0}' が見つかりませんでした。有効なパスを指すように Name パラメーターを更新してから、もう一度やり直してください。</value>
+  </data>
+  <data name="PopulatingRepositorySourceLocation" xml:space="preserve">
+    <value>モジュール {0} の RepositorySourceLocation プロパティを設定しています。</value>
+  </data>
+  <data name="ManifestMemberNotValid" xml:space="preserve">
+    <value>処理するモジュール '{0}' は、モジュール マニフェスト '{2}' のフィールド '{1}' に一覧表示されましたが、処理されませんでした。{3}</value>
+  </data>
+  <data name="PrerequisiteForDesktopEditionOnly" xml:space="preserve">
+    <value>この前提条件は、PowerShell Desktop エディションでのみ有効です。</value>
+  </data>
+  <data name="PSEditionNotSupported" xml:space="preserve">
+    <value>モジュール '{0}' は現在の PowerShell エディション '{1}' をサポートしていません。サポートされているエディションは '{2}' です。このモジュールの互換性を無視するには、'Import-Module -SkipEditionCheck' を使用します。</value>
+  </data>
+  <data name="ImplicitWinCompatDisabled" xml:space="preserve">
+    <value>モジュール '{0}' は PowerShell エディション '{1}' をサポートしており、Windows 互換性機能を使用して暗黙的に読み込むことはできません。これは、設定ファイルで無効になっています。'Import-Module -UseWindowsPowerShell' を使用してこのモジュールを Windows PowerShell または 'Import-Module -SkipEditionCheck' で読み込み、現在の PowerShell でモジュールを読み込もうとします。</value>
+  </data>
+  <data name="ExperimentalFeatureNameMissingOrEmpty" xml:space="preserve">
+    <value>モジュール マニフェストで宣言された試験的機能には、空でない文字列値を指定する必要があります。</value>
+  </data>
+  <data name="InvalidExperimentalFeatureName" xml:space="preserve">
+    <value>1 つ以上の無効な試験的特徴名が見つかりました: {0}。モジュールの試験的機能名は、次の規則に従う必要があります: 'ModuleName.FeatureName'。</value>
+  </data>
+  <data name="SkipEditionCheckNotSupportedWithoutListAvailable" xml:space="preserve">
+    <value>-SkipEditionCheck スイッチ パラメーターは、-ListAvailable スイッチ パラメーターなしでは使用できません。</value>
+  </data>
+  <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>*.ps1 ファイルをモジュールとしてインポートすることは、ConstrainedLanguage モードでは許可されていません。</value>
+  </data>
+  <data name="MismatchedLanguageModes" xml:space="preserve">
+    <value>スクリプト モジュール {0} の読み込み中にエラーが発生しました。モジュール マニフェストが言語モードが異なるためです。マニフェスト言語モードは {1} で、モジュール言語モードが {2} です。すべてのモジュール ファイルが署名されているか、アプリケーションの許可リスト構成の一部であることを確認してください。</value>
+  </data>
+  <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
+    <value>このモジュールでは、ワイルドカード文字を使用して関数をエクスポートするときにドットソース演算子を使用します。これは、システムがアプリケーション検証の適用下にある場合は許可されません。</value>
+  </data>
+  <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
+    <value>実行中のセッションとは異なる言語モードのモジュールからモジュール メンバーをエクスポートすることはできません。</value>
+  </data>
+  <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
+    <value>セッションが ConstrainedLanguage モードの間は、新しいモジュールを作成できません。</value>
+  </data>
+  <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
+    <value>'Core' エディションと互換性のある組み込みモジュール '{0}' が見つかりません。PowerShell 組み込みモジュールが使用可能であることを確認してください。これらは通常、$PSHOME モジュール パスの下に PowerShell パッケージが付属しており、PowerShell が正常に機能するために必要です。</value>
+  </data>
+  <data name="WDACExportModuleCommandLogTitle" xml:space="preserve">
+    <value>Export-ModuleMember コマンドレット</value>
+  </data>
+  <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
+    <value>モジュール '{0}'、言語モード '{1}' が現在のセッション '{2}' とは異なるため、モジュール メンバーのエクスポートは制約付き言語モードで失敗します。</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
+    <value>モジュールの暗黙的な関数のエクスポート</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
+    <value>モジュール '{0}' の暗黙的な関数エクスポートは、信頼されている (完全言語モードで実行される) が、セッションが信頼されていない (制約言語モードで実行される) ため、拒否されます。モジュール関数は常にフル ネームで個別にエクスポートすることをお勧めします。</value>
+  </data>
+  <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
+    <value>モジュールとしてスクリプト ファイルをインポートしています</value>
+  </data>
+  <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
+    <value>スクリプト ファイル '{0}' をモジュールとしてインポートすることは、ConstrainedLanguage モードでは許可されません。</value>
+  </data>
+  <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
+    <value>モジュールにドットソース演算子が含まれています</value>
+  </data>
+  <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
+    <value>モジュール '{0}' のインポートは、ドットソース演算子を使用しながらワイルドカード文字を使用して関数をエクスポートするため、制約付き言語モードで失敗します。</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
+    <value>"モジュールエクスポート関数</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
+    <value>モジュール '{0}' は、名前のワイルドカード文字を使用して関数をエクスポートします。入れ子になったモジュール関数名は、制約付き言語モードで実行すると削除されます。</value>
+  </data>
+  <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
+    <value>"New-Module コマンドレット</value>
+  </data>
+  <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
+    <value>信頼されていない制約言語セッションからの新しいモジュールは、FullLanguage スクリプト ブロックの提供をブロックされます。</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
+    <value>"モジュールの言語モードが一致しません</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
+    <value>親とは異なる言語モードの依存モジュールが読み込まれています。これは、制約付き言語モードでは許可されません。</value>
+  </data>
+</root>

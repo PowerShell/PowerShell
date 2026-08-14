@@ -1092,14 +1092,11 @@ namespace System.Management.Automation
         {
             // Check first to see if File is a variable path. If so, we'll not create the FileBytePipe
             bool redirectToVariable = false;
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSRedirectToVariable))
+
+            context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(File, out ProviderInfo p, out _);
+            if (p != null && p.NameEquals(context.ProviderNames.Variable))
             {
-                ProviderInfo p;
-                context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(File, out p, out _);
-                if (p != null && p.NameEquals(context.ProviderNames.Variable))
-                {
-                    redirectToVariable = true;
-                }
+                redirectToVariable = true;
             }
 
             if (commandProcessor is NativeCommandProcessor nativeCommand
@@ -1223,12 +1220,10 @@ namespace System.Management.Automation
 
             // determine whether we're trying to set a variable by inspecting the file path
             // if we can determine that it's a variable, we'll use Set-Variable rather than Out-File
-            ProviderInfo p;
-            PSDriveInfo d;
             CommandProcessorBase commandProcessor;
-            var name = context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(File, out p, out d);
+            var name = context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(File, out ProviderInfo p, out _);
 
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSRedirectToVariable) && p != null && p.NameEquals(context.ProviderNames.Variable))
+            if (p != null && p.NameEquals(context.ProviderNames.Variable))
             {
                 commandProcessor = context.CreateCommand("Set-Variable", false);
                 Diagnostics.Assert(commandProcessor != null, "CreateCommand returned null");
@@ -3649,6 +3644,7 @@ namespace System.Management.Automation
 
     internal static class MemberInvocationLoggingOps
     {
+#if DEBUG
         private static readonly Lazy<bool> DumpLogAMSIContent = new Lazy<bool>(
             () => {
                 object result = Environment.GetEnvironmentVariable("__PSDumpAMSILogContent");
@@ -3659,6 +3655,7 @@ namespace System.Management.Automation
                 return false;
             }
         );
+#endif
 
         private static string ArgumentToString(object arg)
         {
@@ -3713,20 +3710,24 @@ namespace System.Management.Automation
 
                 string content = $"<{targetName}>.{name}({argsBuilder})";
 
+#if DEBUG
                 if (DumpLogAMSIContent.Value)
                 {
                     Console.WriteLine("\n=== Amsi notification report content ===");
                     Console.WriteLine(content);
                 }
+#endif
 
                 var success = AmsiUtils.ReportContent(
                     name: contentName,
                     content: content);
 
+#if DEBUG
                 if (DumpLogAMSIContent.Value)
                 {
                     Console.WriteLine($"=== Amsi notification report success: {success} ===");
                 }
+#endif
             }
             catch (PSSecurityException)
             {
@@ -3734,12 +3735,16 @@ namespace System.Management.Automation
                 // must be propagated.
                 throw;
             }
+#pragma warning disable CS0168 // variable declared but never used
             catch (Exception ex)
+#pragma warning restore CS0168
             {
+#if DEBUG
                 if (DumpLogAMSIContent.Value)
                 {
                     Console.WriteLine($"!!! Amsi notification report exception: {ex} !!!");
                 }
+#endif
             }
         }
     }

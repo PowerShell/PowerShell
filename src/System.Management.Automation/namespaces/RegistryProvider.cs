@@ -1835,7 +1835,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(
                         invalidCast,
                         invalidCast.GetType().FullName,
-                        ErrorCategory.ReadError, 
+                        ErrorCategory.ReadError,
                         path));
                 }
             }

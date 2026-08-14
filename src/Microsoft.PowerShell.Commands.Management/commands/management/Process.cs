@@ -2188,15 +2188,12 @@ namespace Microsoft.PowerShell.Commands
         #region IDisposable Overrides
 
         /// <summary>
-        /// Dispose WaitHandle used to honor -Wait parameter.
+        /// Release all resources.
         /// </summary>
+        /// <remarks>
+        /// Dispose WaitHandle used to honor -Wait parameter.
+        /// </remarks>
         public void Dispose()
-        {
-            Dispose(true);
-            System.GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool isDisposing)
         {
             _cancellationTokenSource.Dispose();
         }
@@ -2841,7 +2838,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class SECURITY_ATTRIBUTES
+        internal sealed class SECURITY_ATTRIBUTES
         {
             public int nLength;
             public SafeLocalMemHandle lpSecurityDescriptor;
@@ -2879,7 +2876,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class STARTUPINFO
+        internal sealed class STARTUPINFO
         {
             public int cb;
             public IntPtr lpReserved;

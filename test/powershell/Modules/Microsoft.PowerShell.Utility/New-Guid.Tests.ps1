@@ -17,6 +17,11 @@ Describe "New-Guid" -Tags "CI" {
         $guid.ToString() | Should -BeExactly "00000000-0000-0000-0000-000000000000"
     }
 
+    It "Should respect explicit false value for -Empty" {
+        $guid = New-Guid -Empty:$false
+        $guid.ToString() | Should -Not -BeExactly "00000000-0000-0000-0000-000000000000"
+    }
+
     It "Should convert a string to a guid" {
         $guid1 = New-Guid
         $guid2 = New-Guid -InputObject $guid1.ToString()
@@ -36,6 +41,12 @@ Describe "New-Guid" -Tags "CI" {
         $guids = 1..10 | foreach-object { [guid]::newguid() }
         $observed = $guids.Foreach({$_.ToString()}) | New-Guid
         $observed | Should -Be $guids
+    }
+
+    It "Should generate a UUID v7" {
+        $guid = New-Guid
+        # UUID v7 has version nibble '7' at position 14 in the string representation
+        $guid.ToString()[14] | Should -BeExactly '7'
     }
 
     It "Should return different guids with each call" {

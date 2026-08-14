@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -179,7 +179,7 @@
 To update these Help topics, start PowerShell by using the "Run as Administrator" command, and try running Update-Help again.</value>
   </data>
   <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
-    <value>To use the {0}, install Windows PowerShell ISE by using Server Manager, and then restart this application. ({1})</value>
+    <value>To use the {0}, make sure your application uses 'Microsoft.NET.Sdk.WindowsDesktop' as the project SDK and the corresponding assembly 'Microsoft.PowerShell.GraphicalHost' is available. ({1})</value>
   </data>
   <data name="RemotingNotSupportedForFeature" xml:space="preserve">
     <value>{0} does not work in a remote session.</value>

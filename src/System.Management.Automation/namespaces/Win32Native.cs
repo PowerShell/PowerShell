@@ -76,14 +76,14 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         #region Struct
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct SID_AND_ATTRIBUTES
         {
             internal IntPtr Sid;
             internal uint Attributes;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct TOKEN_USER
         {
             internal SID_AND_ATTRIBUTES User;

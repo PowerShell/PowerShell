@@ -40,7 +40,7 @@ namespace System.Management.Automation
                 // So eat the invalid operation
             }
 
-            string scriptContent = ReadScript(path);
+            string scriptContent = File.ReadAllText(path, Encoding.Default);
 
             ParseError[] errors;
             var moduleAst = (new Parser()).Parse(path, scriptContent, null, out errors, ParseMode.ModuleAnalysis);
@@ -87,19 +87,6 @@ namespace System.Management.Automation
             }
 
             return result;
-        }
-
-        internal static string ReadScript(string path)
-        {
-            using (FileStream readerStream = new FileStream(path, FileMode.Open, FileAccess.Read))
-            {
-                Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
-
-                using (StreamReader scriptReader = new StreamReader(readerStream, Encoding.Default))
-                {
-                    return scriptReader.ReadToEnd();
-                }
-            }
         }
 
         internal List<string> DiscoveredExports { get; set; }

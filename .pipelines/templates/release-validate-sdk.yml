@@ -1,8 +1,33 @@
 parameters:
-  jobName: ""
-  displayName: ""
-  poolName: "windows"
-  imageName: 'none'
+  - name: jobName
+    type: string
+    default: ""
+  - name: displayName
+    type: string
+    default: ""
+  - name: poolName
+    type: string
+    default: "windows"
+  - name: imageName
+    type: string
+    default: 'none'
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: DOTNET_RUNTIME_VERSION
+    displayName: Runtime version of early access build
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    displayName: SDK version of early access build
+    type: string
+    default: ' '
+  - name: dotnetArch
+    type: string
+    default: 'win-x64'
+  - name: EarlyAccessFeed
+    type: string
+    default: 'net10'
 
 jobs:
 - job: ${{ parameters.jobName }}
@@ -22,15 +47,19 @@ jobs:
   - group: mscodehub-feed-read-general
   - group: mscodehub-feed-read-akv
   - group: DotNetPrivateBuildAccess
+  - name: ISEARLYACCESS
+    value: ${{ parameters.IsEarlyAccess }}
+  - name: EARLY_ACCESS_FEED
+    value: ${{ parameters.EarlyAccessFeed }}
 
   steps:
     - checkout: self
       clean: true
       lfs: false
 
-    - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    - template: /.pipelines/templates/SetVersionVariables.yml@self
       parameters:
-        repoRoot: "$(Build.SourcesDirectory)"
+        ReleaseTagVar: $(ReleaseTagVar)
 
     - template: release-SetReleaseTagandContainerName.yml@self
 
@@ -46,22 +75,43 @@ jobs:
         Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg" -Recurse
       displayName: 'Capture Downloaded Artifacts'
 
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk'
-      inputs:
-        useGlobalJson: true
-        packageType: 'sdk'
-        workingDirectory: $(REPOROOT)
+    - template: /.pipelines/templates/install-dotnet.yml@self
+      parameters:
+        ob_restore_phase: false
+        architecture: ${{ parameters.dotnetArch }}
+
+    - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
 
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)"
 
+        Import-Module "$repoRoot/build.psm1" -Force -Verbose
+        Start-PSBootstrap -Scenario Dotnet
+
         $env:DOTNET_NOLOGO=1
+
+        $isEarlyAccess = '$(ISEARLYACCESS)'
+
+        $ADORepoUri = if ($isEarlyAccess -eq 'True')
+          {
+            $earlyAccessFeed = '$(EARLY_ACCESS_FEED)'
+            switch ($earlyAccessFeed) {
+                  'net8' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-8-early-access/nuget/v3/index.json' }
+                  'net9' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-9-early-access/nuget/v3/index.json' }
+                  'net10' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-10-early-access/nuget/v3/index.json' }
+                  default { throw "Unknown early access feed URL: $earlyAccessFeed" }
+              }
+          }
+          else {
+            "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v3/index.json"
+          }
+
+        Write-Verbose -Verbose "ADO Repo URI: $ADORepoUri"
 
         $localLocation = "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg"
         $xmlElement = @"
           <add key=`"local`" value=`"$localLocation`" />
-          <add key="dotnet" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2" />
+          <add key=`"dotnet`" value=`"$ADORepoUri`" />
         </packageSources>
         "@
 

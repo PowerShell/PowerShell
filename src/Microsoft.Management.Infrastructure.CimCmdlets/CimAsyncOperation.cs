@@ -381,7 +381,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (value is PSReference cimReference)
             {
                 object baseObject = GetBaseObject(cimReference.Value);
-                if (!(baseObject is CimInstance cimInstance))
+                if (baseObject is not CimInstance cimInstance)
                 {
                     return null;
                 }
@@ -403,7 +403,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimInstance[] cimInstanceArray = new CimInstance[cimReferenceArray.Length];
                 for (int i = 0; i < cimReferenceArray.Length; i++)
                 {
-                    if (!(cimReferenceArray[i] is PSReference tempCimReference))
+                    if (cimReferenceArray[i] is not PSReference tempCimReference)
                     {
                         return null;
                     }

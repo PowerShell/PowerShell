@@ -5,12 +5,11 @@
     Install PowerShell on Windows, Linux or macOS.
 .DESCRIPTION
     By default, the latest PowerShell release package will be installed.
-    If '-Daily' is specified, then the latest PowerShell daily package will be installed.
+    If '-Preview' is specified, then the latest PowerShell preview package will be installed.
 .Parameter Destination
     The destination path to install PowerShell to.
-.Parameter Daily
-    Install PowerShell from the daily build.
-    Note that the 'PackageManagement' module is required to install a daily package.
+.Parameter Preview
+    Install the latest PowerShell preview build.
 .Parameter DoNotOverwrite
     Do not overwrite the destination folder if it already exists.
 .Parameter AddToPath
@@ -18,24 +17,27 @@
     On Linux, make the symlink '/usr/bin/pwsh' points to "$Destination/pwsh";
     On MacOS, make the symlink '/usr/local/bin/pwsh' points to "$Destination/pwsh".
 .EXAMPLE
-    Install the daily build
-    .\install-powershell.ps1 -Daily
+    Install the preview build
+    .\install-powershell.ps1 -Preview
 .EXAMPLE
     Invoke this script directly from GitHub
-    Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -daily"
+    Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -Preview"
 #>
-[CmdletBinding(DefaultParameterSetName = "Daily")]
+[CmdletBinding()]
 param(
-    [Parameter(ParameterSetName = "Daily")]
+    [Parameter()]
+    [switch] $Preview,
+
+    [Parameter()]
+    [switch] $Daily, # Exists for backward compatibility
+
+    [Parameter()]
     [string] $Destination,
 
-    [Parameter(ParameterSetName = "Daily")]
-    [switch] $Daily,
-
-    [Parameter(ParameterSetName = "Daily")]
+    [Parameter()]
     [switch] $DoNotOverwrite,
 
-    [Parameter(ParameterSetName = "Daily")]
+    [Parameter()]
     [switch] $AddToPath,
 
     [Parameter(ParameterSetName = "MSI")]
@@ -48,10 +50,7 @@ param(
     [switch] $AddExplorerContextMenu,
 
     [Parameter(ParameterSetName = "MSI")]
-    [switch] $EnablePSRemoting,
-
-    [Parameter()]
-    [switch] $Preview
+    [switch] $EnablePSRemoting
 )
 
 Set-StrictMode -Version 3.0
@@ -61,6 +60,11 @@ $IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
 $IsMacOSEnv = (Get-Variable -Name "IsMacOS" -ErrorAction Ignore) -and $IsMacOS
 $IsWinEnv = !$IsLinuxEnv -and !$IsMacOSEnv
 
+if ($Daily) {
+    $Preview = $true
+    Write-Warning "The '-Daily' build is deprecated. Continuing as if '-Preview' was specified instead."
+}
+
 if (-not $Destination) {
     if ($IsWinEnv) {
         $Destination = "$env:LOCALAPPDATA\Microsoft\powershell"
@@ -68,8 +72,8 @@ if (-not $Destination) {
         $Destination = "~/.powershell"
     }
 
-    if ($Daily) {
-        $Destination = "${Destination}-daily"
+    if ($Preview) {
+        $Destination = "${Destination}-preview"
     }
 }
 
@@ -265,145 +269,68 @@ try {
     $originalValue = [Net.ServicePointManager]::SecurityProtocol
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
-    if ($Daily) {
-        $metadata = Invoke-RestMethod 'https://aka.ms/pwsh-buildinfo-daily'
+    $metadata = Invoke-RestMethod 'https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json'
+    if ($Preview) {
+        $release = $metadata.PreviewReleaseTag -replace '^v'
+    } else {
         $release = $metadata.ReleaseTag -replace '^v'
+    }
 
-        # Get version from currently installed PowerShell Daily if available.
-        $pwshPath = if ($IsWinEnv) {Join-Path $Destination "pwsh.exe"} else {Join-Path $Destination "pwsh"}
-        $currentlyInstalledVersion = if(Test-Path $pwshPath) {
-            ((& $pwshPath -version) -split " ")[1]
+    if ($IsWinEnv) {
+        if ($UseMSI) {
+            $packageName = "PowerShell-${release}-win-${architecture}.msi"
+        } else {
+            $packageName = "PowerShell-${release}-win-${architecture}.zip"
         }
+    } elseif ($IsLinuxEnv) {
+        $packageName = "powershell-${release}-linux-${architecture}.tar.gz"
+    } elseif ($IsMacOSEnv) {
+        $packageName = "powershell-${release}-osx-${architecture}.tar.gz"
+    }
 
-        if($currentlyInstalledVersion -eq $release) {
-            Write-Verbose "Latest PowerShell Daily already installed." -Verbose
-            return
-        }
+    $downloadURL = "https://github.com/PowerShell/PowerShell/releases/download/v${release}/${packageName}"
+    Write-Verbose "About to download package from '$downloadURL'" -Verbose
 
-        if ($IsWinEnv) {
-            if ($UseMSI) {
-                $packageName = "PowerShell-${release}-win-${architecture}.msi"
-            } else {
-                $packageName = "PowerShell-${release}-win-${architecture}.zip"
-            }
-        } elseif ($IsLinuxEnv) {
-            $packageName = "powershell-${release}-linux-${architecture}.tar.gz"
-        } elseif ($IsMacOSEnv) {
-            $packageName = "powershell-${release}-osx-${architecture}.tar.gz"
-        }
+    $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
+    if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
+        # On Windows PowerShell, progress can make the download significantly slower
+        $oldProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
 
-        if ($architecture -ne "x64") {
-            throw "The OS architecture is '$architecture'. However, we currently only support daily package for x64."
-        }
-
-        $downloadURL = "https://powershellinfraartifacts-gkhedzdeaghdezhr.z01.azurefd.net/install/$($metadata.ReleaseTag)/$packageName"
-        Write-Verbose "About to download package from '$downloadURL'" -Verbose
-
-        $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
+    try {
+        Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
+    } finally {
         if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
-            # On Windows PowerShell, progress can make the download significantly slower
-            $oldProgressPreference = $ProgressPreference
-            $ProgressPreference = "SilentlyContinue"
+            $ProgressPreference = $oldProgressPreference
         }
+    }
 
-        try {
-            Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
-        } finally {
-            if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
-                $ProgressPreference = $oldProgressPreference
+    $contentPath = Join-Path -Path $tempDir -ChildPath "new"
+
+    $null = New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
+    if ($IsWinEnv) {
+        if ($UseMSI -and $Quiet) {
+            Write-Verbose "Performing quiet install"
+            $ArgumentList=@("/i", $packagePath, "/quiet")
+            if($MSIArguments) {
+                $ArgumentList+=$MSIArguments
             }
-        }
-
-        $contentPath = Join-Path -Path $tempDir -ChildPath "new"
-
-        $null = New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
-        if ($IsWinEnv) {
-            if ($UseMSI -and $Quiet) {
-                Write-Verbose "Performing quiet install"
-                $ArgumentList=@("/i", $packagePath, "/quiet")
-                if($MSIArguments) {
-                    $ArgumentList+=$MSIArguments
-                }
-                $process = Start-Process msiexec -ArgumentList $ArgumentList -Wait -PassThru
-                if ($process.exitcode -ne 0) {
-                    throw "Quiet install failed, please rerun install without -Quiet switch or ensure you have administrator rights"
-                }
-            } elseif ($UseMSI) {
-                if($MSIArguments) {
-                    Start-Process $packagePath -ArgumentList $MSIArguments -Wait
-                } else {
-                    Start-Process $packagePath -Wait
-                }
+            $process = Start-Process msiexec -ArgumentList $ArgumentList -Wait -PassThru
+            if ($process.exitcode -ne 0) {
+                throw "Quiet install failed, please rerun install without -Quiet switch or ensure you have administrator rights"
+            }
+        } elseif ($UseMSI) {
+            if($MSIArguments) {
+                Start-Process $packagePath -ArgumentList $MSIArguments -Wait
             } else {
-                Expand-ArchiveInternal -Path $packagePath -DestinationPath $contentPath
+                Start-Process $packagePath -Wait
             }
         } else {
-            tar zxf $packagePath -C $contentPath
+            Expand-ArchiveInternal -Path $packagePath -DestinationPath $contentPath
         }
     } else {
-        $metadata = Invoke-RestMethod https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json
-        if ($Preview) {
-            $release = $metadata.PreviewReleaseTag -replace '^v'
-        } else {
-            $release = $metadata.ReleaseTag -replace '^v'
-        }
-
-        if ($IsWinEnv) {
-            if ($UseMSI) {
-                $packageName = "PowerShell-${release}-win-${architecture}.msi"
-            } else {
-                $packageName = "PowerShell-${release}-win-${architecture}.zip"
-            }
-        } elseif ($IsLinuxEnv) {
-            $packageName = "powershell-${release}-linux-${architecture}.tar.gz"
-        } elseif ($IsMacOSEnv) {
-            $packageName = "powershell-${release}-osx-${architecture}.tar.gz"
-        }
-
-        $downloadURL = "https://github.com/PowerShell/PowerShell/releases/download/v${release}/${packageName}"
-        Write-Verbose "About to download package from '$downloadURL'" -Verbose
-
-        $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
-        if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
-            # On Windows PowerShell, progress can make the download significantly slower
-            $oldProgressPreference = $ProgressPreference
-            $ProgressPreference = "SilentlyContinue"
-        }
-
-        try {
-            Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
-        } finally {
-            if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
-                $ProgressPreference = $oldProgressPreference
-            }
-        }
-
-        $contentPath = Join-Path -Path $tempDir -ChildPath "new"
-
-        $null = New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
-        if ($IsWinEnv) {
-            if ($UseMSI -and $Quiet) {
-                Write-Verbose "Performing quiet install"
-                $ArgumentList=@("/i", $packagePath, "/quiet")
-                if($MSIArguments) {
-                    $ArgumentList+=$MSIArguments
-                }
-                $process = Start-Process msiexec -ArgumentList $ArgumentList -Wait -PassThru
-                if ($process.exitcode -ne 0) {
-                    throw "Quiet install failed, please rerun install without -Quiet switch or ensure you have administrator rights"
-                }
-            } elseif ($UseMSI) {
-                if($MSIArguments) {
-                    Start-Process $packagePath -ArgumentList $MSIArguments -Wait
-                } else {
-                    Start-Process $packagePath -Wait
-                }
-            } else {
-                Expand-ArchiveInternal -Path $packagePath -DestinationPath $contentPath
-            }
-        } else {
-            tar zxf $packagePath -C $contentPath
-        }
+        tar zxf $packagePath -C $contentPath
     }
 
     if (-not $UseMSI) {

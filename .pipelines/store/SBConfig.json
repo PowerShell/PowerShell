@@ -1,0 +1,69 @@
+{
+  "helpUri": "https:\\\\aka.ms\\StoreBroker_Config",
+  "schemaVersion": 2,
+  "packageParameters": {
+    "PDPRootPath": "",
+    "Release": "",
+    "PDPInclude": [
+      "PDP.xml"
+    ],
+    "PDPExclude": [],
+    "LanguageExclude": [
+      "default",
+      "qps-ploc",
+      "qps-ploca",
+      "qps-plocm"
+    ],
+    "MediaRootPath": "",
+    "MediaFallbackLanguage": "en-US",
+    "PackagePath": [],
+    "OutPath": "",
+    "OutName": "",
+    "DisableAutoPackageNameFormatting": false
+  },
+  "appSubmission": {
+    "productId": "",
+    "targetPublishMode": "Immediate",
+    "targetPublishDate": null,
+    "visibility": "NotSet",
+    "pricing": {
+      "priceId": "NotAvailable",
+      "trialPeriod": "NoFreeTrial",
+      "marketSpecificPricings": {},
+      "sales": []
+    },
+    "allowTargetFutureDeviceFamilies": {
+      "Xbox": false,
+      "Team": false,
+      "Holographic": false,
+      "Desktop": false,
+      "Mobile": false
+    },
+    "allowMicrosoftDecideAppAvailabilityToFutureDeviceFamilies": false,
+    "enterpriseLicensing": "None",
+    "applicationCategory": "NotSet",
+    "hardwarePreferences": [],
+    "hasExternalInAppProducts": false,
+    "meetAccessibilityGuidelines": false,
+    "canInstallOnRemovableMedia": false,
+    "automaticBackupEnabled": false,
+    "isGameDvrEnabled": false,
+    "gamingOptions": [
+      {
+        "genres": [],
+        "isLocalMultiplayer": false,
+        "isLocalCooperative": false,
+        "isOnlineMultiplayer": false,
+        "isOnlineCooperative": false,
+        "localMultiplayerMinPlayers": 0,
+        "localMultiplayerMaxPlayers": 0,
+        "localCooperativeMinPlayers": 0,
+        "localCooperativeMaxPlayers": 0,
+        "isBroadcastingPrivilegeGranted": false,
+        "isCrossPlayEnabled": false,
+        "kinectDataForExternal": "Disabled"
+      }
+    ],
+    "notesForCertification": ""
+  }
+}

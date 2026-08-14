@@ -28,7 +28,7 @@ pr:
     - .dependabot/config.yml
     - .github/ISSUE_TEMPLATE/*
     - .vsts-ci/misc-analysis.yml
-    - tools/cgmanifest.json
+    - tools/cgmanifest/*
     - LICENSE.txt
     - test/common/markdown/*
     - test/perf/*

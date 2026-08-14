@@ -166,7 +166,7 @@ open {0}
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework="net10.0"></group>
+            <group targetFramework="net11.0"></group>
         </dependencies>
     </metadata>
 </package>

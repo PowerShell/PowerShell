@@ -37,3 +37,5 @@ We cannot do this for you in the build module due to #[847][].
 Start a PowerShell session by running `pwsh`, and then use `Start-PSBuild -UseNuGetOrg` from the module.
 
 After building, PowerShell will be at `./src/powershell-unix/bin/Debug/net6.0/osx-x64/publish/pwsh`.
+
+> The PowerShell project by default references packages from the private Azure Artifacts feed, which requires authentication. The `-UseNuGetOrg` flag reconfigures the build to use the public NuGet.org feed instead.

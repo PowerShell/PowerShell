@@ -30,7 +30,7 @@ namespace BenchmarkDotNet.Extensions
         {
             public bool Equals(BenchmarkCase x, BenchmarkCase y)
                 => Enumerable.SequenceEqual(
-                    x.Parameters.Items.Select(argument => argument.Value), 
+                    x.Parameters.Items.Select(argument => argument.Value),
                     y.Parameters.Items.Select(argument => argument.Value));
 
             public int GetHashCode(BenchmarkCase obj)

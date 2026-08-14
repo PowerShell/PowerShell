@@ -70,6 +70,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Extension mechanism for shape specific parameters.
         /// </summary>
         internal ShapeSpecificParameters shapeParameters = null;
+
+        /// <summary>
+        /// Filter for excluding properties from formatting.
+        /// </summary>
+        internal PSPropertyExpressionFilter excludePropertyFilter = null;
     }
 
     /// <summary>

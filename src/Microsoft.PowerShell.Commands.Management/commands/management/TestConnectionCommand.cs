@@ -242,14 +242,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            switch (ParameterSetName)
+            if (Repeat)
             {
-                case RepeatPingParameterSet:
-                    Count = int.MaxValue;
-                    break;
-                case TcpPortParameterSet:
-                    SetCountForTcpTest();
-                    break;
+                Count = int.MaxValue;
+            }
+            else if (ParameterSetName == TcpPortParameterSet)
+            {
+                SetCountForTcpTest();
             }
         }
 
@@ -265,21 +264,22 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (var targetName in TargetName)
             {
-                switch (ParameterSetName)
+                if (MtuSize)
                 {
-                    case DefaultPingParameterSet:
-                    case RepeatPingParameterSet:
-                        ProcessPing(targetName);
-                        break;
-                    case MtuSizeDetectParameterSet:
-                        ProcessMTUSize(targetName);
-                        break;
-                    case TraceRouteParameterSet:
-                        ProcessTraceroute(targetName);
-                        break;
-                    case TcpPortParameterSet:
-                        ProcessConnectionByTCPPort(targetName);
-                        break;
+                    ProcessMTUSize(targetName);
+                }
+                else if (Traceroute)
+                {
+                    ProcessTraceroute(targetName);
+                }
+                else if (ParameterSetName == TcpPortParameterSet)
+                {
+                    ProcessConnectionByTCPPort(targetName);
+                }
+                else
+                {
+                    // None of the switch parameters are true: handle default ping or -Repeat
+                    ProcessPing(targetName);
                 }
             }
         }
@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetCountForTcpTest()
         {
-            if (Repeat.IsPresent)
+            if (Repeat)
             {
                 Count = int.MaxValue;
             }

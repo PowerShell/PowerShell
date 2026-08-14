@@ -63,3 +63,17 @@ Describe "Hidden properties should not be returned by the 'FirstOrDefault' primi
         $outstring.Trim() | Should -BeExactly "Param$([System.Environment]::NewLine)-----$([System.Environment]::NewLine)Foo"
     }
 }
+
+Describe "'Format-Table/List/Custom -Property' should not throw NullRef exception" -Tag CI {
+
+    It "'<Command> -Property' requires value to be not null and not empty" -TestCases @(
+        @{ Command = "Format-Table"; NameInErrorId = "FormatTableCommand" }
+        @{ Command = "Format-List"; NameInErrorId = "FormatListCommand" }
+        @{ Command = "Format-Custom"; NameInErrorId = "FormatCustomCommand" }
+    ) {
+        param($Command, $NameInErrorId)
+
+        { Get-Process -Id $PID | & $Command -Property @() } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.$NameInErrorId"
+        { Get-Process -Id $PID | & $Command -Property $null } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.$NameInErrorId"
+    }
+}

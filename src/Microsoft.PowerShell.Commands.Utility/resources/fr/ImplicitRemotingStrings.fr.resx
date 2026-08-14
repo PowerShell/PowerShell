@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ErrorMalformedDataFromRemoteCommand" xml:space="preserve">
+    <value>Les données renvoyées par la commande distante {0} n’ont pas le format attendu.</value>
+  </data>
+  <data name="ErrorRequiredRemoteCommandNotFound" xml:space="preserve">
+    <value>La cmdlet {0} nécessite les commandes suivantes dans la session distante : Get-Command, Get-FormatData et Select-Object. Les commandes suivantes sont utilisées, mais facultatives : Get-Help et Measure-Object. Vérifiez que la session distante inclut les commandes nécessaires, puis réessayez.</value>
+  </data>
+  <data name="ErrorFromRemoteCommand" xml:space="preserve">
+    <value>L’exécution de la commande {0} dans une session distante a signalé l’erreur suivante : {1}.</value>
+  </data>
+  <data name="ErrorNoResultsFromRemoteEnd" xml:space="preserve">
+    <value>L’exécution de la commande {0} dans une session distante n’a renvoyé aucun résultat.</value>
+  </data>
+  <data name="ErrorNoRunspaceForThisModule" xml:space="preserve">
+    <value>Aucune session n’a été associée à ce module de communication à distance implicite.</value>
+  </data>
+  <data name="ErrorCouldntResolveAlias" xml:space="preserve">
+    <value>Nous n’avons pas pu résoudre l’alias distant « {0} ».</value>
+  </data>
+  <data name="ErrorSkippedNonRequestedCommand" xml:space="preserve">
+    <value>La création du proxy a été ignorée pour la commande « {0} », car le nom ne correspondait pas à la valeur du paramètre Name.</value>
+  </data>
+  <data name="ErrorSkippedNonRequestedTypeDefinition" xml:space="preserve">
+    <value>La définition de type étendue a été ignorée pour le type « {0} », car son nom ne correspondait pas à la valeur du paramètre FormatTypeName.</value>
+  </data>
+  <data name="ErrorSkippedUnsafeCommandName" xml:space="preserve">
+    <value>La création du proxy a été ignorée pour la commande « {0} », car PowerShell n’a pas pu vérifier la sécurité du nom de la commande.</value>
+  </data>
+  <data name="ErrorCommandSkippedBecauseOfShadowing" xml:space="preserve">
+    <value>La création du proxy a été ignorée pour la commande suivante : « {0} », car elle va masquer une commande locale existante.  Utilisez le paramètre AllowClobber si vous souhaitez masquer des commandes locales existantes.</value>
+  </data>
+  <data name="ErrorNoCommandsImportedBecauseOfSkipping" xml:space="preserve">
+    <value>Aucun proxy de commande n’a été créé, car toutes les commandes distantes demandées vont masquer des commandes locales existantes.  Utilisez le paramètre AllowClobber si vous souhaitez masquer des commandes locales existantes.</value>
+  </data>
+  <data name="ProxyModuleDescription" xml:space="preserve">
+    <value>Module de communication à distance implicite pour {0}</value>
+  </data>
+  <data name="EventSourceIdentifier" xml:space="preserve">
+    <value>Événement de communication à distance implicite (ID de session : {0}, ID du gestionnaire d’événements : {1})</value>
+  </data>
+  <data name="ModuleHeaderTitle" xml:space="preserve">
+    <value>Module de communication à distance implicite</value>
+  </data>
+  <data name="ModuleHeaderDate" xml:space="preserve">
+    <value>généré le {0}</value>
+  </data>
+  <data name="ModuleHeaderCommand" xml:space="preserve">
+    <value>par la cmdlet {0}</value>
+  </data>
+  <data name="ModuleHeaderCommandLine" xml:space="preserve">
+    <value>Nous l’appelons avec la ligne de commande suivante : {0}</value>
+  </data>
+  <data name="ModuleHeaderRunspaceOverrideParameter" xml:space="preserve">
+    <value>Paramètre facultatif que vous pouvez utiliser pour spécifier la session sur laquelle ce module proxy fonctionne</value>
+  </data>
+  <data name="CreateNewRunspaceMessageTemplate" xml:space="preserve">
+    <value>Création d’une nouvelle session pour la communication à distance implicite de la commande « {{0}} » en cours...</value>
+  </data>
+  <data name="ProxyRunspaceNameTemplate" xml:space="preserve">
+    <value>Session pour le module de communication à distance implicite sur {{0}}</value>
+  </data>
+  <data name="ProgressActivity" xml:space="preserve">
+    <value>Création du module de communication à distance implicite...</value>
+  </data>
+  <data name="ProgressStatusGetCommandStart" xml:space="preserve">
+    <value>Obtention des informations de commande à partir de la session distante en cours...</value>
+  </data>
+  <data name="ProgressStatusGetCommandProgress" xml:space="preserve">
+    <value>Obtention des informations de commande à partir de la session distante en cours... {0} commandes reçues</value>
+  </data>
+  <data name="ProgressStatusGetFormatDataStart" xml:space="preserve">
+    <value>Obtention des informations de mise en forme et de sortie à partir de la session distante en cours...</value>
+  </data>
+  <data name="ProgressStatusGetFormatDataProgress" xml:space="preserve">
+    <value>Obtention des informations de mise en forme et de sortie à partir de la session distante en cours... {0} objets reçus</value>
+  </data>
+  <data name="ProgressStatusCompleted" xml:space="preserve">
+    <value>Terminé.</value>
+  </data>
+  <data name="CredentialRequestTitle" xml:space="preserve">
+    <value>Requête d’informations d’identification PowerShell</value>
+  </data>
+  <data name="CredentialRequestBody" xml:space="preserve">
+    <value>Entrez vos informations d’identification pour {0}.</value>
+  </data>
+  <data name="ProxyCredentialRequestBody" xml:space="preserve">
+    <value>Entrez les informations d’identification du proxy HTTP utilisées pour la connexion suivante : {0}</value>
+  </data>
+  <data name="WarningMismatchedImplicitRemotingHash" xml:space="preserve">
+    <value>Les commandes disponibles dans la nouvelle session distante sont différentes de celles disponibles au moment de la création du module de communication à distance implicite.  Envisagez de recréer le module en utilisant la cmdlet Export-PSSession.</value>
+  </data>
+  <data name="CertificateNeeded" xml:space="preserve">
+    <value>Nous ne pouvons pas charger les fichiers, car l’exécution de scripts est désactivée sur ce système. Fournissez un certificat valide avec lequel signer les fichiers.</value>
+  </data>
+  <data name="InvalidSigningOperation" xml:space="preserve">
+    <value>Nous n’avons pas pu signer le fichier {0}.</value>
+  </data>
+</root>

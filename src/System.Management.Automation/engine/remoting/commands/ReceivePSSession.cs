@@ -1166,7 +1166,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>PSSession disconnected runspace object.</returns>
         private PSSession TryGetSessionFromServer(PSSession session)
         {
-            if (!(session.Runspace is RemoteRunspace remoteRunspace))
+            if (session.Runspace is not RemoteRunspace remoteRunspace)
             {
                 return null;
             }

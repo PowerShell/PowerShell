@@ -20,7 +20,7 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// This exception is used by Formattable constructor to indicate errors
     /// occurred during construction time.
-    /// </summary>    
+    /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
     public class FormatTableLoadException : RuntimeException
     {

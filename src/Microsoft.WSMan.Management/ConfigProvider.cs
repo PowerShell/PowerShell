@@ -62,7 +62,7 @@ namespace Microsoft.WSMan.Management
         string ICmdletProviderSupportsHelp.GetHelpMaml(string helpItemName, string path)
         {
             // Get the leaf node from the path for which help is requested.
-            int ChildIndex = path.LastIndexOf("\\", StringComparison.OrdinalIgnoreCase);
+            int ChildIndex = path.LastIndexOf('\\');
             if (ChildIndex == -1)
             {
                 // Means we are at host level, where no new-item is supported. Return empty string.

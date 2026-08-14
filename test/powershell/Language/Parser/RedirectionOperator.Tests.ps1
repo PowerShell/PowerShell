@@ -127,12 +127,6 @@ Describe "File redirection should have 'DoComplete' called on the underlying pip
 Describe "Redirection and Set-Variable -append tests" -tags CI {
     Context "variable redirection should work" {
         BeforeAll {
-            if ( $EnabledExperimentalFeatures -contains "PSRedirectToVariable" ) {
-                $skipTest = $false
-            }
-            else {
-                $skipTest = $true
-            }
             $testCases = @{ Name = "Variable should be created"; scriptBlock = { 1..3>variable:a }; Validation = { ($a -join "") | Should -Be ((1..3) -join "") } },
                 @{ Name = "variable should be appended"; scriptBlock = {1..3>variable:a; 4..6>>variable:a}; Validation = { ($a -join "") | Should -Be ((1..6) -join "")}},
                 @{ Name = "variable should maintain type"; scriptBlock = {@{one=1}>variable:a};Validation = {$a | Should -BeOfType [hashtable]}},
@@ -220,7 +214,7 @@ Describe "Redirection and Set-Variable -append tests" -tags CI {
 
 
         }
-        It "<name>" -TestCases $testCases -skip:$skipTest {
+        It "<name>" -TestCases $testCases {
             param ( $scriptBlock, $validation )
             . $scriptBlock
             . $validation

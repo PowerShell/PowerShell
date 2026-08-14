@@ -37,6 +37,7 @@ $Script:powershell_team = @(
     "dependabot-preview[bot]"
     "dependabot[bot]"
     "github-actions[bot]"
+    "Copilot"
     "Anam Navied"
     "Andrew Schwartzmeyer"
     "Jason Helmick"
@@ -46,6 +47,27 @@ $Script:powershell_team = @(
     "Justin Chung"
 )
 
+# The powershell team members GitHub logins. We use them to decide if the original author of a backport PR is from the team.
+$script:psteam_logins = @(
+    'andyleejordan'
+    'TravisEz13'
+    'daxian-dbw'
+    'adityapatwardhan'
+    'SteveL-MSFT'
+    'dependabot[bot]'
+    'pwshBot'
+    'jshigetomi'
+    'SeeminglyScience'
+    'anamnavi'
+    'sdwheeler'
+    'Copilot'
+    'copilot-swe-agent'
+    'app/copilot-swe-agent'
+    'StevenBucher98'
+    'alerickson'
+    'tgauth'
+)
+
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
 $Script:community_login_map = @{
     "darpa@yandex.ru" = "iSazonov"
@@ -53,11 +75,6 @@ $Script:community_login_map = @{
     "github@markekraus.com" = "markekraus"
     "info@powercode-consulting.se" = "powercode"
 }
-
-# Ignore dependency bumping bot (Dependabot):
-$Script:attribution_ignore_list = @(
-    'dependabot[bot]@users.noreply.github.com'
-)
 
 ##############################
 #.SYNOPSIS
@@ -262,25 +279,76 @@ function Get-ChangeLog
     $clExperimental = @()
 
     foreach ($commit in $new_commits) {
+        $commitSubject = $commit.Subject
+        $prNumber = $commit.PullRequest
+        Write-Verbose "subject: $commitSubject"
         Write-Verbose "authorname: $($commit.AuthorName)"
-        if ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName -or $Script:attribution_ignore_list -contains $commit.AuthorEmail) {
-            $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $commit.Subject)
+
+        try {
+            $pr = Invoke-RestMethod `
+                -Uri "https://api.github.com/repos/PowerShell/PowerShell/pulls/$prNumber" `
+                -Headers $header `
+                -ErrorAction Stop `
+                -Verbose:$false ## Always disable verbose to avoid noise when we debug this function.
+        } catch {
+            ## A commit may not have corresponding GitHub PRs. In that case, we will get status code 404 (Not Found).
+            ## Otherwise, let the error bubble up.
+            if ($_.Exception.Response.StatusCode -ne 404) {
+                throw
+            }
+        }
+
+        if ($commitSubject -match '^\[release/v\d\.\d\] ') {
+            ## The commit was from a backport PR. We need to get the real author in this case.
+            if (-not $pr) {
+                throw "The commit is from a backport PR (#$prNumber), but the PR cannot be found.`nPR Title: $commitSubject"
+            }
+
+            $userPattern = 'Triggered by @.+ on behalf of @(.+)'
+            if ($pr.body -match $userPattern) {
+                $commit.AuthorGitHubLogin = ($Matches.1).Trim()
+                Write-Verbose "backport PR. real author login: $($commit.AuthorGitHubLogin)"
+            } else {
+                throw "The commit is from a backport PR (#$prNumber), but the PR description failed to match the pattern '$userPattern'. Was the template for backport PRs changed?`nPR Title: $commitSubject"
+            }
+        }
+
+        if ($commit.AuthorGitHubLogin) {
+            if ($script:psteam_logins -contains $commit.AuthorGitHubLogin) {
+                $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $commitSubject)
+            } else {
+                $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commitSubject), $commit.AuthorGitHubLogin)
+                $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
+            }
+        } elseif ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName) {
+            $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $commitSubject)
         } else {
             if ($community_login_map.ContainsKey($commit.AuthorEmail)) {
                 $commit.AuthorGitHubLogin = $community_login_map[$commit.AuthorEmail]
             } else {
-                $uri = "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)"
                 try{
-                    $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header -ErrorAction Ignore
-                } catch{}
+                    ## Always disable verbose to avoid noise when we debug this function.
+                    $response = Invoke-RestMethod `
+                        -Uri "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)" `
+                        -Headers $header `
+                        -ErrorAction Stop `
+                        -Verbose:$false
+                } catch {
+                    ## A commit could be available in ADO only. In that case, we will get status code 422 (UnprocessableEntity).
+                    ## Otherwise, let the error bubble up.
+                    if ($_.Exception.Response.StatusCode -ne 422) {
+                        throw
+                    }
+                }
+
                 if($response)
                 {
-                    $content = ConvertFrom-Json -InputObject $response.Content
-                    $commit.AuthorGitHubLogin = $content.author.login
+                    $commit.AuthorGitHubLogin = $response.author.login
                     $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
                 }
             }
-            $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commit.Subject), $commit.AuthorGitHubLogin)
+
+            $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commitSubject), $commit.AuthorGitHubLogin)
             $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
         }
 
@@ -289,16 +357,6 @@ function Get-ChangeLog
         }
 
         ## Get the labels for the PR
-        try {
-            $pr = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/PowerShell/pulls/$($commit.PullRequest)" -Headers $header -ErrorAction SilentlyContinue
-        }
-        catch {
-            if ($_.Exception.Response.StatusCode -eq '404') {
-                $pr = $null
-                #continue
-            }
-        }
-
         if($pr)
         {
             $clLabel = $pr.labels | Where-Object { $_.Name -match "^CL-"}
@@ -328,7 +386,7 @@ function Get-ChangeLog
                 "CL-Tools" { $clTools += $commit }
                 "CL-Untagged" { $clUntagged += $commit }
                 "CL-NotInBuild" { continue }
-                Default { throw "unknown tag '$cLabel' for PR: '$($commit.PullRequest)'" }
+                Default { throw "unknown tag '$cLabel' for PR: '$prNumber'" }
             }
         }
     }
@@ -424,6 +482,9 @@ function Get-ChangeLogMessage
             return $OriginalMessage.replace($Matches.0,'') + " (Internal $($Matches.1))"
         }
         '^Build\(deps\): ' {
+            return $OriginalMessage.replace($Matches.0,'')
+        }
+        '^\[release/v\d\.\d\] ' {
             return $OriginalMessage.replace($Matches.0,'')
         }
         default {
@@ -867,8 +928,8 @@ function Invoke-PRBackport {
         )
         $continue = $false
         while(!$continue) {
-            $input= Read-Host -Prompt ($Message + "`nType 'Yes<enter>' to continue 'No<enter>' to exit")
-            switch($input) {
+            $value = Read-Host -Prompt ($Message + "`nType 'Yes<enter>' to continue 'No<enter>' to exit")
+            switch($value) {
                 'yes' {
                     $continue= $true
                 }

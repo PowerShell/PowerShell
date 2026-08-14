@@ -795,7 +795,7 @@ namespace System.Management.Automation
                 return 1;
             }
 
-            if (!(version is SemanticVersion v))
+            if (version is not SemanticVersion v)
             {
                 throw PSTraceSource.NewArgumentException(nameof(version));
             }

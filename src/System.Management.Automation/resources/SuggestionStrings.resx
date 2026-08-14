@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -123,16 +123,7 @@ PowerShell does not load commands from the current location by default (see 'Get
 
 If you trust this command, run the following command instead:</value>
   </data>
-  <data name="Suggestion_CommandExistsInCurrentDirectory_Legacy" xml:space="preserve">
-    <value>The command "{0}" was not found, but does exist in the current location. PowerShell does not load commands from the current location by default. If you trust this command, instead type: "{1}". See "get-help about_Command_Precedence" for more details.</value>
-  </data>
   <data name="Suggestion_CommandNotFound" xml:space="preserve">
     <value>The most similar commands are:</value>
-  </data>
-  <data name="RuleMustBeScriptBlock" xml:space="preserve">
-    <value>Rule must be a ScriptBlock for dynamic match types.</value>
-  </data>
-  <data name="InvalidMatchType" xml:space="preserve">
-    <value>MatchType must be 'Command', 'Error', or 'Dynamic'.</value>
   </data>
 </root>

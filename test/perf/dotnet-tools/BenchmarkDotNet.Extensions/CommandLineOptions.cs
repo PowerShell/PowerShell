@@ -37,7 +37,7 @@ namespace BenchmarkDotNet.Extensions
 
             if (parameterIndex + 1 < argsList.Count)
             {
-                while (parameterIndex + 1 < argsList.Count && !argsList[parameterIndex + 1].StartsWith("-"))
+                while (parameterIndex + 1 < argsList.Count && !argsList[parameterIndex + 1].StartsWith('-'))
                 {
                     // remove each filter string and stop when we get to the next argument flag
                     parameterValue.Add(argsList[parameterIndex + 1]);

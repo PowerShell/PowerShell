@@ -9,8 +9,6 @@ using Microsoft.Management.Infrastructure;
 
 namespace Microsoft.PowerShell.Commands
 {
-    using Extensions;
-
     internal static class CIMHelper
     {
         internal static class ClassNames
@@ -132,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
         internal static T[] GetAll<T>(CimSession session, string nameSpace, string wmiClassName) where T : class, new()
         {
             ArgumentException.ThrowIfNullOrEmpty(wmiClassName);
-            
+
             var rv = new List<T>();
 
             try
@@ -237,11 +235,6 @@ namespace Microsoft.PowerShell.Commands
             return string.Join(@"\\", path.Split('\\'));
         }
     }
-}
-
-namespace Extensions
-{
-    using Microsoft.PowerShell.Commands;
 
     internal static class CIMExtensions
     {
@@ -317,12 +310,12 @@ namespace Extensions
 
         internal static T[] GetAll<T>(this CimSession session, string wmiClassName) where T : class, new()
         {
-            return Microsoft.PowerShell.Commands.CIMHelper.GetAll<T>(session, wmiClassName);
+            return CIMHelper.GetAll<T>(session, wmiClassName);
         }
 
         internal static T[] GetAll<T>(this CimSession session, string wmiNamespace, string wmiClassName) where T : class, new()
         {
-            return Microsoft.PowerShell.Commands.CIMHelper.GetAll<T>(session, wmiNamespace, wmiClassName);
+            return CIMHelper.GetAll<T>(session, wmiNamespace, wmiClassName);
         }
     }
 }

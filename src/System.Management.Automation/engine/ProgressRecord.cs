@@ -293,7 +293,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.ToString"/>
+        /// Overrides <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "parent = a id = b act = c stat = d cur = e pct = f sec = g type = h" where

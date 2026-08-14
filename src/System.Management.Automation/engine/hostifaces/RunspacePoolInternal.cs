@@ -812,7 +812,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 EnqueueCheckAndStartRequestServicingThread(null, false);
             }
         }
-        
+
         /// <summary>
         /// Release all resources.
         /// </summary>

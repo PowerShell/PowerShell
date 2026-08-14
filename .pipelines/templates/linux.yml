@@ -2,6 +2,7 @@ parameters:
   Runtime: 'linux-x64'
   BuildConfiguration: 'release'
   JobName: 'build_linux'
+  dotnetArch: 'linux-x64'
 
 jobs:
 - job: build_${{ parameters.JobName }}
@@ -10,8 +11,6 @@ jobs:
   pool:
     type: linux
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - name: DOTNET_NOLOGO
@@ -64,12 +63,9 @@ jobs:
       AnalyzeInPipeline: false
       Language: csharp
 
-  - task: UseDotNet@2
-    inputs:
-      useGlobalJson: true
-      workingDirectory: $(PowerShellRoot)
-    env:
-      ob_restore_phase: true
+  - template: /.pipelines/templates/install-dotnet.yml@self
+    parameters:
+      architecture: ${{ parameters.dotnetArch }}
 
   - pwsh: |
       $runtime = $env:RUNTIME
@@ -144,8 +140,6 @@ jobs:
   pool:
     type: windows
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - name: DOTNET_NOLOGO

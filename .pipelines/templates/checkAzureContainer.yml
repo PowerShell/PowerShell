@@ -3,6 +3,8 @@ jobs:
   variables:
   - group: Azure Blob variable group
   - group: AzureBlobServiceConnection
+  - name: ob_artifactBaseName
+    value: BuildInfoJson
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/BuildJson'
   - name: ob_sdl_sbom_enabled
@@ -29,7 +31,6 @@ jobs:
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: yes
-      UseJson: no
 
   - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 

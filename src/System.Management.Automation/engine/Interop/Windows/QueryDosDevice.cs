@@ -28,7 +28,7 @@ internal static partial class Interop
 #endif
 
             Span<char> buffer = stackalloc char[StartLength + 1];
-            Span<char> fullDeviceName = stackalloc char[3] { deviceName, ':', '\0' };
+            Span<char> fullDeviceName = [deviceName, ':', '\0'];
             char[]? rentedArray = null;
 
             try

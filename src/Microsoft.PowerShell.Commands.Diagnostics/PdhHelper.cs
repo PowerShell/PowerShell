@@ -190,7 +190,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         public string InstanceName;
     }
 
-    internal class PdhHelper : IDisposable
+    internal sealed class PdhHelper : IDisposable
     {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct PDH_COUNTER_PATH_ELEMENTS

@@ -606,7 +606,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     // check if we have a type group reference
-                    if (!(r is TypeGroupReference tgr))
+                    if (r is not TypeGroupReference tgr)
                         continue;
 
                     // find the type group definition the reference points to

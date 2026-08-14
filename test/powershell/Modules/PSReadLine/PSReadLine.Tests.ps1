@@ -12,13 +12,13 @@ Describe "PSReadLine" -tags "CI" {
         Import-Module PSReadLine
         $module = Get-Module PSReadLine
         $module.Name | Should -BeExactly 'PSReadLine'
-        $module.Version | Should -Match '^2.3.\d$'
+        $module.Version | Should -Match '^2.4.\d$'
     }
 
     It "Should be installed to `$PSHOME" {
         $module = Get-Module (Join-Path -Path $PSHOME -ChildPath "Modules" -AdditionalChildPath "PSReadLine") -ListAvailable
         $module.Name | Should -BeExactly 'PSReadLine'
-        $module.Version | Should -Match '^2.3.\d$'
+        $module.Version | Should -Match '^2.4.\d$'
         $module.Path | Should -Be (Join-Path -Path $PSHOME -ChildPath "Modules/PSReadLine/PSReadLine.psd1")
     }
 

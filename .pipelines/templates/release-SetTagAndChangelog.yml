@@ -19,7 +19,7 @@ jobs:
     clean: true
     env:
       ob_restore_phase: true
-  
+
   - pwsh: |
       Write-Verbose -Verbose "Release Tag: $(OutputReleaseTag.releaseTag)"
       $releaseVersion = '$(OutputReleaseTag.releaseTag)' -replace '^v',''
@@ -47,3 +47,5 @@ jobs:
       New-Item -Path $(ob_outputDirectory)/CHANGELOG -ItemType Directory -Force
       Copy-Item -Path $filePath -Destination $(ob_outputDirectory)/CHANGELOG
     displayName: Upload Changelog
+
+  - template: channelSelection.yml@self

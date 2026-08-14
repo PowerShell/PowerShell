@@ -704,7 +704,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                if (!(info is PSPropertyInfo property))
+                if (info is not PSPropertyInfo property)
                 {
                     continue;
                 }

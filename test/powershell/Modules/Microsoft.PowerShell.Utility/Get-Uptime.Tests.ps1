@@ -25,6 +25,10 @@ Describe "Get-Uptime" -Tags "CI" {
         $upt = Get-Uptime -Since
         $upt | Should -BeOfType DateTime
     }
+    It "Get-Uptime -Since:`$false return TimeSpan" {
+        $upt = Get-Uptime -Since:$false
+        $upt | Should -BeOfType TimeSpan
+    }
     It "Get-Uptime throw if IsHighResolution == false" {
         # Enable the test hook
         [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsNotHighResolution', $true)

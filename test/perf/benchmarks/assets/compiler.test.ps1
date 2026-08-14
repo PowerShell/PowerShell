@@ -2238,26 +2238,6 @@ function Start-PSPackage {
                     }
                 }
             }
-            "msi" {
-                $TargetArchitecture = "x64"
-                if ($Runtime -match "-x86") {
-                    $TargetArchitecture = "x86"
-                }
-                Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
-
-                $Arguments = @{
-                    ProductNameSuffix = $NameSuffix
-                    ProductSourcePath = $Source
-                    ProductVersion = $Version
-                    AssetsPath = "$RepoRoot\assets"
-                    ProductTargetArchitecture = $TargetArchitecture
-                    Force = $Force
-                }
-
-                if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
-                    New-MSIPackage @Arguments
-                }
-            }
             "msix" {
                 $Arguments = @{
                     ProductNameSuffix = $NameSuffix

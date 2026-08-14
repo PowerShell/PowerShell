@@ -1,0 +1,48 @@
+id: labelAdded.approvedLowRisk
+name: GitOps.PullRequestIssueManagement
+description: Remove Approved-LowRisk if applied by an unauthorized user
+owner:
+resource: repository
+disabled: false
+where:
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+      - description: Remove Approved-LowRisk if label was added by someone not authorized
+        if:
+          - payloadType: Pull_Request
+          - isOpen
+          - labelAdded:
+              label: Approved-LowRisk
+          # Unauthorized = NOT admin AND NOT in explicit allowlist
+          - not:
+              or:
+                - activitySenderHasPermission:
+                    permission: Admin
+
+                # Allowlist (enabled)
+                - isActivitySender:
+                    user: iSazonov
+                    issueAuthor: False
+                - isActivitySender:
+                    user: daxian-dbw
+                    issueAuthor: False
+
+                # Allowlist (commented out for now)
+                # - isActivitySender:
+                #     user: TravisEz13
+                #     issueAuthor: False
+                # - isActivitySender:
+                #     user: adityapatwardhan
+                #     issueAuthor: False
+                # - isActivitySender:
+                #     user: jshigetomi
+                #     issueAuthor: False
+        then:
+          - removeLabel:
+              label: Approved-LowRisk
+          - addReply:
+              reply: >-
+                The `Approved-LowRisk` label is restricted to authorized maintainers and was removed.
+onFailure:
+onSuccess:

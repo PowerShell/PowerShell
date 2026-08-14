@@ -1,0 +1,657 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidProviderInfo" xml:space="preserve">
+    <value>Sağlayıcının Start yönteminden döndürülen bilgi geçirilenden farklı bir sağlayıcıya ait olduğundan döndürülen bilgiler işlenemiyor.</value>
+  </data>
+  <data name="InvalidProviderInfoNull" xml:space="preserve">
+    <value>Sağlayıcının Start yönteminden döndürülen bilgi null olduğundan döndürülen bilgiler işlenemiyor.</value>
+  </data>
+  <data name="GetItemProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında GetItem işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="GetItemDynamicParametersProviderException" xml:space="preserve">
+    <value>GetItem işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="SetItemProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında SetItem işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="SetItemDynamicParametersProviderException" xml:space="preserve">
+    <value>SetItem işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="ClearItemProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında ClearItem işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="InvokeDefaultActionProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında InvokeDefaultAction işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="InvokeDefaultActionDynamicParametersProviderException" xml:space="preserve">
+    <value>InvokeDefaultAction işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="ItemExistsProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında ItemExists işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="ItemExistsDynamicParametersProviderException" xml:space="preserve">
+    <value>ItemExists işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="IsValidPathProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında IsValidPath işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="IsItemContainerProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında IsItemContainer işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="RemoveItemProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında RemoveItem işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="GetChildrenProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında GetChildItems işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="GetChildrenDynamicParametersProviderException" xml:space="preserve">
+    <value>GetChildItems işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="GetChildNamesProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında GetChildNames işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="GetChildNamesDynamicParametersProviderException" xml:space="preserve">
+    <value>GetChildNames işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="RenameItemProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında RenameItem işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="RenameItemDynamicParametersProviderException" xml:space="preserve">
+    <value>RenameItem işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="NewItemProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında NewItem işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="NewItemDynamicParametersProviderException" xml:space="preserve">
+    <value>NewItem işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="HasChildItemsProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında HasChildItems işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="CopyItemProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında CopyItem işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="CopyItemDynamicParametersProviderException" xml:space="preserve">
+    <value>CopyItem işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="GetParentPathProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında GetParentPath işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="NormalizeRelativePathProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında NormalizeRelativePath işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="MakePathProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında MakePath işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="GetChildNameProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında GetChildName işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="MoveItemProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında MoveItem işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="MoveItemDynamicParametersProviderException" xml:space="preserve">
+    <value>MoveItem işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="GetPropertyProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında GetProperty işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="GetPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>GetProperty işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="SetPropertyProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında SetProperty işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="SetPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>SetProperty işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="ClearPropertyProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında ClearProperty işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="ClearPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>ClearProperty işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="NewPropertyProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında NewProperty işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="NewPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>NewProperty işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="RemovePropertyProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında RemoveProperty işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="RemovePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>RemoveProperty işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="CopyPropertyProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında CopyProperty işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="CopyPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>CopyProperty işleminin dinamik parametreleri '{1}' yolunun '{0}' sağlayıcısı için alınamıyor. {2}</value>
+  </data>
+  <data name="MovePropertyProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında MoveProperty işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="MovePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>MoveProperty işleminin dinamik parametreleri '{1}' yolunun '{0}' sağlayıcısı için alınamıyor. {2}</value>
+  </data>
+  <data name="RenamePropertyProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında RenameProperty işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="RenamePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>'{1}' yolunun '{0}' sağlayıcısında RenameProperty için dinamik parametreler alınamıyor. {2}</value>
+  </data>
+  <data name="GetContentReaderProviderException" xml:space="preserve">
+    <value>'{1}' yolunun '{0}' sağlayıcısı için içerik okuyucu alınamıyor. {2}</value>
+  </data>
+  <data name="GetContentReaderDynamicParametersProviderException" xml:space="preserve">
+    <value>GetContentReader işleminin dinamik parametreleri '{1}' yolunun '{0}' sağlayıcısı için alınamıyor. {2}</value>
+  </data>
+  <data name="GetContentWriterProviderException" xml:space="preserve">
+    <value>'{1}' yolunun '{0}' sağlayıcısı için içerik yazıcı alınamıyor. {2}</value>
+  </data>
+  <data name="GetContentWriterDynamicParametersProviderException" xml:space="preserve">
+    <value>GetContentWriter işleminin dinamik parametreleri '{1}' yolunun '{0}' sağlayıcısı için alınamıyor. {2}</value>
+  </data>
+  <data name="GetContainerContentException" xml:space="preserve">
+    <value>İçerik dizin olduğundan alınamıyor: '{0}'. Lütfen bunun yerine 'Get-ChildItem' kullanın.</value>
+  </data>
+  <data name="WriteContainerContentException" xml:space="preserve">
+    <value>İçerik dizin olduğundan yazılamıyor: '{0}'.</value>
+  </data>
+  <data name="LocationUndoStackIsEmpty" xml:space="preserve">
+    <value>Geriye gitmek için kalan konum geçmişi yok.</value>
+  </data>
+  <data name="LocationRedoStackIsEmpty" xml:space="preserve">
+    <value>İleriye gitmek için kalan konum geçmişi yok.</value>
+  </data>
+  <data name="BoundedStackIsEmpty" xml:space="preserve">
+    <value>BoundedStack boş.</value>
+  </data>
+  <data name="ClearContentProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında ClearContent işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="ClearDirectoryContent" xml:space="preserve">
+    <value>'{0}' içeriği bir dizin olduğundan temizlenemiyor. Clear-Content yalnızca dosyalarda desteklenir.</value>
+  </data>
+  <data name="ClearContentDynamicParametersProviderException" xml:space="preserve">
+    <value>ClearContent işleminin dinamik parametreleri '{1}' yolu için '{0}' sağlayıcısından alınamıyor. {2}</value>
+  </data>
+  <data name="GetSecurityDescriptorProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında GetSecurityDescriptor işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="SetSecurityDescriptorProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında SetSecurityDescriptor işlemini gerçekleştirme girişimi '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="ProviderStartException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında Start işlemini gerçekleştirme girişimi başarısız oldu. {1}</value>
+  </data>
+  <data name="InitializeDefaultDrivesException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında InitializeDefaultDrives işlemini gerçekleştirme girişimi başarısız oldu.</value>
+  </data>
+  <data name="NewDriveProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında NewDrive işlemini gerçekleştirme girişimi '{1}' köküne sahip sürücü için başarısız oldu. {2}</value>
+  </data>
+  <data name="NewDriveDynamicParametersProviderException" xml:space="preserve">
+    <value>NewDrive için dinamik parametreler '{0}' sağlayıcısı için alınamıyor. {1}</value>
+  </data>
+  <data name="RemoveDriveProviderException" xml:space="preserve">
+    <value>'{0}' sağlayıcısında RemoveDrive çağrısı başarısız oldu. {1}</value>
+  </data>
+  <data name="DriveRemovalPreventedByProvider" xml:space="preserve">
+    <value>'{1}' sağlayıcısı engellediğinden '{0}' sürücüsü kaldırılamıyor.</value>
+  </data>
+  <data name="NormalizeRelativePathOutsideBase" xml:space="preserve">
+    <value>'{0}' yolu, '{1}' tabanının dışındaki bir öğeye başvurdu.</value>
+  </data>
+  <data name="ProviderSeekError" xml:space="preserve">
+    <value>'{0}' sağlayıcısının içerik yazıcısında Seek çağrısı '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="ProviderContentCloseError" xml:space="preserve">
+    <value>'{0}' sağlayıcısının içerik okuyucusunda veya yazıcısında Close çağrısı '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="ProviderContentReadError" xml:space="preserve">
+    <value>'{0}' sağlayıcısının içerik okuyucusunda Read çağrısı '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="ProviderContentWriteError" xml:space="preserve">
+    <value>'{0}' sağlayıcısının içerik yazıcısında Write çağrısı '{1}' yolu için başarısız oldu. {2}</value>
+  </data>
+  <data name="ProviderCannotBeUsedAsVariable" xml:space="preserve">
+    <value>'{0}' sağlayıcısı, değişken söz dizimi kullanılarak veri almak veya ayarlamak için kullanılamaz. {2}</value>
+  </data>
+  <data name="ProviderVariableSyntaxInvalid" xml:space="preserve">
+    <value>Değişken söz dizimi sağlayıcıda veri almak veya ayarlamak için kullanılamaz. {2}</value>
+  </data>
+  <data name="AliasNotWritable" xml:space="preserve">
+    <value>{0} diğer adı salt okunur veya sabit olduğundan ve üzerine yazılamadığından diğer ad yazılabilir değil.</value>
+  </data>
+  <data name="FunctionNotWritable" xml:space="preserve">
+    <value>Salt okunur veya sabit olduğundan {0} işlevine yazılamıyor.</value>
+  </data>
+  <data name="VariableNotWritable" xml:space="preserve">
+    <value>{0} değişkeni salt okunur veya sabit olduğundan değişken üzerine yazılamıyor.</value>
+  </data>
+  <data name="VariableIsPrivate" xml:space="preserve">
+    <value>'${0}' değişkeni özel bir değişken olduğundan bu değişkene erişilemiyor.</value>
+  </data>
+  <data name="NamedCommandIsPrivate" xml:space="preserve">
+    <value>Özel bir komut olduğundan '{0}' komutuna erişilemiyor.</value>
+  </data>
+  <data name="CommandIsPrivate" xml:space="preserve">
+    <value>Özel bir komut olduğundan komuta erişilemiyor.</value>
+  </data>
+  <data name="ResourceIsPrivate" xml:space="preserve">
+    <value>Özel bir kaynak olduğundan oturum durumu kaynağına erişilemiyor. </value>
+  </data>
+  <data name="AliasNotRemovable" xml:space="preserve">
+    <value>{0} diğer adı sabit veya salt okunur olduğundan diğer ad kaldırılmadı.</value>
+  </data>
+  <data name="FunctionNotRemovable" xml:space="preserve">
+    <value>{0} işlevi sabit olduğundan kaldırılamıyor.</value>
+  </data>
+  <data name="VariableNotRemovable" xml:space="preserve">
+    <value>Sabit veya salt okunur olduğundan {0} değişkeni kaldırılamıyor. Değişken salt okunursa, Zorla seçeneğini belirterek işlemi yeniden deneyin.</value>
+  </data>
+  <data name="AliasIsConstant" xml:space="preserve">
+    <value>{0} diğer adı sabit olduğundan değiştirilemiyor.</value>
+  </data>
+  <data name="AliasIsReadOnly" xml:space="preserve">
+    <value>{0} diğer adı salt okunur olduğundan değiştirilemiyor.</value>
+  </data>
+  <data name="FunctionIsConstant" xml:space="preserve">
+    <value>{0} işlevi sabit olduğundan değiştirilemiyor.</value>
+  </data>
+  <data name="FunctionIsReadOnly" xml:space="preserve">
+    <value>{0} işlevi salt okunur olduğundan değiştirilemiyor.</value>
+  </data>
+  <data name="AliasCannotBeMadeConstant" xml:space="preserve">
+    <value>{0} diğer adı oluşturulduktan sonra sabit hale getirilemez. Diğer adlar yalnızca oluşturma sırasında sabit hale getirilebilir.</value>
+  </data>
+  <data name="FunctionCannotBeMadeConstant" xml:space="preserve">
+    <value>Mevcut {0} işlevi sabit hale getirilemiyor. İşlevler yalnızca oluşturulurken sabit hale getirilebilir.</value>
+  </data>
+  <data name="VariableCannotBeMadeConstant" xml:space="preserve">
+    <value>Mevcut {0} değişkeni sabit hale getirilemiyor. Değişkenler yalnızca oluşturulurken sabit hale getirilebilir.</value>
+  </data>
+  <data name="AliasAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>AllScope seçeneği '{0}' diğer adından kaldırılamıyor.</value>
+  </data>
+  <data name="FunctionAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>AllScope seçeneği '{0}' işlevinden kaldırılamıyor.</value>
+  </data>
+  <data name="VariableAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>AllScope seçeneği '{0}' değişkeninden kaldırılamıyor.</value>
+  </data>
+  <data name="ScopedFunctionMustHaveName" xml:space="preserve">
+    <value>'{0}' işlev tanımı kapsam niteleyicisi içeriyordu ancak işlev adı içermiyordu.</value>
+  </data>
+  <data name="RemoveDrivesBeforeRemovingProvider" xml:space="preserve">
+    <value>{0} sağlayıcısı kaldırılamıyor. {0} sağlayıcısı kaldırılmadan önce {0} sağlayıcısı ile ilişkili tüm sürücüler kaldırılmalıdır.</value>
+  </data>
+  <data name="DriveNameIllegalCharacters" xml:space="preserve">
+    <value>Sürücü adı şu geçersiz karakterlerden birini veya daha fazlasını içerdiğinden işlenemiyor: ; ~ / \ . :</value>
+  </data>
+  <data name="NewDriveProviderFailed" xml:space="preserve">
+    <value>Sağlayıcı yeni sürücünün oluşturulmasına izin vermediğinden yeni sürücü oluşturulamadı.</value>
+  </data>
+  <data name="StackNameResolvedToMultiple" xml:space="preserve">
+    <value>Sağlanan '{0}' değeri birden fazla konum yığınına çözümlendi.</value>
+  </data>
+  <data name="StackNotFound" xml:space="preserve">
+    <value>'{0}' konum yığını bulunamıyor. Bu yığın yok veya bir kapsayıcı değil.</value>
+  </data>
+  <data name="PathNotFound" xml:space="preserve">
+    <value>‘{0}' yolu mevcut olmadığından bulunamıyor.</value>
+  </data>
+  <data name="AliasNotFound" xml:space="preserve">
+    <value>'{0}' diğer adı mevcut olmadığından diğer ad bulunamıyor.</value>
+  </data>
+  <data name="PathResolvedToMultiple" xml:space="preserve">
+    <value>'{0}' yolu birden çok kapsayıcıya çözümlendiğinden konum ayarlanamıyor. Konumu bir seferde yalnızca tek bir kapsayıcıya ayarlayabilirsiniz.</value>
+  </data>
+  <data name="VariablePathResolvedToMultiple" xml:space="preserve">
+    <value>'{0}' değişken yolu birden çok öğeye çözümlendiğinden değişken işlenemiyor. Değişken değerini aynı anda yalnızca bir öğe için alabilir veya ayarlayabilirsiniz.</value>
+  </data>
+  <data name="DriveNotFound" xml:space="preserve">
+    <value>Sürücü bulunamıyor. '{0}' adlı bir sürücü yok.</value>
+  </data>
+  <data name="ProviderNotFound" xml:space="preserve">
+    <value>'{0}' adlı bir sağlayıcı bulunamıyor.</value>
+  </data>
+  <data name="ProviderNotFoundBadFormat" xml:space="preserve">
+    <value>'{0}' adlı bir sağlayıcı bulunamıyor. Ad doğru biçimde değil. Sağlayıcı adı yalnızca alfasayısal karakterlerden oluşabilir ya da arkasından tek bir '\' ve ardından alfasayısal karakterler gelen bir PowerShell ek bileşeni adı olabilir.</value>
+  </data>
+  <data name="ProviderNameAmbiguous" xml:space="preserve">
+    <value>'{0}' birden fazla sağlayıcı adına çözümlendi. Olası eşleşmeler şunlardır:{1}.</value>
+  </data>
+  <data name="ProviderNotFoundInAssembly" xml:space="preserve">
+    <value>Sağlayıcının bir örneği oluşturulmaya çalışılırken bir hata oluştu. '{0}' sağlayıcı türü adı derlemede bulunamadı.</value>
+  </data>
+  <data name="ProviderNameNotValid" xml:space="preserve">
+    <value>Belirtilen '{0}' sağlayıcı adı, geçerli olmayan şu karakterlerden birini veya daha fazlasını içerdiğinden kullanılamıyor: \ [ ] ? * :</value>
+  </data>
+  <data name="ProviderCtorException" xml:space="preserve">
+    <value>'{0}' sağlayıcısının bir örneği oluşturulmaya çalışılırken bir hata oluştu. {1} </value>
+  </data>
+  <data name="VariableNotFound" xml:space="preserve">
+    <value>'{0}' adlı bir değişken bulunamıyor.</value>
+  </data>
+  <data name="TraceSourceNotFound" xml:space="preserve">
+    <value>'{0}' adlı bir izleme kaynağı bulunamıyor.</value>
+  </data>
+  <data name="DriveAlreadyExists" xml:space="preserve">
+    <value>'{0}' adında bir sürücü zaten var.</value>
+  </data>
+  <data name="VariableAlreadyExists" xml:space="preserve">
+    <value>'{0}' adlı bir değişken zaten var.</value>
+  </data>
+  <data name="AliasAlreadyExists" xml:space="preserve">
+    <value>'{0}' adlı bir diğer ad zaten bulunduğundan diğer ada izin verilmiyor.</value>
+  </data>
+  <data name="CmdletProviderAlreadyExists" xml:space="preserve">
+    <value>'{0}' adlı bir cmdlet sağlayıcısı zaten mevcut olduğundan cmdlet sağlayıcısı kaydedilemiyor.</value>
+  </data>
+  <data name="MustBeFileSystemPath" xml:space="preserve">
+    <value>Yol bir dosya sistemi yoluna başvurmuyor.</value>
+  </data>
+  <data name="GlobalScopeCannotRemove" xml:space="preserve">
+    <value>Genel kapsam kaldırılamıyor.</value>
+  </data>
+  <data name="ScopeIDExceedsAvailableScopes" xml:space="preserve">
+    <value>Kapsam numarası '{0}' etkin kapsam sayısını aşıyor.</value>
+  </data>
+  <data name="OnlyAbleToComparePSDriveInfo" xml:space="preserve">
+    <value>PSDriveInfo karşılaştırılamıyor. Bir PSDriveInfo örneği yalnızca başka bir PSDriveInfo örneğiyle karşılaştırılabilir.</value>
+  </data>
+  <data name="OutputStreamingNotEnabled" xml:space="preserve">
+    <value>Çıkışın akışla aktarılacağı bir cmdlet belirtilmediğinden cmdlet sağlayıcısı sonuçları akışla aktaramıyor.</value>
+  </data>
+  <data name="ErrorStreamingNotEnabled" xml:space="preserve">
+    <value>Hatanın akışla aktarılacağı bir cmdlet belirtilmediğinden cmdlet sağlayıcısı sonuçları akışla aktaramıyor.</value>
+  </data>
+  <data name="HomePathNotSet" xml:space="preserve">
+    <value>Bu sağlayıcı için giriş konumu ayarlanmadı. Giriş konumunu ayarlamak için "(get-psprovider '{0}').Home = 'path'" komutunu çağırın.</value>
+  </data>
+  <data name="NotProviderQualifiedPath" xml:space="preserve">
+    <value>Yol doğru biçimde değil. Sağlayıcı yolları bir sağlayıcı kimliği, ardından "::" ve ardından sağlayıcıya özgü bir yol içermelidir.</value>
+  </data>
+  <data name="MovePropertyDestinationResolveToSingle" xml:space="preserve">
+    <value>Hedef yol yalnızca tek bir yola çözümlenebildiğinden öğe taşınamıyor.</value>
+  </data>
+  <data name="MoveItemSourceAndDestinationNotSameProvider" xml:space="preserve">
+    <value>Kaynak ve hedef yollar aynı sağlayıcıya çözümlenmediğinden öğe taşınamıyor.</value>
+  </data>
+  <data name="MoveItemPathMultipleDestinationNotContainer" xml:space="preserve">
+    <value>Kaynak yol bir veya daha fazla öğeye işaret ettiğinden ve hedef yol bir kapsayıcı olmadığından öğe taşınamıyor. Hedef yolun bir kapsayıcı olduğunu doğrulayın ve yeniden deneyin.</value>
+  </data>
+  <data name="MoveItemOneDestination" xml:space="preserve">
+    <value>Hedef birden çok yola çözümlendiğinden öğe taşınamıyor. Tek bir hedefe çözümlenen bir hedef yolu belirtin ve yeniden deneyin.</value>
+  </data>
+  <data name="CopyContainerItemToLeafError" xml:space="preserve">
+    <value>Kapsayıcı mevcut olan yaprak öğenin üzerine kopyalanamıyor.</value>
+  </data>
+  <data name="CopyContainerToContainerWithoutRecurseOrContainer" xml:space="preserve">
+    <value>Kapsayıcı başka bir kapsayıcıya kopyalanamıyor. -Recurse veya -Container parametresi belirtilmemiş.</value>
+  </data>
+  <data name="CopyItemSourceAndDestinationNotSameProvider" xml:space="preserve">
+    <value>Kaynak ve hedef yol aynı sağlayıcıya çözülmedi.</value>
+  </data>
+  <data name="RenameMultipleItemError" xml:space="preserve">
+    <value>Yol birden çok öğeye çözümlendiğinden öğe yeniden adlandırılamıyor. Bir kerede yalnızca bir öğe yeniden adlandırılabilir.</value>
+  </data>
+  <data name="ProviderImplementationInconsistent" xml:space="preserve">
+    <value>'{0}' sağlayıcısındaki bir hata nedeniyle sağlayıcı '{1}' yolunu çözümlemek için kullanılamıyor.</value>
+  </data>
+  <data name="IContentCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Arabirim kullanılamıyor. IContentCmdletProvider arabirimi bu sağlayıcı tarafından uygulanmıyor.</value>
+  </data>
+  <data name="IPropertyCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Arabirim kullanılamıyor. IPropertyCmdletProvider arabirimi bu sağlayıcı tarafından desteklenmiyor.</value>
+  </data>
+  <data name="IDynamicPropertyCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Arabirim kullanılamıyor. IDynamicPropertyCmdletProvider arabirimi bu sağlayıcı tarafından uygulanmıyor.</value>
+  </data>
+  <data name="NavigationCmdletProvider_NotSupported" xml:space="preserve">
+    <value>NavigationCmdletProvider yöntemleri bu sağlayıcı tarafından desteklenmiyor.</value>
+  </data>
+  <data name="ContainerCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Sağlayıcı yöntemleri işlenmedi. ContainerCmdletProvider yöntemleri bu sağlayıcı tarafından desteklenmiyor.</value>
+  </data>
+  <data name="ItemCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Yöntemler çağrılamıyor. ItemCmdletProvider yöntemleri bu sağlayıcı tarafından desteklenmiyor.</value>
+  </data>
+  <data name="DriveCmdletProvider_NotSupported" xml:space="preserve">
+    <value>DriveCmdletProvider yöntemleri bu sağlayıcı tarafından desteklenmiyor.</value>
+  </data>
+  <data name="CmdletProvider_NotSupported" xml:space="preserve">
+    <value>Sağlayıcı bu işlemi desteklemediğinden sağlayıcı işlemi durduruldu.</value>
+  </data>
+  <data name="CmdletProvider_NotSupportedRecursionDepth" xml:space="preserve">
+    <value>Sağlayıcı 'Depth' parametresini desteklemediğinden sağlayıcı işlemi durduruldu.</value>
+  </data>
+  <data name="IContent_Seek_NotSupported" xml:space="preserve">
+    <value>Yöntem çağrılamıyor. İçerik Seek yöntemi bu sağlayıcı tarafından desteklenmiyor.</value>
+  </data>
+  <data name="IContent_Clear_NotSupported" xml:space="preserve">
+    <value>ClearContent işlemi gerçekleştirilemiyor. ClearContent işlemi bu sağlayıcı tarafından desteklenmiyor.</value>
+  </data>
+  <data name="Credentials_NotSupported" xml:space="preserve">
+    <value>Sağlayıcı kimlik bilgilerinin kullanımını desteklemiyor. İşlemi kimlik bilgileri belirtmeden yeniden gerçekleştirin.</value>
+  </data>
+  <data name="FileSystemProviderCredentials_NotSupported" xml:space="preserve">
+    <value>FileSystem sağlayıcısı kimlik bilgilerini yalnızca New-PSDrive cmdlet'inde destekler. İşlemi kimlik bilgileri belirtmeden yeniden gerçekleştirin.</value>
+  </data>
+  <data name="Transactions_NotSupported" xml:space="preserve">
+    <value>Sağlayıcı işlemleri desteklemiyor. İşlemi -UseTransaction parametresi olmadan yeniden gerçekleştirin.</value>
+  </data>
+  <data name="Filter_NotSupported" xml:space="preserve">
+    <value>Yöntem çağrılamıyor. Sağlayıcı filtrelerin kullanımını desteklemiyor.</value>
+  </data>
+  <data name="NewDriveCredentials_NotSupported" xml:space="preserve">
+    <value>Sürücü oluşturulamıyor. Sağlayıcı kimlik bilgilerinin kullanımını desteklemiyor.</value>
+  </data>
+  <data name="NewItemAlreadyExists" xml:space="preserve">
+    <value>'{0}' yolundaki öğe zaten var.</value>
+  </data>
+  <data name="CopyItemDoesntExist" xml:space="preserve">
+    <value>Öğe kopyalanamıyor. '{0}' yolundaki öğe yok.</value>
+  </data>
+  <data name="RenameItemDoesntExist" xml:space="preserve">
+    <value>'{0}' yolundaki öğe yok.</value>
+  </data>
+  <data name="AliasDriveDescription" xml:space="preserve">
+    <value>Oturum durumunda depolanan diğer adların görünümünü içeren sürücü</value>
+  </data>
+  <data name="EnvironmentDriveDescription" xml:space="preserve">
+    <value>İşlem için ortam değişkenlerinin görünümünü içeren sürücü</value>
+  </data>
+  <data name="FunctionDriveDescription" xml:space="preserve">
+    <value>Oturum durumunda depolanan işlevlerin görünümünü içeren sürücü</value>
+  </data>
+  <data name="VariableDriveDescription" xml:space="preserve">
+    <value>Oturum durumunda depolanan bu değişkenlerin görünümünü içeren sürücü</value>
+  </data>
+  <data name="TempDriveDescription" xml:space="preserve">
+    <value>Geçerli kullanıcı için geçici dizin yoluyla eşlenen sürücü</value>
+  </data>
+  <data name="NewLinkTargetNotSpecified" xml:space="preserve">
+    <value>Hedef Değer belirtilmediğinden '{0}' bağlantısı oluşturulamıyor.</value>
+  </data>
+  <data name="DollarNullDescription" xml:space="preserve">
+    <value>Null değişkenine yapılan başvurular her zaman null değeri döndürür. Atamaların etkisi yoktur.</value>
+  </data>
+  <data name="MaxHistoryCountDescription" xml:space="preserve">
+    <value>Bir oturumda saklanacak en fazla geçmiş nesnesi sayısı</value>
+  </data>
+  <data name="CannotRenameFunction" xml:space="preserve">
+    <value>{0} işlevi salt okunur veya sabit olduğundan işlev yeniden adlandırılamıyor.</value>
+  </data>
+  <data name="CannotRenameAlias" xml:space="preserve">
+    <value>{0} diğer adı salt okunur veya sabit olduğundan diğer ad yeniden adlandırılamıyor.</value>
+  </data>
+  <data name="CannotRenameVariable" xml:space="preserve">
+    <value>{0} değişkeni salt okunur veya sabit olduğundan değişken yeniden adlandırılamıyor.</value>
+  </data>
+  <data name="VariableOptionsNotSettable" xml:space="preserve">
+    <value>Yerel {0} değişkeninde seçenekler ayarlanamıyor. Seçeneklerin ayarlanmasına olanak tanıyan bir değişken oluşturmak için New-Variable kullanın.</value>
+  </data>
+  <data name="CmdletIsReadOnly" xml:space="preserve">
+    <value>{0} cmdlet'i salt okunur olduğundan değiştirilemiyor.</value>
+  </data>
+  <data name="VariableNotRemovableRare" xml:space="preserve">
+    <value>{0} değişkeni iyileştirildiğinden ve kaldırılamadığından değişken kaldırılamıyor. Remove-Variable cmdlet'ini (diğer ad olmadan) kullanmayı veya değişkeni kaldırmak için kullandığınız komutu nokta kaynaklı çalıştırmayı deneyin.</value>
+  </data>
+  <data name="VariableNotWritableRare" xml:space="preserve">
+    <value>{0} değişkeni iyileştirildiğinden değişkenin üzerine yazılamıyor. New-Variable veya Set-Variable cmdlet'ini (diğer ad olmadan) kullanmayı deneyin veya değişkeni ayarlamak için kullandığınız komutu nokta kaynaklı çalıştırın.</value>
+  </data>
+  <data name="GetContent_TailAndHeadCannotCoexist" xml:space="preserve">
+    <value>{0} ve {1} parametreleri birlikte kullanılamaz. Lütfen yalnızca bir parametre belirtin.</value>
+  </data>
+  <data name="GetContent_TailNotSupported" xml:space="preserve">
+    <value>Tail parametresi şu anda yalnızca FileSystem sağlayıcısı için destekleniyor.</value>
+  </data>
+  <data name="AliasWithCommandNameAlreadyExists" xml:space="preserve">
+    <value>Adı '{0}' ve komut türü '{1}' olan bir komut zaten mevcut olduğundan diğer ada izin verilmiyor.</value>
+  </data>
+  <data name="CanNotRun" xml:space="preserve">
+    <value>Yazılım çalıştırılamıyor. İzin reddedildi.</value>
+  </data>
+  <data name="CopyItemFromSessionToSession" xml:space="preserve">
+    <value>'-{0}' ve '-{1}' birbirini dışlar ve aynı anda belirtilemez.</value>
+  </data>
+  <data name="CopyItemRemotelyPathIsNotAbsolute" xml:space="preserve">
+    <value>'{0}' yolu geçerli değil. Uzak kopyalama işlemlerinde yalnızca mutlak yollar desteklenir.</value>
+  </data>
+  <data name="CopyItemValidateRemotePath" xml:space="preserve">
+    <value>'{0}' uzak yolu doğrulanamıyor.</value>
+  </data>
+  <data name="CopyItemSessionProperties" xml:space="preserve">
+    <value>{0} oturumu {1} olarak ayarlandığından işlem gerçekleştirilemiyor.</value>
+  </data>
+  <data name="CopyItemRemotelyPathIsNullOrEmpty" xml:space="preserve">
+    <value>'{0}' parametresi null veya boş olamaz.</value>
+  </data>
+  <data name="WDACSessionStateVarLogTitle" xml:space="preserve">
+    <value>Oturum Durumu Değişkenleri</value>
+  </data>
+  <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
+    <value>ConstrainedLanguage modunda, '{0}' değişkeninin kapsamını AllScope olarak değiştirmek veya bu kapsamda oluşturmak engellenir.</value>
+  </data>
+</root>

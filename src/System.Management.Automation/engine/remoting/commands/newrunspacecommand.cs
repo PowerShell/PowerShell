@@ -267,7 +267,16 @@ namespace Microsoft.PowerShell.Commands
 
                 case NewPSSessionCommand.UseWindowsPowerShellParameterSet:
                     {
-                        remoteRunspaces = CreateRunspacesForUseWindowsPowerShellParameterSet();
+                        if (UseWindowsPowerShell)
+                        {
+                            remoteRunspaces = CreateRunspacesForUseWindowsPowerShellParameterSet();
+                        }
+                        else
+                        {
+                            // When -UseWindowsPowerShell:$false is explicitly specified,
+                            // fall back to the default ComputerName parameter set behavior
+                            goto case NewPSSessionCommand.ComputerNameParameterSet;
+                        }
                     }
 
                     break;

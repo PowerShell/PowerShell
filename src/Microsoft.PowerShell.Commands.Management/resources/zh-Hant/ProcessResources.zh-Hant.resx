@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NoProcessFoundForGivenName" xml:space="preserve">
+    <value>找不到名稱為 "{0}" 的處理序。請確認處理序名稱，然後再次呼叫 Cmdlet。</value>
+  </data>
+  <data name="RecommendIdTagForGivenName" xml:space="preserve">
+    <value>找不到名稱為 "{0}" 的處理序。請嘗試使用 -Id 依處理序識別碼搜尋。</value>
+  </data>
+  <data name="NoDebuggerFound" xml:space="preserve">
+    <value>因為無法將偵錯工具附加到處理序 "{0} ({1})"，所以無法執行此命令。請指定其他處理序，然後執行命令。</value>
+  </data>
+  <data name="NoProcessFoundForGivenId" xml:space="preserve">
+    <value>找不到處理序識別碼為 {1} 的處理序。</value>
+  </data>
+  <data name="CouldNotStopProcess" xml:space="preserve">
+    <value>因為發生下列錯誤，無法停止處理序 "{0} ({1})": {2}</value>
+  </data>
+  <data name="ProcessNameForConfirmation" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="StartProcessTarget" xml:space="preserve">
+    <value>{0} {1}</value>
+  </data>
+  <data name="CouldNotEnumerateModules" xml:space="preserve">
+    <value>無法列舉 "{0}" 處理序的模組。</value>
+  </data>
+  <data name="CouldNotEnumerateFileVer" xml:space="preserve">
+    <value>無法列舉 "{0}" 處理序的檔案版本資訊。</value>
+  </data>
+  <data name="CouldNotEnumerateModuleFileVer" xml:space="preserve">
+    <value>無法列舉 "{0}" 處理序的模組和檔案版本資訊。</value>
+  </data>
+  <data name="ConfirmStopProcess" xml:space="preserve">
+    <value>您確定要在下列項目上執行 Stop-Process 作業嗎: {0}({1})?</value>
+  </data>
+  <data name="UseShell" xml:space="preserve">
+    <value>指定的路徑不是有效的 Win32 應用程式。請改用 UseShellExecute 再試一次。</value>
+  </data>
+  <data name="ProcessIsNotTerminated" xml:space="preserve">
+    <value>因為發生下列錯誤，所以此命令已停止 "{0} ({1})" 的作業: {2}。</value>
+  </data>
+  <data name="RedirectionParams" xml:space="preserve">
+    <value>因為 Redirection 參數無法與 UseShellExecute 參數搭配使用，所以無法執行此命令</value>
+  </data>
+  <data name="NoComputerNameWithFileVersion" xml:space="preserve">
+    <value>取得 "Modules" 或 "FileVersion" 時發生例外狀況: [此功能不支援遠端電腦。]。</value>
+  </data>
+  <data name="DebuggerError" xml:space="preserve">
+    <value>因為沒有可用的預設偵錯工具，所以此命令因 {0} 無法將偵錯工具附加至處理序。</value>
+  </data>
+  <data name="WaitOnIdleProcess" xml:space="preserve">
+    <value>因為此命令無法等候 'System Idle' 處理序，所以已停止作業。請指定其他處理序，然後再次執行命令。</value>
+  </data>
+  <data name="WaitOnItself" xml:space="preserve">
+    <value>因為此命令無法等候自己完成，所以已停止作業。請指定其他處理序，然後再次執行命令。</value>
+  </data>
+  <data name="ProcessNotTerminated" xml:space="preserve">
+    <value>因為處理序 "{0} ({1})" 未在指定的逾時時間內停止，所以此命令已停止作業。</value>
+  </data>
+  <data name="InvalidStartProcess" xml:space="preserve">
+    <value>因為發生錯誤，所以無法執行此命令: {0}</value>
+  </data>
+  <data name="InvalidApplication" xml:space="preserve">
+    <value>因為輸入 "{0}" 不是有效的應用程式，所以無法執行此命令。 請提供有效的應用程式，然後再次執行命令。</value>
+  </data>
+  <data name="InvalidInput" xml:space="preserve">
+    <value>因為參數 "{0}" 的值無效，或無法與此命令搭配使用，所以無法執行此命令。請提供有效的輸入，然後再次執行命令。</value>
+  </data>
+  <data name="DuplicateEntry" xml:space="preserve">
+    <value>因為 "{0}" 和 "{1}" 相同，所以無法執行此命令。請提供不同的輸入，然後再次執行命令。</value>
+  </data>
+  <data name="CannotStarttheProcess" xml:space="preserve">
+    <value>因為系統找不到所有必要的資訊，所以此命令無法完整執行。</value>
+  </data>
+  <data name="FailedToCreateProcessObject" xml:space="preserve">
+    <value>無法擷取新的處理序控制代碼: "{0}"。輸出的 Process 物件可能有一些屬性和方法無法正常運作。</value>
+  </data>
+  <data name="InvalidUserError" xml:space="preserve">
+    <value>因為發生錯誤 1783，所以無法執行此命令。此錯誤的可能原因是使用了不存在的使用者 "{0}"。請提供有效的使用者，然後再次執行命令。</value>
+  </data>
+  <data name="JoinNetworkFailed" xml:space="preserve">
+    <value>將 '{0}' 新增至網路時發生錯誤: {1}</value>
+  </data>
+  <data name="RemoveFailed" xml:space="preserve">
+    <value>從網路移除 '{0}' 時發生錯誤: {1}</value>
+  </data>
+  <data name="RenameFailed" xml:space="preserve">
+    <value>重新命名 '{0}' 時發生錯誤: {1}</value>
+  </data>
+  <data name="ContradictParametersSpecified" xml:space="preserve">
+    <value>不可同時指定參數 "{0}" 和 "{1}"。</value>
+  </data>
+  <data name="CouldNotDebugProcess" xml:space="preserve">
+    <value>因為發生下列錯誤，所以無法對處理序 "{0} ({1})" 進行偵錯: {2}</value>
+  </data>
+  <data name="AttachDebuggerReturnCode2" xml:space="preserve">
+    <value>使用者沒有要求之資訊的存取權。</value>
+  </data>
+  <data name="AttachDebuggerReturnCode21" xml:space="preserve">
+    <value>指定的參數無效。</value>
+  </data>
+  <data name="AttachDebuggerReturnCode3" xml:space="preserve">
+    <value>使用者沒有足夠的權限。</value>
+  </data>
+  <data name="AttachDebuggerReturnCode8" xml:space="preserve">
+    <value>未知失敗。</value>
+  </data>
+  <data name="AttachDebuggerReturnCode9" xml:space="preserve">
+    <value>指定的路徑不存在。</value>
+  </data>
+  <data name="ParameterNotSupported" xml:space="preserve">
+    <value>此版本的 Windows 不支援 cmdlet '{1}' 的參數 '{0}'。</value>
+  </data>
+  <data name="ParameterNotSupportedOnPSEdition" xml:space="preserve">
+    <value>此版本的 PowerShell 不支援 cmdlet '{1}' 的參數 '{0}'。</value>
+  </data>
+</root>

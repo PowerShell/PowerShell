@@ -10,13 +10,13 @@ public class PartitionFilter : IFilter
     private readonly int? _partitionsCount;
     private readonly int? _partitionIndex; // indexed from 0
     private int _counter = 0;
- 
+
     public PartitionFilter(int? partitionCount, int? partitionIndex)
     {
         _partitionsCount = partitionCount;
         _partitionIndex = partitionIndex;
     }
- 
+
     public bool Predicate(BenchmarkCase benchmarkCase)
     {
         if (!_partitionsCount.HasValue || !_partitionIndex.HasValue)

@@ -2836,7 +2836,7 @@ namespace System.Management.Automation.Remoting
 
                     for (int i = 0; i < hashArray.Length; i++)
                     {
-                        if (!(objArray[i] is Hashtable hash))
+                        if (objArray[i] is not Hashtable hash)
                         {
                             return null;
                         }

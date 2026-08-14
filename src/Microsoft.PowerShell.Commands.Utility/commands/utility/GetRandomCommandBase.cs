@@ -488,7 +488,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (EffectiveParameterSet == MyParameterSet.RandomListItem)
             {
-                if (ParameterSetName == ShuffleParameterSet)
+                if (Shuffle)
                 {
                     // this allows for $null to be in an array passed to InputObject
                     foreach (object item in InputObject ?? _nullInArray)

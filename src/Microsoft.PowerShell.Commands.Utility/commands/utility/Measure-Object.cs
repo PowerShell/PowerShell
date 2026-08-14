@@ -824,7 +824,7 @@ namespace Microsoft.PowerShell.Commands
                         string errorId = (IsMeasuringGeneric) ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
                         WritePropertyNotFoundError(propertyName, errorId);
                     }
-                    
+
                     continue;
                 }
 

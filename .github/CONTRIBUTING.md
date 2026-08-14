@@ -91,7 +91,7 @@ To run the link-checker, follow these steps:
 1. Issues marked as [`First-Time-Issue`][first-time-issue],
   are identified as being easy and a great way to learn about this project and making
   contributions.
-  
+
 ### Finding or creating an issue
 
 1. Follow the instructions in [Contributing to Issues][contribute-issues] to find or open an issue.
@@ -264,18 +264,10 @@ Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running
 * Our CI contains automated spell checking and link checking for Markdown files. If there is any false-positive,
   [run the spell checker command-line tool in interactive mode](#spell-checking-documentation)
   to add words to the `.spelling` file.
-* Our packaging test may not pass and ask you to update `files.wxs` file if you add/remove/update nuget package references or add/remove assert files.
 
-  You could update the file manually in accordance with messages in the test log file. Or you can use automatically generated file. To get the file you should build the msi package locally:
-
-  ```powershell
-  Import-Module .\build.psm1
-  Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win7-x64 -Configuration Release -ReleaseTag <release tag>
-  Import-Module .\tools\packaging
-  Start-PSPackage -Type msi -ReleaseTag <release tag> -WindowsRuntime 'win7-x64' -SkipReleaseChecks
-  ```
-
-  Last command will report where new file is located.
+  You could update the `.spelling` file manually in accordance with messages in the test log file, or
+  [run the spell checker command-line tool in interactive mode](#spell-checking-documentation)
+  to add the false-positive words directly.
 
 #### Pull Request - Workflow
 
