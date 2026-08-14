@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Reflection;
@@ -72,6 +73,24 @@ namespace System.Management.Automation
                 COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
 
                 string signature = ComUtil.GetMethodSignatureFromFuncDesc(_typeInfo, funcdesc, false);
+                result.Add(signature);
+
+                _typeInfo.ReleaseFuncDesc(pFuncDesc);
+            }
+
+            return result;
+        }
+
+        internal List<engine.SignatureHelp.SignatureInformation> MethodDefinitionsAsSignatureInformation()
+        {
+            var result = new List<engine.SignatureHelp.SignatureInformation>();
+
+            foreach (int index in _methods)
+            {
+                _typeInfo.GetFuncDesc(index, out nint pFuncDesc);
+                COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
+
+                var signature = ComUtil.GetMethodSignatureFromFuncDescAsSignatureInformation(_typeInfo, funcdesc);
                 result.Add(signature);
 
                 _typeInfo.ReleaseFuncDesc(pFuncDesc);
