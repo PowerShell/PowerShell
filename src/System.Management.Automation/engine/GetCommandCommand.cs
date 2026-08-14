@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the ExcludeModule parameter to the cmdlet.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string[] ExcludeModule
         {
             get
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter causes the output to be packaged into ShowCommandInfo PSObject types
         /// needed to display GUI command information.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter ShowCommandInfo { get; set; }
 
         /// <summary>
