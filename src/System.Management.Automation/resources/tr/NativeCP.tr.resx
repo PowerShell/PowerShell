@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IncorrectValueForCommandParameter" xml:space="preserve">
-    <value>ScriptBlock should only be specified as a value of the Command parameter.</value>
+    <value>ScriptBlock yalnızca Command parametresinin bir değeri olarak belirtilmelidir.</value>
   </data>
   <data name="NoValueForCommandParameter" xml:space="preserve">
-    <value>No value was specified for the Command parameter.</value>
+    <value>Command parametresi için hiçbir değer belirtilmedi.</value>
   </data>
   <data name="IncorrectValueForFormatParameter" xml:space="preserve">
-    <value>A value that is not valid ({6}) was specified for the {7} parameter. Valid values are Text and Xml.</value>
+    <value>Geçersiz bir değer ({6}) {7} parametresi için belirtildi. Geçerli değerler Metin ve Xml'dir.</value>
   </data>
   <data name="NoValueForInputFormatParameter" xml:space="preserve">
-    <value>No value was specified for the InputFormat parameter. Valid values are Text and Xml.</value>
+    <value>InputFormat parametresi için hiçbir değer belirtilmedi. Geçerli değerler Metin ve Xml'dir.</value>
   </data>
   <data name="NoValueForOutputFormatParameter" xml:space="preserve">
-    <value>No value was specified for the OutputFormat parameter. Valid values are text and XML.</value>
+    <value>OutputFormat parametresi için hiçbir değer belirtilmedi. Geçerli değerler metin ve XML'dir.</value>
   </data>
   <data name="StringValueExpectedForFormatParameter" xml:space="preserve">
-    <value>The {6} parameter requires a string value.</value>
+    <value>{6} parametresi bir dize değeri gerektirir.</value>
   </data>
   <data name="NoValuesSpecifiedForArgs" xml:space="preserve">
-    <value>No value was specified for the Args parameter.</value>
+    <value>OutputFormat parametresi için hiçbir değer belirtilmedi.</value>
   </data>
   <data name="ParameterSpecifiedAlready" xml:space="preserve">
-    <value>The {6} parameter was already specified.</value>
+    <value>{6} parametresi zaten belirtilmişti.</value>
   </data>
   <data name="CliXmlError" xml:space="preserve">
-    <value>Cannot process the XML from the '{0}' stream of '{1}': {2}</value>
+    <value>‘{0}' akışından '{1}' XML'i işlenemiyor: {2}</value>
   </data>
 </root>

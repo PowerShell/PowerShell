@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExecutionPolicyOverridden" xml:space="preserve">
-    <value>PowerShell updated your execution policy successfully, but the setting is overridden by a policy defined at a more specific scope.  Due to the override, your shell will retain its current effective execution policy of {0}. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more information please see "Get-Help Set-ExecutionPolicy".</value>
+    <value>PowerShell обновил политику выполнения, но этот параметр переопределяется политикой, заданной в более конкретной области.  Из-за этого переопределения оболочка сохранит текущую действующую политику выполнения {0}. Введите "Get-ExecutionPolicy -List", чтобы просмотреть параметры политики выполнения. Подробнее см. в разделе "Get-Help Set-ExecutionPolicy".</value>
   </data>
   <data name="ExecutionPolicyOverriddenRecommendedAction" xml:space="preserve">
-    <value>Contact your system administrator.</value>
+    <value>Обратитесь к администратору.</value>
   </data>
   <data name="ListAndScopeSpecified" xml:space="preserve">
-    <value>Cannot get execution policy. Specify only the List or Scope parameters.</value>
+    <value>Невозможно получить политику выполнения. Укажите только параметры List или Scope.</value>
   </data>
   <data name="CantSetGroupPolicy" xml:space="preserve">
-    <value>Cannot set execution policy. Execution policies at the MachinePolicy or UserPolicy scopes must be set through Group Policy.</value>
+    <value>Невозможно настроить политику выполнения. Политики выполнения в областях MachinePolicy или UserPolicy нужно настраивать с помощью групповой политики.</value>
   </data>
   <data name="SetExecutionPolicyCaption" xml:space="preserve">
-    <value>Execution Policy Change</value>
+    <value>Изменение политики выполнения</value>
   </data>
   <data name="SetExecutionPolicyQuery" xml:space="preserve">
-    <value>The execution policy helps protect you from scripts that you do not trust. Changing the execution policy might expose you to the security risks described in the about_Execution_Policies help topic at https://go.microsoft.com/fwlink/?LinkID=135170. Do you want to change the execution policy?</value>
+    <value>Политика выполнения помогает защитить вас от сценариев, которым вы не доверяете. Изменение политики выполнения может подвергнуть вас рискам безопасности, описанным в разделе справки о политиках выполнения по адресу https://go.microsoft.com/fwlink/?LinkID=135170. Изменить политику выполнения?</value>
   </data>
   <data name="SetExecutionPolicyAccessDeniedError" xml:space="preserve">
     <value>{0}
-To change the execution policy for the default (LocalMachine) scope, start PowerShell with the "Run as administrator" option. To change the execution policy for the current user, run "Set-ExecutionPolicy -Scope CurrentUser".</value>
+Чтобы изменить политику выполнения для области по умолчанию (LocalMachine), запустите PowerShell с помощью параметра "Запуск от имени администратора". Чтобы изменить политику выполнения для текущего пользователя, выполните команду "Set-ExecutionPolicy -Scope CurrentUser".</value>
   </data>
 </root>

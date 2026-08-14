@@ -549,7 +549,7 @@
     <value>A {0} cannot be specified when {1} is specified.</value>
   </data>
   <data name="WildCardErrorFilePathParameter" xml:space="preserve">
-    <value>Wildcard characters are not supported for the FilePath parameter. Specify a path without wildcard characters.</value>
+    <value>FilePath 매개 변수에는 와일드카드 문자를 사용할 수 없습니다. 와일드카드 문자가 없는 경로를 지정하세요.</value>
   </data>
   <data name="FilePathNotFromFileSystemProvider" xml:space="preserve">
     <value>The path specified as the value of the FilePath parameter is not from the FileSystem provider.</value>
@@ -612,7 +612,7 @@
     <value>Proxy credentials cannot be specified when using the following proxy access type: {0}. Either specify a different access type, or do not specify proxy credentials.</value>
   </data>
   <data name="WrongSessionOptionValue" xml:space="preserve">
-    <value>A {0} value must be specified for session option {1}.</value>
+    <value>세션 옵션 {0}에는 {1} 값을 지정해야 합니다.</value>
   </data>
   <data name="PushedRunspaceMustBeOpen" xml:space="preserve">
     <value>Session must be open.</value>
@@ -636,7 +636,7 @@
     <value>You cannot run Enter-PSSession from a nested prompt.</value>
   </data>
   <data name="WsmanMaxRedirectionCountVariableDescription" xml:space="preserve">
-    <value>The maximum number of WS-Man URI redirections to allow while connecting to a remote computer</value>
+    <value>원격 컴퓨터에 연결할 때 허용할 최대 WS-Man URI 리디렉션 수</value>
   </data>
   <data name="PSDefaultSessionOptionDescription" xml:space="preserve">
     <value>Default session options for new remote sessions</value>
@@ -846,7 +846,7 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
     <value>The Wait and Keep parameters cannot be used together in the same command.</value>
   </data>
   <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
+    <value>WriteEvents 매개 변수는 Wait 매개 변수와 함께만 사용할 수 있습니다.</value>
   </data>
   <data name="PowerShellVersionNotSupported" xml:space="preserve">
     <value>PowerShell remoting endpoint versioning is not supported on PowerShell 7+.</value>
@@ -933,17 +933,17 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
     <value>The command cannot find a PSSession that has the name "{0}".</value>
   </data>
   <data name="WinPERemotingNotSupported" xml:space="preserve">
-    <value>PowerShell remoting is not supported in the Windows Preinstallation Environment (WinPE).</value>
+    <value>WinPE(Windows 사전 설치 환경)에서는 PowerShell 원격 처리가 지원되지 않습니다.</value>
   </data>
   <data name="WinRMRequiresRestart" xml:space="preserve">
-    <value>Changes made by {0} cannot take effect until the WinRM service is restarted.</value>
+    <value>WinRM 서비스를 다시 시작하기 전에는 {0}이(가) 적용한 변경 내용이 적용되지 않습니다.</value>
   </data>
   <data name="WinRMRestartWarning" xml:space="preserve">
-    <value>{0} may need to restart the WinRM service if a configuration using this name has recently been unregistered, certain system data structures may still be cached. In that case, a restart of WinRM may be required.
-All WinRM sessions connected to PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
+    <value>{0}이(가) 이름을 사용하는 구성이 최근에 등록 취소된 경우 WinRM 서비스를 다시 시작해야 할 수 있습니다. 일부 시스템 데이터 구조가 아직 캐시되어 있을 수 있기 때문입니다. 이 경우 WinRM을 다시 시작해야 할 수 있습니다.
+Microsoft.PowerShell과 Register-PSSessionConfiguration cmdlet으로 만든 세션 구성 같은 PowerShell 세션 구성에 연결된 모든 WinRM 세션의 연결이 끊어집니다.</value>
   </data>
   <data name="WinRMForceRestartWarning" xml:space="preserve">
-    <value>You are running in a remote session and have selected the Force option which means the WinRM service may restart.If the WinRM service restarts then this remote session will be terminated and you will need to create a new session to continue</value>
+    <value>원격 세션에서 실행 중이며 강제 옵션을 선택했습니다. 그러면 WinRM 서비스가 다시 시작될 수 있습니다. WinRM 서비스가 다시 시작되면 이 원격 세션은 종료됩니다. 계속하려면 새 세션을 만들어야 합니다</value>
   </data>
   <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
     <value>The job was null when trying to save identifiers. Specify a job to save its identifiers.</value>
@@ -1145,7 +1145,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>Error parsing configuration file {0} with the following message: {1}</value>
   </data>
   <data name="WriteJobInResultsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -WriteJobInResults parameter cannot be used without the -Wait parameter</value>
+    <value>-WriteJobInResults 매개 변수는 -Wait 매개 변수와 함께만 사용할 수 있습니다.</value>
   </data>
   <data name="DISCPathsMustBeAbsolute" xml:space="preserve">
     <value>The member '{0}' is not an absolute path {1}. Change the member to an absolute path in the file {2}.</value>
@@ -1465,52 +1465,52 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>The supplied input data is not valid. Only input data of type {0} is supported.</value>
   </data>
   <data name="WSManPluginInvalidInputStream" xml:space="preserve">
-    <value>The supplied input stream is not valid. Only {0} is supported as input stream.</value>
+    <value>제공된 입력 스트림이 올바르지 않습니다. 입력 스트림으로는 {0}만 지원됩니다.</value>
   </data>
   <data name="WSManPluginInvalidOutputStream" xml:space="preserve">
-    <value>The supplied output stream set is not valid. Only {0} is supported as output stream.</value>
+    <value>제공된 출력 스트림 집합이 올바르지 않습니다. 출력 스트림으로는 {0}만 지원됩니다.</value>
   </data>
   <data name="WSManPluginInvalidSenderDetails" xml:space="preserve">
-    <value>The supplied WSMAN_SENDER_DETAILS is not valid. Cannot process null WSMAN_SENDER_DETAILS.</value>
+    <value>제공된 WSMAN_SENDER_DETAILS가 올바르지 않습니다. null WSMAN_SENDER_DETAILS는 처리할 수 없습니다.</value>
   </data>
   <data name="WSManPluginInvalidShellContext" xml:space="preserve">
-    <value>The supplied shell context is not valid.</value>
+    <value>제공한 셸 컨텍스트가 올바르지 않습니다.</value>
   </data>
   <data name="WSManPluginManagedException" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="WSManPluginNullInvalidInput" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>플러그 인 메서드 {0}에 대한 {1}에는 NULL 값이 허용되지 않습니다.</value>
   </data>
   <data name="WSManPluginNullInvalidStreamSet" xml:space="preserve">
-    <value>NULL value is not allowed for input stream and output stream sets. {0} and {1} are the supported input and output streams.</value>
+    <value>입력 스트림 및 출력 스트림 집합에는 NULL 값이 허용되지 않습니다. {0}과(와) {1}은(는) 지원되는 입력 및 출력 스트림입니다.</value>
   </data>
   <data name="WSManPluginNullPluginContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>플러그 인 메서드 {0}에 대한 {1}에는 NULL 값이 허용되지 않습니다.</value>
   </data>
   <data name="WSManPluginNullShellContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>플러그 인 메서드 {0}에 대한 {1}에는 NULL 값이 허용되지 않습니다.</value>
   </data>
   <data name="WSManPluginOperationClose" xml:space="preserve">
-    <value>PowerShell plugin operation is shutting down. This may happen if the hosting service or application is shutting down.</value>
+    <value>PowerShell 플러그 인 작업을 종료하는 중입니다. 호스팅 서비스 또는 응용 프로그램이 종료되는 경우 이 문제가 발생할 수 있습니다.</value>
   </data>
   <data name="WSManPluginOptionNotUnderstood" xml:space="preserve">
-    <value>PowerShell plugin does not understand the option {0}. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>PowerShell 플러그 인이 {0} 옵션을 인식하지 못합니다. 클라이언트가 PowerShell의 빌드 {1}과(와) 프로토콜 버전 {2}과(와) 호환되는지 확인하세요.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
-    <value>An option with name {0} is expected from the client. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>이름이 {0}인 옵션이 클라이언트에 있어야 합니다. 클라이언트가 PowerShell의 빌드 {1}과(와) 프로토콜 버전 {2}과(와) 호환되는지 확인하세요.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
-    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Powershell plugin does not support the protocol version {2} requested by client.&lt;/PSProtocolVersionError&gt;</value>
+    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;PowerShell 플러그 인이 클라이언트에서 요청한 프로토콜 버전 {2}을(를) 지원하지 않습니다.&lt;/PSProtocolVersionError&gt;</value>
   </data>
   <data name="WSManPluginReportContextFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error while reporting context to WSMan service.</value>
+    <value>PowerShell 플러그 인에서 WSMan 서비스에 컨텍스트를 보고하는 동안 치명적인 오류가 발생했습니다.</value>
   </data>
   <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
-    <value>Unable to create managed server session.</value>
+    <value>관리형 서버 세션을 만들 수 없습니다.</value>
   </data>
   <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error registering a wait handle for shutdown notification.</value>
+    <value>PowerShell 플러그 인에서 종료 알림용 대기 핸들을 등록하는 동안 치명적인 오류가 발생했습니다.</value>
   </data>
   <data name="ServerDriverRemoteHostAlreadyPushed" xml:space="preserve">
     <value>Cannot enter Runspace because a Runspace is already pushed in this session.</value>
@@ -1662,7 +1662,7 @@ SSH client process terminated before connection could be established.</value>
     <value>PowerShell 6+ does not support WOW64. The binary must match the architecture of the processor.</value>
   </data>
   <data name="WowComponentNotPresent" xml:space="preserve">
-    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
+    <value>"{0}" 실행 파일을 찾을 수 없습니다. WOW64 기능이 설치되어 있는지 확인하세요.</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
     <value>Unable to install plugin {0} to directory {1}.</value>
@@ -1703,7 +1703,7 @@ SSH client process terminated before connection could be established.</value>
     <value>Remote debugger exception: {0}, error message: {1}</value>
   </data>
   <data name="WindowsPowerShellNotPresent" xml:space="preserve">
-    <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
+    <value>이 컴퓨터에서 Windows PowerShell을 찾을 수 없으므로 Windows PowerShell 프로세스를 만들 수 없습니다.</value>
   </data>
   <data name="InvalidPSSessionArgument" xml:space="preserve">
     <value>The Runspace argument to Create must be a non-null RemoteRunspace object.</value>

@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExecutionPolicyOverridden" xml:space="preserve">
-    <value>PowerShell updated your execution policy successfully, but the setting is overridden by a policy defined at a more specific scope.  Due to the override, your shell will retain its current effective execution policy of {0}. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more information please see "Get-Help Set-ExecutionPolicy".</value>
+    <value>PowerShell によって実行ポリシーが正常に更新されましたが、より具体的なスコープで定義されたポリシーによって設定がオーバーライドされます。 オーバーライドにより、シェルは {0} の現在の有効な実行ポリシーを保持します。実行ポリシー設定を表示するには、「Get-ExecutionPolicy -List」と入力します。詳細については、「Get-Help Set-ExecutionPolicy」を参照してください。</value>
   </data>
   <data name="ExecutionPolicyOverriddenRecommendedAction" xml:space="preserve">
-    <value>Contact your system administrator.</value>
+    <value>システム管理者に連絡してください。</value>
   </data>
   <data name="ListAndScopeSpecified" xml:space="preserve">
-    <value>Cannot get execution policy. Specify only the List or Scope parameters.</value>
+    <value>実行ポリシーを取得できません。List パラメーターまたは Scope パラメーターのみを指定します。</value>
   </data>
   <data name="CantSetGroupPolicy" xml:space="preserve">
-    <value>Cannot set execution policy. Execution policies at the MachinePolicy or UserPolicy scopes must be set through Group Policy.</value>
+    <value>実行ポリシーを設定できません。MachinePolicy スコープまたは UserPolicy スコープでの実行ポリシーは、グループ ポリシーを使用して設定する必要があります。</value>
   </data>
   <data name="SetExecutionPolicyCaption" xml:space="preserve">
-    <value>Execution Policy Change</value>
+    <value>実行ポリシーの変更</value>
   </data>
   <data name="SetExecutionPolicyQuery" xml:space="preserve">
-    <value>The execution policy helps protect you from scripts that you do not trust. Changing the execution policy might expose you to the security risks described in the about_Execution_Policies help topic at https://go.microsoft.com/fwlink/?LinkID=135170. Do you want to change the execution policy?</value>
+    <value>実行ポリシーは、信頼できないスクリプトから保護するのに役立ちます。実行ポリシーを変更すると、https://go.microsoft.com/fwlink/?LinkID=135170 の about_Execution_Policies ヘルプ トピックで説明されているセキュリティ リスクが発生する可能性があります。実行ポリシーを変更しますか?</value>
   </data>
   <data name="SetExecutionPolicyAccessDeniedError" xml:space="preserve">
     <value>{0}
-To change the execution policy for the default (LocalMachine) scope, start PowerShell with the "Run as administrator" option. To change the execution policy for the current user, run "Set-ExecutionPolicy -Scope CurrentUser".</value>
+"管理者として実行" オプションを使用して PowerShell を開き、既定 (LocalMachine) のスコープの実行ポリシーを変更します。現在のユーザーの実行ポリシーを変更するには、"Set-ExecutionPolicy -Scope CurrentUser" を実行します。</value>
   </data>
 </root>

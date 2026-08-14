@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EmptyInputString" xml:space="preserve">
-    <value>The input expression must not be empty. Specify at least one identifier name in each input expression. </value>
+    <value>入力式を空にすることはできません。各入力式に少なくとも 1 つの識別子名を指定します。</value>
   </data>
   <data name="EmptyTokenString" xml:space="preserve">
-    <value>Unable to match an empty identifier name to a valid enumerator name. Specify one of the following enumerator names and retry: {0}.</value>
+    <value>空の識別子名を有効な列挙子名と一致させることができません。次の列挙子名のいずれかを指定して、もう一度やり直してください: {0}。</value>
   </data>
   <data name="InvalidGenericType" xml:space="preserve">
-    <value>The generic type specified for the expression must represent an enum. Specify a valid enum type. </value>
+    <value>式に指定するジェネリック型は、列挙型を表す必要があります。有効な列挙型を指定してください。</value>
   </data>
   <data name="MultipleEnumNameMatch" xml:space="preserve">
-    <value>The identifier name {0} cannot be processed because it is either too similar or identical to the following enumerator names: {1}. Use a more specific identifier name.</value>
+    <value>識別子名 {0} は、次の列挙子名と似ているか、同一であるため、処理できません: {1}。より具体的な識別子名を使用します。</value>
   </data>
   <data name="NoEnumNameMatch" xml:space="preserve">
-    <value>Unable to match the identifier name {0} to a valid enumerator name. Specify one of the following enumerator names and try again:
+    <value>識別子名 {0} を有効な列挙子名と一致させることができません。次の列挙子名のいずれかを指定して、もう一度やり直してください: 
 {1}</value>
   </data>
   <data name="NoIdentifierGroupingAllowed" xml:space="preserve">
-    <value>Use of parentheses is not valid in the expression because identifier grouping is not allowed. Try removing the parentheses, or if a subexpression is enclosed, try expanding the expression.</value>
+    <value>識別子のグループ化は許可されていないため、式ではかっこの使用は無効です。かっこを削除するか、部分式を囲む場合は式を展開してみてください。</value>
   </data>
   <data name="SyntaxErrorBinaryOperatorExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. Only an OR (,) operator or AND (+) operator is expected after an identifier name.</value>
+    <value>予期しないトークンが原因で式を解析できません。識別子名の後には、OR (,) 演算子または AND (+) 演算子のみが必要です。</value>
   </data>
   <data name="SyntaxErrorIdentifierExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token after a NOT (!) operator. An identifier name is expected after a NOT (!) operator.</value>
+    <value>NOT (!) 演算子の後に予期しないトークンがあるため、式を解析できません。NOT (!) 演算子の後に識別子名が必要です。</value>
   </data>
   <data name="SyntaxErrorUnexpectedBinaryOperator" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. An identifier name or a NOT (!) operator is expected at the start of the expression, or after an OR (,) operator or an AND (+) operator. Also, an expression must not end with an OR (,), AND (+) or NOT (!) operator.</value>
+    <value>予期しないトークンが原因で式を解析できません。識別子名または NOT (!) 演算子は、式の先頭、または OR (,) 演算子または AND (+) 演算子の後に必要です。また、式の末尾に OR (,)、AND (+) 演算子、NOT (!) 演算子を使用することはできません。</value>
   </data>
 </root>

@@ -121,115 +121,115 @@
     <value>이름</value>
   </data>
   <data name="Synopsis" xml:space="preserve">
-    <value>SYNOPSIS</value>
+    <value>개요</value>
   </data>
   <data name="DetailedDescription" xml:space="preserve">
-    <value>DESCRIPTION</value>
+    <value>설명</value>
   </data>
   <data name="Syntax" xml:space="preserve">
     <value>SYNTAX</value>
   </data>
   <data name="Parameters" xml:space="preserve">
-    <value>PARAMETERS</value>
+    <value>매개 변수</value>
   </data>
   <data name="InputType" xml:space="preserve">
-    <value>INPUTS</value>
+    <value>입력</value>
   </data>
   <data name="ReturnType" xml:space="preserve">
-    <value>OUTPUTS</value>
+    <value>출력</value>
   </data>
   <data name="TerminatingErrors" xml:space="preserve">
-    <value>TERMINATING ERRORS</value>
+    <value>종료 오류</value>
   </data>
   <data name="NonHyphenTerminatingErrors" xml:space="preserve">
-    <value>NON-TERMINATING ERRORS</value>
+    <value>종료되지 않는 오류</value>
   </data>
   <data name="Notes" xml:space="preserve">
-    <value>NOTES</value>
+    <value>참고</value>
   </data>
   <data name="Examples" xml:space="preserve">
-    <value>EXAMPLES</value>
+    <value>예</value>
   </data>
   <data name="Example" xml:space="preserve">
     <value>예제</value>
   </data>
   <data name="ExampleUpperCase" xml:space="preserve">
-    <value>EXAMPLE</value>
+    <value>예</value>
   </data>
   <data name="Output" xml:space="preserve">
-    <value>OUTPUT</value>
+    <value>출력</value>
   </data>
   <data name="RelatedLinks" xml:space="preserve">
-    <value>RELATED LINKS</value>
+    <value>관련 링크</value>
   </data>
   <data name="ShortDescription" xml:space="preserve">
-    <value>SHORT DESCRIPTION</value>
+    <value>간단한 설명</value>
   </data>
   <data name="TitleColon" xml:space="preserve">
-    <value>Title:</value>
+    <value>제목:</value>
   </data>
   <data name="QuestionColon" xml:space="preserve">
-    <value>Question:</value>
+    <value>질문:</value>
   </data>
   <data name="Answer" xml:space="preserve">
     <value>답변</value>
   </data>
   <data name="TermColon" xml:space="preserve">
-    <value>Term:</value>
+    <value>용어:</value>
   </data>
   <data name="DefinitionColon" xml:space="preserve">
-    <value>Definition:</value>
+    <value>정의:</value>
   </data>
   <data name="ContentColon" xml:space="preserve">
-    <value>Content:</value>
+    <value>콘텐츠:</value>
   </data>
   <data name="ProviderName" xml:space="preserve">
-    <value>PROVIDER NAME</value>
+    <value>공급자 이름</value>
   </data>
   <data name="BaseCmdletInformation" xml:space="preserve">
-    <value>    This cmdlet supports the common parameters: Verbose, Debug,
+    <value>    이 cmdlet은 다음 공통 매개 변수를 지원합니다. Verbose, Debug,
     ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-    OutBuffer, PipelineVariable, and OutVariable. For more information, see
+    OutBuffer, PipelineVariable 및 OutVariable입니다. 자세한 내용은 다음을 참조하세요.
     about_CommonParameters (https://go.microsoft.com/fwlink/?LinkID=113216). </value>
   </data>
   <data name="ParameterRequired" xml:space="preserve">
-    <value>Required?                    </value>
+    <value>필수인가요?                    </value>
   </data>
   <data name="ParameterPosition" xml:space="preserve">
-    <value>Position?                    </value>
+    <value>위치                    </value>
   </data>
   <data name="TypeColon" xml:space="preserve">
-    <value>Type: </value>
+    <value>형식: </value>
   </data>
   <data name="TargetObjectTypeColon" xml:space="preserve">
-    <value>Target Object Type:   </value>
+    <value>대상 개체 유형:   </value>
   </data>
   <data name="ParameterDefaultValue" xml:space="preserve">
-    <value>Default value                </value>
+    <value>기본값                </value>
   </data>
   <data name="AcceptsPipelineInput" xml:space="preserve">
-    <value>Accept pipeline input?       </value>
+    <value>파이프라인 입력 허용       </value>
   </data>
   <data name="AcceptsWildCardCharacters" xml:space="preserve">
-    <value>Accept wildcard characters?  </value>
+    <value>와일드카드 문자 허용  </value>
   </data>
   <data name="Category" xml:space="preserve">
-    <value>(Category: </value>
+    <value>(범주: </value>
   </data>
   <data name="SuggestedActionColon" xml:space="preserve">
-    <value>Suggested Action: </value>
+    <value>추천 동작: </value>
   </data>
   <data name="VerboseHelpInfo" xml:space="preserve">
-    <value>For more information, type: </value>
+    <value>더 자세한 내용을 보려면 다음을 입력하세요. </value>
   </data>
   <data name="FullHelpInfo" xml:space="preserve">
-    <value>For technical information, type: </value>
+    <value>기술 정보를 보려면 다음을 입력하세요. </value>
   </data>
   <data name="ExampleHelpInfo" xml:space="preserve">
-    <value>To see the examples, type: </value>
+    <value>예제를 보려면 다음을 입력하세요. </value>
   </data>
   <data name="RelatedLinksHelpInfo" xml:space="preserve">
-    <value>For online help, type: </value>
+    <value>온라인 도움말을 보려면 다음을 입력하세요. </value>
   </data>
   <data name="CommonParameters" xml:space="preserve">
     <value>&lt;CommonParameters&gt;</value>
@@ -241,52 +241,52 @@
     <value>true</value>
   </data>
   <data name="NamedParameter" xml:space="preserve">
-    <value>Named</value>
+    <value>명명됨</value>
   </data>
   <data name="Drives" xml:space="preserve">
-    <value>DRIVES</value>
+    <value>드라이브</value>
   </data>
   <data name="Capabilities" xml:space="preserve">
-    <value>CAPABILITIES</value>
+    <value>기능</value>
   </data>
   <data name="Tasks" xml:space="preserve">
-    <value>TASKS</value>
+    <value>작업</value>
   </data>
   <data name="Task" xml:space="preserve">
-    <value>TASK: </value>
+    <value>작업: </value>
   </data>
   <data name="Filters" xml:space="preserve">
-    <value>FILTERS</value>
+    <value>필터</value>
   </data>
   <data name="DynamicParameters" xml:space="preserve">
-    <value>DYNAMIC PARAMETERS</value>
+    <value>동적 매개 변수</value>
   </data>
   <data name="CmdletsSupported" xml:space="preserve">
-    <value>Cmdlets Supported: </value>
+    <value>지원되는 cmdlet: </value>
   </data>
   <data name="AliasesSection" xml:space="preserve">
-    <value>ALIASES</value>
+    <value>별칭</value>
   </data>
   <data name="GetLatestHelpContent" xml:space="preserve">
-    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.
-    -- To download and install Help files for the module that includes this cmdlet, use Update-Help.
-    -- To view the Help topic for this cmdlet online, type: "Get-Help {0} -Online" or
-       go to {1}.</value>
+    <value>Get-Help에서 이 cmdlet의 도움말 파일을 이 컴퓨터에서 찾을 수 없습니다. 부분적인 도움말만 표시됩니다.
+    -- 이 cmdlet을 포함하는 모듈의 도움말 파일을 다운로드하여 설치하려면 Update-Help를 사용하세요.
+    -- 이 cmdlet의 도움말 항목을 온라인으로 보려면 "Get-Help {0} -Online"을 입력하거나
+       {1}(으)로 이동</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>없음</value>
   </data>
   <data name="ParameterAliases" xml:space="preserve">
-    <value>Aliases                      </value>
+    <value>별칭                      </value>
   </data>
   <data name="ParameterIsDynamic" xml:space="preserve">
-    <value>Dynamic?                     </value>
+    <value>동적 여부                     </value>
   </data>
   <data name="ParameterSetName" xml:space="preserve">
-    <value>Parameter set name           </value>
+    <value>매개 변수 집합 이름           </value>
   </data>
   <data name="UnableToRetrieveHelpInfoXml" xml:space="preserve">
-    <value>Unable to retrieve the HelpInfo XML file for UI culture {0}. Make sure the HelpInfoUri property in the module manifest is valid or check your network connection and then try the command again.</value>
+    <value>UI 문화권 {0}에 대한 HelpInfo XML 파일을 검색할 수 없습니다. 모듈 매니페스트의 HelpInfoUri 속성이 올바른지 확인하거나 네트워크 연결을 확인한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="PipelineByPropertyName" xml:space="preserve">
     <value>ByPropertyName</value>
@@ -298,176 +298,176 @@
     <value>FromRemainingArguments</value>
   </data>
   <data name="HelpCultureNotSupported" xml:space="preserve">
-    <value>The specified culture is not supported: {0}. Specify a culture from the following list: {{{1}}}.</value>
+    <value>지정한 문화권은 지원되지 않습니다. {0}. 다음 목록에서 문화권을 지정하세요: {{{1}}}.</value>
   </data>
   <data name="HelpCultureNotSupportedFallback" xml:space="preserve">
-    <value>Postponing error and trying fallback cultures, will show as error if none of fallbacks are supported:
+    <value>오류 처리를 미루고 대체 문화권을 시도합니다. 대체 문화권이 모두 지원되지 않으면 다음과 같이 오류가 표시됩니다:
 {0}</value>
   </data>
   <data name="ModuleBaseMustExist" xml:space="preserve">
-    <value>The ModuleBase directory cannot be found. Verify the directory and try again.</value>
+    <value>ModuleBase 디렉터리를 찾을 수 없습니다. 디렉터리를 확인한 다음 다시 시도하세요.</value>
   </data>
   <data name="PathMustBeValidContainers" xml:space="preserve">
-    <value>The path {0} is not a valid directory. Make sure the directory exists and retry.</value>
+    <value>경로 {0}은(는) 올바른 디렉터리가 아닙니다. 디렉터리가 있는지 확인한 다음 다시 시도하세요.</value>
   </data>
   <data name="TooManyRedirections" xml:space="preserve">
-    <value>A Help URI cannot contain more than 10 redirections. Specify a valid Help URI.</value>
+    <value>도움말 URI에는 10개를 초과하는 리디렉션을 포함할 수 없습니다. 올바른 Help URI를 지정하세요.</value>
   </data>
   <data name="UpdateProgressActivity" xml:space="preserve">
-    <value>Updating Help</value>
+    <value>도움말 업데이트</value>
   </data>
   <data name="UpdateProgressConnecting" xml:space="preserve">
-    <value>Connecting to Help Content...</value>
+    <value>도움말 콘텐츠에 연결하는 중...</value>
   </data>
   <data name="UpdateProgressDownloading" xml:space="preserve">
-    <value>Downloading Help Content...</value>
+    <value>도움말 콘텐츠 다운로드 중...</value>
   </data>
   <data name="UpdateProgressInstalling" xml:space="preserve">
-    <value>Installing Help content...</value>
+    <value>도움말 콘텐츠를 설치하는 중...</value>
   </data>
   <data name="UpdateProgressLocating" xml:space="preserve">
-    <value>Locating Help Content...</value>
+    <value>도움말 콘텐츠를 찾는 중...</value>
   </data>
   <data name="AllParameterSetsName" xml:space="preserve">
-    <value>(All)</value>
+    <value>(모두)</value>
   </data>
   <data name="CannotMatchModulePattern" xml:space="preserve">
-    <value>No PowerShell modules were found that match the following pattern: {0}. Verify the pattern and then try the command again.</value>
+    <value>다음 패턴과 일치하는 PowerShell 모듈을 찾을 수 없습니다. {0}. 패턴을 확인한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ModuleNotFoundWithFullyQualifiedName" xml:space="preserve">
-    <value>No PowerShell modules were found that match the specified FullyQualifiedModule {0}. Verify the FullyQualifiedModule value and then try the command again.</value>
+    <value>지정된 FullyQualifiedModule {0}과(와) 일치하는 PowerShell 모듈을 찾을 수 없습니다. FullyQualifiedModule 값을 확인한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="HelpContentNotFound" xml:space="preserve">
-    <value>Help content cannot be found. Make sure the server is available and the help content location is properly defined in the HelpInfo XML.</value>
+    <value>도움말 콘텐츠를 찾을 수 없습니다. 서버를 사용할 수 있는지, 그리고 도움말 콘텐츠 위치가 HelpInfo XML에 올바르게 정의되어 있는지 확인하세요.</value>
   </data>
   <data name="HelpInfoUriNotFound" xml:space="preserve">
-    <value>The Update-Help command failed because the specified module does not support updatable help. Use Get-Help -Online or look online for help for the commands in this module.</value>
+    <value>지정한 모듈이 업데이트 가능한 도움말을 지원하지 않으므로 Update-Help 명령이 실패했습니다. Get-Help -Online을 사용하거나 온라인에서 이 모듈의 명령에 대한 도움말을 찾아보세요.</value>
   </data>
   <data name="ModuleNameNullOrEmpty" xml:space="preserve">
-    <value>The following parameter must not be null or empty: Module.</value>
+    <value>다음 매개 변수는 null이거나 비워 둘 수 없습니다. Module.</value>
   </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
-    <value>The following parameter must not be null or empty: Path.</value>
+    <value>다음 매개 변수는 null이거나 비워 둘 수 없습니다. Path.</value>
   </data>
   <data name="UpdateHelpCompleted" xml:space="preserve">
-    <value>Update-Help has completed successfully.</value>
+    <value>Update-Help가 완료되었습니다.</value>
   </data>
   <data name="UnzipFailure" xml:space="preserve">
-    <value>Error extracting Help content.</value>
+    <value>도움말 콘텐츠를 추출하는 중 오류가 발생했습니다.</value>
   </data>
   <data name="UnableToConnect" xml:space="preserve">
-    <value>Unable to connect to Help content. The server on which Help content is stored might not be available. Verify that the server is available, or wait until the server is back online, and then try the command again.</value>
+    <value>도움말 콘텐츠에 연결할 수 없습니다. 도움말 콘텐츠가 저장된 서버를 사용할 수 없을 수 있습니다. 서버를 사용할 수 있는지 확인하거나 서버가 다시 온라인 상태가 될 때까지 기다린 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="HelpContentXmlValidationFailure" xml:space="preserve">
-    <value>The Help content at the specified location is not valid. Specify a location that contains valid Help Content.</value>
+    <value>지정한 위치의 도움말 콘텐츠가 올바르지 않습니다. 유효한 도움말 콘텐츠가 포함된 위치를 지정하세요.</value>
   </data>
   <data name="HelpInfoXmlValidationFailure" xml:space="preserve">
-    <value>The HelpInfo XML is not valid. Specify valid HelpInfo XML.</value>
+    <value>HelpInfo XML이 올바르지 않습니다. 유효한 HelpInfo XML을 지정하세요.</value>
   </data>
   <data name="SaveHelpCompleted" xml:space="preserve">
-    <value>Help content was successfully saved to the following location: {0}</value>
+    <value>도움말 내용이 다음 위치에 저장되었습니다. {0}</value>
   </data>
   <data name="HelpContentXsdNotFound" xml:space="preserve">
-    <value>The Help content XSD file cannot be found in {0}. Verify that the XSD file exists at the specified location, and then retry the command.</value>
+    <value>{0}에서 도움말 콘텐츠 XSD 파일을 찾을 수 없습니다. 지정된 위치에 XSD 파일이 있는지 확인한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="FailedToUpdateHelpForModule" xml:space="preserve">
-    <value>Failed to update Help for the module(s) :
+    <value>모듈에 대한 도움말을 업데이트하지 못했습니다:
 '{0}'
 {1}</value>
   </data>
   <data name="SaveProgressActivity" xml:space="preserve">
-    <value>Saving Help</value>
+    <value>도움말 저장 중</value>
   </data>
   <data name="HelpContentContainsInvalidFiles" xml:space="preserve">
-    <value>Help content contains files that are not valid. Only .txt and .xml files are supported.</value>
+    <value>도움말 콘텐츠에 올바르지 않은 파일이 포함되어 있습니다. .txt 및 .xml 파일만 지원됩니다.</value>
   </data>
   <data name="FailedToSaveHelpForModule" xml:space="preserve">
-    <value>Failed to save Help for the module(s) '{0}' : {1}</value>
+    <value>모듈 '{0}'에 대한 도움말을 저장하지 못했습니다. {1}</value>
   </data>
   <data name="FailedToSaveHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to save Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
-English-US help content is available and can be saved using: Save-Help -UICulture en-US.</value>
+    <value>UI 문화권이 {{{1}}}인 모듈 '{0}'에 대한 도움말을 저장하지 못했습니다: {2}.
+영어-US 도움말 콘텐츠를 사용할 수 있으며 Save-Help -UICulture en-US를 사용하여 저장할 수 있습니다.</value>
   </data>
   <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
-English-US help content is available and can be installed using: Update-Help -UICulture en-US.</value>
+    <value>UI 문화권이 {{{1}}}인 모듈 '{0}'에 대한 도움말을 업데이트하지 못했습니다: {2}.
+영어-US 도움말 콘텐츠를 사용할 수 있으며 Update-Help -UICulture en-US를 사용하여 설치할 수 있습니다.</value>
   </data>
   <data name="FailedToUpdateHelpWithLocaleNoUICulture" xml:space="preserve">
-    <value>Your current culture is ({0}), which is not associated with any language, consider changing your system culture or install the English-US help content using: Update-Help -UICulture en-US.</value>
+    <value>현재 문화권은 ({0})이며, 어떤 언어와도 연결되어 있지 않습니다. 시스템 문화권을 변경하거나 Update-Help -UICulture en-US를 사용하여 영어-US 도움말 콘텐츠를 설치하는 것이 좋습니다.</value>
   </data>
   <data name="FalseShort" xml:space="preserve">
     <value>false</value>
   </data>
   <data name="CannotSpecifyRecurseWithoutPath" xml:space="preserve">
-    <value>The -Recurse parameter is only available if a source path is specified.</value>
+    <value>-Recurse 매개 변수는 원본 경로가 지정된 경우에만 사용할 수 있습니다.</value>
   </data>
   <data name="ProviderIsNotFileSystem" xml:space="preserve">
-    <value>The path {0} does not contain a FileSystem provider. Verify that the specified path contains the FileSystem provider, and then retry the command.</value>
+    <value>경로 {0}에 FileSystem 공급자가 없습니다. 지정한 경로에 FileSystem 공급자가 포함되어 있는지 확인한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="SearchingForHelpContent" xml:space="preserve">
-    <value>Searching Help for {0} ...</value>
+    <value>{0}에 대한 도움말을 검색하는 중...</value>
   </data>
   <data name="CannotMatchUICulturePattern" xml:space="preserve">
-    <value>No UI culture was found that matches the following pattern: {0}. Verify the pattern and then try the command again.</value>
+    <value>다음 패턴과 일치하는 UI 문화권을 찾을 수 없습니다. {0}. 패턴을 확인한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="UseForceToSaveHelp" xml:space="preserve">
-    <value>Help was not saved for the module {0}, because the Save-Help command was run on this computer within the last 24 hours.
-To save help again, add the Force parameter to your command.</value>
+    <value>이 컴퓨터에서 지난 24시간 이내에 Save-Help 명령이 실행되었기 때문에 모듈 {0}에 대한 도움말이 저장되지 않았습니다.
+도움말을 다시 저장하려면 명령에 Force 매개 변수를 추가하세요.</value>
   </data>
   <data name="UseForceToUpdateHelp" xml:space="preserve">
-    <value>Help was not updated for the module {0}, because the Update-Help command was run on this computer within the last 24 hours.
-To update help again, add the Force parameter to your command.</value>
+    <value>이 컴퓨터에서 지난 24시간 이내에 Update-Help 명령이 실행되었기 때문에 모듈 {0}에 대한 도움말이 업데이트되지 않았습니다.
+도움말을 다시 업데이트하려면 명령에 Force 매개 변수를 추가하세요.</value>
   </data>
   <data name="NewestContentAlreadyInstalled" xml:space="preserve">
-    <value>The most current Help files are already installed.</value>
+    <value>가장 최신의 도움말 파일이 이미 설치되어 있습니다.</value>
   </data>
   <data name="SuccessfullyUpdatedHelpContent" xml:space="preserve">
-    <value>{0}: {1}. Culture {2} Version {3}</value>
+    <value>{0}: {1}. 문화권 {2} 버전 {3}</value>
   </data>
   <data name="UpdatedHelpContent" xml:space="preserve">
-    <value>Updated {0}</value>
+    <value>{0}에 업데이트됨</value>
   </data>
   <data name="InvalidHelpInfoUri" xml:space="preserve">
-    <value>The value of the HelpInfoUri key in the module manifest must resolve to a container or root URL on a website where the help files are stored. The HelpInfoUri '{0}' does not resolve to a container.</value>
+    <value>모듈 매니페스트의 HelpInfoUri 키 값은 도움말 파일이 저장된 웹 사이트의 컨테이너 또는 루트 URL을 가리켜야 합니다. HelpInfoUri '{0}'은(는) 컨테이너를 가리키지 않습니다.</value>
   </data>
   <data name="HelpContentMustBeInTargetNamespace" xml:space="preserve">
-    <value>Help content must be in the namespace {0}.</value>
+    <value>도움말 콘텐츠는 네임스페이스 {0}에 있어야 합니다.</value>
   </data>
   <data name="GetLatestHelpContentWithoutHelpUri" xml:space="preserve">
-    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.
-    -- To download and install Help files for the module that includes this cmdlet, use Update-Help.</value>
+    <value>Get-Help에서 이 cmdlet의 도움말 파일을 이 컴퓨터에서 찾을 수 없습니다. 부분적인 도움말만 표시됩니다.
+    -- 이 cmdlet을 포함하는 모듈의 도움말 파일을 다운로드하여 설치하려면 Update-Help를 사용하세요.</value>
   </data>
   <data name="NewestContentAlreadyDownloaded" xml:space="preserve">
-    <value>The most current Help files are already downloaded.</value>
+    <value>최신 도움말 파일이 이미 다운로드되어 있습니다.</value>
   </data>
   <data name="SavedHelpContent" xml:space="preserve">
-    <value>Saved {0}</value>
+    <value>{0} 저장됨</value>
   </data>
   <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
-    <value>The HelpInfoURI {0} does not start with HTTP.</value>
+    <value>HelpInfoURI {0}이(가) HTTP로 시작하지 않습니다.</value>
   </data>
   <data name="RootElementMustBeHelpItems" xml:space="preserve">
-    <value>The root level element of the help content must be "helpItems".</value>
+    <value>도움말 콘텐츠의 루트 수준 요소는 "helpItems"여야 합니다.</value>
   </data>
   <data name="SaveProgressActivityForModule" xml:space="preserve">
-    <value>Saving Help for module {0}</value>
+    <value>모듈 {0}에 대한 도움말을 저장하는 중</value>
   </data>
   <data name="UpdateProgressActivityForModule" xml:space="preserve">
-    <value>Updating Help for module {0}</value>
+    <value>모듈 {0}에 대한 도움말을 업데이트하는 중</value>
   </data>
   <data name="UpdateHelpResolveUriVerbose" xml:space="preserve">
-    <value>Resolving URI: "{0}"</value>
+    <value>URI를 확인하는 중: "{0}”</value>
   </data>
   <data name="OnlineHelpUri" xml:space="preserve">
-    <value>Help URI: {0}</value>
+    <value>도움말 URI: {0}</value>
   </data>
   <data name="UpdateHelpShouldProcessActionMessage" xml:space="preserve">
-    <value>{0}, Current Version: {1}, Available Version: {2}, UICulture: {3}</value>
+    <value>{0}, 현재 버전: {1}, 사용 가능한 버전: {2}, UICulture: {3}</value>
   </data>
   <data name="Properties" xml:space="preserve">
-    <value>PROPERTIES</value>
+    <value>속성</value>
   </data>
   <data name="Methods" xml:space="preserve">
-    <value>METHODS</value>
+    <value>방법</value>
   </data>
 </root>

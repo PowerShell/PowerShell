@@ -118,76 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="HelpNotFound" xml:space="preserve">
-    <value>Get-Help could not find {0} in a help file in this session. To download updated help topics type: "Update-Help". To get help online, search for the help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>Get-Help v této relaci nenašel {0} v žádném souboru nápovědy. Aktualizovaná témata nápovědy stáhnete zadáním příkazu Update-Help. Online nápovědu získáte vyhledáním tématu nápovědy v knihovně TechNet na adrese https://go.microsoft.com/fwlink/?LinkID=107116.</value>
   </data>
   <data name="HelpCategoryInvalid" xml:space="preserve">
-    <value>Cannot process the Help category because "{0}" is not a valid Help category.</value>
+    <value>Kategorii nápovědy nejde zpracovat, protože {0} není platná kategorie nápovědy.</value>
   </data>
   <data name="HelpFileLoadFailure" xml:space="preserve">
-    <value>Cannot load the Help file "{0}". Details: {1}.</value>
+    <value>Soubor nápovědy {0} nejde načíst. Podrobnosti: {1}.</value>
   </data>
   <data name="HelpFileNotAccessible" xml:space="preserve">
-    <value>Cannot access the Help file "{0}" because the current user does not have access rights to the file. Details: {1}.</value>
+    <value>K souboru nápovědy {0} nejde získat přístup, protože aktuální uživatel nemá přístupová práva k souboru. Podrobnosti: {1}.</value>
   </data>
   <data name="HelpFileNotValid" xml:space="preserve">
-    <value>The Help file "{0}" is not a valid xml document. Details: {1}.</value>
+    <value>Soubor nápovědy {0} není platný dokument XML. Podrobnosti: {1}.</value>
   </data>
   <data name="LoadHelpFileForTargetFailed" xml:space="preserve">
-    <value>An error occurred while loading Help content for {0} from file {1}. Details: {2}. To download updated Help topics, run the Update-Help cmdlet. To get help online, search for the Help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>Při načítání obsahu nápovědy pro {0} ze souboru {1} došlo k chybě. Podrobnosti: {2}. Aktualizovaná témata nápovědy stáhnete spuštěním rutiny Update-Help. Online nápovědu získáte vyhledáním tématu nápovědy v knihovně TechNet na adrese https://go.microsoft.com/fwlink/?LinkID=107116.</value>
   </data>
   <data name="ProviderLoadError" xml:space="preserve">
-    <value>The provider "{0}" cannot be loaded. Details: {1}.</value>
+    <value>Poskytovatele {0} nejde načíst. Podrobnosti: {1}.</value>
   </data>
   <data name="HelpLoadError" xml:space="preserve">
-    <value>Cannot load the Help file. The following {1} errors occurred while loading the Help file "{0}".</value>
+    <value>Soubor nápovědy nejde načíst. Počet chyb: {1}. Došlo k nim při načítání souboru nápovědy {0}.</value>
   </data>
   <data name="MamlInvalidChildNodeError" xml:space="preserve">
-    <value>The node "{0}" cannot have "{1}" as a child node. Node Path: {2}.</value>
+    <value>Uzel {0} nemůže mít jako podřízený uzel {1}. Cesta k uzlu: {2}.</value>
   </data>
   <data name="MamlInvalidChildNodeCountError" xml:space="preserve">
-    <value>The node "{0}" can have a maximum of {2} child nodes of type "{1}". Node Path: {3}.</value>
+    <value>Uzel {0} může mít nejvýše {2} podřízených uzlů typu {1}. Cesta k uzlu: {3}.</value>
   </data>
   <data name="RegistryPathNotFound" xml:space="preserve">
-    <value>Cannot find the registry key: "{0}{1}"; using "{2}" to load Help files.</value>
+    <value>Klíč registru se nepovedlo najít: {0}{1}. K načtení souborů nápovědy se použije {2}.</value>
   </data>
   <data name="NoParmsFound" xml:space="preserve">
-    <value>No parameter matches criteria {0}.</value>
+    <value>Kritériím {0} neodpovídá žádný parametr.</value>
   </data>
   <data name="ParamNotSupported" xml:space="preserve">
-    <value>{0} is not supported by the requested Help category.</value>
+    <value>Požadovaná kategorie nápovědy nepodporuje {0}.</value>
   </data>
   <data name="NoURIFound" xml:space="preserve">
-    <value>The online version of this Help topic cannot be displayed because the Internet address (URI) of the Help topic is not specified in the command code or in the help file for the command.</value>
+    <value>Online verzi tohoto tématu nápovědy nejde zobrazit, protože internetová adresa (URI) tématu není zadaná v kódu příkazu ani v souboru nápovědy k příkazu.</value>
   </data>
   <data name="InvalidURI" xml:space="preserve">
-    <value>The specified URI {0} is not valid.</value>
+    <value>Zadaný identifikátor URI {0} není platný.</value>
   </data>
   <data name="CannotLaunchURI" xml:space="preserve">
-    <value>Starting a browser to display online Help failed. No program or browser is associated to open the URI {0}.</value>
+    <value>Prohlížeč pro zobrazení online nápovědy se nepovedlo spustit. K otevření identifikátoru URI {0} není přidružený žádný program ani prohlížeč.</value>
   </data>
   <data name="ProtocolNotSupported" xml:space="preserve">
-    <value>The protocol specified in the Uri "{0}" is not supported. Only "{1}" and "{2}" protocols are supported.</value>
+    <value>Protokol zadaný v identifikátoru URI {0} není podporovaný. Podporují se jen protokoly {1} a {2}.</value>
   </data>
   <data name="MultipleOnlineTopicsNotSupported" xml:space="preserve">
-    <value>Multiple Help topics were found. Use only one Help topic with the -{0} option.</value>
+    <value>Našlo se několik témat nápovědy. S možností -{0} použijte jen jedno téma nápovědy.</value>
   </data>
   <data name="RemoteRunspaceNotAvailable" xml:space="preserve">
-    <value>Cannot get Help from a remote runspace, because the runspace has not been opened.  Open the runspace by running an implicit remoting command, and then try running the command to get Help again.</value>
+    <value>Nápovědu nejde získat ze vzdáleného prostředí runspace, protože toto prostředí ještě není otevřené.  Otevřete prostředí runspace spuštěním příkazu implicitní vzdálené komunikace a potom zkuste příkaz pro získání nápovědy spustit znovu.</value>
   </data>
   <data name="UpdatableHelpRequiresElevation" xml:space="preserve">
-    <value>Access is denied. The command could not update Help topics for the PowerShell core modules, or for any modules in the $pshome\Modules directory.
-To update these Help topics, start PowerShell by using the "Run as Administrator" command, and try running Update-Help again.</value>
+    <value>Přístup je odepřený. Příkaz nemohl aktualizovat témata nápovědy pro základní moduly PowerShellu ani pro žádné moduly v adresáři $pshome\Modules.
+Pokud chcete tato témata nápovědy aktualizovat, spusťte PowerShell pomocí příkazu Spustit jako správce a zkuste Update-Help spustit znovu.</value>
   </data>
   <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
-    <value>To use the {0}, make sure your application uses 'Microsoft.NET.Sdk.WindowsDesktop' as the project SDK and the corresponding assembly 'Microsoft.PowerShell.GraphicalHost' is available. ({1})</value>
+    <value>Pokud chcete používat {0}, ujistěte se, že vaše aplikace používá jako sadu SDK projektu Microsoft.NET.Sdk.WindowsDesktop a že je k dispozici odpovídající sestavení Microsoft.PowerShell.GraphicalHost. ({1})</value>
   </data>
   <data name="RemotingNotSupportedForFeature" xml:space="preserve">
-    <value>{0} does not work in a remote session.</value>
+    <value>{0} ve vzdálené relaci nefunguje.</value>
   </data>
   <data name="CircularDependencyInHelpForwarding" xml:space="preserve">
-    <value>ForwardHelpTargetName cannot refer to the function itself.</value>
+    <value>ForwardHelpTargetName nemůže odkazovat na samotnou funkci.</value>
   </data>
   <data name="NoNetworkCommands" xml:space="preserve">
-    <value>Cannot get help from a network location when in a restricted session.</value>
+    <value>V omezené relaci nejde získat nápovědu ze síťového umístění.</value>
   </data>
 </root>

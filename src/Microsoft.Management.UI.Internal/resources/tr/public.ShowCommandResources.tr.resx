@@ -118,41 +118,41 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ActionButtons_Button_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>İptal</value>
   </data>
   <data name="ActionButtons_Button_Copy" xml:space="preserve">
-    <value>Co_py</value>
+    <value>Kop_yala</value>
   </data>
   <data name="ActionButtons_Button_Run" xml:space="preserve">
-    <value>_Run</value>
+    <value>_Çalıştır</value>
   </data>
   <data name="All" xml:space="preserve">
     <value>Tümü</value>
   </data>
   <data name="AllModulesControl_Label_Modules" xml:space="preserve">
-    <value>Modules:</value>
+    <value>Modüller:</value>
   </data>
   <data name="CmdletControl_Button_GetHelp" xml:space="preserve">
     <value> ? </value>
   </data>
   <data name="CmdletControl_Button_ToolTip_Help" xml:space="preserve">
-    <value>Help</value>
+    <value>Yardım</value>
   </data>
   <data name="CmdletControl_Header_CommonParameters" xml:space="preserve">
-    <value>Common Parameters</value>
+    <value>Ortak Parametreler</value>
   </data>
   <data name="CmdletControl_Header_Errors" xml:space="preserve">
-    <value>Errors</value>
+    <value>Hatalar</value>
   </data>
   <data name="DetailsParameterTitleFormat" xml:space="preserve">
-    <value>Parameters for "{0}":</value>
+    <value>"{0}" parametreleri:</value>
   </data>
   <data name="CmdletTooltipFormat" xml:space="preserve">
-    <value>Name: {0}
-Module: {1} ({2})</value>
+    <value>Ad: {0}
+Modül: {1} ({2})</value>
   </data>
   <data name="EndProcessingErrorMessage" xml:space="preserve">
-    <value>The following errors occurred running the command:
+    <value>Komut çalıştırılırken aşağıdaki hatalar oluştu:
 {0}</value>
   </data>
   <data name="MandatoryLabelSegment" xml:space="preserve">
@@ -168,31 +168,31 @@ Module: {1} ({2})</value>
     <comment>This is a label for a control, hence the colon. {0} is a parameter name</comment>
   </data>
   <data name="ShowModuleControl_Label_Name" xml:space="preserve">
-    <value>Name:</value>
+    <value>Ad:</value>
   </data>
   <data name="ActionButtons_Button_Ok" xml:space="preserve">
-    <value>OK</value>
+    <value>Tamam</value>
   </data>
   <data name="MultiParameter_Button_Browse" xml:space="preserve">
     <value>...</value>
   </data>
   <data name="CommandNameAutomationName" xml:space="preserve">
-    <value>Command Name</value>
+    <value>Komut Adı</value>
   </data>
   <data name="ModulesAutomationName" xml:space="preserve">
-    <value>Modules</value>
+    <value>Modüller</value>
   </data>
   <data name="NoModuleName" xml:space="preserve">
-    <value>&lt;No module name&gt;</value>
+    <value>&lt;Modül adı yok&gt;</value>
   </data>
   <data name="SelectMultipleValuesForParameterFormat" xml:space="preserve">
-    <value>Select multiple values for "{0}"</value>
+    <value>"{0}" için birden çok değer seçin</value>
   </data>
   <data name="CanReceiveValueFromPipeline" xml:space="preserve">
-    <value>Can receive value from pipeline</value>
+    <value>İşlem hattından değer alabilir</value>
   </data>
   <data name="CommonToAllParameterSets" xml:space="preserve">
-    <value>Common to all parameter sets</value>
+    <value>Tüm parametre kümeleri için ortak</value>
   </data>
   <data name="Mandatory" xml:space="preserve">
     <value>Zorunlu</value>
@@ -201,39 +201,39 @@ Module: {1} ({2})</value>
     <value>İsteğe bağlı</value>
   </data>
   <data name="PositionFormat" xml:space="preserve">
-    <value>Position: {0}</value>
+    <value>Konum: {0}</value>
   </data>
   <data name="TypeFormat" xml:space="preserve">
-    <value>Type: {0}</value>
+    <value>Tür: {0}</value>
   </data>
   <data name="Imported" xml:space="preserve">
-    <value>Imported</value>
+    <value>İçeri aktarıldı</value>
   </data>
   <data name="NotImported" xml:space="preserve">
-    <value>Not Imported</value>
+    <value>İçeri Aktarılmadı</value>
   </data>
   <data name="ImportModuleButtonText" xml:space="preserve">
-    <value>Show Details</value>
+    <value>Ayrıntıları Göster</value>
   </data>
   <data name="ImportModuleFailedFormat" xml:space="preserve">
-    <value>Failed to import the module required by command "{0}". Module name: "{1}". Error message: "{2}".</value>
+    <value>"{0}" komutu için gereken modül içeri aktarılamadı. Modül adı: "{1}". Hata iletisi: "{2}".</value>
   </data>
   <data name="NotImportedFormat" xml:space="preserve">
-    <value>To import the "{0}" module and its cmdlets, including "{1}", click {2}.</value>
+    <value>"{0}" modülünü ve "{1}" dahil cmdlet'lerini içeri aktarmak için {2} seçeneğine tıklayın.</value>
   </data>
   <data name="ShowCommandError" xml:space="preserve">
-    <value>Show Command - Error</value>
+    <value>Komutu Göster - Hata</value>
   </data>
   <data name="PleaseWaitMessage" xml:space="preserve">
-    <value>Please Wait...</value>
+    <value>Lütfen Bekleyin...</value>
   </data>
   <data name="ShowModuleControl_RefreshButton" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Yenile</value>
   </data>
   <data name="NoParameters" xml:space="preserve">
-    <value>There are no parameters.</value>
+    <value>Parametre yok.</value>
   </data>
   <data name="RefreshShowCommandTooltipFormat" xml:space="preserve">
-    <value>Click after using "{0}" to see the new commands</value>
+    <value>Yeni komutları görmek için "{0}" kullandıktan sonra tıklayın</value>
   </data>
 </root>

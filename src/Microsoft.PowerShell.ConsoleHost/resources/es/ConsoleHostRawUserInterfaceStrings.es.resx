@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CoordinateOutOfBufferErrorTemplate" xml:space="preserve">
-    <value>Cannot process the operation because the supplied coordinate is not valid. Specify a coordinate within the buffer area of {0}.</value>
+    <value>No se puede procesar la operación porque la coordenada proporcionada no es válida. Especifique una coordenada dentro del área de búfer de {0}.</value>
   </data>
   <data name="InvalidBufferSizeError" xml:space="preserve">
-    <value>Cannot set the buffer size because the size specified is too large or too small.</value>
+    <value>No se puede establecer el tamaño del búfer porque el tamaño especificado es demasiado grande o demasiado pequeño.</value>
   </data>
   <data name="InvalidConsoleColorError" xml:space="preserve">
-    <value>Cannot set the console color because the value specified is not valid. Specify a valid color as defined by the System.ConsoleColor type.</value>
+    <value>No se puede establecer el color de la consola porque el valor especificado no es válido. Especifique un color válido según lo definido por el tipo System.ConsoleColor.</value>
   </data>
   <data name="InvalidCursorSizeError" xml:space="preserve">
-    <value>Cannot process CursorSize because the cursor size specified is not valid.</value>
+    <value>No se puede procesar CursorSize porque el tamaño de cursor especificado no es válido.</value>
   </data>
   <data name="InvalidReadKeyOptionsError" xml:space="preserve">
-    <value>Cannot read key options. To read options, set one or both of the following: IncludeKeyDown, IncludeKeyUp.</value>
+    <value>No se pueden leer las opciones de clave. Para leer las opciones, establezca una o las dos opciones siguientes: IncludeKeyDown, IncludeKeyUp.</value>
   </data>
   <data name="InvalidRegionErrorTemplate" xml:space="preserve">
-    <value>{0} should be greater than or equal to {1}.</value>
+    <value>{0} debe ser mayor o igual que {1}.</value>
   </data>
   <data name="InvalidXWindowPositionError" xml:space="preserve">
-    <value>Cannot use the specified Window X (column) position because it extends past the width of the screen buffer. Specify another X position, starting with 0 as the left most column of the buffer.</value>
+    <value>No se puede usar la posición especificada de la ventana X (columna) porque se extiende más allá del ancho del búfer de pantalla. Especifique otra posición X, empezando por 0 como la columna más a la izquierda del búfer.</value>
   </data>
   <data name="InvalidYWindowPositionError" xml:space="preserve">
-    <value>Cannot use the specified Window Y (row) position because it extends past the height of the screen buffer. Specify another Y position, starting with 0 as the top-most row of the buffer.</value>
+    <value>No se puede usar la posición Y (fila) de la ventana especificada porque se extiende más allá del alto del búfer de pantalla. Especifique otra posición Y, empezando por 0 como la fila más alta del búfer.</value>
   </data>
   <data name="WindowWidthTooSmallError" xml:space="preserve">
-    <value>Window width cannot be less than 1.</value>
+    <value>El ancho de la ventana no puede ser menor que 1.</value>
   </data>
   <data name="WindowHeightTooSmallError" xml:space="preserve">
-    <value>Window height must be at least 1.</value>
+    <value>El alto de la ventana debe ser al menos 1.</value>
   </data>
   <data name="WindowWidthLargerThanBufferError" xml:space="preserve">
-    <value>Window cannot be wider than the screen buffer.</value>
+    <value>La ventana no puede ser más ancha que el búfer de pantalla.</value>
   </data>
   <data name="WindowHeightLargerThanBufferError" xml:space="preserve">
-    <value>Window cannot be taller than the screen buffer.</value>
+    <value>La ventana no puede ser más alta que el búfer de pantalla.</value>
   </data>
   <data name="WindowWidthTooLargeErrorTemplate" xml:space="preserve">
-    <value>Window cannot be wider than {0}.</value>
+    <value>La ventana no puede ser más ancha que {0}.</value>
   </data>
   <data name="WindowHeightTooLargeErrorTemplate" xml:space="preserve">
-    <value>Window cannot be taller than {0}.</value>
+    <value>La ventana no puede ser más alta que {0}.</value>
   </data>
   <data name="WindowTooNarrowError" xml:space="preserve">
-    <value>Window size is too narrow.</value>
+    <value>El tamaño de la ventana es demasiado estrecho.</value>
   </data>
   <data name="WindowTooShortError" xml:space="preserve">
-    <value>Window size is too short.</value>
+    <value>El tamaño de la ventana es demasiado corto.</value>
   </data>
   <data name="WindowTitleTooShortError" xml:space="preserve">
-    <value>Window title cannot be empty.</value>
+    <value>El título de la ventana no puede estar vacío.</value>
   </data>
   <data name="WindowTitleTooLongErrorTemplate" xml:space="preserve">
-    <value>Window title cannot be longer than {0} characters.</value>
+    <value>El título de la ventana no puede tener más de {0} caracteres.</value>
   </data>
   <data name="WindowTitleElevatedPrefix" xml:space="preserve">
-    <value>Administrator: </value>
+    <value>Administrador: </value>
   </data>
 </root>

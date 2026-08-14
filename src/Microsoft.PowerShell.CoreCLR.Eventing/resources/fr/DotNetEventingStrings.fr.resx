@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ArgumentOutOfRange_NeedNonNegNum" xml:space="preserve">
-    <value>Non negative number is required.</value>
+    <value>Un nombre non négatif est nécessaire.</value>
   </data>
   <data name="ArgumentOutOfRange_NeedValidId" xml:space="preserve">
-    <value>The ID parameter must be in the range {0} through {1}.</value>
+    <value>Le paramètre ID doit être compris entre {0} et {1}.</value>
   </data>
   <data name="ArgumentOutOfRange_MaxArgExceeded" xml:space="preserve">
-    <value>The total number of parameters must not exceed {0}.</value>
+    <value>Le nombre total de paramètres ne doit pas dépasser {0}.</value>
   </data>
   <data name="ArgumentOutOfRange_MaxStringsExceeded" xml:space="preserve">
-    <value>The number of String parameters must not exceed {0}.</value>
+    <value>Le nombre de paramètres Chaîne ne doit pas dépasser {0}.</value>
   </data>
   <data name="Argument_NeedNonemptyDelimiter" xml:space="preserve">
-    <value>Delimiter cannot be an empty string.</value>
+    <value>Le délimiteur ne peut pas être une chaîne vide.</value>
   </data>
 </root>

@@ -121,37 +121,37 @@
     <value>PowerShell {0}</value>
   </data>
   <data name="ShellBannerCLMode" xml:space="preserve">
-    <value>[Constrained Language Mode]</value>
+    <value>[受约束的语言模式]</value>
   </data>
   <data name="ShellBannerCLAuditMode" xml:space="preserve">
-    <value>[Constrained Language AUDIT Mode : No Restrictions]</value>
+    <value>[受约束的语言审核模式: 无限制]</value>
   </data>
   <data name="ShellBannerNLMode" xml:space="preserve">
-    <value>[No Language Mode]</value>
+    <value>[无语言模式]</value>
   </data>
   <data name="ShellBannerRLMode" xml:space="preserve">
-    <value>[Restricted Language Mode]</value>
+    <value>[受限语言模式]</value>
   </data>
   <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell preview release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} 有新的 PowerShell 预览版本可用: v{0} {2}
+  {1} 立即升级，或访问发布页:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="StableUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell stable release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} 有新的 PowerShell 稳定版本可用: v{0} {2}
+  {1} 立即升级，或访问发布页:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="LTSUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell LTS release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} 有新的 PowerShell LTS 版本可用: v{0} {2}
+  {1} 立即升级，或访问发布页:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="UsageHelp" xml:space="preserve">
-    <value>Usage: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
+    <value>用法: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
                                 | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
                   [-CommandWithArgs &lt;string&gt; [&lt;CommandParameters&gt;]
@@ -166,9 +166,9 @@
 
        pwsh[.exe] -h | -Help | -? | /?
 
-PowerShell Online Help https://aka.ms/powershell-docs
+PowerShell 联机帮助 https://aka.ms/powershell-docs
 
-All parameters are case-insensitive.</value>
+所有参数都不区分大小写。</value>
   </data>
   <data name="ExtendedHelp" xml:space="preserve">
     <value>

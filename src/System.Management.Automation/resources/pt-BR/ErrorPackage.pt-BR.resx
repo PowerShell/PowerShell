@@ -121,18 +121,18 @@
     <value>{0}…{1}</value>
   </data>
   <data name="ErrorDetailsEmptyTemplate" xml:space="preserve">
-    <value>Error text is empty for error "{0}" : "{1}"</value>
+    <value>O texto do erro está vazio para o erro "{0}" : "{1}"</value>
   </data>
   <data name="RedirectedException" xml:space="preserve">
-    <value>Object "{0}" is reported as an error.</value>
+    <value>O objeto "{0}" é relatado como um erro.</value>
   </data>
   <data name="UnsupportedPreferenceError" xml:space="preserve">
-    <value>The value {0} is not supported for an ActionPreference variable. The provided value should be used only as a value for a preference parameter, and has been replaced by the default value. For more information, see the Help topic, "about_Preference_Variables."</value>
+    <value>O valor {0} não tem suporte para uma variável ActionPreference. O valor fornecido deve ser usado somente como valor de um parâmetro de preferência e foi substituído pelo valor padrão. Para obter mais informações, consulte o tópico da Ajuda, "about_Preference_Variables".</value>
   </data>
   <data name="ActionPreferenceReservedForFutureUseError" xml:space="preserve">
-    <value>The {0} ActionPreference value is reserved for future use and is not supported at this time. For more information about preference variables, see the Help topic, "about_Preference_Variables."</value>
+    <value>O valor {0} ActionPreference é reservado para uso futuro e ainda não tem suporte no momento. Para obter mais informações sobre variáveis de preferência, consulte o tópico da Ajuda, "about_Preference_Variables".</value>
   </data>
   <data name="ReservedActionPreferenceReplacedError" xml:space="preserve">
-    <value>The {0} ActionPreference value is reserved for future use and is not supported at this time. It has been replaced in your {1} variable by the default value of {2}. For more information about preference variables, see the Help topic, "about_Preference_Variables."</value>
+    <value>O valor {0} ActionPreference é reservado para uso futuro e ainda não tem suporte no momento. Ele foi substituído em sua variável {1} pelo valor padrão de {2}. Para obter mais informações sobre variáveis de preferência, consulte o tópico da Ajuda, "about_Preference_Variables".</value>
   </data>
 </root>

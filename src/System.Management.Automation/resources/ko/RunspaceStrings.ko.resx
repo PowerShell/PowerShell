@@ -118,126 +118,126 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidRunspaceStateGeneral" xml:space="preserve">
-    <value>The runspace state is not valid for this operation.</value>
+    <value>이 작업에는 runspace 상태가 유효하지 않습니다.</value>
   </data>
   <data name="CannotOpenAgain" xml:space="preserve">
-    <value>Cannot open the runspace because the runspace is not in the BeforeOpen state. Current state of the runspace is '{0}'.</value>
+    <value>runspace가 BeforeOpen 상태가 아니므로 runspace를 열 수 없습니다. runspace의 현재 상태는 '{0}'입니다.</value>
   </data>
   <data name="RunspaceNotInOpenedState" xml:space="preserve">
-    <value>Cannot perform the operation because the runspace is not in the Opened state. Current state of the runspace is '{0}'.</value>
+    <value>runspace가 Opened 상태가 아니므로 작업을 수행할 수 없습니다. runspace의 현재 상태는 '{0}'입니다.</value>
   </data>
   <data name="RunspaceNotOpenForPipeline" xml:space="preserve">
-    <value>Cannot invoke the pipeline because the runspace is not in the Opened state. Current state of the runspace is '{0}'.</value>
+    <value>Runspace가 열림 상태가 아니므로 파이프라인을 호출할 수 없습니다. runspace의 현재 상태는 '{0}'입니다.</value>
   </data>
   <data name="InvalidPipelineStateStateGeneral" xml:space="preserve">
-    <value>The pipeline state is not valid for this operation.</value>
+    <value>이 작업에는 파이프라인 상태가 유효하지 않습니다.</value>
   </data>
   <data name="PipelineReInvokeNotAllowed" xml:space="preserve">
-    <value>Cannot invoke pipeline because it has already been invoked.</value>
+    <value>파이프라인이 이미 호출되었으므로 호출할 수 없습니다.</value>
   </data>
   <data name="InvalidValueToResultError" xml:space="preserve">
-    <value>The valid value for the parameter is PipelineResultTypes.Output.</value>
+    <value>매개 변수의 유효한 값은 PipelineResultTypes.Output입니다.</value>
   </data>
   <data name="NoCommandInPipeline" xml:space="preserve">
-    <value>The pipeline does not contain a command.</value>
+    <value>파이프라인에 명령이 포함되어 있지 않습니다.</value>
   </data>
   <data name="ConcurrentInvokeNotAllowed" xml:space="preserve">
-    <value>The pipeline was not run because a pipeline is already running. Pipelines cannot be run concurrently.</value>
+    <value>파이프라인이 이미 실행 중이므로 실행할 수 없습니다. 파이프라인은 동시에 실행할 수 없습니다.</value>
   </data>
   <data name="NestedPipelineInvokeAsync" xml:space="preserve">
-    <value>A nested pipeline cannot be invoked asynchronously. Use the Invoke method.</value>
+    <value>중첩된 파이프라인은 비동기적으로 호출할 수 없습니다. Invoke 메서드를 사용하세요.</value>
   </data>
   <data name="NestedPipelineNoParentPipeline" xml:space="preserve">
-    <value>You should only run a nested pipeline from within a running pipeline.</value>
+    <value>중첩된 파이프라인은 실행 중인 파이프라인 안에서만 실행해야 합니다.</value>
   </data>
   <data name="RunspaceCloseInvalidWhileSessionStateProxy" xml:space="preserve">
-    <value>Runspace cannot be closed while a SessionStateProxy method call is in progress.</value>
+    <value>SessionStateProxy 메서드 호출이 진행 중인 동안에는 runspace를 닫을 수 없습니다.</value>
   </data>
   <data name="NoPipelineWhenSessionStateProxyInProgress" xml:space="preserve">
-    <value>Pipeline cannot be invoked while a SessionStateProxy method call is in progress.</value>
+    <value>SessionStateProxy 메서드 호출이 진행 중인 동안에는 파이프라인을 호출할 수 없습니다.</value>
   </data>
   <data name="AnotherSessionStateProxyInProgress" xml:space="preserve">
-    <value>A SessionStateProxy method call is in progress. Concurrent SessionStateProxy method calls are not allowed.</value>
+    <value>SessionStateProxy 메서드 호출이 진행 중입니다. 동시에 여러 SessionStateProxy 메서드를 호출할 수 없습니다.</value>
   </data>
   <data name="NoSessionStateProxyWhenPipelineInProgress" xml:space="preserve">
-    <value>A pipeline is already running. Concurrent SessionStateProxy method calls are not allowed.</value>
+    <value>파이프라인이 이미 실행 중입니다. 동시에 여러 SessionStateProxy 메서드를 호출할 수 없습니다.</value>
   </data>
   <data name="ChangePropertyAfterOpen" xml:space="preserve">
-    <value>This property cannot be changed after the runspace has been opened.</value>
+    <value>이 속성은 runspace를 연 후에는 변경할 수 없습니다.</value>
   </data>
   <data name="ErrorLoadingModulesOnRunspaceOpen" xml:space="preserve">
-    <value>One or more errors occurred processing the module '{0}' specified in the InitialSessionState object used to create this runspace. See the ErrorRecords property for a complete list of errors. The first error was: {1}</value>
+    <value>이 runspace를 만드는 데 사용된 InitialSessionState 개체에 지정된 모듈 '{0}'을(를) 처리하는 동안 하나 이상의 오류가 발생했습니다. 전체 오류 목록은 ErrorRecords 속성을 참조하세요. 첫 번째 오류는 다음과 같습니다: {1}</value>
   </data>
   <data name="InvalidThreadOptionsChange" xml:space="preserve">
-    <value>The thread options can only be changed if the apartment state is multithreaded apartment (MTA), the current options are UseNewThread or UseCurrentThread, and the new value is ReuseThread.</value>
+    <value>아파트 상태가 MTA(다중 스레드 아파트)이고, 현재 옵션이 UseNewThread 또는 UseCurrentThread이며, 새 값이 ReuseThread인 경우에만 스레드 옵션을 변경할 수 있습니다.</value>
   </data>
   <data name="UseLocalScopeNotAllowed" xml:space="preserve">
-    <value>{0} cannot be false when language mode is {1} or {2}.</value>
+    <value>{0}은(는) 언어 모드가 {1} 또는 {2}일 때는 false일 수 없습니다.</value>
   </data>
   <data name="DisconnectNotSupported" xml:space="preserve">
-    <value>You cannot disconnect a local-only runspace.</value>
+    <value>로컬 전용 runspace는 연결을 끊을 수 없습니다.</value>
   </data>
   <data name="ConnectNotSupported" xml:space="preserve">
-    <value>The Connect operation is not supported on local runspaces.</value>
+    <value>로컬 runspace에서는 연결 작업이 지원되지 않습니다.</value>
   </data>
   <data name="RunspaceNotReady" xml:space="preserve">
-    <value>The session is busy. You will be connected to the session as soon as it is available. To cancel the Enter-PSSession command, press Ctrl-C.</value>
+    <value>세션이 사용 중입니다. 사용할 수 있게 되면 바로 세션에 연결됩니다. Enter-PSSession 명령을 취소하려면 Ctrl-C를 누르세요.</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>The command cannot be completed. Script invocation is not supported in this session configuration. This can occur if the session configuration is in no-language mode.</value>
+    <value>명령을 완료할 수 없습니다. 이 세션 구성에서는 스크립트 호출이 지원되지 않습니다. 세션 구성이 no-language 모드일 때 이 문제가 발생할 수 있습니다.</value>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">
-    <value>You cannot use Disconnect and Connect operations on local runspaces.</value>
+    <value>로컬 runspace에서는 연결 끊기 및 연결 작업을 사용할 수 없습니다.</value>
   </data>
   <data name="RunspaceNotOpenForPipelineConnect" xml:space="preserve">
-    <value>Cannot connect the pipeline because the runspace is not in the Opened state.  Current state of runspace is '{0}'.</value>
+    <value>runspace가 Opened 상태가 아니므로 파이프라인을 연결할 수 없습니다.  runspace의 현재 상태는 '{0}'입니다.</value>
   </data>
   <data name="InvalidRunspacePool" xml:space="preserve">
-    <value>Cannot construct a RemoteRunspace. The provided RunspacePool object is not valid.</value>
+    <value>RemoteRunspace를 만들 수 없습니다. 제공된 RunspacePool 개체가 올바르지 않습니다.</value>
   </data>
   <data name="NoDisconnectedCommand" xml:space="preserve">
-    <value>There is no disconnected command associated with this runspace.</value>
+    <value>이 runspace와 연결된 연결 끊긴 명령이 없습니다.</value>
   </data>
   <data name="DisconnectNotSupportedOnServer" xml:space="preserve">
-    <value>The disconnection operation is not supported on the remote computer. To support disconnecting, the remote computer must be running Windows PowerShell 3.0 or a later version of Windows PowerShell and using the WSMan transport.</value>
+    <value>원격 컴퓨터에서는 연결 끊기 작업이 지원되지 않습니다. 연결 끊기를 지원하려면 원격 컴퓨터에서 Windows PowerShell 3.0 이상을 실행하고 WSMan 전송을 사용해야 합니다.</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>Cannot connect the PSSession because the session is not in the Disconnected state, or is not available for connection.</value>
+    <value>세션이 연결 끊김 상태가 아니거나 연결할 수 없으므로 PSSession에 연결할 수 없습니다.</value>
   </data>
   <data name="InvalidMyResultError" xml:space="preserve">
-    <value>Value for parameter cannot be PipelineResultTypes.None or PipelineResultTypes.Output.</value>
+    <value>매개 변수 값은 PipelineResultTypes.None 또는 PipelineResultTypes.Output일 수 없습니다.</value>
   </data>
   <data name="InvalidValueToResult" xml:space="preserve">
-    <value>Valid values for the parameter are PipelineResultTypes.Output or PipelineResultTypes.Null.</value>
+    <value>매개 변수의 유효한 값은 PipelineResultTypes.Output 또는 PipelineResultTypes.Null입니다.</value>
   </data>
   <data name="DebugRedirectionNotSupported" xml:space="preserve">
-    <value>Debug stream redirection is not supported on the targeted remote computer.</value>
+    <value>디버그 스트림 리디렉션은 대상 원격 컴퓨터에서 지원되지 않습니다.</value>
   </data>
   <data name="VerboseRedirectionNotSupported" xml:space="preserve">
-    <value>Verbose stream redirection is not supported on the targeted remote computer.</value>
+    <value>자세한 정보 스트림 리디렉션은 대상 원격 컴퓨터에서 지원되지 않습니다.</value>
   </data>
   <data name="WarningRedirectionNotSupported" xml:space="preserve">
-    <value>Warning stream redirection is not supported on the targeted remote computer.</value>
+    <value>경고 스트림 리디렉션은 대상 원격 컴퓨터에서 지원되지 않습니다.</value>
   </data>
   <data name="InformationRedirectionNotSupported" xml:space="preserve">
-    <value>Information stream redirection is not supported on the targeted remote computer.</value>
+    <value>정보 스트림 리디렉션은 대상 원격 컴퓨터에서 지원되지 않습니다.</value>
   </data>
   <data name="RunningCmdWithJob" xml:space="preserve">
-    <value>You have entered a session that is busy running a command or script.  Because output is routed to job "{0}", you will not see output in the console.  You can wait for the running command to finish, or cancel the command and get an input prompt by pressing Ctrl-C.
+    <value>명령이나 스크립트를 실행 중인 세션에 들어왔습니다.  출력은 작업 "{0}"(으)로 라우팅되므로 콘솔에 출력이 표시되지 않습니다.  실행 중인 명령이 끝날 때까지 기다리거나, 명령을 취소하고 Ctrl-C를 눌러 입력 프롬프트를 가져올 수 있습니다.
 </value>
   </data>
   <data name="RunningCmdWithoutJob" xml:space="preserve">
-    <value>You have entered a session that is busy running a command or script and output will be displayed in the console.  You can wait for the running command to finish or cancel it and get an input prompt by pressing Ctrl-C.
+    <value>명령 또는 스크립트를 실행 중인 세션에 들어왔으며 출력은 콘솔에 표시됩니다.  실행 중인 명령이 끝날 때까지 기다리거나 Ctrl-C를 눌러 취소한 다음 입력 프롬프트를 받을 수 있습니다.
 </value>
   </data>
   <data name="RunningCmdDebugStop" xml:space="preserve">
-    <value>You have entered a session that is currently stopped at a debug breakpoint inside a running command or script.  Use the PowerShell command line debugger to continue debugging.
+    <value>실행 중인 명령 또는 스크립트 내부의 디버그 중단점에서 현재 중지된 세션에 들어왔습니다.  PowerShell 명령줄 디버거를 사용하여 디버깅을 계속하세요.
 </value>
   </data>
   <data name="RunspaceNotLocal" xml:space="preserve">
-    <value>DefaultRunspace must be a LocalRunspace</value>
+    <value>DefaultRunspace는 LocalRunspace여야 합니다.</value>
   </data>
   <data name="PrimaryRunspaceAlreadySet" xml:space="preserve">
-    <value>The static PrimaryRunspace property can only be set once, and has already been set.</value>
+    <value>정적 PrimaryRunspace 속성은 한 번만 설정할 수 있으며, 이미 설정되어 있습니다.</value>
   </data>
 </root>

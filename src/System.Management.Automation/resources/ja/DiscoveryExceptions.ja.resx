@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CmdletFormatInvalid" xml:space="preserve">
-    <value>The cmdlet name "{0}" cannot be validated because it is not in the correct format. Cmdlet names must include a verb and a noun separated by a "-", such as "Get-Process".</value>
+    <value>コマンドレット名 "{0}" は形式が正しくないため、検証できません。コマンドレット名には、"Get-Process" などの "-" で区切られた動詞と名詞を含める必要があります。</value>
   </data>
   <data name="ParameterDeclaredInParameterSetMultipleTimes" xml:space="preserve">
-    <value>The parameter "{0}" is declared in parameter-set "{1}" multiple times.</value>
+    <value>パラメーター "{0}" が、パラメーターセット "{1}" で複数回宣言されています。</value>
   </data>
   <data name="AliasDeclaredMultipleTimes" xml:space="preserve">
-    <value>The alias "{0}" is declared multiple times.</value>
+    <value>エイリアス "{0}" が複数回宣言されています。</value>
   </data>
   <data name="CompiledCommandParameterMemberMustBeFieldOrProperty" xml:space="preserve">
-    <value>Parameter could not be declared. Parameters can be declared only on fields and properties.</value>
+    <value>パラメーターを宣言できませんでした。パラメーターは、フィールドとプロパティでのみ宣言できます。</value>
   </data>
   <data name="InvalidCmdletNameFormat" xml:space="preserve">
-    <value>Cannot process the cmdlet. A cmdlet name must consist of a verb and noun pair separated by '-'.</value>
+    <value>コマンドレットを処理できません。コマンドレット名は、動詞と名詞のペアを '-' で区切って構成する必要があります。</value>
   </data>
   <data name="CommandNotFoundException" xml:space="preserve">
-    <value>The term '{0}' is not recognized as a name of a cmdlet, function, script file, or executable program.
-Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>用語 '{0}' は、コマンドレット、関数、スクリプト ファイル、または実行可能プログラムの名前として認識されません。
+名前のスペルを確認するか、パスが含まれている場合はパスが正しいことを確認してから、もう一度お試しください。</value>
   </data>
   <data name="CmdletNotFoundException" xml:space="preserve">
-    <value>Argument '{0}' is not recognized as a cmdlet: {1}</value>
+    <value>引数 '{0}' はコマンドレットとして認識されません: {1}</value>
   </data>
   <data name="CmdletDoesNotDeriveFromCmdletType" xml:space="preserve">
-    <value>The argument '{0}' is not recognized as a cmdlet, possibly because it does not derive from the Cmdlet or PSCmdlet classes: {1}</value>
+    <value>引数 '{0}' はコマンドレットとして認識されません。Cmdlet または PSCmdlet クラスから派生していない可能性があります: {1}</value>
   </data>
   <data name="AliasNotResolvedException" xml:space="preserve">
-    <value>Cannot resolve alias '{0}' because it refers to term '{1}', which is not recognized as a cmdlet, function, executable program, or script file. Verify the term and try again.</value>
+    <value>エイリアス '{0}' は、コマンドレット、関数、実行可能プログラム、またはスクリプト ファイルとして認識されない用語 '{1}' を参照しているため、解決できません。用語を確認して、もう一度お試しください。</value>
   </data>
   <data name="CommandNameNotCmdlet" xml:space="preserve">
-    <value>Parameter '{0}' with value '{1}' cannot be processed because it is not a cmdlet and cannot be processed by the CommandProcessor.</value>
+    <value>値 '{1}' のパラメーター '{0}' はコマンドレットではなく、CommandProcessor で処理できないため、処理できません。</value>
   </data>
   <data name="DuplicateCmdletName" xml:space="preserve">
-    <value>A cmdlet named '{0}' already exists. Cmdlets must have unique names.</value>
+    <value>'{0}' という名前のコマンドレットは既に存在します。コマンドレットには一意の名前が必要です。</value>
   </data>
   <data name="DuplicateCmdletProviderName" xml:space="preserve">
-    <value>A cmdlet provider named '{0}' already exists. Cmdlet providers must have unique names.</value>
+    <value>'{0}' という名前のコマンドレット プロバイダーは既に存在します。コマンドレット プロバイダーには一意の名前が必要です。</value>
   </data>
   <data name="DuplicateAssemblyName" xml:space="preserve">
-    <value>An assembly named '{0}' already exists. Assemblies must have unique names.</value>
+    <value>'{0}' という名前のアセンブリは既に存在します。アセンブリには一意の名前が必要です。</value>
   </data>
   <data name="DuplicateScriptName" xml:space="preserve">
-    <value>A script named '{0}' already exists. Scripts must have unique names.</value>
+    <value>'{0}' という名前のスクリプトは既に存在します。スクリプトには一意の名前が必要です。</value>
   </data>
   <data name="ScriptRequiresInvalidFormat" xml:space="preserve">
-    <value>Cannot process the #requires statement because it is not in the correct format.
-The #requires statement must be in one of the following formats:
+    <value>#requires ステートメントは形式が正しくないため、処理できません。
+#requires ステートメントは、次のいずれかの形式である必要があります: 
  "#requires -shellid &lt;shellID&gt;"
  "#requires -version &lt;major.minor&gt;"
  "#requires -psedition &lt;edition&gt;"
@@ -171,61 +171,61 @@ The #requires statement must be in one of the following formats:
  "#requires -runasadministrator"</value>
   </data>
   <data name="RequiresInterpreterNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell. To run this script you must use the shell located at '{2}'.</value>
+    <value>スクリプト '{0}' は、現在のシェルと互換性のない {1} のシェル ID を持つ "#requires" ステートメントが含まれていたため、実行できません。このスクリプトを実行するには、'{2}' にあるシェルを使用する必要があります。</value>
   </data>
   <data name="RequiresInterpreterNotCompatibleNoPath" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell.</value>
+    <value>スクリプト '{0}' は、現在のシェルと互換性のない {1} のシェル ID を持つ "#requires" ステートメントが含まれていたため、実行できません。</value>
   </data>
   <data name="RequiresPSVersionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell {1}. The version of PowerShell that is required by the script does not match the currently running version of PowerShell {2}.</value>
+    <value>スクリプト ' {0}' は、PowerShell {1} 用の "#requires" ステートメントが含まれていたため、実行できません。スクリプトに必要な PowerShell のバージョンが、現在実行中の PowerShell {2} のバージョンと一致しません。</value>
   </data>
   <data name="RequiresPSEditionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell editions '{1}'. The edition of PowerShell that is required by the script does not match the currently running PowerShell {2} edition.</value>
+    <value>スクリプト '{0}' は、PowerShell エディション '{1}' 用の "#requires" ステートメントが含まれていたため、実行できません。スクリプトに必要な PowerShell のエディションが、現在実行中の PowerShell {2} のエディションと一致しません。</value>
   </data>
   <data name="RequiresMissingPSSnapIns" xml:space="preserve">
-    <value>The script '{0}' cannot be run because the following snap-ins that are specified by the "#requires" statements of the script are missing: {1}.</value>
+    <value>スクリプト '{0}' は、スクリプトの "#requires" ステートメントで指定された次のスナップインがないため、実行できません: {1}。</value>
   </data>
   <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
-    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
+    <value>#requires ステートメントでは、shellID のみが指定されています。#Requires ステートメントでは、PowerShell で実行するときに必要な PowerShell スナップインを指定する必要があります。</value>
   </data>
   <data name="RequiresElevation" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contains a "#requires" statement for running as Administrator. The current PowerShell session is not running as Administrator. Start PowerShell by using the Run as Administrator option, and then try running the script again.</value>
+    <value>スクリプト '{0}' は、管理者として実行するための "#requires" ステートメントが含まれているため、実行できません。現在の PowerShell セッションは管理者として実行されていません。[管理者として実行] オプションを使用して PowerShell を起動し、もう一度スクリプトを実行してみてください。</value>
   </data>
   <data name="PSSnapInNameVersion" xml:space="preserve">
-    <value>{0} (Version {1})</value>
+    <value>{0} (バージョン {1})</value>
   </data>
   <data name="CommandArgsOnlyForSingleCmdlet" xml:space="preserve">
-    <value>The command could not be retrieved because the ArgumentList parameter can be specified only when retrieving a single cmdlet or script.</value>
+    <value>コマンドを取得できませんでした。ArgumentList パラメーターは 1 つのコマンドレットまたはスクリプトを取得するときにのみ指定できます。</value>
   </data>
   <data name="ReservedParameterName" xml:space="preserve">
-    <value>The parameter name "{0}" is reserved for future use.</value>
+    <value>パラメーター名 "{0}" は、将来使用するために予約されています。</value>
   </data>
   <data name="RequiresMissingModules" xml:space="preserve">
-    <value>The script '{0}' cannot be run because the following modules that are specified by the "#requires" statements of the script are missing: {1}.</value>
+    <value>スクリプト '{0}' は、スクリプトの "#requires" ステートメントで指定された次のモジュールがないため、実行できません: {1}。</value>
   </data>
   <data name="CouldNotAutoImportMatchingModule" xml:space="preserve">
-    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded. For more information, run 'Import-Module {1}'.</value>
+    <value>'{0}' コマンドはモジュール '{1}' で見つかりましたが、モジュールを読み込めませんでした。詳細については、'Import-Module {1}' を実行してください。</value>
   </data>
   <data name="CouldNotAutoImportMatchingModuleWithErrorMessage" xml:space="preserve">
-    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded due to the following error: [{2}]
-For more information, run 'Import-Module {1}'.</value>
+    <value>'{0}' コマンドはモジュール '{1}' で見つかりましたが、次のエラーによりモジュールを読み込めませんでした: [{2}]
+詳細については、'Import-Module {1}' を実行してください。</value>
   </data>
   <data name="CouldNotAutoImportModule" xml:space="preserve">
-    <value>The module '{0}' could not be loaded. For more information, run 'Import-Module {0}'.</value>
+    <value>モジュール '{0}' を読み込めませんでした。詳細については、'Import-Module {0}' を実行してください。</value>
   </data>
   <data name="CommandParameterNotFound" xml:space="preserve">
-    <value>No matching commands include a parameter named '{0}'.  Check the spelling of the parameter name, and then try again.</value>
+    <value>'{0}' という名前のパラメーターを含む一致するコマンドはありません。 パラメーター名のスペルを確認してから、もう一度お試しください。</value>
   </data>
   <data name="DotSourceNotSupported" xml:space="preserve">
-    <value>Cannot dot-source this command because it was defined in a different language mode. To invoke this command without importing its contents, omit the '.' operator.</value>
+    <value>このコマンドは別の言語モードで定義されているため、ドットソース化できません。このコマンドを内容をインポートせずに呼び出すには、'.' 演算子を省略します。</value>
   </data>
   <data name="GetCommandShowCommandInfoParamError" xml:space="preserve">
-    <value>The ShowCommandInfo and Syntax parameters cannot be specified together.</value>
+    <value>ShowCommandInfo パラメーターと Syntax パラメーターを同時に指定することはできません。</value>
   </data>
   <data name="ScriptDisabledWhenFeatureOn" xml:space="preserve">
-    <value>This script command is disabled when the experimental feature '{0}' has been turned on.</value>
+    <value>このスクリプト コマンドは、試験的な機能 '{0}' が有効になっている場合は無効になります。</value>
   </data>
   <data name="ScriptDisabledWhenFeatureOff" xml:space="preserve">
-    <value>This script command is disabled when the experimental feature '{0}' has been turned off.</value>
+    <value>このスクリプト コマンドは、試験的な機能 '{0}' が無効になっている場合は無効になります。</value>
   </data>
 </root>

@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EmptyInputString" xml:space="preserve">
-    <value>The input expression must not be empty. Specify at least one identifier name in each input expression. </value>
+    <value>Vstupní výraz nesmí být prázdný. V každém vstupním výrazu zadejte alespoň jeden název identifikátoru. </value>
   </data>
   <data name="EmptyTokenString" xml:space="preserve">
-    <value>Unable to match an empty identifier name to a valid enumerator name. Specify one of the following enumerator names and retry: {0}.</value>
+    <value>Nepodařilo se přiřadit prázdný název identifikátoru k platnému názvu enumerátoru. Zadejte některý z následujících názvů enumerátorů a zkuste to znovu: {0}.</value>
   </data>
   <data name="InvalidGenericType" xml:space="preserve">
-    <value>The generic type specified for the expression must represent an enum. Specify a valid enum type. </value>
+    <value>Obecný typ zadaný pro výraz musí představovat výčet. Zadejte platný typ výčtu. </value>
   </data>
   <data name="MultipleEnumNameMatch" xml:space="preserve">
-    <value>The identifier name {0} cannot be processed because it is either too similar or identical to the following enumerator names: {1}. Use a more specific identifier name.</value>
+    <value>Název identifikátoru {0} nelze zpracovat, protože je příliš podobný nebo shodný s následujícími názvy enumerátorů: {1}. Použijte konkrétnější název identifikátoru.</value>
   </data>
   <data name="NoEnumNameMatch" xml:space="preserve">
-    <value>Unable to match the identifier name {0} to a valid enumerator name. Specify one of the following enumerator names and try again:
+    <value>Nepodařilo se přiřadit název identifikátoru {0} k platnému názvu enumerátoru. Zadejte některý z následujících názvů enumerátorů a zkuste to znovu: 
 {1}</value>
   </data>
   <data name="NoIdentifierGroupingAllowed" xml:space="preserve">
-    <value>Use of parentheses is not valid in the expression because identifier grouping is not allowed. Try removing the parentheses, or if a subexpression is enclosed, try expanding the expression.</value>
+    <value>Použití závorek není ve výrazu platné, protože seskupení identifikátorů není povoleno. Zkuste odebrat závorky, nebo pokud je dílčí výraz uzavřený, zkuste výraz rozšířit.</value>
   </data>
   <data name="SyntaxErrorBinaryOperatorExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. Only an OR (,) operator or AND (+) operator is expected after an identifier name.</value>
+    <value>Výraz nelze analyzovat z důvodu neočekávaného tokenu. Za názvem identifikátoru se očekává pouze operátor OR (,) nebo operátor AND (+).</value>
   </data>
   <data name="SyntaxErrorIdentifierExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token after a NOT (!) operator. An identifier name is expected after a NOT (!) operator.</value>
+    <value>Nepodařilo se analyzovat výraz kvůli neočekávanému tokenu za operátorem NOT (!). Za operátorem NOT (!) se očekává název identifikátoru.</value>
   </data>
   <data name="SyntaxErrorUnexpectedBinaryOperator" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. An identifier name or a NOT (!) operator is expected at the start of the expression, or after an OR (,) operator or an AND (+) operator. Also, an expression must not end with an OR (,), AND (+) or NOT (!) operator.</value>
+    <value>Výraz nelze analyzovat z důvodu neočekávaného tokenu. Na začátku výrazu nebo za operátorem OR (,) či operátorem AND (+) je očekáván název identifikátoru nebo operátor NOT (!). Výraz také nesmí končit operátorem OR (,), AND (+) nebo NOT (!).</value>
   </data>
 </root>

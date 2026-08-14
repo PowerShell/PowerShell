@@ -118,276 +118,276 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NotSupported" xml:space="preserve">
-    <value>This functionality is not supported on this operating system.</value>
+    <value>Tato funkce není v tomto operačním systému podporována.</value>
   </data>
   <data name="NotEnabled" xml:space="preserve">
-    <value>Could not enable drive {0}.</value>
+    <value>Nelze povolit jednotku {0}.</value>
   </data>
   <data name="InvalidDrive" xml:space="preserve">
-    <value>The command cannot turn on the restore computer infrastructure on the specified computer because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>Příkaz nemůže zapnout infrastrukturu obnovení počítače na zadaném počítači, protože zadaná jednotka není platná. Zadejte do parametru Drive platnou jednotku a zkuste to znovu.</value>
   </data>
   <data name="NoSystemDrive" xml:space="preserve">
-    <value>Include System Drive in the list of Drives.</value>
+    <value>Do seznamu jednotek zahrňte systémovou jednotku.</value>
   </data>
   <data name="NotValidDrive" xml:space="preserve">
-    <value>The command cannot turn off the restore computer infrastructure because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>Příkaz nemůže vypnout infrastrukturu obnovení počítače, protože zadaná jednotka není platná. Zadejte do parametru Drive platnou jednotku a zkuste to znovu.</value>
   </data>
   <data name="NotDisabled" xml:space="preserve">
-    <value>The command cannot disable System Restore on the {0} drive. You may not have sufficient permissions to perform this operation.</value>
+    <value>Příkaz nemůže zakázat obnovení systému na jednotce {0} . Tuto operaci nemůžete provést, protože k tomu nemáte dostatečná oprávnění.</value>
   </data>
   <data name="ServiceDisabled" xml:space="preserve">
-    <value>SystemRestore service is disabled.</value>
+    <value>Služba SystemRestore je zakázaná.</value>
   </data>
   <data name="RestorePointNotCreated" xml:space="preserve">
-    <value>The system restore infrastructure cannot create a restore point.</value>
+    <value>Infrastruktura obnovení systému nemůže vytvořit bod obnovení.</value>
   </data>
   <data name="RestoreFailed" xml:space="preserve">
-    <value>The last attempt to restore the computer failed.</value>
+    <value>Poslední pokus o obnovení počítače se nezdařil.</value>
   </data>
   <data name="RestoreSuccess" xml:space="preserve">
-    <value>The computer has been restored to the specified restore point.</value>
+    <value>Počítač byl obnoven do zadaného bodu obnovení.</value>
   </data>
   <data name="RestoreInterrupted" xml:space="preserve">
-    <value>The last attempt to restore the computer was interrupted.</value>
+    <value>Poslední pokus o obnovení počítače byl přerušen.</value>
   </data>
   <data name="NoRestorePoint" xml:space="preserve">
-    <value>The command cannot locate the "{0}" restore point. Verify the "{0}" sequence number, and then try the command again.</value>
+    <value>Příkaz nemůže najít bod obnovení {0}. Ověřte pořadové číslo {0} a potom příkaz spusťte znovu.</value>
   </data>
   <data name="DoubleComputerName" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
   <data name="RestartcomputerFailed" xml:space="preserve">
-    <value>Failed to restart the computer {0} with the following error message: {1}.</value>
+    <value>Restartování počítače {0} se nezdařilo s následující chybovou zprávou: {1}.</value>
   </data>
   <data name="OperationFailed" xml:space="preserve">
-    <value>This command cannot be run on target computer('{1}') due to following error: {0}.{2}</value>
+    <value>Tento příkaz nelze spustit na cílovém počítači ({1}) kvůli následující chybě: {0}. {2}</value>
   </data>
   <data name="StopcomputerFailed" xml:space="preserve">
-    <value>Failed to stop the computer {0} with the following error message: {1}.</value>
+    <value>Počítač {0} se nepodařilo zastavit. Chybová zpráva: {1}.</value>
   </data>
   <data name="InvalidRestorePoint" xml:space="preserve">
-    <value>The command cannot restore the computer because "{0}" has not been set as valid restore point. Enter a valid restore point in the RestorePoint parameter, and then try again.</value>
+    <value>Příkaz nemůže obnovit počítač, protože {0} není nastaven jako platný bod obnovení. Zadejte platný bod obnovení do parametru RestorePoint a zkuste to znovu.</value>
   </data>
   <data name="RestartNeeded" xml:space="preserve">
-    <value>The changes will take effect after you restart the computer {1}.</value>
+    <value>Změny se projeví po restartování počítače {1}.</value>
   </data>
   <data name="RemoveComputerConfirm" xml:space="preserve">
-    <value>After you leave the domain, you will need to know the password of the local Administrator account to log onto this computer. Do you wish to continue?</value>
+    <value>Po opuštění domény budete muset znát heslo místního účtu správce, abyste se mohli přihlásit k tomuto počítači. Chcete pokračovat?</value>
   </data>
   <data name="InvalidComputerNameFormat" xml:space="preserve">
-    <value>The following computer name is not valid: {0}. Make sure that the computer name is not longer than 255 characters, that it does not contain two or more consecutive dots, that it does not begin with a dot, that it does not contain only numeric characters, and that it does not contain any of the following characters:
+    <value>Následující název počítače není platný: {0}. Ujistěte se, že název počítače není delší než 255 znaků, neobsahuje dvě nebo více po sobě jdoucích teček, nezačíná tečkou, neobsahuje pouze číselné znaky a neobsahuje žádný z následujících znaků: 
 {{|}}~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
   </data>
   <data name="InvalidDomainNameFormat" xml:space="preserve">
-    <value>The domain in computer name '{0}' is not valid. Make sure that the domain exists and that the name is a valid domain name.</value>
+    <value>Doména v názvu počítače {0} není platná. Ujistěte se, že doména existuje a že název je platný název domény.</value>
   </data>
   <data name="ComputerNamesAreEqual" xml:space="preserve">
-    <value>The value specified for the NewComputerName parameter is the same as the value of the ComputerName parameter. Provide a different value for the NewComputerName parameter.</value>
+    <value>Hodnota zadaná pro parametr NewComputerName je stejná jako hodnota parametru ComputerName. Zadejte pro parametr NewComputerName jinou hodnotu.</value>
   </data>
   <data name="ResetComputerMachinePassword" xml:space="preserve">
-    <value>"The password of the secure channel between '{0}' and '{1}' has been reset."</value>
+    <value>Heslo zabezpečeného kanálu mezi {0} a {1} bylo resetováno.</value>
   </data>
   <data name="SystemRestoreServiceDisabled" xml:space="preserve">
-    <value>This command cannot be run due to the following error: the service cannot be started because it is disabled or does not have enabled devices associated with it.</value>
+    <value>Tento příkaz nelze spustit kvůli následující chybě: Službu nelze spustit, protože je zakázaná nebo nemá povolená přidružená zařízení.</value>
   </data>
   <data name="ProgressActivity" xml:space="preserve">
-    <value>Creating a system restore point ...</value>
+    <value>Vytváří se bod obnovení systému...</value>
   </data>
   <data name="ProgressStatusCreatingRestorePoint" xml:space="preserve">
-    <value>Creating a system restore point... {0}% Completed.</value>
+    <value>Vytváří se bod obnovení systému... {0} % dokončeno.</value>
   </data>
   <data name="ProgressStatusCompleted" xml:space="preserve">
-    <value>Completed.</value>
+    <value>Dokončeno.</value>
   </data>
   <data name="NetworkPathNotFound" xml:space="preserve">
-    <value>Try below options and Run the command again.
-1. Verify that the target computer('{0}') is running.
-2. Specify full computer name of the target computer('{0}').</value>
+    <value>Zkuste použít níže uvedené možnosti a spusťte příkaz znovu.
+1. Ověřte, zda je cílový počítač ({0}) spuštěn.
+2. Zadejte úplný název cílového počítače ({0}).</value>
   </data>
   <data name="PrivilegeNotEnabled" xml:space="preserve">
-    <value>Failed to restart the computer {0}. Access rights {1} cannot be enabled for the calling process.</value>
+    <value>Restartování počítače {0} se nezdařilo. Oprávnění přístupu {1} nelze pro volající proces povolit.</value>
   </data>
   <data name="RestartComputerAction" xml:space="preserve">
-    <value>Enable the {0} and restart the computer.</value>
+    <value>Povolte {0} a restartujte počítač.</value>
   </data>
   <data name="LocalShutdownPrivilege" xml:space="preserve">
-    <value>Local shutdown access rights</value>
+    <value>Přístupová práva k místnímu vypnutí</value>
   </data>
   <data name="RemoteShutdownPrivilege" xml:space="preserve">
-    <value>Remote shutdown access rights</value>
+    <value>Přístupová práva ke vzdálenému vypnutí</value>
   </data>
   <data name="CannotWaitLocalComputer" xml:space="preserve">
-    <value>Cannot wait for the local computer to restart. The local computer is ignored when the Wait parameter is specified.</value>
+    <value>Nelze čekat na restart místního počítače. Při zadání parametru Wait se místní počítač ignoruje.</value>
   </data>
   <data name="RestartComputerInvalidParameter" xml:space="preserve">
-    <value>The parameters Timeout, For, and Delay are valid only when the parameter Wait is specified.</value>
+    <value>Parametry Timeout, For a Delay jsou platné pouze tehdy, když je zadán parametr Wait.</value>
   </data>
   <data name="RestartMultipleComputersActivity" xml:space="preserve">
-    <value> Restarting computers...</value>
+    <value> Restartují se počítače...</value>
   </data>
   <data name="RestartSingleComputerActivity" xml:space="preserve">
-    <value> Restarting computer {0}</value>
+    <value> Restartování počítače {0}</value>
   </data>
   <data name="WaitForMultipleComputers" xml:space="preserve">
-    <value>Completed: {0}/{1}.</value>
+    <value>Dokončeno: {0}/{1}</value>
   </data>
   <data name="VerifyRebootStage" xml:space="preserve">
-    <value>Verifying that the computer has been restarted...</value>
+    <value>Ověřuje se, zda se počítač restartoval...</value>
   </data>
   <data name="WaitForPowerShell" xml:space="preserve">
-    <value>Waiting for PowerShell connectivity...</value>
+    <value>Čeká se na připojení PowerShellu...</value>
   </data>
   <data name="WaitForRestartToBegin" xml:space="preserve">
-    <value>Waiting for the restart to begin...</value>
+    <value>Čeká se na zahájení restartování...</value>
   </data>
   <data name="WaitForWinRM" xml:space="preserve">
-    <value>Waiting for WinRM connectivity...</value>
+    <value>Čeká se na připojení WinRM...</value>
   </data>
   <data name="WaitForWMI" xml:space="preserve">
-    <value>Waiting for WMI connectivity...</value>
+    <value>Čeká se na připojení rozhraní WMI...</value>
   </data>
   <data name="RestartComplete" xml:space="preserve">
-    <value>Restart is complete</value>
+    <value>Restartování je dokončeno</value>
   </data>
   <data name="NoSupportForCombinedServiceType" xml:space="preserve">
-    <value>The combined service types are not supported for now.</value>
+    <value>Kombinované typy služeb se v současné době nepodporují.</value>
   </data>
   <data name="CannotResolveComputerName" xml:space="preserve">
-    <value>Computer name {0} cannot be resolved with the exception: {1}.</value>
+    <value>Název počítače {0} nelze přeložit s následující výjimkou: {1}.</value>
   </data>
   <data name="IncorrectNewNameNumber" xml:space="preserve">
-    <value>The number of new names is not equal to the number of target computers.</value>
+    <value>Počet nových názvů neodpovídá počtu cílových počítačů.</value>
   </data>
   <data name="InvalidNewName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is not valid. The new computer name entered is not properly formatted. Standard names may contain letters (a-z, A-Z), numbers (0-9), and hyphens (-), but no spaces or periods (.). The name may not consist entirely of digits, and may not be longer than 63 characters.</value>
+    <value>Přeskočit počítač {0} s novým názvem {1}, protože nový název není platný. Zadaný nový název počítače nemá správný formát. Standardní názvy mohou obsahovat písmena (a-z, A-Z), číslice (0-9) a spojovníky (-), ale ne mezery ani tečky (.). Název nesmí být tvořen pouze číslicemi a nesmí být delší než 63 znaků.</value>
   </data>
   <data name="NewNameIsOldName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is the same as the current name.</value>
+    <value>Přeskočit počítač {0} s novým názvem {1}, protože nový název je stejný jako aktuální název.</value>
   </data>
   <data name="ComputerNotInDomain" xml:space="preserve">
-    <value>Cannot remove computer '{0}' because it is not in a domain.</value>
+    <value>Počítač {0} nelze odebrat, protože není v doméně.</value>
   </data>
   <data name="FailToJoinWorkGroup" xml:space="preserve">
-    <value>Failed to join computer '{0}' to workgroup '{1}' with the following error message: {2}</value>
+    <value>Počítač {0} se nepodařilo připojit k pracovní skupině {1}. Chybová zpráva: {2}.</value>
   </data>
   <data name="NetworkDown" xml:space="preserve">
-    <value>Cannot remove computer(s) from the domain because the local network is down.</value>
+    <value>Počítače nelze odebrat z domény, protože místní síť není dostupná.</value>
   </data>
   <data name="FailToRename" xml:space="preserve">
-    <value>Fail to rename computer '{0}' to '{1}' due to the following exception: {2}.</value>
+    <value>Přejmenování počítače {0} na {1} se nezdařilo kvůli následující výjimce: {2}.</value>
   </data>
   <data name="AddComputerActionDomain" xml:space="preserve">
-    <value>Join in domain '{0}'</value>
+    <value>Připojit k doméně {0}</value>
   </data>
   <data name="AddComputerActionWorkgroup" xml:space="preserve">
-    <value>Join in workgroup '{0}'</value>
+    <value>Připojit k pracovní skupině {0}</value>
   </data>
   <data name="AddComputerToSameDomain" xml:space="preserve">
-    <value>Cannot add computer '{0}' to domain '{1}' because it is already in that domain.</value>
+    <value>Počítač {0} nelze přidat do domény {1}, protože už je její součástí.</value>
   </data>
   <data name="AddComputerToSameWorkgroup" xml:space="preserve">
-    <value>Cannot add computer '{0}' to workgroup '{1}' because it is already in that workgroup.</value>
+    <value>Počítač {0} nelze přidat do pracovní skupiny {1}, protože už je její součástí.</value>
   </data>
   <data name="FailToRenameAfterJoinWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' successfully joined the workgroup '{1}', but could not be renamed to '{2}' with the following error message: {3}.</value>
+    <value>Počítač {0} byl úspěšně připojen k pracovní skupině {1}, ale nepodařilo se ho přejmenovat na {2}. Chybová zpráva: {3}.</value>
   </data>
   <data name="FailToSwitchFromDomainToWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from the domain '{1}', but it failed to join the workgroup '{2}' with the following error message: {3}.</value>
+    <value>Počítač {0} byl úspěšně odpojen od domény {1}, ale nepodařilo se ho připojit k pracovní skupině {2}. Chybová zpráva: {3}.</value>
   </data>
   <data name="FailToUnjoinDomain" xml:space="preserve">
-    <value>Failed to unjoin computer '{0}' from domain '{1}' with the following error message: {2}.</value>
+    <value>Počítač {0} se nepodařilo odpojit od domény {1}. Chybová zpráva: {2}.</value>
   </data>
   <data name="FailToConnectToComputer" xml:space="preserve">
-    <value>Cannot establish the WMI connection to the computer '{0}' with the following error message: {1}.</value>
+    <value>K počítači {0} se nepodařilo navázat připojení WMI. Chybová zpráva: {1}</value>
   </data>
   <data name="FailToJoinDomainFromWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' failed to join domain '{1}' from its current workgroup '{2}' with following error message: {3}.</value>
+    <value>Počítači {0} se nepodařilo připojit k doméně {1} z aktuální pracovní skupiny {2} s následující chybovou zprávou: {3}.</value>
   </data>
   <data name="FailToJoinNewDomainAfterUnjoinOldDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from domain '{1}', but failed to join the new domain '{2}' with the following error message: {3}.</value>
+    <value>Počítač {0} byl úspěšně odpojen od domény {1}, ale nepodařilo se ho připojit k nové doméně {2}. Chybová zpráva: {3}.</value>
   </data>
   <data name="FailToRenameAfterJoinDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully joined to the new domain '{1}', but renaming it to '{2}' failed with the following error message: {3}.</value>
+    <value>Počítač {0} byl úspěšně připojen k nové doméně {1}, ale nepodařilo se ho přejmenovat na {2}. Chybová zpráva: {3}.</value>
   </data>
   <data name="InvalidJoinOptions" xml:space="preserve">
-    <value>The flag '{0}' is valid only if flag '{1}' is specified.</value>
+    <value>Příznak {0} je platný pouze v případě, že je zadán příznak {1}.</value>
   </data>
   <data name="CannotRenameMultipleComputers" xml:space="preserve">
-    <value>Cannot rename multiple computers. The NewName parameter is valid only if a single computer is specified.</value>
+    <value>Nelze přejmenovat více počítačů. Parametr -NewName je platný pouze v případě, že je zadán jeden počítač.</value>
   </data>
   <data name="CannotFindMachineAccountFromDomain" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer in the domain {0}.</value>
+    <value>Účet místního počítače v doméně {0} se nepodařilo najít.</value>
   </data>
   <data name="CannotFindMachineAccountFromServer" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer from the domain controller {0}.</value>
+    <value>Účet počítače pro místní počítač se nepodařilo najít na řadiči domény {0}.</value>
   </data>
   <data name="FailToGetDomainInformation" xml:space="preserve">
-    <value>Cannot get domain information about the local computer because of the following exception: {0}.</value>
+    <value>Informace o doméně místního počítače nelze získat kvůli následující výjimce: {0}.</value>
   </data>
   <data name="FailToResetPasswordOnDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the computer account in the domain. Operation failed with the following exception: {0}.</value>
+    <value>Heslo zabezpečeného kanálu pro účet počítače v doméně nelze resetovat. Operace se nezdařila s následujícím výjimkou: {0}.</value>
   </data>
   <data name="FailToResetPasswordOnLocalMachine" xml:space="preserve">
-    <value>Resetting the secure channel password for the local computer failed with the following error message: {0}.</value>
+    <value>Resetování hesla zabezpečeného kanálu pro místní počítač se nezdařilo s následující chybovou zprávou: {0}.</value>
   </data>
   <data name="NeedAdminPrivilegeToResetPassword" xml:space="preserve">
-    <value>Administrator rights are required to reset the secure channel password on the local computer. Access is denied.</value>
+    <value>K resetování hesla zabezpečeného kanálu na místním počítači jsou vyžadována oprávnění správce. Přístup byl odepřen.</value>
   </data>
   <data name="ResetComputerNotInDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the account of the local computer. The local computer is not currently part of a domain.</value>
+    <value>Heslo zabezpečeného kanálu pro účet místního počítače nelze resetovat. Místní počítač momentálně není součástí domény.</value>
   </data>
   <data name="TruncateNetBIOSName" xml:space="preserve">
-    <value>The NetBIOS name of the computer is limited to 15 bytes, which is 15 characters in this case. The NetBIOS name will be shortened to "{0}", which may cause conflicts under NetBIOS name resolution. Do you wish to continue?</value>
+    <value>Název počítače NetBIOS je omezen na 15 bajtů, což v tomto případě představuje 15 znaků. Název pro rozhraní NetBIOS bude zkrácen na {0}, což může způsobit konflikty při překladu názvů rozhraní NetBIOS. Chcete pokračovat?</value>
   </data>
   <data name="TruncateNetBIOSNameCaption" xml:space="preserve">
-    <value>NetBIOS name will be truncated.</value>
+    <value>Název pro rozhraní NetBIOS bude zkrácen.</value>
   </data>
   <data name="CannotResolveServerName" xml:space="preserve">
-    <value>The specified server name {0} cannot be resolved.</value>
+    <value>Zadaný název serveru {0} nelze přeložit.</value>
   </data>
   <data name="CannotCreateRestorePointWarning" xml:space="preserve">
-    <value>A new system restore point cannot be created because one has already been created within the past {0} minutes. The frequency of restore point creation can be changed by creating the DWORD value 'SystemRestorePointCreationFrequency' under the registry key 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore'. The value of this registry key indicates the necessary time interval (in minutes) between two restore point creation. The default value is 1440 minutes (24 hours).</value>
+    <value>Nový bod obnovení systému nelze vytvořit, protože již byl vytvořen během posledních {0} minut. Frekvenci vytváření bodů obnovení lze změnit vytvořením hodnoty DWORD SystemRestorePointCreationFrequency v klíči registru HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore. Hodnota tohoto klíče registru určuje požadovaný časový interval (v minutách) mezi vytvořením dvou bodů obnovení. Výchozí hodnota je 1440 minut (24 hodin).</value>
   </data>
   <data name="CannotGetOperatingSystemObject" xml:space="preserve">
-    <value>The Win32_OperatingSystem WMI object cannot be retrieved.</value>
+    <value>Objekt WMI Win32_OperatingSystem nelze načíst.</value>
   </data>
   <data name="RestartComputerSkipped" xml:space="preserve">
-    <value>The computer {0} is skipped. Fail to retrieve its LastBootUpTime via the WMI service with the following error message: {1}.</value>
+    <value>Počítač {0} je přeskočen. Nepodařilo se načíst hodnotu LastBootUpTime prostřednictvím služby WMI. Chybová zpráva: {1}.</value>
   </data>
   <data name="FailToTestSecureChannel" xml:space="preserve">
-    <value>Cannot verify the secure channel for the local computer. Operation failed with the following exception: {0}.</value>
+    <value>Zabezpečený kanál pro místní počítač nelze ověřit. Operace se nezdařila s následujícím výjimkou: {0}.</value>
   </data>
   <data name="RepairSecureChannelFail" xml:space="preserve">
-    <value>The attempt to repair the secure channel between the local computer and the domain {0} has failed.</value>
+    <value>Pokus o opravu zabezpečeného kanálu mezi místním počítačem a doménou {0} se nezdařil.</value>
   </data>
   <data name="RepairSecureChannelSucceed" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} was successfully repaired.</value>
+    <value>Zabezpečený kanál mezi místním počítačem a doménou {0} byl úspěšně opraven.</value>
   </data>
   <data name="SecureChannelAlive" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is in good condition.</value>
+    <value>Zabezpečený kanál mezi místním počítačem a doménou {0} je v pořádku.</value>
   </data>
   <data name="SecureChannelBroken" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is broken.</value>
+    <value>Zabezpečený kanál mezi místním počítačem a doménou {0} je poškozen.</value>
   </data>
   <data name="TestComputerNotInDomain" xml:space="preserve">
-    <value>Cannot verify the secure channel password for the local computer. The local computer is not currently part of a domain.</value>
+    <value>Nelze ověřit heslo zabezpečeného kanálu pro místní počítač. Místní počítač momentálně není součástí domény.</value>
   </data>
   <data name="SystemRestoreNotSupported" xml:space="preserve">
-    <value>The operation cannot be performed because the system restore APIs are not supported on the Advanced RISC Machine (ARM) platform.</value>
+    <value>Operaci nelze provést, protože rozhraní API pro obnovení systému nejsou na platformě Advanced RISC Machine (ARM) podporována.</value>
   </data>
   <data name="TimeoutError" xml:space="preserve">
-    <value>The computer did not finish restarting within the specified time-out period.</value>
+    <value>Restartování počítače nebylo dokončeno v zadaném časovém limitu.</value>
   </data>
   <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
-    <value>Cannot validate the time interval for restore point creation. It failed to retrieve the last restore point with the following error message: {0}.</value>
+    <value>Časový interval pro vytvoření bodu obnovení nelze ověřit. Nepodařilo se načíst poslední bod obnovení. Chybová zpráva: {0}.</value>
   </data>
   <data name="InvalidParameterSetAsJob" xml:space="preserve">
-    <value>The AsJob Parameter Set is not supported.</value>
+    <value>Sada parametrů AsJob není podporována.</value>
   </data>
   <data name="InvalidParameterForCoreClr" xml:space="preserve">
-    <value>The {0} parameter is not supported for CoreCLR.</value>
+    <value>Parametr {0} se pro CoreCLR nepodporuje.</value>
   </data>
   <data name="ShutdownCommandNotFound" xml:space="preserve">
-    <value>The required native command 'shutdown' was not found.</value>
+    <value>Požadovaný nativní příkaz shutdown nebyl nalezen.</value>
   </data>
 </root>

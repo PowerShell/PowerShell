@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExecutionPolicyOverridden" xml:space="preserve">
-    <value>PowerShell updated your execution policy successfully, but the setting is overridden by a policy defined at a more specific scope.  Due to the override, your shell will retain its current effective execution policy of {0}. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more information please see "Get-Help Set-ExecutionPolicy".</value>
+    <value>PowerShell actualizó correctamente la directiva de ejecución, pero la configuración se invalida mediante una directiva definida en un ámbito más específico.  Debido a la invalidación, el shell conservará su directiva de ejecución vigente actual de {0}. Escriba "Get-ExecutionPolicy -List" para ver la configuración de la directiva de ejecución. Para obtener más información, consulte "Get-Help Set-ExecutionPolicy".</value>
   </data>
   <data name="ExecutionPolicyOverriddenRecommendedAction" xml:space="preserve">
-    <value>Contact your system administrator.</value>
+    <value>Póngase en contacto con el administrador del sistema.</value>
   </data>
   <data name="ListAndScopeSpecified" xml:space="preserve">
-    <value>Cannot get execution policy. Specify only the List or Scope parameters.</value>
+    <value>No se puede obtener la directiva de ejecución. Especifique solo los parámetros List o Scope.</value>
   </data>
   <data name="CantSetGroupPolicy" xml:space="preserve">
-    <value>Cannot set execution policy. Execution policies at the MachinePolicy or UserPolicy scopes must be set through Group Policy.</value>
+    <value>No se puede establecer la directiva de ejecución. Las directivas de ejecución en los ámbitos MachinePolicy o UserPolicy deben establecerse a través de directiva de grupo.</value>
   </data>
   <data name="SetExecutionPolicyCaption" xml:space="preserve">
-    <value>Execution Policy Change</value>
+    <value>Cambio de directiva de ejecución</value>
   </data>
   <data name="SetExecutionPolicyQuery" xml:space="preserve">
-    <value>The execution policy helps protect you from scripts that you do not trust. Changing the execution policy might expose you to the security risks described in the about_Execution_Policies help topic at https://go.microsoft.com/fwlink/?LinkID=135170. Do you want to change the execution policy?</value>
+    <value>La directiva de ejecución le ayuda a protegerse de scripts en los que no confía. Si cambia la directiva de ejecución, podría exponerse a los riesgos de seguridad descritos en el tema de ayuda about_Execution_Policies en https://go.microsoft.com/fwlink/?LinkID=135170. ¿Desea cambiar la directiva de ejecución?</value>
   </data>
   <data name="SetExecutionPolicyAccessDeniedError" xml:space="preserve">
     <value>{0}
-To change the execution policy for the default (LocalMachine) scope, start PowerShell with the "Run as administrator" option. To change the execution policy for the current user, run "Set-ExecutionPolicy -Scope CurrentUser".</value>
+Para cambiar la directiva de ejecución para el ámbito predeterminado (LocalMachine), inicie PowerShell con la opción "Ejecutar como administrador". Para cambiar la directiva de ejecución del usuario actual, ejecute "Set-ExecutionPolicy -Scope CurrentUser".</value>
   </data>
 </root>

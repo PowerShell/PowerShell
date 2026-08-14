@@ -64,763 +64,763 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MissingEventIdMessage" xml:space="preserve">
-    <value>A message was not found for event id PowerShell.Core.Instrumentation.man.</value>
+    <value>イベント ID PowerShell.Core.Instrumentation.man のメッセージが見つかりませんでした。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ScheduledJobStarted" xml:space="preserve">
-    <value>Scheduled Job {0} started at {1}
+    <value>スケジュール済みジョブ {0} が {1} に開始されました
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ScheduledJobCompleted" xml:space="preserve">
-    <value>Scheduled Job {0} completed at {1} with state {2}
+    <value>スケジュール済みジョブ {0} が {1} に状態 {2} で完了しました
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ScheduledJobException" xml:space="preserve">
-    <value>Scheduled Job Exception {0}:
- Message: {1}
+    <value>スケジュール済みジョブの例外 {0}:
+ メッセージ: {1}
  StackTrace: {2}
  InnerException: {3}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ExperimentalFeatureInvalidName" xml:space="preserve">
-    <value>Experimental Feature Initialization: Ignore the experimental feature '{0}' from the config file. {1}</value>
+    <value>試験的な機能の初期化: 構成ファイルから試験的な機能 '{0}' を無視します。 {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ExperimentalFeatureReadConfigError" xml:space="preserve">
-    <value>Experimental Feature Initialization: Failed to read the config file.
- Exception: {0}
- Message: {1}
+    <value>試験的な機能の初期化: 構成ファイルを読み取れませんでした。
+ 例外: {0}
+ メッセージ: {1}
  StackTrace: {2}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPluginStarted" xml:space="preserve">
-    <value>Workflow plugin loaded.
+    <value>ワークフロー プラグインが読み込まれました。
  	 EndpointName: {0}
- 	 User: {1}
+ 	 ユーザー: {1}
  	 HostingMode: {2}
- 	 Protocol: {3}
- 	 Configuration:
+ 	 プロトコル: {3}
+ 	 構成: 
  {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowExecutionStarted" xml:space="preserve">
-    <value>Workflow execution started.
+    <value>ワークフローの実行が開始されました。
  	 WorkflowId: {0}
  	 ManagedNodes: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowStateChanged" xml:space="preserve">
-    <value>Workflow state changed.
+    <value>ワークフローの状態が変更されました。
  	 WorkflowId: {0}
  	 NewState: {1}
  	 OldState: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPluginRequestedToShutdown" xml:space="preserve">
-    <value>Workflow plugin has been requested for a shutdown.
+    <value>ワークフロー プラグインのシャットダウンが要求されました。
  	 EndpointName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPluginRestarted" xml:space="preserve">
-    <value>Workflow plugin restarted.
+    <value>ワークフロー プラグインが再起動されました。
  	 EndpointName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowWorkflowsResuming" xml:space="preserve">
-    <value>Workflow is resuming.
+    <value>ワークフローを再開しています。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowQuotaViolationDetected" xml:space="preserve">
-    <value>A quota limit that was set for the endpoint was exceeded.
+    <value>エンドポイントに設定されたクォータ制限を超えました。
  	 EndpointName: {0}
  	 ConfigName: {1}
  	 AllowedValue: {2}
  	 ValueInQuestion: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowWorkflowsResumed" xml:space="preserve">
-    <value>Workflow has resumed.
+    <value>ワークフローが再開されました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowRunspacePoolCreated" xml:space="preserve">
-    <value>Workflow runspace pool was created.
+    <value>ワークフロー実行空間プールが作成されました。
  	 WorkflowId: {0}
  	 ManagedNode: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionQueued" xml:space="preserve">
-    <value>Activity was queued for execution.
+    <value>アクティビティが実行のためにキューに登録されました。
  	 WorkflowId: {0}
  	 ActivityName: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionStarted" xml:space="preserve">
-    <value>Activity execution started.
+    <value>アクティビティの実行が開始されました。
  	 ActivityName: {0}
  	 ActivityTypeName: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportingFromXaml" xml:space="preserve">
-    <value>Workflow is being imported from a XAML file.
+    <value>ワークフローを XAML ファイルからインポートしています。
  	 WorkflowId: {0}
  	 XamlFile: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportedFromXaml" xml:space="preserve">
-    <value>Workflow has been imported from a XAML file.
+    <value>ワークフローが XAML ファイルからインポートされました。
  	 WorkflowId: {0}
  	 XamlFile: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlError" xml:space="preserve">
-    <value>Workflow could not be imported from a XAML file because of an error.
+    <value>エラーのため、XAML ファイルからワークフローをインポートできませんでした。
  	 WorkflowId: {0}
  	 ErrorDescription: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlValidationStarted" xml:space="preserve">
-    <value>Workflow validation started.
+    <value>ワークフローの検証が開始されました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlValidationFinishedSuccessfully" xml:space="preserve">
-    <value>Workflow validation succeeded.
+    <value>ワークフローの検証に成功しました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlValidationFinishedWithError" xml:space="preserve">
-    <value>Workflow validation failed with error.
+    <value>エラーでワークフローの検証に失敗しました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlActivityValidated" xml:space="preserve">
-    <value>Workflow activity validated.
+    <value>ワークフロー アクティビティが検証されました。
  	 WorkflowId: {0}
  	 ActivityDisplayName: {1}
  	 ActivityTypeName: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowImportFromXamlActivityValidationFailed" xml:space="preserve">
-    <value>Workflow activity could not be validated.
+    <value>ワークフロー アクティビティを検証できませんでした。
  	 WorkflowId: {0}
  	 ActivityDisplayName: {1}
  	 ActivityTypeName: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionFailed" xml:space="preserve">
-    <value>Activity execution failed.
+    <value>アクティビティの実行に失敗しました。
  	 WorkflowId: {0}
  	 ActivityName: {1}
  	 FailureDescription: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowRunspaceAvailabilityChanged" xml:space="preserve">
-    <value>Runspace availability changed.
+    <value>実行空間の可用性が変更されました。
  	 RunspaceId: {0}
- 	 Availability: {1}</value>
+ 	 可用性: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowRunspaceStateChanged" xml:space="preserve">
-    <value>Runspace state changed.
+    <value>実行空間の状態が変更されました。
  	 RunspaceId: {0}
  	 NewState: {1}
  	 OldState: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowLoadedForExecution" xml:space="preserve">
-    <value>Workflow loaded for execution.
+    <value>ワークフローが実行のために読み込まれました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowUnloaded" xml:space="preserve">
-    <value>Workflow unloaded.
+    <value>ワークフローがアンロードされました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowCancelled" xml:space="preserve">
-    <value>Workflow execution cancelled.
+    <value>ワークフローの実行はキャンセルされました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowAborted" xml:space="preserve">
-    <value>Workflow execution aborted.
+    <value>ワークフローの実行が中止されました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowCleanup" xml:space="preserve">
-    <value>Workflow cleanup operation executed.
+    <value>ワークフローのクリーンアップ操作が実行されました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowLoadedFromDisk" xml:space="preserve">
-    <value>Persisted workflow loaded from disk.
+    <value>永続化されたワークフローがディスクから読み込まれました。
  	 WorkflowId: {0}
- 	 Path: {1}</value>
+ 	 パス: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowDeletedFromDisk" xml:space="preserve">
-    <value>Workflow data was deleted from disk.
+    <value>ワークフロー データがディスクから削除されました。
  	 WorkflowId: {0}
- 	 Path: {1}</value>
+ 	 パス: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PRemoveJobStarted" xml:space="preserve">
-    <value>Starting remove job.
+    <value>削除ジョブを開始しています。
  	 JobId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobStateChanged" xml:space="preserve">
-    <value>Job state changed.
+    <value>ジョブの状態が変更されました。
  	 JobId: {0}
  	 WorkflowId: {1}
  	 NewState: {2}
  	 OldState: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobError" xml:space="preserve">
-    <value>Job error.
+    <value>ジョブ エラー。
  	 JobId: {0}
  	 WorkflowId: {1}
  	 ErrorDescription: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowJobCreated" xml:space="preserve">
-    <value>Job created for workflow (child job).
+    <value>ワークフロー用の子ジョブが作成されました。
  	 ParentJobId: {0}
  	 ChildJobId: {1}
  	 ChildWorkflowId: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PParentJobCreated" xml:space="preserve">
-    <value>Parent job created for workflow.
+    <value>ワークフローの親ジョブが作成されました。
  	 JobId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobCreationCompleted" xml:space="preserve">
-    <value>All required jobs were created for workflow execution.
+    <value>ワークフローの実行に必要なすべてのジョブが作成されました。
  	 JobId: {0}
  	 WorkflowId: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobRemoved" xml:space="preserve">
-    <value>Child job removed for workflow.
+    <value>ワークフローの子ジョブが削除されました。
  	 ParentJobId: {0}
  	 ChildJobId: {1}
  	 WorkflowId: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PJobRemoveError" xml:space="preserve">
-    <value>An error occurred while removing job.
+    <value>ジョブの削除中にエラーが発生しました。
  	 ParentJobId: {0}
  	 ChildJobId: {1}
  	 WorkflowId: {2}
- 	 Error: {3}</value>
+ 	 エラー: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PLoadingWorkflowForExecution" xml:space="preserve">
-    <value>Loading workflow for execution.
+    <value>実行するワークフローを読み込んでいます。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowExecutionFinished" xml:space="preserve">
-    <value>Workflow execution finished.
+    <value>ワークフローの実行が完了しました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PCancellingWorkflowExecution" xml:space="preserve">
-    <value>Cancelling workflow execution.
+    <value>ワークフローの実行を取り消しています。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PAbortingWorkflowExecution" xml:space="preserve">
-    <value>Aborting workflow execution.
+    <value>ワークフローの実行を中止しています。
  	 WorkflowId: {0}
- 	 Reason: {1}</value>
+ 	 理由: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PUnloadingWorkflow" xml:space="preserve">
-    <value>Unloading workflow.
+    <value>ワークフローをアンロードしています。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PForcedWorkflowShutdownStarted" xml:space="preserve">
-    <value>Forced workflow shutdown started.
+    <value>ワークフローの強制シャットダウンが開始されました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PForcedWorkflowShutdownFinished" xml:space="preserve">
-    <value>Forced workflow shutdown finished.
+    <value>ワークフローの強制シャットダウンが完了しました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PForcedWorkflowShutdownError" xml:space="preserve">
-    <value>An error occurred while forcefully shutting down a workflow.
+    <value>ワークフローを強制的にシャットダウンしているときにエラーが発生しました。
  	 WorkflowId: {0}
  	 ErrorDescription: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PPersistingWorkflow" xml:space="preserve">
-    <value>Persisting workflow to disk.
+    <value>ワークフローをディスクに永続化しています。
  	 WorkflowId: {0}
  	 PersistPath: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowPersisted" xml:space="preserve">
-    <value>Workflow persisted to disk.
+    <value>ワークフローがディスクに永続化されました。
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowActivityExecutionFinished" xml:space="preserve">
-    <value>Activity execution finished.
+    <value>アクティビティの実行が完了しました。
  	 ActivityName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowExecutionError" xml:space="preserve">
-    <value>Workflow execution error.
+    <value>ワークフローの実行エラー。
  	 WorkflowId: {0}
  	 ErrorDescription: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointRegistered" xml:space="preserve">
-    <value>A new PowerShell endpoint was registered.
+    <value>新しい PowerShell エンドポイントが登録されました。
  	 EndpointName: {0}
  	 EndpointType: {1}
  	 RegisteredBy: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointModified" xml:space="preserve">
-    <value>Endpoint configuration modified.
+    <value>エンドポイント構成が変更されました。
  	 EndpointName: {0}
  	 ModifiedBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointUnregistered" xml:space="preserve">
-    <value>Endpoint configuration unregistered.
+    <value>エンドポイント構成の登録が解除されました。
  	 EndpointName: {0}
  	 UnregisteredBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointDisabled" xml:space="preserve">
-    <value>Endpoint configuration disabled.
+    <value>エンドポイント構成が無効になっています。
  	 EndpointName: {0}
  	 DisabledBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PEndpointEnabled" xml:space="preserve">
-    <value>Endpoint configuration enabled.
+    <value>エンドポイント構成が有効になっています。
  	 EndpointName: {0}
  	 EnabledBy: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3POutOfProcessRunspaceStarted" xml:space="preserve">
-    <value>Out of process runspace started.
- 	 Command: {0}</value>
+    <value>プロセス外の実行空間が開始されました。
+ 	 コマンド: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PParameterSplattingWasPerformed" xml:space="preserve">
-    <value>Parameter splatting was performed during workflow execution.
- 	 Parameters: {0}
- 	 Computers: {1}</value>
+    <value>ワークフローの実行中にパラメーターのスプラッティングが実行されました。
+ 	 パラメーター: {0}
+ 	 コンピューター: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowEngineStarted" xml:space="preserve">
-    <value>Workflow engine started.
+    <value>ワークフロー エンジンが開始されました。
  	 EndpointName: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PWORKFLOW_MANAGER_CHECKPOINTPATH" xml:space="preserve">
-    <value>Workflow manager instantiated with
+    <value>ワークフロー マネージャーを でインスタンス化しました
  	 CheckpointPath: {0}
  	 ConfigProviderId: {1}
- 	 UserName: {2}
- 	 Path: {3}</value>
+ 	 ユーザー名: {2}
+ 	 パス: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_CMDLETS_HOSTNAMERESOLVE" xml:space="preserve">
-    <value>Computer Name $null or . resolve to LocalHost</value>
+    <value>コンピューター名 $null または . が LocalHost に解決されます</value>
 </data>
   <data name="PS_PROVIDEReventE_O_CMDLETS_SCHEMERESOLVE" xml:space="preserve">
-    <value>Resolving to default scheme http</value>
+    <value>既定のスキーム http に解決しています</value>
 </data>
   <data name="PS_PROVIDEReventE_O_CMDLETS_SHELLRESOLVE" xml:space="preserve">
-    <value>Remote shell name resolved to default PowerShellCore</value>
+    <value>リモート シェル名は既定の PowerShellCore に解決されました</value>
 </data>
   <data name="PS_PROVIDEReventE_O_COMMAND_HEALTH" xml:space="preserve">
     <value>{2}
 
-Context:
+コンテキスト:
 {0}
 
-User Data:
+ユーザー データ:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_ENGINE_HEALTH" xml:space="preserve">
     <value>{2}
 
-Context:
+コンテキスト:
 {0}
 
-User Data:
+ユーザー データ:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_PROVIDER_HEALTH" xml:space="preserve">
     <value>{2}
 
-Context:
+コンテキスト:
 {0}
 
-User Data:
+ユーザー データ:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_PIPELINE_DETAIL" xml:space="preserve">
     <value>{2}
 
-Context:
+コンテキスト:
 {0}
 
-User Data:
+ユーザー データ:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_SCRIPTBLOCK_CREATE_DETAIL" xml:space="preserve">
-    <value>Creating Scriptblock text ({0} of {1}):
+    <value>Scriptblock テキストを作成しています ({0}/{1}):
 {2}
 
 ScriptBlock ID: {3}
-Path: {4}</value>
+パス: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_SCRIPTBLOCK_INVOKE_START_DETAIL" xml:space="preserve">
-    <value>Started invocation of ScriptBlock ID: {0}
-Runspace ID: {1}</value>
+    <value>ScriptBlock ID の呼び出しを開始しました: {0}
+実行空間 ID: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_SCRIPTBLOCK_INVOKE_COMPLETE_DETAIL" xml:space="preserve">
-    <value>Completed invocation of ScriptBlock ID: {0}
-Runspace ID: {1}</value>
+    <value>ScriptBlock ID の呼び出しが完了しました: {0}
+実行空間 ID: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_COMMAND_LIFECYCLE" xml:space="preserve">
     <value>{2}
 
-Context:
+コンテキスト:
 {0}
 
-User Data:
+ユーザー データ:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_ENGINE_LIFECYCLE" xml:space="preserve">
     <value>{2}
 
-Context:
+コンテキスト:
 {0}
 
-User Data:
+ユーザー データ:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_PROVIDER_LIFECYCLE" xml:space="preserve">
     <value>{2}
 
-Context:
+コンテキスト:
 {0}
 
-User Data:
+ユーザー データ:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_SETTINGS" xml:space="preserve">
     <value>{2}
 
-Context:
+コンテキスト:
 {0}
 
-User Data:
+ユーザー データ:
 {1}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_A_WriteTransferEvent" xml:space="preserve">
-    <value>Correlating activity id's.
+    <value>アクティビティ ID を関連付けています。
  	 CurrentActivityId: {0}
  	 ParentActivityId: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_ENGINE_TRACE" xml:space="preserve">
-    <value>Class Name = {0}
-Method Name = {1}
-Workflow GUID = {2}
-Message = {3}
+    <value>クラス名 = {0}
+メソッド名 = {1}
+ワークフロー GUID = {2}
+メッセージ = {3}
 {4}
-Activity Name = {5}
-Activity GUID = {6}
-Parameters = {7}</value>
+アクティビティ名 = {5}
+アクティビティ GUID = {6}
+パラメーター = {7}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACE_CONSTRUCTOR" xml:space="preserve">
-    <value>Creating Runspace object
- 	 Instance Id: {0}</value>
+    <value>Runspace オブジェクト を作成しています
+ 	 インスタンス ID: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACEPOOL_CONSTRUCTOR" xml:space="preserve">
-    <value>Creating RunspacePool object
+    <value>RunspacePool オブジェクトを作成しています
  	 InstanceId {0}
  	 MinRunspaces {1}
  	 MaxRunspaces {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACEPOOL_OPEN" xml:space="preserve">
-    <value>Opening RunspacePool</value>
+    <value>RunspacePool を開いています</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACEPOOL_TRANSFER" xml:space="preserve">
-    <value>Modifying activity Id and correlating</value>
+    <value>アクティビティ ID の変更と関連付け</value>
 </data>
   <data name="PS_PROVIDEReventE_O_RUNSPACE_STATE_CHANGE" xml:space="preserve">
-    <value>Runspace state changed to {0}</value>
+    <value>実行空間の状態が {0} に変更されました</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_RUNSPACE_CREATE_RETRY" xml:space="preserve">
-    <value>Attempting session creation retry {0} for error code {1} on session Id {2}</value>
+    <value>セッション ID {2} のエラー コード {1} に対して、セッション作成の再試行 {0} を試みています</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_LISTENER_START" xml:space="preserve">
-    <value>PowerShell has started an IPC listening thread on process: {0} in AppDomain: {1}.</value>
+    <value>PowerShell は、AppDomain: {1} のプロセス: {0} で IPC リッスン スレッドを開始しました。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_LISTENER_END" xml:space="preserve">
-    <value>PowerShell has ended an IPC listening thread on process: {0} in AppDomain: {1}.</value>
+    <value>PowerShell は、AppDomain: {1} のプロセス: {0} で IPC リッスン スレッドを終了しました。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_LISTENER_ERROR" xml:space="preserve">
-    <value>An error has occurred in PowerShell IPC listening thread on process: {0} in AppDomain: {1}.  Error Message: {2}.</value>
+    <value>AppDomain: {1} のプロセス: {0} の PowerShell IPC リッスン スレッドでエラーが発生しました。 エラー メッセージ: {2}。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_CONNECT" xml:space="preserve">
-    <value>PowerShell IPC connect on process: {0} in AppDomain: {1} for User: {2}.</value>
+    <value>PowerShell IPC が、ユーザー:{2} の AppDomain: {1} のプロセス: {0} で接続されました。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_DISCONNECT" xml:space="preserve">
-    <value>PowerShell IPC disconnect on process: {0} in AppDomain: {1} for User: {2}.</value>
+    <value>PowerShell IPC が、ユーザー:{2} の AppDomain: {1} のプロセス: {0} で切断されました。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_PORT" xml:space="preserve">
-    <value>Port resolved to {0}</value>
+    <value>ポートが {0} に解決されました</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_APPNAME" xml:space="preserve">
-    <value>AppName resolved to {0}</value>
+    <value>AppName が {0} に解決されました</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_COMPUTERNAME" xml:space="preserve">
-    <value>ComputerName resolved to {0}</value>
+    <value>ComputerName が {0} に解決されました</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_SCHEME" xml:space="preserve">
-    <value>Scheme is {0}</value>
+    <value>スキームは {0} です</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_TEST" xml:space="preserve">
-    <value>Test analytic message</value>
+    <value>テスト分析メッセージ</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACE_WSMANCONNECTIONINFO" xml:space="preserve">
-    <value>Connection Parameters are
- Connection URI: {0}
- Resource URI: {1}
- User: {2}
+    <value>接続パラメーターは です
+ 接続 URI: {0}
+ リソース URI: {1}
+ ユーザー: {2}
  OpenTimeout: {3}
  IdleTimeout: {4}
  CancelTimeout: {5}
  AuthenticationMechanism: {6}
- Thumb Print: {7}
+ サム プリント: {7}
  MaxUriRedirectionCount: {8}
  MaxReceivedDataSizePerCommand: {0}0
  MaxReceivedObjectSize: {0}1</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RUNSPACEPOOL_TRANSFER" xml:space="preserve">
-    <value>Modifying activity Id and correlating</value>
+    <value>アクティビティ ID の変更と関連付け</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_RCVDOBJ" xml:space="preserve">
-    <value>Received object with Runspace Id: {0} Command Id: {1} Destination: {2} DataType: {3} TargetInterface: {4}</value>
+    <value>次のオブジェクトを受信しました。実行空間 ID: {0} コマンド ID: {1} 宛先: {2} DataType: {3} TargetInterface: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_APPDOMAIN_UNHANDLED_EXCEPTION" xml:space="preserve">
-    <value>An unhandled exception occurred in the appdomain.
-Exception Type: {0}
-Exception Message: {1}
-Exception StackTrace: {2}</value>
+    <value>appdomain でハンドルされない例外が発生しました。
+例外の種類: {0}
+例外メッセージ: {1}
+例外のスタック トレース: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_ERROR" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. WSMan reported an error with error code: {2}.
- Error message: {3}
+    <value>実行空間 ID: {0} パイプライン ID: {1}。WSMan がエラー コード {2} のエラーを報告しました。
+ エラー メッセージ: {3}
  StackTrace: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_APPDOMAIN_UNHANDLED_EXCEPTION" xml:space="preserve">
-    <value>An unhandled exception occurred in the appdomain.
-Exception Type: {0}
-Exception Message: {1}
-Exception StackTrace: {2}</value>
+    <value>appdomain でハンドルされない例外が発生しました。
+例外の種類: {0}
+例外メッセージ: {1}
+例外のスタック トレース: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_TRANSPORT_ERROR" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. WSMan reported an error with error code: {2}.
- Error message: {3}
+    <value>実行空間 ID: {0} パイプライン ID: {1}。WSMan がエラー コード {2} のエラーを報告しました。
+ エラー メッセージ: {3}
  StackTrace: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CONNECT" xml:space="preserve">
-    <value>Runspace Id {0}. Establishing a connection using WSMan Create Shell</value>
+    <value>実行空間 ID: {0}。WSMan Create Shell を使用して接続を確立しています</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SHELL_CONNECT_CALLBACK" xml:space="preserve">
-    <value>Runspace Id {0}. Callback received for WSMan Create Shell</value>
+    <value>実行空間 ID: {0}。WSMan Create Shell のコールバックを受信しました</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SHELL_CLOSE" xml:space="preserve">
-    <value>Runspace Id: {0}. Closing shell using WSManCloseShell</value>
+    <value>実行空間 ID: {0}。WSManCloseShell を使用してシェルを閉じています</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SHELL_CLOSE_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0}. Callback received for WSManCloseShell</value>
+    <value>実行空間 ID: {0}。WSManCloseShell のコールバックを受信しました</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SEND_DATA" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Sending data of size {2}</value>
+    <value>実行空間 ID: {0} パイプライン ID: {1}。サイズ {2} のデータを送信しています</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SEND_DATA_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Callback received for WSManSendShellInputEx</value>
+    <value>実行空間 ID: {0} パイプライン ID: {1}。WSManSendShellInputEx のコールバックを受信しました</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_RECEIVE_DATA" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Placing Receive request using WSManReceiveShellOutputEx</value>
+    <value>実行空間 ID: {0} パイプライン ID: {1}。Placing Receive request using WSManReceiveShellOutputEx</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_RECEIVE_DATA_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Received Data of size {2}.</value>
+    <value>実行空間 ID: {0} パイプライン ID: {1}。サイズ {2}のデータを受信しました。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CONNECT" xml:space="preserve">
-    <value>Runspace Id {0} Pipeline Id {1}. Establishing a command connection using WSManRunShellCommandEx</value>
+    <value>実行空間 ID: {0} パイプライン ID: {1}。WSManRunShellCommandEx を使用してコマンド接続を確立しています</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CONNECT_CALLBACK" xml:space="preserve">
-    <value>Runspace Id {0} Pipeline Id {1}. Callback received for command connection</value>
+    <value>実行空間 ID: {0} パイプライン ID: {1}。コマンド接続のコールバックを受信しました</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CLOSE" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Closing transport for command</value>
+    <value>実行空間 ID: {0} パイプライン ID: {1}。コマンドのトランスポートを閉じています</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_CMD_CLOSE_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Callback received for command close</value>
+    <value>実行空間 ID: {0} パイプライン ID: {1}。コマンド終了のコールバックを受信しました</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SIGNAL" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Sending signal with code {2} using WSManSignalShellEx</value>
+    <value>実行空間 ID: {0} パイプライン ID: {1}。WSManSignalShellEx を使用してコード {2} のシグナルを送信しています</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SIGNAL_CALLBACK" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id {1}. Callback received for WSManSignalShellEx</value>
+    <value>実行空間 ID: {0} パイプライン ID: {1}。WSManSignalShellEx のコールバックを受信しました</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_URI_REDIRECTION" xml:space="preserve">
-    <value>Runspace Id: {0}. Connection is getting redirected to Uri: {1}</value>
+    <value>実行空間 ID: {0}。接続が URI にリダイレクトされています: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_TRANSPORT_SERVER_SEND_DATA" xml:space="preserve">
-    <value>Runspace Id: {0} Pipeline Id: {1}. Server is sending data of size {2} to client. DataType: {3} TargetInterface: {4}</value>
+    <value>実行空間 ID: {0} パイプライン ID: {1}。サーバーはサイズ {2} のデータをクライアントに送信しています。DataType: {3} TargetInterface: {4}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_CREATE_SERVER_REMOTESESSION" xml:space="preserve">
-    <value>Request {0}. Creating a server remote session. UserName: {1} Custom Shell Id: {2}</value>
+    <value>{0} を要求します。サーバー リモート セッションを作成しています。ユーザー名: {1} カスタム シェル ID: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_REPORT_CONTEXT" xml:space="preserve">
-    <value>Reporting context for request: {0} Context Reported: {0}</value>
+    <value>要求のコンテキストを報告しています: {0} 報告されたコンテキスト: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_REPORT_OPERATION_COMPLETE" xml:space="preserve">
-    <value>Reporting operation complete for request: {0}
- Error Code: {1}
- Error Message: {2}
+    <value>要求のレポート操作が完了しました: {0}
+ エラー コード: {1}
+ エラー メッセージ: {2}
  StackTrace: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_CREATE_COMMAND_REMOTESESSION" xml:space="preserve">
-    <value>Shell Context {0}. Request Id {1}. Creating a commonad session for running a command.</value>
+    <value>シェル コンテキスト {0}。要求 ID {1}。コマンドを実行するための共通セッションを作成しています。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_STOP_COMMAND" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} Request Id {2}. Stopping command.</value>
+    <value>シェル コンテキスト {0} コマンド コンテキスト {1} 要求 ID {2}。コマンドを停止しています。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERVER_RECEIVED_DATA" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} Request Id {2}. Received data from client.</value>
+    <value>シェル コンテキスト {0} コマンド コンテキスト {1} 要求 ID {2}。クライアントからデータを受信しました。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERVER_RECEIVE_REQUEST" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} Request Id {2}. Client sent a receive request so that server can send data.</value>
+    <value>シェル コンテキスト {0} コマンド コンテキスト {1} 要求 ID {2}。クライアントは、サーバーがデータを送信できるように受信要求を送信しました。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERVER_CLOSE_OPERATION" xml:space="preserve">
-    <value>Shell Context {0} Command Context {1} IsReceiveOperation {2}. Got close operation request.</value>
+    <value>シェル コンテキスト {0} コマンド コンテキスト {1} IsReceiveOperation {2}。終了操作要求を受信しました。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_LOAD_PSCUSTOMSHELL_ASSEMBLY" xml:space="preserve">
-    <value>Loading assembly {0} for custom shell with shell Id {1}</value>
+    <value>シェル ID {1} のカスタム シェル用アセンブリ {0} を読み込んでいます</value>
 </data>
   <data name="PS_PROVIDEReventE_A_LOAD_PSCUSTOMSHELL_TYPE" xml:space="preserve">
-    <value>Loading type {0} for custom shell with shell Id {1}</value>
+    <value>シェル ID {1} のカスタム シェルの種類 {0} を読み込んでいます</value>
 </data>
   <data name="PS_PROVIDEReventE_A_RECEIVED_FRAGMENT" xml:space="preserve">
-    <value>Received remoting fragment.
- 	 Object Id: {0}
- 	 Fragment Id: {1}
- 	 Start Flag: {2}
- 	 End Flag: {3}
- 	 Payload Length: {4}
- 	 Payload Data: {5}</value>
+    <value>リモート処理フラグメントを受信しました。
+ 	 オブジェクト ID: {0}
+ 	 フラグメント ID: {1}
+ 	 開始フラグ: {2}
+ 	 終了フラグ: {3}
+ 	 ペイロードの長さ: {4}
+ 	 ペイロード データ: {5}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SENT_FRAGMENT" xml:space="preserve">
-    <value>Sent remoting fragment.
- 	 Object Id: {0}
- 	 Fragment Id: {1}
- 	 Start Flag: {2}
- 	 End Flag: {3}
- 	 Payload Length: {4}
- 	 Payload Data: {5}</value>
+    <value>リモート処理フラグメントを送信しました。
+ 	 オブジェクト ID: {0}
+ 	 フラグメント ID: {1}
+ 	 開始フラグ: {2}
+ 	 終了フラグ: {3}
+ 	 ペイロードの長さ: {4}
+ 	 ペイロード データ: {5}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SHUTTING_DOWN" xml:space="preserve">
-    <value>Shutting down winrm service.</value>
+    <value>winrm サービスをシャットダウンしています。</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_REHYDRATION_SUCCESS" xml:space="preserve">
-    <value>Successfully rehydrated an object.
- 	 Deserialized type name: {0}
- 	 Rehydrated by casting to type: {1}
- 	 Rehydrated object is of type: {2}</value>
+    <value>オブジェクトが正常にリハイドレートされました。
+ 	 逆シリアル化された型名: {0}
+ 	 型にキャストしてリハイドレート: {1}
+ 	 リハイドレートされたオブジェクトの種類: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_REHYDRATION_FAILURE" xml:space="preserve">
-    <value>Failed to rehydrated an object.
- 	 Deserialized type name: {0}
- 	 Rehydrated by casting to type: {1}
- 	 Type cast exception: {2}
- 	 Type cast inner exception: {3}</value>
+    <value>オブジェクトのリハイドレートに失敗しました。
+ 	 逆シリアル化された型名: {0}
+ 	 型にキャストしてリハイドレート: {1}
+ 	 型キャストの例外: {2}
+ 	 型キャストの内部例外: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_DEPTH_OVERRIDE" xml:space="preserve">
-    <value>Serialization depth has been overridden.
- 	 Serialized type name: {0}
- 	 Original depth: {1}
- 	 Overridden depth: {2}
- 	 Current depth below top level: {3}</value>
+    <value>シリアル化の深さがオーバーライドされました。
+ 	 シリアル化された型名: {0}
+ 	 元の深さ: {1}
+ 	 オーバーライドされた深さ: {2}
+ 	 トップ レベルより下の現在の深さ: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_MODE_OVERRIDE" xml:space="preserve">
-    <value>Serialization mode has been overridden.
- 	 Serialized type name: {0}
- 	 Overridden mode: {1}</value>
+    <value>シリアル化モードがオーバーライドされました。
+ 	 シリアル化された型名: {0}
+ 	 オーバーライドされたモード: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_SCRIPT_PROPERTY_WITHOUT_RUNSPACE" xml:space="preserve">
-    <value>Serialization of a script property has been skipped, because there is no runspace to use for evaluation of the property.
- 	 Property name: {0}
- 	 Property owner's type name: {1}
- 	 Getter script: {2}</value>
+    <value>プロパティの評価に使用できる実行空間がないため、スクリプト プロパティのシリアル化はスキップされました。
+ 	 プロパティ名: {0}
+ 	 プロパティ所有者の型名: {1}
+ 	 ゲッター スクリプト: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_PROPERTY_GETTER_FAILED" xml:space="preserve">
-    <value>Serialization of a property has been skipped, because property getter failed.
- 	 Property name: {0}
- 	 Property owner's type name: {1}
- 	 Exception from property getter: {2}
- 	 Inner exception from property getter: {3}</value>
+    <value>プロパティ ゲッターが失敗したため、プロパティのシリアル化はスキップされました。
+ 	 プロパティ名: {0}
+ 	 プロパティ所有者の型名: {1}
+ 	 プロパティ ゲッターの例外: {2}
+ 	 プロパティ ゲッターの内部例外: {3}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_ENUMERATION_FAILED" xml:space="preserve">
-    <value>Serialization of an enumerable object might not be complete, because object being enumerated threw an exception.
- 	 Type of object being enumerated: {0}
- 	 Exception: {1}</value>
+    <value>列挙されるオブジェクトが例外をスローしたため、列挙可能なオブジェクトのシリアル化が完了していない可能性があります。
+ 	 列挙対象のオブジェクトの種類: {0}
+ 	 例外: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_TOSTRING_FAILED" xml:space="preserve">
-    <value>Serialization called object's ToString method which failed.
- 	 Type of object: {0}
- 	 Exception: {1}</value>
+    <value>シリアル化でオブジェクトの ToString メソッドが呼び出されましたが、失敗しました。
+ 	 オブジェクトの種類: {0}
+ 	 例外: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_MAX_DEPTH_WHEN_SERIALIZING" xml:space="preserve">
-    <value>Maximum depth below top level has been reached, forcing object to be serialized as strings.
- 	 Object type at max depth: {0}
- 	 Property name at max depth: {1}
- 	 Depth: {2}</value>
+    <value>トップ レベルより下の最大深度に達したため、オブジェクトは文字列としてシリアル化されます。
+ 	 最大深度のオブジェクトの種類: {0}
+ 	 最大深度のプロパティ名: {1}
+ 	 深度: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_XMLEXCEPTION_WHEN_DESERIALIZING" xml:space="preserve">
-    <value>XmlException has been thrown by the deserializer (most likely indicating incorrect clixml format).
- 	 Line number: {0} Line position: {1}
- 	 Exception: {2}</value>
+    <value>XmlException がデシリアライザーによってスローされました (clixml の形式が正しくない可能性があります)。
+ 	 行番号: {0} 行の位置: {1}
+ 	 例外: {2}</value>
 </data>
   <data name="PS_PROVIDEReventE_A_SERIALIZER_SPECIFIC_PROPERTY_MISSING" xml:space="preserve">
-    <value>Serialization of specified properties failed, because one of the specified properties was missing.
- 	 Type of object: {0}
- 	 Property name: {1}</value>
+    <value>指定されたプロパティの 1 つが見つからなかったため、指定されたプロパティのシリアル化に失敗しました。
+ 	 オブジェクトの種類: {0}
+ 	 プロパティ名: {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_PowershellConsoleStartupStart" xml:space="preserve">
-    <value>PowerShell console is starting up</value>
+    <value>PowerShell コンソールを起動しています</value>
 </data>
   <data name="PS_PROVIDEReventE_O_PowershellConsoleStartupStop" xml:space="preserve">
-    <value>PowerShell console is ready for user input</value>
+    <value>PowerShell コンソールでユーザーによる入力が可能になりました</value>
 </data>
   <data name="PS_PROVIDEReventE_D_DebugMessage" xml:space="preserve">
     <value>{0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_Powershell_ErrorRecord" xml:space="preserve">
-    <value>Tracing ErrorRecord:
- Message: {0}
+    <value>ErrorRecord のトレース:
+ メッセージ: {0}
  CategoryInfo.Category: {1}
- CategoryInfo.Reason : {2}
- CategoryInfo.TargetName : {3}
+ CategoryInfo.Reason: {2}
+ CategoryInfo.TargetName: {3}
  FullyQualifiedErrorId: {4}
- Exception Details:
- Message : {5}
- Stack Trace: {6}
+ 例外の詳細: 
+ メッセージ : {5}
+ スタック トレース: {6}
  InnerException {7}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_D_Powershell_Exception" xml:space="preserve">
-    <value>Exception:
- Message: {0}
+    <value>例外: 
+ メッセージ: {0}
  StackTrace: {1}
- InnerException : {2}
+ InnerException: {2}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_O_Powershell_PSObject" xml:space="preserve">
-    <value>Tracing PSObject</value>
+    <value>PSObject のトレース</value>
 </data>
   <data name="PS_PROVIDEReventE_D_Powershell_Job" xml:space="preserve">
-    <value>Tracing Job:
- Id: {0}
- InstanceId: {1}
- Name: {2}
- Location: {3}
- State: {4}
- Command: {5}
+    <value>トレース ジョブ: 
+ ID: {0}
+ InstanceID: {1}
+ 名前: {2}
+ 場所: {3}
+ 状態: {4}
+ コマンド: {5}
 </value>
 </data>
   <data name="PS_PROVIDEReventE_D_MESSAGE" xml:space="preserve">
-    <value>Trace Information:
+    <value>トレース情報:
  {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_MESSAGE2" xml:space="preserve">
-    <value>Trace Information:
+    <value>トレース情報:
  {0} {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginStartWorkflowApplication" xml:space="preserve">
-    <value>BEGIN ImportWorkflowCommand::StartWorkflowApplication. Starting invocation of workflow function. Tracking Guid {0}</value>
+    <value>BEGIN ImportWorkflowCommand::StartWorkflowApplication.ワークフロー関数の呼び出しを開始しています。追跡 GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndStartWorkflowApplication" xml:space="preserve">
-    <value>END ImportWorkflowCommand::StartWorkflowApplication. Ending invocation of workflow function. Tracking Guid {0}</value>
+    <value>END ImportWorkflowCommand::StartWorkflowApplication.ワークフロー関数の呼び出しを終了しています。追跡 GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginCreateNewJob" xml:space="preserve">
-    <value>BEGIN Creating new job in ImportWorkflowCommand::StartWorkflowApplication. Tracking Guid {0}</value>
+    <value>BEGIN ImportWorkflowCommand::StartWorkflowApplication で新しいジョブを作成しています。追跡 GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndCreateNewJob" xml:space="preserve">
-    <value>END Creating new job in ImportWorkflowCommand::StartWorkflowApplication. Tracking Guid {0}</value>
+    <value>END ImportWorkflowCommand::StartWorkflowApplication で新しいジョブを作成しています。追跡 GUID {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PTrackingGuidContainerParentJobCorrelation" xml:space="preserve">
-    <value>END Creating new job in ImportWorkflowCommand::StartWorkflowApplication. Tracking Guid {0} : ContainerParentJob Guid {1}</value>
+    <value>END ImportWorkflowCommand::StartWorkflowApplication で新しいジョブを作成しています。追跡 GUID {0}: ContainerParentJob GUID {1}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginJobLogic" xml:space="preserve">
     <value>BEGIN JobLogic ContainerParentJob Guid {0}</value>
@@ -835,90 +835,90 @@ Exception StackTrace: {2}</value>
     <value>END WorkflowExecution ContainerParentJob Guid {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PChildWorkflowJobAddition" xml:space="preserve">
-    <value>WorkflowJob with Guid {0} added to ContainerParentJob with Guid {1}</value>
+    <value>Guid {0} の WorkflowJob が Guid {1} の ContainerParentJob に追加されました</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PProxyJobRemoteJobAssociation" xml:space="preserve">
-    <value>ProxyJob with Guid {0} associated with remote ContainerParentJob with Guid {1}</value>
+    <value>Guid {0} の ProxyJob が、Guid {1} のリモート ContainerParentJob に関連付けられています</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginContainerParentJobExecution" xml:space="preserve">
-    <value>BEGIN Execution of ContainerParentJob with Guid {0}</value>
+    <value>BEGIN Guid {0} の ContainerParentJob の実行</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndContainerParentJobExecution" xml:space="preserve">
-    <value>END Execution of ContainerParentJob with Guid {0}</value>
+    <value>END Guid {0} の ContainerParentJob の実行</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginProxyJobExecution" xml:space="preserve">
-    <value>BEGIN Execution of Proxy Job with Guid {0}</value>
+    <value>BEGIN Guid {0} のプロキシ ジョブの実行</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndProxyJobExecution" xml:space="preserve">
-    <value>END Execution of Proxy Job with Guid {0}</value>
+    <value>END Guid {0} のプロキシ ジョブの実行</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginProxyJobEventHandler" xml:space="preserve">
-    <value>BEGIN StateChanged event handler for Proxy Job with Guid {0}</value>
+    <value>BEGIN Guid {0} のプロキシ ジョブの StateChanged イベント ハンドラー</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndProxyJobEventHandler" xml:space="preserve">
-    <value>END StateChanged event handler for Proxy Job with Guid {0}</value>
+    <value>END Guid {0} のプロキシ ジョブの StateChanged イベント ハンドラー</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginProxyChildJobEventHandler" xml:space="preserve">
-    <value>BEGIN StateChanged event handler for Proxy Child Job with Guid {0}</value>
+    <value>BEGIN Guid {0} のプロキシ子ジョブの StateChanged イベント ハンドラー</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndProxyChildJobEventHandler" xml:space="preserve">
-    <value>END StateChanged event handler for Proxy Child Job with Guid {0}</value>
+    <value>END Guid {0} のプロキシ子ジョブの StateChanged イベント ハンドラー</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PBeginRunGarbageCollection" xml:space="preserve">
-    <value>BEGIN Running garbage collection</value>
+    <value>BEGIN GC の実行</value>
 </data>
   <data name="PS_PROVIDEReventE_D_M3PEndRunGarbageCollection" xml:space="preserve">
-    <value>END Running garbage collection</value>
+    <value>END GC の実行</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PPERSISTENCE_STORE_MAXSIZE_REACHED" xml:space="preserve">
-    <value>Persistence store has reached its maximum specified size</value>
+    <value>永続化ストアが指定された最大サイズに達しました</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEExecuteScript" xml:space="preserve">
-    <value>Windows PowerShell ISE has started to run script file {0}.</value>
+    <value>Windows PowerShell ISE はスクリプト ファイル {0} の実行を開始しました。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEExecuteSelection" xml:space="preserve">
-    <value>Windows PowerShell ISE has started to run a user-selected script from file {0}.</value>
+    <value>Windows PowerShell ISE は、ファイル {0}からユーザーが選択したスクリプトの実行を開始しました。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEStopCommand" xml:space="preserve">
-    <value>Windows PowerShell ISE is stopping the current command.</value>
+    <value>Windows PowerShell ISE は現在のコマンドを停止しています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEResumeDebugger" xml:space="preserve">
-    <value>Windows PowerShell ISE is resuming the debugger.</value>
+    <value>Windows PowerShell ISE はデバッガーを再開しています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEStopDebugger" xml:space="preserve">
-    <value>Windows PowerShell ISE is stopping the debugger.</value>
+    <value>Windows PowerShell ISE でデバッガーを停止しています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDebuggerStepInto" xml:space="preserve">
-    <value>Windows PowerShell ISE is stepping into debugging.</value>
+    <value>Windows PowerShell ISE はデバッグにステップ インしています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDebuggerStepOver" xml:space="preserve">
-    <value>Windows PowerShell ISE is stepping over debugging.</value>
+    <value>Windows PowerShell ISE はデバッグにステップ オーバーしています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDebuggerStepOut" xml:space="preserve">
-    <value>Windows PowerShell ISE is stepping out of debugging.</value>
+    <value>Windows PowerShell ISE はデバッグからステップ アウトしています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEEnableAllBreakpoints" xml:space="preserve">
-    <value>Windows PowerShell ISE is enabling all breakpoints.</value>
+    <value>Windows PowerShell ISE ですべてのブレークポイントを有効にしています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDisableAllBreakpoints" xml:space="preserve">
-    <value>Windows PowerShell ISE is disabling all breakpoints.</value>
+    <value>Windows PowerShell ISE ですべてのブレークポイントを無効にしています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISERemoveAllBreakpoints" xml:space="preserve">
-    <value>Windows PowerShell ISE is removing all breakpoints.</value>
+    <value>Windows PowerShell ISE ですべてのブレークポイントを削除しています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISESetBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is setting the breakpoint at line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE は、ファイル {1} の行 #: {0} のブレークポイントを設定しています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISERemoveBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is removing the breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE は、ファイル {1} の行 #: {0} にあるブレークポイントを削除しています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEEnableBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is enabling the breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE は、ファイル {1} の行 #: {0} のブレークポイントを有効にしています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEDisableBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE is disabling the breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE は、ファイル {1} の行 #: {0} のブレークポイントを無効にしています。</value>
 </data>
   <data name="PS_PROVIDEReventE_O_ISEHitBreakpoint" xml:space="preserve">
-    <value>Windows PowerShell ISE has hit a breakpoint on line #: {0} of file {1}.</value>
+    <value>Windows PowerShell ISE で、ファイル {1} の行 #: {0} のブレークポイントに到達しました。</value>
 </data>
 </root>

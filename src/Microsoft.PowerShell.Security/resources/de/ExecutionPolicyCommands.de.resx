@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExecutionPolicyOverridden" xml:space="preserve">
-    <value>PowerShell updated your execution policy successfully, but the setting is overridden by a policy defined at a more specific scope.  Due to the override, your shell will retain its current effective execution policy of {0}. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more information please see "Get-Help Set-ExecutionPolicy".</value>
+    <value>PowerShell hat Ihre Ausführungsrichtlinie erfolgreich aktualisiert, aber die Einstellung wird durch eine Richtlinie überschrieben, die in einem spezifischeren Bereich definiert ist.  Aufgrund der Außerkraftsetzung behält Ihre Shell die aktuelle effektive Ausführungsrichtlinie von {0} bei. Geben Sie „Get-ExecutionPolicy -List“ ein, um ihre Ausführungsrichtlinieneinstellungen anzuzeigen. Weitere Informationen finden Sie unter „Get-Help Set-ExecutionPolicy“.</value>
   </data>
   <data name="ExecutionPolicyOverriddenRecommendedAction" xml:space="preserve">
-    <value>Contact your system administrator.</value>
+    <value>Wenden Sie sich an Ihren Systemadministrator.</value>
   </data>
   <data name="ListAndScopeSpecified" xml:space="preserve">
-    <value>Cannot get execution policy. Specify only the List or Scope parameters.</value>
+    <value>Ausführungsrichtlinie kann nicht abrufen werden. Geben Sie nur die Listen- oder Bereichsparameter an.</value>
   </data>
   <data name="CantSetGroupPolicy" xml:space="preserve">
-    <value>Cannot set execution policy. Execution policies at the MachinePolicy or UserPolicy scopes must be set through Group Policy.</value>
+    <value>Die Ausführungsrichtlinie kann nicht festgelegt werden. Ausführungsrichtlinien in den Bereichen „MachinePolicy“ oder „UserPolicy“ müssen über die Gruppenrichtlinie festgelegt werden.</value>
   </data>
   <data name="SetExecutionPolicyCaption" xml:space="preserve">
-    <value>Execution Policy Change</value>
+    <value>Änderung der Ausführungsrichtlinie</value>
   </data>
   <data name="SetExecutionPolicyQuery" xml:space="preserve">
-    <value>The execution policy helps protect you from scripts that you do not trust. Changing the execution policy might expose you to the security risks described in the about_Execution_Policies help topic at https://go.microsoft.com/fwlink/?LinkID=135170. Do you want to change the execution policy?</value>
+    <value>Die Ausführungsrichtlinie schützt Sie vor Skripten, denen Sie nicht vertrauen. Wenn Sie die Ausführungsrichtlinie ändern, sind Sie möglicherweise den Sicherheitsrisiken ausgesetzt, die im about_Execution_Policies Hilfethema unter https://go.microsoft.com/fwlink/?LinkID=135170 beschrieben werden. Möchten Sie die Ausführungsrichtlinie ändern?</value>
   </data>
   <data name="SetExecutionPolicyAccessDeniedError" xml:space="preserve">
     <value>{0}
-To change the execution policy for the default (LocalMachine) scope, start PowerShell with the "Run as administrator" option. To change the execution policy for the current user, run "Set-ExecutionPolicy -Scope CurrentUser".</value>
+Um die Ausführungsrichtlinie für den Standardbereich (LocalMachine) zu ändern, öffnen Sie PowerShell mit der Option „Als Administrator ausführen“. Führen Sie „Set-ExecutionPolicy -Scope CurrentUser“ aus, um die Ausführungsrichtlinie für den aktuellen Benutzer zu ändern.</value>
   </data>
 </root>

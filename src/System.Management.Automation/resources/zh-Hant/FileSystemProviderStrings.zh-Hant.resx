@@ -118,240 +118,240 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvokeItemAction" xml:space="preserve">
-    <value>Invoke Item</value>
+    <value>叫用項目</value>
   </data>
   <data name="InvokeItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>項目: {0}</value>
   </data>
   <data name="RemoveItemActionFile" xml:space="preserve">
-    <value>Remove File</value>
+    <value>移除檔案</value>
   </data>
   <data name="RemoveItemActionDirectory" xml:space="preserve">
-    <value>Remove Directory</value>
+    <value>移除目錄</value>
   </data>
   <data name="CopyItemActionFile" xml:space="preserve">
-    <value>Copy File</value>
+    <value>複製檔案</value>
   </data>
   <data name="CopyItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>項目: {0} 目的地: {1}</value>
   </data>
   <data name="CopyItemActionDirectory" xml:space="preserve">
-    <value>Copy Directory</value>
+    <value>複製目錄</value>
   </data>
   <data name="RenameItemActionFile" xml:space="preserve">
-    <value>Rename File</value>
+    <value>重新命名檔案</value>
   </data>
   <data name="RenameItemActionDirectory" xml:space="preserve">
-    <value>Rename Directory</value>
+    <value>重新命名目錄</value>
   </data>
   <data name="RenameItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>項目: {0} 目的地: {1}</value>
   </data>
   <data name="MoveItemActionFile" xml:space="preserve">
-    <value>Move File</value>
+    <value>移動檔案</value>
   </data>
   <data name="MoveItemActionDirectory" xml:space="preserve">
-    <value>Move Directory</value>
+    <value>移動目錄</value>
   </data>
   <data name="MoveItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>項目: {0} 目的地: {1}</value>
   </data>
   <data name="SetPropertyActionFile" xml:space="preserve">
-    <value>Set Property File</value>
+    <value>設定屬性檔案</value>
   </data>
   <data name="SetPropertyActionDirectory" xml:space="preserve">
-    <value>Set Property Directory</value>
+    <value>設定屬性目錄</value>
   </data>
   <data name="SetPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1} Value: {2}</value>
+    <value>項目: {0} 屬性: {1} 值: {2}</value>
   </data>
   <data name="ClearPropertyActionFile" xml:space="preserve">
-    <value>Clear Property File</value>
+    <value>清除屬性檔案</value>
   </data>
   <data name="ClearPropertyActionDirectory" xml:space="preserve">
-    <value>Clear Property Directory</value>
+    <value>清除屬性目錄</value>
   </data>
   <data name="ClearPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>項目: {0} 屬性: {1}</value>
   </data>
   <data name="NewItemActionFile" xml:space="preserve">
-    <value>Create File</value>
+    <value>建立檔案</value>
   </data>
   <data name="NewItemActionDirectory" xml:space="preserve">
-    <value>Create Directory</value>
+    <value>建立目錄</value>
   </data>
   <data name="NewItemActionTemplate" xml:space="preserve">
-    <value>Destination: {0}</value>
+    <value>目的地: {0}</value>
   </data>
   <data name="ClearContentActionFile" xml:space="preserve">
-    <value>Clear Content</value>
+    <value>清除內容</value>
   </data>
   <data name="ClearContentesourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>項目: {0}</value>
   </data>
   <data name="ItemNotFound" xml:space="preserve">
-    <value>Could not find item {0}.</value>
+    <value>找不到項目 {0}。</value>
   </data>
   <data name="CannotRemoveItem" xml:space="preserve">
-    <value>Cannot remove item {0}: {1}</value>
+    <value>無法移除項目 {0}: {1}</value>
   </data>
   <data name="CannotRestoreAttributes" xml:space="preserve">
-    <value>Cannot restore attributes on item {0}: {1}</value>
+    <value>無法還原項目 {0} 上的屬性: {1}</value>
   </data>
   <data name="ItemDoesNotExist" xml:space="preserve">
-    <value>An object at the specified path {0} does not exist.</value>
+    <value>指定路徑 {0} 上的物件不存在。</value>
   </data>
   <data name="DirectoryNotEmpty" xml:space="preserve">
-    <value>Directory {0} cannot be removed because it is not empty.</value>
+    <value>目錄 {0} 非空白，因此無法移除。</value>
   </data>
   <data name="UnknownType" xml:space="preserve">
-    <value>The type is not a known type for the file system. Only "file","directory" or "symboliclink" can be specified.</value>
+    <value>此類型不是檔案系統的已知類型。只能指定 "file"、"directory" 或 "symboliclink"。</value>
   </data>
   <data name="PathOutSideBasePath" xml:space="preserve">
-    <value>Cannot process the path because the specified path refers to an item that is outside the basePath.</value>
+    <value>無法處理路徑，因為指定的路徑參考 basePath 外的項目。</value>
   </data>
   <data name="DriveRootError" xml:space="preserve">
-    <value>The specified drive root "{0}" either does not exist, or it is not a folder.</value>
+    <value>指定的磁碟機根目錄 "{0}" 不存在，或不是資料夾。</value>
   </data>
   <data name="DirectoryExist" xml:space="preserve">
-    <value>An item with the specified name {0} already exists.</value>
+    <value>具有指定名稱 {0} 的項目已存在。</value>
   </data>
   <data name="DelimiterError" xml:space="preserve">
-    <value>A delimiter cannot be specified when reading the stream one byte at a time.</value>
+    <value>一次一個位元組讀取資料流時，無法指定分隔符號。</value>
   </data>
   <data name="CopyError" xml:space="preserve">
-    <value>Cannot overwrite the item {0} with itself.</value>
+    <value>無法以項目 {0} 本身覆寫自己。</value>
   </data>
   <data name="RenameError" xml:space="preserve">
-    <value>Cannot rename the specified target, because it represents a path or device name.</value>
+    <value>無法重新命名指定的目標，因為它代表路徑或裝置名稱。</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property {0} does not exist or was not found.</value>
+    <value>屬性 {0} 不存在或找不到。</value>
   </data>
   <data name="PermissionError" xml:space="preserve">
-    <value>You do not have sufficient access rights to perform this operation or the item is hidden, system, or read only.</value>
+    <value>您沒有足夠的存取權限可執行此作業，或項目為隱藏、系統或唯讀。</value>
   </data>
   <data name="AttributesNotSupported" xml:space="preserve">
-    <value>The attribute cannot be set because attributes are not supported. Only the following attributes can be set: Archive, Hidden, Normal, ReadOnly, or System.</value>
+    <value>無法設定屬性，因為不支援屬性。只能設定下列屬性: 封存、隱藏、一般、唯讀或系統。</value>
   </data>
   <data name="CannotClearProperty" xml:space="preserve">
-    <value>The property cannot be cleared because the property is not supported. Only the Attributes property can be cleared.</value>
+    <value>無法清除屬性，因為不支援該屬性。只能清除 Attributes 屬性。</value>
   </data>
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
-    <value>Cannot process path '{0}' because the target represents a reserved device name.</value>
+    <value>無法處理路徑 '{0}'，因為目標代表保留的裝置名稱。</value>
   </data>
   <data name="EncodingNotUsed" xml:space="preserve">
-    <value>Encoding not used when '-AsByteStream' specified.</value>
+    <value>指定 '-AsByteStream' 時不使用編碼。</value>
   </data>
   <data name="ByteEncodingError" xml:space="preserve">
-    <value>Cannot proceed with byte encoding. When using byte encoding the content must be of type byte.</value>
+    <value>無法繼續進行位元組編碼。使用位元組編碼時，內容必須是位元組類型。</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>Cannot process the file because the file {0} was not found.</value>
+    <value>無法處理檔案，因為找不到檔案 {0}。</value>
   </data>
   <data name="DirectoryDisplayGrouping" xml:space="preserve">
-    <value>    Directory: </value>
+    <value>    目錄:</value>
   </data>
   <data name="ReadBackward_Encoding_NotSupport" xml:space="preserve">
-    <value>Cannot detect the encoding of the file. The specified encoding {0} is not supported when the content is read in reverse.</value>
+    <value>無法偵測檔案的編碼。反向讀取內容時，不支援指定的編碼 {0}。</value>
   </data>
   <data name="AlternateDataStreamNotFound" xml:space="preserve">
-    <value>Could not open the alternate data stream '{0}' of the file '{1}'.</value>
+    <value>無法開啟檔案 '{1}' 的替代資料流 '{0}'。</value>
   </data>
   <data name="StreamAction" xml:space="preserve">
-    <value>Stream '{0}' of file '{1}'.</value>
+    <value>檔案 '{1}' 的資料流 '{0}'。</value>
   </data>
   <data name="RawAndWaitCannotCoexist" xml:space="preserve">
-    <value>The Raw and Wait parameters cannot be specified in the same command.</value>
+    <value>不能在同一個命令中同時指定 Raw 和 Wait 參數。</value>
   </data>
   <data name="InvalidDriveName" xml:space="preserve">
-    <value>To use the Persist switch parameter, the drive name must be supported by the operating system (for example, drive letters A-Z).</value>
+    <value>若要使用 Persist 切換參數，磁碟機名稱必須是作業系統支援的名稱 (例如，磁碟機代號 A-Z)。</value>
   </data>
   <data name="PersistNotSupported" xml:space="preserve">
-    <value>When you use the Persist parameter, the root must be a file system location on a remote computer.</value>
+    <value>使用 Persist 參數時，根目錄必須是遠端電腦上的檔案系統位置。</value>
   </data>
   <data name="NoFirstLastWaitForRaw" xml:space="preserve">
-    <value>The '{0}' and '{1}' parameters cannot be specified in the same command.</value>
+    <value>不能在同一個命令中同時指定 '{0}' 和 '{1}' 參數。</value>
   </data>
   <data name="ItemNotDirectory" xml:space="preserve">
-    <value>A directory is required for the operation. The item '{0}' is not a directory.</value>
+    <value>作業需要目錄。項目 '{0}' 不是目錄。</value>
   </data>
   <data name="NewItemActionJunction" xml:space="preserve">
-    <value>Create Junction</value>
+    <value>建立連接點</value>
   </data>
   <data name="NewItemActionSymbolicLink" xml:space="preserve">
-    <value>Create Symbolic Link</value>
+    <value>建立符號連結</value>
   </data>
   <data name="ElevationRequired" xml:space="preserve">
-    <value>Administrator privilege required for this operation.</value>
+    <value>此作業需要系統管理員權限。</value>
   </data>
   <data name="NewItemActionHardLink" xml:space="preserve">
-    <value>Create Hard Link</value>
+    <value>建立硬式連結</value>
   </data>
   <data name="ItemNotFile" xml:space="preserve">
-    <value>A file is required for the operation. The item '{0}' is not a file.</value>
+    <value>作業需要檔案。項目 '{0}' 不是檔案。</value>
   </data>
   <data name="HardLinkNotSupported" xml:space="preserve">
-    <value>Hard links are not supported for the specified path.</value>
+    <value>指定的路徑不支援硬式連結。</value>
   </data>
   <data name="SymbolicLinkNotSupported" xml:space="preserve">
-    <value>Symbolic links are not supported for the specified path.</value>
+    <value>指定的路徑不支援符號連結。</value>
   </data>
   <data name="CopyItemRemotelyProgressActivity" xml:space="preserve">
     <value>正在將 {0} 複製到 {1}</value>
   </data>
   <data name="CopyItemRemoteDestinationIsFile" xml:space="preserve">
-    <value>Destination path {0} is a file that already exists on the target destination.</value>
+    <value>目的地路徑 {0} 是目標位置中已存在的檔案。</value>
   </data>
   <data name="CopyItemRemotelyFailed" xml:space="preserve">
-    <value>Failed to copy file {0} to remote target destination.</value>
+    <value>無法將檔案 {0} 複製到遠端目標。</value>
   </data>
   <data name="CopyItemRemotelyStatusDescription" xml:space="preserve">
     <value>從 {0} 到 {1}</value>
   </data>
   <data name="CopyItemRemotelyDestinationIsFile" xml:space="preserve">
-    <value>Cannot copy a directory '{0}' to file '{0}'</value>
+    <value>無法將目錄 '{0}' 複製到檔案 '{0}'</value>
   </data>
   <data name="CopyItemRemotelyFailedToGetDirectoryChildItems" xml:space="preserve">
-    <value>Failed to get directory {0} child items.</value>
+    <value>無法取得目錄 {0} 的子項目。</value>
   </data>
   <data name="CopyItemRemotelyFailedToReadFile" xml:space="preserve">
-    <value>Failed to read remote file '{0}'.</value>
+    <value>無法讀取遠端檔案 '{0}'。</value>
   </data>
   <data name="CopyItemRemotelyFailedToValidateIfDestinationIsFile" xml:space="preserve">
-    <value>Cannot validate if remote destination {0} is a file.</value>
+    <value>無法驗證遠端目的地 {0} 是否為檔案。</value>
   </data>
   <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
-    <value>Failed to create directory '{0}' on remote destination.</value>
+    <value>無法在遠端目的地建立目錄 '{0}'。</value>
   </data>
   <data name="DriveMaxSizeError" xml:space="preserve">
-    <value>Maximum size for drive has been exceeded: {0}.</value>
+    <value>磁碟機已超過大小上限: {0}。</value>
   </data>
   <data name="SymlinkItemExists" xml:space="preserve">
-    <value>Cannot create link because the path already exists: {0}.</value>
+    <value>無法建立連結，因為路徑已存在: {0}。</value>
   </data>
   <data name="AlreadyListedDirectory" xml:space="preserve">
-    <value>Skip already-visited directory {0}.</value>
+    <value>跳過已瀏覽的目錄 {0}。</value>
   </data>
   <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
-    <value>Destination path cannot be a subdirectory of the source or the source itself: {0}.</value>
+    <value>目的地路徑不能是來源的子目錄或來源本身: {0}。</value>
   </data>
   <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
-    <value>The target and path cannot be the same.</value>
+    <value>目標和路徑不能相同。</value>
   </data>
   <data name="CopyingLocalFileActivity" xml:space="preserve">
-    <value>Copied {0} of {1} files</value>
+    <value>已複製 {0}/{1} 個檔案</value>
   </data>
   <data name="CopyingLocalBytesStatus" xml:space="preserve">
-    <value>{0} of {1} ({2:0.0} MB/s)</value>
+    <value>{0}/{1} ({2:0.0} MB/秒)</value>
   </data>
   <data name="RemovingLocalFileActivity" xml:space="preserve">
-    <value>Removed {0} of {1} files</value>
+    <value>已移除 {0}/{1} 個檔案</value>
   </data>
   <data name="RemovingLocalBytesStatus" xml:space="preserve">
-    <value>{0} of {1} ({2:0.0} MB/s)</value>
+    <value>{0}/{1} ({2:0.0} MB/秒)</value>
   </data>
   <data name="JunctionAbsolutePath" xml:space="preserve">
-    <value>Creating a junction requires an absolute path for the target.</value>
+    <value>建立接合需要目標的絕對路徑。</value>
   </data>
 </root>

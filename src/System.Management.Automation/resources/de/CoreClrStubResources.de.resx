@@ -118,24 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ArgumentIllegalEnvVarName" xml:space="preserve">
-    <value>Environment variable name cannot contain equal character.</value>
+    <value>Der Name der Umgebungsvariable darf kein Gleichheitszeichen enthalten.</value>
   </data>
   <data name="ArgumentLongEnvVarValue" xml:space="preserve">
-    <value>Environment variable name or value is too long.</value>
+    <value>Der Name oder Wert der Umgebungsvariable ist zu lang.</value>
   </data>
   <data name="ArgumentStringFirstCharIsZero" xml:space="preserve">
-    <value>The first char in the string is the null character.</value>
+    <value>Das erste Zeichen in der Zeichenfolge ist das Null-Zeichen.</value>
   </data>
   <data name="ArgumentStringZeroLength" xml:space="preserve">
-    <value>String cannot be of zero length.</value>
+    <value>Die Länge der Zeichenfolge darf nicht Null sein.</value>
   </data>
   <data name="CannotGetComputerName" xml:space="preserve">
-    <value>Computer name could not be obtained.</value>
+    <value>Der Computername konnte nicht abgerufen werden.</value>
   </data>
   <data name="CannotGetDomainName" xml:space="preserve">
-    <value>Current user's domain name could not be obtained.</value>
+    <value>Der Domänenname des aktuellen Benutzers konnte nicht abgerufen werden.</value>
   </data>
   <data name="UnknownErrorNumber" xml:space="preserve">
-    <value>Unknown error "{0}".</value>
+    <value>Unbekannter Fehler „{0}“.</value>
   </data>
 </root>

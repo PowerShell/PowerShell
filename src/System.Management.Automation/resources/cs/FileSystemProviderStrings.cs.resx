@@ -118,240 +118,240 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvokeItemAction" xml:space="preserve">
-    <value>Invoke Item</value>
+    <value>Vyvolat položku</value>
   </data>
   <data name="InvokeItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>Položka: {0}</value>
   </data>
   <data name="RemoveItemActionFile" xml:space="preserve">
-    <value>Remove File</value>
+    <value>Odebrat soubor</value>
   </data>
   <data name="RemoveItemActionDirectory" xml:space="preserve">
-    <value>Remove Directory</value>
+    <value>Odebrat adresář</value>
   </data>
   <data name="CopyItemActionFile" xml:space="preserve">
-    <value>Copy File</value>
+    <value>Kopírovat soubor</value>
   </data>
   <data name="CopyItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>Položka: {0} Cíl: {1}</value>
   </data>
   <data name="CopyItemActionDirectory" xml:space="preserve">
-    <value>Copy Directory</value>
+    <value>Kopírovat adresář</value>
   </data>
   <data name="RenameItemActionFile" xml:space="preserve">
-    <value>Rename File</value>
+    <value>Přejmenovat soubor</value>
   </data>
   <data name="RenameItemActionDirectory" xml:space="preserve">
-    <value>Rename Directory</value>
+    <value>Přejmenovat adresář</value>
   </data>
   <data name="RenameItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>Položka: {0} Cíl: {1}</value>
   </data>
   <data name="MoveItemActionFile" xml:space="preserve">
-    <value>Move File</value>
+    <value>Přesunout soubor</value>
   </data>
   <data name="MoveItemActionDirectory" xml:space="preserve">
-    <value>Move Directory</value>
+    <value>Přesunout adresář</value>
   </data>
   <data name="MoveItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>Položka: {0} Cíl: {1}</value>
   </data>
   <data name="SetPropertyActionFile" xml:space="preserve">
-    <value>Set Property File</value>
+    <value>Nastavit vlastnost souboru</value>
   </data>
   <data name="SetPropertyActionDirectory" xml:space="preserve">
-    <value>Set Property Directory</value>
+    <value>Nastavit vlastnost adresáře</value>
   </data>
   <data name="SetPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1} Value: {2}</value>
+    <value>Položka: {0} Vlastnost: {1} Hodnota: {2}</value>
   </data>
   <data name="ClearPropertyActionFile" xml:space="preserve">
-    <value>Clear Property File</value>
+    <value>Vymazat vlastnost souboru</value>
   </data>
   <data name="ClearPropertyActionDirectory" xml:space="preserve">
-    <value>Clear Property Directory</value>
+    <value>Vymazat vlastnost adresáře</value>
   </data>
   <data name="ClearPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>Položka: {0} Vlastnost: {1}</value>
   </data>
   <data name="NewItemActionFile" xml:space="preserve">
-    <value>Create File</value>
+    <value>Vytvořit soubor</value>
   </data>
   <data name="NewItemActionDirectory" xml:space="preserve">
-    <value>Create Directory</value>
+    <value>Vytvořit adresář</value>
   </data>
   <data name="NewItemActionTemplate" xml:space="preserve">
-    <value>Destination: {0}</value>
+    <value>Cíl: {0}</value>
   </data>
   <data name="ClearContentActionFile" xml:space="preserve">
-    <value>Clear Content</value>
+    <value>Vymazat obsah</value>
   </data>
   <data name="ClearContentesourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>Položka: {0}</value>
   </data>
   <data name="ItemNotFound" xml:space="preserve">
-    <value>Could not find item {0}.</value>
+    <value>Položku {0} se nepovedlo najít.</value>
   </data>
   <data name="CannotRemoveItem" xml:space="preserve">
-    <value>Cannot remove item {0}: {1}</value>
+    <value>Položku {0} nejde odebrat: {1}</value>
   </data>
   <data name="CannotRestoreAttributes" xml:space="preserve">
-    <value>Cannot restore attributes on item {0}: {1}</value>
+    <value>Atributy položky {0} nejde obnovit: {1}</value>
   </data>
   <data name="ItemDoesNotExist" xml:space="preserve">
-    <value>An object at the specified path {0} does not exist.</value>
+    <value>Objekt v zadané cestě {0} neexistuje.</value>
   </data>
   <data name="DirectoryNotEmpty" xml:space="preserve">
-    <value>Directory {0} cannot be removed because it is not empty.</value>
+    <value>Adresář {0} nejde odebrat, protože není prázdný.</value>
   </data>
   <data name="UnknownType" xml:space="preserve">
-    <value>The type is not a known type for the file system. Only "file","directory" or "symboliclink" can be specified.</value>
+    <value>Typ není známým typem pro systém souborů. Je možné zadat jen file, directory nebo symboliclink.</value>
   </data>
   <data name="PathOutSideBasePath" xml:space="preserve">
-    <value>Cannot process the path because the specified path refers to an item that is outside the basePath.</value>
+    <value>Cestu nejde zpracovat, protože zadaná cesta odkazuje na položku mimo basePath.</value>
   </data>
   <data name="DriveRootError" xml:space="preserve">
-    <value>The specified drive root "{0}" either does not exist, or it is not a folder.</value>
+    <value>Zadaný kořen jednotky {0} buď neexistuje, nebo není složkou.</value>
   </data>
   <data name="DirectoryExist" xml:space="preserve">
-    <value>An item with the specified name {0} already exists.</value>
+    <value>Položka se zadaným názvem {0} už existuje.</value>
   </data>
   <data name="DelimiterError" xml:space="preserve">
-    <value>A delimiter cannot be specified when reading the stream one byte at a time.</value>
+    <value>Při čtení proudu po jednom bajtu nejde zadat oddělovač.</value>
   </data>
   <data name="CopyError" xml:space="preserve">
-    <value>Cannot overwrite the item {0} with itself.</value>
+    <value>Položku {0} nejde přepsat sama sebou.</value>
   </data>
   <data name="RenameError" xml:space="preserve">
-    <value>Cannot rename the specified target, because it represents a path or device name.</value>
+    <value>Zadaný cíl nejde přejmenovat, protože představuje cestu nebo název zařízení.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property {0} does not exist or was not found.</value>
+    <value>Vlastnost {0} neexistuje nebo nebyla nalezena.</value>
   </data>
   <data name="PermissionError" xml:space="preserve">
-    <value>You do not have sufficient access rights to perform this operation or the item is hidden, system, or read only.</value>
+    <value>K provedení této operace nemáte dostatečná přístupová práva nebo je položka skrytá, systémová či jen pro čtení.</value>
   </data>
   <data name="AttributesNotSupported" xml:space="preserve">
-    <value>The attribute cannot be set because attributes are not supported. Only the following attributes can be set: Archive, Hidden, Normal, ReadOnly, or System.</value>
+    <value>Atribut nejde nastavit, protože atributy nejsou podporované. Nastavit je možné jen tyto atributy: Archive, Hidden, Normal, ReadOnly nebo System.</value>
   </data>
   <data name="CannotClearProperty" xml:space="preserve">
-    <value>The property cannot be cleared because the property is not supported. Only the Attributes property can be cleared.</value>
+    <value>Vlastnost nejde vymazat, protože není podporovaná. Vymazat je možné jen vlastnost Attributes.</value>
   </data>
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
-    <value>Cannot process path '{0}' because the target represents a reserved device name.</value>
+    <value>Cestu {0} nejde zpracovat, protože cíl představuje rezervovaný název zařízení.</value>
   </data>
   <data name="EncodingNotUsed" xml:space="preserve">
-    <value>Encoding not used when '-AsByteStream' specified.</value>
+    <value>Při zadání -AsByteStream se kódování nepoužívá.</value>
   </data>
   <data name="ByteEncodingError" xml:space="preserve">
-    <value>Cannot proceed with byte encoding. When using byte encoding the content must be of type byte.</value>
+    <value>S kódováním po bajtech nejde pokračovat. Při použití kódování po bajtech musí být obsah typu byte.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>Cannot process the file because the file {0} was not found.</value>
+    <value>Soubor nejde zpracovat, protože soubor {0} nebyl nalezen.</value>
   </data>
   <data name="DirectoryDisplayGrouping" xml:space="preserve">
-    <value>    Directory: </value>
+    <value>    Adresář: </value>
   </data>
   <data name="ReadBackward_Encoding_NotSupport" xml:space="preserve">
-    <value>Cannot detect the encoding of the file. The specified encoding {0} is not supported when the content is read in reverse.</value>
+    <value>Kódování souboru nejde zjistit. Zadané kódování {0} není podporované při čtení obsahu v opačném pořadí.</value>
   </data>
   <data name="AlternateDataStreamNotFound" xml:space="preserve">
-    <value>Could not open the alternate data stream '{0}' of the file '{1}'.</value>
+    <value>Alternativní datový proud {0} souboru {1} se nepovedlo otevřít.</value>
   </data>
   <data name="StreamAction" xml:space="preserve">
-    <value>Stream '{0}' of file '{1}'.</value>
+    <value>Proud {0} souboru {1}.</value>
   </data>
   <data name="RawAndWaitCannotCoexist" xml:space="preserve">
-    <value>The Raw and Wait parameters cannot be specified in the same command.</value>
+    <value>Parametry Raw a Wait nejde zadat ve stejném příkazu.</value>
   </data>
   <data name="InvalidDriveName" xml:space="preserve">
-    <value>To use the Persist switch parameter, the drive name must be supported by the operating system (for example, drive letters A-Z).</value>
+    <value>Pokud chcete použít přepínací parametr Persist, musí operační systém podporovat název jednotky (například písmena jednotek A–Z).</value>
   </data>
   <data name="PersistNotSupported" xml:space="preserve">
-    <value>When you use the Persist parameter, the root must be a file system location on a remote computer.</value>
+    <value>Při použití parametru Persist musí být kořen umístění systému souborů ve vzdáleném počítači.</value>
   </data>
   <data name="NoFirstLastWaitForRaw" xml:space="preserve">
-    <value>The '{0}' and '{1}' parameters cannot be specified in the same command.</value>
+    <value>Parametry {0} a {1} nejde zadat ve stejném příkazu.</value>
   </data>
   <data name="ItemNotDirectory" xml:space="preserve">
-    <value>A directory is required for the operation. The item '{0}' is not a directory.</value>
+    <value>Pro tuto operaci je vyžadován adresář. Položka {0} není adresář.</value>
   </data>
   <data name="NewItemActionJunction" xml:space="preserve">
-    <value>Create Junction</value>
+    <value>Vytvořit spojovací bod</value>
   </data>
   <data name="NewItemActionSymbolicLink" xml:space="preserve">
-    <value>Create Symbolic Link</value>
+    <value>Vytvořit symbolický odkaz</value>
   </data>
   <data name="ElevationRequired" xml:space="preserve">
-    <value>Administrator privilege required for this operation.</value>
+    <value>Tato operace vyžaduje oprávnění správce.</value>
   </data>
   <data name="NewItemActionHardLink" xml:space="preserve">
-    <value>Create Hard Link</value>
+    <value>Vytvořit pevný odkaz</value>
   </data>
   <data name="ItemNotFile" xml:space="preserve">
-    <value>A file is required for the operation. The item '{0}' is not a file.</value>
+    <value>Pro tuto operaci je vyžadován soubor. Položka {0} není soubor.</value>
   </data>
   <data name="HardLinkNotSupported" xml:space="preserve">
-    <value>Hard links are not supported for the specified path.</value>
+    <value>Pro zadanou cestu nejsou podporované pevné odkazy.</value>
   </data>
   <data name="SymbolicLinkNotSupported" xml:space="preserve">
-    <value>Symbolic links are not supported for the specified path.</value>
+    <value>Pro zadanou cestu nejsou podporované symbolické odkazy.</value>
   </data>
   <data name="CopyItemRemotelyProgressActivity" xml:space="preserve">
     <value>Kopírování {0} do {1}</value>
   </data>
   <data name="CopyItemRemoteDestinationIsFile" xml:space="preserve">
-    <value>Destination path {0} is a file that already exists on the target destination.</value>
+    <value>Cílová cesta {0} je soubor, který už v cílovém umístění existuje.</value>
   </data>
   <data name="CopyItemRemotelyFailed" xml:space="preserve">
-    <value>Failed to copy file {0} to remote target destination.</value>
+    <value>Soubor {0} se nepovedlo zkopírovat do vzdáleného cílového umístění.</value>
   </data>
   <data name="CopyItemRemotelyStatusDescription" xml:space="preserve">
     <value>Z: {0} do: {1}</value>
   </data>
   <data name="CopyItemRemotelyDestinationIsFile" xml:space="preserve">
-    <value>Cannot copy a directory '{0}' to file '{0}'</value>
+    <value>Adresář {0} nejde zkopírovat do souboru {0}</value>
   </data>
   <data name="CopyItemRemotelyFailedToGetDirectoryChildItems" xml:space="preserve">
-    <value>Failed to get directory {0} child items.</value>
+    <value>Nepovedlo se získat podřízené položky adresáře {0}.</value>
   </data>
   <data name="CopyItemRemotelyFailedToReadFile" xml:space="preserve">
-    <value>Failed to read remote file '{0}'.</value>
+    <value>Vzdálený soubor {0} se nepovedlo přečíst.</value>
   </data>
   <data name="CopyItemRemotelyFailedToValidateIfDestinationIsFile" xml:space="preserve">
-    <value>Cannot validate if remote destination {0} is a file.</value>
+    <value>Nejde ověřit, jestli je vzdálený cíl {0} soubor.</value>
   </data>
   <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
-    <value>Failed to create directory '{0}' on remote destination.</value>
+    <value>Adresář {0} se ve vzdáleném cíli nepovedlo vytvořit.</value>
   </data>
   <data name="DriveMaxSizeError" xml:space="preserve">
-    <value>Maximum size for drive has been exceeded: {0}.</value>
+    <value>Byla překročena maximální velikost jednotky: {0}.</value>
   </data>
   <data name="SymlinkItemExists" xml:space="preserve">
-    <value>Cannot create link because the path already exists: {0}.</value>
+    <value>Odkaz nejde vytvořit, protože cesta už existuje: {0}.</value>
   </data>
   <data name="AlreadyListedDirectory" xml:space="preserve">
-    <value>Skip already-visited directory {0}.</value>
+    <value>Přeskakuje se už navštívený adresář {0}.</value>
   </data>
   <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
-    <value>Destination path cannot be a subdirectory of the source or the source itself: {0}.</value>
+    <value>Cílová cesta nemůže být podadresářem zdroje ani samotným zdrojem: {0}.</value>
   </data>
   <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
-    <value>The target and path cannot be the same.</value>
+    <value>Cíl a cesta nemůžou být stejné.</value>
   </data>
   <data name="CopyingLocalFileActivity" xml:space="preserve">
-    <value>Copied {0} of {1} files</value>
+    <value>Zkopírováno {0} z {1} souborů</value>
   </data>
   <data name="CopyingLocalBytesStatus" xml:space="preserve">
-    <value>{0} of {1} ({2:0.0} MB/s)</value>
+    <value>{0} z {1} ({2:0.0} MB/s)</value>
   </data>
   <data name="RemovingLocalFileActivity" xml:space="preserve">
-    <value>Removed {0} of {1} files</value>
+    <value>Odebráno {0} z {1} souborů</value>
   </data>
   <data name="RemovingLocalBytesStatus" xml:space="preserve">
-    <value>{0} of {1} ({2:0.0} MB/s)</value>
+    <value>{0} z {1} ({2:0.0} MB/s)</value>
   </data>
   <data name="JunctionAbsolutePath" xml:space="preserve">
-    <value>Creating a junction requires an absolute path for the target.</value>
+    <value>Vytvoření spojovacího bodu vyžaduje absolutní cestu k cíli.</value>
   </data>
 </root>
