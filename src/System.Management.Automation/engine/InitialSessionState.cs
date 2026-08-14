@@ -1935,55 +1935,19 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The list of assemblies to load...
         /// </summary>
-        public virtual InitialSessionStateEntryCollection<SessionStateAssemblyEntry> Assemblies
-        {
-            get
-            {
-                if (_assemblies == null)
-                {
-                    Interlocked.CompareExchange(ref _assemblies, new InitialSessionStateEntryCollection<SessionStateAssemblyEntry>(), null);
-                }
-
-                return _assemblies;
-            }
-        }
-
-        private InitialSessionStateEntryCollection<SessionStateAssemblyEntry> _assemblies;
+        public virtual InitialSessionStateEntryCollection<SessionStateAssemblyEntry> Assemblies =>
+            field ?? Interlocked.CompareExchange(ref field, new(), null) ?? field;
 
         /// <summary>
         /// List of types to use for this session state instance...
         /// </summary>
-        public virtual InitialSessionStateEntryCollection<SessionStateTypeEntry> Types
-        {
-            get
-            {
-                if (_types == null)
-                {
-                    Interlocked.CompareExchange(ref _types, new InitialSessionStateEntryCollection<SessionStateTypeEntry>(), null);
-                }
-
-                return _types;
-            }
-        }
-
-        private InitialSessionStateEntryCollection<SessionStateTypeEntry> _types;
+        public virtual InitialSessionStateEntryCollection<SessionStateTypeEntry> Types =>
+            field ?? Interlocked.CompareExchange(ref field, new(), null) ?? field;
 
         /// <summary>
         /// </summary>
-        public virtual InitialSessionStateEntryCollection<SessionStateFormatEntry> Formats
-        {
-            get
-            {
-                if (_formats == null)
-                {
-                    Interlocked.CompareExchange(ref _formats, new InitialSessionStateEntryCollection<SessionStateFormatEntry>(), null);
-                }
-
-                return _formats;
-            }
-        }
-
-        private InitialSessionStateEntryCollection<SessionStateFormatEntry> _formats;
+        public virtual InitialSessionStateEntryCollection<SessionStateFormatEntry> Formats =>
+            field ?? Interlocked.CompareExchange(ref field, new(), null) ?? field;
 
         /// <summary>
         /// If set to true, disables any updates to format table. This includes disabling
@@ -1995,119 +1959,35 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// </summary>
-        public virtual InitialSessionStateEntryCollection<SessionStateProviderEntry> Providers
-        {
-            get
-            {
-                if (_providers == null)
-                {
-                    Interlocked.CompareExchange(ref _providers, new InitialSessionStateEntryCollection<SessionStateProviderEntry>(), null);
-                }
-
-                return _providers;
-            }
-        }
-
-        private InitialSessionStateEntryCollection<SessionStateProviderEntry> _providers;
+        public virtual InitialSessionStateEntryCollection<SessionStateProviderEntry> Providers =>
+            field ?? Interlocked.CompareExchange(ref field, new(), null) ?? field;
 
         /// <summary>
         /// List of commands (Alias, Application, Cmdlets, Function, Script) for this entry.
         /// </summary>
-        public virtual InitialSessionStateEntryCollection<SessionStateCommandEntry> Commands
-        {
-            get
-            {
-                if (_commands == null)
-                {
-                    Interlocked.CompareExchange(ref _commands, new InitialSessionStateEntryCollection<SessionStateCommandEntry>(), null);
-                }
-
-                return _commands;
-            }
-        }
-
-        private InitialSessionStateEntryCollection<SessionStateCommandEntry> _commands;
+        public virtual InitialSessionStateEntryCollection<SessionStateCommandEntry> Commands =>
+            field ?? Interlocked.CompareExchange(ref field, new(), null) ?? field;
 
         internal SessionStateEntryVisibility DefaultCommandVisibility { get; set; }
 
-        internal HashSet<string> UnresolvedCommandsToExpose
-        {
-            get
-            {
-                if (_unresolvedCommandsToExpose == null)
-                {
-                    Interlocked.CompareExchange(ref _unresolvedCommandsToExpose, new HashSet<string>(StringComparer.OrdinalIgnoreCase), null);
-                }
+        internal HashSet<string> UnresolvedCommandsToExpose =>
+            field ?? Interlocked.CompareExchange(ref field, new(StringComparer.OrdinalIgnoreCase), null) ?? field;
 
-                return _unresolvedCommandsToExpose;
-            }
-        }
+        internal Dictionary<string, Hashtable> CommandModifications =>
+            field ?? Interlocked.CompareExchange(ref field, new(StringComparer.OrdinalIgnoreCase), null) ?? field;
 
-        private HashSet<string> _unresolvedCommandsToExpose;
-
-        internal Dictionary<string, Hashtable> CommandModifications
-        {
-            get
-            {
-                if (_commandModifications == null)
-                {
-                    Interlocked.CompareExchange(ref _commandModifications, new Dictionary<string, Hashtable>(StringComparer.OrdinalIgnoreCase), null);
-                }
-
-                return _commandModifications;
-            }
-        }
-
-        private Dictionary<string, Hashtable> _commandModifications;
-
-        internal List<Hashtable> DynamicVariablesToDefine
-        {
-            get
-            {
-                if (_dynamicVariablesToDefine == null)
-                {
-                    Interlocked.CompareExchange(ref _dynamicVariablesToDefine, new List<Hashtable>(), null);
-                }
-
-                return _dynamicVariablesToDefine;
-            }
-        }
-
-        private List<Hashtable> _dynamicVariablesToDefine;
+        internal List<Hashtable> DynamicVariablesToDefine =>
+            field ?? Interlocked.CompareExchange(ref field, new(), null) ?? field;
 
         /// <summary>
         /// </summary>
-        public virtual InitialSessionStateEntryCollection<SessionStateVariableEntry> Variables
-        {
-            get
-            {
-                if (_variables == null)
-                {
-                    Interlocked.CompareExchange(ref _variables, new InitialSessionStateEntryCollection<SessionStateVariableEntry>(), null);
-                }
-
-                return _variables;
-            }
-        }
-
-        private InitialSessionStateEntryCollection<SessionStateVariableEntry> _variables;
+        public virtual InitialSessionStateEntryCollection<SessionStateVariableEntry> Variables =>
+            field ?? Interlocked.CompareExchange(ref field, new(), null) ?? field;
 
         /// <summary>
         /// </summary>
-        public virtual InitialSessionStateEntryCollection<SessionStateVariableEntry> EnvironmentVariables
-        {
-            get
-            {
-                if (_environmentVariables == null)
-                {
-                    Interlocked.CompareExchange(ref _environmentVariables, new InitialSessionStateEntryCollection<SessionStateVariableEntry>(), null);
-                }
-
-                return _environmentVariables;
-            }
-        }
-
-        private InitialSessionStateEntryCollection<SessionStateVariableEntry> _environmentVariables;
+        public virtual InitialSessionStateEntryCollection<SessionStateVariableEntry> EnvironmentVariables =>
+            field ?? Interlocked.CompareExchange(ref field, new(), null) ?? field;
 
         /// <summary>
         /// </summary>
