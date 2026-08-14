@@ -511,7 +511,9 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'U':
-                            sb.Append(dateTime.DayOfYear / 7);
+                            var formatUStartOfYear = new DateTime(dateTime.Year, 1, 1);
+                            var formatUOffset = ((int)formatUStartOfYear.DayOfWeek + 6) % 7;
+                            sb.AppendFormat("{0:00}", (formatUOffset + dateTime.DayOfYear - (int)dateTime.DayOfWeek) / 7);
                             break;
 
                         case 'u':
