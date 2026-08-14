@@ -80,7 +80,6 @@ jobs:
     - template: /.pipelines/templates/install-dotnet.yml@self
       parameters:
         architecture: ${{ parameters.dotnetArch }}
-        ob_restore_phase: false
 
     - pwsh: |
         $artifactName = '$(artifactName)'

@@ -77,7 +77,6 @@ jobs:
 
     - template: /.pipelines/templates/install-dotnet.yml@self
       parameters:
-        ob_restore_phase: false
         architecture: ${{ parameters.dotnetArch }}
 
     - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
@@ -137,7 +136,7 @@ jobs:
         Get-Content $nugetPath
 
         dotnet --info
-        dotnet restore
+        dotnet restore /property:RELEASE_VERSION=$releaseVersion
         dotnet test /property:RELEASE_VERSION=$releaseVersion --test-adapter-path:. "--logger:xunit;LogFilePath=$(System.DefaultWorkingDirectory)/test-hosting.xml"
       displayName: Restore and execute tests
       env:

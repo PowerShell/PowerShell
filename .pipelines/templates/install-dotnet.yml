@@ -18,9 +18,15 @@ parameters:
 
 steps:
   - pwsh: |
+      Write-Verbose -Verbose "Specified RepoRoot: '$(RepoRoot)'"
       if (-not (Test-Path '$(RepoRoot)')) {
         $psRoot = '$(Build.SourcesDirectory)/PowerShell'
         Set-Location $psRoot -Verbose
+      }
+
+      $globalJsonPath = Join-Path -Path $PWD -ChildPath 'global.json'
+      if (-not (Test-Path $globalJsonPath)) {
+        throw "Cannot locate global.json under the given repo root '$PWD'."
       }
 
       $version = Get-Content ./global.json | ConvertFrom-Json | Select-Object -ExpandProperty sdk | Select-Object -ExpandProperty version
