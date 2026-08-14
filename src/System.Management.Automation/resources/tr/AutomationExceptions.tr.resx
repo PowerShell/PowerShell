@@ -118,93 +118,93 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Argument" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is not valid. Change the value of the "{0}" argument and run the operation again.</value>
+    <value>Bağımsız değişken "{0}" değeri geçersiz olduğu için bağımsız değişken işlenemiyor. “{0}" bağımsız değişkeninin değerini değiştirin ve işlemi yeniden çalıştırın.</value>
   </data>
   <data name="InvalidScopeIdArgument" xml:space="preserve">
-    <value>Cannot process argument because the value of parameter "{0}" is not valid. Valid values are "Global", "Local", or "Script", or a number relative to the current scope (0 through the number of scopes where 0 is the current scope and 1 is its parent). Change the value of the "{0}" parameter and run the operation again.</value>
+    <value>Parametre "{0}" değeri geçersiz olduğu için bağımsız değişken işlenemiyor. Geçerli değerler "Global", "Local" veya "Script" ya da geçerli kapsama göreli bir sayı (0 ile kapsam sayısı arasında; 0 geçerli kapsam, 1 ise üst kapsamıdır). “{0}" parametresinin değerini değiştirin ve işlemi yeniden çalıştırın.</value>
   </data>
   <data name="ArgumentNull" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is null. Change the value of argument "{0}" to a non-null value.</value>
+    <value>Bağımsız değişken "{0}" null olduğu için işlenemiyor. “{0}" bağımsız değişkeninin değerini null olmayan bir değerle değiştirin.</value>
   </data>
   <data name="ArgumentOutOfRange" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is out of range. Change argument "{0}" to a value that is within range.</value>
+    <value>Bağımsız değişken "{0}" değeri aralık dışında olduğu için işlenemiyor. Bağımsız değişken "{0}" değerini aralık içinde olacak şekilde değiştirin.</value>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not valid. Remove operation "{0}", or investigate why it is not valid.</value>
+    <value>İşlem "{0}" geçersiz olduğu için işlem gerçekleştirilemiyor. İşlem "{0}"'ı kaldırın veya neden geçersiz olduğunu araştırın.</value>
   </data>
   <data name="NotImplemented" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not implemented.</value>
+    <value>“{0}" işlemi uygulanamadığı için işlem gerçekleştirilemiyor.</value>
   </data>
   <data name="NotSupported" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not supported.</value>
+    <value>Nesne "{0}" zaten atıldığı için işlem gerçekleştirilemiyor.</value>
   </data>
   <data name="ObjectDisposed" xml:space="preserve">
-    <value>Cannot perform operation because object "{0}" has already been disposed.</value>
+    <value>Nesne "{0}" zaten atıldığı için işlem gerçekleştirilemiyor.</value>
   </data>
   <data name="ScriptBlockInvokeOnOneClauseOnly" xml:space="preserve">
-    <value>The script block cannot be invoked because it contains more than one clause. The Invoke() method can only be used on script blocks that contain a single clause.</value>
+    <value>Betik bloğu, birden fazla yan tümce içerdiği için çağrılamaz. Invoke() yöntemi yalnızca tek bir yan tümce içeren betik bloklarında kullanılabilir.</value>
   </data>
   <data name="CanConvertOneClauseOnly" xml:space="preserve">
-    <value>The script block cannot be converted because it contains more than one clause. Expressions or control structures are not permitted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>Betik bloğu, birden fazla yan tümce içerdiği için dönüştürülemez. İfadeler veya denetim yapıları izin verilmez. Betik bloğunun tam olarak bir işlem hattı veya komut içerdiğini doğrulayın.</value>
   </data>
   <data name="CantConvertEmptyPipeline" xml:space="preserve">
-    <value>An empty script block cannot be converted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>Boş bir betik bloğu dönüştürülemez. Betik bloğunun tam olarak bir işlem hattı veya komut içerdiğini doğrulayın.</value>
   </data>
   <data name="CanOnlyConvertOnePipeline" xml:space="preserve">
-    <value>Only a script block that contains exactly one pipeline or command can be converted. Expressions or control structures are not permitted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>Yalnızca tam olarak bir işlem hattı veya komut içeren bir betik bloğu dönüştürülebilir. İfadeler veya denetim yapıları izin verilmez. Betik bloğunun tam olarak bir işlem hattı veya komut içerdiğini doğrulayın.</value>
   </data>
   <data name="CantConvertScriptBlockWithTrap" xml:space="preserve">
-    <value>A script block that contains a top-level trap statement cannot be converted.</value>
+    <value>Üst düzey bir trap deyimi içeren bir betik bloğu dönüştürülemez.</value>
   </data>
   <data name="CantConvertWithUndeclaredVariables" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock dereferencing variables undeclared in the param(...) block.  Name of undeclared variable: {0}.</value>
+    <value>param(...) bloğunda bildirilmemiş değişkenlere başvuran bir ScriptBlock için Windows PowerShell nesnesi oluşturulamıyor.  Bildirilmemiş değişkenin adı: {0}.</value>
   </data>
   <data name="CantConvertWithNonConstantExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock evaluating non-constant expressions. Non-constant expression: {0}.</value>
+    <value>Sabit olmayan ifadeler değerlendiren bir ScriptBlock için Windows PowerShell nesnesi oluşturulamıyor. Sabit olmayan ifade: {0}.</value>
   </data>
   <data name="CantConvertWithDynamicExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock evaluating dynamic expressions. Dynamic expression: {0}.</value>
+    <value>Dinamik ifadeler değerlendiren bir ScriptBlock için Windows PowerShell nesnesi oluşturulamıyor. Dinamik ifade: {0}.</value>
   </data>
   <data name="CantConvertWithScriptBlocks" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that tries to pass other script blocks inside argument values.</value>
+    <value>Bağımsız değişken değerlerinde başka betik bloklarını geçirmeye çalışan bir ScriptBlock için Windows PowerShell nesnesi oluşturulamıyor.</value>
   </data>
   <data name="CantConvertWithCommandInvocations" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock which invokes pipelines, commands or functions to evaluate arguments of the main pipeline.</value>
+    <value>Ana işlem hattının bağımsız değişkenlerini değerlendirmek için işlem hatları, komutlar veya işlevler çağıran bir ScriptBlock için Windows PowerShell nesnesi oluşturulamıyor.</value>
   </data>
   <data name="CantConvertWithDotSourcing" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that uses dot sourcing.</value>
+    <value>Dot sourcing kullanan bir ScriptBlock için Windows PowerShell nesnesi oluşturulamıyor.</value>
   </data>
   <data name="CantConvertWithScriptBlockInvocation" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that invokes other script blocks.</value>
+    <value>Başka betik bloklarını çağıran bir ScriptBlock için Windows PowerShell nesnesi oluşturulamıyor.</value>
   </data>
   <data name="CanConvertOneOutputErrorRedir" xml:space="preserve">
-    <value>The script block cannot be converted to a PowerShell object because it contains forbidden redirection operators.</value>
+    <value>Betik bloğu, yasaklı yönlendirme işleçleri içerdiği için Windows PowerShell nesnesine dönüştürülemez.</value>
   </data>
   <data name="CantConvertScriptBlockWithNoContext" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that does not have an associated operation context.</value>
+    <value>ilişkili bir işlem bağlamı olmayan bir ScriptBlock için Windows PowerShell nesnesi oluşturulamıyor.</value>
   </data>
   <data name="HaltCommandException" xml:space="preserve">
-    <value>The command was stopped by the user.</value>
+    <value>Komut kullanıcı tarafından durduruldu.</value>
   </data>
   <data name="DynamicParametersWrongType" xml:space="preserve">
-    <value>Object "{0}" is the wrong type to return from the dynamicparam block. The dynamicparam block must return either $null, or an object with type [System.Management.Automation.RuntimeDefinedParameterDictionary].</value>
+    <value>“{0}" nesnesi, dynamicparam bloğundan döndürmek için yanlış türde. dynamicparam bloğu, ya $null ya da [System.Management.Automation.RuntimeDefinedParameterDictionary] türünde bir nesne döndürmelidir.</value>
   </data>
   <data name="CantConvertScriptBlockToOpenGenericType" xml:space="preserve">
-    <value>The script block cannot be converted to an open generic type. Define an appropriate closed generic type, and then retry.</value>
+    <value>Betik bloğu açık bir genel türe dönüştürülemez. Uygun bir kapalı genel tür tanımlayın ve ardından yeniden deneyin.</value>
   </data>
   <data name="CantConvertPipelineStartsWithExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that starts a pipeline with an expression.</value>
+    <value>Bir ifade ile başlayan bir işlem hattı başlatan ScriptBlock için Windows PowerShell nesnesi oluşturulamıyor.</value>
   </data>
   <data name="UsingVariableIsUndefined" xml:space="preserve">
-    <value>The value of the using variable '$using:{0}' cannot be retrieved because it has not been set in the local session.</value>
+    <value>Yerel oturumda ayarlanmadığı için kullanma değişkeni '$using:{0}' değeri alınamıyor.</value>
   </data>
   <data name="CantGetUsingExpressionValueWithSpecifiedVariableDictionary" xml:space="preserve">
-    <value>Cannot get the value of the Using expression '{0}' in the specified variable dictionary. When creating a PowerShell instance from a script block, the Using expression cannot contain an indexing operation or member-accessing operation.</value>
+    <value>Belirtilen değişken sözlüğünde Using ifadesi "{0}" değerini alınamıyor. Bir betik bloğundan Windows PowerShell örneği oluşturulurken, Using ifadesi dizin oluşturma işlemi veya üye erişme işlemi içeremez.</value>
   </data>
   <data name="WDACCompiledScriptBlockLogTitle" xml:space="preserve">
-    <value>Compiled Script Block Dot Source</value>
+    <value>Derlenmiş Betik Bloğu Dot Source</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>Script block '{0}' invocation into current scope will be disallowed in Constrained Language mode. Script language mode: {1}, Context language mode: {2}.</value>
+    <value>Geçerli kapsamdaki ' {0}' betik bloğu çağrısına, Kısıtlanmış Dil modunda izin verilmeyecek. Betik dili modu: {1}, Bağlam dili modu: {2}.</value>
   </data>
 </root>
