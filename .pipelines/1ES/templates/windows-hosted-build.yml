@@ -244,7 +244,9 @@ jobs:
         AuthSignCertName: $(EsrpProdAuthSignCertName)
         UseMSIAuthentication: true
         FolderPath: $(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release
-        Pattern: '**/*.dll,**/*.exe'
+        Pattern: |
+          **/*.dll
+          **/*.exe
         UseMinimatch: true
         signConfigType: inlineSignParams
         inlineOperation: |
@@ -308,7 +310,9 @@ jobs:
         AuthCertName: $(EsrpTestAuthCertName)
         AuthSignCertName: $(EsrpTestAuthSignCertName)
         FolderPath: $(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release
-        Pattern: '**/*.dll,**/*.exe'
+        Pattern: |
+          **/*.dll
+          **/*.exe
         UseMinimatch: true
         signConfigType: inlineSignParams
         inlineOperation: |
