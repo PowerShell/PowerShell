@@ -147,7 +147,14 @@ steps:
       AuthSignCertName: $(EsrpProdAuthSignCertName)
       UseMSIAuthentication: true
       FolderPath: $(Pipeline.Workspace)/toBeSigned
-      Pattern: '**/*.psd1,**/*.psm1,**/*.ps1xml,**/*.ps1,**/*.dll,**/*.exe,**/pwsh'
+      Pattern: |
+        **/*.psd1
+        **/*.psm1
+        **/*.ps1xml
+        **/*.ps1
+        **/*.dll
+        **/*.exe
+        **/pwsh
       UseMinimatch: true
       signConfigType: inlineSignParams
       inlineOperation: |
@@ -214,7 +221,14 @@ steps:
       AuthCertName: $(EsrpTestAuthCertName)
       AuthSignCertName: $(EsrpTestAuthSignCertName)
       FolderPath: $(Pipeline.Workspace)/toBeSigned
-      Pattern: '**/*.psd1,**/*.psm1,**/*.ps1xml,**/*.ps1,**/*.dll,**/*.exe,**/pwsh'
+      Pattern: |
+        **/*.psd1
+        **/*.psm1
+        **/*.ps1xml
+        **/*.ps1
+        **/*.dll
+        **/*.exe
+        **/pwsh
       UseMinimatch: true
       signConfigType: inlineSignParams
       inlineOperation: |
@@ -304,7 +318,9 @@ steps:
       AuthSignCertName: $(EsrpProdAuthSignCertName)
       UseMSIAuthentication: true
       FolderPath: $(Pipeline.Workspace)/thirdPartyToBeSigned
-      Pattern: '**/*.dll,**/*.exe'
+      Pattern: |
+        **/*.dll
+        **/*.exe
       UseMinimatch: true
       signConfigType: inlineSignParams
       inlineOperation: |
@@ -371,7 +387,9 @@ steps:
       AuthCertName: $(EsrpTestAuthCertName)
       AuthSignCertName: $(EsrpTestAuthSignCertName)
       FolderPath: $(Pipeline.Workspace)/thirdPartyToBeSigned
-      Pattern: '**/*.dll,**/*.exe'
+      Pattern: |
+        **/*.dll
+        **/*.exe
       UseMinimatch: true
       signConfigType: inlineSignParams
       inlineOperation: |

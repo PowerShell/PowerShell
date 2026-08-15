@@ -119,6 +119,11 @@ resources:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    featureFlags:
+      # The new Roslyn ruleset currently promotes existing IDE style findings
+      # to build errors before the signing steps can run.
+      autoEnableRoslynWithNewRuleset: false
+
     # Pool default for all jobs. Windows jobs inherit; macOS/Linux jobs override
     # at the per-job level inside the templates.
     pool:
