@@ -3877,6 +3877,56 @@ function MyFunction ($param1, $param2)
         $res = TabExpansion2 -inputScript $Text -cursorColumn ($Text.Length - 1)
         $res.CompletionMatches | Should -HaveCount 0
     }
+
+    Context "Using statement related tests" {
+        It 'Should complete <ScriptText>' -TestCases @(
+            @{
+                Expected = 'MyCustomType'
+                ScriptText = 'using type MyCustomType = System.Collections.ArrayList;[MyCustom'
+            }
+            @{
+                Expected = 'System.Collections.ArrayList'
+                ScriptText = 'using type MyCustomType = ArrayList'
+            }
+            @{
+                Expected = 'string'
+                ScriptText = 'using type MyCustomType = [System.Collections.Generic.Dictionary[strin'
+            }
+            @{
+                Expected = 'System.Int128'
+                ScriptText = 'using type MyCustomType = [System.Collections.Generic.Dictionary[string,int'
+            }
+            @{
+                Expected = 'MyCustomNamespace'
+                ScriptText = 'using namespace MyCustomNamespace = System.Collections.Generic;[MyCustomN'
+            }
+            @{
+                Expected = 'MyCustomNamespace.List'
+                ScriptText = 'using namespace MyCustomNamespace = System.Collections.Generic;[MyCustomNamespace.Lis'
+            }
+            @{
+                Expected = 'System.Collections'
+                ScriptText = 'using namespace MyCustomNamespace = System.Col'
+            }
+            @{
+                Expected = 'MyCustomNamespace.Generic.List'
+                ScriptText = 'using namespace MyCustomNamespace = System.Collections;[MyCustomNamespace.Generic.Lis'
+            }
+        ) -test {
+            param ($Expected, $ScriptText)
+            (TabExpansion2 -inputScript $ScriptText -cursorColumn $ScriptText.Length).CompletionMatches.CompletionText | Select-Object -First 1 | Should -Be $Expected
+        }
+
+        It 'Should not complete <ScriptText>' -TestCases @(
+            @{ScriptText = 'using type s^'}
+            @{ScriptText = 'using type s^ = int'}
+            @{ScriptText = 'using namespace s^ = System'}
+        ) -test {
+            param ($Expected, $ScriptText)
+            $CursorIndex = $ScriptText.IndexOf('^')
+            (TabExpansion2 -cursorColumn $CursorIndex -inputScript $ScriptText.Remove($CursorIndex, 1)).CompletionMatches.CompletionText | Should -BeNullOrEmpty
+        }
+    }
 }
 
 Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows {
