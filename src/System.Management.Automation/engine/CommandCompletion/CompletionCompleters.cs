@@ -1797,13 +1797,10 @@ namespace System.Management.Automation
                         addedToAltParamList = false;
                     }
 
-                    // Prioritize the parameter from the default set. A parameter in all sets is considered from the default set if the
-                    // default set is still valid. But, we prioritize it only if we have not found a default param yet.
+                    // Prioritize the parameter from the default set, but only if we have not found such a default param yet.
                     // If 'defaultSetParam' is not null, then that means there are 2 parameters in the default set with the same position.
                     // That would be invalid parameter declaration, but we tolerate that in tab completion.
-                    if (isDefaultParameterSetValid
-                        && (parameterSetData.IsInAllSets || parameterSetData.ParameterSetFlag == defaultParameterSetFlag)
-                        && defaultSetParam is null)
+                    if (isDefaultParameterSetValid && parameterSetData.ParameterSetFlag == defaultParameterSetFlag && defaultSetParam is null)
                     {
                         defaultSetParam = param;
 
@@ -1831,6 +1828,7 @@ namespace System.Management.Automation
                 }
             }
 
+            bool isProcessedAsPositional = false;
             if (defaultSetParam is not null)
             {
                 ProcessParameter(commandName, commandAst, context, result, defaultSetParam, boundArguments);
@@ -1838,44 +1836,45 @@ namespace System.Management.Automation
                 {
                     return;
                 }
+
+                isProcessedAsPositional = true;
             }
 
             if (alternativeParams?.Count > 0)
             {
-                // There are alternative parameters at the same best position.
-                // Process them in the discovery order.
+                // There are alternative parameters at the same best position. Process them in the discovery order.
                 foreach (MergedCompiledCommandParameter param in alternativeParams)
                 {
                     ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
                     if (result.Count > 0)
                     {
-                        // Stop at the first one that we successfully get completion results.
-                        break;
+                        return;
                     }
                 }
 
-                // We will return here no matter we get completion results or not, because we did find
-                // applicable positional parameters, and we have done processing them.
-                return;
+                isProcessedAsPositional = true;
             }
 
-            // If we found no applicable positional parameter, then try the remaining argument parameters.
-            foreach (MergedCompiledCommandParameter param in parameters)
+            if (!isProcessedAsPositional)
             {
-                bool isInParameterSet = (param.Parameter.ParameterSetFlags & validParameterSetFlags) != 0 || param.Parameter.IsInAllSets;
-                if (!isInParameterSet)
+                // If we found no applicable positional parameter, then try the remaining argument parameters.
+                foreach (MergedCompiledCommandParameter param in parameters)
                 {
-                    continue;
-                }
-
-                var parameterSetDataCollection = param.Parameter.GetMatchingParameterSetData(validParameterSetFlags);
-                foreach (ParameterSetSpecificMetadata parameterSetData in parameterSetDataCollection)
-                {
-                    // in the second pass, we check the remaining argument ones
-                    if (parameterSetData.ValueFromRemainingArguments)
+                    bool isInParameterSet = (param.Parameter.ParameterSetFlags & validParameterSetFlags) != 0 || param.Parameter.IsInAllSets;
+                    if (!isInParameterSet)
                     {
-                        ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
-                        break;
+                        continue;
+                    }
+
+                    var parameterSetDataCollection = param.Parameter.GetMatchingParameterSetData(validParameterSetFlags);
+                    foreach (ParameterSetSpecificMetadata parameterSetData in parameterSetDataCollection)
+                    {
+                        // in the second pass, we check the remaining argument ones
+                        if (parameterSetData.ValueFromRemainingArguments)
+                        {
+                            ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
+                            break;
+                        }
                     }
                 }
             }
