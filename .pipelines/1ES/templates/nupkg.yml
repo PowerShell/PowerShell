@@ -181,7 +181,13 @@ jobs:
             {
               "keyCode": "CP-230012",
               "operationSetCode": "SigntoolSign",
-              "parameters": [],
+              "parameters": [
+                { "parameterName": "OpusName", "parameterValue": "Microsoft" },
+                { "parameterName": "OpusInfo", "parameterValue": "http://www.microsoft.com" },
+                { "parameterName": "FileDigest", "parameterValue": "/fd \"SHA256\"" },
+                { "parameterName": "PageHash", "parameterValue": "/NPH" },
+                { "parameterName": "TimeStamp", "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256" }
+              ],
               "toolName": "sign",
               "toolVersion": "1.0"
             },
