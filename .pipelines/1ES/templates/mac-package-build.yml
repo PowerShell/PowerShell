@@ -1,0 +1,362 @@
+parameters:
+  parentJob: ''
+  buildArchitecture: x64
+  OfficialBuild: false
+
+jobs:
+- job: package_macOS_${{ parameters.buildArchitecture }}
+  displayName: Package macOS ${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  pool:
+    name: Azure Pipelines
+    vmImage: 'macOS-latest'
+    os: macOS
+    isCustom: true
+  templateContext:
+    sdl:
+      codeSignValidation:
+        enabled: false
+      binskim:
+        enabled: true
+        exactToolVersion: 4.4.2
+      tsa:
+        configFile: $(Build.SourcesDirectory)/PowerShell/.config/tsaoptions.json
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+    outputs:
+      - output: pipelineArtifact
+        targetPath: $(ob_outputDirectory)
+        artifactName: macos-pkgs-${{ parameters.buildArchitecture }}
+
+  variables:
+    - name: HOMEBREW_NO_ANALYTICS
+      value: 1
+    - name: nugetMultiFeedWarnLevel
+      value: none
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: skipNugetSecurityAnalysis
+      value: true
+    - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_binskim_enabled
+      value: true
+    - name: ob_sdl_credscan_suppressionsfileforartifacts
+      value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+    - name: BuildArch
+      value: ${{ parameters.buildArchitecture }}
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - pwsh: |
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: Capture environment
+
+  - pwsh: |
+      # create folder
+      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
+
+      # make the current user the owner
+      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: no
+
+  - template: /.pipelines/templates/shouldSign.yml@self
+
+  - template: /.pipelines/1ES/templates/stage-repo-under-PowerShell.yml@self
+
+  - template: /.pipelines/templates/rebuild-branch-check.yml@self
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: macosBinResults-${{ parameters.buildArchitecture }}
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_macos_sign_${{ parameters.buildArchitecture }}
+
+  - pwsh: |
+      Write-Verbose -Verbose "unsigned artifacts"
+      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults-${{ parameters.buildArchitecture }}" -Recurse
+
+      Write-Verbose -Verbose "unsigned artifacts"
+      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+
+  - pwsh: |
+      $signedDir = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}/Signed-${{ parameters.buildArchitecture }}"
+      Get-ChildItem $signedDir -Recurse -Include 'pwsh', '*.dylib' | ForEach-Object {
+        codesign --verify --deep --strict --verbose=4 $_.FullName
+        if ($LASTEXITCODE -ne 0) { throw "codesign verification failed for $($_.FullName)" }
+      }
+    displayName: 'Verify Apple codesign on signed binaries'
+
+  - pwsh: |
+      # Add -SkipReleaseChecks as a mitigation to unblock release.
+      # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
+
+      $buildArch = '${{ parameters.buildArchitecture }}'
+
+      Write-Verbose -Message "Init..." -Verbose
+      $repoRoot = $env:REPOROOT
+      Set-Location $repoRoot
+      Import-Module "$repoRoot/build.psm1"
+      Import-Module "$repoRoot/tools/packaging"
+
+      $unsignedFilesPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults-$buildArch"
+      $signedFilesPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_$buildArch/Signed-$buildArch"
+
+      Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
+      if (-not (Test-Path $signedFilesPath/pwsh)) {
+        throw "pwsh not found in $signedFilesPath"
+      }
+
+      $psoptionsPath = Get-ChildItem -Path $unsignedFilesPath -Filter 'psoptions.json' -Recurse -File | Select-Object -ExpandProperty FullName
+      Write-Verbose -Message "Restoring PSOptions from $psoptionsPath" -Verbose
+
+      Restore-PSOptions -PSOptionsPath "$psoptionsPath"
+      Get-PSOptions | Write-Verbose -Verbose
+
+      if (-not (Test-Path "$repoRoot/tools/metadata.json")) {
+        throw "metadata.json not found in $repoRoot/tools"
+      }
+
+      $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
+
+      Write-Verbose -Verbose "metadata:"
+      $metadata | Out-String | Write-Verbose -Verbose
+
+      # Use the rebuild branch check from the template
+      $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
+
+      # Don't build LTS packages for rebuild branches
+      $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+
+      if ($isRebuildBranch) {
+        Write-Verbose -Message "Rebuild branch detected, skipping LTS package build" -Verbose
+      }
+
+      Write-Verbose -Verbose "LTS: $LTS"
+
+      if ($LTS) {
+        Write-Verbose -Message "LTS Release: $LTS" -Verbose
+      }
+
+      Start-PSBootstrap -Scenario Package
+
+      $macosRuntime = "osx-$buildArch"
+
+      Start-PSPackage -Type osxpkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+
+      if ($LTS) {
+        Start-PSPackage -Type osxpkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS
+      }
+
+      $pkgNameFilter = "powershell-*$macosRuntime.pkg"
+      Write-Verbose -Verbose "Looking for pkg packages with filter: $pkgNameFilter in '$(Pipeline.Workspace)'..."
+      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File
+
+      if (-not (Test-Path $(ob_outputDirectory))) {
+        $null = New-Item -Path $(ob_outputDirectory) -ItemType Directory -Force
+      }
+      $pkgPath | Copy-Item -Destination $(ob_outputDirectory) -Force -Verbose
+
+      Start-PSPackage -Type tar -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
+      $tarPkgNameFilter = "powershell-*$macosRuntime.tar.gz"
+      Write-Verbose -Verbose "Looking for tar packages with filter: $tarPkgNameFilter in '$(Pipeline.Workspace)'..."
+      $tarPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $tarPkgNameFilter -Recurse -File
+
+      foreach($t in $tarPkgPath) {
+        $file = $t.FullName
+        $entry = & tar -tzvf $file | Where-Object { $_ -match '\spwsh$' } | Select-Object -First 1
+        if ($entry -notmatch '^-..x') {
+            throw "pwsh is not executable in $file : $entry"
+        }
+        Copy-Item -Path $file -Destination $(ob_outputDirectory) -Force -Verbose
+      }
+
+      $packageInfo = Get-MacOSPackageIdentifierInfo -Version '$(Version)' -LTS:$LTS
+      Write-Verbose -Verbose "BundleId: $($packageInfo.PackageIdentifier)"
+      Write-Host "##vso[task.setvariable variable=BundleId;isOutput=true]$($packageInfo.PackageIdentifier)"
+
+    displayName: 'Package ${{ parameters.buildArchitecture}}'
+    name: packageStep
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+- job: sign_package_macOS_${{ parameters.buildArchitecture }}
+  displayName: Sign Package macOS ${{ parameters.buildArchitecture }}
+  dependsOn: package_macOS_${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  pool:
+    name: PowerShell1ES
+    image: MMS2022
+    os: windows
+  templateContext:
+    sdl:
+      codeSignValidation:
+        enabled: ${{ parameters.OfficialBuild }}
+      binskim:
+        enabled: true
+        exactToolVersion: 4.4.2
+      tsa:
+        configFile: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    outputs:
+      - output: pipelineArtifact
+        targetPath: $(ob_outputDirectory)
+        artifactName: drop_mac_package_sign_package_macos_${{ parameters.buildArchitecture }}
+
+  variables:
+  - group: certificate_logical_to_actual
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_binskim_enabled
+    value: true
+  - name: ob_sdl_credscan_suppressionsfileforartifacts
+    value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+  - name: BuildArch
+    value: ${{ parameters.buildArchitecture }}
+  - name: BundleId
+    value: $[ dependencies.package_macOS_${{ parameters.buildArchitecture }}.outputs['packageStep.BundleId'] ]
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - template: /.pipelines/1ES/templates/stage-repo-under-PowerShell.yml@self
+
+  - download: current
+    artifact: macos-pkgs-${{ parameters.buildArchitecture }}
+
+  - pwsh: |
+      $buildArch = '${{ parameters.buildArchitecture }}'
+      $macosRuntime = "osx-$buildArch"
+      $pkgNameFilter = "powershell-*$macosRuntime.pkg"
+      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File
+
+      if ($pkgPath.Count -eq 0) {
+        throw "No package found for $macosRuntime"
+      }
+
+      foreach($p in $pkgPath) {
+        $file = $p.FullName
+        $fileName = $p.BaseName
+        Write-Verbose -verbose "Compressing $file"
+        $zipFile = "$(Pipeline.Workspace)\${fileName}.zip"
+        Write-Verbose -Verbose "Zip file: $zipFile"
+        Compress-Archive -Path $file -Destination $zipFile
+      }
+
+      Write-Verbose -Verbose "Compressed files:"
+      Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*.zip" -File | Write-Verbose -Verbose
+    displayName: Compress package files for signing
+
+  - ${{ if eq(parameters.OfficialBuild, true) }}:
+    - task: EsrpCodeSigning@5
+      displayName: Code sign macOS packages
+      inputs:
+        ConnectedServiceName: PowerShell-ESRP-Release
+        AppRegistrationClientId: $(EsrpProdAppRegClientId)
+        AppRegistrationTenantId: $(EsrpProdAppRegTenantId)
+        AuthAKVName: $(EsrpProdAuthAkvName)
+        AuthSignCertName: $(EsrpProdAuthSignCertName)
+        UseMSIAuthentication: true
+        FolderPath: $(Pipeline.Workspace)
+        Pattern: |
+          **/*-osx-*.zip
+        UseMinimatch: true
+        signConfigType: inlineSignParams
+        inlineOperation: |
+          [
+            {
+              "keyCode": "CP-401337-Apple",
+              "operationSetCode": "MacAppDeveloperSign",
+              "parameters": [
+                { "parameterName": "Hardening", "parameterValue": "--options=runtime" }
+              ],
+              "toolName": "sign",
+              "toolVersion": "1.0"
+            }
+          ]
+        SessionTimeout: 60
+        MaxConcurrency: 50
+        MaxRetryAttempts: 5
+        PendingAnalysisWaitTimeoutMinutes: 5
+  - ${{ if ne(parameters.OfficialBuild, true) }}:
+    - pwsh: Write-Host '##[warning]STUB - skipped ESRP macOS package code signing'
+      displayName: Code sign macOS packages (stub)
+
+  - ${{ if eq(parameters.OfficialBuild, true) }}:
+    - task: EsrpCodeSigning@5
+      displayName: Notarize macOS packages
+      timeoutInMinutes: 120
+      inputs:
+        ConnectedServiceName: PowerShell-ESRP-Release
+        AppRegistrationClientId: $(EsrpProdAppRegClientId)
+        AppRegistrationTenantId: $(EsrpProdAppRegTenantId)
+        AuthAKVName: $(EsrpProdAuthAkvName)
+        AuthSignCertName: $(EsrpProdAuthSignCertName)
+        UseMSIAuthentication: true
+        FolderPath: $(Pipeline.Workspace)
+        Pattern: |
+          **/*-osx-*.zip
+        UseMinimatch: true
+        signConfigType: inlineSignParams
+        inlineOperation: |
+          [
+            {
+              "keyCode": "CP-401337-Apple",
+              "operationSetCode": "MacAppNotarize",
+              "parameters": [
+                { "parameterName": "BundleId", "parameterValue": "$(BundleId)" }
+              ],
+              "toolName": "sign",
+              "toolVersion": "1.0"
+            }
+          ]
+        SessionTimeout: 120
+        MaxConcurrency: 50
+        MaxRetryAttempts: 5
+        PendingAnalysisWaitTimeoutMinutes: 5
+  - ${{ if ne(parameters.OfficialBuild, true) }}:
+    - pwsh: Write-Host '##[warning]STUB - skipped ESRP macOS package notarization'
+      displayName: Notarize macOS packages (stub)
+
+  - pwsh: |
+      $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
+
+      if (-not (Test-Path $(ob_outputDirectory))) {
+        $null = New-Item -Path $(ob_outputDirectory) -ItemType Directory
+      }
+
+      $expandDir = "$(Pipeline.Workspace)/pkgExpand"
+      $null = New-Item -Path $expandDir -ItemType Directory -Force
+
+      $signedPkg | ForEach-Object {
+        Write-Verbose -Verbose "Signed package zip: $_"
+        Expand-Archive -Path $_ -DestinationPath $expandDir -Verbose
+      }
+
+      # ESRP's signing pipeline nests the PKG inside a '<hash>.zip.unzipped' subfolder
+      $pkgFile = Get-ChildItem -Path $expandDir -Filter '*.pkg' -Recurse -File
+      if (-not $pkgFile) {
+        throw "Package not found in: $signedPkg"
+      }
+
+      $pkgFile | ForEach-Object {
+        Move-Item -Path $_ -Destination $(ob_outputDirectory) -Verbose
+      }
+
+      Write-Verbose -Verbose "Expanded pkg file:"
+      Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
+    displayName: Expand signed file

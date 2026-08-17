@@ -6,6 +6,29 @@ applyTo:
 
 # OneBranch Signing Configuration
 
+## 1ES Pipeline Templates
+
+For migrated pipelines under `.pipelines/1ES`, do not use
+`onebranch.pipeline.signing@1`. Follow the successful coordinated-build
+pipeline pattern instead:
+
+- Extend the official or unofficial 1ES v1 template.
+- Use `EsrpCodeSigning@5` for official production signing.
+- Compile-time exclude the production service connection from unofficial
+  pipelines and use an explicit stub there.
+- Authenticate the official task through `PowerShell-ESRP-Release` with
+  `UseMSIAuthentication: true` and the `EsrpSigning-PowerShell` variable group.
+- Use newline-delimited minimatch values in `Pattern: |`; comma- or
+  semicolon-delimited patterns do not select every file.
+- Publish job artifacts through `templateContext.outputs`.
+- Configure code-sign validation with
+  `templateContext.sdl.codeSignValidation.enabled`.
+
+`ob_restore_phase` is a OneBranch-only phase marker. In a 1ES job it must not
+be used to order signing; preserve the step order directly and stage the repo
+with `.pipelines/1ES/templates/stage-repo-under-PowerShell.yml` when scripts
+depend on the historical `$(Build.SourcesDirectory)\PowerShell` layout.
+
 This guide explains how to configure OneBranch signing variables in Azure Pipeline jobs, particularly when signing is not required.
 
 ## Purpose
