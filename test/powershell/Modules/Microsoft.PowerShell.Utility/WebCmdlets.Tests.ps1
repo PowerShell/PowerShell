@@ -3029,7 +3029,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         1..$maxLinksToFollow | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
     }
 
-    It "Validate Invoke-RestMethod -FollowRelLink strips the authorization header on followed relation links by default" {
+    It "Validate Invoke-RestMethod -FollowRelLink keeps the authorization header on relation links within the origin" {
         $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 3}
         $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink -Headers @{Authorization = 'test'}"
         $result = ExecuteWebCommand -command $command
@@ -3037,8 +3037,32 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error | Should -BeNullOrEmpty
         $result.Output.Count | Should -BeExactly 3
         $result.Output[0].headers.Authorization | Should -BeExactly 'test'
+        $result.Output[1].headers.Authorization | Should -BeExactly 'test'
+        $result.Output[2].headers.Authorization | Should -BeExactly 'test'
+    }
+
+    It "Validate Invoke-RestMethod -FollowRelLink strips the authorization header on a relation link that leaves the origin" {
+        $crossOrigin = Get-WebListenerUrl -Https
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 2; nextauthority = $crossOrigin.GetLeftPart([System.UriPartial]::Authority)}
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink -SkipCertificateCheck -Headers @{Authorization = 'test'}"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Error | Should -BeNullOrEmpty
+        $result.Output.Count | Should -BeExactly 2
+        $result.Output[0].headers.Authorization | Should -BeExactly 'test'
         $result.Output[1].headers.Authorization | Should -BeNullOrEmpty
-        $result.Output[2].headers.Authorization | Should -BeNullOrEmpty
+    }
+
+    It "Validate Invoke-RestMethod -FollowRelLink -PreserveAuthorizationOnRedirect keeps the authorization header across origins" {
+        $crossOrigin = Get-WebListenerUrl -Https
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 2; nextauthority = $crossOrigin.GetLeftPart([System.UriPartial]::Authority)}
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink -PreserveAuthorizationOnRedirect -SkipCertificateCheck -Headers @{Authorization = 'test'}"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Error | Should -BeNullOrEmpty
+        $result.Output.Count | Should -BeExactly 2
+        $result.Output[0].headers.Authorization | Should -BeExactly 'test'
+        $result.Output[1].headers.Authorization | Should -BeExactly 'test'
     }
 
     It "Validate Invoke-RestMethod quietly ignores invalid Link Headers if -FollowRelLink is specified: <type>" -TestCases @(

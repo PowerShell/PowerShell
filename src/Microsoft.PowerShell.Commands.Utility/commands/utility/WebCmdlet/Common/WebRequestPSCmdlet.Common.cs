@@ -554,7 +554,12 @@ namespace Microsoft.PowerShell.Commands
                 HttpClient client = GetHttpClient(handleRedirect);
 
                 int followedRelLink = 0;
-                Uri uri = Uri;
+
+                // A rel link is a URL the same server advertised in its own 'Link' header, not a redirect,
+                // so the credentials the caller supplied still apply. Treat a followed link as a credential
+                // boundary only when it leaves the origin the caller requested.
+                Uri uri = CheckProtocol(Uri);
+                string originAuthority = uri.GetLeftPart(UriPartial.Authority);
                 do
                 {
                     if (followedRelLink > 0)
@@ -567,7 +572,10 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(linkVerboseMsg);
                     }
 
-                    using (HttpRequestMessage request = GetRequest(uri, isRedirect: followedRelLink > 0))
+                    bool relLinkLeavesOrigin = followedRelLink > 0
+                                               && !string.Equals(originAuthority, uri.GetLeftPart(UriPartial.Authority), StringComparison.OrdinalIgnoreCase);
+
+                    using (HttpRequestMessage request = GetRequest(uri, isRedirect: relLinkLeavesOrigin))
                     {
                         FillRequestStream(request);
                         try

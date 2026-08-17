@@ -78,7 +78,16 @@ namespace mvc.Controllers
 
             if (!skipNextLink && maxLinks > 1 && linkNumber < maxLinks)
             {
-                linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber + 1, type: type, whitespace: whitespace, rel: "next"));
+                // 'nextauthority' advertises the next link on another scheme/host/port, which lets tests
+                // cover a rel link that crosses an origin. Pass it the authority of another listener port.
+                string nextBaseUri = baseUri;
+                if (Request.Query.TryGetValue("nextauthority", out StringValues nextAuthoritySV)
+                    && Uri.TryCreate(nextAuthoritySV.FirstOrDefault(), UriKind.Absolute, out Uri nextAuthority))
+                {
+                    nextBaseUri = new Uri(nextAuthority, new Uri(baseUri).AbsolutePath).AbsoluteUri;
+                }
+
+                linkList.Add(GetLink(baseUri: nextBaseUri, maxLinks: maxLinks, linkNumber: linkNumber + 1, type: type, whitespace: whitespace, rel: "next"));
             }
 
             StringValues linkHeader;
