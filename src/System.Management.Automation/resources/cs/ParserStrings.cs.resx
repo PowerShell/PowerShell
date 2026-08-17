@@ -127,7 +127,7 @@
     <value>Neúplný token řetězce.</value>
   </data>
   <data name="InvalidUnicodeEscapeSequence" xml:space="preserve">
-    <value>The Unicode escape sequence is not valid. A valid sequence is `u{ followed by one to six hex digits and a closing '}'.</value>
+    <value>Řídicí sekvence Unicode není platná. Platná sekvence je `u{ následovaná jednou až šesti šestnáctkovými číslicemi a ukončovací }.</value>
   </data>
   <data name="InvalidUnicodeEscapeSequenceValue" xml:space="preserve">
     <value>Hodnota řídicí sekvence Unicode je mimo rozsah. Maximální hodnota je 0x10FFFF.</value>
@@ -857,7 +857,7 @@ Správný tvar je: foreach ($a in $b) {...}</value>
     <value>Modul {0} se nepodařilo najít.</value>
   </data>
   <data name="MultipleModuleEntriesFoundDuringParse" xml:space="preserve">
-    <value>Multiple versions of the module '{0}' were found. You can run 'Get-Module -ListAvailable -FullyQualifiedName {0}' to see available versions on the system, and then use the fully qualified name '@{{ModuleName="{0}"; RequiredVersion="Version"}}'.</value>
+    <value>Bylo nalezeno více verzí modulu {0}. Spuštěním Get-Module -ListAvailable -FullyQualifiedName {0} můžete zobrazit verze dostupné v systému a potom použít plně kvalifikovaný název '@{{ModuleName="{0}"; RequiredVersion="Version"}}'.</value>
   </data>
   <data name="MissingThrottleLimit" xml:space="preserve">
     <value>Parametru ThrottleLimit příkazu foreach chybí hodnota. Zadejte parametru limit omezení.</value>

@@ -127,7 +127,7 @@
     <value>Niekompletny token ciągu.</value>
   </data>
   <data name="InvalidUnicodeEscapeSequence" xml:space="preserve">
-    <value>The Unicode escape sequence is not valid. A valid sequence is `u{ followed by one to six hex digits and a closing '}'.</value>
+    <value>Sekwencja ucieczki Unicode jest nieprawidłowa. Prawidłowa sekwencja to „u{, po której następuje od jednej do sześciu cyfr szesnastkowych i zamykający znak „}”.</value>
   </data>
   <data name="InvalidUnicodeEscapeSequenceValue" xml:space="preserve">
     <value>Wartość sekwencji ucieczki Unicode jest spoza zakresu. Maksymalna wartość wynosi 0x10FFFF.</value>
@@ -901,7 +901,7 @@ Poprawna forma to: ForEach ($a in $b) {...}</value>
     <value>Właściwość klucza dla wpisu w słowniku funkcji do zdefiniowania nie może być pusta, ponieważ właściwość klucza jest używana jako nazwa funkcji. Podaj niepusty ciąg jako wartość właściwości klucza, a następnie spróbuj ponownie wykonać operację.</value>
   </data>
   <data name="GetBadlyFormedRequiredResourceId" xml:space="preserve">
-    <value>The format of the resource reference '{0}' in the Requires list for resource '{1}' is not valid. A required resource name should be in the format '[&lt;typename&gt;]&lt;name&gt;', with alphanumeric characters, spaces, '_', '-', '.' and '\'.</value>
+    <value>Format odwołania do zasobu „{0}” na liście Requires dla zasobu „{1}” jest nieprawidłowy. Wymagana nazwa zasobu powinna mieć format „[&lt;typename&gt;]&lt;name&gt;”, z użyciem znaków alfanumerycznych, spacji oraz znaków „_”, „-”, „.” i „\”.</value>
     <comment>The capitalized word Requires should not be localized. The words &lt;typename&gt; and &lt;name&gt; should be localized but the &lt;&gt; characters must be preserved.</comment>
   </data>
   <data name="GetBadlyFormedExclusiveResourceId" xml:space="preserve">
