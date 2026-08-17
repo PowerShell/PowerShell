@@ -158,16 +158,27 @@ jobs:
           inlineOperation: |
             [
               {
-                "keyCode": "$(MSIXProfile)",
+                "keyCode": "Dynamic",
                 "operationSetCode": "SigntoolSign",
-                "parameters": [],
+                "parameters": [
+                  { "parameterName": "CertTemplateName", "parameterValue": "WINMSAPP1ST" },
+                  { "parameterName": "CertSubjectName", "parameterValue": "CN=Microsoft Corporation, O= Microsoft Corporation, L=Redmond, S=Washington, C=US" },
+                  { "parameterName": "OpusName", "parameterValue": "Microsoft" },
+                  { "parameterName": "OpusInfo", "parameterValue": "https://www.microsoft.com" },
+                  { "parameterName": "FileDigest", "parameterValue": "/fd SHA256" },
+                  { "parameterName": "PageHash", "parameterValue": "/NPH" },
+                  { "parameterName": "TimeStamp", "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256" }
+                ],
                 "toolName": "sign",
                 "toolVersion": "1.0"
               },
               {
-                "keyCode": "$(MSIXProfile)",
+                "keyCode": "Dynamic",
                 "operationSetCode": "SigntoolVerify",
-                "parameters": [],
+                "parameters": [
+                  { "parameterName": "CertTemplateName", "parameterValue": "WINMSAPP1ST" },
+                  { "parameterName": "CertSubjectName", "parameterValue": "CN=Microsoft Corporation, O= Microsoft Corporation, L=Redmond, S=Washington, C=US" }
+                ],
                 "toolName": "sign",
                 "toolVersion": "1.0"
               }

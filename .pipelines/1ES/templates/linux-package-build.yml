@@ -178,11 +178,11 @@ jobs:
       $packageType = '$(PackageType)'
       Write-Verbose -Verbose "packageType = $packageType"
 
-      Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+      Start-PSPackage -Type $packageType -SkipReleaseChecks -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
 
       if ($LTS -and ($packageType -like 'deb*' -or $packageType -like 'rpm*')) {
         Write-Verbose -Message "LTS Release: $LTS" -Verbose
-        Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS
+        Start-PSPackage -Type $packageType -SkipReleaseChecks -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS
       }
 
       $vstsCommandString = "vso[task.setvariable variable=PackageFilter]$pkgFilter"
