@@ -1743,9 +1743,9 @@ namespace System.Management.Automation
 
             // Find all the parameters with the position closest to the specified position. Different parameter
             // sets can declare a parameter at the same position, so there can be more than one candidate.
-            // Only parameters from the still valid parameter sets are considered: 'GetMatchingParameterSetData'
-            // filters the parameter set data by 'validParameterSetFlags', and the default parameter set is
-            // given priority only when it's still valid.
+            // Only parameters from the still valid parameter sets are considered and the default parameter set
+            // is given priority if it's still valid.
+            //
             // The candidate from the default parameter set is tried first, and when it doesn't produce any
             // completion results, the candidates from the other parameter sets are tried in turn.
             // For example, 'Get-Process | ForEach-Object <Tab>' should complete member names for '-MemberName'
