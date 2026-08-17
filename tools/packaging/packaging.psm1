@@ -843,6 +843,11 @@ function Update-PSSignedBuildFolder
 
     $signedFilesList = Get-ChildItem -Path $signedFilesFilter -Recurse -File
     foreach ($signedFileObject in $signedFilesList) {
+        if ($signedFileObject.Name -like 'CodeSignSummary-*.md') {
+            Write-Verbose -Verbose "Skipping ESRP signing summary $signedFileObject"
+            continue
+        }
+
         # completely skip replacing pwsh on non-windows systems (there is no .exe extension here)
         # and it may not be signed correctly
 
