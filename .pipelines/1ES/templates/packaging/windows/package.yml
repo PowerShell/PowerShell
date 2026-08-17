@@ -74,9 +74,9 @@ jobs:
     condition: ${{ not(contains(parameters.runtime, 'minsize')) }}
 
   - download: CoOrdinatedBuildPipeline
-    artifact: drop_windows_build_windows_${{ parameters.runtime }}
+    artifact: drop_windows_build_windows_x64_minSize_release
     displayName: Download minsize signed artifacts
-    condition: ${{ contains(parameters.runtime, 'minsize') }}
+    condition: ${{ eq(parameters.runtime, 'x64_minsize') }}
 
   - pwsh: |
       Write-Verbose -Verbose "signed artifacts"
@@ -112,8 +112,8 @@ jobs:
       Find-Dotnet
 
       $signedFilesPath, $psoptionsFilePath = if ($runtime.Contains('minsize')) {
-          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}\$signedFolder"
-          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}\psoptions\psoptions.json"
+          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_minSize_release\$signedFolder"
+          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_minSize_release\psoptions\psoptions.json"
         }
         else {
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\$signedFolder"

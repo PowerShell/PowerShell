@@ -195,7 +195,8 @@ steps:
       }
     }
 
-    # Expose REPOROOT for downstream helper templates (SetVersionVariables, etc.).
+    # Expose both names used by the inherited packaging templates.
     Write-Host "##vso[task.setvariable variable=REPOROOT]$dst"
+    Write-Host "##vso[task.setvariable variable=PowerShellRoot]$dst"
     Write-Verbose -Verbose "Repository staged at $dst (git worktree from $src)"
   displayName: 'Stage repo into $(Build.SourcesDirectory)/PowerShell (git worktree, OneBranch path parity)'
