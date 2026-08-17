@@ -1,0 +1,89 @@
+trigger: none
+
+parameters:
+  - name: ForceAzureBlobDelete
+    displayName: Delete Azure Blob
+    type: string
+    values:
+      - true
+      - false
+    default: false
+  - name: debug
+    displayName: Enable debug output
+    type: boolean
+    default: false
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: fromBranch
+  - name: SKIP_SIGNING
+    displayName: Skip Signing
+    type: string
+    default: 'NO'
+  - name: disableNetworkIsolation
+    type: boolean
+    default: false
+
+name: pkgs-$(BUILD.SOURCEBRANCHNAME)-1ES-nonofficial-$(Build.BuildId)
+
+variables:
+  - template: /.pipelines/templates/variables/PowerShell-Packages-Variables.yml@self
+    parameters:
+      debug: ${{ parameters.debug }}
+      ForceAzureBlobDelete: ${{ parameters.ForceAzureBlobDelete }}
+      ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
+      disableNetworkIsolation: ${{ parameters.disableNetworkIsolation }}
+
+resources:
+  pipelines:
+    - pipeline: CoOrdinatedBuildPipeline
+      source: PowerShell-Coordinated_Packages-1ESNonOfficial
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
+  repositories:
+    - repository: 1ESPipelineTemplates
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    featureFlags:
+      autoEnableRoslynWithNewRuleset: false
+    pool:
+      name: PowerShell1ES
+      image: MMS2022
+      os: windows
+    sdl:
+      codeql:
+        compiled:
+          enabled: false
+      sbom:
+        enabled: true
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+      tsa:
+        enabled: true
+        configFile: $(Build.SourcesDirectory)\.config\tsaoptions.json
+      credscan:
+        enabled: true
+        scanFolder: $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      apiscan:
+        enabled: false
+    stages:
+      - template: /.pipelines/1ES/templates/stages/PowerShell-Packages-Stages.yml@self
+        parameters:
+          OfficialBuild: false
