@@ -436,7 +436,7 @@ function Start-PSBuild {
         [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis', '')] # We might need "Checked" as well
         [string]$Configuration,
 
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
         [switch]$Detailed,
@@ -445,7 +445,7 @@ function Start-PSBuild {
         [string]$PSOptionsPath
     )
 
-    if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d{1,2})?)?$") {
+    if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d+)?)?$") {
         Write-Warning "Only preview or rc are supported for releasing pre-release version of PowerShell"
     }
 
