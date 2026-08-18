@@ -1591,7 +1591,7 @@ Toutes les sessions WinRM connectées à des configurations de session PowerShel
     <value>La table de hachage de propriété RequiredGroups ne doit contenir qu’une seule clé.</value>
   </data>
   <data name="RequiredGroupsNotHashTable" xml:space="preserve">
-    <value>The RequiredGroups property is not in a name/value pair hashtable format.  This must be a hashtable of the form (using PowerShell syntax): RequiredGroups = @{ Or = 'Administrators' }.</value>
+    <value>La propriété RequiredGroups n’est pas dans un format de table de hachage de paire nom/valeur.  Il doit s’agir d’une table de hachage du formulaire (à l’aide de la syntaxe PowerShell) : RequiredGroups = @{ ou = 'Administrateurs' }.</value>
   </data>
   <data name="UnknownGroupMembershipKey" xml:space="preserve">
     <value>Clé inconnue dans la configuration des groupes obligatoires.  La table de hachage des groupes requis ne peut contenir que des clés de hachage « And » et « Or » pour les regroupements d’appartenances logiques.</value>
