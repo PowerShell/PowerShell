@@ -6,6 +6,9 @@ jobs:
 - job: sign_win_${{ parameters.runtime }}
   displayName: Sign Windows Packages ${{ parameters.runtime }}
   condition: succeeded()
+  # Leave an additional hour beyond the ESRP signing session for setup,
+  # artifact transfer, validation, and publication of large MSIX packages.
+  timeoutInMinutes: 180
   pool:
     name: PowerShell1ES
     image: MMS2022
@@ -84,6 +87,64 @@ jobs:
       Import-Module "$repoRoot\tools\packaging"
       Write-Verbose -Verbose "Modules imported successfully"
     displayName: 'Import modules'
+
+  # The coordinated build artifacts already contain Authenticode-signed
+  # binaries. ZIP/fxdependent/min-size packages only wrap those signed files,
+  # and ZIP itself is not a SignTool target. MSIX files are signable package
+  # containers created unsigned in the preceding stage, so sign those outputs.
+  #
+  # Historical Windows package signing used MSIX_CERT, whose production value
+  # is CP-230012, for standalone .msix files. The separate .msixbundle signing
+  # job uses the Dynamic/WINMSAPP1ST Store profile.
+  - ${{ if and(eq(parameters.OfficialBuild, true), or(eq(parameters.runtime, 'x64'), eq(parameters.runtime, 'x86'), eq(parameters.runtime, 'arm64'))) }}:
+    - task: EsrpCodeSigning@5
+      displayName: Sign MSIX packages
+      # Keep the task timeout above the ESRP session timeout so the task can
+      # finish download, verification, and cleanup after the signing session.
+      timeoutInMinutes: 150
+      inputs:
+        ConnectedServiceName: PowerShell-ESRP-Release
+        AppRegistrationClientId: $(EsrpProdAppRegClientId)
+        AppRegistrationTenantId: $(EsrpProdAppRegTenantId)
+        AuthAKVName: $(EsrpProdAuthAkvName)
+        AuthSignCertName: $(EsrpProdAuthSignCertName)
+        UseMSIAuthentication: true
+        FolderPath: $(Pipeline.Workspace)\drop_windows_package_${{ parameters.runtime }}
+        Pattern: |
+          **/*.msix
+        UseMinimatch: true
+        signConfigType: inlineSignParams
+        inlineOperation: |
+          [
+            {
+              "keyCode": "CP-230012",
+              "operationSetCode": "SigntoolSign",
+              "parameters": [
+                { "parameterName": "OpusName", "parameterValue": "Microsoft" },
+                { "parameterName": "OpusInfo", "parameterValue": "http://www.microsoft.com" },
+                { "parameterName": "PageHash", "parameterValue": "/NPH" },
+                { "parameterName": "FileDigest", "parameterValue": "/fd \"SHA256\"" },
+                { "parameterName": "TimeStamp", "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256" }
+              ],
+              "toolName": "sign",
+              "toolVersion": "1.0"
+            },
+            {
+              "keyCode": "CP-230012",
+              "operationSetCode": "SigntoolVerify",
+              "parameters": [],
+              "toolName": "sign",
+              "toolVersion": "1.0"
+            }
+          ]
+        SessionTimeout: 120
+        MaxConcurrency: 50
+        MaxRetryAttempts: 5
+        PendingAnalysisWaitTimeoutMinutes: 5
+
+  - ${{ if and(ne(parameters.OfficialBuild, true), or(eq(parameters.runtime, 'x64'), eq(parameters.runtime, 'x86'), eq(parameters.runtime, 'arm64'))) }}:
+    - pwsh: Write-Host '##[warning]STUB - skipped ESRP MSIX package signing (CP-230012)'
+      displayName: Sign MSIX packages (stub)
 
   # Copy all signed packages to output directory
   - pwsh: |

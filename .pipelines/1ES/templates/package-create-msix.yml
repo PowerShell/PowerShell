@@ -6,9 +6,10 @@ parameters:
 jobs:
 - job: CreateMSIXBundle
   displayName: Create .msixbundle file
-  # ESRP bundle signing can consume nearly its full 60-minute session timeout.
-  # Leave enough job-level headroom for artifact download and bundle creation.
-  timeoutInMinutes: 120
+  # Dynamic ESRP bundle signing can exceed a 60-minute signing session for
+  # large bundles. Match the repository's long-running ESRP timeout and leave
+  # job-level headroom for artifact download and bundle creation.
+  timeoutInMinutes: 180
   pool:
     name: PowerShell1ES
     image: MMS2022
@@ -144,8 +145,13 @@ jobs:
       retryCountOnTaskFailure: 1
 
     - ${{ if eq(parameters.OfficialBuild, true) }}:
+      # Dynamic-WINMSAPP1ST is the OneBranch profile name. Direct ESRP
+      # inline operations use keyCode Dynamic with the WINMSAPP1ST template.
       - task: EsrpCodeSigning@5
         displayName: Sign MsixBundle
+        # Keep the task timeout above the ESRP session timeout so the task can
+        # finish download, verification, and cleanup after the signing session.
+        timeoutInMinutes: 150
         inputs:
           ConnectedServiceName: PowerShell-ESRP-Release
           AppRegistrationClientId: $(EsrpProdAppRegClientId)
@@ -186,10 +192,14 @@ jobs:
                 "toolVersion": "1.0"
               }
             ]
-          SessionTimeout: 60
+          SessionTimeout: 120
           MaxConcurrency: 50
           MaxRetryAttempts: 5
           PendingAnalysisWaitTimeoutMinutes: 5
+
+    - ${{ if ne(parameters.OfficialBuild, true) }}:
+      - pwsh: Write-Host '##[warning]STUB - skipped ESRP MSIX bundle signing'
+        displayName: Sign MsixBundle (stub)
 
     - pwsh: |
         $signedBundles = @(Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File)
