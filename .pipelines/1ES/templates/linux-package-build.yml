@@ -193,6 +193,15 @@ jobs:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - ${{ if eq(parameters.OfficialBuild, true) }}:
+    # EsrpCodeSigning@5 requires a supported dotnet host on Linux. The package
+    # bootstrap installs the repo SDK for its own process, but does not put a
+    # supported SDK on PATH for subsequent tasks.
+    - task: UseDotNet@2
+      displayName: Install .NET 9 SDK for ESRP signing
+      inputs:
+        packageType: sdk
+        version: 9.x
+
     - task: EsrpCodeSigning@5
       displayName: Sign deb and rpm packages
       inputs:
