@@ -53,15 +53,15 @@ jobs:
     - name: ob_sdl_credscan_suppressionsFile
       value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
     # PGP signing profile selection: Mariner (Azure Linux) packages ship through
-    # a different distribution channel and must be signed with the Mariner release
-    # key; all other Linux packages use the standard PowerShell Linux key. Both
-    # key codes come from the `certificate_logical_to_actual` variable group.
+    # a different distribution channel and use CP-459159-Pgp. Other DEB/RPM
+    # packages use CP-450779-Pgp. These are the ESRP key codes corresponding to
+    # the historical OneBranch *-pgpdetached signing profiles.
     - ${{ if startsWith(parameters.jobName, 'mariner') }}:
       - name: SigningProfile
-        value: $(pgp_release_cert_id)
+        value: CP-459159-Pgp
     - ${{ else }}:
       - name: SigningProfile
-        value: $(pgp_linux_cert_id)
+        value: CP-450779-Pgp
 
   steps:
   - checkout: self
@@ -192,7 +192,7 @@ jobs:
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
-  - ${{ if eq(parameters.OfficialBuild, true) }}:
+  - ${{ if and(eq(parameters.OfficialBuild, true), or(startsWith(parameters.packageType, 'deb'), startsWith(parameters.packageType, 'rpm'))) }}:
     # EsrpCodeSigning@5 requires a supported dotnet host on Linux. The package
     # bootstrap installs the repo SDK for its own process, but does not put a
     # supported SDK on PATH for subsequent tasks.
@@ -231,7 +231,7 @@ jobs:
         MaxConcurrency: 50
         MaxRetryAttempts: 5
         PendingAnalysisWaitTimeoutMinutes: 5
-  - ${{ if ne(parameters.OfficialBuild, true) }}:
+  - ${{ if and(ne(parameters.OfficialBuild, true), or(startsWith(parameters.packageType, 'deb'), startsWith(parameters.packageType, 'rpm'))) }}:
     - pwsh: Write-Host '##[warning]STUB - skipped ESRP PGP signing for RPM/DEB packages'
       displayName: Sign deb and rpm packages (stub)
 

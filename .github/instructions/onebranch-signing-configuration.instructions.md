@@ -24,6 +24,28 @@ pipeline pattern instead:
 - Configure code-sign validation with
   `templateContext.sdl.codeSignValidation.enabled`.
 
+### Valid ESRP production key codes
+
+Use only these registered production key codes in PowerShell pipelines:
+
+- `CP-230012`
+- `CP-231522`
+- `CP-401337-Apple`
+- `CP-401405`
+- `CP-450779-Pgp`
+- `CP-458204`
+- `CP-459159-Pgp`
+- `CP-460906`
+- `Dynamic-WINMSAPP1ST`
+
+Do not pass the historical OneBranch profile suffix `-pgpdetached` to
+`EsrpCodeSigning@5`. Standard Linux DEB/RPM packages use `CP-450779-Pgp`;
+Mariner/Azure Linux RPM packages use `CP-459159-Pgp`.
+
+`Dynamic-WINMSAPP1ST` is the OneBranch profile name. In an inline
+`EsrpCodeSigning@5` operation, configure it as `keyCode: Dynamic` with
+`CertTemplateName: WINMSAPP1ST` and the corresponding certificate subject.
+
 `ob_restore_phase` is a OneBranch-only phase marker. In a 1ES job it must not
 be used to order signing; preserve the step order directly and stage the repo
 with `.pipelines/1ES/templates/stage-repo-under-PowerShell.yml` when scripts
