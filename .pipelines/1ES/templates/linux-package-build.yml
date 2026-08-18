@@ -55,7 +55,8 @@ jobs:
     # PGP signing profile selection: Mariner (Azure Linux) packages ship through
     # a different distribution channel and use CP-459159-Pgp. Other DEB/RPM
     # packages use CP-450779-Pgp. These are the ESRP key codes corresponding to
-    # the historical OneBranch *-pgpdetached signing profiles.
+    # the historical OneBranch *-pgpdetached signing profiles. Both key codes
+    # use the ESRP LinuxSign operation set.
     - ${{ if startsWith(parameters.jobName, 'mariner') }}:
       - name: SigningProfile
         value: CP-459159-Pgp
@@ -221,7 +222,7 @@ jobs:
           [
             {
               "keyCode": "$(SigningProfile)",
-              "operationSetCode": "PGPSign",
+              "operationSetCode": "LinuxSign",
               "parameters": [],
               "toolName": "sign",
               "toolVersion": "1.0"

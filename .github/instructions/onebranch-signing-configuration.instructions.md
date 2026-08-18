@@ -40,7 +40,8 @@ Use only these registered production key codes in PowerShell pipelines:
 
 Do not pass the historical OneBranch profile suffix `-pgpdetached` to
 `EsrpCodeSigning@5`. Standard Linux DEB/RPM packages use `CP-450779-Pgp`;
-Mariner/Azure Linux RPM packages use `CP-459159-Pgp`.
+Mariner/Azure Linux RPM packages use `CP-459159-Pgp`. Pair both key codes with
+`operationSetCode: LinuxSign`; `PGPSign` is not a valid ESRP operation set.
 
 `Dynamic-WINMSAPP1ST` is the OneBranch profile name. In an inline
 `EsrpCodeSigning@5` operation, configure it as `keyCode: Dynamic` with
