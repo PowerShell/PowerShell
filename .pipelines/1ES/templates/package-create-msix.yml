@@ -6,6 +6,9 @@ parameters:
 jobs:
 - job: CreateMSIXBundle
   displayName: Create .msixbundle file
+  # ESRP bundle signing can consume nearly its full 60-minute session timeout.
+  # Leave enough job-level headroom for artifact download and bundle creation.
+  timeoutInMinutes: 120
   pool:
     name: PowerShell1ES
     image: MMS2022
