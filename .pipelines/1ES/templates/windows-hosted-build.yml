@@ -11,16 +11,16 @@ parameters:
 # header for the full variable group story):
 #   1. obp-file-signing.yml call for the main bin folder (1P Authenticode)
 #      - STUB MODE: Write-Host placeholder
-#      - TEST MODE: EsrpCodeSigning@5 against test code CP-466277
+#      - TEST MODE: EsrpCodeSigning@6 against test code CP-466277
 #   2. obp-file-signing.yml call for the global tool publish folder (fxdependent only)
 #      - same modes as #1
 #   3. Inline `Sign obj files` (1P Authenticode)
 #      - STUB MODE: Write-Host placeholder
-#      - TEST MODE: EsrpCodeSigning@5 against test code CP-466277
+#      - TEST MODE: EsrpCodeSigning@6 against test code CP-466277
 #   4. Inline `Sign nupkg files` ($(nuget_cert_id), PROD CP-401405)
 #      - STUB MODE ONLY: no NuGet test KeyCode is available in the MS test inventory,
 #        so this site stays as a Write-Host placeholder even in TEST MODE. Future
-#        work: identify a NuGet-compatible test code and wire EsrpCodeSigning@5 with
+#        work: identify a NuGet-compatible test code and wire EsrpCodeSigning@6 with
 #        operationSetCode "NuGetSign" / "NuGetVerify".
 # CodeQL3000Init/Finalize tasks DROPPED (1ES PT auto-injects via sdl.codeql config).
 # cloneToOfficialPath.yml replaced with stage-repo-under-PowerShell.yml.
@@ -233,7 +233,7 @@ jobs:
   ## (OfficialBuild: true). Real ESRP 1P Authenticode of the global-tool obj
   ## files via PowerShell-ESRP-Release against PROD KeyCode CP-230012.
   - ${{ if eq(parameters.OfficialBuild, true) }}:
-    - task: EsrpCodeSigning@5
+    - task: EsrpCodeSigning@6
       displayName: 'Sign obj files (ESRP prod signing)'
       condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
       inputs:
@@ -299,7 +299,7 @@ jobs:
     ## REAL TEST SIGNING (obj files): runs only when EsrpSigningTest-PowerShell
     ## variable group is attached. Uses MS-Sign Test KeyCode CP-466277 (same as
     ## 1st-party path in obp-file-signing.yml — both are 1P Authenticode).
-    - task: EsrpCodeSigning@5
+    - task: EsrpCodeSigning@6
       displayName: 'Sign obj files (ESRP test signing)'
       condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'), ne(variables['EsrpTestConnectionName'], ''))
       inputs:
@@ -433,7 +433,7 @@ jobs:
   ## (OfficialBuild: true). Real ESRP NuGet signing via PowerShell-ESRP-Release
   ## against PROD KeyCode CP-401405 (operationSetCode NuGetSign/NuGetVerify).
   - ${{ if eq(parameters.OfficialBuild, true) }}:
-    - task: EsrpCodeSigning@5
+    - task: EsrpCodeSigning@6
       displayName: 'Sign nupkg files (ESRP prod signing)'
       condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
       inputs:

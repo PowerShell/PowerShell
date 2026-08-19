@@ -19,7 +19,7 @@
 # HOW OFFICIAL vs NONOFFICIAL SIGNING IS SELECTED:
 #   The shared signing templates fork at COMPILE TIME on the `OfficialBuild` parameter
 #   threaded from the stages template:
-#     * OfficialBuild: true  (this pipeline)  -> real `EsrpCodeSigning@5` tasks against
+#     * OfficialBuild: true  (this pipeline)  -> real `EsrpCodeSigning@6` tasks against
 #       PROD KeyCodes using `PowerShell-ESRP-Release`. The stub/test tasks are compile-
 #       time excluded, so `$(EsrpTestConnectionName)` is never referenced here.
 #     * OfficialBuild: false (NonOfficial)    -> the existing stub / ESRP-test hybrid.
@@ -42,7 +42,7 @@
 # REQUIRED VARIABLE GROUP — `EsrpSigning-PowerShell`:
 #   Create this variable group in mscodehub/PowerShellCore and link it to this pipeline
 #   definition. It supplies the ESRP auth inputs (non-secret identifiers) consumed by every
-#   prod EsrpCodeSigning@5 task. Auth is via the ESRP-Signing-Identity managed identity over
+#   prod EsrpCodeSigning@6 task. Auth is via the ESRP-Signing-Identity managed identity over
 #   the PowerShell-ESRP-Release WIF connection (UseMSIAuthentication: true) — the MI's AAD
 #   token proves identity to ESRP, so NO separate authentication cert is needed; only the
 #   request-signing cert (AuthSignCertName) is required:

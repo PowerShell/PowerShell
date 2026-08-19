@@ -147,7 +147,7 @@ jobs:
     - ${{ if eq(parameters.OfficialBuild, true) }}:
       # Dynamic-WINMSAPP1ST is the OneBranch profile name. Direct ESRP
       # inline operations use keyCode Dynamic with the WINMSAPP1ST template.
-      - task: EsrpCodeSigning@5
+      - task: EsrpCodeSigning@6
         displayName: Sign MsixBundle
         # Keep the task timeout above the ESRP session timeout so the task can
         # finish download, verification, and cleanup after the signing session.

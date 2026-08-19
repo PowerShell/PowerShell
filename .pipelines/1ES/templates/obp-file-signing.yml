@@ -17,7 +17,7 @@ parameters:
 #     UNSIGNED artifacts. This is the safe default for the rebuild branch
 #     and for any contributor without ESRP onboarding.
 #
-#   * TEST SIGNING MODE (variable group attached): real `EsrpCodeSigning@5`
+#   * TEST SIGNING MODE (variable group attached): real `EsrpCodeSigning@6`
 #     tasks fire against the MS-Sign Test KeyCodes (https://aka.ms/keycodes —
 #     auth-gated). Auth is via federated managed identity (no PFX cert in
 #     pipeline). Requires the linked AAD app registration to be onboarded to
@@ -136,7 +136,7 @@ steps:
 # This block is compile-time excluded from the NonOfficial pipeline so the prod
 # connection is never referenced there (avoids the Production Readiness Check).
 - ${{ if eq(parameters.OfficialBuild, true) }}:
-  - task: EsrpCodeSigning@5
+  - task: EsrpCodeSigning@6
     displayName: 'Sign 1st party files (ESRP prod signing)'
     condition: succeeded()
     inputs:
@@ -210,7 +210,7 @@ steps:
 
   # REAL TEST SIGNING (1st-party): runs only when EsrpSigningTest-PowerShell
   # variable group is attached. Uses MS-Sign Test KeyCode CP-466277.
-  - task: EsrpCodeSigning@5
+  - task: EsrpCodeSigning@6
     displayName: 'Sign 1st party files (ESRP test signing)'
     condition: and(succeeded(), ne(variables['EsrpTestConnectionName'], ''))
     inputs:
@@ -314,7 +314,7 @@ steps:
 # production connection PowerShell-ESRP-Release against PROD KeyCode CP-231522
 # (was $(msft_3rd_party_cert_id)). Compile-time excluded from NonOfficial.
 - ${{ if eq(parameters.OfficialBuild, true) }}:
-  - task: EsrpCodeSigning@5
+  - task: EsrpCodeSigning@6
     displayName: 'Sign 3rd Party files (ESRP prod signing)'
     condition: succeeded()
     inputs:
@@ -383,7 +383,7 @@ steps:
   # REAL TEST SIGNING (3rd-party): runs only when EsrpSigningTest-PowerShell
   # variable group is attached. Uses MS-Sign Test KeyCode CP-466279 (different
   # cert chain from 1P so we exercise both signing paths in TEST mode).
-  - task: EsrpCodeSigning@5
+  - task: EsrpCodeSigning@6
     displayName: 'Sign 3rd Party files (ESRP test signing)'
     condition: and(succeeded(), ne(variables['EsrpTestConnectionName'], ''))
     inputs:

@@ -262,7 +262,7 @@ jobs:
     displayName: Compress package files for signing
 
   - ${{ if eq(parameters.OfficialBuild, true) }}:
-    - task: EsrpCodeSigning@5
+    - task: EsrpCodeSigning@6
       displayName: Code sign macOS packages
       inputs:
         ConnectedServiceName: PowerShell-ESRP-Release
@@ -297,7 +297,7 @@ jobs:
       displayName: Code sign macOS packages (stub)
 
   - ${{ if eq(parameters.OfficialBuild, true) }}:
-    - task: EsrpCodeSigning@5
+    - task: EsrpCodeSigning@6
       displayName: Notarize macOS packages
       timeoutInMinutes: 120
       inputs:

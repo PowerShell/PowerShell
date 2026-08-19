@@ -162,7 +162,7 @@ jobs:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - ${{ if eq(parameters.OfficialBuild, true) }}:
-    - task: EsrpCodeSigning@5
+    - task: EsrpCodeSigning@6
       displayName: Sign ref assemblies
       inputs:
         ConnectedServiceName: PowerShell-ESRP-Release
@@ -248,7 +248,7 @@ jobs:
     displayName: 'Create NuGet Package for single file'
 
   - ${{ if eq(parameters.OfficialBuild, true) }}:
-    - task: EsrpCodeSigning@5
+    - task: EsrpCodeSigning@6
       displayName: Sign nupkg files
       inputs:
         ConnectedServiceName: PowerShell-ESRP-Release
@@ -340,7 +340,7 @@ jobs:
     displayName: Capture global tools
 
   - ${{ if eq(parameters.OfficialBuild, true) }}:
-    - task: EsrpCodeSigning@5
+    - task: EsrpCodeSigning@6
       displayName: Sign global tool nupkg files
       inputs:
         ConnectedServiceName: PowerShell-ESRP-Release

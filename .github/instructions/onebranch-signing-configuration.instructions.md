@@ -13,7 +13,7 @@ For migrated pipelines under `.pipelines/1ES`, do not use
 pipeline pattern instead:
 
 - Extend the official or unofficial 1ES v1 template.
-- Use `EsrpCodeSigning@5` for official production signing.
+- Use `EsrpCodeSigning@6` for official production signing.
 - Compile-time exclude the production service connection from unofficial
   pipelines and use an explicit stub there.
 - Authenticate the official task through `PowerShell-ESRP-Release` with
@@ -39,12 +39,12 @@ Use only these registered production key codes in PowerShell pipelines:
 - `Dynamic-WINMSAPP1ST`
 
 Do not pass the historical OneBranch profile suffix `-pgpdetached` to
-`EsrpCodeSigning@5`. Standard Linux DEB/RPM packages use `CP-450779-Pgp`;
+`EsrpCodeSigning@6`. Standard Linux DEB/RPM packages use `CP-450779-Pgp`;
 Mariner/Azure Linux RPM packages use `CP-459159-Pgp`. Pair both key codes with
 `operationSetCode: LinuxSign`; `PGPSign` is not a valid ESRP operation set.
 
 `Dynamic-WINMSAPP1ST` is the OneBranch profile name. In an inline
-`EsrpCodeSigning@5` operation, configure it as `keyCode: Dynamic` with
+`EsrpCodeSigning@6` operation, configure it as `keyCode: Dynamic` with
 `CertTemplateName: WINMSAPP1ST` and the corresponding certificate subject.
 
 `ob_restore_phase` is a OneBranch-only phase marker. In a 1ES job it must not

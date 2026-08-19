@@ -81,7 +81,7 @@
 #   gated by the runtime variable `EsrpTestConnectionName`. When this variable
 #   is empty (default), every signing site runs the original Write-Host stub
 #   and the pipeline stays UNSIGNED — preserving the green baseline. When the
-#   variable is non-empty, three sites switch to real `EsrpCodeSigning@5` tasks
+#   variable is non-empty, three sites switch to real `EsrpCodeSigning@6` tasks
 #   that exercise the ESRP signing path against MS-Sign Test KeyCodes.
 #
 #   TO ENABLE TEST SIGNING:
@@ -116,7 +116,7 @@
 #     CP-466277 -> CP-230012  (1P Authenticode prod)
 #     CP-466279 -> CP-231522  (3P Authenticode prod)
 #     CP-466277 -> CP-230012  (obj files / 1P prod)
-#     (nupkg)   -> CP-401405  (NuGet prod, needs new EsrpCodeSigning@5 task)
+#     (nupkg)   -> CP-401405  (NuGet prod, needs new EsrpCodeSigning@6 task)
 #     (Apple)   -> CP-401337-Apple (MacAppDeveloperSign prod)
 #
 #   PREDICATE CAVEAT (test signing mode):

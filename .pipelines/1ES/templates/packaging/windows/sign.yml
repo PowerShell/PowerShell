@@ -97,7 +97,7 @@ jobs:
   # is CP-230012, for standalone .msix files. The separate .msixbundle signing
   # job uses the Dynamic/WINMSAPP1ST Store profile.
   - ${{ if and(eq(parameters.OfficialBuild, true), or(eq(parameters.runtime, 'x64'), eq(parameters.runtime, 'x86'), eq(parameters.runtime, 'arm64'))) }}:
-    - task: EsrpCodeSigning@5
+    - task: EsrpCodeSigning@6
       displayName: Sign MSIX packages
       # Keep the task timeout above the ESRP session timeout so the task can
       # finish download, verification, and cleanup after the signing session.

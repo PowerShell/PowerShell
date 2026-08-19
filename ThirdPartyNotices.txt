@@ -3343,7 +3343,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.Xml 10.0.3 - MIT
+System.Security.Cryptography.Xml 10.0.10 - MIT
 
 
 Copyright (c) 2021
