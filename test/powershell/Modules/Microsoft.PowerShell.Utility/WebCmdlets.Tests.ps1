@@ -3035,6 +3035,20 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         1..$maxLinksToFollow | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
     }
 
+    It "Validate Invoke-RestMethod -FollowRelLink keeps the authorization header on relation links within the origin" {
+        # A rel link is a URL the same server advertised in its own 'Link' header, so the credentials
+        # the caller supplied for the API being paged still apply. Dropping the header here leaves
+        # -FollowRelLink unable to page an authenticated API, and does so silently against a server
+        # that permits anonymous reads: see #27861.
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 3}
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink -Headers @{Authorization = 'test'}"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Error | Should -BeNullOrEmpty
+        $result.Output.Count | Should -BeExactly 3
+        1..3 | ForEach-Object { $result.Output[$_ - 1].headers.Authorization | Should -BeExactly 'test' }
+    }
+
     It "Validate Invoke-RestMethod quietly ignores invalid Link Headers if -FollowRelLink is specified: <type>" -TestCases @(
         @{ type = "noUrl" }
         @{ type = "malformed" }
