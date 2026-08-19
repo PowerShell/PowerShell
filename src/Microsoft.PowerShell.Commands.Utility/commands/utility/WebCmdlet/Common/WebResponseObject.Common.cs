@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
 
-            // Use ASCII encoding for the RawContent visual view of the content.
+            // Use the response encoding for the RawContent visual view of the content.
             if (Content?.Length > 0)
             {
                 raw.Append(ToString());
@@ -184,7 +184,13 @@ namespace Microsoft.PowerShell.Commands
                 return string.Empty;
             }
 
-            char[] stringContent = Encoding.ASCII.GetChars(Content);
+            // Decode using the response's character set when available so non-ASCII
+            // content is preserved. Fall back to UTF-8, which is a safe superset of
+            // ASCII and the default encoding used elsewhere in the web cmdlets.
+            string? characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
+            StreamHelper.TryGetEncoding(characterSet, out Encoding encoding);
+
+            char[] stringContent = encoding.GetChars(Content);
             for (int counter = 0; counter < stringContent.Length; counter++)
             {
                 if (!IsPrintable(stringContent[counter]))
