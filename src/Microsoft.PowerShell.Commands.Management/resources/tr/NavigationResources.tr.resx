@@ -118,75 +118,75 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DeleteHasChildrenPrompt" xml:space="preserve">
-    <value>The specified path is a container that has child items. Do you want to delete this container and its child items?</value>
+    <value>Belirtilen yol, alt öğeleri olan bir kapsayıcıdır. Bu kapsayıcıyı ve alt öğelerini silmek istiyor musunuz?</value>
   </data>
   <data name="DeletePrompt" xml:space="preserve">
-    <value>Do you want to delete the specified item?</value>
+    <value>Belirtilen öğeyi silmek istiyor musunuz?</value>
   </data>
   <data name="CopyToExistingPrompt" xml:space="preserve">
-    <value>Cannot copy because the specified destination already exists. Do you want to overwrite the existing content?</value>
+    <value>Belirtilen hedef zaten var olduğu için kopyalanamıyor. Var olan içeriğin üzerine yazmak istiyor musunuz?</value>
   </data>
   <data name="NewDriveConfirmAction" xml:space="preserve">
-    <value>New drive</value>
+    <value>Yeni sürücü</value>
   </data>
   <data name="NewDriveConfirmResourceTemplate" xml:space="preserve">
-    <value>Name: {0} Provider: {1} Root: {2}</value>
+    <value>Ad: {0} Sağlayıcı: {1} Kök: {2}</value>
   </data>
   <data name="RemoveDriveConfirmAction" xml:space="preserve">
-    <value>Remove Drive</value>
+    <value>Sürücüyü kaldır</value>
   </data>
   <data name="RemoveDriveConfirmResourceTemplate" xml:space="preserve">
-    <value>Name: {0} Provider: {1} Root: {2}</value>
+    <value>Ad: {0} Sağlayıcı: {1} Kök: {2}</value>
   </data>
   <data name="RemoveDriveInUse" xml:space="preserve">
-    <value>Cannot remove drive '{0}' because it is in use.</value>
+    <value>‘{0}' sürücüsü kullanımda olduğu için kaldırılamıyor.</value>
   </data>
   <data name="RemoveItemWithChildren" xml:space="preserve">
-    <value>The item at {0} has children and the Recurse parameter was not specified. If you continue, all children will be removed with the item. Are you sure you want to continue?</value>
+    <value>{0} konumundaki öğenin alt öğeleri var ve Recurse parametresi belirtilmedi. Devam ederseniz, tüm çocuklar öğe ile birlikte kaldırılacaktır. Devam etmek istediğinizden emin misiniz?</value>
   </data>
   <data name="RemoveItemInUse" xml:space="preserve">
-    <value>Cannot remove the item at '{0}' because it is in use.</value>
+    <value>‘{0}' konumundaki öğe kullanımda olduğu için kaldırılamıyor.</value>
   </data>
   <data name="ItemNotFound" xml:space="preserve">
-    <value>An object at the specified path {0} does not exist, or has been filtered by the -Include or -Exclude parameter.</value>
+    <value>Belirtilen {0} yolundaki nesne yok veya -Include ya da -Exclude parametresi tarafından filtrelenmiş.</value>
   </data>
   <data name="SetContentAction" xml:space="preserve">
-    <value>Set Content</value>
+    <value>İçerik Ayarla</value>
   </data>
   <data name="SetContentTarget" xml:space="preserve">
-    <value>Path: {0}</value>
+    <value>Yol: {0}</value>
   </data>
   <data name="AddContentAction" xml:space="preserve">
-    <value>Add Content</value>
+    <value>İçerik Ekle</value>
   </data>
   <data name="AddContentTarget" xml:space="preserve">
-    <value>Path: {0}</value>
+    <value>Yol: {0}</value>
   </data>
   <data name="MoveItemDoesntExist" xml:space="preserve">
-    <value>Cannot move item because the item at '{0}' does not exist.</value>
+    <value>‘{0}' konumundaki öğe bulunamadığı için öğe taşınamıyor.</value>
   </data>
   <data name="MoveItemInUse" xml:space="preserve">
-    <value>Cannot move item because the item at '{0}' is in use.</value>
+    <value>‘{0}' konumundaki öğe kullanımda olduğu için öğe taşınamıyor.</value>
   </data>
   <data name="RenameItemDoesntExist" xml:space="preserve">
-    <value>Cannot rename because item at '{0}' does not exist.</value>
+    <value>Belirtilen konumdaki '{0}' öğesi yeniden adlandırılamıyor çünkü bu öğe yok.</value>
   </data>
   <data name="RenamedItemInUse" xml:space="preserve">
-    <value>Cannot rename the item at '{0}' because it is in use.</value>
+    <value>‘{0}' konumundaki öğe kullanımda olduğu için yeniden adlandırılamıyor.</value>
   </data>
   <data name="ParsePathFormatError" xml:space="preserve">
-    <value>Cannot parse path because path '{0}' does not have a qualifier specified.</value>
+    <value>‘{0}' yolu bir niteleyici belirtilmediği için ayrıştırılamıyor.</value>
   </data>
   <data name="CreateAction" xml:space="preserve">
-    <value>Begin</value>
+    <value>Başlat</value>
   </data>
   <data name="RollbackAction" xml:space="preserve">
-    <value>Rollback</value>
+    <value>Geri alma</value>
   </data>
   <data name="CommitAction" xml:space="preserve">
-    <value>Commit</value>
+    <value>İşle</value>
   </data>
   <data name="TransactionResource" xml:space="preserve">
-    <value>Current transaction</value>
+    <value>Geçerli işlem</value>
   </data>
 </root>

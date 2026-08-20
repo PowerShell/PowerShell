@@ -118,147 +118,147 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="VariableBreakpointString" xml:space="preserve">
-    <value>Variable breakpoint on '${0}' ({1} access)</value>
+    <value>Punto de interrupción variable en "${0}" (acceso de {1})</value>
   </data>
   <data name="VariableScriptBreakpointString" xml:space="preserve">
-    <value>Variable breakpoint on '{0}:${1}' ({2} access)</value>
+    <value>Punto de interrupción variable en "{0}:${1}" (acceso de {2})</value>
   </data>
   <data name="LineBreakpointString" xml:space="preserve">
-    <value>Line breakpoint on '{0}:{1}'</value>
+    <value>Punto de interrupción de línea en "{0}:{1}"</value>
   </data>
   <data name="StatementBreakpointString" xml:space="preserve">
-    <value>Line breakpoint on '{0}:{1}, {2}'</value>
+    <value>Punto de interrupción de línea en "{0}:{1}, {2}"</value>
   </data>
   <data name="CommandBreakpointString" xml:space="preserve">
-    <value>Command breakpoint on '{0}'</value>
+    <value>Punto de interrupción de comando en "{0}"</value>
   </data>
   <data name="CommandScriptBreakpointString" xml:space="preserve">
-    <value>Command breakpoint on '{0}:{1}'</value>
+    <value>Punto de interrupción de comando en "{0}:{1}"</value>
   </data>
   <data name="WarningBreakpointWillNotBeHit" xml:space="preserve">
-    <value>Breakpoint {0} will not be hit</value>
+    <value>No se alcanzará el punto de interrupción {0}</value>
   </data>
   <data name="StepHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Single step (step into functions, scripts, etc.)</value>
+    <value> {0}, {1,-16} Un solo paso (ir a funciones, scripts, etc.)</value>
   </data>
   <data name="StepOverHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Step to next statement (step over functions, scripts, etc.)</value>
+    <value> {0}, {1,-16} Ir a la siguiente instrucción (paso a paso por funciones, scripts, etc.)</value>
   </data>
   <data name="StepOutHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Step out of the current function, script, etc.</value>
+    <value> {0}, {1,-16} Salga de la función, script, etc. actual.</value>
   </data>
   <data name="ContinueHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Continue operation</value>
+    <value> {0}, {1,-16} Continuar la operación</value>
   </data>
   <data name="StopHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Stop operation and exit the debugger</value>
+    <value> {0}, {1,-16} Detener la operación y salir del depurador</value>
   </data>
   <data name="GetStackTraceHelp" xml:space="preserve">
-    <value> {0}, Get-PSCallStack Display call stack</value>
+    <value> {0}, Mostrar la pila de llamadas Get-PSCallStack</value>
   </data>
   <data name="ListHelp" xml:space="preserve">
-    <value> {0}, {1,-16} List source code for the current script.  </value>
+    <value> {0}, {1,-16} Muestre el código fuente del script actual.  </value>
   </data>
   <data name="AdditionalListHelp1" xml:space="preserve">
-    <value>                     Use "list" to start from the current line, "list &lt;m&gt;"  </value>
+    <value>                     Use "list" para empezar desde la línea actual, "list &lt;m&gt;"  </value>
   </data>
   <data name="AdditionalListHelp2" xml:space="preserve">
-    <value>                     to start from line &lt;m&gt;, and "list &lt;m&gt; &lt;n&gt;" to list &lt;n&gt; </value>
+    <value>                     para empezar desde la línea &lt;m&gt; y "list &lt;m&gt; &lt;n&gt;" para enumerar &lt;n&gt; </value>
   </data>
   <data name="AdditionalListHelp3" xml:space="preserve">
-    <value>                     lines starting from line &lt;m&gt;</value>
+    <value>                     líneas a partir de la línea &lt;m&gt;</value>
   </data>
   <data name="EnterHelp" xml:space="preserve">
-    <value> &lt;enter&gt;             Repeat last command if it was {0}, {1} or {2}</value>
+    <value> &lt;enter&gt;             Repita el último comando si fue {0}, {1} o {2}</value>
   </data>
   <data name="HelpCommandHelp" xml:space="preserve">
-    <value> {0}, {1,-16} displays this help message.</value>
+    <value> {0}, {1,-16} muestra este mensaje de ayuda.</value>
   </data>
   <data name="PromptHelp" xml:space="preserve">
-    <value>For instructions about how to customize your debugger prompt, type "help about_prompt".</value>
+    <value>Para obtener instrucciones sobre cómo personalizar la indicación del depurador, escriba "help about_prompt".</value>
   </data>
   <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
     <value>
-The current session does not support debugging; operation will continue.
+La sesión actual no admite la depuración; la operación continuará.
 
 </value>
   </data>
   <data name="LocationFormat" xml:space="preserve">
-    <value>{0}: line {1}</value>
+    <value>{0}: línea {1}</value>
   </data>
   <data name="NoSourceCode" xml:space="preserve">
-    <value>There is no source code available.</value>
+    <value>No hay código fuente disponible.</value>
   </data>
   <data name="BadStartFormat" xml:space="preserve">
-    <value>The starting line must be a positive integer no greater than {0}</value>
+    <value>La línea inicial debe ser un entero positivo no mayor que {0}</value>
   </data>
   <data name="BadCountFormat" xml:space="preserve">
-    <value>The line count must be a positive integer.</value>
+    <value>El recuento de líneas debe ser un entero positivo.</value>
   </data>
   <data name="NoFile" xml:space="preserve">
-    <value>&lt;No file&gt;</value>
+    <value>&lt;No hay ningún archivo&gt;</value>
   </data>
   <data name="StackTraceFormat" xml:space="preserve">
-    <value>at {0}, {1}: line {2}</value>
+    <value>en {0}, {1}: línea {2}</value>
   </data>
   <data name="CannotProcessDebuggerCommandNotStopped" xml:space="preserve">
-    <value>The debugger cannot process commands unless it is in the Stopped state.</value>
+    <value>El depurador no puede procesar comandos a menos que esté en estado Detenido.</value>
   </data>
   <data name="CannotSetDebuggerAction" xml:space="preserve">
-    <value>SetDebugAction is not implemented for the local script debugger.</value>
+    <value>SetDebugAction no está implementado para el depurador de scripts local.</value>
   </data>
   <data name="CannotSetRemoteDebuggerAction" xml:space="preserve">
-    <value>The debugger cannot set a resume action because the debugger in the remote session is not in a Stopped state.</value>
+    <value>El depurador no puede establecer una acción de reanudación porque el depurador de la sesión remota no está en estado Detenido.</value>
   </data>
   <data name="CannotStartJobDebuggingDebuggerBusy" xml:space="preserve">
-    <value>The job cannot be debugged because the debugger is currently busy.</value>
+    <value>No se puede depurar el trabajo porque el depurador está ocupado actualmente.</value>
   </data>
   <data name="NoDebuggableJobsFound" xml:space="preserve">
-    <value>The provided job and all child jobs were examined but no jobs were found that could be debugged.  In order to debug a job or child job the job must support debugging and also be in a running state.</value>
+    <value>Se examinó el trabajo proporcionado y todos los trabajos secundarios, pero no se encontró ningún trabajo que pudiera depurarse.  Para depurar un trabajo o un trabajo secundario, el trabajo debe admitir la depuración y estar en estado en ejecución.</value>
   </data>
   <data name="CannotEnableDebuggerSteppingInvalidMode" xml:space="preserve">
-    <value>The debugger cannot be enabled for step mode because the debugger is turned off with debug mode set to None.</value>
+    <value>No se puede habilitar el depurador para el modo de paso porque el depurador está desactivado con el modo de depuración establecido en Ninguno.</value>
   </data>
   <data name="RunspaceDebuggingDebuggerBusy" xml:space="preserve">
-    <value>The Runspace cannot be debugged because the host debugger is currently busy.</value>
+    <value>No se puede depurar el espacio de ejecución porque el depurador del host está ocupado actualmente.</value>
   </data>
   <data name="RunspaceDebuggingDebuggerIsOff" xml:space="preserve">
-    <value>Cannot debug Runspace. The Runspace debugger is currently turned off (DebugMode is 'None').</value>
+    <value>No se puede depurar el espacio de ejecución. El depurador del espacio de ejecución está desactivado actualmente (DebugMode es "None").</value>
   </data>
   <data name="RunspaceDebuggingInvalidRunspaceState" xml:space="preserve">
-    <value>Cannot debug a Runspace that is not in the Opened state. This Runspace state is {0}.</value>
+    <value>No se puede depurar un espacio de ejecución que no esté en el estado Abierto. Este espacio de ejecución está en el estado {0}.</value>
   </data>
   <data name="RunspaceDebuggingNoRunspaceDebugger" xml:space="preserve">
-    <value>Cannot debug Runspace. The Runspace {0} has no associated debugger.</value>
+    <value>No se puede depurar el espacio de ejecución. El espacio de ejecución {0} no tiene ningún depurador asociado.</value>
   </data>
   <data name="RemoteServerDebuggerAlreadyPushed" xml:space="preserve">
-    <value>The debugger is already overridden.</value>
+    <value>El depurador ya está invalidado.</value>
   </data>
   <data name="RemoteServerDebuggerCannotPushSelf" xml:space="preserve">
-    <value>Cannot push a debugger object onto itself.</value>
+    <value>No se puede insertar un objeto depurador sobre sí mismo.</value>
   </data>
   <data name="CommandNotSupportedForRemoteUseInServerDebugger" xml:space="preserve">
-    <value>The {0} command is not supported for remote use in the version of PowerShell that is running in the remote runspace.</value>
+    <value>El comando {0} no se admite para uso remoto en la versión de PowerShell que se ejecuta en el espacio de ejecución remoto.</value>
   </data>
   <data name="NestedRunspaceDebuggerPromptProcessName" xml:space="preserve">
-    <value>Process</value>
+    <value>Proceso</value>
   </data>
   <data name="DetachHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Continue operation and detach the debugger.</value>
+    <value> {0}, {1,-16} Continúe la operación y desasocie el depurador.</value>
   </data>
   <data name="InvalidDetachCommand" xml:space="preserve">
-    <value>The debugger detach command is not applicable.  The detach command only applies when debugging jobs and runspaces with the Debug-Job or Debug-Runspace cmdlets.</value>
+    <value>El comando de desasociar el depurador no está disponible.  El comando de desasociar solo se aplica al depurar trabajos y espacios de ejecución con los cmdlets Debug-Job o Debug-Runspace.</value>
   </data>
   <data name="InvalidRunspaceId" xml:space="preserve">
-    <value>Invalid runspace id: {0}</value>
+    <value>Id. de espacio de ejecución no válido: {0}</value>
   </data>
   <data name="UnableToGetRunspace" xml:space="preserve">
-    <value>Unable to get Runspace.</value>
+    <value>No se puede obtener el espacio de ejecución.</value>
   </data>
   <data name="BreakpointOrBreakpointListNotSpecified" xml:space="preserve">
-    <value>Breakpoint or BreakpointList must be specified.</value>
+    <value>Se debe especificar Breakpoint o BreakpointList.</value>
   </data>
   <data name="BreakpointListContainedANonBreakpoint" xml:space="preserve">
-    <value>The BreakpointList contained an item that was not a breakpoint.</value>
+    <value>BreakpointList contenía un elemento que no era un punto de interrupción.</value>
   </data>
 </root>

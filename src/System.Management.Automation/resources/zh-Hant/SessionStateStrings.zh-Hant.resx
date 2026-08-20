@@ -118,540 +118,540 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidProviderInfo" xml:space="preserve">
-    <value>Cannot process the returned information because the information returned from the provider's Start method was for a different provider than the one passed.</value>
+    <value>無法處理所傳回的資訊，因為從提供者的 Start 方法傳回的資訊適用於與通過提供者不同的提供者。</value>
   </data>
   <data name="InvalidProviderInfoNull" xml:space="preserve">
-    <value>Cannot process the returned information because the information returned from the provider's Start method was null.</value>
+    <value>無法處理所傳回的資訊，因為從提供者的 Start 方法傳回的資訊為 Null。</value>
   </data>
   <data name="GetItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 GetItem 作業失敗。{2}</value>
   </data>
   <data name="GetItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 GetItem 作業的動態參數。{2}</value>
   </data>
   <data name="SetItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the SetItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 SetItem 作業失敗。{2}</value>
   </data>
   <data name="SetItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the SetItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 SetItem 作業的動態參數。{2}</value>
   </data>
   <data name="ClearItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the ClearItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 ClearItem 作業失敗。{2}</value>
   </data>
   <data name="InvokeDefaultActionProviderException" xml:space="preserve">
-    <value>Attempting to perform the InvokeDefaultAction operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 InvokeDefaultAction 作業失敗。{2}</value>
   </data>
   <data name="InvokeDefaultActionDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the InvokeDefaultAction operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 InvokeDefaultAction 作業的動態參數。{2}</value>
   </data>
   <data name="ItemExistsProviderException" xml:space="preserve">
-    <value>Attempting to perform the ItemExists operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 ItemExists 作業失敗。{2}</value>
   </data>
   <data name="ItemExistsDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the ItemExists operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 ItemExists 作業的動態參數。{2}</value>
   </data>
   <data name="IsValidPathProviderException" xml:space="preserve">
-    <value>Attempting to perform the IsValidPath operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 IsValidPath 作業失敗。{2}</value>
   </data>
   <data name="IsItemContainerProviderException" xml:space="preserve">
-    <value>Attempting to perform the IsItemContainer operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 IsItemContainer 作業失敗。{2}</value>
   </data>
   <data name="RemoveItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the RemoveItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 RemoveItem 作業失敗。{2}</value>
   </data>
   <data name="GetChildrenProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetChildItems operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 GetChildItems 作業失敗。{2}</value>
   </data>
   <data name="GetChildrenDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetChildItems operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 GetChildItems 作業的動態參數。{2}</value>
   </data>
   <data name="GetChildNamesProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetChildNames operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 GetChildNames 作業失敗。{2}</value>
   </data>
   <data name="GetChildNamesDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetChildNames operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 GetChildNames 作業的動態參數。{2}</value>
   </data>
   <data name="RenameItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the RenameItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 RenameItem 作業失敗。{2}</value>
   </data>
   <data name="RenameItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the RenameItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 RenameItem 作業的動態參數。{2}</value>
   </data>
   <data name="NewItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the NewItem operation on the '{0}' provider failed for the path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 NewItem 作業失敗。{2}</value>
   </data>
   <data name="NewItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the NewItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 NewItem 作業的動態參數。{2}</value>
   </data>
   <data name="HasChildItemsProviderException" xml:space="preserve">
-    <value>Attempting to perform the HasChildItems operation on the '{0}' provider failed for the path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 HasChildItems 作業失敗。{2}</value>
   </data>
   <data name="CopyItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the CopyItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 CopyItem 作業失敗。{2}</value>
   </data>
   <data name="CopyItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the CopyItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 CopyItem 作業的動態參數。{2}</value>
   </data>
   <data name="GetParentPathProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetParentPath operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 GetParentPath 作業失敗。{2}</value>
   </data>
   <data name="NormalizeRelativePathProviderException" xml:space="preserve">
-    <value>Attempting to perform the NormalizeRelativePath operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 NormalizeRelativePath 作業失敗。{2}</value>
   </data>
   <data name="MakePathProviderException" xml:space="preserve">
-    <value>Attempting to perform the MakePath operation operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 MakePath 作業失敗。{2}</value>
   </data>
   <data name="GetChildNameProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetChildName operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 GetChildName 作業失敗。{2}</value>
   </data>
   <data name="MoveItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the MoveItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 MoveItem 作業失敗。{2}</value>
   </data>
   <data name="MoveItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the MoveItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 MoveItem 作業的動態參數。{2}</value>
   </data>
   <data name="GetPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 GetProperty 作業失敗。{2}</value>
   </data>
   <data name="GetPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 GetProperty 作業的動態參數。{2}</value>
   </data>
   <data name="SetPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the SetProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 SetProperty 作業失敗。{2}</value>
   </data>
   <data name="SetPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the SetProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 SetProperty 作業的動態參數。{2}</value>
   </data>
   <data name="ClearPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the ClearProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 ClearProperty 作業失敗。{2}</value>
   </data>
   <data name="ClearPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the ClearProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 ClearProperty 作業的動態參數。{2}</value>
   </data>
   <data name="NewPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the NewProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 NewProperty 作業失敗。{2}</value>
   </data>
   <data name="NewPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the NewProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 NewProperty 作業的動態參數。{2}</value>
   </data>
   <data name="RemovePropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the RemoveProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 RemoveProperty 作業失敗。{2}</value>
   </data>
   <data name="RemovePropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the RemoveProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 RemoveProperty 作業的動態參數。{2}</value>
   </data>
   <data name="CopyPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the CopyProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 CopyProperty 作業失敗。{2}</value>
   </data>
   <data name="CopyPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the CopyProperty operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法針對路徑 '{1}' 的 '{0}' 提供者，擷取 CopyProperty 作業的動態參數。{2}</value>
   </data>
   <data name="MovePropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the MoveProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 MoveProperty 作業失敗。{2}</value>
   </data>
   <data name="MovePropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the MoveProperty operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法針對路徑 '{1}' 的 '{0}' 提供者，擷取 MoveProperty 作業的動態參數。{2}</value>
   </data>
   <data name="RenamePropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the RenameProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 RenameProperty 作業失敗。{2}</value>
   </data>
   <data name="RenamePropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>Dynamic parameters for RenameProperty cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法針對路徑 '{1}' 的 '{0}' 提供者，擷取 RenameProperty 的參數。{2}</value>
   </data>
   <data name="GetContentReaderProviderException" xml:space="preserve">
-    <value>Content reader cannot be retrieved for the '{0}' provider for the path '{1}'. {2}</value>
+    <value>無法針對路徑 '{1}' 的 '{0}' 提供者，擷取內容讀取器。{2}</value>
   </data>
   <data name="GetContentReaderDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetContentReader operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法針對路徑 '{1}' 的 '{0}' 提供者，擷取 GetContentReader 作業的動態參數。{2}</value>
   </data>
   <data name="GetContentWriterProviderException" xml:space="preserve">
-    <value>Content writer cannot be retrieved for the '{0}' provider for the path '{1}'. {2}</value>
+    <value>無法針對路徑 '{1}' 的 '{0}' 提供者，擷取內容寫入器。{2}</value>
   </data>
   <data name="GetContentWriterDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetContentWriter operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法針對路徑 '{1}' 的 '{0}' 提供者，擷取 GetContentWriter 作業的動態參數。{2}</value>
   </data>
   <data name="GetContainerContentException" xml:space="preserve">
-    <value>Unable to get content because it is a directory: '{0}'. Please use 'Get-ChildItem' instead.</value>
+    <value>無法取得內容，因為它是目錄: '{0}'。請改為使用 'Get-ChildItem'。</value>
   </data>
   <data name="WriteContainerContentException" xml:space="preserve">
-    <value>Unable to write content because it is a directory: '{0}'.</value>
+    <value>無法寫入內容，因為它是目錄: '{0}'。</value>
   </data>
   <data name="LocationUndoStackIsEmpty" xml:space="preserve">
-    <value>There is no location history left to navigate backwards.</value>
+    <value>沒有可供向後瀏覽的位置歷程記錄。</value>
   </data>
   <data name="LocationRedoStackIsEmpty" xml:space="preserve">
-    <value>There is no location history left to navigate forwards.</value>
+    <value>沒有可供向前瀏覽的位置歷程記錄。</value>
   </data>
   <data name="BoundedStackIsEmpty" xml:space="preserve">
-    <value>The BoundedStack is empty.</value>
+    <value>BoundedStack 是空的。</value>
   </data>
   <data name="ClearContentProviderException" xml:space="preserve">
-    <value>Attempting to perform the ClearContent operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 ClearContent 作業失敗。{2}</value>
   </data>
   <data name="ClearDirectoryContent" xml:space="preserve">
-    <value>Unable to clear content of '{0}' because it is a directory. Clear-Content is only supported on files.</value>
+    <value>無法清除 '{0}' 的內容，因為它是目錄。僅在檔案上支援 Clear-Content。</value>
   </data>
   <data name="ClearContentDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the ClearContent operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>無法從路徑 '{1}' 的 '{0}' 提供者，擷取 ClearContent 作業的動態參數。{2}</value>
   </data>
   <data name="GetSecurityDescriptorProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetSecurityDescriptor operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 GetSecurityDescriptor 作業失敗。{2}</value>
   </data>
   <data name="SetSecurityDescriptorProviderException" xml:space="preserve">
-    <value>Attempting to perform the SetSecurityDescriptor operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>嘗試針對路徑 '{1}' 在 '{0}' 提供者上執行 SetSecurityDescriptor 作業失敗。{2}</value>
   </data>
   <data name="ProviderStartException" xml:space="preserve">
-    <value>Attempting to perform the Start operation on the '{0}' provider failed. {1}</value>
+    <value>嘗試在 '{0}' 提供者上執行 Start 作業失敗。{1}</value>
   </data>
   <data name="InitializeDefaultDrivesException" xml:space="preserve">
-    <value>Attempting to perform the InitializeDefaultDrives operation on the '{0}' provider failed.</value>
+    <value>嘗試在 '{0}' 提供者上執行 InitializDefaultDrives 作業失敗。</value>
   </data>
   <data name="NewDriveProviderException" xml:space="preserve">
-    <value>Attempting to perform the NewDrive operation on the '{0}' provider failed for the drive with root '{1}'. {2}</value>
+    <value>嘗試針對根目錄為 '{1}' 的磁碟機在 '{0}' 提供者上執行 NewDrive 作業失敗。{2}</value>
   </data>
   <data name="NewDriveDynamicParametersProviderException" xml:space="preserve">
-    <value>Dynamic parameters for NewDrive cannot be retrieved for the '{0}' provider. {1}</value>
+    <value>無法為 '{0}' 提供者擷取 NewDrive 的動態參數。{1}</value>
   </data>
   <data name="RemoveDriveProviderException" xml:space="preserve">
-    <value>The invocation of RemoveDrive on the '{0}' provider failed. {1}</value>
+    <value>在 '{0}' 提供者上叫用 RemoveDrive 失敗。{1}</value>
   </data>
   <data name="DriveRemovalPreventedByProvider" xml:space="preserve">
-    <value>Drive '{0}' cannot be removed because the provider '{1}' prevented it.</value>
+    <value>無法移除磁碟機 '{0}'，因為提供者 '{1}' 防止這麼做。</value>
   </data>
   <data name="NormalizeRelativePathOutsideBase" xml:space="preserve">
-    <value>The path '{0}' referred to an item that was outside the base '{1}'.</value>
+    <value>路徑 '{0}' 是指基底 '{1}' 以外的項目。</value>
   </data>
   <data name="ProviderSeekError" xml:space="preserve">
-    <value>The invocation of Seek on the '{0}' provider's content writer failed for path '{1}'. {2}</value>
+    <value>針對 '{1}' 路徑在 '{0}' 提供者的內容寫入器上叫用 Seek 失敗。{2}</value>
   </data>
   <data name="ProviderContentCloseError" xml:space="preserve">
-    <value>The invocation of Close on the '{0}' provider's content reader or writer failed for path '{1}'. {2}</value>
+    <value>針對 '{1}' 路徑在 '{0}' 提供者的內容讀取器或寫入器上叫用 Close 失敗。{2}</value>
   </data>
   <data name="ProviderContentReadError" xml:space="preserve">
-    <value>The invocation of Read on the '{0}' provider's content reader failed for path '{1}'. {2}</value>
+    <value>針對 '{1}' 路徑在 '{0}' 提供者的內容讀取器上叫用 Read 失敗。{2}</value>
   </data>
   <data name="ProviderContentWriteError" xml:space="preserve">
-    <value>The invocation of Write on the '{0}' provider's content writer failed for path '{1}'. {2}</value>
+    <value>針對 '{1}' 路徑在 '{0}' 提供者的內容寫入器上叫用 Write 失敗。{2}</value>
   </data>
   <data name="ProviderCannotBeUsedAsVariable" xml:space="preserve">
-    <value>The provider '{0}' cannot be used to get or set data using the variable syntax. {2}</value>
+    <value>提供者 '{0}' 無法使用變數語法來取得或設定資料。{2}</value>
   </data>
   <data name="ProviderVariableSyntaxInvalid" xml:space="preserve">
-    <value>The variable syntax cannot be used to get or set data in the provider. {2}</value>
+    <value>變數語法無法用於在提供者中取得或設定資料。{2}</value>
   </data>
   <data name="AliasNotWritable" xml:space="preserve">
-    <value>Alias is not writeable because alias {0} is read-only or constant and cannot be written to.</value>
+    <value>無法寫入別名，因為別名 {0} 是唯讀或常數，因此無法寫入其中。</value>
   </data>
   <data name="FunctionNotWritable" xml:space="preserve">
-    <value>Cannot write to function {0} because it is read-only or constant.</value>
+    <value>無法寫入至函式 {0}，因為它是唯讀或常數。</value>
   </data>
   <data name="VariableNotWritable" xml:space="preserve">
-    <value>Cannot overwrite variable {0} because it is read-only or constant.</value>
+    <value>無法覆寫變數 {0}，因為它是唯讀或常數。</value>
   </data>
   <data name="VariableIsPrivate" xml:space="preserve">
-    <value>Cannot access the variable '${0}' because it is a private variable.</value>
+    <value>無法存取變數 '${0}'，因為它是私人變數。</value>
   </data>
   <data name="NamedCommandIsPrivate" xml:space="preserve">
-    <value>Cannot access the command '{0}' because it is a private command.</value>
+    <value>無法存取命令 '{0}'，因為它是私人命令。</value>
   </data>
   <data name="CommandIsPrivate" xml:space="preserve">
-    <value>Cannot access the command because it is a private command.</value>
+    <value>無法存取命令，因為它是私人命令。</value>
   </data>
   <data name="ResourceIsPrivate" xml:space="preserve">
-    <value>Cannot access the session state resource because it is a private resource. </value>
+    <value>無法存取工作階段狀態資源，因為它是私人資源。</value>
   </data>
   <data name="AliasNotRemovable" xml:space="preserve">
-    <value>Alias was not removed because alias {0} is constant or read-only.</value>
+    <value>未移除別名，因為別名 {0} 為常數或唯讀。</value>
   </data>
   <data name="FunctionNotRemovable" xml:space="preserve">
-    <value>Cannot remove function {0} because it is constant.</value>
+    <value>無法移除函式 {0}，因為它是常數。</value>
   </data>
   <data name="VariableNotRemovable" xml:space="preserve">
-    <value>Cannot remove variable {0} because it is constant or read-only. If the variable is read-only, try the operation again specifying the Force option.</value>
+    <value>無法移除變數 {0}，因為它是常數或唯讀。如果變數是唯讀，請再次嘗試指定 Force 選項的作業。</value>
   </data>
   <data name="AliasIsConstant" xml:space="preserve">
-    <value>Alias {0} cannot be modified because it is constant.</value>
+    <value>無法修改別名 {0}，因為它是常數。</value>
   </data>
   <data name="AliasIsReadOnly" xml:space="preserve">
-    <value>Alias {0} cannot be modified because it is read-only.</value>
+    <value>無法修改別名 {0}，因為它是唯讀。</value>
   </data>
   <data name="FunctionIsConstant" xml:space="preserve">
-    <value>Cannot modify function {0} because it is constant.</value>
+    <value>無法修改函式 {0}，因為它是常數。</value>
   </data>
   <data name="FunctionIsReadOnly" xml:space="preserve">
-    <value>Cannot modify function {0} because it is read-only.</value>
+    <value>無法修改函式 {0}，因為它是唯讀。</value>
   </data>
   <data name="AliasCannotBeMadeConstant" xml:space="preserve">
-    <value>Alias {0} cannot be made constant after it has been created. Aliases can only be made constant at creation time.</value>
+    <value>別名 {0} 在建立後就無法成為常數。別名只能在建立時成為常數。</value>
   </data>
   <data name="FunctionCannotBeMadeConstant" xml:space="preserve">
-    <value>Existing function {0} cannot be made constant. Functions can be made constant only at creation time.</value>
+    <value>現有函式 {0} 不能成為常數。函式只能在建立時成為常數。</value>
   </data>
   <data name="VariableCannotBeMadeConstant" xml:space="preserve">
-    <value>Existing variable {0} cannot be made constant. Variables can be made constant only at creation time.</value>
+    <value>現有變數 {0} 不能成為常數。變數只能在建立時成為常數。</value>
   </data>
   <data name="AliasAllScopeOptionCannotBeRemoved" xml:space="preserve">
-    <value>The AllScope option cannot be removed from the alias '{0}'.</value>
+    <value>AllScope 選項無法從別名 '{0}' 移除。</value>
   </data>
   <data name="FunctionAllScopeOptionCannotBeRemoved" xml:space="preserve">
-    <value>The AllScope option cannot be removed from the function '{0}'.</value>
+    <value>AllScope 選項無法從函式 '{0}' 移除。</value>
   </data>
   <data name="VariableAllScopeOptionCannotBeRemoved" xml:space="preserve">
-    <value>The AllScope option cannot be removed from the variable '{0}'.</value>
+    <value>AllScope 選項無法從變數 '{0}' 移除。</value>
   </data>
   <data name="ScopedFunctionMustHaveName" xml:space="preserve">
-    <value>The function definition '{0}' contained a scope qualifier but no function name.</value>
+    <value>函式定義 '{0}' 包含範圍限定詞，但沒有函式名稱。</value>
   </data>
   <data name="RemoveDrivesBeforeRemovingProvider" xml:space="preserve">
-    <value>Cannot remove provider {0}. All drives associated with provider {0} must be removed before provider {0} can be removed.</value>
+    <value>無法移除提供者 {0}。必須先移除與提供者 {0} 相關聯的所有磁碟機，才能移除提供者 {0}。</value>
   </data>
   <data name="DriveNameIllegalCharacters" xml:space="preserve">
-    <value>Cannot process the drive name because the drive name contains one or more of the following characters that are not valid: ; ~ / \ . :</value>
+    <value>無法處理磁碟機名稱，因為磁碟機名稱包含下列一或多個無效字元: ; ~ / \ . :</value>
   </data>
   <data name="NewDriveProviderFailed" xml:space="preserve">
-    <value>New drive creation failed because the provider does not allow the creation of the new drive.</value>
+    <value>新磁碟機建立失敗，因為提供者不允許建立新磁碟機。</value>
   </data>
   <data name="StackNameResolvedToMultiple" xml:space="preserve">
-    <value>The provided value '{0}' resolved to more than one location stack.</value>
+    <value>提供的值 '{0}' 解析為多個位置堆疊。</value>
   </data>
   <data name="StackNotFound" xml:space="preserve">
-    <value>Cannot find location stack '{0}'. It does not exist or it is not a container.</value>
+    <value>找不到位置堆疊 '{0}'。它不存在或不是容器。</value>
   </data>
   <data name="PathNotFound" xml:space="preserve">
     <value>找不到路徑 '{0}'，因為它不存在。</value>
   </data>
   <data name="AliasNotFound" xml:space="preserve">
-    <value>Cannot find alias because alias '{0}' does not exist.</value>
+    <value>找不到別名，因為別名 '{0}' 不存在。</value>
   </data>
   <data name="PathResolvedToMultiple" xml:space="preserve">
-    <value>Cannot set the location because path '{0}' resolved to multiple containers. You can only set the location to a single container at a time.</value>
+    <value>無法設定位置，因為路徑 '{0}' 解析為多個容器。您一次只能將位置設定為單一容器。</value>
   </data>
   <data name="VariablePathResolvedToMultiple" xml:space="preserve">
-    <value>Cannot process variable because variable path '{0}' resolved to multiple items. You can get or set the variable value only one item at a time.</value>
+    <value>無法處理變數，因為變數路徑 '{0}' 解析為多個項目。您一次只能取得或設定一個項目的變數值。</value>
   </data>
   <data name="DriveNotFound" xml:space="preserve">
-    <value>Cannot find drive. A drive with the name '{0}' does not exist.</value>
+    <value>找不到磁碟機。沒有名為 '{0}' 的磁碟機。</value>
   </data>
   <data name="ProviderNotFound" xml:space="preserve">
-    <value>Cannot find a provider with the name '{0}'.</value>
+    <value>找不到名稱為 '{0}' 的提供者。</value>
   </data>
   <data name="ProviderNotFoundBadFormat" xml:space="preserve">
-    <value>Cannot find a provider with the name '{0}'. The name is not in the proper format. A provider name can only be alphanumeric characters, or a PowerShell snap-in name that is followed by a single '\', followed by alphanumeric characters.</value>
+    <value>找不到名稱為 '{0}' 的提供者。名稱的格式不正確。提供者名稱只能是英數字元，或後面依序接著單一 '\' 和英數字元的 PowerShell 嵌入式管理單元名稱。</value>
   </data>
   <data name="ProviderNameAmbiguous" xml:space="preserve">
-    <value>'{0}' resolved to more than one provider name. Possible matches include:{1}.</value>
+    <value>'{0}' 解析為多個提供者名稱。可能的相符項目包括: {1}。</value>
   </data>
   <data name="ProviderNotFoundInAssembly" xml:space="preserve">
-    <value>An error occurred attempting to create an instance of the provider. The provider type name of '{0}' could not be found in the assembly.</value>
+    <value>嘗試建立提供者的執行個體時發生錯誤。在組件中找不到 '{0}' 的提供者類型名稱。</value>
   </data>
   <data name="ProviderNameNotValid" xml:space="preserve">
-    <value>The specified provider name '{0}' cannot be used because it contains one or more of the following characters that are not valid: \ [ ] ? * :</value>
+    <value>無法使用指定的提供者名稱 '{0}'，因為它包含下列一或多個無效的字元: \ [ ] ? * :</value>
   </data>
   <data name="ProviderCtorException" xml:space="preserve">
-    <value>An error occurred attempting to create an instance of the provider '{0}'. {1} </value>
+    <value>嘗試建立提供者 '{0}' 的執行個體時發生錯誤。{1}</value>
   </data>
   <data name="VariableNotFound" xml:space="preserve">
-    <value>Cannot find a variable with the name '{0}'.</value>
+    <value>找不到名稱為 '{0}' 的變數。</value>
   </data>
   <data name="TraceSourceNotFound" xml:space="preserve">
-    <value>Cannot find a trace source with the name '{0}'.</value>
+    <value>找不到名稱為 '{0}' 的追蹤來源。</value>
   </data>
   <data name="DriveAlreadyExists" xml:space="preserve">
-    <value>A drive with the name '{0}' already exists.</value>
+    <value>名稱為 '{0}' 的磁碟機已經存在。</value>
   </data>
   <data name="VariableAlreadyExists" xml:space="preserve">
-    <value>A variable with name '{0}' already exists.</value>
+    <value>具有名稱 '{0}' 的變數已存在。</value>
   </data>
   <data name="AliasAlreadyExists" xml:space="preserve">
-    <value>The alias is not allowed, because an alias with the name '{0}' already exists.</value>
+    <value>不允許別名，因為名稱為 '{0}' 的別名已經存在。</value>
   </data>
   <data name="CmdletProviderAlreadyExists" xml:space="preserve">
-    <value>Cannot register the cmdlet provider because a cmdlet provider with the name '{0}' already exists.</value>
+    <value>無法登錄 Cmdlet 提供者，因為名稱為 '{0}' 的 Cmdlet 提供者已存在。</value>
   </data>
   <data name="MustBeFileSystemPath" xml:space="preserve">
-    <value>The path does not refer to a file system path.</value>
+    <value>路徑未參考檔案系統路徑。</value>
   </data>
   <data name="GlobalScopeCannotRemove" xml:space="preserve">
-    <value>Global scope cannot be removed.</value>
+    <value>無法移除全域範圍。</value>
   </data>
   <data name="ScopeIDExceedsAvailableScopes" xml:space="preserve">
-    <value>The scope number '{0}' exceeds the number of active scopes.</value>
+    <value>範圍編號 '{0}' 超過使用中範圍的數目。</value>
   </data>
   <data name="OnlyAbleToComparePSDriveInfo" xml:space="preserve">
-    <value>Cannot compare PSDriveInfo. A PSDriveInfo instance can be compared only to another PSDriveInfo instance.</value>
+    <value>無法比較 PSDriveInfo。PSDriveInfo 執行個體只能與另一個 PSDriveInfo 執行個體進行比較。</value>
   </data>
   <data name="OutputStreamingNotEnabled" xml:space="preserve">
-    <value>The cmdlet provider cannot stream the results because no cmdlet was specified through which to stream the output.</value>
+    <value>Cmdlet 提供者無法串流處理結果，因為未指定任何 Cmdlet 來串流處理輸出。</value>
   </data>
   <data name="ErrorStreamingNotEnabled" xml:space="preserve">
-    <value>The cmdlet provider cannot stream the results because no cmdlet was specified through which to stream the error.</value>
+    <value>Cmdlet 提供者無法串流處理結果，因為未指定任何 Cmdlet 來串流處理錯誤。</value>
   </data>
   <data name="HomePathNotSet" xml:space="preserve">
-    <value>Home location for this provider is not set. To set the home location, call "(get-psprovider '{0}').Home = 'path'".</value>
+    <value>未設定此提供者的首頁位置。若要設定首頁位置，請呼叫 "(get-psprovider '{0}').Home = 'path'”。</value>
   </data>
   <data name="NotProviderQualifiedPath" xml:space="preserve">
-    <value>The path is not in the correct format. Provider paths must contain a provider Id, followed by "::", followed by a provider specific path.</value>
+    <value>路徑的格式不正確。提供者路徑必須包含提供者識別碼，後面接著 "::"，再接著提供者特定路徑。</value>
   </data>
   <data name="MovePropertyDestinationResolveToSingle" xml:space="preserve">
-    <value>Cannot move the item because the destination path can resolve only to a single path.</value>
+    <value>無法移動項目，因為目的地路徑只能解析為單一路徑。</value>
   </data>
   <data name="MoveItemSourceAndDestinationNotSameProvider" xml:space="preserve">
-    <value>Cannot move the item because the source and destination paths did not resolve to the same provider.</value>
+    <value>無法移動項目，因為來源和目的地路徑未解析為相同的提供者。</value>
   </data>
   <data name="MoveItemPathMultipleDestinationNotContainer" xml:space="preserve">
-    <value>Cannot move the item because the source path points to one or more items and the destination path is not a container. Validate that the destination path is a container and try again.</value>
+    <value>無法移動項目，因為來源路徑指向一或多個項目，而且目的地路徑不是容器。驗證目的地路徑是否為容器，然後再試一次。</value>
   </data>
   <data name="MoveItemOneDestination" xml:space="preserve">
-    <value>Cannot move the item because the destination resolved to multiple paths. Specify a destination path that resolves to a single destination and try again.</value>
+    <value>無法移動項目，因為目的地解析為多個路徑。指定解析為單一目的地的目的地路徑，然後再試一次。</value>
   </data>
   <data name="CopyContainerItemToLeafError" xml:space="preserve">
-    <value>Container cannot be copied onto existing leaf item.</value>
+    <value>容器無法複製到現有的分葉項目。</value>
   </data>
   <data name="CopyContainerToContainerWithoutRecurseOrContainer" xml:space="preserve">
-    <value>Container cannot be copied to another container. The -Recurse or -Container parameter is not specified.</value>
+    <value>容器無法複製到另一個容器。未指定 -Recurse 或 -Container 參數。</value>
   </data>
   <data name="CopyItemSourceAndDestinationNotSameProvider" xml:space="preserve">
-    <value>Source and destination path did not resolve to the same provider.</value>
+    <value>來源和目的地路徑未解析為相同的提供者。</value>
   </data>
   <data name="RenameMultipleItemError" xml:space="preserve">
-    <value>Cannot rename item because the path resolved to multiple items. Only one item can be renamed at a time.</value>
+    <value>無法將項目重新命名，因為路徑解析為多個項目。一次只能重新命名一個項目。</value>
   </data>
   <data name="ProviderImplementationInconsistent" xml:space="preserve">
-    <value>The provider '{0}' cannot be used to resolve the path '{1}' because of an error in the provider.</value>
+    <value>提供者 '{0}' 無法用來解析 '{1}' 路徑，因為提供者發生錯誤。</value>
   </data>
   <data name="IContentCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot use interface. The IContentCmdletProvider interface is not implemented by this provider.</value>
+    <value>無法使用介面。此提供者未實作 IContentCmdletProvider 介面。</value>
   </data>
   <data name="IPropertyCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot use interface. The IPropertyCmdletProvider interface is not supported by this provider.</value>
+    <value>無法使用介面。此提供者不支援 IPropertyCmdletProvider 介面。</value>
   </data>
   <data name="IDynamicPropertyCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot use interface. The IDynamicPropertyCmdletProvider interface is not implemented by this provider.</value>
+    <value>無法使用介面。此提供者未實作 IDynamicPropertyCmdletProvider 介面。</value>
   </data>
   <data name="NavigationCmdletProvider_NotSupported" xml:space="preserve">
-    <value>The NavigationCmdletProvider methods are not supported by this provider.</value>
+    <value>此提供者不支援 NavigationCmdletProvider 方法。</value>
   </data>
   <data name="ContainerCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Provider methods not processed. The ContainerCmdletProvider methods are not supported by this provider.</value>
+    <value>未處理提供者方法。此提供者不支援 ContainerCmdletProvider 方法。</value>
   </data>
   <data name="ItemCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot call methods. The ItemCmdletProvider methods are not supported by this provider.</value>
+    <value>無法呼叫方法。此提供者不支援 ItemCmdletProvider 方法。</value>
   </data>
   <data name="DriveCmdletProvider_NotSupported" xml:space="preserve">
-    <value>DriveCmdletProvider methods are not supported by this provider.</value>
+    <value>此提供者不支援 DriveCmdletProvider 方法。</value>
   </data>
   <data name="CmdletProvider_NotSupported" xml:space="preserve">
-    <value>Provider operation stopped because the provider does not support this operation.</value>
+    <value>提供者作業已停止，因為提供者不支援此作業。</value>
   </data>
   <data name="CmdletProvider_NotSupportedRecursionDepth" xml:space="preserve">
-    <value>Provider operation stopped because the provider does not support the 'Depth' parameter.</value>
+    <value>提供者作業已停止，因為提供者不支援 'Depth' 參數。</value>
   </data>
   <data name="IContent_Seek_NotSupported" xml:space="preserve">
-    <value>Cannot call method. The content Seek method is not supported by this provider.</value>
+    <value>無法呼叫方法。此提供者不支援內容 Seek 方法。</value>
   </data>
   <data name="IContent_Clear_NotSupported" xml:space="preserve">
-    <value>Cannot perform the ClearContent operation. The ClearContent operation is not supported by this provider.</value>
+    <value>無法執行 ClearContent 作業。此提供者不支援 ClearContent 作業。</value>
   </data>
   <data name="Credentials_NotSupported" xml:space="preserve">
-    <value>The provider does not support the use of credentials. Perform the operation again without specifying credentials.</value>
+    <value>提供者不支援使用認證。請再次執行作業，而不指定認證。</value>
   </data>
   <data name="FileSystemProviderCredentials_NotSupported" xml:space="preserve">
-    <value>The FileSystem provider supports credentials only on the New-PSDrive cmdlet. Perform the operation again without specifying credentials.</value>
+    <value>FileSystem 提供者僅在 New-PSDrive Cmdlet 上支援認證。請再次執行作業，而不指定認證。</value>
   </data>
   <data name="Transactions_NotSupported" xml:space="preserve">
-    <value>The provider does not support transactions. Perform the operation again without the -UseTransaction parameter.</value>
+    <value>提供者不支援交易。在沒有 UseTransaction 參數的情況下再次執行作業。</value>
   </data>
   <data name="Filter_NotSupported" xml:space="preserve">
-    <value>Cannot call method. The provider does not support the use of filters.</value>
+    <value>無法呼叫方法。提供者不支援使用篩選條件。</value>
   </data>
   <data name="NewDriveCredentials_NotSupported" xml:space="preserve">
-    <value>Cannot create drive. The provider does not support the use of credentials.</value>
+    <value>無法建立磁碟機。提供者不支援使用認證。</value>
   </data>
   <data name="NewItemAlreadyExists" xml:space="preserve">
-    <value>The item at path '{0}' already exists.</value>
+    <value>路徑 '{0}' 上已有此項目。</value>
   </data>
   <data name="CopyItemDoesntExist" xml:space="preserve">
-    <value>Cannot copy item. Item at the path '{0}' does not exist.</value>
+    <value>無法複製項目。位於 '{0}' 路徑的項目不存在。</value>
   </data>
   <data name="RenameItemDoesntExist" xml:space="preserve">
-    <value>The item at the path '{0}' does not exist.</value>
+    <value>位於 '{0}' 路徑的項目不存在。</value>
   </data>
   <data name="AliasDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of the aliases stored in a session state</value>
+    <value>包含工作階段狀態中儲存之別名檢視的磁碟機</value>
   </data>
   <data name="EnvironmentDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of the environment variables for the process</value>
+    <value>包含處理序環境變數檢視的磁碟機</value>
   </data>
   <data name="FunctionDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of the functions stored in a session state</value>
+    <value>包含工作階段狀態中儲存之函式檢視的磁碟機</value>
   </data>
   <data name="VariableDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of those variables stored in a session state</value>
+    <value>包含工作階段狀態中儲存之變數檢視的磁碟機</value>
   </data>
   <data name="TempDriveDescription" xml:space="preserve">
-    <value>Drive that maps to the temporary directory path for the current user</value>
+    <value>對應至目前使用者之暫存目錄路徑的磁碟機</value>
   </data>
   <data name="NewLinkTargetNotSpecified" xml:space="preserve">
-    <value>Link '{0}' cannot be created because the target Value was not specified.</value>
+    <value>因為未指定目標值，所以無法建立連結 '{0}'。</value>
   </data>
   <data name="DollarNullDescription" xml:space="preserve">
-    <value>References to the null variable always return the null value. Assignments have no effect.</value>
+    <value>null 變數的參考一律會傳回 null 值。指派沒有作用。</value>
   </data>
   <data name="MaxHistoryCountDescription" xml:space="preserve">
-    <value>Maximum number of history objects to retain in a session</value>
+    <value>工作階段中要保留的歷程記錄物件數目上限</value>
   </data>
   <data name="CannotRenameFunction" xml:space="preserve">
-    <value>Cannot rename function because function {0} is read-only or constant.</value>
+    <value>無法將函式重新命名，因為函式 {0} 是唯讀或常數。</value>
   </data>
   <data name="CannotRenameAlias" xml:space="preserve">
-    <value>Cannot rename alias because alias {0} is read-only or constant.</value>
+    <value>無法重新命名別名，因為別名 {0} 是唯讀或常數。</value>
   </data>
   <data name="CannotRenameVariable" xml:space="preserve">
-    <value>Cannot rename variable because variable {0} is read-only or constant.</value>
+    <value>無法將變數重新命名，因為變數 {0} 是唯讀或常數。</value>
   </data>
   <data name="VariableOptionsNotSettable" xml:space="preserve">
-    <value>Cannot set options on the local variable {0}. Use New-Variable to create a variable that allows options to be set.</value>
+    <value>無法在本機變數 {0} 上設定選項。使用 New-Variable 建立允許設定選項的變數。</value>
   </data>
   <data name="CmdletIsReadOnly" xml:space="preserve">
-    <value>Cmdlet {0} cannot be modified because it is read-only.</value>
+    <value>無法修改 Cmdlet {0}，因為它是唯讀。</value>
   </data>
   <data name="VariableNotRemovableRare" xml:space="preserve">
-    <value>Cannot remove variable {0} because the variable has been optimized and is not removable. Try using the Remove-Variable cmdlet (without any aliases), or dot-sourcing the command that you are using to remove the variable.</value>
+    <value>無法移除變數 {0}，因為變數已最佳化且不可移除。請嘗試使用 Remove-Variable Cmdlet (不含任何別名)，或對您用於移除變數的命令執行點號載入。</value>
   </data>
   <data name="VariableNotWritableRare" xml:space="preserve">
-    <value>Cannot overwrite variable {0} because the variable has been optimized. Try using the New-Variable or Set-Variable cmdlet (without any aliases), or dot-source the command that you are using to set the variable.</value>
+    <value>無法覆寫變數 {0}，因為變數已最佳化。請嘗試使用 New-Variable 或 Set-Variable Cmdlet (不含任何別名)，或對您用於設定變數的命令執行點號載入。</value>
   </data>
   <data name="GetContent_TailAndHeadCannotCoexist" xml:space="preserve">
-    <value>The parameters {0} and {1} cannot be used together. Please specify only one parameter.</value>
+    <value>無法同時使用 {0} 和 {1} 參數。請僅指定一個參數。</value>
   </data>
   <data name="GetContent_TailNotSupported" xml:space="preserve">
-    <value>The Tail parameter currently is supported only for the FileSystem provider.</value>
+    <value>目前只有 FileSystem 提供者支援 Tail 參數。</value>
   </data>
   <data name="AliasWithCommandNameAlreadyExists" xml:space="preserve">
-    <value>The alias is not allowed, because a command with the name '{0}' and command type '{1}' already exists.</value>
+    <value>不允許別名，因為名稱為 '{0}' 且命令類型為 '{1}' 的命令已經存在。</value>
   </data>
   <data name="CanNotRun" xml:space="preserve">
-    <value>Cannot run software. Permission is denied.</value>
+    <value>無法執行軟體。權限被拒; 目前的使用者沒有足夠的權限可執行此作業。</value>
   </data>
   <data name="CopyItemFromSessionToSession" xml:space="preserve">
-    <value>'-{0}' and '-{1}' are mutually exclusive and cannot be specified at the same time.</value>
+    <value>'-{0}' 和 '-{1}' 互斥，無法同時指定。</value>
   </data>
   <data name="CopyItemRemotelyPathIsNotAbsolute" xml:space="preserve">
-    <value>The path '{0}' is not valid. Only absolute paths are supported on remote copy operations.</value>
+    <value>路徑 '{0}' 無效。遠端複製作業僅支援絕對路徑。</value>
   </data>
   <data name="CopyItemValidateRemotePath" xml:space="preserve">
-    <value>Cannot validate remote path '{0}'.</value>
+    <value>無法驗證遠端路徑 '{0}'。</value>
   </data>
   <data name="CopyItemSessionProperties" xml:space="preserve">
-    <value>Cannot perform operation because the session {0} is set to {1}.</value>
+    <value>無法執行作業，因為工作階段 {0} 設定為 {1}。</value>
   </data>
   <data name="CopyItemRemotelyPathIsNullOrEmpty" xml:space="preserve">
-    <value>'{0}' parameter cannot be null or empty.</value>
+    <value>'{0}' 參數不得為 null 或空白。</value>
   </data>
   <data name="WDACSessionStateVarLogTitle" xml:space="preserve">
-    <value>Session State Variables</value>
+    <value>工作階段狀態變數</value>
   </data>
   <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
-    <value>Changing or creating the variable '{0}' scope to AllScope will be prevented in ConstrainedLanguage mode.</value>
+    <value>在 ConstrainedLanguage 模式中會防止建立變數 '{0}' 範圍或將其變更為 AllScope。</value>
   </data>
 </root>

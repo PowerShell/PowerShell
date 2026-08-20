@@ -7,6 +7,20 @@ parameters:
     type: boolean
   - name: skipMSIXPublish
     type: boolean
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: DOTNET_RUNTIME_VERSION
+    displayName: Runtime version of early access build
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    displayName: SDK version of early access build
+    type: string
+    default: ' '
+  - name: EarlyAccessFeed
+    type: string
+    default: 'net10'
 
 stages:
 - stage: setReleaseTagAndChangelog
@@ -14,9 +28,27 @@ stages:
   jobs:
   - template: /.pipelines/templates/release-SetTagAndChangelog.yml@self
 
+- stage: downloadDotnetEarlyAccess
+  displayName: 'Download Early release .NET'
+  jobs:
+  - ${{ if eq(parameters.IsEarlyAccess, true) }}:
+    - template: /.pipelines/templates/downloadDotnetEarlyAccess.yml@self
+      parameters:
+        DotnetRuntimeVersion: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+        DotnetSdkVersion: ${{ parameters.DOTNET_SDK_VERSION }}
+  - ${{ else }}:
+    - job: skip_download_dotnet_early_access
+      displayName: 'Skip early access .NET download'
+      pool:
+        type: windows
+      variables:
+      - name: ob_outputDirectory
+        value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+      steps:
+      - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET download.'
 - stage: validateSdk
   displayName: 'Validate SDK'
-  dependsOn: []
+  dependsOn: [downloadDotnetEarlyAccess]
   jobs:
   - template: /.pipelines/templates/release-validate-sdk.yml@self
     parameters:
@@ -24,6 +56,11 @@ stages:
       displayName: "Windows SDK Validation"
       imageName: PSMMS2019-Secure
       poolName: $(windowsPool)
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
+      dotnetArch: 'win-x64'
 
   - template: /.pipelines/templates/release-validate-sdk.yml@self
     parameters:
@@ -31,6 +68,10 @@ stages:
       displayName: "MacOS SDK Validation"
       imageName: macOS-latest
       poolName: Azure Pipelines
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      dotnetArch: 'osx-x64'
 
   - template: /.pipelines/templates/release-validate-sdk.yml@self
     parameters:
@@ -38,16 +79,24 @@ stages:
       displayName: "Linux SDK Validation"
       imageName: PSMMSUbuntu22.04-Secure
       poolName: $(ubuntuPool)
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      dotnetArch: 'linux-x64'
 
 - stage: gbltool
   displayName: 'Validate Global tools'
-  dependsOn: []
+  dependsOn: [downloadDotnetEarlyAccess]
   jobs:
   - template: /.pipelines/templates/release-validate-globaltools.yml@self
     parameters:
       jobName: "WindowsGlobalTools"
       displayName: "Windows Global Tools Validation"
       jobtype: windows
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      dotnetArch: 'win-x64'
 
   - template: /.pipelines/templates/release-validate-globaltools.yml@self
     parameters:
@@ -56,10 +105,14 @@ stages:
       jobtype: linux
       globalToolExeName: 'pwsh'
       globalToolPackageName: 'PowerShell.Linux.x64'
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      dotnetArch: 'linux-x64'
 
 - stage: fxdpackages
   displayName: 'Validate FXD Packages'
-  dependsOn: []
+  dependsOn: [downloadDotnetEarlyAccess]
   jobs:
   - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
     parameters:
@@ -68,6 +121,10 @@ stages:
       jobtype: 'windows'
       artifactName: 'drop_windows_package_package_win_fxdependent'
       packageNamePattern: '**/*win-fxdependent.zip'
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      dotnetArch: 'win-x64'
 
   - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
     parameters:
@@ -76,6 +133,10 @@ stages:
       jobtype: 'windows'
       artifactName: 'drop_windows_package_package_win_fxdependentWinDesktop'
       packageNamePattern: '**/*win-fxdependentwinDesktop.zip'
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      dotnetArch: 'win-x64'
 
   - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
     parameters:
@@ -84,6 +145,10 @@ stages:
       jobtype: 'linux'
       artifactName: 'drop_linux_package_fxdependent'
       packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      dotnetArch: 'linux-x64'
 
   - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
     parameters:
@@ -95,6 +160,10 @@ stages:
       packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
       arm64: 'yes'
       enableCredScan: false
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      dotnetArch: 'linux-arm64'
 
 - stage: ManualValidation
   dependsOn: []

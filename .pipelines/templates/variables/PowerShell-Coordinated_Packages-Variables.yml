@@ -2,6 +2,13 @@ parameters:
   - name: InternalSDKBlobURL
     type: string
     default: ' '
+  - name: EarlyAccessFeed
+    type: string
+    default: 'net10'
+    values:
+      - 'net8'
+      - 'net9'
+      - 'net10'
   - name: ReleaseTagVar
     type: string
     default: 'fromBranch'
@@ -12,6 +19,9 @@ parameters:
     type: boolean
     default: false
   - name: FORCE_CODEQL
+    type: boolean
+    default: false
+  - name: IsEarlyAccess
     type: boolean
     default: false
 
@@ -65,3 +75,7 @@ variables:
   # Disable BinSkim at job level to override NonOfficial template defaults
   - name: ob_sdl_binskim_enabled
     value: false
+  - name: EARLY_ACCESS_FEED
+    value: ${{ parameters.EarlyAccessFeed }}
+  - name: IsEarlyAccess
+    value: ${{ parameters.IsEarlyAccess }}

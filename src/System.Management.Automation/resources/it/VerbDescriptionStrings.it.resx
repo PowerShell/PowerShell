@@ -118,303 +118,303 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Add" xml:space="preserve">
-    <value>Adds a resource to a container, or attaches an item to another item</value>
+    <value>Aggiunge una risorsa a un contenitore o collega un elemento a un altro elemento</value>
   </data>
   <data name="Approve" xml:space="preserve">
-    <value>Confirms or agrees to the status of a resource or process</value>
+    <value>Conferma o accetta lo stato di una risorsa o di un processo</value>
   </data>
   <data name="Assert" xml:space="preserve">
-    <value>Affirms the state of a resource</value>
+    <value>Afferma lo stato di una risorsa</value>
   </data>
   <data name="Backup" xml:space="preserve">
-    <value>Stores data by replicating it</value>
+    <value>Archivia i dati eseguendone la replica</value>
   </data>
   <data name="Block" xml:space="preserve">
-    <value>Restricts access to a resource</value>
+    <value>Limita l'accesso a una risorsa</value>
   </data>
   <data name="Build" xml:space="preserve">
-    <value>Creates an artifact (usually a binary or document) out of some set of input files (usually source code or declarative documents)</value>
+    <value>Crea un artefatto, in genere un file binario o un documento, da un set di file di input, in genere codice sorgente o documenti dichiarativi</value>
   </data>
   <data name="Checkpoint" xml:space="preserve">
-    <value>Creates a snapshot of the current state of the data or of its configuration</value>
+    <value>Crea uno snapshot dello stato corrente dei dati o della relativa configurazione</value>
   </data>
   <data name="Clear" xml:space="preserve">
-    <value>Removes all the resources from a container but does not delete the container</value>
+    <value>Rimuove tutte le risorse da un contenitore, ma non elimina il contenitore</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Changes the state of a resource to make it inaccessible, unavailable, or unusable</value>
+    <value>Modifica lo stato di una risorsa per renderla inaccessibile, non disponibile o inutilizzabile</value>
   </data>
   <data name="Compare" xml:space="preserve">
-    <value>Evaluates the data from one resource against the data from another resource</value>
+    <value>Valuta i dati di una risorsa in base a quelli di un'altra risorsa</value>
   </data>
   <data name="Complete" xml:space="preserve">
-    <value>Concludes an operation</value>
+    <value>Conclude un'operazione</value>
   </data>
   <data name="Compress" xml:space="preserve">
-    <value>Compacts the data of a resource</value>
+    <value>Compatta i dati di una risorsa</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Acknowledges, verifies, or validates the state of a resource or process</value>
+    <value>Conferma, verifica o convalida lo stato di una risorsa o di un processo</value>
   </data>
   <data name="Connect" xml:space="preserve">
-    <value>Creates a link between a source and a destination</value>
+    <value>Crea un collegamento tra un'origine e una destinazione</value>
   </data>
   <data name="Convert" xml:space="preserve">
-    <value>Changes the data from one representation to another when the cmdlet supports bidirectional conversion or when the cmdlet supports conversion between multiple data types</value>
+    <value>Modifica i dati da una rappresentazione a un'altra quando il cmdlet supporta la conversione bidirezionale o quando il cmdlet supporta la conversione tra più tipi di dati</value>
   </data>
   <data name="ConvertFrom" xml:space="preserve">
-    <value>Converts one primary type of input (the cmdlet noun indicates the input) to one or more supported output types</value>
+    <value>Converte un tipo di input primario (il nome del cmdlet indica l'input) in uno o più tipi di output supportati</value>
   </data>
   <data name="ConvertTo" xml:space="preserve">
-    <value>Converts from one or more types of input to a primary output type (the cmdlet noun indicates the output type)</value>
+    <value>Esegue la conversione da uno o più tipi di input a un tipo di output primario (il nome del cmdlet indica il tipo di output)</value>
   </data>
   <data name="Copy" xml:space="preserve">
-    <value>Copies a resource to another name or to another container</value>
+    <value>Copia una risorsa in un altro nome o in un altro contenitore</value>
   </data>
   <data name="Debug" xml:space="preserve">
-    <value>Examines a resource to diagnose operational problems</value>
+    <value>Esamina una risorsa per diagnosticare problemi operativi</value>
   </data>
   <data name="Deny" xml:space="preserve">
-    <value>Refuses, objects, blocks, or opposes the state of a resource or process</value>
+    <value>Rifiuta, blocca, obietta o si oppone allo stato di una risorsa o di un processo</value>
   </data>
   <data name="Deploy" xml:space="preserve">
-    <value>Sends an application, website, or solution to a remote target[s] in such a way that a consumer of that solution can access it after deployment is complete</value>
+    <value>Invia un'applicazione, un sito Web o una soluzione a una o più destinazioni remote in modo che un utente di tale soluzione possa accedervi al termine della distribuzione</value>
   </data>
   <data name="Disable" xml:space="preserve">
-    <value>Configures a resource to an unavailable or inactive state</value>
+    <value>Configura una risorsa su uno stato non disponibile o inattivo</value>
   </data>
   <data name="Disconnect" xml:space="preserve">
-    <value>Breaks the link between a source and a destination</value>
+    <value>Interrompe il collegamento tra un'origine e una destinazione</value>
   </data>
   <data name="Dismount" xml:space="preserve">
-    <value>Detaches a named entity from a location</value>
+    <value>Scollega un'entità denominata da un percorso</value>
   </data>
   <data name="Edit" xml:space="preserve">
-    <value>Modifies existing data by adding or removing content</value>
+    <value>Modifica i dati esistenti aggiungendo o rimuovendo contenuto</value>
   </data>
   <data name="Enable" xml:space="preserve">
-    <value>Configures a resource to an available or active state</value>
+    <value>Configura una risorsa su uno stato disponibile o attivo</value>
   </data>
   <data name="Enter" xml:space="preserve">
-    <value>Specifies an action that allows the user to move into a resource</value>
+    <value>Specifica un'azione che consente all'utente di spostarsi in una risorsa</value>
   </data>
   <data name="Exit" xml:space="preserve">
-    <value>Sets the current environment or context to the most recently used context</value>
+    <value>Imposta l'ambiente o il contesto corrente sul contesto usato più di recente</value>
   </data>
   <data name="Expand" xml:space="preserve">
-    <value>Restores the data of a resource that has been compressed to its original state</value>
+    <value>Ripristina i dati di una risorsa che è stata compressa allo stato originale</value>
   </data>
   <data name="Export" xml:space="preserve">
-    <value>Encapsulates the primary input into a persistent data store, such as a file, or into an interchange format</value>
+    <value>Incapsula l'input primario in un archivio dati persistente, ad esempio un file, o in un formato di interscambio</value>
   </data>
   <data name="Find" xml:space="preserve">
-    <value>Looks for an object in a container that is unknown, implied, optional, or specified</value>
+    <value>Cerca un oggetto in un contenitore sconosciuto, implicito, facoltativo o specificato</value>
   </data>
   <data name="Format" xml:space="preserve">
-    <value>Arranges objects in a specified form or layout</value>
+    <value>Dispone gli oggetti in una forma o un layout specificato</value>
   </data>
   <data name="Get" xml:space="preserve">
-    <value>Specifies an action that retrieves a resource</value>
+    <value>Specifica un'azione che recupera una risorsa</value>
   </data>
   <data name="Grant" xml:space="preserve">
-    <value>Allows access to a resource</value>
+    <value>Consente l'accesso a una risorsa</value>
   </data>
   <data name="Group" xml:space="preserve">
-    <value>Arranges or associates one or more resources</value>
+    <value>Dispone o associa una o più risorse</value>
   </data>
   <data name="Hide" xml:space="preserve">
-    <value>Makes a resource undetectable</value>
+    <value>Rende una risorsa non rilevabile</value>
   </data>
   <data name="Import" xml:space="preserve">
-    <value>Creates a resource from data that is stored in a persistent data store (such as a file) or in an interchange format</value>
+    <value>Crea una risorsa da dati archiviati in un archivio dati permanente (ad esempio un file) o in un formato di interscambio</value>
   </data>
   <data name="Initialize" xml:space="preserve">
-    <value>Prepares a resource for use, and sets it to a default state</value>
+    <value>Prepara una risorsa per l'uso e la imposta su uno stato predefinito</value>
   </data>
   <data name="Install" xml:space="preserve">
-    <value>Places a resource in a location, and optionally initializes it</value>
+    <value>Inserisce una risorsa in un percorso e, facoltativamente, la inizializza</value>
   </data>
   <data name="Invoke" xml:space="preserve">
-    <value>Performs an action, such as running a command or a method</value>
+    <value>Esegue un'azione, come l'esecuzione di un comando o di un metodo</value>
   </data>
   <data name="Join" xml:space="preserve">
-    <value>Combines resources into one resource</value>
+    <value>Combina le risorse in un'unica risorsa</value>
   </data>
   <data name="Limit" xml:space="preserve">
-    <value>Applies constraints to a resource</value>
+    <value>Applica vincoli a una risorsa</value>
   </data>
   <data name="Lock" xml:space="preserve">
-    <value>Secures a resource</value>
+    <value>Protegge una risorsa</value>
   </data>
   <data name="Measure" xml:space="preserve">
-    <value>Identifies resources that are consumed by a specified operation, or retrieves statistics about a resource</value>
+    <value>Identifica le risorse usate da un'operazione specificata o recupera le statistiche relative a una risorsa</value>
   </data>
   <data name="Merge" xml:space="preserve">
-    <value>Creates a single resource from multiple resources</value>
+    <value>Crea un'unica risorsa da più risorse</value>
   </data>
   <data name="Mount" xml:space="preserve">
-    <value>Attaches a named entity to a location</value>
+    <value>Collega un'entità denominata a un percorso</value>
   </data>
   <data name="Move" xml:space="preserve">
-    <value>Moves a resource from one location to another</value>
+    <value>Sposta una risorsa da un percorso a un altro</value>
   </data>
   <data name="New" xml:space="preserve">
-    <value>Creates a resource</value>
+    <value>Crea una risorsa</value>
   </data>
   <data name="Open" xml:space="preserve">
-    <value>Changes the state of a resource to make it accessible, available, or usable</value>
+    <value>Modifica lo stato di una risorsa per renderla accessibile, disponibile o utilizzabile</value>
   </data>
   <data name="Optimize" xml:space="preserve">
-    <value>Increases the effectiveness of a resource</value>
+    <value>Aumenta l'efficacia di una risorsa</value>
   </data>
   <data name="Out" xml:space="preserve">
-    <value>Sends data out of the environment</value>
+    <value>Invia dati all'esterno dell'ambiente</value>
   </data>
   <data name="Ping" xml:space="preserve">
-    <value>Use the Test verb</value>
+    <value>Usa il verbo Test</value>
   </data>
   <data name="Pop" xml:space="preserve">
-    <value>Removes an item from the top of a stack</value>
+    <value>Rimuove un elemento dall'inizio di uno stack</value>
   </data>
   <data name="Protect" xml:space="preserve">
-    <value>Safeguards a resource from attack or loss</value>
+    <value>Protegge una risorsa da attacchi o perdite</value>
   </data>
   <data name="Publish" xml:space="preserve">
-    <value>Makes a resource available to others</value>
+    <value>Rende una risorsa disponibile ad altri utenti</value>
   </data>
   <data name="Push" xml:space="preserve">
-    <value>Adds an item to the top of a stack</value>
+    <value>Aggiunge un elemento all'inizio di uno stack</value>
   </data>
   <data name="Read" xml:space="preserve">
-    <value>Acquires information from a source</value>
+    <value>Acquisisce informazioni da un'origine</value>
   </data>
   <data name="Receive" xml:space="preserve">
-    <value>Accepts information sent from a source</value>
+    <value>Accetta le informazioni inviate da un'origine</value>
   </data>
   <data name="Redo" xml:space="preserve">
-    <value>Resets a resource to the state that was undone</value>
+    <value>Reimposta una risorsa sullo stato che è stato annullato</value>
   </data>
   <data name="Register" xml:space="preserve">
-    <value>Creates an entry for a resource in a repository such as a database</value>
+    <value>Crea una voce per una risorsa in un repository, ad esempio un database</value>
   </data>
   <data name="Remove" xml:space="preserve">
-    <value>Deletes a resource from a container</value>
+    <value>Elimina una risorsa da un contenitore</value>
   </data>
   <data name="Rename" xml:space="preserve">
-    <value>Changes the name of a resource</value>
+    <value>Modifica il nome di una risorsa</value>
   </data>
   <data name="Repair" xml:space="preserve">
-    <value>Restores a resource to a usable condition</value>
+    <value>Riporta una risorsa a una condizione utilizzabile</value>
   </data>
   <data name="Request" xml:space="preserve">
-    <value>Asks for a resource or asks for permissions</value>
+    <value>Richiede una risorsa o chiede le autorizzazioni</value>
   </data>
   <data name="Reset" xml:space="preserve">
-    <value>Sets a resource back to its original state</value>
+    <value>Ripristina lo stato originale di una risorsa</value>
   </data>
   <data name="Resize" xml:space="preserve">
-    <value>Changes the size of a resource</value>
+    <value>Modifica la dimensione di una risorsa</value>
   </data>
   <data name="Resolve" xml:space="preserve">
-    <value>Maps a shorthand representation of a resource to a more complete representation</value>
+    <value>Esegue il mapping di una rappresentazione abbreviata di una risorsa a una rappresentazione più completa</value>
   </data>
   <data name="Restart" xml:space="preserve">
-    <value>Stops an operation and then starts it again</value>
+    <value>Arresta un'operazione, quindi la avvia nuovamente</value>
   </data>
   <data name="Restore" xml:space="preserve">
-    <value>Sets a resource to a predefined state, such as a state set by Checkpoint</value>
+    <value>Imposta una risorsa su uno stato predefinito, come uno stato impostato da Checkpoint</value>
   </data>
   <data name="Resume" xml:space="preserve">
-    <value>Starts an operation that has been suspended</value>
+    <value>Avvia un'operazione precedentemente sospesa</value>
   </data>
   <data name="Revoke" xml:space="preserve">
-    <value>Specifies an action that does not allow access to a resource</value>
+    <value>Specifica un'azione che non consente l'accesso a una risorsa</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Preserves data to avoid loss</value>
+    <value>Conserva i dati per evitare perdite</value>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Creates a reference to a resource in a container</value>
+    <value>Crea un riferimento a una risorsa in un contenitore</value>
   </data>
   <data name="Select" xml:space="preserve">
-    <value>Locates a resource in a container</value>
+    <value>Individua una risorsa in un contenitore</value>
   </data>
   <data name="Send" xml:space="preserve">
-    <value>Delivers information to a destination</value>
+    <value>Recapita le informazioni a una destinazione</value>
   </data>
   <data name="Set" xml:space="preserve">
-    <value>Replaces data on an existing resource or creates a resource that contains some data</value>
+    <value>Sostituisce i dati in una risorsa esistente o crea una risorsa contenente alcuni dati</value>
   </data>
   <data name="Show" xml:space="preserve">
-    <value>Makes a resource visible to the user</value>
+    <value>Rende visibile una risorsa all'utente</value>
   </data>
   <data name="Sync" xml:space="preserve">
-    <value>Assures that two or more resources are in the same state</value>
+    <value>Assicura che due o più risorse si trovino nello stesso stato</value>
   </data>
   <data name="Skip" xml:space="preserve">
-    <value>Bypasses one or more resources or points in a sequence</value>
+    <value>Ignora una o più risorse o punti in una sequenza</value>
   </data>
   <data name="Split" xml:space="preserve">
-    <value>Separates parts of a resource</value>
+    <value>Separa le parti di una risorsa</value>
   </data>
   <data name="Start" xml:space="preserve">
-    <value>Initiates an operation</value>
+    <value>Avvia un'operazione</value>
   </data>
   <data name="Step" xml:space="preserve">
-    <value>Moves to the next point or resource in a sequence</value>
+    <value>Passa al punto o alla risorsa successiva in una sequenza</value>
   </data>
   <data name="Stop" xml:space="preserve">
-    <value>Discontinues an activity</value>
+    <value>Interrompe un'attività</value>
   </data>
   <data name="Submit" xml:space="preserve">
-    <value>Presents a resource for approval</value>
+    <value>Presenta una risorsa per l'approvazione</value>
   </data>
   <data name="Suspend" xml:space="preserve">
-    <value>Pauses an activity</value>
+    <value>Sospende un'attività</value>
   </data>
   <data name="Switch" xml:space="preserve">
-    <value>Specifies an action that alternates between two resources, such as to change between two locations, responsibilities, or states</value>
+    <value>Specifica un'azione che si alterna tra due risorse, ad esempio per passare da una posizione, responsabilità o stato all'altro</value>
   </data>
   <data name="Test" xml:space="preserve">
-    <value>Verifies the operation or consistency of a resource</value>
+    <value>Verifica l'operazione o la coerenza di una risorsa</value>
   </data>
   <data name="Trace" xml:space="preserve">
-    <value>Tracks the activities of a resource</value>
+    <value>Tiene traccia delle attività di una risorsa</value>
   </data>
   <data name="Unblock" xml:space="preserve">
-    <value>Removes restrictions to a resource</value>
+    <value>Rimuove le restrizioni per una risorsa</value>
   </data>
   <data name="Undo" xml:space="preserve">
-    <value>Sets a resource to its previous state</value>
+    <value>Imposta una risorsa sullo stato precedente</value>
   </data>
   <data name="Uninstall" xml:space="preserve">
-    <value>Removes a resource from an indicated location</value>
+    <value>Rimuove una risorsa da una posizione indicata</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Releases a resource that was locked</value>
+    <value>Rilascia una risorsa bloccata</value>
   </data>
   <data name="Unprotect" xml:space="preserve">
-    <value>Removes safeguards from a resource that were added to prevent it from attack or loss</value>
+    <value>Rimuove le misure di sicurezza di una risorsa aggiunte per impedirne l'attacco o la perdita</value>
   </data>
   <data name="Unpublish" xml:space="preserve">
-    <value>Makes a resource unavailable to others</value>
+    <value>Rende una risorsa non disponibile ad altri utenti</value>
   </data>
   <data name="Unregister" xml:space="preserve">
-    <value>Removes the entry for a resource from a repository</value>
+    <value>Rimuove la voce di una risorsa da un repository</value>
   </data>
   <data name="Update" xml:space="preserve">
-    <value>Brings a resource up-to-date to maintain its state, accuracy, conformance, or compliance</value>
+    <value>Tiene aggiornata una risorsa per mantenerne lo stato, l'accuratezza e la conformità</value>
   </data>
   <data name="Use" xml:space="preserve">
-    <value>Uses or includes a resource to do something</value>
+    <value>Usa o include una risorsa per eseguire un'operazione</value>
   </data>
   <data name="Wait" xml:space="preserve">
-    <value>Pauses an operation until a specified event occurs</value>
+    <value>Sospende un'operazione fino a quando non si verifica un evento specificato</value>
   </data>
   <data name="Watch" xml:space="preserve">
-    <value>Continually inspects or monitors a resource for changes</value>
+    <value>Controlla o monitora continuamente una risorsa per individuare eventuali modifiche</value>
   </data>
   <data name="Write" xml:space="preserve">
-    <value>Adds information to a target</value>
+    <value>Aggiunge informazioni a una destinazione</value>
   </data>
 </root>

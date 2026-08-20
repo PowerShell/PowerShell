@@ -118,74 +118,74 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TooManyNestedPromptsError" xml:space="preserve">
-    <value>Cannot display prompt because too many nested prompts are already running.</value>
+    <value>중첩 프롬프트가 너무 많이 실행 중이어서 프롬프트를 표시할 수 없습니다.</value>
   </data>
   <data name="InputExitCurrentLoopOutOfSyncError" xml:space="preserve">
-    <value>Cannot process input loop. ExitCurrentLoop was called when no InputLoops were running.</value>
+    <value>입력 루프를 처리할 수 없습니다. 실행 중인 InputLoop가 없을 때 ExitCurrentLoop가 호출되었습니다.</value>
   </data>
   <data name="DefaultPrompt" xml:space="preserve">
     <value>PS&gt;</value>
   </data>
   <data name="ShellCannotBeStarted" xml:space="preserve">
-    <value>The shell cannot be started. A failure occurred during initialization:</value>
+    <value>셸을 시작할 수 없습니다. 초기화 중에 오류가 발생했습니다:</value>
   </data>
   <data name="ShellCannotBeStartedWithConfigConflict" xml:space="preserve">
-    <value>The shell cannot be started. An InitialSessionState object has been provided along with a -ConfigurationFile argument. Both configuration directives cannot be used at the same time.</value>
+    <value>셸을 시작할 수 없습니다. InitialSessionState 개체가 -ConfigurationFile 인수와 함께 제공되었습니다. 두 구성 지시문은 동시에 사용할 수 없습니다.</value>
   </data>
   <data name="UnhandledExceptionShutdownMessage" xml:space="preserve">
-    <value>An error has occurred that was not properly handled. Additional information is shown below. The PowerShell process will exit.</value>
+    <value>적절하게 처리되지 않은 오류가 발생했습니다. 자세한 내용은 아래에 표시됩니다. PowerShell 프로세스가 종료됩니다.</value>
   </data>
   <data name="TranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
-Username  : {1}\{2}
-Machine   : {3} ({4})
+PowerShell 기록 시작
+시작 시간: {0:yyyyMMddHHmmss}
+사용자 이름  : {1}\{2}
+컴퓨터   : {3} ({4})
 **********************</value>
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
     <value>**********************
-PowerShell transcript end
-End time: {0:yyyyMMddHHmmss}
+PowerShell 기록 끝
+종료 시간: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="InitialCommandNotExecuted" xml:space="preserve">
-    <value>Command '{0}' could not be run because some PowerShell Snap-Ins did not load.</value>
+    <value>일부 PowerShell 스냅인(Snap-In)이 로드되지 않아 명령 '{0}'을(를) 실행할 수 없습니다.</value>
   </data>
   <data name="CommandNotExecuted" xml:space="preserve">
-    <value>Command '{0}' was not run as the session in which it was intended to run was either closed or broken</value>
+    <value>명령 '{0}'을(를) 실행해야 할 세션이 닫혔거나 손상되어 실행되지 않았습니다.</value>
   </data>
   <data name="EnteringDebugger" xml:space="preserve">
-    <value>Entering debug mode. Use h or ? for help. </value>
+    <value>디버그 모드로 들어갑니다. h 또는 ? 사용에 도움이 될 수 있습니다. </value>
   </data>
   <data name="HitBreakpoint" xml:space="preserve">
-    <value>Hit {0}</value>
+    <value>{0} 적중</value>
   </data>
   <data name="DebuggerSourceCodeFormat" xml:space="preserve">
     <value>{0}:{1,-3} {2}</value>
   </data>
   <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
     <value>
-The current session does not support debugging; execution will continue.
+현재 세션은 디버깅을 지원하지 않습니다. 실행을 계속합니다.
 
 </value>
   </data>
   <data name="CannotLoadPSReadline" xml:space="preserve">
-    <value>Cannot load PSReadline module.  Console is running without PSReadline.</value>
+    <value>PSReadline 모듈을 로드할 수 없습니다.  콘솔은 PSReadline 없이 실행됩니다.</value>
   </data>
   <data name="ConflictingServerModeParameters" xml:space="preserve">
-    <value>More than one server mode parameter was specified. Server mode parameters must be used exclusively.</value>
+    <value>서버 모드 매개 변수가 두 개 이상 지정되었습니다. 서버 모드 매개 변수는 하나만 사용해야 합니다.</value>
   </data>
   <data name="SlowProfileLoadingMessage" xml:space="preserve">
-    <value>Loading personal and system profiles took {0}ms.</value>
+    <value>개인 및 시스템 프로필을 로드하는 데 {0}ms가 걸렸습니다.</value>
   </data>
   <data name="RunAsAdministrator" xml:space="preserve">
-    <value>Run as Administrator</value>
+    <value>관리자 권한으로 실행</value>
   </data>
   <data name="PushRunspaceNotRemote" xml:space="preserve">
-    <value>PushRunspace can only push a remote runspace.</value>
+    <value>PushRunspace는 원격 runspace만 푸시할 수 있습니다.</value>
   </data>
   <data name="MissingMandatoryParameter" xml:space="preserve">
-    <value>The '{0}' parameter is mandatory and must be specified when using the '{1}' parameter.</value>
+    <value>'{0}' 매개 변수는 필수이며 '{1}' 매개 변수를 사용할 때는 반드시 지정해야 합니다.</value>
   </data>
 </root>

@@ -118,108 +118,108 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandStateChange" xml:space="preserve">
-    <value>Command {0} is {1}.</value>
+    <value>{0} komutu: {1}.</value>
   </data>
   <data name="EngineStateChange" xml:space="preserve">
-    <value>Engine state changed from {0} to {1}.</value>
+    <value>{0} altyapı durumu {1} olarak değiştirildi.</value>
   </data>
   <data name="ErrorRecordId" xml:space="preserve">
-    <value>Fully Qualified Error ID = {0}</value>
+    <value>Tam Hata Kimliği = {0}</value>
   </data>
   <data name="ErrorRecordMessage" xml:space="preserve">
-    <value>Error Message = {0}</value>
+    <value>Hata İletisi = {0}</value>
   </data>
   <data name="ErrorRecordRecommendedAction" xml:space="preserve">
-    <value>Recommended Action = {0}</value>
+    <value>Önerilen Eylem = {0}</value>
   </data>
   <data name="ExecutionPolicyName" xml:space="preserve">
-    <value>Execution Policy</value>
+    <value>Yürütme İlkesi</value>
   </data>
   <data name="JobCommand" xml:space="preserve">
-    <value>Job Command = {0}</value>
+    <value>İş Komutu = {0}</value>
   </data>
   <data name="JobId" xml:space="preserve">
-    <value>Job Id = {0}</value>
+    <value>İş Kimliği = {0}</value>
   </data>
   <data name="JobInstanceId" xml:space="preserve">
-    <value>Job Instance Id = {0}</value>
+    <value>İş Örneği Kimliği = {0}</value>
   </data>
   <data name="JobLocation" xml:space="preserve">
-    <value>Job Location = {0}</value>
+    <value>İş Yeri = {0}</value>
   </data>
   <data name="JobName" xml:space="preserve">
-    <value>Job Name = {0}</value>
+    <value>İş Adı = {0}</value>
   </data>
   <data name="JobState" xml:space="preserve">
-    <value>Job State = {0}</value>
+    <value>İş Durumu = {0}</value>
   </data>
   <data name="LogContextCommandName" xml:space="preserve">
-    <value>        Command Name = </value>
+    <value>        Komut Adı = </value>
   </data>
   <data name="LogContextCommandPath" xml:space="preserve">
-    <value>        Command Path = </value>
+    <value>        Komut Yolu = </value>
   </data>
   <data name="LogContextCommandType" xml:space="preserve">
-    <value>        Command Type = </value>
+    <value>        Komut Türü = </value>
   </data>
   <data name="LogContextEngineVersion" xml:space="preserve">
-    <value>        Engine Version = </value>
+    <value>        Altyapı Sürümü = </value>
   </data>
   <data name="LogContextHostId" xml:space="preserve">
-    <value>        Host ID = </value>
+    <value>        Konak Kimliği = </value>
   </data>
   <data name="LogContextHostName" xml:space="preserve">
-    <value>        Host Name = </value>
+    <value>        Ana Bilgisayar Adı = </value>
   </data>
   <data name="LogContextHostApplication" xml:space="preserve">
-    <value>        Host Application = </value>
+    <value>        Konak Uygulama = </value>
   </data>
   <data name="LogContextHostVersion" xml:space="preserve">
-    <value>        Host Version = </value>
+    <value>        Konak Sürümü = </value>
   </data>
   <data name="LogContextPipelineId" xml:space="preserve">
-    <value>        Pipeline ID = </value>
+    <value>        İşlem Hattı Kimliği = </value>
   </data>
   <data name="LogContextRunspaceId" xml:space="preserve">
-    <value>        Runspace ID = </value>
+    <value>        Çalışma Alanı Kimliği = </value>
   </data>
   <data name="LogContextScriptName" xml:space="preserve">
-    <value>        Script Name = </value>
+    <value>        Betik Adı = </value>
   </data>
   <data name="LogContextSequenceNumber" xml:space="preserve">
-    <value>        Sequence Number = </value>
+    <value>        Sıra Numarası = </value>
   </data>
   <data name="LogContextSeverity" xml:space="preserve">
-    <value>        Severity = </value>
+    <value>        Önem derecesi = </value>
   </data>
   <data name="LogContextShellId" xml:space="preserve">
-    <value>        Shell ID = </value>
+    <value>        Kabuk Kimliği = </value>
   </data>
   <data name="LogContextTime" xml:space="preserve">
-    <value>        Time = </value>
+    <value>        Saat = </value>
   </data>
   <data name="LogContextUser" xml:space="preserve">
-    <value>        User = </value>
+    <value>        Kullanıcı = </value>
   </data>
   <data name="LogContextConnectedUser" xml:space="preserve">
-    <value>        Connected User = </value>
+    <value>        Bağlı Kullanıcı = </value>
   </data>
   <data name="NullJobName" xml:space="preserve">
-    <value>NULL Job</value>
+    <value>NULL İş</value>
   </data>
   <data name="ProviderNameString" xml:space="preserve">
-    <value>Provider name</value>
+    <value>Sağlayıcı adı</value>
   </data>
   <data name="ProviderStateChange" xml:space="preserve">
-    <value>Provider {0} changed state to {1}.</value>
+    <value>{0} sağlayıcısı durumu {1} olarak değiştirdi.</value>
   </data>
   <data name="ScriptStateChange" xml:space="preserve">
-    <value>Script execution is {0}.</value>
+    <value>Betik yürütme: {0}.</value>
   </data>
   <data name="SettingChange" xml:space="preserve">
-    <value>Variable {0} changed from {1} to {2}.</value>
+    <value>{1} olan {0} değişkeni {2} olarak değiştirildi.</value>
   </data>
   <data name="SettingChangeNoPrevious" xml:space="preserve">
-    <value>Variable {0} changed to {1}.</value>
+    <value>{0} değişkeni {1} olarak değiştirildi.</value>
   </data>
 </root>
