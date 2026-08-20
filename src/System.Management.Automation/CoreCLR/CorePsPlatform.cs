@@ -175,6 +175,10 @@ namespace System.Management.Automation
             Environment.SpecialFolder.Personal,
             @"PowerShell");
 
+        internal static readonly string SystemConfigDirectory = SafeDeriveFromSpecialFolder(
+            Environment.SpecialFolder.CommonApplicationData,
+            @"Microsoft\PowerShell");
+
         private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
         {
             int result = Interop.Windows.CoInitializeEx(IntPtr.Zero, Interop.Windows.COINIT_APARTMENTTHREADED);
