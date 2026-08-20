@@ -118,276 +118,276 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NotSupported" xml:space="preserve">
-    <value>This functionality is not supported on this operating system.</value>
+    <value>此作業系統不支援此功能。</value>
   </data>
   <data name="NotEnabled" xml:space="preserve">
-    <value>Could not enable drive {0}.</value>
+    <value>無法啟用磁碟機 {0}。</value>
   </data>
   <data name="InvalidDrive" xml:space="preserve">
-    <value>The command cannot turn on the restore computer infrastructure on the specified computer because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>因為提供的磁碟機無效，所以命令無法在指定電腦上開啟還原電腦基礎結構。請在 Drive 參數中輸入有效的磁碟機，然後再試一次。</value>
   </data>
   <data name="NoSystemDrive" xml:space="preserve">
-    <value>Include System Drive in the list of Drives.</value>
+    <value>在磁碟機清單中包含系統磁碟機。</value>
   </data>
   <data name="NotValidDrive" xml:space="preserve">
-    <value>The command cannot turn off the restore computer infrastructure because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>因為提供的磁碟機無效，所以命令無法關閉還原電腦基礎結構。請在 Drive 參數中輸入有效的磁碟機，然後再試一次。</value>
   </data>
   <data name="NotDisabled" xml:space="preserve">
-    <value>The command cannot disable System Restore on the {0} drive. You may not have sufficient permissions to perform this operation.</value>
+    <value>命令無法在 {0} 磁碟機上停用系統還原。您可能沒有足夠的權限可執行此作業。</value>
   </data>
   <data name="ServiceDisabled" xml:space="preserve">
-    <value>SystemRestore service is disabled.</value>
+    <value>系統還原服務已停用。</value>
   </data>
   <data name="RestorePointNotCreated" xml:space="preserve">
-    <value>The system restore infrastructure cannot create a restore point.</value>
+    <value>系統還原基礎結構無法建立還原點。</value>
   </data>
   <data name="RestoreFailed" xml:space="preserve">
-    <value>The last attempt to restore the computer failed.</value>
+    <value>上次的電腦還原嘗試失敗。</value>
   </data>
   <data name="RestoreSuccess" xml:space="preserve">
-    <value>The computer has been restored to the specified restore point.</value>
+    <value>電腦已還原至指定的還原點。</value>
   </data>
   <data name="RestoreInterrupted" xml:space="preserve">
-    <value>The last attempt to restore the computer was interrupted.</value>
+    <value>上次的電腦還原嘗試已中斷。</value>
   </data>
   <data name="NoRestorePoint" xml:space="preserve">
-    <value>The command cannot locate the "{0}" restore point. Verify the "{0}" sequence number, and then try the command again.</value>
+    <value>命令找不到 "{0}" 還原點。請確認 "{0}" 序號，然後再次嘗試命令。</value>
   </data>
   <data name="DoubleComputerName" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
   <data name="RestartcomputerFailed" xml:space="preserve">
-    <value>Failed to restart the computer {0} with the following error message: {1}.</value>
+    <value>無法重新啟動電腦 {0}，錯誤訊息如下: {1}。</value>
   </data>
   <data name="OperationFailed" xml:space="preserve">
-    <value>This command cannot be run on target computer('{1}') due to following error: {0}.{2}</value>
+    <value>由於下列錯誤，無法在目標電腦('{1}')上執行此命令: {0}。{2}</value>
   </data>
   <data name="StopcomputerFailed" xml:space="preserve">
-    <value>Failed to stop the computer {0} with the following error message: {1}.</value>
+    <value>無法停止電腦 {0}，錯誤訊息如下: {1}。</value>
   </data>
   <data name="InvalidRestorePoint" xml:space="preserve">
-    <value>The command cannot restore the computer because "{0}" has not been set as valid restore point. Enter a valid restore point in the RestorePoint parameter, and then try again.</value>
+    <value>命令無法還原電腦 "{0}"，因為它尚未設定為有效的還原點。請在 RestorePoint 參數中輸入有效的還原點，然後再試一次。</value>
   </data>
   <data name="RestartNeeded" xml:space="preserve">
-    <value>The changes will take effect after you restart the computer {1}.</value>
+    <value>該變更將在您重新啟動電腦 {1} 之後生效。</value>
   </data>
   <data name="RemoveComputerConfirm" xml:space="preserve">
-    <value>After you leave the domain, you will need to know the password of the local Administrator account to log onto this computer. Do you wish to continue?</value>
+    <value>離開網域之後，您必須知道本機系統管理員帳戶的密碼，才能登入這部電腦。是否要繼續?</value>
   </data>
   <data name="InvalidComputerNameFormat" xml:space="preserve">
-    <value>The following computer name is not valid: {0}. Make sure that the computer name is not longer than 255 characters, that it does not contain two or more consecutive dots, that it does not begin with a dot, that it does not contain only numeric characters, and that it does not contain any of the following characters:
+    <value>下列電腦名稱無效: {0}。請確定電腦名稱不超過 255 個字元、不包含兩個以上的連續句號、不以句號開頭、不全為數字字元，且不包含下列任何字元:
 {{|}}~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
   </data>
   <data name="InvalidDomainNameFormat" xml:space="preserve">
-    <value>The domain in computer name '{0}' is not valid. Make sure that the domain exists and that the name is a valid domain name.</value>
+    <value>電腦名稱 '{0}' 中的網域無效。請確定網域存在，而且名稱是有效的網域名稱。</value>
   </data>
   <data name="ComputerNamesAreEqual" xml:space="preserve">
-    <value>The value specified for the NewComputerName parameter is the same as the value of the ComputerName parameter. Provide a different value for the NewComputerName parameter.</value>
+    <value>為 NewComputerName 參數指定的值與 ComputerName 參數的值相同。請為 NewComputerName 參數提供不同的值。</value>
   </data>
   <data name="ResetComputerMachinePassword" xml:space="preserve">
-    <value>"The password of the secure channel between '{0}' and '{1}' has been reset."</value>
+    <value>「已重設 '{0}' 與 '{1}' 之間的安全通道密碼。」</value>
   </data>
   <data name="SystemRestoreServiceDisabled" xml:space="preserve">
-    <value>This command cannot be run due to the following error: the service cannot be started because it is disabled or does not have enabled devices associated with it.</value>
+    <value>無法執行此命令，因為發生下列錯誤：服務無法啟動，因為它已停用，或沒有與其關聯的已啟用裝置。</value>
   </data>
   <data name="ProgressActivity" xml:space="preserve">
-    <value>Creating a system restore point ...</value>
+    <value>正在建立系統還原點...</value>
   </data>
   <data name="ProgressStatusCreatingRestorePoint" xml:space="preserve">
-    <value>Creating a system restore point... {0}% Completed.</value>
+    <value>正在建立系統還原點... 已完成 {0}%。</value>
   </data>
   <data name="ProgressStatusCompleted" xml:space="preserve">
-    <value>Completed.</value>
+    <value>已完成。</value>
   </data>
   <data name="NetworkPathNotFound" xml:space="preserve">
-    <value>Try below options and Run the command again.
-1. Verify that the target computer('{0}') is running.
-2. Specify full computer name of the target computer('{0}').</value>
+    <value>請嘗試下列選項，然後再次執行命令。
+1. 確認目標電腦('{0}') 正在執行中。
+2. 指定目標電腦('{0}') 的完整電腦名稱。</value>
   </data>
   <data name="PrivilegeNotEnabled" xml:space="preserve">
-    <value>Failed to restart the computer {0}. Access rights {1} cannot be enabled for the calling process.</value>
+    <value>無法重新啟動電腦 {0}。無法為呼叫處理程序啟用存取權限 {1}。</value>
   </data>
   <data name="RestartComputerAction" xml:space="preserve">
-    <value>Enable the {0} and restart the computer.</value>
+    <value>啟用 {0} 並重新啟動電腦。</value>
   </data>
   <data name="LocalShutdownPrivilege" xml:space="preserve">
-    <value>Local shutdown access rights</value>
+    <value>本機關機存取權限</value>
   </data>
   <data name="RemoteShutdownPrivilege" xml:space="preserve">
-    <value>Remote shutdown access rights</value>
+    <value>遠端關機存取權限</value>
   </data>
   <data name="CannotWaitLocalComputer" xml:space="preserve">
-    <value>Cannot wait for the local computer to restart. The local computer is ignored when the Wait parameter is specified.</value>
+    <value>無法等候本機電腦重新啟動。指定 Wait 參數時，會忽略本機電腦。</value>
   </data>
   <data name="RestartComputerInvalidParameter" xml:space="preserve">
-    <value>The parameters Timeout, For, and Delay are valid only when the parameter Wait is specified.</value>
+    <value>只有在指定 Wait 參數時，Timeout、For 和 Delay 參數才有效。</value>
   </data>
   <data name="RestartMultipleComputersActivity" xml:space="preserve">
-    <value> Restarting computers...</value>
+    <value> 正在重新啟動電腦...</value>
   </data>
   <data name="RestartSingleComputerActivity" xml:space="preserve">
-    <value> Restarting computer {0}</value>
+    <value> 正在重新啟動電腦 {0}</value>
   </data>
   <data name="WaitForMultipleComputers" xml:space="preserve">
-    <value>Completed: {0}/{1}.</value>
+    <value>已完成: {0}/{1}。</value>
   </data>
   <data name="VerifyRebootStage" xml:space="preserve">
-    <value>Verifying that the computer has been restarted...</value>
+    <value>正在確認電腦已重新啟動...</value>
   </data>
   <data name="WaitForPowerShell" xml:space="preserve">
-    <value>Waiting for PowerShell connectivity...</value>
+    <value>正在等候 PowerShell 連線...</value>
   </data>
   <data name="WaitForRestartToBegin" xml:space="preserve">
-    <value>Waiting for the restart to begin...</value>
+    <value>正在等候重新啟動開始...</value>
   </data>
   <data name="WaitForWinRM" xml:space="preserve">
-    <value>Waiting for WinRM connectivity...</value>
+    <value>正在等候 WinRM 連線...</value>
   </data>
   <data name="WaitForWMI" xml:space="preserve">
-    <value>Waiting for WMI connectivity...</value>
+    <value>正在等候 WMI 連線...</value>
   </data>
   <data name="RestartComplete" xml:space="preserve">
-    <value>Restart is complete</value>
+    <value>重新啟動完成</value>
   </data>
   <data name="NoSupportForCombinedServiceType" xml:space="preserve">
-    <value>The combined service types are not supported for now.</value>
+    <value>目前不支援合併的服務類型。</value>
   </data>
   <data name="CannotResolveComputerName" xml:space="preserve">
-    <value>Computer name {0} cannot be resolved with the exception: {1}.</value>
+    <value>無法解析電腦名稱 {0}，例外狀況如下: {1}。</value>
   </data>
   <data name="IncorrectNewNameNumber" xml:space="preserve">
-    <value>The number of new names is not equal to the number of target computers.</value>
+    <value>新名稱的數目不等於目標電腦的數目。</value>
   </data>
   <data name="InvalidNewName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is not valid. The new computer name entered is not properly formatted. Standard names may contain letters (a-z, A-Z), numbers (0-9), and hyphens (-), but no spaces or periods (.). The name may not consist entirely of digits, and may not be longer than 63 characters.</value>
+    <value>因為新名稱無效，請略過電腦 '{0}'，其新名稱為 '{1}'。輸入的新電腦名稱格式不正確。Standard 名稱可包含字母 (a-z、A-Z)、數字 (0-9) 和連字號 (-)，但不能包含空格或句點 (.)。名稱不能全由數字組成，而且長度不能超過 63 個字元。</value>
   </data>
   <data name="NewNameIsOldName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is the same as the current name.</value>
+    <value>略過電腦 '{0}'，其新名稱為 '{1}'，因為新名稱與目前名稱相同。</value>
   </data>
   <data name="ComputerNotInDomain" xml:space="preserve">
-    <value>Cannot remove computer '{0}' because it is not in a domain.</value>
+    <value>無法移除電腦 '{0}'，因為它不在網域中。</value>
   </data>
   <data name="FailToJoinWorkGroup" xml:space="preserve">
-    <value>Failed to join computer '{0}' to workgroup '{1}' with the following error message: {2}</value>
+    <value>無法將電腦 '{0}' 加入工作群組 '{1}'，錯誤訊息如下: {2}</value>
   </data>
   <data name="NetworkDown" xml:space="preserve">
-    <value>Cannot remove computer(s) from the domain because the local network is down.</value>
+    <value>無法從網域移除電腦，因為本機網路已中斷。</value>
   </data>
   <data name="FailToRename" xml:space="preserve">
-    <value>Fail to rename computer '{0}' to '{1}' due to the following exception: {2}.</value>
+    <value>無法將電腦 '{0}' 重新命名為 '{1}'，因為發生下列例外狀況: {2}。</value>
   </data>
   <data name="AddComputerActionDomain" xml:space="preserve">
-    <value>Join in domain '{0}'</value>
+    <value>加入網域 '{0}'</value>
   </data>
   <data name="AddComputerActionWorkgroup" xml:space="preserve">
-    <value>Join in workgroup '{0}'</value>
+    <value>加入工作群組 '{0}'</value>
   </data>
   <data name="AddComputerToSameDomain" xml:space="preserve">
-    <value>Cannot add computer '{0}' to domain '{1}' because it is already in that domain.</value>
+    <value>無法將電腦 '{0}' 新增至網域 '{1}'，因為它已在該網域中。</value>
   </data>
   <data name="AddComputerToSameWorkgroup" xml:space="preserve">
-    <value>Cannot add computer '{0}' to workgroup '{1}' because it is already in that workgroup.</value>
+    <value>無法將電腦 '{0}' 新增至工作群組 '{1}'，因為它已在該工作群組中。</value>
   </data>
   <data name="FailToRenameAfterJoinWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' successfully joined the workgroup '{1}', but could not be renamed to '{2}' with the following error message: {3}.</value>
+    <value>電腦 '{0}' 已成功加入工作群組 '{1}'，但無法重新命名為 '{2}'，錯誤訊息如下: {3}。</value>
   </data>
   <data name="FailToSwitchFromDomainToWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from the domain '{1}', but it failed to join the workgroup '{2}' with the following error message: {3}.</value>
+    <value>電腦 '{0}' 已成功取消加入網域 '{1}'，但無法加入工作群組 '{2}'，錯誤訊息如下: {3}。</value>
   </data>
   <data name="FailToUnjoinDomain" xml:space="preserve">
-    <value>Failed to unjoin computer '{0}' from domain '{1}' with the following error message: {2}.</value>
+    <value>無法將電腦 '{0}' 從網域 '{1}' 退出，錯誤訊息如下: {2}。</value>
   </data>
   <data name="FailToConnectToComputer" xml:space="preserve">
-    <value>Cannot establish the WMI connection to the computer '{0}' with the following error message: {1}.</value>
+    <value>無法建立與電腦 '{0}' 的 WMI 連線，錯誤訊息如下: {1}。</value>
   </data>
   <data name="FailToJoinDomainFromWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' failed to join domain '{1}' from its current workgroup '{2}' with following error message: {3}.</value>
+    <value>電腦 '{0}' 無法從目前的工作群組 '{1}' 加入網域 '{2}'，錯誤訊息如下: {3}。</value>
   </data>
   <data name="FailToJoinNewDomainAfterUnjoinOldDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from domain '{1}', but failed to join the new domain '{2}' with the following error message: {3}.</value>
+    <value>電腦 '{0}' 已成功取消加入網域 '{1}'，但無法加入新網域 '{2}'，錯誤訊息如下: {3}。</value>
   </data>
   <data name="FailToRenameAfterJoinDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully joined to the new domain '{1}', but renaming it to '{2}' failed with the following error message: {3}.</value>
+    <value>電腦 '{0}' 已成功加入新的網域 '{1}'，但重新命名為 '{2}' 失敗，錯誤訊息如下: {3}。</value>
   </data>
   <data name="InvalidJoinOptions" xml:space="preserve">
-    <value>The flag '{0}' is valid only if flag '{1}' is specified.</value>
+    <value>旗標 '{0}' 只有在指定旗標 '{1}' 時才有效。</value>
   </data>
   <data name="CannotRenameMultipleComputers" xml:space="preserve">
-    <value>Cannot rename multiple computers. The NewName parameter is valid only if a single computer is specified.</value>
+    <value>無法重新命名多部電腦。只有在指定單一電腦時，NewName 參數才有效。</value>
   </data>
   <data name="CannotFindMachineAccountFromDomain" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer in the domain {0}.</value>
+    <value>在網域 {0} 中找不到本機電腦的電腦帳戶。</value>
   </data>
   <data name="CannotFindMachineAccountFromServer" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer from the domain controller {0}.</value>
+    <value>在網域控制站 {0} 中找不到本機電腦的電腦帳戶。</value>
   </data>
   <data name="FailToGetDomainInformation" xml:space="preserve">
-    <value>Cannot get domain information about the local computer because of the following exception: {0}.</value>
+    <value>無法取得本機電腦的網域資訊，因為發生下列例外狀況: {0}。</value>
   </data>
   <data name="FailToResetPasswordOnDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the computer account in the domain. Operation failed with the following exception: {0}.</value>
+    <value>無法重設網域中電腦帳戶的安全通道密碼。作業失敗，發生下列例外狀況: {0}。</value>
   </data>
   <data name="FailToResetPasswordOnLocalMachine" xml:space="preserve">
-    <value>Resetting the secure channel password for the local computer failed with the following error message: {0}.</value>
+    <value>重設本機電腦的安全通道密碼失敗，錯誤訊息如下: {0}。</value>
   </data>
   <data name="NeedAdminPrivilegeToResetPassword" xml:space="preserve">
-    <value>Administrator rights are required to reset the secure channel password on the local computer. Access is denied.</value>
+    <value>重設本機電腦上的安全通道密碼需要系統管理員權限。存取遭到拒絕。</value>
   </data>
   <data name="ResetComputerNotInDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the account of the local computer. The local computer is not currently part of a domain.</value>
+    <value>無法重設本機電腦的帳戶安全通道密碼。本機電腦目前不屬於任何網域。</value>
   </data>
   <data name="TruncateNetBIOSName" xml:space="preserve">
-    <value>The NetBIOS name of the computer is limited to 15 bytes, which is 15 characters in this case. The NetBIOS name will be shortened to "{0}", which may cause conflicts under NetBIOS name resolution. Do you wish to continue?</value>
+    <value>電腦的 NetBIOS 名稱限制為 15 個位元組，在此情況下即為 15 個字元。NetBIOS 名稱將縮短為 "{0}"，這可能會導致 NetBIOS 名稱解析發生衝突。是否要繼續?</value>
   </data>
   <data name="TruncateNetBIOSNameCaption" xml:space="preserve">
-    <value>NetBIOS name will be truncated.</value>
+    <value>NetBIOS 名稱將被截斷。</value>
   </data>
   <data name="CannotResolveServerName" xml:space="preserve">
-    <value>The specified server name {0} cannot be resolved.</value>
+    <value>無法解析指定的伺服器名稱 {0}。</value>
   </data>
   <data name="CannotCreateRestorePointWarning" xml:space="preserve">
-    <value>A new system restore point cannot be created because one has already been created within the past {0} minutes. The frequency of restore point creation can be changed by creating the DWORD value 'SystemRestorePointCreationFrequency' under the registry key 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore'. The value of this registry key indicates the necessary time interval (in minutes) between two restore point creation. The default value is 1440 minutes (24 hours).</value>
+    <value>無法建立新的系統還原點，因為在過去 {0} 分鐘內已建立一個還原點。您可以在登錄機碼 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore' 下建立 DWORD 值 'SystemRestorePointCreationFrequency'，以變更還原點建立的頻率。此登錄機碼的值表示建立兩個還原點之間所需的時間間隔 (以分鐘為單位)。預設值為 1440 分鐘 (24 小時)。</value>
   </data>
   <data name="CannotGetOperatingSystemObject" xml:space="preserve">
-    <value>The Win32_OperatingSystem WMI object cannot be retrieved.</value>
+    <value>無法擷取 Win32_OperatingSystem WMI 物件。</value>
   </data>
   <data name="RestartComputerSkipped" xml:space="preserve">
-    <value>The computer {0} is skipped. Fail to retrieve its LastBootUpTime via the WMI service with the following error message: {1}.</value>
+    <value>已略過電腦 {0}。無法透過 WMI 服務擷取其 LastBootUpTime，錯誤訊息如下: {1}。</value>
   </data>
   <data name="FailToTestSecureChannel" xml:space="preserve">
-    <value>Cannot verify the secure channel for the local computer. Operation failed with the following exception: {0}.</value>
+    <value>無法驗證本機電腦的安全通道。作業失敗，發生下列例外狀況: {0}。</value>
   </data>
   <data name="RepairSecureChannelFail" xml:space="preserve">
-    <value>The attempt to repair the secure channel between the local computer and the domain {0} has failed.</value>
+    <value>嘗試修復本機電腦與網域 {0} 之間的安全通道失敗。</value>
   </data>
   <data name="RepairSecureChannelSucceed" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} was successfully repaired.</value>
+    <value>已成功修復本機電腦與網域 {0} 之間的安全通道。</value>
   </data>
   <data name="SecureChannelAlive" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is in good condition.</value>
+    <value>本機電腦與網域 {0} 之間的安全通道狀況良好。</value>
   </data>
   <data name="SecureChannelBroken" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is broken.</value>
+    <value>本機電腦與網域 {0} 之間的安全通道已中斷。</value>
   </data>
   <data name="TestComputerNotInDomain" xml:space="preserve">
-    <value>Cannot verify the secure channel password for the local computer. The local computer is not currently part of a domain.</value>
+    <value>無法驗證本機電腦的安全通道密碼。本機電腦目前不屬於任何網域。</value>
   </data>
   <data name="SystemRestoreNotSupported" xml:space="preserve">
-    <value>The operation cannot be performed because the system restore APIs are not supported on the Advanced RISC Machine (ARM) platform.</value>
+    <value>無法執行作業，因為 Advanced RISC Machine (ARM) 平台不支援系統還原 API。</value>
   </data>
   <data name="TimeoutError" xml:space="preserve">
-    <value>The computer did not finish restarting within the specified time-out period.</value>
+    <value>電腦未在指定的逾時期間內完成重新啟動。</value>
   </data>
   <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
-    <value>Cannot validate the time interval for restore point creation. It failed to retrieve the last restore point with the following error message: {0}.</value>
+    <value>無法驗證建立還原點的時間間隔。無法擷取上一個還原點，錯誤訊息如下: {0}。</value>
   </data>
   <data name="InvalidParameterSetAsJob" xml:space="preserve">
-    <value>The AsJob Parameter Set is not supported.</value>
+    <value>不支援 AsJob 參數集。</value>
   </data>
   <data name="InvalidParameterForCoreClr" xml:space="preserve">
-    <value>The {0} parameter is not supported for CoreCLR.</value>
+    <value>CoreCLR 不支援 {0} 參數。</value>
   </data>
   <data name="ShutdownCommandNotFound" xml:space="preserve">
-    <value>The required native command 'shutdown' was not found.</value>
+    <value>找不到必要的原生命令 'shutdown'。</value>
   </data>
 </root>

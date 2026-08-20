@@ -118,93 +118,93 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Argument" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is not valid. Change the value of the "{0}" argument and run the operation again.</value>
+    <value>无法处理参数，因为参数 "{0}" 的值无效。请更改参数 "{0}" 的值，然后再次运行该操作。</value>
   </data>
   <data name="InvalidScopeIdArgument" xml:space="preserve">
-    <value>Cannot process argument because the value of parameter "{0}" is not valid. Valid values are "Global", "Local", or "Script", or a number relative to the current scope (0 through the number of scopes where 0 is the current scope and 1 is its parent). Change the value of the "{0}" parameter and run the operation again.</value>
+    <value>无法处理参数，因为参数 "{0}" 的值无效。有效值为 "Global"、"Local"、"Script" 或者相对于当前范围的数字(0 到范围数，其中 0 是指当前范围，1 是指其父范围)。请更改 "{0}" 参数的值，然后重新运行该操作。</value>
   </data>
   <data name="ArgumentNull" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is null. Change the value of argument "{0}" to a non-null value.</value>
+    <value>无法处理参数，因为参数 "{0}" 的值为 null。请将参数 "{0}" 的值更改为非 null 值。</value>
   </data>
   <data name="ArgumentOutOfRange" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is out of range. Change argument "{0}" to a value that is within range.</value>
+    <value>无法处理参数，因为参数 "{0}" 的值超出范围。请将参数 "{0}" 更改为范围内的值。</value>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not valid. Remove operation "{0}", or investigate why it is not valid.</value>
+    <value>无法执行操作，因为操作 "{0}" 无效。请移除操作 "{0}"，或调查其无效的原因。</value>
   </data>
   <data name="NotImplemented" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not implemented.</value>
+    <value>无法执行操作，因为未实现操作 "{0}"。</value>
   </data>
   <data name="NotSupported" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not supported.</value>
+    <value>无法执行操作，因为不支持操作 "{0}"。</value>
   </data>
   <data name="ObjectDisposed" xml:space="preserve">
-    <value>Cannot perform operation because object "{0}" has already been disposed.</value>
+    <value>无法执行操作，因为对象 "{0}" 已被释放。</value>
   </data>
   <data name="ScriptBlockInvokeOnOneClauseOnly" xml:space="preserve">
-    <value>The script block cannot be invoked because it contains more than one clause. The Invoke() method can only be used on script blocks that contain a single clause.</value>
+    <value>无法调用脚本块，因为它包含多个子句。Invoke() 方法只能用于包含单个子句的脚本块。</value>
   </data>
   <data name="CanConvertOneClauseOnly" xml:space="preserve">
-    <value>The script block cannot be converted because it contains more than one clause. Expressions or control structures are not permitted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>无法转换脚本块，因为它包含多个子句。不允许使用表达式或控件结构。验证脚本块是否只包含一个管道或命令。</value>
   </data>
   <data name="CantConvertEmptyPipeline" xml:space="preserve">
-    <value>An empty script block cannot be converted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>无法转换空脚本块。验证脚本块是否只包含一个管道或命令。</value>
   </data>
   <data name="CanOnlyConvertOnePipeline" xml:space="preserve">
-    <value>Only a script block that contains exactly one pipeline or command can be converted. Expressions or control structures are not permitted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>只能转换仅包含一个管道或命令的脚本块。不允许使用表达式或控件结构。验证脚本块是否只包含一个管道或命令。</value>
   </data>
   <data name="CantConvertScriptBlockWithTrap" xml:space="preserve">
-    <value>A script block that contains a top-level trap statement cannot be converted.</value>
+    <value>包含顶级 trap 语句的脚本块无法转换。</value>
   </data>
   <data name="CantConvertWithUndeclaredVariables" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock dereferencing variables undeclared in the param(...) block.  Name of undeclared variable: {0}.</value>
+    <value>无法为取消引用 param(...) 块中未声明变量的 ScriptBlock 生成 PowerShell 对象。 未声明变量的名称: {0}。</value>
   </data>
   <data name="CantConvertWithNonConstantExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock evaluating non-constant expressions. Non-constant expression: {0}.</value>
+    <value>无法为计算非常量表达式的 ScriptBlock 生成 PowerShell 对象。非常量表达式: {0}。</value>
   </data>
   <data name="CantConvertWithDynamicExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock evaluating dynamic expressions. Dynamic expression: {0}.</value>
+    <value>无法为计算动态表达式的 ScriptBlock 生成 PowerShell 对象。动态表达式: {0}。</value>
   </data>
   <data name="CantConvertWithScriptBlocks" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that tries to pass other script blocks inside argument values.</value>
+    <value>无法为尝试在参数值内传递其他脚本块的 ScriptBlock 生成 PowerShell 对象。</value>
   </data>
   <data name="CantConvertWithCommandInvocations" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock which invokes pipelines, commands or functions to evaluate arguments of the main pipeline.</value>
+    <value>无法为调用管道、命令或函数来计算主管道参数的 ScriptBlock 生成 PowerShell 对象。</value>
   </data>
   <data name="CantConvertWithDotSourcing" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that uses dot sourcing.</value>
+    <value>无法为使用点源的 ScriptBlock 生成 PowerShell 对象。</value>
   </data>
   <data name="CantConvertWithScriptBlockInvocation" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that invokes other script blocks.</value>
+    <value>无法为调用其他脚本块的 ScriptBlock 生成 PowerShell 对象。</value>
   </data>
   <data name="CanConvertOneOutputErrorRedir" xml:space="preserve">
-    <value>The script block cannot be converted to a PowerShell object because it contains forbidden redirection operators.</value>
+    <value>无法将脚本块转换为 PowerShell 对象，因为它包含禁止重定向运算符。</value>
   </data>
   <data name="CantConvertScriptBlockWithNoContext" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that does not have an associated operation context.</value>
+    <value>无法为没有关联操作上下文的 ScriptBlock 生成 PowerShell 对象。</value>
   </data>
   <data name="HaltCommandException" xml:space="preserve">
-    <value>The command was stopped by the user.</value>
+    <value>用户已停止该命令。</value>
   </data>
   <data name="DynamicParametersWrongType" xml:space="preserve">
-    <value>Object "{0}" is the wrong type to return from the dynamicparam block. The dynamicparam block must return either $null, or an object with type [System.Management.Automation.RuntimeDefinedParameterDictionary].</value>
+    <value>对象 "{0}" 的类型不正确，无法从 dynamicparam 块返回。dynamicparam 块必须返回 $null，或者返回类型为 [System.Management.Automation.RuntimeDefinedParameterDictionary] 的对象。</value>
   </data>
   <data name="CantConvertScriptBlockToOpenGenericType" xml:space="preserve">
-    <value>The script block cannot be converted to an open generic type. Define an appropriate closed generic type, and then retry.</value>
+    <value>脚本块无法转换为开放泛型类型。请定义适当的封闭泛型类型，然后重试。</value>
   </data>
   <data name="CantConvertPipelineStartsWithExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that starts a pipeline with an expression.</value>
+    <value>无法为使用表达式启动管道的 ScriptBlock 生成 PowerShell 对象。</value>
   </data>
   <data name="UsingVariableIsUndefined" xml:space="preserve">
-    <value>The value of the using variable '$using:{0}' cannot be retrieved because it has not been set in the local session.</value>
+    <value>无法检索 using 变量 '$using:{0}' 的值，因为该变量尚未在本地会话中设置。</value>
   </data>
   <data name="CantGetUsingExpressionValueWithSpecifiedVariableDictionary" xml:space="preserve">
-    <value>Cannot get the value of the Using expression '{0}' in the specified variable dictionary. When creating a PowerShell instance from a script block, the Using expression cannot contain an indexing operation or member-accessing operation.</value>
+    <value>无法获取指定变量字典中 Using 表达式 '{0}' 的值。从脚本块创建 PowerShell 实例时，Using 表达式不能包含索引操作或成员访问操作。</value>
   </data>
   <data name="WDACCompiledScriptBlockLogTitle" xml:space="preserve">
-    <value>Compiled Script Block Dot Source</value>
+    <value>编译的脚本块点源</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>Script block '{0}' invocation into current scope will be disallowed in Constrained Language mode. Script language mode: {1}, Context language mode: {2}.</value>
+    <value>在“受约束语言”模式下，将不允许在当前范围中调用脚本块 "{0}"。脚本语言模式: {1}，上下文语言模式: {2}。</value>
   </data>
 </root>

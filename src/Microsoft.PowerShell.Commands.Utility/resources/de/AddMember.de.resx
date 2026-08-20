@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WrongMemberCount" xml:space="preserve">
-    <value>To add a member, only one member type can be specified. The member types specified are: "{0}"</value>
+    <value>Zum Hinzufügen eines Members kann nur ein Membertyp angegeben werden. Die angegebenen Membertypen sind: „{0}“.</value>
   </data>
   <data name="CannotAddMemberType" xml:space="preserve">
-    <value>Cannot add a member with type "{0}". Specify a different type for the MemberTypes parameter.</value>
+    <value>Ein Member vom Typ „{0}“ kann nicht hinzugefügt werden. Geben Sie für den MemberTypes-Parameter einen anderen Typ an.</value>
   </data>
   <data name="Value2ShouldNotBeSpecified" xml:space="preserve">
-    <value>The SecondValue parameter is not necessary for a member of type "{0}", and should not be specified. Do not specify the SecondValue parameter when you add members of this type.</value>
+    <value>Der SecondValue-Parameter ist für einen Member vom Typ „{0}“ nicht erforderlich und sollte nicht angegeben werden. Geben Sie den SecondValue-Parameter nicht an, wenn Sie Members dieses Typs hinzufügen.</value>
   </data>
   <data name="Value1Prompt" xml:space="preserve">
-    <value>The Value parameter is required for a member of type "{0}". Specify the Value parameter when adding members of this type.</value>
+    <value>Der Value-Parameter ist für einen Member vom Typ „{0}“ erforderlich. Geben Sie den Parameter Value an, wenn Sie Members dieses Typs hinzufügen.</value>
   </data>
   <data name="Value1AndValue2AreNotBothNull" xml:space="preserve">
-    <value>Both Value and SecondValue parameters should not be null for a member of type "{0}". Specify a non-null value for one of the two parameters.</value>
+    <value>Sowohl der Value- als auch der SecondValue-Parameter dürfen für einen Member vom Typ „{0}“ nicht beide NULL sein. Geben Sie für einen der beiden Parameter einen Wert ungleich NULL an.</value>
   </data>
   <data name="MemberAlreadyExists" xml:space="preserve">
-    <value>Cannot add a member with the name "{0}" because a member with that name already exists. To overwrite the member anyway, add the Force parameter to your command.</value>
+    <value>Ein Member mit dem Namen „{0}“ kann nicht hinzugefügt werden, da bereits ein Member mit diesem Namen vorhanden ist. Wenn der Member trotzdem überschrieben werden soll, fügen Sie Ihrem Befehl den Parameter Force hinzu.</value>
   </data>
   <data name="CannotRemoveTypeDataMember" xml:space="preserve">
-    <value>Cannot force the member with name "{0}" and type "{1}" to be added. A member with that name and type already exists, and the existing member is not an instance extension.</value>
+    <value>Das Hinzufügen des Members mit dem Namen „{0}“ und dem Typ „{1}“ kann nicht erzwungen werden. Ein Member mit diesem Namen und Typ ist bereits vorhanden, und der vorhandene Member ist keine Instanzerweiterung.</value>
   </data>
   <data name="AliasReferenceShouldNotBeNullOrEmpty" xml:space="preserve">
-    <value>The member referenced by this alias should not be null or empty.</value>
+    <value>Der Member, auf den dieser Alias verweist, darf nicht NULL oder leer sein.</value>
   </data>
   <data name="Value1ShouldNotBeNull" xml:space="preserve">
-    <value>The Value parameter should not be null for a member of type "{0}". Specify a non-null value for the Value parameter when adding members of this type.</value>
+    <value>Der Value-Parameter darf für einen Member vom Typ „{0}“ nicht NULL sein. Geben Sie beim Hinzufügen von Members dieses Typs einen Wert ungleich NULL für den Parameter Value an.</value>
   </data>
   <data name="Value2ShouldNotBeNull" xml:space="preserve">
-    <value>The SecondValue parameter should not be null for a member of type "{0}". Specify a non-null value for the SecondValue parameter when adding members of this type.</value>
+    <value>Der SecondValue-Parameter darf für einen Member vom Typ „{0}“ nicht NULL sein. Geben Sie beim Hinzufügen von Members dieses Typs einen Wert ungleich NULL für den SecondValue-Parameter an.</value>
   </data>
   <data name="InvalidValueForNotePropertyName" xml:space="preserve">
-    <value>The parameter NotePropertyName cannot take values that could be converted to the type {0}. To define the name of a member with those values, use Add-Member, and specify the member type.</value>
+    <value>Der NotePropertyName-Parameter kann keine Werte annehmen, die in den Typ „{0}“ konvertiert werden können. Wenn Sie den Namen eines Members mit diesen Werten definieren möchten, verwenden Sie Add-Member, und geben Sie den Membertyp an.</value>
   </data>
   <data name="NotePropertyNameShouldNotBeNull" xml:space="preserve">
-    <value>The name for a NoteProperty member should not be null or an empty string.</value>
+    <value>Der Name für einen NoteProperty-Member darf nicht NULL oder eine leere Zeichenfolge sein.</value>
   </data>
   <data name="TypeNameShouldNotBeEmpty" xml:space="preserve">
-    <value>The TypeName parameter should not be null, empty, or contain only white spaces.</value>
+    <value>Der TypeName-Parameter darf nicht NULL oder leer sein oder nur Leerzeichen enthalten.</value>
   </data>
 </root>
