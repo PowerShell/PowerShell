@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UpdateNotSupportedForConfigurationCategory" xml:space="preserve">
-    <value>The update is not supported for the runspace configuration category {0}. </value>
+    <value>La mise à jour n’est pas prise en charge pour la catégorie de configuration de l’instance d’exécution {0}. </value>
   </data>
   <data name="UpdateAssemblyErrors" xml:space="preserve">
-    <value>The following errors occurred when updating the assembly list for the runspace: {0}.</value>
+    <value>Les erreurs suivantes se sont produites lors de la mise à jour de la liste d’assemblages pour l’instance d’exécution : {0}.</value>
   </data>
 </root>

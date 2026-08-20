@@ -121,132 +121,132 @@
     <value>对路径“{0}”的访问被拒绝。</value>
   </data>
   <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
-    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To suppress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthentication parameter.</value>
+    <value>该 cmdlet 无法保护通过未加密连接发送的纯文本机密。若要取消显示此警告并通过未加密的网络发送纯文本机密，请重新发出指定 AllowUnencryptedAuthentication 参数的命令。</value>
   </data>
   <data name="AuthenticationConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Authentication and UseDefaultCredentials. Authentication does not support Default Credentials. Specify either Authentication or UseDefaultCredentials, then retry.</value>
+    <value>无法运行 cmdlet，因为指定了以下冲突参数: Authentication 和 UseDefaultCredentials。身份验证不支持默认凭据。请指定 Authentication 或 UseDefaultCredentials，然后重试。</value>
   </data>
   <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Credential. The supplied Authentication type requires a Credential. Specify Credential, then retry.</value>
+    <value>该 cmdlet 无法运行，因为未指定以下参数: Credential。所提供的 Authentication 类型需要 Credential。指定凭据，然后重试。</value>
   </data>
   <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Token. The supplied Authentication type requires a Token. Specify Token, then retry.</value>
+    <value>该 cmdlet 无法运行，因为未指定以下参数: Token。所提供的 Authentication 类型需要 Token。请指定 Token，然后重试。</value>
   </data>
   <data name="AuthenticationTokenConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and Token. Specify either Credential or Token, then retry.</value>
+    <value>无法运行 cmdlet，因为指定了以下冲突参数: Credential 和 Token。请指定 Credential 或 Token，然后重试。</value>
   </data>
   <data name="BodyConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and InFile. Specify either Body or Infile, then retry.  </value>
+    <value>该 cmdlet 无法运行，因为指定了以下冲突参数: Body 和 InFile。请指定 Body 或 InFile，然后重试。 </value>
   </data>
   <data name="BodyFormConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and Form. Specify either Body or Form, then retry.  </value>
+    <value>该 cmdlet 无法运行，因为指定了以下冲突参数: Body 和 Form。请指定 Body 或 Form，然后重试。 </value>
   </data>
   <data name="FormInFileConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: InFile and Form. Specify either InFile or Form, then retry.  </value>
+    <value>该 cmdlet 无法运行，因为指定了以下冲突参数: InFile 和 Form。请指定 InFile 或 Form，然后重试。 </value>
   </data>
   <data name="ContentTypeException" xml:space="preserve">
-    <value>The cmdlet cannot run because the -ContentType parameter is not a valid Content-Type header. Specify a valid Content-Type for -ContentType, then retry. To suppress header validation, supply the -SkipHeaderValidation parameter.</value>
+    <value>该 cmdlet 无法运行，因为 -ContentType 参数不是有效的 Content-Type 标头。为 -ContentType 指定有效的 Content-Type，然后重试。若要取消标头验证，请提供 -SkipHeaderValidation 参数。</value>
   </data>
   <data name="CredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and UseDefaultCredentials. Specify either Credential or UseDefaultCredentials, then retry.</value>
+    <value>无法运行 cmdlet，因为指定了以下冲突参数: Credential 和 UseDefaultCredentials。请指定 Credential 或 UseDefaultCredentials，然后重试。</value>
   </data>
   <data name="DirectoryPathSpecified" xml:space="preserve">
-    <value>Path '{0}' resolves to a directory. Specify a path including a file name, and then retry the command.</value>
+    <value>路径 '{0}' 解析为目录。指定包含文件名的路径，然后重试该命令。</value>
   </data>
   <data name="EmptyKeyInJsonString" xml:space="preserve">
-    <value>The provided JSON includes a property whose name is an empty string, this is only supported using the -AsHashTable switch.</value>
+    <value>提供的 JSON 包括一个名称为空字符串的属性，仅支持使用 -AsHashTable 开关。</value>
   </data>
   <data name="DuplicateKeysInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated key '{0}'.</value>
+    <value>无法转换 JSON 字符串，因为从该字符串转换的字典包含重复键 '{0}'。</value>
   </data>
   <data name="IEDomNotSupported" xml:space="preserve">
-    <value>The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again. </value>
+    <value>无法解析响应内容，因为 Internet Explorer 引擎不可用，或者 Internet Explorer 的首次启动配置未完成。指定 UseBasicParsing 参数，然后重试。</value>
   </data>
   <data name="InsecureRedirection" xml:space="preserve">
-    <value>Cannot follow an insecure redirection by default. Reissue the command specifying the -AllowInsecureRedirect switch. </value>
+    <value>默认情况下，不能跟随不安全的重定向。重新发出指定 -AllowInsecureRedirect 开关的命令。</value>
   </data>
   <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
+    <value>无法转换 JSON 字符串，因为它包含具有不同大小写的键。请改用 -AsHashTable 开关。尝试添加到现有键 '{0}' 的键是 '{1}'。</value>
   </data>
   <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
-    <value>The maximum redirection count has been exceeded. To increase the number of redirections allowed, supply a higher value to the -MaximumRedirection parameter.</value>
+    <value>已超过最大重定向计数。若要增加允许的重定向数，请为 -MaximumRedirection 参数提供更高的值。</value>
   </data>
   <data name="MultiplePathsResolved" xml:space="preserve">
-    <value>Path '{0}' can be resolved to multiple paths.</value>
+    <value>路径 '{0}' 可解析为多个路径。</value>
   </data>
   <data name="NonStringKeyInDictionary" xml:space="preserve">
-    <value>The type '{0}' is not supported for serialization or deserialization of a dictionary. Keys must be strings.</value>
+    <value>类型 '{0}' 不支持字典的序列化或反序列化。键必须是字符串。</value>
   </data>
   <data name="NoPathResolved" xml:space="preserve">
-    <value>Path '{0}' cannot be resolved to a file.</value>
+    <value>路径 '{0}' 无法解析为文件。</value>
   </data>
   <data name="NotFilesystemPath" xml:space="preserve">
-    <value>Path '{0}' is not a file system path. Please specify the path to a file in the file system.</value>
+    <value>路径 '{0}' 不是文件系统路径。请指定文件系统中文件的路径。</value>
   </data>
   <data name="OutFileMissing" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide a valid OutFile parameter value when using the {0} parameter, then retry.</value>
+    <value>该 cmdlet 无法运行，因为缺少以下参数: OutFile。使用 {0} 参数时提供有效的 OutFile 参数值，然后重试。</value>
   </data>
   <data name="OutFileWritingSkipped" xml:space="preserve">
-    <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
+    <value>不会重新下载该文件，因为远程文件与 OutFile 大小相同: {0}</value>
   </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
+    <value>该 cmdlet 无法运行，因为指定了以下冲突参数: ProxyCredential 和 ProxyUseDefaultCredentials。指定 ProxyCredential 或 ProxyUseDefaultCredentials，然后重试。</value>
   </data>
   <data name="ProxyUriNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or ProxyUseDefaultCredentials parameters, then retry.</value>
+    <value>无法运行 cmdlet，因为缺少以下参数: Proxy。使用 ProxyCredential 或 ProxyUseDefaultCredentials 参数时，请为 Proxy 参数提供有效的代理 URI，然后重试。</value>
   </data>
   <data name="ReadResponseComplete" xml:space="preserve">
-    <value>Reading web response stream completed. Bytes downloaded: {0}</value>
+    <value>已完成读取 Web 响应流。已下载字节数: {0}</value>
   </data>
   <data name="ReadResponseProgressActivity" xml:space="preserve">
-    <value>Reading web response stream</value>
+    <value>正在读取 Web 响应流</value>
   </data>
   <data name="ReadResponseProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>已下载: {0}/{1}</value>
   </data>
   <data name="ResumeNotFilePath" xml:space="preserve">
-    <value>The Resume switch can only be used if OutFile targets a file but it resolves to a directory: {0}.</value>
+    <value>只有当 OutFile 指向文件但解析结果为目录时，才能使用 Resume 开关: {0}。</value>
   </data>
   <data name="SessionConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Session and SessionVariable. Specify either Session or SessionVariable, then retry.</value>
+    <value>该 cmdlet 无法运行，因为指定了以下冲突参数: Session 和 SessionVariable。请指定 Session 或 SessionVariable，然后重试。</value>
   </data>
   <data name="ThumbprintNotFound" xml:space="preserve">
-    <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
+    <value>无法检索证书，因为指纹无效。验证指纹并重试。</value>
   </data>
   <data name="WriteRequestComplete" xml:space="preserve">
-    <value>Web request completed. (Number of bytes processed: {0})</value>
+    <value>Web 请求已完成。(已处理的字节数: {0})</value>
   </data>
   <data name="WriteRequestCancelled" xml:space="preserve">
-    <value>Web request cancelled. (Number of bytes processed: {0})</value>
+    <value>Web 请求已取消。(已处理的字节数: {0})</value>
   </data>
   <data name="WriteRequestProgressActivity" xml:space="preserve">
-    <value>Web request status</value>
+    <value>Web 请求状态</value>
   </data>
   <data name="WriteRequestProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>已下载: {0}/{1}</value>
   </data>
   <data name="JsonDeserializationFailed" xml:space="preserve">
-    <value>Conversion from JSON failed with error: {0}</value>
+    <value>从 JSON 转换失败，出现错误: {0}</value>
   </data>
   <data name="ResponseStatusCodeFailure" xml:space="preserve">
-    <value>Response status code does not indicate success: {0} ({1}).</value>
+    <value>响应状态代码未指示成功: {0} ({1})。</value>
   </data>
   <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
-    <value>Following rel link {0}</value>
+    <value>正在跟踪 rel 链接 {0}</value>
   </data>
   <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
-    <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>
+    <value>远程服务器指示无法继续下载。将覆盖本地文件。</value>
   </data>
   <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
-    <value>Received HTTP/{0} response of content type {1} of unknown size</value>
+    <value>收到了未知大小的内容类型 {1} 的 HTTP/ {0} 响应</value>
   </data>
   <data name="RetryVerboseMsg" xml:space="preserve">
-    <value>Retrying after interval of {0} seconds. Status code for previous attempt: {1}</value>
+    <value>间隔 {0} 秒后重试。上次尝试的状态代码: {1}</value>
   </data>
   <data name="JsonMaxDepthReached" xml:space="preserve">
-    <value>Resulting JSON is truncated as serialization has exceeded the set depth of {0}.</value>
+    <value>生成的 JSON 已截断，因为序列化已超过设置的深度 {0}。</value>
   </data>
   <data name="WebSessionConnectionRecreated" xml:space="preserve">
-    <value>The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.</value>
+    <value>在强制重新创建会话中的所有 HTTP 连接的请求之间更改了 WebSession 属性。</value>
   </data>
 </root>
