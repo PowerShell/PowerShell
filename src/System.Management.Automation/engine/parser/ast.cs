@@ -7398,6 +7398,88 @@ namespace System.Management.Automation.Language
         }
     }
 
+#nullable enable
+
+    /// <summary>
+    /// The ast representing an expression with a string label inside a method invocation argument list, e.g.
+    /// <c>$class.Method(name: $value)</c>.
+    /// </summary>
+    public class NamedMethodArgumentAst : ExpressionAst
+    {
+        /// <summary>
+        /// Initializes a new instance of the argument with label expression.
+        /// </summary>
+        /// <param name="extent">The extent of the expression.</param>
+        /// <param name="label">The expression label.</param>
+        /// <param name="expression">The labeled expression.</param>
+        public NamedMethodArgumentAst(
+            IScriptExtent extent,
+            StringConstantExpressionAst label,
+            ExpressionAst expression) : base(extent)
+        {
+            Label = label ?? throw PSTraceSource.NewArgumentNullException(nameof(label));
+            Expression = expression ?? throw PSTraceSource.NewArgumentNullException(nameof(expression));
+
+            SetParent(label);
+            SetParent(expression);
+        }
+
+        /// <summary>
+        /// Gets the expression label. The property is never null.
+        /// </summary>
+        public StringConstantExpressionAst Label { get; }
+
+        /// <summary>
+        /// Gets the labeled expression. The property is never null.
+        /// </summary>
+        public ExpressionAst Expression { get; }
+
+        /// <summary>
+        /// Copy the NamedMethodArgumentAst instance.
+        /// </summary>
+        /// <returns>
+        /// Returns a copy of the ast.
+        /// </returns>
+        public override Ast Copy()
+        {
+            StringConstantExpressionAst newLabel = CopyElement(this.Label);
+            ExpressionAst newExpression = CopyElement(this.Expression);
+            return new NamedMethodArgumentAst(this.Extent, newLabel, newExpression);
+        }
+
+        #region Visitors
+
+        internal override object? Accept(ICustomAstVisitor visitor)
+            => (visitor as ICustomAstVisitor2)?.VisitNamedMethodArgumentExpression(this);
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            var action = AstVisitAction.Continue;
+            if (visitor is AstVisitor2 visitor2)
+            {
+                action = visitor2.VisitNamedMethodArgumentExpression(this);
+                if (action == AstVisitAction.SkipChildren)
+                {
+                    return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+                }
+                if (action == AstVisitAction.Continue)
+                {
+                    action = Label.InternalVisit(visitor);
+                }
+                if (action == AstVisitAction.Continue)
+                {
+                    action = Expression.InternalVisit(visitor);
+                }
+            }
+
+            return visitor.CheckForPostAction(this, action);
+        }
+
+        #endregion Visitors
+    }
+
+#nullable disable
+
     /// <summary>
     /// The ast representing a ternary expression, e.g. <c>$a ? 1 : 2</c>.
     /// </summary>
