@@ -41,6 +41,29 @@ try
             }
         }
 
+        It "Should support -Comment parameter" -Skip:(!$IsWindows) {
+            Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
+            $comment = "Testing comment"
+            Restart-Computer -Comment $comment -ErrorAction Stop | Should -BeNullOrEmpty
+        }
+
+        It "Should support -RestartDelaySec parameter" -Skip:(!$IsWindows) {
+            Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
+            $restartDelaySec = 30
+            Restart-Computer -RestartDelaySec $restartDelaySec -ErrorAction Stop | Should -BeNullOrEmpty
+        }
+
+        It "Should support Reason types" -Skip:(!$IsWindows) {
+            $ReasonList =  "Application", "Hardware", "OperatingSystem", "Other", "Power", "Software", "System", `
+                "BlueScreen", "Disk", "Environment", "Driver", "HotFix", "HotFixUninstall", "Unresponsive", "Installation", `
+                "Maintenance", "MMC", "NetworkConnectivity", "NetworkCard", "OtherDriver", "PowerSupply", "Processor", "Reconfigure", `
+                "SecurityIssue", "SecurityPatch","SecurityPatchUninstallation", "ServicePack", "ServicePackUninstallation", "TerminalServices", `
+                "Unstable", "Upgrade", "WMI"
+            foreach ( $reason in $ReasonList ) {
+                Restart-Computer -Reason $reason -ErrorAction Stop | Should -BeNullOrEmpty
+            }
+        }
+
         # this requires setting a test hook, so we wrap the execution with try/finally of the
         # set operation. Internally, we want to suppress the progress, so
         # that is also wrapped in try/finally
