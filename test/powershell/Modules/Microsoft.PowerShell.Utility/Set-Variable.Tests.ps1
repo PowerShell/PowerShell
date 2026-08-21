@@ -163,6 +163,56 @@ Describe "Set-Variable" -Tags "CI" {
         }
     }
 
+    Context "Set-Variable should not mutate variable when -Option Constant fails on existing variable" {
+        It "Writable variable: value and options should remain unchanged when -Option Constant fails" {
+            & {
+                New-Variable -Name x -Value 1
+                Set-Variable -Name x -Value 2 -Option Constant -ErrorVariable setError -ErrorAction SilentlyContinue
+
+                $var = Get-Variable -Name x
+                $var.Value | Should -Be 1
+                $var.Options | Should -BeExactly "None"
+                $setError.FullyQualifiedErrorId | Should -BeExactly "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
+            }
+        }
+
+        It "ReadOnly variable with -Force: value and options should remain unchanged when -Option Constant fails" {
+            & {
+                New-Variable -Name x -Value 1 -Option ReadOnly
+                Set-Variable -Name x -Value 2 -Force -Option Constant -ErrorVariable setError -ErrorAction SilentlyContinue
+
+                $var = Get-Variable -Name x
+                $var.Value | Should -Be 1
+                $var.Options | Should -BeExactly "ReadOnly"
+                $setError.FullyQualifiedErrorId | Should -BeExactly "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
+            }
+        }
+
+        It "ReadOnly variable without value change: options should remain unchanged when -Option Constant fails" {
+            & {
+                New-Variable -Name x -Value 1 -Option ReadOnly
+                Set-Variable -Name x -Force -Option Constant -ErrorVariable setError -ErrorAction SilentlyContinue
+
+                $var = Get-Variable -Name x
+                $var.Value | Should -Be 1
+                $var.Options | Should -BeExactly "ReadOnly"
+                $setError.FullyQualifiedErrorId | Should -BeExactly "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
+            }
+        }
+
+        It "Description should remain unchanged when -Option Constant fails" {
+            & {
+                New-Variable -Name x -Value 1 -Description "original"
+                Set-Variable -Name x -Value 2 -Description "changed" -Option Constant -ErrorVariable setError -ErrorAction SilentlyContinue
+
+                $var = Get-Variable -Name x
+                $var.Value | Should -Be 1
+                $var.Description | Should -BeExactly "original"
+                $var.Options | Should -BeExactly "None"
+            }
+        }
+    }
+
     It "Should create a new variable with no parameters" {
 	{ Set-Variable testVar } | Should -Not -Throw
     }
