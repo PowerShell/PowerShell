@@ -44,6 +44,12 @@ namespace Microsoft.PowerShell.Commands
         public char Delimiter { get; set; } = '=';
 
         /// <summary>
+        /// Gets or sets the AsLiteral property.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter AsLiteral { get; set; }
+
+        /// <summary>
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -53,6 +59,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject(result);
                 return;
+            }
+
+            if (AsLiteral.IsPresent)
+            {
+                _stringData = Regex.Escape(_stringData);
             }
 
             string[] lines = _stringData.Split('\n', StringSplitOptions.TrimEntries);
