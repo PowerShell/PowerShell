@@ -973,6 +973,7 @@ namespace Microsoft.PowerShell.Commands
                         if (ShouldProcess(target, action))
                         {
                             object result = null;
+                            bool wasReadOnly = false;
 
                             try
                             {
@@ -983,12 +984,11 @@ namespace Microsoft.PowerShell.Commands
                                 // If we want to force setting over a readonly variable
                                 // we have to temporarily mark the variable writable.
 
-                                bool wasReadOnly = false;
-                                if (Force &&
-                                    (matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0)
+                                wasReadOnly = Force &&
+                                    (matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0;
+                                if (wasReadOnly)
                                 {
                                     matchingVariable.SetOptions(matchingVariable.Options & ~ScopedItemOptions.ReadOnly, true);
-                                    wasReadOnly = true;
                                 }
 
                                 // Now change the value, options, or description
@@ -1036,6 +1036,11 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (SessionStateException sessionStateException)
                             {
+                                if (wasReadOnly)
+                                {
+                                    matchingVariable.SetOptions(matchingVariable.Options | ScopedItemOptions.ReadOnly, true);
+                                }
+
                                 WriteError(
                                     new ErrorRecord(
                                         sessionStateException.ErrorRecord,
@@ -1044,6 +1049,11 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (PSArgumentException argException)
                             {
+                                if (wasReadOnly)
+                                {
+                                    matchingVariable.SetOptions(matchingVariable.Options | ScopedItemOptions.ReadOnly, true);
+                                }
+
                                 WriteError(
                                     new ErrorRecord(
                                         argException.ErrorRecord,
