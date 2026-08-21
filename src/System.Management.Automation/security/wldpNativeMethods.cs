@@ -97,10 +97,24 @@ namespace System.Management.Automation.Security
 
         private static bool TestBooleanWldpSetting(string settingName)
         {
-            int hr = WldpNativeMethods.WldpGetApplicationSettingBoolean(
-                AppManifestId,
-                settingName,
-                out bool result);
+            int hr;
+            bool result;
+            try
+            {
+                hr = WldpNativeMethods.WldpGetApplicationSettingBoolean(
+                    AppManifestId,
+                    settingName,
+                    out result);
+            }
+            catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
+            {
+                PSEtwLog.LogWDACQueryEvent(
+                    "WldpGetApplicationSettingBoolean_Failed",
+                    settingName,
+                    ex.HResult,
+                    0);
+                return false;
+            }
 
             PSEtwLog.LogWDACQueryEvent(
                 "WldpGetApplicationSettingBoolean",
@@ -126,7 +140,7 @@ namespace System.Management.Automation.Security
             }
 
             return result;
-        }
+            }
 
         /// <summary>
         /// Writes to PowerShell WDAC Audit mode ETW log.
