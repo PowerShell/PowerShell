@@ -13,17 +13,17 @@ Describe "Test-Path" -Tags "CI" {
         $nonExistentDir = Join-Path -Path (Join-Path -Path $testdirectory -ChildPath usr) -ChildPath bin
         $nonExistentPath = Join-Path -Path (Join-Path -Path (Join-Path -Path $testdirectory -ChildPath usr) -ChildPath bin) -ChildPath error
 
-        $today = Get-Date
-        $oneDayOld = (Get-Date).AddDays(-1)
-        $twoDaysOld = (Get-Date).AddDays(-2)
+        $now = Get-Date -AsUTC
+        $oneHourOld = $now.AddHours(-1)
+        $twoHoursOld = $now.AddHours(-2)
 
         $oldFilePath = Join-Path -Path $testdirectory -ChildPath oldfile
         $oldFile = New-Item -Path $oldFilePath -ItemType File
-        $oldFile.LastWriteTime = $oneDayOld
+        $oldFile.LastWriteTimeUtc = $oneHourOld
 
         $oldDirPath = Join-Path -Path $testdirectory -ChildPath olddir
         $oldDir = New-Item -Path $oldDirPath -ItemType Directory
-        $oldDir.LastWriteTime = $oneDayOld
+        $oldDir.LastWriteTimeUtc = $oneHourOld
 
         $newFilePath = Join-Path -Path $testdirectory -ChildPath newfile
         New-Item -Path $newFilePath -ItemType File | Out-Null
@@ -201,57 +201,80 @@ Describe "Test-Path" -Tags "CI" {
         Test-Path Env:\PATH  | Should -BeTrue
     }
 
-    It "Should return true if NewerThan is used and path is newer than one day" {
-        Test-Path -Path $newFilePath -PathType Leaf -NewerThan $oneDayOld | Should -BeTrue
-        Test-Path -Path $newDirPath -PathType Container -NewerThan $oneDayOld | Should -BeTrue
-        Test-Path -Path $newFilePath -PathType Any -NewerThan $oneDayOld | Should -BeTrue
-        Test-Path -Path $newDirPath -PathType Any -NewerThan $oneDayOld | Should -BeTrue
-        Test-Path -Path $newFilePath -NewerThan $oneDayOld | Should -BeTrue
-        Test-Path -Path $newDirPath -NewerThan $oneDayOld | Should -BeTrue
-    }
+    # The following tests acquire significance when run in a timezone whose offset is
+    # less than the difference between now and the earliest input DateTime (2 hours).
+    # In other words, the local timezone should have offset -02:01 or earlier.
+    # The reason for this is to verify that Test-Path is treating the input DateTime values
+    # according to their Kind (i.e. not assuming local DateTime).
+    # To ensure this behavior in a CROSS-PLATFORM, REVERTABLE, SCOPED (non-system-wide) fashion,
+    # we temporarily set a custom timezone with -03:00 offset for the duration of each test.
+    # Unfortunately, the local timezone can be set only via reflection, so any
+    # improvements to this tweaky approach are welcome.
+    Context "DateTime-based parameters" {
+        BeforeEach {
+            $tz = [System.TimeZoneInfo]::CreateCustomTimeZone('TEMP', [timespan]::FromHours(-3), $null, $null)
+            [System.TimeZoneInfo]::ClearCachedData()
+            $cachedData = [System.TimeZoneInfo].GetField('s_cachedData', [System.Reflection.BindingFlags]'NonPublic,Static').GetValue($null)
+            $tzField = $cachedData.GetType().GetField('_localTimeZone', [System.Reflection.BindingFlags]'NonPublic,Instance')
+            $tzField.SetValue($cachedData, $tz)
+        }
 
-    It "Should return false if NewerThan is used and path is not newer than today" {
-        Test-Path -Path $oldFilePath -PathType Leaf -NewerThan $today | Should -BeFalse
-        Test-Path -Path $oldDirPath -PathType Container -NewerThan $today | Should -BeFalse
-        Test-Path -Path $oldFilePath -PathType Any -NewerThan $today | Should -BeFalse
-        Test-Path -Path $oldDirPath -PathType Any -NewerThan $today | Should -BeFalse
-        Test-Path -Path $oldFilePath -NewerThan $today | Should -BeFalse
-        Test-Path -Path $oldDirPath -NewerThan $today | Should -BeFalse
-    }
+        AfterEach {
+            [System.TimeZoneInfo]::ClearCachedData()
+        }
 
-    It "Should return true if OlderThan is used and path is older than today" {
-        Test-Path -Path $oldFilePath -PathType Leaf -OlderThan $today | Should -BeTrue
-        Test-Path -Path $oldDirPath -PathType Container -OlderThan $today | Should -BeTrue
-        Test-Path -Path $oldFilePath -PathType Any -OlderThan $today | Should -BeTrue
-        Test-Path -Path $oldDirPath -PathType Any -OlderThan $today | Should -BeTrue
-        Test-Path -Path $oldFilePath -OlderThan $today | Should -BeTrue
-        Test-Path -Path $oldDirPath -OlderThan $today | Should -BeTrue
-    }
+        It "Should return true if NewerThan is used and path is newer than one hour" {
+            Test-Path -Path $newFilePath -PathType Leaf -NewerThan $oneHourOld | Should -BeTrue
+            Test-Path -Path $newDirPath -PathType Container -NewerThan $oneHourOld | Should -BeTrue
+            Test-Path -Path $newFilePath -PathType Any -NewerThan $oneHourOld | Should -BeTrue
+            Test-Path -Path $newDirPath -PathType Any -NewerThan $oneHourOld | Should -BeTrue
+            Test-Path -Path $newFilePath -NewerThan $oneHourOld | Should -BeTrue
+            Test-Path -Path $newDirPath -NewerThan $oneHourOld | Should -BeTrue
+        }
 
-    It "Should return false if OlderThan is used and path is not older than one day" {
-        Test-Path -Path $newFilePath -PathType Leaf -OlderThan $oneDayOld | Should -BeFalse
-        Test-Path -Path $newDirPath -PathType Container -OlderThan $oneDayOld | Should -BeFalse
-        Test-Path -Path $newFilePath -PathType Any -OlderThan $oneDayOld | Should -BeFalse
-        Test-Path -Path $newDirPath -PathType Any -OlderThan $oneDayOld | Should -BeFalse
-        Test-Path -Path $newFilePath -OlderThan $oneDayOld | Should -BeFalse
-        Test-Path -Path $newDirPath -OlderThan $oneDayOld | Should -BeFalse
-    }
+        It "Should return false if NewerThan is used and path is not newer than now" {
+            Test-Path -Path $oldFilePath -PathType Leaf -NewerThan $now | Should -BeFalse
+            Test-Path -Path $oldDirPath -PathType Container -NewerThan $now | Should -BeFalse
+            Test-Path -Path $oldFilePath -PathType Any -NewerThan $now | Should -BeFalse
+            Test-Path -Path $oldDirPath -PathType Any -NewerThan $now | Should -BeFalse
+            Test-Path -Path $oldFilePath -NewerThan $now | Should -BeFalse
+            Test-Path -Path $oldDirPath -NewerThan $now | Should -BeFalse
+        }
 
-    It "Should return true if OlderThan and NewerThan is used together and path exists in date range" {
-        Test-Path -Path $oldFilePath -PathType Leaf -NewerThan $twoDaysOld -OlderThan $today | Should -BeTrue
-        Test-Path -Path $oldDirPath -PathType Container -NewerThan $twoDaysOld -OlderThan $today | Should -BeTrue
-        Test-Path -Path $oldFilePath -PathType Any -NewerThan $twoDaysOld -OlderThan $today | Should -BeTrue
-        Test-Path -Path $oldDirPath -PathType Any -NewerThan $twoDaysOld -OlderThan $today | Should -BeTrue
-        Test-Path -Path $oldFilePath -NewerThan $twoDaysOld -OlderThan $today | Should -BeTrue
-        Test-Path -Path $oldDirPath -NewerThan $twoDaysOld -OlderThan $today | Should -BeTrue
-    }
+        It "Should return true if OlderThan is used and path is older than now" {
+            Test-Path -Path $oldFilePath -PathType Leaf -OlderThan $now | Should -BeTrue
+            Test-Path -Path $oldDirPath -PathType Container -OlderThan $now | Should -BeTrue
+            Test-Path -Path $oldFilePath -PathType Any -OlderThan $now | Should -BeTrue
+            Test-Path -Path $oldDirPath -PathType Any -OlderThan $now | Should -BeTrue
+            Test-Path -Path $oldFilePath -OlderThan $now | Should -BeTrue
+            Test-Path -Path $oldDirPath -OlderThan $now | Should -BeTrue
+        }
 
-    It "Should return false if OlderThan and NewerThan is used together and path does not exist in date range" {
-        Test-Path -Path $newFilePath -PathType Leaf -NewerThan $twoDaysOld -OlderThan $oneDayOld | Should -BeFalse
-        Test-Path -Path $newDirPath -PathType Container -NewerThan $twoDaysOld -OlderThan $oneDayOld | Should -BeFalse
-        Test-Path -Path $newFilePath -PathType Any -NewerThan $twoDaysOld -OlderThan $oneDayOld | Should -BeFalse
-        Test-Path -Path $newDirPath -PathType Any -NewerThan $twoDaysOld -OlderThan $oneDayOld | Should -BeFalse
-        Test-Path -Path $newFilePath -NewerThan $twoDaysOld -OlderThan $oneDayOld | Should -BeFalse
-        Test-Path -Path $newDirPath -NewerThan $twoDaysOld -OlderThan $oneDayOld | Should -BeFalse
+        It "Should return false if OlderThan is used and path is not older than one hour" {
+            Test-Path -Path $newFilePath -PathType Leaf -OlderThan $oneHourOld | Should -BeFalse
+            Test-Path -Path $newDirPath -PathType Container -OlderThan $oneHourOld | Should -BeFalse
+            Test-Path -Path $newFilePath -PathType Any -OlderThan $oneHourOld | Should -BeFalse
+            Test-Path -Path $newDirPath -PathType Any -OlderThan $oneHourOld | Should -BeFalse
+            Test-Path -Path $newFilePath -OlderThan $oneHourOld | Should -BeFalse
+            Test-Path -Path $newDirPath -OlderThan $oneHourOld | Should -BeFalse
+        }
+
+        It "Should return true if OlderThan and NewerThan is used together and path exists in date range" {
+            Test-Path -Path $oldFilePath -PathType Leaf -NewerThan $twoHoursOld -OlderThan $now | Should -BeTrue
+            Test-Path -Path $oldDirPath -PathType Container -NewerThan $twoHoursOld -OlderThan $now | Should -BeTrue
+            Test-Path -Path $oldFilePath -PathType Any -NewerThan $twoHoursOld -OlderThan $now | Should -BeTrue
+            Test-Path -Path $oldDirPath -PathType Any -NewerThan $twoHoursOld -OlderThan $now | Should -BeTrue
+            Test-Path -Path $oldFilePath -NewerThan $twoHoursOld -OlderThan $now | Should -BeTrue
+            Test-Path -Path $oldDirPath -NewerThan $twoHoursOld -OlderThan $now | Should -BeTrue
+        }
+
+        It "Should return false if OlderThan and NewerThan is used together and path does not exist in date range" {
+            Test-Path -Path $newFilePath -PathType Leaf -NewerThan $twoHoursOld -OlderThan $oneHourOld | Should -BeFalse
+            Test-Path -Path $newDirPath -PathType Container -NewerThan $twoHoursOld -OlderThan $oneHourOld | Should -BeFalse
+            Test-Path -Path $newFilePath -PathType Any -NewerThan $twoHoursOld -OlderThan $oneHourOld | Should -BeFalse
+            Test-Path -Path $newDirPath -PathType Any -NewerThan $twoHoursOld -OlderThan $oneHourOld | Should -BeFalse
+            Test-Path -Path $newFilePath -NewerThan $twoHoursOld -OlderThan $oneHourOld | Should -BeFalse
+            Test-Path -Path $newDirPath -NewerThan $twoHoursOld -OlderThan $oneHourOld | Should -BeFalse
+        }
     }
 }
