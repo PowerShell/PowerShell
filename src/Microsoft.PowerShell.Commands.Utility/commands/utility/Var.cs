@@ -973,7 +973,6 @@ namespace Microsoft.PowerShell.Commands
                         if (ShouldProcess(target, action))
                         {
                             object result = null;
-                            ScopedItemOptions originalOptions = matchingVariable.Options;
                             bool wasReadOnly = false;
 
                             try
@@ -986,7 +985,7 @@ namespace Microsoft.PowerShell.Commands
                                 // we have to temporarily mark the variable writable.
 
                                 wasReadOnly = Force &&
-                                    (originalOptions & ScopedItemOptions.ReadOnly) != 0;
+                                    (matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0;
                                 if (wasReadOnly)
                                 {
                                     matchingVariable.SetOptions(matchingVariable.Options & ~ScopedItemOptions.ReadOnly, true);
@@ -1039,7 +1038,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 if (wasReadOnly)
                                 {
-                                    matchingVariable.SetOptions(originalOptions, true);
+                                    matchingVariable.SetOptions(matchingVariable.Options | ScopedItemOptions.ReadOnly, true);
                                 }
 
                                 WriteError(
@@ -1052,7 +1051,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 if (wasReadOnly)
                                 {
-                                    matchingVariable.SetOptions(originalOptions, true);
+                                    matchingVariable.SetOptions(matchingVariable.Options | ScopedItemOptions.ReadOnly, true);
                                 }
 
                                 WriteError(

@@ -125,20 +125,38 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		{ Set-Variable abcaVar -Option None -Scope 1 -ErrorAction Stop } | Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 	}
 
-	It "Set-Variable of ReadOnly variable with force preserves original state when option update fails"{
+	It "Set-Variable of ReadOnly variable with force preserves expected options when option update fails for <ExpectedOptions>" -TestCases @(
+		@{
+			Name = "SetVariableIssue27679Case3ReadOnly"
+			Options = [System.Management.Automation.ScopedItemOptions]::ReadOnly
+			ExpectedOptions = "ReadOnly"
+		}
+		@{
+			Name = "SetVariableIssue27679Case3ReadOnlyPrivate"
+			Options = [System.Management.Automation.ScopedItemOptions]::ReadOnly -bor [System.Management.Automation.ScopedItemOptions]::Private
+			ExpectedOptions = "ReadOnly, Private"
+		}
+		@{
+			Name = "SetVariableIssue27679Case3ReadOnlyAllScope"
+			Options = [System.Management.Automation.ScopedItemOptions]::ReadOnly -bor [System.Management.Automation.ScopedItemOptions]::AllScope
+			ExpectedOptions = "ReadOnly, AllScope"
+		}
+	) {
+		param($Name, $Options, $ExpectedOptions)
+
 		try
 		{
-			Set-Variable -Name x -Value 1 -Option ReadOnly
+			Set-Variable -Name $Name -Value 1 -Option $Options
 
-			{ Set-Variable -Name x -Force -Option Constant -ErrorAction Stop } | Should -Throw -ErrorId "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
+			{ Set-Variable -Name $Name -Force -Option Constant -ErrorAction Stop } | Should -Throw -ErrorId "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
 
-			$var1 = Get-Variable -Name x
+			$var1 = Get-Variable -Name $Name
 			$var1.Value | Should -Be 1
-			$var1.Options | Should -BeExactly "ReadOnly"
+			$var1.Options.ToString() | Should -BeExactly $ExpectedOptions
 		}
 		finally
 		{
-			Remove-Variable -Name x -Force -ErrorAction SilentlyContinue
+			Remove-Variable -Name $Name -Force -ErrorAction SilentlyContinue
 		}
 	}
 
