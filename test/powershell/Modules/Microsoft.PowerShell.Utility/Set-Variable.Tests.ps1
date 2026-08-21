@@ -148,7 +148,18 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		{
 			Set-Variable -Name $Name -Value 1 -Option $Options
 
-			{ Set-Variable -Name $Name -Force -Option Constant -ErrorAction Stop } | Should -Throw -ErrorId "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
+			$exception = $null
+			try
+			{
+				Set-Variable -Name $Name -Force -Option Constant -ErrorAction Stop
+			}
+			catch
+			{
+				$exception = $_
+			}
+
+			$exception | Should -Not -BeNullOrEmpty
+			$exception.FullyQualifiedErrorId | Should -BeExactly "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
 
 			$var1 = Get-Variable -Name $Name
 			$var1.Value | Should -Be 1
