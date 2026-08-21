@@ -125,6 +125,45 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		{ Set-Variable abcaVar -Option None -Scope 1 -ErrorAction Stop } | Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 	}
 
+	# Issue #27679 cases 1 and 2 intentionally retain value mutation for backward compatibility.
+	It "Set-Variable preserves value mutation when setting Constant on an existing writable variable fails"{
+		$name = "SetVariableIssue27679Case1"
+
+		try
+		{
+			Set-Variable -Name $name -Value 1
+
+			{ Set-Variable -Name $name -Value 2 -Option Constant -ErrorAction Stop } | Should -Throw -ErrorId "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
+
+			$var1 = Get-Variable -Name $name
+			$var1.Value | Should -Be 2
+			$var1.Options | Should -BeExactly "None"
+		}
+		finally
+		{
+			Remove-Variable -Name $name -Force -ErrorAction SilentlyContinue
+		}
+	}
+
+	It "Set-Variable preserves value mutation and restores ReadOnly when setting Constant fails with force"{
+		$name = "SetVariableIssue27679Case2"
+
+		try
+		{
+			Set-Variable -Name $name -Value 1 -Option ReadOnly
+
+			{ Set-Variable -Name $name -Value 2 -Force -Option Constant -ErrorAction Stop } | Should -Throw -ErrorId "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
+
+			$var1 = Get-Variable -Name $name
+			$var1.Value | Should -Be 2
+			$var1.Options | Should -BeExactly "ReadOnly"
+		}
+		finally
+		{
+			Remove-Variable -Name $name -Force -ErrorAction SilentlyContinue
+		}
+	}
+
 	It "Set-Variable of ReadOnly variable with force preserves expected options when option update fails for <ExpectedOptions>" -TestCases @(
 		@{
 			Name = "SetVariableIssue27679Case3ReadOnly"
