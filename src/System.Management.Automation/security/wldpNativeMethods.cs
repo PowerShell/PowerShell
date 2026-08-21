@@ -97,17 +97,7 @@ namespace System.Management.Automation.Security
 
         private static bool TestBooleanWldpSetting(string settingName)
         {
-            int hr = WldpNativeMethods.WldpGetApplicationSettingBoolean(
-                AppManifestId,
-                settingName,
-                out bool result);
-
-            PSEtwLog.LogWDACQueryEvent(
-                "WldpGetApplicationSettingBoolean",
-                settingName,
-                hr,
-                result ? 1 : 0);
-
+            int hr = TryWldpGetApplicationSettingBoolean(settingName, out bool result);
             if (hr is not 0)
             {
                 result = false;
@@ -126,6 +116,36 @@ namespace System.Management.Automation.Security
             }
 
             return result;
+        }
+
+        private static int TryWldpGetApplicationSettingBoolean(string settingName, out bool result)
+        {
+            try
+            {
+                int hr = WldpNativeMethods.WldpGetApplicationSettingBoolean(
+                    AppManifestId,
+                    settingName,
+                    out result);
+
+                PSEtwLog.LogWDACQueryEvent(
+                    "WldpGetApplicationSettingBoolean",
+                    settingName,
+                    hr,
+                    result ? 1 : 0);
+
+                return hr;
+            }
+            catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
+            {
+                PSEtwLog.LogWDACQueryEvent(
+                    "WldpGetApplicationSettingBoolean_Failed",
+                    settingName,
+                    ex.HResult,
+                    0);
+
+                result = false;
+                return ex.HResult;
+            }
         }
 
         /// <summary>
