@@ -576,6 +576,33 @@ namespace System.Management.Automation
             => WriteHelper_ShouldWrite(VerbosePreference, lastVerboseContinueStatus);
 
         /// <summary>
+        /// Check if verbose should be emitted from ShouldProcess.
+        /// This method only considers -Verbose parameter and $VerbosePreference variable,
+        /// excluding the effect of -Debug parameter.
+        /// </summary>
+        private bool ShouldEmitVerboseFromShouldProcess()
+        {
+            // If -Verbose is explicitly set, use that value
+            if (IsVerboseFlagSet)
+            {
+                return Verbose;
+            }
+
+            // Otherwise, check $VerbosePreference variable only (excluding -Debug effect)
+            if (!_isVerbosePreferenceCached)
+            {
+                bool defaultUsed = false;
+                _verbosePreference = Context.GetEnumPreference(
+                    SpecialVariables.VerbosePreferenceVarPath,
+                    _verbosePreference,
+                    out defaultUsed);
+            }
+
+            return _verbosePreference != ActionPreference.Ignore &&
+                   _verbosePreference != ActionPreference.SilentlyContinue;
+        }
+
+        /// <summary>
         /// Display verbose information.
         /// </summary>
         internal void WriteVerbose(VerboseRecord record, bool overrideInquire = false)
@@ -1559,7 +1586,7 @@ namespace System.Management.Automation
 
             if (this.CanShouldProcessAutoConfirm())
             {
-                if (this.Verbose)
+                if (ShouldEmitVerboseFromShouldProcess())
                 {
                     // 2005/05/24 908827
                     // WriteDebug/WriteVerbose/WriteProgress/WriteWarning should only be callable from the main thread
@@ -1639,7 +1666,7 @@ namespace System.Management.Automation
 
             if (this.CanShouldProcessAutoConfirm())
             {
-                if (this.Verbose)
+                if (ShouldEmitVerboseFromShouldProcess())
                 {
                     return ShouldProcessPossibleOptimization.AutoYes_CanCallShouldProcessAsynchronously;
                 }
