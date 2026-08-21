@@ -125,6 +125,23 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		{ Set-Variable abcaVar -Option None -Scope 1 -ErrorAction Stop } | Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 	}
 
+	It "Set-Variable of ReadOnly variable with force preserves original state when option update fails"{
+		try
+		{
+			Set-Variable -Name x -Value 1 -Option ReadOnly
+
+			{ Set-Variable -Name x -Force -Option Constant -ErrorAction Stop } | Should -Throw -ErrorId "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
+
+			$var1 = Get-Variable -Name x
+			$var1.Value | Should -Be 1
+			$var1.Options | Should -BeExactly "ReadOnly"
+		}
+		finally
+		{
+			Remove-Variable -Name x -Force -ErrorAction SilentlyContinue
+		}
+	}
+
 	It "Set-Variable of ReadOnly variable with private scope should work"{
 		Set-Variable foo bar -Description "new description" -Option ReadOnly -Scope "private"
 		$var1=Get-Variable -Name foo

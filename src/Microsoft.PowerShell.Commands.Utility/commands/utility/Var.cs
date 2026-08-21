@@ -983,71 +983,64 @@ namespace Microsoft.PowerShell.Commands
                                 // If we want to force setting over a readonly variable
                                 // we have to temporarily mark the variable writable.
 
-                                bool wasReadOnly = Force &&
-                                    (matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0;
                                 ScopedItemOptions originalOptions = matchingVariable.Options;
+                                bool wasReadOnly = Force &&
+                                    (originalOptions & ScopedItemOptions.ReadOnly) != 0;
                                 if (wasReadOnly)
                                 {
                                     matchingVariable.SetOptions(matchingVariable.Options & ~ScopedItemOptions.ReadOnly, true);
                                 }
 
-                                try
+                                // Now change the value, options, or description
+                                // and set the variable
+
+                                if (varValue != AutomationNull.Value)
                                 {
-                                    // Now change the value, options, or description
-                                    // and set the variable.
+                                    matchingVariable.Value = varValue;
 
-                                    if (varValue != AutomationNull.Value)
+                                    if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                                     {
-                                        matchingVariable.Value = varValue;
-
-                                        if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
-                                        {
-                                            // In 'ConstrainedLanguage' we want to monitor untrusted values assigned to 'Global:' variables
-                                            // and 'Script:' variables, because they may be set from 'ConstrainedLanguage' environment and
-                                            // referenced within trusted script block, and thus result in security issues.
-                                            // Here we are setting the value of an existing variable and don't know what scope this variable
-                                            // is from, so we mark the value as untrusted, regardless of the scope.
-                                            ExecutionContext.MarkObjectAsUntrusted(matchingVariable.Value);
-                                        }
+                                        // In 'ConstrainedLanguage' we want to monitor untrusted values assigned to 'Global:' variables
+                                        // and 'Script:' variables, because they may be set from 'ConstrainedLanguage' environment and
+                                        // referenced within trusted script block, and thus result in security issues.
+                                        // Here we are setting the value of an existing variable and don't know what scope this variable
+                                        // is from, so we mark the value as untrusted, regardless of the scope.
+                                        ExecutionContext.MarkObjectAsUntrusted(matchingVariable.Value);
                                     }
+                                }
 
-                                    if (Description != null)
-                                    {
-                                        matchingVariable.Description = Description;
-                                    }
+                                if (Description != null)
+                                {
+                                    matchingVariable.Description = Description;
+                                }
 
-                                    if (_options != null)
-                                    {
-                                        matchingVariable.Options = (ScopedItemOptions)_options;
-                                    }
-                                    else if (wasReadOnly)
+                                if (_options != null)
+                                {
+                                    matchingVariable.Options = (ScopedItemOptions)_options;
+                                }
+                                else
+                                {
+                                    if (wasReadOnly)
                                     {
                                         matchingVariable.SetOptions(matchingVariable.Options | ScopedItemOptions.ReadOnly, true);
                                     }
                                 }
-                                catch (SessionStateException)
-                                {
-                                    if (wasReadOnly)
-                                    {
-                                        matchingVariable.SetOptions(originalOptions, true);
-                                    }
 
-                                    throw;
-                                }
-                                catch (PSArgumentException)
+                                // If visibility was specified, set it on the variable
+                                if (_visibility != null)
                                 {
-                                    if (wasReadOnly)
-                                    {
-                                        matchingVariable.SetOptions(originalOptions, true);
-                                    }
-
-                                    throw;
+                                    matchingVariable.Visibility = Visibility;
                                 }
 
                                 result = matchingVariable;
                             }
                             catch (SessionStateException sessionStateException)
                             {
+                                if (wasReadOnly)
+                                {
+                                    matchingVariable.SetOptions(originalOptions, true);
+                                }
+
                                 WriteError(
                                     new ErrorRecord(
                                         sessionStateException.ErrorRecord,
@@ -1056,6 +1049,11 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (PSArgumentException argException)
                             {
+                                if (wasReadOnly)
+                                {
+                                    matchingVariable.SetOptions(originalOptions, true);
+                                }
+
                                 WriteError(
                                     new ErrorRecord(
                                         argException.ErrorRecord,
