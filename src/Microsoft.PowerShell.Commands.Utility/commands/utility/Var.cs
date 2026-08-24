@@ -973,7 +973,8 @@ namespace Microsoft.PowerShell.Commands
                         if (ShouldProcess(target, action))
                         {
                             object result = null;
-                            bool wasReadOnly = false;
+                            bool wasReadOnly = Force &&
+                                (matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0;
 
                             try
                             {
@@ -984,8 +985,6 @@ namespace Microsoft.PowerShell.Commands
                                 // If we want to force setting over a readonly variable
                                 // we have to temporarily mark the variable writable.
 
-                                wasReadOnly = Force &&
-                                    (matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0;
                                 if (wasReadOnly)
                                 {
                                     matchingVariable.SetOptions(matchingVariable.Options & ~ScopedItemOptions.ReadOnly, true);
