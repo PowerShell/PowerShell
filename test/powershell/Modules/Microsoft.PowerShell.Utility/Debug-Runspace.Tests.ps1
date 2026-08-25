@@ -90,12 +90,12 @@ Describe "Debug-Runspace" -Tag "CI" {
         }
         finally {
             if ($debugger) {
-                $debugger.Stop()
+                try { $debugger.Stop() } catch { Write-Warning "Failed to stop the debugger during cleanup: $_" }
                 $debugger.Dispose()
             }
 
             if ($debugTarget) {
-                $debugTarget.Stop()
+                try { $debugTarget.Stop() } catch { Write-Warning "Failed to stop the debug target during cleanup: $_" }
                 $debugTarget.Dispose()
             }
 
