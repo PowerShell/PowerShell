@@ -55,7 +55,7 @@ Describe "Debug-Runspace" -Tag "CI" {
             # 'BeginInvoke' only queues the work. Wait until the 'Wait-Event' pipeline is actually
             # running in the target runspace before attaching the debugger, so the attach event is
             # never generated against a runspace that has not started executing the waiter.
-            $ready = Wait-UntilTrue -IntervalInMilliseconds 20 -TimeoutInMilliseconds 30000 -sb {
+            $ready = Wait-UntilTrue -IntervalInMilliseconds 20 -TimeoutInMilliseconds 5000 -sb {
                 $debugTarget.InvocationStateInfo.State -eq [System.Management.Automation.PSInvocationState]::Running -and
                 $targetRunspace.RunspaceAvailability -eq [System.Management.Automation.Runspaces.RunspaceAvailability]::Busy
             }
@@ -67,7 +67,7 @@ Describe "Debug-Runspace" -Tag "CI" {
             $null = $debugger.AddCommand('Debug-Runspace').AddParameter('Id', $targetRunspace.Id)
             $debugTask = $debugger.BeginInvoke()
 
-            $waitTask.AsyncWaitHandle.WaitOne(30000) | Should -BeTrue
+            $waitTask.AsyncWaitHandle.WaitOne(5000) | Should -BeTrue
             $waitInfo = $debugTarget.EndInvoke($waitTask)
             $waitInfo.SourceIdentifier | Should -Be $onAttachName
 
@@ -81,7 +81,7 @@ Describe "Debug-Runspace" -Tag "CI" {
 
             # 'IsRemoteDebuggerAttached' is reset by the cmdlet as it unwinds, which happens
             # asynchronously with respect to 'Stop' completing.
-            $detached = Wait-UntilTrue -IntervalInMilliseconds 20 -TimeoutInMilliseconds 30000 -sb {
+            $detached = Wait-UntilTrue -IntervalInMilliseconds 20 -TimeoutInMilliseconds 5000 -sb {
                 -not $targetRunspace.IsRemoteDebuggerAttached
             }
             $detached | Should -BeTrue
@@ -90,12 +90,12 @@ Describe "Debug-Runspace" -Tag "CI" {
         }
         finally {
             if ($debugger) {
-                try { $debugger.Stop() } catch { }
+                $debugger.Stop()
                 $debugger.Dispose()
             }
 
             if ($debugTarget) {
-                try { $debugTarget.Stop() } catch { }
+                $debugTarget.Stop()
                 $debugTarget.Dispose()
             }
 
@@ -103,4 +103,3 @@ Describe "Debug-Runspace" -Tag "CI" {
         }
     }
 }
-
