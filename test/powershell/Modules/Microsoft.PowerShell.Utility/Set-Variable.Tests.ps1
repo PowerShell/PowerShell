@@ -133,7 +133,18 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		{
 			Set-Variable -Name $name -Value 1
 
-			{ Set-Variable -Name $name -Value 2 -Option Constant -ErrorAction Stop } | Should -Throw -ErrorId "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
+			$exception = $null
+			try
+			{
+				Set-Variable -Name $name -Value 2 -Option Constant -ErrorAction Stop
+			}
+			catch
+			{
+				$exception = $_
+			}
+
+			$exception | Should -Not -BeNullOrEmpty
+			$exception.FullyQualifiedErrorId | Should -BeExactly "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
 
 			$var1 = Get-Variable -Name $name
 			$var1.Value | Should -Be 2
@@ -152,7 +163,18 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		{
 			Set-Variable -Name $name -Value 1 -Option ReadOnly
 
-			{ Set-Variable -Name $name -Value 2 -Force -Option Constant -ErrorAction Stop } | Should -Throw -ErrorId "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
+			$exception = $null
+			try
+			{
+				Set-Variable -Name $name -Value 2 -Force -Option Constant -ErrorAction Stop
+			}
+			catch
+			{
+				$exception = $_
+			}
+
+			$exception | Should -Not -BeNullOrEmpty
+			$exception.FullyQualifiedErrorId | Should -BeExactly "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
 
 			$var1 = Get-Variable -Name $name
 			$var1.Value | Should -Be 2
