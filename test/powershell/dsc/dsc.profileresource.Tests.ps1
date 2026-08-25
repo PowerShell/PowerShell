@@ -82,7 +82,7 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
     It 'DSC resource is located at $PSHome' {
 
         if ($isMsix) {
-            Set-ItResult -Pending -Reason "Running in MSIX context. Skipping test."
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
             return
         }
 
@@ -95,7 +95,7 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
 
     It 'DSC resource can be found' {
         if ($isMsix) {
-            Set-ItResult -Pending -Reason "Running in MSIX context. Skipping test."
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
             return
         }
 
@@ -104,7 +104,7 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
 
     It 'DSC resource can set current user current host profile' {
         if ($isMsix) {
-            Set-ItResult -Pending -Reason "Running in MSIX context. Skipping test."
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
             return
         }
 
@@ -115,7 +115,7 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
 
     It 'DSC resource can get current user current host profile' {
         if ($isMsix) {
-            Set-ItResult -Pending -Reason "Running in MSIX context. Skipping test."
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
             return
         }
 
@@ -126,7 +126,7 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
 
     It 'DSC resource can set content as empty for current user current host profile' {
         if ($isMsix) {
-            Set-ItResult -Pending -Reason "Running in MSIX context. Skipping test."
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
             return
         }
 
@@ -136,7 +136,7 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
 
     It 'DSC resource can set current user all hosts profile' {
         if ($isMsix) {
-            Set-ItResult -Pending -Reason "Running in MSIX context. Skipping test."
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
             return
         }
 
@@ -147,7 +147,7 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
 
     It 'DSC resource can get current user all hosts profile' {
         if ($isMsix) {
-            Set-ItResult -Pending -Reason "Running in MSIX context. Skipping test."
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
             return
         }
 
@@ -158,7 +158,7 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
 
     It 'DSC resource can export all profiles' {
         if ($isMsix) {
-            Set-ItResult -Pending -Reason "Running in MSIX context. Skipping test."
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
             return
         }
 
@@ -252,7 +252,7 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
 
     It 'DSC resource can set all users all hosts profile' {
         if ($isMsix) {
-            Set-ItResult -Pending -Reason "Running in MSIX context. Skipping test."
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
             return
         }
 
@@ -262,6 +262,11 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
     }
 
     It 'DSC resource can get all users all hosts profile' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $getOutput = (& $dscExe config get --file $PSScriptRoot/psprofile_alluser_allhost.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - AllUsersAllHosts!'"
         $getOutput.results.result.actualState.content | Should -BeExactly $expectedContent
@@ -269,7 +274,7 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
 
     It 'DSC resource can set all users current hosts profile' {
         if ($isMsix) {
-            Set-ItResult -Pending -Reason "Running in MSIX context. Skipping test."
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
             return
         }
 
@@ -280,7 +285,7 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
 
     It 'DSC resource can get all users current hosts profile' {
         if ($isMsix) {
-            Set-ItResult -Pending -Reason "Running in MSIX context. Skipping test."
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
             return
         }
 
