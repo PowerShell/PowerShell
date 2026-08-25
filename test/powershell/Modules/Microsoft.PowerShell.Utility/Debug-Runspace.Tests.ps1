@@ -34,30 +34,73 @@ Describe "Debug-Runspace" -Tag "CI" {
     
     It "Should write attach event and mark runspace as having a remote debugger attached" {
         $onAttachName = [System.Management.Automation.PSEngineEvent]::OnDebugAttach
-        
-        $debugTarget = [PowerShell]::Create()
-        $null = $debugTarget.AddCommand('Wait-Event').AddParameter('SourceIdentifier', $onAttachName)
-        $waitTask = $debugTarget.BeginInvoke()
 
-        $debugTarget.Runspace.IsRemoteDebuggerAttached | Should -BeFalse
+        $targetRunspace = $null
+        $debugTarget = $null
+        $debugger = $null
+        $debugTask = $null
 
-        $debugger = [PowerShell]::Create()
-        $null = $debugger.AddCommand('Debug-Runspace').AddParameter('Id', $debugTarget.Runspace.Id)
-        $debugTask = $debugger.BeginInvoke()
-        
-        $waitTask.AsyncWaitHandle.WaitOne(5000) | Should -BeTrue
-        $waitInfo = $debugTarget.EndInvoke($waitTask)
-        $waitInfo.SourceIdentifier | Should -Be $onAttachName
+        try {
+            # Open the target runspace up front so that 'Debug-Runspace' can never observe it in a
+            # non-Opened state, and so that its event manager is guaranteed to exist when the
+            # OnDebugAttach event is generated.
+            $targetRunspace = [runspacefactory]::CreateRunspace()
+            $targetRunspace.Open()
 
-        $debugTarget.Runspace.IsRemoteDebuggerAttached | Should -BeTrue
+            $debugTarget = [PowerShell]::Create()
+            $debugTarget.Runspace = $targetRunspace
+            $null = $debugTarget.AddCommand('Wait-Event').AddParameter('SourceIdentifier', $onAttachName)
+            $waitTask = $debugTarget.BeginInvoke()
 
-        $debugger.Stop()
-        $exp = {
-            $debugger.EndInvoke($debugTask)
-        } | Should -Throw -PassThru
-        $exp.FullyQualifiedErrorId | Should -Be "PipelineStoppedException"
+            # 'BeginInvoke' only queues the work. Wait until the 'Wait-Event' pipeline is actually
+            # running in the target runspace before attaching the debugger, so the attach event is
+            # never generated against a runspace that has not started executing the waiter.
+            $ready = Wait-UntilTrue -IntervalInMilliseconds 20 -TimeoutInMilliseconds 30000 -sb {
+                $debugTarget.InvocationStateInfo.State -eq [System.Management.Automation.PSInvocationState]::Running -and
+                $targetRunspace.RunspaceAvailability -eq [System.Management.Automation.Runspaces.RunspaceAvailability]::Busy
+            }
+            $ready | Should -BeTrue -Because "the 'Wait-Event' pipeline should be running in the target runspace"
 
-        $debugTarget.Runspace.IsRemoteDebuggerAttached | Should -BeFalse
+            $targetRunspace.IsRemoteDebuggerAttached | Should -BeFalse
+
+            $debugger = [PowerShell]::Create()
+            $null = $debugger.AddCommand('Debug-Runspace').AddParameter('Id', $targetRunspace.Id)
+            $debugTask = $debugger.BeginInvoke()
+
+            $waitTask.AsyncWaitHandle.WaitOne(30000) | Should -BeTrue
+            $waitInfo = $debugTarget.EndInvoke($waitTask)
+            $waitInfo.SourceIdentifier | Should -Be $onAttachName
+
+            $targetRunspace.IsRemoteDebuggerAttached | Should -BeTrue
+
+            $debugger.Stop()
+            $exp = {
+                $debugger.EndInvoke($debugTask)
+            } | Should -Throw -PassThru
+            $exp.FullyQualifiedErrorId | Should -Be "PipelineStoppedException"
+
+            # 'IsRemoteDebuggerAttached' is reset by the cmdlet as it unwinds, which happens
+            # asynchronously with respect to 'Stop' completing.
+            $detached = Wait-UntilTrue -IntervalInMilliseconds 20 -TimeoutInMilliseconds 30000 -sb {
+                -not $targetRunspace.IsRemoteDebuggerAttached
+            }
+            $detached | Should -BeTrue
+
+            $targetRunspace.IsRemoteDebuggerAttached | Should -BeFalse
+        }
+        finally {
+            if ($debugger) {
+                try { $debugger.Stop() } catch { }
+                $debugger.Dispose()
+            }
+
+            if ($debugTarget) {
+                try { $debugTarget.Stop() } catch { }
+                $debugTarget.Dispose()
+            }
+
+            if ($targetRunspace) { $targetRunspace.Dispose() }
+        }
     }
 }
 
