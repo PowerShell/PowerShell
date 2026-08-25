@@ -97,35 +97,33 @@ namespace System.Management.Automation.Security
 
         private static bool TestBooleanWldpSetting(string settingName)
         {
-            int hr = TryWldpGetApplicationSettingBoolean(settingName, out bool result);
-            if (hr is not 0)
+            bool result = SafeWldpGetApplicationSettingBoolean(settingName);
+
+            if (result)
             {
-                result = false;
+                return true;
             }
 
-            if (!result)
-            {
-                string debugValue = Environment.GetEnvironmentVariable(
-                    $"__PSLockdownPolicy_{settingName}",
-                    EnvironmentVariableTarget.Machine);
+            string debugValue = Environment.GetEnvironmentVariable(
+                $"__PSLockdownPolicy_{settingName}",
+                EnvironmentVariableTarget.Machine);
 
-                if (debugValue is "1")
-                {
-                    result = true;
-                }
+            if (debugValue is "1")
+            {
+                result = true;
             }
 
             return result;
         }
 
-        private static int TryWldpGetApplicationSettingBoolean(string settingName, out bool result)
+        private static bool SafeWldpGetApplicationSettingBoolean(string settingName)
         {
             try
             {
                 int hr = WldpNativeMethods.WldpGetApplicationSettingBoolean(
                     AppManifestId,
                     settingName,
-                    out result);
+                    out bool result);
 
                 PSEtwLog.LogWDACQueryEvent(
                     "WldpGetApplicationSettingBoolean",
@@ -133,7 +131,7 @@ namespace System.Management.Automation.Security
                     hr,
                     result ? 1 : 0);
 
-                return hr;
+                return hr is 0 && result;
             }
             catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
             {
@@ -143,8 +141,7 @@ namespace System.Management.Automation.Security
                     ex.HResult,
                     0);
 
-                result = false;
-                return ex.HResult;
+                return false;
             }
         }
 
