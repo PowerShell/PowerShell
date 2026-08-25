@@ -143,6 +143,6 @@
     <value>{0} は項目コレクションへの追加をサポートしていません。代わりに {1} を使用してください。</value>
   </data>
   <data name="ViewSetWithType" xml:space="preserve">
-    <value>If View is set to a {0}, it should have the type {1}.</value>
+    <value>ビューが {0} に設定されている場合、種類は {1} である必要があります。</value>
   </data>
 </root>
