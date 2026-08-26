@@ -49,6 +49,10 @@ jobs:
     - checkout: self
       clean: true
 
+    - template: /.pipelines/templates/SetVersionVariables.yml@self
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+
     - template: release-SetReleaseTagandContainerName.yml@self
 
     - download: PSPackagesOfficial
