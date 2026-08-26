@@ -18,6 +18,8 @@ namespace System.Management.Automation
     {
         internal List<Ast> RelatedAsts { get; set; }
 
+        internal Ast InputAst { get; set; }
+
         // Only one of TokenAtCursor or TokenBeforeCursor is set
         // This is how we can tell if we're trying to complete part of something (like a member)
         // or complete an argument, where TokenBeforeCursor could be a parameter name.
@@ -199,6 +201,7 @@ namespace System.Management.Automation
                 TokenAtCursor = astContext.TokenAtCursor,
                 TokenBeforeCursor = astContext.TokenBeforeCursor,
                 RelatedAsts = astContext.RelatedAsts,
+                InputAst = _ast,
                 ReplacementIndex = astContext.ReplacementIndex,
                 ExecutionContext = executionContext,
                 TypeInferenceContext = typeInferenceContext,
