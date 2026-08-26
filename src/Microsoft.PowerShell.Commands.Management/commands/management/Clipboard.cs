@@ -68,18 +68,18 @@ namespace Microsoft.PowerShell.Commands.Internal
 
             string tool = string.Empty;
             string args = string.Empty;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (OperatingSystem.IsWindows())
             {
                 string clipboardText = string.Empty;
                 ExecuteOnStaThread(() => GetTextImpl(out clipboardText));
                 return clipboardText;
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            else if (OperatingSystem.IsLinux())
             {
                 tool = "xclip";
                 args = "-selection clipboard -out";
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            else if (OperatingSystem.IsMacOS())
             {
                 tool = "pbpaste";
             }
@@ -102,12 +102,12 @@ namespace Microsoft.PowerShell.Commands.Internal
 
             string tool = string.Empty;
             string args = string.Empty;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (OperatingSystem.IsWindows())
             {
                 ExecuteOnStaThread(() => SetClipboardData(Tuple.Create(text, CF_UNICODETEXT)));
                 return;
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            else if (OperatingSystem.IsLinux())
             {
                 tool = "xclip";
                 if (string.IsNullOrEmpty(text))
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     args = "-selection clipboard -in";
                 }
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            else if (OperatingSystem.IsMacOS())
             {
                 tool = "pbcopy";
             }
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         public static void SetRtf(string plainText, string rtfText)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
