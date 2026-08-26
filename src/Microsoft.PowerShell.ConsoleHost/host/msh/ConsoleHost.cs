@@ -824,14 +824,14 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (_isRunspacePushed)
-                {
-                    return RunspaceRef.OldRunspace as LocalRunspace;
-                }
-
                 if (RunspaceRef == null)
                 {
                     return null;
+                }
+
+                if (_isRunspacePushed)
+                {
+                    return RunspaceRef.OldRunspace as LocalRunspace;
                 }
 
                 return RunspaceRef.Runspace as LocalRunspace;
