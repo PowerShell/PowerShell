@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -94,7 +93,7 @@ namespace System.Management.Automation
         /// _uniqueMatches is used to track matches already found during the search process.
         /// This is useful for ignoring duplicates in the case of unique search.
         /// </summary>
-        private readonly Hashtable _uniqueMatches = new Hashtable(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _uniqueMatches = new(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Search for files using the target, searchPaths member of this class.
@@ -144,10 +143,9 @@ namespace System.Management.Automation
                             string leafFileName = Path.GetFileName(file);
                             string uniqueToDirectory = Path.Combine(directory, leafFileName);
 
-                            if (!_result.Contains(path) && !_uniqueMatches.Contains(uniqueToDirectory))
+                            if (!_result.Contains(path) && _uniqueMatches.Add(uniqueToDirectory))
                             {
                                 _result.Add(path);
-                                _uniqueMatches[uniqueToDirectory] = true;
                             }
 
                             break;
