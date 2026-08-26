@@ -3312,7 +3312,7 @@ function Start-ResGen
 
     Push-Location "$PSScriptRoot/src/ResGen"
     try {
-        Start-NativeExecution { dotnet run } | Write-Verbose
+        Start-NativeExecution { dotnet run --verbosity normal } -VerboseOutputOnError
     } finally {
         Pop-Location
     }
