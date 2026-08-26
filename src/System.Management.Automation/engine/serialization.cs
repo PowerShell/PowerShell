@@ -164,7 +164,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Deserializes PowerShell CliXml into an object.
         /// </summary>
-        /// <param name="source">The CliXml the represents the object to deserialize.</param>
+        /// <param name="source">The CliXml that represents the object to deserialize.</param>
         /// <returns>
         /// The shape of the returned value depends on how many objects the CliXml contains:
         /// <see langword="null"/> if it contains no objects, the single deserialized object if it
