@@ -6661,7 +6661,7 @@ namespace System.Management.Automation.Language
             //              $ConfigurationData, # a collection of property bags describe the configuration environment
             //          [string]
             //              $InstanceName = ""  # THe name of the configuration instance being created.
-            //          [boolean]
+            //          [bool]
             //               $IsMetaConfig = $false # the configuration to generated is a meta configuration
             //      )
             //   }
