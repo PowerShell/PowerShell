@@ -165,7 +165,12 @@ namespace System.Management.Automation
         /// Deserializes PowerShell CliXml into an object.
         /// </summary>
         /// <param name="source">The CliXml the represents the object to deserialize.</param>
-        /// <returns>An object that represents the serialized content.</returns>
+        /// <returns>
+        /// The shape of the returned value depends on how many objects the CliXml contains:
+        /// <see langword="null"/> if it contains no objects, the single deserialized object if it
+        /// contains exactly one, or an <see cref="object"/> array if it contains more than one.
+        /// Use <see cref="DeserializeAsList(string)"/> instead if a consistent return type is needed.
+        /// </returns>
         public static object Deserialize(string source)
         {
             object[] results = DeserializeAsList(source);
