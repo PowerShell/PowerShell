@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
             // Workaround for CLR bug that doesn't support full range of DWORD or QWORD
             if (kind == RegistryValueKind.DWord)
             {
-                UInt32 intValue = 0;
+                uint intValue = 0;
 
                 // See if it's already a positive number
                 try
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (kind == RegistryValueKind.QWord)
             {
-                UInt64 intValue = 0;
+                ulong intValue = 0;
 
                 // See if it's already a positive number
                 try
