@@ -3873,7 +3873,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="parameterInfo">ParameterInfo containing the parameter's default value.</param>
         /// <returns>String representation of the parameter's default value.</returns>
-        private static string GetDefaultValueStringRepresentation(ParameterInfo parameterInfo)
+        internal static string GetDefaultValueStringRepresentation(ParameterInfo parameterInfo)
         {
             var parameterType = parameterInfo.ParameterType;
             var parameterDefaultValue = parameterInfo.DefaultValue;
