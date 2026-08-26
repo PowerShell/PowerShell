@@ -451,7 +451,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!string.IsNullOrEmpty(_title))
             {
-                WebUtility.HtmlEncode(_title);
+                _title = WebUtility.HtmlEncode(_title);
             }
 
             // This first line ensures w3c validation will succeed. However we are not specifying
