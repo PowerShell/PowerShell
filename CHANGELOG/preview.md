@@ -18,7 +18,7 @@
 - Improve output file path determination for `Invoke-WebRequest` (#27872)
 - Improve Authorization Header default and redirect behavior (#27873)
 - Fix the regression in tab completing positional parameters (#27857)
-- Add New-TemporaryDirectory cmdlet (#27549) (Thanks @KirtiRamchandani!)
+- Add `New-TemporaryDirectory` cmdlet (#27549) (Thanks @KirtiRamchandani!)
 
 ### Code Cleanup
 
