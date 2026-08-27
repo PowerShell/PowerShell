@@ -1,5 +1,89 @@
 # Preview Changelog
 
+## [7.7.0-preview.4]
+
+### Engine Updates and Fixes
+
+- Fix `FileOnlyEntry` crashing on older versions of Windows (#27880)
+- Call `CodeGeneration.EscapeSingleQuotedStringContent` API in `SyncCurrentLocationHandler` (#27874)
+- Improve PowerShell Remoting Argument Validation (#27870)
+- Improve validation for data fragments for PSRP frame headers (#27871)
+- Add the xsd validation back for CIM cmdlets (#27869)
+- Fix PATH caching in `CommandDiscovery` code (#27809)
+- Add support for new WLDP setting `EnableFileOnlyEntry` (#26752)
+- Fix the dot-sourcing behavior of `pwsh -file` for advanced-function scripts (#27727)
+
+### General Cmdlet Updates and Fixes
+
+- Improve output file path determination for Invoke-WebRequest (#27872)
+- Improve Authorization Header default and redirect behavior (#27873)
+- Fix the regression in tab completing positional parameters (#27857)
+- Add New-TemporaryDirectory cmdlet (#27549) (Thanks @KirtiRamchandani!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+
+</summary>
+
+<ul>
+<li>Remove <code>Test-Bom</code> and the boms JSON files (#27726)</li>
+</ul>
+
+</details>
+
+### Tests
+
+- Fix the scripts used for `Copy-Item -FromSessoin/-ToSession` scenarios and also enable tests  (#27773)
+- Fix TimeZone test with duplicate names (#27525) (Thanks @KirtiRamchandani!)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+
+</summary>
+
+<ul>
+<li>Add the needed variable groups to the MSIX VPack pipeline to enforce using the production ADO feed (#27896)</li>
+<li>Fix install dotnet for non-early-access release (#27892)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2691582 (#27876)</li>
+<li>Fix comments in <code>CmdletizationCoreResources.resx</code> (#27879)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2684623 (#27841)</li>
+<li>Use Azure CLI for early-access feed token (#27849)</li>
+<li>Fix OneBranch output variables for early .NET jobs (#27843)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2674492 (#27821)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2670960 (#27802)</li>
+<li>Use .NET SDK and NuGet feed early access for build, package and release pipelines (#27795)</li>
+<li>Update Microsoft.PowerShell.Archive version to 1.2.6 (#27784)</li>
+<li>PMC: Remove EOL debian12 distribution for v7.7.0 preview (#27763)</li>
+<li>PMC: Add Ubuntu 26.04 distribution for v7.7.0 (#27765)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2661935 (#27766)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2660148 (#27752)</li>
+<li>Update the manifest resource names for the localized resources embedded in satellite assemblies (#27756)</li>
+<li>Update <code>LocProject.json</code> to list each English resource file directly (#27751)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2652124 (#27736)</li>
+<li>Fix min-size package and ship localized resources only for MSIX packages (#27725)</li>
+<li>Fix the W3C URIs in <code>.resx</code> resource files (#27729)</li>
+<li>Update <code>metadata.json</code> for July releases (#27704)</li>
+<li>Prepare for onboarding PowerShell to the Native2Native localization pipeline (#27667)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update changelogs for v7.4.18, v7.5.9, and v7.6.4 (#27707)
+
+[7.7.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.7.0-preview.3...v7.7.0-preview.4
+
 ## [7.7.0-preview.3]
 
 ### General Cmdlet Updates and Fixes
