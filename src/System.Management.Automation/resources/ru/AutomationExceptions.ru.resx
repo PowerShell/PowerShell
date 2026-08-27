@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Argument" xml:space="preserve">
+    <value>Не удается обработать аргумент, так как значение аргумента {0} недопустимо. Измените значение аргумента {0} и повторите операцию.</value>
+  </data>
+  <data name="InvalidScopeIdArgument" xml:space="preserve">
+    <value>Не удается обработать аргумент, так как значение параметра {0} недопустимо. Допустимые значения: Global, Local, Script или число относительно текущей области (от 0 до количества областей, где 0 — это текущая область, а 1 — ее родительская область). Измените значение параметра {0} и повторите операцию.</value>
+  </data>
+  <data name="ArgumentNull" xml:space="preserve">
+    <value>Не удается обработать аргумент, так как значение аргумента {0} имеет значение NULL. Измените значение аргумента {0} на ненулевое значение.</value>
+  </data>
+  <data name="ArgumentOutOfRange" xml:space="preserve">
+    <value>Не удается обработать аргумент, так как значение аргумента {0} вне диапазона. Измените значение аргумента {0} на значение в пределах диапазона.</value>
+  </data>
+  <data name="InvalidOperation" xml:space="preserve">
+    <value>Не удается выполнить операцию, так как операция {0} недопустима. Удалите операцию {0} или выясните, почему она недопустима.</value>
+  </data>
+  <data name="NotImplemented" xml:space="preserve">
+    <value>Не удается выполнить операцию, так как операция {0} не реализована.</value>
+  </data>
+  <data name="NotSupported" xml:space="preserve">
+    <value>Не удается выполнить операцию, так как операция {0} не поддерживается.</value>
+  </data>
+  <data name="ObjectDisposed" xml:space="preserve">
+    <value>Не удается выполнить операцию, так как объект {0} уже удален.</value>
+  </data>
+  <data name="ScriptBlockInvokeOnOneClauseOnly" xml:space="preserve">
+    <value>Невозможно вызвать блок сценария, так как он содержит более одного предложения. Метод Invoke() можно использовать только для блоков сценария, содержащих одно предложение.</value>
+  </data>
+  <data name="CanConvertOneClauseOnly" xml:space="preserve">
+    <value>Невозможно преобразовать блок сценария, так как он содержит более одного предложения. Выражения или структуры управления не разрешены. Убедитесь, что блок сценария содержит ровно один конвейер или команду.</value>
+  </data>
+  <data name="CantConvertEmptyPipeline" xml:space="preserve">
+    <value>Пустой блок сценария нельзя преобразовать. Убедитесь, что блок сценария содержит ровно один конвейер или команду.</value>
+  </data>
+  <data name="CanOnlyConvertOnePipeline" xml:space="preserve">
+    <value>Преобразовать можно только блок сценария, содержащий ровно один конвейер или команду. Выражения или структуры управления не разрешены. Убедитесь, что блок сценария содержит ровно один конвейер или команду.</value>
+  </data>
+  <data name="CantConvertScriptBlockWithTrap" xml:space="preserve">
+    <value>Блок сценария, содержащий оператор trap верхнего уровня, нельзя преобразовать.</value>
+  </data>
+  <data name="CantConvertWithUndeclaredVariables" xml:space="preserve">
+    <value>Не удается создать объект PowerShell для блока сценария (ScriptBlock), который обращается к переменным, не объявленным в блоке param(...).  Имя необъявленной переменной: {0}.</value>
+  </data>
+  <data name="CantConvertWithNonConstantExpression" xml:space="preserve">
+    <value>Невозможно создать объект PowerShell для ScriptBlock, вычисляющего неконстантные выражения. Неконстантное выражение: {0}.</value>
+  </data>
+  <data name="CantConvertWithDynamicExpression" xml:space="preserve">
+    <value>Невозможно создать объект PowerShell для ScriptBlock, вычисляющего динамические выражения. Динамическое выражение: {0}.</value>
+  </data>
+  <data name="CantConvertWithScriptBlocks" xml:space="preserve">
+    <value>Невозможно создать объект PowerShell для ScriptBlock, который пытается передавать другие блоки сценария в значениях аргументов.</value>
+  </data>
+  <data name="CantConvertWithCommandInvocations" xml:space="preserve">
+    <value>Не удается создать объект PowerShell для ScriptBlock, который вызывает конвейеры, команды или функции для вычисления аргументов основного конвейера.</value>
+  </data>
+  <data name="CantConvertWithDotSourcing" xml:space="preserve">
+    <value>Не удается сгенерировать объект PowerShell для блока сценариев, использующего точечный поиск.</value>
+  </data>
+  <data name="CantConvertWithScriptBlockInvocation" xml:space="preserve">
+    <value>Невозможно создать объект PowerShell для ScriptBlock, вызывающего другие блоки сценария.</value>
+  </data>
+  <data name="CanConvertOneOutputErrorRedir" xml:space="preserve">
+    <value>Блок сценария нельзя преобразовать в объект PowerShell, так как он содержит запрещенные операторы перенаправления.</value>
+  </data>
+  <data name="CantConvertScriptBlockWithNoContext" xml:space="preserve">
+    <value>Невозможно создать объект PowerShell для ScriptBlock, не имеющего связанного контекста операции.</value>
+  </data>
+  <data name="HaltCommandException" xml:space="preserve">
+    <value>Команда была остановлена пользователем.</value>
+  </data>
+  <data name="DynamicParametersWrongType" xml:space="preserve">
+    <value>Объект {0} имеет неверный тип для возврата из блока dynamicparam. Блок dynamicparam должен возвращать либо $null, либо объект типа [System.Management.Automation.RuntimeDefinedParameterDictionary].</value>
+  </data>
+  <data name="CantConvertScriptBlockToOpenGenericType" xml:space="preserve">
+    <value>Блок сценария нельзя преобразовать в открытый универсальный тип. Определите подходящий закрытый универсальный тип и повторите попытку.</value>
+  </data>
+  <data name="CantConvertPipelineStartsWithExpression" xml:space="preserve">
+    <value>Невозможно создать объект PowerShell для ScriptBlock, который начинает конвейер с выражением.</value>
+  </data>
+  <data name="UsingVariableIsUndefined" xml:space="preserve">
+    <value>Невозможно получить значение переменной $using:{0}, так как оно не задано в локальном сеансе.</value>
+  </data>
+  <data name="CantGetUsingExpressionValueWithSpecifiedVariableDictionary" xml:space="preserve">
+    <value>Не удается получить значение выражения Using {0} в указанном словаре переменных. При создании экземпляра PowerShell из блока сценария выражение Using не может содержать операцию индексирования или доступ к элемента.</value>
+  </data>
+  <data name="WDACCompiledScriptBlockLogTitle" xml:space="preserve">
+    <value>Точечное подключение скомпилированного блока сценария</value>
+  </data>
+  <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
+    <value>Вызов блока сценария {0} в текущей области будет запрещен в режиме ограниченного языка. Режим языка сценария: {1}, режим языка контекста: {2}.</value>
+  </data>
+</root>

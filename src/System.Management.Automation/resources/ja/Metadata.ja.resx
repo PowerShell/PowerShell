@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MetadataMemberInitialization" xml:space="preserve">
+    <value>"{0}" の属性を初期化できません: "{1}"</value>
+  </data>
+  <data name="ValidateRangeElementType" xml:space="preserve">
+    <value>引数の型 "{0}" がパラメーターの最大および最小制限と同じ型 ({1}) ではないため、引数を検証できません。引数の型が {1} であることを確認してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidateRangePositiveFailure" xml:space="preserve">
+    <value>引数 "{0}" の値が 0 以下であるため、検証できません。</value>
+  </data>
+  <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
+    <value>引数 "{0}" の値が 0 以上でないため、検証できません。</value>
+  </data>
+  <data name="ValidateRangeNegativeFailure" xml:space="preserve">
+    <value>引数 "{0}" の値が 0 以下でないため、検証できません。</value>
+  </data>
+  <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
+    <value>引数 "{0}" の値が 0 以下でないため、検証できません。</value>
+  </data>
+  <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
+    <value>指定された最小範囲 ({0}) は、指定された最大範囲 ({1}) と同じ型ではないため、受け入れられません。パラメーターの ValidateRange 属性を更新してください。</value>
+  </data>
+  <data name="ValidateRangeNotIComparable" xml:space="preserve">
+    <value>MaxRange および MinRange パラメーター型を受け入れることはできません。どちらのパラメーターも、IComparable インターフェイスを実装するオブジェクトである必要があります。</value>
+  </data>
+  <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
+    <value>指定された最大範囲は、指定された最小範囲より小さいため受け入れられません。パラメーターの ValidateRange 属性を更新してください。</value>
+  </data>
+  <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
+    <value>{0} 引数が {1}の最大許容範囲を超えています。{1} 以下の引数を指定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidateRangeSmallerThanMinRangeFailure" xml:space="preserve">
+    <value>{0} 引数が {1}の最小許容範囲を下回っています。{1} 以上の引数を指定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidatePatternFailure" xml:space="preserve">
+    <value>引数 "{0}" が "{1}" パターンと一致しません。"{1}" と一致する引数を指定して、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidateCountNotInArray" xml:space="preserve">
+    <value>ValidateCount 属性を配列以外のパラメーターに適用することはできません。パラメーターから属性を削除するか、パラメーターを配列パラメーターにしてください。</value>
+  </data>
+  <data name="ValidateCountExactFailure" xml:space="preserve">
+    <value>パラメーターには正確に {0} 個の値が必要ですが、{1} 個の値が指定されました。</value>
+  </data>
+  <data name="ValidateCountMinMaxFailure" xml:space="preserve">
+    <value>パラメーターには少なくとも {0} 個の値が必要であり、{1} 個以下である必要があります。{2} 個の値が指定されました。</value>
+  </data>
+  <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>パラメーターに指定された引数の最大数が、指定された引数の最小数より少なくなっています。パラメーターの ValidateCount 属性を更新してください。</value>
+  </data>
+  <data name="ValidateLengthMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>引数の指定された最大文字数が、指定された最小引数文字の長さよりも短くなっています。パラメーターの ValidateLength 属性を更新してください。</value>
+  </data>
+  <data name="ValidateLengthNotString" xml:space="preserve">
+    <value>ValidateLength 属性は、文字列または string[] パラメーターではないパラメーターには適用できません。パラメーターを文字列または string[] パラメーターにしてください。</value>
+  </data>
+  <data name="ValidateLengthMinLengthFailure" xml:space="preserve">
+    <value>引数の文字の長さ ({1}) が短すぎます。長さが "{0}" 以上の引数を指定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidateLengthMaxLengthFailure" xml:space="preserve">
+    <value>引数の文字数 ({1}) が長すぎます。長さが "{0}" 以下の引数を指定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidateSetFailure" xml:space="preserve">
+    <value>引数 "{0}" は ValidateSet 属性で指定されたセット "{1}" に属していません。セットでに属する引数を指定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidateSetGeneratedValidValuesListIsNull" xml:space="preserve">
+    <value>有効な値ジェネレーターは null 値を返します。</value>
+  </data>
+  <data name="ValidateFailureResult" xml:space="preserve">
+    <value>プロパティ "{1}" で "{0}" が失敗しました {2}</value>
+  </data>
+  <data name="ParsingTooManyParameterSets" xml:space="preserve">
+    <value>コマンドを取得または実行できません。このコマンドのパラメーター セットの最大数を超えました。</value>
+  </data>
+  <data name="ArgumentTransformationArgumentsShouldBeStrings" xml:space="preserve">
+    <value>引数の値が文字列ではないため、引数を処理できません。ArgumentTransformationAttribute が指定されているパラメーター引数の値は文字列である必要があります。</value>
+  </data>
+  <data name="InvalidValueFailure" xml:space="preserve">
+    <value>値 {1} が {0} 変数の有効な値ではないため、変数を検証できません。</value>
+  </data>
+  <data name="InvalidMetadataForCurrentValue" xml:space="preserve">
+    <value>値が {1} の変数 {0} が無効になるため、属性を追加できません。</value>
+  </data>
+  <data name="ValidateNotNullFailure" xml:space="preserve">
+    <value>引数が null です。引数に有効な値を指定してから、コマンドを再実行してください。</value>
+  </data>
+  <data name="ValidateNotNullCollectionFailure" xml:space="preserve">
+    <value>引数に null 値が含まれているか、引数コレクションの要素に null 値が含まれています。null 値を含まないコレクションを指定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyFailure" xml:space="preserve">
+    <value>引数が null か空です。null または空でない引数を指定して、コマンドを再度実行してください。</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
+    <value>引数が null または空であるか、引数コレクションの要素に null 値が含まれています。null 値を含まないコレクションを指定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
+    <value>引数が null、空、または空白文字のみで構成されています。空白文字以外の文字を含む引数を指定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
+    <value>引数コレクションの要素が null、空、または空白文字のみで構成されています。これらの値を含まないコレクションを指定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>'{0}' という名前のパラメーターがコマンドに対して複数回定義されました。</value>
+  </data>
+  <data name="AliasParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>'{0}' という名前のエイリアスがコマンドに対して既に複数回定義されているため、パラメーター エイリアスを指定できません。</value>
+  </data>
+  <data name="ParameterNameConflictsWithAlias" xml:space="preserve">
+    <value>パラメーター '{0}' は、パラメーター '{1}' の同じ名前のパラメーター エイリアスと競合しているため、指定できません。</value>
+  </data>
+  <data name="ValidateScriptFailure" xml:space="preserve">
+    <value>値が "{0}" の引数の "{1}" 検証スクリプトは True の結果を返しませんでした。検証スクリプトが失敗した理由を特定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidateVersionFailure" xml:space="preserve">
+    <value>"{0}" 引数に有効な PowerShell バージョンが含まれていません。有効なバージョン番号を指定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="ValidateVariableName" xml:space="preserve">
+    <value>引数 '{0}' は有効な変数名ではないため、検証できません。</value>
+  </data>
+  <data name="JobDefinitionMustDeriveFromIJobConverter" xml:space="preserve">
+    <value>ジョブ変換の型は、IAstToScriptBlockConverter から派生する必要があります。</value>
+  </data>
+  <data name="ValidateDrivePathArgNotString" xml:space="preserve">
+    <value>path 引数が無効です。文字列型の path 引数を指定してください。</value>
+  </data>
+  <data name="ValidateDrivePathFailure" xml:space="preserve">
+    <value>パス引数ドライブ {0} は、承認済みドライブのセット: {1} に属していません。承認済みドライブにパス引数を指定してください。</value>
+  </data>
+  <data name="ValidateDrivePathInvalidChar" xml:space="preserve">
+    <value>path 引数に無効な文字が含まれています。</value>
+  </data>
+  <data name="ValidateDrivePathNoRoot" xml:space="preserve">
+    <value>path 引数にルート ドライブがありません。 ルート ドライブを含む完全なパスを指定してください。</value>
+  </data>
+  <data name="ArgumentNullOrEmpty" xml:space="preserve">
+    <value>パラメーター '{0}' の引数値を null または空の文字列にすることはできません。</value>
+  </data>
+  <data name="InvalidEnumArgument" xml:space="preserve">
+    <value>Enum メンバー '{0}' は、パラメーター '{1}' の有効な値ではありません。次のいずれかのメンバーを指定して、もう一度お試しください: {2}。</value>
+  </data>
+  <data name="ValidateTrustedDataFailure" xml:space="preserve">
+    <value>入力を処理できません。引数 "{0}" は信頼されていません。</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
+    <value>ValidateTrustedData 属性チェック エラー</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
+    <value>パラメーター引数 '{0}' は信頼されていないため、制約言語モードでの ValidateTrustedData パラメーター属性のチェックに失敗します。</value>
+  </data>
+</root>

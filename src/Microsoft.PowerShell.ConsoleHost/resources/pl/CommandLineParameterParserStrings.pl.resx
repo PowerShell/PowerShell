@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CommandAlreadySpecified" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ określono już polecenie -Command, -CommandWithArgs lub -EncodedCommand.</value>
+  </data>
+  <data name="MissingCommandParameter" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia z powodu braku parametru. Polecenie musi być zgodne z poleceniem -Command.</value>
+  </data>
+  <data name="UnknownParameter" xml:space="preserve">
+    <value>Nierozpoznany parametr: „{0}”.</value>
+  </data>
+  <data name="TooManyParametersToCommand" xml:space="preserve">
+    <value>Element „-” został określony za pomocą parametru -Command; żadne inne argumenty polecenia -Command nie są dozwolone.</value>
+  </data>
+  <data name="StdinNotRedirected" xml:space="preserve">
+    <value>Element „-” został określony jako argument polecenia -Command, ale standardowe dane wejściowe nie zostały przekierowane dla tego procesu.</value>
+  </data>
+  <data name="MissingOutputFormatParameter" xml:space="preserve">
+    <value>Nie można uruchomić polecenia, ponieważ nie podano argumentu dla parametru OutputFormat.
+Określ jeden z następujących formatów dla tego parametru:
+{0}</value>
+  </data>
+  <data name="MissingInputFormatParameter" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ parametr -InputFormat wymaga argumentu. Określ prawidłowy argument formatu dla tego parametru.
+Prawidłowe formaty to:
+{0}</value>
+  </data>
+  <data name="BadFormatParameterValue" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia z powodu nieprawidłowej wartości parametru. „{0}” nie jest prawidłowym formatem.
+Prawidłowe formaty to:
+{1}</value>
+  </data>
+  <data name="ArgsAlreadySpecified" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ argumenty polecenia -Command lub -EncodedCommand zostały już określone za pomocą parametru -EncodedArguments.</value>
+  </data>
+  <data name="MissingArgsValue" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ parametr -EncodedArguments wymaga wartości. Określ wartość parametru -EncodedArguments.</value>
+  </data>
+  <data name="MissingFileArgument" xml:space="preserve">
+    <value>Nie można uruchomić polecenia, ponieważ parametr File wymaga ścieżki pliku. Podaj ścieżkę parametru File, a następnie spróbuj ponownie wykonać polecenie.</value>
+  </data>
+  <data name="MissingWindowStyleArgument" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ parametr -WindowStyle wymaga argumentu normalnego, ukrytego, zminimalizowanego lub zmaksymalizowanego. Określ jedną z tych wartości argumentów i spróbuj ponownie.</value>
+  </data>
+  <data name="InvalidFileArgument" xml:space="preserve">
+    <value>Przetwarzanie pliku -File „{0}” nie powiodło się: {1}. Określ prawidłową ścieżkę dla parametru -File.</value>
+  </data>
+  <data name="InvalidWindowStyleArgument" xml:space="preserve">
+    <value>Przetwarzanie elementu -WindowStyle „{0}” nie powiodło się: {1}.</value>
+  </data>
+  <data name="InvalidFileArgumentExtension" xml:space="preserve">
+    <value>Przetwarzanie pliku -File „{0}” nie powiodło się, ponieważ plik nie ma rozszerzenia „.ps1”. Określ prawidłową nazwę pliku skryptu programu PowerShell, a następnie spróbuj ponownie.</value>
+  </data>
+  <data name="ArgumentFileDoesNotExist" xml:space="preserve">
+    <value>Argument „{0}” nie jest rozpoznawany jako nazwa pliku skryptu. Sprawdź pisownię nazwy lub sprawdź, czy ścieżka została dołączona, sprawdź, czy ścieżka jest poprawna, i spróbuj ponownie.</value>
+  </data>
+  <data name="BadArgsValue" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ wartość określona za pomocą parametru -EncodedArguments nie jest poprawnie zakodowana. Wartość musi być zakodowana w formacie Base64.</value>
+  </data>
+  <data name="BadCommandValue" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ wartość określona za pomocą polecenia -EncodedCommand nie jest poprawnie zakodowana. Wartość musi być zakodowana w formacie Base64.</value>
+  </data>
+  <data name="MissingExecutionPolicyParameter" xml:space="preserve">
+    <value>Nie można przetworzyć zasad wykonywania z powodu braku nazwy zasad. Nazwa zasad musi być zgodna z parametrem -ExecutionPolicy.</value>
+  </data>
+  <data name="MtaStaMutuallyExclusive" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ określono zarówno parametry -STA, jak i -MTA. Określ parametr -STA lub -MTA.</value>
+  </data>
+  <data name="MissingConfigurationNameArgument" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ parametr -ConfigurationName wymaga argumentu, który jest nazwą konfiguracji zdalnego punktu końcowego. Określ ten argument i spróbuj ponownie.</value>
+  </data>
+  <data name="MissingConfigurationFileArgument" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ parametr -ConfigurationFile wymaga argumentu będącego ścieżką pliku konfiguracji sesji (.pssc). Określ ten argument i spróbuj ponownie.</value>
+  </data>
+  <data name="MissingCustomPipeNameArgument" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ parametr -CustomPipeName wymaga argumentu, który jest nazwą potoku, którego chcesz użyć. Określ ten argument i spróbuj ponownie.</value>
+  </data>
+  <data name="CustomPipeNameTooLong" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ określony parametr -CustomPipeName jest za długi. Nazwy potoków na tej platformie mają określony maksymalny limit znaków ({0}). Nazwa potoku „{1}” ma określoną liczbę znaków ({2}).</value>
+  </data>
+  <data name="MissingSettingsFileArgument" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ parametr -SettingsFile wymaga argumentu będącego ścieżką pliku.</value>
+  </data>
+  <data name="InvalidSettingsFileArgument" xml:space="preserve">
+    <value>Przetwarzanie pliku -SettingsFile „{0}”nie powiodło się: {1}. Określ prawidłową ścieżkę parametru -SettingsFile.</value>
+  </data>
+  <data name="SettingsFileNotExists" xml:space="preserve">
+    <value>Argument „{0}” przekazany do pliku -SettingsFile nie istnieje. Podaj ścieżkę do istniejącego pliku JSON jako argument parametru -SettingsFile.</value>
+  </data>
+  <data name="InvalidArgument" xml:space="preserve">
+    <value>Nieprawidłowy argument „{0}”, czy chodziło Ci o:</value>
+  </data>
+  <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
+    <value>Parametr -WindowStyle nie jest zaimplementowany na tej platformie.</value>
+  </data>
+  <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
+    <value>Nie można przetworzyć polecenia, ponieważ parametr -WorkingDirectory wymaga argumentu będącego ścieżką katalogu.</value>
+  </data>
+  <data name="MTANotImplemented" xml:space="preserve">
+    <value>Parametr -MTA nie jest obsługiwany na tej platformie.</value>
+  </data>
+  <data name="STANotImplemented" xml:space="preserve">
+    <value>Parametr -STA nie jest obsługiwany na tej platformie.</value>
+  </data>
+  <data name="NullElementInArgs" xml:space="preserve">
+    <value>Określone argumenty nie mogą zawierać elementów o wartości null.</value>
+  </data>
+  <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
+    <value>Nieprawidłowa wartość ExecutionPolicy „{0}”.</value>
+  </data>
+  <data name="MissingMandatoryArgument" xml:space="preserve">
+    <value>Argument musi zostać podany do parametru „{0}”.</value>
+  </data>
+  <data name="FileOnlyEntryRequired" xml:space="preserve">
+    <value>Parametr „-File” jest wymagany przez zasady.</value>
+  </data>
+  <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
+    <value>Parametr „-NoExit” jest niedozwolony przez zasady.</value>
+  </data>
+  <data name="FileOnlyEntryServerMode" xml:space="preserve">
+    <value>Tryb serwera jest niedozwolony przez zasady.</value>
+  </data>
+</root>

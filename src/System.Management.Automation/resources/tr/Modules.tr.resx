@@ -1,0 +1,687 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ModuleNotFound" xml:space="preserve">
+    <value>Herhangi bir modül dizininde geçerli bir modül dosyası bulunamadığından belirtilen '{0}' modülü yüklenmedi.</value>
+  </data>
+  <data name="ModuleWithVersionNotFound" xml:space="preserve">
+    <value>Herhangi bir modül dizininde geçerli bir modül dosyası bulunamadığından '{1}' sürümü ile belirtilen '{0}' modülü yüklenmedi.</value>
+  </data>
+  <data name="MaximumVersionFormatIncorrect" xml:space="preserve">
+    <value>Belirtilen MaximumVersion '{0}' yanlıştı. '*' kullanıyorsanız, MaximumVersion yalnızca bir '*' destekler ve bu karakter her zaman MaximumVersion'ın sonunda yer almalıdır.</value>
+  </data>
+  <data name="MaximumVersionNotFound" xml:space="preserve">
+    <value>Herhangi bir modül dizininde geçerli bir modül dosyası bulunamadığından MaximumVersion '{1}' ile belirtilen '{0}' modülü yüklenmedi.</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionNotFound" xml:space="preserve">
+    <value>Herhangi bir modül dizininde geçerli bir modül dosyası bulunamadığından MinimumVersion '{1}' ve MaximumVersion '{2}' ile belirtilen '{0}' modülü yüklenmedi.</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionInvalidRange" xml:space="preserve">
+    <value>MinimumVersion '{0}', MaximumVersion '{1}' değerinden büyük olmamalıdır.</value>
+  </data>
+  <data name="ModuleAssemblyFound" xml:space="preserve">
+    <value>Bu ada sahip bir derleme bulunamadığından '{0}' derlemesi yüklenmedi. Derleme adını doğrulayın ve yeniden deneyin.</value>
+  </data>
+  <data name="ManifestMemberNotFound" xml:space="preserve">
+    <value>'{2}' modül bildiriminin '{1}' alanında listelenen, '{0}' öğesini işleyecek modül, herhangi bir modül dizininde geçerli bir modül bulunamadığından işlenmedi.</value>
+  </data>
+  <data name="CantUseAsCustomObjectWithBinaryModule" xml:space="preserve">
+    <value>-AsCustomObject parametresi yalnızca betik modülleriyle kullanılabildiğinden '{0}' modülü için özel nesne döndürülmedi.</value>
+  </data>
+  <data name="InvalidModuleManifest" xml:space="preserve">
+    <value>'{0}' modül bildirimi, geçerli bir PowerShell modül bildirim dosyası olmadığından işlenemedi. İzin verilmeyen öğeleri kaldırın: {1}</value>
+  </data>
+  <data name="EmptyModuleManifest" xml:space="preserve">
+    <value>'{0}' modül bildirim dosyasının işlenmesi geçerli bir bildirim nesnesi ile sonuçlanmadı. Dosyayı geçerli bir PowerShell modül bildirimi içerecek şekilde güncelleştirin. Geçerli bir bildirim, New-ModuleManifest cmdlet'i kullanılarak oluşturulabilir.</value>
+  </data>
+  <data name="InvalidModuleManifestMember" xml:space="preserve">
+    <value>Bildirimi bir veya daha fazla geçersiz üye içerdiğinden '{0}' modülü içeri aktarılamıyor. Geçerli bildirim üyeleri: ({1}). Geçerli olmayan üyeleri ({2}) kaldırın ve ardından modülü yeniden içeri aktarmayı deneyin.</value>
+  </data>
+  <data name="InvalidModuleSpecificationMember" xml:space="preserve">
+    <value>Bir modül açıklayan hashtable bir veya daha fazla geçersiz üye içeriyor. Geçerli üyeler: ({0}). Geçerli olmayan üyeleri ({1}) kaldırın, ardından yeniden deneyin.</value>
+  </data>
+  <data name="ModuleTooDeeplyNested" xml:space="preserve">
+    <value>Modül iç içe yerleştirme sınırı aşıldığından '{0}' modülü yüklenemiyor. Modüller yalnızca {1} düzey iç içe yerleştirilebilir. İç içe yerleştirme sınırının aşılmasını önlemek için modülleri yüklediğiniz sırayı değerlendirip değiştirin ve sonra betiğinizi yeniden çalıştırmayı deneyin.</value>
+  </data>
+  <data name="ModuleManifestMissingModuleVersion" xml:space="preserve">
+    <value>'ModuleVersion' üyesi modül bildiriminde yok. Bu üye mevcut olmalı ve üyeye 'n.n.n.n' biçiminde bir sürüm numarası atanmalıdır. Eksik üyeyi '{0}' dosyasına ekleyin.</value>
+  </data>
+  <data name="ModuleManifestInvalidValue" xml:space="preserve">
+    <value>'{2}' modül bildirimindeki '{0}' üyesi geçerli değil: {1}</value>
+  </data>
+  <data name="ModuleManifestInsufficientModuleVersion" xml:space="preserve">
+    <value>'{1}' modülünün '{0}' sürümü, gereken en düşük '{2}' sürümünü karşılamıyor. Sürüm numarasının desteklendiğini doğrulayın ve modülü yeniden yüklemeyi deneyin.</value>
+  </data>
+  <data name="ModuleManifestInsufficientPowerShellVersion" xml:space="preserve">
+    <value>Bu bilgisayardaki PowerShell sürümü: '{0}'. '{1}' modülünü çalıştırmak için en düşük PowerShell sürümü '{2}' gerekir. Gerekli en düşük PowerShell sürümünün yüklü olduğunu doğrulayın ve ardından yeniden deneyin.</value>
+  </data>
+  <data name="ModuleManifestNestedModulesCantGoWithModuleToProcess" xml:space="preserve">
+    <value>'ModuleToProcess' üyesi ikili bir modülse 'NestedModules' modül bildirimi üyesi kullanılamaz. '{0}' konumundaki modül bildirimi dosyasını düzenleyin ve ardından yeniden deneyin.</value>
+  </data>
+  <data name="ModuleManifestInvalidManifestMember" xml:space="preserve">
+    <value>Modül bildirimindeki '{0}' üyesi geçerli değil: {1}. Lütfen '{2}' dosyasında bu alan için geçerli bir değer belirtildiğini doğrulayın.</value>
+  </data>
+  <data name="InvalidModuleManifestPath" xml:space="preserve">
+    <value>'{0}' modül bildirim yolu geçerli değil. Path bağımsız değişkeninin değeri, uzantısı '.psd1' olan tek bir dosyaya çözümlenmelidir. Path bağımsız değişkeninin değerini geçerli bir psd1 dosyasına işaret edecek şekilde değiştirin ve ardından yeniden deneyin.</value>
+  </data>
+  <data name="InvalidModuleManifestVersion" xml:space="preserve">
+    <value>'{0}' modül bildirimindeki ModuleVersion anahtarı, '{2}' konumundaki sürüm klasörü adıyla eşleşmeyen '{1}' modül sürümünü belirtiyor. ModuleVersion anahtarının değerini sürüm klasörü adıyla eşleşecek şekilde değiştirin.</value>
+  </data>
+  <data name="InvalidNestedModuleinModuleManifest" xml:space="preserve">
+    <value>'{1}' modül bildiriminde belirtilen '{0}' NestedModule girdisi geçersiz. Bu girdiyi geçerli değerlerle güncelleştirdikten sonra yeniden deneyin.</value>
+  </data>
+  <data name="InvalidRequiredAssembliesInModuleManifest" xml:space="preserve">
+    <value>'{1}' modül bildiriminde belirtilen '{0}' RequiredAssemblies girdisi geçersiz. Bu girdiyi geçerli değerlerle güncelleştirdikten sonra yeniden deneyin.</value>
+  </data>
+  <data name="InvalidFilePathinModuleManifest" xml:space="preserve">
+    <value>'{1}' modül bildiriminde belirtilen '{0}' FileList girdisi geçersiz. Bu girdiyi geçerli değerlerle güncelleştirdikten sonra yeniden deneyin.</value>
+  </data>
+  <data name="InvalidRequiredModulesinModuleManifest" xml:space="preserve">
+    <value>'{1}' modül bildiriminde belirtilen '{0}' RequiredModules girdisi geçersiz. Bu girdiyi geçerli değerlerle güncelleştirdikten sonra yeniden deneyin.</value>
+  </data>
+  <data name="InvalidModuleListinModuleManifest" xml:space="preserve">
+    <value>'{1}' modül bildiriminde belirtilen '{0}' ModuleList girdisi geçersiz. Bu girdiyi geçerli değerlerle güncelleştirdikten sonra yeniden deneyin.</value>
+  </data>
+  <data name="InvalidPowerShellVersionInModuleManifest" xml:space="preserve">
+    <value>'{0}' modül bildirimi, yalnızca PowerShell '5.1' veya üzeri bir sürümünde desteklenen CompatiblePSEditions anahtarıyla belirtilir. PowerShellVersion anahtarının değerini '5.1' veya üzeri olacak şekilde güncelleştirin ve yeniden deneyin.</value>
+  </data>
+  <data name="DuplicateEntriesInCompatiblePSEditions" xml:space="preserve">
+    <value>CompatiblePSEditions için belirtilen '{0}' değeri yinelenen PowerShell Edition adları içeriyor. Yinelenen PowerShell Edition adlarını kaldırdıktan sonra yeniden deneyin.</value>
+  </data>
+  <data name="ModuleVersionEqualsToVersionFolder" xml:space="preserve">
+    <value>ModuleVersion anahtarında belirtilen sürüm, sürüm klasörü adıyla aynı.</value>
+  </data>
+  <data name="SkippingInvalidModuleVersionFolder" xml:space="preserve">
+    <value>Geçerli bir modül bildirim dosyasına sahip olmadığından {1} Modülü altındaki {0} Sürüm klasörü atlanıyor.</value>
+  </data>
+  <data name="RequiredModuleMissingModuleName" xml:space="preserve">
+    <value>'ModuleName' üyesi, bu modülü açıklayan karma tabloda yoktur.</value>
+  </data>
+  <data name="RequiredModuleMissingModuleVersion" xml:space="preserve">
+    <value>'ModuleVersion', 'MaximumVersion' ve 'RequiredVersion' üyeleri bu modülü açıklayan karma tabloda yok. Bu üç üyeden biri mevcut olmalı ve ona 'n.n.n.n' biçiminde bir sürüm numarası atanmalıdır.</value>
+  </data>
+  <data name="RequiredModuleNotLoaded" xml:space="preserve">
+    <value>Gerekli '{1}' modülü yüklenmedi. Modülü yükleyin veya '{0}' dosyasındaki 'RequiredModules' içinden modülü kaldırın.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongGuid" xml:space="preserve">
+    <value>GUID'si '{2}' olan gerekli '{1}' modülü yüklenmedi. Modülü yükleyin veya '{0}' dosyasındaki 'RequiredModules' içinden modülü kaldırın.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongVersion" xml:space="preserve">
+    <value>'{2}' sürümüne sahip gerekli '{1}' modülü yüklenmedi. Modülü yükleyin veya '{0}' dosyasındaki 'RequiredModules' içinden modülü kaldırın.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMaximumVersion" xml:space="preserve">
+    <value>MaximumVersion '{2}' değerine sahip gerekli '{1}' modülü yüklenmedi. Modülü yükleyin veya '{0}' dosyasındaki 'RequiredModules' içinden modülü kaldırın.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion" xml:space="preserve">
+    <value>MinimumVersion '{2}' ve MaximumVersion '{3}' değerlerine sahip gerekli '{1}' modülü yüklenmedi. Modülü yükleyin veya '{0}' dosyasındaki 'RequiredModules' içinden modülü kaldırın.</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleVersion" xml:space="preserve">
+    <value>'{0}' modülü, ModuleVersion '{1}' ile bulunamadı.</value>
+  </data>
+  <data name="RequiredModuleNotFoundRequiredVersion" xml:space="preserve">
+    <value>'{0}' modülü, RequiredVersion '{1}' ile bulunamadı.</value>
+  </data>
+  <data name="RequiredModuleNotFoundMaximumVersion" xml:space="preserve">
+    <value>'{0}' modülü, MaximumVersion '{1}' ile bulunamadı.</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleAndMaximumVersion" xml:space="preserve">
+    <value>'{0}' modülü, ModuleVersion '{1}' ve MaximumVersion '{2}' ile bulunamıyor.</value>
+  </data>
+  <data name="RequiredModuleNotFoundWithoutVersion" xml:space="preserve">
+    <value>'{0}' modülü bulunamıyor.</value>
+  </data>
+  <data name="NoModulesRemoved" xml:space="preserve">
+    <value>Hiçbir modül kaldırılmadı. Kaldırılacak modüllerin belirtiminin doğru olduğunu ve bu modüllerin çalışma alanında bulunduğunu denetleyin.</value>
+  </data>
+  <data name="UnableToRemoveModuleMember" xml:space="preserve">
+    <value>'{1}' modülünden içeri aktarılan '{0}' üyesi şu nedenle kaldırılamıyor: {2}</value>
+  </data>
+  <data name="ModuleIsReadOnly" xml:space="preserve">
+    <value>'{0}' modülü salt okunur olduğundan kaldırılamıyor. Salt okunur modülleri kaldırmak için komutunuza Force parametresini ekleyin.</value>
+  </data>
+  <data name="ModuleIsConstant" xml:space="preserve">
+    <value>'{0}' modülü 'constant' olarak işaretlendiğinden kaldırılamıyor. Bir modül 'constant' olarak işaretlendiyse kaldırılamaz.</value>
+  </data>
+  <data name="ModuleIsRequired" xml:space="preserve">
+    <value>'{0}' modülü '{1}' için gerekli olduğundan kaldırılamıyor. Modülü kaldırmak için komutunuza Force parametresini ekleyin.</value>
+  </data>
+  <data name="CanOnlyBeUsedFromWithinAModule" xml:space="preserve">
+    <value>Export-ModuleMember cmdlet'i yalnızca bir modülün içinden çağrılabilir.</value>
+  </data>
+  <data name="InvalidModuleExtension" xml:space="preserve">
+    <value>'{0}' uzantısı geçerli bir modül uzantısı değil. Desteklenen modül uzantıları şunlardır: '.dll', '.ps1', '.psm1', '.psd1' ve '.cdxml'. Uzantıyı düzeltin ve ardından '{1}' dosyasını yeniden eklemeyi deneyin.</value>
+  </data>
+  <data name="InvalidOperationOnBinaryModule" xml:space="preserve">
+    <value>Bu işlem ikili modülde gerçekleştirilemez. Yalnızca bir betik modülünde gerçekleştirilebilir.</value>
+  </data>
+  <data name="ScriptsToProcessIncorrectExtension" xml:space="preserve">
+    <value>'.ps1' uzantısına sahip olmadığından '{0}' dosyasına izin verilmiyor.</value>
+  </data>
+  <data name="DefaultCompanyName" xml:space="preserve">
+    <value>Bilinmiyor</value>
+  </data>
+  <data name="DefaultCopyrightMessage" xml:space="preserve">
+    <value>(c) {0}. Tüm hakları saklıdır.</value>
+  </data>
+  <data name="RemovingImportedFunction" xml:space="preserve">
+    <value>İçeri aktarılan "{0}" işlevi kaldırılıyor.</value>
+  </data>
+  <data name="RemovingImportedAlias" xml:space="preserve">
+    <value>İçeri aktarılan "{0}" diğer adı kaldırılıyor.</value>
+  </data>
+  <data name="RemovingImportedVariable" xml:space="preserve">
+    <value>İçeri aktarılan "{0}" değişkeni kaldırılıyor.</value>
+  </data>
+  <data name="LoadingModule" xml:space="preserve">
+    <value>Modül, '{0}' yolundan yükleniyor.</value>
+  </data>
+  <data name="LoadingFile" xml:space="preserve">
+    <value>'{0}', '{1}' yolundan yükleniyor.</value>
+  </data>
+  <data name="DottingScriptFile" xml:space="preserve">
+    <value>'{0}' betik dosyası nokta kaynak olarak kullanılıyor.</value>
+  </data>
+  <data name="ImportingFunction" xml:space="preserve">
+    <value>'{0}' işlevi içeri aktarılıyor.</value>
+  </data>
+  <data name="ImportingCmdlet" xml:space="preserve">
+    <value>'{0}' cmdlet'i içeri aktarılıyor.</value>
+  </data>
+  <data name="ImportingAlias" xml:space="preserve">
+    <value>'{0}' diğer adı içeri aktarılıyor.</value>
+  </data>
+  <data name="ImportingVariable" xml:space="preserve">
+    <value>'{0}' değişkeni içeri aktarılıyor.</value>
+  </data>
+  <data name="ExportingCmdlet" xml:space="preserve">
+    <value>'{0}' cmdlet'i dışarı aktarılıyor.</value>
+  </data>
+  <data name="ExportingFunction" xml:space="preserve">
+    <value>'{0}' işlevi dışarı aktarılıyor.</value>
+  </data>
+  <data name="ExportingAlias" xml:space="preserve">
+    <value>'{0}' diğer adı dışarı aktarılıyor.</value>
+  </data>
+  <data name="ExportingVariable" xml:space="preserve">
+    <value>'{0}' değişkeni dışarı aktarılıyor.</value>
+  </data>
+  <data name="ImportingNonStandardVerb" xml:space="preserve">
+    <value>'{0}' modülünden içeri aktarılan bazı komutların adları, onaylanmamış fiiller içeriyor ve bu da komutların bulunmasını zorlaştırabilir. Onaylanmamış fiil içeren komutları bulmak için Import-Module komutunu Verbose parametresiyle yeniden çalıştırın. Onaylanan fiillerin listesi için Get-Verb yazın.</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerbose" xml:space="preserve">
+    <value>'{1}' modülündeki '{0}' komutu içeri aktarıldı, ancak adı onaylanmış bir fiil içermediğinden bulunması zor olabilir. Onaylanan fiillerin listesi için Get-Verb yazın.</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerboseSuggestion" xml:space="preserve">
+    <value>'{2}' modülündeki '{0}' komutu içeri aktarıldı, ancak adı onaylanmış bir fiil içermediğinden bulunması zor olabilir. Önerilen alternatif fiiller: "{1}".</value>
+  </data>
+  <data name="ImportingNonStandardNoun" xml:space="preserve">
+    <value>İçeri aktarılan bazı komut adları, şu kısıtlanmış karakterlerden bir veya daha fazlasını içeriyor: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="ImportingNonStandardNounVerbose" xml:space="preserve">
+    <value>'{1}' modülündeki '{0}' komut adı, şu kısıtlanmış karakterlerden bir veya daha fazlasını içeriyor: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="CreatingModuleManifestFile" xml:space="preserve">
+    <value>"{0}" modülü bildirim dosyası oluşturuluyor.</value>
+  </data>
+  <data name="ConfirmRemoveModule" xml:space="preserve">
+    <value>{0} (Yol: '{1}')</value>
+  </data>
+  <data name="InvalidProcessorArchitecture" xml:space="preserve">
+    <value>Geçerli işlemci mimarisi: {0}. '{1}' modülü şu mimariyi gerektiriyor: {2}.</value>
+  </data>
+  <data name="InvalidPowerShellHostName" xml:space="preserve">
+    <value>Geçerli PowerShell konağının adı: '{0}'. '{1}' modülü için gerekli PowerShell konağı: '{2}'.</value>
+  </data>
+  <data name="InvalidPowerShellHostVersion" xml:space="preserve">
+    <value>Geçerli PowerShell konağı: '{0}' (sürüm {1}). '{2}' modülünü çalıştırmak için en düşük PowerShell konak sürümü '{3}' gerekir.</value>
+  </data>
+  <data name="ManifestHeaderLine1" xml:space="preserve">
+    <value>'{0}' modülü için modül bildirimi</value>
+  </data>
+  <data name="ManifestHeaderLine2" xml:space="preserve">
+    <value>Oluşturan: {0}</value>
+  </data>
+  <data name="ManifestHeaderLine3" xml:space="preserve">
+    <value>{0} tarihinde oluşturuldu</value>
+  </data>
+  <data name="RootModule" xml:space="preserve">
+    <value>Bu bildirimle ilişkilendirilmiş betik modülü veya ikili modül dosyası.</value>
+  </data>
+  <data name="NestedModules" xml:space="preserve">
+    <value>RootModule/ModuleToProcess içinde belirtilen modülün iç içe modülleri olarak içeri aktarılacak modüller</value>
+  </data>
+  <data name="GUID" xml:space="preserve">
+    <value>Bu modülü benzersiz olarak tanımlamak için kullanılan kimlik</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Bu modülün yazarı</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>Bu modülün şirketi veya satıcısı</value>
+  </data>
+  <data name="Copyright" xml:space="preserve">
+    <value>Bu modül için telif hakkı bildirimi</value>
+  </data>
+  <data name="ModuleVersion" xml:space="preserve">
+    <value>Bu modülün sürüm numarası.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Bu modülün sağladığı işlevselliğin açıklaması</value>
+  </data>
+  <data name="PowerShellVersion" xml:space="preserve">
+    <value>Bu modülün gerektirdiği PowerShell altyapısının en düşük sürümü</value>
+  </data>
+  <data name="CLRVersion" xml:space="preserve">
+    <value>Bu modülün gerektirdiği en düşük ortak dil çalışma zamanı (CLR) sürümü. {0}</value>
+  </data>
+  <data name="RequiredModules" xml:space="preserve">
+    <value>Bu modül içeri aktarılmadan önce genel ortama aktarılması gereken modüller</value>
+  </data>
+  <data name="ScriptsToProcess" xml:space="preserve">
+    <value>Bu modül içeri aktarılmadan önce çağıranın ortamında çalıştırılan betik dosyaları (.ps1).</value>
+  </data>
+  <data name="TypesToProcess" xml:space="preserve">
+    <value>Bu modül içeri aktarılırken yüklenecek tür dosyaları (.ps1xml)</value>
+  </data>
+  <data name="FormatsToProcess" xml:space="preserve">
+    <value>Bu modül içeri aktarılırken yüklenecek biçim dosyaları (.ps1xml)</value>
+  </data>
+  <data name="RequiredAssemblies" xml:space="preserve">
+    <value>Bu modül içeri aktarılmadan önce yüklenmesi gereken derlemeler</value>
+  </data>
+  <data name="FileList" xml:space="preserve">
+    <value>Bu modülle paketlenmiş tüm dosyaların listesi</value>
+  </data>
+  <data name="PrivateData" xml:space="preserve">
+    <value>RootModule/ModuleToProcess içinde belirtilen modüle geçirilecek özel veriler. Bu, PowerShell tarafından kullanılan ek modül meta verilerine sahip bir PSData karma tablosu da içerebilir.</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Bu modüle uygulanan etiketler. Bunlar, çevrimiçi galerilerde modül bulmaya yardımcı olur.</value>
+  </data>
+  <data name="ProjectUri" xml:space="preserve">
+    <value>Bu proje için ana web sitesinin URL'si.</value>
+  </data>
+  <data name="LicenseUri" xml:space="preserve">
+    <value>Bu modül lisansının URL'si.</value>
+  </data>
+  <data name="IconUri" xml:space="preserve">
+    <value>Bu modülü temsil eden simgenin URL'si.</value>
+  </data>
+  <data name="ReleaseNotes" xml:space="preserve">
+    <value>Bu modülün sürüm notları</value>
+  </data>
+  <data name="Prerelease" xml:space="preserve">
+    <value>Bu modülün ön sürüm dizesi</value>
+  </data>
+  <data name="RequireLicenseAcceptance" xml:space="preserve">
+    <value>Modülün yükleme/güncelleştirme/kaydetme işlemleri için kullanıcıdan açık onay gerektirip gerektirmediğini gösteren bayrak</value>
+  </data>
+  <data name="ExternalModuleDependencies" xml:space="preserve">
+    <value>Bu modülün dış bağımlı modülleri</value>
+  </data>
+  <data name="EndOfManifestHashTable" xml:space="preserve">
+    <value>{0} hashtable'ın sonu</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableError" xml:space="preserve">
+    <value>PrivateData parametre değeri, modül bildirimini Tags, ProjectUri, LicenseUri, IconUri veya ReleaseNotes parametre değerleriyle oluşturmak için bir karma tablo olmalıdır. Tags, ProjectUri, LicenseUri, IconUri veya ReleaseNotes parametre değerlerini kaldırın ya da PrivateData içeriklerini bir karma tablo içinde sarmalayın.</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableWarning" xml:space="preserve">
+    <value>PrivateData bir karma tablo olarak tanımlanmalıdır, ancak bu modül bildirimi bunu bir nesne olarak tanımlıyor. Lütfen PrivateData içeriklerini bir karma tablo içinde sarmalamayı deneyin. Bu, daha sonra modül bildirimine Tags, ProjectUri, LicenseUri, IconUri ve ReleaseNotes özelliklerini eklemenizi sağlar.</value>
+  </data>
+  <data name="InvalidParameterValue" xml:space="preserve">
+    <value>Belirtilen '{0}' değeri geçersiz. Geçerli bir değerle yeniden deneyin.</value>
+  </data>
+  <data name="FunctionsToExport" xml:space="preserve">
+    <value>Bu modülden dışarı aktarılacak işlevler için en iyi performansı elde etmek amacıyla joker karakterler kullanmayın ve girdiyi silmeyin. Dışarı aktarılacak işlev yoksa boş bir dizi kullanın.</value>
+  </data>
+  <data name="AliasesToExport" xml:space="preserve">
+    <value>Bu modülden dışarı aktarılacak diğer adlar için en iyi performansı elde etmek amacıyla joker karakterler kullanmayın ve girdiyi silmeyin. Dışarı aktarılacak diğer ad yoksa boş bir dizi kullanın.</value>
+  </data>
+  <data name="CmdletsToExport" xml:space="preserve">
+    <value>Bu modülden dışarı aktarılacak cmdlet'ler için en iyi performansı elde etmek amacıyla joker karakterler kullanmayın ve girdiyi silmeyin. Dışarı aktarılacak cmdlet yoksa boş bir dizi kullanın.</value>
+  </data>
+  <data name="VariablesToExport" xml:space="preserve">
+    <value>Bu modülden dışarı aktarılacak değişkenler</value>
+  </data>
+  <data name="DscResourcesToExport" xml:space="preserve">
+    <value>Bu modülden dışarı aktarılacak DSC kaynakları</value>
+  </data>
+  <data name="CompatiblePSEditions" xml:space="preserve">
+    <value>Desteklenen PSEdition'lar</value>
+  </data>
+  <data name="ProcessorArchitecture" xml:space="preserve">
+    <value>Bu modülün gerektirdiği işlemci mimarisi (None, X86, Amd64)</value>
+  </data>
+  <data name="ModuleList" xml:space="preserve">
+    <value>Bu modülle paketlenmiş tüm modüllerin listesi</value>
+  </data>
+  <data name="DotNetFrameworkVersion" xml:space="preserve">
+    <value>Bu modül için gereken en düşük Microsoft .NET Framework sürümü. {0}</value>
+  </data>
+  <data name="PowerShellHostName" xml:space="preserve">
+    <value>Bu modül için gerekli PowerShell konağının adı</value>
+  </data>
+  <data name="PowerShellHostVersion" xml:space="preserve">
+    <value>Bu modülün gerektirdiği PowerShell konağının en düşük sürümü</value>
+  </data>
+  <data name="HelpInfoURI" xml:space="preserve">
+    <value>Bu modülün HelpInfo URI'si</value>
+  </data>
+  <data name="ModuleDriveInUse" xml:space="preserve">
+    <value>{0} modülü geçerli PowerShell oturumunda PSDrive'ı sağladığından, hiçbir modül kaldırılmadı. Geçerli PSDrive sağlayıcısını değiştirin ve ardından modülleri yeniden kaldırmayı deneyin.</value>
+  </data>
+  <data name="ImportModuleNoClobberForCmdlet" xml:space="preserve">
+    <value>Geçerli kapsamda aynı ada sahip bir üye olduğundan '{0}' cmdlet'i içeri aktarılmadı.</value>
+  </data>
+  <data name="ImportModuleNoClobberForAlias" xml:space="preserve">
+    <value>Geçerli kapsamda aynı ada sahip bir üye olduğundan '{0}' diğer adı içeri aktarılmadı.</value>
+  </data>
+  <data name="ImportModuleNoClobberForFunction" xml:space="preserve">
+    <value>Geçerli kapsamda aynı ada sahip bir üye olduğundan '{0}' işlevi içeri aktarılmadı.</value>
+  </data>
+  <data name="ImportModuleNoClobberForVariable" xml:space="preserve">
+    <value>Geçerli kapsamda aynı ada sahip bir üye olduğundan '{0}' değişkeni içeri aktarılmadı.</value>
+  </data>
+  <data name="WildCardNotAllowedInModuleToProcessAndInNestedModules" xml:space="preserve">
+    <value>'{0}' modül bildirimindeki 'ModuleToProcess', 'RootModule' veya 'NestedModules' üyelerinde joker karakterlere izin verilmiyor.</value>
+  </data>
+  <data name="CoreModuleCannotBeRemoved" xml:space="preserve">
+    <value>'{0}' modülü PowerShell için bir çekirdek modüldür. Çekirdek modülleri kaldırmak için komutunuza Force parametresini ekleyin.</value>
+  </data>
+  <data name="ModuleManifestCannotContainBothModuleToProcessAndRootModule" xml:space="preserve">
+    <value>Modül bildirimi hem 'ModuleToProcess' hem de 'RootModule' üyelerini içeremez. Modül bildirimi dosyasını değiştirerek '{0}' konumundaki bu üyelerden birini kaldırın ve ardından yeniden deneyin.</value>
+  </data>
+  <data name="ModuleToProcessFieldDeprecated" xml:space="preserve">
+    <value>'ModuleToProcess' modül bildirimi üyesi kullanım dışı bırakıldı. Bunun yerine 'RootModule' üyesini kullanın.</value>
+  </data>
+  <data name="DefaultCommandPrefix" xml:space="preserve">
+    <value>Bu modülden dışarı aktarılan komutlar için varsayılan ön ek. Varsayılan ön eki Import-Module -Prefix kullanarak geçersiz kılın.</value>
+  </data>
+  <data name="GlobalAndScopeParameterCannotBeSpecifiedTogether" xml:space="preserve">
+    <value>'Global' ve 'Scope' parametreleri birlikte belirtilemez. Bu parametrelerden birini kaldırın ve ardından komutu yeniden çalıştırmayı deneyin.</value>
+  </data>
+  <data name="RequiredModulesCyclicDependency" xml:space="preserve">
+    <value>Gerekli '{0}' modülü yüklenmedi. '{0}' modülü, '{2}' modül bildiriminde döngüsel bağımlılığa işaret eden requiredModule '{1}' içeriyor.</value>
+  </data>
+  <data name="RequiredModuleNotFound" xml:space="preserve">
+    <value>Herhangi bir modül dizininde geçerli bir modül dosyası bulunamadığından gerekli '{0}' modülü yüklenmedi.</value>
+  </data>
+  <data name="MixedModuleOverCimSessionWarning" xml:space="preserve">
+    <value>{0} modülündeki bazı komutlar CimSession üzerinden içeri aktarılamıyor. Tüm komutları almak için uzak sunucuda PowerShell uzaktan yönetiminin etkin olduğunu doğrulayın ve ardından Import-Module cmdlet'ine PSSession parametresini eklemeyi deneyin.</value>
+  </data>
+  <data name="WinCompatModuleWarning" xml:space="preserve">
+    <value>{0} modülü, {1} uzaktan iletişim oturumu kullanılarak Windows PowerShell'de yüklenir. Lütfen bu modüldeki tüm komut giriş ve çıkışlarının seri durumdan çıkarılmış nesneler olacağını unutmayın. Bu modülü PowerShell'e yüklemek istiyorsanız lütfen 'Import-Module -SkipEditionCheck' söz dizimini kullanın.</value>
+  </data>
+  <data name="WinCompatRequredVersionError" xml:space="preserve">
+    <value>Windows PowerShell sürümü {0} algılandı. Windows PowerShell uyumluluk özelliğini kullanarak modülleri yüklemek için Windows PowerShell 5.1 gerekir. Bu özelliği etkinleştirmek için https://aka.ms/WMF5Download adresinden Windows Management Framework (WMF) 5.1 yükleyin.</value>
+  </data>
+  <data name="WinCompatModuleInDenyList" xml:space="preserve">
+    <value>'{0}' modülünün, PowerShell yapılandırma dosyasındaki 'WindowsPowerShellCompatibilityModuleDenyList' ayarı tarafından Windows PowerShell uyumluluk özelliği kullanılarak yüklenmesi engellendi.</value>
+  </data>
+  <data name="PsModuleOverCimSessionError" xml:space="preserve">
+    <value>{0} modülü CimSession üzerinden içeri aktarılamıyor. Import-Module cmdlet'inin PSSession parametresini kullanmayı deneyin.</value>
+  </data>
+  <data name="InvalidProcessorArchitectureInManifest" xml:space="preserve">
+    <value>{0} işlemci mimarisi değeri desteklenmiyor. İşlemci mimarisi için desteklenen şu numaralandırma değerlerinden birini belirterek New-ModuleManifest komutunu yeniden çalıştırın: None, MSIL, X86, Amd64, Arm</value>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyInListAvailableMode" xml:space="preserve">
+    <value>Get-Module cmdlet'i uzak bilgisayarda çalıştırıldığında yalnızca kullanılabilir modüller listelenebilir. Komutunuza ListAvailable parametresini ekleyin ve ardından yeniden deneyin.</value>
+  </data>
+  <data name="ModuleLoadedAsASnapin" xml:space="preserve">
+    <value>'{0}' ek bileşeni zaten içeri aktarıldığından '{0}' modülü içeri aktarılmadı.</value>
+  </data>
+  <data name="WildCardNotAllowedInRequiredAssemblies" xml:space="preserve">
+    <value>'{0}' modül bildirimindeki 'RequiredAssemblies' üyesinde joker karakterlere izin verilmiyor.</value>
+  </data>
+  <data name="CmdletizationDoesSupportRexportingNestedModules" xml:space="preserve">
+    <value>{1} içindeki {0} anahtarının değeri {2} ve modülde iç içe modüller var. CDXML dosyası kök modül olduğunda, iç içe modüllerdeki komutlar dışarı aktarılamadığından Import-Module komutu başarısız olur. CDXML dosyasını NestedModules anahtarına taşıyın ve komutu yeniden deneyin.</value>
+    <comment>{0} is equal to either ModuleToProcess or RootModule
+{1} is a placeholder for a file path to psd1 file
+{2} is a placeholder for a file path to cdxml file</comment>
+  </data>
+  <data name="RemoteDiscoveryRemotePsrpCommandFailed" xml:space="preserve">
+    <value>Uzak komuttaki hata: {0}: {{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToGenerateProxyForRemoteModule" xml:space="preserve">
+    <value>'{0}' uzak modülü için ara sunucular oluşturulamadı. {{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToProcessRemoteModule" xml:space="preserve">
+    <value>{0} uzak modülü işlenemedi. {1}</value>
+  </data>
+  <data name="RemoteDiscoveryFailureFromDiscoveryProvider" xml:space="preserve">
+    <value>Uzak CimSession'dan modül verileri alınamadı. {0}</value>
+  </data>
+  <data name="RequiredModuleNotFoundWrongGuidVersion" xml:space="preserve">
+    <value>Herhangi bir modül dizininde geçerli bir modül dosyası bulunamadığından GUID'si '{1}' ve sürümü '{2}' olan gerekli '{0}' modülü yüklenmedi.</value>
+  </data>
+  <data name="RemoteDiscoveryProviderNotFound" xml:space="preserve">
+    <value>CIM sunucusunda modül bulmaya yönelik bir CIM sağlayıcısı bulunamadı. {0}</value>
+    <comment>{0} is a placeholder for a more detailed error message</comment>
+  </data>
+  <data name="CannotDetectNetFrameworkVersion" xml:space="preserve">
+    <value>İzin verilen sürümler listesinde yer almadığı için Microsoft .NET Framework sürümü {0} doğrulanamıyor.</value>
+  </data>
+  <data name="ScriptAnalysisModule" xml:space="preserve">
+    <value>{0} analiz ediliyor.</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="ScriptAnalysisPreparing" xml:space="preserve">
+    <value>Modüller ilk kullanım için hazırlanıyor.</value>
+  </data>
+  <data name="DeterminingAvailableModules" xml:space="preserve">
+    <value>Kullanılabilir modüller aranıyor</value>
+  </data>
+  <data name="SearchingUncShare" xml:space="preserve">
+    <value>{0} UNC paylaşımı aranıyor.</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>Bir uzak bilgisayarda Get-Module cmdlet’ini çalıştırmak yalnızca yol içermeyen modül adları için yapılabilir. Name parametresi, bir yola çözümlenen şu öğeyi içeriyor: '{0}'. Name parametresini yol öğeleri içermeyecek şekilde güncelleştirin ve sonra yeniden deneyin.</value>
+  </data>
+  <data name="ModuleDiscoveryForLoadedModulesWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>Get-Module cmdlet’inin ListAvailable parametresi olmadan çalıştırılması, yol içeren modül adları için desteklenmiyor. Name parametresi, bir yola çözümlenen şu öğeyi içeriyor: '{0}'. Name parametresini yol öğeleri içermeyecek şekilde güncelleştirin ve sonra yeniden deneyin.</value>
+  </data>
+  <data name="ModuleNotFoundForGetModule" xml:space="preserve">
+    <value>Belirtilen '{0}' modülü bulunamadı. Name parametresini geçerli bir yola işaret edecek şekilde güncelleştirin ve yeniden deneyin. </value>
+  </data>
+  <data name="PopulatingRepositorySourceLocation" xml:space="preserve">
+    <value>RepositorySourceLocation özelliği {0} modülü için dolduruluyor.</value>
+  </data>
+  <data name="ManifestMemberNotValid" xml:space="preserve">
+    <value>'{2}' modül bildiriminin '{1}' alanında listelenen, '{0}' öğesini işleyecek modül işlenmedi. {3}</value>
+  </data>
+  <data name="PrerequisiteForDesktopEditionOnly" xml:space="preserve">
+    <value>Bu önkoşul yalnızca PowerShell Desktop sürümü için geçerlidir.</value>
+  </data>
+  <data name="PSEditionNotSupported" xml:space="preserve">
+    <value>'{0}' modülü, geçerli PowerShell sürümü '{1}' için desteklenmiyor. Desteklenen sürümleri: '{2}'. Bu modülün uyumluluk denetimini yoksaymak için 'Import-Module -SkipEditionCheck' kullanın.</value>
+  </data>
+  <data name="ImplicitWinCompatDisabled" xml:space="preserve">
+    <value>'{0}' modülü, PowerShell '{1}' sürümünü destekler ve ayarlar dosyasında devre dışı bırakıldığı için Windows Uyumluluk özelliği kullanılarak örtük olarak yüklenemez. Bu modülü Windows PowerShell ile yüklemek için 'Import-Module -UseWindowsPowerShell' komutunu ya da modülü geçerli PowerShell ile yüklemeyi denemek için 'Import-Module -SkipEditionCheck' komutunu kullanın.</value>
+  </data>
+  <data name="ExperimentalFeatureNameMissingOrEmpty" xml:space="preserve">
+    <value>Modül bildiriminde tanımlanan deneysel bir özellik için boş olmayan bir dize değeri belirtilmelidir.</value>
+  </data>
+  <data name="InvalidExperimentalFeatureName" xml:space="preserve">
+    <value>Bir veya daha fazla geçersiz deneysel özellik adı bulundu: {0}. Modül deneysel özellik adı şu kuralı izlemelidir: 'ModuleName.FeatureName'.</value>
+  </data>
+  <data name="SkipEditionCheckNotSupportedWithoutListAvailable" xml:space="preserve">
+    <value>-SkipEditionCheck anahtar parametresi, -ListAvailable anahtar parametresi olmadan kullanılamaz.</value>
+  </data>
+  <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>ConstrainedLanguage modunda *.ps1 dosyalarının modül olarak içeri aktarılmasına izin verilmiyor.</value>
+  </data>
+  <data name="MismatchedLanguageModes" xml:space="preserve">
+    <value>{0} betik modülü, modül bildiriminden farklı bir dil moduna sahip olduğundan betik modülü yüklenirken bir hata oluştu. Bildirim dil modu {1} ve modül dil modu {2}. Tüm modül dosyalarının imzalı olduğundan veya uygulamanızın izin verilenler listesi yapılandırmasının bir parçası olduğundan emin olun.</value>
+  </data>
+  <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
+    <value>Bu modül, joker karakterler kullanarak işlevleri dışarı aktarırken nokta kaynak işlecini kullanıyor ve sistem uygulama doğrulama zorlaması altındayken buna izin verilmiyor.</value>
+  </data>
+  <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
+    <value>Modül üyeleri, çalışan oturumdan farklı bir dil moduna sahip bir modülden dışarı aktarılamaz.</value>
+  </data>
+  <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
+    <value>Oturum ConstrainedLanguage modundayken yeni modül oluşturulamaz.</value>
+  </data>
+  <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
+    <value>'Core' sürümüyle uyumlu yerleşik '{0}' modülü bulunamıyor. Lütfen PowerShell yerleşik modüllerinin kullanılabilir olduğundan emin olun. Bunlar genellikle PowerShell paketinin içinde, $PSHOME modül yolunun altında yer alır ve PowerShell’in düzgün çalışması için gereklidir.</value>
+  </data>
+  <data name="WDACExportModuleCommandLogTitle" xml:space="preserve">
+    <value>Export-ModuleMember Cmdlet'i</value>
+  </data>
+  <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
+    <value>'{0}' modülü, geçerli '{2}' oturumundan farklı olan '{1}' dil moduna sahip olduğundan modül üyelerinin dışarı aktarılması Kısıtlı Dil modunda başarısız olur.</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
+    <value>Modül Örtük İşlev Dışarı Aktarma</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
+    <value>'{0}' modülü güvenilir (Tam Dil modunda çalışıyor) ancak oturum güvenilir olmadığından (Kısıtlı Dil modunda çalışıyor) bu modül için örtük işlev dışarı aktarma işlemi reddedilecek. En iyi uygulama olarak, modül işlevlerini her zaman tam ada göre tek tek dışarı aktarın.</value>
+  </data>
+  <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
+    <value>Betik Dosyası Modül Olarak İçeri Aktarılıyor</value>
+  </data>
+  <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
+    <value>'{0}' betik dosyasının modül olarak içeri aktarılmasına ConstrainedLanguage modunda izin verilmeyecek.</value>
+  </data>
+  <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
+    <value>Modül Nokta Kaynak İşleci İçeriyor</value>
+  </data>
+  <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
+    <value>'{0}' modülünün içeri aktarılması, joker karakterler kullanırken aynı zamanda nokta kaynak işlecini de kullanarak işlevleri dışarı aktardığından Kısıtlı Dil modunda başarısız olacak.</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
+    <value>"Modül Dışarı Aktaran İşlevler</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
+    <value>'{0}' modülü, işlevleri ad joker karakterleri kullanarak dışarı aktarır. Kısıtlı Dil modunda çalıştırıldığında iç içe modül işlev adlarının tümü kaldırılır.</value>
+  </data>
+  <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
+    <value>"Yeni Modül Cmdlet'i</value>
+  </data>
+  <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
+    <value>Güvenilmeyen bir Kısıtlı Dil oturumundaki yeni bir modülün FullLanguage betik bloğu sağlaması engellenir.</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
+    <value>"Modül Eşleşmeyen Dil Modları</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
+    <value>Üst modülden farklı bir dil moduna sahip bağımlı bir modül yükleniyor. Kısıtlı Dil modunda buna izin verilmez.</value>
+  </data>
+</root>

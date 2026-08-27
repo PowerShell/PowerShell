@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NotSupported" xml:space="preserve">
+    <value>此作業系統不支援此功能。</value>
+  </data>
+  <data name="NotEnabled" xml:space="preserve">
+    <value>無法啟用磁碟機 {0}。</value>
+  </data>
+  <data name="InvalidDrive" xml:space="preserve">
+    <value>因為提供的磁碟機無效，所以命令無法在指定電腦上開啟還原電腦基礎結構。請在 Drive 參數中輸入有效的磁碟機，然後再試一次。</value>
+  </data>
+  <data name="NoSystemDrive" xml:space="preserve">
+    <value>在磁碟機清單中包含系統磁碟機。</value>
+  </data>
+  <data name="NotValidDrive" xml:space="preserve">
+    <value>因為提供的磁碟機無效，所以命令無法關閉還原電腦基礎結構。請在 Drive 參數中輸入有效的磁碟機，然後再試一次。</value>
+  </data>
+  <data name="NotDisabled" xml:space="preserve">
+    <value>命令無法在 {0} 磁碟機上停用系統還原。您可能沒有足夠的權限可執行此作業。</value>
+  </data>
+  <data name="ServiceDisabled" xml:space="preserve">
+    <value>系統還原服務已停用。</value>
+  </data>
+  <data name="RestorePointNotCreated" xml:space="preserve">
+    <value>系統還原基礎結構無法建立還原點。</value>
+  </data>
+  <data name="RestoreFailed" xml:space="preserve">
+    <value>上次的電腦還原嘗試失敗。</value>
+  </data>
+  <data name="RestoreSuccess" xml:space="preserve">
+    <value>電腦已還原至指定的還原點。</value>
+  </data>
+  <data name="RestoreInterrupted" xml:space="preserve">
+    <value>上次的電腦還原嘗試已中斷。</value>
+  </data>
+  <data name="NoRestorePoint" xml:space="preserve">
+    <value>命令找不到 "{0}" 還原點。請確認 "{0}" 序號，然後再次嘗試命令。</value>
+  </data>
+  <data name="DoubleComputerName" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="RestartcomputerFailed" xml:space="preserve">
+    <value>無法重新啟動電腦 {0}，錯誤訊息如下: {1}。</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>由於下列錯誤，無法在目標電腦('{1}')上執行此命令: {0}。{2}</value>
+  </data>
+  <data name="StopcomputerFailed" xml:space="preserve">
+    <value>無法停止電腦 {0}，錯誤訊息如下: {1}。</value>
+  </data>
+  <data name="InvalidRestorePoint" xml:space="preserve">
+    <value>命令無法還原電腦 "{0}"，因為它尚未設定為有效的還原點。請在 RestorePoint 參數中輸入有效的還原點，然後再試一次。</value>
+  </data>
+  <data name="RestartNeeded" xml:space="preserve">
+    <value>該變更將在您重新啟動電腦 {1} 之後生效。</value>
+  </data>
+  <data name="RemoveComputerConfirm" xml:space="preserve">
+    <value>離開網域之後，您必須知道本機系統管理員帳戶的密碼，才能登入這部電腦。是否要繼續?</value>
+  </data>
+  <data name="InvalidComputerNameFormat" xml:space="preserve">
+    <value>下列電腦名稱無效: {0}。請確定電腦名稱不超過 255 個字元、不包含兩個以上的連續句號、不以句號開頭、不全為數字字元，且不包含下列任何字元:
+{{|}}~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
+  </data>
+  <data name="InvalidDomainNameFormat" xml:space="preserve">
+    <value>電腦名稱 '{0}' 中的網域無效。請確定網域存在，而且名稱是有效的網域名稱。</value>
+  </data>
+  <data name="ComputerNamesAreEqual" xml:space="preserve">
+    <value>為 NewComputerName 參數指定的值與 ComputerName 參數的值相同。請為 NewComputerName 參數提供不同的值。</value>
+  </data>
+  <data name="ResetComputerMachinePassword" xml:space="preserve">
+    <value>「已重設 '{0}' 與 '{1}' 之間的安全通道密碼。」</value>
+  </data>
+  <data name="SystemRestoreServiceDisabled" xml:space="preserve">
+    <value>無法執行此命令，因為發生下列錯誤：服務無法啟動，因為它已停用，或沒有與其關聯的已啟用裝置。</value>
+  </data>
+  <data name="ProgressActivity" xml:space="preserve">
+    <value>正在建立系統還原點...</value>
+  </data>
+  <data name="ProgressStatusCreatingRestorePoint" xml:space="preserve">
+    <value>正在建立系統還原點... 已完成 {0}%。</value>
+  </data>
+  <data name="ProgressStatusCompleted" xml:space="preserve">
+    <value>已完成。</value>
+  </data>
+  <data name="NetworkPathNotFound" xml:space="preserve">
+    <value>請嘗試下列選項，然後再次執行命令。
+1. 確認目標電腦('{0}') 正在執行中。
+2. 指定目標電腦('{0}') 的完整電腦名稱。</value>
+  </data>
+  <data name="PrivilegeNotEnabled" xml:space="preserve">
+    <value>無法重新啟動電腦 {0}。無法為呼叫處理程序啟用存取權限 {1}。</value>
+  </data>
+  <data name="RestartComputerAction" xml:space="preserve">
+    <value>啟用 {0} 並重新啟動電腦。</value>
+  </data>
+  <data name="LocalShutdownPrivilege" xml:space="preserve">
+    <value>本機關機存取權限</value>
+  </data>
+  <data name="RemoteShutdownPrivilege" xml:space="preserve">
+    <value>遠端關機存取權限</value>
+  </data>
+  <data name="CannotWaitLocalComputer" xml:space="preserve">
+    <value>無法等候本機電腦重新啟動。指定 Wait 參數時，會忽略本機電腦。</value>
+  </data>
+  <data name="RestartComputerInvalidParameter" xml:space="preserve">
+    <value>只有在指定 Wait 參數時，Timeout、For 和 Delay 參數才有效。</value>
+  </data>
+  <data name="RestartMultipleComputersActivity" xml:space="preserve">
+    <value> 正在重新啟動電腦...</value>
+  </data>
+  <data name="RestartSingleComputerActivity" xml:space="preserve">
+    <value> 正在重新啟動電腦 {0}</value>
+  </data>
+  <data name="WaitForMultipleComputers" xml:space="preserve">
+    <value>已完成: {0}/{1}。</value>
+  </data>
+  <data name="VerifyRebootStage" xml:space="preserve">
+    <value>正在確認電腦已重新啟動...</value>
+  </data>
+  <data name="WaitForPowerShell" xml:space="preserve">
+    <value>正在等候 PowerShell 連線...</value>
+  </data>
+  <data name="WaitForRestartToBegin" xml:space="preserve">
+    <value>正在等候重新啟動開始...</value>
+  </data>
+  <data name="WaitForWinRM" xml:space="preserve">
+    <value>正在等候 WinRM 連線...</value>
+  </data>
+  <data name="WaitForWMI" xml:space="preserve">
+    <value>正在等候 WMI 連線...</value>
+  </data>
+  <data name="RestartComplete" xml:space="preserve">
+    <value>重新啟動完成</value>
+  </data>
+  <data name="NoSupportForCombinedServiceType" xml:space="preserve">
+    <value>目前不支援合併的服務類型。</value>
+  </data>
+  <data name="CannotResolveComputerName" xml:space="preserve">
+    <value>無法解析電腦名稱 {0}，例外狀況如下: {1}。</value>
+  </data>
+  <data name="IncorrectNewNameNumber" xml:space="preserve">
+    <value>新名稱的數目不等於目標電腦的數目。</value>
+  </data>
+  <data name="InvalidNewName" xml:space="preserve">
+    <value>因為新名稱無效，請略過電腦 '{0}'，其新名稱為 '{1}'。輸入的新電腦名稱格式不正確。Standard 名稱可包含字母 (a-z、A-Z)、數字 (0-9) 和連字號 (-)，但不能包含空格或句點 (.)。名稱不能全由數字組成，而且長度不能超過 63 個字元。</value>
+  </data>
+  <data name="NewNameIsOldName" xml:space="preserve">
+    <value>略過電腦 '{0}'，其新名稱為 '{1}'，因為新名稱與目前名稱相同。</value>
+  </data>
+  <data name="ComputerNotInDomain" xml:space="preserve">
+    <value>無法移除電腦 '{0}'，因為它不在網域中。</value>
+  </data>
+  <data name="FailToJoinWorkGroup" xml:space="preserve">
+    <value>無法將電腦 '{0}' 加入工作群組 '{1}'，錯誤訊息如下: {2}</value>
+  </data>
+  <data name="NetworkDown" xml:space="preserve">
+    <value>無法從網域移除電腦，因為本機網路已中斷。</value>
+  </data>
+  <data name="FailToRename" xml:space="preserve">
+    <value>無法將電腦 '{0}' 重新命名為 '{1}'，因為發生下列例外狀況: {2}。</value>
+  </data>
+  <data name="AddComputerActionDomain" xml:space="preserve">
+    <value>加入網域 '{0}'</value>
+  </data>
+  <data name="AddComputerActionWorkgroup" xml:space="preserve">
+    <value>加入工作群組 '{0}'</value>
+  </data>
+  <data name="AddComputerToSameDomain" xml:space="preserve">
+    <value>無法將電腦 '{0}' 新增至網域 '{1}'，因為它已在該網域中。</value>
+  </data>
+  <data name="AddComputerToSameWorkgroup" xml:space="preserve">
+    <value>無法將電腦 '{0}' 新增至工作群組 '{1}'，因為它已在該工作群組中。</value>
+  </data>
+  <data name="FailToRenameAfterJoinWorkgroup" xml:space="preserve">
+    <value>電腦 '{0}' 已成功加入工作群組 '{1}'，但無法重新命名為 '{2}'，錯誤訊息如下: {3}。</value>
+  </data>
+  <data name="FailToSwitchFromDomainToWorkgroup" xml:space="preserve">
+    <value>電腦 '{0}' 已成功取消加入網域 '{1}'，但無法加入工作群組 '{2}'，錯誤訊息如下: {3}。</value>
+  </data>
+  <data name="FailToUnjoinDomain" xml:space="preserve">
+    <value>無法將電腦 '{0}' 從網域 '{1}' 退出，錯誤訊息如下: {2}。</value>
+  </data>
+  <data name="FailToConnectToComputer" xml:space="preserve">
+    <value>無法建立與電腦 '{0}' 的 WMI 連線，錯誤訊息如下: {1}。</value>
+  </data>
+  <data name="FailToJoinDomainFromWorkgroup" xml:space="preserve">
+    <value>電腦 '{0}' 無法從目前的工作群組 '{1}' 加入網域 '{2}'，錯誤訊息如下: {3}。</value>
+  </data>
+  <data name="FailToJoinNewDomainAfterUnjoinOldDomain" xml:space="preserve">
+    <value>電腦 '{0}' 已成功取消加入網域 '{1}'，但無法加入新網域 '{2}'，錯誤訊息如下: {3}。</value>
+  </data>
+  <data name="FailToRenameAfterJoinDomain" xml:space="preserve">
+    <value>電腦 '{0}' 已成功加入新的網域 '{1}'，但重新命名為 '{2}' 失敗，錯誤訊息如下: {3}。</value>
+  </data>
+  <data name="InvalidJoinOptions" xml:space="preserve">
+    <value>旗標 '{0}' 只有在指定旗標 '{1}' 時才有效。</value>
+  </data>
+  <data name="CannotRenameMultipleComputers" xml:space="preserve">
+    <value>無法重新命名多部電腦。只有在指定單一電腦時，NewName 參數才有效。</value>
+  </data>
+  <data name="CannotFindMachineAccountFromDomain" xml:space="preserve">
+    <value>在網域 {0} 中找不到本機電腦的電腦帳戶。</value>
+  </data>
+  <data name="CannotFindMachineAccountFromServer" xml:space="preserve">
+    <value>在網域控制站 {0} 中找不到本機電腦的電腦帳戶。</value>
+  </data>
+  <data name="FailToGetDomainInformation" xml:space="preserve">
+    <value>無法取得本機電腦的網域資訊，因為發生下列例外狀況: {0}。</value>
+  </data>
+  <data name="FailToResetPasswordOnDomain" xml:space="preserve">
+    <value>無法重設網域中電腦帳戶的安全通道密碼。作業失敗，發生下列例外狀況: {0}。</value>
+  </data>
+  <data name="FailToResetPasswordOnLocalMachine" xml:space="preserve">
+    <value>重設本機電腦的安全通道密碼失敗，錯誤訊息如下: {0}。</value>
+  </data>
+  <data name="NeedAdminPrivilegeToResetPassword" xml:space="preserve">
+    <value>重設本機電腦上的安全通道密碼需要系統管理員權限。存取遭到拒絕。</value>
+  </data>
+  <data name="ResetComputerNotInDomain" xml:space="preserve">
+    <value>無法重設本機電腦的帳戶安全通道密碼。本機電腦目前不屬於任何網域。</value>
+  </data>
+  <data name="TruncateNetBIOSName" xml:space="preserve">
+    <value>電腦的 NetBIOS 名稱限制為 15 個位元組，在此情況下即為 15 個字元。NetBIOS 名稱將縮短為 "{0}"，這可能會導致 NetBIOS 名稱解析發生衝突。是否要繼續?</value>
+  </data>
+  <data name="TruncateNetBIOSNameCaption" xml:space="preserve">
+    <value>NetBIOS 名稱將被截斷。</value>
+  </data>
+  <data name="CannotResolveServerName" xml:space="preserve">
+    <value>無法解析指定的伺服器名稱 {0}。</value>
+  </data>
+  <data name="CannotCreateRestorePointWarning" xml:space="preserve">
+    <value>無法建立新的系統還原點，因為在過去 {0} 分鐘內已建立一個還原點。您可以在登錄機碼 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore' 下建立 DWORD 值 'SystemRestorePointCreationFrequency'，以變更還原點建立的頻率。此登錄機碼的值表示建立兩個還原點之間所需的時間間隔 (以分鐘為單位)。預設值為 1440 分鐘 (24 小時)。</value>
+  </data>
+  <data name="CannotGetOperatingSystemObject" xml:space="preserve">
+    <value>無法擷取 Win32_OperatingSystem WMI 物件。</value>
+  </data>
+  <data name="RestartComputerSkipped" xml:space="preserve">
+    <value>已略過電腦 {0}。無法透過 WMI 服務擷取其 LastBootUpTime，錯誤訊息如下: {1}。</value>
+  </data>
+  <data name="FailToTestSecureChannel" xml:space="preserve">
+    <value>無法驗證本機電腦的安全通道。作業失敗，發生下列例外狀況: {0}。</value>
+  </data>
+  <data name="RepairSecureChannelFail" xml:space="preserve">
+    <value>嘗試修復本機電腦與網域 {0} 之間的安全通道失敗。</value>
+  </data>
+  <data name="RepairSecureChannelSucceed" xml:space="preserve">
+    <value>已成功修復本機電腦與網域 {0} 之間的安全通道。</value>
+  </data>
+  <data name="SecureChannelAlive" xml:space="preserve">
+    <value>本機電腦與網域 {0} 之間的安全通道狀況良好。</value>
+  </data>
+  <data name="SecureChannelBroken" xml:space="preserve">
+    <value>本機電腦與網域 {0} 之間的安全通道已中斷。</value>
+  </data>
+  <data name="TestComputerNotInDomain" xml:space="preserve">
+    <value>無法驗證本機電腦的安全通道密碼。本機電腦目前不屬於任何網域。</value>
+  </data>
+  <data name="SystemRestoreNotSupported" xml:space="preserve">
+    <value>無法執行作業，因為 Advanced RISC Machine (ARM) 平台不支援系統還原 API。</value>
+  </data>
+  <data name="TimeoutError" xml:space="preserve">
+    <value>電腦未在指定的逾時期間內完成重新啟動。</value>
+  </data>
+  <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
+    <value>無法驗證建立還原點的時間間隔。無法擷取上一個還原點，錯誤訊息如下: {0}。</value>
+  </data>
+  <data name="InvalidParameterSetAsJob" xml:space="preserve">
+    <value>不支援 AsJob 參數集。</value>
+  </data>
+  <data name="InvalidParameterForCoreClr" xml:space="preserve">
+    <value>CoreCLR 不支援 {0} 參數。</value>
+  </data>
+  <data name="ShutdownCommandNotFound" xml:space="preserve">
+    <value>找不到必要的原生命令 'shutdown'。</value>
+  </data>
+</root>

@@ -1,0 +1,357 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvokeItemAction" xml:space="preserve">
+    <value>Vyvolat položku</value>
+  </data>
+  <data name="InvokeItemResourceFileTemplate" xml:space="preserve">
+    <value>Položka: {0}</value>
+  </data>
+  <data name="RemoveItemActionFile" xml:space="preserve">
+    <value>Odebrat soubor</value>
+  </data>
+  <data name="RemoveItemActionDirectory" xml:space="preserve">
+    <value>Odebrat adresář</value>
+  </data>
+  <data name="CopyItemActionFile" xml:space="preserve">
+    <value>Kopírovat soubor</value>
+  </data>
+  <data name="CopyItemResourceFileTemplate" xml:space="preserve">
+    <value>Položka: {0} Cíl: {1}</value>
+  </data>
+  <data name="CopyItemActionDirectory" xml:space="preserve">
+    <value>Kopírovat adresář</value>
+  </data>
+  <data name="RenameItemActionFile" xml:space="preserve">
+    <value>Přejmenovat soubor</value>
+  </data>
+  <data name="RenameItemActionDirectory" xml:space="preserve">
+    <value>Přejmenovat adresář</value>
+  </data>
+  <data name="RenameItemResourceFileTemplate" xml:space="preserve">
+    <value>Položka: {0} Cíl: {1}</value>
+  </data>
+  <data name="MoveItemActionFile" xml:space="preserve">
+    <value>Přesunout soubor</value>
+  </data>
+  <data name="MoveItemActionDirectory" xml:space="preserve">
+    <value>Přesunout adresář</value>
+  </data>
+  <data name="MoveItemResourceFileTemplate" xml:space="preserve">
+    <value>Položka: {0} Cíl: {1}</value>
+  </data>
+  <data name="SetPropertyActionFile" xml:space="preserve">
+    <value>Nastavit vlastnost souboru</value>
+  </data>
+  <data name="SetPropertyActionDirectory" xml:space="preserve">
+    <value>Nastavit vlastnost adresáře</value>
+  </data>
+  <data name="SetPropertyResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Vlastnost: {1} Hodnota: {2}</value>
+  </data>
+  <data name="ClearPropertyActionFile" xml:space="preserve">
+    <value>Vymazat vlastnost souboru</value>
+  </data>
+  <data name="ClearPropertyActionDirectory" xml:space="preserve">
+    <value>Vymazat vlastnost adresáře</value>
+  </data>
+  <data name="ClearPropertyResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Vlastnost: {1}</value>
+  </data>
+  <data name="NewItemActionFile" xml:space="preserve">
+    <value>Vytvořit soubor</value>
+  </data>
+  <data name="NewItemActionDirectory" xml:space="preserve">
+    <value>Vytvořit adresář</value>
+  </data>
+  <data name="NewItemActionTemplate" xml:space="preserve">
+    <value>Cíl: {0}</value>
+  </data>
+  <data name="ClearContentActionFile" xml:space="preserve">
+    <value>Vymazat obsah</value>
+  </data>
+  <data name="ClearContentesourceTemplate" xml:space="preserve">
+    <value>Položka: {0}</value>
+  </data>
+  <data name="ItemNotFound" xml:space="preserve">
+    <value>Položku {0} se nepovedlo najít.</value>
+  </data>
+  <data name="CannotRemoveItem" xml:space="preserve">
+    <value>Položku {0} nejde odebrat: {1}</value>
+  </data>
+  <data name="CannotRestoreAttributes" xml:space="preserve">
+    <value>Atributy položky {0} nejde obnovit: {1}</value>
+  </data>
+  <data name="ItemDoesNotExist" xml:space="preserve">
+    <value>Objekt v zadané cestě {0} neexistuje.</value>
+  </data>
+  <data name="DirectoryNotEmpty" xml:space="preserve">
+    <value>Adresář {0} nejde odebrat, protože není prázdný.</value>
+  </data>
+  <data name="UnknownType" xml:space="preserve">
+    <value>Typ není známým typem pro systém souborů. Je možné zadat jen file, directory nebo symboliclink.</value>
+  </data>
+  <data name="PathOutSideBasePath" xml:space="preserve">
+    <value>Cestu nejde zpracovat, protože zadaná cesta odkazuje na položku mimo basePath.</value>
+  </data>
+  <data name="DriveRootError" xml:space="preserve">
+    <value>Zadaný kořen jednotky {0} buď neexistuje, nebo není složkou.</value>
+  </data>
+  <data name="DirectoryExist" xml:space="preserve">
+    <value>Položka se zadaným názvem {0} už existuje.</value>
+  </data>
+  <data name="DelimiterError" xml:space="preserve">
+    <value>Při čtení proudu po jednom bajtu nejde zadat oddělovač.</value>
+  </data>
+  <data name="CopyError" xml:space="preserve">
+    <value>Položku {0} nejde přepsat sama sebou.</value>
+  </data>
+  <data name="RenameError" xml:space="preserve">
+    <value>Zadaný cíl nejde přejmenovat, protože představuje cestu nebo název zařízení.</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>Vlastnost {0} neexistuje nebo nebyla nalezena.</value>
+  </data>
+  <data name="PermissionError" xml:space="preserve">
+    <value>K provedení této operace nemáte dostatečná přístupová práva nebo je položka skrytá, systémová či jen pro čtení.</value>
+  </data>
+  <data name="AttributesNotSupported" xml:space="preserve">
+    <value>Atribut nejde nastavit, protože atributy nejsou podporované. Nastavit je možné jen tyto atributy: Archive, Hidden, Normal, ReadOnly nebo System.</value>
+  </data>
+  <data name="CannotClearProperty" xml:space="preserve">
+    <value>Vlastnost nejde vymazat, protože není podporovaná. Vymazat je možné jen vlastnost Attributes.</value>
+  </data>
+  <data name="TargetCannotContainDeviceName" xml:space="preserve">
+    <value>Cestu {0} nejde zpracovat, protože cíl představuje rezervovaný název zařízení.</value>
+  </data>
+  <data name="EncodingNotUsed" xml:space="preserve">
+    <value>Při zadání -AsByteStream se kódování nepoužívá.</value>
+  </data>
+  <data name="ByteEncodingError" xml:space="preserve">
+    <value>S kódováním po bajtech nejde pokračovat. Při použití kódování po bajtech musí být obsah typu byte.</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>Soubor nejde zpracovat, protože soubor {0} nebyl nalezen.</value>
+  </data>
+  <data name="DirectoryDisplayGrouping" xml:space="preserve">
+    <value>    Adresář: </value>
+  </data>
+  <data name="ReadBackward_Encoding_NotSupport" xml:space="preserve">
+    <value>Kódování souboru nejde zjistit. Zadané kódování {0} není podporované při čtení obsahu v opačném pořadí.</value>
+  </data>
+  <data name="AlternateDataStreamNotFound" xml:space="preserve">
+    <value>Alternativní datový proud {0} souboru {1} se nepovedlo otevřít.</value>
+  </data>
+  <data name="StreamAction" xml:space="preserve">
+    <value>Proud {0} souboru {1}.</value>
+  </data>
+  <data name="RawAndWaitCannotCoexist" xml:space="preserve">
+    <value>Parametry Raw a Wait nejde zadat ve stejném příkazu.</value>
+  </data>
+  <data name="InvalidDriveName" xml:space="preserve">
+    <value>Pokud chcete použít přepínací parametr Persist, musí operační systém podporovat název jednotky (například písmena jednotek A–Z).</value>
+  </data>
+  <data name="PersistNotSupported" xml:space="preserve">
+    <value>Při použití parametru Persist musí být kořen umístění systému souborů ve vzdáleném počítači.</value>
+  </data>
+  <data name="NoFirstLastWaitForRaw" xml:space="preserve">
+    <value>Parametry {0} a {1} nejde zadat ve stejném příkazu.</value>
+  </data>
+  <data name="ItemNotDirectory" xml:space="preserve">
+    <value>Pro tuto operaci je vyžadován adresář. Položka {0} není adresář.</value>
+  </data>
+  <data name="NewItemActionJunction" xml:space="preserve">
+    <value>Vytvořit spojovací bod</value>
+  </data>
+  <data name="NewItemActionSymbolicLink" xml:space="preserve">
+    <value>Vytvořit symbolický odkaz</value>
+  </data>
+  <data name="ElevationRequired" xml:space="preserve">
+    <value>Tato operace vyžaduje oprávnění správce.</value>
+  </data>
+  <data name="NewItemActionHardLink" xml:space="preserve">
+    <value>Vytvořit pevný odkaz</value>
+  </data>
+  <data name="ItemNotFile" xml:space="preserve">
+    <value>Pro tuto operaci je vyžadován soubor. Položka {0} není soubor.</value>
+  </data>
+  <data name="HardLinkNotSupported" xml:space="preserve">
+    <value>Pro zadanou cestu nejsou podporované pevné odkazy.</value>
+  </data>
+  <data name="SymbolicLinkNotSupported" xml:space="preserve">
+    <value>Pro zadanou cestu nejsou podporované symbolické odkazy.</value>
+  </data>
+  <data name="CopyItemRemotelyProgressActivity" xml:space="preserve">
+    <value>Kopírování {0} do {1}</value>
+  </data>
+  <data name="CopyItemRemoteDestinationIsFile" xml:space="preserve">
+    <value>Cílová cesta {0} je soubor, který už v cílovém umístění existuje.</value>
+  </data>
+  <data name="CopyItemRemotelyFailed" xml:space="preserve">
+    <value>Soubor {0} se nepovedlo zkopírovat do vzdáleného cílového umístění.</value>
+  </data>
+  <data name="CopyItemRemotelyStatusDescription" xml:space="preserve">
+    <value>Z: {0} do: {1}</value>
+  </data>
+  <data name="CopyItemRemotelyDestinationIsFile" xml:space="preserve">
+    <value>Adresář {0} nejde zkopírovat do souboru {0}</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToGetDirectoryChildItems" xml:space="preserve">
+    <value>Nepovedlo se získat podřízené položky adresáře {0}.</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToReadFile" xml:space="preserve">
+    <value>Vzdálený soubor {0} se nepovedlo přečíst.</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToValidateIfDestinationIsFile" xml:space="preserve">
+    <value>Nejde ověřit, jestli je vzdálený cíl {0} soubor.</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
+    <value>Adresář {0} se ve vzdáleném cíli nepovedlo vytvořit.</value>
+  </data>
+  <data name="DriveMaxSizeError" xml:space="preserve">
+    <value>Byla překročena maximální velikost jednotky: {0}.</value>
+  </data>
+  <data name="SymlinkItemExists" xml:space="preserve">
+    <value>Odkaz nejde vytvořit, protože cesta už existuje: {0}.</value>
+  </data>
+  <data name="AlreadyListedDirectory" xml:space="preserve">
+    <value>Přeskakuje se už navštívený adresář {0}.</value>
+  </data>
+  <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
+    <value>Cílová cesta nemůže být podadresářem zdroje ani samotným zdrojem: {0}.</value>
+  </data>
+  <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
+    <value>Cíl a cesta nemůžou být stejné.</value>
+  </data>
+  <data name="CopyingLocalFileActivity" xml:space="preserve">
+    <value>Zkopírováno {0} z {1} souborů</value>
+  </data>
+  <data name="CopyingLocalBytesStatus" xml:space="preserve">
+    <value>{0} z {1} ({2:0.0} MB/s)</value>
+  </data>
+  <data name="RemovingLocalFileActivity" xml:space="preserve">
+    <value>Odebráno {0} z {1} souborů</value>
+  </data>
+  <data name="RemovingLocalBytesStatus" xml:space="preserve">
+    <value>{0} z {1} ({2:0.0} MB/s)</value>
+  </data>
+  <data name="JunctionAbsolutePath" xml:space="preserve">
+    <value>Vytvoření spojovacího bodu vyžaduje absolutní cestu k cíli.</value>
+  </data>
+</root>

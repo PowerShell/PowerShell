@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Argument" xml:space="preserve">
+    <value>无法处理参数，因为参数 "{0}" 的值无效。请更改参数 "{0}" 的值，然后再次运行该操作。</value>
+  </data>
+  <data name="InvalidScopeIdArgument" xml:space="preserve">
+    <value>无法处理参数，因为参数 "{0}" 的值无效。有效值为 "Global"、"Local"、"Script" 或者相对于当前范围的数字(0 到范围数，其中 0 是指当前范围，1 是指其父范围)。请更改 "{0}" 参数的值，然后重新运行该操作。</value>
+  </data>
+  <data name="ArgumentNull" xml:space="preserve">
+    <value>无法处理参数，因为参数 "{0}" 的值为 null。请将参数 "{0}" 的值更改为非 null 值。</value>
+  </data>
+  <data name="ArgumentOutOfRange" xml:space="preserve">
+    <value>无法处理参数，因为参数 "{0}" 的值超出范围。请将参数 "{0}" 更改为范围内的值。</value>
+  </data>
+  <data name="InvalidOperation" xml:space="preserve">
+    <value>无法执行操作，因为操作 "{0}" 无效。请移除操作 "{0}"，或调查其无效的原因。</value>
+  </data>
+  <data name="NotImplemented" xml:space="preserve">
+    <value>无法执行操作，因为未实现操作 "{0}"。</value>
+  </data>
+  <data name="NotSupported" xml:space="preserve">
+    <value>无法执行操作，因为不支持操作 "{0}"。</value>
+  </data>
+  <data name="ObjectDisposed" xml:space="preserve">
+    <value>无法执行操作，因为对象 "{0}" 已被释放。</value>
+  </data>
+  <data name="ScriptBlockInvokeOnOneClauseOnly" xml:space="preserve">
+    <value>无法调用脚本块，因为它包含多个子句。Invoke() 方法只能用于包含单个子句的脚本块。</value>
+  </data>
+  <data name="CanConvertOneClauseOnly" xml:space="preserve">
+    <value>无法转换脚本块，因为它包含多个子句。不允许使用表达式或控件结构。验证脚本块是否只包含一个管道或命令。</value>
+  </data>
+  <data name="CantConvertEmptyPipeline" xml:space="preserve">
+    <value>无法转换空脚本块。验证脚本块是否只包含一个管道或命令。</value>
+  </data>
+  <data name="CanOnlyConvertOnePipeline" xml:space="preserve">
+    <value>只能转换仅包含一个管道或命令的脚本块。不允许使用表达式或控件结构。验证脚本块是否只包含一个管道或命令。</value>
+  </data>
+  <data name="CantConvertScriptBlockWithTrap" xml:space="preserve">
+    <value>包含顶级 trap 语句的脚本块无法转换。</value>
+  </data>
+  <data name="CantConvertWithUndeclaredVariables" xml:space="preserve">
+    <value>无法为取消引用 param(...) 块中未声明变量的 ScriptBlock 生成 PowerShell 对象。 未声明变量的名称: {0}。</value>
+  </data>
+  <data name="CantConvertWithNonConstantExpression" xml:space="preserve">
+    <value>无法为计算非常量表达式的 ScriptBlock 生成 PowerShell 对象。非常量表达式: {0}。</value>
+  </data>
+  <data name="CantConvertWithDynamicExpression" xml:space="preserve">
+    <value>无法为计算动态表达式的 ScriptBlock 生成 PowerShell 对象。动态表达式: {0}。</value>
+  </data>
+  <data name="CantConvertWithScriptBlocks" xml:space="preserve">
+    <value>无法为尝试在参数值内传递其他脚本块的 ScriptBlock 生成 PowerShell 对象。</value>
+  </data>
+  <data name="CantConvertWithCommandInvocations" xml:space="preserve">
+    <value>无法为调用管道、命令或函数来计算主管道参数的 ScriptBlock 生成 PowerShell 对象。</value>
+  </data>
+  <data name="CantConvertWithDotSourcing" xml:space="preserve">
+    <value>无法为使用点源的 ScriptBlock 生成 PowerShell 对象。</value>
+  </data>
+  <data name="CantConvertWithScriptBlockInvocation" xml:space="preserve">
+    <value>无法为调用其他脚本块的 ScriptBlock 生成 PowerShell 对象。</value>
+  </data>
+  <data name="CanConvertOneOutputErrorRedir" xml:space="preserve">
+    <value>无法将脚本块转换为 PowerShell 对象，因为它包含禁止重定向运算符。</value>
+  </data>
+  <data name="CantConvertScriptBlockWithNoContext" xml:space="preserve">
+    <value>无法为没有关联操作上下文的 ScriptBlock 生成 PowerShell 对象。</value>
+  </data>
+  <data name="HaltCommandException" xml:space="preserve">
+    <value>用户已停止该命令。</value>
+  </data>
+  <data name="DynamicParametersWrongType" xml:space="preserve">
+    <value>对象 "{0}" 的类型不正确，无法从 dynamicparam 块返回。dynamicparam 块必须返回 $null，或者返回类型为 [System.Management.Automation.RuntimeDefinedParameterDictionary] 的对象。</value>
+  </data>
+  <data name="CantConvertScriptBlockToOpenGenericType" xml:space="preserve">
+    <value>脚本块无法转换为开放泛型类型。请定义适当的封闭泛型类型，然后重试。</value>
+  </data>
+  <data name="CantConvertPipelineStartsWithExpression" xml:space="preserve">
+    <value>无法为使用表达式启动管道的 ScriptBlock 生成 PowerShell 对象。</value>
+  </data>
+  <data name="UsingVariableIsUndefined" xml:space="preserve">
+    <value>无法检索 using 变量 '$using:{0}' 的值，因为该变量尚未在本地会话中设置。</value>
+  </data>
+  <data name="CantGetUsingExpressionValueWithSpecifiedVariableDictionary" xml:space="preserve">
+    <value>无法获取指定变量字典中 Using 表达式 '{0}' 的值。从脚本块创建 PowerShell 实例时，Using 表达式不能包含索引操作或成员访问操作。</value>
+  </data>
+  <data name="WDACCompiledScriptBlockLogTitle" xml:space="preserve">
+    <value>编译的脚本块点源</value>
+  </data>
+  <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
+    <value>在“受约束语言”模式下，将不允许在当前范围中调用脚本块 "{0}"。脚本语言模式: {1}，上下文语言模式: {2}。</value>
+  </data>
+</root>

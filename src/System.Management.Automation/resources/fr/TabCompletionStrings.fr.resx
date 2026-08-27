@@ -1,0 +1,610 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
+    <value>Nous ne pouvons pas désérialiser correctement le résultat de la saisie semi-automatique par tabulation, car l’instance d’exécution distante ne contient pas d’instance TypeTable.</value>
+  </data>
+  <data name="NoAccessToProperties" xml:space="preserve">
+    <value>Nous ne pouvons pas accéder aux propriétés sur une instance nulle du type CompletionResult.</value>
+  </data>
+  <data name="bnotOperatorDescription" xml:space="preserve">
+    <value>Opération NOT au niveau du bit</value>
+  </data>
+  <data name="notOperatorDescription" xml:space="preserve">
+    <value>Opération Not logique. Inverse l’instruction qui la suit.</value>
+  </data>
+  <data name="eqOperatorDescription" xml:space="preserve">
+    <value>Égal à, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont égales à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est égale à l’opérande de droite.</value>
+  </data>
+  <data name="ieqOperatorDescription" xml:space="preserve">
+    <value>Égal à, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont égales à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est égale à l’opérande de droite.</value>
+  </data>
+  <data name="ceqOperatorDescription" xml:space="preserve">
+    <value>Égal à, respecte la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont égales à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est égale à l’opérande de droite.</value>
+  </data>
+  <data name="neOperatorDescription" xml:space="preserve">
+    <value>Est différent de, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont différentes de l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est différente de l’opérande de droite.</value>
+  </data>
+  <data name="ineOperatorDescription" xml:space="preserve">
+    <value>Est différent de, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont différentes de l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est différente de l’opérande de droite.</value>
+  </data>
+  <data name="cneOperatorDescription" xml:space="preserve">
+    <value>Différent de, respecte la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont différentes de l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est différente de l’opérande de droite.</value>
+  </data>
+  <data name="geOperatorDescription" xml:space="preserve">
+    <value>Supérieur ou égal à, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette dernière qui sont supérieures ou égales à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est supérieur ou égale à l’opérande de droite.</value>
+  </data>
+  <data name="igeOperatorDescription" xml:space="preserve">
+    <value>Supérieur ou égal à, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette dernière qui sont supérieures ou égales à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est supérieur ou égale à l’opérande de droite.</value>
+  </data>
+  <data name="cgeOperatorDescription" xml:space="preserve">
+    <value>Supérieur ou égal à, respecte la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette dernière qui sont supérieures ou égales à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est supérieur ou égale à l’opérande de droite.</value>
+  </data>
+  <data name="gtOperatorDescription" xml:space="preserve">
+    <value>Supérieur à, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont supérieures à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est supérieure à l’opérande de droite.</value>
+  </data>
+  <data name="igtOperatorDescription" xml:space="preserve">
+    <value>Supérieur à, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont supérieures à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est supérieure à l’opérande de droite.</value>
+  </data>
+  <data name="cgtOperatorDescription" xml:space="preserve">
+    <value>Supérieur à, respecte la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont supérieures à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est supérieure à l’opérande de droite.</value>
+  </data>
+  <data name="ltOperatorDescription" xml:space="preserve">
+    <value>Inférieur à, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont inférieures à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est inférieure à l’opérande de droite.</value>
+  </data>
+  <data name="iltOperatorDescription" xml:space="preserve">
+    <value>Inférieur à, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont inférieures à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est inférieure à l’opérande de droite.</value>
+  </data>
+  <data name="cltOperatorDescription" xml:space="preserve">
+    <value>Inférieur à, respecte la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui sont inférieures à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est inférieure à l’opérande de droite.</value>
+  </data>
+  <data name="leOperatorDescription" xml:space="preserve">
+    <value>Inférieur ou égal à, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette dernière qui sont inférieures ou égales à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est inférieur ou égale à l’opérande de droite.</value>
+  </data>
+  <data name="ileOperatorDescription" xml:space="preserve">
+    <value>Inférieur ou égal à, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette dernière qui sont inférieures ou égales à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est inférieur ou égale à l’opérande de droite.</value>
+  </data>
+  <data name="cleOperatorDescription" xml:space="preserve">
+    <value>Inférieur ou égal à, respecte la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette dernière qui sont inférieures ou égales à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche est inférieur ou égale à l’opérande de droite.</value>
+  </data>
+  <data name="likeOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance de caractères génériques, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui correspondent à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche correspond à l’opérande de droite.</value>
+  </data>
+  <data name="ilikeOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance de caractères génériques, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui correspondent à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche correspond à l’opérande de droite.</value>
+  </data>
+  <data name="clikeOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance de caractères génériques, respecte la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui correspondent à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche correspond à l’opérande de droite.</value>
+  </data>
+  <data name="notlikeOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance de caractères génériques, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui ne correspondent pas à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche ne correspond pas à l’opérande de droite.</value>
+  </data>
+  <data name="inotlikeOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance de caractères génériques, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui ne correspondent pas à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche ne correspond pas à l’opérande de droite.</value>
+  </data>
+  <data name="cnotlikeOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance de caractères génériques, respecte la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui ne correspondent pas à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche ne correspond pas à l’opérande de droite.</value>
+  </data>
+  <data name="matchOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance d’expressions régulières, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui correspondent à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche correspond à l’opérande de droite.</value>
+  </data>
+  <data name="imatchOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance d’expressions régulières, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui correspondent à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche correspond à l’opérande de droite.</value>
+  </data>
+  <data name="cmatchOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance d’expressions régulières, respecte la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui correspondent à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche correspond à l’opérande de droite.</value>
+  </data>
+  <data name="notmatchOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance d’expressions régulières, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui ne correspondent pas à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche ne correspond pas à l’opérande de droite.</value>
+  </data>
+  <data name="inotmatchOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance d’expressions régulières, ne respecte pas la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui ne correspondent pas à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche ne correspond pas à l’opérande de droite.</value>
+  </data>
+  <data name="cnotmatchOperatorDescription" xml:space="preserve">
+    <value>Opérateur de correspondance d’expressions régulières, respecte la casse. Lorsque l’opérande de gauche est une collection, renvoie les valeurs de cette collection qui ne correspondent pas à l’opérande de droite. Dans le cas contraire, renvoie la valeur TRUE si l’opérande de gauche ne correspond pas à l’opérande de droite.</value>
+  </data>
+  <data name="replaceOperatorDescription" xml:space="preserve">
+    <value>Opérateur de remplacement, ne respecte pas la casse. Permet de modifier l’opérande de gauche. Exemple : (dir *.ps1).FullName -replace « .ps1$ »,« .ps1.bak »</value>
+  </data>
+  <data name="ireplaceOperatorDescription" xml:space="preserve">
+    <value>Opérateur de remplacement, ne respecte pas la casse. Permet de modifier l’opérande de gauche. Exemple : (dir *.ps1).FullName -replace « .ps1$ »,« .ps1.bak »</value>
+  </data>
+  <data name="creplaceOperatorDescription" xml:space="preserve">
+    <value>Opérateur de remplacement, respecte la casse. Permet de modifier l’opérande de gauche. Exemple : (dir *.ps1).FullName -replace « .ps1$ »,« .ps1.bak »</value>
+  </data>
+  <data name="containsOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, ne respecte pas la casse. Renvoie la valeur TRUE lorsque la valeur de test (opérande de droite) correspond exactement à au moins une des valeurs de l’opérande de gauche.</value>
+  </data>
+  <data name="icontainsOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, ne respecte pas la casse. Renvoie la valeur TRUE lorsque la valeur de test (opérande de droite) correspond exactement à au moins une des valeurs de l’opérande de gauche.</value>
+  </data>
+  <data name="ccontainsOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, respecte la casse. Renvoie uniquement la valeur TRUE lorsque la valeur de test (opérande de droite) correspond exactement à au moins une des valeurs de l’opérande de gauche.</value>
+  </data>
+  <data name="notcontainsOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, ne respecte pas la casse. Renvoie la valeur TRUE lorsque la valeur de test (opérande de droite) correspond exactement à aucune des valeurs de l’opérande de gauche.</value>
+  </data>
+  <data name="inotcontainsOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, ne respecte pas la casse. Renvoie la valeur TRUE lorsque la valeur de test (opérande de droite) correspond exactement à aucune des valeurs de l’opérande de gauche.</value>
+  </data>
+  <data name="cnotcontainsOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, respecte la casse. Renvoie la valeur TRUE lorsque la valeur de test (opérande de droite) correspond exactement à aucune des valeurs de l’opérande de gauche.</value>
+  </data>
+  <data name="inOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, ne respecte pas la casse. Renvoie la valeur TRUE lorsque la valeur de test (opérande de gauche) correspond exactement à au moins une des valeurs de l’opérande de droite.</value>
+  </data>
+  <data name="iinOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, ne respecte pas la casse. Renvoie la valeur TRUE lorsque la valeur de test (opérande de gauche) correspond exactement à au moins une des valeurs de l’opérande de droite.</value>
+  </data>
+  <data name="cinOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, respecte la casse. Renvoie la valeur TRUE lorsque la valeur de test (opérande de gauche) correspond exactement à au moins une des valeurs de l’opérande de droite.</value>
+  </data>
+  <data name="notinOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, respecte la casse. Renvoie la valeur TRUE lorsque la valeur de test (opérande de gauche) correspond exactement à aucune des valeurs de l’opérande de droite.</value>
+  </data>
+  <data name="inotinOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, ne respecte pas la casse. Renvoie la valeur TRUE lorsque la valeur de test (opérande de gauche) correspond exactement à aucune des valeurs de l’opérande de droite.</value>
+  </data>
+  <data name="cnotinOperatorDescription" xml:space="preserve">
+    <value>Opérateur d’autonomie, respecte la casse. Renvoie la valeur TRUE lorsque la valeur de test (opérande de gauche) correspond exactement à aucune des valeurs de l’opérande de droite.</value>
+  </data>
+  <data name="splitOperatorDescription" xml:space="preserve">
+    <value>Fractionner, ne respecte pas la casse. Fractionnez une ou plusieurs chaînes en sous-chaînes.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isplitOperatorDescription" xml:space="preserve">
+    <value>Fractionner, ne respecte pas la casse. Fractionnez une ou plusieurs chaînes en sous-chaînes.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="csplitOperatorDescription" xml:space="preserve">
+    <value>Fractionner (respecte la casse). Fractionnez une ou plusieurs chaînes en sous-chaînes.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isnotOperatorDescription" xml:space="preserve">
+    <value>Renvoie la valeur TRUE lorsque l’opérande de gauche n’est pas une instance du type .NET Framework spécifié (opérande de droite).</value>
+  </data>
+  <data name="isOperatorDescription" xml:space="preserve">
+    <value>Renvoie la valeur TRUE lorsque l’opérande de gauche est une instance du type .NET Framework spécifié (opérande de droite).</value>
+  </data>
+  <data name="asOperatorDescription" xml:space="preserve">
+    <value>Convertit l’opérande de gauche en type .NET Framework spécifié (opérande de droite).</value>
+  </data>
+  <data name="fOperatorDescription" xml:space="preserve">
+    <value>Permet de mettre en forme des chaînes en utilisant la méthode de format des objets chaîne.</value>
+  </data>
+  <data name="andOperatorDescription" xml:space="preserve">
+    <value>Opération AND logique. Retourne la valeur TRUE lorsque les deux instructions ont la valeur TRUE.</value>
+  </data>
+  <data name="bandOperatorDescription" xml:space="preserve">
+    <value>Opération AND au niveau du bit</value>
+  </data>
+  <data name="orOperatorDescription" xml:space="preserve">
+    <value>Opération logique OR. TRUE lorsque l’une des instructions ou les deux ont la valeur TRUE.</value>
+  </data>
+  <data name="borOperatorDescription" xml:space="preserve">
+    <value>Opération OR au niveau du bit (inclusif)</value>
+  </data>
+  <data name="xorOperatorDescription" xml:space="preserve">
+    <value>Opération OR exclusive logique. Renvoie la valeur TRUE lorsque l’une des instructions est TRUE et l’autre est FALSE.</value>
+  </data>
+  <data name="bxorOperatorDescription" xml:space="preserve">
+    <value>Opération OR au niveau du bit (exclusive)</value>
+  </data>
+  <data name="joinOperatorDescription" xml:space="preserve">
+    <value>Joindre – combine plusieurs chaînes en une seule chaîne.
+-Join &lt;String[]&gt;
+&lt;String[]&gt; -Join &lt;Delimiter&gt;</value>
+  </data>
+  <data name="shlOperatorDescription" xml:space="preserve">
+    <value>Opérateur de bit de décalage vers la gauche. Permet d’insérer un zéro à la position du bit la plus à droite.</value>
+  </data>
+  <data name="shrOperatorDescription" xml:space="preserve">
+    <value>Opérateur de bit de décalage vers la droite. Permet d’insérer un zéro à la position du bit la plus à gauche. Pour les valeurs signées, le bit de signe est conservé.</value>
+  </data>
+  <data name="NameHashtableKeyDescription" xml:space="preserve">
+    <value>[chaîne]
+Permet de spécifier le nom de la propriété en cours de création.</value>
+  </data>
+  <data name="LabelHashtableKeyDescription" xml:space="preserve">
+    <value>[chaîne]
+Permet de spécifier le nom de la propriété en cours de création.</value>
+  </data>
+  <data name="ExpressionHashtableKeyDescription" xml:space="preserve">
+    <value>[scriptblock]
+Bloc de script utilisé pour calculer la valeur de la nouvelle propriété.</value>
+  </data>
+  <data name="AlignmentHashtableKeyDescription" xml:space="preserve">
+    <value>[chaîne]
+Définissez le mode d’affichage des valeurs dans une colonne.
+Les valeurs valides sont « left », « center » ou « right ».</value>
+  </data>
+  <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
+    <value>[chaîne]
+Permet de spécifier une chaîne de format qui définit le format de la valeur pour la sortie.</value>
+  </data>
+  <data name="WidthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+Permet de spécifier la largeur maximale de colonne dans un tableau lorsque la valeur est affichée.
+La valeur doit être supérieure à 0.</value>
+  </data>
+  <data name="DepthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+La clé de profondeur spécifie la profondeur de développement par propriété.</value>
+  </data>
+  <data name="AscendingHashtableKeyDescription" xml:space="preserve">
+    <value>[booléen]
+Permet de spécifier l’ordre de tri d’une ou plusieurs propriétés.</value>
+  </data>
+  <data name="DescendingHashtableKeyDescription" xml:space="preserve">
+    <value>[booléen]
+Permet de spécifier l’ordre de tri d’une ou plusieurs propriétés.</value>
+  </data>
+  <data name="LogNameHashtableKeyDescription" xml:space="preserve">
+    <value>[Chaîne[]]
+Permet de spécifier les noms des journaux à partir desquels obtenir des événements.
+Prend en charge les caractères génériques.</value>
+  </data>
+  <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
+    <value>[Chaîne[]]
+Permet de spécifier les fournisseurs de journaux des événements à partir desquels obtenir les événements.
+Prend en charge les caractères génériques.</value>
+  </data>
+  <data name="PathHashtableKeyDescription" xml:space="preserve">
+    <value>[Chaîne[]]
+Permet de spécifier les chemins d’accès aux fichiers journaux à partir desquels obtenir des événements.
+Les formats de fichier valides sont : .etl, .evt et .evtx</value>
+  </data>
+  <data name="KeywordsHashtableKeyDescription" xml:space="preserve">
+    <value>[Long[]]
+Permet de sélectionner les événements avec les masques de bits du mot clé spécifiés.
+Les mots clés standard sont les suivants :
+4503599627370496 : AuditFailure
+9007199254740992 : AuditSuccess
+4503599627370496 : CorrelationHint
+18014398509481984 : CorrelationHint2
+36028797018963968 : EventLogClassic
+281474976710656 : ResponseTime
+2251799813685248 : Sqm
+562949953421312 : WdiContext
+1125899906842624 : WdiDiagnostic</value>
+  </data>
+  <data name="IDHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+Permet de sélectionner les événements avec les ID d’événements spécifiés.</value>
+  </data>
+  <data name="LevelHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+Permet de sélectionner les événements avec les niveaux de journalisation spécifiés.
+Les niveaux de journalisation suivants sont valides :
+1 : Critique
+2 : Erreur
+3 : Avertissement
+4 : Caractère informatif
+5 : Détaillé</value>
+  </data>
+  <data name="StartTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[Date/Heure]
+Permet de sélectionner les événements créés après la date et l’heure spécifiées.</value>
+  </data>
+  <data name="EndTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[Date/Heure]
+Permet de sélectionner les événements créés avant la date et l’heure spécifiées.</value>
+  </data>
+  <data name="UserIDHashtableKeyDescription" xml:space="preserve">
+    <value>[chaîne]
+Permet de sélectionner les événements générés par l’utilisateur spécifié.
+Il peut s’agir d’une représentation sous forme de chaîne d’un SID, ou d’un domaine et d’un nom d’utilisateur au format DOMAIN\USERNAME ou USERNAME@DOMAIN</value>
+  </data>
+  <data name="DataHashtableKeyDescription" xml:space="preserve">
+    <value>[chaîne[]]
+Permet de sélectionner les événements ayant l’une des valeurs spécifiées dans la section EventData.</value>
+  </data>
+  <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
+    <value>[hashtable]
+Permet d’exclure les événements qui correspondent aux valeurs spécifiées dans la hashtable.</value>
+  </data>
+  <data name="RequiresModulesParameterDescription" xml:space="preserve">
+    <value>[string] ou [hashtable]
+Permet de spécifier un tableau de modules PowerShell requis par le script.
+Chaque élément peut être une chaîne dont la valeur correspond au nom du module ou une hashtable avec les clés suivantes :
+Nom : Nom du module
+GUID : GUID du module
+L’un des éléments suivants :
+ModuleVersion : permet de spécifier la version minimale acceptable du module.
+RequiredVersion : permet de spécifier une version exacte et obligatoire du module.
+MaximumVersion : permet de spécifier la version maximale acceptable du module.</value>
+  </data>
+  <data name="RequiresPSEditionParameterDescription" xml:space="preserve">
+    <value>[chaîne]
+Permet de spécifier une édition PowerShell requise par le script.
+Les valeurs valides sont « Core » et « Desktop »</value>
+  </data>
+  <data name="RequiresRunAsAdministratorParameterDescription" xml:space="preserve">
+    <value>[basculer]
+Permet de spécifier que PowerShell doit s’exécuter en tant qu’administrateur sur Windows.
+Il doit s’agir du dernier paramètre de la ligne d’instruction #requires.</value>
+  </data>
+  <data name="RequiresVersionParameterDescription" xml:space="preserve">
+    <value>[Version]
+Permet de spécifier la version minimale de PowerShell requise par le script.</value>
+  </data>
+  <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
+    <value>Permet de spécifier que le script nécessite PowerShell 7+ pour s’exécuter.</value>
+  </data>
+  <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
+    <value>Permet de spécifier que le script nécessite Windows PowerShell 5.1 pour s’exécuter.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
+    <value>[chaîne]
+Obligatoire. Permet de spécifier le nom du module.</value>
+  </data>
+  <data name="RequiresModuleSpecGUIDDescription" xml:space="preserve">
+    <value>[chaîne]
+Facultatif. Permet de spécifier le GUID du module.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleVersionDescription" xml:space="preserve">
+    <value>[chaîne]
+Permet de spécifier la version minimale acceptable du module.</value>
+  </data>
+  <data name="RequiresModuleSpecRequiredVersionDescription" xml:space="preserve">
+    <value>[chaîne]
+Permet de spécifier une version exacte et obligatoire du module.</value>
+  </data>
+  <data name="RequiresModuleSpecMaximumVersionDescription" xml:space="preserve">
+    <value>[chaîne]
+Permet de spécifier la version maximale acceptable du module.</value>
+  </data>
+  <data name="CommentHelpSYNOPSISKeywordDescription" xml:space="preserve">
+    <value>Brève description de la fonction ou du script.
+Ce mot clé ne peut être utilisé qu’une seule fois dans chaque rubrique.</value>
+  </data>
+  <data name="CommentHelpDESCRIPTIONKeywordDescription" xml:space="preserve">
+    <value>Description détaillée de la fonction ou du script.
+Ce mot clé ne peut être utilisé qu’une seule fois dans chaque rubrique.</value>
+  </data>
+  <data name="CommentHelpPARAMETERKeywordDescription" xml:space="preserve">
+    <value>.PARAMETER  &lt;Parameter-Name&gt;
+Description du paramètre.
+Ajoutez un mot clé .PARAMETER pour chaque paramètre dans la syntaxe de fonction ou du script.</value>
+  </data>
+  <data name="CommentHelpEXAMPLEKeywordDescription" xml:space="preserve">
+    <value>Exemple de commande qui utilise la fonction ou le script, éventuellement suivi d’un exemple de sortie et d’une description.
+Répétez ce mot clé pour chaque exemple.</value>
+  </data>
+  <data name="CommentHelpINPUTSKeywordDescription" xml:space="preserve">
+    <value>Les types .NET des objets pouvant être envoyés par le pipeline vers une fonction ou un script.
+Vous pouvez également inclure une description des objets d’entrée.</value>
+  </data>
+  <data name="CommentHelpOUTPUTSKeywordDescription" xml:space="preserve">
+    <value>Type .NET des objets retournés par la cmdlet.
+Vous pouvez également inclure une description des objets retournés.</value>
+  </data>
+  <data name="CommentHelpNOTESKeywordDescription" xml:space="preserve">
+    <value>Informations supplémentaires sur la fonction ou le script.</value>
+  </data>
+  <data name="CommentHelpLINKKeywordDescription" xml:space="preserve">
+    <value>Nom d’un sujet associé.
+Répétez le mot clé .LINK pour chaque sujet associé.
+Le contenu du mot clé .Link peut également inclure un URI vers une version en ligne du même sujet d’aide.</value>
+  </data>
+  <data name="CommentHelpCOMPONENTKeywordDescription" xml:space="preserve">
+    <value>Nom de la technologie ou de la fonctionnalité utilisée par la fonction ou le script, ou à laquelle elle est liée.</value>
+  </data>
+  <data name="CommentHelpROLEKeywordDescription" xml:space="preserve">
+    <value>Nom du rôle d’utilisateur pour la rubrique d’aide.</value>
+  </data>
+  <data name="CommentHelpFUNCTIONALITYKeywordDescription" xml:space="preserve">
+    <value>Les mots clés qui décrivent l’utilisation prévue de la fonction.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPTARGETNAMEKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPTARGETNAME &lt;Command-Name&gt;
+Permet de rediriger vers le sujet d’aide de la commande spécifiée.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPCATEGORYKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPCATEGORY &lt;Category&gt;
+Spécifie la catégorie d’aide de l’élément dans ForwardHelpTargetName</value>
+  </data>
+  <data name="CommentHelpREMOTEHELPRUNSPACEKeywordDescription" xml:space="preserve">
+    <value>.REMOTEHELPRUNSPACE &lt;PSSession-variable&gt;
+Permet de spécifier une session qui contient la rubrique d’aide.
+Entrez une variable qui contient un objet PSSession.</value>
+  </data>
+  <data name="CommentHelpEXTERNALHELPKeywordDescription" xml:space="preserve">
+    <value>.EXTERNALHELP &lt;XML Help File&gt;
+Le mot clé .ExternalHelp est requis lorsqu’une fonction ou un script est documenté dans des fichiers XML.</value>
+  </data>
+  <data name="AssemblyKeywordDescription" xml:space="preserve">
+    <value>Permet de spécifier le chemin d’accès à un assembly .NET à charger.
+
+using assembly &lt;.NET-assembly-path&gt;</value>
+  </data>
+  <data name="ModuleKeywordDescription" xml:space="preserve">
+    <value>Permet de spécifier un module PowerShell à partir duquel charger les classes.
+
+using module &lt;ModuleName or Path&gt;
+
+using module &lt;ModuleSpecification hashtable&gt;</value>
+  </data>
+  <data name="NamespaceKeywordDescription" xml:space="preserve">
+    <value>Permet de spécifier un espace de noms .NET à partir duquel résoudre les types ou un alias d’espace de noms.
+
+using namespace &lt;.NET-namespace&gt;
+
+using namespace &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
+  </data>
+  <data name="TypeKeywordDescription" xml:space="preserve">
+    <value>Permet de spécifier un alias pour un type .NET.
+
+using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
+  </data>
+  <data name="RegistryStringToolTip" xml:space="preserve">
+    <value>Chaîne normale.</value>
+  </data>
+  <data name="RegistryExpandStringToolTip" xml:space="preserve">
+    <value>Une chaîne qui contient des références non développées à des variables d’environnement qui sont développées quand la valeur est récupérée.</value>
+  </data>
+  <data name="RegistryBinaryToolTip" xml:space="preserve">
+    <value>Données binaires sous n’importe quelle forme.</value>
+  </data>
+  <data name="RegistryDWordToolTip" xml:space="preserve">
+    <value>Nombre binaire de 32 bits.</value>
+  </data>
+  <data name="RegistryMultiStringToolTip" xml:space="preserve">
+    <value>Tableau de chaînes.</value>
+  </data>
+  <data name="RegistryQWordToolTip" xml:space="preserve">
+    <value>Nombre binaire de 64 bits.</value>
+  </data>
+  <data name="RegistryUnknownToolTip" xml:space="preserve">
+    <value>Type de données du Registre non pris en charge.</value>
+  </data>
+  <data name="SeparatorCommaToolTip" xml:space="preserve">
+    <value>« , », virgule</value>
+  </data>
+  <data name="SeparatorCommaSpaceToolTip" xml:space="preserve">
+    <value>« , » – Comma-Space</value>
+  </data>
+  <data name="SeparatorSemiColonToolTip" xml:space="preserve">
+    <value>« ; », point-virgule</value>
+  </data>
+  <data name="SeparatorSemiColonSpaceToolTip" xml:space="preserve">
+    <value>'; ' - Semi-Colon-Space</value>
+  </data>
+  <data name="SeparatorNewlineToolTip" xml:space="preserve">
+    <value>{0} : Newline</value>
+  </data>
+  <data name="SeparatorDashToolTip" xml:space="preserve">
+    <value>« – » – Tiret</value>
+  </data>
+  <data name="SeparatorSpaceToolTip" xml:space="preserve">
+    <value>«   » – Space</value>
+  </data>
+</root>

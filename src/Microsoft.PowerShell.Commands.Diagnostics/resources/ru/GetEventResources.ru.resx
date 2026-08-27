@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CounterNotALogFile" xml:space="preserve">
+    <value>Файл {0} не имеет ожидаемого расширения имени файла. При использовании параметра Path указывайте только файлы .blg, .csv или .tsv.</value>
+  </data>
+  <data name="CounterApiError" xml:space="preserve">
+    <value>Сбой вызова API внутреннего счетчика производительности. Ошибка: {0:x8}.</value>
+  </data>
+  <data name="LogProviderOrPathNeeded" xml:space="preserve">
+    <value>Необходимо указать хотя бы одну пару "ключ-значение" для журнала, поставщика или пути.</value>
+  </data>
+  <data name="NoMatchingProvidersFound" xml:space="preserve">
+    <value>На компьютере {0} нет поставщика событий, соответствующего {1}.</value>
+  </data>
+  <data name="NullNotAllowedInHashtable" xml:space="preserve">
+    <value>В ключе хэш-таблицы {0} обнаружено значение NULL. Значения NULL не допускаются.</value>
+  </data>
+  <data name="QueryTrace" xml:space="preserve">
+    <value>Сформированный структурированный запрос:
+{0}.</value>
+  </data>
+  <data name="ProviderLogLink" xml:space="preserve">
+    <value>Поставщик {0} записывает события в журнал {1}.</value>
+  </data>
+  <data name="CounterInvalidDateRange" xml:space="preserve">
+    <value>Значение параметра StartTime должно быть меньше значения параметра EndTime.</value>
+  </data>
+  <data name="NoMatchingLogsFound" xml:space="preserve">
+    <value>На компьютере {0} нет журнала событий, соответствующего {1}.</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="CounterCircularNoMaxSize" xml:space="preserve">
+    <value>Параметр Circular будет проигнорирован, если также не указан параметр MaxSize.</value>
+  </data>
+  <data name="FileOpenFailed" xml:space="preserve">
+    <value>Не удалось открыть файл {0} для записи.</value>
+  </data>
+  <data name="KeywordLongExpected" xml:space="preserve">
+    <value>Указано недопустимое значение {0} для ключевого слова.</value>
+  </data>
+  <data name="CounterExportSampleNotInInitialSet" xml:space="preserve">
+    <value>Счетчик производительности {0} невозможно экспортировать в файл {1}, так как он не входил в первый набор образцов.</value>
+  </data>
+  <data name="NoMatchingEventsFound" xml:space="preserve">
+    <value>Не найдены события, соответствующие указанным критериям выбора.</value>
+  </data>
+  <data name="CounterPathTranslationFailed" xml:space="preserve">
+    <value>Не удалось использовать значения по умолчанию для этой команды. Ошибка: {0:x8}.</value>
+  </data>
+  <data name="CounterNoMixedLogTypes" xml:space="preserve">
+    <value>Нельзя импортировать разные типы файлов журнала производительности в одной команде.  Укажите только один тип файла в параметре Path.</value>
+  </data>
+  <data name="NotAFileSystemPath" xml:space="preserve">
+    <value>Путь {0} не является допустимым путем к файлу журнала. Укажите допустимый путь к файловой системе.</value>
+  </data>
+  <data name="EventIdNotSpecified" xml:space="preserve">
+    <value>Необходимо указать допустимый идентификатор события.</value>
+  </data>
+  <data name="ProviderMetadataUnavailable" xml:space="preserve">
+    <value>Не удалось получить сведения о поставщике {0}. Ошибка: {1}.</value>
+  </data>
+  <data name="SpecifyOldestForLog" xml:space="preserve">
+    <value>Журнал событий {0} можно просматривать только в прямом хронологическом порядке, поскольку это аналитический или отладочный журнал. Чтобы просмотреть события из журнала событий {0}, используйте параметр Oldest в команде.</value>
+  </data>
+  <data name="ExportDestPathAmbiguous" xml:space="preserve">
+    <value>Указанный путь назначения экспорта неоднозначен: {0}.</value>
+  </data>
+  <data name="CounterPathIsInvalid" xml:space="preserve">
+    <value>Путь счетчика производительности {0} недопустим.</value>
+  </data>
+  <data name="CounterSampleDataInvalid" xml:space="preserve">
+    <value>Данные в одном из примеров счетчика производительности не являются допустимым. Проверьте свойство Status каждого объекта PerformanceCounterSample, чтобы убедиться, что он содержит допустимые данные.</value>
+  </data>
+  <data name="PayloadMismatch" xml:space="preserve">
+    <value>Предоставленные данные не соответствуют шаблону, определенному для идентификатора события {0}.
+Определен следующий шаблон:
+{1}</value>
+  </data>
+  <data name="NoMatchingCounterSetsFound" xml:space="preserve">
+    <value>Не удается найти на компьютере {0} ни одного набора счетчиков производительности, соответствующих следующему: {1}.</value>
+  </data>
+  <data name="CounterPathsInFilesInvalid" xml:space="preserve">
+    <value>В файлах не найдено допустимых путей счетчиков.</value>
+  </data>
+  <data name="FileCreateFailed" xml:space="preserve">
+    <value>Не удалось создать файл {0}. Убедитесь, что путь допустим.</value>
+  </data>
+  <data name="NoCounterSetsOnComputer" xml:space="preserve">
+    <value>Не удалось найти на компьютере {0} наборы счетчиков производительности: ошибка {1:x8}. Убедитесь, что компьютер {0} существует, доступен для обнаружения и что у вас есть необходимые привилегии для просмотра данных счетчиков производительности на этом компьютере.</value>
+  </data>
+  <data name="IncorrectEventId" xml:space="preserve">
+    <value>Невозможно записать событие, так как для поставщика {1} не определены события с идентификатором {0}.  Исправьте идентификатор события и повторите попытку.</value>
+  </data>
+  <data name="InvalidContext" xml:space="preserve">
+    <value>Значение ключа Context {0} не является допустимым SID или именем учетной записи NT.</value>
+  </data>
+  <data name="IncorrectEventVersion" xml:space="preserve">
+    <value>Невозможно записать событие, так как указанная версия {0} для события {1} не определена для поставщика {2}.  Исправьте версию и повторите попытку.</value>
+  </data>
+  <data name="Counter32FileLimit" xml:space="preserve">
+    <value>В каждой команде нельзя импортировать более 32 файлов журнала счетчиков с расширением .blg.</value>
+  </data>
+  <data name="SpecifiedProvidersDontWriteToLog" xml:space="preserve">
+    <value>Указанные поставщики не записывают события в журнал {0}. Этот журнал будет проигнорирован.</value>
+  </data>
+  <data name="InvalidSIDFormat" xml:space="preserve">
+    <value>Следующее значение имеет недопустимый формат идентификатора безопасности (SID): {0}. Введите допустимый идентификатор безопасности, например S-1-5-32-544.</value>
+  </data>
+  <data name="NoProviderFound" xml:space="preserve">
+    <value>Поставщик с именем {0} не найден.</value>
+  </data>
+  <data name="CounterSetEnumAccessDenied" xml:space="preserve">
+    <value>Не удается получить сведения о наборе счетчиков производительности {0} из-за отказа в доступе.</value>
+  </data>
+  <data name="VersionNotSpecified" xml:space="preserve">
+    <value>Невозможно записать событие, так как для поставщика {1} определено несколько событий с идентификатором {0}.  Укажите версию события и повторите попытку.</value>
+  </data>
+  <data name="SpecifyOldestForEtlEvt" xml:space="preserve">
+    <value>Файл журнала событий {0} можно прочитать только в прямом хронологическом порядке, поскольку это файл формата .etl или .evt. Чтобы просмотреть события из журнала событий {0}, используйте параметр Oldest в команде.</value>
+  </data>
+  <data name="ProviderNotSpecified" xml:space="preserve">
+    <value>Должно быть указано имя поставщика.</value>
+  </data>
+  <data name="NotALogFile" xml:space="preserve">
+    <value>Файл {0} не является допустимым файлом журнала. В качестве значений параметра Path указывайте только файлы .evtx, .etl или .evt.</value>
+  </data>
+  <data name="CounterPathInvalidOrNotInFile" xml:space="preserve">
+    <value>Путь к счетчику производительности {0} недопустим или отсутствует в следующих файлах: {1}.</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>Метка времени</value>
+  </data>
+  <data name="DateTimeExpected" xml:space="preserve">
+    <value>Следующее значение имеет недопустимый формат даты и времени: {0}.</value>
+  </data>
+  <data name="LogInfoUnavailable" xml:space="preserve">
+    <value>Чтобы получить доступ к журналу {0}, запустите PowerShell с повышенными правами пользователями.  Ошибка: {1}</value>
+  </data>
+  <data name="LogInfoNoAccess" xml:space="preserve">
+    <value>Запрещен доступ к журналу: {0}</value>
+  </data>
+  <data name="SuggestElevation" xml:space="preserve">
+    <value>Запустите PowerShell с повышенными правами пользователя.</value>
+  </data>
+  <data name="NoEventMessage" xml:space="preserve">
+    <value>Не удается получить текст сообщения события.</value>
+  </data>
+  <data name="CounterFileExists" xml:space="preserve">
+    <value>Файл {0} уже существует. Чтобы перезаписать этот файл, используйте параметр Force в команде Export-Counter.</value>
+  </data>
+  <data name="CounterContinuousOrMaxSamples" xml:space="preserve">
+    <value>Параметры Continuous и MaxSamples нельзя использовать в одной команде.</value>
+  </data>
+  <data name="ExportCtrWin7Required" xml:space="preserve">
+    <value>Этот командлет можно запускать только в Microsoft Windows 7 и более поздних версиях.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Эта оснастка PowerShell содержит командлеты для работы с системой событий Windows и счетчиками производительности.</value>
+  </data>
+  <data name="NoMatchingCounterSetsInFile" xml:space="preserve">
+    <value>Не удается найти в файлах {0} ни одного набора счетчиков производительности, соответствующих следующему: {1}.</value>
+  </data>
+  <data name="LogsAndProvidersDontOverlap" xml:space="preserve">
+    <value>Указанные поставщики не записывают события ни в один из указанных журналов.</value>
+  </data>
+  <data name="CookedValues" xml:space="preserve">
+    <value>Подготовленные значения</value>
+  </data>
+  <data name="Counter1FileLimit" xml:space="preserve">
+    <value>За одну команду нельзя импортировать более одного файла счетчиков производительности в формате с разделителями-запятыми (.csv) или с разделителями-табуляциями (.tsv).</value>
+  </data>
+  <data name="LogCountLimitExceeded" xml:space="preserve">
+    <value>Количество журналов ({0}) превышает ограничение API журнала событий Windows ({1}). Настройте фильтр, чтобы возвращалось меньше имен журналов.</value>
+  </data>
+  <data name="ListLogParamHelp" xml:space="preserve">
+    <value>Определяет журналы событий. Разрешено использовать подстановочные знаки.</value>
+  </data>
+  <data name="GetLogParamHelp" xml:space="preserve">
+    <value>Указывает журналы событий, из которых этот командлет получает события. Разрешено использовать подстановочные знаки.</value>
+  </data>
+  <data name="ListProviderParamHelp" xml:space="preserve">
+    <value>Указывает поставщиков журналов событий, из которых этот командлет получает данные.</value>
+  </data>
+  <data name="GetProviderParamHelp" xml:space="preserve">
+    <value>Указывает поставщиков журналов событий, от которых этот командлет получает события.</value>
+  </data>
+  <data name="PathParamHelp" xml:space="preserve">
+    <value>Указывает путь к файлам журнала событий, из которых этот командлет получает события.</value>
+  </data>
+  <data name="MaxEventsParamHelp" xml:space="preserve">
+    <value>Задает максимальное число возвращаемых событий.</value>
+  </data>
+  <data name="ComputerNameParamHelp" xml:space="preserve">
+    <value>Указывает имя компьютера, с которого этот командлет получает данные.</value>
+  </data>
+</root>

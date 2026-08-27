@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NotSupported" xml:space="preserve">
+    <value>この機能は、このオペレーティング システムではサポートされていません。</value>
+  </data>
+  <data name="NotEnabled" xml:space="preserve">
+    <value>ドライブ {0} を有効にできませんでした。</value>
+  </data>
+  <data name="InvalidDrive" xml:space="preserve">
+    <value>指定されたドライブが無効なため、指定されたコンピューターの復元コンピューター インフラストラクチャを有効にできません。Drive パラメーターに有効なドライブを入力してから、もう一度やり直してください。</value>
+  </data>
+  <data name="NoSystemDrive" xml:space="preserve">
+    <value>ドライブの一覧にシステム ドライブを含めます。</value>
+  </data>
+  <data name="NotValidDrive" xml:space="preserve">
+    <value>指定されたドライブが無効なため、コンピューターの復元インフラストラクチャを無効にできません。Drive パラメーターに有効なドライブを入力してから、もう一度やり直してください。</value>
+  </data>
+  <data name="NotDisabled" xml:space="preserve">
+    <value>コマンドは、{0} ドライブのシステムの復元を無効にできません。この操作を行うための十分なアクセス許可がない可能性があります。</value>
+  </data>
+  <data name="ServiceDisabled" xml:space="preserve">
+    <value>SystemRestore サービスが無効になっています。</value>
+  </data>
+  <data name="RestorePointNotCreated" xml:space="preserve">
+    <value>システム復元インフラストラクチャは復元ポイントを作成できません。</value>
+  </data>
+  <data name="RestoreFailed" xml:space="preserve">
+    <value>コンピューターを復元する最後の試行に失敗しました。</value>
+  </data>
+  <data name="RestoreSuccess" xml:space="preserve">
+    <value>指定された復元ポイントにコンピューターが復元されました。</value>
+  </data>
+  <data name="RestoreInterrupted" xml:space="preserve">
+    <value>コンピューターを復元する最後の試行が中断されました。</value>
+  </data>
+  <data name="NoRestorePoint" xml:space="preserve">
+    <value>"{0}" 復元ポイントが見つかりません。"{0}" シーケンス番号を確認してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="DoubleComputerName" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="RestartcomputerFailed" xml:space="preserve">
+    <value>次のエラー メッセージで、コンピューター {0} を再起動できませんでした: {1}。</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>次のエラーのため、ターゲット コンピューター ('{1}') でこのコマンドを実行できません: {0}。{2}</value>
+  </data>
+  <data name="StopcomputerFailed" xml:space="preserve">
+    <value>次のエラー メッセージで、コンピューターの {0} を停止できませんでした: {1}。</value>
+  </data>
+  <data name="InvalidRestorePoint" xml:space="preserve">
+    <value>"{0}" が有効な復元ポイントとして設定されていないため、コマンドはコンピューターを復元できません。RestorePoint パラメーターに有効な復元ポイントを入力してから、もう一度やり直してください。</value>
+  </data>
+  <data name="RestartNeeded" xml:space="preserve">
+    <value>変更は、コンピューター {1} を再起動した後に有効になります。</value>
+  </data>
+  <data name="RemoveComputerConfirm" xml:space="preserve">
+    <value>ドメインを離れた後、このコンピューターにログオンするには、ローカルの Administrator アカウントのパスワードを知っている必要があります。続行しますか?</value>
+  </data>
+  <data name="InvalidComputerNameFormat" xml:space="preserve">
+    <value>次のコンピューター名が無効です: {0}。コンピューター名が 255 文字より長くなく、2 つ以上の連続するドットが含まれていないか、ドットで始まらないか、数字のみが含まれていないか、次の文字が含まれていないことを確認してください:
+{{|}}~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
+  </data>
+  <data name="InvalidDomainNameFormat" xml:space="preserve">
+    <value>コンピューター名 '{0}' のドメインが無効です。ドメインが存在し、名前が有効なドメイン名であることを確認してください。</value>
+  </data>
+  <data name="ComputerNamesAreEqual" xml:space="preserve">
+    <value>NewComputerName パラメーターに指定された値は、ComputerName パラメーターの値と同じです。NewComputerName パラメーターに別の値を指定します。</value>
+  </data>
+  <data name="ResetComputerMachinePassword" xml:space="preserve">
+    <value>"'{0}' と '{1}' の間の安全なチャネルのパスワードがリセットされました。"</value>
+  </data>
+  <data name="SystemRestoreServiceDisabled" xml:space="preserve">
+    <value>次のエラーのため、このコマンドを実行できません: サービスが無効になっているか、有効になっているデバイスが関連付けられていないため、サービスを開始できません。</value>
+  </data>
+  <data name="ProgressActivity" xml:space="preserve">
+    <value>システムの復元ポイントを作成しています...</value>
+  </data>
+  <data name="ProgressStatusCreatingRestorePoint" xml:space="preserve">
+    <value>システム復元ポイントを作成しています... {0}% 完了しました。</value>
+  </data>
+  <data name="ProgressStatusCompleted" xml:space="preserve">
+    <value>完了しました。</value>
+  </data>
+  <data name="NetworkPathNotFound" xml:space="preserve">
+    <value>以下のオプションを試して、コマンドをもう一度実行します。
+1. ターゲット コンピューター ('{0}') が実行されていることを確認します。
+2. ターゲット コンピューターのフル コンピューター名を指定します ('{0}')。</value>
+  </data>
+  <data name="PrivilegeNotEnabled" xml:space="preserve">
+    <value>コンピューター {0} を再起動できませんでした。呼び出し元のプロセスに対してアクセス権 {1} を有効にすることはできません。</value>
+  </data>
+  <data name="RestartComputerAction" xml:space="preserve">
+    <value>{0} を有効にし、コンピューターを再起動してください。</value>
+  </data>
+  <data name="LocalShutdownPrivilege" xml:space="preserve">
+    <value>ローカル シャットダウン アクセス権</value>
+  </data>
+  <data name="RemoteShutdownPrivilege" xml:space="preserve">
+    <value>リモート シャットダウン アクセス権</value>
+  </data>
+  <data name="CannotWaitLocalComputer" xml:space="preserve">
+    <value>ローカル コンピューターの再起動を待機できません。Wait パラメーターが指定されている場合、ローカル コンピューターは無視されます。</value>
+  </data>
+  <data name="RestartComputerInvalidParameter" xml:space="preserve">
+    <value>パラメーター Timeout、For、Delay は、パラメーター Wait が指定されている場合にのみ有効です。</value>
+  </data>
+  <data name="RestartMultipleComputersActivity" xml:space="preserve">
+    <value> コンピューターを再起動しています...</value>
+  </data>
+  <data name="RestartSingleComputerActivity" xml:space="preserve">
+    <value> コンピューター {0} を再起動しています</value>
+  </data>
+  <data name="WaitForMultipleComputers" xml:space="preserve">
+    <value>完了済み: {0}/{1}。</value>
+  </data>
+  <data name="VerifyRebootStage" xml:space="preserve">
+    <value>コンピューターが再起動されたことを確認しています...</value>
+  </data>
+  <data name="WaitForPowerShell" xml:space="preserve">
+    <value>PowerShell 接続を待機しています...</value>
+  </data>
+  <data name="WaitForRestartToBegin" xml:space="preserve">
+    <value>再起動の開始を待機しています...</value>
+  </data>
+  <data name="WaitForWinRM" xml:space="preserve">
+    <value>WinRM 接続を待機しています...</value>
+  </data>
+  <data name="WaitForWMI" xml:space="preserve">
+    <value>WMI 接続を待機しています...</value>
+  </data>
+  <data name="RestartComplete" xml:space="preserve">
+    <value>再起動が完了しました</value>
+  </data>
+  <data name="NoSupportForCombinedServiceType" xml:space="preserve">
+    <value>現時点では、結合されたサービスの種類はサポートされていません。</value>
+  </data>
+  <data name="CannotResolveComputerName" xml:space="preserve">
+    <value>コンピューター名 {0} を解決できません。例外: {1}。</value>
+  </data>
+  <data name="IncorrectNewNameNumber" xml:space="preserve">
+    <value>新しい名前の数がターゲット コンピューターの数と同じではありません。</value>
+  </data>
+  <data name="InvalidNewName" xml:space="preserve">
+    <value>新しい名前が無効なため、新しい名前 '{1}' のコンピューター '{0}' をスキップします。入力された新しいコンピューター名の形式が正しくありません。標準名には、文字 (a から z、A から Z)、数字 (0 から 9)、ハイフン (-) を含めることができますが、スペースやピリオド (.) は使用できません。名前は完全には数字で構成されず、63 文字を超えてはなりません。</value>
+  </data>
+  <data name="NewNameIsOldName" xml:space="preserve">
+    <value>新しい名前が現在の名前と同じであるため、新しい名前 '{1}' のコンピューター '{0}' をスキップします。</value>
+  </data>
+  <data name="ComputerNotInDomain" xml:space="preserve">
+    <value>ドメインに存在しないため、コンピューター '{0}' を削除できません。</value>
+  </data>
+  <data name="FailToJoinWorkGroup" xml:space="preserve">
+    <value>次のエラー メッセージにより、コンピューター '{0}' をワークグループ '{1}' に参加できませんでした: {2}</value>
+  </data>
+  <data name="NetworkDown" xml:space="preserve">
+    <value>ローカル ネットワークがダウンしているため、ドメインからコンピューターを削除できません。</value>
+  </data>
+  <data name="FailToRename" xml:space="preserve">
+    <value>次の例外により、コンピューター '{0}' の名前を '{1}' に変更できませんでした: {2}。</value>
+  </data>
+  <data name="AddComputerActionDomain" xml:space="preserve">
+    <value>ドメイン '{0}' に参加する</value>
+  </data>
+  <data name="AddComputerActionWorkgroup" xml:space="preserve">
+    <value>ワークグループ '{0}' に参加する</value>
+  </data>
+  <data name="AddComputerToSameDomain" xml:space="preserve">
+    <value>コンピューター '{0}' をドメイン '{1}' に追加できません。コンピューターは既にそのドメインに存在します。</value>
+  </data>
+  <data name="AddComputerToSameWorkgroup" xml:space="preserve">
+    <value>コンピューター '{0}' をワークグループ '{1}' に追加できません。このコンピューターは既にそのワークグループに存在します。</value>
+  </data>
+  <data name="FailToRenameAfterJoinWorkgroup" xml:space="preserve">
+    <value>コンピューター '{0}' はワークグループ '{1}' に正常に参加しましたが、'{2}' に名前を変更できませんでした。エラー メッセージ: {3}。</value>
+  </data>
+  <data name="FailToSwitchFromDomainToWorkgroup" xml:space="preserve">
+    <value>コンピューター '{0}' はドメイン '{1}' から正常に参加しませんでしたが、ワークグループ '{2}' に参加できませんでした。エラー メッセージ: {3}。</value>
+  </data>
+  <data name="FailToUnjoinDomain" xml:space="preserve">
+    <value>ドメイン '{1}' からコンピューター '{0}' の参加を解除できませんでした。エラー メッセージ: {2}。</value>
+  </data>
+  <data name="FailToConnectToComputer" xml:space="preserve">
+    <value>次のエラー メッセージにより、コンピューター '{0}' への WMI 接続を確立できません: {1}。</value>
+  </data>
+  <data name="FailToJoinDomainFromWorkgroup" xml:space="preserve">
+    <value>コンピューター '{0}' は、現在のワークグループ '{2}' からドメイン '{1}' に参加できませんでした。エラー メッセージ: {3}。</value>
+  </data>
+  <data name="FailToJoinNewDomainAfterUnjoinOldDomain" xml:space="preserve">
+    <value>コンピューター '{0}' はドメイン '{1}' から正常に参加しませんでしたが、新しいドメイン '{2}' に参加できませんでした。エラー メッセージ: {3}。</value>
+  </data>
+  <data name="FailToRenameAfterJoinDomain" xml:space="preserve">
+    <value>コンピューター '{0}' は新しいドメイン '{1}' に正常に参加しましたが、名前を '{2}' に変更できませんでした。エラー メッセージ: {3}。</value>
+  </data>
+  <data name="InvalidJoinOptions" xml:space="preserve">
+    <value>フラグ '{0}' は、フラグ '{1}' が指定されている場合にのみ有効です。</value>
+  </data>
+  <data name="CannotRenameMultipleComputers" xml:space="preserve">
+    <value>複数のコンピューターの名前を変更することはできません。NewName パラメーターは、1 台のコンピューターが指定されている場合にのみ有効です。</value>
+  </data>
+  <data name="CannotFindMachineAccountFromDomain" xml:space="preserve">
+    <value>ドメイン {0} 内にローカル コンピューターのコンピューター アカウントが見つかりません。</value>
+  </data>
+  <data name="CannotFindMachineAccountFromServer" xml:space="preserve">
+    <value>ドメイン コントローラー {0} からローカル コンピューターのコンピューター アカウントが見つかりません。</value>
+  </data>
+  <data name="FailToGetDomainInformation" xml:space="preserve">
+    <value>次の例外のため、ローカル コンピューターに関するドメイン情報を取得できません: {0}。</value>
+  </data>
+  <data name="FailToResetPasswordOnDomain" xml:space="preserve">
+    <value>ドメイン内のコンピューター アカウントの安全なチャネル パスワードをリセットできません。次の例外により、操作は失敗しました: {0}。</value>
+  </data>
+  <data name="FailToResetPasswordOnLocalMachine" xml:space="preserve">
+    <value>ローカル コンピューターの安全なチャネル パスワードをリセットできませんでした。エラー メッセージ: {0}。</value>
+  </data>
+  <data name="NeedAdminPrivilegeToResetPassword" xml:space="preserve">
+    <value>ローカル コンピューターの安全なチャネル パスワードをリセットするには、管理者権限が必要です。アクセスは拒否されました。</value>
+  </data>
+  <data name="ResetComputerNotInDomain" xml:space="preserve">
+    <value>ローカル コンピューターのアカウントの安全なチャネル パスワードをリセットできません。ローカル コンピューターは現在ドメインの一部ではありません。</value>
+  </data>
+  <data name="TruncateNetBIOSName" xml:space="preserve">
+    <value>コンピューターの NetBIOS 名は 15 バイトに制限されています。この場合は 15 文字です。NetBIOS 名は "{0}" に短縮され、NetBIOS 名解決で競合が発生する可能性があります。続行しますか?</value>
+  </data>
+  <data name="TruncateNetBIOSNameCaption" xml:space="preserve">
+    <value>NetBIOS 名は切り捨てられます。</value>
+  </data>
+  <data name="CannotResolveServerName" xml:space="preserve">
+    <value>指定されたサーバー名 {0} を解決できません。</value>
+  </data>
+  <data name="CannotCreateRestorePointWarning" xml:space="preserve">
+    <value>過去 {0} 分以内に既に作成されているため、新しいシステム復元ポイントを作成できません。復元ポイントの作成頻度は、レジストリ キー 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore' の下に DWORD 値 'SystemRestorePointCreationFrequency' を作成することで変更できます。このレジストリ キーの値は、2 つの復元ポイントの作成の間に必要な時間間隔 (分単位) を示します。既定値は 1440 分 (24 時間) です。</value>
+  </data>
+  <data name="CannotGetOperatingSystemObject" xml:space="preserve">
+    <value>Win32_OperatingSystem WMI オブジェクトを取得できません。</value>
+  </data>
+  <data name="RestartComputerSkipped" xml:space="preserve">
+    <value>コンピューター {0} はスキップされます。WMI サービス経由で LastBootUpTime を取得できませんでした。エラー メッセージ: {1}。</value>
+  </data>
+  <data name="FailToTestSecureChannel" xml:space="preserve">
+    <value>ローカル コンピューターの安全なチャネルを確認できません。次の例外により、操作は失敗しました: {0}。</value>
+  </data>
+  <data name="RepairSecureChannelFail" xml:space="preserve">
+    <value>ローカル コンピューターとドメイン {0} の間の安全なチャネルを修復できませんでした。</value>
+  </data>
+  <data name="RepairSecureChannelSucceed" xml:space="preserve">
+    <value>ローカル コンピューターとドメイン {0} の間の安全なチャネルが正常に修復されました。</value>
+  </data>
+  <data name="SecureChannelAlive" xml:space="preserve">
+    <value>ローカル コンピューターとドメイン {0} の間の安全なチャネルは良好な状態です。</value>
+  </data>
+  <data name="SecureChannelBroken" xml:space="preserve">
+    <value>ローカル コンピューターとドメイン {0} の間の安全なチャネルが壊れています。</value>
+  </data>
+  <data name="TestComputerNotInDomain" xml:space="preserve">
+    <value>ローカル コンピューターの安全なチャネル パスワードを確認できません。ローカル コンピューターは現在ドメインの一部ではありません。</value>
+  </data>
+  <data name="SystemRestoreNotSupported" xml:space="preserve">
+    <value>システム復元 API が Advanced RISC Machine (ARM) プラットフォームでサポートされていないため、操作を実行できません。</value>
+  </data>
+  <data name="TimeoutError" xml:space="preserve">
+    <value>指定されたタイムアウト期間内にコンピューターの再起動が完了しませんでした。</value>
+  </data>
+  <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
+    <value>復元ポイントの作成の時間間隔を検証できません。次のエラー メッセージで最後の復元ポイントを取得できませんでした: {0}。</value>
+  </data>
+  <data name="InvalidParameterSetAsJob" xml:space="preserve">
+    <value>AsJob パラメーター セットはサポートされていません。</value>
+  </data>
+  <data name="InvalidParameterForCoreClr" xml:space="preserve">
+    <value>{0} パラメーターは CoreCLR ではサポートされていません。</value>
+  </data>
+  <data name="ShutdownCommandNotFound" xml:space="preserve">
+    <value>必須のネイティブ コマンド 'shutdown' が見つかりませんでした。</value>
+  </data>
+</root>

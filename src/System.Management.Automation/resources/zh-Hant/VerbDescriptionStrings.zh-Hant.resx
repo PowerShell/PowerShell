@@ -1,0 +1,420 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Add" xml:space="preserve">
+    <value>將資源新增至容器，或將項目連結至另一個項目</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>確認或同意資源或程序的狀態</value>
+  </data>
+  <data name="Assert" xml:space="preserve">
+    <value>確認資源的狀態</value>
+  </data>
+  <data name="Backup" xml:space="preserve">
+    <value>透過複寫它來儲存資料</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>限制存取資源</value>
+  </data>
+  <data name="Build" xml:space="preserve">
+    <value>從一組輸入檔案 (通常是原始程式碼或宣告式文件) 建立成品 (通常是二進位檔或文件)</value>
+  </data>
+  <data name="Checkpoint" xml:space="preserve">
+    <value>建立資料目前狀態的快照集，或其設定目前狀態的快照集</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>從容器移除所有資源，但不刪除容器</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>變更資源的狀態，使其無法存取、無法提供或無法使用</value>
+  </data>
+  <data name="Compare" xml:space="preserve">
+    <value>比較一個資源的資料與另一個資源的資料</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>結束作業</value>
+  </data>
+  <data name="Compress" xml:space="preserve">
+    <value>壓縮資源的資料</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>認可、確認或驗證資源或處理序的狀態</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>建立來源與目的地之間的連結</value>
+  </data>
+  <data name="Convert" xml:space="preserve">
+    <value>當 Cmdlet 支援雙向轉換，或當 Cmdlet 支援多個資料類型之間的轉換時，會將資料從一個表示法變更為另一個</value>
+  </data>
+  <data name="ConvertFrom" xml:space="preserve">
+    <value>將一個主要輸入類型 (Cmdlet 名詞表示輸入) 轉換成一或多個支援的輸出類型</value>
+  </data>
+  <data name="ConvertTo" xml:space="preserve">
+    <value>從一或多個輸入類型轉換成主要輸出類型 (Cmdlet 名詞表示輸出類型)</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>將資源複製到另一個名稱或另一個容器</value>
+  </data>
+  <data name="Debug" xml:space="preserve">
+    <value>檢查資源以診斷操作問題</value>
+  </data>
+  <data name="Deny" xml:space="preserve">
+    <value>拒絕、反對、封鎖或抵制資源或處理序的狀態</value>
+  </data>
+  <data name="Deploy" xml:space="preserve">
+    <value>將應用程式、網站或解決方案傳送至遠端目標，讓該解決方案的取用者能夠在部署完成之後加以存取</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>將資源設定為無法使用或非作用中狀態</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>中斷來源與目的地之間的連結</value>
+  </data>
+  <data name="Dismount" xml:space="preserve">
+    <value>從位置中斷已命名實體的連線</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>透過新增或移除內容來修改現有資料</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>將資源設定為可供使用或作用中狀態</value>
+  </data>
+  <data name="Enter" xml:space="preserve">
+    <value>指定允許使用者進入資源的動作</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>將目前環境或內容設定為最近使用的內容</value>
+  </data>
+  <data name="Expand" xml:space="preserve">
+    <value>還原已壓縮至其原始狀態的資源其資料</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>將主要輸入封裝至永久性資料存放區，例如檔案或交換格式</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>在容器中尋找未知、隱含、選擇性或指定的物件</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>以指定的表單或版面配置來排列物件</value>
+  </data>
+  <data name="Get" xml:space="preserve">
+    <value>指定擷取資源的動作</value>
+  </data>
+  <data name="Grant" xml:space="preserve">
+    <value>允許存取資源</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>排列一或多個資源，或將一或多個資源建立關聯</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>使資源無法偵測</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>從儲存在永久性資料存放區 (例如檔案) 或交換格式中的資料建立資源</value>
+  </data>
+  <data name="Initialize" xml:space="preserve">
+    <value>準備要使用的資源，並將其設定為預設狀態</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>將資源放置到位置中，並選用性地初始化它</value>
+  </data>
+  <data name="Invoke" xml:space="preserve">
+    <value>執行動作，例如執行命令或方法</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>將多個資源合併成一個資源</value>
+  </data>
+  <data name="Limit" xml:space="preserve">
+    <value>將條件約束套用至資源</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>保護資源</value>
+  </data>
+  <data name="Measure" xml:space="preserve">
+    <value>識別指定作業所取用的資源，或擷取資源的有關統計資料</value>
+  </data>
+  <data name="Merge" xml:space="preserve">
+    <value>從多個資源建立單一資源</value>
+  </data>
+  <data name="Mount" xml:space="preserve">
+    <value>將已命名實體連結至位置</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>將資源從一個位置移至另一個</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>建立資源</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>變更資源的狀態，使其可存取、可供使用或可使用</value>
+  </data>
+  <data name="Optimize" xml:space="preserve">
+    <value>增加資源的有效性</value>
+  </data>
+  <data name="Out" xml:space="preserve">
+    <value>將資料傳送出環境</value>
+  </data>
+  <data name="Ping" xml:space="preserve">
+    <value>使用 Test 動詞</value>
+  </data>
+  <data name="Pop" xml:space="preserve">
+    <value>從堆疊頂端移除項目</value>
+  </data>
+  <data name="Protect" xml:space="preserve">
+    <value>保護資源免於遭受攻擊或遺失</value>
+  </data>
+  <data name="Publish" xml:space="preserve">
+    <value>以便其他人使用資源</value>
+  </data>
+  <data name="Push" xml:space="preserve">
+    <value>將項目新增至堆疊頂端</value>
+  </data>
+  <data name="Read" xml:space="preserve">
+    <value>從來源取得資訊</value>
+  </data>
+  <data name="Receive" xml:space="preserve">
+    <value>接受從來源傳送的資訊</value>
+  </data>
+  <data name="Redo" xml:space="preserve">
+    <value>將資源重設為未完成的狀態</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>為存放庫中的資源建立項目，例如資料庫中的項目</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>從容器刪除資源</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>變更資源的名稱</value>
+  </data>
+  <data name="Repair" xml:space="preserve">
+    <value>將資源還原為可用狀態</value>
+  </data>
+  <data name="Request" xml:space="preserve">
+    <value>要求資源或要求權限</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>將資源設定回其原始狀態</value>
+  </data>
+  <data name="Resize" xml:space="preserve">
+    <value>變更資源大小</value>
+  </data>
+  <data name="Resolve" xml:space="preserve">
+    <value>將資源的速記表示法對應至更完整表示法</value>
+  </data>
+  <data name="Restart" xml:space="preserve">
+    <value>停止作業，然後再次啟動</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>將資源設定為預先定義的狀態，例如檢查點所設定的狀態</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>啟動已擱置的作業</value>
+  </data>
+  <data name="Revoke" xml:space="preserve">
+    <value>指定不允許存取資源的動作</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>保留資料以避免遺失</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>建立容器中資源的參考</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>尋找容器中的資源</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>將資訊傳遞到目的地</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>取代現有資源上的資料，或建立包含某些資料的資源</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>讓使用者能看見資源</value>
+  </data>
+  <data name="Sync" xml:space="preserve">
+    <value>確保有兩個以上的資源處於相同狀態</value>
+  </data>
+  <data name="Skip" xml:space="preserve">
+    <value>略過順序中的一或多個資源或點</value>
+  </data>
+  <data name="Split" xml:space="preserve">
+    <value>將資源的各個部分分開</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>起始作業</value>
+  </data>
+  <data name="Step" xml:space="preserve">
+    <value>移至順序中的下一個點或資源</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>中止活動</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>顯示核准的資源</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>暫停活動</value>
+  </data>
+  <data name="Switch" xml:space="preserve">
+    <value>指定在兩個資源之間進行替代的動作，例如在兩個位置、責任或狀態之間變更</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>確認資源的作業或一致性</value>
+  </data>
+  <data name="Trace" xml:space="preserve">
+    <value>追蹤資源的活動</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>移除資源的限制</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>將資源設定為其先前的狀態</value>
+  </data>
+  <data name="Uninstall" xml:space="preserve">
+    <value>從指出的位置移除資源</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>發行已鎖定的資源</value>
+  </data>
+  <data name="Unprotect" xml:space="preserve">
+    <value>從新增為防止遭受攻擊或遺失的資源中移除保護</value>
+  </data>
+  <data name="Unpublish" xml:space="preserve">
+    <value>讓其他人無法使用資源</value>
+  </data>
+  <data name="Unregister" xml:space="preserve">
+    <value>從存放庫移除資源的項目</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>將資源保持在最新狀態，以維護其狀態、精確度、符合性或合規性</value>
+  </data>
+  <data name="Use" xml:space="preserve">
+    <value>使用或包括資源以執行某些動作</value>
+  </data>
+  <data name="Wait" xml:space="preserve">
+    <value>暫停作業，直到發生指定的事件為止</value>
+  </data>
+  <data name="Watch" xml:space="preserve">
+    <value>持續針對變更檢查或監視資源</value>
+  </data>
+  <data name="Write" xml:space="preserve">
+    <value>將資訊新增至目標</value>
+  </data>
+</root>

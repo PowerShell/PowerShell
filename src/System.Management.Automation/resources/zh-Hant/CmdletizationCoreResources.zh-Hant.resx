@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ScriptWriter_ModuleDescription" xml:space="preserve">
+    <value>'{0}' 類別的 Cmdlet</value>
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "ROOT\cimv2\Win32_Process"</comment>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ScriptWriter_DuplicateQueryParameterName" xml:space="preserve">
+    <value>{0} 元素內定義的兩個 Cmdlet 參數使用相同的名稱: {1}。 請在 Cmdlet 定義 XML 中解決衝突，然後再試一次。</value>
+    <comment>{0} is a placeholder for a name of an XML element.  Example: &lt;GetCmdletParameters&gt;
+{1} is a placeholder for a cmdlet parameter name.  Example: Name</comment>
+  </data>
+  <data name="ExportCimCommand_ErrorInCmdletizationXmlFile" xml:space="preserve">
+    <value>無法處理下列檔案的 Cmdlet 定義 XML: {0}。 {1}</value>
+    <comment>{0} is a placeholder for a file name.
+{1} is an exception message copied from an XmlException or XmlSchemaException</comment>
+  </data>
+  <data name="ScriptWriter_DuplicateParameterSetInStaticCmdlet" xml:space="preserve">
+    <value>{0} Cmdlet 多次定義了 {1} 參數集。 請確認 Cmdlet 定義 XML 中沒有重複的參數集名稱，然後再試一次。</value>
+    <comment>{0} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
+{1} is a placeholder for a parameter set name.  Example: 'foo'</comment>
+  </data>
+  <data name="ScriptWriter_ObjectModelWrapperDefinesMultipleParameterSets" xml:space="preserve">
+    <value>無法處理 ObjectModelWrapper 屬性。{0} 類型定義了多個參數集。請確認 Cmdlet 定義 XML 在 ObjectModelWrapper 屬性中指定有效的類型，然後再試一次。</value>
+    <comment>{StrContains="ObjectModelWrapper"}
+{0} is a placeholder for a .NET class name.  Example: System.Net.IPAddress</comment>
+  </data>
+  <data name="ScriptWriter_ObjectModelWrapperIsStillGeneric" xml:space="preserve">
+    <value>無法處理 ObjectModelWrapper 屬性。{0} 類型是開放式泛型類型。 請確認 Cmdlet 定義 XML 在 ObjectModelWrapper 屬性中指定有效的類型，然後再試一次。</value>
+    <comment>{StrContains="ObjectModelWrapper"}
+{0} is a placeholder for a .NET class name.  Example: System.Net.IPAddress</comment>
+  </data>
+  <data name="ScriptWriter_ObjectModelWrapperNotDerivedFromObjectModelWrapper" xml:space="preserve">
+    <value>無法處理 ObjectModelWrapper 屬性。{0} 類型不是從下列類別衍生: {1}。 請確認 Cmdlet 定義 XML 在 ObjectModelWrapper 屬性中指定有效的類型，然後再試一次。</value>
+    <comment>{StrContains="ObjectModelWrapper"}
+{0} is a placeholder for a .NET class name.  Example: System.Net.IPAddress
+{1} is a placeholder for a .NET class name. Example: Microsoft.PowerShell.Cmdletization.ObjectModelWrapper</comment>
+  </data>
+  <data name="ScriptWriter_ObjectModelWrapperUsesIgnoredParameterMetadata" xml:space="preserve">
+    <value>無法處理 ObjectModelWrapper 屬性。{0} 類型定義了 {1} Cmdlet 參數，且帶有一個會被忽略的 {2} 屬性參數。 請確認 Cmdlet 定義 XML 在 ObjectModelWrapper 屬性中指定有效的類型，然後再試一次。</value>
+    <comment>{StrContains="ObjectModelWrapper"}
+{0} is a placeholder for a .NET class name.  Example: System.Net.IPAddress
+{1} is a placeholder for a cmdlet parameter name.  Example: 'ProcessId'
+{2} is a placeholder for a name of a property of ParameterAttribute class. Example: ValueFromPipelineByPropertyName </comment>
+  </data>
+  <data name="ScriptWriter_ParameterNameConflictsWithCommonParameters" xml:space="preserve">
+    <value>無法為 {1} Cmdlet 定義 {0} 參數。 參數名稱已由 {2} 類別定義。 請在 Cmdlet 定義 XML 中變更參數名稱，然後再試一次。</value>
+    <comment>{0} is a placeholder for a cmdlet parameter name.  Example: 'ProcessId'
+{1} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
+{2} is a placeholder for a .NET class name.  Example: 'Microsoft.PowerShell.Cmdletization.Cim.CimWrapper'</comment>
+  </data>
+  <data name="ScriptWriter_ParameterNameConflictsWithQueryParameters" xml:space="preserve">
+    <value>無法為 {1} Cmdlet 定義 {0} 參數。參數名稱已在 {2} XML 元素內定義。請變更 Cmdlet 定義 XML 中的參數名稱，然後再試一次。</value>
+    <comment>{0} is a placeholder for a cmdlet parameter name.  Example: 'ProcessId'
+{1} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
+{2} is a placeholder for an xml element name.  Example: &lt;GetCmdletParameters&gt;</comment>
+  </data>
+  <data name="ScriptWriter_ConcatenationOfDeserializationExceptions" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>This is a resource string, to support locales where the order of placeholders might need to be reversed.
+{0} is a placeholder for a top-level exception message (i.e. "There is an error in XML document (2, 2).")
+{1} is a placeholder for a secondary exception message (i.e. "")</comment>
+  </data>
+  <data name="EnumWriter_InvalidEnumName" xml:space="preserve">
+    <value>EnumName 屬性的值無法轉換為有效的 C# 識別碼: {0}。請在 Cmdlet 定義 XML 中確認 EnumName 屬性，然後再試一次。</value>
+    <comment>{StrContains="EnumName"}</comment>
+  </data>
+  <data name="EnumWriter_InvalidValueName" xml:space="preserve">
+    <value>Name 屬性的值不是有效的 C# 識別碼: {0}。 請在 Cmdlet 定義 XML 中確認 Name 屬性，然後再試一次。</value>
+    <comment>{StrContains="Name"}</comment>
+  </data>
+  <data name="ScriptWriter_InvalidEnum" xml:space="preserve">
+    <value>無法處理  &lt;Enum EnumName="{0}" ...&gt; 元素。{1}</value>
+    <comment>{StrContains="Enum"} {StrContains="EnumName"}</comment>
+  </data>
+  <data name="ImportModule_UnsupportedCmdletAdapter" xml:space="preserve">
+    <value>遠端電腦傳回了無效的 CDXML 檔案。不支援下列 Cmdlet 配接器用於從遠端電腦匯入 CDXML 模組: {0}</value>
+    <comment>{0} is a placeholder for a fully qualified type name</comment>
+  </data>
+</root>

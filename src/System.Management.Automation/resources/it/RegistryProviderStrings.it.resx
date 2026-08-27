@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetItemAction" xml:space="preserve">
+    <value>Imposta elemento</value>
+  </data>
+  <data name="SetItemResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0} Valore: {1}</value>
+  </data>
+  <data name="ClearItemAction" xml:space="preserve">
+    <value>Cancella elemento</value>
+  </data>
+  <data name="ClearItemResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0}</value>
+  </data>
+  <data name="NewItemAction" xml:space="preserve">
+    <value>Nuovo elemento</value>
+  </data>
+  <data name="NewItemResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0}</value>
+  </data>
+  <data name="RemoveKeyAction" xml:space="preserve">
+    <value>Rimuovere la chiave</value>
+  </data>
+  <data name="RemoveKeyResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0}</value>
+  </data>
+  <data name="CopyKeyAction" xml:space="preserve">
+    <value>Copia chiave</value>
+  </data>
+  <data name="CopyKeyResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0} Destinazione: {1}</value>
+  </data>
+  <data name="RenameItemAction" xml:space="preserve">
+    <value>Rinomina elemento</value>
+  </data>
+  <data name="RenameItemResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0} NewName: {1}</value>
+  </data>
+  <data name="MoveItemAction" xml:space="preserve">
+    <value>Sposta elemento</value>
+  </data>
+  <data name="MoveItemResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0} Destinazione: {1}</value>
+  </data>
+  <data name="SetPropertyAction" xml:space="preserve">
+    <value>Imposta proprietà</value>
+  </data>
+  <data name="SetPropertyResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0} Proprietà: {1}</value>
+  </data>
+  <data name="ClearPropertyAction" xml:space="preserve">
+    <value>Cancella proprietà</value>
+  </data>
+  <data name="ClearPropertyResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0} Proprietà: {1}</value>
+  </data>
+  <data name="NewPropertyAction" xml:space="preserve">
+    <value>Nuova proprietà</value>
+  </data>
+  <data name="NewPropertyResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0} Proprietà: {1}</value>
+  </data>
+  <data name="RemovePropertyAction" xml:space="preserve">
+    <value>Rimuovi proprietà</value>
+  </data>
+  <data name="RemovePropertyResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0} Proprietà: {1}</value>
+  </data>
+  <data name="RenamePropertyAction" xml:space="preserve">
+    <value>Rinomina proprietà.</value>
+  </data>
+  <data name="RenamePropertyResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0} SourceProperty: {1} DestinationProperty: {2}</value>
+  </data>
+  <data name="CopyPropertyAction" xml:space="preserve">
+    <value>Copia proprietà</value>
+  </data>
+  <data name="CopyPropertyResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
+  </data>
+  <data name="MovePropertyAction" xml:space="preserve">
+    <value>Sposta proprietà</value>
+  </data>
+  <data name="MovePropertyResourceTemplate" xml:space="preserve">
+    <value>Elemento: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
+  </data>
+  <data name="ContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>L'operazione non è stata elaborata. La posizione specificata non consente questa operazione.</value>
+  </data>
+  <data name="SourceContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>L'operazione non è consentita nella posizione di origine.</value>
+  </data>
+  <data name="DestinationContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>L'operazione non è consentita nella posizione di destinazione.</value>
+  </data>
+  <data name="HKLMDriveDescription" xml:space="preserve">
+    <value>Impostazioni di configurazione per il computer locale</value>
+  </data>
+  <data name="HKCUDriveDescription" xml:space="preserve">
+    <value>Impostazioni software per l'utente corrente</value>
+  </data>
+  <data name="KeyAlreadyExists" xml:space="preserve">
+    <value>Esiste già una chiave in questo percorso.</value>
+  </data>
+  <data name="DestinationChildOfSource" xml:space="preserve">
+    <value>Non è possibile eseguire l'operazione perché il percorso di destinazione è subordinato al percorso di origine.</value>
+  </data>
+  <data name="PropertyAlreadyExists" xml:space="preserve">
+    <value>La proprietà esiste già.</value>
+  </data>
+  <data name="PropertyNotAtPath" xml:space="preserve">
+    <value>La proprietà {0} non esiste nel percorso {1}.</value>
+  </data>
+  <data name="KeyDoesNotExist" xml:space="preserve">
+    <value>La chiave del Registro di sistema non esiste nel percorso specificato.</value>
+  </data>
+  <data name="TypeParameterBindingFailure" xml:space="preserve">
+    <value>Non è possibile associare il parametro 'Type'. Non è possibile convertire "{0}" in "{1}". I valori di enumerazione possibili sono "String, ExpandString, Binary, DWord, MultiString, QWord, Unknown".</value>
+  </data>
+  <data name="KeyCreatedValueFailed" xml:space="preserve">
+    <value>La chiave {0} è stata creata, ma non è stato possibile impostare un valore predefinito.</value>
+  </data>
+  <data name="NewDriveRootDoesNotExist" xml:space="preserve">
+    <value>Non è possibile creare un'unità con la radice specificata. Il percorso radice non esiste.</value>
+  </data>
+  <data name="RenameItemAlreadyExists" xml:space="preserve">
+    <value>Non è possibile rinominare l'elemento perché esiste già un elemento con quel nome nello stesso contenitore.</value>
+  </data>
+  <data name="Arg_RegInvalidKeyName" xml:space="preserve">
+    <value>Il nome della chiave del Registro di sistema deve iniziare con un nome chiave di base valido.</value>
+  </data>
+  <data name="ArgRegKeyDelHive" xml:space="preserve">
+    <value>L'argomento della sottochiave non è valido.</value>
+  </data>
+  <data name="Arg_RegSubKeyAbsent" xml:space="preserve">
+    <value>Non è possibile eliminare un albero di sottochiavi perché la sottochiave non esiste.</value>
+  </data>
+  <data name="Arg_RegSubKeyValueAbsent" xml:space="preserve">
+    <value>Non esiste alcun valore con quel nome.</value>
+  </data>
+  <data name="Arg_EnumIllegalVal" xml:space="preserve">
+    <value>Il valore enum {0} non è valido.</value>
+  </data>
+  <data name="Arg_Value" xml:space="preserve">
+    <value>È necessario specificare un argomento di tipo valore.</value>
+  </data>
+  <data name="Arg_Name" xml:space="preserve">
+    <value>È necessario specificare un argomento name.</value>
+  </data>
+  <data name="Arg_RegBadKeyKind" xml:space="preserve">
+    <value>Il valore RegistryValueKind specificato non è valido.</value>
+  </data>
+  <data name="Arg_RegSetStrArrNull" xml:space="preserve">
+    <value>RegistryKey.SetValue non consente un valore String[] che contiene un riferimento String null.</value>
+  </data>
+  <data name="Arg_RegKeyStrLenBug" xml:space="preserve">
+    <value>Le sottochiavi del Registro di sistema non devono contenere più di 255 caratteri.</value>
+  </data>
+  <data name="Arg_RegKeyStrEmpty" xml:space="preserve">
+    <value>È necessario specificare un nome di sottochiave non vuoto.</value>
+  </data>
+  <data name="Arg_RegSetMismatchedKind" xml:space="preserve">
+    <value>Il tipo dell'oggetto valore non corrisponde all'elemento RegistryValueKind specificato oppure non è possibile convertire correttamente l'oggetto.</value>
+  </data>
+  <data name="Arg_RegSetBadArrType" xml:space="preserve">
+    <value>RegistryKey.SetValue non supporta matrici di tipo '{0}'. Sono supportati solo Byte[] e String[].</value>
+  </data>
+  <data name="Arg_RegKeyNotFound" xml:space="preserve">
+    <value>La chiave del Registro di sistema specificata non esiste.</value>
+  </data>
+  <data name="Arg_RegValueNameStrLenBug" xml:space="preserve">
+    <value>La lunghezza del nome di valore specificato supera il numero massimo di 16383 caratteri.</value>
+  </data>
+  <data name="Arg_ValueDataLenBug" xml:space="preserve">
+    <value>Le dimensioni dei dati del valore specificato superano il valore massimo di 1 MB.</value>
+  </data>
+  <data name="ArgumentException_RegSubKeyAbsent" xml:space="preserve">
+    <value>La sottochiave del Registro di sistema specificata non esiste.</value>
+  </data>
+  <data name="Argument_InvalidRegistryKeyPermissionCheck" xml:space="preserve">
+    <value>Il valore RegistryKeyPermissionCheck specificato non è valido.</value>
+  </data>
+  <data name="InvalidOperation_RegRemoveSubKey" xml:space="preserve">
+    <value>Nella chiave del Registro di sistema sono contenute sottochiavi e con questo metodo non sono supportate rimozioni.</value>
+  </data>
+  <data name="InvalidOperation_NeedTransaction" xml:space="preserve">
+    <value>Non è possibile creare un handle KTM senza Transaction.Current o una transazione specificata.</value>
+  </data>
+  <data name="InvalidOperation_MustUseSameTransaction" xml:space="preserve">
+    <value>È necessario che la transazione specificata o Transaction.Current corrisponda alla transazione usata per creare o aprire questo elemento TransactedRegistryKey.</value>
+  </data>
+  <data name="InvalidOperation_NotAssociatedWithTransaction" xml:space="preserve">
+    <value>L'oggetto TransactedRegistryKey non è associato a una transazione perché si riferisce a una chiave predefinita.</value>
+  </data>
+  <data name="Security_RegistryPermission" xml:space="preserve">
+    <value>L'accesso richiesto al Registro di sistema non è consentito.</value>
+  </data>
+  <data name="UnauthorizedAccess_RegistryKeyGeneric_Key" xml:space="preserve">
+    <value>Accesso negato alla chiave del Registro di sistema '{0}'.</value>
+  </data>
+  <data name="UnauthorizedAccess_RegistryNoWrite" xml:space="preserve">
+    <value>Non è possibile scrivere nella chiave del Registro di sistema.</value>
+  </data>
+  <data name="ObjectDisposed_RegKeyClosed" xml:space="preserve">
+    <value>Non è possibile accedere a una chiave del Registro di sistema chiusa.</value>
+  </data>
+  <data name="UnknownError_Num" xml:space="preserve">
+    <value>Errore sconosciuto: {0}.</value>
+  </data>
+  <data name="NotSupported_KernelTransactions" xml:space="preserve">
+    <value>Le transazioni del Registro di sistema non sono supportate in questa piattaforma.</value>
+  </data>
+  <data name="AccessControl_InvalidHandle" xml:space="preserve">
+    <value>L'handle di traccia specificato non è valido.</value>
+  </data>
+</root>

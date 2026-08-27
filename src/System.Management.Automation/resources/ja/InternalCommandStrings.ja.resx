@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AmbiguousMethodName" xml:space="preserve">
+    <value>名前 "{0}" があいまいです。一致した複数のメソッドに解決できます。一致の可能性は次のとおりです:{1}。</value>
+  </data>
+  <data name="AmbiguousPropertyOrMethodName" xml:space="preserve">
+    <value>入力名 "{0}" があいまいです。一致した複数のメンバーに解決できます。一致の可能性は次のとおりです:{1}。</value>
+  </data>
+  <data name="ForEachObjectKeyAction" xml:space="preserve">
+    <value>キー '{0}' の値を取得する</value>
+  </data>
+  <data name="ForEachObjectMethodActionWithArguments" xml:space="preserve">
+    <value>引数を指定してメソッド '{0}' を呼び出す: {1}</value>
+  </data>
+  <data name="ForEachObjectMethodActionWithoutArguments" xml:space="preserve">
+    <value>メソッド '{0}' を呼び出す</value>
+  </data>
+  <data name="ForEachObjectPropertyAction" xml:space="preserve">
+    <value>プロパティ '{0}' の値を取得します</value>
+  </data>
+  <data name="ForEachObjectTarget" xml:space="preserve">
+    <value>InputObject: {0}</value>
+  </data>
+  <data name="InputObjectIsNull" xml:space="preserve">
+    <value>'null' 入力オブジェクトに対して操作することはできません。</value>
+  </data>
+  <data name="MethodNotFound" xml:space="preserve">
+    <value>入力名 "{0}" はメソッドに解決できません。</value>
+  </data>
+  <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
+    <value>制限付き言語モードでメソッドを呼び出すことはできません。</value>
+  </data>
+  <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
+    <value>-WhatIf パラメーターと -Confirm パラメーターは、スクリプト ブロックではサポートされていません。</value>
+  </data>
+  <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
+    <value>'{0}' 操作は RestrictedLanguage モードでは許可されていません。</value>
+  </data>
+  <data name="OperatorNotSpecified" xml:space="preserve">
+    <value>指定した 2 つの値を比較するには、演算子が必要です。コマンドに有効な演算子を含めてから、コマンドを再試行してください。たとえば、Get-Process | Where-Object -Property Name -eq Idle</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>入力名 "{0}" はプロパティに解決できません。</value>
+  </data>
+  <data name="PropertyOrMethodNotFound" xml:space="preserve">
+    <value>入力名 "{0}" はメンバーに解決できません。</value>
+  </data>
+  <data name="ValueNotSpecifiedForWhereObject" xml:space="preserve">
+    <value>指定された演算子には、-Property パラメーターと -Value パラメーターの両方が必要です。両方のパラメーターの値を指定してから、コマンドを再試行してください。</value>
+  </data>
+  <data name="PSTaskStreamWriterWrongThread" xml:space="preserve">
+    <value>このメソッドは現在のスレッドでは実行できません。コマンドレット スレッドでのみ呼び出すことができます。</value>
+  </data>
+  <data name="ParallelUsingVariableCannotBeScriptBlock" xml:space="preserve">
+    <value>変数を使用する ForEach-Object -Parallel をスクリプト ブロックにすることはできません。Passed-in スクリプト ブロック変数は ForEach-Object -Parallel ではサポートされていないため、未定義の動作が発生する可能性があります。</value>
+  </data>
+  <data name="ParallelPipedInputObjectCannotBeScriptBlock" xml:space="preserve">
+    <value>ForEach-Object -Parallel パイプ入力オブジェクトをスクリプト ブロックにすることはできません。Passed-in スクリプト ブロック変数は ForEach-Object -Parallel ではサポートされていないため、未定義の動作が発生する可能性があります。</value>
+  </data>
+  <data name="ParallelCannotUseTimeoutWithJob" xml:space="preserve">
+    <value>'TimeoutSeconds' パラメーターを 'AsJob' パラメーターと共に使用することはできません。</value>
+  </data>
+  <data name="ParallelCommonParametersNotSupported" xml:space="preserve">
+    <value>Parallel パラメーター セットでは、次の共通パラメーターは現在サポートされていません:
+ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
+  </data>
+  <data name="ParallelPipedInputProcessingError" xml:space="preserve">
+    <value>ForEach-Object -Parallel 入力の処理中に予期しないエラーが発生しました。これは、パイプ処理された入力の一部が処理されなかったことを意味する可能性があります。エラーは {0} です。</value>
+  </data>
+  <data name="WDACLogTitle" xml:space="preserve">
+    <value>ForEach-Object コマンドレット</value>
+  </data>
+  <data name="WDACLogMessage" xml:space="preserve">
+    <value>制約付き言語モードで実行する場合、型 '{0}' でのメソッドの呼び出しは許可されません。</value>
+  </data>
+</root>

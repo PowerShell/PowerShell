@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CommandAlreadySpecified" xml:space="preserve">
+    <value>无法处理命令，因为已使用 -Command、-CommandWithArgs 或 -EncodedCommand 指定了命令。</value>
+  </data>
+  <data name="MissingCommandParameter" xml:space="preserve">
+    <value>由于缺少参数，无法处理该命令。命令必须遵循 -Command。</value>
+  </data>
+  <data name="UnknownParameter" xml:space="preserve">
+    <value>无法识别的参数: '{0}'。</value>
+  </data>
+  <data name="TooManyParametersToCommand" xml:space="preserve">
+    <value>'-' 是使用 -Command 参数指定的; 不允许对 -Command 使用任何其他参数。</value>
+  </data>
+  <data name="StdinNotRedirected" xml:space="preserve">
+    <value>'-' 被指定为 -Command 的参数，但尚未为此进程重定向标准输入。</value>
+  </data>
+  <data name="MissingOutputFormatParameter" xml:space="preserve">
+    <value>无法运行该命令，因为没有为 OutputFormat 参数提供任何参数。
+为此参数指定以下格式之一:
+{0}</value>
+  </data>
+  <data name="MissingInputFormatParameter" xml:space="preserve">
+    <value>无法处理该命令，因为 -InputFormat 参数需要参数。为此参数指定有效的格式参数。
+有效格式为:
+{0}</value>
+  </data>
+  <data name="BadFormatParameterValue" xml:space="preserve">
+    <value>无法处理命令，因为参数值不正确。'{0}' 不是有效的格式。
+有效格式为:
+{1}</value>
+  </data>
+  <data name="ArgsAlreadySpecified" xml:space="preserve">
+    <value>无法处理该命令，因为已使用 -EncodedArguments 指定了 -Command 或 -EncodedCommand 的参数。</value>
+  </data>
+  <data name="MissingArgsValue" xml:space="preserve">
+    <value>无法处理该命令，因为 -EncodedArguments 需要一个值。指定 -EncodedArguments 参数的值。</value>
+  </data>
+  <data name="MissingFileArgument" xml:space="preserve">
+    <value>无法运行该命令，因为 File 参数需要文件路径。提供 File 参数的路径，然后重试该命令。</value>
+  </data>
+  <data name="MissingWindowStyleArgument" xml:space="preserve">
+    <value>无法处理该命令，因为 -WindowStyle 需要正常、隐藏、最小化或最大化的参数。请指定这些参数值之一，然后重试。</value>
+  </data>
+  <data name="InvalidFileArgument" xml:space="preserve">
+    <value>处理 -File '{0}' 失败: {1} 请为 -File 参数指定有效路径。</value>
+  </data>
+  <data name="InvalidWindowStyleArgument" xml:space="preserve">
+    <value>处理 -WindowStyle '{0}' 失败: {1}。</value>
+  </data>
+  <data name="InvalidFileArgumentExtension" xml:space="preserve">
+    <value>处理 -File '{0}' 失败，因为文件没有 '.ps1' 扩展名。请指定有效的 PowerShell 脚本文件名，然后重试。</value>
+  </data>
+  <data name="ArgumentFileDoesNotExist" xml:space="preserve">
+    <value>参数 '{0}' 无法识别为脚本文件名。请检查名称的拼写或验证路径是否正确(如果包含路径)，然后重试。</value>
+  </data>
+  <data name="BadArgsValue" xml:space="preserve">
+    <value>无法处理该命令，因为使用 -EncodedArguments 指定的值未正确编码。该值必须是 Base64 编码的。</value>
+  </data>
+  <data name="BadCommandValue" xml:space="preserve">
+    <value>无法处理该命令，因为使用 -EncodedCommand 指定的值未正确编码。该值必须是 Base64 编码的。</value>
+  </data>
+  <data name="MissingExecutionPolicyParameter" xml:space="preserve">
+    <value>由于缺少策略名称，无法处理执行策略。策略名称必须遵循 -ExecutionPolicy。</value>
+  </data>
+  <data name="MtaStaMutuallyExclusive" xml:space="preserve">
+    <value>无法处理该命令，因为同时指定了 -STA 和 -MTA。指定 -STA 或 -MTA。</value>
+  </data>
+  <data name="MissingConfigurationNameArgument" xml:space="preserve">
+    <value>无法处理该命令，因为 -ConfigurationName 需要一个作为远程终结点配置名称的参数。请指定此参数，然后重试。</value>
+  </data>
+  <data name="MissingConfigurationFileArgument" xml:space="preserve">
+    <value>无法处理该命令，因为 -ConfigurationFile 需要一个会话配置(.pssc)文件路径作为参数。请指定此参数，然后重试。</value>
+  </data>
+  <data name="MissingCustomPipeNameArgument" xml:space="preserve">
+    <value>无法处理该命令，因为 -CustomPipeName 需要一个参数，该参数是要使用的管道的名称。请指定此参数，然后重试。</value>
+  </data>
+  <data name="CustomPipeNameTooLong" xml:space="preserve">
+    <value>无法处理命令，因为指定的 -CustomPipeName 过长。此平台上的管道名称最长可包含 {0} 个字符。管道名称 '{1}' 包含 {2} 个字符。</value>
+  </data>
+  <data name="MissingSettingsFileArgument" xml:space="preserve">
+    <value>无法处理该命令，因为 -SettingsFile 需要一个作为文件路径的参数。</value>
+  </data>
+  <data name="InvalidSettingsFileArgument" xml:space="preserve">
+    <value>处理 -SettingsFile '{0}' 失败: {1}。指定 -SettingsFile 参数的有效路径。</value>
+  </data>
+  <data name="SettingsFileNotExists" xml:space="preserve">
+    <value>传递给 -SettingsFile 的参数 '{0}' 不存在。请提供现有 json 文件的路径作为 -SettingsFile 参数的值。</value>
+  </data>
+  <data name="InvalidArgument" xml:space="preserve">
+    <value>无效的参数 '{0}'，你的意思是否是:</value>
+  </data>
+  <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
+    <value>参数 -WindowStyle 未在此平台上实现。</value>
+  </data>
+  <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
+    <value>无法处理该命令，因为 -WorkingDirectory 需要一个作为目录路径的参数。</value>
+  </data>
+  <data name="MTANotImplemented" xml:space="preserve">
+    <value>此平台不支持参数 -MTA。</value>
+  </data>
+  <data name="STANotImplemented" xml:space="preserve">
+    <value>此平台不支持参数 -STA。</value>
+  </data>
+  <data name="NullElementInArgs" xml:space="preserve">
+    <value>指定的参数不能包含 null 元素。</value>
+  </data>
+  <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
+    <value>ExecutionPolicy 值 '{0}' 无效。</value>
+  </data>
+  <data name="MissingMandatoryArgument" xml:space="preserve">
+    <value>必须为 '{0}' 参数提供一个参数。</value>
+  </data>
+  <data name="FileOnlyEntryRequired" xml:space="preserve">
+    <value>策略需要参数 '-File'。</value>
+  </data>
+  <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
+    <value>策略不允许使用参数 '-NoExit'。</value>
+  </data>
+  <data name="FileOnlyEntryServerMode" xml:space="preserve">
+    <value>策略不允许服务器模式。</value>
+  </data>
+</root>

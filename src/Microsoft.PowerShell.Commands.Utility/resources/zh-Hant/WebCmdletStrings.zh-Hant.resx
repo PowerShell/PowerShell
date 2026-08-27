@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>存取路徑 '{0}' 遭拒。</value>
+  </data>
+  <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
+    <value>Cmdlet 無法保護透過未加密連線傳送的純文字密碼。若要隱藏此警告並透過未加密的網路傳送純文字密碼，請重新執行命令，並指定 AllowUnencryptedAuthentication 參數。</value>
+  </data>
+  <data name="AuthenticationConflict" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為指定了下列衝突的參數: Authentication 和 UseDefaultCredentials。Authentication 不支援預設認證。請指定 Authentication 或 UseDefaultCredentials，然後重試。</value>
+  </data>
+  <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為未指定下列參數: Credential。提供的驗證類型需要 Credential。請指定 Credential，然後重試。</value>
+  </data>
+  <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為未指定下列參數: Token。提供的驗證類型需要 Token。請指定 Token，然後重試。</value>
+  </data>
+  <data name="AuthenticationTokenConflict" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為指定了下列衝突的參數: Credential 和 Token。請指定 Credential 或 Token，然後重試。</value>
+  </data>
+  <data name="BodyConflict" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為指定了下列衝突的參數: Body 和 InFile。請指定 Body 或 InFile，然後重試。 </value>
+  </data>
+  <data name="BodyFormConflict" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為指定了下列衝突的參數: Body 和 Form。請指定 Body 或 Form，然後重試。 </value>
+  </data>
+  <data name="FormInFileConflict" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為指定了下列衝突的參數: InFile 和 Form。請指定 InFile 或 Form，然後重試。 </value>
+  </data>
+  <data name="ContentTypeException" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為 -ContentType 參數不是有效的 Content-Type 標頭。請為 -ContentType 指定有效的 Content-Type，然後重試。若要停用標頭驗證，請提供 -SkipHeaderValidation 參數。</value>
+  </data>
+  <data name="CredentialConflict" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為指定了下列衝突的參數: Credential 和 UseDefaultCredentials。請指定 Credential 或 UseDefaultCredentials，然後重試。</value>
+  </data>
+  <data name="DirectoryPathSpecified" xml:space="preserve">
+    <value>路徑 '{0}' 會解析為目錄。請指定包含檔案名稱的路徑，然後重試命令。</value>
+  </data>
+  <data name="EmptyKeyInJsonString" xml:space="preserve">
+    <value>提供的 JSON 包含名稱為空字串的屬性，只有使用 -AsHashTable 切換參數時才支援此功能。</value>
+  </data>
+  <data name="DuplicateKeysInJsonString" xml:space="preserve">
+    <value>無法轉換 JSON 字串，因為從字串轉換而來的字典包含重複的索引鍵 '{0}'。</value>
+  </data>
+  <data name="IEDomNotSupported" xml:space="preserve">
+    <value>無法剖析回應內容，因為 Internet Explorer 引擎無法使用，或 Internet Explorer 的首次啟動設定不完整。請指定 UseBasicParsing 參數，然後再試一次。</value>
+  </data>
+  <data name="InsecureRedirection" xml:space="preserve">
+    <value>預設無法遵循不安全的重新導向。請重新執行命令，並指定 -AllowInsecureRedirect 切換參數。</value>
+  </data>
+  <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
+    <value>無法轉換 JSON 字串，因為它包含大小寫不同的索引鍵。請改用 -AsHashTable 切換參數。嘗試加入現有索引鍵 '{0}' 的索引鍵為 '{1}'。</value>
+  </data>
+  <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
+    <value>已超過重新導向次數上限。若要增加允許的重新導向次數，請為 -MaximumRedirection 參數提供較大的值。</value>
+  </data>
+  <data name="MultiplePathsResolved" xml:space="preserve">
+    <value>路徑 '{0}' 可解析為多個路徑。</value>
+  </data>
+  <data name="NonStringKeyInDictionary" xml:space="preserve">
+    <value>字典的序列化或還原序列化不支援類型 '{0}'。索引鍵必須是字串。</value>
+  </data>
+  <data name="NoPathResolved" xml:space="preserve">
+    <value>無法將路徑 '{0}' 解析為檔案。</value>
+  </data>
+  <data name="NotFilesystemPath" xml:space="preserve">
+    <value>路徑 '{0}' 不是檔案系統路徑。請指定檔案系統中檔案的路徑。</value>
+  </data>
+  <data name="OutFileMissing" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為缺少下列參數: OutFile。使用 {0} 參數時，請提供有效的 OutFile 參數值，然後重試。</value>
+  </data>
+  <data name="OutFileWritingSkipped" xml:space="preserve">
+    <value>將不會重新下載檔案，因為遠端檔案的大小與 OutFile 相同: {0}</value>
+  </data>
+  <data name="ProxyCredentialConflict" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為指定了下列衝突的參數: ProxyCredential 和 ProxyUseDefaultCredentials。請指定 ProxyCredential 或 ProxyUseDefaultCredentials，然後重試。</value>
+  </data>
+  <data name="ProxyUriNotSupplied" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為缺少下列參數: Proxy。使用 ProxyCredential 或 ProxyUseDefaultCredentials 參數時，請為 Proxy 參數提供有效的 Proxy URI，然後重試。</value>
+  </data>
+  <data name="ReadResponseComplete" xml:space="preserve">
+    <value>已完成讀取網頁回應資料流。下載的位元組: {0}</value>
+  </data>
+  <data name="ReadResponseProgressActivity" xml:space="preserve">
+    <value>正在讀取網頁回應資料流</value>
+  </data>
+  <data name="ReadResponseProgressStatus" xml:space="preserve">
+    <value>已下載: {0}/{1}</value>
+  </data>
+  <data name="ResumeNotFilePath" xml:space="preserve">
+    <value>只有在 OutFile 目標是檔案，但解析結果為目錄時，才能使用 Resume 切換參數: {0}。</value>
+  </data>
+  <data name="SessionConflict" xml:space="preserve">
+    <value>無法執行 Cmdlet，因為指定了下列衝突的參數: Session 和 SessionVariable。請指定 Session 或 SessionVariable，然後重試。</value>
+  </data>
+  <data name="ThumbprintNotFound" xml:space="preserve">
+    <value>無法擷取憑證，因為指紋無效。請驗證指紋並重試。</value>
+  </data>
+  <data name="WriteRequestComplete" xml:space="preserve">
+    <value>已完成 Web 要求。(處理的位元組數: {0})</value>
+  </data>
+  <data name="WriteRequestCancelled" xml:space="preserve">
+    <value>Web 要求已取消。(處理的位元組數: {0})</value>
+  </data>
+  <data name="WriteRequestProgressActivity" xml:space="preserve">
+    <value>Web 要求狀態</value>
+  </data>
+  <data name="WriteRequestProgressStatus" xml:space="preserve">
+    <value>已下載: {0}/{1}</value>
+  </data>
+  <data name="JsonDeserializationFailed" xml:space="preserve">
+    <value>從 JSON 轉換失敗，錯誤: {0}</value>
+  </data>
+  <data name="ResponseStatusCodeFailure" xml:space="preserve">
+    <value>回應狀態碼未表示成功: {0} ({1})。</value>
+  </data>
+  <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
+    <value>追蹤 rel 連結 {0}</value>
+  </data>
+  <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
+    <value>遠端伺服器指出無法繼續下載。本機檔案將會覆寫。</value>
+  </data>
+  <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
+    <value>已收到內容類型為 {0} 的 HTTP/{1} 回應，大小未知</value>
+  </data>
+  <data name="RetryVerboseMsg" xml:space="preserve">
+    <value>在 {0} 秒後重試。前次嘗試的狀態碼: {1}</value>
+  </data>
+  <data name="JsonMaxDepthReached" xml:space="preserve">
+    <value>由於序列化深度已超過設定的 {0}，因此產生的 JSON 已截斷。</value>
+  </data>
+  <data name="WebSessionConnectionRecreated" xml:space="preserve">
+    <value>WebSession 屬性在要求之間已變更，強制重新建立工作階段中的所有 HTTP 連線。</value>
+  </data>
+</root>
