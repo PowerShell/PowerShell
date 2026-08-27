@@ -38,7 +38,7 @@
 
 ### Tests
 
-- Fix the scripts used for `Copy-Item -FromSessoin/-ToSession` scenarios and also enable tests  (#27773)
+- Fix the scripts used for `Copy-Item -FromSession/-ToSession` scenarios and also enable tests  (#27773)
 - Fix TimeZone test with duplicate names (#27525) (Thanks @KirtiRamchandani!)
 
 ### Build and Packaging Improvements
