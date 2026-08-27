@@ -16,6 +16,10 @@ Set-StrictMode -Version 3.0
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $script:Options = $null
 
+# The Pester version the test suite is built against. 'Restore-PSPester' saves exactly
+# this version, and 'Start-PSPester' restores it when the build output has a different one.
+$script:PesterVersion = '6.0.0'
+
 $dotnetMetadata = Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json
 $dotnetCLIChannel = $dotnetMetadata.Sdk.Channel
 $dotnetCLIQuality = $dotnetMetadata.Sdk.Quality
@@ -1176,7 +1180,7 @@ function Restore-PSPester
     .SYNOPSIS
         Downloads and saves the Pester module (v6.x) from the PowerShell Gallery.
     .DESCRIPTION
-        Uses Save-Module to install Pester version 6.0.0 into the target directory.
+        Uses Save-Module to install the pinned Pester version into the target directory.
     .PARAMETER Destination
         Directory to save Pester into. Defaults to the Modules folder of the current build output.
     #>
@@ -1184,7 +1188,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion 6.0.0
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion $script:PesterVersion
 }
 
 function Compress-TestContent {
@@ -1772,7 +1776,7 @@ function Start-PSPester {
         Switch-PSNugetConfig -Source Public
     }
 
-    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "5.0" } ))
+    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -eq $script:PesterVersion } ))
     {
         Restore-PSPester
     }
@@ -1900,6 +1904,12 @@ function Start-PSPester {
     # doing a daily build as the log file is too large
     if ( $Quiet ) {
         $command += "; Output = @{ Verbosity = 'None' }"
+    }
+    else {
+        # Pester's default 'Normal' verbosity prints neither the Describe/Context headers
+        # nor a line per passing or skipped test, which is what 'Write-Terse' collapses into
+        # '+' and '!'. 'Detailed' prints them, and gives the same CI output as Pester 4 did.
+        $command += "; Output = @{ Verbosity = 'Detailed' }"
     }
 
     $command += " }; Invoke-Pester -Configuration `$pesterConfig"

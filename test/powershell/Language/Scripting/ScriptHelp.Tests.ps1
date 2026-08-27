@@ -105,13 +105,15 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         }
     }
 
+    # TestHelpError and TestHelpFunc1 are called from the Context bodies, during discovery,
+    # so that the It blocks they contain are registered. The It bodies themselves run later,
+    # in the scope of the Context, where they read $x, $e and $expectedError set by that
+    # Context's BeforeAll. They deliberately take no parameters: a parameter of this function
+    # no longer exists by the time the It body runs, and the value produced by Get-Help is
+    # not available during discovery anyway.
     function TestHelpError {
         [CmdletBinding()]
-        param(
-        $x,
-        [System.Management.Automation.ErrorRecord[]]$e,
-        [string] $expectedError
-        )
+        param()
         It 'Help result should be $null' { $x | Should -BeNullOrEmpty }
         It '$e.Count' { $e.Count | Should -BeGreaterThan 0 }
         It 'FullyQualifiedErrorId' { $e[0].FullyQualifiedErrorId | Should -BeExactly $expectedError }
@@ -119,7 +121,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
 
     function TestHelpFunc1 {
         [CmdletBinding()]
-        param( $x )
+        param()
         It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
         It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "A relatively useless function." }
         It '$x.Description' { $x.Description[0].Text | Should -BeExactly "A description`n`n    with indented text and a blank line." }
@@ -138,14 +140,14 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         BeforeAll {
             $x = Get-Help helpFunc1
         }
-        TestHelpFunc1 $x
+        TestHelpFunc1
     }
 
     Context 'Get-Help dynamicHelpFunc1' {
         BeforeAll {
             $x = Get-Help dynamicHelpFunc1
         }
-        TestHelpFunc1 $x
+        TestHelpFunc1
     }
 
     Context 'get-help helpFunc1 -component blah' {
@@ -153,14 +155,14 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
             $x = Get-Help helpFunc1 -Component blah -ErrorAction SilentlyContinue -ErrorVariable e
             $expectedError = 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
         }
-        TestHelpError $x $e $expectedError
+        TestHelpError
     }
 
     Context 'get-help helpFunc1 -component Something' {
         BeforeAll {
             $x = Get-Help helpFunc1 -Component Something -ErrorAction SilentlyContinue -ErrorVariable e
         }
-        TestHelpFunc1 $x
+        TestHelpFunc1
         It '$e should be empty' { $e.Count | Should -Be 0 }
     }
 
@@ -169,14 +171,14 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
             $x = Get-Help helpFunc1 -Component blah -ErrorAction SilentlyContinue -ErrorVariable e
             $expectedError = 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
         }
-        TestHelpError $x $e $expectedError
+        TestHelpError
     }
 
     Context 'get-help helpFunc1 -role CrazyUser' {
         BeforeAll {
             $x = Get-Help helpFunc1 -Role CrazyUser -ErrorAction SilentlyContinue -ErrorVariable e
         }
-        TestHelpFunc1 $x
+        TestHelpFunc1
         It '$e should be empty' { $e.Count | Should -Be 0 }
     }
 
@@ -185,14 +187,14 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
             $x = Get-Help helpFunc1 -Functionality blah -ErrorAction SilentlyContinue -ErrorVariable e
             $expectedError = 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
         }
-        TestHelpError $x $e $expectedError
+        TestHelpError
     }
 
     Context '$x = get-help helpFunc1 -functionality Useless' {
         BeforeAll {
             $x = Get-Help helpFunc1 -Functionality Useless -ErrorAction SilentlyContinue -ErrorVariable e
         }
-        TestHelpFunc1 $x
+        TestHelpFunc1
         It '$e should be empty' { $e.Count | Should -Be 0 }
     }
 }

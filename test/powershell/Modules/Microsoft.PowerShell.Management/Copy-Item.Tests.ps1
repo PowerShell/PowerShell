@@ -544,16 +544,25 @@ Describe "Validate Copy-Item Remotely" -Tags @('CI', 'RequireAdminOnWindows') {
         {
             param ($path, $destination, $expectedFullyQualifiedErrorId, $fromSession = $false)
 
+            # This function is called during discovery, so it generates It blocks. The bodies
+            # of those It blocks run later, when these parameters no longer exist, so the values
+            # have to be handed over as test case data instead of being read from the closure.
+            $case = @{
+                path = $path
+                destination = $destination
+                expectedFullyQualifiedErrorId = $expectedFullyQualifiedErrorId
+            }
+
             if ($fromSession)
             {
-                It "Copy-Item FromSession -Path '$path' throws $expectedFullyQualifiedErrorId" {
+                It "Copy-Item FromSession -Path '$path' throws $expectedFullyQualifiedErrorId" -TestCases $case {
                     { Copy-Item -Path $path -FromSession $s -Destination $destination -ErrorAction Stop } |
                         Should -Throw -ErrorId $expectedFullyQualifiedErrorId
                 }
             }
             else
             {
-                It "Copy-Item ToSession -Destination '$destination' throws $expectedFullyQualifiedErrorId" {
+                It "Copy-Item ToSession -Destination '$destination' throws $expectedFullyQualifiedErrorId" -TestCases $case {
                     { Copy-Item -Path $path -ToSession $s -Destination $destination -ErrorAction Stop } |
                         Should -Throw -ErrorId $expectedFullyQualifiedErrorId
                 }
