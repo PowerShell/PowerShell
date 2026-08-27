@@ -52,6 +52,7 @@ variables:
   - group: MSIXSigningProfile
   - group: msixTools
   - group: mscodehub-feed-read-general
+  - group: mscodehub-feed-read-akv
 
 resources:
   repositories:
