@@ -51,6 +51,7 @@ variables:
   - group: certificate_logical_to_actual # used within signing task
   - group: MSIXSigningProfile
   - group: msixTools
+  - group: mscodehub-feed-read-general
 
 resources:
   repositories:
