@@ -193,8 +193,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Deserializes PowerShell CliXml into a list of objects.
         /// </summary>
-        /// <param name="source">The CliXml the represents the object to deserialize.</param>
-        /// <returns>An object array represents the serialized content.</returns>
+        /// <param name="source">The CliXml that represents the object to deserialize.</param>
+        /// <returns>An object array that represents the serialized content.</returns>
         public static object[] DeserializeAsList(string source)
         {
             List<object> results = new List<object>();
