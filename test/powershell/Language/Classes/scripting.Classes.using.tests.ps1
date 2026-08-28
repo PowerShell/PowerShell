@@ -284,6 +284,12 @@ New-Object Foo
             $err.Count | Should -Be 1
             $err[0].ErrorId | Should -BeExactly 'InvalidValueForUsingItemName'
         }
+
+        It "report an error when a type alias conflicts with an imported type" {
+            $err = Get-ParseResults "using module Foo;using type Foo = string"
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'TypeAliasConflictsImportedTypeDefinition'
+        }
     }
 
     Context 'short name in case of name collision' {

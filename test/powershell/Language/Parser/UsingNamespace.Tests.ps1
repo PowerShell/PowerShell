@@ -8,7 +8,7 @@ using namespace System.Threading
 using namespace System.Timers
 using namespace System.Diagnostics
 # Test parsing more than one using statement on one line
-using namespace System.Diagnostics; using namespace System.Runtime.CompilerServices
+using namespace System.Buffers; using namespace System.Runtime.CompilerServices
 using namespace System.Collections.Generic
 
 # Flags is System.FlagsAttribute
@@ -127,11 +127,10 @@ Describe "Using Namespace" -Tags "CI" {
     }
 
     ShouldBeParseError "1; using namespace System" UsingMustBeAtStartOfScript 3
-    ShouldBeParseError "using namespace Foo = System" UsingStatementNotSupported 0
     ShouldBeParseError "using namespace ''" InvalidNamespaceValue 16
     ShouldBeParseError "using namespace [System]" InvalidNamespaceValue 16
     ShouldBeParseError "using namespace ',System'" InvalidNamespaceValue 16
     ShouldBeParseError "using namespace ']System'" InvalidNamespaceValue 16
     # TODO: add diagnostic (low pri)
-    # ShouldBeParseError "using namespace System; using namespace System" UsingNamespaceAlreadySpecified 24
+    ShouldBeParseError "using namespace System; using namespace System" DuplicateNamespaceClause 24
 }
