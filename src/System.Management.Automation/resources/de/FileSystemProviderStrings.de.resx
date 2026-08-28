@@ -118,240 +118,240 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvokeItemAction" xml:space="preserve">
-    <value>Invoke Item</value>
+    <value>Element aufrufen</value>
   </data>
   <data name="InvokeItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>Element: {0}</value>
   </data>
   <data name="RemoveItemActionFile" xml:space="preserve">
-    <value>Remove File</value>
+    <value>Datei entfernen</value>
   </data>
   <data name="RemoveItemActionDirectory" xml:space="preserve">
-    <value>Remove Directory</value>
+    <value>Verzeichnis entfernen</value>
   </data>
   <data name="CopyItemActionFile" xml:space="preserve">
-    <value>Copy File</value>
+    <value>Datei kopieren</value>
   </data>
   <data name="CopyItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>Element: {0} Ziel: {1}</value>
   </data>
   <data name="CopyItemActionDirectory" xml:space="preserve">
-    <value>Copy Directory</value>
+    <value>Verzeichnis kopieren</value>
   </data>
   <data name="RenameItemActionFile" xml:space="preserve">
-    <value>Rename File</value>
+    <value>Datei umbenennen</value>
   </data>
   <data name="RenameItemActionDirectory" xml:space="preserve">
-    <value>Rename Directory</value>
+    <value>Verzeichnis umbenennen</value>
   </data>
   <data name="RenameItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>Element: {0} Ziel: {1}</value>
   </data>
   <data name="MoveItemActionFile" xml:space="preserve">
-    <value>Move File</value>
+    <value>Datei verschieben</value>
   </data>
   <data name="MoveItemActionDirectory" xml:space="preserve">
-    <value>Move Directory</value>
+    <value>Verzeichnis verschieben</value>
   </data>
   <data name="MoveItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>Element: {0} Ziel: {1}</value>
   </data>
   <data name="SetPropertyActionFile" xml:space="preserve">
-    <value>Set Property File</value>
+    <value>Eigenschaftendatei festlegen</value>
   </data>
   <data name="SetPropertyActionDirectory" xml:space="preserve">
-    <value>Set Property Directory</value>
+    <value>Eigenschaftenverzeichnis festlegen</value>
   </data>
   <data name="SetPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1} Value: {2}</value>
+    <value>Element: {0} Eigenschaft: {1} Wert: {2}</value>
   </data>
   <data name="ClearPropertyActionFile" xml:space="preserve">
-    <value>Clear Property File</value>
+    <value>Eigenschaftendatei löschen</value>
   </data>
   <data name="ClearPropertyActionDirectory" xml:space="preserve">
-    <value>Clear Property Directory</value>
+    <value>Eigenschaftenverzeichnis löschen</value>
   </data>
   <data name="ClearPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>Element: {0} Eigenschaft: {1}</value>
   </data>
   <data name="NewItemActionFile" xml:space="preserve">
-    <value>Create File</value>
+    <value>Datei erstellen</value>
   </data>
   <data name="NewItemActionDirectory" xml:space="preserve">
-    <value>Create Directory</value>
+    <value>Verzeichnis erstellen</value>
   </data>
   <data name="NewItemActionTemplate" xml:space="preserve">
-    <value>Destination: {0}</value>
+    <value>Ziel: {0}</value>
   </data>
   <data name="ClearContentActionFile" xml:space="preserve">
-    <value>Clear Content</value>
+    <value>Inhalt löschen</value>
   </data>
   <data name="ClearContentesourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>Element: {0}</value>
   </data>
   <data name="ItemNotFound" xml:space="preserve">
-    <value>Could not find item {0}.</value>
+    <value>Das Element „{0}“ wurde nicht gefunden.</value>
   </data>
   <data name="CannotRemoveItem" xml:space="preserve">
-    <value>Cannot remove item {0}: {1}</value>
+    <value>Das Element „{0}“ kann nicht entfernt werden: {1}</value>
   </data>
   <data name="CannotRestoreAttributes" xml:space="preserve">
-    <value>Cannot restore attributes on item {0}: {1}</value>
+    <value>Die Attribute für das Element „{0}“ können nicht wiederhergestellt werden: {1}</value>
   </data>
   <data name="ItemDoesNotExist" xml:space="preserve">
-    <value>An object at the specified path {0} does not exist.</value>
+    <value>Ein Objekt am angegebenen Pfad „{0}“ ist nicht vorhanden.</value>
   </data>
   <data name="DirectoryNotEmpty" xml:space="preserve">
-    <value>Directory {0} cannot be removed because it is not empty.</value>
+    <value>Das Verzeichnis „{0}“ kann nicht entfernt werden, da es nicht leer ist.</value>
   </data>
   <data name="UnknownType" xml:space="preserve">
-    <value>The type is not a known type for the file system. Only "file","directory" or "symboliclink" can be specified.</value>
+    <value>Der Typ ist für das Dateisystem nicht bekannt. Es können nur „file“, „directory“ oder „symboliclink“ angegeben werden.</value>
   </data>
   <data name="PathOutSideBasePath" xml:space="preserve">
-    <value>Cannot process the path because the specified path refers to an item that is outside the basePath.</value>
+    <value>Der Pfad kann nicht verarbeitet werden, da der angegebene Pfad auf ein Element außerhalb von basePath verweist.</value>
   </data>
   <data name="DriveRootError" xml:space="preserve">
-    <value>The specified drive root "{0}" either does not exist, or it is not a folder.</value>
+    <value>Der angegebene Laufwerkstamm „{0}“ ist entweder nicht vorhanden oder es handelt sich nicht um einen Ordner.</value>
   </data>
   <data name="DirectoryExist" xml:space="preserve">
-    <value>An item with the specified name {0} already exists.</value>
+    <value>Es ist bereits ein Element mit dem angegebenen Namen „{0}“ vorhanden.</value>
   </data>
   <data name="DelimiterError" xml:space="preserve">
-    <value>A delimiter cannot be specified when reading the stream one byte at a time.</value>
+    <value>Beim Lesen des Datenstroms Byte für Byte kann kein Trennzeichen angegeben werden.</value>
   </data>
   <data name="CopyError" xml:space="preserve">
-    <value>Cannot overwrite the item {0} with itself.</value>
+    <value>Das Element „{0}“ kann nicht mit sich selbst überschrieben werden.</value>
   </data>
   <data name="RenameError" xml:space="preserve">
-    <value>Cannot rename the specified target, because it represents a path or device name.</value>
+    <value>Das angegebene Ziel kann nicht umbenannt werden, da es einen Pfad- oder Gerätenamen darstellt.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property {0} does not exist or was not found.</value>
+    <value>Die Eigenschaft „{0}“ ist nicht vorhanden oder wurde nicht gefunden.</value>
   </data>
   <data name="PermissionError" xml:space="preserve">
-    <value>You do not have sufficient access rights to perform this operation or the item is hidden, system, or read only.</value>
+    <value>Sie verfügen nicht über ausreichende Zugriffsrechte, um diesen Vorgang auszuführen, oder das Element ist ausgeblendet, systemseitig oder schreibgeschützt.</value>
   </data>
   <data name="AttributesNotSupported" xml:space="preserve">
-    <value>The attribute cannot be set because attributes are not supported. Only the following attributes can be set: Archive, Hidden, Normal, ReadOnly, or System.</value>
+    <value>Das Attribut kann nicht festgelegt werden, da Attribute nicht unterstützt werden. Nur die folgenden Attribute können festgelegt werden: „Archive“, „Hidden“, „Normal“, „ReadOnly“ oder „System“.</value>
   </data>
   <data name="CannotClearProperty" xml:space="preserve">
-    <value>The property cannot be cleared because the property is not supported. Only the Attributes property can be cleared.</value>
+    <value>Die Eigenschaft kann nicht gelöscht werden, da sie nicht unterstützt wird. Nur die Eigenschaft Attributes kann gelöscht werden.</value>
   </data>
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
-    <value>Cannot process path '{0}' because the target represents a reserved device name.</value>
+    <value>Der Pfad „{0}“ kann nicht verarbeitet werden, da das Ziel einen reservierten Gerätenamen darstellt.</value>
   </data>
   <data name="EncodingNotUsed" xml:space="preserve">
-    <value>Encoding not used when '-AsByteStream' specified.</value>
+    <value>Die Codierung wird nicht verwendet, wenn „-AsByteStream“ angegeben ist.</value>
   </data>
   <data name="ByteEncodingError" xml:space="preserve">
-    <value>Cannot proceed with byte encoding. When using byte encoding the content must be of type byte.</value>
+    <value>Die Bytecodierung kann nicht fortgesetzt werden. Bei Verwendung der Bytecodierung muss der Inhalt vom Typ „byte“ sein.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>Cannot process the file because the file {0} was not found.</value>
+    <value>Die Datei kann nicht verarbeitet werden, da die Datei „{0}“ nicht gefunden wurde.</value>
   </data>
   <data name="DirectoryDisplayGrouping" xml:space="preserve">
-    <value>    Directory: </value>
+    <value>    Verzeichnis: </value>
   </data>
   <data name="ReadBackward_Encoding_NotSupport" xml:space="preserve">
-    <value>Cannot detect the encoding of the file. The specified encoding {0} is not supported when the content is read in reverse.</value>
+    <value>Die Codierung der Datei kann nicht erkannt werden. Die angegebene Codierung „{0}“ wird nicht unterstützt, wenn der Inhalt in umgekehrter Reihenfolge gelesen wird.</value>
   </data>
   <data name="AlternateDataStreamNotFound" xml:space="preserve">
-    <value>Could not open the alternate data stream '{0}' of the file '{1}'.</value>
+    <value>Der alternative Datenstrom „{0}“ der Datei „{1}“ konnte nicht geöffnet werden.</value>
   </data>
   <data name="StreamAction" xml:space="preserve">
-    <value>Stream '{0}' of file '{1}'.</value>
+    <value>Stream „{0}“ der Datei „{1}“.</value>
   </data>
   <data name="RawAndWaitCannotCoexist" xml:space="preserve">
-    <value>The Raw and Wait parameters cannot be specified in the same command.</value>
+    <value>Die Parameter „Raw“ und „Wait“ können nicht im selben Befehl angegeben werden.</value>
   </data>
   <data name="InvalidDriveName" xml:space="preserve">
-    <value>To use the Persist switch parameter, the drive name must be supported by the operating system (for example, drive letters A-Z).</value>
+    <value>Damit der Parameter „Persist“ verwendet werden kann, muss der Laufwerksname vom Betriebssystem unterstützt werden (z. B. Laufwerkbuchstaben A-Z).</value>
   </data>
   <data name="PersistNotSupported" xml:space="preserve">
-    <value>When you use the Persist parameter, the root must be a file system location on a remote computer.</value>
+    <value>Wenn Sie den Parameter „Persist“ verwenden, muss der Stamm ein Dateisystemort auf einem Remotcomputer sein.</value>
   </data>
   <data name="NoFirstLastWaitForRaw" xml:space="preserve">
-    <value>The '{0}' and '{1}' parameters cannot be specified in the same command.</value>
+    <value>Die Parameter „{0}“ und „{1}“ können nicht im selben Befehl angegeben werden.</value>
   </data>
   <data name="ItemNotDirectory" xml:space="preserve">
-    <value>A directory is required for the operation. The item '{0}' is not a directory.</value>
+    <value>Für den Vorgang ist ein Verzeichnis erforderlich. Das Element „{0}“ ist kein Verzeichnis.</value>
   </data>
   <data name="NewItemActionJunction" xml:space="preserve">
-    <value>Create Junction</value>
+    <value>Junction erstellen</value>
   </data>
   <data name="NewItemActionSymbolicLink" xml:space="preserve">
-    <value>Create Symbolic Link</value>
+    <value>Symbolische Verknüpfung erstellen</value>
   </data>
   <data name="ElevationRequired" xml:space="preserve">
-    <value>Administrator privilege required for this operation.</value>
+    <value>Für diesen Vorgang sind Administratorrechte erforderlich.</value>
   </data>
   <data name="NewItemActionHardLink" xml:space="preserve">
-    <value>Create Hard Link</value>
+    <value>Feste Verknüpfung erstellen</value>
   </data>
   <data name="ItemNotFile" xml:space="preserve">
-    <value>A file is required for the operation. The item '{0}' is not a file.</value>
+    <value>Für den Vorgang ist eine Datei erforderlich. Das Element „{0}“ ist keine Datei.</value>
   </data>
   <data name="HardLinkNotSupported" xml:space="preserve">
-    <value>Hard links are not supported for the specified path.</value>
+    <value>Feste Verknüpfungen werden für den angegebenen Pfad nicht unterstützt.</value>
   </data>
   <data name="SymbolicLinkNotSupported" xml:space="preserve">
-    <value>Symbolic links are not supported for the specified path.</value>
+    <value>Symbolische Verknüpfungen werden für den angegebenen Pfad nicht unterstützt.</value>
   </data>
   <data name="CopyItemRemotelyProgressActivity" xml:space="preserve">
     <value>'{0}' wird in '{1}' kopiert.</value>
   </data>
   <data name="CopyItemRemoteDestinationIsFile" xml:space="preserve">
-    <value>Destination path {0} is a file that already exists on the target destination.</value>
+    <value>Der Zielpfad „{0}“ ist eine Datei, die am Zielort bereits vorhanden ist.</value>
   </data>
   <data name="CopyItemRemotelyFailed" xml:space="preserve">
-    <value>Failed to copy file {0} to remote target destination.</value>
+    <value>Fehler beim Kopieren der Datei „{0}“ an das Remotziel.</value>
   </data>
   <data name="CopyItemRemotelyStatusDescription" xml:space="preserve">
     <value>Von {0} bis {1}</value>
   </data>
   <data name="CopyItemRemotelyDestinationIsFile" xml:space="preserve">
-    <value>Cannot copy a directory '{0}' to file '{0}'</value>
+    <value>Ein Verzeichnis „{0}“ kann nicht in die Datei „{0}“ kopiert werden.</value>
   </data>
   <data name="CopyItemRemotelyFailedToGetDirectoryChildItems" xml:space="preserve">
-    <value>Failed to get directory {0} child items.</value>
+    <value>Fehler beim Abrufen der untergeordneten Elemente von Verzeichnis „{0}“.</value>
   </data>
   <data name="CopyItemRemotelyFailedToReadFile" xml:space="preserve">
-    <value>Failed to read remote file '{0}'.</value>
+    <value>Fehler beim Lesen der Remotedatei „{0}“.</value>
   </data>
   <data name="CopyItemRemotelyFailedToValidateIfDestinationIsFile" xml:space="preserve">
-    <value>Cannot validate if remote destination {0} is a file.</value>
+    <value>Es kann nicht überprüft werden, ob das Remoteziel „{0}“ eine Datei ist.</value>
   </data>
   <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
-    <value>Failed to create directory '{0}' on remote destination.</value>
+    <value>Fehler beim Erstellen des Verzeichnisses „{0}“ am entfernten Ziel.</value>
   </data>
   <data name="DriveMaxSizeError" xml:space="preserve">
-    <value>Maximum size for drive has been exceeded: {0}.</value>
+    <value>Die maximale Laufwerksgröße wurde überschritten: {0}.</value>
   </data>
   <data name="SymlinkItemExists" xml:space="preserve">
-    <value>Cannot create link because the path already exists: {0}.</value>
+    <value>Die Verknüpfung kann nicht erstellt werden, da der Pfad bereits vorhanden ist: {0}.</value>
   </data>
   <data name="AlreadyListedDirectory" xml:space="preserve">
-    <value>Skip already-visited directory {0}.</value>
+    <value>Bereits besuchtes Verzeichnis „{0}“ überspringen.</value>
   </data>
   <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
-    <value>Destination path cannot be a subdirectory of the source or the source itself: {0}.</value>
+    <value>Der Zielpfad darf kein Unterverzeichnis der Quelle oder die Quelle selbst sein: {0}.</value>
   </data>
   <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
-    <value>The target and path cannot be the same.</value>
+    <value>Ziel und Pfad dürfen nicht identisch sein.</value>
   </data>
   <data name="CopyingLocalFileActivity" xml:space="preserve">
-    <value>Copied {0} of {1} files</value>
+    <value>{0} von {1} Dateien kopiert</value>
   </data>
   <data name="CopyingLocalBytesStatus" xml:space="preserve">
-    <value>{0} of {1} ({2:0.0} MB/s)</value>
+    <value>{0} von {1} ({2:0.0} MB/s)</value>
   </data>
   <data name="RemovingLocalFileActivity" xml:space="preserve">
-    <value>Removed {0} of {1} files</value>
+    <value>{0} von {1} Dateien entfernt</value>
   </data>
   <data name="RemovingLocalBytesStatus" xml:space="preserve">
-    <value>{0} of {1} ({2:0.0} MB/s)</value>
+    <value>{0} von {1} ({2:0.0} MB/s)</value>
   </data>
   <data name="JunctionAbsolutePath" xml:space="preserve">
-    <value>Creating a junction requires an absolute path for the target.</value>
+    <value>Zum Erstellen einer Verknüpfung ist ein absoluter Pfad für das Ziel erforderlich.</value>
   </data>
 </root>

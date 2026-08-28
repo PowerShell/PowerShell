@@ -118,106 +118,106 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WriteDebugLineStoppedError" xml:space="preserve">
-    <value>WriteDebug stopped because the value of the DebugPreference variable was 'Stop'.</value>
+    <value>DebugPreference 変数の値が 'Stop' であったため、WriteDebug が停止しました。</value>
   </data>
   <data name="UnsupportedPreferenceError" xml:space="preserve">
-    <value>The value {0} is not a supported ActionPreference value.</value>
+    <value>{0} 値はサポートされている ActionPreference 値ではありません。</value>
   </data>
   <data name="PromptEmptyDescriptionsError" xml:space="preserve">
-    <value>The "{0}" parameter must contain at least one value.</value>
+    <value>"{0}" パラメーターには、少なくとも 1 つの値を含む必要があります。</value>
   </data>
   <data name="ShouldContinueYesLabel" xml:space="preserve">
-    <value>&amp;Yes</value>
+    <value>はい(&amp;Y)</value>
   </data>
   <data name="ShouldContinueYesHelp" xml:space="preserve">
-    <value>Continue.</value>
+    <value>続行します。</value>
   </data>
   <data name="ShouldContinueYesToAllLabel" xml:space="preserve">
-    <value>Yes to &amp;All</value>
+    <value>すべてはい(&amp;A)</value>
   </data>
   <data name="ShouldContinueYesToAllHelp" xml:space="preserve">
-    <value>Continue, and do not ask again whether to continue in this session.</value>
+    <value>続行し、このセッションを続行するかどうかを再度確認しないでください。</value>
   </data>
   <data name="ShouldContinueNoLabel" xml:space="preserve">
-    <value>&amp;No</value>
+    <value>いいえ(&amp;N)</value>
   </data>
   <data name="ShouldContinueNoHelp" xml:space="preserve">
-    <value>End the operation with an error.</value>
+    <value>操作をエラーで終了します。</value>
   </data>
   <data name="ShouldContinueNoToAllLabel" xml:space="preserve">
-    <value>No to A&amp;ll</value>
+    <value>すべていいえ(&amp;L)</value>
   </data>
   <data name="ShouldContinueNoToAllHelp" xml:space="preserve">
-    <value>End the operation with an error. Do not request to resume operation for this session.</value>
+    <value>操作をエラーで終了します。このセッションの操作の再開を要求しないでください。</value>
   </data>
   <data name="ShouldContinueSuspendLabel" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>一時停止(&amp;S)</value>
   </data>
   <data name="ShouldContinueSuspendHelp" xml:space="preserve">
-    <value>Pause the current operation and enter a command prompt. Type "exit" to resume the paused operation.</value>
+    <value>現在の操作を一時停止し、コマンド プロンプトを入力します。一時停止した操作を再開するには、「exit」と入力します。</value>
   </data>
   <data name="ShouldContinuePromptMessage" xml:space="preserve">
-    <value>Continue with this operation?</value>
+    <value>この操作を続行しますか?</value>
   </data>
   <data name="DefaultChoice" xml:space="preserve">
-    <value>(default is "{0}")</value>
+    <value>(既定値は "{0}" です)</value>
   </data>
   <data name="DefaultChoicesForMultipleChoices" xml:space="preserve">
-    <value>(default choices are {0})</value>
+    <value>(既定の選択肢は {0} です)</value>
   </data>
   <data name="ChoiceMessage" xml:space="preserve">
-    <value>Choice[{0}]: </value>
+    <value>選択肢[{0}]:</value>
   </data>
   <data name="EmptyChoicesError" xml:space="preserve">
-    <value>"{0}" should have at least one element.</value>
+    <value>"{0}" には少なくとも 1 つの要素が必要です。</value>
   </data>
   <data name="InvalidDefaultChoiceForMultipleSelection" xml:space="preserve">
-    <value>"{0}" must be a valid index into "{1}". "{2}" is not a valid index.</value>
+    <value>"{0}" は "{1}" の有効なインデックスである必要があります。"{2}" は有効なインデックスではありません。</value>
   </data>
   <data name="InvalidChoiceHotKeyError" xml:space="preserve">
-    <value>Cannot process the hot key because a question mark ("?") cannot be used as a hot key.</value>
+    <value>疑問符 ("?") はホット キーとして使用できないため、ホット キーを処理できません。</value>
   </data>
   <data name="VerboseFormatString" xml:space="preserve">
-    <value>VERBOSE: {0}</value>
+    <value>詳細: {0}</value>
   </data>
   <data name="WarningFormatString" xml:space="preserve">
-    <value>WARNING: {0}</value>
+    <value>警告: {0}</value>
   </data>
   <data name="DebugFormatString" xml:space="preserve">
-    <value>DEBUG: {0}</value>
+    <value>デバッグ: {0}</value>
   </data>
   <data name="HostNotTranscribing" xml:space="preserve">
-    <value>The host is not currently transcribing.</value>
+    <value>ホストは現在文字起こししていません。</value>
   </data>
   <data name="CommandStartTime" xml:space="preserve">
-    <value>Command start time: {0}</value>
+    <value>コマンドの開始時刻: {0}</value>
   </data>
   <data name="TranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
-Username: {1}
-RunAs User: {2}
-Configuration Name: {3}
-Machine: {4} ({5})
-Host Application: {6}
-Process ID: {7}
+PowerShell トランスクリプトの開始
+開始時刻: {0:yyyyMMddHHmmss}
+ユーザー名: {1}
+RunAs ユーザー: {2}
+構成名: {3}
+マシン: {4} ({5})
+ホスト アプリケーション: {6}
+プロセス ID: {7}
 {8}
 **********************</value>
   </data>
   <data name="MinimalTranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
+PowerShell トランスクリプトの開始
+開始時刻: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
     <value>**********************
-PowerShell transcript end
-End time: {0:yyyyMMddHHmmss}
+PowerShell トランスクリプトの終了
+終了時刻: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="InvalidTranscriptFilePath" xml:space="preserve">
-    <value>File path {0} resolves to a directory.</value>
+    <value>ファイル パス {0} はディレクトリに解決されます。</value>
   </data>
 </root>

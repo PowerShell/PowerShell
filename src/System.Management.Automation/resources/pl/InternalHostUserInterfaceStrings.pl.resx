@@ -118,106 +118,106 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WriteDebugLineStoppedError" xml:space="preserve">
-    <value>WriteDebug stopped because the value of the DebugPreference variable was 'Stop'.</value>
+    <value>Funkcja WriteDebug została zatrzymana, ponieważ wartość zmiennej DebugPreference to „Stop”.</value>
   </data>
   <data name="UnsupportedPreferenceError" xml:space="preserve">
-    <value>The value {0} is not a supported ActionPreference value.</value>
+    <value>Wartość {0} nie jest obsługiwaną wartością ActionPreference.</value>
   </data>
   <data name="PromptEmptyDescriptionsError" xml:space="preserve">
-    <value>The "{0}" parameter must contain at least one value.</value>
+    <value>Parametr „{0}” musi zawierać co najmniej jedną wartość.</value>
   </data>
   <data name="ShouldContinueYesLabel" xml:space="preserve">
-    <value>&amp;Yes</value>
+    <value>&amp;Tak</value>
   </data>
   <data name="ShouldContinueYesHelp" xml:space="preserve">
-    <value>Continue.</value>
+    <value>Kontynuuj.</value>
   </data>
   <data name="ShouldContinueYesToAllLabel" xml:space="preserve">
-    <value>Yes to &amp;All</value>
+    <value>Tak w przypadku &amp;Wszystko</value>
   </data>
   <data name="ShouldContinueYesToAllHelp" xml:space="preserve">
-    <value>Continue, and do not ask again whether to continue in this session.</value>
+    <value>Kontynuuj i nie pytaj ponownie, czy kontynuować w tej sesji.</value>
   </data>
   <data name="ShouldContinueNoLabel" xml:space="preserve">
-    <value>&amp;No</value>
+    <value>&amp;Nie</value>
   </data>
   <data name="ShouldContinueNoHelp" xml:space="preserve">
-    <value>End the operation with an error.</value>
+    <value>Zakończ operację z błędem.</value>
   </data>
   <data name="ShouldContinueNoToAllLabel" xml:space="preserve">
-    <value>No to A&amp;ll</value>
+    <value>Nie w przypadku W&amp;szystko</value>
   </data>
   <data name="ShouldContinueNoToAllHelp" xml:space="preserve">
-    <value>End the operation with an error. Do not request to resume operation for this session.</value>
+    <value>Zakończ operację z błędem. Nie żądaj wznowienia operacji dla tej sesji.</value>
   </data>
   <data name="ShouldContinueSuspendLabel" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>&amp;Wstrzymaj</value>
   </data>
   <data name="ShouldContinueSuspendHelp" xml:space="preserve">
-    <value>Pause the current operation and enter a command prompt. Type "exit" to resume the paused operation.</value>
+    <value>Wstrzymaj bieżącą operację i wprowadź wiersz polecenia. Wpisz „exit”, aby wznowić wstrzymane działanie.</value>
   </data>
   <data name="ShouldContinuePromptMessage" xml:space="preserve">
-    <value>Continue with this operation?</value>
+    <value>Kontynuować tę operację?</value>
   </data>
   <data name="DefaultChoice" xml:space="preserve">
-    <value>(default is "{0}")</value>
+    <value>(wartość domyślna to „{0}”)</value>
   </data>
   <data name="DefaultChoicesForMultipleChoices" xml:space="preserve">
-    <value>(default choices are {0})</value>
+    <value>(domyślne opcje to {0})</value>
   </data>
   <data name="ChoiceMessage" xml:space="preserve">
-    <value>Choice[{0}]: </value>
+    <value>Wybór[{0}]: </value>
   </data>
   <data name="EmptyChoicesError" xml:space="preserve">
-    <value>"{0}" should have at least one element.</value>
+    <value>Element „{0}” powinien mieć co najmniej jeden element.</value>
   </data>
   <data name="InvalidDefaultChoiceForMultipleSelection" xml:space="preserve">
-    <value>"{0}" must be a valid index into "{1}". "{2}" is not a valid index.</value>
+    <value>„{0}” musi być prawidłowym indeksem w „{1}”. „{2}” nie jest prawidłowym indeksem.</value>
   </data>
   <data name="InvalidChoiceHotKeyError" xml:space="preserve">
-    <value>Cannot process the hot key because a question mark ("?") cannot be used as a hot key.</value>
+    <value>Nie można przetworzyć klawisza skrótu, ponieważ znak zapytania ("?") nie może być użyty jako klawisz skrótu.</value>
   </data>
   <data name="VerboseFormatString" xml:space="preserve">
-    <value>VERBOSE: {0}</value>
+    <value>PEŁNE INFORMACJE: {0}</value>
   </data>
   <data name="WarningFormatString" xml:space="preserve">
-    <value>WARNING: {0}</value>
+    <value>OSTRZEŻENIE: {0}</value>
   </data>
   <data name="DebugFormatString" xml:space="preserve">
-    <value>DEBUG: {0}</value>
+    <value>DEBUGOWANIE: {0}</value>
   </data>
   <data name="HostNotTranscribing" xml:space="preserve">
-    <value>The host is not currently transcribing.</value>
+    <value>Host obecnie nie prowadzi transkrypcji.</value>
   </data>
   <data name="CommandStartTime" xml:space="preserve">
-    <value>Command start time: {0}</value>
+    <value>Godzina rozpoczęcia polecenia: {0}</value>
   </data>
   <data name="TranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
-Username: {1}
-RunAs User: {2}
-Configuration Name: {3}
-Machine: {4} ({5})
-Host Application: {6}
-Process ID: {7}
+Początek transkrypcji programu PowerShell
+Czas rozpoczęcia: {0:yyyyMMddHHmmss}
+Nazwa użytkownika: {1}
+Użytkownik RunAs: {2}
+Nazwa konfiguracji: {3}
+Maszyna: {4} ({5})
+Aplikacja hosta: {6}
+Identyfikator procesu: {7}
 {8}
 **********************</value>
   </data>
   <data name="MinimalTranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
+Początek transkrypcji programu PowerShell
+Czas rozpoczęcia: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
     <value>**********************
-PowerShell transcript end
-End time: {0:yyyyMMddHHmmss}
+Zakończenie transkrypcji programu PowerShell
+Godzina zakończenia: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="InvalidTranscriptFilePath" xml:space="preserve">
-    <value>File path {0} resolves to a directory.</value>
+    <value>Ścieżka pliku {0} jest rozpoznawana jako katalog.</value>
   </data>
 </root>
