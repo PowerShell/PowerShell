@@ -1664,6 +1664,7 @@ namespace System.Management.Automation.Runspaces
             ss.DefaultCommandVisibility = this.DefaultCommandVisibility;
             ss.AuthorizationManager = this.AuthorizationManager;
             ss.LanguageMode = this.LanguageMode;
+            ss.PSModulePath = this.PSModulePath;
             ss.TranscriptDirectory = this.TranscriptDirectory;
             ss.UserDriveEnabled = this.UserDriveEnabled;
             ss.UserDriveUserName = this.UserDriveUserName;
@@ -1747,6 +1748,12 @@ namespace System.Management.Automation.Runspaces
         /// Specifies the language mode to be used for this session state instance.
         /// </summary>
         public PSLanguageMode LanguageMode { get; set; } = PSLanguageMode.NoLanguage;
+
+        /// <summary>
+        /// Specifies the module search path to use for this session state instance.
+        /// If unset, PowerShell uses the existing environment and configuration-based behavior.
+        /// </summary>
+        public string PSModulePath { get; set; } = null;
 
         /// <summary>
         /// Specifies the directory to be used for collection session transcripts.
