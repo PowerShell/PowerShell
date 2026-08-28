@@ -1919,12 +1919,9 @@ function Start-PSPester {
     $summaryFile = Get-PSPesterSummaryPath -TestResultsFile $OutputFile
     Remove-Item $summaryFile -Force -ErrorAction SilentlyContinue
 
-    $command += " }; Invoke-Pester -Configuration `$pesterConfig"
-    $command += "$projection | Export-Clixml -Path '$summaryFile' -Force"
-    if ($Unelevate)
-    {
-        $command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
-    }
+    $command += " }; "
+    $command += Get-PSPesterRunCommand -Projection $projection -SummaryFile $summaryFile `
+        -BufferPath $(if ($Unelevate) { $outputBufferFilePath } else { $null })
 
     Write-Verbose $command -Verbose
 
@@ -2285,6 +2282,48 @@ function Get-PSPesterSummaryProjection
     }
 }
 '@
+}
+
+function Get-PSPesterRunCommand
+{
+    <#
+    .SYNOPSIS
+        Builds the Invoke-Pester call that 'Start-PSPester' runs in the child process.
+    .DESCRIPTION
+        Returned as text because it is spliced into a command string that a separate pwsh
+        process parses.
+
+        When a buffer path is given, for the unelevated run, the pipeline is wrapped in '& { }'
+        before the '*>' redirection. A redirection written after a pipeline binds to its last
+        command only, so without the wrapper everything Pester prints escapes to the detached
+        process's stdout, where nothing reads it, and the buffer file that 'Start-PSPester' tails
+        ends up holding only the end marker.
+    .PARAMETER Projection
+        The pipeline fragment from 'Get-PSPesterSummaryProjection'.
+    .PARAMETER SummaryFile
+        Where the child writes the run summary.
+    .PARAMETER BufferPath
+        For the unelevated run, the file the child redirects all of its output into. Omit for a
+        normal run, where the output is streamed back through the pipe instead.
+    #>
+    param(
+        [Parameter(Mandatory)]
+        [string] $Projection,
+
+        [Parameter(Mandatory)]
+        [string] $SummaryFile,
+
+        [string] $BufferPath
+    )
+
+    $pipeline = "Invoke-Pester -Configuration `$pesterConfig$Projection | Export-Clixml -Path '$SummaryFile' -Force"
+
+    if ([string]::IsNullOrEmpty($BufferPath))
+    {
+        return $pipeline
+    }
+
+    return "& { $pipeline } *> $BufferPath; '__UNELEVATED_TESTS_THE_END__' >> $BufferPath"
 }
 
 function Get-PSPesterSummaryPath

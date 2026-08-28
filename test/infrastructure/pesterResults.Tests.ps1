@@ -233,6 +233,45 @@ Invoke-Pester -Configuration `$config $(Get-PSPesterSummaryProjection) | Export-
         }
     }
 
+    Context "The unelevated run keeps its console output" {
+
+        # Start-PSPester runs the unelevated child detached and tails a buffer file for its
+        # output. A redirection written after a pipeline binds to its last command only, so the
+        # pipeline has to be wrapped before '*>' or everything Pester prints is lost and CI shows
+        # a silent 16 minute gap. That happened, and nothing failed, hence this test.
+        It "wraps the pipeline so the redirection captures all of it" {
+            $command = Get-PSPesterRunCommand -Projection '| ForEach-Object { $_ }' `
+                -SummaryFile 'S.clixml' -BufferPath 'B.txt'
+
+            $command | Should -Match '^&\s*\{.*\}\s*\*>' -Because 'the redirection must apply to the whole pipeline'
+            $command | Should -Match '__UNELEVATED_TESTS_THE_END__'
+        }
+
+        It "does not redirect when there is no buffer, so the output streams back through the pipe" {
+            $command = Get-PSPesterRunCommand -Projection '| ForEach-Object { $_ }' -SummaryFile 'S.clixml'
+
+            $command | Should -Not -Match '\*>'
+            $command | Should -Not -Match '__UNELEVATED_TESTS_THE_END__'
+        }
+
+        It "actually captures host output and still writes the summary" {
+            $buffer = Join-Path $TestDrive 'buffer.txt'
+            $summary = Join-Path $TestDrive 'redirect-summary.clixml'
+
+            # Stands in for Invoke-Pester: writes to the host and emits one object.
+            $fake = '& { Write-Host "PESTER-CONSOLE-OUTPUT"; [pscustomobject]@{ Result = "Passed" } }'
+            $command = (Get-PSPesterRunCommand -Projection '| ForEach-Object { $_ }' `
+                -SummaryFile $summary -BufferPath $buffer) -replace
+                'Invoke-Pester -Configuration \$pesterConfig', $fake
+
+            & (Get-Process -Id $PID).Path -NoProfile -Command $command *> $null
+
+            (Get-Content $buffer -Raw) | Should -Match 'PESTER-CONSOLE-OUTPUT' -Because 'this is the whole point of the buffer file'
+            (Get-Content $buffer -Raw) | Should -Match '__UNELEVATED_TESTS_THE_END__'
+            (Import-Clixml $summary).Result | Should -BeExactly 'Passed'
+        }
+    }
+
     Context "Get-PSPesterSummaryPath and Import-PSPesterSummary" {
 
         It "puts the summary next to the result file" {
