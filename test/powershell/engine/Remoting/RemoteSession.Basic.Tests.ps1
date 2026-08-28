@@ -83,6 +83,8 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
         [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
         [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
         [string] $transScriptFile = "$RoleCapDirectory\*.txt"
+        # Declared before the try so that the finally can always read it, even under StrictMode.
+        $ps = $null
         try
         {
             New-PSSessionConfigurationFile -Path $PSSessionConfigFile -TranscriptDirectory $RoleCapDirectory -SessionType RestrictedRemoteServer
@@ -90,7 +92,8 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
             $scriptBlock = {Enter-RemoteSession -ComputerName Localhost -ConfigurationName JEA; Exit-PSSession}
             # Invoke the script block in a different PowerShell instance so that when TestDrive tries to delete $RoleCapDirectory,
             # the transcription has finished and the files are not locked.
-            [powershell]::Create().AddScript($scriptBlock).Invoke()
+            $ps = [powershell]::Create()
+            $null = $ps.AddScript($scriptBlock).Invoke()
             $headerFile = Get-ChildItem $transScriptFile | Sort-Object LastWriteTime | Select-Object -Last 1
             $header = Get-Content $headerFile | Out-String
             $header | Should -Match "Configuration Name: JEA"
@@ -98,6 +101,17 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
         finally
         {
             Unregister-PSSessionConfiguration -Name JEA -Force -ErrorAction SilentlyContinue
+
+            # The runspace keeps the transcript file open, so dispose it before removing the
+            # directory. Without both of these, Pester's TestDrive cleanup fails at the end of
+            # the file with "The process cannot access the file ... because it is being used by
+            # another process", which takes the whole container down. The 'JEA session Get-Help
+            # test' below already removes its own directory for the same reason.
+            if ($null -ne $ps)
+            {
+                $ps.Dispose()
+            }
+            Remove-Item $RoleCapDirectory -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
 }
