@@ -1877,8 +1877,8 @@ function Start-PSPester {
         }
     }
 
-    # PassThru is always on: the run summary is written to disk in every mode, because the
-    # NUnit file cannot express a failed discovery or a failed AfterAll (see $summaryFile below).
+    # PassThru is always on: the run summary is written to disk in every mode, because the NUnit
+    # file cannot express a file that failed outside a test (see $summaryFile below).
     $runProps = "Path = @('$($Path -join "','")'); "
     $runProps += 'PassThru = $true; '
     # Pester 6 fails discovery on an empty/`$null -ForEach or -TestCases by default.
@@ -2233,10 +2233,12 @@ function Get-PSPesterSummaryProjection
         "Serialized XML is nested too deeply". So everything below is flattened to strings and
         simple objects.
 
-        Result is what decides pass or fail. Counting failed tests is not enough: a file whose
-        Discovery phase throws reports FailedCount 0, and so does a failing AfterAll. Result
-        covers all three, and stays 'Passed' for runs that are only inconclusive, skipped,
-        filtered to nothing, or empty.
+        Result is what decides pass or fail. Counting failed tests is not enough: a file that
+        fails outside a test reports FailedCount 0. That covers a Discovery phase that throws,
+        and also a teardown that throws, for example when TestDrive cannot be removed because
+        something still holds a file open. A failing AfterAll reports FailedCount 0 as well.
+        Result covers all of them, and stays 'Passed' for runs that are only inconclusive,
+        skipped, filtered to nothing, or empty.
 
         TestResult collects all three error sources, because they do not overlap. In particular a
         test that failed because its BeforeAll threw carries no ErrorRecord of its own; the
@@ -2695,7 +2697,7 @@ function Assert-PSPesterRunPassed
     $failedContainers = & $read 'FailedContainersCount' 0
     if ($failedTests -gt 0) { $counts += "$failedTests failed tests" }
     if ($failedBlocks -gt 0) { $counts += "$failedBlocks failed setup/teardown blocks" }
-    if ($failedContainers -gt 0) { $counts += "$failedContainers files that failed discovery" }
+    if ($failedContainers -gt 0) { $counts += "$failedContainers files that failed outside a test, during discovery or teardown" }
     $detail = if ($counts) { $counts -join ', ' } else { 'no failure was attributed to a test, block or file' }
 
     throw "$reason for ${TestArea}: $detail"

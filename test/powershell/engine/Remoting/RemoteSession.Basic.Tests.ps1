@@ -80,20 +80,23 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
     }
 
     It "Configuration name should be in the transcript header" {
-        [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
+        # Deliberately not under TestDrive. The transcript is written by the JEA session's own
+        # host process, which outlives Exit-PSSession by a moment and keeps the file open. Pester
+        # removes TestDrive as soon as this block ends and fails the whole container on the lock
+        # with "The process cannot access the file ... because it is being used by another
+        # process". Nothing this test can do makes that race go away, so the file is kept
+        # somewhere Pester will not try to delete.
+        [string] $RoleCapDirectory = (New-Item -Path (Join-Path ([System.IO.Path]::GetTempPath()) "JEATranscript_$([System.IO.Path]::GetRandomFileName())") -ItemType Directory -Force).FullName
         [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
         [string] $transScriptFile = "$RoleCapDirectory\*.txt"
-        # Declared before the try so that the finally can always read it, even under StrictMode.
-        $ps = $null
         try
         {
             New-PSSessionConfigurationFile -Path $PSSessionConfigFile -TranscriptDirectory $RoleCapDirectory -SessionType RestrictedRemoteServer
             Register-PSSessionConfiguration -Name JEA -Path $PSSessionConfigFile -Force -ErrorAction SilentlyContinue
             $scriptBlock = {Enter-RemoteSession -ComputerName Localhost -ConfigurationName JEA; Exit-PSSession}
-            # Invoke the script block in a different PowerShell instance so that when TestDrive tries to delete $RoleCapDirectory,
-            # the transcription has finished and the files are not locked.
-            $ps = [powershell]::Create()
-            $null = $ps.AddScript($scriptBlock).Invoke()
+            # Invoke the script block in a different PowerShell instance so that the transcription
+            # has finished by the time the header is read.
+            [powershell]::Create().AddScript($scriptBlock).Invoke()
             $headerFile = Get-ChildItem $transScriptFile | Sort-Object LastWriteTime | Select-Object -Last 1
             $header = Get-Content $headerFile | Out-String
             $header | Should -Match "Configuration Name: JEA"
@@ -102,15 +105,8 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
         {
             Unregister-PSSessionConfiguration -Name JEA -Force -ErrorAction SilentlyContinue
 
-            # The runspace keeps the transcript file open, so dispose it before removing the
-            # directory. Without both of these, Pester's TestDrive cleanup fails at the end of
-            # the file with "The process cannot access the file ... because it is being used by
-            # another process", which takes the whole container down. The 'JEA session Get-Help
-            # test' below already removes its own directory for the same reason.
-            if ($null -ne $ps)
-            {
-                $ps.Dispose()
-            }
+            # Best effort: the host process may still hold the transcript. Failing to clean up a
+            # temp directory must not fail the test, and it no longer breaks TestDrive either.
             Remove-Item $RoleCapDirectory -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
