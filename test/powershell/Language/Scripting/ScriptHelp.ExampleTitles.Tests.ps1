@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 $ProgressPreference = "SilentlyContinue"
 
 Describe 'get-help comment-based help example titles' -Tags "CI" {

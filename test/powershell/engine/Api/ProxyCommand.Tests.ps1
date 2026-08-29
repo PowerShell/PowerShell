@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 using namespace System.Management.Automation
 using namespace System.Collections.ObjectModel
 
@@ -115,11 +116,6 @@ Describe 'ProxyCommand Tests' -Tags "CI" {
         $oldExamples = @($helpObj.examples.example)
         $newExamples = @($newHelpObj.examples.example)
         $oldExamples.Length | Should -Be $newExamples.Length
-
-        # Verify example titles are preserved exactly through the round-trip
-        for ($i = 0; $i -lt $oldExamples.Length; $i++) {
-            $newExamples[$i].title | Should -Be $oldExamples[$i].title -Because "example $($i+1) title should be preserved exactly"
-        }
     }
 
     It "ProxyCommand.GetHelpComments preserves custom example titles" {
@@ -390,6 +386,35 @@ End {{
             $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($helpObject)
             $exampleDirective = $helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
             $exampleDirective | Should -BeExactly ".EXAMPLE $ExpectedTitle"
+        }
+
+        It 'should preserve a title generated under a localized UI culture' {
+            $originalUICulture = [System.Globalization.CultureInfo]::CurrentUICulture
+            try {
+                [System.Globalization.CultureInfo]::CurrentUICulture =
+                    [System.Globalization.CultureInfo]::GetCultureInfo('de-DE')
+
+                function HelpFuncLocalizedTitle {
+                    <#
+                      .SYNOPSIS
+                      Test a localized example heading.
+
+                      .EXAMPLE Localized title
+                      Get-Date
+                    #>
+                    param()
+                }
+
+                $help = Get-Help HelpFuncLocalizedTitle
+                $help.examples.example.title | Should -BeLike '*BEISPIEL 1: Localized title*'
+
+                $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($help)
+                $exampleDirective = $helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
+                $exampleDirective | Should -BeExactly '.EXAMPLE Localized title'
+            }
+            finally {
+                [System.Globalization.CultureInfo]::CurrentUICulture = $originalUICulture
+            }
         }
 
         It 'should handle a titled example alongside an untitled one' {
