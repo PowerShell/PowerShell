@@ -370,6 +370,28 @@ End {{
             $helpComments | Should -BeLike '*.EXAMPLE Using a non-standard path*'
         }
 
+        It 'should preserve arbitrary MAML title "<MamlTitle>"' -TestCases @(
+            @{ MamlTitle = 'Use a temporary directory'; ExpectedTitle = 'Use a temporary directory' }
+            @{ MamlTitle = 'Use C:\Temp'; ExpectedTitle = 'Use C:\Temp' }
+            @{ MamlTitle = 'Example 1: Standard title'; ExpectedTitle = 'Standard title' }
+        ) {
+            param($MamlTitle, $ExpectedTitle)
+
+            $example = [pscustomobject]@{
+                title = $MamlTitle
+                code = [pscustomobject]@{ Text = 'Get-Date' }
+            }
+            $helpObject = [pscustomobject]@{
+                Synopsis = 'Synthetic help object'
+                examples = [pscustomobject]@{ example = $example }
+            }
+            $helpObject.PSObject.TypeNames.Insert(0, 'Synthetic.HelpInfo')
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($helpObject)
+            $exampleDirective = $helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
+            $exampleDirective | Should -BeExactly ".EXAMPLE $ExpectedTitle"
+        }
+
         It 'should handle a titled example alongside an untitled one' {
             function HelpFuncTitledPair {
                 <#
