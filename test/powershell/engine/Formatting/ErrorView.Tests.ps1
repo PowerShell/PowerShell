@@ -592,5 +592,13 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
             $e | Should -BeExactly (Get-Error | Out-String).Trim([Environment]::NewLine.ToCharArray())
         }
+
+        It 'Renders the passed error instead of the last one' {
+            $ErrorView = 'DetailedView'
+            $first = try {throw "first"} catch {$_}
+            try {throw "second"} catch {}
+            # DetailedView internally calls 'Get-Error' to render the output, ensure that it picks up the correct error
+            $first | Out-String | Should -BeLike '*throw "first"*'
+        }
     }
 }
