@@ -1,5 +1,6 @@
 parameters:
   runtime: x64
+  dotnetArch: 'win-x64'
 
 jobs:
 - job: build_win_${{ parameters.runtime }}
@@ -80,6 +81,7 @@ jobs:
   - template: /.pipelines/templates/install-dotnet.yml@self
     parameters:
       ob_restore_phase: false
+      architecture: ${{ parameters.dotnetArch }}
 
   - pwsh: |
       $runtime = '$(Runtime)'
