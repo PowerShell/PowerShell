@@ -250,12 +250,19 @@ stages:
           Targets: '**\*.ps1;**\*.psm1;**\*.ps1xml;**\*.psd1;**\*.exe;**\*.dll'
 
       - pwsh: |
-          $sarifPath = Join-Path '$(Pipeline.Workspace)' '.gdn\.r\codesign\001\Logs\Phalanx.Plugins.CodeSignValidation.dll.sarif'
-          if (-not (Test-Path -LiteralPath $sarifPath)) {
-              throw "CodeSign Validation did not produce its expected SARIF file: $sarifPath"
+          $codesignResultsRoot = Join-Path '$(Pipeline.Workspace)' '.gdn\.r\codesign'
+          if (-not (Test-Path -LiteralPath $codesignResultsRoot -PathType Container)) {
+              throw "CodeSign Validation did not produce its expected results directory: $codesignResultsRoot"
           }
 
-          $sarif = Get-Content -LiteralPath $sarifPath -Raw | ConvertFrom-Json -Depth 100
+          $sarifFile = Get-ChildItem -LiteralPath $codesignResultsRoot -Recurse -File -Filter 'Phalanx.Plugins.CodeSignValidation.dll.sarif' |
+              Sort-Object -Property LastWriteTimeUtc -Descending |
+              Select-Object -First 1
+          if (-not $sarifFile) {
+              throw "CodeSign Validation did not produce its expected SARIF file under: $codesignResultsRoot"
+          }
+
+          $sarif = Get-Content -LiteralPath $sarifFile.FullName -Raw | ConvertFrom-Json -Depth 100
           $failures = @(
               foreach ($run in $sarif.runs) {
                   foreach ($result in $run.results) {
