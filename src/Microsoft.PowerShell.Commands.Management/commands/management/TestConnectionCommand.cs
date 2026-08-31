@@ -485,9 +485,10 @@ namespace Microsoft.PowerShell.Commands
                                     ? reply.RoundtripTime
                                     : timer.ElapsedMilliseconds,
 
-                                // If we use the empty buffer, then .NET actually uses a 32 byte buffer so we want to show
-                                // as the result object the actual buffer size used instead of 0.
-                                buffer.Length == 0 ? DefaultSendBufferSize : buffer.Length,
+                                // The buffer may be empty even when BufferSize is not 0 as sending
+                                // a custom buffer needs privileges on Unix (see GetSendBuffer),
+                                // so report the requested size.
+                                BufferSize,
                                 pingNum: i);
                             WriteObject(new TraceStatus(
                                 currentHop,
@@ -732,7 +733,11 @@ namespace Microsoft.PowerShell.Commands
                         resolvedTargetName,
                         reply,
                         reply.RoundtripTime,
-                        buffer.Length == 0 ? DefaultSendBufferSize : buffer.Length,
+
+                        // The buffer may be empty even when BufferSize is not 0 as sending
+                        // a custom buffer needs privileges on Unix (see GetSendBuffer),
+                        // so report the requested size.
+                        BufferSize,
                         pingNum: (uint)i));
                 }
 
