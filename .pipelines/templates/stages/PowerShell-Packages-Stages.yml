@@ -38,6 +38,9 @@ stages:
       displayName: 'Skip early access .NET setup'
       pool:
         type: windows
+      variables:
+      - name: ob_outputDirectory
+        value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
       steps:
       - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET setup.'
 - stage: mac_package
