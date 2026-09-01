@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>"Sort-Object" - "{0}" cannot be found in "InputObject".</value>
+    <value>"Sort-Object" - 無法在 "InputObject" 中找到 "{0}"。</value>
   </data>
 </root>

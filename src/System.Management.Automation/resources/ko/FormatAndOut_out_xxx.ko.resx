@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ConsoleLineOutput_PagingPrompt" xml:space="preserve">
-    <value>&lt;SPACE&gt; next page; &lt;CR&gt; next line; Q quit</value>
+    <value>&lt;SPACE&gt; 다음 페이지; &lt;CR&gt; 다음 줄; Q 종료</value>
   </data>
   <data name="OutLineOutput_NullLineOutputParameter" xml:space="preserve">
-    <value>The value of LineOutput should not be null.</value>
+    <value>LineOutput 값은 null이면 안 됩니다.</value>
   </data>
   <data name="OutLineOutput_InvalidLineOutputParameterType" xml:space="preserve">
-    <value>The lineOutput type {0} was not expected; LineOutput expects type {1}.</value>
+    <value>lineOutput 유형 {0}은(는) 예상되지 않았습니다. LineOutput에는 {1} 형식이 필요합니다.</value>
   </data>
   <data name="OutLineOutput_OutOfSequencePacket" xml:space="preserve">
-    <value>The object of type "{0}" is not valid or not in the correct sequence. This is likely caused by a user-specified "{1}" command which is conflicting with the default formatting.</value>
+    <value>"{0}" 형식의 개체가 올바르지 않거나 순서가 맞지 않습니다. 기본 서식과 충돌하는 사용자가 지정한 "{1}" 명령 때문일 수 있습니다.</value>
   </data>
   <data name="OutFile_FileOpenFailure" xml:space="preserve">
-    <value>Cannot open file "{0}".</value>
+    <value>파일 "{0}"을(를) 열 수 없습니다.</value>
   </data>
   <data name="OutFile_Action" xml:space="preserve">
-    <value>Output to File</value>
+    <value>파일에 출력</value>
   </data>
 </root>

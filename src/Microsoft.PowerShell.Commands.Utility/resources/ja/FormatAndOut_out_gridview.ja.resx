@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DataNotQualifiedForGridView" xml:space="preserve">
-    <value>The data format is not supported by Out-GridView.</value>
+    <value>このデータ形式は Out-GridView ではサポートされていません。</value>
   </data>
   <data name="RestartPowerShell" xml:space="preserve">
-    <value>Microsoft .NET Framework 4.5 was installed while one or more PowerShell sessions were running. To use the {0} cmdlet, close all PowerShell windows, and then open a new PowerShell window.</value>
+    <value>1 つ以上の PowerShell セッションの実行中に、Microsoft .NET Framework 4.5 がインストールされました。{0} コマンドレットを使用するには、すべての PowerShell ウィンドウを閉じてから、新しい PowerShell ウィンドウを開いてください。</value>
   </data>
   <data name="TypeColumnName" xml:space="preserve">
-    <value>Type</value>
+    <value>型</value>
   </data>
   <data name="ValueColumnName" xml:space="preserve">
     <value>値</value>
   </data>
   <data name="IndexColumnName" xml:space="preserve">
-    <value>Index</value>
+    <value>インデックス</value>
   </data>
   <data name="CommandNotFound" xml:space="preserve">
-    <value>A command named '{0}' was not found.</value>
+    <value>'{0}' という名前のコマンドが見つかりませんでした。</value>
   </data>
   <data name="MoreThanOneCommand" xml:space="preserve">
-    <value>More than one command named '{0}' was found. Start '{1}' with no parameters, and then type '{0}' to filter the results.</value>
+    <value>'{0}' という名前のコマンドが複数見つかりました。パラメーターなしで '{1}' を開始し、'{0}' と入力して結果をフィルター処理します。</value>
   </data>
   <data name="CannotWriteToConsoleInputBuffer" xml:space="preserve">
-    <value>Cannot write to console input buffer.</value>
+    <value>コンソールの入力バッファーに書き込めません。</value>
   </data>
   <data name="PropertyValidate" xml:space="preserve">
-    <value>{0} should be smaller than {1}.</value>
+    <value>{0} は {1} より小さくする必要があります。</value>
     <comment>{0} is the property "Height"
 {1} is the maximum allowed value for the height property.</comment>
   </data>
