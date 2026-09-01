@@ -118,114 +118,114 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EnabledExperimentalFeatures" xml:space="preserve">
-    <value>Variable to hold the enabled experimental feature names</value>
+    <value>有効な試験的機能名を保持する変数</value>
   </data>
   <data name="PSHOMEDescription" xml:space="preserve">
-    <value>Parent folder of the host application of the current runspace</value>
+    <value>現在の実行空間のホスト アプリケーションの親フォルダー</value>
   </data>
   <data name="HOMEDescription" xml:space="preserve">
-    <value>Folder containing the current user's profile</value>
+    <value>現在のユーザーのプロファイルを含むフォルダー</value>
   </data>
   <data name="PSHostDescription" xml:space="preserve">
-    <value>A reference to the host of the current runspace</value>
+    <value>現在の実行空間のホストへの参照</value>
   </data>
   <data name="ExecutionContextDescription" xml:space="preserve">
-    <value>The run objects available to cmdlets</value>
+    <value>コマンドレットで使用できる実行オブジェクト</value>
   </data>
   <data name="PSVersionTableDescription" xml:space="preserve">
-    <value>Version information for current PowerShell session</value>
+    <value>現在の PowerShell セッションのバージョン情報</value>
   </data>
   <data name="PIDDescription" xml:space="preserve">
-    <value>Current process ID</value>
+    <value>現在のプロセス ID</value>
   </data>
   <data name="DollarHookDescription" xml:space="preserve">
-    <value>Status of last command</value>
+    <value>最後のコマンドの状態</value>
   </data>
   <data name="PPIDDescription" xml:space="preserve">
-    <value>Parent process ID</value>
+    <value>親プロセス ID</value>
   </data>
   <data name="MshShellIdDescription" xml:space="preserve">
-    <value>The ShellID identifies the current shell.  This is used by #Requires.</value>
+    <value>ShellID は現在のシェルを識別します。 これは、#Requires によって使用されます。</value>
   </data>
   <data name="ConsoleDescription" xml:space="preserve">
-    <value>Name of the current console file</value>
+    <value>現在のコンソール ファイルの名前</value>
   </data>
   <data name="OutputEncodingDescription" xml:space="preserve">
-    <value>The text encoding used when piping text to a native executable file</value>
+    <value>ネイティブ実行可能ファイルにテキストをパイプ処理するときに使用されるテキスト エンコード</value>
   </data>
   <data name="PSApplicationOutputEncodingDescription" xml:space="preserve">
-    <value>The text encoding used when reading output text from a native executable file</value>
+    <value>ネイティブ実行可能ファイルから出力テキストを読み取るときに使用されるテキスト エンコード</value>
   </data>
   <data name="PSStyleDescription" xml:space="preserve">
-    <value>Configuration controlling how text is rendered.</value>
+    <value>テキストのレンダリング方法を制御する構成。</value>
   </data>
   <data name="PSEmailServerDescription" xml:space="preserve">
-    <value>Variable to contain the name of the email server. This can be used instead of the HostName parameter in the Send-MailMessage cmdlet.</value>
+    <value>メール サーバーの名前を格納する変数。これは、Send-MailMessage コマンドレットの HostName パラメーターの代わりに使用できます。</value>
   </data>
   <data name="ConfirmPreferenceDescription" xml:space="preserve">
-    <value>Dictates when confirmation should be requested. Confirmation is requested when the ConfirmImpact of the operation is equal to or greater than $ConfirmPreference. If $ConfirmPreference is None, actions will only be confirmed when Confirm is specified.</value>
+    <value>確認を要求するタイミングを指定します。操作の ConfirmImpact が $ConfirmPreference 以上の場合、確認が要求されます。$ConfirmPreferenceが None の場合、Confirm が指定されているときにのみアクションが確認されます。</value>
   </data>
   <data name="DebugPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Debug message is delivered</value>
+    <value>デバッグ メッセージの配信時に実行されるアクションを指定します</value>
   </data>
   <data name="ErrorActionPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when an error message is delivered</value>
+    <value>エラー メッセージが配信されたときに実行されるアクションを指定します</value>
   </data>
   <data name="ProgressPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when progress records are delivered</value>
+    <value>進行状況レコードの配信時に実行されるアクションを指定します</value>
   </data>
   <data name="VerbosePreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Verbose message is delivered</value>
+    <value>詳細メッセージが配信されたときに実行されるアクションを指定します</value>
   </data>
   <data name="WarningPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Warning message is delivered</value>
+    <value>警告メッセージが配信されたときに実行されるアクションを指定します</value>
   </data>
   <data name="InformationPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a command generates an item in the Information stream</value>
+    <value>コマンドが Information ストリームに項目を生成するときに実行されるアクションを指定します</value>
   </data>
   <data name="ErrorViewDescription" xml:space="preserve">
-    <value>Dictates the view mode to use when displaying errors</value>
+    <value>エラーを表示するときに使用する表示モードを指定します</value>
   </data>
   <data name="NestedPromptLevelDescription" xml:space="preserve">
-    <value>Dictates what type of prompt should be displayed for the current nesting level</value>
+    <value>現在の入れ子レベルに対して表示するプロンプトの種類を指定します</value>
   </data>
   <data name="PSNativeCommandUseErrorActionPreferenceDescription" xml:space="preserve">
-    <value>If true, $ErrorActionPreference applies to native executables, so that non-zero exit codes will generate cmdlet-style errors governed by error action settings</value>
+    <value>true の場合、$ErrorActionPreference はネイティブ実行可能ファイルに適用されるため、ゼロ以外の終了コードによって、エラー アクション設定によって制御されるコマンドレット スタイルのエラーが生成されます</value>
   </data>
   <data name="WhatIfPreferenceDescription" xml:space="preserve">
-    <value>If true, WhatIf is considered to be enabled for all commands.</value>
+    <value>true の場合、WhatIf はすべてのコマンドで有効と見なされます。</value>
   </data>
   <data name="NativeCommandArgumentPassingDescription" xml:space="preserve">
-    <value>Dictates how arguments are passed to native executables.</value>
+    <value>ネイティブ実行可能ファイルに引数を渡す方法を指定します。</value>
   </data>
   <data name="FormatEnumerationLimitDescription" xml:space="preserve">
-    <value>Dictates the limit of enumeration on formatting IEnumerable objects</value>
+    <value>IEnumerable オブジェクトの書式設定に関する列挙の制限を指定します</value>
   </data>
   <data name="ReportErrorShowStackTraceDescription" xml:space="preserve">
-    <value>Displays errors with a stack trace</value>
+    <value>スタック トレースでエラーを表示します</value>
   </data>
   <data name="ReportErrorShowInnerExceptionDescription" xml:space="preserve">
-    <value>Displays errors with inner exceptions</value>
+    <value>内部例外を含むエラーを表示します</value>
   </data>
   <data name="ReportErrorShowSourceDescription" xml:space="preserve">
-    <value>Displays errors with their sources</value>
+    <value>エラーとそのソースを表示します</value>
   </data>
   <data name="ReportErrorShowExceptionClassDescription" xml:space="preserve">
-    <value>Displays errors with a description of the error class</value>
+    <value>エラー クラスの説明と共にエラーを表示します</value>
   </data>
   <data name="DollarPSCultureDescription" xml:space="preserve">
-    <value>Culture of the current PowerShell session</value>
+    <value>現在の PowerShell セッションのカルチャ</value>
   </data>
   <data name="DollarPSUICultureDescription" xml:space="preserve">
-    <value>UI culture of the current PowerShell session</value>
+    <value>現在の PowerShell セッションの UI カルチャ</value>
   </data>
   <data name="PSDefaultParameterValuesDescription" xml:space="preserve">
-    <value>Variable to hold all default &lt;cmdlet:parameter, value&gt; pairs</value>
+    <value>すべての既定の &lt;cmdlet:parameter、value&gt; ペアを保持する変数</value>
   </data>
   <data name="PauseDefinitionString" xml:space="preserve">
-    <value>Press Enter to continue...</value>
+    <value>続行するには、Enter キーを押してください...</value>
   </data>
   <data name="PSEditionDescription" xml:space="preserve">
-    <value>Edition information for the current PowerShell session</value>
+    <value>現在の PowerShell セッションのエディション情報</value>
   </data>
 </root>

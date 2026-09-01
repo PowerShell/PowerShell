@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoPingResult" xml:space="preserve">
-    <value>Testing connection to computer '{0}' failed: {1}</value>
+    <value>コンピューター '{0}' への接続のテストに失敗しました: {1}</value>
   </data>
   <data name="CannotResolveTargetName" xml:space="preserve">
-    <value>Cannot resolve the target name.</value>
+    <value>ターゲット名を解決できません。</value>
   </data>
   <data name="TargetAddressAbsent" xml:space="preserve">
-    <value>Target IPv4/IPv6 address absent.</value>
+    <value>ターゲット IPv4/IPv6 アドレスがありません。</value>
   </data>
   <data name="MaxHopsExceeded" xml:space="preserve">
-    <value>Cannot complete traceroute to destination '{0}': Number of hops required to reach host exceeds MaxHops ({1}).</value>
+    <value>宛先 '{0}' への traceroute を完了できません: ホストに到達するために必要なホップ数が MaxHops ({1})を超えています。</value>
   </data>
 </root>

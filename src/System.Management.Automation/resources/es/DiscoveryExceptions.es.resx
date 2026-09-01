@@ -186,7 +186,7 @@ La instrucción #requires debe tener uno de los siguientes formatos:
     <value>No se puede ejecutar el script "{0}" porque faltan los siguientes complementos especificados por las instrucciones "#requires" del script: {1}.</value>
   </data>
   <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
-    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
+    <value>Una instrucción #requires solo ha especificado un shellID. Las instrucciones #Requires deben especificar un complemento de PowerShell necesario cuando se ejecutan en PowerShell.</value>
   </data>
   <data name="RequiresElevation" xml:space="preserve">
     <value>No se puede ejecutar el script "{0}" porque contiene una instrucción "#requires" para ejecutarse como administrador. La sesión actual de PowerShell no se está ejecutando como administrador. Inicie PowerShell con la opción Ejecutar como administrador e intente ejecutar el script de nuevo.</value>

@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Reason_DoNotRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted not to run this software now.</value>
+    <value>Невозможно загрузить файл {0}, так как вы решили не запускать это программное обеспечение сейчас.</value>
   </data>
   <data name="Reason_NeverRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted never to run software from this publisher.</value>
+    <value>Невозможно загрузить файл {0}, так как вы решили никогда не запускать программное обеспечение от этого издателя.</value>
   </data>
   <data name="Reason_NotTrusted" xml:space="preserve">
-    <value>File {0} is published by {1}. This publisher is explicitly not trusted on your system. The script will not run on the system. For more information, run the command "get-help about_signing".</value>
+    <value>Файл {0} опубликован {1}. Этот издатель явно не является доверенным в вашей системе. Скрипт не будет запущен в системе. Для получения дополнительных сведений выполните команду "get-help about_signing".</value>
   </data>
   <data name="Reason_RestrictedMode" xml:space="preserve">
-    <value>File {0} cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.</value>
+    <value>Невозможно загрузить файл {0}, так как выполнение скриптов отключено в этой системе. Дополнительные сведения см. в статье about_Execution_Policies на странице https://go.microsoft.com/fwlink/?LinkID=135170.</value>
   </data>
   <data name="Reason_Unknown" xml:space="preserve">
-    <value>File {0} cannot be loaded. {1}.</value>
+    <value>Невозможно загрузить файл {0}. {1}.</value>
   </data>
   <data name="Reason_DisallowedBySafer" xml:space="preserve">
-    <value>File {0} cannot be loaded because its operation is blocked by software restriction policies, such as those created by using Group Policy.</value>
+    <value>Невозможно загрузить файл {0}, так как его выполнение заблокировано политиками ограниченного использования программ, например созданными с помощью групповой политики.</value>
   </data>
   <data name="Reason_FileContentUnavailable" xml:space="preserve">
-    <value>File {0} cannot be loaded because its content could not be read.</value>
+    <value>Невозможно загрузить файл {0}, так как не удалось прочитать его содержимое.</value>
   </data>
   <data name="CertNotGoodForSigning" xml:space="preserve">
-    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+    <value>Не удается подписать код. Указанный сертификат не подходит для подписания кода.</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code. The TimeStamp server URL must be fully qualified, and in the format http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+    <value>Не удается подписать код. URL-адрес сервера TimeStamp должен быть указан полностью в формате http://&lt;server url&gt; или https://&lt;server url&gt;.</value>
   </data>
   <data name="InvalidHashAlgorithm" xml:space="preserve">
-    <value>Cannot sign code. The hash algorithm is not supported.</value>
+    <value>Не удается подписать код. Хэш-алгоритм не поддерживается.</value>
   </data>
   <data name="AuthenticodePromptCaption" xml:space="preserve">
-    <value>Do you want to run software from this untrusted publisher?</value>
+    <value>Вы действительно хотите запускать программы от этого недоверенного издателя?</value>
   </data>
   <data name="AuthenticodePromptText" xml:space="preserve">
-    <value>File {0} is published by {1} and is not trusted on your system. Only run scripts from trusted publishers.</value>
+    <value>Файл {0} опубликован {1} и не является доверенным в вашей системе. Запускайте скрипты только от доверенных издателей.</value>
   </data>
   <data name="AuthenticodePromptText_UnknownPublisher" xml:space="preserve">
-    <value>Software {0} is published by an unknown publisher. It is recommended that you do not run this software.</value>
+    <value>Программное обеспечение {0} опубликовано неизвестным издателем. Не рекомендуется запускать это программное обеспечение.</value>
   </data>
   <data name="RemoteFilePromptCaption" xml:space="preserve">
-    <value>Security warning</value>
+    <value>Предупреждение системы безопасности</value>
   </data>
   <data name="RemoteFilePromptText" xml:space="preserve">
-    <value>Run only scripts that you trust. While scripts from the internet can be useful, this script can potentially harm your computer. If you trust this script, use the Unblock-File cmdlet to allow the script to run without this warning message. Do you want to run {0}?</value>
+    <value>Запускайте только скрипты, которым вы доверяете. Хотя скрипты из Интернета могут быть полезны, этот скрипт может нанести вред вашему компьютеру. Если вы доверяете этому скрипту, используйте командлет Unblock-File, чтобы разрешить его выполнение без этого предупреждающего сообщения. Вы хотите запустить {0}?</value>
   </data>
   <data name="Choice_NeverRun" xml:space="preserve">
-    <value>Ne&amp;ver run</value>
+    <value>Н&amp;икогда не запускать</value>
   </data>
   <data name="Choice_NeverRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and do not prompt me to run this script in future. Future attempts to run this script will result in a silent failure.</value>
+    <value>Не запускать скрипт от этого издателя сейчас и не предлагать запускать этот скрипт в будущем. Дальнейшие попытки запустить этот скрипт будут завершаться без сообщения об ошибке.</value>
   </data>
   <data name="Choice_DoNotRun" xml:space="preserve">
-    <value>&amp;Do not run</value>
+    <value>&amp;Не выполнять</value>
   </data>
   <data name="Choice_DoNotRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>Не запускать скрипт от этого издателя сейчас и предлагать запускать этот скрипт в будущем.</value>
   </data>
   <data name="Choice_RunOnce" xml:space="preserve">
-    <value>&amp;Run once</value>
+    <value>В&amp;ыполнить однократно</value>
   </data>
   <data name="Choice_RunOnce_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>Запустить скрипт от этого издателя сейчас и предлагать запускать этот скрипт в будущем.</value>
   </data>
   <data name="Choice_AlwaysRun" xml:space="preserve">
-    <value>&amp;Always run</value>
+    <value>&amp;Всегда выполнять</value>
   </data>
   <data name="Choice_AlwaysRun_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and do not prompt me to run this script in the future.</value>
+    <value>Запустить скрипт от этого издателя сейчас и не предлагать запускать этот скрипт в будущем.</value>
   </data>
   <data name="Choice_Suspend" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>&amp;Приостановить</value>
   </data>
   <data name="Choice_Suspend_Help" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type exit to resume operation when you are done.</value>
+    <value>Приостановить текущий конвейер и вернуться в командную строку. По завершении введите exit, чтобы возобновить работу.</value>
   </data>
 </root>

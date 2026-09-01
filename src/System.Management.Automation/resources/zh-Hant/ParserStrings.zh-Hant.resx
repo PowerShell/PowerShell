@@ -127,7 +127,7 @@
     <value>字串語彙基元不完整。</value>
   </data>
   <data name="InvalidUnicodeEscapeSequence" xml:space="preserve">
-    <value>The Unicode escape sequence is not valid. A valid sequence is `u{ followed by one to six hex digits and a closing '}'.</value>
+    <value>Unicode 逸出序列無效。有效的序列是 `u{，後接一到六個十六進位數字，並以 '}' 結尾。</value>
   </data>
   <data name="InvalidUnicodeEscapeSequenceValue" xml:space="preserve">
     <value>Unicode 逸出序列值超出範圍。最大值為 0x10FFFF。</value>

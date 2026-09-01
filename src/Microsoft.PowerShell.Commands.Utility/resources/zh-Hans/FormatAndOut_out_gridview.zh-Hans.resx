@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DataNotQualifiedForGridView" xml:space="preserve">
-    <value>The data format is not supported by Out-GridView.</value>
+    <value>Out-GridView 不支持这种数据格式。</value>
   </data>
   <data name="RestartPowerShell" xml:space="preserve">
-    <value>Microsoft .NET Framework 4.5 was installed while one or more PowerShell sessions were running. To use the {0} cmdlet, close all PowerShell windows, and then open a new PowerShell window.</value>
+    <value>在运行一个或多个 PowerShell 会话时安装了 Microsoft .NET Framework 4.5。若要使用 {0} cmdlet，请关闭所有 PowerShell 窗口，然后打开一个新的 PowerShell 窗口。</value>
   </data>
   <data name="TypeColumnName" xml:space="preserve">
-    <value>Type</value>
+    <value>类型</value>
   </data>
   <data name="ValueColumnName" xml:space="preserve">
     <value>值</value>
   </data>
   <data name="IndexColumnName" xml:space="preserve">
-    <value>Index</value>
+    <value>索引</value>
   </data>
   <data name="CommandNotFound" xml:space="preserve">
-    <value>A command named '{0}' was not found.</value>
+    <value>找不到名为 "{0}" 的命令。</value>
   </data>
   <data name="MoreThanOneCommand" xml:space="preserve">
-    <value>More than one command named '{0}' was found. Start '{1}' with no parameters, and then type '{0}' to filter the results.</value>
+    <value>找到多个名为 "{0}" 的命令。请不使用参数启动“{1}”，然后键入“{0}”以筛选结果。</value>
   </data>
   <data name="CannotWriteToConsoleInputBuffer" xml:space="preserve">
-    <value>Cannot write to console input buffer.</value>
+    <value>无法写入控制台输入缓冲区。</value>
   </data>
   <data name="PropertyValidate" xml:space="preserve">
-    <value>{0} should be smaller than {1}.</value>
+    <value>{0} 应小于 {1}。</value>
     <comment>{0} is the property "Height"
 {1} is the maximum allowed value for the height property.</comment>
   </data>

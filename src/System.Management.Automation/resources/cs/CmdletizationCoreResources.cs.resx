@@ -123,9 +123,8 @@
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ScriptWriter_DuplicateQueryParameterName" xml:space="preserve">
-    <value>Two cmdlet parameters defined within the {0} element have the same name: {1}.  Resolve the conflict in the Cmdlet Definition XML and retry.</value>
-    <comment>{StrContains="CmdletParameterMetadata"} {StrContains="PSName"}
-{0} is a placeholder for a name of an XML element.  Example: &lt;GetCmdletParameters&gt;
+    <value>Dva parametry rutiny definované v elementu {0} mají stejný název: {1}.  Vyřešte konflikt v XML definice rutiny a zkuste to znovu.</value>
+    <comment>{0} is a placeholder for a name of an XML element.  Example: &lt;GetCmdletParameters&gt;
 {1} is a placeholder for a cmdlet parameter name.  Example: Name</comment>
   </data>
   <data name="ExportCimCommand_ErrorInCmdletizationXmlFile" xml:space="preserve">
@@ -134,9 +133,8 @@
 {1} is an exception message copied from an XmlException or XmlSchemaException</comment>
   </data>
   <data name="ScriptWriter_DuplicateParameterSetInStaticCmdlet" xml:space="preserve">
-    <value>The {0} cmdlet defines the {1} parameter set more than once.  Verify that the Cmdlet Definition XML does not have duplicate parameter set names and retry.</value>
-    <comment>{StrContains="CmdletParameterSet"}
-{0} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
+    <value>Rutina {0} definuje sadu parametrů {1} více než jednou.  Ověřte, že XML definice rutiny neobsahuje duplicitní názvy sad parametrů, a zkuste to znovu.</value>
+    <comment>{0} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
 {1} is a placeholder for a parameter set name.  Example: 'foo'</comment>
   </data>
   <data name="ScriptWriter_ObjectModelWrapperDefinesMultipleParameterSets" xml:space="preserve">
@@ -185,8 +183,8 @@
     <comment>{StrContains="EnumName"}</comment>
   </data>
   <data name="EnumWriter_InvalidValueName" xml:space="preserve">
-    <value>The value of the Name attribute is not a valid C# identifier: {0}.  Verify the Name attribute in the Cmdlet Definition XML, and then try again.</value>
-    <comment>{StrContains="Enum"} {StrContains="Value"} {StrContains="Name"}</comment>
+    <value>Hodnota atributu Name není platný identifikátor jazyka C#: {0}.  Ověřte atribut Name v XML definice rutiny a zkuste to znovu.</value>
+    <comment>{StrContains="Name"}</comment>
   </data>
   <data name="ScriptWriter_InvalidEnum" xml:space="preserve">
     <value>Element &lt;Enum EnumName="{0}" ...&gt; nejde zpracovat.  {1}</value>

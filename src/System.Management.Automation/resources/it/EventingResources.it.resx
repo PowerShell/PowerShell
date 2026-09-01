@@ -118,24 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NonVoidDelegateNotSupported" xml:space="preserve">
-    <value>Cannot register for the specified event. Events that require a return value are not supported.</value>
+    <value>Non è possibile registrarsi per l'evento specificato. Gli eventi che richiedono un valore restituito non sono supportati.</value>
   </data>
   <data name="CouldNotFindEvent" xml:space="preserve">
-    <value>Cannot register for the specified event. An event with the name '{0}' does not exist.</value>
+    <value>Non è possibile registrarsi per l'evento specificato. Un evento con il nome "{0}" non esiste.</value>
   </data>
   <data name="WinRTEventsNotSupported" xml:space="preserve">
-    <value>PowerShell cannot subscribe to Windows RT events.</value>
+    <value>PowerShell non può sottoscrivere eventi di Windows RT.</value>
   </data>
   <data name="ReservedIdentifier" xml:space="preserve">
-    <value>Cannot register for the specified event. The event source identifier '{0}' is reserved for the PowerShell engine.</value>
+    <value>Non è possibile registrarsi per l'evento specificato. L'identificatore dell'origine eventi "{0}" è riservato al motore di PowerShell.</value>
   </data>
   <data name="RemoteOperationNotSupported" xml:space="preserve">
-    <value>This operation is not supported on remote instances.</value>
+    <value>Questa operazione non è supportata nelle istanze remote.</value>
   </data>
   <data name="ActionAndForwardNotSupported" xml:space="preserve">
-    <value>The action is not supported when you are forwarding events.</value>
+    <value>L'azione non è supportata durante l'inoltro degli eventi.</value>
   </data>
   <data name="SubscriberExists" xml:space="preserve">
-    <value>Cannot subscribe to the specified event. A subscriber with the source identifier '{0}' already exists.</value>
+    <value>Non è possibile sottoscrivere l'evento specificato. Esiste già un sottoscrittore con l'identificatore di origine "{0}".</value>
   </data>
 </root>

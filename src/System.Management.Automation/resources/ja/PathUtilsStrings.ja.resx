@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Utf7EncodingObsolete" xml:space="preserve">
-    <value>Encoding 'UTF-7' is obsolete, please use UTF-8.</value>
+    <value>エンコード 'UTF-7' は非推奨です。UTF-8 を使用してください。</value>
   </data>
   <data name="UtilityFileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>ファイル {0} は既に存在し、{1} が指定されました。</value>
   </data>
   <data name="OutFile_ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>Cannot open file because the current provider ({0}) cannot open a file.</value>
+    <value>現在のプロバイダー ({0}) がファイルを開くことができないため、ファイルを開けません。</value>
   </data>
   <data name="OutFile_MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>パスが複数のファイルに解決されたため、操作を実行できません。このコマンドは、複数のファイルに適用することはできません。</value>
   </data>
   <data name="OutFile_DidNotResolveFile" xml:space="preserve">
-    <value>Cannot perform operation because the wildcard path {0} did not resolve to a file.</value>
+    <value>ワイルドカード パス {0} がファイルに解決されなかったため、操作を実行できません。</value>
   </data>
   <data name="OutFile_WriteToFileEncodingUnknown" xml:space="preserve">
-    <value>Unknown encoding {0}; valid values are {1}.</value>
+    <value>不明なエンコード {0}。有効な値は {1} です。</value>
   </data>
   <data name="ExportPSSession_ErrorDirectoryExists" xml:space="preserve">
-    <value>The directory '{0}' already exists.  Use the -Force parameter if you want to overwrite the directory and files within the directory.</value>
+    <value>ディレクトリ '{0}' は既に存在します。 ディレクトリおよびその中のファイルを上書きする場合は、-Force パラメーターを使用してください。</value>
   </data>
   <data name="ExportPSSession_ErrorModuleNameOrPath" xml:space="preserve">
-    <value>The user module path does not exist, and hence a module folder cannot be created for the provided module name '{0}'.</value>
+    <value>ユーザー モジュールのパスが存在しないため、指定されたモジュール名 '{0}' のモジュール フォルダーを作成できません。</value>
   </data>
   <data name="ExportPSSession_CannotCreateOutputDirectory" xml:space="preserve">
-    <value>Cannot create the module {0} due to the following: {1}. Use a different argument for the -OutputModule parameter and retry.</value>
+    <value>次の理由により、モジュール {0} を作成できません: {1}。-OutputModule パラメーターに別の引数を指定して、再試行してください。</value>
     <comment>{StrContains="OutputModule"}
 {0} is a placeholder for the name of a directory
 {1} is a placeholder for an error message from the inner exception
@@ -161,6 +161,6 @@ At line:1 char:1
     </comment>
   </data>
   <data name="ExportPSSession_ScriptGeneratorVersionMismatch" xml:space="preserve">
-    <value>The module cannot be loaded because it has been generated with an incompatible version of the {0} cmdlet. Generate the module with the {0} cmdlet from the current session, and try loading the module again.</value>
+    <value>このモジュールは、互換性のないバージョンの {0} コマンドレットで生成されているため、読み込めません。現在のセッションの {0} コマンドレットを使用してモジュールを生成し、もう一度読み込んでください。</value>
   </data>
 </root>

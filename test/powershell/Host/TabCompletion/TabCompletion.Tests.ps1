@@ -51,7 +51,7 @@ Describe "TabCompletion" -Tags CI {
                 New-ModuleManifest -Path "$($NewDir.FullName)\$ModuleName.psd1" -RootModule "$ModuleName.psm1" -FunctionsToExport "MyTestFunction" -ModuleVersion $NewDir.Name
             }
 
-            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir            
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir
             $Res = TabExpansion2 -inputScript MyTestFunction
             $Res.CompletionMatches.Count | Should -Be 2
             $SortedMatches = $Res.CompletionMatches.CompletionText | Sort-Object
@@ -82,7 +82,7 @@ Describe "TabCompletion" -Tags CI {
                 New-ModuleManifest -Path "$($NewDir.FullName)\$ModuleName.psd1" -RootModule "$ModuleName.psm1" -FunctionsToExport "MyTestFunction" -ModuleVersion $NewDir.Name
             }
 
-            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir            
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir
             $Res = TabExpansion2 -inputScript 'Import-Module -Name TestModule'
             $Res.CompletionMatches.Count | Should -Be 1
             $Res.CompletionMatches[0].CompletionText | Should -Be TestModule1
@@ -165,21 +165,21 @@ Describe "TabCompletion" -Tags CI {
         $res = TabExpansion2 -inputScript 'param($PS = $P'
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
     }
-    
+
     It 'Should complete variable with description and value <Value>' -TestCases @(
         @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
         @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
         @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
     ) {
         param ($Value, $Expected)
-        
+
         New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
         $res = TabExpansion2 -inputScript '$VariableWithDescription'
         $res.CompletionMatches.Count | Should -Be 1
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$VariableWithDescription'
         $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
     }
-    
+
     It 'Should complete environment variable' {
         try {
             $env:PWSH_TEST_1 = 'value 1'
@@ -226,7 +226,7 @@ Describe "TabCompletion" -Tags CI {
         @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
     ) {
         param ($Value, $Expected)
-        
+
         New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
         $res = TabExpansion2 -inputScript '$local:VariableWithDescription'
         $res.CompletionMatches.Count | Should -Be 1
@@ -1191,7 +1191,7 @@ param([ValidatePattern(
                 [Parameter(ParameterSetName = 'SetWithoutHelp')]
                 [string]
                 $ParamWithHelp,
-                
+
                 [Parameter(ParameterSetName = 'SetWithHelp')]
                 [switch]
                 $ParamWithoutHelp
@@ -1733,7 +1733,7 @@ param([ValidatePattern(
 
             $commaSeparators = "',' ', '"
             $semiColonSeparators = "';' '; '"
-            
+
             $squareBracketFormatString = "'[{0}]'"
             $curlyBraceFormatString = "'{0:N2}'"
         }
@@ -2097,6 +2097,90 @@ Verb-Noun -Param1 Hello ^
         $res.CompletionMatches[0].CompletionText | Should -Be "Attributes"
     }
 
+    it 'Should fall back to a positional parameter in another parameterset when the default parameterset has no completions' {
+        $ScriptInput = 'Get-Process | ForEach-Object '
+        $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
+        # '-Process' is positional in the default 'ScriptBlockSet' but has no completions to offer,
+        # so the completion should fall back to '-MemberName' in the 'PropertyAndMethodSet'.
+        $res.CompletionMatches.CompletionText | Should -Contain "ProcessName"
+        # Make sure we didn't fall through to file name completion.
+        $res.CompletionMatches.ResultType | Should -Not -Contain ([System.Management.Automation.CompletionResultType]::ProviderItem)
+    }
+
+    it 'Should keep trying the positional parameters from other parameter sets until completions are found' {
+        $TestString = @'
+function Verb-Noun
+{
+    [CmdletBinding(DefaultParameterSetName = 'ScriptBlockSet')]
+    Param
+    (
+        [Parameter(ParameterSetName = 'ScriptBlockSet', Position = 0)]
+        [scriptblock]
+        $ScriptBlockParam,
+        [Parameter(ParameterSetName = 'StringSet', Position = 0)]
+        [string]
+        $StringParam,
+        [Parameter(ParameterSetName = 'ValidateSetSet', Position = 0)]
+        [ValidateSet('Alpha', 'Beta')]
+        [string]
+        $ValidateSetParam
+    )
+}
+Verb-Noun ^
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        # Neither the default set nor the 'StringSet' parameter has completions to offer,
+        # so we should keep going until the 'ValidateSetSet' parameter is reached.
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly 'Alpha,Beta'
+    }
+
+    it 'Should complete a positional parameter declared at different positions in different parameter sets' {
+        $TestString = @'
+function Verb-Noun
+{
+    [CmdletBinding(DefaultParameterSetName = 'SetB')]
+    Param
+    (
+        [Parameter(ParameterSetName = 'SetB', Position = 0)]
+        [Parameter(ParameterSetName = 'SetA', Position = 1)]
+        [ValidateSet('Alpha', 'Beta')]
+        [string]
+        $Param1
+    )
+}
+Verb-Noun ^
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        # The parameter set data is enumerated in the reverse order of the declaration, so 'SetA' with the
+        # position 1 is seen first, and then 'SetB' with the closer position 0. The parameter must still be
+        # a candidate after the closer position is found.
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly 'Alpha,Beta'
+    }
+
+    it 'Should complete a positional parameter declared at different positions when there is no default parameterset' {
+        $TestString = @'
+function Verb-Noun
+{
+    Param
+    (
+        [Parameter(ParameterSetName = 'SetB', Position = 0)]
+        [Parameter(ParameterSetName = 'SetA', Position = 1)]
+        [ValidateSet('Alpha', 'Beta')]
+        [string]
+        $Param1
+    )
+}
+Verb-Noun ^
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        # Same as above, but without a default parameter set the parameter is tracked as an alternative
+        # candidate instead, and it must survive finding the closer position.
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly 'Alpha,Beta'
+    }
+
     it 'Should complete base class members of types without type definition AST' {
         $res = TabExpansion2 -inputScript @'
 class InheritedClassTest : System.Attribute
@@ -2408,7 +2492,7 @@ param ($Param1)
             $null = New-Item -Path $TestFile
             $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
             Pop-Location
-                        
+
             $ExpectedPath = Join-Path -Path '.\' -ChildPath $ExpectedFileName
             $res.CompletionMatches.CompletionText | Where-Object {$_ -Like "*$ExpectedFileName"} | Should -Be $ExpectedPath
         }

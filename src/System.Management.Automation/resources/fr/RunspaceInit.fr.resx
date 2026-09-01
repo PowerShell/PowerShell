@@ -118,114 +118,114 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EnabledExperimentalFeatures" xml:space="preserve">
-    <value>Variable to hold the enabled experimental feature names</value>
+    <value>Variable qui contient les noms des fonctionnalités expérimentales activées</value>
   </data>
   <data name="PSHOMEDescription" xml:space="preserve">
-    <value>Parent folder of the host application of the current runspace</value>
+    <value>Dossier parent de l’application hôte de l’instance d’exécution actuelle</value>
   </data>
   <data name="HOMEDescription" xml:space="preserve">
-    <value>Folder containing the current user's profile</value>
+    <value>Dossier contenant le profil de l’utilisateur actuel</value>
   </data>
   <data name="PSHostDescription" xml:space="preserve">
-    <value>A reference to the host of the current runspace</value>
+    <value>Une référence à l’hôte de l’instance d’exécution actuel</value>
   </data>
   <data name="ExecutionContextDescription" xml:space="preserve">
-    <value>The run objects available to cmdlets</value>
+    <value>Objets d’exécution disponibles pour les cmdlets</value>
   </data>
   <data name="PSVersionTableDescription" xml:space="preserve">
-    <value>Version information for current PowerShell session</value>
+    <value>Informations sur la version pour la session PowerShell actuelle</value>
   </data>
   <data name="PIDDescription" xml:space="preserve">
-    <value>Current process ID</value>
+    <value>ID du processus actuel</value>
   </data>
   <data name="DollarHookDescription" xml:space="preserve">
-    <value>Status of last command</value>
+    <value>État de la dernière commande</value>
   </data>
   <data name="PPIDDescription" xml:space="preserve">
-    <value>Parent process ID</value>
+    <value>ID du processus parent</value>
   </data>
   <data name="MshShellIdDescription" xml:space="preserve">
-    <value>The ShellID identifies the current shell.  This is used by #Requires.</value>
+    <value>Le ShellID identifie le shell actuel.  Ceci est utilisé par #Requires.</value>
   </data>
   <data name="ConsoleDescription" xml:space="preserve">
-    <value>Name of the current console file</value>
+    <value>Nom du fichier de console actuel</value>
   </data>
   <data name="OutputEncodingDescription" xml:space="preserve">
-    <value>The text encoding used when piping text to a native executable file</value>
+    <value>Encodage de texte utilisé lors de l’envoi du texte vers un fichier exécutable natif</value>
   </data>
   <data name="PSApplicationOutputEncodingDescription" xml:space="preserve">
-    <value>The text encoding used when reading output text from a native executable file</value>
+    <value>Encodage de texte utilisé lors de la lecture du texte de sortie d’un fichier exécutable natif</value>
   </data>
   <data name="PSStyleDescription" xml:space="preserve">
-    <value>Configuration controlling how text is rendered.</value>
+    <value>Configuration qui contrôle le rendu du texte.</value>
   </data>
   <data name="PSEmailServerDescription" xml:space="preserve">
-    <value>Variable to contain the name of the email server. This can be used instead of the HostName parameter in the Send-MailMessage cmdlet.</value>
+    <value>Variable qui contient le nom du serveur de messagerie. Vous pouvez l’utiliser à la place du paramètre HostName dans la cmdlet Send-MailMessage.</value>
   </data>
   <data name="ConfirmPreferenceDescription" xml:space="preserve">
-    <value>Dictates when confirmation should be requested. Confirmation is requested when the ConfirmImpact of the operation is equal to or greater than $ConfirmPreference. If $ConfirmPreference is None, actions will only be confirmed when Confirm is specified.</value>
+    <value>Détermine quand une confirmation doit être demandée. La confirmation est demandée lorsque la valeur ConfirmImpact de l’opération est égale ou supérieure à $ConfirmPreference. Si $ConfirmPreference a la valeur None, les actions ne sont confirmées que lorsque Confirm est spécifié.</value>
   </data>
   <data name="DebugPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Debug message is delivered</value>
+    <value>Indique l’action effectuée lorsqu’un message Déboguer est remis</value>
   </data>
   <data name="ErrorActionPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when an error message is delivered</value>
+    <value>Indique l’action effectuée lorsqu’un message d’erreur est remis</value>
   </data>
   <data name="ProgressPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when progress records are delivered</value>
+    <value>Indique l’action effectuée lorsque des enregistrements de progression sont remis</value>
   </data>
   <data name="VerbosePreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Verbose message is delivered</value>
+    <value>Indique l’action effectuée lorsqu’un message Détaillé est remis</value>
   </data>
   <data name="WarningPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Warning message is delivered</value>
+    <value>Indique l’action effectuée lorsqu’un message Avertissement est remis</value>
   </data>
   <data name="InformationPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a command generates an item in the Information stream</value>
+    <value>Indique l’action effectuée lorsqu’une commande génère un élément dans le flux Informations</value>
   </data>
   <data name="ErrorViewDescription" xml:space="preserve">
-    <value>Dictates the view mode to use when displaying errors</value>
+    <value>Détermine le mode d’affichage à utiliser lors de l’affichage des erreurs</value>
   </data>
   <data name="NestedPromptLevelDescription" xml:space="preserve">
-    <value>Dictates what type of prompt should be displayed for the current nesting level</value>
+    <value>Indique le type de requête à afficher pour le niveau d’imbrication actuel</value>
   </data>
   <data name="PSNativeCommandUseErrorActionPreferenceDescription" xml:space="preserve">
-    <value>If true, $ErrorActionPreference applies to native executables, so that non-zero exit codes will generate cmdlet-style errors governed by error action settings</value>
+    <value>Si la valeur est true, $ErrorActionPreference s’applique aux exécutables natifs, afin que les codes de sortie non nuls génèrent des erreurs de type cmdlet régies par les paramètres d’action pour l’erreur</value>
   </data>
   <data name="WhatIfPreferenceDescription" xml:space="preserve">
-    <value>If true, WhatIf is considered to be enabled for all commands.</value>
+    <value>Si la valeur est true, WhatIf est considéré comme activé pour toutes les commandes.</value>
   </data>
   <data name="NativeCommandArgumentPassingDescription" xml:space="preserve">
-    <value>Dictates how arguments are passed to native executables.</value>
+    <value>Détermine la manière dont les arguments sont passés aux exécutables natifs.</value>
   </data>
   <data name="FormatEnumerationLimitDescription" xml:space="preserve">
-    <value>Dictates the limit of enumeration on formatting IEnumerable objects</value>
+    <value>Indique la limite d’énumération lors de la mise en forme des objets IEnumerable</value>
   </data>
   <data name="ReportErrorShowStackTraceDescription" xml:space="preserve">
-    <value>Displays errors with a stack trace</value>
+    <value>Affiche les erreurs avec une trace</value>
   </data>
   <data name="ReportErrorShowInnerExceptionDescription" xml:space="preserve">
-    <value>Displays errors with inner exceptions</value>
+    <value>Affiche les erreurs avec les exceptions internes</value>
   </data>
   <data name="ReportErrorShowSourceDescription" xml:space="preserve">
-    <value>Displays errors with their sources</value>
+    <value>Affiche les erreurs avec leur source</value>
   </data>
   <data name="ReportErrorShowExceptionClassDescription" xml:space="preserve">
-    <value>Displays errors with a description of the error class</value>
+    <value>Affiche les erreurs avec une description de la classe d’erreur</value>
   </data>
   <data name="DollarPSCultureDescription" xml:space="preserve">
-    <value>Culture of the current PowerShell session</value>
+    <value>Culture de la session PowerShell actuelle</value>
   </data>
   <data name="DollarPSUICultureDescription" xml:space="preserve">
-    <value>UI culture of the current PowerShell session</value>
+    <value>Culture de l’interface utilisateur de la session PowerShell actuelle</value>
   </data>
   <data name="PSDefaultParameterValuesDescription" xml:space="preserve">
-    <value>Variable to hold all default &lt;cmdlet:parameter, value&gt; pairs</value>
+    <value>Variable pour stocker toutes les paires par défaut &lt;cmdlet:parameter, value&gt;</value>
   </data>
   <data name="PauseDefinitionString" xml:space="preserve">
-    <value>Press Enter to continue...</value>
+    <value>Appuyez sur ENTRÉE pour continuer...</value>
   </data>
   <data name="PSEditionDescription" xml:space="preserve">
-    <value>Edition information for the current PowerShell session</value>
+    <value>Informations d’édition pour la session PowerShell actuelle</value>
   </data>
 </root>

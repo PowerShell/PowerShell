@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FileOpenError" xml:space="preserve">
-    <value>Cannot open the file because the current provider ({0}) cannot open files.</value>
+    <value>Non è possibile aprire il file perché il provider corrente ({0}) non può aprire i file.</value>
   </data>
   <data name="FileReadError" xml:space="preserve">
-    <value>The file {0} cannot be read: {1}</value>
+    <value>Non è possibile leggere il file {0}: {1}</value>
   </data>
   <data name="FilterContextWarning" xml:space="preserve">
-    <value>The option "Context" is not valid when searching results that are piped from Select-String output.</value>
+    <value>L'opzione "Context" non è valida quando si cercano risultati inviati tramite pipe dall'output di Select-String.</value>
   </data>
   <data name="InvalidRegex" xml:space="preserve">
-    <value>The string {0} is not a valid regular expression: {1}</value>
+    <value>La stringa {0} non è un'espressione regolare valida: {1}</value>
   </data>
   <data name="CannotSpecifyCultureWithoutSimpleMatch" xml:space="preserve">
-    <value>You must specify -Culture parameter only with -SimpleMatch parameter.</value>
+    <value>È necessario specificare il parametro -Culture solo con il parametro -SimpleMatch.</value>
   </data>
 </root>
