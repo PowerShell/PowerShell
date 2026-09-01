@@ -118,108 +118,108 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandStateChange" xml:space="preserve">
-    <value>Command {0} is {1}.</value>
+    <value>El comando {0} está {1}.</value>
   </data>
   <data name="EngineStateChange" xml:space="preserve">
-    <value>Engine state changed from {0} to {1}.</value>
+    <value>El estado del motor cambió de {0} a {1}.</value>
   </data>
   <data name="ErrorRecordId" xml:space="preserve">
-    <value>Fully Qualified Error ID = {0}</value>
+    <value>Id. de error completo = {0}</value>
   </data>
   <data name="ErrorRecordMessage" xml:space="preserve">
-    <value>Error Message = {0}</value>
+    <value>Mensaje de error = {0}</value>
   </data>
   <data name="ErrorRecordRecommendedAction" xml:space="preserve">
-    <value>Recommended Action = {0}</value>
+    <value>Acción recomendada = {0}</value>
   </data>
   <data name="ExecutionPolicyName" xml:space="preserve">
-    <value>Execution Policy</value>
+    <value>Directiva de ejecución</value>
   </data>
   <data name="JobCommand" xml:space="preserve">
-    <value>Job Command = {0}</value>
+    <value>Comando de trabajo = {0}</value>
   </data>
   <data name="JobId" xml:space="preserve">
-    <value>Job Id = {0}</value>
+    <value>Id. de trabajo = {0}</value>
   </data>
   <data name="JobInstanceId" xml:space="preserve">
-    <value>Job Instance Id = {0}</value>
+    <value>Id. de instancia de trabajo = {0}</value>
   </data>
   <data name="JobLocation" xml:space="preserve">
-    <value>Job Location = {0}</value>
+    <value>Ubicación del trabajo = {0}</value>
   </data>
   <data name="JobName" xml:space="preserve">
-    <value>Job Name = {0}</value>
+    <value>Nombre del trabajo = {0}</value>
   </data>
   <data name="JobState" xml:space="preserve">
-    <value>Job State = {0}</value>
+    <value>Estado del trabajo = {0}</value>
   </data>
   <data name="LogContextCommandName" xml:space="preserve">
-    <value>        Command Name = </value>
+    <value>        Nombre de comando = </value>
   </data>
   <data name="LogContextCommandPath" xml:space="preserve">
-    <value>        Command Path = </value>
+    <value>        Ruta de acceso del comando = </value>
   </data>
   <data name="LogContextCommandType" xml:space="preserve">
-    <value>        Command Type = </value>
+    <value>        Tipo de comando = </value>
   </data>
   <data name="LogContextEngineVersion" xml:space="preserve">
-    <value>        Engine Version = </value>
+    <value>        Versión del motor = </value>
   </data>
   <data name="LogContextHostId" xml:space="preserve">
-    <value>        Host ID = </value>
+    <value>        Id. de host = </value>
   </data>
   <data name="LogContextHostName" xml:space="preserve">
-    <value>        Host Name = </value>
+    <value>        Nombre de host = </value>
   </data>
   <data name="LogContextHostApplication" xml:space="preserve">
-    <value>        Host Application = </value>
+    <value>        Aplicación host = </value>
   </data>
   <data name="LogContextHostVersion" xml:space="preserve">
-    <value>        Host Version = </value>
+    <value>        Versión del host = </value>
   </data>
   <data name="LogContextPipelineId" xml:space="preserve">
-    <value>        Pipeline ID = </value>
+    <value>        Id. de canalización = </value>
   </data>
   <data name="LogContextRunspaceId" xml:space="preserve">
-    <value>        Runspace ID = </value>
+    <value>        Id. de espacio de ejecución = </value>
   </data>
   <data name="LogContextScriptName" xml:space="preserve">
-    <value>        Script Name = </value>
+    <value>        Nombre de script = </value>
   </data>
   <data name="LogContextSequenceNumber" xml:space="preserve">
-    <value>        Sequence Number = </value>
+    <value>        Número de secuencia = </value>
   </data>
   <data name="LogContextSeverity" xml:space="preserve">
-    <value>        Severity = </value>
+    <value>        Gravedad = </value>
   </data>
   <data name="LogContextShellId" xml:space="preserve">
-    <value>        Shell ID = </value>
+    <value>        Id. de shell = </value>
   </data>
   <data name="LogContextTime" xml:space="preserve">
-    <value>        Time = </value>
+    <value>        Hora = </value>
   </data>
   <data name="LogContextUser" xml:space="preserve">
-    <value>        User = </value>
+    <value>        Usuario = </value>
   </data>
   <data name="LogContextConnectedUser" xml:space="preserve">
-    <value>        Connected User = </value>
+    <value>        Usuario conectado = </value>
   </data>
   <data name="NullJobName" xml:space="preserve">
-    <value>NULL Job</value>
+    <value>Trabajo NULL</value>
   </data>
   <data name="ProviderNameString" xml:space="preserve">
-    <value>Provider name</value>
+    <value>Nombre del proveedor</value>
   </data>
   <data name="ProviderStateChange" xml:space="preserve">
-    <value>Provider {0} changed state to {1}.</value>
+    <value>El proveedor {0} cambió el estado a {1}.</value>
   </data>
   <data name="ScriptStateChange" xml:space="preserve">
-    <value>Script execution is {0}.</value>
+    <value>La ejecución del script es {0}.</value>
   </data>
   <data name="SettingChange" xml:space="preserve">
-    <value>Variable {0} changed from {1} to {2}.</value>
+    <value>La variable {0} cambió de {1} a {2}.</value>
   </data>
   <data name="SettingChangeNoPrevious" xml:space="preserve">
-    <value>Variable {0} changed to {1}.</value>
+    <value>La variable {0} cambió a {1}.</value>
   </data>
 </root>

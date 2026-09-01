@@ -118,35 +118,35 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FileNotExist" xml:space="preserve">
-    <value>The data file '{0}' cannot be found. </value>
+    <value>데이터 파일 '{0}'을(를) 찾을 수 없습니다. </value>
   </data>
   <data name="NotCalledFromAScriptFile" xml:space="preserve">
-    <value>The FileName parameter was not specified. The FileName parameter is required when Import-LocalizedData is not called from a script file.</value>
+    <value>FileName 매개 변수를 지정하지 않았습니다. Import-LocalizedData를 스크립트 파일에서 호출하지 않는 경우 FileName 매개 변수가 필요합니다.</value>
   </data>
   <data name="ErrorOpeningFile" xml:space="preserve">
-    <value>The following error occurred while PowerShell was opening the data file '{0}':
+    <value>PowerShell이 데이터 파일 '{0}'을(를) 여는 동안 다음 오류가 발생했습니다.
 {1}.</value>
   </data>
   <data name="ErrorLoadingDataFile" xml:space="preserve">
-    <value>The following error occurred while PowerShell was loading the '{0}' script data file:
+    <value>PowerShell이 '{0}' 스크립트 데이터 파일을 로드하는 동안 다음 오류가 발생했습니다.
 {1}.</value>
   </data>
   <data name="FileNameParameterCannotHavePath" xml:space="preserve">
-    <value>The argument for the FileName parameter should not contain a path.</value>
+    <value>FileName 매개 변수의 인수에는 경로가 포함되어서는 안 됩니다.</value>
   </data>
   <data name="CannotFindPsd1File" xml:space="preserve">
-    <value>Cannot find the PowerShell data file '{0}' in directory '{1}', or in any parent culture directories.</value>
+    <value>'{0}' 디렉터리 또는 상위 문화권 디렉터리에서 PowerShell 데이터 파일 '{1}'을(를) 찾을 수 없습니다.</value>
   </data>
   <data name="CannotDefineSupportedCommand" xml:space="preserve">
-    <value>Cannot import localized data. The definition of additional supported commands is not allowed in this language mode.</value>
+    <value>지역화된 데이터를 가져올 수 없습니다. 이 언어 모드에서는 추가 지원 명령을 정의할 수 없습니다.</value>
   </data>
   <data name="IncorrectVariableName" xml:space="preserve">
-    <value>The BindingVariable name '{0}' is invalid.</value>
+    <value>BindingVariable 이름 '{0}'은(는) 잘못되었습니다.</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
     <value>Import-LocalizedData Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Additional supported commands (via SupportedCommand parameter) will not be allowed in ConstrainedLanguage mode.</value>
+    <value>ConstrainedLanguage 모드에서는 추가 지원 명령(SupportedCommand 매개 변수를 통해)이 허용되지 않습니다.</value>
   </data>
 </root>

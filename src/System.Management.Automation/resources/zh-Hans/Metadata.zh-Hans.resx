@@ -118,150 +118,150 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MetadataMemberInitialization" xml:space="preserve">
-    <value>Cannot initialize attributes for "{0}": "{1}"</value>
+    <value>无法初始化“{0}”的属性:“{1}”</value>
   </data>
   <data name="ValidateRangeElementType" xml:space="preserve">
-    <value>The argument cannot be validated because its type "{0}" is not the same type ({1}) as the maximum and minimum limits of the parameter. Make sure the argument is of type {1} and then try the command again.</value>
+    <value>无法验证该参数，因为其类型“{0}”与参数的最大和最小限制类型({1})不同。请确保参数类型为 {1}，然后重试该命令。</value>
   </data>
   <data name="ValidateRangePositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not greater than zero.</value>
+    <value>无法验证参数“{0}”，因为其值不大于零。</value>
   </data>
   <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not greater than or equal to zero.</value>
+    <value>无法验证参数“{0}”，因为其值不大于或等于零。</value>
   </data>
   <data name="ValidateRangeNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not less than zero.</value>
+    <value>无法验证参数“{0}”，因为其值不小于零。</value>
   </data>
   <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not less than or equal to zero.</value>
+    <value>无法验证参数“{0}”，因为其值不小于或等于零。</value>
   </data>
   <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
-    <value>The specified minimum range ({0}) cannot be accepted because it is not the same type as the specified maximum range ({1}). Update the ValidateRange attribute for the parameter.</value>
+    <value>无法接受指定的最小范围({0})，因为它与指定的最大范围({1})的类型不同。更新参数的 ValidateRange 属性。</value>
   </data>
   <data name="ValidateRangeNotIComparable" xml:space="preserve">
-    <value>Cannot accept the MaxRange and MinRange parameter types. Both parameters must be objects that implement an IComparable interface.</value>
+    <value>无法接受 MaxRange 和 MinRange 参数类型。这两个参数都必须是实现 IComparable 接口的对象。</value>
   </data>
   <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
-    <value>The specified maximum range cannot be accepted because it is less than the specified minimum range. Update the ValidateRange attribute for the parameter.</value>
+    <value>无法接受指定的最大范围，因为它小于指定的最小范围。更新参数的 ValidateRange 属性。</value>
   </data>
   <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
-    <value>The {0} argument is greater than the maximum allowed range of {1}. Supply an argument that is less than or equal to {1} and then try the command again.</value>
+    <value>参数 {0} 大于允许的最大范围 {1}。提供小于或等于 {1} 的参数，然后重试该命令。</value>
   </data>
   <data name="ValidateRangeSmallerThanMinRangeFailure" xml:space="preserve">
-    <value>The {0} argument is less than the minimum allowed range of {1}. Supply an argument that is greater than or equal to {1} and then try the command again.</value>
+    <value>参数 {0} 小于允许的最小范围 {1}。提供大于或等于 {1} 的参数，然后重试该命令。</value>
   </data>
   <data name="ValidatePatternFailure" xml:space="preserve">
-    <value>The argument "{0}" does not match the "{1}" pattern. Supply an argument that matches "{1}" and try the command again.</value>
+    <value>参数“{0}”与“{1}”模式不匹配。提供与“{1}”匹配的参数，然后重试该命令。</value>
   </data>
   <data name="ValidateCountNotInArray" xml:space="preserve">
-    <value>The ValidateCount attribute cannot be applied to a non-array parameter. Either remove the attribute from the parameter or make the parameter an array parameter.</value>
+    <value>ValidateCount 属性不能应用于非数组参数。从参数中移除属性或将参数设为数组参数。</value>
   </data>
   <data name="ValidateCountExactFailure" xml:space="preserve">
-    <value>The parameter requires exactly {0} value(s) - {1} value(s) were provided.</value>
+    <value>该参数确切需要 {0} 个值 - 系统提供了 {1} 个值。</value>
   </data>
   <data name="ValidateCountMinMaxFailure" xml:space="preserve">
-    <value>The parameter requires at least {0} value(s) and no more than {1} value(s) - {2} value(s) were provided.</value>
+    <value>参数至少需要 {0} 个值，并且不超过 {1} 个值 - 已提供 {2} 个值。</value>
   </data>
   <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
-    <value>The specified maximum number of arguments for a parameter is fewer than the specified minimum number of arguments. Update the ValidateCount attribute for the parameter.</value>
+    <value>参数的指定最大实参数小于指定的最小实参数。更新参数的 ValidateCount 属性。</value>
   </data>
   <data name="ValidateLengthMaxLengthSmallerThanMinLength" xml:space="preserve">
-    <value>The specified maximum character length of the argument is shorter than the specified minimum argument character length. Update the ValidateLength attribute for the parameter.</value>
+    <value>参数的指定最大字符长度短于指定的最小参数字符长度。更新参数的 ValidateLength 属性。</value>
   </data>
   <data name="ValidateLengthNotString" xml:space="preserve">
-    <value>The ValidateLength attribute cannot be applied to a parameter that is not a string or string[] parameter. Make the parameter a string or string[] parameter.</value>
+    <value>无法将 ValidateLength 属性应用于不是字符串的参数或 string[] 参数。将参数设为字符串或 string[] 参数。</value>
   </data>
   <data name="ValidateLengthMinLengthFailure" xml:space="preserve">
-    <value>The character length ({1}) of the argument is too short. Specify an argument with a length that is greater than or equal to "{0}", and then try the command again.</value>
+    <value>参数的字符长度({1})太短。指定长度大于或等于“{0}”的参数，然后重试该命令。</value>
   </data>
   <data name="ValidateLengthMaxLengthFailure" xml:space="preserve">
-    <value>The character length ({1}) of the argument is too long. Specify an argument with a length that is shorter than or equal to "{0}", and then try the command again.</value>
+    <value>参数的字符长度({1})太长。指定长度小于或等于“{0}”的参数，然后重试该命令。</value>
   </data>
   <data name="ValidateSetFailure" xml:space="preserve">
-    <value>The argument "{0}" does not belong to the set "{1}" specified by the ValidateSet attribute. Supply an argument that is in the set and then try the command again.</value>
+    <value>参数“{0}”不属于 ValidateSet 属性指定的集“{1}”。请提供位于集中的参数，然后重试该命令。</value>
   </data>
   <data name="ValidateSetGeneratedValidValuesListIsNull" xml:space="preserve">
-    <value>Valid values generator return a null value.</value>
+    <value>有效值生成器返回 null 值。</value>
   </data>
   <data name="ValidateFailureResult" xml:space="preserve">
-    <value>"{0}" failed on property "{1}" {2}</value>
+    <value>属性“{1}”{2} 上的“{0}”失败</value>
   </data>
   <data name="ParsingTooManyParameterSets" xml:space="preserve">
-    <value>Cannot get or run the command. The maximum number of parameter sets for this command has been exceeded.</value>
+    <value>无法获取或运行该命令。已超过此命令的最大参数集数。</value>
   </data>
   <data name="ArgumentTransformationArgumentsShouldBeStrings" xml:space="preserve">
-    <value>Cannot process the argument because the argument value is not a string. The values of parameter arguments that have the ArgumentTransformationAttribute specified should be strings.</value>
+    <value>无法处理参数，因为参数值不是字符串。指定了 ArgumentTransformationAttribute 的参数实参值应为字符串。</value>
   </data>
   <data name="InvalidValueFailure" xml:space="preserve">
-    <value>The variable cannot be validated because the value {1} is not a valid value for the {0} variable.</value>
+    <value>无法验证该变量，因为该值 {1} 不是变量 {0} 的有效值。</value>
   </data>
   <data name="InvalidMetadataForCurrentValue" xml:space="preserve">
-    <value>The attribute cannot be added because variable {0} with value {1} would no longer be valid.</value>
+    <value>无法添加属性，因为值为 {1} 的变量 {0} 将不再有效。</value>
   </data>
   <data name="ValidateNotNullFailure" xml:space="preserve">
-    <value>The argument is null. Provide a valid value for the argument, and then try running the command again.</value>
+    <value>参数为 null。提供参数的有效值，然后再次尝试运行该命令。</value>
   </data>
   <data name="ValidateNotNullCollectionFailure" xml:space="preserve">
-    <value>The argument has a null value, or an element of the argument collection contains a null value. Provide a collection that does not contain any null values, and then try the command again.</value>
+    <value>参数具有 null 值，或者参数集合的元素包含 null 值。提供不包含任何 null 值的集合，然后重试该命令。</value>
   </data>
   <data name="ValidateNotNullOrEmptyFailure" xml:space="preserve">
-    <value>The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.</value>
+    <value>参数为 Null 或空。提供不为 Null 或空的参数，然后重试该命令。</value>
   </data>
   <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
-    <value>The argument is null, empty, or an element of the argument collection contains a null value. Supply a collection that does not contain any null values and then try the command again.</value>
+    <value>参数为 null、空，或参数集合的元素包含 null 值。提供不包含任何 null 值的集合，然后重试该命令。</value>
   </data>
   <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
-    <value>The argument is null, empty, or consists of only white-space characters. Provide an argument that contains non white-space characters, and then try the command again.</value>
+    <value>参数为 null、空或仅由空格字符组成。提供包含非空空格字符的参数，然后重试该命令。</value>
   </data>
   <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
-    <value>An element of the argument collection is null, empty, or consists of only white-space characters. Supply a collection that does not contain any those values and then try the command again.</value>
+    <value>参数集合的元素为 null、空或仅由空格字符组成。提供不包含任何这些值的集合，然后重试该命令。</value>
   </data>
   <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
-    <value>A parameter with the name '{0}' was defined multiple times for the command.</value>
+    <value>已为命令多次定义名为“{0}”的参数。</value>
   </data>
   <data name="AliasParameterNameAlreadyExistsForCommand" xml:space="preserve">
-    <value>The parameter alias cannot be specified because an alias with the name '{0}' was already defined multiple times for the command.</value>
+    <value>无法指定参数别名，因为已为命令多次定义名为“{0}”的别名。</value>
   </data>
   <data name="ParameterNameConflictsWithAlias" xml:space="preserve">
-    <value>The parameter '{0}' cannot be specified because it conflicts with the parameter alias of the same name for parameter '{1}'.</value>
+    <value>无法指定参数“{0}”，因为它与参数“{1}”的同名参数别名冲突。</value>
   </data>
   <data name="ValidateScriptFailure" xml:space="preserve">
-    <value>The "{1}" validation script for the argument with value "{0}" did not return a result of True. Determine why the validation script failed, and then try the command again.</value>
+    <value>值为“{0}”的参数的“{1}”验证脚本未返回结果 True。确定验证脚本失败的原因，然后重试该命令。</value>
   </data>
   <data name="ValidateVersionFailure" xml:space="preserve">
-    <value>The "{0}" argument does not contain a valid PowerShell version. Supply a valid version number and then try the command again.</value>
+    <value>“{0}”参数不包含有效的 PowerShell 版本。提供有效的版本号，然后重试该命令。</value>
   </data>
   <data name="ValidateVariableName" xml:space="preserve">
-    <value>Cannot validate argument '{0}' because it is not a valid variable name.</value>
+    <value>无法验证参数“{0}”，因为它不是有效的变量名称。</value>
   </data>
   <data name="JobDefinitionMustDeriveFromIJobConverter" xml:space="preserve">
-    <value>The job conversion type must derive from IAstToScriptBlockConverter.</value>
+    <value>作业转换类型必须派生自 IAstToScriptBlockConverter。</value>
   </data>
   <data name="ValidateDrivePathArgNotString" xml:space="preserve">
-    <value>The path argument is invalid. Supply a path argument that is a string type.</value>
+    <value>路径参数无效。提供字符串类型的路径参数。</value>
   </data>
   <data name="ValidateDrivePathFailure" xml:space="preserve">
-    <value>The path argument drive {0} does not belong to the set of approved drives: {1}. Supply a path argument with an approved drive.</value>
+    <value>路径参数驱动器 {0} 不属于已批准的驱动器集: {1}。使用批准的驱动器提供路径参数。</value>
   </data>
   <data name="ValidateDrivePathInvalidChar" xml:space="preserve">
-    <value>The path argument contains invalid characters.</value>
+    <value>路径参数包含无效字符。</value>
   </data>
   <data name="ValidateDrivePathNoRoot" xml:space="preserve">
-    <value>The path argument has no root drive.  Supply a full path argument with a root drive.</value>
+    <value>路径参数没有根驱动器。 提供包含根驱动器的完整路径参数。</value>
   </data>
   <data name="ArgumentNullOrEmpty" xml:space="preserve">
-    <value>The argument value for the parameter '{0}' cannot be null or an empty string.</value>
+    <value>参数“{0}”的参数值不能为 null 或空字符串。</value>
   </data>
   <data name="InvalidEnumArgument" xml:space="preserve">
-    <value>The Enum member '{0}' is not a valid value for the parameter '{1}'. Specify one of the following members and try again: {2}.</value>
+    <value>枚举成员“{0}”不是参数“{1}”的有效值。请指定以下成员之一，然后重试: {2}。</value>
   </data>
   <data name="ValidateTrustedDataFailure" xml:space="preserve">
-    <value>Cannot process input. The argument "{0}" is not trusted.</value>
+    <value>无法处理输入。参数“{0}”不受信任。</value>
   </data>
   <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
-    <value>ValidateTrustedData Attribute Check Failure</value>
+    <value>ValidateTrustedData 属性检查失败</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>The parameter argument '{0}' is not trusted and will fail the ValidateTrustedData parameter attribute check in Constrained Language mode.</value>
+    <value>参数实参“{0}”不受信任，且在约束语言模式下无法通过 ValidateTrustedData 参数属性检查。</value>
   </data>
 </root>

@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LessThanErrorTemplate" xml:space="preserve">
-    <value>"{0}" cannot be greater than or equal to "{1}".</value>
+    <value>"{0}" değeri "{1}" değerinden büyük veya buna eşit olamaz.</value>
   </data>
   <data name="NonPositiveNumberErrorTemplate" xml:space="preserve">
-    <value>"{0}" needs to be a positive number.</value>
+    <value>"{0}" pozitif bir sayı olmalıdır.</value>
   </data>
   <data name="AllNullOrEmptyStringsErrorTemplate" xml:space="preserve">
-    <value>All strings are null or empty.</value>
+    <value>Tüm dizeler null veya boş.</value>
   </data>
 </root>

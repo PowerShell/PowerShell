@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ISecurityDescriptorCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot use the interface because the ISecurityDescriptorCmdletProvider interface is not supported by this provider.</value>
+    <value>Não é possível usar a interface porque a interface ISecurityDescriptorCmdletProvider não tem suporte nesse provedor.</value>
   </data>
 </root>

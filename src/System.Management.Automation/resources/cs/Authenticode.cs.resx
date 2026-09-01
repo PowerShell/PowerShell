@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Reason_DoNotRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted not to run this software now.</value>
+    <value>Soubor {0} nelze načíst, protože jste se rozhodli tento software nyní nespouštět.</value>
   </data>
   <data name="Reason_NeverRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted never to run software from this publisher.</value>
+    <value>Soubor {0} nelze načíst, protože jste zvolili možnost nikdy nespouštět software od tohoto vydavatele.</value>
   </data>
   <data name="Reason_NotTrusted" xml:space="preserve">
-    <value>File {0} is published by {1}. This publisher is explicitly not trusted on your system. The script will not run on the system. For more information, run the command "get-help about_signing".</value>
+    <value>Soubor {0} publikoval vydavatel {1}. Tento vydavatel není ve vašem systému výslovně důvěryhodný. Skript se v systému nespustí. Další informace získáte spuštěním příkazu get-help about_signing.</value>
   </data>
   <data name="Reason_RestrictedMode" xml:space="preserve">
-    <value>File {0} cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.</value>
+    <value>Soubor {0} nelze načíst, protože spuštěné skripty jsou v tomto systému zakázány. Další informace najdete viz about_Execution_Policies na https://go.microsoft.com/fwlink/?LinkID=135170.</value>
   </data>
   <data name="Reason_Unknown" xml:space="preserve">
-    <value>File {0} cannot be loaded. {1}.</value>
+    <value>Soubor {0} nelze načíst. {1}.</value>
   </data>
   <data name="Reason_DisallowedBySafer" xml:space="preserve">
-    <value>File {0} cannot be loaded because its operation is blocked by software restriction policies, such as those created by using Group Policy.</value>
+    <value>Soubor {0} nelze načíst, protože jeho operace je blokována zásadami omezení softwaru, jako jsou zásady vytvořené pomocí Zásad skupiny.</value>
   </data>
   <data name="Reason_FileContentUnavailable" xml:space="preserve">
-    <value>File {0} cannot be loaded because its content could not be read.</value>
+    <value>Soubor {0} nelze načíst, protože jeho obsah nelze přečíst.</value>
   </data>
   <data name="CertNotGoodForSigning" xml:space="preserve">
-    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+    <value>Kód nejde podepsat. Zadaný certifikát není vhodný k podepisování kódu.</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code. The TimeStamp server URL must be fully qualified, and in the format http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+    <value>Kód nejde podepsat. Adresa URL serveru TimeStamp musí být plně kvalifikovaná a ve formátu http://&lt;adresa URL serveru&gt; nebo https://&lt;adresa URL serveru&gt;.</value>
   </data>
   <data name="InvalidHashAlgorithm" xml:space="preserve">
-    <value>Cannot sign code. The hash algorithm is not supported.</value>
+    <value>Kód nejde podepsat. Hashovací algoritmus se nepodporuje.</value>
   </data>
   <data name="AuthenticodePromptCaption" xml:space="preserve">
-    <value>Do you want to run software from this untrusted publisher?</value>
+    <value>Chcete spustit software od tohoto nedůvěryhodného vydavatele?</value>
   </data>
   <data name="AuthenticodePromptText" xml:space="preserve">
-    <value>File {0} is published by {1} and is not trusted on your system. Only run scripts from trusted publishers.</value>
+    <value>Soubor {0} publikoval vydavatel {1} a není v systému důvěryhodný. Spouštějte pouze skripty od důvěryhodných vydavatelů.</value>
   </data>
   <data name="AuthenticodePromptText_UnknownPublisher" xml:space="preserve">
-    <value>Software {0} is published by an unknown publisher. It is recommended that you do not run this software.</value>
+    <value>Software {0} je publikován neznámým vydavatelem. Doporučujeme tento software nespouštět.</value>
   </data>
   <data name="RemoteFilePromptCaption" xml:space="preserve">
-    <value>Security warning</value>
+    <value>Upozornění zabezpečení</value>
   </data>
   <data name="RemoteFilePromptText" xml:space="preserve">
-    <value>Run only scripts that you trust. While scripts from the internet can be useful, this script can potentially harm your computer. If you trust this script, use the Unblock-File cmdlet to allow the script to run without this warning message. Do you want to run {0}?</value>
+    <value>Spouštějte pouze skripty, kterým důvěřujete. Přestože skripty z internetu můžou být užitečné, může vám tento skript potenciálně poškodit počítač. Pokud tomuto skriptu důvěřujete, pomocí rutiny Unblock-File povolte spuštění skriptu bez této zprávy upozornění. Chcete spustit soubor {0}?</value>
   </data>
   <data name="Choice_NeverRun" xml:space="preserve">
-    <value>Ne&amp;ver run</value>
+    <value>&amp;Nikdy nespouštět</value>
   </data>
   <data name="Choice_NeverRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and do not prompt me to run this script in future. Future attempts to run this script will result in a silent failure.</value>
+    <value>Nyní nespouštějte skript od tohoto vydavatele a nezobrazujte výzvu ke spuštění tohoto skriptu v budoucnu. Budoucí pokusy o spuštění tohoto skriptu způsobí tichou chybu.</value>
   </data>
   <data name="Choice_DoNotRun" xml:space="preserve">
-    <value>&amp;Do not run</value>
+    <value>&amp;Nespouštět</value>
   </data>
   <data name="Choice_DoNotRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>Nespouštějte skript od tohoto vydavatele a pokračujte v zobrazování výzvy ke spuštění tohoto skriptu v budoucnu.</value>
   </data>
   <data name="Choice_RunOnce" xml:space="preserve">
-    <value>&amp;Run once</value>
+    <value>Spustit &amp;jednou</value>
   </data>
   <data name="Choice_RunOnce_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>Spusťte skript od tohoto vydavatele a pokračujte v zobrazování výzvy ke spuštění tohoto skriptu v budoucnu.</value>
   </data>
   <data name="Choice_AlwaysRun" xml:space="preserve">
-    <value>&amp;Always run</value>
+    <value>&amp;Vždycky spouštět</value>
   </data>
   <data name="Choice_AlwaysRun_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and do not prompt me to run this script in the future.</value>
+    <value>Spusťte skript od tohoto vydavatele a nezobrazujte výzvu ke spuštění tohoto skriptu v budoucnu.</value>
   </data>
   <data name="Choice_Suspend" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>&amp;Pozastavit</value>
   </data>
   <data name="Choice_Suspend_Help" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type exit to resume operation when you are done.</value>
+    <value>Pozastavit aktuální kanál a vrátit se na příkazový řádek. Po dokončení operace můžete pokračovat zadáním příkazu exit.</value>
   </data>
 </root>

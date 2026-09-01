@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GetUptimePlatformIsNotSupported" xml:space="preserve">
-    <value>"The platform is not supported (System.Diagnostics.Stopwatch.IsHighResolution is false)."</value>
+    <value>플랫폼이 지원되지 않습니다(System.Diagnostics.Stopwatch.IsHighResolution이 false임).</value>
   </data>
 </root>

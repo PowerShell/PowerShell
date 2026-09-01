@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AttributeExpected" xml:space="preserve">
-    <value>{0} attribute was expected.</value>
+    <value>{0} 특성이 필요합니다.</value>
   </data>
   <data name="InvalidElementTag" xml:space="preserve">
-    <value>{0} XML tag is not recognized.</value>
+    <value>{0} XML 태그를 인식할 수 없습니다.</value>
   </data>
   <data name="InvalidReferenceId" xml:space="preserve">
-    <value>No object found for referenceId {0}</value>
+    <value>referenceId {0}에 대한 개체를 찾을 수 없습니다.</value>
   </data>
   <data name="InvalidDictionaryKeyName" xml:space="preserve">
-    <value>Name attribute for dictionary key is incorrectly specified.</value>
+    <value>사전 키에 대한 Name 특성이 잘못 지정되었습니다.</value>
   </data>
   <data name="InvalidDictionaryValueName" xml:space="preserve">
-    <value>Name attribute for dictionary value is incorrectly specified.</value>
+    <value>사전 값에 대한 Name 특성이 잘못 지정되었습니다.</value>
   </data>
   <data name="InvalidVersion" xml:space="preserve">
-    <value>Version of PSObject is not valid.</value>
+    <value>PSObject 버전이 올바르지 않습니다.</value>
   </data>
   <data name="UnexpectedVersion" xml:space="preserve">
-    <value>Version of incoming PSObject is {0}. Expected value is 1.</value>
+    <value>들어오는 PSObject의 버전은 {0}입니다. 예상 값은 1입니다.</value>
   </data>
   <data name="InvalidTypeHierarchyReferenceId" xml:space="preserve">
-    <value>Cannot process names because no TypeNames were found for referenceId {0}.</value>
+    <value>referenceId {0}에 대한 TypeNames를 찾을 수 없어 이름을 처리할 수 없습니다.</value>
   </data>
   <data name="DepthOfOneRequired" xml:space="preserve">
-    <value>Value of depth parameter must be greater than or equal to 1.</value>
+    <value>depth 매개 변수 값은 1보다 크거나 같아야 합니다.</value>
   </data>
   <data name="InvalidNodeType" xml:space="preserve">
-    <value>Current Node type is {0}. Expected type is {1}.</value>
+    <value>현재 노드 형식은 {0}입니다. {1} 형식이 필요합니다.</value>
   </data>
   <data name="DictionaryKeyNotSpecified" xml:space="preserve">
-    <value>Key for dictionary entry is not specified.</value>
+    <value>사전 항목의 키가 지정되지 않았습니다.</value>
   </data>
   <data name="DictionaryValueNotSpecified" xml:space="preserve">
-    <value>Value for dictionary entry is not specified.</value>
+    <value>사전 항목의 값이 지정되지 않았습니다.</value>
   </data>
   <data name="ReadCalledAfterDone" xml:space="preserve">
-    <value>There are no more objects to deserialize.</value>
+    <value>더 이상 역직렬화할 개체가 없습니다.</value>
   </data>
   <data name="NullAsDictionaryKey" xml:space="preserve">
-    <value>Null is specified as dictionary key.</value>
+    <value>Null이 사전 키로 지정되었습니다.</value>
   </data>
   <data name="InvalidPrimitiveType" xml:space="preserve">
-    <value>The contents of the {0} primitive type are not valid.</value>
+    <value>{0} 기본 형식의 내용이 올바르지 않습니다.</value>
   </data>
   <data name="DeserializationTooDeep" xml:space="preserve">
-    <value>Serialized XML is nested too deeply.</value>
+    <value>직렬화된 XML의 중첩이 너무 깊습니다.</value>
   </data>
   <data name="Stopping" xml:space="preserve">
-    <value>Serializer was closed.</value>
+    <value>직렬 변환기가 닫혔습니다.</value>
   </data>
   <data name="DeserializationMemoryQuota" xml:space="preserve">
-    <value>The data in the command exceeded the maximum size that is allowed by the session configuration. The allowed maximum is {0} MB. Change the input, use a different session configuration, or change the "{1}" and "{2}" properties of the session configuration on the remote computer.</value>
+    <value>명령에 포함된 데이터가 세션 구성에서 허용하는 최대 크기를 초과했습니다. 허용되는 최대 크기는 {0}MB입니다. 입력을 변경하거나, 다른 세션 구성을 사용하거나, 원격 컴퓨터에서 세션 구성의 "{1}" 및 "{2}" 속성을 변경하세요.</value>
   </data>
   <data name="DeserializeSecureStringFailed" xml:space="preserve">
-    <value>Deserialization of encrypted secure string failed</value>
+    <value>암호화된 보안 문자열의 역직렬화에 실패했습니다.</value>
   </data>
   <data name="PrimitiveHashtableInvalidKey" xml:space="preserve">
-    <value>The key type {0} is not valid. The PSPrimitiveDictionary class accepts only keys of the type System.String.</value>
+    <value>{0} 키 유형이 유효하지 않습니다. PSPrimitiveDictionary 클래스는 System.String 형식의 키만 허용합니다.</value>
   </data>
   <data name="PrimitiveHashtableInvalidValue" xml:space="preserve">
-    <value>The type of the value {0} is not valid. The PSPrimitiveDictionary class accepts only values of types that are fully serializable over PowerShell remoting. See the Help topic about_Remoting for a list of fully-serializable types.</value>
+    <value>값 형식 {0}이(가) 올바르지 않습니다. PSPrimitiveDictionary 클래스는 PowerShell 원격을 통해 완전히 직렬화할 수 있는 형식의 값만 허용합니다. 완전히 직렬화할 수 있는 형식 목록은 about_Remoting 도움말 항목을 참조하세요.</value>
   </data>
   <data name="InvalidKey" xml:space="preserve">
-    <value>Could not decrypt data. The data was not encrypted with this key.</value>
+    <value>데이터를 해독할 수 없습니다. 이 키로 암호화된 데이터가 아닙니다.</value>
   </data>
   <data name="InvalidEncryptedString" xml:space="preserve">
-    <value>The parameter value "{0}" is not a valid encrypted string.</value>
+    <value>매개 변수 값 "{0}"은(는) 올바른 암호화된 문자열이 아닙니다.</value>
   </data>
   <data name="InvalidKeyLength" xml:space="preserve">
-    <value>The specified {0} is not valid. Valid {0} length settings are either 128 bits, 192 bits, or 256 bits.</value>
+    <value>지정한 {0}이(가) 잘못되었습니다. 유효한 {0} 길이 설정은 128비트, 192비트 또는 256비트입니다.</value>
   </data>
   <data name="DeserializeSecureStringNotSupported" xml:space="preserve">
-    <value>Deserialization of SecureString is currently only supported on Windows.</value>
+    <value>SecureString 역직렬화는 현재 Windows에서만 지원됩니다.</value>
   </data>
 </root>

@@ -121,99 +121,99 @@
     <value>{0} ({1})</value>
   </data>
   <data name="NoServiceFoundForGivenName" xml:space="preserve">
-    <value>Cannot find any service with service name '{0}'.</value>
+    <value>找不到任何服務名稱為 '{0}' 的服務。</value>
   </data>
   <data name="NoServiceFoundForGivenDisplayName" xml:space="preserve">
-    <value>Cannot find any service with display name '{1}'.</value>
+    <value>找不到任何顯示名稱為 '{1}' 的服務。</value>
   </data>
   <data name="ServiceHasDependentServices" xml:space="preserve">
-    <value>Cannot stop service '{1} ({0})' because it has dependent services. It can only be stopped if the Force flag is set.</value>
+    <value>無法停止服務 '{1} ({0})'，因為該服務具有相依式服務。只有在設定 Force 旗標時，才能停止該服務。</value>
   </data>
   <data name="ServiceHasDependentServicesNoForce" xml:space="preserve">
-    <value>Cannot stop service '{1} ({0})' because it has dependent services.</value>
+    <value>無法停止服務 '{1} ({0})'，因為該服務具有相依式服務。</value>
   </data>
   <data name="CouldNotStopService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be stopped due to the following error: {2}</value>
+    <value>由於下列錯誤，無法停止服務 '{1} ({0})': {2}</value>
   </data>
   <data name="CouldNotStartService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be started due to the following error: {2}</value>
+    <value>由於下列錯誤，無法啟動服務 '{1} ({0})': {2}</value>
   </data>
   <data name="CouldNotSuspendService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be suspended due to the following error: {2}</value>
+    <value>由於下列錯誤，無法暫止服務 '{1} ({0})': {2}</value>
   </data>
   <data name="CouldNotSuspendServiceNotSupported" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be suspended because the service does not support being suspended or resumed.</value>
+    <value>無法暫止服務 '{1} ({0})'，因為該服務不支援暫止或繼續。</value>
   </data>
   <data name="CouldNotSuspendServiceNotRunning" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be suspended because it is not currently running.</value>
+    <value>無法暫止服務 '{1} ({0})'，因為該服務目前未執行。</value>
   </data>
   <data name="CouldNotResumeService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be resumed due to the following error: {2}</value>
+    <value>由於下列錯誤，無法繼續服務 '{1} ({0})': {2}</value>
   </data>
   <data name="CouldNotResumeServiceNotSupported" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be resumed because the service does not support being suspended or resumed.</value>
+    <value>無法繼續服務 '{1} ({0})'，因為該服務不支援暫止或繼續。</value>
   </data>
   <data name="CouldNotResumeServiceNotRunning" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be resumed because it is not currently running.</value>
+    <value>無法繼續服務 '{1} ({0})'，因為該服務目前未執行。</value>
   </data>
   <data name="CouldNotSetService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be configured due to the following error: {2}</value>
+    <value>由於下列錯誤，無法設定服務 '{1} ({0})': {2}</value>
   </data>
   <data name="CouldNotSetServiceDescription" xml:space="preserve">
-    <value>Service '{1} ({0})' description cannot be configured due to the following error: {2}</value>
+    <value>由於下列錯誤，無法設定服務 '{1} ({0})' 的描述: {2}</value>
   </data>
   <data name="CouldNotSetServiceDelayedAutoStart" xml:space="preserve">
-    <value>Service '{1} ({0})' automatic (delayed start) cannot be configured due to the following error: {2}</value>
+    <value>由於下列錯誤，無法將服務 '{1} ({0})' 設定為自動 (延遲啟動): {2}</value>
   </data>
   <data name="CouldNotSetServiceSecurityDescriptorSddl" xml:space="preserve">
-    <value>Service '{0}' security descriptor cannot be configured due to the following error: {1}</value>
+    <value>由於下列錯誤，無法設定服務 '{0}' 的安全性描述元: {1}</value>
   </data>
   <data name="CouldNotNewService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be created due to the following error: {2}</value>
+    <value>由於下列錯誤，無法建立服務 '{1} ({0})': {2}</value>
   </data>
   <data name="CouldNotNewServiceDescription" xml:space="preserve">
-    <value>Service '{1} ({0})' was created, but its description cannot be configured due to the following error: {2}</value>
+    <value>已建立服務 '{1} ({0})'，但由於下列錯誤，無法設定其描述: {2}</value>
   </data>
   <data name="CouldNotNewServiceDelayedAutoStart" xml:space="preserve">
-    <value>Service '{1} ({0})' was created, but its StartupType 'Automatic (Delayed Start)' could not be configured due to the following error: {2}</value>
+    <value>已建立服務 '{1} ({0})'，但由於下列錯誤，無法將其 StartupType 設定為 [自動 (延遲啟動)]: {2}</value>
   </data>
   <data name="CouldNotRemoveService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be removed due to the following error: {2}</value>
+    <value>由於下列錯誤，無法移除服務 '{1} ({0})': {2}</value>
   </data>
   <data name="CouldNotAccessDependentServices" xml:space="preserve">
-    <value>'Cannot access dependent services of '{1} ({0})'</value>
+    <value>'無法存取 '{1} ({0})' 的相依式服務'</value>
   </data>
   <data name="StartingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to start...</value>
+    <value>正在等候服務 '{1} ({0})' 啟動...</value>
   </data>
   <data name="StoppingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to stop...</value>
+    <value>正在等候服務 '{1} ({0})' 停止...</value>
   </data>
   <data name="SuspendingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to suspend...</value>
+    <value>正在等候服務 '{1} ({0})' 暫止...</value>
   </data>
   <data name="ResumingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to resume...</value>
+    <value>正在等候服務 '{1} ({0})' 繼續...</value>
   </data>
   <data name="StartServiceFailed" xml:space="preserve">
-    <value>Failed to start service '{1} ({0})'.</value>
+    <value>無法啟動服務 '{1} ({0})。</value>
   </data>
   <data name="StopServiceFailed" xml:space="preserve">
-    <value>Service '{1} ({0})' stop failed.</value>
+    <value>服務 '{1} ({0})' 停止失敗。</value>
   </data>
   <data name="SuspendServiceFailed" xml:space="preserve">
-    <value>Service '{1} ({0})' suspend failed.</value>
+    <value>服務 '{1} ({0})' 暫止失敗。</value>
   </data>
   <data name="ResumeServiceFailed" xml:space="preserve">
-    <value>Service '{1} ({0})' resume failed.</value>
+    <value>服務 '{1} ({0})' 繼續失敗。</value>
   </data>
   <data name="FailToOpenServiceControlManager" xml:space="preserve">
-    <value>Failed to open SCManager due to the following error: {0}. Run PowerShell as admin and run your command again.</value>
+    <value>由於下列錯誤，無法開啟 SCManager: {0}。以系統管理員身分執行 PowerShell，然後再次執行您的命令。</value>
   </data>
   <data name="UnsupportedStartupType" xml:space="preserve">
-    <value>The startup type '{0}' is not supported by {1}.</value>
+    <value>{1} 不支援啟動類型 '{0}'。</value>
   </data>
   <data name="CouldNotGetServiceProperty" xml:space="preserve">
-    <value>Could not retrieve property '{1}' for service '{0}': {2}</value>
+    <value>無法擷取服務 '{0}' 的屬性 '{1}': {2}</value>
   </data>
 </root>

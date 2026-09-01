@@ -118,63 +118,63 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LineLessThanOne" xml:space="preserve">
-    <value>Line cannot be less than 1.</value>
+    <value>La ligne ne peut pas être inférieure à 1.</value>
   </data>
   <data name="BreakpointIdNotFound" xml:space="preserve">
-    <value>There is no breakpoint with ID '{0}'.</value>
+    <value>Il n’existe aucun point d’arrêt avec l’ID « {0} ».</value>
   </data>
   <data name="FileDoesNotExist" xml:space="preserve">
     <value>Le fichier « {0} » n'existe pas.</value>
   </data>
   <data name="WrongExtension" xml:space="preserve">
-    <value>Cannot set breakpoint on file '{0}'; only *.ps1 and *.psm1 files are valid.</value>
+    <value>Nous ne pouvons pas définir un point d’arrêt sur le fichier « {0} ». Seuls les fichiers *.ps1 et *.psm1 sont valides.</value>
   </data>
   <data name="RemoteDebuggerNotSupported" xml:space="preserve">
-    <value>Debugging is not supported on remote sessions.</value>
+    <value>Le débogage n’est pas pris en charge sur les sessions distantes.</value>
   </data>
   <data name="CannotSetBreakpointInconsistentLanguageMode" xml:space="preserve">
-    <value>Cannot set breakpoint. The language mode for this session is incompatible with the system-wide language mode.</value>
+    <value>Nous ne pouvons pas définir un point d’arrêt. Le mode de langage de cette session n’est pas compatible avec le mode de langage à l’échelle du système.</value>
   </data>
   <data name="RemoteDebuggerNotSupportedInHost" xml:space="preserve">
-    <value>Breakpoints cannot be set in the remote session because remote debugging is not supported by the current host.</value>
+    <value>Nous ne pouvons pas définir des points d’arrêt dans la session à distance, car l’hôte actuel ne prend pas en charge le débogage distant.</value>
   </data>
   <data name="RunspaceDebuggingCannotDebugDefaultRunspace" xml:space="preserve">
-    <value>You cannot debug the default host Runspace using this cmdlet. To debug the default Runspace use the normal debugging commands from the host.</value>
+    <value>Vous ne pouvez pas déboguer l’instance d’exécution de l’hôte par défaut en utilisant cette cmdlet. Pour déboguer l’instance d’exécution par défaut, utilisez les commandes de débogage normales à partir de l’hôte.</value>
   </data>
   <data name="RunspaceDebuggingNoHostRunspaceOrDebugger" xml:space="preserve">
-    <value>Cannot debug Runspace. The host has no debugger. Try debugging the Runspace inside the PowerShell console or with Visual Studio Code, both of which have built-in debuggers.</value>
+    <value>Nous ne pouvons pas déboguer l’instance d’exécution. L’hôte n’a aucun débogueur. Essayez de déboguer l’instance d’exécution dans la console PowerShell ou avec Visual Studio Code, qui ont tous deux des débogueurs intégrés.</value>
   </data>
   <data name="RunspaceDebuggingNoHost" xml:space="preserve">
-    <value>Cannot debug Runspace. There is no host or host UI. The debugger requires a host and host UI for debugging.</value>
+    <value>Nous ne pouvons pas déboguer l’instance d’exécution. Il n’existe ni hôte ni interface utilisateur hôte. Le débogueur nécessite un hôte et une interface utilisateur hôte pour le débogage.</value>
   </data>
   <data name="RunspaceDebuggingTooManyRunspacesFound" xml:space="preserve">
-    <value>More than one Runspace was found. Only one Runspace can be debugged at a time.</value>
+    <value>Plusieurs instance d’exécution ont été trouvées. Vous ne pouvez en déboguer qu’une seule à la fois.</value>
   </data>
   <data name="RunspaceDebuggingEndSession" xml:space="preserve">
-    <value>To end the debugging session type the 'Detach' command at the debugger prompt, or type 'Ctrl+C' otherwise.</value>
+    <value>Pour terminer le type de session de débogage, tapez la commande « Detach » à l’invite du débogueur, sinon tapez « Ctrl+C ».</value>
   </data>
   <data name="RunspaceDebuggingScriptCompleted" xml:space="preserve">
-    <value>Command or script completed.</value>
+    <value>La commande ou le script a été effectué.</value>
   </data>
   <data name="RunspaceDebuggingStarted" xml:space="preserve">
-    <value>Debugging Runspace: {0}</value>
+    <value>Débogage de l’instance d’exécution : {0}</value>
   </data>
   <data name="RunspaceOptionInvalidRunspaceState" xml:space="preserve">
-    <value>Cannot set debug options on Runspace {0} because it is not in the Opened state.</value>
+    <value>Nous ne pouvons pas définir les options de débogage sur l’instance d'exécution {0}, car elle n’est pas dans l’état Ouvert.</value>
   </data>
   <data name="PersistDebugPreferenceFailure" xml:space="preserve">
-    <value>Failed to persist debug options for Process {0}.</value>
+    <value>Nous n’avons pas pu conserver les options de débogage pour le processus {0}.</value>
   </data>
   <data name="RunspaceOptionNoDebugger" xml:space="preserve">
-    <value>No debugger was found for Runspace {0}.</value>
+    <value>Aucun débogueur n’a été trouvé pour l’instance d’exécution {0}.</value>
   </data>
   <data name="RunspaceDebuggingNoRunspaceFound" xml:space="preserve">
-    <value>No Runspace was found.</value>
+    <value>Aucune instance d’exécution n’a été trouvée.</value>
   </data>
   <data name="DebugBreakMessage" xml:space="preserve">
-    <value>Wait-Debugger called on line {0} in {1}.</value>
+    <value>Wait-Debugger a été appelé à la ligne {0} dans {1}.</value>
   </data>
   <data name="RunspaceInstanceIdNotFound" xml:space="preserve">
-    <value>A breakpoint associated with another runspace cannot be updated because there is no runspace with instance ID '{0}'.</value>
+    <value>Nous ne pouvons pas à jour un point d’arrêt associé à une autre instance d’exécution, car il n’en existe aucune avec l’ID d’instance « {0} ».</value>
   </data>
 </root>

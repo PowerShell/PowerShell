@@ -121,7 +121,7 @@
     <value>İptal</value>
   </data>
   <data name="CaseSensitiveTitle" xml:space="preserve">
-    <value>Match Case</value>
+    <value>Büyük/Küçük Harf Eşleştirin</value>
   </data>
   <data name="CommonParameters" xml:space="preserve">
     <value>CommonParameters</value>
@@ -131,98 +131,99 @@
     <value>Açıklama</value>
   </data>
   <data name="ExamplesTitle" xml:space="preserve">
-    <value>Examples</value>
+    <value>Örnekler</value>
   </data>
   <data name="FindText" xml:space="preserve">
-    <value>_Find:</value>
+    <value>_Bul:</value>
   </data>
   <data name="HelpSectionsTitle" xml:space="preserve">
-    <value>Help Sections</value>
+    <value>Yardım bölümleri</value>
   </data>
   <data name="HelpTitleFormat" xml:space="preserve">
-    <value>{0} Help</value>
+    <value>{0} Yardım</value>
   </data>
   <data name="InputsTitle" xml:space="preserve">
-    <value>Inputs</value>
+    <value>Girişler</value>
   </data>
   <data name="LinkTextFormat" xml:space="preserve">
     <value>{0} {1}</value>
   </data>
   <data name="MethodsTitle" xml:space="preserve">
-    <value>Methods</value>
+    <value>Metotlar</value>
   </data>
   <data name="NextText" xml:space="preserve">
-    <value>_Next</value>
+    <value>_İleri</value>
   </data>
   <data name="NoMatches" xml:space="preserve">
-    <value>No matches found</value>
+    <value>Eşleşme bulunamadı</value>
   </data>
   <data name="NotesTitle" xml:space="preserve">
-    <value>Notes</value>
+    <value>Notlar</value>
   </data>
   <data name="OKText" xml:space="preserve">
     <value>Tamam</value>
   </data>
   <data name="OneMatch" xml:space="preserve">
-    <value>1 match</value>
+    <value>1 eşleşme</value>
   </data>
   <data name="OutputsTitle" xml:space="preserve">
-    <value>Outputs</value>
+    <value>Çıkışlar</value>
   </data>
   <data name="ParameterAcceptWildcard" xml:space="preserve">
-    <value>Accept wildcard characters?</value>
+    <value>Joker karakterler kabul edilsin mi?</value>
   </data>
   <data name="ParameterDefaultValue" xml:space="preserve">
-    <value>Default value</value>
+    <value>Varsayılan değer</value>
   </data>
   <data name="ParameterPipelineInput" xml:space="preserve">
-    <value>Accept pipeline input?</value>
+    <value>Ardışık düzen girişi kabul edilsin mi?</value>
   </data>
   <data name="ParameterPosition" xml:space="preserve">
-    <value>Position?</value>
+    <value>Konum?</value>
   </data>
   <data name="ParameterRequired" xml:space="preserve">
-    <value>Required?</value>
+    <value>Gerekli mi?</value>
   </data>
   <data name="ParametersTitle" xml:space="preserve">
-    <value>Parameters</value>
+    <value>Parametreler</value>
   </data>
   <data name="PreviousText" xml:space="preserve">
-    <value>_Previous</value>
+    <value>_Önceki</value>
   </data>
   <data name="PropertiesTitle" xml:space="preserve">
     <value>Özellikler</value>
   </data>
   <data name="RelatedLinksTitle" xml:space="preserve">
-    <value>RelatedLinks</value>
+    <value>İlgili Bağlantılar</value>
   </data>
   <data name="RemarksTitle" xml:space="preserve">
-    <value>Remarks</value>
+    <value>Açıklamalar</value>
   </data>
   <data name="SearchOptionsTitle" xml:space="preserve">
-    <value>Search Options</value>
+    <value>Arama Seçenekleri</value>
   </data>
   <data name="SettingsText" xml:space="preserve">
     <value>Ayarlar</value>
   </data>
   <data name="SomeMatchesFormat" xml:space="preserve">
-    <value>{0} matches</value>
+    <value>{0} eşleşme.</value>
   </data>
   <data name="SynopsisTitle" xml:space="preserve">
-    <value>Synopsis</value>
+    <value>Özet</value>
   </data>
   <data name="SyntaxTitle" xml:space="preserve">
-    <value>Syntax</value>
+    <value>Söz Dizimi</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Help for {0}</value>
+    <value>
+          {0} yardımı</value>
     <comment>{0} is the name of a cmdlet</comment>
   </data>
   <data name="WholeWordTitle" xml:space="preserve">
-    <value>Whole Word</value>
+    <value>Tüm Sözcük</value>
   </data>
   <data name="ZoomLabelTextFormat" xml:space="preserve">
-    <value>{0}%</value>
+    <value>%{0}</value>
   </data>
   <data name="ZoomSlider" xml:space="preserve">
     <value>Zoom</value>

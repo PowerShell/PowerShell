@@ -118,276 +118,276 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NotSupported" xml:space="preserve">
-    <value>This functionality is not supported on this operating system.</value>
+    <value>Данная функциональность не поддерживается в этой операционной системе.</value>
   </data>
   <data name="NotEnabled" xml:space="preserve">
-    <value>Could not enable drive {0}.</value>
+    <value>Не удалось включить диск {0} .</value>
   </data>
   <data name="InvalidDrive" xml:space="preserve">
-    <value>The command cannot turn on the restore computer infrastructure on the specified computer because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>Команда не может включить инфраструктуру восстановления компьютера на указанном компьютере, поскольку предоставленный диск недействителен. Введите действительный диск в поле "Диск", а затем повторите попытку.</value>
   </data>
   <data name="NoSystemDrive" xml:space="preserve">
-    <value>Include System Drive in the list of Drives.</value>
+    <value>Включите системный диск в список дисков.</value>
   </data>
   <data name="NotValidDrive" xml:space="preserve">
-    <value>The command cannot turn off the restore computer infrastructure because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>Команда не может отключить инфраструктуру восстановления компьютера, поскольку предоставленный диск недействителен. Введите действительный диск в поле "Диск", а затем повторите попытку.</value>
   </data>
   <data name="NotDisabled" xml:space="preserve">
-    <value>The command cannot disable System Restore on the {0} drive. You may not have sufficient permissions to perform this operation.</value>
+    <value>Команда не может отключить восстановление системы на {0} диске . Возможно, у вас недостаточно прав для выполнения этой операции.</value>
   </data>
   <data name="ServiceDisabled" xml:space="preserve">
-    <value>SystemRestore service is disabled.</value>
+    <value>Служба восстановления системы отключена.</value>
   </data>
   <data name="RestorePointNotCreated" xml:space="preserve">
-    <value>The system restore infrastructure cannot create a restore point.</value>
+    <value>Инфраструктура восстановления системы не может создать точку восстановления.</value>
   </data>
   <data name="RestoreFailed" xml:space="preserve">
-    <value>The last attempt to restore the computer failed.</value>
+    <value>Последняя попытка восстановления компьютера не удалась.</value>
   </data>
   <data name="RestoreSuccess" xml:space="preserve">
-    <value>The computer has been restored to the specified restore point.</value>
+    <value>Компьютер восстановлен до указанной точки восстановления.</value>
   </data>
   <data name="RestoreInterrupted" xml:space="preserve">
-    <value>The last attempt to restore the computer was interrupted.</value>
+    <value>Последняя попытка восстановления компьютера была прервана.</value>
   </data>
   <data name="NoRestorePoint" xml:space="preserve">
-    <value>The command cannot locate the "{0}" restore point. Verify the "{0}" sequence number, and then try the command again.</value>
+    <value>Команда не может найти точку восстановления " {0} ". Проверьте порядковый номер " {0} ", а затем повторите команду.</value>
   </data>
   <data name="DoubleComputerName" xml:space="preserve">
-    <value>{0} ({1})</value>
+    <value>{0} ( {1} )</value>
   </data>
   <data name="RestartcomputerFailed" xml:space="preserve">
-    <value>Failed to restart the computer {0} with the following error message: {1}.</value>
+    <value>Не удалось перезагрузить компьютер {0} со следующим сообщением об ошибке: {1} .</value>
   </data>
   <data name="OperationFailed" xml:space="preserve">
-    <value>This command cannot be run on target computer('{1}') due to following error: {0}.{2}</value>
+    <value>Эту команду невозможно выполнить на целевом компьютере (' {1} ') из-за следующей ошибки: {0} . {2}</value>
   </data>
   <data name="StopcomputerFailed" xml:space="preserve">
-    <value>Failed to stop the computer {0} with the following error message: {1}.</value>
+    <value>Не удалось остановить компьютер {0} со следующим сообщением об ошибке: {1} .</value>
   </data>
   <data name="InvalidRestorePoint" xml:space="preserve">
-    <value>The command cannot restore the computer because "{0}" has not been set as valid restore point. Enter a valid restore point in the RestorePoint parameter, and then try again.</value>
+    <value>Команда не может восстановить компьютер, поскольку " {0} " не был установлен в качестве допустимой точки восстановления. Введите действительную точку восстановления в параметре RestorePoint, а затем повторите попытку.</value>
   </data>
   <data name="RestartNeeded" xml:space="preserve">
-    <value>The changes will take effect after you restart the computer {1}.</value>
+    <value>Изменения вступят в силу после перезагрузки компьютера {1} .</value>
   </data>
   <data name="RemoveComputerConfirm" xml:space="preserve">
-    <value>After you leave the domain, you will need to know the password of the local Administrator account to log onto this computer. Do you wish to continue?</value>
+    <value>После выхода из домена вам потребуется знать пароль локальной учетной записи администратора для входа на этот компьютер. Вы хотите продолжить?</value>
   </data>
   <data name="InvalidComputerNameFormat" xml:space="preserve">
-    <value>The following computer name is not valid: {0}. Make sure that the computer name is not longer than 255 characters, that it does not contain two or more consecutive dots, that it does not begin with a dot, that it does not contain only numeric characters, and that it does not contain any of the following characters:
-{{|}}~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
+    <value>Следующее имя компьютера недействительно: {0} . Убедитесь, что имя компьютера не длиннее 255 символов, не содержит двух или более последовательных точек, не начинается с точки, не содержит только цифр и не содержит следующих символов: 
+{{|}} ~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
   </data>
   <data name="InvalidDomainNameFormat" xml:space="preserve">
-    <value>The domain in computer name '{0}' is not valid. Make sure that the domain exists and that the name is a valid domain name.</value>
+    <value>Домен в имени компьютера ' {0} ' недействителен. Убедитесь, что домен существует и что имя является допустимым доменным именем.</value>
   </data>
   <data name="ComputerNamesAreEqual" xml:space="preserve">
-    <value>The value specified for the NewComputerName parameter is the same as the value of the ComputerName parameter. Provide a different value for the NewComputerName parameter.</value>
+    <value>Значение, указанное для параметра NewComputerName, совпадает со значением параметра ComputerName. Укажите другое значение для параметра NewComputerName.</value>
   </data>
   <data name="ResetComputerMachinePassword" xml:space="preserve">
-    <value>"The password of the secure channel between '{0}' and '{1}' has been reset."</value>
+    <value>"Пароль защищенного канала между ' {0} ' и ' {1} ' был сброшен".</value>
   </data>
   <data name="SystemRestoreServiceDisabled" xml:space="preserve">
-    <value>This command cannot be run due to the following error: the service cannot be started because it is disabled or does not have enabled devices associated with it.</value>
+    <value>Выполнение этой команды невозможно из-за следующей ошибки: служба не может быть запущена, поскольку она отключена или к ней не подключены включенные устройства.</value>
   </data>
   <data name="ProgressActivity" xml:space="preserve">
-    <value>Creating a system restore point ...</value>
+    <value>Создание точки восстановления системы...</value>
   </data>
   <data name="ProgressStatusCreatingRestorePoint" xml:space="preserve">
-    <value>Creating a system restore point... {0}% Completed.</value>
+    <value>Создание точки восстановления системы... {0} % Завершено.</value>
   </data>
   <data name="ProgressStatusCompleted" xml:space="preserve">
-    <value>Completed.</value>
+    <value>Выполнено.</value>
   </data>
   <data name="NetworkPathNotFound" xml:space="preserve">
-    <value>Try below options and Run the command again.
-1. Verify that the target computer('{0}') is running.
-2. Specify full computer name of the target computer('{0}').</value>
+    <value>Попробуйте следующие варианты и снова выполните команду. 
+1. Убедитесь, что целевой компьютер (' {0} ') запущен. 
+2. Укажите полное имя целевого компьютера (' {0} ').</value>
   </data>
   <data name="PrivilegeNotEnabled" xml:space="preserve">
-    <value>Failed to restart the computer {0}. Access rights {1} cannot be enabled for the calling process.</value>
+    <value>Не удалось перезагрузить компьютер {0} . Права доступа {1} не могут быть предоставлены вызывающему процессу.</value>
   </data>
   <data name="RestartComputerAction" xml:space="preserve">
-    <value>Enable the {0} and restart the computer.</value>
+    <value>Включите {0} и перезагрузите компьютер.</value>
   </data>
   <data name="LocalShutdownPrivilege" xml:space="preserve">
-    <value>Local shutdown access rights</value>
+    <value>Права доступа к локальному завершению работы</value>
   </data>
   <data name="RemoteShutdownPrivilege" xml:space="preserve">
-    <value>Remote shutdown access rights</value>
+    <value>Права доступа для удаленного завершения работы</value>
   </data>
   <data name="CannotWaitLocalComputer" xml:space="preserve">
-    <value>Cannot wait for the local computer to restart. The local computer is ignored when the Wait parameter is specified.</value>
+    <value>Не могу дождаться перезагрузки локального компьютера. При указании параметра Wait локальный компьютер игнорируется.</value>
   </data>
   <data name="RestartComputerInvalidParameter" xml:space="preserve">
-    <value>The parameters Timeout, For, and Delay are valid only when the parameter Wait is specified.</value>
+    <value>Параметры Timeout, For и Delay действительны только при указании параметра Wait.</value>
   </data>
   <data name="RestartMultipleComputersActivity" xml:space="preserve">
-    <value> Restarting computers...</value>
+    <value> Перезагрузка компьютеров...</value>
   </data>
   <data name="RestartSingleComputerActivity" xml:space="preserve">
-    <value> Restarting computer {0}</value>
+    <value> Перезагрузка компьютера {0}</value>
   </data>
   <data name="WaitForMultipleComputers" xml:space="preserve">
-    <value>Completed: {0}/{1}.</value>
+    <value>Завершено: {0} / {1} .</value>
   </data>
   <data name="VerifyRebootStage" xml:space="preserve">
-    <value>Verifying that the computer has been restarted...</value>
+    <value>Проверка перезагрузки компьютера...</value>
   </data>
   <data name="WaitForPowerShell" xml:space="preserve">
-    <value>Waiting for PowerShell connectivity...</value>
+    <value>Ожидание подключения PowerShell...</value>
   </data>
   <data name="WaitForRestartToBegin" xml:space="preserve">
-    <value>Waiting for the restart to begin...</value>
+    <value>Ожидание начала перезапуска...</value>
   </data>
   <data name="WaitForWinRM" xml:space="preserve">
-    <value>Waiting for WinRM connectivity...</value>
+    <value>Ожидание подключения WinRM...</value>
   </data>
   <data name="WaitForWMI" xml:space="preserve">
-    <value>Waiting for WMI connectivity...</value>
+    <value>Ожидание подключения WMI...</value>
   </data>
   <data name="RestartComplete" xml:space="preserve">
-    <value>Restart is complete</value>
+    <value>Перезагрузка завершена.</value>
   </data>
   <data name="NoSupportForCombinedServiceType" xml:space="preserve">
-    <value>The combined service types are not supported for now.</value>
+    <value>В настоящее время комбинированные типы услуг не поддерживаются.</value>
   </data>
   <data name="CannotResolveComputerName" xml:space="preserve">
-    <value>Computer name {0} cannot be resolved with the exception: {1}.</value>
+    <value>Имя компьютера {0} не может быть разрешено, исключение: {1} .</value>
   </data>
   <data name="IncorrectNewNameNumber" xml:space="preserve">
-    <value>The number of new names is not equal to the number of target computers.</value>
+    <value>Количество новых имен не равно количеству целевых компьютеров.</value>
   </data>
   <data name="InvalidNewName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is not valid. The new computer name entered is not properly formatted. Standard names may contain letters (a-z, A-Z), numbers (0-9), and hyphens (-), but no spaces or periods (.). The name may not consist entirely of digits, and may not be longer than 63 characters.</value>
+    <value>Пропустить компьютер ' {0} ' с новым именем ' {1} ', поскольку новое имя недействительно. Введенное новое имя компьютера имеет неправильный формат. Стандартные имена могут содержать буквы (az, AZ), цифры (0-9) и дефисы (-), но не пробелы и точки (.). Имя не может состоять исключительно из цифр и не может быть длиннее 63 символов.</value>
   </data>
   <data name="NewNameIsOldName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is the same as the current name.</value>
+    <value>Пропустить компьютер ' {0} ' с новым именем ' {1} ', поскольку новое имя совпадает с текущим именем.</value>
   </data>
   <data name="ComputerNotInDomain" xml:space="preserve">
-    <value>Cannot remove computer '{0}' because it is not in a domain.</value>
+    <value>Невозможно удалить компьютер ' {0} ', поскольку он не входит в домен.</value>
   </data>
   <data name="FailToJoinWorkGroup" xml:space="preserve">
-    <value>Failed to join computer '{0}' to workgroup '{1}' with the following error message: {2}</value>
+    <value>Не удалось подключить компьютер ' {0} ' к рабочей группе ' {1} ' со следующим сообщением об ошибке: {2}</value>
   </data>
   <data name="NetworkDown" xml:space="preserve">
-    <value>Cannot remove computer(s) from the domain because the local network is down.</value>
+    <value>Невозможно удалить компьютер(ы) из домена, поскольку локальная сеть недоступна.</value>
   </data>
   <data name="FailToRename" xml:space="preserve">
-    <value>Fail to rename computer '{0}' to '{1}' due to the following exception: {2}.</value>
+    <value>Не удалось переименовать компьютер ' {0} ' в ' {1} ' из-за следующего исключения: {2} .</value>
   </data>
   <data name="AddComputerActionDomain" xml:space="preserve">
-    <value>Join in domain '{0}'</value>
+    <value>Присоединиться к домену ' {0} '</value>
   </data>
   <data name="AddComputerActionWorkgroup" xml:space="preserve">
-    <value>Join in workgroup '{0}'</value>
+    <value>Присоединиться к рабочей группе ' {0} '</value>
   </data>
   <data name="AddComputerToSameDomain" xml:space="preserve">
-    <value>Cannot add computer '{0}' to domain '{1}' because it is already in that domain.</value>
+    <value>Невозможно добавить компьютер ' {0} ' в домен ' {1} ', поскольку он уже находится в этом домене.</value>
   </data>
   <data name="AddComputerToSameWorkgroup" xml:space="preserve">
-    <value>Cannot add computer '{0}' to workgroup '{1}' because it is already in that workgroup.</value>
+    <value>Невозможно добавить компьютер ' {0} ' в рабочую группу ' {1} ', поскольку он уже находится в этой рабочей группе.</value>
   </data>
   <data name="FailToRenameAfterJoinWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' successfully joined the workgroup '{1}', but could not be renamed to '{2}' with the following error message: {3}.</value>
+    <value>Компьютер ' {0} ' успешно присоединился к рабочей группе ' {1} ', но не смог быть переименован в ' {2} ' со следующим сообщением об ошибке: ' {3} '.</value>
   </data>
   <data name="FailToSwitchFromDomainToWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from the domain '{1}', but it failed to join the workgroup '{2}' with the following error message: {3}.</value>
+    <value>Компьютер " {0} " был успешно отсоединен от домена " {1} ", но не смог присоединиться к рабочей группе " {2} " со следующим сообщением об ошибке: "{3}" .</value>
   </data>
   <data name="FailToUnjoinDomain" xml:space="preserve">
-    <value>Failed to unjoin computer '{0}' from domain '{1}' with the following error message: {2}.</value>
+    <value>Не удалось отсоединить компьютер ' {0} ' от домена ' {1} ' со следующим сообщением об ошибке: {2} .</value>
   </data>
   <data name="FailToConnectToComputer" xml:space="preserve">
-    <value>Cannot establish the WMI connection to the computer '{0}' with the following error message: {1}.</value>
+    <value>Не удается установить WMI-соединение с компьютером ' {0} ' со следующим сообщением об ошибке: {1} .</value>
   </data>
   <data name="FailToJoinDomainFromWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' failed to join domain '{1}' from its current workgroup '{2}' with following error message: {3}.</value>
+    <value>Компьютер ' {0} ' не смог присоединиться к домену ' {1} ' из текущей рабочей группы ' {2} ' со следующим сообщением об ошибке: {3} .</value>
   </data>
   <data name="FailToJoinNewDomainAfterUnjoinOldDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from domain '{1}', but failed to join the new domain '{2}' with the following error message: {3}.</value>
+    <value>Компьютер ' {0} ' успешно отсоединился от домена ' {1} ', но не смог присоединиться к новому домену ' {2} ' со следующим сообщением об ошибке: {3} .</value>
   </data>
   <data name="FailToRenameAfterJoinDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully joined to the new domain '{1}', but renaming it to '{2}' failed with the following error message: {3}.</value>
+    <value>Компьютер ' {0} ' успешно подключен к новому домену ' {1} ', но переименование его в ' {2} ' завершилось с ошибкой: {3} .</value>
   </data>
   <data name="InvalidJoinOptions" xml:space="preserve">
-    <value>The flag '{0}' is valid only if flag '{1}' is specified.</value>
+    <value>Флаг ' {0} ' действителен только в том случае, если указан флаг ' {1} '.</value>
   </data>
   <data name="CannotRenameMultipleComputers" xml:space="preserve">
-    <value>Cannot rename multiple computers. The NewName parameter is valid only if a single computer is specified.</value>
+    <value>Невозможно переименовать несколько компьютеров. Параметр NewName действителен только в том случае, если указан один компьютер.</value>
   </data>
   <data name="CannotFindMachineAccountFromDomain" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer in the domain {0}.</value>
+    <value>Не удается найти учетную запись компьютера для локального компьютера в домене {0} .</value>
   </data>
   <data name="CannotFindMachineAccountFromServer" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer from the domain controller {0}.</value>
+    <value>Не удается найти учетную запись компьютера для локального компьютера на контроллере домена {0} .</value>
   </data>
   <data name="FailToGetDomainInformation" xml:space="preserve">
-    <value>Cannot get domain information about the local computer because of the following exception: {0}.</value>
+    <value>Невозможно получить информацию о домене локального компьютера из-за следующего исключения: {0} .</value>
   </data>
   <data name="FailToResetPasswordOnDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the computer account in the domain. Operation failed with the following exception: {0}.</value>
+    <value>Не удается сбросить пароль защищенного канала для учетной записи компьютера в домене. Операция завершилась с ошибкой: {0} .</value>
   </data>
   <data name="FailToResetPasswordOnLocalMachine" xml:space="preserve">
-    <value>Resetting the secure channel password for the local computer failed with the following error message: {0}.</value>
+    <value>Сброс пароля защищенного канала для локального компьютера завершился с ошибкой: {0} .</value>
   </data>
   <data name="NeedAdminPrivilegeToResetPassword" xml:space="preserve">
-    <value>Administrator rights are required to reset the secure channel password on the local computer. Access is denied.</value>
+    <value>Для сброса пароля защищенного канала на локальном компьютере требуются права администратора. Доступ запрещен.</value>
   </data>
   <data name="ResetComputerNotInDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the account of the local computer. The local computer is not currently part of a domain.</value>
+    <value>Не удается сбросить пароль защищенного канала для учетной записи локального компьютера. Локальный компьютер в данный момент не входит в домен.</value>
   </data>
   <data name="TruncateNetBIOSName" xml:space="preserve">
-    <value>The NetBIOS name of the computer is limited to 15 bytes, which is 15 characters in this case. The NetBIOS name will be shortened to "{0}", which may cause conflicts under NetBIOS name resolution. Do you wish to continue?</value>
+    <value>Имя компьютера в NetBIOS ограничено 15 байтами, что в данном случае составляет 15 символов. Имя NetBIOS будет сокращено до " {0} ", что может вызвать конфликты при разрешении имен NetBIOS. Вы хотите продолжить?</value>
   </data>
   <data name="TruncateNetBIOSNameCaption" xml:space="preserve">
-    <value>NetBIOS name will be truncated.</value>
+    <value>Имя NetBIOS будет усечено.</value>
   </data>
   <data name="CannotResolveServerName" xml:space="preserve">
-    <value>The specified server name {0} cannot be resolved.</value>
+    <value>Указанное имя сервера {0} не может быть разрешено.</value>
   </data>
   <data name="CannotCreateRestorePointWarning" xml:space="preserve">
-    <value>A new system restore point cannot be created because one has already been created within the past {0} minutes. The frequency of restore point creation can be changed by creating the DWORD value 'SystemRestorePointCreationFrequency' under the registry key 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore'. The value of this registry key indicates the necessary time interval (in minutes) between two restore point creation. The default value is 1440 minutes (24 hours).</value>
+    <value>Создать новую точку восстановления системы невозможно, поскольку она уже была создана в течение последних {0} минут. Частоту создания точек восстановления можно изменить, создав значение DWORD 'SystemRestorePointCreationFrequency' в разделе реестра 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore'. Значение этого ключа реестра указывает необходимый временной интервал (в минутах) между созданием двух точек восстановления. Значение по умолчанию — 1440 минут (24 часа).</value>
   </data>
   <data name="CannotGetOperatingSystemObject" xml:space="preserve">
-    <value>The Win32_OperatingSystem WMI object cannot be retrieved.</value>
+    <value>Не удается получить объект WMI Win32_OperatingSystem.</value>
   </data>
   <data name="RestartComputerSkipped" xml:space="preserve">
-    <value>The computer {0} is skipped. Fail to retrieve its LastBootUpTime via the WMI service with the following error message: {1}.</value>
+    <value>Компьютер {0} пропускается. Не удалось получить LastBootUpTime через службу WMI со следующим сообщением об ошибке: {1} .</value>
   </data>
   <data name="FailToTestSecureChannel" xml:space="preserve">
-    <value>Cannot verify the secure channel for the local computer. Operation failed with the following exception: {0}.</value>
+    <value>Не удается проверить защищенный канал для локального компьютера. Операция завершилась с ошибкой: {0} .</value>
   </data>
   <data name="RepairSecureChannelFail" xml:space="preserve">
-    <value>The attempt to repair the secure channel between the local computer and the domain {0} has failed.</value>
+    <value>Попытка восстановить защищенный канал между локальным компьютером и доменом {0} не удалась.</value>
   </data>
   <data name="RepairSecureChannelSucceed" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} was successfully repaired.</value>
+    <value>Защищенный канал между локальным компьютером и доменом {0} был успешно восстановлен.</value>
   </data>
   <data name="SecureChannelAlive" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is in good condition.</value>
+    <value>Защищенный канал связи между локальным компьютером и доменом {0} находится в хорошем состоянии.</value>
   </data>
   <data name="SecureChannelBroken" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is broken.</value>
+    <value>Защищенный канал связи между локальным компьютером и доменом {0} разорван.</value>
   </data>
   <data name="TestComputerNotInDomain" xml:space="preserve">
-    <value>Cannot verify the secure channel password for the local computer. The local computer is not currently part of a domain.</value>
+    <value>Не удается проверить пароль защищенного канала для локального компьютера. Локальный компьютер в данный момент не входит в домен.</value>
   </data>
   <data name="SystemRestoreNotSupported" xml:space="preserve">
-    <value>The operation cannot be performed because the system restore APIs are not supported on the Advanced RISC Machine (ARM) platform.</value>
+    <value>Данная операция не может быть выполнена, поскольку API-интерфейсы восстановления системы не поддерживаются на платформе Advanced RISC Machine (ARM).</value>
   </data>
   <data name="TimeoutError" xml:space="preserve">
-    <value>The computer did not finish restarting within the specified time-out period.</value>
+    <value>Компьютер не завершил перезагрузку в течение указанного периода времени.</value>
   </data>
   <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
-    <value>Cannot validate the time interval for restore point creation. It failed to retrieve the last restore point with the following error message: {0}.</value>
+    <value>Не удается подтвердить временной интервал для создания точки восстановления. Не удалось восстановить последнюю точку восстановления со следующим сообщением об ошибке: {0} .</value>
   </data>
   <data name="InvalidParameterSetAsJob" xml:space="preserve">
-    <value>The AsJob Parameter Set is not supported.</value>
+    <value>Набор параметров AsJob не поддерживается.</value>
   </data>
   <data name="InvalidParameterForCoreClr" xml:space="preserve">
-    <value>The {0} parameter is not supported for CoreCLR.</value>
+    <value>{0} Параметр не поддерживается для CoreCLR.</value>
   </data>
   <data name="ShutdownCommandNotFound" xml:space="preserve">
-    <value>The required native command 'shutdown' was not found.</value>
+    <value>Необходимая встроенная команда 'shutdown' не найдена.</value>
   </data>
 </root>

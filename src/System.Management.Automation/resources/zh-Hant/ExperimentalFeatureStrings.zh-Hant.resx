@@ -59,9 +59,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExperimentalFeatureNameNotFound" xml:space="preserve">
-    <value>No experimental feature was found that matched the name '{0}'.</value>
+    <value>未找到任何名稱與 '{0}' 相符的實驗性功能。</value>
   </data>
   <data name="ExperimentalFeaturePending" xml:space="preserve">
-    <value>Enabling and disabling experimental features do not take effect until next start of PowerShell.</value>
+    <value>啟用或停用實驗性功能後，須待下次啟動 PowerShell 才會生效。</value>
   </data>
 </root>

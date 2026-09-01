@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MultipleMatchingTimeZones" xml:space="preserve">
-    <value>Cannot set the local time zone because the name '{0}' resolves to multiple entries.</value>
+    <value>Místní časové pásmo nelze nastavit, protože název {0} se překládá na více položek.</value>
   </data>
   <data name="TimeZoneNameNotFound" xml:space="preserve">
-    <value>The time zone name '{0}' was not found on the local computer.</value>
+    <value>Název časového pásma {0} nebyl v místním počítači nalezen.</value>
   </data>
 </root>
