@@ -155,6 +155,21 @@
     "Architecture": null
   },
   {
+    "Pattern": "cs\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\System.Management.Automation.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "cs\\System.ServiceModel.Http.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -278,6 +293,21 @@
   },
   {
     "Pattern": "de/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\System.Management.Automation.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -412,6 +442,21 @@
     "Architecture": null
   },
   {
+    "Pattern": "es\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\System.Management.Automation.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "es\\System.ServiceModel.Http.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -528,6 +573,21 @@
   },
   {
     "Pattern": "fr/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\System.Management.Automation.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -677,6 +737,21 @@
     "Architecture": null
   },
   {
+    "Pattern": "it\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\System.Management.Automation.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "it\\System.ServiceModel.Http.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -793,6 +868,21 @@
   },
   {
     "Pattern": "ja/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\System.Management.Automation.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -928,6 +1018,21 @@
   },
   {
     "Pattern": "ko/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\System.Management.Automation.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -1212,13 +1317,14 @@
     "Architecture": null
   },
   {
-    "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\.signature.p7s",
+    "Pattern": "Modules\\Microsoft.PowerShell.Archive\\.signature.p7s",
     "FileType": "NonProduct",
     "Architecture": null
   },
   {
-    "Pattern": "Modules\\Microsoft.PowerShell.Archive\\.signature.p7s",
-    "FileType": "NonProduct"
+    "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\.signature.p7s",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\Microsoft.PowerShell.PSResourceGet.pdb",
@@ -1402,6 +1508,21 @@
   },
   {
     "Pattern": "pl/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\System.Management.Automation.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -1637,6 +1758,21 @@
   },
   {
     "Pattern": "pt-BR/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\System.Management.Automation.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -2617,6 +2753,21 @@
   },
   {
     "Pattern": "ru/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\System.Management.Automation.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -4106,6 +4257,21 @@
     "Architecture": null
   },
   {
+    "Pattern": "tr\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\System.Management.Automation.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "tr\\System.ServiceModel.Http.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -4266,6 +4432,21 @@
     "Architecture": null
   },
   {
+    "Pattern": "zh-Hans\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\System.Management.Automation.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "zh-Hans\\System.ServiceModel.Http.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -4386,6 +4567,21 @@
     "Architecture": null
   },
   {
+    "Pattern": "zh-Hant\\Microsoft.Management.Infrastructure.CimCmdlets.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\Microsoft.WSMan.Management.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\System.Management.Automation.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "zh-Hant\\System.ServiceModel.Http.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -4436,12 +4632,257 @@
     "Architecture": null
   },
   {
+    "Pattern": "cs\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\Microsoft.PowerShell.Security.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\Microsoft.PowerShell.Security.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\Microsoft.PowerShell.Security.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\Microsoft.PowerShell.Security.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
     "Pattern": "Install-PowerShellRemoting.ps1",
     "FileType": "Product",
     "Architecture": null
   },
   {
     "Pattern": "InstallPSCorePolicyDefinitions.ps1",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\Microsoft.PowerShell.Security.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\Microsoft.PowerShell.Security.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\Microsoft.PowerShell.Security.resources.dll",
     "FileType": "Product",
     "Architecture": null
   },
@@ -4586,12 +5027,92 @@
     "Architecture": null
   },
   {
+    "Pattern": "pl\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\Microsoft.PowerShell.Security.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\Microsoft.PowerShell.Security.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
     "Pattern": "pwsh.dll",
     "FileType": "Product",
     "Architecture": null
   },
   {
     "Pattern": "pwsh.exe",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pwsh.profile.dsc.resource.json",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pwsh.profile.resource.ps1",
     "FileType": "Product",
     "Architecture": null
   },
@@ -4606,17 +5127,147 @@
     "Architecture": null
   },
   {
+    "Pattern": "ru\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\Microsoft.PowerShell.Security.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
     "Pattern": "System.Management.Automation.dll",
     "FileType": "Product",
     "Architecture": null
   },
   {
-    "Pattern": "pwsh.profile.dsc.resource.json",
+    "Pattern": "tr\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
     "FileType": "Product",
     "Architecture": null
   },
   {
-    "Pattern": "pwsh.profile.resource.ps1",
+    "Pattern": "tr\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\Microsoft.PowerShell.Security.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\Microsoft.PowerShell.Security.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\Microsoft.PowerShell.Commands.Diagnostics.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\Microsoft.PowerShell.Commands.Management.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\Microsoft.PowerShell.Commands.Utility.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\Microsoft.PowerShell.ConsoleHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\Microsoft.PowerShell.CoreCLR.Eventing.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\Microsoft.PowerShell.GraphicalHost.resources.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\Microsoft.PowerShell.Security.resources.dll",
     "FileType": "Product",
     "Architecture": null
   }
