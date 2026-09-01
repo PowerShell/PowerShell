@@ -127,10 +127,10 @@
     <value>Nous ne pouvons pas trouver un service avec le nom d’affichage « {1} ».</value>
   </data>
   <data name="ServiceHasDependentServices" xml:space="preserve">
-    <value>Nous ne pouvons pas arrêter le service « {1} ({0}) », car il a des services dépendants. Il ne peut être arrêté que si l’indicateur Force est défini.</value>
+    <value>Nouss ne pouvons pas arrêter le service « {1} ({0}) », car il a des services dépendants. Il ne peut être arrêté que si l’indicateur Force est défini.</value>
   </data>
   <data name="ServiceHasDependentServicesNoForce" xml:space="preserve">
-    <value>Nous ne pouvons pas arrêter le service « {1} ({0}) », car il a des services dépendants.</value>
+    <value>Nouss ne pouvons pas arrêter le service « {1} ({0}) », car il a des services dépendants.</value>
   </data>
   <data name="CouldNotStopService" xml:space="preserve">
     <value>Nous ne pouvons pas arrêter le service « {1} ({0}) » en raison de l’erreur suivante : {2}</value>
@@ -181,7 +181,7 @@
     <value>Nous ne pouvons pas supprimer le service « {1} ({0}) » en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotAccessDependentServices" xml:space="preserve">
-    <value>Nous ne pouvons pas accéder aux services dépendants de « {1} ({0}) »</value>
+    <value>« Nous ne pouvons pas accéder aux services dépendants de « {1} ({0}) »</value>
   </data>
   <data name="StartingService" xml:space="preserve">
     <value>Attente de le début du service. « {1} ({0}) »...</value>

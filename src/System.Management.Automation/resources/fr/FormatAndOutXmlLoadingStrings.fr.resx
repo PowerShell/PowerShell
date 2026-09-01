@@ -208,7 +208,7 @@
     <value>Erreur XPath {0} dans le fichier {1} : La chaîne de caractères {2} de la ressource {3} dans l'assembly {4} est introuvable.</value>
   </data>
   <data name="ResourceNotFound" xml:space="preserve">
-    <value>Erreur XPath {0} dans le fichier {1} : La ressource {2} dans l'assembly {3} est introuvable.</value>
+    <value>Erreur XPath {0} dans le fichier {1} : La chaîne de caractères {2} de la ressource {3} dans l'assembly est introuvable.</value>
   </data>
   <data name="AssemblyNotFound" xml:space="preserve">
     <value>Erreur XPath {0} dans le fichier {1} : l'assembly {2} est introuvable.</value>
@@ -292,16 +292,16 @@
     <value>Erreur lors de la mise en forme des données «{0}» : {1}</value>
   </data>
   <data name="IncorrectHeaderItemCountInFormattingData" xml:space="preserve">
-    <value>Erreur dans les données d’affichage avec le nom de type {0} à l’index {1}: le nombre d’éléments d’en-tête = {2} ne correspond pas au nombre d’éléments de ligne par défaut = {3}.</value>
+    <value>Erreur dans les données d’affichage avec le nom de type {0} à l’index {1} : le nombre d’éléments d’en-tête = {2} ne correspond pas au nombre d’éléments de ligne par défaut = {3}.</value>
   </data>
   <data name="InvalidFormattingData" xml:space="preserve">
-    <value>Erreur dans les données d’affichage avec le nom de type {0} à l’index {1}: les données de mise en forme «{2}» ne sont pas valides.</value>
+    <value>Erreur dans les données d’affichage avec le nom de type {0} à l’index {1} : le bloc de script «{2}» n’est pas valide.</value>
   </data>
   <data name="InvalidScriptBlockInFormattingData" xml:space="preserve">
     <value>Erreur dans les données d’affichage avec le nom de type {0} à l’index {1}: le bloc de script «{2}» n’est pas valide.</value>
   </data>
   <data name="LoadTagFailedInFormattingData" xml:space="preserve">
-    <value>Erreur dans les données d’affichage avec le nom de type {0} à l’index {1}: échec du chargement de {2}.</value>
+    <value>Erreur dans les données d’affichage avec le nom de type {0} à l’index {1}: échec du chargement de {2} .</value>
   </data>
   <data name="MultipleRowEntriesFoundInFormattingData" xml:space="preserve">
     <value>Erreur lors de l'affichage des données avec le nom {0} de type à l'index {1} : Un TableControl ne doit contenir qu'un seul {2}.</value>

@@ -118,102 +118,102 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CloseError" xml:space="preserve">
-    <value>CloseError: ({1}:{2}) [{0}], {3}</value>
+    <value>CloseError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="DeadlockDetected" xml:space="preserve">
-    <value>Deadlock detected: ({1}:{2}) [{0}], {3}</value>
+    <value>Blocage détecté : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="DeviceError" xml:space="preserve">
-    <value>DeviceError: ({1}:{2}) [{0}], {3}</value>
+    <value>DeviceError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
-    <value>InvalidArgument: ({1}:{2}) [{0}], {3}</value>
+    <value>InvalidArgument : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidData" xml:space="preserve">
-    <value>InvalidData: ({1}:{2}) [{0}], {3}</value>
+    <value>InvalidData : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>InvalidOperation: ({1}:{2}) [{0}], {3}</value>
+    <value>InvalidOperation : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidResult" xml:space="preserve">
-    <value>InvalidResult: ({1}:{2}) [{0}], {3}</value>
+    <value>InvalidResult : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidType" xml:space="preserve">
-    <value>InvalidType: ({1}:{2}) [{0}], {3}</value>
+    <value>InvalidType : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="MetadataError" xml:space="preserve">
-    <value>MetadataError: ({1}:{2}) [{0}], {3}</value>
+    <value>MetadataError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="NotImplemented" xml:space="preserve">
-    <value>NotImplemented: ({1}:{2}) [{0}], {3}</value>
+    <value>NotImplemented : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="NotInstalled" xml:space="preserve">
-    <value>NotInstalled: ({1}:{2}) [{0}], {3}</value>
+    <value>NotInstalled : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="ObjectNotFound" xml:space="preserve">
-    <value>ObjectNotFound: ({1}:{2}) [{0}], {3}</value>
+    <value>ObjectNotFound : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="OpenError" xml:space="preserve">
-    <value>OpenError: ({1}:{2}) [{0}], {3}</value>
+    <value>OpenError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="OperationStopped" xml:space="preserve">
-    <value>OperationStopped: ({1}:{2}) [{0}], {3}</value>
+    <value>OperationStopped : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="OperationTimeout" xml:space="preserve">
-    <value>OperationTimeout: ({1}:{2}) [{0}], {3}</value>
+    <value>OperationTimeout : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="ParserError" xml:space="preserve">
-    <value>ParserError: ({1}:{2}) [{0}], {3}</value>
+    <value>ParserError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="PermissionDenied" xml:space="preserve">
-    <value>PermissionDenied: ({1}:{2}) [{0}], {3}</value>
+    <value>PermissionDenied : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="ReadError" xml:space="preserve">
-    <value>ReadError: ({1}:{2}) [{0}], {3}</value>
+    <value>ReadError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="ResourceBusy" xml:space="preserve">
-    <value>ResourceBusy: ({1}:{2}) [{0}], {3}</value>
+    <value>ResourceBusy : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="ResourceExists" xml:space="preserve">
-    <value>ResourceExists: ({1}:{2}) [{0}], {3}</value>
+    <value>ResourceExists : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="ResourceUnavailable" xml:space="preserve">
-    <value>ResourceUnavailable: ({1}:{2}) [{0}], {3}</value>
+    <value>ResourceUnavailable : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="SyntaxError" xml:space="preserve">
-    <value>SyntaxError: ({1}:{2}) [{0}], {3}</value>
+    <value>SyntaxError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="WriteError" xml:space="preserve">
-    <value>WriteError: ({1}:{2}) [{0}], {3}</value>
+    <value>WriteError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="FromStdErr" xml:space="preserve">
-    <value>FromStdErr: ({1}:{2}) [{0}], {3}</value>
+    <value>FromStdErr : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="SecurityError" xml:space="preserve">
-    <value>SecurityError: ({1}:{2}) [{0}], {3}</value>
+    <value>SecurityError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="ProtocolError" xml:space="preserve">
-    <value>ProtocolError: ({1}:{2}) [{0}], {3}</value>
+    <value>ProtocolError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="ConnectionError" xml:space="preserve">
-    <value>ConnectionError: ({1}:{2}) [{0}], {3}</value>
+    <value>ConnectionError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="AuthenticationError" xml:space="preserve">
-    <value>AuthenticationError: ({1}:{2}) [{0}], {3}</value>
+    <value>AuthenticationError : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="LimitsExceeded" xml:space="preserve">
-    <value>LimitsExceeded: ({1}:{2}) [{0}], {3}</value>
+    <value>LimitsExceeded : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="QuotaExceeded" xml:space="preserve">
-    <value>QuotaExceeded: ({1}:{2}) [{0}], {3}</value>
+    <value>QuotaExceeded : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="NotEnabled" xml:space="preserve">
-    <value>NotEnabled: ({1}:{2}) [{0}], {3}</value>
+    <value>NotEnabled : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="NotSpecified" xml:space="preserve">
-    <value>NotSpecified: ({1}:{2}) [{0}], {3}</value>
+    <value>NotSpecified : ({1} :{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidErrorCategory" xml:space="preserve">
-    <value>Unrecognized error category {4}: ({1}:{2}) [{0}], {3}</value>
+    <value>Code d’erreur non reconnu : {4} : ({1}:{2}) [{0}], {3}</value>
   </data>
 </root>

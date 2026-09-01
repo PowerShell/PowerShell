@@ -145,7 +145,7 @@
     <value>Non è possibile trovare le informazioni necessarie nel Registro di sistema oppure mancano i file delle chiavi.  Non è possibile caricare alcuni cmdlet.</value>
   </data>
   <data name="NoMshSnapinPresentForVersion" xml:space="preserve">
-    <value>Non sono stati registrati snap-in per la versione {0} di PowerShell.</value>
+    <value>Non sono stati registrati snap-in per la versione {0}di PowerShell.</value>
   </data>
   <data name="ResourceReaderDisposed" xml:space="preserve">
     <value>Non è possibile recuperare la risorsa stringa perché è stato eliminato il lettore.</value>
