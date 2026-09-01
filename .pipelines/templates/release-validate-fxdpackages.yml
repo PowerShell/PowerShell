@@ -20,6 +20,20 @@ parameters:
   - name: enableCredScan
     type: boolean
     default: true
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: DOTNET_RUNTIME_VERSION
+    displayName: Runtime version of early access build
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    displayName: SDK version of early access build
+    type: string
+    default: ' '
+  - name: dotnetArch
+    type: string
+    default: 'win-x64'
 
 jobs:
 - job: ${{ parameters.jobName }}
@@ -36,6 +50,8 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
   - name: ob_sdl_credscan_enabled
     value: ${{ parameters.enableCredScan }}
+  - name: ISEARLYACCESS
+    value: ${{ parameters.IsEarlyAccess }}
 
   pool:
     type: ${{ parameters.jobtype }}
@@ -62,6 +78,9 @@ jobs:
       displayName: 'Capture Downloaded Artifacts'
 
     - template: /.pipelines/templates/install-dotnet.yml@self
+      parameters:
+        architecture: ${{ parameters.dotnetArch }}
+        ob_restore_phase: false
 
     - pwsh: |
         $artifactName = '$(artifactName)'
