@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IncorrectValueForCommandParameter" xml:space="preserve">
-    <value>ScriptBlock should only be specified as a value of the Command parameter.</value>
+    <value>ScriptBlock 只能指定为 Command 参数的值。</value>
   </data>
   <data name="NoValueForCommandParameter" xml:space="preserve">
-    <value>No value was specified for the Command parameter.</value>
+    <value>没有为 Command 参数指定值。</value>
   </data>
   <data name="IncorrectValueForFormatParameter" xml:space="preserve">
-    <value>A value that is not valid ({6}) was specified for the {7} parameter. Valid values are Text and Xml.</value>
+    <value>为 {7} 参数指定的值无效({6})。有效值为 Text 和 Xml。</value>
   </data>
   <data name="NoValueForInputFormatParameter" xml:space="preserve">
-    <value>No value was specified for the InputFormat parameter. Valid values are Text and Xml.</value>
+    <value>没有为 InputFormat 参数指定值。有效值为 Text 和 Xml。</value>
   </data>
   <data name="NoValueForOutputFormatParameter" xml:space="preserve">
-    <value>No value was specified for the OutputFormat parameter. Valid values are text and XML.</value>
+    <value>没有为 OutputFormat 参数指定值。有效值为 text 和 XML。</value>
   </data>
   <data name="StringValueExpectedForFormatParameter" xml:space="preserve">
-    <value>The {6} parameter requires a string value.</value>
+    <value>{6} 参数需要字符串值。</value>
   </data>
   <data name="NoValuesSpecifiedForArgs" xml:space="preserve">
-    <value>No value was specified for the Args parameter.</value>
+    <value>没有为 Args 参数指定值。</value>
   </data>
   <data name="ParameterSpecifiedAlready" xml:space="preserve">
-    <value>The {6} parameter was already specified.</value>
+    <value>{6} 参数已指定。</value>
   </data>
   <data name="CliXmlError" xml:space="preserve">
-    <value>Cannot process the XML from the '{0}' stream of '{1}': {2}</value>
+    <value>无法处理来自 "{0}" 的 "{1}" 流中的 XML: {2}</value>
   </data>
 </root>

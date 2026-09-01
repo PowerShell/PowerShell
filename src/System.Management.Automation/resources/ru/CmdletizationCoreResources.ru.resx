@@ -123,9 +123,8 @@
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ScriptWriter_DuplicateQueryParameterName" xml:space="preserve">
-    <value>Two cmdlet parameters defined within the {0} element have the same name: {1}.  Resolve the conflict in the Cmdlet Definition XML and retry.</value>
-    <comment>{StrContains="CmdletParameterMetadata"} {StrContains="PSName"}
-{0} is a placeholder for a name of an XML element.  Example: &lt;GetCmdletParameters&gt;
+    <value>Два параметра, определенных в элементе {0}, имеют одинаковое имя: {1}.  Устраните конфликт в XML-файле определения командлета и повторите попытку.</value>
+    <comment>{0} is a placeholder for a name of an XML element.  Example: &lt;GetCmdletParameters&gt;
 {1} is a placeholder for a cmdlet parameter name.  Example: Name</comment>
   </data>
   <data name="ExportCimCommand_ErrorInCmdletizationXmlFile" xml:space="preserve">
@@ -134,9 +133,8 @@
 {1} is an exception message copied from an XmlException or XmlSchemaException</comment>
   </data>
   <data name="ScriptWriter_DuplicateParameterSetInStaticCmdlet" xml:space="preserve">
-    <value>The {0} cmdlet defines the {1} parameter set more than once.  Verify that the Cmdlet Definition XML does not have duplicate parameter set names and retry.</value>
-    <comment>{StrContains="CmdletParameterSet"}
-{0} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
+    <value>Командлет {0} определяет набор параметров {1} более одного раза.  Убедитесь, что в XML-файле определения командлета нет повторяющихся имен наборов параметров, и повторите попытку.</value>
+    <comment>{0} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
 {1} is a placeholder for a parameter set name.  Example: 'foo'</comment>
   </data>
   <data name="ScriptWriter_ObjectModelWrapperDefinesMultipleParameterSets" xml:space="preserve">
@@ -185,8 +183,8 @@
     <comment>{StrContains="EnumName"}</comment>
   </data>
   <data name="EnumWriter_InvalidValueName" xml:space="preserve">
-    <value>The value of the Name attribute is not a valid C# identifier: {0}.  Verify the Name attribute in the Cmdlet Definition XML, and then try again.</value>
-    <comment>{StrContains="Enum"} {StrContains="Value"} {StrContains="Name"}</comment>
+    <value>Значение атрибута Name не является допустимым идентификатором C#: {0}.  Проверьте атрибут Name в XML-файле определения командлета, а затем повторите попытку.</value>
+    <comment>{StrContains="Name"}</comment>
   </data>
   <data name="ScriptWriter_InvalidEnum" xml:space="preserve">
     <value>Не удается обработать &lt;Enum EnumName="{0}" ... &gt; элемент.  {1}</value>

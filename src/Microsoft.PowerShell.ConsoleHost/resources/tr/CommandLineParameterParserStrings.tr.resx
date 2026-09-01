@@ -118,123 +118,123 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandAlreadySpecified" xml:space="preserve">
-    <value>Cannot process command because a command is already specified with -Command, -CommandWithArgs, or -EncodedCommand.</value>
+    <value>-Command, -CommandWithArgs veya -EncodedCommand ile zaten bir komut belirtildiği için komut işlenemiyor.</value>
   </data>
   <data name="MissingCommandParameter" xml:space="preserve">
-    <value>Cannot process the command because of a missing parameter. A command must follow -Command.</value>
+    <value>Eksik bir parametre nedeniyle komut işlenemiyor. -Command sonrasında bir komut gelmelidir.</value>
   </data>
   <data name="UnknownParameter" xml:space="preserve">
-    <value>Unrecognized parameter: '{0}'.</value>
+    <value>Tanınmayan parametre: '{0}'.</value>
   </data>
   <data name="TooManyParametersToCommand" xml:space="preserve">
-    <value>'-' was specified with the -Command parameter; no other arguments to -Command are permitted.</value>
+    <value>-Command parametresiyle '-' belirtildi; -Command için başka bağımsız değişkenlere izin verilmez.</value>
   </data>
   <data name="StdinNotRedirected" xml:space="preserve">
-    <value>'-' was specified as the argument to -Command but standard input has not been redirected for this process.</value>
+    <value>-Command için bağımsız değişken olarak '-' belirtildi ancak bu işlem için standart giriş yeniden yönlendirilmedi.</value>
   </data>
   <data name="MissingOutputFormatParameter" xml:space="preserve">
-    <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter.
-Specify one of the following formats for this parameter:
+    <value>OutputFormat parametresi için bağımsız değişken sağlanmadığından komut çalıştırılamıyor.
+Bu parametre için aşağıdaki biçimlerden birini belirtin:
 {0}</value>
   </data>
   <data name="MissingInputFormatParameter" xml:space="preserve">
-    <value>Cannot process the command because the -InputFormat parameter requires an argument. Specify a valid format argument for this parameter.
-Valid formats are:
+    <value>-InputFormat parametresi bir bağımsız değişken gerektirdiğinden komut işlenemiyor. Bu parametre için geçerli bir biçim bağımsız değişkeni belirtin.
+Geçerli biçimler:
 {0}</value>
   </data>
   <data name="BadFormatParameterValue" xml:space="preserve">
-    <value>Cannot process the command because of an incorrect parameter value. "{0}" is not a valid format.
-Valid formats are:
+    <value>Hatalı parametre değeri nedeniyle komut işlenemiyor. "{0}" geçerli bir biçim değil.
+Geçerli biçimler:
 {1}</value>
   </data>
   <data name="ArgsAlreadySpecified" xml:space="preserve">
-    <value>Cannot process the command because arguments to -Command or -EncodedCommand have already been specified with -EncodedArguments.</value>
+    <value>-Command veya -EncodedCommand bağımsız değişkenleri zaten -EncodedArguments ile belirtildiği için komut işlenemiyor.</value>
   </data>
   <data name="MissingArgsValue" xml:space="preserve">
-    <value>Cannot process the command because -EncodedArguments requires a value. Specify a value for the -EncodedArguments parameter.</value>
+    <value>-EncodedArguments bir değer gerektirdiğinden komut işlenemiyor. -EncodedArguments parametresi için bir değer belirtin.</value>
   </data>
   <data name="MissingFileArgument" xml:space="preserve">
-    <value>The command cannot be run because the File parameter requires a file path. Supply a path for the File parameter and then try the command again.</value>
+    <value>File parametresi bir dosya yolu gerektirdiği için komut çalıştırılamıyor. File parametresi için bir yol sağlayın ve ardından komutu yeniden deneyin.</value>
   </data>
   <data name="MissingWindowStyleArgument" xml:space="preserve">
-    <value>Cannot process the command because -WindowStyle requires an argument that is normal, hidden, minimized or maximized. Specify one of these argument values and try again.</value>
+    <value>-WindowStyle normal, gizli, simge durumuna küçültülmüş veya büyütülmüş bir değer gerektirdiğinden komut işlenemiyor. Bu değerlerden birini belirtin ve yeniden deneyin.</value>
   </data>
   <data name="InvalidFileArgument" xml:space="preserve">
-    <value>Processing -File '{0}' failed: {1} Specify a valid path for the -File parameter.</value>
+    <value>-File '{0}' işlenemedi: {1} -File parametresi için geçerli bir yol belirtin.</value>
   </data>
   <data name="InvalidWindowStyleArgument" xml:space="preserve">
-    <value>Processing -WindowStyle '{0}' failed: {1}.</value>
+    <value>-WindowStyle '{0}' işlenirken hata oluştu: {1}.</value>
   </data>
   <data name="InvalidFileArgumentExtension" xml:space="preserve">
-    <value>Processing -File '{0}' failed because the file does not have a '.ps1' extension. Specify a valid PowerShell script file name, and then try again.</value>
+    <value>Dosyanın '.ps1' uzantısı olmadığı için -File '{0}' işlenemedi. Geçerli bir PowerShell betik dosyası adı belirtin ve yeniden deneyin.</value>
   </data>
   <data name="ArgumentFileDoesNotExist" xml:space="preserve">
-    <value>The argument '{0}' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>'{0}' bağımsız değişkeni bir betik dosyası adı olarak tanınmıyor. Adın yazımını denetleyin veya yol eklenmişse yolun doğru olduğundan emin olun ve yeniden deneyin.</value>
   </data>
   <data name="BadArgsValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedArguments is not properly encoded. The value must be Base64 encoded.</value>
+    <value>-EncodedArguments ile belirtilen değer doğru şekilde kodlanmadığından komut işlenemiyor. Değer Base64 olarak kodlanmış olmalıdır.</value>
   </data>
   <data name="BadCommandValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedCommand is not properly encoded. The value must be Base64 encoded.</value>
+    <value>-EncodedCommand ile belirtilen değer doğru şekilde kodlanmadığından komut işlenemiyor. Değer Base64 olarak kodlanmış olmalıdır.</value>
   </data>
   <data name="MissingExecutionPolicyParameter" xml:space="preserve">
-    <value>Cannot process the execution policy because of a missing policy name. A policy name must follow -ExecutionPolicy.</value>
+    <value>İlke adı eksik olduğundan yürütme ilkesi işlenemiyor. -ExecutionPolicy sonrasında bir ilke adı gelmelidir.</value>
   </data>
   <data name="MtaStaMutuallyExclusive" xml:space="preserve">
-    <value>Cannot process the command because -STA and -MTA are both specified. Specify either -STA or -MTA.</value>
+    <value>Hem -STA hem de -MTA belirtildiğinden komut işlenemiyor. -STA veya -MTA komutlarından birini belirtin.</value>
   </data>
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationName requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+    <value>-ConfigurationName uzak uç nokta yapılandırma adı olan bir bağımsız değişken gerektirdiğinden komut işlenemiyor. Bu bağımsız değişkeni belirtin ve yeniden deneyin.</value>
   </data>
   <data name="MissingConfigurationFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationFile requires an argument that is a session configuration (.pssc) file path. Specify this argument and try again.</value>
+    <value>-ConfigurationFile bir oturum yapılandırması (.pssc) dosya yolu olan bir bağımsız değişken gerektirdiğinden komut işlenemiyor. Bu bağımsız değişkeni belirtin ve yeniden deneyin.</value>
   </data>
   <data name="MissingCustomPipeNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName requires an argument that is a name of the pipe you want to use. Specify this argument and try again.</value>
+    <value>-CustomPipeName, kullanmak istediğiniz kanalın adı olan bir bağımsız değişken gerektirdiğinden komut işlenemiyor. Bu bağımsız değişkeni belirtin ve yeniden deneyin.</value>
   </data>
   <data name="CustomPipeNameTooLong" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+    <value>Belirtilen -CustomPipeName çok uzun olduğu için komut işlenemiyor. Bu platformdaki kanal adları en fazla {0} karakter uzunluğunda olabilir. Kanal adınız '{1}' {2} karakterdir.</value>
   </data>
   <data name="MissingSettingsFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -SettingsFile requires an argument that is a file path.</value>
+    <value>-SettingsFile bir dosya yolu olan bir bağımsız değişken gerektirdiğinden komut işlenemiyor.</value>
   </data>
   <data name="InvalidSettingsFileArgument" xml:space="preserve">
-    <value>Processing -SettingsFile '{0}' failed: {1}. Specify a valid path for the -SettingsFile parameter.</value>
+    <value>-SettingsFile '{0}' işlenemedi: {1}. -SettingsFile parametresi için geçerli bir yol belirtin.</value>
   </data>
   <data name="SettingsFileNotExists" xml:space="preserve">
-    <value>The argument '{0}' passed to the -SettingsFile does not exist. Provide the path to an existing json file as an argument to the -SettingsFile parameter.</value>
+    <value>-SettingsFile komutuna geçirilen '{0}' bağımsız değişkeni yok. -SettingsFile parametresi için var olan bir json dosyasının yolunu sağlayın.</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
-    <value>Invalid argument '{0}', did you mean:</value>
+    <value>Geçersiz bağımsız değişken '{0}'. Şunu mu demek istediniz:</value>
   </data>
   <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
-    <value>Parameter -WindowStyle is not implemented on this platform.</value>
+    <value>-WindowStyle parametresi bu platformda uygulanmıyor.</value>
   </data>
   <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
-    <value>Cannot process the command because -WorkingDirectory requires an argument that is a directory path.</value>
+    <value>-WorkingDirectory bir dizin yolu olan bir bağımsız değişken gerektirdiğinden komut işlenemiyor.</value>
   </data>
   <data name="MTANotImplemented" xml:space="preserve">
-    <value>Parameter -MTA is not supported on this platform.</value>
+    <value>-MTA parametresi bu platformda desteklenmiyor.</value>
   </data>
   <data name="STANotImplemented" xml:space="preserve">
-    <value>Parameter -STA is not supported on this platform.</value>
+    <value>-STA parametresi bu platformda desteklenmiyor.</value>
   </data>
   <data name="NullElementInArgs" xml:space="preserve">
-    <value>The specified arguments must not contain null elements.</value>
+    <value>Belirtilen bağımsız değişkenler null öğeler içermemelidir.</value>
   </data>
   <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
-    <value>Invalid ExecutionPolicy value '{0}'.</value>
+    <value>Geçersiz ExecutionPolicy değeri '{0}'.</value>
   </data>
   <data name="MissingMandatoryArgument" xml:space="preserve">
-    <value>An argument is required to be supplied to the '{0}' parameter.</value>
+    <value>'{0}' parametresi için bir bağımsız değişken sağlanmalıdır.</value>
   </data>
   <data name="FileOnlyEntryRequired" xml:space="preserve">
-    <value>The parameter "-File" is required by policy.</value>
+    <value>"-File" parametresi ilke tarafından zorunlu kılınıyor.</value>
   </data>
   <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
-    <value>The parameter "-NoExit" is disallowed by policy.</value>
+    <value>"-NoExit" parametresine ilke tarafından izin verilmiyor.</value>
   </data>
   <data name="FileOnlyEntryServerMode" xml:space="preserve">
-    <value>Server mode is disallowed by policy.</value>
+    <value>Sunucu moduna ilke tarafından izin verilmiyor.</value>
   </data>
 </root>
