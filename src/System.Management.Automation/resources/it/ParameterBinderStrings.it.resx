@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NamedParameterNotFound" xml:space="preserve">
+    <value>Non è possibile trovare un parametro corrispondente al nome parametro ''{1}''.</value>
+  </data>
+  <data name="PositionalParameterNotFound" xml:space="preserve">
+    <value>Non è possibile trovare un parametro posizionale che accetti l'argomento ''{1}''.</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>Argomento mancante per il parametro ''{1}''. Specificare un parametro di tipo ''{2}'' e riprovare.</value>
+  </data>
+  <data name="AmbiguousParameter" xml:space="preserve">
+    <value>Non è possibile elaborare il parametro perché il nome del parametro ''{1}'' è ambiguo. Le possibili corrispondenze includono:{6}.</value>
+  </data>
+  <data name="CannotConvertArgument" xml:space="preserve">
+    <value>Non è possibile convertire ''{6}'' nel tipo ''{2}'' richiesto dal parametro ''{1}''. {7}</value>
+  </data>
+  <data name="CannotConvertArgumentNoMessage" xml:space="preserve">
+    <value>Non è possibile associare il parametro ''{1}''. {6}</value>
+  </data>
+  <data name="AmbiguousPositionalParameter" xml:space="preserve">
+    <value>Non è possibile associare i parametri posizionali ''{1}''.</value>
+  </data>
+  <data name="AmbiguousPositionalParameterNoName" xml:space="preserve">
+    <value>Non è possibile associare i parametri posizionali perché non è stato indicato alcun nome.</value>
+  </data>
+  <data name="AmbiguousParameterSet" xml:space="preserve">
+    <value>Impossibile impostare il parametro utilizzando i parametri denominati. Uno o più parametri emessi non possono essere usati insieme o è stato specificato un numero insufficiente di parametri.</value>
+  </data>
+  <data name="MissingMandatoryParameter" xml:space="preserve">
+    <value>Non è possibile elaborare il comando a causa di uno o più parametri obbligatori mancanti:{1}.</value>
+  </data>
+  <data name="ParameterNotInParameterSet" xml:space="preserve">
+    <value>Non è possibile specificare il parametro ''{1}'' nel set di parametri ''{6}''.</value>
+  </data>
+  <data name="ParameterAlreadyBound" xml:space="preserve">
+    <value>Non è possibile associare il parametro perché il parametro ''{1}'' è specificato più di una volta. Per fornire più valori ai parametri che possono accettare più valori, usare la sintassi della matrice. Ad esempio, "-parameter value1,value2,value3".</value>
+  </data>
+  <data name="ScriptBlockArgumentNoInput" xml:space="preserve">
+    <value>Non è possibile valutare il parametro ''{1}'' perché il relativo argomento è specificato come blocco di script e non è presente alcun input. Un blocco di script non può essere valutato senza input.</value>
+  </data>
+  <data name="ScriptBlockArgumentInvocationFailed" xml:space="preserve">
+    <value>L'input al blocco di script per il parametro ''{1}'' non è riuscito. {6}</value>
+  </data>
+  <data name="ScriptBlockArgumentNoOutput" xml:space="preserve">
+    <value>Non è possibile valutare il parametro ''{1}'' perché l'input dell'argomento non ha prodotto alcun output.</value>
+  </data>
+  <data name="InputObjectNotBound" xml:space="preserve">
+    <value>Non è possibile associare l'oggetto di input ad alcun parametro per il comando, perché il comando non accetta input della pipeline oppure l'input e le relative proprietà non corrispondono ad alcun parametro che accetta l'input della pipeline.</value>
+  </data>
+  <data name="InputObjectMissingMandatory" xml:space="preserve">
+    <value>Non è possibile associare l'oggetto di input perché non contiene le informazioni necessarie per associare tutti i parametri obbligatori: {6}</value>
+  </data>
+  <data name="GetDefaultValueFailed" xml:space="preserve">
+    <value>Non è possibile elaborare l'input della pipeline perché non è possibile recuperare il valore predefinito del parametro ''{1}''. {6}</value>
+  </data>
+  <data name="GetDynamicParametersException" xml:space="preserve">
+    <value>Impossibile recuperare i parametri dinamici del cmdlet. {6}</value>
+  </data>
+  <data name="PromptMessage" xml:space="preserve">
+    <value>Specificare i valori per i parametri seguenti:</value>
+  </data>
+  <data name="PromptCaption" xml:space="preserve">
+    <value>cmdlet {0} nella posizione della pipeline di comando {1}</value>
+  </data>
+  <data name="ParameterArgumentTransformationError" xml:space="preserve">
+    <value>Non è possibile elaborare la trasformazione degli argomenti nel parametro "{1}".{6}</value>
+  </data>
+  <data name="ParameterArgumentTransformationErrorMessageOnly" xml:space="preserve">
+    <value>{6}</value>
+  </data>
+  <data name="ParameterArgumentValidationError" xml:space="preserve">
+    <value>Non è possibile convalidare l'argomento per il parametro ''{1}''. {6}</value>
+  </data>
+  <data name="ParameterBindingFailed" xml:space="preserve">
+    <value>Non è possibile associare il parametro ''{1}'' alla destinazione. {6}</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorNullNotAllowed" xml:space="preserve">
+    <value>Non è possibile associare l'argomento al parametro ''{1}'' perché è Null.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyStringNotAllowed" xml:space="preserve">
+    <value>Non è possibile associare l'argomento al parametro ''{1}'' perché è una stringa vuota.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyCollectionNotAllowed" xml:space="preserve">
+    <value>Non è possibile associare l'argomento al parametro ''{1}'' perché è una raccolta vuota.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyArrayNotAllowed" xml:space="preserve">
+    <value>Non è possibile associare l'argomento al parametro ''{1}'' perché è una matrice vuota.</value>
+  </data>
+  <data name="DuplicateParameterDefinition" xml:space="preserve">
+    <value>Non è possibile elaborare il comando. Il parametro ''{0}'' è definito più volte.</value>
+  </data>
+  <data name="CannotExtractAddMethod" xml:space="preserve">
+    <value>Non è possibile associare il cmdlet {0} perché il parametro ''{1}'' è di tipo ''{2}'' e non è possibile identificare il metodo Add() oppure esistono più metodi Add(). {6}</value>
+  </data>
+  <data name="RuntimeDefinedParameterNameMismatch" xml:space="preserve">
+    <value>Non è possibile associare il cmdlet {0} perché il parametro definito in fase di esecuzione ''{1}'' è stato aggiunto a RuntimeDefinedParameterDictionary con la chiave ''{6}''. La chiave deve essere uguale a RuntimeDefinedParameter.Name.</value>
+  </data>
+  <data name="MismatchedPSTypeName" xml:space="preserve">
+    <value>Non è possibile associare l'argomento al parametro ''{1}'' perché i PSTypeNames dell'argomento non corrispondono al PSTypeName richiesto dal parametro: {6}.</value>
+  </data>
+  <data name="DifferentValuesAssignedToSingleParameter" xml:space="preserve">
+    <value>In $PSDefaultParameterValues sono definiti più valori predefiniti diversi per il parametro corrispondente al nome o all'alias seguente: {0}. Questi valori predefiniti sono stati ignorati.</value>
+  </data>
+  <data name="MultipleParametersMatched" xml:space="preserve">
+    <value>Il nome o l'alias seguente definito in $PSDefaultParameterValues per questo cmdlet viene risolto in più parametri: {0}. Il valore predefinito è stato ignorato.</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationMultiple" xml:space="preserve">
+    <value>{6} Questo errore potrebbe essere stato causato dall'applicazione dell'associazione predefinita dei parametri. È possibile disabilitare l'associazione predefinita dei parametri in $PSDefaultParameterValues impostando $PSDefaultParameterValues["Disabled"] su $true, quindi riprovare. I seguenti parametri predefiniti sono stati associati correttamente per questo cmdlet quando si è verificato l'errore:{7}</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationSingle" xml:space="preserve">
+    <value>{6} Questo errore potrebbe essere causato dall'applicazione dell'associazione predefinita dei parametri. È possibile disabilitare l'associazione predefinita dei parametri in $PSDefaultParameterValues impostando $PSDefaultParameterValues["Disabled"] su $true, quindi riprovare. Il seguente parametro predefinito è stato associato correttamente per questo cmdlet quando si è verificato l'errore:{7}</value>
+  </data>
+  <data name="FailToBindDefaultParameter" xml:space="preserve">
+    <value>L'associazione del valore predefinito ''{0}'' al parametro ''{1}'' non è riuscita: {2}</value>
+  </data>
+  <data name="SingleKeyInBadFormat" xml:space="preserve">
+    <value>La chiave ''{0}'' non ha un formato valido. Per informazioni sul formato corretto, vedi about_Parameters_Default_Values all'indirizzo https://go.microsoft.com/fwlink/?LinkId=228266.</value>
+  </data>
+  <data name="MultipleKeysInBadFormat" xml:space="preserve">
+    <value>I formati delle chiavi ''{0}'' non sono validi. Per informazioni sul formato corretto, vedi about_Parameters_Default_Values all'indirizzo https://go.microsoft.com/fwlink/?LinkId=228266.</value>
+  </data>
+  <data name="UseOfDeprecatedParameterWarning" xml:space="preserve">
+    <value>Il parametro ''{0}'' è obsoleto. {1}</value>
+  </data>
+  <data name="StringValueKeyExpected" xml:space="preserve">
+    <value>La chiave ''{0}'' di tipo ''{1}'' non è un valore stringa. DefaultParameterDictionary accetta solo chiavi con valore stringa.</value>
+  </data>
+  <data name="KeyAlreadyAdded" xml:space="preserve">
+    <value>La chiave ''{0}'' è già stata aggiunta al dizionario.</value>
+  </data>
+  <data name="WDACBinderInvocationLogTitle" xml:space="preserve">
+    <value>Chiamata di metodo o proprietà non consentita</value>
+  </data>
+  <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
+    <value>La chiamata del metodo o della proprietà ''{0}'' per il tipo ''{1}'' non sarà consentita in modalità Linguaggio vincolato per gli script non attendibili.</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
+    <value>Creazione del tipo non consentita</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
+    <value>La creazione del tipo ''{0}'' non sarà consentita durante l'associazione dei parametri in modalità Linguaggio vincolato per gli script non attendibili.</value>
+  </data>
+</root>
