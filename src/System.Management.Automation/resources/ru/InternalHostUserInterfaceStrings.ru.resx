@@ -118,106 +118,106 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WriteDebugLineStoppedError" xml:space="preserve">
-    <value>WriteDebug stopped because the value of the DebugPreference variable was 'Stop'.</value>
+    <value>WriteDebug остановлена, так как значение переменной DebugPreference — "Stop".</value>
   </data>
   <data name="UnsupportedPreferenceError" xml:space="preserve">
-    <value>The value {0} is not a supported ActionPreference value.</value>
+    <value>Значение {0} не является поддерживаемым значением ActionPreference.</value>
   </data>
   <data name="PromptEmptyDescriptionsError" xml:space="preserve">
-    <value>The "{0}" parameter must contain at least one value.</value>
+    <value>Параметр {0} должен содержать хотя бы одно значение.</value>
   </data>
   <data name="ShouldContinueYesLabel" xml:space="preserve">
-    <value>&amp;Yes</value>
+    <value>&amp;Да</value>
   </data>
   <data name="ShouldContinueYesHelp" xml:space="preserve">
-    <value>Continue.</value>
+    <value>Продолжить.</value>
   </data>
   <data name="ShouldContinueYesToAllLabel" xml:space="preserve">
-    <value>Yes to &amp;All</value>
+    <value>Да для &amp;всех</value>
   </data>
   <data name="ShouldContinueYesToAllHelp" xml:space="preserve">
-    <value>Continue, and do not ask again whether to continue in this session.</value>
+    <value>Продолжить и больше не спрашивать, следует ли продолжать этот сеанс.</value>
   </data>
   <data name="ShouldContinueNoLabel" xml:space="preserve">
-    <value>&amp;No</value>
+    <value>&amp;Нет</value>
   </data>
   <data name="ShouldContinueNoHelp" xml:space="preserve">
-    <value>End the operation with an error.</value>
+    <value>Завершить операцию с ошибкой.</value>
   </data>
   <data name="ShouldContinueNoToAllLabel" xml:space="preserve">
-    <value>No to A&amp;ll</value>
+    <value>Нет для &amp;всех</value>
   </data>
   <data name="ShouldContinueNoToAllHelp" xml:space="preserve">
-    <value>End the operation with an error. Do not request to resume operation for this session.</value>
+    <value>Завершить операцию с ошибкой. Не запрашивать возобновление операции для этого сеанса.</value>
   </data>
   <data name="ShouldContinueSuspendLabel" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>&amp;Приостановить</value>
   </data>
   <data name="ShouldContinueSuspendHelp" xml:space="preserve">
-    <value>Pause the current operation and enter a command prompt. Type "exit" to resume the paused operation.</value>
+    <value>Приостановить текущую операцию и перейти в командную строку. Введите "exit", чтобы возобновить приостановленную операцию.</value>
   </data>
   <data name="ShouldContinuePromptMessage" xml:space="preserve">
-    <value>Continue with this operation?</value>
+    <value>Продолжить эту операцию?</value>
   </data>
   <data name="DefaultChoice" xml:space="preserve">
-    <value>(default is "{0}")</value>
+    <value>(по умолчанию — {0})</value>
   </data>
   <data name="DefaultChoicesForMultipleChoices" xml:space="preserve">
-    <value>(default choices are {0})</value>
+    <value>(значения по умолчанию: {0})</value>
   </data>
   <data name="ChoiceMessage" xml:space="preserve">
-    <value>Choice[{0}]: </value>
+    <value>Выбор[{0}]: </value>
   </data>
   <data name="EmptyChoicesError" xml:space="preserve">
-    <value>"{0}" should have at least one element.</value>
+    <value>В {0} должен быть указан по меньшей мере один элемент.</value>
   </data>
   <data name="InvalidDefaultChoiceForMultipleSelection" xml:space="preserve">
-    <value>"{0}" must be a valid index into "{1}". "{2}" is not a valid index.</value>
+    <value>{0} должен быть допустимым индексом в {1}. {2} не является допустимым индексом.</value>
   </data>
   <data name="InvalidChoiceHotKeyError" xml:space="preserve">
-    <value>Cannot process the hot key because a question mark ("?") cannot be used as a hot key.</value>
+    <value>Не удается обработать горячую клавишу, так как вопросительный знак ("?") нельзя использовать в качестве горячей клавиши.</value>
   </data>
   <data name="VerboseFormatString" xml:space="preserve">
-    <value>VERBOSE: {0}</value>
+    <value>ПОДРОБНО: {0}</value>
   </data>
   <data name="WarningFormatString" xml:space="preserve">
-    <value>WARNING: {0}</value>
+    <value>ВНИМАНИЕ! {0}</value>
   </data>
   <data name="DebugFormatString" xml:space="preserve">
-    <value>DEBUG: {0}</value>
+    <value>ОТЛАДКА: {0}</value>
   </data>
   <data name="HostNotTranscribing" xml:space="preserve">
-    <value>The host is not currently transcribing.</value>
+    <value>В настоящее время узел не выполняет расшифровку.</value>
   </data>
   <data name="CommandStartTime" xml:space="preserve">
-    <value>Command start time: {0}</value>
+    <value>Время запуска команды: {0}</value>
   </data>
   <data name="TranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
-Username: {1}
-RunAs User: {2}
-Configuration Name: {3}
-Machine: {4} ({5})
-Host Application: {6}
-Process ID: {7}
+Начало расшифровки PowerShell
+Время начала: {0:yyyyMMddHHmmss}
+Имя пользователя: {1}
+Пользователь, от имени которого выполняется запуск: {2}
+Имя конфигурации: {3}
+Компьютер: {4} ({5})
+Ведущее приложение: {6}
+Идентификатор процесса: {7}
 {8}
 **********************</value>
   </data>
   <data name="MinimalTranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
+Начало расшифровки PowerShell
+Время начала: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
     <value>**********************
-PowerShell transcript end
-End time: {0:yyyyMMddHHmmss}
+Завершение расшифровки PowerShell
+Время окончания: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="InvalidTranscriptFilePath" xml:space="preserve">
-    <value>File path {0} resolves to a directory.</value>
+    <value>Путь к файлу {0} указывает на каталог.</value>
   </data>
 </root>

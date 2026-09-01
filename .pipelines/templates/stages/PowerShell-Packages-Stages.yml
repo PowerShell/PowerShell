@@ -1,6 +1,20 @@
 parameters:
   - name: OfficialBuild
     type: boolean
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: DOTNET_RUNTIME_VERSION
+    displayName: Runtime version of early access build
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    displayName: SDK version of early access build
+    type: string
+    default: ' '
+  - name: EarlyAccessFeed
+    type: string
+    default: 'net10'
 
 stages:
 - stage: prep
@@ -8,9 +22,30 @@ stages:
   jobs:
   - template: /.pipelines/templates/checkAzureContainer.yml@self
 
+- stage: EarlyDotnet
+  displayName: 'Early .NET Setup'
+  dependsOn: []
+  condition: always()
+
+  jobs:
+  - ${{ if eq(parameters.IsEarlyAccess, true) }}:
+    - template: /.pipelines/templates/downloadDotnetEarlyAccess.yml@self
+      parameters:
+        DotnetRuntimeVersion: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+        DotnetSdkVersion: ${{ parameters.DOTNET_SDK_VERSION }}
+  - ${{ else }}:
+    - job: skip_early_dotnet
+      displayName: 'Skip early access .NET setup'
+      pool:
+        type: windows
+      variables:
+      - name: ob_outputDirectory
+        value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+      steps:
+      - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET setup.'
 - stage: mac_package
   displayName: 'macOS Pkg+Sign'
-  dependsOn: []
+  dependsOn: [EarlyDotnet]
   jobs:
   - template: /.pipelines/templates/mac-package-build.yml@self
     parameters:
@@ -22,7 +57,7 @@ stages:
 
 - stage: windows_package_build
   displayName: 'Win Pkg (unsigned)'
-  dependsOn: []
+  dependsOn: [EarlyDotnet]
   jobs:
   - template: /.pipelines/templates/packaging/windows/package.yml@self
     parameters:
@@ -86,7 +121,7 @@ stages:
 
 - stage: linux_package
   displayName: 'Linux Pkg+Sign'
-  dependsOn: []
+  dependsOn: [EarlyDotnet]
   jobs:
   - template: /.pipelines/templates/linux-package-build.yml@self
     parameters:
@@ -181,13 +216,13 @@ stages:
 
 - stage: nupkg
   displayName: 'NuGet Pkg+Sign'
-  dependsOn: []
+  dependsOn: [EarlyDotnet]
   jobs:
   - template: /.pipelines/templates/nupkg.yml@self
 
 - stage: msixbundle
   displayName: 'MSIX Bundle+Sign'
-  dependsOn: [windows_package_build]  # Only depends on unsigned packages
+  dependsOn: [EarlyDotnet, windows_package_build]  # Only depends on unsigned packages
   jobs:
   - template: /.pipelines/templates/package-create-msix.yml@self
     parameters:
@@ -201,7 +236,7 @@ stages:
 
 - stage: upload
   displayName: 'Upload'
-  dependsOn: [prep, mac_package, windows_package_sign, linux_package, nupkg, msixbundle]  # prep needed for BuildInfo JSON
+  dependsOn: [EarlyDotnet, prep, mac_package, windows_package_sign, linux_package, nupkg, msixbundle]  # prep needed for BuildInfo JSON
   jobs:
   - template: /.pipelines/templates/uploadToAzure.yml@self
 

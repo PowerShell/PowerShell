@@ -118,114 +118,123 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandAlreadySpecified" xml:space="preserve">
-    <value>Cannot process command because a command is already specified with -Command, -CommandWithArgs, or -EncodedCommand.</value>
+    <value>-Command, -CommandWithArgs 또는 -EncodedCommand로 명령이 이미 지정되었으므로 명령을 처리할 수 없습니다.</value>
   </data>
   <data name="MissingCommandParameter" xml:space="preserve">
-    <value>Cannot process the command because of a missing parameter. A command must follow -Command.</value>
+    <value>필수 매개 변수가 없어서 명령을 처리할 수 없습니다. -Command 뒤에 명령을 지정해야 합니다.</value>
   </data>
   <data name="UnknownParameter" xml:space="preserve">
-    <value>Unrecognized parameter: '{0}'.</value>
+    <value>매개 변수 '{0}'을(를) 인식할 수 없습니다.</value>
   </data>
   <data name="TooManyParametersToCommand" xml:space="preserve">
-    <value>'-' was specified with the -Command parameter; no other arguments to -Command are permitted.</value>
+    <value>-Command 매개 변수로 '-'를 지정했습니다. -Command에 다른 인수는 허용되지 않습니다.</value>
   </data>
   <data name="StdinNotRedirected" xml:space="preserve">
-    <value>'-' was specified as the argument to -Command but standard input has not been redirected for this process.</value>
+    <value>'-'가 -Command의 인수로 지정되었지만 이 프로세스에 대해 표준 입력이 리디렉션되지 않았습니다.</value>
   </data>
   <data name="MissingOutputFormatParameter" xml:space="preserve">
-    <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter.
-Specify one of the following formats for this parameter:
+    <value>OutputFormat 매개 변수에 인수가 제공되지 않아 명령을 실행할 수 없습니다.
+이 매개 변수에 대해 다음 형식 중 하나를 지정하세요:
 {0}</value>
   </data>
   <data name="MissingInputFormatParameter" xml:space="preserve">
-    <value>Cannot process the command because the -InputFormat parameter requires an argument. Specify a valid format argument for this parameter.
-Valid formats are:
+    <value>-InputFormat 매개 변수에 인수가 필요하므로 명령을 처리할 수 없습니다. 이 매개 변수에 유효한 형식 인수를 지정하세요.
+유효한 형식: 
 {0}</value>
   </data>
   <data name="BadFormatParameterValue" xml:space="preserve">
-    <value>Cannot process the command because of an incorrect parameter value. "{0}" is not a valid format.
-Valid formats are:
+    <value>매개 변수 값이 잘못되어 명령을 처리할 수 없습니다. "{0}"은(는) 유효한 형식이 아닙니다.
+유효한 형식: 
 {1}</value>
   </data>
   <data name="ArgsAlreadySpecified" xml:space="preserve">
-    <value>Cannot process the command because arguments to -Command or -EncodedCommand have already been specified with -EncodedArguments.</value>
+    <value>-EncodedArguments를 사용해 -Command 또는 -EncodedCommand의 인수가 이미 지정되었으므로 명령을 처리할 수 없습니다.</value>
   </data>
   <data name="MissingArgsValue" xml:space="preserve">
-    <value>Cannot process the command because -EncodedArguments requires a value. Specify a value for the -EncodedArguments parameter.</value>
+    <value>-EncodedArguments에는 값이 필요하므로 명령을 처리할 수 없습니다. -EncodedArguments 매개 변수의 값을 지정하세요.</value>
   </data>
   <data name="MissingFileArgument" xml:space="preserve">
-    <value>The command cannot be run because the File parameter requires a file path. Supply a path for the File parameter and then try the command again.</value>
+    <value>File 매개 변수에 파일 경로가 필요하므로 명령을 실행할 수 없습니다. File 매개 변수의 경로를 제공한 후 명령을 다시 시도하세요.</value>
   </data>
   <data name="MissingWindowStyleArgument" xml:space="preserve">
-    <value>Cannot process the command because -WindowStyle requires an argument that is normal, hidden, minimized or maximized. Specify one of these argument values and try again.</value>
+    <value>-WindowStyle에는 normal, hidden, minimized 또는 maximized 인수가 필요하므로 명령을 처리할 수 없습니다. 이러한 값 중 하나를 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="InvalidFileArgument" xml:space="preserve">
-    <value>Processing -File '{0}' failed: {1} Specify a valid path for the -File parameter.</value>
+    <value>-File '{0}' 처리에 실패했습니다. {1} -File 매개 변수에 올바른 경로를 지정하세요.</value>
   </data>
   <data name="InvalidWindowStyleArgument" xml:space="preserve">
-    <value>Processing -WindowStyle '{0}' failed: {1}.</value>
+    <value>-WindowStyle '{0}'을(를) 처리하지 못했습니다: {1}.</value>
   </data>
   <data name="InvalidFileArgumentExtension" xml:space="preserve">
-    <value>Processing -File '{0}' failed because the file does not have a '.ps1' extension. Specify a valid PowerShell script file name, and then try again.</value>
+    <value>파일에 '.ps1' 확장명이 없어 -File '{0}'을(를) 처리하지 못했습니다. 유효한 PowerShell 스크립트 파일 이름을 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="ArgumentFileDoesNotExist" xml:space="preserve">
-    <value>The argument '{0}' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>'{0}' 인수가 스크립트 파일 이름으로 인식되지 않습니다. 이름의 철자를 확인하거나, 포함된 경로가 올바른지 확인한 후 다시 시도하세요.</value>
   </data>
   <data name="BadArgsValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedArguments is not properly encoded. The value must be Base64 encoded.</value>
+    <value>-EncodedArguments로 지정된 값이 제대로 인코딩되지 않아 명령을 처리할 수 없습니다. 값이 Base64로 인코딩되어야 합니다.</value>
   </data>
   <data name="BadCommandValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedCommand is not properly encoded. The value must be Base64 encoded.</value>
+    <value>-EncodedCommand로 지정된 값이 제대로 인코딩되지 않아 명령을 처리할 수 없습니다. 값이 Base64로 인코딩되어야 합니다.</value>
   </data>
   <data name="MissingExecutionPolicyParameter" xml:space="preserve">
-    <value>Cannot process the execution policy because of a missing policy name. A policy name must follow -ExecutionPolicy.</value>
+    <value>정책 이름이 없어서 실행 정책을 처리할 수 없습니다. -ExecutionPolicy 뒤에 정책 이름을 지정해야 합니다.</value>
   </data>
   <data name="MtaStaMutuallyExclusive" xml:space="preserve">
-    <value>Cannot process the command because -STA and -MTA are both specified. Specify either -STA or -MTA.</value>
+    <value>-STA와 -MTA가 둘 다 지정되어 명령을 처리할 수 없습니다. -STA 또는 -MTA 중 하나만 지정하세요.</value>
   </data>
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationName requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+    <value>-ConfigurationName에는 원격 엔드포인트 구성 이름을 나타내는 인수가 필요하므로 명령을 처리할 수 없습니다. 이 인수를 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="MissingConfigurationFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationFile requires an argument that is a session configuration (.pssc) file path. Specify this argument and try again.</value>
+    <value>-ConfigurationFile에는 세션 구성(.pssc) 파일 경로를 나타내는 인수가 필요하므로 명령을 처리할 수 없습니다. 이 인수를 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="MissingCustomPipeNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName requires an argument that is a name of the pipe you want to use. Specify this argument and try again.</value>
+    <value>-CustomPipeName에는 사용하려고 하는 파이프 이름을 나타내는 인수가 필요하므로 명령을 처리할 수 없습니다. 이 인수를 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="CustomPipeNameTooLong" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+    <value>지정한 -CustomPipeName이 너무 길어 명령을 처리할 수 없습니다. 이 플랫폼의 파이프 이름은 최대 {0}자까지 가능합니다. 현재 파이프 이름 '{1}'은(는) {2}자입니다.</value>
   </data>
   <data name="MissingSettingsFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -SettingsFile requires an argument that is a file path.</value>
+    <value>-SettingsFile에는 파일 경로를 나타내는 인수가 필요하므로 명령을 처리할 수 없습니다.</value>
   </data>
   <data name="InvalidSettingsFileArgument" xml:space="preserve">
-    <value>Processing -SettingsFile '{0}' failed: {1}. Specify a valid path for the -SettingsFile parameter.</value>
+    <value>-SettingsFile '{0}' 처리에 실패했습니다: {1}. -SettingsFile 매개 변수에 올바른 경로를 지정하세요.</value>
   </data>
   <data name="SettingsFileNotExists" xml:space="preserve">
-    <value>The argument '{0}' passed to the -SettingsFile does not exist. Provide the path to an existing json file as an argument to the -SettingsFile parameter.</value>
+    <value>-SettingsFile에 전달된 인수 '{0}'이(가) 없습니다. 기존 json 파일의 경로를 -SettingsFile 매개 변수의 인수로 제공하세요.</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
-    <value>Invalid argument '{0}', did you mean:</value>
+    <value>'{0}' 인수는 잘못되었습니다. 다음을 의미했나요?</value>
   </data>
   <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
-    <value>Parameter -WindowStyle is not implemented on this platform.</value>
+    <value>-WindowStyle 매개 변수는 이 플랫폼에서 지원되지 않습니다.</value>
   </data>
   <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
-    <value>Cannot process the command because -WorkingDirectory requires an argument that is a directory path.</value>
+    <value>-WorkingDirectory에는 디렉터리 경로를 나타내는 인수가 필요하므로 명령을 처리할 수 없습니다.</value>
   </data>
   <data name="MTANotImplemented" xml:space="preserve">
-    <value>Parameter -MTA is not supported on this platform.</value>
+    <value>매개 변수 -MTA는 이 플랫폼에서 지원되지 않습니다.</value>
   </data>
   <data name="STANotImplemented" xml:space="preserve">
-    <value>Parameter -STA is not supported on this platform.</value>
+    <value>매개 변수 -STA는 이 플랫폼에서 지원되지 않습니다.</value>
   </data>
   <data name="NullElementInArgs" xml:space="preserve">
-    <value>The specified arguments must not contain null elements.</value>
+    <value>지정한 인수에 null 요소가 있으면 안 됩니다.</value>
   </data>
   <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
-    <value>Invalid ExecutionPolicy value '{0}'.</value>
+    <value>ExecutionPolicy 값 '{0}'이(가) 잘못되었습니다.</value>
   </data>
   <data name="MissingMandatoryArgument" xml:space="preserve">
-    <value>An argument is required to be supplied to the '{0}' parameter.</value>
+    <value>'{0}' 매개 변수에 제공할 인수가 필요합니다.</value>
+  </data>
+  <data name="FileOnlyEntryRequired" xml:space="preserve">
+    <value>정책상 매개 변수 "-File"이 필요합니다.</value>
+  </data>
+  <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
+    <value>정책상 매개 변수 "-NoExit"를 사용할 수 없습니다.</value>
+  </data>
+  <data name="FileOnlyEntryServerMode" xml:space="preserve">
+    <value>정책상 서버 모드는 사용할 수 없습니다.</value>
   </data>
 </root>

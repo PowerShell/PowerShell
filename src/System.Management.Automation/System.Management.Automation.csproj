@@ -45,15 +45,13 @@
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <!-- exclude code of source generators from compilation and IDEs (e.g. vscode and visual studio) -->
     <Compile Remove="SourceGenerators\**\*.cs" />
     <!-- exclude the generated code for EventResource.resx, which is not directly used -->
     <Compile Remove="gen\EventResource.cs" />
+
+    <EmbeddedResource Include="cimSupport\cmdletization\xml\cmdlets-over-objects.xsd" LogicalName="cmdlets-over-objects.xsd" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
@@ -71,5 +69,11 @@
 
   <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
     <Compile Remove="engine\Interop\Unix\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

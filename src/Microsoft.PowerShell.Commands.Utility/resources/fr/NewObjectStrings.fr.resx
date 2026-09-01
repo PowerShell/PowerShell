@@ -118,45 +118,45 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotFindAppropriateCtor" xml:space="preserve">
-    <value>A constructor was not found. Cannot find an appropriate constructor for type {0}.</value>
+    <value>Aucun constructeur n’a été trouvé. Nous ne pouvons pas trouver un constructeur approprié pour le type {0}.</value>
   </data>
   <data name="TypeNotFound" xml:space="preserve">
-    <value>Cannot find type [{0}]: verify that the assembly containing this type is loaded.</value>
+    <value>Type [{0}] introuvable : vérifiez que l’assembly contenant ce type est chargé.</value>
   </data>
   <data name="CannotLoadComObjectType" xml:space="preserve">
-    <value>Cannot load COM type {0}.</value>
+    <value>Nous ne pouvons pas charger le type COM {0}.</value>
   </data>
   <data name="ComInteropLoaded" xml:space="preserve">
-    <value>The object written to the pipeline is an instance of the type "{0}" from the component's primary interoperability assembly. If this type exposes different members than the IDispatch members, scripts that are written to work with this object might not work if the primary interoperability assembly is not installed.</value>
+    <value>L’objet écrit dans le pipeline est une instance du type « {0} » provenant de l’assembly d’interopérabilité principal du composant. Si ce type expose des membres différents de ceux de IDispatch, les scripts écrits pour fonctionner avec cet objet risquent de ne pas fonctionner si l’assembly d’interopérabilité principal n’est pas installé.</value>
   </data>
   <data name="MemberNotFound" xml:space="preserve">
-    <value>The member "{1}" was not found for the specified {2} object.</value>
+    <value>Le membre « {1} » est introuvable pour l’objet spécifié {2}.</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
-    <value>The value supplied is not valid, or the property is read-only. Change the value, and then try again.</value>
+    <value>La valeur fournie n’est pas valide ou la propriété est en lecture seule. Modifiez la valeur, puis réessayez.</value>
   </data>
   <data name="CannotInstantiateWinRTType" xml:space="preserve">
-    <value>Creating instances of attribute and delegated Windows RT types is not supported.</value>
+    <value>La création d’instances de types d’attribut et de types Windows RT délégués n’est pas prise en charge.</value>
   </data>
   <data name="CannotInstantiateBoxedByRefLikeType" xml:space="preserve">
-    <value>Cannot create instances of the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
+    <value>Nous ne pouvons pas créer des instances du type ByRef-like « {0} ». Les types ByRef-like ne sont pas pris en charge dans PowerShell.</value>
   </data>
   <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
-    <value>Cannot create type. Only core types are supported in this language mode.</value>
+    <value>Nous ne pouvons pas créer le type. Seuls les types principaux sont pris en charge dans ce mode de langage.</value>
   </data>
   <data name="CannotCreateTypeLanguageMode" xml:space="preserve">
-    <value>Cannot create type. Only core types are supported in {0} language mode on a policy locked down machine.</value>
+    <value>Nous ne pouvons pas créer le type. Seuls les types principaux sont pris en charge en mode langue {0} sur un ordinateur verrouillé par stratégie.</value>
   </data>
   <data name="TypeWDACLogTitle" xml:space="preserve">
-    <value>New-Object Cmdlet Type Creation</value>
+    <value>Création d’un type avec l’applet de commande New-Object</value>
   </data>
   <data name="TypeWDACLogMessage" xml:space="preserve">
-    <value>The type '{0}' will not be created in ConstrainedLanguage mode.</value>
+    <value>Le type « {0} » ne sera pas créé en mode ConstrainedLanguage.</value>
   </data>
   <data name="ComWDACLogTitle" xml:space="preserve">
-    <value>New-Object Cmdlet COM Object Creation</value>
+    <value>Création d’un objet COM avec l’applet de commande New-Object</value>
   </data>
   <data name="ComWDACLogMessage" xml:space="preserve">
-    <value>The COM object '{0}' will not be created in ConstrainedLanguage mode.</value>
+    <value>L’objet COM « {0} » ne sera pas créé en mode ConstrainedLanguage.</value>
   </data>
 </root>

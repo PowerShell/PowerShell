@@ -8,7 +8,6 @@ param(
 
 . "$PSScriptRoot\tools\buildCommon\startNativeExecution.ps1"
 
-# CI runs with PowerShell 5.0, so don't use features like ?: && ||
 Set-StrictMode -Version 3.0
 
 # On Unix paths is separated by colon.
@@ -565,9 +564,11 @@ Fix steps:
     # as well as .zip packages, we only support the default en-US culture.
     # Therefore, we only produce satellite assemblies for win7-x64, win7-x86, and win-arm64 by default (excluding min-size build),
     # unless the caller wants to force produce localized resources.
+    $RemovePowerShellSatelliteAssemblies = $false
     if (!$ForceProduceLocalizedResources -and ($Options.Runtime -notmatch '^(win7-x64|win7-x86|win-arm64)$' -or $ForMinimalSize)) {
-        # Disable satellite assemblies for other cultures.
+        # Disable satellite assemblies from package/runtime assets for other cultures.
         $Arguments += "/property:SatelliteResourceLanguages=en"
+        $RemovePowerShellSatelliteAssemblies = $true
     }
 
     if ($Output -or $SMAOnly) {
@@ -743,6 +744,21 @@ Fix steps:
     } finally {
         Pop-Location
     }
+
+    if ($RemovePowerShellSatelliteAssemblies) {
+        $smaResDll = 'System.Management.Automation.resources.dll'
+        $resDirs = Get-ChildItem -Path $publishPath -Filter $smaResDll -Recurse -Depth 1 | ForEach-Object DirectoryName
+
+        if ($resDirs) {
+            Write-Log -message "PowerShell satellite assemblies found under '$publishPath':"
+            $relatives = $resDirs | ForEach-Object { Resolve-Path $_ -Relative -RelativeBasePath $publishPath }
+            Write-Log -message ($relatives -join ", ")
+
+            $resDirs | Remove-Item -Recurse -Force -ErrorAction Stop
+            Write-Log -message "Removed PowerShell satellite assemblies under '$publishPath'."
+        }
+    }
+
     Write-LogGroupEnd -Title "Build PowerShell"
 
     # No extra post-building task will run if '-SMAOnly' is specified, because its purpose is for a quick update of S.M.A.dll after full build.
@@ -899,7 +915,7 @@ function Switch-PSNugetConfig {
     param(
         [Parameter(Mandatory = $true, ParameterSetName = 'user')]
         [Parameter(Mandatory = $true, ParameterSetName = 'nouser')]
-        [ValidateSet('Public', 'Private', 'NuGetOnly')]
+        [ValidateSet('Public', 'Private', 'NuGetOnly', 'EarlyAccess')]
         [string] $Source,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'user')]
@@ -936,6 +952,23 @@ function Switch-PSNugetConfig {
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/" @extraParams
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
+    } elseif ($Source -eq 'EarlyAccess') {
+        $earlyAccess = $env:EARLY_ACCESS_FEED
+
+        $earlyAccessFeedUrl = switch ($earlyAccess) {
+            'net8' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-8-early-access/nuget/v3/index.json' }
+            'net9' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-9-early-access/nuget/v3/index.json' }
+            'net10' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-10-early-access/nuget/v3/index.json' }
+            default { throw "Unknown early access feed URL: $earlyAccess" }
+        }
+
+        Set-PipelineVariable -Name 'EARLY_ACCESS_FEED_URL' -Value $earlyAccessFeedUrl
+
+        $earlyAccessFeed = [NugetPackageSource] @{Url = $earlyAccessFeedUrl; Name = 'earlyaccess' }
+
+        New-NugetConfigFile -NugetPackageSource $earlyAccessFeed -Destination "$PSScriptRoot/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $gallery -Destination "$PSScriptRoot/src/Modules/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $gallery -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } else {
         throw "Unknown source: $Source"
     }
@@ -2574,6 +2607,62 @@ function Start-PSxUnit {
     finally {
         $env:DOTNET_ROOT = $originalDOTNET_ROOT
         Pop-Location
+    }
+}
+
+function Get-DotnetEarlyAccess {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$DestinationPath,
+
+        [Parameter(Mandatory)]
+        [ValidateSet('win-x64', 'win-x86', 'win-arm64', 'linux-x64', 'linux-arm64', 'linux-alpine-x64', 'linux-alpine-arm64', 'osx-x64', 'osx-arm64', 'all')]
+        [string]$Architecture,
+
+        [Parameter(Mandatory)]
+        [string]$DOTNET_PRIVATE_SAS
+    )
+
+    $baseUrl = $env:DOTNET_PRIVATE_BLOB_BASE_URL
+    $DOTNET_RUNTIME_VERSION = $env:DOTNET_RUNTIME_VERSION
+    $DOTNET_SDK_VERSION = $env:DOTNET_SDK_VERSION
+
+    $fileName = switch ($Architecture) {
+        'win-x64' { "dotnet-sdk-$DOTNET_SDK_VERSION-win-x64.zip" }
+        'win-x86' { "dotnet-sdk-$DOTNET_SDK_VERSION-win-x86.zip" }
+        'win-arm64' { "dotnet-sdk-$DOTNET_SDK_VERSION-win-arm64.zip" }
+        'linux-x64' { "dotnet-sdk-$DOTNET_SDK_VERSION-linux-x64.tar.gz" }
+        'linux-arm64' { "dotnet-sdk-$DOTNET_SDK_VERSION-linux-arm64.tar.gz" }
+        'linux-alpine-x64' { "dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-x64.tar.gz" }
+        'linux-alpine-arm64' { "dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-arm64.tar.gz" }
+        'osx-x64' { "dotnet-sdk-$DOTNET_SDK_VERSION-osx-x64.tar.gz" }
+        'osx-arm64' { "dotnet-sdk-$DOTNET_SDK_VERSION-osx-arm64.tar.gz" }
+        'all' { @(
+            "dotnet-sdk-$DOTNET_SDK_VERSION-win-x64.zip"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-win-x86.zip"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-win-arm64.zip"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-linux-x64.tar.gz"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-linux-arm64.tar.gz"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-x64.tar.gz"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-arm64.tar.gz"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-osx-x64.tar.gz"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-osx-arm64.tar.gz"
+        ) }
+        default { throw "Unsupported architecture: $Architecture" }
+    }
+
+    $fileName | ForEach-Object {
+        $destFile = "$DestinationPath/$_"
+        Write-Verbose -Verbose "Downloading $_ from $baseUrl/$DOTNET_RUNTIME_VERSION to $destFile"
+
+        try {
+            Invoke-WebRequest -Uri "$baseUrl/$DOTNET_RUNTIME_VERSION/$_$DOTNET_PRIVATE_SAS" -OutFile $destFile -RetryIntervalSec 5 -MaximumRetryCount 3
+        }
+        catch {
+            Write-Error "Failed to download $_ from $baseUrl/$DOTNET_RUNTIME_VERSION"
+            throw
+        }
     }
 }
 

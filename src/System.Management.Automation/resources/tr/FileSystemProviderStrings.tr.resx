@@ -118,240 +118,240 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvokeItemAction" xml:space="preserve">
-    <value>Invoke Item</value>
+    <value>Öğeyi Çağır</value>
   </data>
   <data name="InvokeItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>Öğe: {0}</value>
   </data>
   <data name="RemoveItemActionFile" xml:space="preserve">
-    <value>Remove File</value>
+    <value>Dosyayı Kaldır</value>
   </data>
   <data name="RemoveItemActionDirectory" xml:space="preserve">
-    <value>Remove Directory</value>
+    <value>Dizini Kaldır</value>
   </data>
   <data name="CopyItemActionFile" xml:space="preserve">
-    <value>Copy File</value>
+    <value>Dosyayı Kopyala</value>
   </data>
   <data name="CopyItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>Öğe: {0} Hedef: {1}</value>
   </data>
   <data name="CopyItemActionDirectory" xml:space="preserve">
-    <value>Copy Directory</value>
+    <value>Dizini Kopyala</value>
   </data>
   <data name="RenameItemActionFile" xml:space="preserve">
-    <value>Rename File</value>
+    <value>Dosyayı Yeniden Adlandır</value>
   </data>
   <data name="RenameItemActionDirectory" xml:space="preserve">
-    <value>Rename Directory</value>
+    <value>Dizini Yeniden Adlandır</value>
   </data>
   <data name="RenameItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>Öğe: {0} Hedef: {1}</value>
   </data>
   <data name="MoveItemActionFile" xml:space="preserve">
-    <value>Move File</value>
+    <value>Dosyayı Taşı</value>
   </data>
   <data name="MoveItemActionDirectory" xml:space="preserve">
-    <value>Move Directory</value>
+    <value>Dizini Taşı</value>
   </data>
   <data name="MoveItemResourceFileTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>Öğe: {0} Hedef: {1}</value>
   </data>
   <data name="SetPropertyActionFile" xml:space="preserve">
-    <value>Set Property File</value>
+    <value>Özellik Dosyasını Ayarla</value>
   </data>
   <data name="SetPropertyActionDirectory" xml:space="preserve">
-    <value>Set Property Directory</value>
+    <value>Özellik Dizinini Ayarla</value>
   </data>
   <data name="SetPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1} Value: {2}</value>
+    <value>Öğe: {0} Özellik: {1} Değer: {2}</value>
   </data>
   <data name="ClearPropertyActionFile" xml:space="preserve">
-    <value>Clear Property File</value>
+    <value>Özellik Dosyasını Temizle</value>
   </data>
   <data name="ClearPropertyActionDirectory" xml:space="preserve">
-    <value>Clear Property Directory</value>
+    <value>Özellik Dizinini Temizle</value>
   </data>
   <data name="ClearPropertyResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1}</value>
+    <value>Öğe: {0} Özellik: {1}</value>
   </data>
   <data name="NewItemActionFile" xml:space="preserve">
-    <value>Create File</value>
+    <value>Dosya Oluştur</value>
   </data>
   <data name="NewItemActionDirectory" xml:space="preserve">
-    <value>Create Directory</value>
+    <value>Dizin Oluştur</value>
   </data>
   <data name="NewItemActionTemplate" xml:space="preserve">
-    <value>Destination: {0}</value>
+    <value>Hedef: {0}</value>
   </data>
   <data name="ClearContentActionFile" xml:space="preserve">
-    <value>Clear Content</value>
+    <value>İçeriği Temizle</value>
   </data>
   <data name="ClearContentesourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>Öğe: {0}</value>
   </data>
   <data name="ItemNotFound" xml:space="preserve">
-    <value>Could not find item {0}.</value>
+    <value>{0} öğesi bulunamadı.</value>
   </data>
   <data name="CannotRemoveItem" xml:space="preserve">
-    <value>Cannot remove item {0}: {1}</value>
+    <value>{0} öğesi kaldırılamıyor: {1}</value>
   </data>
   <data name="CannotRestoreAttributes" xml:space="preserve">
-    <value>Cannot restore attributes on item {0}: {1}</value>
+    <value>{0} öğesinde öznitelikler geri yüklenemiyor: {1}</value>
   </data>
   <data name="ItemDoesNotExist" xml:space="preserve">
-    <value>An object at the specified path {0} does not exist.</value>
+    <value>Belirtilen {0} yolunda bir nesne yok.</value>
   </data>
   <data name="DirectoryNotEmpty" xml:space="preserve">
-    <value>Directory {0} cannot be removed because it is not empty.</value>
+    <value>{0} dizini boş olmadığından kaldırılamıyor.</value>
   </data>
   <data name="UnknownType" xml:space="preserve">
-    <value>The type is not a known type for the file system. Only "file","directory" or "symboliclink" can be specified.</value>
+    <value>Tür, dosya sistemi için bilinen bir tür değil. Yalnızca "file", "directory" veya "symboliclink" belirtilebilir.</value>
   </data>
   <data name="PathOutSideBasePath" xml:space="preserve">
-    <value>Cannot process the path because the specified path refers to an item that is outside the basePath.</value>
+    <value>Belirtilen yol basePath dışındaki bir öğeye başvurduğundan, yol işlenemiyor.</value>
   </data>
   <data name="DriveRootError" xml:space="preserve">
-    <value>The specified drive root "{0}" either does not exist, or it is not a folder.</value>
+    <value>Belirtilen "{0}" sürücü kökü yok veya bir klasör değil.</value>
   </data>
   <data name="DirectoryExist" xml:space="preserve">
-    <value>An item with the specified name {0} already exists.</value>
+    <value>Belirtilen {0} adına sahip bir öğe zaten var.</value>
   </data>
   <data name="DelimiterError" xml:space="preserve">
-    <value>A delimiter cannot be specified when reading the stream one byte at a time.</value>
+    <value>Akış her seferinde bir bayt okunurken sınırlayıcı belirtilemez.</value>
   </data>
   <data name="CopyError" xml:space="preserve">
-    <value>Cannot overwrite the item {0} with itself.</value>
+    <value>{0} öğesi kendi üzerinde yazılamaz.</value>
   </data>
   <data name="RenameError" xml:space="preserve">
-    <value>Cannot rename the specified target, because it represents a path or device name.</value>
+    <value>Belirtilen hedef bir yol veya cihaz adını temsil ettiğinden, yeniden adlandırılamıyor.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property {0} does not exist or was not found.</value>
+    <value>{0} özelliği yok veya bulunamadı.</value>
   </data>
   <data name="PermissionError" xml:space="preserve">
-    <value>You do not have sufficient access rights to perform this operation or the item is hidden, system, or read only.</value>
+    <value>Bu işlemi gerçekleştirmek için yeterli erişim hakkınız yok veya öğe gizli, sistem öğesi veya salt okunur.</value>
   </data>
   <data name="AttributesNotSupported" xml:space="preserve">
-    <value>The attribute cannot be set because attributes are not supported. Only the following attributes can be set: Archive, Hidden, Normal, ReadOnly, or System.</value>
+    <value>Öznitelikler desteklenmediğinden öznitelik ayarlanamıyor. Yalnızca şu öznitelikler ayarlanabilir: Archive, Hidden, Normal, ReadOnly veya System.</value>
   </data>
   <data name="CannotClearProperty" xml:space="preserve">
-    <value>The property cannot be cleared because the property is not supported. Only the Attributes property can be cleared.</value>
+    <value>Özellik desteklenmediğinden temizlenemiyor. Yalnızca Attributes özelliği temizlenebilir.</value>
   </data>
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
-    <value>Cannot process path '{0}' because the target represents a reserved device name.</value>
+    <value>Hedef ayrılmış bir cihaz adını temsil ettiğinden '{0}' yolu işlenemiyor.</value>
   </data>
   <data name="EncodingNotUsed" xml:space="preserve">
-    <value>Encoding not used when '-AsByteStream' specified.</value>
+    <value>'-AsByteStream' belirtildiğinde kodlama kullanılmaz.</value>
   </data>
   <data name="ByteEncodingError" xml:space="preserve">
-    <value>Cannot proceed with byte encoding. When using byte encoding the content must be of type byte.</value>
+    <value>Bayt kodlamasına devam edilemiyor. Bayt kodlaması kullanılırken içerik bayt türünde olmalıdır.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>Cannot process the file because the file {0} was not found.</value>
+    <value>{0} dosyası bulunamadığı için dosya işlenemiyor.</value>
   </data>
   <data name="DirectoryDisplayGrouping" xml:space="preserve">
-    <value>    Directory: </value>
+    <value>    Dizin: </value>
   </data>
   <data name="ReadBackward_Encoding_NotSupport" xml:space="preserve">
-    <value>Cannot detect the encoding of the file. The specified encoding {0} is not supported when the content is read in reverse.</value>
+    <value>Dosyanın kodlaması algılanamadı. Belirtilen {0} kodlaması, içerik tersten okunduğunda desteklenmez.</value>
   </data>
   <data name="AlternateDataStreamNotFound" xml:space="preserve">
-    <value>Could not open the alternate data stream '{0}' of the file '{1}'.</value>
+    <value>'{1}' dosyasının '{0}' alternatif veri akışı açılamadı.</value>
   </data>
   <data name="StreamAction" xml:space="preserve">
-    <value>Stream '{0}' of file '{1}'.</value>
+    <value>'{1}' dosyasının '{0}' akışı.</value>
   </data>
   <data name="RawAndWaitCannotCoexist" xml:space="preserve">
-    <value>The Raw and Wait parameters cannot be specified in the same command.</value>
+    <value>Raw ve Wait parametreleri aynı komutta belirtilemez.</value>
   </data>
   <data name="InvalidDriveName" xml:space="preserve">
-    <value>To use the Persist switch parameter, the drive name must be supported by the operating system (for example, drive letters A-Z).</value>
+    <value>Persist anahtar parametresini kullanmak için sürücü adının işletim sistemi tarafından desteklenmesi gerekir (örneğin, A-Z sürücü harfleri).</value>
   </data>
   <data name="PersistNotSupported" xml:space="preserve">
-    <value>When you use the Persist parameter, the root must be a file system location on a remote computer.</value>
+    <value>Persist parametresini kullandığınızda, kök uzak bilgisayardaki bir dosya sistemi konumu olmalıdır.</value>
   </data>
   <data name="NoFirstLastWaitForRaw" xml:space="preserve">
-    <value>The '{0}' and '{1}' parameters cannot be specified in the same command.</value>
+    <value>'{0}' ve '{1}' parametreleri aynı komutta belirtilemez.</value>
   </data>
   <data name="ItemNotDirectory" xml:space="preserve">
-    <value>A directory is required for the operation. The item '{0}' is not a directory.</value>
+    <value>İşlem için bir dizin gerekiyor. '{0}' öğesi bir dizin değil.</value>
   </data>
   <data name="NewItemActionJunction" xml:space="preserve">
-    <value>Create Junction</value>
+    <value>Birleşim Oluştur</value>
   </data>
   <data name="NewItemActionSymbolicLink" xml:space="preserve">
-    <value>Create Symbolic Link</value>
+    <value>Sembolik Bağlantı Oluştur</value>
   </data>
   <data name="ElevationRequired" xml:space="preserve">
-    <value>Administrator privilege required for this operation.</value>
+    <value>Bu işlem için Yönetici ayrıcalığı gerekir.</value>
   </data>
   <data name="NewItemActionHardLink" xml:space="preserve">
-    <value>Create Hard Link</value>
+    <value>Sabit Bağlantı Oluştur</value>
   </data>
   <data name="ItemNotFile" xml:space="preserve">
-    <value>A file is required for the operation. The item '{0}' is not a file.</value>
+    <value>İşlem için bir dosya gerekiyor. '{0}' öğesi bir dosya değil.</value>
   </data>
   <data name="HardLinkNotSupported" xml:space="preserve">
-    <value>Hard links are not supported for the specified path.</value>
+    <value>Belirtilen yol için sabit bağlantılar desteklenmiyor.</value>
   </data>
   <data name="SymbolicLinkNotSupported" xml:space="preserve">
-    <value>Symbolic links are not supported for the specified path.</value>
+    <value>Belirtilen yol için sembolik bağlantılar desteklenmiyor.</value>
   </data>
   <data name="CopyItemRemotelyProgressActivity" xml:space="preserve">
     <value>{0} dosyasını {1} klasörüne kopyalama</value>
   </data>
   <data name="CopyItemRemoteDestinationIsFile" xml:space="preserve">
-    <value>Destination path {0} is a file that already exists on the target destination.</value>
+    <value>{0} hedef yolu, hedef konumda zaten mevcut olan bir dosyadır.</value>
   </data>
   <data name="CopyItemRemotelyFailed" xml:space="preserve">
-    <value>Failed to copy file {0} to remote target destination.</value>
+    <value>{0} dosyası uzak hedef konuma kopyalanamadı.</value>
   </data>
   <data name="CopyItemRemotelyStatusDescription" xml:space="preserve">
     <value>Başlangıç: {0} Bitiş: {1}</value>
   </data>
   <data name="CopyItemRemotelyDestinationIsFile" xml:space="preserve">
-    <value>Cannot copy a directory '{0}' to file '{0}'</value>
+    <value>'{0}' dizini '{0}' dosyasına kopyalanamıyor</value>
   </data>
   <data name="CopyItemRemotelyFailedToGetDirectoryChildItems" xml:space="preserve">
-    <value>Failed to get directory {0} child items.</value>
+    <value>{0} dizini alt öğeleri alınamadı.</value>
   </data>
   <data name="CopyItemRemotelyFailedToReadFile" xml:space="preserve">
-    <value>Failed to read remote file '{0}'.</value>
+    <value>'{0}' uzak dosyası okunamadı.</value>
   </data>
   <data name="CopyItemRemotelyFailedToValidateIfDestinationIsFile" xml:space="preserve">
-    <value>Cannot validate if remote destination {0} is a file.</value>
+    <value>{0} uzak hedefinin bir dosya olup olmadığı doğrulanamıyor.</value>
   </data>
   <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
-    <value>Failed to create directory '{0}' on remote destination.</value>
+    <value>Uzak hedefte '{0}' dizini oluşturulamadı.</value>
   </data>
   <data name="DriveMaxSizeError" xml:space="preserve">
-    <value>Maximum size for drive has been exceeded: {0}.</value>
+    <value>Sürücü için maksimum boyut aşıldı: {0}.</value>
   </data>
   <data name="SymlinkItemExists" xml:space="preserve">
-    <value>Cannot create link because the path already exists: {0}.</value>
+    <value>Yol zaten mevcut olduğundan bağlantı oluşturulamıyor: {0}.</value>
   </data>
   <data name="AlreadyListedDirectory" xml:space="preserve">
-    <value>Skip already-visited directory {0}.</value>
+    <value>Daha önce ziyaret edilmiş olan {0} dizinini atlayın.</value>
   </data>
   <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
-    <value>Destination path cannot be a subdirectory of the source or the source itself: {0}.</value>
+    <value>Hedef yol, kaynağın bir alt dizini veya kaynağın kendisi olamaz: {0}.</value>
   </data>
   <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
-    <value>The target and path cannot be the same.</value>
+    <value>Hedef ve yol aynı olamaz.</value>
   </data>
   <data name="CopyingLocalFileActivity" xml:space="preserve">
-    <value>Copied {0} of {1} files</value>
+    <value>{1} dosyasının {0} tanesi kopyalandı</value>
   </data>
   <data name="CopyingLocalBytesStatus" xml:space="preserve">
-    <value>{0} of {1} ({2:0.0} MB/s)</value>
+    <value>{0}/{1} ({2:0.0} MB/sn)</value>
   </data>
   <data name="RemovingLocalFileActivity" xml:space="preserve">
-    <value>Removed {0} of {1} files</value>
+    <value>{1} dosyanın {0} tanesi kaldırıldı</value>
   </data>
   <data name="RemovingLocalBytesStatus" xml:space="preserve">
-    <value>{0} of {1} ({2:0.0} MB/s)</value>
+    <value>{0}/{1} ({2:0.0} MB/sn)</value>
   </data>
   <data name="JunctionAbsolutePath" xml:space="preserve">
-    <value>Creating a junction requires an absolute path for the target.</value>
+    <value>Bir birleşim oluşturmak için hedefin mutlak bir yolu olması gerekir.</value>
   </data>
 </root>

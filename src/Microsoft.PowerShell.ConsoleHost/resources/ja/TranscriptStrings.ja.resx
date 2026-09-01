@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TranscriptionStarted" xml:space="preserve">
-    <value>Transcript started, output file is {0}</value>
+    <value>トランスクリプトが開始されました。出力ファイルは {0} です</value>
   </data>
   <data name="TranscriptionStopped" xml:space="preserve">
-    <value>Transcript stopped, output file is {0}</value>
+    <value>トランスクリプトが停止しました。出力ファイルは {0} です</value>
   </data>
   <data name="CannotStartTranscription" xml:space="preserve">
-    <value>Transcription cannot be started due to the error: {0}</value>
+    <value>次のエラーのため、文字起こしを開始できません: {0}</value>
   </data>
   <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>The current provider ({0}) cannot open a file.</value>
+    <value>現在のプロバイダー ({0}) はファイルを開けません。</value>
   </data>
   <data name="TranscriptFileReadOnly" xml:space="preserve">
-    <value>File {0} is read-only. Cannot write to this file. "Start-Transcript -Force" will clear the read-only attribute.</value>
+    <value>ファイル {0} は読み取り専用です。このファイルに書き込めません。"Start-Transcript -Force" は読み取り専用属性をクリアします。</value>
   </data>
   <data name="MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>パスが複数のファイルに解決されたため、操作を実行できません。このコマンドは、複数のファイルに対して操作することはできません。</value>
   </data>
   <data name="TranscriptFileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>ファイル {0} は既に存在し、{1} が指定されました。</value>
   </data>
   <data name="ErrorStoppingTranscript" xml:space="preserve">
-    <value>An error occurred stopping transcription: {0}</value>
+    <value>文字起こしの停止中にエラーが発生しました: {0}</value>
   </data>
 </root>

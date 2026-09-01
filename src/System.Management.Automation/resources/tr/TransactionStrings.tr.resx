@@ -118,57 +118,57 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoTransactionActive" xml:space="preserve">
-    <value>Cannot use transaction. No transaction is active.</value>
+    <value>İşlem kullanılamıyor. Hiçbir işlem etkin değil.</value>
   </data>
   <data name="NoTransactionActiveForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. No transaction is active.</value>
+    <value>İşlem yürütülemiyor. Hiçbir işlem etkin değil.</value>
   </data>
   <data name="NoTransactionActiveForRollback" xml:space="preserve">
-    <value>Cannot roll back the transaction, because there is no active transaction.</value>
+    <value>Etkin işlem olmadığından işlem geri alınamıyor.</value>
   </data>
   <data name="CommittedTransactionForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been committed.</value>
+    <value>İşlem geri alınamıyor. İşlem zaten yürütüldü.</value>
   </data>
   <data name="CommittedTransactionForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has already been committed.</value>
+    <value>İşlem yürütülemiyor. İşlem zaten yürütüldü.</value>
   </data>
   <data name="TransactionRolledBackForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has been rolled back or has timed out.</value>
+    <value>İşlem yürütülemiyor. İşlem geri alındı veya zaman aşımına uğradı.</value>
   </data>
   <data name="TransactionRolledBackForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been rolled back or has timed out.</value>
+    <value>İşlem geri alınamıyor. İşlem zaten geri alındı veya zaman aşımına uğradı.</value>
   </data>
   <data name="NoTransactionForActivation" xml:space="preserve">
-    <value>Cannot set active transaction. No transaction has been created.</value>
+    <value>Etkin işlem ayarlanamıyor. İşlem oluşturulmadı.</value>
   </data>
   <data name="NoTransactionForActivationBecauseRollback" xml:space="preserve">
-    <value>Cannot set active transaction. The active transaction has been rolled back or has timed out.</value>
+    <value>Etkin işlem ayarlanamıyor. Etkin işlem geri alındı veya zaman aşımına uğradı.</value>
   </data>
   <data name="NoTransactionAvailable" xml:space="preserve">
-    <value>This cmdlet requires an active transaction. The current transaction has already been committed or rolled back.</value>
+    <value>Bu cmdlet için etkin bir işlem gerekiyor. Geçerli işlem zaten yürütüldü veya geri alındı.</value>
   </data>
   <data name="CmdletRequiresUseTx" xml:space="preserve">
-    <value>This cmdlet requires a transaction. Run the command again with the -UseTransaction parameter.</value>
+    <value>Bu cmdlet için bir işlem gerekiyor. Komutu -UseTransaction parametresiyle yeniden çalıştırın.</value>
   </data>
   <data name="NoTransactionStarted" xml:space="preserve">
-    <value>Cannot use transaction. No transaction has been started.</value>
+    <value>İşlem kullanılamıyor. İşlem başlatılmadı.</value>
   </data>
   <data name="NoTransactionStartedFromCommit" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been committed.</value>
+    <value>İşlem kullanılamıyor. İşlem yürütüldü.</value>
   </data>
   <data name="NoTransactionStartedFromRollback" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been rolled back or has timed out.</value>
+    <value>İşlem kullanılamıyor. İşlem geri alındı veya zaman aşımına uğradı.</value>
   </data>
   <data name="TransactionTimedOut" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has timed out.</value>
+    <value>İşlem kullanılamıyor. İşlem zaman aşımına uğradı.</value>
   </data>
   <data name="BaseTransactionNotSet" xml:space="preserve">
-    <value>The base transaction has not been set.</value>
+    <value>Temel işlem ayarlanmadı.</value>
   </data>
   <data name="BaseTransactionNotActive" xml:space="preserve">
-    <value>The base transaction is not active.</value>
+    <value>Temel işlem etkin değil.</value>
   </data>
   <data name="BaseTransactionMustBeFirst" xml:space="preserve">
-    <value>The base transaction cannot be set after other transactions have been created.</value>
+    <value>Diğer işlemler oluşturulduktan sonra temel işlem ayarlanamaz.</value>
   </data>
 </root>

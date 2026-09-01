@@ -118,69 +118,69 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UpdateData_WrongProviderError" xml:space="preserve">
-    <value>Cannot open the file because the current provider is "{0}", and this command requires a file.</value>
+    <value>無法開啟檔案，因為目前的提供者是 "{0}"，而此命令需要檔案。</value>
   </data>
   <data name="UpdateData_WrongExtension" xml:space="preserve">
-    <value>Cannot read the file "{0}"  because it does not have the file name extension "{1}".</value>
+    <value>無法讀取檔案 "{0}"，因為它沒有副檔名 "{1}"。</value>
   </data>
   <data name="UpdateTypeDataAction" xml:space="preserve">
-    <value>Update TypeData</value>
+    <value>更新 TypeData</value>
   </data>
   <data name="UpdateFormatDataAction" xml:space="preserve">
-    <value>Update FormatData</value>
+    <value>更新 FormatData</value>
   </data>
   <data name="UpdateTarget" xml:space="preserve">
     <value>FileName: {0}</value>
   </data>
   <data name="CannotUpdateMemberType" xml:space="preserve">
-    <value>Cannot update a member with type "{0}". Specify a different type for the MemberType parameter.</value>
+    <value>無法使用類型 "{0}" 更新成員。請為 MemberTypes 參數指定不同的類型。</value>
   </data>
   <data name="ShouldBeSpecified" xml:space="preserve">
-    <value>The {0} parameter is required for the type "{1}". Please specify the {0} parameter.</value>
+    <value>類型 "{1}" 需要 {0} 參數。請指定 {0} 參數。</value>
   </data>
   <data name="ShouldNotBeNull" xml:space="preserve">
-    <value>The {0} parameter should not be null or an empty string for a member of type "{1}". Specify a non-null value for the {0} parameter when updating this member type.</value>
+    <value>對於類型 "{1}" 的成員，{0} 參數不應為 null 或空字串。更新此成員類型時，請為 {0} 參數指定非 null 值。</value>
   </data>
   <data name="ShouldNotBeSpecified" xml:space="preserve">
-    <value>The {0} parameter is not necessary for a member of type "{1}", and should not be specified. Do not specify the {0} parameter when updating this member type.</value>
+    <value>類型 "{1}" 的成員不需要 {0} 參數，因此不應指定此參數。更新此成員類型時，請勿指定 {0} 參數。</value>
   </data>
   <data name="TypeDataEmpty" xml:space="preserve">
-    <value>No member is specified for the update on type "{0}".</value>
+    <value>未為類型 "{0}" 的更新指定成員。</value>
   </data>
   <data name="TargetTypeNameEmpty" xml:space="preserve">
-    <value>The target type name should not be null, empty, or contain only white spaces.</value>
+    <value>目標類型名稱不應為 null、空白，或只包含空白字元。</value>
   </data>
   <data name="Value1AndValue2AreNotBothNull" xml:space="preserve">
-    <value>The Value and SecondValue parameters should not both be null for a member of type "{0}". Specify a non-null value for one of the two parameters.</value>
+    <value>類型為 "{0}" 的成員，其 Value 和 SecondValue 參數不應同時為 null。請為這兩個參數的其中一個指定非 null 值。</value>
   </data>
   <data name="WrongMemberCount" xml:space="preserve">
-    <value>Only one member type can be specified. The member types specified are: "{0}". Update the type with only one member type.</value>
+    <value>只能指定一種成員類型。指定的成員類型為: "{0}"。請只使用一種成員類型更新此類型。</value>
   </data>
   <data name="MemberTypeIsMissing" xml:space="preserve">
-    <value>The MemberName, Value, and SecondValue parameters cannot be specified without the MemberType parameter.</value>
+    <value>若未指定 MemberType 參數，則無法指定 MemberName、Value 及 SecondValue 參數。</value>
   </data>
   <data name="RemoveTypeDataAction" xml:space="preserve">
-    <value>Remove TypeData</value>
+    <value>移除 TypeData</value>
   </data>
   <data name="RemoveTypeDataTarget" xml:space="preserve">
-    <value>Name of the type that will be removed: {0}</value>
+    <value>將移除的類型名稱: {0}</value>
   </data>
   <data name="UpdateTypeDataTarget" xml:space="preserve">
-    <value>Type to update: {0}</value>
+    <value>要更新的類型: {0}</value>
   </data>
   <data name="RemoveTypeFileAction" xml:space="preserve">
-    <value>Remove type file</value>
+    <value>移除類型檔案</value>
   </data>
   <data name="TypeFileNotExistsInCurrentSession" xml:space="preserve">
-    <value>The file {0} is not imported into the current session.</value>
+    <value>檔案 {0} 未匯入目前的工作階段。</value>
   </data>
   <data name="FormatUpdatesDisabled" xml:space="preserve">
-    <value>Updating format data is not allowed in this runspace. The 'DisableFormatUpdates' property is set to True when creating the runspace.</value>
+    <value>此 Runspace 不允許更新格式資料。建立 Runspace 時，已將 'DisableFormatUpdates' 屬性設為 True。</value>
   </data>
   <data name="CannotUpdateFormatWithFormatTable" xml:space="preserve">
-    <value>Cannot update the format data with a FormatTable instance.</value>
+    <value>無法使用 FormatTable 執行個體更新格式資料。</value>
   </data>
   <data name="CannotUpdateTypeWithTypeTable" xml:space="preserve">
-    <value>Cannot update the type data with a TypeTable instance.</value>
+    <value>無法使用 TypeTable 執行個體更新類型資料。</value>
   </data>
 </root>

@@ -121,7 +121,7 @@
     <value>NOME</value>
   </data>
   <data name="Synopsis" xml:space="preserve">
-    <value>SYNOPSIS</value>
+    <value>RIEPILOGO</value>
   </data>
   <data name="DetailedDescription" xml:space="preserve">
     <value>DESCRIPTION</value>
@@ -130,106 +130,106 @@
     <value>SYNTAX</value>
   </data>
   <data name="Parameters" xml:space="preserve">
-    <value>PARAMETERS</value>
+    <value>PARAMETRI</value>
   </data>
   <data name="InputType" xml:space="preserve">
-    <value>INPUTS</value>
+    <value>INPUT</value>
   </data>
   <data name="ReturnType" xml:space="preserve">
-    <value>OUTPUTS</value>
+    <value>OUTPUT</value>
   </data>
   <data name="TerminatingErrors" xml:space="preserve">
-    <value>TERMINATING ERRORS</value>
+    <value>ERRORI IRREVERSIBILI</value>
   </data>
   <data name="NonHyphenTerminatingErrors" xml:space="preserve">
-    <value>NON-TERMINATING ERRORS</value>
+    <value>ERRORI NON FATALI</value>
   </data>
   <data name="Notes" xml:space="preserve">
-    <value>NOTES</value>
+    <value>NOTE</value>
   </data>
   <data name="Examples" xml:space="preserve">
-    <value>EXAMPLES</value>
+    <value>ESEMPI</value>
   </data>
   <data name="Example" xml:space="preserve">
     <value>Esempio</value>
   </data>
   <data name="ExampleUpperCase" xml:space="preserve">
-    <value>EXAMPLE</value>
+    <value>ESEMPIO</value>
   </data>
   <data name="Output" xml:space="preserve">
     <value>OUTPUT</value>
   </data>
   <data name="RelatedLinks" xml:space="preserve">
-    <value>RELATED LINKS</value>
+    <value>COLLEGAMENTI CORRELATI</value>
   </data>
   <data name="ShortDescription" xml:space="preserve">
-    <value>SHORT DESCRIPTION</value>
+    <value>DESCRIZIONE BREVE</value>
   </data>
   <data name="TitleColon" xml:space="preserve">
-    <value>Title:</value>
+    <value>Titolo:</value>
   </data>
   <data name="QuestionColon" xml:space="preserve">
-    <value>Question:</value>
+    <value>Domanda:</value>
   </data>
   <data name="Answer" xml:space="preserve">
     <value>Risposta</value>
   </data>
   <data name="TermColon" xml:space="preserve">
-    <value>Term:</value>
+    <value>Termine:</value>
   </data>
   <data name="DefinitionColon" xml:space="preserve">
-    <value>Definition:</value>
+    <value>Definizione:</value>
   </data>
   <data name="ContentColon" xml:space="preserve">
-    <value>Content:</value>
+    <value>Contenuto:</value>
   </data>
   <data name="ProviderName" xml:space="preserve">
-    <value>PROVIDER NAME</value>
+    <value>NOME DEL PROVIDER</value>
   </data>
   <data name="BaseCmdletInformation" xml:space="preserve">
-    <value>    This cmdlet supports the common parameters: Verbose, Debug,
+    <value>    Questo cmdlet supporta i parametri comuni: Verbose, Debug,
     ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-    OutBuffer, PipelineVariable, and OutVariable. For more information, see
+    OutBuffer, PipelineVariable e OutVariable. Per altre informazioni, vedere
     about_CommonParameters (https://go.microsoft.com/fwlink/?LinkID=113216). </value>
   </data>
   <data name="ParameterRequired" xml:space="preserve">
-    <value>Required?                    </value>
+    <value>Obbligatorio?                    </value>
   </data>
   <data name="ParameterPosition" xml:space="preserve">
-    <value>Position?                    </value>
+    <value>Posizione?                    </value>
   </data>
   <data name="TypeColon" xml:space="preserve">
-    <value>Type: </value>
+    <value>Tipo: </value>
   </data>
   <data name="TargetObjectTypeColon" xml:space="preserve">
-    <value>Target Object Type:   </value>
+    <value>Tipo oggetto di destinazione:   </value>
   </data>
   <data name="ParameterDefaultValue" xml:space="preserve">
-    <value>Default value                </value>
+    <value>Valore predefinito                </value>
   </data>
   <data name="AcceptsPipelineInput" xml:space="preserve">
-    <value>Accept pipeline input?       </value>
+    <value>Accettare input da pipeline?       </value>
   </data>
   <data name="AcceptsWildCardCharacters" xml:space="preserve">
-    <value>Accept wildcard characters?  </value>
+    <value>Accettare caratteri jolly?  </value>
   </data>
   <data name="Category" xml:space="preserve">
-    <value>(Category: </value>
+    <value>(Categoria: </value>
   </data>
   <data name="SuggestedActionColon" xml:space="preserve">
-    <value>Suggested Action: </value>
+    <value>Azione suggerita: </value>
   </data>
   <data name="VerboseHelpInfo" xml:space="preserve">
-    <value>For more information, type: </value>
+    <value>Per ulteriori informazioni, digitare: </value>
   </data>
   <data name="FullHelpInfo" xml:space="preserve">
-    <value>For technical information, type: </value>
+    <value>Per informazioni tecniche, digitare: </value>
   </data>
   <data name="ExampleHelpInfo" xml:space="preserve">
-    <value>To see the examples, type: </value>
+    <value>Per visualizzare gli esempi, digitare: </value>
   </data>
   <data name="RelatedLinksHelpInfo" xml:space="preserve">
-    <value>For online help, type: </value>
+    <value>Per visualizzare la Guida, digitare: </value>
   </data>
   <data name="CommonParameters" xml:space="preserve">
     <value>&lt;CommonParameters&gt;</value>
@@ -241,52 +241,52 @@
     <value>true</value>
   </data>
   <data name="NamedParameter" xml:space="preserve">
-    <value>Named</value>
+    <value>Denominato</value>
   </data>
   <data name="Drives" xml:space="preserve">
-    <value>DRIVES</value>
+    <value>UNITÀ</value>
   </data>
   <data name="Capabilities" xml:space="preserve">
-    <value>CAPABILITIES</value>
+    <value>FUNZIONALITÀ</value>
   </data>
   <data name="Tasks" xml:space="preserve">
-    <value>TASKS</value>
+    <value>ATTIVITÀ</value>
   </data>
   <data name="Task" xml:space="preserve">
-    <value>TASK: </value>
+    <value>ATTIVITÀ: </value>
   </data>
   <data name="Filters" xml:space="preserve">
-    <value>FILTERS</value>
+    <value>FILTRI</value>
   </data>
   <data name="DynamicParameters" xml:space="preserve">
-    <value>DYNAMIC PARAMETERS</value>
+    <value>PARAMETRI DINAMICI</value>
   </data>
   <data name="CmdletsSupported" xml:space="preserve">
-    <value>Cmdlets Supported: </value>
+    <value>Cmdlet supportati: </value>
   </data>
   <data name="AliasesSection" xml:space="preserve">
-    <value>ALIASES</value>
+    <value>ALIAS</value>
   </data>
   <data name="GetLatestHelpContent" xml:space="preserve">
-    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.
-    -- To download and install Help files for the module that includes this cmdlet, use Update-Help.
-    -- To view the Help topic for this cmdlet online, type: "Get-Help {0} -Online" or
-       go to {1}.</value>
+    <value>Get-Help non riesce a trovare i file della Guida per questo cmdlet in questo computer. Viene visualizzata solo una parte della Guida.
+    -- Per scaricare e installare i file della Guida per il modulo che include questo cmdlet, usare Update-Help.
+    -- Per visualizzare l'argomento della Guida per questo cmdlet online, digitare "Get-Help {0} -Online" o
+       Passa a {1}.</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>Nessuno</value>
   </data>
   <data name="ParameterAliases" xml:space="preserve">
-    <value>Aliases                      </value>
+    <value>Alias                      </value>
   </data>
   <data name="ParameterIsDynamic" xml:space="preserve">
-    <value>Dynamic?                     </value>
+    <value>Dinamica?                     </value>
   </data>
   <data name="ParameterSetName" xml:space="preserve">
-    <value>Parameter set name           </value>
+    <value>Nome del set di parametri           </value>
   </data>
   <data name="UnableToRetrieveHelpInfoXml" xml:space="preserve">
-    <value>Unable to retrieve the HelpInfo XML file for UI culture {0}. Make sure the HelpInfoUri property in the module manifest is valid or check your network connection and then try the command again.</value>
+    <value>Non è possibile recuperare il file HelpInfo XML per le impostazioni cultura dell'interfaccia utente {0}. Verificare che la proprietà HelpInfoUri nel manifesto del modulo sia valida o controllare la connessione di rete, quindi riprovare.</value>
   </data>
   <data name="PipelineByPropertyName" xml:space="preserve">
     <value>ByPropertyName</value>
@@ -298,176 +298,176 @@
     <value>FromRemainingArguments</value>
   </data>
   <data name="HelpCultureNotSupported" xml:space="preserve">
-    <value>The specified culture is not supported: {0}. Specify a culture from the following list: {{{1}}}.</value>
+    <value>Le impostazioni di cultura specificate non sono supportate: {0}. Specificare un'impostazione di cultura dall'elenco seguente: {{{1}}}.</value>
   </data>
   <data name="HelpCultureNotSupportedFallback" xml:space="preserve">
-    <value>Postponing error and trying fallback cultures, will show as error if none of fallbacks are supported:
+    <value>Il posticipo dell'errore e il tentativo di usare le impostazioni cultura di fallback verranno visualizzati come errore se nessuna delle impostazioni di fallback è supportata:
 {0}</value>
   </data>
   <data name="ModuleBaseMustExist" xml:space="preserve">
-    <value>The ModuleBase directory cannot be found. Verify the directory and try again.</value>
+    <value>Non è possibile trovare la directory ModuleBase. Verificare la directory e riprovare.</value>
   </data>
   <data name="PathMustBeValidContainers" xml:space="preserve">
-    <value>The path {0} is not a valid directory. Make sure the directory exists and retry.</value>
+    <value>Il percorso {0} non è una directory valida. Verificare che la directory esista e riprovare.</value>
   </data>
   <data name="TooManyRedirections" xml:space="preserve">
-    <value>A Help URI cannot contain more than 10 redirections. Specify a valid Help URI.</value>
+    <value>Un URI della Guida non può contenere più di 10 reindirizzamenti. Specificare un URI della Guida valido.</value>
   </data>
   <data name="UpdateProgressActivity" xml:space="preserve">
-    <value>Updating Help</value>
+    <value>Aggiornamento della Guida</value>
   </data>
   <data name="UpdateProgressConnecting" xml:space="preserve">
-    <value>Connecting to Help Content...</value>
+    <value>Connessione al contenuto della Guida in corso...</value>
   </data>
   <data name="UpdateProgressDownloading" xml:space="preserve">
-    <value>Downloading Help Content...</value>
+    <value>Download del contenuto della Guida in corso...</value>
   </data>
   <data name="UpdateProgressInstalling" xml:space="preserve">
-    <value>Installing Help content...</value>
+    <value>Installazione del contenuto della Guida in corso...</value>
   </data>
   <data name="UpdateProgressLocating" xml:space="preserve">
-    <value>Locating Help Content...</value>
+    <value>Individuazione del contenuto della Guida in corso...</value>
   </data>
   <data name="AllParameterSetsName" xml:space="preserve">
-    <value>(All)</value>
+    <value>(Tutti)</value>
   </data>
   <data name="CannotMatchModulePattern" xml:space="preserve">
-    <value>No PowerShell modules were found that match the following pattern: {0}. Verify the pattern and then try the command again.</value>
+    <value>Non sono stati trovati moduli di PowerShell corrispondenti al modello seguente: {0}. Verificare il modello, quindi riprovare a eseguire il comando.</value>
   </data>
   <data name="ModuleNotFoundWithFullyQualifiedName" xml:space="preserve">
-    <value>No PowerShell modules were found that match the specified FullyQualifiedModule {0}. Verify the FullyQualifiedModule value and then try the command again.</value>
+    <value>Non sono stati trovati moduli di PowerShell corrispondenti al valore FullyQualifiedModule specificato {0}. Verificare il valore di FullyQualifiedModule, quindi riprovare a eseguire il comando.</value>
   </data>
   <data name="HelpContentNotFound" xml:space="preserve">
-    <value>Help content cannot be found. Make sure the server is available and the help content location is properly defined in the HelpInfo XML.</value>
+    <value>Non è possibile trovare il contenuto della Guida. Verificare che il server sia disponibile e che il percorso del contenuto della Guida sia definito correttamente nel codice XML HelpInfo.</value>
   </data>
   <data name="HelpInfoUriNotFound" xml:space="preserve">
-    <value>The Update-Help command failed because the specified module does not support updatable help. Use Get-Help -Online or look online for help for the commands in this module.</value>
+    <value>Il comando Update-Help non è riuscito perché il modulo specificato non supporta la Guida aggiornabile. Usare Get-Help -Online oppure cercare online la Guida per i comandi di questo modulo.</value>
   </data>
   <data name="ModuleNameNullOrEmpty" xml:space="preserve">
-    <value>The following parameter must not be null or empty: Module.</value>
+    <value>Il parametro seguente non deve essere Null o vuoto: Module.</value>
   </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
-    <value>The following parameter must not be null or empty: Path.</value>
+    <value>Il parametro seguente non deve essere Null o vuoto: Path.</value>
   </data>
   <data name="UpdateHelpCompleted" xml:space="preserve">
-    <value>Update-Help has completed successfully.</value>
+    <value>Aggiornamento della Guida completato.</value>
   </data>
   <data name="UnzipFailure" xml:space="preserve">
-    <value>Error extracting Help content.</value>
+    <value>Errore durante l'estrazione del contenuto della Guida.</value>
   </data>
   <data name="UnableToConnect" xml:space="preserve">
-    <value>Unable to connect to Help content. The server on which Help content is stored might not be available. Verify that the server is available, or wait until the server is back online, and then try the command again.</value>
+    <value>Non è possibile connettersi al contenuto della Guida. Il server in cui è archiviato il contenuto della Guida potrebbe non essere disponibile. Verificare che il server sia disponibile o attendere che il server sia nuovamente online, quindi riprovare.</value>
   </data>
   <data name="HelpContentXmlValidationFailure" xml:space="preserve">
-    <value>The Help content at the specified location is not valid. Specify a location that contains valid Help Content.</value>
+    <value>Il contenuto della Guida nel percorso specificato non è valido. Specificare un percorso contenente contenuto valido della Guida.</value>
   </data>
   <data name="HelpInfoXmlValidationFailure" xml:space="preserve">
-    <value>The HelpInfo XML is not valid. Specify valid HelpInfo XML.</value>
+    <value>HelpInfo XML non è valido. Specificare un HelpInfo XML valido.</value>
   </data>
   <data name="SaveHelpCompleted" xml:space="preserve">
-    <value>Help content was successfully saved to the following location: {0}</value>
+    <value>Il contenuto della Guida è stato salvato nel percorso seguente: {0}</value>
   </data>
   <data name="HelpContentXsdNotFound" xml:space="preserve">
-    <value>The Help content XSD file cannot be found in {0}. Verify that the XSD file exists at the specified location, and then retry the command.</value>
+    <value>Non è possibile trovare il file XSD del contenuto della Guida in {0}. Verificare che il file XSD esista nel percorso specificato, quindi ripetere il comando.</value>
   </data>
   <data name="FailedToUpdateHelpForModule" xml:space="preserve">
-    <value>Failed to update Help for the module(s) :
+    <value>Non è possibile aggiornare la Guida per i moduli: 
 '{0}'
 {1}</value>
   </data>
   <data name="SaveProgressActivity" xml:space="preserve">
-    <value>Saving Help</value>
+    <value>Salvataggio della Guida</value>
   </data>
   <data name="HelpContentContainsInvalidFiles" xml:space="preserve">
-    <value>Help content contains files that are not valid. Only .txt and .xml files are supported.</value>
+    <value>Il contenuto della Guida contiene file non validi. Sono supportati solo file .txt e .xml.</value>
   </data>
   <data name="FailedToSaveHelpForModule" xml:space="preserve">
-    <value>Failed to save Help for the module(s) '{0}' : {1}</value>
+    <value>Non è possibile salvare la Guida per i moduli ''{0}'': {1}</value>
   </data>
   <data name="FailedToSaveHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to save Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
-English-US help content is available and can be saved using: Save-Help -UICulture en-US.</value>
+    <value>Non è possibile salvare la Guida per i moduli ''{0}'' con impostazioni cultura dell'interfaccia utente {{{1}}}: {2}.
+Il contenuto della Guida in inglese-US è disponibile e può essere salvato usando: Save-Help -UICulture en-US.</value>
   </data>
   <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
-English-US help content is available and can be installed using: Update-Help -UICulture en-US.</value>
+    <value>Non è stato possibile aggiornare la Guida per i moduli ''{0}'' con le impostazioni cultura dell'interfaccia utente {{{1}}}: {2}.
+Il contenuto della Guida in inglese-US è disponibile e può essere installato usando: Update-Help -UICulture en-US.</value>
   </data>
   <data name="FailedToUpdateHelpWithLocaleNoUICulture" xml:space="preserve">
-    <value>Your current culture is ({0}), which is not associated with any language, consider changing your system culture or install the English-US help content using: Update-Help -UICulture en-US.</value>
+    <value>Le impostazioni cultura correnti sono ({0}), che non sono associate ad alcuna lingua. Valutare di modificare le impostazioni cultura del sistema oppure installare il contenuto della Guida in inglese-US usando: Update-Help -UICulture en-US.</value>
   </data>
   <data name="FalseShort" xml:space="preserve">
     <value>false</value>
   </data>
   <data name="CannotSpecifyRecurseWithoutPath" xml:space="preserve">
-    <value>The -Recurse parameter is only available if a source path is specified.</value>
+    <value>Il parametro -Recurse è disponibile solo se viene specificato un percorso di origine.</value>
   </data>
   <data name="ProviderIsNotFileSystem" xml:space="preserve">
-    <value>The path {0} does not contain a FileSystem provider. Verify that the specified path contains the FileSystem provider, and then retry the command.</value>
+    <value>Il percorso {0} non contiene un provider FileSystem. Verificare che il percorso specificato contenga il provider FileSystem, quindi riprovare il comando.</value>
   </data>
   <data name="SearchingForHelpContent" xml:space="preserve">
-    <value>Searching Help for {0} ...</value>
+    <value>Ricerca nella Guida di {0} ...</value>
   </data>
   <data name="CannotMatchUICulturePattern" xml:space="preserve">
-    <value>No UI culture was found that matches the following pattern: {0}. Verify the pattern and then try the command again.</value>
+    <value>Non sono state trovate impostazioni cultura dell'interfaccia utente che corrispondono al modello seguente: {0}. Verificare il modello, quindi riprovare a eseguire il comando.</value>
   </data>
   <data name="UseForceToSaveHelp" xml:space="preserve">
-    <value>Help was not saved for the module {0}, because the Save-Help command was run on this computer within the last 24 hours.
-To save help again, add the Force parameter to your command.</value>
+    <value>La Guida non è stata salvata per il modulo {0}, perché il comando Save-Help è stato eseguito nel computer nelle ultime 24 ore.
+Per salvare di nuovo la Guida, aggiungere il parametro Force al comando.</value>
   </data>
   <data name="UseForceToUpdateHelp" xml:space="preserve">
-    <value>Help was not updated for the module {0}, because the Update-Help command was run on this computer within the last 24 hours.
-To update help again, add the Force parameter to your command.</value>
+    <value>La Guida non è stata aggiornata per il modulo {0}, perché il comando Update-Help è stato eseguito nel computer nelle ultime 24 ore.
+Per aggiornare di nuovo la Guida, aggiungere il parametro Force al comando.</value>
   </data>
   <data name="NewestContentAlreadyInstalled" xml:space="preserve">
-    <value>The most current Help files are already installed.</value>
+    <value>I file della Guida più recenti sono già installati.</value>
   </data>
   <data name="SuccessfullyUpdatedHelpContent" xml:space="preserve">
-    <value>{0}: {1}. Culture {2} Version {3}</value>
+    <value>{0}: {1}. Cultura {2} versione {3}</value>
   </data>
   <data name="UpdatedHelpContent" xml:space="preserve">
-    <value>Updated {0}</value>
+    <value>Aggiornamento di {0} completato</value>
   </data>
   <data name="InvalidHelpInfoUri" xml:space="preserve">
-    <value>The value of the HelpInfoUri key in the module manifest must resolve to a container or root URL on a website where the help files are stored. The HelpInfoUri '{0}' does not resolve to a container.</value>
+    <value>Il valore della chiave HelpInfoUri nel manifesto del modulo deve essere risolto in un contenitore o in un URL radice in un sito Web in cui sono archiviati i file della Guida. Il valore HelpInfoUri ''{0}'' non viene risolto in un contenitore.</value>
   </data>
   <data name="HelpContentMustBeInTargetNamespace" xml:space="preserve">
-    <value>Help content must be in the namespace {0}.</value>
+    <value>Il contenuto della Guida deve essere nello spazio dei nomi {0}.</value>
   </data>
   <data name="GetLatestHelpContentWithoutHelpUri" xml:space="preserve">
-    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.
-    -- To download and install Help files for the module that includes this cmdlet, use Update-Help.</value>
+    <value>Get-Help non riesce a trovare i file della Guida per questo cmdlet in questo computer. Viene visualizzata solo una parte della Guida.
+    -- Per scaricare e installare i file della Guida per il modulo che include questo cmdlet, usare Update-Help.</value>
   </data>
   <data name="NewestContentAlreadyDownloaded" xml:space="preserve">
-    <value>The most current Help files are already downloaded.</value>
+    <value>I file più recenti della Guida sono già stati scaricati.</value>
   </data>
   <data name="SavedHelpContent" xml:space="preserve">
-    <value>Saved {0}</value>
+    <value>{0} salvato</value>
   </data>
   <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
-    <value>The HelpInfoURI {0} does not start with HTTP.</value>
+    <value>HelpInfoURI {0} non inizia con HTTP.</value>
   </data>
   <data name="RootElementMustBeHelpItems" xml:space="preserve">
-    <value>The root level element of the help content must be "helpItems".</value>
+    <value>L'elemento di livello radice del contenuto della Guida deve essere "helpItems".</value>
   </data>
   <data name="SaveProgressActivityForModule" xml:space="preserve">
-    <value>Saving Help for module {0}</value>
+    <value>Salvataggio della Guida per il modulo {0}</value>
   </data>
   <data name="UpdateProgressActivityForModule" xml:space="preserve">
-    <value>Updating Help for module {0}</value>
+    <value>Aggiornamento della Guida per il modulo {0}</value>
   </data>
   <data name="UpdateHelpResolveUriVerbose" xml:space="preserve">
-    <value>Resolving URI: "{0}"</value>
+    <value>Risoluzione dell'URI in corso: "{0}"</value>
   </data>
   <data name="OnlineHelpUri" xml:space="preserve">
-    <value>Help URI: {0}</value>
+    <value>URI della Guida: {0}</value>
   </data>
   <data name="UpdateHelpShouldProcessActionMessage" xml:space="preserve">
-    <value>{0}, Current Version: {1}, Available Version: {2}, UICulture: {3}</value>
+    <value>{0}, versione corrente: {1}, versione disponibile: {2}, UICulture: {3}</value>
   </data>
   <data name="Properties" xml:space="preserve">
-    <value>PROPERTIES</value>
+    <value>PROPRIETÀ</value>
   </data>
   <data name="Methods" xml:space="preserve">
-    <value>METHODS</value>
+    <value>METODI</value>
   </data>
 </root>

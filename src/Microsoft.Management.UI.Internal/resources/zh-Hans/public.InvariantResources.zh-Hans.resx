@@ -143,6 +143,6 @@
     <value>{0} 不支持添加到项目集合，请改用 {1}。</value>
   </data>
   <data name="ViewSetWithType" xml:space="preserve">
-    <value>If View is set to a {0}, it should have the type {1}.</value>
+    <value>如果“视图”设置为 {0}，则它应该具有类型 {1}。</value>
   </data>
 </root>

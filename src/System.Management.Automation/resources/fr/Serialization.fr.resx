@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AttributeExpected" xml:space="preserve">
-    <value>{0} attribute was expected.</value>
+    <value>{0} attribut était attendu.</value>
   </data>
   <data name="InvalidElementTag" xml:space="preserve">
-    <value>{0} XML tag is not recognized.</value>
+    <value>Le jeton {0} n’est pas reconnu.</value>
   </data>
   <data name="InvalidReferenceId" xml:space="preserve">
-    <value>No object found for referenceId {0}</value>
+    <value>Aucun objet trouvé pour referenceId {0}</value>
   </data>
   <data name="InvalidDictionaryKeyName" xml:space="preserve">
-    <value>Name attribute for dictionary key is incorrectly specified.</value>
+    <value>L’attribut Name de la clé du dictionnaire est mal spécifié.</value>
   </data>
   <data name="InvalidDictionaryValueName" xml:space="preserve">
-    <value>Name attribute for dictionary value is incorrectly specified.</value>
+    <value>L’attribut Name de la valeur du dictionnaire est mal spécifié.</value>
   </data>
   <data name="InvalidVersion" xml:space="preserve">
-    <value>Version of PSObject is not valid.</value>
+    <value>La version de PSObject n’est pas valide.</value>
   </data>
   <data name="UnexpectedVersion" xml:space="preserve">
-    <value>Version of incoming PSObject is {0}. Expected value is 1.</value>
+    <value>La version du PSObject entrant est {0}. La valeur attendue est 1.</value>
   </data>
   <data name="InvalidTypeHierarchyReferenceId" xml:space="preserve">
-    <value>Cannot process names because no TypeNames were found for referenceId {0}.</value>
+    <value>Nous ne pouvons pas traiter les noms, car aucun TypeNames n’a été trouvé pour referenceId {0}.</value>
   </data>
   <data name="DepthOfOneRequired" xml:space="preserve">
-    <value>Value of depth parameter must be greater than or equal to 1.</value>
+    <value>La valeur du paramètre de profondeur doit être supérieure ou égale à 1.</value>
   </data>
   <data name="InvalidNodeType" xml:space="preserve">
-    <value>Current Node type is {0}. Expected type is {1}.</value>
+    <value>Le type de nœud actuel est {0}. Type attendu est {1}.</value>
   </data>
   <data name="DictionaryKeyNotSpecified" xml:space="preserve">
-    <value>Key for dictionary entry is not specified.</value>
+    <value>La clé de l’entrée du dictionnaire n’est pas spécifiée.</value>
   </data>
   <data name="DictionaryValueNotSpecified" xml:space="preserve">
-    <value>Value for dictionary entry is not specified.</value>
+    <value>La valeur de l’entrée du dictionnaire n’est pas spécifiée.</value>
   </data>
   <data name="ReadCalledAfterDone" xml:space="preserve">
-    <value>There are no more objects to deserialize.</value>
+    <value>Il n’y a plus d’objets à désérialiser.</value>
   </data>
   <data name="NullAsDictionaryKey" xml:space="preserve">
-    <value>Null is specified as dictionary key.</value>
+    <value>Null est spécifié comme clé de dictionnaire.</value>
   </data>
   <data name="InvalidPrimitiveType" xml:space="preserve">
-    <value>The contents of the {0} primitive type are not valid.</value>
+    <value>Le contenu du type primitif {0} n’est pas valide.</value>
   </data>
   <data name="DeserializationTooDeep" xml:space="preserve">
-    <value>Serialized XML is nested too deeply.</value>
+    <value>Le XML sérialisé est imbriqué trop profondément.</value>
   </data>
   <data name="Stopping" xml:space="preserve">
-    <value>Serializer was closed.</value>
+    <value>Le sérialiseur a été fermé.</value>
   </data>
   <data name="DeserializationMemoryQuota" xml:space="preserve">
-    <value>The data in the command exceeded the maximum size that is allowed by the session configuration. The allowed maximum is {0} MB. Change the input, use a different session configuration, or change the "{1}" and "{2}" properties of the session configuration on the remote computer.</value>
+    <value>Les données de la commande ont dépassé la taille maximale autorisée par la configuration de session. Le maximum autorisé est {0} Mo. Modifiez l’entrée, utilisez une autre configuration de session ou modifiez les propriétés « {1} » et « {2} » de la configuration de session sur l’ordinateur distant.</value>
   </data>
   <data name="DeserializeSecureStringFailed" xml:space="preserve">
-    <value>Deserialization of encrypted secure string failed</value>
+    <value>Échec de la désérialisation de la chaîne sécurisée chiffrée</value>
   </data>
   <data name="PrimitiveHashtableInvalidKey" xml:space="preserve">
-    <value>The key type {0} is not valid. The PSPrimitiveDictionary class accepts only keys of the type System.String.</value>
+    <value>Le type de clé « {0} » n’est pas valide. La classe PSPrimitiveDictionary accepte uniquement les clés de type System.String.</value>
   </data>
   <data name="PrimitiveHashtableInvalidValue" xml:space="preserve">
-    <value>The type of the value {0} is not valid. The PSPrimitiveDictionary class accepts only values of types that are fully serializable over PowerShell remoting. See the Help topic about_Remoting for a list of fully-serializable types.</value>
+    <value>Le type de la valeur {0} n’est pas valide. La classe PSPrimitiveDictionary accepte uniquement les valeurs de types entièrement sérialisables via PowerShell remoting. Consultez la rubrique d’Aide about_Remoting pour obtenir la liste des types entièrement sérialisables.</value>
   </data>
   <data name="InvalidKey" xml:space="preserve">
-    <value>Could not decrypt data. The data was not encrypted with this key.</value>
+    <value>Nous n’avons pas pu déchiffrer les données. Elles n’ont pas été chiffrées avec cette clé.</value>
   </data>
   <data name="InvalidEncryptedString" xml:space="preserve">
-    <value>The parameter value "{0}" is not a valid encrypted string.</value>
+    <value>La valeur du paramètre « {0} » n’est pas une chaîne chiffrée valide.</value>
   </data>
   <data name="InvalidKeyLength" xml:space="preserve">
-    <value>The specified {0} is not valid. Valid {0} length settings are either 128 bits, 192 bits, or 256 bits.</value>
+    <value>Le {0} spécifié n'est pas valide. Les valeurs de longueur {0} valide sont 128 bits, 192 bits ou 256 bits.</value>
   </data>
   <data name="DeserializeSecureStringNotSupported" xml:space="preserve">
-    <value>Deserialization of SecureString is currently only supported on Windows.</value>
+    <value>La désérialisation de SecureString n’est actuellement prise en charge que sur Windows.</value>
   </data>
 </root>

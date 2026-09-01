@@ -121,43 +121,43 @@
     <value>PowerShell {0}</value>
   </data>
   <data name="ShellBannerCLMode" xml:space="preserve">
-    <value>[Constrained Language Mode]</value>
+    <value>[Tryb z ograniczonym językiem]</value>
   </data>
   <data name="ShellBannerCLAuditMode" xml:space="preserve">
-    <value>[Constrained Language AUDIT Mode : No Restrictions]</value>
+    <value>[Tryb AUDYTU języka z ograniczeniami: brak ograniczeń]</value>
   </data>
   <data name="ShellBannerNLMode" xml:space="preserve">
-    <value>[No Language Mode]</value>
+    <value>[Brak trybu języka]</value>
   </data>
   <data name="ShellBannerRLMode" xml:space="preserve">
-    <value>[Restricted Language Mode]</value>
+    <value>[Tryb języka z ograniczeniami]</value>
   </data>
   <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell preview release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Dostępna jest nowa wersja zapoznawcza programu PowerShell: v{0} {2}
+  {1} Zaktualizuj teraz albo sprawdź stronę wydania pod adresem:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="StableUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell stable release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Dostępna jest nowa stabilna wersja programu PowerShell: v{0} {2}
+  {1} Zaktualizuj teraz albo sprawdź stronę wydania pod adresem:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="LTSUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell LTS release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Dostępna jest nowa wersja LTS programu PowerShell: v{0} {2}
+  {1} Zaktualizuj teraz albo sprawdź stronę wydania pod adresem:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="UsageHelp" xml:space="preserve">
-    <value>Usage: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
+    <value>Sposób użycia: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
                                 | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
                   [-CommandWithArgs &lt;string&gt; [&lt;CommandParameters&gt;]
                   [-ConfigurationName &lt;string&gt;] [-ConfigurationFile &lt;filePath&gt;]
                   [-CustomPipeName &lt;string&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
-                  [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
+                  [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Tekst | XML}]
                   [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
                   [-NoProfileLoadTime] [-OutputFormat {Text | XML}]
                   [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA]
@@ -166,9 +166,9 @@
 
        pwsh[.exe] -h | -Help | -? | /?
 
-PowerShell Online Help https://aka.ms/powershell-docs
+Pomoc online programu PowerShell https://aka.ms/powershell-docs
 
-All parameters are case-insensitive.</value>
+Wszystkie parametry nie rozróżniają wielkości liter.</value>
   </data>
   <data name="ExtendedHelp" xml:space="preserve">
     <value>

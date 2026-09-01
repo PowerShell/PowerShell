@@ -121,11 +121,9 @@
     <value>基于“{0}”类的 Cmdlet</value>
     <comment>{0} is a placeholder for a name of a CIM class.  Example: "ROOT\cimv2\Win32_Process"</comment>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ScriptWriter_DuplicateQueryParameterName" xml:space="preserve">
-    <value>Two cmdlet parameters defined within the {0} element have the same name: {1}.  Resolve the conflict in the Cmdlet Definition XML and retry.</value>
-    <comment>{StrContains="CmdletParameterMetadata"} {StrContains="PSName"}
-{0} is a placeholder for a name of an XML element.  Example: &lt;GetCmdletParameters&gt;
+    <value>{0} 元素中定义的两个 cmdlet 参数具有相同的名称: {1}。 解决 Cmdlet 定义 XML 中的冲突，然后重试。</value>
+    <comment>{0} is a placeholder for a name of an XML element.  Example: &lt;GetCmdletParameters&gt;
 {1} is a placeholder for a cmdlet parameter name.  Example: Name</comment>
   </data>
   <data name="ExportCimCommand_ErrorInCmdletizationXmlFile" xml:space="preserve">
@@ -134,9 +132,8 @@
 {1} is an exception message copied from an XmlException or XmlSchemaException</comment>
   </data>
   <data name="ScriptWriter_DuplicateParameterSetInStaticCmdlet" xml:space="preserve">
-    <value>The {0} cmdlet defines the {1} parameter set more than once.  Verify that the Cmdlet Definition XML does not have duplicate parameter set names and retry.</value>
-    <comment>{StrContains="CmdletParameterSet"}
-{0} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
+    <value>{0} cmdlet 多次定义 {1} 参数集。 验证 Cmdlet 定义 XML 没有重复的参数集名称，然后重试。</value>
+    <comment>{0} is a placeholder for a cmdlet name. Example: 'Get-Win32Process'
 {1} is a placeholder for a parameter set name.  Example: 'foo'</comment>
   </data>
   <data name="ScriptWriter_ObjectModelWrapperDefinesMultipleParameterSets" xml:space="preserve">
@@ -185,8 +182,8 @@
     <comment>{StrContains="EnumName"}</comment>
   </data>
   <data name="EnumWriter_InvalidValueName" xml:space="preserve">
-    <value>The value of the Name attribute is not a valid C# identifier: {0}.  Verify the Name attribute in the Cmdlet Definition XML, and then try again.</value>
-    <comment>{StrContains="Enum"} {StrContains="Value"} {StrContains="Name"}</comment>
+    <value>Name 属性的值不是有效的 C# 标识符: {0}。 请验证 Cmdlet 定义 XML 中的 Name 属性，然后重试。</value>
+    <comment>{StrContains="Name"}</comment>
   </data>
   <data name="ScriptWriter_InvalidEnum" xml:space="preserve">
     <value>无法处理 &lt;Enum EnumName="{0}" ...&gt; 元素。{1}</value>

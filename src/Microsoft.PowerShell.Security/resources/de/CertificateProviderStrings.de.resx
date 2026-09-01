@@ -118,72 +118,72 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertProvidername" xml:space="preserve">
-    <value>X509 Certificate Provider</value>
+    <value>X509 Zertifikatanbieter</value>
   </data>
   <data name="CertificateNotFound" xml:space="preserve">
-    <value>Cannot find the X509 certificate at path {0}.</value>
+    <value>Das X509-Zertifikat wurde unter dem Pfad {0} nicht gefunden.</value>
   </data>
   <data name="CertificateStoreNotFound" xml:space="preserve">
-    <value>Cannot find the X509 certificate store at path {0}.</value>
+    <value>Der X509-Zertifikatspeicher wurde im Pfad {0} nicht gefunden.</value>
   </data>
   <data name="CertificateStoreLocationNotFound" xml:space="preserve">
-    <value>Cannot find the certificate store because the specified X509 store location {0} is not valid.</value>
+    <value>Der Zertifikatspeicher wurde nicht gefunden, da der angegebene X509-Speicherort {0} ungültig ist.</value>
   </data>
   <data name="InvalidPath" xml:space="preserve">
-    <value>Cannot process the path because path {0} is not a valid certificate provider path.</value>
+    <value>Der Pfad kann nicht verarbeitet werden, da der Pfad {0} kein gültiger Zertifikatanbieterpfad ist.</value>
   </data>
   <data name="Action_Move" xml:space="preserve">
-    <value>Move certificate</value>
+    <value>Zertifikat verschieben</value>
   </data>
   <data name="Action_Remove" xml:space="preserve">
-    <value>Remove certificate</value>
+    <value>Zertifikat entfernen</value>
   </data>
   <data name="Action_RemoveAndDeleteKey" xml:space="preserve">
-    <value>Remove certificate and its private key.</value>
+    <value>Entfernen Sie das Zertifikat und den zugehörigen privaten Schlüssel.</value>
   </data>
   <data name="Action_Invoke" xml:space="preserve">
-    <value>Invoke Certificate Manager</value>
+    <value>Zertifikat-Manager aufrufen</value>
   </data>
   <data name="MoveItemTemplate" xml:space="preserve">
-      <value>Item: {0} Destination: {1} </value>
+      <value>Element: {0} Ziel: {1} </value>
   </data>
   <data name="CannotMoveContainer" xml:space="preserve">
-      <value>You cannot move a certificate container. </value>
+      <value>Sie können keinen Zertifikatcontainer verschieben. </value>
   </data>
   <data name="CannotMoveCrossContext" xml:space="preserve">
-      <value>You cannot move a certificate from user store to or from machine. </value>
+      <value>Sie können ein Zertifikat nicht aus dem Benutzerspeicher auf den Computer oder vom Computer verschieben. </value>
   </data>
   <data name="CannotMoveToSameStore" xml:space="preserve">
-    <value>You cannot move a certificate to the same store. </value>
+    <value>Sie können ein Zertifikat nicht in denselben Speicher verschieben. </value>
   </data>
   <data name="CannotCreateItem" xml:space="preserve">
-    <value>You cannot create an item other than certificate store. </value>
+    <value>Sie können kein anderes Element als den Zertifikatspeicher erstellen. </value>
   </data>
   <data name="CannotCreateUserStore" xml:space="preserve">
-    <value>Creating certificate stores under CurrentUser is not supported. </value>
+    <value>Das Erstellen von Zertifikatspeichern unter CurrentUser wird nicht unterstützt. </value>
   </data>
   <data name="CannotDeleteUserStore" xml:space="preserve">
-    <value>Deleting certificate stores under CurrentUser is not supported. </value>
+    <value>Das Löschen von Zertifikatspeichern unter CurrentUser wird nicht unterstützt. </value>
   </data>
   <data name="InvalidDestStore" xml:space="preserve">
-    <value>The destination is not a valid store. </value>
+    <value>Das Ziel ist kein gültiger Speicher. </value>
   </data>
   <data name="RemoveItemTemplate" xml:space="preserve">
-    <value>Item: {0} </value>
+    <value>Element: {0} </value>
   </data>
   <data name="RemoveStoreTemplate" xml:space="preserve">
-    <value>The store {0} is a built-in system store and cannot be deleted.</value>
+    <value>Der Speicher {0} ist ein integrierter Systemspeicher und kann nicht gelöscht werden.</value>
   </data>
   <data name="CannotRemoveContainer" xml:space="preserve">
-    <value>You cannot remove a certificate container. </value>
+    <value>Ein Zertifikatcontainer kann nicht entfernt werden. </value>
   </data>
   <data name="VerboseNoPrivateKey" xml:space="preserve">
-    <value>Private key skipped. The certificate has no private key association. </value>
+    <value>Privater Schlüssel übersprungen. Das Zertifikat weist keine Zuordnung mit einem privaten Schlüssel auf. </value>
   </data>
   <data name="UINotAllowed" xml:space="preserve">
-    <value>The operation is on user root store and UI is not allowed. </value>
+    <value>Der Vorgang befindet sich im Benutzerstammspeicher und die Benutzeroberfläche ist nicht zulässig. </value>
   </data>
   <data name="RemoteErrorMessage" xml:space="preserve">
-    <value>. The following error may be a result of user credentials required on the remote machine. See Enable-WSManCredSSP Cmdlet help on how to enable and use CredSSP for delegation with PowerShell remoting. </value>
+    <value>. Der folgende Fehler kann auf Benutzeranmeldeinformationen zurückzuführen sein, die auf dem Remotecomputer erforderlich sind. Informationen zum Aktivieren und Verwenden von CredSSP für die Delegierung mit PowerShell-Remoting finden Sie in der Hilfe zum Enable-WSManCredSSP-Cmdlet. </value>
   </data>
 </root>

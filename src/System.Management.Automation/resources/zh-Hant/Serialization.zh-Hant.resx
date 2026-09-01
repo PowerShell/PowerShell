@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AttributeExpected" xml:space="preserve">
-    <value>{0} attribute was expected.</value>
+    <value>需要 {0} 屬性。</value>
   </data>
   <data name="InvalidElementTag" xml:space="preserve">
-    <value>{0} XML tag is not recognized.</value>
+    <value>無法辨識 {0} XML 標籤。</value>
   </data>
   <data name="InvalidReferenceId" xml:space="preserve">
-    <value>No object found for referenceId {0}</value>
+    <value>找不到 referenceId {0} 的物件</value>
   </data>
   <data name="InvalidDictionaryKeyName" xml:space="preserve">
-    <value>Name attribute for dictionary key is incorrectly specified.</value>
+    <value>字典索引鍵的名稱屬性指定錯誤。</value>
   </data>
   <data name="InvalidDictionaryValueName" xml:space="preserve">
-    <value>Name attribute for dictionary value is incorrectly specified.</value>
+    <value>字典值的名稱屬性指定錯誤。</value>
   </data>
   <data name="InvalidVersion" xml:space="preserve">
-    <value>Version of PSObject is not valid.</value>
+    <value>PSObject 的版本無效。</value>
   </data>
   <data name="UnexpectedVersion" xml:space="preserve">
-    <value>Version of incoming PSObject is {0}. Expected value is 1.</value>
+    <value>傳入 PSObject 的版本為 {0}。預期的值為 1。</value>
   </data>
   <data name="InvalidTypeHierarchyReferenceId" xml:space="preserve">
-    <value>Cannot process names because no TypeNames were found for referenceId {0}.</value>
+    <value>因為找不到 referenceId {0} 的 TypeNames，所以無法處理名稱。</value>
   </data>
   <data name="DepthOfOneRequired" xml:space="preserve">
-    <value>Value of depth parameter must be greater than or equal to 1.</value>
+    <value>深度參數的值必須大於或等於 1。</value>
   </data>
   <data name="InvalidNodeType" xml:space="preserve">
-    <value>Current Node type is {0}. Expected type is {1}.</value>
+    <value>目前的節點類型是 {0}。需要的型別是 {1}。</value>
   </data>
   <data name="DictionaryKeyNotSpecified" xml:space="preserve">
-    <value>Key for dictionary entry is not specified.</value>
+    <value>未指定字典項目的索引鍵。</value>
   </data>
   <data name="DictionaryValueNotSpecified" xml:space="preserve">
-    <value>Value for dictionary entry is not specified.</value>
+    <value>未指定字典項目的值。</value>
   </data>
   <data name="ReadCalledAfterDone" xml:space="preserve">
-    <value>There are no more objects to deserialize.</value>
+    <value>沒有可供反序列化的其他物件。</value>
   </data>
   <data name="NullAsDictionaryKey" xml:space="preserve">
-    <value>Null is specified as dictionary key.</value>
+    <value>指定 Null 作為字典索引鍵。</value>
   </data>
   <data name="InvalidPrimitiveType" xml:space="preserve">
-    <value>The contents of the {0} primitive type are not valid.</value>
+    <value>{0} 基本類型的內容無效。</value>
   </data>
   <data name="DeserializationTooDeep" xml:space="preserve">
-    <value>Serialized XML is nested too deeply.</value>
+    <value>序列化 XML 的巢狀層級太深。</value>
   </data>
   <data name="Stopping" xml:space="preserve">
-    <value>Serializer was closed.</value>
+    <value>序列化程式已關閉。</value>
   </data>
   <data name="DeserializationMemoryQuota" xml:space="preserve">
-    <value>The data in the command exceeded the maximum size that is allowed by the session configuration. The allowed maximum is {0} MB. Change the input, use a different session configuration, or change the "{1}" and "{2}" properties of the session configuration on the remote computer.</value>
+    <value>命令中的資料超過工作階段組態允許的大小上限。允許的最大值為 {0} MB。請變更輸入、使用不同的工作階段組態，或變更遠端電腦上工作階段組態的 "{1}" 和 "{2}" 屬性。</value>
   </data>
   <data name="DeserializeSecureStringFailed" xml:space="preserve">
-    <value>Deserialization of encrypted secure string failed</value>
+    <value>加密的安全字串還原序列化失敗</value>
   </data>
   <data name="PrimitiveHashtableInvalidKey" xml:space="preserve">
-    <value>The key type {0} is not valid. The PSPrimitiveDictionary class accepts only keys of the type System.String.</value>
+    <value>索引鍵類型 {0} 無效。PSPrimitiveDictionary 類別只接受 System.String 類型的索引鍵。</value>
   </data>
   <data name="PrimitiveHashtableInvalidValue" xml:space="preserve">
-    <value>The type of the value {0} is not valid. The PSPrimitiveDictionary class accepts only values of types that are fully serializable over PowerShell remoting. See the Help topic about_Remoting for a list of fully-serializable types.</value>
+    <value>值 {0} 的類型無效。PSPrimitiveDictionary 類別只接受可透過 PowerShell 遠端執行完整序列化的值類型。請參閱說明主題 about_Remoting，以取得可完整序列化的類型清單。</value>
   </data>
   <data name="InvalidKey" xml:space="preserve">
-    <value>Could not decrypt data. The data was not encrypted with this key.</value>
+    <value>無法解密資料。資料未使用此索引鍵加密。</value>
   </data>
   <data name="InvalidEncryptedString" xml:space="preserve">
-    <value>The parameter value "{0}" is not a valid encrypted string.</value>
+    <value>參數值 "{0}" 不是有效的加密字串。</value>
   </data>
   <data name="InvalidKeyLength" xml:space="preserve">
-    <value>The specified {0} is not valid. Valid {0} length settings are either 128 bits, 192 bits, or 256 bits.</value>
+    <value>指定的 {0} 無效。有效的 {0} 長度設定為 128 位元、192 位元或 256 位元。</value>
   </data>
   <data name="DeserializeSecureStringNotSupported" xml:space="preserve">
-    <value>Deserialization of SecureString is currently only supported on Windows.</value>
+    <value>目前只有 Windows 支援 SecureString 的還原序列化。</value>
   </data>
 </root>

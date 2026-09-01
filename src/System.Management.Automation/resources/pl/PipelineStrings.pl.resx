@@ -118,39 +118,39 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandProcessorAlreadyUsed" xml:space="preserve">
-    <value>Cannot process the cmdlet instance because the cmdlet instance is in use by another pipeline. Please contact Microsoft Customer Support Services.</value>
+    <value>Nie można przetworzyć wystąpienia polecenia cmdlet, ponieważ wystąpienie polecenia cmdlet jest używane przez inny potok. Skontaktuj się z pomocą techniczną firmy Microsoft.</value>
   </data>
   <data name="ExecutionAlreadyStarted" xml:space="preserve">
-    <value>Cannot perform the operation because the pipeline is started. Stop the pipeline and try the operation again.</value>
+    <value>Nie można wykonać operacji, ponieważ potok został uruchomiony. Zatrzymaj potok i spróbuj ponownie wykonać operację.</value>
   </data>
   <data name="ActionPreferenceStop" xml:space="preserve">
-    <value>Cannot continue to run the cmdlet because running cmdlets has been prevented by the Stop policy.</value>
+    <value>Nie można kontynuować uruchamiania polecenia cmdlet, ponieważ zasady zatrzymywania uniemożliwiają uruchamianie poleceń cmdlet.</value>
   </data>
   <data name="FirstCommandCannotHaveInput" xml:space="preserve">
-    <value>Cannot run the pipeline because the first cmdlet in the pipeline is trying to read input from the results of a preceding cmdlet. Either modify the first cmdlet, remove the first cmdlet, or add to the pipeline the cmdlet whose output is required by the first cmdlet, and then try running the pipeline again.</value>
+    <value>Nie można uruchomić potoku, ponieważ pierwsze polecenie cmdlet w potoku próbuje odczytać dane wejściowe z wyników poprzedniego polecenia cmdlet. Zmodyfikuj pierwsze polecenie cmdlet, usuń pierwsze polecenie cmdlet lub dodaj do potoku polecenie cmdlet, którego dane wyjściowe są wymagane przez pierwsze polecenie cmdlet, a następnie spróbuj ponownie uruchomić potok.</value>
   </data>
   <data name="InvalidCommandNumber" xml:space="preserve">
-    <value>Cannot process the cmdlet number. The ReadFromCommand function must specify the Id of a cmdlet that has already been added to the pipeline. Please contact Microsoft Customer Support Services.</value>
+    <value>Nie można przetworzyć numeru polecenia cmdlet. Funkcja ReadFromCommand musi określać identyfikator polecenia cmdlet, które zostało już dodane do potoku. Skontaktuj się z pomocą techniczną firmy Microsoft.</value>
   </data>
   <data name="PipeAlreadyTaken" xml:space="preserve">
-    <value>Cannot read the output of the ReadFromCommand and ReadErrorQueue functions because another cmdlet is already reading that output. Please contact Microsoft Customer Support Services.</value>
+    <value>Nie można odczytać danych wyjściowych funkcji ReadFromCommand i ReadErrorQueue, ponieważ inne polecenie cmdlet odczytuje już dane wyjściowe. Skontaktuj się z pomocą techniczną firmy Microsoft.</value>
   </data>
   <data name="PipelineExecuteRequiresAtLeastOneCommand" xml:space="preserve">
-    <value>Cannot run the pipeline because there are no commands. Add at least one command to the pipeline, and then run it again.</value>
+    <value>Nie można uruchomić potoku, ponieważ nie ma żadnych poleceń. Dodaj co najmniej jedno polecenie do potoku, a następnie uruchom je ponownie.</value>
   </data>
   <data name="PipelineNotStarted" xml:space="preserve">
-    <value>Cannot complete the pipeline operation because it has not yet been started. You must call the Begin() method before calling End() on a steppable pipeline.</value>
+    <value>Nie można wykonać operacji potoku, ponieważ nie została jeszcze uruchomiona. Przed wywołaniem metody End() w potoku schodkowym należy wywołać metodę Begin().</value>
   </data>
   <data name="WriteNotPermitted" xml:space="preserve">
-    <value>The WriteObject and WriteError methods cannot be called from outside the overrides of the BeginProcessing, ProcessRecord, and EndProcessing methods, and they can only be called from within the same thread. Validate that the cmdlet makes these calls correctly, or contact Microsoft Customer Support Services.</value>
+    <value>Metody WriteObject i WriteError nie mogą być wywoływane spoza zastąpień metod BeginProcessing, ProcessRecord i EndProcessing oraz mogą być wywoływane tylko z tego samego wątku. Sprawdź, czy polecenie cmdlet wykonuje te wywołania poprawnie, lub skontaktuj się z pomocą techniczną firmy Microsoft.</value>
   </data>
   <data name="SecondFailure" xml:space="preserve">
-    <value>A cmdlet threw an exception after calling ThrowTerminatingError.
-The first exception was "{0}" with stack trace "{1}".
-The second exception was "{2}" with stack trace "{3}".</value>
+    <value>Polecenie cmdlet zgłosiło wyjątek po wywołaniu metody ThrowTerminatingError.
+Pierwszy wyjątek to „{0}” ze śladem stosu „{1}”.
+Drugi wyjątek to „{2}” ze śladem stosu „{3}”.</value>
   </data>
   <data name="WriteToClosedPipeline" xml:space="preserve">
-    <value>The WriteObject and WriteError methods cannot be called after the pipeline has been closed. Please contact Microsoft Customer Support Services.</value>
+    <value>Nie można wywołać metod WriteObject i WriteError po zamknięciu potoku. Skontaktuj się z pomocą techniczną firmy Microsoft.</value>
   </data>
   <data name="PipelineExecutionInformation" xml:space="preserve">
     <value>CommandInvocation({0}): "{1}"</value>
@@ -165,15 +165,15 @@ The second exception was "{2}" with stack trace "{3}".</value>
     <value>ParameterBinding({0}): name="{1}"; value="{2}"</value>
   </data>
   <data name="CannotCreatePipeline" xml:space="preserve">
-    <value>An error occurred while creating the pipeline.</value>
+    <value>Wystąpił błąd podczas tworzenia potoku.</value>
   </data>
   <data name="ConnectNotSupported" xml:space="preserve">
-    <value>This pipeline does not support disconnect-connect semantics.</value>
+    <value>Ten potok nie obsługuje semantyki rozłączenia-połączenia.</value>
   </data>
   <data name="PipelineNotDisconnected" xml:space="preserve">
-    <value>Cannot connect this pipeline because it is not in the disconnected state.</value>
+    <value>Nie można połączyć tego potoku, ponieważ nie jest on w stanie rozłączenia.</value>
   </data>
   <data name="InvalidRemoteCommand" xml:space="preserve">
-    <value>The runspace object has a null remote command associated with it.  A disconnected RemotePipeline object cannot be created because there is no remote command specified.</value>
+    <value>Obiekt obszaru działania ma skojarzone z nim polecenie zdalne o wartości null.  Nie można utworzyć rozłączonego obiektu RemotePipeline, ponieważ nie określono polecenia zdalnego.</value>
   </data>
 </root>

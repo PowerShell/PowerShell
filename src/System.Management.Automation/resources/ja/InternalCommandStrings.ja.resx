@@ -118,76 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AmbiguousMethodName" xml:space="preserve">
-    <value>Input name "{0}" is ambiguous. It can be resolved to multiple matched methods. Possible matches include:{1}.</value>
+    <value>名前 "{0}" があいまいです。一致した複数のメソッドに解決できます。一致の可能性は次のとおりです:{1}。</value>
   </data>
   <data name="AmbiguousPropertyOrMethodName" xml:space="preserve">
-    <value>Input name "{0}" is ambiguous. It can be resolved to multiple matched members. Possible matches include:{1}.</value>
+    <value>入力名 "{0}" があいまいです。一致した複数のメンバーに解決できます。一致の可能性は次のとおりです:{1}。</value>
   </data>
   <data name="ForEachObjectKeyAction" xml:space="preserve">
-    <value>Retrieve the value for key '{0}'</value>
+    <value>キー '{0}' の値を取得する</value>
   </data>
   <data name="ForEachObjectMethodActionWithArguments" xml:space="preserve">
-    <value>Invoke method '{0}' with arguments: {1}</value>
+    <value>引数を指定してメソッド '{0}' を呼び出す: {1}</value>
   </data>
   <data name="ForEachObjectMethodActionWithoutArguments" xml:space="preserve">
-    <value>Invoke method '{0}'</value>
+    <value>メソッド '{0}' を呼び出す</value>
   </data>
   <data name="ForEachObjectPropertyAction" xml:space="preserve">
-    <value>Retrieve the value for property '{0}'</value>
+    <value>プロパティ '{0}' の値を取得します</value>
   </data>
   <data name="ForEachObjectTarget" xml:space="preserve">
     <value>InputObject: {0}</value>
   </data>
   <data name="InputObjectIsNull" xml:space="preserve">
-    <value>Cannot operate on a 'null' input object.</value>
+    <value>'null' 入力オブジェクトに対して操作することはできません。</value>
   </data>
   <data name="MethodNotFound" xml:space="preserve">
-    <value>Input name "{0}" cannot be resolved to a method.</value>
+    <value>入力名 "{0}" はメソッドに解決できません。</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Cannot invoke a method in the restricted language mode.</value>
+    <value>制限付き言語モードでメソッドを呼び出すことはできません。</value>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
-    <value>The -WhatIf and -Confirm parameters are not supported for script blocks.</value>
+    <value>-WhatIf パラメーターと -Confirm パラメーターは、スクリプト ブロックではサポートされていません。</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
-    <value>The '{0}' operation is not allowed in the RestrictedLanguage mode.</value>
+    <value>'{0}' 操作は RestrictedLanguage モードでは許可されていません。</value>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
-    <value>An operator is required to compare the two specified values. Include a valid operator in the command, and then try the command again. For example, Get-Process | Where-Object -Property Name -eq Idle</value>
+    <value>指定した 2 つの値を比較するには、演算子が必要です。コマンドに有効な演算子を含めてから、コマンドを再試行してください。たとえば、Get-Process | Where-Object -Property Name -eq Idle</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The input name "{0}" cannot be resolved to a property.</value>
+    <value>入力名 "{0}" はプロパティに解決できません。</value>
   </data>
   <data name="PropertyOrMethodNotFound" xml:space="preserve">
-    <value>The input name "{0}" cannot be resolved to a member.</value>
+    <value>入力名 "{0}" はメンバーに解決できません。</value>
   </data>
   <data name="ValueNotSpecifiedForWhereObject" xml:space="preserve">
-    <value>The specified operator requires both the -Property and -Value parameters. Provide values for both parameters, and then try the command again.</value>
+    <value>指定された演算子には、-Property パラメーターと -Value パラメーターの両方が必要です。両方のパラメーターの値を指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="PSTaskStreamWriterWrongThread" xml:space="preserve">
-    <value>This method cannot be run on the current thread. It can only be called on the cmdlet thread.</value>
+    <value>このメソッドは現在のスレッドでは実行できません。コマンドレット スレッドでのみ呼び出すことができます。</value>
   </data>
   <data name="ParallelUsingVariableCannotBeScriptBlock" xml:space="preserve">
-    <value>A ForEach-Object -Parallel using variable cannot be a script block. Passed-in script block variables are not supported with ForEach-Object -Parallel, and can result in undefined behavior.</value>
+    <value>変数を使用する ForEach-Object -Parallel をスクリプト ブロックにすることはできません。Passed-in スクリプト ブロック変数は ForEach-Object -Parallel ではサポートされていないため、未定義の動作が発生する可能性があります。</value>
   </data>
   <data name="ParallelPipedInputObjectCannotBeScriptBlock" xml:space="preserve">
-    <value>A ForEach-Object -Parallel piped input object cannot be a script block. Passed-in script block variables are not supported with ForEach-Object -Parallel, and can result in undefined behavior.</value>
+    <value>ForEach-Object -Parallel パイプ入力オブジェクトをスクリプト ブロックにすることはできません。Passed-in スクリプト ブロック変数は ForEach-Object -Parallel ではサポートされていないため、未定義の動作が発生する可能性があります。</value>
   </data>
   <data name="ParallelCannotUseTimeoutWithJob" xml:space="preserve">
-    <value>The 'TimeoutSeconds' parameter cannot be used with the 'AsJob' parameter.</value>
+    <value>'TimeoutSeconds' パラメーターを 'AsJob' パラメーターと共に使用することはできません。</value>
   </data>
   <data name="ParallelCommonParametersNotSupported" xml:space="preserve">
-    <value>The following common parameters are not currently supported in the Parallel parameter set:
+    <value>Parallel パラメーター セットでは、次の共通パラメーターは現在サポートされていません:
 ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
   </data>
   <data name="ParallelPipedInputProcessingError" xml:space="preserve">
-    <value>An unexpected error has occurred while processing ForEach-Object -Parallel input. This may mean that some of the piped input did not get processed. Error: {0}.</value>
+    <value>ForEach-Object -Parallel 入力の処理中に予期しないエラーが発生しました。これは、パイプ処理された入力の一部が処理されなかったことを意味する可能性があります。エラーは {0} です。</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
-    <value>ForEach-Object Cmdlet</value>
+    <value>ForEach-Object コマンドレット</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Method invocation on type '{0}' will not be allowed when run in Constrained Language mode.</value>
+    <value>制約付き言語モードで実行する場合、型 '{0}' でのメソッドの呼び出しは許可されません。</value>
   </data>
 </root>

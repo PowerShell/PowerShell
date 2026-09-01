@@ -59,12 +59,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TextContainsContent" xml:space="preserve">
-    <value>The specified string contains printable content when it should only contain ANSI escape sequences: {0}</value>
+    <value>Zadaný řetězec obsahuje tisknutelný obsah, i když smí obsahovat jen řídicí sekvence ANSI: {0}</value>
   </data>
   <data name="ProgressWidthTooSmall" xml:space="preserve">
-    <value>The MaxWidth for the Progress rendering must be at least 18 to render correctly.</value>
+    <value>Aby se průběh vykreslil správně, musí být hodnota MaxWidth alespoň 18.</value>
   </data>
   <data name="ExtensionNotStartingWithPeriod" xml:space="preserve">
-    <value>When adding or removing extensions, the extension must start with a period.</value>
+    <value>Při přidávání nebo odebírání přípon musí přípona začínat tečkou.</value>
   </data>
 </root>

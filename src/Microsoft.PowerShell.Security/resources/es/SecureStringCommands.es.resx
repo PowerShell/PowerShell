@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NewSecureString_Prompt" xml:space="preserve">
-    <value>Enter secret: </value>
+    <value>Escribir secreto: </value>
   </data>
   <data name="ForceRequired" xml:space="preserve">
-    <value>The system cannot protect plain text input. To suppress this warning and convert the plain text to a SecureString, reissue the command specifying the Force parameter. For more information, type: get-help ConvertTo-SecureString.</value>
+    <value>El sistema no puede proteger la entrada de texto sin formato. Para quitar esta advertencia y convertir el texto sin formato en un SecureString, vuelva a ejecutar el comando especificando el parámetro Force. Para obtener más información, escriba: get-help ConvertTo-SecureString.</value>
   </data>
 </root>

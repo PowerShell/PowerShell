@@ -118,23 +118,23 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AutoResXGen_ColumnPicker_AutomationPropertiesName_49" xml:space="preserve">
-    <value>Available Columns</value>
+    <value>可用列</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_AutomationPropertiesName_75" xml:space="preserve">
-    <value>Add</value>
+    <value>添加</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_AutomationPropertiesName_86" xml:space="preserve">
-    <value>Remove</value>
+    <value>移除</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_AutomationPropertiesName_104" xml:space="preserve">
-    <value>Selected Columns</value>
+    <value>所选列</value>
   </data>
   <data name="AutoResXGen_BackForwardHistory_AutomationPropertiesName_613" xml:space="preserve">
-    <value>Back</value>
+    <value>返回</value>
     <comment>Localizable AutomationName for control that is used by accessibility screen readers.</comment>
   </data>
   <data name="AutoResXGen_BackForwardHistory_AutomationPropertiesName_619" xml:space="preserve">
-    <value>Forward</value>
+    <value>前进</value>
     <comment>Localizable AutomationName for control that is used by accessibility screen readers.</comment>
   </data>
   <data name="AutoResXGen_BreadcrumbItem_Text_144" xml:space="preserve">
@@ -142,42 +142,42 @@
     <comment>Background text shown in the search box.</comment>
   </data>
   <data name="AutoResXGen_DesignerStyleResources_Tooltip_148" xml:space="preserve">
-    <value>Expand</value>
+    <value>展开</value>
   </data>
   <data name="AutoResXGen_ListOrganizer_AutomationPropertiesName_95" xml:space="preserve">
-    <value>Name</value>
+    <value>名称</value>
   </data>
   <data name="AutoResXGen_ManagementList_Text_602" xml:space="preserve">
-    <value>New Query</value>
+    <value>新查询</value>
   </data>
   <data name="AutoResXGen_TaskPane_Text_74" xml:space="preserve">
-    <value>Tasks</value>
+    <value>任务</value>
     <comment>This is the title string for the Task Pane.</comment>
   </data>
   <data name="AutoResXGen_Tile_AutomationPropertiesName_674" xml:space="preserve">
-    <value>Tasks</value>
+    <value>任务</value>
     <comment>AutomationProperties.Name of a SeparatedList.</comment>
   </data>
   <data name="AutoResXGen_WaitingRing_AutomationPropertiesName_74" xml:space="preserve">
-    <value>Indeterminate Progress Icon</value>
+    <value>未定进度图标</value>
   </data>
   <data name="AutoResXGen_ManagementList2_Text_124" xml:space="preserve">
-    <value>Add criteria</value>
+    <value>添加条件</value>
   </data>
   <data name="AutoResXGen_ManagementList2_Text_166" xml:space="preserve">
-    <value>Overwrite the existing query or type a different name to save a new query. Each query consists of criteria, sorting, and column customizations.</value>
+    <value>覆盖现有查询，或键入其他名称以保存新查询。每个查询都由条件、排序和列自定义项组成。</value>
   </data>
   <data name="AutoResXGen_ManagementList2_Content_186" xml:space="preserve">
-    <value>Ok</value>
+    <value>确定</value>
   </data>
   <data name="AutoResXGen_ManagementList2_Content_196" xml:space="preserve">
-    <value>Cancel</value>
+    <value>取消</value>
   </data>
   <data name="AutoResXGen_ManagementList2_AutomationPropertiesName_314" xml:space="preserve">
     <value>单击以保存搜索查询</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Content_42" xml:space="preserve">
-    <value>Available columns</value>
+    <value>可用列</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Content_73" xml:space="preserve">
     <value>&gt;&gt;</value>
@@ -188,19 +188,19 @@
     <comment>The contents of a button which indicates that items will move from the right column to left column</comment>
   </data>
   <data name="AutoResXGen_ColumnPicker_Content_127" xml:space="preserve">
-    <value>Move up</value>
+    <value>上移</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Content_134" xml:space="preserve">
-    <value>Move down</value>
+    <value>下移</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Content_189" xml:space="preserve">
-    <value>OK</value>
+    <value>确定</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Content_199" xml:space="preserve">
-    <value>Cancel</value>
+    <value>取消</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Content_5" xml:space="preserve">
-    <value>Select columns</value>
+    <value>选择列</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Tooltip_76" xml:space="preserve">
     <value>将选定列移到可视列的列表中</value>
@@ -215,13 +215,13 @@
     <value>此列表必须始终显示至少一列。</value>
   </data>
   <data name="AutoResXGen_ColumnPicker_Content_93" xml:space="preserve">
-    <value>Selected columns</value>
+    <value>所选列</value>
   </data>
   <data name="ColumnsExplorer_Column_FindTextBox_BackgroundText" xml:space="preserve">
     <value>在此列中查找</value>
   </data>
   <data name="AutoResXGen_DesignerStyleResources_ToolTip_97" xml:space="preserve">
-    <value>Expand</value>
+    <value>展开</value>
   </data>
   <data name="AutoResXGen_ManagementList2_ToolTip_104" xml:space="preserve">
     <value>单击以清除所有筛选条件。</value>
@@ -236,56 +236,56 @@
     <value>当前没有保存的查询。</value>
   </data>
   <data name="AutoResXGen_ManagementList2_AutomationPropertiesName_52" xml:space="preserve">
-    <value>Queries</value>
+    <value>查询</value>
   </data>
   <data name="AutoResXGen_ListOrganizer_AutomationPropertiesName_47" xml:space="preserve">
-    <value>Delete</value>
+    <value>删除</value>
   </data>
   <data name="AutoResXGen_ListOrganizer_AutomationPropertiesName_72" xml:space="preserve">
-    <value>Rename</value>
+    <value>重命名</value>
   </data>
   <data name="FilterRule_AccessibleName" xml:space="preserve">
-    <value>{0} rule</value>
+    <value>“{0}”规则</value>
     <comment>The text representation of a rule in the filter panel, displayed to accessibility clients. {0} will be the name of the rule.</comment>
   </data>
   <data name="AutoResXGen_AddFilterRulePicker_Content_214" xml:space="preserve">
-    <value>Add</value>
+    <value>添加</value>
   </data>
   <data name="AutoResXGen_AddFilterRulePicker_Content_223" xml:space="preserve">
-    <value>Cancel</value>
+    <value>取消</value>
   </data>
   <data name="AutoResXGen_AddFilterRulePicker_AutomationPropertiesName_293" xml:space="preserve">
-    <value>Add Filter Criteria</value>
+    <value>添加筛选器条件</value>
   </data>
   <data name="AutoResXGen_FilterRulePanel_AutomationPropertiesName_199" xml:space="preserve">
-    <value>Value</value>
+    <value>值</value>
     <comment>The name for text input fields</comment>
   </data>
   <data name="AutoResXGen_FilterRulePanel_BackgroundText_200" xml:space="preserve">
     <value>&lt;Empty&gt;</value>
   </data>
   <data name="AutoResXGen_FilterRulePanel_AutomationPropertiesName_257" xml:space="preserve">
-    <value>Rules</value>
+    <value>规则</value>
     <comment>The name of the panel which contains the filter rules</comment>
   </data>
   <data name="AutoResXGen_ManagementList_AutomationPropertiesName_302" xml:space="preserve">
-    <value>Delete</value>
+    <value>删除</value>
   </data>
   <data name="AutoResXGen_ManagementList2_Content_19" xml:space="preserve">
-    <value>Query</value>
+    <value>查询</value>
   </data>
   <data name="AutoResXGen_ManagementList2_Content_33" xml:space="preserve">
-    <value>Queries</value>
+    <value>查询</value>
   </data>
   <data name="AutoResXGen_SearchBox_AutomationPropertiesName_75" xml:space="preserve">
-    <value>Search</value>
+    <value>搜索</value>
   </data>
   <data name="ManagementListTitle_ListStatus_FilterApplied" xml:space="preserve">
-    <value>({0} of {1})</value>
+    <value>(第 {0} 个，共 {1} 个)</value>
     <comment>The text displayed in the management list title when the list has a filter applied. {0} will be the number of items shown in the list. {1} will be the total number of items in the list before filtering.</comment>
   </data>
   <data name="ManagementListTitle_ListStatus_FilterInProgress" xml:space="preserve">
-    <value>Searching...</value>
+    <value>正在搜索...</value>
     <comment>The text displayed in the management list title when the list is processing a filter.</comment>
   </data>
   <data name="ManagementListTitle_ListStatus_FilterNotApplied" xml:space="preserve">
@@ -293,70 +293,70 @@
     <comment>The text displayed in the management list title when the list does not have a filter applied. {0} will be the number of items shown in the list.</comment>
   </data>
   <data name="AutoResXGen_BreadcrumbItem_AutomationPropertiesName_142" xml:space="preserve">
-    <value>Filter</value>
+    <value>筛选器</value>
     <comment>Localizable AutomationName for control that is used by accessibility screen readers.</comment>
   </data>
   <data name="ColumnsExplorer_Column_FindTextBox_AutomationName" xml:space="preserve">
-    <value>Filter</value>
+    <value>筛选器</value>
   </data>
   <data name="AutoResXGen_AddFilterRulePicker_AutomationPropertiesName_157" xml:space="preserve">
-    <value>Shortcut Rules</value>
+    <value>快捷方式规则</value>
     <comment>The name used to indicate custom filter rules which are specific to a particular application.</comment>
   </data>
   <data name="AutoResXGen_AddFilterRulePicker_AutomationPropertiesName_180" xml:space="preserve">
-    <value>Columns Rules</value>
+    <value>列规则</value>
     <comment>The name used to indicate filter rules that are based upon the properties of the items in the list.</comment>
   </data>
   <data name="ManagementList_SortGlyph_Ascending_AutomationName" xml:space="preserve">
-    <value>Sort Glyph</value>
+    <value>排序字形</value>
   </data>
   <data name="ManagementList_SortGlyph_Descending_AutomationName" xml:space="preserve">
-    <value>Sort Glyph</value>
+    <value>排序字形</value>
   </data>
   <data name="AutoResXGen_DesignerStyleResources_ToolTip_119" xml:space="preserve">
-    <value>Collapse</value>
+    <value>折叠</value>
   </data>
   <data name="AutoResXGen_DesignerStyleResources_ToolTip_160" xml:space="preserve">
-    <value>Collapse</value>
+    <value>折叠</value>
   </data>
   <data name="InnerList_GridViewColumnHeader_ItemStatus_Ascending" xml:space="preserve">
-    <value>Sorted ascending</value>
+    <value>已按升序排序</value>
     <comment>The text used for the accessible ItemStatus property when a column is sorted ascending.</comment>
   </data>
   <data name="InnerList_GridViewColumnHeader_ItemStatus_Descending" xml:space="preserve">
-    <value>Sorted descending</value>
+    <value>已按降序排序</value>
     <comment>The text used for the accessible ItemStatus property when a column is sorted descending.</comment>
   </data>
   <data name="CollapsingTabControl_ExpandButton_AutomationName" xml:space="preserve">
-    <value>Collapse</value>
+    <value>折叠</value>
   </data>
   <data name="CollapsingTabControl_CollapseButton_AutomationName" xml:space="preserve">
-    <value>Expand</value>
+    <value>展开</value>
   </data>
   <data name="AutoResXGen_ManagementList_TextBlock_83" xml:space="preserve">
-    <value>Search</value>
+    <value>搜索</value>
   </data>
   <data name="AutoResXGen_ManagementList_TextBlock_106" xml:space="preserve">
-    <value>Cancel</value>
+    <value>取消</value>
   </data>
   <data name="AutoResXGen_ManagementList_TextBlock_129" xml:space="preserve">
-    <value>Clear All</value>
+    <value>全部清除</value>
   </data>
   <data name="AutoResXGen_ManagementList_AutomationPropertiesName_395" xml:space="preserve">
-    <value>Clear All</value>
+    <value>全部清除</value>
   </data>
   <data name="AutoResXGen_SearchBox_AutomationPropertiesName_85" xml:space="preserve">
-    <value>Clear Search Text</value>
+    <value>清除搜索文本</value>
   </data>
   <data name="AutoResXGen_TaskPane_AutomationPropertiesName_133" xml:space="preserve">
-    <value>Tasks</value>
+    <value>任务</value>
   </data>
   <data name="ManagementList_StartFilterButton_AutomationName" xml:space="preserve">
-    <value>Search</value>
+    <value>搜索</value>
     <comment>The accessible name of the Search button in the filter panel.</comment>
   </data>
   <data name="ManagementList_StopFilterButton_AutomationName" xml:space="preserve">
-    <value>Cancel</value>
+    <value>取消</value>
     <comment>The accessible name of the Stop Search button in the filter panel.</comment>
   </data>
   <data name="ManagementList_ToggleFilterPanelButton_AutomationName" xml:space="preserve">
@@ -364,51 +364,51 @@
     <comment>The accessible name of the button that expands/collapses the filter panel.</comment>
   </data>
   <data name="ManagementList_SearchBox_BackgroundText_Live" xml:space="preserve">
-    <value>Filter</value>
+    <value>筛选器</value>
     <comment>The background text of the list's search box when filtering is immediate.</comment>
   </data>
   <data name="AutoResXGen_ManagementList_ToolTip_314" xml:space="preserve">
     <value>单击以显示已保存的搜索查询。</value>
   </data>
   <data name="AutoResXGen_ManagementList_Text_392" xml:space="preserve">
-    <value>Filter applied.</value>
+    <value>已应用筛选器。</value>
   </data>
   <data name="FilterRulePanel_LogicalOperatorText_FirstHeader" xml:space="preserve">
-    <value>and</value>
+    <value>和</value>
     <comment>The first header operator indicates that it is the first item in the list of filter rules. The AND value is used to indicate that it is and'ed with the above SearchBox.</comment>
   </data>
   <data name="FilterRulePanel_LogicalOperatorText_Header" xml:space="preserve">
-    <value>and</value>
+    <value>和</value>
     <comment>The header operator indicates that it is the first item in a group of filter rules which are the same. The AND value is used to indicate that it is and'ed with the other groups in the panel.</comment>
   </data>
   <data name="FilterRulePanel_LogicalOperatorText_Item" xml:space="preserve">
-    <value>or</value>
+    <value>或</value>
     <comment>The Item operator indicates that it is NOT the first item in a group of filter rules which are the same. The OR value is used to indicate that it is or'ed with the other items in the same group.</comment>
   </data>
   <data name="ManagementList_NoMatchesFound_Message" xml:space="preserve">
-    <value>No matches found.</value>
+    <value>未找到匹配项。</value>
     <comment>The text displayed in the ManagementList when the filter has been applied but matching items were found.</comment>
   </data>
   <data name="CollapsingTabControl_CollapseButton_ToolTip" xml:space="preserve">
-    <value>Collapse</value>
+    <value>折叠</value>
   </data>
   <data name="CollapsingTabControl_ExpandButton_ToolTip" xml:space="preserve">
-    <value>Expand</value>
+    <value>展开</value>
   </data>
   <data name="NavigationList_ShownChildrenButton_ToolTip" xml:space="preserve">
-    <value>Show Children</value>
+    <value>显示子项</value>
   </data>
   <data name="NavigationList_ShownChildrenButton_AutomationName" xml:space="preserve">
-    <value>Show Children</value>
+    <value>显示子项</value>
   </data>
   <data name="ManagementListTitle_Title_WithViewName" xml:space="preserve">
     <value>{0}: {1}</value>
     <comment>The format string used for the ManagementList title when query has been applied. For example, "Users: My Fancy Query"</comment>
   </data>
   <data name="OutGridView_Button_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>取消</value>
   </data>
   <data name="OutGridView_Button_OK" xml:space="preserve">
-    <value>OK</value>
+    <value>确定</value>
   </data>
 </root>

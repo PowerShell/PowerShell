@@ -118,76 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AmbiguousMethodName" xml:space="preserve">
-    <value>Input name "{0}" is ambiguous. It can be resolved to multiple matched methods. Possible matches include:{1}.</value>
+    <value>Le nom d’entrée « {0} » est ambigu. Il peut correspondre à plusieurs méthodes. Correspondances possibles :{1}.</value>
   </data>
   <data name="AmbiguousPropertyOrMethodName" xml:space="preserve">
-    <value>Input name "{0}" is ambiguous. It can be resolved to multiple matched members. Possible matches include:{1}.</value>
+    <value>Le nom d’entrée « {0} » est ambigu. Il peut correspondre à plusieurs membres. Correspondances possibles :{1}.</value>
   </data>
   <data name="ForEachObjectKeyAction" xml:space="preserve">
-    <value>Retrieve the value for key '{0}'</value>
+    <value>Récupérer la valeur de la clé « {0} »</value>
   </data>
   <data name="ForEachObjectMethodActionWithArguments" xml:space="preserve">
-    <value>Invoke method '{0}' with arguments: {1}</value>
+    <value>Appeler la méthode « {0} » avec les arguments : {1}</value>
   </data>
   <data name="ForEachObjectMethodActionWithoutArguments" xml:space="preserve">
-    <value>Invoke method '{0}'</value>
+    <value>Appeler la méthode « {0} »</value>
   </data>
   <data name="ForEachObjectPropertyAction" xml:space="preserve">
-    <value>Retrieve the value for property '{0}'</value>
+    <value>Récupérer la valeur de la propriété « {0} »</value>
   </data>
   <data name="ForEachObjectTarget" xml:space="preserve">
-    <value>InputObject: {0}</value>
+    <value>InputObject : {0}</value>
   </data>
   <data name="InputObjectIsNull" xml:space="preserve">
-    <value>Cannot operate on a 'null' input object.</value>
+    <value>Nous ne pouvons pas effectuer cette opération sur un objet d’entrée null.</value>
   </data>
   <data name="MethodNotFound" xml:space="preserve">
-    <value>Input name "{0}" cannot be resolved to a method.</value>
+    <value>Le nom d’entrée « {0} » ne peut pas être résolu en méthode.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Cannot invoke a method in the restricted language mode.</value>
+    <value>Nous ne pouvons pas appeler une méthode en mode de langage restreint.</value>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
-    <value>The -WhatIf and -Confirm parameters are not supported for script blocks.</value>
+    <value>Les paramètres -WhatIf et -Confirm ne sont pas pris en charge pour les blocs de script.</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
-    <value>The '{0}' operation is not allowed in the RestrictedLanguage mode.</value>
+    <value>L’opération « {0} » n’est pas autorisée en mode RestrictedLanguage.</value>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
-    <value>An operator is required to compare the two specified values. Include a valid operator in the command, and then try the command again. For example, Get-Process | Where-Object -Property Name -eq Idle</value>
+    <value>Un opérateur est requis pour comparer les deux valeurs spécifiées. Incluez un opérateur valide dans la commande, puis réessayez. Par exemple, Get-Process | Where-Object -Property Name -eq Idle</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The input name "{0}" cannot be resolved to a property.</value>
+    <value>Le nom d’entrée « {0} » ne peut pas être résolu en propriété.</value>
   </data>
   <data name="PropertyOrMethodNotFound" xml:space="preserve">
-    <value>The input name "{0}" cannot be resolved to a member.</value>
+    <value>Le nom d’entrée « {0} » ne peut pas être résolu en membre.</value>
   </data>
   <data name="ValueNotSpecifiedForWhereObject" xml:space="preserve">
-    <value>The specified operator requires both the -Property and -Value parameters. Provide values for both parameters, and then try the command again.</value>
+    <value>L’opérateur spécifié requiert les paramètres -Property et -Value. Fournissez des valeurs pour ces deux paramètres, puis réessayez la commande.</value>
   </data>
   <data name="PSTaskStreamWriterWrongThread" xml:space="preserve">
-    <value>This method cannot be run on the current thread. It can only be called on the cmdlet thread.</value>
+    <value>Cette méthode ne peut pas être exécutée sur le thread actuel. Elle ne peut être appelée que sur le thread de l’applet de commande.</value>
   </data>
   <data name="ParallelUsingVariableCannotBeScriptBlock" xml:space="preserve">
-    <value>A ForEach-Object -Parallel using variable cannot be a script block. Passed-in script block variables are not supported with ForEach-Object -Parallel, and can result in undefined behavior.</value>
+    <value>Une variable utilisée avec ForEach-Object -Parallel ne peut pas être un bloc de script. Les variables de bloc de script passées ne sont pas prises en charge avec ForEach-Object -Parallel et peuvent entraîner un comportement indéfini.</value>
   </data>
   <data name="ParallelPipedInputObjectCannotBeScriptBlock" xml:space="preserve">
-    <value>A ForEach-Object -Parallel piped input object cannot be a script block. Passed-in script block variables are not supported with ForEach-Object -Parallel, and can result in undefined behavior.</value>
+    <value>Un objet d’entrée transmis à ForEach-Object -Parallel ne peut pas être un bloc de script. Les variables de bloc de script passées ne sont pas prises en charge avec ForEach-Object -Parallel et peuvent entraîner un comportement indéfini.</value>
   </data>
   <data name="ParallelCannotUseTimeoutWithJob" xml:space="preserve">
-    <value>The 'TimeoutSeconds' parameter cannot be used with the 'AsJob' parameter.</value>
+    <value>Le paramètre « TimeoutSeconds » ne peut pas être utilisé avec le paramètre « AsJob ».</value>
   </data>
   <data name="ParallelCommonParametersNotSupported" xml:space="preserve">
-    <value>The following common parameters are not currently supported in the Parallel parameter set:
+    <value>Les paramètres communs suivants ne sont actuellement pas pris en charge dans le jeu de paramètres Parallel :
 ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
   </data>
   <data name="ParallelPipedInputProcessingError" xml:space="preserve">
-    <value>An unexpected error has occurred while processing ForEach-Object -Parallel input. This may mean that some of the piped input did not get processed. Error: {0}.</value>
+    <value>Une erreur inattendue s’est produite lors du traitement de l’entrée ForEach-Object -Parallel. Cela peut signifier qu’une partie des entrées transmises par le pipeline n’a pas été traitée. Erreur {0}.</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
-    <value>ForEach-Object Cmdlet</value>
+    <value>Cmdlet ForEach-Object</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Method invocation on type '{0}' will not be allowed when run in Constrained Language mode.</value>
+    <value>L’appel de méthode sur le type « {0} » ne sera pas autorisé lors de l’exécution en mode de langage contraint.</value>
   </data>
 </root>
