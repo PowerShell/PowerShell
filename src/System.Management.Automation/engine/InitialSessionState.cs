@@ -3494,7 +3494,7 @@ namespace System.Management.Automation.Runspaces
                 List<string> resolvedTypeFilesToRemove = new List<string>();
                 foreach (var typeFile in typeFilesToRemove)
                 {
-                    resolvedTypeFilesToRemove.Add(ModuleCmdletBase.ResolveRootedFilePath(typeFile, context) ?? typeFile);
+                    resolvedTypeFilesToRemove.Add(ModuleCmdletBase.ResolveToFileSystemPathIfRooted(typeFile, context) ?? typeFile);
                 }
 
                 foreach (SessionStateTypeEntry entry in context.InitialSessionState.Types)
@@ -3508,7 +3508,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         // Resolving the file path because the path to the types file in module manifest is now specified as
                         // ..\..\types.ps1xml which expands to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Core\..\..\types.ps1xml
-                        string filePath = ModuleCmdletBase.ResolveRootedFilePath(entry.FileName, context) ?? entry.FileName;
+                        string filePath = ModuleCmdletBase.ResolveToFileSystemPathIfRooted(entry.FileName, context) ?? entry.FileName;
                         if (!resolvedTypeFilesToRemove.Contains(filePath))
                         {
                             newTypes.Add(entry);
