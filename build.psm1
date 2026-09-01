@@ -564,9 +564,11 @@ Fix steps:
     # as well as .zip packages, we only support the default en-US culture.
     # Therefore, we only produce satellite assemblies for win7-x64, win7-x86, and win-arm64 by default (excluding min-size build),
     # unless the caller wants to force produce localized resources.
+    $RemovePowerShellSatelliteAssemblies = $false
     if (!$ForceProduceLocalizedResources -and ($Options.Runtime -notmatch '^(win7-x64|win7-x86|win-arm64)$' -or $ForMinimalSize)) {
-        # Disable satellite assemblies for other cultures.
+        # Disable satellite assemblies from package/runtime assets for other cultures.
         $Arguments += "/property:SatelliteResourceLanguages=en"
+        $RemovePowerShellSatelliteAssemblies = $true
     }
 
     if ($Output -or $SMAOnly) {
@@ -742,6 +744,21 @@ Fix steps:
     } finally {
         Pop-Location
     }
+
+    if ($RemovePowerShellSatelliteAssemblies) {
+        $smaResDll = 'System.Management.Automation.resources.dll'
+        $resDirs = Get-ChildItem -Path $publishPath -Filter $smaResDll -Recurse -Depth 1 | ForEach-Object DirectoryName
+
+        if ($resDirs) {
+            Write-Log -message "PowerShell satellite assemblies found under '$publishPath':"
+            $relatives = $resDirs | ForEach-Object { Resolve-Path $_ -Relative -RelativeBasePath $publishPath }
+            Write-Log -message ($relatives -join ", ")
+
+            $resDirs | Remove-Item -Recurse -Force -ErrorAction Stop
+            Write-Log -message "Removed PowerShell satellite assemblies under '$publishPath'."
+        }
+    }
+
     Write-LogGroupEnd -Title "Build PowerShell"
 
     # No extra post-building task will run if '-SMAOnly' is specified, because its purpose is for a quick update of S.M.A.dll after full build.
