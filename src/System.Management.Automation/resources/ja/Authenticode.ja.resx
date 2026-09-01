@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Reason_DoNotRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted not to run this software now.</value>
+    <value>今回はこのソフトウェアを実行しないことが選択されたため、ファイル {0} を読み込めません。</value>
   </data>
   <data name="Reason_NeverRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted never to run software from this publisher.</value>
+    <value>この発行元のソフトウェアを決して実行しないことが選択されたため、ファイル {0} を読み込めません。</value>
   </data>
   <data name="Reason_NotTrusted" xml:space="preserve">
-    <value>File {0} is published by {1}. This publisher is explicitly not trusted on your system. The script will not run on the system. For more information, run the command "get-help about_signing".</value>
+    <value>ファイル {0} は {1}によって公開されています。このシステム上では、この発行元を信頼しないことが明示されています。このスクリプトは、このシステム上では実行されません。詳細については、コマンド "get-help about_signing" を実行してください。</value>
   </data>
   <data name="Reason_RestrictedMode" xml:space="preserve">
-    <value>File {0} cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.</value>
+    <value>このシステムではスクリプトの実行が無効になっているため、ファイル {0} を読み込めません。詳細については、https://go.microsoft.com/fwlink/?LinkID=135170 の about_Execution_Policies を参照してください。</value>
   </data>
   <data name="Reason_Unknown" xml:space="preserve">
-    <value>File {0} cannot be loaded. {1}.</value>
+    <value>ファイル {0} を読み込めません。{1}。</value>
   </data>
   <data name="Reason_DisallowedBySafer" xml:space="preserve">
-    <value>File {0} cannot be loaded because its operation is blocked by software restriction policies, such as those created by using Group Policy.</value>
+    <value>ソフトウェア制限ポリシー (例: グループ ポリシーなどで作成されたもの) によって操作がブロックされているため、ファイル {0} を読み込めません。</value>
   </data>
   <data name="Reason_FileContentUnavailable" xml:space="preserve">
-    <value>File {0} cannot be loaded because its content could not be read.</value>
+    <value>内容を読み取れなかったため、ファイル {0} を読み込めません。</value>
   </data>
   <data name="CertNotGoodForSigning" xml:space="preserve">
-    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+    <value>コードに署名できません。指定された証明書はコード署名に適していません。</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code. The TimeStamp server URL must be fully qualified, and in the format http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+    <value>コードに署名できません。TimeStamp サーバー URL は、http://&lt;server url&gt; または https://&lt;server url&gt; の形式で完全修飾されている必要があります。</value>
   </data>
   <data name="InvalidHashAlgorithm" xml:space="preserve">
-    <value>Cannot sign code. The hash algorithm is not supported.</value>
+    <value>コードに署名できません。このハッシュ アルゴリズムはサポートされていません。</value>
   </data>
   <data name="AuthenticodePromptCaption" xml:space="preserve">
-    <value>Do you want to run software from this untrusted publisher?</value>
+    <value>この信頼されていない発行元からのソフトウェアを実行しますか?</value>
   </data>
   <data name="AuthenticodePromptText" xml:space="preserve">
-    <value>File {0} is published by {1} and is not trusted on your system. Only run scripts from trusted publishers.</value>
+    <value>ファイル {0} は {1} によって公開されており、このシステム上では信頼されません。信頼できる発行元からのスクリプトのみ実行してください。</value>
   </data>
   <data name="AuthenticodePromptText_UnknownPublisher" xml:space="preserve">
-    <value>Software {0} is published by an unknown publisher. It is recommended that you do not run this software.</value>
+    <value>ソフトウェア {0} は不明な発行元によって公開されたものです。このソフトウェアは実行しないことをおすすめします。</value>
   </data>
   <data name="RemoteFilePromptCaption" xml:space="preserve">
-    <value>Security warning</value>
+    <value>セキュリティ警告</value>
   </data>
   <data name="RemoteFilePromptText" xml:space="preserve">
-    <value>Run only scripts that you trust. While scripts from the internet can be useful, this script can potentially harm your computer. If you trust this script, use the Unblock-File cmdlet to allow the script to run without this warning message. Do you want to run {0}?</value>
+    <value>信頼できるスクリプトのみ実行してください。インターネットから取得したスクリプトは役立つ場合がありますが、このスクリプトには、コンピューターに害を及ぼす可能性もあります。このスクリプトを信頼する場合は、Unblock-File コマンドレットを使用すると、この警告メッセージを表示せずにスクリプトを実行できるようになります。{0} を実行しますか?</value>
   </data>
   <data name="Choice_NeverRun" xml:space="preserve">
-    <value>Ne&amp;ver run</value>
+    <value>決して実行しない(&amp;V)</value>
   </data>
   <data name="Choice_NeverRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and do not prompt me to run this script in future. Future attempts to run this script will result in a silent failure.</value>
+    <value>今回、この発行元からのスクリプトを実行しません。以後、このスクリプトの実行確認を求めません。今後このスクリプトの実行が試行された場合は通知なしで失敗します。</value>
   </data>
   <data name="Choice_DoNotRun" xml:space="preserve">
-    <value>&amp;Do not run</value>
+    <value>実行しない(&amp;D)</value>
   </data>
   <data name="Choice_DoNotRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>今回、この発行元からのスクリプトを実行しません。以後、このスクリプトを実行する際は引き続き確認を求めます。</value>
   </data>
   <data name="Choice_RunOnce" xml:space="preserve">
-    <value>&amp;Run once</value>
+    <value>今回は実行する(&amp;R)</value>
   </data>
   <data name="Choice_RunOnce_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>今回、この発行元からのスクリプトを実行します。以後、このスクリプトを実行する際は引き続き確認を求めます。</value>
   </data>
   <data name="Choice_AlwaysRun" xml:space="preserve">
-    <value>&amp;Always run</value>
+    <value>常に実行(&amp;A)</value>
   </data>
   <data name="Choice_AlwaysRun_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and do not prompt me to run this script in the future.</value>
+    <value>今回、この発行元からのスクリプトを実行します。以後、このスクリプトの実行確認を求めません。</value>
   </data>
   <data name="Choice_Suspend" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>一時停止(&amp;S)</value>
   </data>
   <data name="Choice_Suspend_Help" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type exit to resume operation when you are done.</value>
+    <value>現在のパイプラインを一時停止し、コマンド プロンプトに戻ります。終了後、「exit」と入力して操作を再開してください。</value>
   </data>
 </root>

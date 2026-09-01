@@ -118,114 +118,114 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandAlreadySpecified" xml:space="preserve">
-    <value>Cannot process command because a command is already specified with -Command, -CommandWithArgs, or -EncodedCommand.</value>
+    <value>Příkaz nelze zpracovat, protože už byl zadán pomocí parametru -Command, -CommandWithArgs nebo -EncodedCommand.</value>
   </data>
   <data name="MissingCommandParameter" xml:space="preserve">
-    <value>Cannot process the command because of a missing parameter. A command must follow -Command.</value>
+    <value>Příkaz nelze zpracovat, protože chybí parametr. Za parametrem -Command musí následovat příkaz.</value>
   </data>
   <data name="UnknownParameter" xml:space="preserve">
-    <value>Unrecognized parameter: '{0}'.</value>
+    <value>Nerozpoznaný parametr: {0}.</value>
   </data>
   <data name="TooManyParametersToCommand" xml:space="preserve">
-    <value>'-' was specified with the -Command parameter; no other arguments to -Command are permitted.</value>
+    <value>Parametrem -Command byla zadána hodnota -; nejsou povoleny žádné další argumenty parametru -Command.</value>
   </data>
   <data name="StdinNotRedirected" xml:space="preserve">
-    <value>'-' was specified as the argument to -Command but standard input has not been redirected for this process.</value>
+    <value>Jako argument parametru -Command byla zadána hodnota -, ale standardní vstup nebyl pro tento proces přesměrován.</value>
   </data>
   <data name="MissingOutputFormatParameter" xml:space="preserve">
-    <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter.
-Specify one of the following formats for this parameter:
+    <value>Příkaz nelze spustit, protože pro parametr OutputFormat nebyl zadán žádný argument.
+Zadejte pro tento parametr jeden z následujících formátů: 
 {0}</value>
   </data>
   <data name="MissingInputFormatParameter" xml:space="preserve">
-    <value>Cannot process the command because the -InputFormat parameter requires an argument. Specify a valid format argument for this parameter.
-Valid formats are:
+    <value>Příkaz nelze zpracovat, protože parametr -InputFormat vyžaduje argument. Zadejte pro tento parametr platný argument formátu.
+Platné formáty jsou:
 {0}</value>
   </data>
   <data name="BadFormatParameterValue" xml:space="preserve">
-    <value>Cannot process the command because of an incorrect parameter value. "{0}" is not a valid format.
-Valid formats are:
+    <value>Příkaz nelze zpracovat, protože byla zadána nesprávná hodnota parametru. {0} není platný formát. 
+Platné formáty jsou:
 {1}</value>
   </data>
   <data name="ArgsAlreadySpecified" xml:space="preserve">
-    <value>Cannot process the command because arguments to -Command or -EncodedCommand have already been specified with -EncodedArguments.</value>
+    <value>Příkaz nelze zpracovat, protože argumenty parametru -Command nebo -EncodedCommand už byly zadány pomocí parametru -EncodedArguments.</value>
   </data>
   <data name="MissingArgsValue" xml:space="preserve">
-    <value>Cannot process the command because -EncodedArguments requires a value. Specify a value for the -EncodedArguments parameter.</value>
+    <value>Příkaz nelze zpracovat, protože parametr -EncodedArguments vyžaduje hodnotu. Zadejte hodnotu pro parametr -EncodedArguments.</value>
   </data>
   <data name="MissingFileArgument" xml:space="preserve">
-    <value>The command cannot be run because the File parameter requires a file path. Supply a path for the File parameter and then try the command again.</value>
+    <value>Příkaz nelze spustit, protože parametr -File vyžaduje cestu k souboru. Zadejte cestu pro parametr -File a potom příkaz spusťte znovu.</value>
   </data>
   <data name="MissingWindowStyleArgument" xml:space="preserve">
-    <value>Cannot process the command because -WindowStyle requires an argument that is normal, hidden, minimized or maximized. Specify one of these argument values and try again.</value>
+    <value>Příkaz nelze zpracovat, protože parametr -WindowStyle vyžaduje jako argument hodnotu normal, hidden, minimized nebo maximized. Zadejte jednu z těchto hodnot argumentu a zkuste to znovu.</value>
   </data>
   <data name="InvalidFileArgument" xml:space="preserve">
-    <value>Processing -File '{0}' failed: {1} Specify a valid path for the -File parameter.</value>
+    <value>Zpracování parametru -File {0} se nezdařilo: {1}. Zadejte platnou cestu pro parametr -File.</value>
   </data>
   <data name="InvalidWindowStyleArgument" xml:space="preserve">
-    <value>Processing -WindowStyle '{0}' failed: {1}.</value>
+    <value>Zpracování parametru -WindowStyle {0} se nezdařilo: {1}.</value>
   </data>
   <data name="InvalidFileArgumentExtension" xml:space="preserve">
-    <value>Processing -File '{0}' failed because the file does not have a '.ps1' extension. Specify a valid PowerShell script file name, and then try again.</value>
+    <value>Zpracování parametru -File {0} se nezdařilo, protože soubor nemá příponu .ps1. Zadejte název platného souboru skriptu PowerShellu a zkuste to znovu.</value>
   </data>
   <data name="ArgumentFileDoesNotExist" xml:space="preserve">
-    <value>The argument '{0}' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>Argument {0} se nerozpoznal jako název souboru skriptu. Zkontrolujte pravopis názvu. Pokud jste zadali cestu, ověřte, že je správná, a zkuste to znovu.</value>
   </data>
   <data name="BadArgsValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedArguments is not properly encoded. The value must be Base64 encoded.</value>
+    <value>Příkaz nelze zpracovat, protože hodnota zadaná pomocí parametru -EncodedArguments není správně zakódovaná. Hodnota musí být zakódovaná ve formátu Base64.</value>
   </data>
   <data name="BadCommandValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedCommand is not properly encoded. The value must be Base64 encoded.</value>
+    <value>Příkaz nelze zpracovat, protože hodnota zadaná pomocí parametru -EncodedCommand není správně zakódovaná. Hodnota musí být zakódovaná ve formátu Base64.</value>
   </data>
   <data name="MissingExecutionPolicyParameter" xml:space="preserve">
-    <value>Cannot process the execution policy because of a missing policy name. A policy name must follow -ExecutionPolicy.</value>
+    <value>Zásadu spouštění nelze zpracovat, protože chybí název zásady. Za parametrem -ExecutionPolicy musí následovat název zásady.</value>
   </data>
   <data name="MtaStaMutuallyExclusive" xml:space="preserve">
-    <value>Cannot process the command because -STA and -MTA are both specified. Specify either -STA or -MTA.</value>
+    <value>Příkaz nelze zpracovat, protože jsou zadány oba parametry, -STA i -MTA. Zadejte buď parametr -STA, nebo parametr -MTA.</value>
   </data>
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationName requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+    <value>Příkaz nelze zpracovat, protože parametr -ConfigurationName vyžaduje jako argument název konfigurace vzdáleného koncového bodu. Zadejte tento argument a zkuste to znovu.</value>
   </data>
   <data name="MissingConfigurationFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationFile requires an argument that is a session configuration (.pssc) file path. Specify this argument and try again.</value>
+    <value>Příkaz nelze zpracovat, protože parametr -ConfigurationFile vyžaduje jako argument cestu ke konfiguračnímu souboru relace (.pssc). Zadejte tento argument a zkuste to znovu.</value>
   </data>
   <data name="MissingCustomPipeNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName requires an argument that is a name of the pipe you want to use. Specify this argument and try again.</value>
+    <value>Příkaz nelze zpracovat, protože parametr -CustomPipeName vyžaduje jako argument název kanálu, který chcete použít. Zadejte tento argument a zkuste to znovu.</value>
   </data>
   <data name="CustomPipeNameTooLong" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+    <value>Příkaz nelze zpracovat, protože název zadaný parametrem -CustomPipeName je příliš dlouhý. Názvy kanálů mohou mít na této platformě maximálně {0} znaků. Název vašeho kanálu {1} má {2} znaků.</value>
   </data>
   <data name="MissingSettingsFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -SettingsFile requires an argument that is a file path.</value>
+    <value>Příkaz nelze zpracovat, protože parametr -SettingsFile vyžaduje jako argument cestu k souboru.</value>
   </data>
   <data name="InvalidSettingsFileArgument" xml:space="preserve">
-    <value>Processing -SettingsFile '{0}' failed: {1}. Specify a valid path for the -SettingsFile parameter.</value>
+    <value>Zpracování parametru -SettingsFile {0} se nezdařilo: {1}. Zadejte platnou cestu pro parametr -SettingsFile.</value>
   </data>
   <data name="SettingsFileNotExists" xml:space="preserve">
-    <value>The argument '{0}' passed to the -SettingsFile does not exist. Provide the path to an existing json file as an argument to the -SettingsFile parameter.</value>
+    <value>Argument {0} předaný parametru -SettingsFile neexistuje. Jako argument parametru -SettingsFile zadejte cestu k existujícímu souboru JSON.</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
-    <value>Invalid argument '{0}', did you mean:</value>
+    <value>Neplatný argument {0}. Neměli jste na mysli:</value>
   </data>
   <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
-    <value>Parameter -WindowStyle is not implemented on this platform.</value>
+    <value>Parametr -WindowStyle není na této platformě implementovaný.</value>
   </data>
   <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
-    <value>Cannot process the command because -WorkingDirectory requires an argument that is a directory path.</value>
+    <value>Příkaz nelze zpracovat, protože parametr -WorkingDirectory vyžaduje jako argument cestu k adresáři.</value>
   </data>
   <data name="MTANotImplemented" xml:space="preserve">
-    <value>Parameter -MTA is not supported on this platform.</value>
+    <value>Parametr -MTA není na této platformě podporovaný.</value>
   </data>
   <data name="STANotImplemented" xml:space="preserve">
-    <value>Parameter -STA is not supported on this platform.</value>
+    <value>Parametr -STA není na této platformě podporovaný.</value>
   </data>
   <data name="NullElementInArgs" xml:space="preserve">
-    <value>The specified arguments must not contain null elements.</value>
+    <value>Zadané argumenty nesmí obsahovat elementy null.</value>
   </data>
   <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
-    <value>Invalid ExecutionPolicy value '{0}'.</value>
+    <value>Neplatná hodnota ExecutionPolicy {0}.</value>
   </data>
   <data name="MissingMandatoryArgument" xml:space="preserve">
-    <value>An argument is required to be supplied to the '{0}' parameter.</value>
+    <value>Pro parametr {0} je nutné zadat argument.</value>
   </data>
 </root>

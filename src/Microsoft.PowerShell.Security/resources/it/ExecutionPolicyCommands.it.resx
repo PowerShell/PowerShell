@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExecutionPolicyOverridden" xml:space="preserve">
-    <value>PowerShell updated your execution policy successfully, but the setting is overridden by a policy defined at a more specific scope.  Due to the override, your shell will retain its current effective execution policy of {0}. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more information please see "Get-Help Set-ExecutionPolicy".</value>
+    <value>PowerShell ha aggiornato il criterio di esecuzione, ma l'impostazione viene sostituita da un criterio definito in un ambito più specifico.  A causa dell'override, la shell manterrà effettivo il criterio di esecuzione di {0} corrente. Digitare "Get-ExecutionPolicy -List" per visualizzare le impostazioni del criterio di esecuzione. Per altre informazioni, vedere "Get-Help Set-ExecutionPolicy".</value>
   </data>
   <data name="ExecutionPolicyOverriddenRecommendedAction" xml:space="preserve">
-    <value>Contact your system administrator.</value>
+    <value>Contattare l'amministratore di sistema.</value>
   </data>
   <data name="ListAndScopeSpecified" xml:space="preserve">
-    <value>Cannot get execution policy. Specify only the List or Scope parameters.</value>
+    <value>Non è possibile recuperare il criterio di esecuzione. Specificare solo i parametri List o Scope.</value>
   </data>
   <data name="CantSetGroupPolicy" xml:space="preserve">
-    <value>Cannot set execution policy. Execution policies at the MachinePolicy or UserPolicy scopes must be set through Group Policy.</value>
+    <value>Non è possibile impostare il criterio di esecuzione. I criteri di esecuzione negli ambiti MachinePolicy o UserPolicy devono essere impostati tramite Criteri di gruppo.</value>
   </data>
   <data name="SetExecutionPolicyCaption" xml:space="preserve">
-    <value>Execution Policy Change</value>
+    <value>Modifica del criterio di esecuzione</value>
   </data>
   <data name="SetExecutionPolicyQuery" xml:space="preserve">
-    <value>The execution policy helps protect you from scripts that you do not trust. Changing the execution policy might expose you to the security risks described in the about_Execution_Policies help topic at https://go.microsoft.com/fwlink/?LinkID=135170. Do you want to change the execution policy?</value>
+    <value>Il criterio di esecuzione consente di proteggersi da script non attendibili. La modifica del criterio di esecuzione potrebbe esporre l'utente ai rischi per la sicurezza descritti nell'argomento della Guida about_Execution_Policies help topic at https://go.microsoft.com/fwlink/?LinkID=135170. Modificare il criterio di esecuzione?</value>
   </data>
   <data name="SetExecutionPolicyAccessDeniedError" xml:space="preserve">
     <value>{0}
-To change the execution policy for the default (LocalMachine) scope, start PowerShell with the "Run as administrator" option. To change the execution policy for the current user, run "Set-ExecutionPolicy -Scope CurrentUser".</value>
+Per modificare il criterio di esecuzione per l'ambito predefinito (LocalMachine), aprire PowerShell con l'opzione "Esegui come amministratore". Per modificare il criterio di esecuzione per l'utente corrente, eseguire "Set-ExecutionPolicy -Scope CurrentUser".</value>
   </data>
 </root>

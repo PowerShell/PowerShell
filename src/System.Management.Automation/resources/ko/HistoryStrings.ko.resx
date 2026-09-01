@@ -118,36 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidIdGetHistory" xml:space="preserve">
-    <value>The identifier {0} is not a valid value for a History identifier. Specify a positive number, and then try again.</value>
+    <value>식별자 {0}은(는) 기록 식별자의 올바른 값이 아닙니다. 양수를 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="NoHistoryForId" xml:space="preserve">
-    <value>Cannot locate the history for Id {0}.</value>
+    <value>ID {0}의 기록을 찾을 수 없습니다.</value>
   </data>
   <data name="NoCountWithMultipleIds" xml:space="preserve">
-    <value>The count cannot be combined with multiple Ids.</value>
+    <value>개수는 여러 ID와 함께 사용할 수 없습니다.</value>
   </data>
   <data name="NoHistoryForCommandline" xml:space="preserve">
-    <value>Cannot locate the history for command line {0}.</value>
+    <value>명령줄 {0}에 대한 기록을 찾을 수 없습니다.</value>
   </data>
   <data name="NoLastHistoryEntryFound" xml:space="preserve">
-    <value>Cannot locate most recent history.</value>
+    <value>가장 최근 기록을 찾을 수 없습니다.</value>
   </data>
   <data name="InvokeHistoryLoopDetected" xml:space="preserve">
-    <value>The Invoke-History cmdlet is called repeatedly, in a loop.</value>
+    <value>Invoke-History cmdlet이 루프에서 반복적으로 호출됩니다.</value>
   </data>
   <data name="InvokeHistoryMultipleCommandsError" xml:space="preserve">
-    <value>Cannot process multiple history commands. You can only run a single command by using Invoke-History.</value>
+    <value>여러 기록 명령은 처리할 수 없습니다. Invoke-History를 사용하면 한 번에 하나의 명령만 실행할 수 있습니다.</value>
   </data>
   <data name="AddHistoryInvalidInput" xml:space="preserve">
-    <value>Cannot add history because the input object has a format that is not valid.</value>
+    <value>입력 개체의 형식이 올바르지 않아 기록을 추가할 수 없습니다.</value>
   </data>
   <data name="InvalidCountValue" xml:space="preserve">
-    <value>The identifier {0} is not valid. Specify a positive number, and then try again.</value>
+    <value>식별자 {0}은(는) 올바르지 않습니다. 양수를 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="ClearHistoryWarning" xml:space="preserve">
-    <value>This command will clear all the entries from the session history.</value>
+    <value>이 명령은 세션 기록의 모든 항목을 지웁니다.</value>
   </data>
   <data name="NoCountWithMultipleCmdLine" xml:space="preserve">
-    <value>The count cannot be combined with multiple CommandLine parameters.</value>
+    <value>개수는 여러 CommandLine 매개 변수와 함께 사용할 수 없습니다.</value>
   </data>
 </root>

@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PathIsNullOrEmptyCollection" xml:space="preserve">
-    <value>The provided Path argument was null or an empty collection.</value>
+    <value>提供的 Path 参数为 null 或为空集合。</value>
   </data>
 </root>

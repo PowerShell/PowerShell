@@ -118,99 +118,99 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorMalformedDataFromRemoteCommand" xml:space="preserve">
-    <value>Data returned by the remote {0} command is not in the expected format.</value>
+    <value>Los datos devueltos por el comando {0} remoto no están en el formato esperado.</value>
   </data>
   <data name="ErrorRequiredRemoteCommandNotFound" xml:space="preserve">
-    <value>The {0} cmdlet requires the following commands in the remote session: Get-Command, Get-FormatData, and Select-Object. The following commands are used, but optional: Get-Help, and Measure-Object. Verify that the remote session includes the required commands, and then try again.</value>
+    <value>El cmdlet {0} requiere los siguientes comandos en la sesión remota: Get-Command, Get-FormatData y Select-Object. Los siguientes comandos se usan, pero son opcionales: Get-Help y Measure-Object. Compruebe que la sesión remota incluye los comandos necesarios e inténtelo de nuevo.</value>
   </data>
   <data name="ErrorFromRemoteCommand" xml:space="preserve">
-    <value>Running the {0} command in a remote session reported the following error: {1}.</value>
+    <value>Al ejecutar el comando {0} en una sesión remota se notificó el siguiente error: {1}.</value>
   </data>
   <data name="ErrorNoResultsFromRemoteEnd" xml:space="preserve">
-    <value>Running the {0} command in a remote session returned no results.</value>
+    <value>La ejecución del comando {0} en una sesión remota no devolvió ningún resultado.</value>
   </data>
   <data name="ErrorNoRunspaceForThisModule" xml:space="preserve">
-    <value>No session has been associated with this implicit remoting module.</value>
+    <value>No se ha asociado ninguna sesión a este módulo de comunicación remota implícita.</value>
   </data>
   <data name="ErrorCouldntResolveAlias" xml:space="preserve">
-    <value>Could not resolve remote alias '{0}'.</value>
+    <value>No se pudo resolver el alias remoto "{0}".</value>
   </data>
   <data name="ErrorSkippedNonRequestedCommand" xml:space="preserve">
-    <value>Proxy creation has been skipped for the '{0}' command, because the name did not match the value of the Name parameter.</value>
+    <value>Se omitió la creación del proxy para el comando "{0}" porque el nombre no coincidía con el valor del parámetro Name.</value>
   </data>
   <data name="ErrorSkippedNonRequestedTypeDefinition" xml:space="preserve">
-    <value>Extended type definition has been skipped for the '{0}' type because its name did not match the value of the FormatTypeName parameter.</value>
+    <value>Se ha omitido la definición de tipo extendido para el tipo "{0}" porque su nombre no coincide con el valor del parámetro FormatTypeName.</value>
   </data>
   <data name="ErrorSkippedUnsafeCommandName" xml:space="preserve">
-    <value>Proxy creation has been skipped for the '{0}' command, because PowerShell could not verify the safety of the command name.</value>
+    <value>Se omitió la creación del proxy para el comando "{0}" porque PowerShell no pudo comprobar la seguridad del nombre del comando.</value>
   </data>
   <data name="ErrorCommandSkippedBecauseOfShadowing" xml:space="preserve">
-    <value>Proxy creation has been skipped for the following command: '{0}', because it would shadow an existing local command.  Use the AllowClobber parameter if you want to shadow existing local commands.</value>
+    <value>Se ha omitido la creación del Proxy para el siguiente comando: "{0}", ya que se ocultaría un comando local existente.  Use el parámetro AllowClobber si desea ocultar los comandos locales existentes.</value>
   </data>
   <data name="ErrorNoCommandsImportedBecauseOfSkipping" xml:space="preserve">
-    <value>No command proxies have been created, because all of the requested remote commands would shadow existing local commands.  Use the AllowClobber parameter if you want to shadow existing local commands.</value>
+    <value>No se ha creado ningún proxy de comando, porque todos los comandos remotos solicitados crearían sombras de los comandos locales existentes.  Use el parámetro AllowClobber si desea ocultar los comandos locales existentes.</value>
   </data>
   <data name="ProxyModuleDescription" xml:space="preserve">
-    <value>Implicit remoting for {0}</value>
+    <value>Comunicación remota implícita para {0}</value>
   </data>
   <data name="EventSourceIdentifier" xml:space="preserve">
-    <value>Implicit remoting event (session id: {0}; event handler id: {1})</value>
+    <value>Evento de comunicación remota implícita (id. de sesión: {0}; id. de controlador de eventos: {1})</value>
   </data>
   <data name="ModuleHeaderTitle" xml:space="preserve">
-    <value>Implicit remoting module</value>
+    <value>Módulo de comunicación remota implícita</value>
   </data>
   <data name="ModuleHeaderDate" xml:space="preserve">
-    <value>generated on {0}</value>
+    <value>generado en {0}</value>
   </data>
   <data name="ModuleHeaderCommand" xml:space="preserve">
-    <value>by {0} cmdlet</value>
+    <value>por {0} cmdlet</value>
   </data>
   <data name="ModuleHeaderCommandLine" xml:space="preserve">
-    <value>Invoked with the following command line: {0}</value>
+    <value>Se invoca con la siguiente línea de comandos: {0}</value>
   </data>
   <data name="ModuleHeaderRunspaceOverrideParameter" xml:space="preserve">
-    <value>Optional parameter that can be used to specify the session on which this proxy module works</value>
+    <value>Parámetro opcional que se puede usar para especificar la sesión en la que funciona este módulo de proxy</value>
   </data>
   <data name="CreateNewRunspaceMessageTemplate" xml:space="preserve">
-    <value>Creating a new session for implicit remoting of "{{0}}" command...</value>
+    <value>Creando una nueva sesión para la comunicación remota implícita del comando "{{0}}"...</value>
   </data>
   <data name="ProxyRunspaceNameTemplate" xml:space="preserve">
-    <value>Session for implicit remoting module at {{0}}</value>
+    <value>Sesión para el módulo de comunicación remota implícita en {{0}}</value>
   </data>
   <data name="ProgressActivity" xml:space="preserve">
-    <value>Creating implicit remoting module ...</value>
+    <value>Creando módulo de comunicación remota implícita...</value>
   </data>
   <data name="ProgressStatusGetCommandStart" xml:space="preserve">
-    <value>Getting command information from remote session ...</value>
+    <value>Obteniendo información de comandos de la sesión remota...</value>
   </data>
   <data name="ProgressStatusGetCommandProgress" xml:space="preserve">
-    <value>Getting command information from remote session ... {0} commands received</value>
+    <value>Obteniendo información de comandos de sesión remota... {0} comandos recibidos</value>
   </data>
   <data name="ProgressStatusGetFormatDataStart" xml:space="preserve">
-    <value>Getting formatting and output information from remote session ...</value>
+    <value>Obteniendo formato e información de salida de la sesión remota...</value>
   </data>
   <data name="ProgressStatusGetFormatDataProgress" xml:space="preserve">
-    <value>Getting formatting and output information from remote session ... {0} objects received</value>
+    <value>Obteniendo información de formato y salida de sesión remota... {0} objetos recibidos</value>
   </data>
   <data name="ProgressStatusCompleted" xml:space="preserve">
-    <value>Completed.</value>
+    <value>Completado.</value>
   </data>
   <data name="CredentialRequestTitle" xml:space="preserve">
-    <value>PowerShell Credential Request</value>
+    <value>Solicitud de credenciales de PowerShell</value>
   </data>
   <data name="CredentialRequestBody" xml:space="preserve">
-    <value>Enter your credentials for {0}.</value>
+    <value>Escriba sus credenciales para {0}.</value>
   </data>
   <data name="ProxyCredentialRequestBody" xml:space="preserve">
-    <value>Enter the HTTP proxy credentials that are used for the following connection: {0}</value>
+    <value>Escriba las credenciales de proxy HTTP que se usan para la siguiente conexión: {0}</value>
   </data>
   <data name="WarningMismatchedImplicitRemotingHash" xml:space="preserve">
-    <value>Commands that are available in the new remote session are different than those available when the implicit remoting module was created.  Consider creating the module again by using the Export-PSSession cmdlet.</value>
+    <value>Los comandos disponibles en la nueva sesión remota son distintos de los que estaban disponibles cuando se creó el módulo de comunicación remota implícita.  Considere la posibilidad de volver a crear el módulo mediante el cmdlet Export-PSSession.</value>
   </data>
   <data name="CertificateNeeded" xml:space="preserve">
-    <value>Files cannot be loaded because running scripts is disabled on this system. Provide a valid certificate with which to sign the files.</value>
+    <value>No se pueden cargar archivos porque la ejecución de scripts está deshabilitada en este sistema. Proporcione un certificado válido con el que firmar los archivos.</value>
   </data>
   <data name="InvalidSigningOperation" xml:space="preserve">
-    <value>The file {0} could not be signed.</value>
+    <value>El archivo {0} no se pudo firmar.</value>
   </data>
 </root>

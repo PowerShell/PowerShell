@@ -121,32 +121,32 @@
     <value>PowerShell {0}</value>
   </data>
   <data name="ShellBannerCLMode" xml:space="preserve">
-    <value>[Constrained Language Mode]</value>
+    <value>[Mode de langue contrainte]</value>
   </data>
   <data name="ShellBannerCLAuditMode" xml:space="preserve">
-    <value>[Constrained Language AUDIT Mode : No Restrictions]</value>
+    <value>[Mode AUDIT du langage contraint : Aucune restriction]</value>
   </data>
   <data name="ShellBannerNLMode" xml:space="preserve">
-    <value>[No Language Mode]</value>
+    <value>[Aucun mode de langue]</value>
   </data>
   <data name="ShellBannerRLMode" xml:space="preserve">
-    <value>[Restricted Language Mode]</value>
+    <value>[Mode de langage restreint]</value>
   </data>
   <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell preview release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Une nouvelle version de préversion de PowerShell est disponible : v{0} {2}
+  {1} Mettez à niveau maintenant ou consultez la page de publication à l’adresse suivante :{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="StableUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell stable release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Une nouvelle version stable de PowerShell est disponible : v{0} {2}
+  {1} Mettez à niveau maintenant ou consultez la page de publication à l’adresse suivante :{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>
   <data name="LTSUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} A new PowerShell LTS release is available: v{0} {2}
-  {1} Upgrade now, or check out the release page at:{3}{2}
+    <value>  {1} Une nouvelle version LTS de PowerShell est disponible : v{0} {2}
+  {1} Mettez à niveau maintenant ou consultez la page de publication à l’adresse suivante :{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>
   </data>

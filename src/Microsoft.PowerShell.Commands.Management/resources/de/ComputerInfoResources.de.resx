@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LoadingOperationSystemInfo" xml:space="preserve">
-    <value>Loading operating system information</value>
+    <value>Informationen zum Betriebssystem werden geladen</value>
   </data>
   <data name="LoadingHotPatchInfo" xml:space="preserve">
-    <value>Loading hot-patch information</value>
+    <value>Hotpatchinformationen werden geladen</value>
   </data>
   <data name="LoadingRegistryInfo" xml:space="preserve">
-    <value>Loading registry information</value>
+    <value>Registrierungsinformationen werden geladen</value>
   </data>
   <data name="LoadingBiosInfo" xml:space="preserve">
-    <value>Loading BIOS information</value>
+    <value>BIOS-Informationen werden geladen</value>
   </data>
   <data name="LoadingMotherboardInfo" xml:space="preserve">
-    <value>Loading motherboard information</value>
+    <value>Hauptplatineninformationen werden geladen</value>
   </data>
   <data name="LoadingComputerInfo" xml:space="preserve">
-    <value>Loading Computer information</value>
+    <value>Computerinformationen werden geladen</value>
   </data>
   <data name="LoadingProcessorInfo" xml:space="preserve">
-    <value>Loading processor information</value>
+    <value>Prozessorinformationen werden geladen</value>
   </data>
   <data name="LoadingNetworkAdapterInfo" xml:space="preserve">
-    <value>Loading network adapter information</value>
+    <value>Informationen zum Netzwerkadapter werden geladen</value>
   </data>
 </root>
