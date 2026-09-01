@@ -4105,6 +4105,14 @@ namespace Microsoft.PowerShell.Commands
 
             if (IsItemContainer(destination))
             {
+                if (CanRemoteNameCausePathTraversal(sourceDirectoryName))
+                {
+                    throw PSTraceSource.NewArgumentException(
+                        nameof(sourceDirectoryName),
+                        FileSystemProviderStrings.DirectoryNamePathTraversal,
+                        sourceDirectoryName);
+                }
+
                 destination = MakePath(destination, sourceDirectoryName);
             }
 
@@ -4340,6 +4348,14 @@ namespace Microsoft.PowerShell.Commands
             // to the destination path.
             if (IsItemContainer(destinationPath))
             {
+                if (CanRemoteNameCausePathTraversal(sourceFileName))
+                {
+                    throw PSTraceSource.NewArgumentException(
+                        nameof(sourceFileName),
+                        FileSystemProviderStrings.FileNamePathTraversal,
+                        sourceFileName);
+                }
+
                 destinationPath = MakePath(destinationPath, sourceFileName);
             }
 
@@ -4367,6 +4383,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (string streamName in remoteFileStreams)
                         {
+                            if (CanRemoteNameCausePathTraversal(streamName))
+                            {
+                                throw PSTraceSource.NewArgumentException(nameof(streamName), FileSystemProviderStrings.ADSPathTraversal, streamName);
+                            }
+
                             result = PerformCopyFileFromRemoteSession(sourceFileFullName, destinationFile, destinationPath, force, ps, fileSize, true, streamName);
                             if (!result)
                             {
@@ -4961,6 +4982,30 @@ namespace Microsoft.PowerShell.Commands
 
             return pathIsReservedDeviceName;
         }
+
+        /// <summary>
+        /// Check if a file/directory name or an alternate stream name is a plain name that does not contain any characters that could allow path traversal.
+        /// </summary>
+        private static bool CanRemoteNameCausePathTraversal(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                // 'MakePath' handles null or empty value, so we just let it flow through.
+                return false;
+            }
+
+            // Detect characters and name patterns that could enable path traversal.
+            return name.IndexOfAny(s_pathTraversalChars) >= 0 || name is "." or "..";
+        }
+
+        // Characters that must never appear in a remote-supplied file system item name or an alternate stream name
+        // because we expect a plain name, not a path, and we don't want to allow any path traversal.
+        private static readonly char[] s_pathTraversalChars =
+#if UNIX
+            ['\\', '/'];
+#else
+            ['\\', '/', ':'];
+#endif
 
         private long _totalFiles;
         private long _totalBytes;
