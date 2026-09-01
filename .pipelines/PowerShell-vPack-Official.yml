@@ -61,7 +61,6 @@ extends:
       enabled: false
 
     globalSdl:
-      useCustomPolicy: true # for signing code
       disableLegacyManifest: true
       # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
       armory:
