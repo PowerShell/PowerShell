@@ -140,7 +140,7 @@
 Inicio de transcripción de PowerShell
 Hora de inicio: {0:yyyyMMddHHmmss}
 Nombre de usuario : {1}\{2}
-Máquina: {3}({4})
+Máquina: {3} ({4})
 **********************</value>
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">

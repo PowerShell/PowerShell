@@ -118,123 +118,123 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandAlreadySpecified" xml:space="preserve">
-    <value>Cannot process command because a command is already specified with -Command, -CommandWithArgs, or -EncodedCommand.</value>
+    <value>-Command、-CommandWithArgs、または -EncodedCommand でコマンドが既に指定されているため、コマンドを処理できません。</value>
   </data>
   <data name="MissingCommandParameter" xml:space="preserve">
-    <value>Cannot process the command because of a missing parameter. A command must follow -Command.</value>
+    <value>パラメーターがないため、コマンドを処理できません。コマンドは -Command の後に続ける必要があります。</value>
   </data>
   <data name="UnknownParameter" xml:space="preserve">
-    <value>Unrecognized parameter: '{0}'.</value>
+    <value>パラメーター: '{0}' が認識されていません。</value>
   </data>
   <data name="TooManyParametersToCommand" xml:space="preserve">
-    <value>'-' was specified with the -Command parameter; no other arguments to -Command are permitted.</value>
+    <value>'-' が -Command パラメーターで指定されました。-Command に対する他の引数は許可されません。</value>
   </data>
   <data name="StdinNotRedirected" xml:space="preserve">
-    <value>'-' was specified as the argument to -Command but standard input has not been redirected for this process.</value>
+    <value>-Command の引数として '-' が指定されましたが、このプロセスの標準入力はリダイレクトされていません。</value>
   </data>
   <data name="MissingOutputFormatParameter" xml:space="preserve">
-    <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter.
-Specify one of the following formats for this parameter:
+    <value>OutputFormat パラメーターに引数が指定されていないため、コマンドを実行できません。
+このパラメーターには、次のいずれかの形式を指定します:
 {0}</value>
   </data>
   <data name="MissingInputFormatParameter" xml:space="preserve">
-    <value>Cannot process the command because the -InputFormat parameter requires an argument. Specify a valid format argument for this parameter.
-Valid formats are:
+    <value>-InputFormat パラメーターに引数が必要なため、コマンドを処理できません。このパラメーターの有効な書式引数を指定してください。
+有効な形式は次のとおりです:
 {0}</value>
   </data>
   <data name="BadFormatParameterValue" xml:space="preserve">
-    <value>Cannot process the command because of an incorrect parameter value. "{0}" is not a valid format.
-Valid formats are:
+    <value>パラメーター値が正しくないため、コマンドを処理できません。"{0}" は有効な形式ではありません。
+有効な形式は次のとおりです:
 {1}</value>
   </data>
   <data name="ArgsAlreadySpecified" xml:space="preserve">
-    <value>Cannot process the command because arguments to -Command or -EncodedCommand have already been specified with -EncodedArguments.</value>
+    <value>-Command または -EncodedCommand への引数が -EncodedArguments で既に指定されているため、コマンドを処理できません。</value>
   </data>
   <data name="MissingArgsValue" xml:space="preserve">
-    <value>Cannot process the command because -EncodedArguments requires a value. Specify a value for the -EncodedArguments parameter.</value>
+    <value>-EncodedArguments には値が必要なため、コマンドを処理できません。-EncodedArguments パラメーターの値を指定してください。</value>
   </data>
   <data name="MissingFileArgument" xml:space="preserve">
-    <value>The command cannot be run because the File parameter requires a file path. Supply a path for the File parameter and then try the command again.</value>
+    <value>File パラメーターにファイル パスが必要なため、コマンドを実行できません。File パラメーターのパスを指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="MissingWindowStyleArgument" xml:space="preserve">
-    <value>Cannot process the command because -WindowStyle requires an argument that is normal, hidden, minimized or maximized. Specify one of these argument values and try again.</value>
+    <value>-WindowStyle には、通常、非表示、最小化、最大化の引数が必要なため、コマンドを処理できません。これらの引数の値のいずれかを指定してから、もう一度お試しください。</value>
   </data>
   <data name="InvalidFileArgument" xml:space="preserve">
-    <value>Processing -File '{0}' failed: {1} Specify a valid path for the -File parameter.</value>
+    <value>-File '{0}' の処理に失敗しました: {1} -File パラメーターの有効なパスを指定してください。</value>
   </data>
   <data name="InvalidWindowStyleArgument" xml:space="preserve">
-    <value>Processing -WindowStyle '{0}' failed: {1}.</value>
+    <value>-WindowStyle '{0}' の処理に失敗しました: {1}。</value>
   </data>
   <data name="InvalidFileArgumentExtension" xml:space="preserve">
-    <value>Processing -File '{0}' failed because the file does not have a '.ps1' extension. Specify a valid PowerShell script file name, and then try again.</value>
+    <value>ファイル '{0}' の処理に失敗しました。ファイルの拡張子が '.ps1' ではありません。有効な PowerShell スクリプト ファイル名を指定してから、やり直してください。</value>
   </data>
   <data name="ArgumentFileDoesNotExist" xml:space="preserve">
-    <value>The argument '{0}' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>引数 '{0}' はスクリプト ファイルの名前として認識されません。名前のスペルを確認するか、パスが含まれている場合はパスが正しいことを確認してから、もう一度お試しください。</value>
   </data>
   <data name="BadArgsValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedArguments is not properly encoded. The value must be Base64 encoded.</value>
+    <value>-EncodedArguments で指定された値が正しくエンコードされていないため、コマンドを処理できません。値は Base64 でエンコードされている必要があります。</value>
   </data>
   <data name="BadCommandValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedCommand is not properly encoded. The value must be Base64 encoded.</value>
+    <value>-EncodedCommand で指定された値が正しくエンコードされていないため、コマンドを処理できません。値は Base64 でエンコードされている必要があります。</value>
   </data>
   <data name="MissingExecutionPolicyParameter" xml:space="preserve">
-    <value>Cannot process the execution policy because of a missing policy name. A policy name must follow -ExecutionPolicy.</value>
+    <value>ポリシー名がないため、実行ポリシーを処理できません。ポリシー名は -ExecutionPolicy の後に続く必要があります。</value>
   </data>
   <data name="MtaStaMutuallyExclusive" xml:space="preserve">
-    <value>Cannot process the command because -STA and -MTA are both specified. Specify either -STA or -MTA.</value>
+    <value>-STA と -MTA の両方が指定されているため、コマンドを処理できません。-STA または -MTA のいずれかを指定してください。</value>
   </data>
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationName requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+    <value>-ConfigurationName にはリモート エンドポイント構成名の引数が必要なため、コマンドを処理できません。この引数を指定して、もう一度やり直してください。</value>
   </data>
   <data name="MissingConfigurationFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationFile requires an argument that is a session configuration (.pssc) file path. Specify this argument and try again.</value>
+    <value>-ConfigurationFile にはセッション構成 (.pssc) ファイル パスの引数が必要なため、コマンドを処理できません。この引数を指定して、もう一度やり直してください。</value>
   </data>
   <data name="MissingCustomPipeNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName requires an argument that is a name of the pipe you want to use. Specify this argument and try again.</value>
+    <value>-CustomPipeName には使用するパイプの名前である引数が必要なため、コマンドを処理できません。この引数を指定して、もう一度やり直してください。</value>
   </data>
   <data name="CustomPipeNameTooLong" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+    <value>指定された -CustomPipeName が長すぎるため、コマンドを処理できません。このプラットフォームのパイプ名は、最大 {0} 文字まで指定できます。パイプ名 '{1}' は {2} 文字です。</value>
   </data>
   <data name="MissingSettingsFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -SettingsFile requires an argument that is a file path.</value>
+    <value>-SettingsFile にはファイル パスである引数が必要なため、コマンドを処理できません。</value>
   </data>
   <data name="InvalidSettingsFileArgument" xml:space="preserve">
-    <value>Processing -SettingsFile '{0}' failed: {1}. Specify a valid path for the -SettingsFile parameter.</value>
+    <value>-SettingsFile '{0}' の処理に失敗しました: {1}。-SettingsFile パラメーターの有効なパスを指定してください。</value>
   </data>
   <data name="SettingsFileNotExists" xml:space="preserve">
-    <value>The argument '{0}' passed to the -SettingsFile does not exist. Provide the path to an existing json file as an argument to the -SettingsFile parameter.</value>
+    <value>-SettingsFile に渡された引数 '{0}' が存在しません。既存の json ファイルへのパスを -SettingsFile パラメーターの引数として指定します。</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
-    <value>Invalid argument '{0}', did you mean:</value>
+    <value>引数 '{0}' が無効です。次のことを意味しましたか:</value>
   </data>
   <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
-    <value>Parameter -WindowStyle is not implemented on this platform.</value>
+    <value>パラメーター -WindowStyle は、このプラットフォームでは実装されていません。</value>
   </data>
   <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
-    <value>Cannot process the command because -WorkingDirectory requires an argument that is a directory path.</value>
+    <value>-WorkingDirectory にはディレクトリ パスである引数が必要なため、コマンドを処理できません。</value>
   </data>
   <data name="MTANotImplemented" xml:space="preserve">
-    <value>Parameter -MTA is not supported on this platform.</value>
+    <value>パラメーター -MTA は、このプラットフォームではサポートされていません。</value>
   </data>
   <data name="STANotImplemented" xml:space="preserve">
-    <value>Parameter -STA is not supported on this platform.</value>
+    <value>パラメーター -STA は、このプラットフォームではサポートされていません。</value>
   </data>
   <data name="NullElementInArgs" xml:space="preserve">
-    <value>The specified arguments must not contain null elements.</value>
+    <value>指定された引数に null 値要素を含めることはできません。</value>
   </data>
   <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
-    <value>Invalid ExecutionPolicy value '{0}'.</value>
+    <value>ExecutionPolicy 値 '{0}' が無効です。</value>
   </data>
   <data name="MissingMandatoryArgument" xml:space="preserve">
-    <value>An argument is required to be supplied to the '{0}' parameter.</value>
+    <value>引数を '{0}' パラメーターに指定する必要があります。</value>
   </data>
   <data name="FileOnlyEntryRequired" xml:space="preserve">
-    <value>The parameter "-File" is required by policy.</value>
+    <value>パラメーター "-File" はポリシーで必要です。</value>
   </data>
   <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
-    <value>The parameter "-NoExit" is disallowed by policy.</value>
+    <value>パラメーター "-NoExit" はポリシーで許可されていません。</value>
   </data>
   <data name="FileOnlyEntryServerMode" xml:space="preserve">
-    <value>Server mode is disallowed by policy.</value>
+    <value>サーバー モードはポリシーで許可されていません。</value>
   </data>
 </root>

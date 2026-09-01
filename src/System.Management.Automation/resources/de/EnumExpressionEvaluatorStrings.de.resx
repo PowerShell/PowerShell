@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EmptyInputString" xml:space="preserve">
-    <value>The input expression must not be empty. Specify at least one identifier name in each input expression. </value>
+    <value>Der Eingabeausdruck darf nicht leer sein. Geben Sie in jedem Eingabeausdruck mindestens einen Bezeichnernamen an. </value>
   </data>
   <data name="EmptyTokenString" xml:space="preserve">
-    <value>Unable to match an empty identifier name to a valid enumerator name. Specify one of the following enumerator names and retry: {0}.</value>
+    <value>Ein leerer Bezeichner kann keinem gültigen Enumeratornamen zugeordnet werden. Geben Sie einen der folgenden Enumeratornamen an, und wiederholen Sie den Vorgang: {0}.</value>
   </data>
   <data name="InvalidGenericType" xml:space="preserve">
-    <value>The generic type specified for the expression must represent an enum. Specify a valid enum type. </value>
+    <value>Der für den Ausdruck angegebene generische Typ muss eine Enumeration darstellen. Geben Sie einen gültigen Enumerationstyp an. </value>
   </data>
   <data name="MultipleEnumNameMatch" xml:space="preserve">
-    <value>The identifier name {0} cannot be processed because it is either too similar or identical to the following enumerator names: {1}. Use a more specific identifier name.</value>
+    <value>Der Bezeichnername „{0}“ kann nicht verarbeitet werden, da er den folgenden Enumeratornamen entweder zu ähnlich oder identisch ist: {1}. Verwenden Sie einen spezifischeren Bezeichnernamen.</value>
   </data>
   <data name="NoEnumNameMatch" xml:space="preserve">
-    <value>Unable to match the identifier name {0} to a valid enumerator name. Specify one of the following enumerator names and try again:
+    <value>Der Bezeichner kann keinem gültigen Enumeratornamen „{0}“ zugeordnet werden. Geben Sie einen der folgenden Enumeratornamen an, und versuchen Sie es erneut:
 {1}</value>
   </data>
   <data name="NoIdentifierGroupingAllowed" xml:space="preserve">
-    <value>Use of parentheses is not valid in the expression because identifier grouping is not allowed. Try removing the parentheses, or if a subexpression is enclosed, try expanding the expression.</value>
+    <value>Die Verwendung von Klammern ist in dem Ausdruck nicht zulässig, da eine Gruppierung von Bezeichnern nicht erlaubt ist. Entfernen Sie die Klammern, oder erweitern Sie den Ausdruck, wenn ein Teilausdruck eingeschlossen ist.</value>
   </data>
   <data name="SyntaxErrorBinaryOperatorExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. Only an OR (,) operator or AND (+) operator is expected after an identifier name.</value>
+    <value>Der Ausdruck kann aufgrund eines unerwarteten Tokens nicht analysiert werden. Nach einem Bezeichnernamen wird nur ein OR (,)-Operator oder ein AND (+)-Operator erwartet.</value>
   </data>
   <data name="SyntaxErrorIdentifierExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token after a NOT (!) operator. An identifier name is expected after a NOT (!) operator.</value>
+    <value>Der Ausdruck kann aufgrund eines unerwarteten Tokens nach einem NOT (!)-Operator nicht analysiert werden. Nach einem NOT (!)-Operator wird ein Bezeichnername erwartet.</value>
   </data>
   <data name="SyntaxErrorUnexpectedBinaryOperator" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. An identifier name or a NOT (!) operator is expected at the start of the expression, or after an OR (,) operator or an AND (+) operator. Also, an expression must not end with an OR (,), AND (+) or NOT (!) operator.</value>
+    <value>Der Ausdruck kann aufgrund eines unerwarteten Tokens nicht analysiert werden. Zu Beginn des Ausdrucks oder nach einem OR-Operator (,) bzw. einem AND-Operator (+) wird ein Bezeichnername oder ein NOT-Operator (!) erwartet. Außerdem darf ein Ausdruck nicht mit einem OR-Operator (,), einem AND-Operator (+) oder einem NOT-Operator (!) enden.</value>
   </data>
 </root>

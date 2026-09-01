@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EmptyInputString" xml:space="preserve">
-    <value>The input expression must not be empty. Specify at least one identifier name in each input expression. </value>
+    <value>輸入運算式不可為空白。請在每個輸入運算式中至少指定一個識別碼名稱。</value>
   </data>
   <data name="EmptyTokenString" xml:space="preserve">
-    <value>Unable to match an empty identifier name to a valid enumerator name. Specify one of the following enumerator names and retry: {0}.</value>
+    <value>無法將空白識別碼名稱與有效的列舉程式名稱做比對。請指定下列其中一個列舉值名稱，然後重試: {0}。</value>
   </data>
   <data name="InvalidGenericType" xml:space="preserve">
-    <value>The generic type specified for the expression must represent an enum. Specify a valid enum type. </value>
+    <value>為運算式指定的泛型型別必須代表列舉。請指定有效的列舉型別。</value>
   </data>
   <data name="MultipleEnumNameMatch" xml:space="preserve">
-    <value>The identifier name {0} cannot be processed because it is either too similar or identical to the following enumerator names: {1}. Use a more specific identifier name.</value>
+    <value>無法處理識別碼名稱 {0}，因為它與下列列舉值名稱太相似或完全相同: {1}。請使用更具體的識別碼名稱。</value>
   </data>
   <data name="NoEnumNameMatch" xml:space="preserve">
-    <value>Unable to match the identifier name {0} to a valid enumerator name. Specify one of the following enumerator names and try again:
+    <value>無法將識別碼名稱 {0} 與有效的列舉程式名稱做比對。請指定下列其中一個列舉程式名稱，然後再試一次: 
 {1}</value>
   </data>
   <data name="NoIdentifierGroupingAllowed" xml:space="preserve">
-    <value>Use of parentheses is not valid in the expression because identifier grouping is not allowed. Try removing the parentheses, or if a subexpression is enclosed, try expanding the expression.</value>
+    <value>運算式中不允許識別碼分組，因此無法使用括號。請嘗試移除括號；如果括號內包含子運算式，請嘗試展開該運算式。</value>
   </data>
   <data name="SyntaxErrorBinaryOperatorExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. Only an OR (,) operator or AND (+) operator is expected after an identifier name.</value>
+    <value>因為出現未預期的 Token，所以無法剖析運算式。識別碼名稱之後只能接 OR (,) 運算子或 AND (+) 運算子。</value>
   </data>
   <data name="SyntaxErrorIdentifierExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token after a NOT (!) operator. An identifier name is expected after a NOT (!) operator.</value>
+    <value>因為 NOT (!) 後出現未預期的 Token，所以無法剖析運算式。NOT (!) 運算子後面必須是識別碼名稱。</value>
   </data>
   <data name="SyntaxErrorUnexpectedBinaryOperator" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. An identifier name or a NOT (!) operator is expected at the start of the expression, or after an OR (,) operator or an AND (+) operator. Also, an expression must not end with an OR (,), AND (+) or NOT (!) operator.</value>
+    <value>因為出現未預期的 Token，所以無法剖析運算式。在運算式開頭，或在 OR (,) 運算子或 AND (+) 運算子之後，必須有識別項名稱或 NOT (!) 運算子。此外，運算式結尾不能是 OR (,)、AND (+) 或 NOT (!) 運算子。</value>
   </data>
 </root>

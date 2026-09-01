@@ -121,132 +121,132 @@
     <value>'{0}' yoluna erişim reddedildi.</value>
   </data>
   <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
-    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To suppress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthentication parameter.</value>
+    <value>Cmdlet, düz metin gizli bilgileri şifrelenmemiş bağlantılar üzerinden koruyamaz. Düz metin gizli bilgileri şifrelenmemiş ağlar üzerinden göndermeye yönelik bu uyarıyı durdurmak için, AllowUnencryptedAuthentication parametresini belirterek komutu yeniden verin.</value>
   </data>
   <data name="AuthenticationConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Authentication and UseDefaultCredentials. Authentication does not support Default Credentials. Specify either Authentication or UseDefaultCredentials, then retry.</value>
+    <value>Çakışan aşağıdaki parametreler belirtildiği için cmdlet çalıştırılamıyor: Authentication ve UseDefaultCredentials. Authentication, Default Credentials'ı desteklemez. Authentication veya UseDefaultCredentials belirtin, ardından yeniden deneyin.</value>
   </data>
   <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Credential. The supplied Authentication type requires a Credential. Specify Credential, then retry.</value>
+    <value>Aşağıdaki parametre belirtilmediği için cmdlet çalıştırılamıyor: Credential. Sağlanan Authentication türü bir Credential gerektirir. Önce Kimlik Bilgisi belirtin, ardından yeniden deneyin.</value>
   </data>
   <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Token. The supplied Authentication type requires a Token. Specify Token, then retry.</value>
+    <value>Aşağıdaki parametre belirtilmediği için cmdlet çalıştırılamıyor: Token. Belirtilen Authentication türü bir Token gerektirir. Token belirtin, ardından yeniden deneyin.</value>
   </data>
   <data name="AuthenticationTokenConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and Token. Specify either Credential or Token, then retry.</value>
+    <value>Çakışan aşağıdaki parametreler belirtildiği için cmdlet çalıştırılamıyor: Kimlik bilgisi ve Belirteç. Kimlik Bilgisi veya Belirteç belirtin, ardından yeniden deneyin.</value>
   </data>
   <data name="BodyConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and InFile. Specify either Body or Infile, then retry.  </value>
+    <value>Çakışan aşağıdaki parametreler belirtildiği için cmdlet çalıştırılamıyor: Body ve InFile. Gövde veya Infile belirtin, ardından yeniden deneyin.  </value>
   </data>
   <data name="BodyFormConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and Form. Specify either Body or Form, then retry.  </value>
+    <value>Çakışan aşağıdaki parametreler belirtildiği için cmdlet çalıştırılamıyor: Body ve Form. Body veya Form belirtin, ardından yeniden deneyin.  </value>
   </data>
   <data name="FormInFileConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: InFile and Form. Specify either InFile or Form, then retry.  </value>
+    <value>Cmdlet, aşağıdaki çakışan parametreler belirtildiği için çalıştırılamıyor: InFile ve Form. InFile veya Form belirtin, ardından yeniden deneyin.  </value>
   </data>
   <data name="ContentTypeException" xml:space="preserve">
-    <value>The cmdlet cannot run because the -ContentType parameter is not a valid Content-Type header. Specify a valid Content-Type for -ContentType, then retry. To suppress header validation, supply the -SkipHeaderValidation parameter.</value>
+    <value>Cmdlet, -ContentType parametresi geçerli bir Content-Type üst bilgi olmadığı için çalıştırılamıyor. -ContentType için geçerli bir Content-Type belirtin, ardından yeniden deneyin. Üst bilgi doğrulamasını durdurmak için -SkipHeaderValidation parametresini sağlayın.</value>
   </data>
   <data name="CredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and UseDefaultCredentials. Specify either Credential or UseDefaultCredentials, then retry.</value>
+    <value>Cmdlet, aşağıdaki çakışan parametreler belirtildiği için çalıştırılamıyor: Credential ve UseDefaultCredentials. Credential veya UseDefaultCredentials belirtin, ardından yeniden deneyin.</value>
   </data>
   <data name="DirectoryPathSpecified" xml:space="preserve">
-    <value>Path '{0}' resolves to a directory. Specify a path including a file name, and then retry the command.</value>
+    <value>Yol '{0}' bir dizine çözümleniyor. Dosya adı içeren bir yol belirtin ve ardından komutu yeniden deneyin.</value>
   </data>
   <data name="EmptyKeyInJsonString" xml:space="preserve">
-    <value>The provided JSON includes a property whose name is an empty string, this is only supported using the -AsHashTable switch.</value>
+    <value>Sağlanan JSON, adı boş bir dize olan bir özellik içeriyor; bu yalnızca -AsHashTable anahtarı kullanılarak desteklenir.</value>
   </data>
   <data name="DuplicateKeysInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated key '{0}'.</value>
+    <value>JSON dizesinden dönüştürülen sözlük, yinelenen '{0}' anahtarını içerdiği için JSON dizesi dönüştürülemiyor.</value>
   </data>
   <data name="IEDomNotSupported" xml:space="preserve">
-    <value>The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again. </value>
+    <value>Yanıt içeriği, Internet Explorer altyapısı kullanılamadığı veya Internet Explorer'ın ilk çalıştırma yapılandırması tamamlanmadığı için ayrıştırılamıyor. UseBasicParsing parametresini belirtin ve yeniden deneyin. </value>
   </data>
   <data name="InsecureRedirection" xml:space="preserve">
-    <value>Cannot follow an insecure redirection by default. Reissue the command specifying the -AllowInsecureRedirect switch. </value>
+    <value>Varsayılan olarak güvensiz bir yeniden yönlendirme izlenemez. -AllowInsecureRedirect anahtarını belirterek komutu yeniden verin. </value>
   </data>
   <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
+    <value>JSON dizesi, farklı büyük/küçük harf kullanımına sahip anahtarlar içerdiği için dönüştürülemiyor. Lütfen bunun yerine -AsHashTable anahtarını kullanın. Var olan anahtar '{0}' içine eklenmeye çalışılan anahtar '{1}' idi.</value>
   </data>
   <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
-    <value>The maximum redirection count has been exceeded. To increase the number of redirections allowed, supply a higher value to the -MaximumRedirection parameter.</value>
+    <value>Maksimum yönlendirme sayısı aşıldı. İzin verilen yönlendirme sayısını artırmak için, -MaximumRedirection parametresine daha yüksek bir değer sağlayın.</value>
   </data>
   <data name="MultiplePathsResolved" xml:space="preserve">
-    <value>Path '{0}' can be resolved to multiple paths.</value>
+    <value>‘{0}' yolu birden çok yola çözümlenebilir.</value>
   </data>
   <data name="NonStringKeyInDictionary" xml:space="preserve">
-    <value>The type '{0}' is not supported for serialization or deserialization of a dictionary. Keys must be strings.</value>
+    <value>‘{0}' türü, bir sözlüğün serileştirilmesi veya seri durumundan çıkarılması için desteklenmiyor. Anahtarlar dize olmalıdır.</value>
   </data>
   <data name="NoPathResolved" xml:space="preserve">
-    <value>Path '{0}' cannot be resolved to a file.</value>
+    <value>‘{0}' yolu bir dosyaya çözümlenemiyor.</value>
   </data>
   <data name="NotFilesystemPath" xml:space="preserve">
-    <value>Path '{0}' is not a file system path. Please specify the path to a file in the file system.</value>
+    <value>Yol '{0}' bir dosya sistemi yolu değil. Lütfen dosya sistemindeki bir dosyanın yolunu belirtin.</value>
   </data>
   <data name="OutFileMissing" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide a valid OutFile parameter value when using the {0} parameter, then retry.</value>
+    <value>Cmdlet, aşağıdaki parametre belirtilmediği için çalıştırılamıyor: OutFile. {0} parametresini kullanırken geçerli bir OutFile parametre değeri belirtin, ardından yeniden deneyin.</value>
   </data>
   <data name="OutFileWritingSkipped" xml:space="preserve">
-    <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
+    <value>Uzak dosya, OutFile ile aynı boyutta olduğu için dosya yeniden indirilmeyecek: {0}</value>
   </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
+    <value>Çakışan aşağıdaki parametreler belirtildiği için cmdlet çalıştırılamıyor: ProxyCredential ve ProxyUseDefaultCredentials. ProxyCredential veya ProxyUseDefaultCredentials belirtin, ardından yeniden deneyin.</value>
   </data>
   <data name="ProxyUriNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or ProxyUseDefaultCredentials parameters, then retry.</value>
+    <value>Aşağıdaki parametre belirtilmediği için cmdlet çalıştırılamıyor: Proxy. ProxyCredential veya proxyusedefaultcredentials parametrelerini kullanırken proxy parametresi için geçerli bir proxy URI'si sağlayın, ardından yeniden deneyin.</value>
   </data>
   <data name="ReadResponseComplete" xml:space="preserve">
-    <value>Reading web response stream completed. Bytes downloaded: {0}</value>
+    <value>Web yanıt akışının okunması tamamlandı. İndirilen bayt miktarı: {0}</value>
   </data>
   <data name="ReadResponseProgressActivity" xml:space="preserve">
-    <value>Reading web response stream</value>
+    <value>Web yanıt akışı okunuyor</value>
   </data>
   <data name="ReadResponseProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>İndirilen: {0} / {1}</value>
   </data>
   <data name="ResumeNotFilePath" xml:space="preserve">
-    <value>The Resume switch can only be used if OutFile targets a file but it resolves to a directory: {0}.</value>
+    <value>Sürdürme anahtarı yalnızca OutFile bir dosyayı hedefliyorsa kullanılabilir, ancak bir dizine çözümleniyor: {0}.</value>
   </data>
   <data name="SessionConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Session and SessionVariable. Specify either Session or SessionVariable, then retry.</value>
+    <value>Cmdlet, aşağıdaki çakışan parametreler belirtildiği için çalıştırılamıyor: Session ve SessionVariable. Session veya SessionVariable belirtin, ardından yeniden deneyin.</value>
   </data>
   <data name="ThumbprintNotFound" xml:space="preserve">
-    <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
+    <value>Sertifikalar alınamıyor çünkü parmak izi geçersiz. Parmak izini doğrulayın ve yeniden deneyin. </value>
   </data>
   <data name="WriteRequestComplete" xml:space="preserve">
-    <value>Web request completed. (Number of bytes processed: {0})</value>
+    <value>Web isteği tamamlandı. (İşlenen bayt sayısı: {0})</value>
   </data>
   <data name="WriteRequestCancelled" xml:space="preserve">
-    <value>Web request cancelled. (Number of bytes processed: {0})</value>
+    <value>Web isteği iptal edildi. (İşlenen bayt sayısı: {0})</value>
   </data>
   <data name="WriteRequestProgressActivity" xml:space="preserve">
-    <value>Web request status</value>
+    <value>Web isteği durumu</value>
   </data>
   <data name="WriteRequestProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>İndirilen: {0} / {1}</value>
   </data>
   <data name="JsonDeserializationFailed" xml:space="preserve">
-    <value>Conversion from JSON failed with error: {0}</value>
+    <value>JSON'dan dönüştürme şu hatayla başarısız oldu: {0}</value>
   </data>
   <data name="ResponseStatusCodeFailure" xml:space="preserve">
-    <value>Response status code does not indicate success: {0} ({1}).</value>
+    <value>Yanıt durum kodu, başarı durumu göstermiyor: {0} ({1}).</value>
   </data>
   <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
-    <value>Following rel link {0}</value>
+    <value>İlgili bağlantıyı {0} izleyen</value>
   </data>
   <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
-    <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>
+    <value>Uzak sunucu, indirmeyi sürdüremeyeceğini belirtti. Yerel dosyanın üzerine yazılacak.</value>
   </data>
   <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
-    <value>Received HTTP/{0} response of content type {1} of unknown size</value>
+    <value>HTTP/{0} türünde, boyutu bilinmeyen {1} içerik türüne sahip yanıt alındı</value>
   </data>
   <data name="RetryVerboseMsg" xml:space="preserve">
-    <value>Retrying after interval of {0} seconds. Status code for previous attempt: {1}</value>
+    <value>{0} saniyelik aralıktan sonra yeniden deneniyor. Önceki denemenin durum kodu: {1}</value>
   </data>
   <data name="JsonMaxDepthReached" xml:space="preserve">
-    <value>Resulting JSON is truncated as serialization has exceeded the set depth of {0}.</value>
+    <value>Serileştirme, {0} olarak ayarlanan derinliği aştığı için ortaya çıkan JSON kesildi.</value>
   </data>
   <data name="WebSessionConnectionRecreated" xml:space="preserve">
-    <value>The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.</value>
+    <value>WebSession özellikleri istekler arasında değiştirildiğinden, oturumdaki tüm HTTP bağlantıları yeniden oluşturuluyor.</value>
   </data>
 </root>
