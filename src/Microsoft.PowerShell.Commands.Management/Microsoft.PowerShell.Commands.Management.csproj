@@ -10,14 +10,15 @@
     <ProjectReference Include="..\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.csproj" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="System.Diagnostics.EventLog" Version="10.0.5" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

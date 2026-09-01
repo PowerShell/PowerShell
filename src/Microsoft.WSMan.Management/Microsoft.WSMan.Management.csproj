@@ -14,8 +14,10 @@
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.5" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>
