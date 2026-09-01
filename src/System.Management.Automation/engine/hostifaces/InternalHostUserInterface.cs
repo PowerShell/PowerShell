@@ -652,12 +652,33 @@ namespace System.Management.Automation.Internal.Host
 
         internal static bool IsSecuritySensitiveType(string typeName)
         {
-            if (typeName.Equals(nameof(PSCredential), StringComparison.OrdinalIgnoreCase))
+            // Normalize the wire-provided type name so array-typed sensitive fields are
+            // recognized in this type-name fallback (used when the Type cannot be resolved).
+            // Every array form decorates the element name with a trailing bracket group
+            // ("PSCredential[]", multidimensional "[,]"/"[,,]", non-zero-based "[*]", jagged
+            // "[][]"), and assembly-qualified names append ", <assembly>, Version=...". Both
+            // are strictly suffixes, so cutting at the first '[' or ',' recovers the element
+            // type name for any shape. This mirrors the IsArray element-type unwrap in
+            // RemoteHostCall.PerformSecurityChecksOnHostMessage; without it such prompts would
+            // silently degrade to a cleartext string input instead of failing secure. Compare
+            // against both the short Name and the namespace-qualified FullName so the check is
+            // robust to whichever type-name variant is sent. As a fail-secure backstop the
+            // match is deliberately conservative: a false match only refuses a prompt.
+            string effectiveName = typeName;
+            int suffixIndex = effectiveName.IndexOfAny(new char[] { '[', ',' });
+            if (suffixIndex >= 0)
+            {
+                effectiveName = effectiveName.Substring(0, suffixIndex);
+            }
+
+            if (effectiveName.Equals(nameof(PSCredential), StringComparison.OrdinalIgnoreCase) ||
+                effectiveName.Equals(typeof(PSCredential).FullName, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            if (typeName.Equals(nameof(SecureString), StringComparison.OrdinalIgnoreCase))
+            if (effectiveName.Equals(nameof(SecureString), StringComparison.OrdinalIgnoreCase) ||
+                effectiveName.Equals(typeof(SecureString).FullName, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
