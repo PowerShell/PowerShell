@@ -15,6 +15,9 @@ jobs:
     value: none
   - name: DOTNET_NOLOGO
     value: 1
+  # Allow .NET SDK to access cultural data on Windows build.
+  - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+    value: 0
   - group: DotNetPrivateBuildAccess
   - group: certificate_logical_to_actual
   - name: ob_outputDirectory
