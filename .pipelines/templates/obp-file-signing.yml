@@ -2,6 +2,8 @@ parameters:
   binPath: '$(ob_outputDirectory)'
   globalTool: 'false'
   SigningProfile: 'external_distribution'
+  ThirdPartySigningProfile: '$(msft_3rd_party_cert_id)'
+  SignAllBinariesWithThirdPartyProfile: false
   OfficialBuild: true
   vPackScenario: false
 
@@ -112,7 +114,12 @@ steps:
     $signatures = $dlls | Get-AuthenticodeSignature
     $officialIssuerPattern = '^CN=(Microsoft Code Signing PCA|Microsoft Root Certificate Authority|Microsoft Corporation).*'
     $testCert = '^CN=(Microsoft|TestAzureEngBuildCodeSign).*'
-    $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned' -or $_.SignerCertificate.Issuer -notmatch $testCert -or $_.SignerCertificate.Issuer -notmatch $officialIssuerPattern} | select-object -ExpandProperty Path
+    $signAllBinaries = [System.Convert]::ToBoolean('${{ parameters.SignAllBinariesWithThirdPartyProfile }}')
+    if ($signAllBinaries) {
+      $missingSignatures = $signatures | Select-Object -ExpandProperty Path
+    } else {
+      $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned' -or $_.SignerCertificate.Issuer -notmatch $testCert -or $_.SignerCertificate.Issuer -notmatch $officialIssuerPattern} | Select-Object -ExpandProperty Path
+    }
 
     Write-Verbose -verbose "to be signed:`r`n $($missingSignatures | Out-String)"
 
@@ -140,7 +147,7 @@ steps:
   displayName: Sign 3rd Party files
   inputs:
     command: 'sign'
-    signing_profile: $(msft_3rd_party_cert_id)
+    signing_profile: ${{ parameters.ThirdPartySigningProfile }}
     files_to_sign: '**\*.dll;**\*.exe'
     search_root: $(Pipeline.Workspace)/thirdPartyToBeSigned
 
