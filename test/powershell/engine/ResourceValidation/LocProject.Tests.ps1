@@ -1,16 +1,22 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "Localized resource files validation" -Tags "CI" {
+Describe "LocProject.json file validation" -Tags "CI" {
     BeforeAll {
-        $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot ../../../..)).Path
+        ## The 'LocProject.json' tests depend on running from a local PowerShell repo.
+        $skipTests = $env:PIPELINE_REPOSITORY_NAME -eq 'Release-Automation'
+        if ($skipTests) {
+            Write-Host "Skipping 'LocProject.json' tests in Release Automation." -ForegroundColor Yellow
+            return
+        }
 
+        $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot ../../../..)).Path
         $locProjectPath = Join-Path $repoRoot 'Localize' 'LocProject.json'
-        $content = Get-Content -Path $locProjectPath -Raw
-        $locProject = ConvertFrom-Json -InputObject $content
+        $content = Get-Content -Path $locProjectPath -Raw -ErrorAction Stop
+        $locProject = ConvertFrom-Json -InputObject $content -ErrorAction Stop
     }
 
-    It 'Validate LocItems in LocProject.json' {
+    It 'Validate LocItems in LocProject.json' -Skip:$skipTests {
         $locProject.Projects.Count | Should -Be 1
         $project = $locProject.Projects[0]
         $project.LanguageSet | Should -BeExactly 'VS_Main_Languages'
@@ -28,7 +34,7 @@ Describe "Localized resource files validation" -Tags "CI" {
             }
     }
 
-    It 'Validate total resource count' {
+    It 'Validate total resource count' -Skip:$skipTests {
         $srcDir = Join-Path $repoRoot 'src'
         $project = $locProject.Projects[0]
 
