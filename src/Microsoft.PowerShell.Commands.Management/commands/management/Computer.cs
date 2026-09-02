@@ -1381,7 +1381,7 @@ $result
             object[] flags = new object[] { 0, 0, 0, 1 };
             flags[0] = ShutdownDelaySec;
             flags[1] = Comment;
-            flags[2] = Reason;
+            flags[2] = (uint)Reason;
 
             if (Force.IsPresent)
             {
