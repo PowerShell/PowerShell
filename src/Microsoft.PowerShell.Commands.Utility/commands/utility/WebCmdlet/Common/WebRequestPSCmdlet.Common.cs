@@ -1620,9 +1620,43 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ContentHelper.IsTextBasedContentType(ContentHelper.GetContentType(response)))
                     {
-                        debugBuilder.AppendLine(
-                            response.Content.ReadAsStringAsync(_cancelToken.Token)
-                            .GetAwaiter().GetResult());
+                        string body;
+
+                        try
+                        {
+                            // Normal path
+                            body = response.Content
+                                .ReadAsStringAsync(_cancelToken.Token)
+                                .GetAwaiter().GetResult();
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // Fallback for invalid charset (e.g., "utf8")
+                            var headers = response.Content.Headers;
+                            string charset = headers?.ContentType?.CharSet;
+
+                            Encoding encoding;
+
+                            try
+                            {
+                                encoding = !string.IsNullOrEmpty(charset)
+                                    ? Encoding.GetEncoding(charset)
+                                    : Encoding.UTF8;
+                            }
+                            catch (ArgumentException)
+                            {
+                                // Final fallback
+                                encoding = Encoding.UTF8;
+                            }
+
+                            var bytes = response.Content
+                                .ReadAsByteArrayAsync(_cancelToken.Token)
+                                .GetAwaiter().GetResult();
+
+                            body = encoding.GetString(bytes);
+                        }
+
+                        debugBuilder.AppendLine(body);
                     }
                     else
                     {
