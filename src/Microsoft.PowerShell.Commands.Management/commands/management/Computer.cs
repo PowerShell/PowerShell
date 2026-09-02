@@ -942,11 +942,7 @@ $result
             // Validate parameters
             ValidateComputerNames();
 
-            object[] flags = new object[] { 0, 0, 0, 2 };
-
-            flags[0] = RestartDelaySec;
-            flags[1] = Comment;
-            flags[2] = (uint)Reason;
+            object[] flags = new object[] { RestartDelaySec, Comment, (uint)Reason, 2 };
 
             if (Force)
             {
@@ -1378,10 +1374,7 @@ $result
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
         protected override void ProcessRecord()
         {
-            object[] flags = new object[] { 0, 0, 0, 1 };
-            flags[0] = ShutdownDelaySec;
-            flags[1] = Comment;
-            flags[2] = (uint)Reason;
+            object[] flags = new object[] { ShutdownDelaySec, Comment, (uint)Reason, 1 };
 
             if (Force.IsPresent)
             {
@@ -1728,10 +1721,13 @@ $result
                             if (_restart)
                             {
                                 // If successful and the Restart parameter is specified, restart the computer
-                                object[] flags = new object[] { 0, 0, 0, 6 };
-                                flags[0] = (uint)0;
-                                flags[1] = StringUtil.Format(ComputerResources.RestartcomputerAfterRename, newName);
-                                flags[2] = (uint)Reasons.OperatingSystemReconfigPlanned;
+                                object[] flags = new object[] {
+                                                    (uint)0,
+                                                    StringUtil.Format(ComputerResources.RestartcomputerAfterRename, newName),
+                                                    (uint)Reasons.OperatingSystemReconfigPlanned,
+                                                    6
+                                                };
+
                                 ComputerWMIHelper.InvokeWin32ShutdownTrackerUsingWsman(
                                     this,
                                     isLocalhost,
