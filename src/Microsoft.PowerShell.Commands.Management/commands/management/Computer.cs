@@ -300,6 +300,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the comment for rebooting the computer.
         /// </summary>
         [Parameter]
+        [ValidateNotNull]
         public string Comment { get; set; } = string.Empty;
 
         /// <summary>
@@ -1340,7 +1341,7 @@ $result
         /// Gets or sets the comment for shutting down the computer.
         /// </summary>
         [Parameter]
-        [ValidateNotNullOrEmpty]
+        [ValidateNotNull]
         public string Comment { get; set; } = string.Empty;
 
         /// <summary>
