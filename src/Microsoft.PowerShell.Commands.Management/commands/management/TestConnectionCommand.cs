@@ -477,6 +477,9 @@ namespace Microsoft.PowerShell.Commands
 
                         if (!Quiet.IsPresent)
                         {
+                            // The buffer may be empty even when BufferSize is not 0 as sending
+                            // a custom buffer needs privileges on Unix (see GetSendBuffer),
+                            // so report the requested size.
                             var status = new PingStatus(
                                 Source,
                                 routerName,
@@ -484,10 +487,6 @@ namespace Microsoft.PowerShell.Commands
                                 reply.Status == IPStatus.Success
                                     ? reply.RoundtripTime
                                     : timer.ElapsedMilliseconds,
-
-                                // The buffer may be empty even when BufferSize is not 0 as sending
-                                // a custom buffer needs privileges on Unix (see GetSendBuffer),
-                                // so report the requested size.
                                 BufferSize,
                                 pingNum: i);
                             WriteObject(new TraceStatus(
@@ -728,14 +727,14 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
+                    // The buffer may be empty even when BufferSize is not 0 as sending
+                    // a custom buffer needs privileges on Unix (see GetSendBuffer),
+                    // so report the requested size.
                     WriteObject(new PingStatus(
                         Source,
                         resolvedTargetName,
                         reply,
                         reply.RoundtripTime,
-                        // The buffer may be empty even when BufferSize is not 0 as sending
-                        // a custom buffer needs privileges on Unix (see GetSendBuffer),
-                        // so report the requested size.
                         BufferSize,
                         pingNum: (uint)i));
                 }
