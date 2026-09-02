@@ -142,42 +142,42 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// OperatingsystemHotfix related shutdown/restart.
         /// </summary>
-        OperatingsystemHotfix = 0x00020000 | 0x00000011,
+        OperatingSystemHotfix = 0x00020000 | 0x00000011,
 
         /// <summary>
         /// OperatingsystemHotfixPlanned related shutdown/restart.
         /// </summary>
-        OperatingsystemHotfixPlanned = 0x00020000 | 0x00000011 | 0x80000000,
+        OperatingSystemHotfixPlanned = 0x00020000 | 0x00000011 | 0x80000000,
 
         /// <summary>
         /// OperatingsystemReconfig related shutdown/restart.
         /// </summary>
-        OperatingsystemReconfig = 0x00020000 | 0x00000004,
+        OperatingSystemReconfig = 0x00020000 | 0x00000004,
 
         /// <summary>
         /// OperatingsystemReconfigPlanned related shutdown/restart.
         /// </summary>
-        OperatingsystemReconfigPlanned = 0x00020000 | 0x00000004 | 0x80000000,
+        OperatingSystemReconfigPlanned = 0x00020000 | 0x00000004 | 0x80000000,
 
         /// <summary>
         /// OperatingsystemSecurityfix related shutdown/restart.
         /// </summary>
-        OperatingsystemSecurityfix = 0x00020000 | 0x00000012,
+        OperatingSystemSecurityfix = 0x00020000 | 0x00000012,
 
         /// <summary>
         /// OperatingsystemSecurityfixPlanned related shutdown/restart.
         /// </summary>
-        OperatingsystemSecurityfixPlanned = 0x00020000 | 0x00000012 | 0x80000000,
+        OperatingSystemSecurityFixPlanned = 0x00020000 | 0x00000012 | 0x80000000,
 
         /// <summary>
         /// OperatingsystemServicepackPlanned related shutdown/restart.
         /// </summary>
-        OperatingsystemServicepackPlanned = 0x00020000 | 0x00000010 | 0x80000000,
+        OperatingSystemServicepackPlanned = 0x00020000 | 0x00000010 | 0x80000000,
 
         /// <summary>
         /// OperatingsystemUpgradePlanned related shutdown/restart.
         /// </summary>
-        OperatingsystemUpgradePlanned = 0x00020000 | 0x00000003 | 0x80000000,
+        OperatingSystemUpgradePlanned = 0x00020000 | 0x00000003 | 0x80000000,
 
         /// <summary>
         /// Other related shutdown/restart.
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// PowerCordunplugged related shutdown/restart.
         /// </summary>
-        PowerCordunplugged = 0x00060000 | 0x0000000b,
+        PowerCordUnplugged = 0x00060000 | 0x0000000b,
 
         /// <summary>
         /// PowerEnvironment related shutdown/restart.
@@ -1729,7 +1729,9 @@ $result
                             {
                                 // If successful and the Restart parameter is specified, restart the computer
                                 object[] flags = new object[] { 0, 0, 0, 6 };
+                                flags[0] = (uint)0;
                                 flags[1] = StringUtil.Format(ComputerResources.RestartcomputerAfterRename, newName);
+                                flags[2] = (uint)Reasons.OperatingSystemReconfigPlanned;
                                 ComputerWMIHelper.InvokeWin32ShutdownTrackerUsingWsman(
                                     this,
                                     isLocalhost,
