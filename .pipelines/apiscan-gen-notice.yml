@@ -4,6 +4,25 @@ name: apiscan-genNotice-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 trigger: none
 
 parameters:
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: EarlyAccessFeed
+    displayName: Early Access Feed
+    type: string
+    default: 'net10'
+    values:
+      - 'net8'
+      - 'net9'
+      - 'net10'
+  - name: DOTNET_RUNTIME_VERSION
+    displayName: Runtime version of early access build
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    displayName: SDK version of early access build
+    type: string
+    default: ' '
   - name: FORCE_CODEQL
     displayName: Debugging - Enable CodeQL and set cadence to 1 hour
     type: boolean
@@ -22,6 +41,12 @@ variables:
   # Defines the variables CgPat, CgOrganization, and CgProject
   - group: 'ComponentGovernance'
   - group: 'PoolNames'
+  - name: EARLY_ACCESS_FEED
+    value: ${{ parameters.EarlyAccessFeed }}
+  - name: IsEarlyAccess
+    value: ${{ parameters.IsEarlyAccess }}
+  - name: DOTNET_SDK_VERSION
+    value: ${{ parameters.DOTNET_SDK_VERSION }}
   - name: LinuxContainerImage
     value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - name: WindowsContainerImage
@@ -92,9 +117,32 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
+      - stage: prep
+        displayName: 'Prepare early access .NET'
+        dependsOn: []
+        jobs:
+          - ${{ if eq(parameters.IsEarlyAccess, true) }}:
+            - template: /.pipelines/templates/downloadDotnetEarlyAccess.yml@self
+              parameters:
+                DotnetRuntimeVersion: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+                DotnetSdkVersion: ${{ parameters.DOTNET_SDK_VERSION }}
+          - ${{ else }}:
+            - job: skip_download_dotnet_early_access
+              displayName: 'Skip early access .NET download'
+              pool:
+                type: windows
+              variables:
+                - name: ob_outputDirectory
+                  value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+                - name: ob_signing_setup_enabled
+                  value: false
+                - name: ob_sdl_codeSignValidation_enabled
+                  value: false
+              steps:
+                - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET download.'
       - stage: APIScan
         displayName: 'ApiScan'
-        dependsOn: []
+        dependsOn: [prep]
         jobs:
           - template: /.pipelines/templates/compliance/apiscan.yml@self
             parameters:

@@ -931,10 +931,11 @@ function Switch-PSNugetConfig {
         Set-PipelineVariable -Name 'EARLY_ACCESS_FEED_URL' -Value $earlyAccessFeedUrl
 
         $earlyAccessFeed = [NugetPackageSource] @{Url = $earlyAccessFeedUrl; Name = 'earlyaccess' }
+        $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'; Name = 'powershell' }
 
-        New-NugetConfigFile -NugetPackageSource $earlyAccessFeed -Destination "$PSScriptRoot/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $gallery -Destination "$PSScriptRoot/src/Modules/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $gallery -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $earlyAccessFeed -Destination "$PSScriptRoot/"
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } else {
         throw "Unknown source: $Source"
     }
