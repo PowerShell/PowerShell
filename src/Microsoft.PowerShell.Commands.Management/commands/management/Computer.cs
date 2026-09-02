@@ -140,37 +140,37 @@ namespace Microsoft.PowerShell.Commands
         LegacyApi = 0x00070000,
 
         /// <summary>
-        /// OperatingsystemHotfix related shutdown/restart.
+        /// OperatingSystemHotfix related shutdown/restart.
         /// </summary>
         OperatingSystemHotfix = 0x00020000 | 0x00000011,
 
         /// <summary>
-        /// OperatingsystemHotfixPlanned related shutdown/restart.
+        /// OperatingSystemHotfixPlanned related shutdown/restart.
         /// </summary>
         OperatingSystemHotfixPlanned = 0x00020000 | 0x00000011 | 0x80000000,
 
         /// <summary>
-        /// OperatingsystemReconfig related shutdown/restart.
+        /// OperatingSystemReconfig related shutdown/restart.
         /// </summary>
         OperatingSystemReconfig = 0x00020000 | 0x00000004,
 
         /// <summary>
-        /// OperatingsystemReconfigPlanned related shutdown/restart.
+        /// OperatingSystemReconfigPlanned related shutdown/restart.
         /// </summary>
         OperatingSystemReconfigPlanned = 0x00020000 | 0x00000004 | 0x80000000,
 
         /// <summary>
-        /// OperatingsystemSecurityfix related shutdown/restart.
+        /// OperatingSystemSecurityFix related shutdown/restart.
         /// </summary>
-        OperatingSystemSecurityfix = 0x00020000 | 0x00000012,
+        OperatingSystemSecurityFix = 0x00020000 | 0x00000012,
 
         /// <summary>
-        /// OperatingsystemSecurityfixPlanned related shutdown/restart.
+        /// OperatingSystemSecurityFixPlanned related shutdown/restart.
         /// </summary>
         OperatingSystemSecurityFixPlanned = 0x00020000 | 0x00000012 | 0x80000000,
 
         /// <summary>
-        /// OperatingsystemServicepackPlanned related shutdown/restart.
+        /// OperatingSystemServicepackPlanned related shutdown/restart.
         /// </summary>
         OperatingSystemServicepackPlanned = 0x00020000 | 0x00000010 | 0x80000000,
 
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
         OtherHung = 0x00000000 | 0x00000005,
 
         /// <summary>
-        /// PowerCordunplugged related shutdown/restart.
+        /// PowerCordUnplugged related shutdown/restart.
         /// </summary>
         PowerCordUnplugged = 0x00060000 | 0x0000000b,
 
