@@ -54,11 +54,11 @@ try
         }
 
         It "Should support Reason types" -Skip:(!$IsWindows) {
-            $ReasonList =  "Application", "Hardware", "OperatingSystem", "Other", "Power", "Software", "System", `
-                "BlueScreen", "Disk", "Environment", "Driver", "HotFix", "HotFixUninstall", "Unresponsive", "Installation", `
-                "Maintenance", "MMC", "NetworkConnectivity", "NetworkCard", "OtherDriver", "PowerSupply", "Processor", "Reconfigure", `
-                "SecurityIssue", "SecurityPatch","SecurityPatchUninstallation", "ServicePack", "ServicePackUninstallation", "TerminalServices", `
-                "Unstable", "Upgrade", "WMI"
+            $ReasonList =  "ApplicationHung","ApplicationInstallationPlanned","ApplicationMaintenance","ApplicationMaintenancePlanned","ApplicationUnstable",`
+                            "HardwareInstallation","HardwareInstallationPlanned","HardwareMaintenance","HardwareMaintenancePlanned","LegacyApi","OperatingsystemHotfix",`
+                            "OperatingsystemHotfixPlanned","OperatingsystemReconfig","OperatingsystemReconfigPlanned","OperatingsystemSecurityfix","OperatingsystemSecurityfixPlanned",`
+                            "OperatingsystemServicepackPlanned","OperatingsystemUpgradePlanned","Other","OtherPlanned","OtherHung","PowerCordunplugged","PowerEnvironment",`
+                            "SystemBluescreen","SystemNetworkConnectivity","SystemSecurity"
             foreach ( $reason in $ReasonList ) {
                 Restart-Computer -Reason $reason -ErrorAction Stop | Should -BeNullOrEmpty
             }
