@@ -68,6 +68,7 @@ jobs:
       workingDirectory: '$(repoRoot)'
       retryCountOnTaskFailure: 2
       env:
+        ob_restore_phase: true
         VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
     - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
@@ -75,6 +76,8 @@ jobs:
       condition: eq(variables['CODEQL_ENABLED'], 'true')
       inputs:
         Language: csharp
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         Import-Module .\build.psm1 -force
@@ -98,6 +101,7 @@ jobs:
       workingDirectory: '$(repoRoot)'
       displayName: 'Build PowerShell Source'
       env:
+        ob_restore_phase: true
         VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
     - pwsh: |
@@ -121,10 +125,14 @@ jobs:
         Write-Host
       workingDirectory: '$(repoRoot)'
       displayName: 'Remove unused runtimes'
+      env:
+        ob_restore_phase: true
 
     - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
       displayName: 🔏 CodeQL 3000 Finalize
       condition: eq(variables['CODEQL_ENABLED'], 'true')
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
