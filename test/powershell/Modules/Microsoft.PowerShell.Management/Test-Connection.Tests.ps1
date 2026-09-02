@@ -218,6 +218,12 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
             $result.BufferSize | Should -Be 2
         }
 
+        It "BufferSize 0 works and returns 0" {
+            $result = Test-Connection $targetName -Count 1 -BufferSize 0
+
+            $result.BufferSize | Should -Be 0
+        }
+
         It "ResolveDestination for address" {
             $result = Test-Connection $targetAddress -ResolveDestination -Count 1
             $resolvedName = [System.Net.DNS]::GetHostEntry($targetAddress).HostName
