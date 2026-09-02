@@ -1,5 +1,43 @@
 # Preview Changelog
 
+## [7.7.0-preview.5]
+
+### General Cmdlet Updates and Fixes
+
+- Handle MSIX installation specially when prepend to PATH (#27782)
+- Add `GetImportModuleCommand` method back and check for session restriction in `ShowCommand` (#25557)
+- Remove the `<assembly>` element for from `CmdletizationCoreResources.resx` (#27900)
+
+### Tests
+
+- Fix the localization tests for the Release Automation environment (#27944)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+
+</summary>
+
+<ul>
+<li>Change Windows test CI to stop using PowerShell 5.1 (#27940)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2701735 (#27895)</li>
+<li>Update <code>metadata.json</code> for August releases (#27919)</li>
+<li>Update <code>AppxManifest.xml</code> to only declare <code>en-US</code> for the <code>&lt;Resources&gt;</code> element (#27939)</li>
+<li>Use Custom Validation Policy for vPack Pipeline (#27911)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Correct New-TemporaryDirectory help URI (#27934)
+
+[7.7.0-preview.5]: https://github.com/PowerShell/PowerShell/compare/v7.7.0-preview.4...v7.7.0-preview.5
+
 ## [7.7.0-preview.4]
 
 ### Engine Updates and Fixes
