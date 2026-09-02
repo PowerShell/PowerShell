@@ -1345,7 +1345,7 @@ $result
         public string Comment { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the reason for rebooting the computer.
+        /// Gets or sets the reason for shutting down the computer.
         /// </summary>
         [Parameter]
         public Reasons Reason { get; set; } = Reasons.Other;
