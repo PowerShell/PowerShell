@@ -733,7 +733,6 @@ namespace Microsoft.PowerShell.Commands
                         resolvedTargetName,
                         reply,
                         reply.RoundtripTime,
-
                         // The buffer may be empty even when BufferSize is not 0 as sending
                         // a custom buffer needs privileges on Unix (see GetSendBuffer),
                         // so report the requested size.
