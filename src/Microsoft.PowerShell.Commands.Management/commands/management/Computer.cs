@@ -2230,14 +2230,14 @@ $result
         }
 
         /// <summary>
-        /// Invokes the Win32ShutdownTracker  command on provided target computer using WSMan
+        /// Invokes the Win32ShutdownTracker command on provided target computer using WSMan
         /// over a CIMSession.  The flags parameter determines the type of shutdown operation
         /// such as shutdown, reboot, force etc.
         /// </summary>
         /// <param name="cmdlet">Cmdlet host for reporting errors.</param>
         /// <param name="isLocalhost">True if local host computer.</param>
         /// <param name="computerName">Target computer.</param>
-        /// <param name="flags">Win32ShutdownTracker  flags.</param>
+        /// <param name="flags">Win32ShutdownTracker flags.</param>
         /// <param name="credential">Optional credential.</param>
         /// <param name="authentication">Optional authentication.</param>
         /// <param name="formatErrorMessage">Error message format string that takes two parameters.</param>
@@ -2255,7 +2255,7 @@ $result
             string ErrorFQEID,
             CancellationToken cancelToken)
         {
-            Dbg.Diagnostics.Assert(flags.Length == 4, "Caller need to verify the flags passed in");
+            Dbg.Diagnostics.Assert(flags.Length == 4, "Caller needs to verify the flags passed in");
 
             bool isSuccess = false;
             string targetMachine = isLocalhost ? "localhost" : computerName;
