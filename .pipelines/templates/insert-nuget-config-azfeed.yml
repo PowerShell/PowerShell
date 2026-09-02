@@ -46,17 +46,19 @@ steps:
     NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
     ob_restore_phase: ${{ parameters.ob_restore_phase }}
 
-- task: AzurePowerShell@5
+- task: AzureCLI@2
   inputs:
     azureSubscription: powershell-net-early-access
-    azurePowerShellVersion: LatestVersion
-    ScriptType: InlineScript
-    pwsh: true
-    inline: |
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: |
       Write-Verbose -Verbose "Getting an Azure DevOps access token"
       # Microsoft's well-known Entra resource ID for the Azure DevOps token audience.
       $azureDevOpsResourceUrl = '499b84ac-1321-427f-aa17-267ca6975798'
-      $azt = (Get-AzAccessToken -ResourceUrl $azureDevOpsResourceUrl).Token | ConvertFrom-SecureString -AsPlainText
+      $azt = az account get-access-token --resource $azureDevOpsResourceUrl --query accessToken --output tsv
+      if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($azt)) {
+        throw "Failed to get an Azure DevOps access token."
+      }
 
       Write-Host "##vso[task.setsecret]$azt"
       Write-Verbose -Verbose "Setting up Azure Artifacts Credential Provider token"
