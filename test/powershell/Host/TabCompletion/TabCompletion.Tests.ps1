@@ -1715,6 +1715,59 @@ param([ValidatePattern(
             $completionText -join ' ' | Should -BeExactly (($ExpectedExperimentalFeatureNames | Sort-Object -Unique) -join ' ')
         }
     }
+    
+    Context 'Invoke-RestMethod & Invoke-WebRequest -ContentType parameter completion' {
+        BeforeAll {
+            $allApplicationAndTextMediaTypes = "application/gzip application/json application/json-patch+json application/json-seq application/manifest+json application/octet-stream application/pdf application/problem+json application/problem+xml application/rtf application/soap+xml application/wasm application/x-www-form-urlencoded application/xml application/xml-dtd application/xml-patch+xml application/zip text/css text/csv text/event-stream text/html text/javascript text/markdown text/plain text/richtext text/rtf text/xml"
+            $allApplicationAndTextMediaTypesSingleQuote = "'application/gzip' 'application/json-patch+json' 'application/json-seq' 'application/json' 'application/manifest+json' 'application/octet-stream' 'application/pdf' 'application/problem+json' 'application/problem+xml' 'application/rtf' 'application/soap+xml' 'application/wasm' 'application/x-www-form-urlencoded' 'application/xml-dtd' 'application/xml-patch+xml' 'application/xml' 'application/zip' 'text/css' 'text/csv' 'text/event-stream' 'text/html' 'text/javascript' 'text/markdown' 'text/plain' 'text/richtext' 'text/rtf' 'text/xml'"
+            $allApplicationAndTextMediaTypesDoubleQuote = """application/gzip"" ""application/json-patch+json"" ""application/json-seq"" ""application/json"" ""application/manifest+json"" ""application/octet-stream"" ""application/pdf"" ""application/problem+json"" ""application/problem+xml"" ""application/rtf"" ""application/soap+xml"" ""application/wasm"" ""application/x-www-form-urlencoded"" ""application/xml-dtd"" ""application/xml-patch+xml"" ""application/xml"" ""application/zip"" ""text/css"" ""text/csv"" ""text/event-stream"" ""text/html"" ""text/javascript"" ""text/markdown"" ""text/plain"" ""text/richtext"" ""text/rtf"" ""text/xml"""
+            $allApplicationMediaTypes = "application/gzip application/json application/json-patch+json application/json-seq application/manifest+json application/octet-stream application/pdf application/problem+json application/problem+xml application/rtf application/soap+xml application/wasm application/x-www-form-urlencoded application/xml application/xml-dtd application/xml-patch+xml application/zip"
+            $allApplicationMediaTypesSingleQuote = "'application/gzip' 'application/json-patch+json' 'application/json-seq' 'application/json' 'application/manifest+json' 'application/octet-stream' 'application/pdf' 'application/problem+json' 'application/problem+xml' 'application/rtf' 'application/soap+xml' 'application/wasm' 'application/x-www-form-urlencoded' 'application/xml-dtd' 'application/xml-patch+xml' 'application/xml' 'application/zip'"
+            $allApplicationMediaTypesDoubleQuote = """application/gzip"" ""application/json-patch+json"" ""application/json-seq"" ""application/json"" ""application/manifest+json"" ""application/octet-stream"" ""application/pdf"" ""application/problem+json"" ""application/problem+xml"" ""application/rtf"" ""application/soap+xml"" ""application/wasm"" ""application/x-www-form-urlencoded"" ""application/xml-dtd"" ""application/xml-patch+xml"" ""application/xml"" ""application/zip"""
+            $allTextMediaTypes = "text/css text/csv text/event-stream text/html text/javascript text/markdown text/plain text/richtext text/rtf text/xml"
+            $allTextMediaTypesSingleQuote = "'text/css' 'text/csv' 'text/event-stream' 'text/html' 'text/javascript' 'text/markdown' 'text/plain' 'text/richtext' 'text/rtf' 'text/xml'"
+            $allTextMediaTypesDoubleQuote = """text/css"" ""text/csv"" ""text/event-stream"" ""text/html"" ""text/javascript"" ""text/markdown"" ""text/plain"" ""text/richtext"" ""text/rtf"" ""text/xml"""
+            $allApplicationJsonMediaTypes = "application/json application/json-patch+json application/json-seq"
+            $allApplicationJsonMediaTypesSingleQuote = "'application/json-patch+json' 'application/json-seq' 'application/json'"
+            $allApplicationJsonMediaTypesDoubleQuote = """application/json-patch+json"" ""application/json-seq"" ""application/json"""
+        }
+
+        It "Should complete Content Type for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Invoke-RestMethod -ContentType "; ExpectedContentTypes = $allApplicationAndTextMediaTypes }
+            @{ TextInput = "Invoke-WebRequest -ContentType "; ExpectedContentTypes = $allApplicationAndTextMediaTypes }
+            @{ TextInput = "Invoke-RestMethod -ContentType '"; ExpectedContentTypes = $allApplicationAndTextMediaTypesSingleQuote }
+            @{ TextInput = "Invoke-WebRequest -ContentType '"; ExpectedContentTypes = $allApplicationAndTextMediaTypesSingleQuote }
+            @{ TextInput = "Invoke-RestMethod -ContentType """; ExpectedContentTypes = $allApplicationAndTextMediaTypesDoubleQuote }
+            @{ TextInput = "Invoke-WebRequest -ContentType """; ExpectedContentTypes = $allApplicationAndTextMediaTypesDoubleQuote }
+
+            @{ TextInput = "Invoke-RestMethod -ContentType app"; ExpectedContentTypes = $allApplicationMediaTypes }
+            @{ TextInput = "Invoke-WebRequest -ContentType app"; ExpectedContentTypes = $allApplicationMediaTypes }
+            @{ TextInput = "Invoke-RestMethod -ContentType 'app"; ExpectedContentTypes = $allApplicationMediaTypesSingleQuote }
+            @{ TextInput = "Invoke-WebRequest -ContentType 'app"; ExpectedContentTypes = $allApplicationMediaTypesSingleQuote }
+            @{ TextInput = "Invoke-RestMethod -ContentType ""app"; ExpectedContentTypes = $allApplicationMediaTypesDoubleQuote }
+            @{ TextInput = "Invoke-WebRequest -ContentType ""app"; ExpectedContentTypes = $allApplicationMediaTypesDoubleQuote }
+
+            @{ TextInput = "Invoke-RestMethod -ContentType text"; ExpectedContentTypes = $allTextMediaTypes }
+            @{ TextInput = "Invoke-WebRequest -ContentType text"; ExpectedContentTypes = $allTextMediaTypes }
+            @{ TextInput = "Invoke-RestMethod -ContentType 'text"; ExpectedContentTypes = $allTextMediaTypesSingleQuote }
+            @{ TextInput = "Invoke-WebRequest -ContentType 'text"; ExpectedContentTypes = $allTextMediaTypesSingleQuote }
+            @{ TextInput = "Invoke-RestMethod -ContentType ""text"; ExpectedContentTypes = $allTextMediaTypesDoubleQuote }
+            @{ TextInput = "Invoke-WebRequest -ContentType ""text"; ExpectedContentTypes = $allTextMediaTypesDoubleQuote }
+
+            @{ TextInput = "Invoke-RestMethod -ContentType application/j"; ExpectedContentTypes = $allApplicationJsonMediaTypes }
+            @{ TextInput = "Invoke-WebRequest -ContentType application/j"; ExpectedContentTypes = $allApplicationJsonMediaTypes }
+            @{ TextInput = "Invoke-RestMethod -ContentType 'application/j"; ExpectedContentTypes = $allApplicationJsonMediaTypesSingleQuote }
+            @{ TextInput = "Invoke-WebRequest -ContentType 'application/j"; ExpectedContentTypes = $allApplicationJsonMediaTypesSingleQuote }
+            @{ TextInput = "Invoke-RestMethod -ContentType ""application/j"; ExpectedContentTypes = $allApplicationJsonMediaTypesDoubleQuote }
+            @{ TextInput = "Invoke-WebRequest -ContentType ""application/j"; ExpectedContentTypes = $allApplicationJsonMediaTypesDoubleQuote }
+        ) {
+            param($TextInput, $ExpectedContentTypes)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $ExpectedContentTypes
+            ($res.CompletionMatches.ResultType | Select-Object -Unique) | Should -BeExactly 'ParameterValue'
+        }
+    }
 
     Context "Join-String -Separator & -FormatString parameter completion" {
         BeforeAll {
