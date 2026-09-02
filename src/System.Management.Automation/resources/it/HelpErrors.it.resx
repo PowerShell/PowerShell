@@ -190,4 +190,7 @@ Per aggiornare questi argomenti della Guida, avviare PowerShell usando il comand
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>Non è possibile ottenere la Guida da una posizione di rete in una sessione con restrizioni.</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>Command not allowed in a restricted session.</value>
+  </data>
 </root>
