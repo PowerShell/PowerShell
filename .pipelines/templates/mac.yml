@@ -87,6 +87,7 @@ jobs:
     displayName: 'Build'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
   - template: /.pipelines/templates/step/finalize.yml@self
 
