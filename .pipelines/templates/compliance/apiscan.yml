@@ -14,6 +14,7 @@ jobs:
         value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
       - name: branchCounter
         value: $[counter(variables['branchCounterKey'], 1)]
+      - group: dotnet-early-access
       - group: DotNetPrivateBuildAccess
       - group: ReleasePipelineSecrets
       - group: mscodehub-feed-read-general
