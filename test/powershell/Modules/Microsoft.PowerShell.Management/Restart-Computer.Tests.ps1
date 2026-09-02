@@ -54,6 +54,7 @@ try
         }
 
         It "Should support Reason types" -Skip:(!$IsWindows) {
+            Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
             $ReasonList = [System.Enum]::GetNames([Microsoft.PowerShell.Commands.Reasons])
             foreach ( $reason in $ReasonList ) {
                 Restart-Computer -Reason $reason -ErrorAction Stop | Should -BeNullOrEmpty

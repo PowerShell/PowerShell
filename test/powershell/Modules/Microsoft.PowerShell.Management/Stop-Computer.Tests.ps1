@@ -55,6 +55,7 @@ try
         }
 
         It "Should support Reason types" -Skip:(!$IsWindows) {
+            Set-TesthookResult -testhookName $stopTesthookResultName -Value $defaultResultValue
             $ReasonList = [System.Enum]::GetNames([Microsoft.PowerShell.Commands.Reasons])
             foreach ( $reason in $ReasonList ) {
                 Stop-Computer -Reason $reason -ErrorAction Stop | Should -BeNullOrEmpty
