@@ -67,6 +67,8 @@ jobs:
       displayName: Install dotnet-symbol
       workingDirectory: '$(repoRoot)'
       retryCountOnTaskFailure: 2
+      env:
+        VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
     - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
       displayName: 🔏 CodeQL 3000 Init
@@ -95,6 +97,8 @@ jobs:
         Copy-Item -Path "$OutputFolder\*" -Destination $Destination -Recurse -Verbose
       workingDirectory: '$(repoRoot)'
       displayName: 'Build PowerShell Source'
+      env:
+        VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
     - pwsh: |
         # Only keep windows runtimes
