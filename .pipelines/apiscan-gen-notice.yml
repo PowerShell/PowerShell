@@ -45,6 +45,8 @@ variables:
     value: ${{ parameters.EarlyAccessFeed }}
   - name: IsEarlyAccess
     value: ${{ parameters.IsEarlyAccess }}
+  - name: DOTNET_SDK_VERSION
+    value: ${{ parameters.DOTNET_SDK_VERSION }}
   - name: LinuxContainerImage
     value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - name: WindowsContainerImage
