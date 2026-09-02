@@ -27,8 +27,8 @@ steps:
       }
       else
       {
-        Write-Verbose -Verbose "Running: Switch-PSNugetConfig -Source EarlyAccess"
-        Switch-PSNugetConfig -Source EarlyAccess
+        Write-Verbose -Verbose "Running: Switch-PSNugetConfig -Source EarlyAccess (using Azure DevOps feed credentials from pipeline variables)"
+        Switch-PSNugetConfig -Source EarlyAccess -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '$(powershellPackageReadPat)'
       }
 
       if(-not (Test-Path $configPath))
@@ -70,7 +70,7 @@ steps:
             'net10' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-10-early-access/nuget/v3/index.json' }
             default { throw "Unknown early access feed URL: $earlyAccessFeed" }
         }
-      $galleryRepoUri = 'https://www.powershellgallery.com/api/v2'
+      $powerShellRepoUri = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'
 
       Write-Verbose -Verbose "ADORepoUri == $ADORepoUri"
 
@@ -78,6 +78,11 @@ steps:
       {
         $endpointCredsObj = @{ endpointCredentials = @(
           @{ endpoint = $ADORepoUri; password = $azt }
+          @{
+            endpoint = $powerShellRepoUri
+            username = '$(AzDevopsFeedUserNameKVPAT)'
+            password = '$(powershellPackageReadPat)'
+          }
         )}
         $VSS_NUGET_EXTERNAL_FEED_ENDPOINTS = $endpointCredsObj | ConvertTo-Json -Compress
 
