@@ -946,7 +946,7 @@ $result
 
             flags[0] = RestartDelaySec;
             flags[1] = Comment;
-            flags[2] = Reason;
+            flags[2] = (uint)Reason;
 
             if (Force)
             {

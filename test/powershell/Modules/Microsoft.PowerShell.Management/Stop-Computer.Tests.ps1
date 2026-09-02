@@ -55,11 +55,7 @@ try
         }
 
         It "Should support Reason types" -Skip:(!$IsWindows) {
-            $ReasonList =  "ApplicationHung","ApplicationInstallationPlanned","ApplicationMaintenance","ApplicationMaintenancePlanned","ApplicationUnstable",`
-                            "HardwareInstallation","HardwareInstallationPlanned","HardwareMaintenance","HardwareMaintenancePlanned","LegacyApi","OperatingsystemHotfix",`
-                            "OperatingsystemHotfixPlanned","OperatingsystemReconfig","OperatingsystemReconfigPlanned","OperatingsystemSecurityfix","OperatingsystemSecurityfixPlanned",`
-                            "OperatingsystemServicepackPlanned","OperatingsystemUpgradePlanned","Other","OtherPlanned","OtherHung","PowerCordunplugged","PowerEnvironment",`
-                            "SystemBluescreen","SystemNetworkConnectivity","SystemSecurity"
+            $ReasonList = [System.Enum]::GetNames([Microsoft.PowerShell.Commands.Reasons])
             foreach ( $reason in $ReasonList ) {
                 Stop-Computer -Reason $reason -ErrorAction Stop | Should -BeNullOrEmpty
             }
