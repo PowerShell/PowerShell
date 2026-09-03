@@ -190,4 +190,7 @@
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>在受限会话中，无法从网络位置获取帮助。</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>Command not allowed in a restricted session.</value>
+  </data>
 </root>
