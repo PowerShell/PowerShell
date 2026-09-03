@@ -31,7 +31,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     default: false
   - name: EarlyAccessFeed
     type: string
-    default: 'net10'
+    default: 'net8'
     values:
       - 'net8'
       - 'net9'

@@ -31,6 +31,14 @@ jobs:
 
   - pwsh: |
       Get-ChildItem Env: | Out-String -Width 9999 -Stream | Write-Verbose -Verbose
+
+      if ([string]::IsNullOrWhiteSpace($env:DOTNET_RUNTIME_VERSION)) {
+        throw 'DOTNET_RUNTIME_VERSION must be set for an early access build.'
+      }
+
+      if ([string]::IsNullOrWhiteSpace($env:DOTNET_SDK_VERSION)) {
+        throw 'DOTNET_SDK_VERSION must be set for an early access build.'
+      }
     displayName: Capture environment
 
   - task: AzurePowerShell@5

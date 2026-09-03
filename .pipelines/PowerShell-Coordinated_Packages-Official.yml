@@ -35,7 +35,7 @@ parameters:
   - name: EarlyAccessFeed
     displayName: Early Access Feed
     type: string
-    default: 'net10'
+    default: 'net8'
     values:
       - 'net8'
       - 'net9'

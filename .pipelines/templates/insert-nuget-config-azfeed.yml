@@ -64,6 +64,8 @@ steps:
       Write-Verbose -Verbose "Setting up Azure Artifacts Credential Provider token"
 
       $earlyAccessFeed = '$(EARLY_ACCESS_FEED)'
+      Write-Verbose -Verbose "Early Access Feed: $earlyAccessFeed"
+
       $ADORepoUri = switch ($earlyAccessFeed) {
             'net8' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-8-early-access/nuget/v3/index.json' }
             'net9' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-9-early-access/nuget/v3/index.json' }
