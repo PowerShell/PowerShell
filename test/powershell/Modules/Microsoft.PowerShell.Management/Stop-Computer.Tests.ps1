@@ -43,20 +43,17 @@ try
         }
 
         It "Should support -Comment parameter" -Skip:(!$IsWindows) {
-            Set-TesthookResult -testhookName $stopTesthookResultName -value $defaultResultValue
             $comment = "Testing comment"
             Stop-Computer -Comment $comment -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
         It "Should support -ShutdownDelaySec parameter" -Skip:(!$IsWindows) {
-            Set-TesthookResult -testhookName $stopTesthookResultName -value $defaultResultValue
             $shutdownDelaySec = 30
             Stop-Computer -ShutdownDelaySec $shutdownDelaySec -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
         It "Should support Reason types" -Skip:(!$IsWindows) {
-            Set-TesthookResult -testhookName $stopTesthookResultName -Value $defaultResultValue
-            $ReasonList = [System.Enum]::GetNames([Microsoft.PowerShell.Commands.Reasons])
+            $ReasonList = [System.Enum]::GetNames([Microsoft.PowerShell.Commands.ShutdownReason])
             foreach ( $reason in $ReasonList ) {
                 Stop-Computer -Reason $reason -ErrorAction Stop | Should -BeNullOrEmpty
             }

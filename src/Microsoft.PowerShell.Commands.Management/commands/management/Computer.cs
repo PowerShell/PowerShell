@@ -85,9 +85,9 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Supported reasons for restarting or shutting down.
+    /// Supported ShutdownReason for restarting or shutting down.
     /// </summary>
-    public enum Reasons : uint
+    public enum ShutdownReason : uint
     {
         /// <summary>
         /// ApplicationHung related shutdown/restart.
@@ -170,9 +170,9 @@ namespace Microsoft.PowerShell.Commands
         OperatingSystemSecurityFixPlanned = 0x00020000 | 0x00000012 | 0x80000000,
 
         /// <summary>
-        /// OperatingSystemServicepackPlanned related shutdown/restart.
+        /// OperatingSystemServicePackPlanned related shutdown/restart.
         /// </summary>
-        OperatingSystemServicepackPlanned = 0x00020000 | 0x00000010 | 0x80000000,
+        OperatingSystemServicePackPlanned = 0x00020000 | 0x00000010 | 0x80000000,
 
         /// <summary>
         /// OperatingsystemUpgradePlanned related shutdown/restart.
@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the reason for rebooting the computer.
         /// </summary>
         [Parameter]
-        public Reasons Reason { get; set; } = Reasons.Other;
+        public ShutdownReason Reason { get; set; } = ShutdownReason.Other;
 
         /// <summary>
         /// Using Force in conjunction with Reboot on a
@@ -319,9 +319,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the delay before the reboot occurs.
+        /// MAX_SHUTDOWN_TIMEOUT supported by Win32ShutdownTracker is 315360000
         /// </summary>
         [Parameter(ParameterSetName = DefaultParameterSet)]
-        [ValidateRange(0, uint.MaxValue)]
+        [ValidateRange(0, 315360000)]
         public uint RestartDelaySec { get; set; }
 
         /// <summary>
@@ -1328,9 +1329,10 @@ $result
 
         /// <summary>
         /// Gets or sets the delay before the shutdown.
+        /// MAX_SHUTDOWN_TIMEOUT supported by Win32ShutdownTracker is 315360000
         /// </summary>
         [Parameter]
-        [ValidateRange(0, uint.MaxValue)]
+        [ValidateRange(0, 315360000)]
         public uint ShutdownDelaySec { get; set; }
 
         /// <summary>
@@ -1344,7 +1346,7 @@ $result
         /// Gets or sets the reason for shutting down the computer.
         /// </summary>
         [Parameter]
-        public Reasons Reason { get; set; } = Reasons.Other;
+        public ShutdownReason Reason { get; set; } = ShutdownReason.Other;
 
         /// <summary>
         /// Force the operation to take place if possible.
@@ -1724,7 +1726,7 @@ $result
                                 object[] flags = new object[] {
                                                     (uint)0,
                                                     StringUtil.Format(ComputerResources.RestartcomputerAfterRename, newName),
-                                                    (uint)Reasons.OperatingSystemReconfigPlanned,
+                                                    (uint)ShutdownReason.OperatingSystemReconfigPlanned,
                                                     6
                                                 };
 

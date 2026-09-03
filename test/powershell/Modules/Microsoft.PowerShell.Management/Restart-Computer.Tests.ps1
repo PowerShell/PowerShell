@@ -42,20 +42,17 @@ try
         }
 
         It "Should support -Comment parameter" -Skip:(!$IsWindows) {
-            Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
             $comment = "Testing comment"
             Restart-Computer -Comment $comment -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
         It "Should support -RestartDelaySec parameter" -Skip:(!$IsWindows) {
-            Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
             $restartDelaySec = 30
             Restart-Computer -RestartDelaySec $restartDelaySec -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
         It "Should support Reason types" -Skip:(!$IsWindows) {
-            Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
-            $ReasonList = [System.Enum]::GetNames([Microsoft.PowerShell.Commands.Reasons])
+            $ReasonList = [System.Enum]::GetNames([Microsoft.PowerShell.Commands.ShutdownReason])
             foreach ( $reason in $ReasonList ) {
                 Restart-Computer -Reason $reason -ErrorAction Stop | Should -BeNullOrEmpty
             }
