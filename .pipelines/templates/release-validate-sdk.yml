@@ -143,6 +143,7 @@ jobs:
       displayName: Restore and execute tests
       env:
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+        VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
     - task: PublishTestResults@2
       displayName: 'Publish Test Results **\test-hosting.xml'
