@@ -301,6 +301,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNull]
+        [ValidateLength(0, 512)]
         public string Comment { get; set; } = string.Empty;
 
         /// <summary>
@@ -1340,6 +1341,7 @@ $result
         /// </summary>
         [Parameter]
         [ValidateNotNull]
+        [ValidateLength(0, 512)]
         public string Comment { get; set; } = string.Empty;
 
         /// <summary>
