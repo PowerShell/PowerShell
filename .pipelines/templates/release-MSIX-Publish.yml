@@ -57,22 +57,34 @@ jobs:
         $jsonPath = "$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json"
         $json = Get-Content $jsonPath -Raw | ConvertFrom-Json
 
-        $releaseNotes = $json.listings.'en-us'.baseListing.releaseNotes
-        if ([string]::IsNullOrWhiteSpace($releaseNotes)) {
-          throw "Store release notes are missing from '$jsonPath'."
-        }
         $releaseNoteVariables = @{
           '___VERSION___' = $tagString
           '___CHANGELOGLINK___' = $changelogLink
         }
-        foreach ($placeholder in $releaseNoteVariables.Keys) {
-          if (-not $releaseNotes.Contains($placeholder)) {
-            throw "Store release notes do not contain the required placeholder '$placeholder'."
-          }
-          $releaseNotes = $releaseNotes.Replace($placeholder, $releaseNoteVariables[$placeholder])
+
+        $listingProperties = @($json.listings.PSObject.Properties)
+        if ($listingProperties.Count -eq 0) {
+          throw "Store listings are missing from '$jsonPath'."
         }
-        $json.listings.'en-us'.baseListing.releaseNotes = $releaseNotes
-        Write-Verbose -Verbose $releaseNotes
+
+        foreach ($listingProperty in $listingProperties) {
+          $language = $listingProperty.Name
+          $releaseNotes = $listingProperty.Value.baseListing.releaseNotes
+          if ([string]::IsNullOrWhiteSpace($releaseNotes)) {
+            throw "Store release notes for '$language' are missing from '$jsonPath'."
+          }
+
+          foreach ($placeholder in $releaseNoteVariables.Keys) {
+            if (-not $releaseNotes.Contains($placeholder)) {
+              throw "Store release notes for '$language' do not contain the required placeholder '$placeholder'."
+            }
+            $releaseNotes = $releaseNotes.Replace($placeholder, $releaseNoteVariables[$placeholder])
+          }
+
+          $listingProperty.Value.baseListing.releaseNotes = $releaseNotes
+          Write-Verbose -Verbose "Release notes for '$language':"
+          Write-Verbose -Verbose $releaseNotes
+        }
 
         $json | ConvertTo-Json -Depth 100 | Set-Content $jsonPath -Encoding UTF8
     displayName: 'Set Store Release Note Variables'
