@@ -190,4 +190,7 @@ Pour mettre à jour ces rubriques d’Aide, démarrez PowerShell à l’aide de 
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>Nous ne pouvons pas obtenir de l’Aide à partir d’un emplacement réseau dans une session restreinte.</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>Command not allowed in a restricted session.</value>
+  </data>
 </root>
