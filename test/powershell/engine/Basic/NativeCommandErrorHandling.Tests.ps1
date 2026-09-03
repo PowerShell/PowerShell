@@ -4,18 +4,21 @@
 # Functional tests to verify that native executables throw errors (non-terminating and terminating) appropriately
 # when $PSNativeCommandUseErrorActionPreference is $true
 
-Describe 'Native command error handling tests' -Tags 'CI' {
+BeforeDiscovery {
+    $skipTestExe = -not (Get-Command testexe -ErrorAction SilentlyContinue)
+    $errorActionPrefTestCases = @(
+        @{ ErrorActionPref = 'Stop' }
+        @{ ErrorActionPref = 'Continue' }
+        @{ ErrorActionPref = 'SilentlyContinue' }
+        @{ ErrorActionPref = 'Ignore' }
+    )
+}
+
+Describe 'Native command error handling tests' -Tags 'CI' -Skip:$skipTestExe {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $exeName = $IsWindows ? 'testexe.exe' : 'testexe'
         $exePath = @(Get-Command $exeName -Type Application)[0].Path
-
-        $errorActionPrefTestCases = @(
-            @{ ErrorActionPref = 'Stop' }
-            @{ ErrorActionPref = 'Continue' }
-            @{ ErrorActionPref = 'SilentlyContinue' }
-            @{ ErrorActionPref = 'Ignore' }
-        )
     }
 
     AfterAll {

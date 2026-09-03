@@ -4,8 +4,8 @@ Describe "Trace-Command" -tags "Feature" {
 
     Context "Listener options" {
         BeforeAll {
-            $logFile = Setup -f traceCommandLog.txt -pass
-            $actualLogFile = Setup -f actualTraceCommandLog.txt -pass
+            $logFile = Join-Path $TestDrive "traceCommandLog.txt"
+            $actualLogFile = Join-Path $TestDrive "actualTraceCommandLog.txt"
         }
 
         AfterEach {
@@ -13,7 +13,7 @@ Describe "Trace-Command" -tags "Feature" {
             if ( Test-Path $actualLogFile ) { Remove-Item $actualLogFile }
         }
 
-        It "LogicalOperationStack works" -Pending:($IsCoreCLR) {
+        It "LogicalOperationStack works" -Skip:($IsCoreCLR) {
             $keyword = "Trace_Command_ListenerOption_LogicalOperationStack_Foo"
             $stack = [System.Diagnostics.Trace]::CorrelationManager.LogicalOperationStack
             $stack.Push($keyword)
@@ -24,7 +24,7 @@ Describe "Trace-Command" -tags "Feature" {
             $log.Count | Should -BeGreaterThan 0
         }
 
-        It "Callstack works" -Pending:($IsCoreCLR) {
+        It "Callstack works" -Skip:($IsCoreCLR) {
             Trace-Command -Name * -Expression {Write-Output Foo} -ListenerOption Callstack -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*Callstack=   * System.Environment.GetStackTrace(Exception e, Boolean needFileInfo)*"}
             $log.Count | Should -BeGreaterThan 0

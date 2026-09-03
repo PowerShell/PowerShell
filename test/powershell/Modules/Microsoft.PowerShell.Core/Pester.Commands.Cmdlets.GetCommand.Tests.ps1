@@ -5,15 +5,24 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
 
     BeforeAll {
         # Create temporary EXE command files
-        $file1 = Setup -f WildCardCommandA.exe -pass
-        $file2 = Setup -f WildCardCommand[B].exe -pass
-        #$null = New-Item -ItemType File -Path (Join-Path $TestDrive WildCardCommandA.exe) -ErrorAction Ignore
-        #$null = New-Item -ItemType File -Path (Join-Path $TestDRive WildCardCommand[B].exe) -ErrorAction Ignore
+        $file1 = New-Item -ItemType File -Path (Join-Path $TestDrive 'WildCardCommandA.exe') -Force
+        $file2 = New-Item -ItemType File -Path (Join-Path $TestDrive 'WildCardCommand[B].exe') -Force
         if ( $IsLinux -or $IsMacOS ) {
             /bin/chmod a+rw "$file1"
             /bin/chmod a+rw "$file2"
         }
         $commandInfo = Get-Command Get-Date -ShowCommandInfo
+    }
+
+    BeforeDiscovery {
+        $commandInfoDisc = Get-Command Get-Date -ShowCommandInfo
+        $testcases = @(
+                      @{observed = $commandInfoDisc.Name; testname = "Name"; result = "Get-Date"}
+                      @{observed = $commandInfoDisc.ModuleName; testname = "ModuleName"; result = "Microsoft.PowerShell.Utility"}
+                      @{observed = $commandInfoDisc.Module.Name; testname = "ModuleName2"; result = "Microsoft.PowerShell.Utility"}
+                      @{observed = $commandInfoDisc.CommandType; testname = "CommandType"; result = "Cmdlet"}
+                      @{observed = $commandInfoDisc.Definition.Count; testname = "Definition"; result = 1}
+                   )
     }
 
     # this test doesn't test anything on non-windows platforms
@@ -67,14 +76,6 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
         $propertiesAsString | Should -MatchExactly 'Name'
         $propertiesAsString | Should -MatchExactly 'ParameterSets'
     }
-
-    $testcases = @(
-                  @{observed = $commandInfo.Name; testname = "Name"; result = "Get-Date"}
-                  @{observed = $commandInfo.ModuleName; testname = "Name"; result = "Microsoft.PowerShell.Utility"}
-                  @{observed = $commandInfo.Module.Name; testname = "ModuleName"; result = "Microsoft.PowerShell.Utility"}
-                  @{observed = $commandInfo.CommandType; testname = "CommandType"; result = "Cmdlet"}
-                  @{observed = $commandInfo.Definition.Count; testname = "Definition"; result = 1}
-               )
 
     It "Get-Command -ShowCommandInfo property test - <testname>" -TestCases $testcases{
             param (

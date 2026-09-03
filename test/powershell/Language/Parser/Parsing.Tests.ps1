@@ -350,7 +350,7 @@ Describe 'Unicode escape sequence parsing' -Tag "CI" {
 }
 
 Describe "Ternary Operator parsing" -Tags CI {
-    BeforeAll {
+    BeforeDiscovery {
         $testCases_basic = @(
             @{ Script = '$true?2:3'; TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
             @{ Script = '$false?';   TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
@@ -466,7 +466,7 @@ Describe "ParserError type tests" -Tag CI {
 }
 
 Describe "Keywords 'default', 'hidden', 'in', 'static' Token parsing" -Tags CI {
-    BeforeAll {
+    BeforeDiscovery {
         $testCases_basic = @(
             @{
                 Script = 'switch (1) {default {0} 1 {1}}'
@@ -611,12 +611,14 @@ Describe "Keywords 'default', 'hidden', 'in', 'static' Token parsing" -Tags CI {
         }
     }
 
-    $testKeywordsAsCmds = @(
-        @{ Keyword = 'default' }
-        @{ Keyword = 'hidden' }
-        @{ Keyword = 'in' }         # Note: this overwrites Pester's `In` function.
-        @{ Keyword = 'static' }
-    )
+    BeforeDiscovery {
+        $testKeywordsAsCmds = @(
+            @{ Keyword = 'default' }
+            @{ Keyword = 'hidden' }
+            @{ Keyword = 'in' }         # Note: this overwrites Pester's `In` function.
+            @{ Keyword = 'static' }
+        )
+    }
 
     It "<Keyword> can be used as command name" -TestCases $testKeywordsAsCmds {
         param($Keyword)

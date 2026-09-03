@@ -1,18 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe 'Get-WinEvent' -Tags "CI" {
-    BeforeAll {
-        if ( ! $IsWindows )
-        {
-            $origDefaults = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues['it:skip'] = $true
-        }
-    }
-    AfterAll {
-        if ( ! $IsWindows ){
-            $global:PSDefaultParameterValues = $origDefaults
-        }
-    }
+Describe 'Get-WinEvent' -Tags "CI" -Skip:(-not $IsWindows) {
     Context "Get-WinEvent ListProvider parameter" {
         It 'Get-WinEvent can list the providers' {
             $result = Get-WinEvent -ListProvider * -ErrorAction ignore

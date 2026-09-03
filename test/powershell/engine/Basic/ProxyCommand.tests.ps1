@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 Describe 'ProxyCommand Tests' -Tag 'CI' {
-    BeforeAll {
+    BeforeDiscovery {
         $testCases = @(
             @{ Name = 'ValidateLengthAttribute';                         ParamBlock = '[ValidateLength(1, 10)][int]${Parameter}' }
             @{ Name = 'ValidateRangeAttribute with Minimum and Maximum'; ParamBlock = '[ValidateRange(1, 10)][int]${Parameter}' }

@@ -11,11 +11,11 @@ Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
 	    Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.WriteProgressCommand'
     }
 
-    It "all mandatory params works" -Pending {
+    It "all mandatory params works" -Skip {
         { Write-Progress -Activity 'myactivity' -Status 'mystatus' } | Should -Not -Throw
     }
 
-    It "all params works" -Pending {
+    It "all params works" -Skip {
         { Write-Progress -Activity 'myactivity' -Status 'mystatus' -Id 1 -ParentId 2 -Completed:$false -current 'current' -sec 1 -percent 1 } | Should -Not -Throw
     }
 

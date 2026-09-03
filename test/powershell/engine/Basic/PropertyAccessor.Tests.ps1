@@ -6,17 +6,13 @@
 # Windows so that file IO can be verified using supported cmdlets.
 #
 
-Describe "User-Specific powershell.config.json Modifications" -Tags "CI" {
+$script:propertyAccessorSkip = -not ($IsWindows -and -not $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase))
+
+Describe "User-Specific powershell.config.json Modifications" -Tags "CI" -Skip:$script:propertyAccessorSkip {
 
     BeforeAll {
-        # Skip these tests when run against "InBox" PowerShell
-        $IsInbox = $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase)
         $productName = "PowerShell"
-
-        #skip all tests on non-windows platform
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $IsNotSkipped = ($IsWindows -and !$IsInbox) # Only execute for PowerShell on Windows
-        $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
+        $IsNotSkipped = $true
 
         if ($IsNotSkipped) {
             # Discover the user-specific powershell.config.json file
@@ -62,8 +58,6 @@ Describe "User-Specific powershell.config.json Modifications" -Tags "CI" {
             # Restore the original Process ExecutionPolicy
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy $processExecutionPolicy
         }
-
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     It "Verify Queries to Missing File Return Default Value" {

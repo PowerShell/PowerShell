@@ -7,34 +7,34 @@ Describe "PowerShell Command Debugging" -tags "CI" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
-    }
 
-    function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
-    {
-        return [ProcessStartInfo]@{
-            FileName               = $powershell
-            Arguments              = $CommandLine
-            RedirectStandardInput  = $RedirectStdIn
-            RedirectStandardOutput = $true
-            RedirectStandardError  = $true
-            UseShellExecute        = $false
-        }
-    }
-
-    function RunPowerShell([ProcessStartInfo]$debugfn)
-    {
-        $process = [Process]::Start($debugfn)
-        return $process
-    }
-
-    function EnsureChildHasExited([Process]$process, [int]$WaitTimeInMS = 15000)
-    {
-        $process.WaitForExit($WaitTimeInMS)
-
-        if (!$process.HasExited)
+        function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
         {
-            $process.HasExited | Should -BeTrue
-            $process.Kill()
+            return [ProcessStartInfo]@{
+                FileName               = $powershell
+                Arguments              = $CommandLine
+                RedirectStandardInput  = $RedirectStdIn
+                RedirectStandardOutput = $true
+                RedirectStandardError  = $true
+                UseShellExecute        = $false
+            }
+        }
+
+        function RunPowerShell([ProcessStartInfo]$debugfn)
+        {
+            $process = [Process]::Start($debugfn)
+            return $process
+        }
+
+        function EnsureChildHasExited([Process]$process, [int]$WaitTimeInMS = 15000)
+        {
+            $process.WaitForExit($WaitTimeInMS)
+
+            if (!$process.HasExited)
+            {
+                $process.HasExited | Should -BeTrue
+                $process.Kill()
+            }
         }
     }
 
@@ -74,7 +74,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process.ExitCode | Should -Be 0
     }
 
-    It -Pending "Should be able to list help for debugging" {
+    It -Skip "Should be able to list help for debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n")
@@ -140,7 +140,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process.ExitCode | Should -Be 0
     }
 
-    It -Pending "Should be able to list source code in debugging" {
+    It -Skip "Should be able to list source code in debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n") | Write-Host
@@ -162,7 +162,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
 
     }
 
-    It -Pending "Should be able to get the call stack in debugging" {
+    It -Skip "Should be able to get the call stack in debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n") | Write-Host
@@ -248,4 +248,3 @@ Describe "Runspace Debugging API tests" -Tag CI {
 
     }
 }
-

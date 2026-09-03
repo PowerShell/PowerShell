@@ -52,7 +52,7 @@ Describe "Verify SBOMs" {
 
             It "$name has a BOM" {
                 if ($skip) {
-                    Set-ItResult -Pending -Because $skip
+                    Set-ItResult -Inconclusive -Because $skip
                 }
                 $manifestPath | Should -Exist
             }

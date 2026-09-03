@@ -46,10 +46,11 @@ Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
         ($gl + 1) | Should -BeExactly (lineno)
     }
     # multiple args, no return
-    For($i = 1; $i -le 8; $i++)
-    {
-        $str = 'System.Action`{0}' -f $i
-        Context $str {
+    BeforeDiscovery {
+        $actionCases = 1..8 | ForEach-Object { @{ i = $_; str = 'System.Action`{0}' -f $_ } }
+    }
+    Context '<str>' -ForEach $actionCases {
+        BeforeAll {
             $gt = [object].Assembly.GetType($str)
 
             $parameters = @()
@@ -60,8 +61,8 @@ Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
 
             $func = { $script:gl=lineno; $args.Length | Should -BeExactly $i } -as $ct
             $func.DynamicInvoke($parameters)
-            It '$gl + 2' { ($gl + 2) | Should -BeExactly (lineno) }
         }
+        It '$gl + 3' { ($gl + 3) | Should -BeExactly (lineno) }
     }
 
     #0 arg with return value
@@ -81,10 +82,11 @@ Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
     }
 
     #multiple args, differnt return type
-    For($i = 2; $i -le 9; $i++)
-    {
-        $str = 'System.Func`{0}' -f $i
-        Context $str {
+    BeforeDiscovery {
+        $funcCases = 2..9 | ForEach-Object { @{ i = $_; str = 'System.Func`{0}' -f $_ } }
+    }
+    Context '<str>' -ForEach $funcCases {
+        BeforeAll {
             $gt = [object].Assembly.GetType($str)
 
             $parameters = @()
@@ -94,14 +96,16 @@ Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
             $ct = $gt.MakeGenericType($argumentTypes)
             $func = { $script:gl=lineno; $null = ($args.Length | Should -BeExactly ($i-1)); $v } -as $ct
             $t = $func.DynamicInvoke($parameters)
-            It '$gl + 2' { ($gl + 2) | Should -BeExactly (lineno) }
+        }
+        It '$gl + 3' { ($gl + 3) | Should -BeExactly (lineno) }
+        It 'return value' {
             if ($argumentTypes[$i-1] -eq [Hashtable] )
             {
-                It '$t.a' { $t.a | Should -BeExactly $v.a }
+                $t.a | Should -BeExactly $v.a
             }
             else
             {
-                It '$t' { $t | Should -BeExactly $v }
+                $t | Should -BeExactly $v
             }
         }
     }
