@@ -44,7 +44,7 @@ PowerShell is Open Source.  See https://github.com/powershell/powershell </Descr
     <!-- _locComment_text="{MaxLength=255} App DevStudio" -->
   </DevStudio>
   <ReleaseNotes _locID="App_ReleaseNotes">
-    <!-- _locComment_text="{MaxLength=1500} App Release Note" -->Version: ___VERSION___
+    <!-- _locComment_text="{MaxLength=1500} {Locked=___VERSION___}{Locked=___CHANGELOGLINK___} App Release Note" -->Version: ___VERSION___
 
 Changelog: ___CHANGELOGLINK___</ReleaseNotes>
   <AppFeatures>
