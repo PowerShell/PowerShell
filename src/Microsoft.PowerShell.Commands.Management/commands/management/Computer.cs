@@ -205,9 +205,9 @@ namespace Microsoft.PowerShell.Commands
         PowerEnvironment = 0x00060000 | 0x0000000c,
 
         /// <summary>
-        /// SystemBluescreen related shutdown/restart.
+        /// SystemBlueScreen  related shutdown/restart.
         /// </summary>
-        SystemBluescreen = 0x00050000 | 0x0000000F,
+        SystemBlueScreen  = 0x00050000 | 0x0000000F,
 
         /// <summary>
         /// SystemNetworkConnectivity related shutdown/restart.
