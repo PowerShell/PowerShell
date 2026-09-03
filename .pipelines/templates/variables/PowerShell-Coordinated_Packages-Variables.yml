@@ -4,7 +4,7 @@ parameters:
     default: ' '
   - name: EarlyAccessFeed
     type: string
-    default: 'net10'
+    default: 'net9'
     values:
       - 'net8'
       - 'net9'
