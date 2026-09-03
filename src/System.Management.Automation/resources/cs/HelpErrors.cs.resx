@@ -190,4 +190,7 @@ Pokud chcete tato témata nápovědy aktualizovat, spusťte PowerShell pomocí p
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>V omezené relaci nejde získat nápovědu ze síťového umístění.</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>Command not allowed in a restricted session.</value>
+  </data>
 </root>
