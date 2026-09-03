@@ -359,7 +359,7 @@ namespace System.Management.Automation
                 for (int exampleIndex = 0; exampleIndex < _examples.Count; exampleIndex++)
                 {
                     string exampleBody = _examples[exampleIndex];
-                    string exampleTitle = exampleIndex < _exampleTitles.Count ? _exampleTitles[exampleIndex] : null;
+                    string exampleTitle = _exampleTitles[exampleIndex];
                     XmlElement example_node = _doc.CreateElement("command:example", commandURI);
 
                     // The title is automatically generated, with an optional custom title appended
@@ -726,9 +726,21 @@ namespace System.Management.Automation
                 {
                     directiveFound = true;
 
-                    if (match.Groups[3].Success)
+                    string sectionName = match.Groups[1].Value.ToUpperInvariant();
+
+                    // .EXAMPLE is the only directive that is valid both with and without inline
+                    // text, so it is handled once here instead of in both switches below. Adding
+                    // the title and the body together keeps _exampleTitles and _examples the same
+                    // length by construction. Groups[3].Value is the empty string when the
+                    // optional group did not participate, which is the untitled form.
+                    if (sectionName == "EXAMPLE")
                     {
-                        switch (match.Groups[1].Value.ToUpperInvariant())
+                        _exampleTitles.Add(match.Groups[3].Value.Trim());
+                        _examples.Add(GetSection(commentLines, ref i));
+                    }
+                    else if (match.Groups[3].Success)
+                    {
+                        switch (sectionName)
                         {
                             case "PARAMETER":
                                 {
@@ -741,10 +753,6 @@ namespace System.Management.Automation
 
                                     break;
                                 }
-                            case "EXAMPLE":
-                                _exampleTitles.Add(match.Groups[3].Value.Trim());
-                                _examples.Add(GetSection(commentLines, ref i));
-                                break;
                             case "FORWARDHELPTARGETNAME":
                                 _sections.ForwardHelpTargetName = match.Groups[3].Value.Trim();
                                 break;
@@ -764,7 +772,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        switch (match.Groups[1].Value.ToUpperInvariant())
+                        switch (sectionName)
                         {
                             case "SYNOPSIS":
                                 _sections.Synopsis = GetSection(commentLines, ref i);
@@ -777,10 +785,6 @@ namespace System.Management.Automation
                                 break;
                             case "LINK":
                                 _links.Add(GetSection(commentLines, ref i).Trim());
-                                break;
-                            case "EXAMPLE":
-                                _exampleTitles.Add(string.Empty);
-                                _examples.Add(GetSection(commentLines, ref i));
                                 break;
                             case "INPUTS":
                                 _inputs.Add(GetSection(commentLines, ref i));

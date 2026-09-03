@@ -10792,9 +10792,9 @@ namespace System.Management.Automation.Language
 
             for (int index = 0; index < Examples.Count; index++)
             {
-                string title = (ExampleTitles != null && index < ExampleTitles.Count)
-                    ? ExampleTitles[index]
-                    : null;
+                // ExampleTitles is always parallel to Examples, so the index is valid whenever
+                // Examples[index] is. An empty entry means the example was declared untitled.
+                string title = ExampleTitles[index];
 
                 if (!string.IsNullOrEmpty(title))
                 {
