@@ -190,4 +190,7 @@ Bu Yardım konularını güncelleştirmek için, PowerShell'i "Yönetici olarak 
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>Kısıtlanmış bir oturumdayken ağ konumundan yardım alınamaz.</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>Command not allowed in a restricted session.</value>
+  </data>
 </root>
