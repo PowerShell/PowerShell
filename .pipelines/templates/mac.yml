@@ -220,12 +220,16 @@ jobs:
           $expectedSignature = if ($officialBuild) {
             "'$officialSignature'"
           } else {
-            'a Developer ID or ad-hoc'
+            'a Developer ID signature or ad-hoc CodeDirectory'
           }
-          Write-Host "##[error]Missing $expectedSignature signature in $($_.FullName)"
+          Write-Host "##[error]Missing $expectedSignature in $($_.FullName)"
         } else {
-          $signatureType = if ($hasOfficialSignature) { 'Developer ID' } else { 'ad-hoc' }
-          Write-Host "OK: $($_.FullName) has a $signatureType signature"
+          $signatureDescription = if ($hasOfficialSignature) {
+            'a Developer ID signature'
+          } else {
+            'an ad-hoc CodeDirectory'
+          }
+          Write-Host "OK: $($_.FullName) contains $signatureDescription"
         }
       }
       if ($missing.Count -gt 0) {
