@@ -302,6 +302,7 @@ namespace System.Management.Automation
         internal const string PSCulture = "PSCulture";
         internal const string PSHome = "PSHOME";
         internal const string PSUICulture = "PSUICulture";
+        internal const string PSUserContentPath = "PSUserContentPath";
         internal const string PSVersionTable = "PSVersionTable";
         internal const string PSEdition = "PSEdition";
         internal const string ShellId = "ShellId";
