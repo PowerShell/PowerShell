@@ -227,175 +227,176 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(xmlReader != null, "xmlReader cannot be null.");
             Dbg.Assert(xmlReader.NodeType == XmlNodeType.Element, "xmlReader's NodeType should be of type Element");
 
-            PowerShellTraceSource tracer = PowerShellTraceSourceFactory.GetTraceSource();
-
-            switch (xmlReader.LocalName)
+            using (PowerShellTraceSource tracer = PowerShellTraceSourceFactory.GetTraceSource())
             {
-                case OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG:
-                    {
-                        // A <Data> should have 1 attribute identifying the stream
-                        if (xmlReader.AttributeCount != 2)
+                switch (xmlReader.LocalName)
+                {
+                    case OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG:
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForDataElement,
-                                RemotingErrorIdStrings.IPCWrongAttributeCountForDataElement,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_STREAM_ATTRIBUTE,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG);
+                            // A <Data> should have 1 attribute identifying the stream
+                            if (xmlReader.AttributeCount != 2)
+                            {
+                                throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForDataElement,
+                                    RemotingErrorIdStrings.IPCWrongAttributeCountForDataElement,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_STREAM_ATTRIBUTE,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG);
+                            }
+
+                            string stream = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_STREAM_ATTRIBUTE);
+                            string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
+                            Guid psGuid = new Guid(psGuidString);
+
+                            // Now move the reader to the data portion
+                            if (!xmlReader.Read())
+                            {
+                                throw new PSRemotingTransportException(PSRemotingErrorId.IPCInsufficientDataforElement,
+                                    RemotingErrorIdStrings.IPCInsufficientDataforElement,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG);
+                            }
+
+                            if (xmlReader.NodeType != XmlNodeType.Text)
+                            {
+                                throw new PSRemotingTransportException(PSRemotingErrorId.IPCOnlyTextExpectedInDataElement,
+                                    RemotingErrorIdStrings.IPCOnlyTextExpectedInDataElement,
+                                    xmlReader.NodeType, OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG, XmlNodeType.Text);
+                            }
+
+                            string data = xmlReader.Value;
+                            tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_DATA received, psGuid : " + psGuid.ToString());
+                            byte[] rawData = Convert.FromBase64String(data);
+                            callbacks.DataPacketReceived(rawData, stream, psGuid);
                         }
 
-                        string stream = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_STREAM_ATTRIBUTE);
-                        string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
-
-                        // Now move the reader to the data portion
-                        if (!xmlReader.Read())
+                        break;
+                    case OutOfProcessUtils.PS_OUT_OF_PROC_DATA_ACK_TAG:
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCInsufficientDataforElement,
-                                RemotingErrorIdStrings.IPCInsufficientDataforElement,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG);
+                            if (xmlReader.AttributeCount != 1)
+                            {
+                                throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
+                                    RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_DATA_ACK_TAG);
+                            }
+
+                            string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
+                            Guid psGuid = new Guid(psGuidString);
+
+                            tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_DATA_ACK received, psGuid : " + psGuid.ToString());
+                            callbacks.DataAckPacketReceived(psGuid);
                         }
 
-                        if (xmlReader.NodeType != XmlNodeType.Text)
+                        break;
+                    case OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_TAG:
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCOnlyTextExpectedInDataElement,
-                                RemotingErrorIdStrings.IPCOnlyTextExpectedInDataElement,
-                                xmlReader.NodeType, OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG, XmlNodeType.Text);
+                            if (xmlReader.AttributeCount != 1)
+                            {
+                                throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
+                                    RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_TAG);
+                            }
+
+                            string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
+                            Guid psGuid = new Guid(psGuidString);
+
+                            tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND received, psGuid : " + psGuid.ToString());
+                            callbacks.CommandCreationPacketReceived(psGuid);
                         }
 
-                        string data = xmlReader.Value;
-                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_DATA received, psGuid : " + psGuid.ToString());
-                        byte[] rawData = Convert.FromBase64String(data);
-                        callbacks.DataPacketReceived(rawData, stream, psGuid);
-                    }
-
-                    break;
-                case OutOfProcessUtils.PS_OUT_OF_PROC_DATA_ACK_TAG:
-                    {
-                        if (xmlReader.AttributeCount != 1)
+                        break;
+                    case OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_ACK_TAG:
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
+                            if (xmlReader.AttributeCount != 1)
+                            {
+                                throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
+                                    RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_ACK_TAG);
+                            }
+
+                            string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
+                            Guid psGuid = new Guid(psGuidString);
+                            tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND_ACK received, psGuid : " + psGuid.ToString());
+                            callbacks.CommandCreationAckReceived(psGuid);
+                        }
+
+                        break;
+                    case OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_TAG:
+                        {
+                            if (xmlReader.AttributeCount != 1)
+                            {
+                                throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
+                                    RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_TAG);
+                            }
+
+                            string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
+                            Guid psGuid = new Guid(psGuidString);
+
+                            tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_CLOSE received, psGuid : " + psGuid.ToString());
+                            callbacks.ClosePacketReceived(psGuid);
+                        }
+
+                        break;
+                    case OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_ACK_TAG:
+                        {
+                            if (xmlReader.AttributeCount != 1)
+                            {
+                                throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
                                 RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_DATA_ACK_TAG);
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_ACK_TAG);
+                            }
+
+                            string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
+                            Guid psGuid = new Guid(psGuidString);
+                            tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_CLOSE_ACK received, psGuid : " + psGuid.ToString());
+                            callbacks.CloseAckPacketReceived(psGuid);
                         }
 
-                        string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
-
-                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_DATA_ACK received, psGuid : " + psGuid.ToString());
-                        callbacks.DataAckPacketReceived(psGuid);
-                    }
-
-                    break;
-                case OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_TAG:
-                    {
-                        if (xmlReader.AttributeCount != 1)
+                        break;
+                    case OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_TAG:
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
+                            if (xmlReader.AttributeCount != 1)
+                            {
+                                throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
                                 RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_TAG);
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_TAG);
+                            }
+
+                            string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
+                            Guid psGuid = new Guid(psGuidString);
+
+                            tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_SIGNAL received, psGuid : " + psGuid.ToString());
+                            callbacks.SignalPacketReceived(psGuid);
                         }
 
-                        string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
-
-                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND received, psGuid : " + psGuid.ToString());
-                        callbacks.CommandCreationPacketReceived(psGuid);
-                    }
-
-                    break;
-                case OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_ACK_TAG:
-                    {
-                        if (xmlReader.AttributeCount != 1)
+                        break;
+                    case OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_ACK_TAG:
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
+                            if (xmlReader.AttributeCount != 1)
+                            {
+                                throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
                                 RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_ACK_TAG);
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
+                                    OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_ACK_TAG);
+                            }
+
+                            string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
+                            Guid psGuid = new Guid(psGuidString);
+                            tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_SIGNAL_ACK received, psGuid : " + psGuid.ToString());
+                            callbacks.SignalAckPacketReceived(psGuid);
                         }
 
-                        string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
-                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND_ACK received, psGuid : " + psGuid.ToString());
-                        callbacks.CommandCreationAckReceived(psGuid);
-                    }
-
-                    break;
-                case OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_TAG:
-                    {
-                        if (xmlReader.AttributeCount != 1)
-                        {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
-                                RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_TAG);
-                        }
-
-                        string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
-
-                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_CLOSE received, psGuid : " + psGuid.ToString());
-                        callbacks.ClosePacketReceived(psGuid);
-                    }
-
-                    break;
-                case OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_ACK_TAG:
-                    {
-                        if (xmlReader.AttributeCount != 1)
-                        {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
-                            RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_ACK_TAG);
-                        }
-
-                        string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
-                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_CLOSE_ACK received, psGuid : " + psGuid.ToString());
-                        callbacks.CloseAckPacketReceived(psGuid);
-                    }
-
-                    break;
-                case OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_TAG:
-                    {
-                        if (xmlReader.AttributeCount != 1)
-                        {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
-                            RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_TAG);
-                        }
-
-                        string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
-
-                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_SIGNAL received, psGuid : " + psGuid.ToString());
-                        callbacks.SignalPacketReceived(psGuid);
-                    }
-
-                    break;
-                case OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_ACK_TAG:
-                    {
-                        if (xmlReader.AttributeCount != 1)
-                        {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
-                            RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
-                                OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_ACK_TAG);
-                        }
-
-                        string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
-                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_SIGNAL_ACK received, psGuid : " + psGuid.ToString());
-                        callbacks.SignalAckPacketReceived(psGuid);
-                    }
-
-                    break;
-                default:
-                    throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived,
-                    RemotingErrorIdStrings.IPCUnknownElementReceived,
-                        xmlReader.LocalName);
+                        break;
+                    default:
+                        throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived,
+                        RemotingErrorIdStrings.IPCUnknownElementReceived,
+                            xmlReader.LocalName);
+                }
             }
         }
 
@@ -499,7 +500,7 @@ namespace System.Management.Automation.Remoting.Client
         private OutOfProcessUtils.DataProcessingDelegates _dataProcessingCallbacks;
         private readonly Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
         private readonly Timer _closeTimeOutTimer;
-        internal PowerShellTraceSource _tracer;
+        internal readonly PowerShellTraceSource _tracer;
         internal OutOfProcessTextWriter _messageWriter;
 
         #endregion
@@ -660,6 +661,7 @@ namespace System.Management.Automation.Remoting.Client
                 _cmdTransportManagers.Clear();
                 _closeTimeOutTimer.Dispose();
                 DisposeMessageQueue();
+                _tracer.Dispose();
             }
         }
 
@@ -1677,7 +1679,6 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
 
         #region Overrides
-
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
