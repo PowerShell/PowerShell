@@ -82,9 +82,9 @@ jobs:
       $signatureParameters = @{
         Path = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}/Signed-${{ parameters.buildArchitecture }}"
         OfficialBuild = [System.Convert]::ToBoolean('${{ parameters.OfficialBuild }}')
-        EntitlementsPath = "$(Build.SourcesDirectory)/PowerShell/assets/macos-entitlements.plist"
+        EntitlementsPath = "$(Build.SourcesDirectory)/assets/macos-entitlements.plist"
       }
-      & "$(Build.SourcesDirectory)/PowerShell/tools/packaging/Update-MacOSCodeSignature.ps1" @signatureParameters
+      & "$(Build.SourcesDirectory)/tools/packaging/Update-MacOSCodeSignature.ps1" @signatureParameters
     displayName: 'Apply and verify Apple codesign on signed binaries'
 
   - pwsh: |
