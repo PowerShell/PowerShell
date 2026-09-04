@@ -29,62 +29,6 @@ namespace Microsoft.PowerShell.Commands
     #region Restart-Computer
 
     /// <summary>
-    /// This exception is thrown when the timeout expires before a computer finishes restarting.
-    /// </summary>
-    public sealed class RestartComputerTimeoutException : RuntimeException
-    {
-        /// <summary>
-        /// Name of the computer that is restarting.
-        /// </summary>
-        public string ComputerName { get; }
-
-        /// <summary>
-        /// The timeout value specified by the user. It indicates the seconds to wait before timeout.
-        /// </summary>
-        public int Timeout { get; }
-
-        /// <summary>
-        /// Construct a RestartComputerTimeoutException.
-        /// </summary>
-        /// <param name="computerName"></param>
-        /// <param name="timeout"></param>
-        /// <param name="message"></param>
-        /// <param name="errorId"></param>
-        internal RestartComputerTimeoutException(string computerName, int timeout, string message, string errorId)
-            : base(message)
-        {
-            SetErrorId(errorId);
-            SetErrorCategory(ErrorCategory.OperationTimeout);
-            ComputerName = computerName;
-            Timeout = timeout;
-        }
-
-        /// <summary>
-        /// Construct a RestartComputerTimeoutException.
-        /// </summary>
-        public RestartComputerTimeoutException() : base() { }
-
-        /// <summary>
-        /// Constructs a RestartComputerTimeoutException.
-        /// </summary>
-        /// <param name="message">
-        /// The message used in the exception.
-        /// </param>
-        public RestartComputerTimeoutException(string message) : base(message) { }
-
-        /// <summary>
-        /// Constructs a RestartComputerTimeoutException.
-        /// </summary>
-        /// <param name="message">
-        /// The message used in the exception.
-        /// </param>
-        /// <param name="innerException">
-        /// An exception that led to this exception.
-        /// </param>
-        public RestartComputerTimeoutException(string message, Exception innerException) : base(message, innerException) { }
-    }
-
-    /// <summary>
     /// Supported ShutdownReason for restarting or shutting down.
     /// </summary>
     public enum ShutdownReason : uint
@@ -205,9 +149,9 @@ namespace Microsoft.PowerShell.Commands
         PowerEnvironment = 0x00060000 | 0x0000000c,
 
         /// <summary>
-        /// SystemBlueScreen  related shutdown/restart.
+        /// SystemBlueScreen related shutdown/restart.
         /// </summary>
-        SystemBlueScreen  = 0x00050000 | 0x0000000F,
+        SystemBlueScreen = 0x00050000 | 0x0000000F,
 
         /// <summary>
         /// SystemNetworkConnectivity related shutdown/restart.
@@ -240,6 +184,62 @@ namespace Microsoft.PowerShell.Commands
         /// Wait for the PowerShell to be ready.
         /// </summary>
         PowerShell = 0x2,
+    }
+
+    /// <summary>
+    /// This exception is thrown when the timeout expires before a computer finishes restarting.
+    /// </summary>
+    public sealed class RestartComputerTimeoutException : RuntimeException
+    {
+        /// <summary>
+        /// Name of the computer that is restarting.
+        /// </summary>
+        public string ComputerName { get; }
+
+        /// <summary>
+        /// The timeout value specified by the user. It indicates the seconds to wait before timeout.
+        /// </summary>
+        public int Timeout { get; }
+
+        /// <summary>
+        /// Construct a RestartComputerTimeoutException.
+        /// </summary>
+        /// <param name="computerName"></param>
+        /// <param name="timeout"></param>
+        /// <param name="message"></param>
+        /// <param name="errorId"></param>
+        internal RestartComputerTimeoutException(string computerName, int timeout, string message, string errorId)
+            : base(message)
+        {
+            SetErrorId(errorId);
+            SetErrorCategory(ErrorCategory.OperationTimeout);
+            ComputerName = computerName;
+            Timeout = timeout;
+        }
+
+        /// <summary>
+        /// Construct a RestartComputerTimeoutException.
+        /// </summary>
+        public RestartComputerTimeoutException() : base() { }
+
+        /// <summary>
+        /// Constructs a RestartComputerTimeoutException.
+        /// </summary>
+        /// <param name="message">
+        /// The message used in the exception.
+        /// </param>
+        public RestartComputerTimeoutException(string message) : base(message) { }
+
+        /// <summary>
+        /// Constructs a RestartComputerTimeoutException.
+        /// </summary>
+        /// <param name="message">
+        /// The message used in the exception.
+        /// </param>
+        /// <param name="innerException">
+        /// An exception that led to this exception.
+        /// </param>
+        public RestartComputerTimeoutException(string message, Exception innerException) : base(message, innerException) { }
     }
 
     /// <summary>
@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the delay before the reboot occurs.
-        /// MAX_SHUTDOWN_TIMEOUT supported by Win32ShutdownTracker is 315360000
+        /// MAX_SHUTDOWN_TIMEOUT supported by Win32ShutdownTracker is 315360000.
         /// </summary>
         [Parameter(ParameterSetName = DefaultParameterSet)]
         [ValidateRange(0, 315360000)]
@@ -1330,7 +1330,7 @@ $result
 
         /// <summary>
         /// Gets or sets the delay before the shutdown.
-        /// MAX_SHUTDOWN_TIMEOUT supported by Win32ShutdownTracker is 315360000
+        /// MAX_SHUTDOWN_TIMEOUT supported by Win32ShutdownTracker is 315360000.
         /// </summary>
         [Parameter]
         [ValidateRange(0, 315360000)]
@@ -1725,12 +1725,13 @@ $result
                             if (_restart)
                             {
                                 // If successful and the Restart parameter is specified, restart the computer
-                                object[] flags = new object[] {
+                                object[] flags = new object[]
+                                                 {
                                                     (uint)0,
                                                     StringUtil.Format(ComputerResources.RestartcomputerAfterRename, newName),
                                                     (uint)ShutdownReason.OperatingSystemReconfigPlanned,
-                                                    6
-                                                };
+                                                    6,
+                                                 };
 
                                 ComputerWMIHelper.InvokeWin32ShutdownTrackerUsingWsman(
                                     this,
