@@ -62,6 +62,10 @@ resources:
     type: git
     name: OneBranch.Pipelines/GovernedTemplates
     ref: refs/heads/main
+  - repository: PowerShellEngineeringSystem
+    type: git
+    name: PowerShellCore/PowerShell-Engineering-System
+    ref: refs/heads/pilot/powershell-coordinated-packages
 
 variables:
   - template: /.pipelines/templates/variables/PowerShell-Coordinated_Packages-Variables.yml@self
@@ -112,7 +116,7 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - template: /.pipelines/templates/stages/PowerShell-Coordinated_Packages-Stages.yml@self
+    - template: /templates/stages/powershell-coordinated-packages.yml@PowerShellEngineeringSystem
       parameters:
         RUN_WINDOWS: ${{ parameters.RUN_WINDOWS }}
         RUN_TEST_AND_RELEASE: ${{ parameters.RUN_TEST_AND_RELEASE }}
