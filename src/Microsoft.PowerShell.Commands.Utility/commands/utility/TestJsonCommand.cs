@@ -192,9 +192,21 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, e);
                         WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, SchemaFile));
-                    }
+                    }                  
                 }
             }
+            catch (Exception e) when (
+                e is FileNotFoundException
+            )
+            {
+                Exception exception = new(
+                    string.Format(
+                        CultureInfo.CurrentUICulture,
+                        TestJsonCmdletStrings.JsonSchemaFileNotFound,
+                        resolvedpath),
+                    e);
+                ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileNotFound", ErrorCategory.OpenError, resolvedpath));
+            }            
             catch (Exception e) when (
                 // Handle exceptions related to file access to provide more specific error message
                 // https://learn.microsoft.com/dotnet/standard/io/handling-io-errors
