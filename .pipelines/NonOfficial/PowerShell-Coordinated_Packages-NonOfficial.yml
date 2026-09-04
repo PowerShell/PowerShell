@@ -65,7 +65,7 @@ resources:
   - repository: PowerShellEngineeringSystem
     type: git
     name: PowerShellCore/PowerShell-Engineering-System
-    ref: refs/heads/pilot/powershell-coordinated-packages
+    ref: ac401b01fccbe26898de20a66bcde10ca019dcdd
 
 variables:
   - template: /.pipelines/templates/variables/PowerShell-Coordinated_Packages-Variables.yml@self
