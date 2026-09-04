@@ -477,9 +477,9 @@ namespace Microsoft.PowerShell.Commands
 
                         if (!Quiet.IsPresent)
                         {
-                            // The buffer may be empty even when BufferSize is not 0 as sending
-                            // a custom buffer needs privileges on Unix (see GetSendBuffer),
-                            // so report the requested size.
+                            // The default send buffer is intentionally empty (see s_DefaultSendBuffer),
+                            // so buffer.Length cannot distinguish the default from an explicit
+                            // BufferSize of 0. Report the requested size instead.
                             var status = new PingStatus(
                                 Source,
                                 routerName,
@@ -727,9 +727,9 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // The buffer may be empty even when BufferSize is not 0 as sending
-                    // a custom buffer needs privileges on Unix (see GetSendBuffer),
-                    // so report the requested size.
+                    // The default send buffer is intentionally empty (see s_DefaultSendBuffer),
+                    // so buffer.Length cannot distinguish the default from an explicit
+                    // BufferSize of 0. Report the requested size instead.
                     WriteObject(new PingStatus(
                         Source,
                         resolvedTargetName,
