@@ -336,8 +336,8 @@ Describe "Test-Json" -Tags "CI" {
     }
 
     It "Test-Json throw if a path to a schema from file is invalid" {
-        { Test-Json -Json $validJson -SchemaFile $missingSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonSchemaFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
-        { Test-Json -Path $validJsonPath -SchemaFile $missingSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonSchemaFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
+        { Test-Json -Json $validJson -SchemaFile $missingSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonSchemaFileNotFound,Microsoft.PowerShell.Commands.TestJsonCommand"
+        { Test-Json -Path $validJsonPath -SchemaFile $missingSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonSchemaFileNotFound,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Test-Json throw if a path from file is invalid" {
