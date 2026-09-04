@@ -62,6 +62,10 @@ resources:
     type: git
     name: OneBranch.Pipelines/GovernedTemplates
     ref: refs/heads/main
+  - repository: PowerShellEngineeringSystem
+    type: git
+    name: PowerShellCore/PowerShell-Engineering-System
+    ref: ac401b01fccbe26898de20a66bcde10ca019dcdd
 
 variables:
   - template: templates/variables/PowerShell-Coordinated_Packages-Variables.yml
@@ -112,7 +116,7 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - template: templates/stages/PowerShell-Coordinated_Packages-Stages.yml
+    - template: /templates/stages/powershell-coordinated-packages.yml@PowerShellEngineeringSystem
       parameters:
         RUN_WINDOWS: ${{ parameters.RUN_WINDOWS }}
         RUN_TEST_AND_RELEASE: ${{ parameters.RUN_TEST_AND_RELEASE }}
@@ -121,4 +125,3 @@ extends:
         DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
         EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
         IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
-
