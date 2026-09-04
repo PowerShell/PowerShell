@@ -81,7 +81,7 @@ Describe -Name "Windows MSI" -Fixture {
 
                 [Parameter(Mandatory)]
                 [ValidateScript({Test-Path -Path $_})]
-                [String]$MsiPath,
+                [string]$MsiPath,
 
                 [Parameter(ParameterSetName = 'Install')]
                 [HashTable] $Properties

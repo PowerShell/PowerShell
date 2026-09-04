@@ -155,7 +155,7 @@ function RemoveMachineName
     param (
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [string]
         $path
     )
 
@@ -185,7 +185,7 @@ function TranslateCounterName
     param (
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [string]
         $counterName
     )
 
@@ -205,7 +205,7 @@ function TranslateCounterPath
     param (
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [string]
         $path
     )
 
