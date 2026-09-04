@@ -168,7 +168,7 @@ namespace System.Management.Automation
         /// <returns>
         /// The shape of the returned value depends on how many objects the CliXml contains:
         /// <see langword="null"/> if it contains no objects, the single deserialized object if it
-        /// contains exactly one, or an <see cref="object"/> array if it contains more than one.
+        /// contains exactly one, or an <see cref="object"/>[] if it contains more than one.
         /// Use <see cref="DeserializeAsList(string)"/> instead if a consistent return type is needed.
         /// </returns>
         public static object Deserialize(string source)
