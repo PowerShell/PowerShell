@@ -118,540 +118,540 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidProviderInfo" xml:space="preserve">
-    <value>Cannot process the returned information because the information returned from the provider's Start method was for a different provider than the one passed.</value>
+    <value>공급자의 Start 메서드에서 반환된 정보가 전달된 것과 다른 공급자에 대한 정보이므로 반환된 정보를 처리할 수 없습니다.</value>
   </data>
   <data name="InvalidProviderInfoNull" xml:space="preserve">
-    <value>Cannot process the returned information because the information returned from the provider's Start method was null.</value>
+    <value>공급자의 Start 메서드에서 반환된 정보가 null이므로 반환된 정보를 처리할 수 없습니다.</value>
   </data>
   <data name="GetItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 GetItem 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="GetItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 GetItem 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="SetItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the SetItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 SetItem 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="SetItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the SetItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 SetItem 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="ClearItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the ClearItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 ClearItem 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="InvokeDefaultActionProviderException" xml:space="preserve">
-    <value>Attempting to perform the InvokeDefaultAction operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 InvokeDefaultAction 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="InvokeDefaultActionDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the InvokeDefaultAction operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 InvokeDefaultAction 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="ItemExistsProviderException" xml:space="preserve">
-    <value>Attempting to perform the ItemExists operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 ItemExists 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="ItemExistsDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the ItemExists operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 ItemExists 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="IsValidPathProviderException" xml:space="preserve">
-    <value>Attempting to perform the IsValidPath operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 IsValidPath 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="IsItemContainerProviderException" xml:space="preserve">
-    <value>Attempting to perform the IsItemContainer operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 IsItemContainer 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="RemoveItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the RemoveItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 RemoveItem 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="GetChildrenProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetChildItems operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 GetChildItems 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="GetChildrenDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetChildItems operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 GetChildItems 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="GetChildNamesProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetChildNames operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 GetChildNames 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="GetChildNamesDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetChildNames operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 GetChildNames 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="RenameItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the RenameItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 RenameItem 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="RenameItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the RenameItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 RenameItem 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="NewItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the NewItem operation on the '{0}' provider failed for the path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 NewItem 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="NewItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the NewItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 NewItem 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="HasChildItemsProviderException" xml:space="preserve">
-    <value>Attempting to perform the HasChildItems operation on the '{0}' provider failed for the path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 HasChildItems 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="CopyItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the CopyItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 CopyItem 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="CopyItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the CopyItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 CopyItem 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="GetParentPathProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetParentPath operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 GetParentPath 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="NormalizeRelativePathProviderException" xml:space="preserve">
-    <value>Attempting to perform the NormalizeRelativePath operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 NormalizeRelativePath 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="MakePathProviderException" xml:space="preserve">
-    <value>Attempting to perform the MakePath operation operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 MakePath 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="GetChildNameProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetChildName operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 GetChildName 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="MoveItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the MoveItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 MoveItem 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="MoveItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the MoveItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 MoveItem 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="GetPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 GetProperty 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="GetPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 GetProperty 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="SetPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the SetProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 SetProperty 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="SetPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the SetProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 SetProperty 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="ClearPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the ClearProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 ClearProperty 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="ClearPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the ClearProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 ClearProperty 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="NewPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the NewProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 NewProperty 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="NewPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the NewProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 NewProperty 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="RemovePropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the RemoveProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 RemoveProperty 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="RemovePropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the RemoveProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 RemoveProperty 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="CopyPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the CopyProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 CopyProperty 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="CopyPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the CopyProperty operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에 대해 CopyProperty 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="MovePropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the MoveProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 MoveProperty 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="MovePropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the MoveProperty operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에 대해 MoveProperty 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="RenamePropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the RenameProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 RenameProperty 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="RenamePropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>Dynamic parameters for RenameProperty cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에 대해 RenameProperty에 대한 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="GetContentReaderProviderException" xml:space="preserve">
-    <value>Content reader cannot be retrieved for the '{0}' provider for the path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에 대해 콘텐츠 판독기를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="GetContentReaderDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetContentReader operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에 대해 GetContentReader 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="GetContentWriterProviderException" xml:space="preserve">
-    <value>Content writer cannot be retrieved for the '{0}' provider for the path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에 대해 콘텐츠 작성기를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="GetContentWriterDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetContentWriter operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에 대해 GetContentWriter 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="GetContainerContentException" xml:space="preserve">
-    <value>Unable to get content because it is a directory: '{0}'. Please use 'Get-ChildItem' instead.</value>
+    <value>'{0}'은(는) 디렉터리이므로 콘텐츠를 가져올 수 없습니다. 대신 'Get-ChildItem'을 사용하세요.</value>
   </data>
   <data name="WriteContainerContentException" xml:space="preserve">
-    <value>Unable to write content because it is a directory: '{0}'.</value>
+    <value>'{0}'은(는) 디렉터리이므로 콘텐츠를 쓸 수 없습니다.</value>
   </data>
   <data name="LocationUndoStackIsEmpty" xml:space="preserve">
-    <value>There is no location history left to navigate backwards.</value>
+    <value>뒤로 이동할 위치 기록이 남아 있지 않습니다.</value>
   </data>
   <data name="LocationRedoStackIsEmpty" xml:space="preserve">
-    <value>There is no location history left to navigate forwards.</value>
+    <value>앞으로 이동할 위치 기록이 남아 있지 않습니다.</value>
   </data>
   <data name="BoundedStackIsEmpty" xml:space="preserve">
-    <value>The BoundedStack is empty.</value>
+    <value>BoundedStack이 비어 있습니다.</value>
   </data>
   <data name="ClearContentProviderException" xml:space="preserve">
-    <value>Attempting to perform the ClearContent operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 ClearContent 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="ClearDirectoryContent" xml:space="preserve">
-    <value>Unable to clear content of '{0}' because it is a directory. Clear-Content is only supported on files.</value>
+    <value>'{0}'은(는) 디렉터리이므로 해당 콘텐츠를 지울 수 없습니다. Clear-Content는 파일에서만 지원됩니다.</value>
   </data>
   <data name="ClearContentDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the ClearContent operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 ClearContent 작업의 동적 매개 변수를 검색할 수 없습니다. {2}</value>
   </data>
   <data name="GetSecurityDescriptorProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetSecurityDescriptor operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 GetSecurityDescriptor 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="SetSecurityDescriptorProviderException" xml:space="preserve">
-    <value>Attempting to perform the SetSecurityDescriptor operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자에서 SetSecurityDescriptor 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="ProviderStartException" xml:space="preserve">
-    <value>Attempting to perform the Start operation on the '{0}' provider failed. {1}</value>
+    <value>'{0}' 공급자에서 Start 작업을 수행하지 못했습니다. {1}</value>
   </data>
   <data name="InitializeDefaultDrivesException" xml:space="preserve">
-    <value>Attempting to perform the InitializeDefaultDrives operation on the '{0}' provider failed.</value>
+    <value>'{0}' 공급자에서 InitializeDefaultDrives 작업을 수행하지 못했습니다.</value>
   </data>
   <data name="NewDriveProviderException" xml:space="preserve">
-    <value>Attempting to perform the NewDrive operation on the '{0}' provider failed for the drive with root '{1}'. {2}</value>
+    <value>루트 '{1}'이(가) 있는 드라이브의 '{0}' 공급자에서 NewDrive 작업을 수행하지 못했습니다. {2}</value>
   </data>
   <data name="NewDriveDynamicParametersProviderException" xml:space="preserve">
-    <value>Dynamic parameters for NewDrive cannot be retrieved for the '{0}' provider. {1}</value>
+    <value>'{0}' 공급자에 대한 NewDrive의 동적 매개 변수를 검색할 수 없습니다. {1}</value>
   </data>
   <data name="RemoveDriveProviderException" xml:space="preserve">
-    <value>The invocation of RemoveDrive on the '{0}' provider failed. {1}</value>
+    <value>'{0}' 공급자에서 RemoveDrive를 호출하지 못했습니다. {1}</value>
   </data>
   <data name="DriveRemovalPreventedByProvider" xml:space="preserve">
-    <value>Drive '{0}' cannot be removed because the provider '{1}' prevented it.</value>
+    <value>공급자 '{1}'에서 허용하지 않으므로 드라이브 '{0}'을(를) 제거할 수 없습니다.</value>
   </data>
   <data name="NormalizeRelativePathOutsideBase" xml:space="preserve">
-    <value>The path '{0}' referred to an item that was outside the base '{1}'.</value>
+    <value>경로 '{0}'이(가) 기준 '{1}' 밖에 있는 항목을 참조했습니다.</value>
   </data>
   <data name="ProviderSeekError" xml:space="preserve">
-    <value>The invocation of Seek on the '{0}' provider's content writer failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자 콘텐츠 작성기에서 Seek를 호출하지 못했습니다. {2}</value>
   </data>
   <data name="ProviderContentCloseError" xml:space="preserve">
-    <value>The invocation of Close on the '{0}' provider's content reader or writer failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자 콘텐츠 판독기 또는 작성기에서 Close를 호출하지 못했습니다. {2}</value>
   </data>
   <data name="ProviderContentReadError" xml:space="preserve">
-    <value>The invocation of Read on the '{0}' provider's content reader failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자 콘텐츠 판독기에서 Read를 호출하지 못했습니다. {2}</value>
   </data>
   <data name="ProviderContentWriteError" xml:space="preserve">
-    <value>The invocation of Write on the '{0}' provider's content writer failed for path '{1}'. {2}</value>
+    <value>경로 '{1}'의 '{0}' 공급자 콘텐츠 작성기에서 Write를 호출하지 못했습니다. {2}</value>
   </data>
   <data name="ProviderCannotBeUsedAsVariable" xml:space="preserve">
-    <value>The provider '{0}' cannot be used to get or set data using the variable syntax. {2}</value>
+    <value>변수 구문을 사용하여 데이터를 가져오거나 설정할 때는 공급자 '{0}'을(를) 사용할 수 없습니다. {2}</value>
   </data>
   <data name="ProviderVariableSyntaxInvalid" xml:space="preserve">
-    <value>The variable syntax cannot be used to get or set data in the provider. {2}</value>
+    <value>변수 구문을 사용하여 공급자에서 데이터를 가져오거나 설정할 수 없습니다. {2}</value>
   </data>
   <data name="AliasNotWritable" xml:space="preserve">
-    <value>Alias is not writeable because alias {0} is read-only or constant and cannot be written to.</value>
+    <value>별칭 {0}이(가) 읽기 전용이거나 상수이고 쓰기가 불가능하므로 별칭을 쓸 수 없습니다.</value>
   </data>
   <data name="FunctionNotWritable" xml:space="preserve">
-    <value>Cannot write to function {0} because it is read-only or constant.</value>
+    <value>함수 {0}은(는) 읽기 전용이거나 상수이므로 쓸 수 없습니다.</value>
   </data>
   <data name="VariableNotWritable" xml:space="preserve">
-    <value>Cannot overwrite variable {0} because it is read-only or constant.</value>
+    <value>변수가 읽기 전용이거나 상수이므로 변수 {0}을(를) 덮어쓸 수 없습니다.</value>
   </data>
   <data name="VariableIsPrivate" xml:space="preserve">
-    <value>Cannot access the variable '${0}' because it is a private variable.</value>
+    <value>변수 '${0}'은(는) 비공개 변수이므로 액세스할 수 없습니다.</value>
   </data>
   <data name="NamedCommandIsPrivate" xml:space="preserve">
-    <value>Cannot access the command '{0}' because it is a private command.</value>
+    <value>명령 '{0}'은(는) 비공개 명령이므로 명령에 액세스할 수 없습니다.</value>
   </data>
   <data name="CommandIsPrivate" xml:space="preserve">
-    <value>Cannot access the command because it is a private command.</value>
+    <value>비공개 명령이므로 명령에 액세스할 수 없습니다.</value>
   </data>
   <data name="ResourceIsPrivate" xml:space="preserve">
-    <value>Cannot access the session state resource because it is a private resource. </value>
+    <value>비공개 리소스이므로 세션 상태 리소스에 액세스할 수 없습니다. </value>
   </data>
   <data name="AliasNotRemovable" xml:space="preserve">
-    <value>Alias was not removed because alias {0} is constant or read-only.</value>
+    <value>별칭 {0}은(는) 상수이거나 읽기 전용이므로 제거하지 못했습니다.</value>
   </data>
   <data name="FunctionNotRemovable" xml:space="preserve">
-    <value>Cannot remove function {0} because it is constant.</value>
+    <value>함수 {0}은(는) 상수이므로 제거할 수 없습니다.</value>
   </data>
   <data name="VariableNotRemovable" xml:space="preserve">
-    <value>Cannot remove variable {0} because it is constant or read-only. If the variable is read-only, try the operation again specifying the Force option.</value>
+    <value>변수 {0}은(는) 상수이거나 읽기 전용이므로 제거할 수 없습니다. 변수가 읽기 전용인 경우 Force 옵션을 지정하여 작업을 다시 시도하세요.</value>
   </data>
   <data name="AliasIsConstant" xml:space="preserve">
-    <value>Alias {0} cannot be modified because it is constant.</value>
+    <value>별칭 {0}은(는) 상수이므로 수정할 수 없습니다.</value>
   </data>
   <data name="AliasIsReadOnly" xml:space="preserve">
-    <value>Alias {0} cannot be modified because it is read-only.</value>
+    <value>별칭 {0}은(는) 읽기 전용이므로 수정할 수 없습니다.</value>
   </data>
   <data name="FunctionIsConstant" xml:space="preserve">
-    <value>Cannot modify function {0} because it is constant.</value>
+    <value>함수 {0}은(는) 상수이므로 수정할 수 없습니다.</value>
   </data>
   <data name="FunctionIsReadOnly" xml:space="preserve">
-    <value>Cannot modify function {0} because it is read-only.</value>
+    <value>함수 {0}은(는) 읽기 전용이므로 수정할 수 없습니다.</value>
   </data>
   <data name="AliasCannotBeMadeConstant" xml:space="preserve">
-    <value>Alias {0} cannot be made constant after it has been created. Aliases can only be made constant at creation time.</value>
+    <value>별칭 {0}은(는) 만든 후 상수로 설정할 수 없습니다. 별칭은 만들 때만 상수로 설정할 수 있습니다.</value>
   </data>
   <data name="FunctionCannotBeMadeConstant" xml:space="preserve">
-    <value>Existing function {0} cannot be made constant. Functions can be made constant only at creation time.</value>
+    <value>기존 함수 {0}은(는) 상수로 만들 수 없습니다. 함수는 만들 때만 상수로 설정할 수 있습니다.</value>
   </data>
   <data name="VariableCannotBeMadeConstant" xml:space="preserve">
-    <value>Existing variable {0} cannot be made constant. Variables can be made constant only at creation time.</value>
+    <value>기존 변수 {0}을(를) 상수로 만들 수 없습니다. 변수는 만들 때만 상수로 설정할 수 있습니다.</value>
   </data>
   <data name="AliasAllScopeOptionCannotBeRemoved" xml:space="preserve">
-    <value>The AllScope option cannot be removed from the alias '{0}'.</value>
+    <value>별칭 '{0}'에서 AllScope 옵션을 제거할 수 없습니다.</value>
   </data>
   <data name="FunctionAllScopeOptionCannotBeRemoved" xml:space="preserve">
-    <value>The AllScope option cannot be removed from the function '{0}'.</value>
+    <value>함수 '{0}'에서 AllScope 옵션을 제거할 수 없습니다.</value>
   </data>
   <data name="VariableAllScopeOptionCannotBeRemoved" xml:space="preserve">
-    <value>The AllScope option cannot be removed from the variable '{0}'.</value>
+    <value>변수 '{0}'에서 AllScope 옵션을 제거할 수 없습니다.</value>
   </data>
   <data name="ScopedFunctionMustHaveName" xml:space="preserve">
-    <value>The function definition '{0}' contained a scope qualifier but no function name.</value>
+    <value>함수 정의 '{0}'에는 범위 한정자는 있지만 함수 이름이 없습니다.</value>
   </data>
   <data name="RemoveDrivesBeforeRemovingProvider" xml:space="preserve">
-    <value>Cannot remove provider {0}. All drives associated with provider {0} must be removed before provider {0} can be removed.</value>
+    <value>공급자 {0}을(를) 제거할 수 없습니다. 공급자 {0}을(를) 제거하려면 먼저 공급자 {0}과(와) 연결된 모든 드라이브를 제거해야 합니다.</value>
   </data>
   <data name="DriveNameIllegalCharacters" xml:space="preserve">
-    <value>Cannot process the drive name because the drive name contains one or more of the following characters that are not valid: ; ~ / \ . :</value>
+    <value>드라이브 이름에 다음과 같은 잘못된 문자가 하나 이상 포함되어 있으므로 드라이브 이름을 처리할 수 없습니다. ; ~ / \ . :</value>
   </data>
   <data name="NewDriveProviderFailed" xml:space="preserve">
-    <value>New drive creation failed because the provider does not allow the creation of the new drive.</value>
+    <value>공급자가 새 드라이브 만들기를 허용하지 않으므로 새 드라이브를 만들지 못했습니다.</value>
   </data>
   <data name="StackNameResolvedToMultiple" xml:space="preserve">
-    <value>The provided value '{0}' resolved to more than one location stack.</value>
+    <value>제공된 값 '{0}'이(가) 둘 이상의 위치 스택으로 확인되었습니다.</value>
   </data>
   <data name="StackNotFound" xml:space="preserve">
-    <value>Cannot find location stack '{0}'. It does not exist or it is not a container.</value>
+    <value>위치 스택 '{0}'을(를) 찾을 수 없습니다. 존재하지 않거나 컨테이너가 아닙니다.</value>
   </data>
   <data name="PathNotFound" xml:space="preserve">
     <value>경로 '{0}'이(가) 없으므로 찾을 수 없습니다.</value>
   </data>
   <data name="AliasNotFound" xml:space="preserve">
-    <value>Cannot find alias because alias '{0}' does not exist.</value>
+    <value>별칭 '{0}'이(가) 없으므로 별칭을 찾을 수 없습니다.</value>
   </data>
   <data name="PathResolvedToMultiple" xml:space="preserve">
-    <value>Cannot set the location because path '{0}' resolved to multiple containers. You can only set the location to a single container at a time.</value>
+    <value>경로 '{0}'이(가) 여러 컨테이너로 확인되어 위치를 설정할 수 없습니다. 위치는 한 번에 하나의 컨테이너로만 설정할 수 있습니다.</value>
   </data>
   <data name="VariablePathResolvedToMultiple" xml:space="preserve">
-    <value>Cannot process variable because variable path '{0}' resolved to multiple items. You can get or set the variable value only one item at a time.</value>
+    <value>변수 경로 '{0}'이(가) 여러 항목으로 확인되었으므로 변수를 처리할 수 없습니다. 변수 값은 한 번에 한 항목씩만 가져오거나 설정할 수 있습니다.</value>
   </data>
   <data name="DriveNotFound" xml:space="preserve">
-    <value>Cannot find drive. A drive with the name '{0}' does not exist.</value>
+    <value>드라이브를 찾을 수 없습니다. 이름이 '{0}'인 드라이브가 없습니다.</value>
   </data>
   <data name="ProviderNotFound" xml:space="preserve">
-    <value>Cannot find a provider with the name '{0}'.</value>
+    <value>이름이 '{0}'인 공급자를 찾을 수 없습니다.</value>
   </data>
   <data name="ProviderNotFoundBadFormat" xml:space="preserve">
-    <value>Cannot find a provider with the name '{0}'. The name is not in the proper format. A provider name can only be alphanumeric characters, or a PowerShell snap-in name that is followed by a single '\', followed by alphanumeric characters.</value>
+    <value>이름이 '{0}'인 공급자를 찾을 수 없습니다. 이름 형식이 올바르지 않습니다. 공급자 이름은 영숫자 문자로만 구성되거나, PowerShell 스냅인 이름 뒤에 단일 '\'와 영숫자 문자가 와야 합니다.</value>
   </data>
   <data name="ProviderNameAmbiguous" xml:space="preserve">
-    <value>'{0}' resolved to more than one provider name. Possible matches include:{1}.</value>
+    <value>'{0}'이(가) 둘 이상의 공급자 이름으로 확인되었습니다. 가능한 일치 항목은 다음과 같습니다.{1}.</value>
   </data>
   <data name="ProviderNotFoundInAssembly" xml:space="preserve">
-    <value>An error occurred attempting to create an instance of the provider. The provider type name of '{0}' could not be found in the assembly.</value>
+    <value>공급자의 인스턴스를 만드는 동안 오류가 발생했습니다. 어셈블리에서 '{0}'의 공급자 형식 이름을 찾을 수 없습니다.</value>
   </data>
   <data name="ProviderNameNotValid" xml:space="preserve">
-    <value>The specified provider name '{0}' cannot be used because it contains one or more of the following characters that are not valid: \ [ ] ? * :</value>
+    <value>지정한 공급자 이름 '{0}'에 다음과 같은 잘못된 문자가 하나 이상 포함되어 있으므로 공급자 이름을 사용할 수 없습니다. \ [ ] ? * :</value>
   </data>
   <data name="ProviderCtorException" xml:space="preserve">
-    <value>An error occurred attempting to create an instance of the provider '{0}'. {1} </value>
+    <value>공급자 '{0}'의 인스턴스를 만드는 동안 오류가 발생했습니다. {1} </value>
   </data>
   <data name="VariableNotFound" xml:space="preserve">
-    <value>Cannot find a variable with the name '{0}'.</value>
+    <value>이름이 '{0}'인 변수를 찾을 수 없습니다.</value>
   </data>
   <data name="TraceSourceNotFound" xml:space="preserve">
-    <value>Cannot find a trace source with the name '{0}'.</value>
+    <value>이름이 '{0}'인 추적 원본을 찾을 수 없습니다.</value>
   </data>
   <data name="DriveAlreadyExists" xml:space="preserve">
-    <value>A drive with the name '{0}' already exists.</value>
+    <value>이름이 '{0}'인 지정된 드라이브가 이미 있습니다.</value>
   </data>
   <data name="VariableAlreadyExists" xml:space="preserve">
-    <value>A variable with name '{0}' already exists.</value>
+    <value>이름이 '{0}'인 변수가 이미 있습니다.</value>
   </data>
   <data name="AliasAlreadyExists" xml:space="preserve">
-    <value>The alias is not allowed, because an alias with the name '{0}' already exists.</value>
+    <value>이름이 '{0}'인 별칭이 이미 있으므로 별칭을 사용할 수 없습니다.</value>
   </data>
   <data name="CmdletProviderAlreadyExists" xml:space="preserve">
-    <value>Cannot register the cmdlet provider because a cmdlet provider with the name '{0}' already exists.</value>
+    <value>이름이 '{0}'인 cmdlet 공급자가 이미 있으므로 cmdlet 공급자를 등록할 수 없습니다.</value>
   </data>
   <data name="MustBeFileSystemPath" xml:space="preserve">
-    <value>The path does not refer to a file system path.</value>
+    <value>경로가 파일 시스템 경로를 참조하지 않습니다.</value>
   </data>
   <data name="GlobalScopeCannotRemove" xml:space="preserve">
-    <value>Global scope cannot be removed.</value>
+    <value>전역 범위를 제거할 수 없습니다.</value>
   </data>
   <data name="ScopeIDExceedsAvailableScopes" xml:space="preserve">
-    <value>The scope number '{0}' exceeds the number of active scopes.</value>
+    <value>범위 번호 '{0}'이(가) 활성 범위 수를 초과합니다.</value>
   </data>
   <data name="OnlyAbleToComparePSDriveInfo" xml:space="preserve">
-    <value>Cannot compare PSDriveInfo. A PSDriveInfo instance can be compared only to another PSDriveInfo instance.</value>
+    <value>PSDriveInfo를 비교할 수 없습니다. PSDriveInfo 인스턴스는 다른 PSDriveInfo 인스턴스와만 비교할 수 있습니다.</value>
   </data>
   <data name="OutputStreamingNotEnabled" xml:space="preserve">
-    <value>The cmdlet provider cannot stream the results because no cmdlet was specified through which to stream the output.</value>
+    <value>출력을 스트리밍할 cmdlet이 지정되지 않아 cmdlet 공급자가 결과를 스트리밍할 수 없습니다.</value>
   </data>
   <data name="ErrorStreamingNotEnabled" xml:space="preserve">
-    <value>The cmdlet provider cannot stream the results because no cmdlet was specified through which to stream the error.</value>
+    <value>오류를 스트리밍할 cmdlet이 지정되지 않아 cmdlet 공급자가 결과를 스트리밍할 수 없습니다.</value>
   </data>
   <data name="HomePathNotSet" xml:space="preserve">
-    <value>Home location for this provider is not set. To set the home location, call "(get-psprovider '{0}').Home = 'path'".</value>
+    <value>이 공급자의 홈 위치가 설정되지 않았습니다. 홈 위치를 설정하려면 "(get-psprovider '{0}').Home = 'path'"를 호출하세요.</value>
   </data>
   <data name="NotProviderQualifiedPath" xml:space="preserve">
-    <value>The path is not in the correct format. Provider paths must contain a provider Id, followed by "::", followed by a provider specific path.</value>
+    <value>경로 형식이 잘못되었습니다. 공급자 경로에는 공급자 ID 뒤에 "::" 및 공급자별 경로가 차례로 포함되어야 합니다.</value>
   </data>
   <data name="MovePropertyDestinationResolveToSingle" xml:space="preserve">
-    <value>Cannot move the item because the destination path can resolve only to a single path.</value>
+    <value>대상 경로를 단일 경로로만 확인할 수 있으므로 항목을 이동할 수 없습니다.</value>
   </data>
   <data name="MoveItemSourceAndDestinationNotSameProvider" xml:space="preserve">
-    <value>Cannot move the item because the source and destination paths did not resolve to the same provider.</value>
+    <value>원본 경로와 대상 경로가 동일한 공급자로 확인되지 않았으므로 항목을 이동할 수 없습니다.</value>
   </data>
   <data name="MoveItemPathMultipleDestinationNotContainer" xml:space="preserve">
-    <value>Cannot move the item because the source path points to one or more items and the destination path is not a container. Validate that the destination path is a container and try again.</value>
+    <value>원본 경로가 하나 이상의 항목을 가리키고 대상 경로가 컨테이너가 아니므로 항목을 이동할 수 없습니다. 대상 경로가 컨테이너인지 확인하고 다시 시도하세요.</value>
   </data>
   <data name="MoveItemOneDestination" xml:space="preserve">
-    <value>Cannot move the item because the destination resolved to multiple paths. Specify a destination path that resolves to a single destination and try again.</value>
+    <value>대상이 여러 경로로 확인되었으므로 항목을 이동할 수 없습니다. 하나의 대상으로만 확인되는 대상 경로를 지정하고 다시 시도하세요.</value>
   </data>
   <data name="CopyContainerItemToLeafError" xml:space="preserve">
-    <value>Container cannot be copied onto existing leaf item.</value>
+    <value>컨테이너를 기존 리프 항목에 복사할 수 없습니다.</value>
   </data>
   <data name="CopyContainerToContainerWithoutRecurseOrContainer" xml:space="preserve">
-    <value>Container cannot be copied to another container. The -Recurse or -Container parameter is not specified.</value>
+    <value>컨테이너를 다른 컨테이너에 복사할 수 없습니다. -Recurse 또는 -Container 매개 변수가 지정되지 않았습니다.</value>
   </data>
   <data name="CopyItemSourceAndDestinationNotSameProvider" xml:space="preserve">
-    <value>Source and destination path did not resolve to the same provider.</value>
+    <value>원본 경로와 대상 경로가 같은 공급자로 확인되지 않았습니다.</value>
   </data>
   <data name="RenameMultipleItemError" xml:space="preserve">
-    <value>Cannot rename item because the path resolved to multiple items. Only one item can be renamed at a time.</value>
+    <value>경로가 여러 항목으로 확인되었으므로 항목 이름을 바꿀 수 없습니다. 한 번에 하나의 항목만 이름을 바꿀 수 있습니다.</value>
   </data>
   <data name="ProviderImplementationInconsistent" xml:space="preserve">
-    <value>The provider '{0}' cannot be used to resolve the path '{1}' because of an error in the provider.</value>
+    <value>공급자의 오류로 인해 공급자 '{0}'을(를) 사용하여 경로 '{1}'을(를) 확인할 수 없습니다.</value>
   </data>
   <data name="IContentCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot use interface. The IContentCmdletProvider interface is not implemented by this provider.</value>
+    <value>인터페이스를 사용할 수 없습니다. 이 공급자는 IContentCmdletProvider 인터페이스를 구현하지 않습니다.</value>
   </data>
   <data name="IPropertyCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot use interface. The IPropertyCmdletProvider interface is not supported by this provider.</value>
+    <value>인터페이스를 사용할 수 없습니다. 이 공급자는 IPropertyCmdletProvider 인터페이스를 지원하지 않습니다.</value>
   </data>
   <data name="IDynamicPropertyCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot use interface. The IDynamicPropertyCmdletProvider interface is not implemented by this provider.</value>
+    <value>인터페이스를 사용할 수 없습니다. 이 공급자는 IDynamicPropertyCmdletProvider 인터페이스를 구현하지 않습니다.</value>
   </data>
   <data name="NavigationCmdletProvider_NotSupported" xml:space="preserve">
-    <value>The NavigationCmdletProvider methods are not supported by this provider.</value>
+    <value>이 공급자는 NavigationCmdletProvider 메서드를 지원하지 않습니다.</value>
   </data>
   <data name="ContainerCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Provider methods not processed. The ContainerCmdletProvider methods are not supported by this provider.</value>
+    <value>공급자 메서드를 처리할 수 없습니다. 이 공급자는 ContainerCmdletProvider 메서드를 지원하지 않습니다.</value>
   </data>
   <data name="ItemCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot call methods. The ItemCmdletProvider methods are not supported by this provider.</value>
+    <value>메서드를 호출할 수 없습니다. 이 공급자는 ItemCmdletProvider 메서드를 지원하지 않습니다.</value>
   </data>
   <data name="DriveCmdletProvider_NotSupported" xml:space="preserve">
-    <value>DriveCmdletProvider methods are not supported by this provider.</value>
+    <value>이 공급자는 DriveCmdletProvider 메서드를 지원하지 않습니다.</value>
   </data>
   <data name="CmdletProvider_NotSupported" xml:space="preserve">
-    <value>Provider operation stopped because the provider does not support this operation.</value>
+    <value>공급자가 이 작업을 지원하지 않으므로 공급자 작업이 중지되었습니다.</value>
   </data>
   <data name="CmdletProvider_NotSupportedRecursionDepth" xml:space="preserve">
-    <value>Provider operation stopped because the provider does not support the 'Depth' parameter.</value>
+    <value>공급자가 'Depth' 매개 변수를 지원하지 않으므로 공급자 작업이 중지되었습니다.</value>
   </data>
   <data name="IContent_Seek_NotSupported" xml:space="preserve">
-    <value>Cannot call method. The content Seek method is not supported by this provider.</value>
+    <value>메서드를 호출할 수 없습니다. 이 공급자는 콘텐츠 Seek 메서드를 지원하지 않습니다.</value>
   </data>
   <data name="IContent_Clear_NotSupported" xml:space="preserve">
-    <value>Cannot perform the ClearContent operation. The ClearContent operation is not supported by this provider.</value>
+    <value>ClearContent 작업을 수행할 수 없습니다. 이 공급자는 ClearContent 작업을 지원하지 않습니다.</value>
   </data>
   <data name="Credentials_NotSupported" xml:space="preserve">
-    <value>The provider does not support the use of credentials. Perform the operation again without specifying credentials.</value>
+    <value>공급자가 자격 증명의 사용을 지원하지 않습니다. 자격 증명을 지정하지 않고 작업을 다시 수행하세요.</value>
   </data>
   <data name="FileSystemProviderCredentials_NotSupported" xml:space="preserve">
-    <value>The FileSystem provider supports credentials only on the New-PSDrive cmdlet. Perform the operation again without specifying credentials.</value>
+    <value>FileSystem 공급자는 New-PSDrive cmdlet에서만 자격 증명을 지원합니다. 자격 증명을 지정하지 않고 작업을 다시 수행하세요.</value>
   </data>
   <data name="Transactions_NotSupported" xml:space="preserve">
-    <value>The provider does not support transactions. Perform the operation again without the -UseTransaction parameter.</value>
+    <value>공급자가 트랜잭션을 지원하지 않습니다. -UseTransaction 매개 변수 없이 작업을 다시 수행하세요.</value>
   </data>
   <data name="Filter_NotSupported" xml:space="preserve">
-    <value>Cannot call method. The provider does not support the use of filters.</value>
+    <value>메서드를 호출할 수 없습니다. 공급자가 필터의 사용을 지원하지 않습니다.</value>
   </data>
   <data name="NewDriveCredentials_NotSupported" xml:space="preserve">
-    <value>Cannot create drive. The provider does not support the use of credentials.</value>
+    <value>드라이브를 만들 수 없습니다. 공급자가 자격 증명의 사용을 지원하지 않습니다.</value>
   </data>
   <data name="NewItemAlreadyExists" xml:space="preserve">
-    <value>The item at path '{0}' already exists.</value>
+    <value>경로 '{0}'에 항목이 이미 있습니다.</value>
   </data>
   <data name="CopyItemDoesntExist" xml:space="preserve">
-    <value>Cannot copy item. Item at the path '{0}' does not exist.</value>
+    <value>항목을 복사할 수 없습니다. 경로 '{0}'에 항목이 없습니다.</value>
   </data>
   <data name="RenameItemDoesntExist" xml:space="preserve">
-    <value>The item at the path '{0}' does not exist.</value>
+    <value>경로 '{0}'에 항목이 없습니다.</value>
   </data>
   <data name="AliasDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of the aliases stored in a session state</value>
+    <value>세션 상태에 저장된 별칭의 보기가 포함된 드라이브</value>
   </data>
   <data name="EnvironmentDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of the environment variables for the process</value>
+    <value>프로세스에 대한 환경 변수의 보기가 포함된 드라이브</value>
   </data>
   <data name="FunctionDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of the functions stored in a session state</value>
+    <value>세션 상태에 저장된 함수의 보기가 포함된 드라이브</value>
   </data>
   <data name="VariableDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of those variables stored in a session state</value>
+    <value>세션 상태에 저장된 해당 별칭의 보기가 포함된 드라이브</value>
   </data>
   <data name="TempDriveDescription" xml:space="preserve">
-    <value>Drive that maps to the temporary directory path for the current user</value>
+    <value>현재 사용자의 임시 디렉터리 경로에 매핑되는 드라이브</value>
   </data>
   <data name="NewLinkTargetNotSpecified" xml:space="preserve">
-    <value>Link '{0}' cannot be created because the target Value was not specified.</value>
+    <value>대상 값을 지정하지 않았으므로 링크 '{0}'을(를) 만들 수 없습니다.</value>
   </data>
   <data name="DollarNullDescription" xml:space="preserve">
-    <value>References to the null variable always return the null value. Assignments have no effect.</value>
+    <value>null 변수에 대한 참조는 항상 null 값을 반환합니다. 할당해도 아무 효과가 없습니다.</value>
   </data>
   <data name="MaxHistoryCountDescription" xml:space="preserve">
-    <value>Maximum number of history objects to retain in a session</value>
+    <value>세션에서 유지할 최대 기록 개체 수</value>
   </data>
   <data name="CannotRenameFunction" xml:space="preserve">
-    <value>Cannot rename function because function {0} is read-only or constant.</value>
+    <value>함수 {0}은(는) 읽기 전용이거나 상수이므로 이름을 바꿀 수 없습니다.</value>
   </data>
   <data name="CannotRenameAlias" xml:space="preserve">
-    <value>Cannot rename alias because alias {0} is read-only or constant.</value>
+    <value>별칭 {0}은(는) 읽기 전용이거나 상수이므로 이름을 바꿀 수 없습니다.</value>
   </data>
   <data name="CannotRenameVariable" xml:space="preserve">
-    <value>Cannot rename variable because variable {0} is read-only or constant.</value>
+    <value>변수 {0}은(는) 읽기 전용이거나 상수이므로 이름을 바꿀 수 없습니다.</value>
   </data>
   <data name="VariableOptionsNotSettable" xml:space="preserve">
-    <value>Cannot set options on the local variable {0}. Use New-Variable to create a variable that allows options to be set.</value>
+    <value>로컬 변수 {0}에는 옵션을 설정할 수 없습니다. 옵션을 설정할 수 있는 변수를 만들려면 New-Variable을 사용하세요.</value>
   </data>
   <data name="CmdletIsReadOnly" xml:space="preserve">
-    <value>Cmdlet {0} cannot be modified because it is read-only.</value>
+    <value>Cmdlet {0}은(는) 읽기 전용이므로 수정할 수 없습니다.</value>
   </data>
   <data name="VariableNotRemovableRare" xml:space="preserve">
-    <value>Cannot remove variable {0} because the variable has been optimized and is not removable. Try using the Remove-Variable cmdlet (without any aliases), or dot-sourcing the command that you are using to remove the variable.</value>
+    <value>변수가 최적화되어 제거할 수 없으므로 변수 {0}을(를) 제거할 수 없습니다. 별칭 없이 Remove-Variable cmdlet을 사용하거나, 변수를 제거하는 데 사용하는 명령을 도트 소싱해 보세요.</value>
   </data>
   <data name="VariableNotWritableRare" xml:space="preserve">
-    <value>Cannot overwrite variable {0} because the variable has been optimized. Try using the New-Variable or Set-Variable cmdlet (without any aliases), or dot-source the command that you are using to set the variable.</value>
+    <value>변수 {0}이(가) 최적화되어 있으므로 변수를 덮어쓸 수 없습니다. 별칭 없이 New-Variable 또는 Set-Variable cmdlet을 사용하거나, 변수를 설정하는 데 사용하는 명령을 도트 소싱해 보세요.</value>
   </data>
   <data name="GetContent_TailAndHeadCannotCoexist" xml:space="preserve">
-    <value>The parameters {0} and {1} cannot be used together. Please specify only one parameter.</value>
+    <value>매개 변수 {0}과(와) {1}은(는) 함께 사용할 수 없습니다. 매개 변수를 하나만 지정하세요.</value>
   </data>
   <data name="GetContent_TailNotSupported" xml:space="preserve">
-    <value>The Tail parameter currently is supported only for the FileSystem provider.</value>
+    <value>현재 Tail 매개 변수는 FileSystem 공급자에 대해서만 지원됩니다.</value>
   </data>
   <data name="AliasWithCommandNameAlreadyExists" xml:space="preserve">
-    <value>The alias is not allowed, because a command with the name '{0}' and command type '{1}' already exists.</value>
+    <value>이름이 '{0}'이고 명령 유형이 '{1}'인 명령이 이미 있으므로 별칭을 사용할 수 없습니다.</value>
   </data>
   <data name="CanNotRun" xml:space="preserve">
-    <value>Cannot run software. Permission is denied.</value>
+    <value>소프트웨어를 실행할 수 없습니다. 사용 권한이 거부되었습니다.</value>
   </data>
   <data name="CopyItemFromSessionToSession" xml:space="preserve">
-    <value>'-{0}' and '-{1}' are mutually exclusive and cannot be specified at the same time.</value>
+    <value>'-{0}' 및 '-{1}'은(는) 상호 배타적이며 동시에 지정할 수 없습니다.</value>
   </data>
   <data name="CopyItemRemotelyPathIsNotAbsolute" xml:space="preserve">
-    <value>The path '{0}' is not valid. Only absolute paths are supported on remote copy operations.</value>
+    <value>경로 '{0}'은(는) 유효하지 않습니다. 원격 복사 작업에서는 절대 경로만 지원됩니다.</value>
   </data>
   <data name="CopyItemValidateRemotePath" xml:space="preserve">
-    <value>Cannot validate remote path '{0}'.</value>
+    <value>원격 경로 '{0}'의 유효성을 검사할 수 없습니다.</value>
   </data>
   <data name="CopyItemSessionProperties" xml:space="preserve">
-    <value>Cannot perform operation because the session {0} is set to {1}.</value>
+    <value>세션 {0}이(가) {1}(으)로 설정되어 있으므로 작업을 수행할 수 없습니다.</value>
   </data>
   <data name="CopyItemRemotelyPathIsNullOrEmpty" xml:space="preserve">
-    <value>'{0}' parameter cannot be null or empty.</value>
+    <value>'{0}' 매개 변수는 null이거나 비워 둘 수 없습니다.</value>
   </data>
   <data name="WDACSessionStateVarLogTitle" xml:space="preserve">
-    <value>Session State Variables</value>
+    <value>세션 상태 변수</value>
   </data>
   <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
-    <value>Changing or creating the variable '{0}' scope to AllScope will be prevented in ConstrainedLanguage mode.</value>
+    <value>ConstrainedLanguage 모드에서는 변수 '{0}'의 범위를 AllScope로 변경하거나 만들 수 없습니다.</value>
   </data>
 </root>

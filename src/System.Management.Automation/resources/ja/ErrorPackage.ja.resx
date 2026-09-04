@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Ellipsize" xml:space="preserve">
-    <value>{0}…{1}</value>
+    <value>{0}: {1}</value>
   </data>
   <data name="ErrorDetailsEmptyTemplate" xml:space="preserve">
-    <value>Error text is empty for error "{0}" : "{1}"</value>
+    <value>エラー "{0}" のエラー テキストが空です : "{1}"</value>
   </data>
   <data name="RedirectedException" xml:space="preserve">
-    <value>Object "{0}" is reported as an error.</value>
+    <value>オブジェクト "{0}" はエラーとして報告されます。</value>
   </data>
   <data name="UnsupportedPreferenceError" xml:space="preserve">
-    <value>The value {0} is not supported for an ActionPreference variable. The provided value should be used only as a value for a preference parameter, and has been replaced by the default value. For more information, see the Help topic, "about_Preference_Variables."</value>
+    <value>{0} 値は、ActionPreference 変数ではサポートされていません。指定された値は、基本設定パラメーターの値としてのみ使用する必要があり、既定値に置き換えられています。詳細については、ヘルプ トピック「about_Preference_Variables」を参照してください。</value>
   </data>
   <data name="ActionPreferenceReservedForFutureUseError" xml:space="preserve">
-    <value>The {0} ActionPreference value is reserved for future use and is not supported at this time. For more information about preference variables, see the Help topic, "about_Preference_Variables."</value>
+    <value>{0} ActionPreference 値は将来使用するために予約されており、現時点ではサポートされていません。基本設定変数の詳細については、ヘルプ トピック「about_Preference_Variables」を参照してください。</value>
   </data>
   <data name="ReservedActionPreferenceReplacedError" xml:space="preserve">
-    <value>The {0} ActionPreference value is reserved for future use and is not supported at this time. It has been replaced in your {1} variable by the default value of {2}. For more information about preference variables, see the Help topic, "about_Preference_Variables."</value>
+    <value>{0} ActionPreference 値は将来使用するために予約されており、現時点ではサポートされていません。{1} 変数では、既定値の {2} に置き換えられました。基本設定変数の詳細については、ヘルプ トピック「about_Preference_Variables」を参照してください。</value>
   </data>
 </root>

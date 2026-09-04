@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NewSecureString_Prompt" xml:space="preserve">
-    <value>Enter secret: </value>
+    <value>輸入祕密:</value>
   </data>
   <data name="ForceRequired" xml:space="preserve">
-    <value>The system cannot protect plain text input. To suppress this warning and convert the plain text to a SecureString, reissue the command specifying the Force parameter. For more information, type: get-help ConvertTo-SecureString.</value>
+    <value>系統無法保護純文字輸入。若要抑制此警告並將純文字轉換為 SecureString，請重新執行命令並指定 Force 參數。如需詳細資訊，請輸入: get-help ConvertTo-SecureString。</value>
   </data>
 </root>

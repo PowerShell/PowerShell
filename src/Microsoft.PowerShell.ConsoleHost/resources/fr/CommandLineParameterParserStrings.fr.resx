@@ -118,114 +118,123 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandAlreadySpecified" xml:space="preserve">
-    <value>Cannot process command because a command is already specified with -Command, -CommandWithArgs, or -EncodedCommand.</value>
+    <value>Impossible de traiter la commande, car une commande est déjà spécifiée avec -Command, -CommandWithArgs ou -EncodedCommand.</value>
   </data>
   <data name="MissingCommandParameter" xml:space="preserve">
-    <value>Cannot process the command because of a missing parameter. A command must follow -Command.</value>
+    <value>Impossible de traiter la commande en raison d’un paramètre manquant. Une commande doit suivre -Command.</value>
   </data>
   <data name="UnknownParameter" xml:space="preserve">
-    <value>Unrecognized parameter: '{0}'.</value>
+    <value>Paramètre non reconnu : '{0}'.</value>
   </data>
   <data name="TooManyParametersToCommand" xml:space="preserve">
-    <value>'-' was specified with the -Command parameter; no other arguments to -Command are permitted.</value>
+    <value>'-' a été spécifié avec le paramètre -Command ; aucun autre argument pour -Command n’est autorisé.</value>
   </data>
   <data name="StdinNotRedirected" xml:space="preserve">
-    <value>'-' was specified as the argument to -Command but standard input has not been redirected for this process.</value>
+    <value>'-' a été spécifié comme argument vers -Command, mais l’entrée standard n’a pas été redirigée pour ce processus.</value>
   </data>
   <data name="MissingOutputFormatParameter" xml:space="preserve">
-    <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter.
-Specify one of the following formats for this parameter:
+    <value>Impossible d’exécuter la commande, car aucun argument n’a été fourni pour le paramètre OutputFormat.
+Spécifiez l’un des formats suivants pour ce paramètre :
 {0}</value>
   </data>
   <data name="MissingInputFormatParameter" xml:space="preserve">
-    <value>Cannot process the command because the -InputFormat parameter requires an argument. Specify a valid format argument for this parameter.
-Valid formats are:
+    <value>Impossible de traiter la commande, car le paramètre -InputFormat requiert un argument. Spécifiez un argument de format valide pour ce paramètre.
+Les formats valides sont les suivants :
 {0}</value>
   </data>
   <data name="BadFormatParameterValue" xml:space="preserve">
-    <value>Cannot process the command because of an incorrect parameter value. "{0}" is not a valid format.
-Valid formats are:
+    <value>Impossible de traiter la commande en raison d’une valeur de paramètre incorrecte. «{0}" n’est pas un format valide.
+Les formats valides sont les suivants :
 {1}</value>
   </data>
   <data name="ArgsAlreadySpecified" xml:space="preserve">
-    <value>Cannot process the command because arguments to -Command or -EncodedCommand have already been specified with -EncodedArguments.</value>
+    <value>Impossible de traiter la commande, car les arguments de -Command ou -EncodedCommand ont déjà été spécifiés avec -EncodedArguments.</value>
   </data>
   <data name="MissingArgsValue" xml:space="preserve">
-    <value>Cannot process the command because -EncodedArguments requires a value. Specify a value for the -EncodedArguments parameter.</value>
+    <value>Impossible de traiter la commande, car -EncodedArguments requiert une valeur. Spécifiez une valeur pour le paramètre -EncodedArguments.</value>
   </data>
   <data name="MissingFileArgument" xml:space="preserve">
-    <value>The command cannot be run because the File parameter requires a file path. Supply a path for the File parameter and then try the command again.</value>
+    <value>Impossible d’exécuter la commande, car le paramètre File requiert un chemin d’accès au fichier. Fournissez un chemin d’accès pour le paramètre File, puis réessayez la commande.</value>
   </data>
   <data name="MissingWindowStyleArgument" xml:space="preserve">
-    <value>Cannot process the command because -WindowStyle requires an argument that is normal, hidden, minimized or maximized. Specify one of these argument values and try again.</value>
+    <value>Impossible de traiter la commande, car -WindowStyle requiert un argument normal, masqué, réduit ou agrandi. Spécifiez l’une de ces valeurs d’argument et réessayez.</value>
   </data>
   <data name="InvalidFileArgument" xml:space="preserve">
-    <value>Processing -File '{0}' failed: {1} Specify a valid path for the -File parameter.</value>
+    <value>Échec du traitement de -File '{0}' : {1} Spécifiez un chemin d’accès valide pour le paramètre -File.</value>
   </data>
   <data name="InvalidWindowStyleArgument" xml:space="preserve">
-    <value>Processing -WindowStyle '{0}' failed: {1}.</value>
+    <value>Échec du traitement de -WindowStyle '{0}' : {1}.</value>
   </data>
   <data name="InvalidFileArgumentExtension" xml:space="preserve">
-    <value>Processing -File '{0}' failed because the file does not have a '.ps1' extension. Specify a valid PowerShell script file name, and then try again.</value>
+    <value>Échec du traitement de -File '{0}', car le fichier n’a pas d’extension '.ps1'. Spécifiez un nom de fichier de script PowerShell valide, puis réessayez.</value>
   </data>
   <data name="ArgumentFileDoesNotExist" xml:space="preserve">
-    <value>The argument '{0}' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>L’argument «{0}» n’est pas reconnu comme nom d’un fichier de script. Vérifiez l’orthographe du nom ou, si un chemin d’accès a été inclus, vérifiez que le chemin d’accès est correct et réessayez.</value>
   </data>
   <data name="BadArgsValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedArguments is not properly encoded. The value must be Base64 encoded.</value>
+    <value>Impossible de traiter la commande, car la valeur spécifiée avec -EncodedArguments n’est pas correctement encodée. La valeur doit être encodée en Base64.</value>
   </data>
   <data name="BadCommandValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedCommand is not properly encoded. The value must be Base64 encoded.</value>
+    <value>Impossible de traiter la commande, car la valeur spécifiée avec -EncodedCommand n’est pas correctement encodée. La valeur doit être encodée en Base64.</value>
   </data>
   <data name="MissingExecutionPolicyParameter" xml:space="preserve">
-    <value>Cannot process the execution policy because of a missing policy name. A policy name must follow -ExecutionPolicy.</value>
+    <value>Impossible de traiter la stratégie d’exécution en raison d’un nom de stratégie manquant. Un nom de stratégie doit suivre -ExecutionPolicy.</value>
   </data>
   <data name="MtaStaMutuallyExclusive" xml:space="preserve">
-    <value>Cannot process the command because -STA and -MTA are both specified. Specify either -STA or -MTA.</value>
+    <value>Impossible de traiter la commande, car -STA et -MTA sont tous deux spécifiés. Spécifiez -STA ou -MTA.</value>
   </data>
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationName requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+    <value>Impossible de traiter la commande, car -ConfigurationName requiert un argument qui est un nom de configuration de point de terminaison distant. Spécifiez cet argument et réessayez.</value>
   </data>
   <data name="MissingConfigurationFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationFile requires an argument that is a session configuration (.pssc) file path. Specify this argument and try again.</value>
+    <value>Impossible de traiter la commande car -ConfigurationFile requiert un argument qui est un chemin d'accès à un fichier de configuration de session (.pssc). Spécifiez cet argument et réessayez.</value>
   </data>
   <data name="MissingCustomPipeNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName requires an argument that is a name of the pipe you want to use. Specify this argument and try again.</value>
+    <value>Impossible de traiter la commande, car -CustomPipeName requiert un argument qui est le nom du canal que vous souhaitez utiliser. Spécifiez cet argument et réessayez.</value>
   </data>
   <data name="CustomPipeNameTooLong" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+    <value>Impossible de traiter la commande, car -CustomPipeName spécifié est trop long. Les noms de canaux sur cette plateforme peuvent avoir jusqu’à {0} caractères. Le nom de votre canal «{1}» est {2} caractères.</value>
   </data>
   <data name="MissingSettingsFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -SettingsFile requires an argument that is a file path.</value>
+    <value>Impossible de traiter la commande, car -SettingsFile nécessite un argument qui est un chemin d’accès de fichier.</value>
   </data>
   <data name="InvalidSettingsFileArgument" xml:space="preserve">
-    <value>Processing -SettingsFile '{0}' failed: {1}. Specify a valid path for the -SettingsFile parameter.</value>
+    <value>Échec du traitement de -SettingsFile '{0}' : {1}. Spécifiez un chemin d’accès valide pour le paramètre -SettingsFile.</value>
   </data>
   <data name="SettingsFileNotExists" xml:space="preserve">
-    <value>The argument '{0}' passed to the -SettingsFile does not exist. Provide the path to an existing json file as an argument to the -SettingsFile parameter.</value>
+    <value>L’argument «{0}» passé à -SettingsFile n’existe pas. Indiquez le chemin d’accès à un fichier JSON existant en tant qu’argument du paramètre -SettingsFile.</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
-    <value>Invalid argument '{0}', did you mean:</value>
+    <value>Argument non valide '{0}', voulez-vous dire :</value>
   </data>
   <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
-    <value>Parameter -WindowStyle is not implemented on this platform.</value>
+    <value>Le paramètre -WindowStyle n’est pas implémenté sur cette plateforme.</value>
   </data>
   <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
-    <value>Cannot process the command because -WorkingDirectory requires an argument that is a directory path.</value>
+    <value>Impossible de traiter la commande, car -WorkingDirectory requiert un argument qui est un chemin d’accès de répertoire.</value>
   </data>
   <data name="MTANotImplemented" xml:space="preserve">
-    <value>Parameter -MTA is not supported on this platform.</value>
+    <value>Le paramètre -MTA n’est pas pris en charge sur cette plateforme.</value>
   </data>
   <data name="STANotImplemented" xml:space="preserve">
-    <value>Parameter -STA is not supported on this platform.</value>
+    <value>Le paramètre -STA n’est pas pris en charge sur cette plateforme.</value>
   </data>
   <data name="NullElementInArgs" xml:space="preserve">
-    <value>The specified arguments must not contain null elements.</value>
+    <value>Les arguments spécifiés ne doivent pas contenir d'éléments nuls.</value>
   </data>
   <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
-    <value>Invalid ExecutionPolicy value '{0}'.</value>
+    <value>Valeur ExecutionPolicy non valide '{0}'.</value>
   </data>
   <data name="MissingMandatoryArgument" xml:space="preserve">
-    <value>An argument is required to be supplied to the '{0}' parameter.</value>
+    <value>Un argument doit être fourni au paramètre '{0}'.</value>
+  </data>
+  <data name="FileOnlyEntryRequired" xml:space="preserve">
+    <value>Le paramètre « -File » est requis par la stratégie.</value>
+  </data>
+  <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
+    <value>Le paramètre « -NoExit » est interdit par la stratégie.</value>
+  </data>
+  <data name="FileOnlyEntryServerMode" xml:space="preserve">
+    <value>Le mode serveur est interdit par la stratégie.</value>
   </data>
 </root>

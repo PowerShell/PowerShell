@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ResourceBaseNameFailure" xml:space="preserve">
-    <value>Cannot load a resource with base name "{0}".</value>
+    <value>기본 이름이 "{0}"인 리소스를 로드할 수 없습니다.</value>
   </data>
   <data name="ResourceIdFailure" xml:space="preserve">
-    <value>Cannot load a resource string with ID "{0}".</value>
+    <value>ID가 "{0}"인 리소스 문자열을 로드할 수 없습니다.</value>
   </data>
   <data name="ActionPreferenceStop" xml:space="preserve">
-    <value>Running commands is prevented by Stop policy settings.</value>
+    <value>Stop 정책 설정으로 인해 명령 실행이 제한됩니다.</value>
   </data>
   <data name="AssemblyNotRegistered" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}" because an assembly was not registered.</value>
+    <value>어셈블리가 등록되지 않아 메시지 "{0}" "{1}" "{2}"을(를) 검색할 수 없습니다.</value>
   </data>
   <data name="BadTemplate" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}". A template string format is not valid in template string "{3}".</value>
+    <value>메시지 "{0}" "{1}" "{2}"을(를) 검색할 수 없습니다. 템플릿 문자열 "{3}"의 형식이 올바르지 않습니다.</value>
   </data>
   <data name="BlankTemplate" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}". A template string exists, but its value is empty or blank.</value>
+    <value>메시지 "{0}" "{1}" "{2}"을(를) 검색할 수 없습니다. 템플릿 문자열은 있지만 값이 비어 있거나 공백입니다.</value>
   </data>
   <data name="PipelineStoppedException" xml:space="preserve">
-    <value>The pipeline has been stopped.</value>
+    <value>파이프라인이 중지되었습니다.</value>
   </data>
   <data name="ScriptCallDepthException" xml:space="preserve">
-    <value>The script failed due to call depth overflow.</value>
+    <value>호출 깊이 초과로 인해 스크립트가 실패했습니다.</value>
   </data>
   <data name="PipelineDepthException" xml:space="preserve">
-    <value>The pipeline failed due to call depth overflow.</value>
+    <value>호출 깊이 초과로 인해 파이프라인이 실패했습니다.</value>
   </data>
 </root>

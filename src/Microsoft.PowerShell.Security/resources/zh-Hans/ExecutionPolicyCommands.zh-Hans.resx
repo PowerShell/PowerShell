@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExecutionPolicyOverridden" xml:space="preserve">
-    <value>PowerShell updated your execution policy successfully, but the setting is overridden by a policy defined at a more specific scope.  Due to the override, your shell will retain its current effective execution policy of {0}. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more information please see "Get-Help Set-ExecutionPolicy".</value>
+    <value>PowerShell 已成功更新你的执行策略，但该设置被在更具体作用域中定义的策略覆盖。 由于该覆盖，你的 shell 将保留当前生效的执行策略 {0}。键入“Get-ExecutionPolicy -List”以查看你的执行策略设置。有关详细信息，请参阅“Get-Help Set-ExecutionPolicy”。</value>
   </data>
   <data name="ExecutionPolicyOverriddenRecommendedAction" xml:space="preserve">
-    <value>Contact your system administrator.</value>
+    <value>请与你的系统管理员联系。</value>
   </data>
   <data name="ListAndScopeSpecified" xml:space="preserve">
-    <value>Cannot get execution policy. Specify only the List or Scope parameters.</value>
+    <value>无法获取执行策略。请仅指定 List 或 Scope 参数。</value>
   </data>
   <data name="CantSetGroupPolicy" xml:space="preserve">
-    <value>Cannot set execution policy. Execution policies at the MachinePolicy or UserPolicy scopes must be set through Group Policy.</value>
+    <value>无法设置执行策略。必须通过组策略设置 MachinePolicy 或 UserPolicy 范围的执行策略。</value>
   </data>
   <data name="SetExecutionPolicyCaption" xml:space="preserve">
-    <value>Execution Policy Change</value>
+    <value>执行策略更改</value>
   </data>
   <data name="SetExecutionPolicyQuery" xml:space="preserve">
-    <value>The execution policy helps protect you from scripts that you do not trust. Changing the execution policy might expose you to the security risks described in the about_Execution_Policies help topic at https://go.microsoft.com/fwlink/?LinkID=135170. Do you want to change the execution policy?</value>
+    <value>执行策略可帮助你防范不受信任的脚本。更改执行策略可能会使你面临 https://go.microsoft.com/fwlink/?LinkID=135170 中 about_Execution_Policies 帮助主题所述的安全风险。是否要更改执行策略？</value>
   </data>
   <data name="SetExecutionPolicyAccessDeniedError" xml:space="preserve">
     <value>{0}
-To change the execution policy for the default (LocalMachine) scope, start PowerShell with the "Run as administrator" option. To change the execution policy for the current user, run "Set-ExecutionPolicy -Scope CurrentUser".</value>
+若要更改默认 (LocalMachine) 范围的执行策略，请使用“以管理员身份运行”选项启动 PowerShell。若要更改当前用户的执行策略，请运行“Set-ExecutionPolicy -Scope CurrentUser”。</value>
   </data>
 </root>

@@ -121,99 +121,99 @@
     <value>{0} ({1})</value>
   </data>
   <data name="NoServiceFoundForGivenName" xml:space="preserve">
-    <value>Cannot find any service with service name '{0}'.</value>
+    <value>Nous ne pouvons pas trouver un service avec le nom de service « {0} ».</value>
   </data>
   <data name="NoServiceFoundForGivenDisplayName" xml:space="preserve">
-    <value>Cannot find any service with display name '{1}'.</value>
+    <value>Nous ne pouvons pas trouver un service avec le nom d’affichage « {1} ».</value>
   </data>
   <data name="ServiceHasDependentServices" xml:space="preserve">
-    <value>Cannot stop service '{1} ({0})' because it has dependent services. It can only be stopped if the Force flag is set.</value>
+    <value>Nouss ne pouvons pas arrêter le service « {1} ({0}) », car il a des services dépendants. Il ne peut être arrêté que si l’indicateur Force est défini.</value>
   </data>
   <data name="ServiceHasDependentServicesNoForce" xml:space="preserve">
-    <value>Cannot stop service '{1} ({0})' because it has dependent services.</value>
+    <value>Nouss ne pouvons pas arrêter le service « {1} ({0}) », car il a des services dépendants.</value>
   </data>
   <data name="CouldNotStopService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be stopped due to the following error: {2}</value>
+    <value>Nous ne pouvons pas arrêter le service « {1} ({0}) » en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotStartService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be started due to the following error: {2}</value>
+    <value>Nous ne pouvons pas démarrer le service « {1} ({0}) » en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotSuspendService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be suspended due to the following error: {2}</value>
+    <value>Nous ne pouvons pas mettre en pause le service « {1} ({0}) » en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotSuspendServiceNotSupported" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be suspended because the service does not support being suspended or resumed.</value>
+    <value>Nous ne pouvons pas mettre en pause le service « {1} ({0}) », car il ne prend pas en charge l’interruption ou la reprise.</value>
   </data>
   <data name="CouldNotSuspendServiceNotRunning" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be suspended because it is not currently running.</value>
+    <value>Nous ne pouvons pas interrompre le service « {1} ({0}) », car il n’est pas en cours d’exécution.</value>
   </data>
   <data name="CouldNotResumeService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be resumed due to the following error: {2}</value>
+    <value>Nous ne pouvons pas reprendre le service « {1} ({0}) » en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotResumeServiceNotSupported" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be resumed because the service does not support being suspended or resumed.</value>
+    <value>Nous ne pouvons pas reprendre le service « {1} ({0}) », car il ne prend pas en charge l’interruption ou la reprise.</value>
   </data>
   <data name="CouldNotResumeServiceNotRunning" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be resumed because it is not currently running.</value>
+    <value>Nous ne pouvons pas reprendre le service « {1} ({0}) », car il n’est pas en cours d’exécution.</value>
   </data>
   <data name="CouldNotSetService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be configured due to the following error: {2}</value>
+    <value>Nous ne pouvons pas configurer le service « {1} ({0}) » en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotSetServiceDescription" xml:space="preserve">
-    <value>Service '{1} ({0})' description cannot be configured due to the following error: {2}</value>
+    <value>Nous ne pouvons pas configurer la description du service « {1} ({0}) » en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotSetServiceDelayedAutoStart" xml:space="preserve">
-    <value>Service '{1} ({0})' automatic (delayed start) cannot be configured due to the following error: {2}</value>
+    <value>Nous ne pouvons pas configurer le service « {1} ({0}) » avec le démarrage automatique (démarrage différé) en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotSetServiceSecurityDescriptorSddl" xml:space="preserve">
-    <value>Service '{0}' security descriptor cannot be configured due to the following error: {1}</value>
+    <value>Nous ne pouvons pas configurer le descripteur de sécurité du service « {0} » en raison de l’erreur suivante : {1}</value>
   </data>
   <data name="CouldNotNewService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be created due to the following error: {2}</value>
+    <value>Nous ne pouvons pas créer le service « {1} ({0}) » en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotNewServiceDescription" xml:space="preserve">
-    <value>Service '{1} ({0})' was created, but its description cannot be configured due to the following error: {2}</value>
+    <value>Le service « {1} ({0}) » a été créé, mais sa description ne peut pas être configurée en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotNewServiceDelayedAutoStart" xml:space="preserve">
-    <value>Service '{1} ({0})' was created, but its StartupType 'Automatic (Delayed Start)' could not be configured due to the following error: {2}</value>
+    <value>Le service « {1} ({0}) » a été créé, mais son type de démarrage « Automatic (Delayed Start) » n’a pas pu être configuré en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotRemoveService" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be removed due to the following error: {2}</value>
+    <value>Nous ne pouvons pas supprimer le service « {1} ({0}) » en raison de l’erreur suivante : {2}</value>
   </data>
   <data name="CouldNotAccessDependentServices" xml:space="preserve">
-    <value>'Cannot access dependent services of '{1} ({0})'</value>
+    <value>« Nous ne pouvons pas accéder aux services dépendants de « {1} ({0}) »</value>
   </data>
   <data name="StartingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to start...</value>
+    <value>Attente de le début du service. « {1} ({0}) »...</value>
   </data>
   <data name="StoppingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to stop...</value>
+    <value>Attente de l’arrêt du service. « {1} ({0}) »...</value>
   </data>
   <data name="SuspendingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to suspend...</value>
+    <value>Attente de la mise en pause du service. « {1} ({0}) »...</value>
   </data>
   <data name="ResumingService" xml:space="preserve">
-    <value>Waiting for service '{1} ({0})' to resume...</value>
+    <value>Attente de la reprise du service. « {1} ({0}) »...</value>
   </data>
   <data name="StartServiceFailed" xml:space="preserve">
-    <value>Failed to start service '{1} ({0})'.</value>
+    <value>Échec du démarrage du service « {1} ({0}) ».</value>
   </data>
   <data name="StopServiceFailed" xml:space="preserve">
-    <value>Service '{1} ({0})' stop failed.</value>
+    <value>Échec d’arrêt du service « {1} ({0}) ».</value>
   </data>
   <data name="SuspendServiceFailed" xml:space="preserve">
-    <value>Service '{1} ({0})' suspend failed.</value>
+    <value>L’interruption du service « {1} ({0}) » a échoué.</value>
   </data>
   <data name="ResumeServiceFailed" xml:space="preserve">
-    <value>Service '{1} ({0})' resume failed.</value>
+    <value>La reprise du service « {1} ({0}) » a échoué.</value>
   </data>
   <data name="FailToOpenServiceControlManager" xml:space="preserve">
-    <value>Failed to open SCManager due to the following error: {0}. Run PowerShell as admin and run your command again.</value>
+    <value>Échec de l’ouverture de SCManager en raison de l’erreur suivante : {0}. Exécutez PowerShell en tant qu’administrateur(-trice), puis relancez votre commande.</value>
   </data>
   <data name="UnsupportedStartupType" xml:space="preserve">
-    <value>The startup type '{0}' is not supported by {1}.</value>
+    <value>Le type de démarrage « {0} » n’est pas pris en charge par {1}.</value>
   </data>
   <data name="CouldNotGetServiceProperty" xml:space="preserve">
-    <value>Could not retrieve property '{1}' for service '{0}': {2}</value>
+    <value>Nous n’avons pas pu récupérer la propriété « {1} » pour le service « {0} » : {2}</value>
   </data>
 </root>

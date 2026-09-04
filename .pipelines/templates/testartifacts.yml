@@ -33,6 +33,8 @@ jobs:
       ob_restore_phase: true
 
   - template: /.pipelines/templates/install-dotnet.yml@self
+    parameters:
+      architecture: 'win-x64'
 
   - pwsh: |
       New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force
@@ -63,6 +65,7 @@ jobs:
     retryCountOnTaskFailure: 1
     env:
       ob_restore_phase: true
+      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
   - pwsh: |
       Write-Host "This doesn't do anything but make the build phase run."
@@ -96,6 +99,8 @@ jobs:
       ob_restore_phase: true
 
   - template: /.pipelines/templates/install-dotnet.yml@self
+    parameters:
+      architecture: 'linux-x64'
 
   - pwsh: |
       New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force
@@ -128,6 +133,7 @@ jobs:
     retryCountOnTaskFailure: 1
     env:
       ob_restore_phase: true
+      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
   - pwsh: |
       Write-Host "This doesn't do anything but make the build phase run."

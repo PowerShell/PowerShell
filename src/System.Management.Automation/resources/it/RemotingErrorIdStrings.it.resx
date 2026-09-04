@@ -118,1618 +118,1618 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DefaultRemotingExceptionMessage" xml:space="preserve">
-    <value>An error of type "{0}" has occurred.</value>
+    <value>Si è verificato un errore di tipo "{0}".</value>
   </data>
   <data name="OutOfMemory" xml:space="preserve">
-    <value>Out of process memory.</value>
+    <value>Memoria del processo insufficiente.</value>
   </data>
   <data name="UnsupportedOSForRemoteEnumeration" xml:space="preserve">
-    <value>Remote PSSession enumeration with -ComputerName is only supported on Windows and not "{0}".</value>
+    <value>L'enumerazione remota di PSSession con -ComputerName è supportata solo in Windows e non in "{0}".</value>
   </data>
   <data name="PipelineIdsDoNotMatch" xml:space="preserve">
-    <value>Pipeline ID "{0}" does not match the InstanceId of the pipeline that is currently running, "{1}".</value>
+    <value>L'ID pipeline "{0}" non corrisponde all'InstanceId della pipeline attualmente in esecuzione, "{1}".</value>
   </data>
   <data name="PipelineNotFoundOnServer" xml:space="preserve">
-    <value>Pipeline Id "{0}" was not found on the server.</value>
+    <value>L'ID pipeline "{0}" non è stato trovato nel server.</value>
   </data>
   <data name="PipelineStopped" xml:space="preserve">
-    <value>The remote pipeline has been stopped.</value>
+    <value>La pipeline remota è stata arrestata.</value>
   </data>
   <data name="RunspaceAlreadyExists" xml:space="preserve">
-    <value>The session already exists. Trying to create the session again with the same InstanceId {0} is not allowed.</value>
+    <value>La sessione di esiste già. Non è consentito creare di nuovo la sessione con lo stesso InstanceId {0}.</value>
   </data>
   <data name="RunspaceIdsDoNotMatch" xml:space="preserve">
-    <value>The specified client session InstanceId "{0}" does not match the existing session's InstanceId "{1}".</value>
+    <value>L'InstanceId della sessione client specificato "{0}" non corrisponde all'InstanceId "{1}" della sessione esistente.</value>
   </data>
   <data name="RemoteRunspaceOpenFailed" xml:space="preserve">
-    <value>Opening the remote session failed.</value>
+    <value>Apertura della sessione remota non riuscita.</value>
   </data>
   <data name="RunspaceCannotBeFound" xml:space="preserve">
-    <value>The specified remote session with a client InstanceId of "{0}" cannot be found.</value>
+    <value>Non è possibile trovare la sessione remota specificata con InstanceId client "{0}".</value>
   </data>
   <data name="ResponsePromptIdCannotBeFound" xml:space="preserve">
-    <value>Prompt response has a prompt id "{0}" that cannot be found.</value>
+    <value>La risposta al prompt contiene un ID prompt "{0}" che non è stato trovato.</value>
   </data>
   <data name="RemoteHostCallFailed" xml:space="preserve">
-    <value>Remote host call to "{0}" failed.</value>
+    <value>Chiamata dell'host remoto a "{0}" non riuscita.</value>
   </data>
   <data name="RemoteHostMethodNotImplemented" xml:space="preserve">
-    <value>Remote host method {0} is not implemented.</value>
+    <value>Il metodo host remoto {0} non è implementato.</value>
   </data>
   <data name="RemoteHostDataEncodingNotSupported" xml:space="preserve">
-    <value>Remote host method data encoding is not supported for type {0}.</value>
+    <value>La codifica dei dati del metodo host remoto non è supportata per il tipo {0}.</value>
   </data>
   <data name="RemoteHostDataDecodingNotSupported" xml:space="preserve">
-    <value>Remote host method data decoding is not supported for type {0}.</value>
+    <value>La decodifica dei dati del metodo host remoto non è supportata per il tipo {0}.</value>
   </data>
   <data name="NestedPipelineNotSupported" xml:space="preserve">
-    <value>Creation of nested pipelines is not supported.</value>
+    <value>La creazione di pipeline annidate non è supportata.</value>
   </data>
   <data name="RelativeUriForRunspacePathNotSupported" xml:space="preserve">
-    <value>Relative URIs are not supported in the creation of remote sessions.</value>
+    <value>Gli URI relativi non sono supportati nella creazione di sessioni remote.</value>
   </data>
   <data name="RemoteHostDecodingFailed" xml:space="preserve">
-    <value>A failure occurred while decoding data from the remote host. There was an error in the network data.</value>
+    <value>Si è verificato un errore durante la decodifica dei dati dall'host remoto. Sono presenti errori nei dati di rete.</value>
   </data>
   <data name="MustBeAdminToOverrideThreadOptions" xml:space="preserve">
-    <value>Only administrators can override the Thread Options remotely.</value>
+    <value>Solo gli amministratori possono eseguire l'override delle opzioni thread in remoto.</value>
   </data>
   <data name="RemoteHostPromptForCredentialModifiedCaption" xml:space="preserve">
-    <value>PowerShell Credential Request: {0}</value>
+    <value>Richiesta di credenziali di PowerShell: {0}</value>
   </data>
   <data name="RemoteHostPromptForCredentialModifiedMessage" xml:space="preserve">
-    <value>Warning: A script or application on the remote computer {0} is requesting your credentials. Enter your credentials only if you trust the remote computer and the application or script that is requesting them.
+    <value>Avviso: uno script o un'applicazione nel computer remoto {0} sta richiedendo le credenziali dell'utente. Immettere le credenziali solo se si considerano attendibili il computer remoto e l'applicazione o lo script che le richiede.
 
 {1}</value>
   </data>
   <data name="RemoteHostReadLineAsSecureStringPrompt" xml:space="preserve">
-    <value>A script or application on the remote computer {0} is asking to read a line securely. Enter sensitive information, such as your credentials, only if you trust the remote computer and the application or script that is requesting it.</value>
+    <value>Uno script o un'applicazione nel computer remoto {0} richiede di leggere una riga in modo sicuro. Immettere informazioni riservate, ad esempio le credenziali, solo se si considerano attendibili il computer remoto e l'applicazione o lo script che le richiede.</value>
   </data>
   <data name="RemoteHostGetBufferContents" xml:space="preserve">
-    <value>A script or application on the remote computer {0} is attempting to read the buffer contents on the PowerShell host. For security reasons, this is not allowed; the call has been suppressed.</value>
+    <value>Uno script o un'applicazione nel computer remoto {0} sta tentando di leggere il contenuto del buffer nell'host di PowerShell. Per motivi di sicurezza, questa operazione non è consentita; la chiamata è stata eliminata.</value>
   </data>
   <data name="RemoteHostPromptSecureStringPrompt" xml:space="preserve">
-    <value>A script or application on the remote computer {0} is sending a prompt request. When you are prompted, enter sensitive information, such as credentials or passwords, only if you trust the remote computer and the application or script that is requesting the data.</value>
+    <value>Uno script o un'applicazione nel computer remoto {0} sta inviando una richiesta di input. Quando richiesto immettere informazioni riservate, ad esempio le credenziali o le password, solo se si considerano attendibili il computer remoto e l'applicazione o lo script che richiede i dati.</value>
   </data>
   <data name="ReceivedUnsupportedRemoteHostCall" xml:space="preserve">
-    <value>Received unsupported remote host call: {0}.</value>
+    <value>Ricevuta chiamata a host remoto non supportata: {0}.</value>
   </data>
   <data name="ReceivedUnsupportedAction" xml:space="preserve">
-    <value>Received remoting data with unsupported action: {0}.</value>
+    <value>Sono stati ricevuti dati di comunicazione remota con azione non supportata: {0}.</value>
   </data>
   <data name="ReceivedUnsupportedDataType" xml:space="preserve">
-    <value>Received remoting data with unsupported data type: {0}.</value>
+    <value>Sono stati ricevuti dati remoti con azione non supportata: {0}.</value>
   </data>
   <data name="MissingDestination" xml:space="preserve">
-    <value>Remoting data is missing the destination property.</value>
+    <value>I dati di comunicazione remota non includono la proprietà di destinazione.</value>
   </data>
   <data name="MissingTarget" xml:space="preserve">
-    <value>Remoting data is missing target interface property.</value>
+    <value>La proprietà dell'interfaccia di destinazione manca nei dati di comunicazione remota.</value>
   </data>
   <data name="MissingRunspaceId" xml:space="preserve">
-    <value>Remoting data is missing Session InstanceId property.</value>
+    <value>Nei dati di comunicazione remota manca la proprietà Session InstanceId.</value>
   </data>
   <data name="MissingDataType" xml:space="preserve">
-    <value>Remoting data is missing RemotingDataType property.</value>
+    <value>La proprietà RemotingDataType non è presente nei dati di comunicazione remota.</value>
   </data>
   <data name="MissingCallId" xml:space="preserve">
-    <value>Remoting data is missing CallId property.</value>
+    <value>Manca la proprietà CallId nei dati di comunicazione remota.</value>
   </data>
   <data name="MissingMethodName" xml:space="preserve">
-    <value>Remoting data is missing MethodName property.</value>
+    <value>I dati di comunicazione remota non includono la proprietà MethodName.</value>
   </data>
   <data name="MissingIsStartFragment" xml:space="preserve">
-    <value>The IsStartFragment flag for the first fragment is not set.</value>
+    <value>Il flag IsStartFragment per il primo frammento non è impostato.</value>
   </data>
   <data name="MissingProperty" xml:space="preserve">
-    <value>Remoting data is missing {0} property.</value>
+    <value>Manca la proprietà {0} nei dati di comunicazione remota.</value>
   </data>
   <data name="ObjectIdsNotMatching" xml:space="preserve">
-    <value>Unexpected ObjectId received. This can happen if the fragments are not properly constructed by the remote computer, or the data might have been corrupted or changed.</value>
+    <value>Ricevuto ObjectId imprevisto. È possibile che i frammenti non siano stati costruiti correttamente dal computer remoto oppure che i dati siano stati danneggiati o modificati.</value>
   </data>
   <data name="ObjectIdCannotBeLessThanZero" xml:space="preserve">
-    <value>ObjectId cannot be less than or equal to 0. This can happen if the fragments are not properly constructed by the remote computer, or the data has been changed by unauthorized users.</value>
+    <value>ObjectId non può essere minore o uguale a 0. Questo può verificarsi se i frammenti non sono stati creati correttamente dal computer remoto oppure se i dati sono stati modificati da utenti non autorizzati.</value>
   </data>
   <data name="FragmentIdsNotInSequence" xml:space="preserve">
-    <value>The FragmentIDs of the same object must be in sequence, incrementally changing by 1. This can happen if the fragments are not properly constructed by the remote computer. The data might also have been corrupted or changed.</value>
+    <value>Gli ID di frammento dello stesso oggetto devono essere in sequenza, con una variazione incrementale di 1. Questo problema può verificarsi se i frammenti non sono stati creati correttamente dal computer remoto. È anche possibile che i dati siano stati danneggiati o modificati.</value>
   </data>
   <data name="ObjectIsTooBig" xml:space="preserve">
-    <value>Remoting data is too large to be reassembled from the fragments. This can happen if the length of the data in a fragment is greater than Int32.Max. It can also occur if the data was changed by unauthorized users.</value>
+    <value>I dati di comunicazione remota sono troppo grandi per essere riassemblati dai frammenti. Questo può accadere se la lunghezza dei dati in un frammento è maggiore di Int32.Max. Può anche verificarsi se i dati sono stati modificati da utenti non autorizzati.</value>
   </data>
   <data name="MissingIsEndFragment" xml:space="preserve">
-    <value>The IsEndFragment flag is not set for the last fragment. This can happen if the fragments are not properly constructed by the remote computer, or if the data was corrupted or changed.</value>
+    <value>Il flag IsEndFragment non è impostato per l'ultimo frammento. È possibile che i frammenti non siano stati costruiti correttamente dal computer remoto o se i dati sono danneggiati o modificati.</value>
   </data>
   <data name="DeserializedObjectIsNull" xml:space="preserve">
-    <value>Deserialized remoting data is null.</value>
+    <value>I dati di comunicazione remota deserializzati sono Null.</value>
   </data>
   <data name="BlobLengthNotInRange" xml:space="preserve">
-    <value>Fragment blob length is out of range: {0}</value>
+    <value>La lunghezza del BLOB del frammento non è compresa nell'intervallo: {0}</value>
   </data>
   <data name="DecodingErrorForErrorRecord" xml:space="preserve">
-    <value>Error in decoding ErrorRecord.</value>
+    <value>Errore durante la decodifica di ErrorRecord.</value>
   </data>
   <data name="DecodingErrorForPipelineStateInfo" xml:space="preserve">
-    <value>Error in decoding PipelineStateInfo.</value>
+    <value>Errore durante la decodifica di PipelineStateInfo.</value>
   </data>
   <data name="DecodingErrorForRunspaceStateInfo" xml:space="preserve">
-    <value>Error in decoding RunspaceStateInfo.</value>
+    <value>Errore durante la decodifica di RunspaceStateInfo.</value>
   </data>
   <data name="ReceivedUnsupportedRemotingTargetInterfaceType" xml:space="preserve">
-    <value>Received unsupported RemotingTargetInterface type: {0}</value>
+    <value>Ricevuto tipo RemotingTargetInterface non supportato: {0}</value>
   </data>
   <data name="UnknownTargetClass" xml:space="preserve">
-    <value>Remote host method was invoked on an unknown target class: {0}</value>
+    <value>Il metodo host remoto è stato richiamato su una classe di destinazione sconosciuta: {0}</value>
   </data>
   <data name="MissingTargetClass" xml:space="preserve">
-    <value>Remote host method was invoked without specifying a target class.</value>
+    <value>Il metodo host remoto è stato richiamato senza specificare una classe di destinazione.</value>
   </data>
   <data name="DecodingErrorForRunspacePoolStateInfo" xml:space="preserve">
-    <value>Error in decoding RunspacePoolStateInfo.</value>
+    <value>Errore durante la decodifica di RunspacePoolStateInfo.</value>
   </data>
   <data name="DecodingErrorForMinRunspaces" xml:space="preserve">
-    <value>Error in decoding Minimum runspaces.</value>
+    <value>Errore durante la decodifica del numero minimo di spazi di esecuzione.</value>
   </data>
   <data name="DecodingErrorForMaxRunspaces" xml:space="preserve">
-    <value>Error in decoding Maximum runspaces.</value>
+    <value>Errore durante la decodifica del numero massimo di spazi di esecuzione.</value>
   </data>
   <data name="DecodingErrorForPowerShellStateInfo" xml:space="preserve">
-    <value>Error in decoding PowerShellStateInfo.</value>
+    <value>Errore durante la decodifica di PowerShellStateInfo.</value>
   </data>
   <data name="CantCastPropertyToExpectedType" xml:space="preserve">
-    <value>Unexpected type of {0} property (expected {1}, got {2}).</value>
+    <value>Tipo imprevisto della proprietà {0} (previsto {1}, ottenuto {2}).</value>
   </data>
   <data name="CantCastRemotingDataToPSObject" xml:space="preserve">
-    <value>Unexpected type of remoting data (expected PSObject, got {0}).</value>
+    <value>Tipo imprevisto di dati di comunicazione remota (previsto PSObject, ottenuto {0}).</value>
   </data>
   <data name="CantCastCommandToPSObject" xml:space="preserve">
-    <value>Unexpected type of encoded command (expected PSObject, got {0}).</value>
+    <value>Tipo imprevisto di comando codificato (previsto PSObject, ottenuto {0}).</value>
   </data>
   <data name="CantCastParameterToPSObject" xml:space="preserve">
-    <value>Unexpected type of encoded command parameter (expected PSObject, got {0}).</value>
+    <value>Tipo imprevisto di parametro di comando codificato (previsto PSObject, ottenuto {0}).</value>
   </data>
   <data name="NotEnoughHeaderForRemoteDataObject" xml:space="preserve">
-    <value>An error occurred while decoding data received from the remote computer. At least {0} bytes of data are required to decode a deserialized object that is received from a remote computer. This can happen if the fragments are not properly constructed by the remote computer, or if the data was corrupted or changed.</value>
+    <value>Si è verificato un errore durante la decodifica dei dati ricevuti dal computer remoto. Per decodificare un oggetto deserializzato ricevuto da un computer remoto sono necessari almeno {0} byte di dati. È possibile che i frammenti non siano stati costruiti correttamente dal computer remoto o se i dati sono danneggiati o modificati.</value>
   </data>
   <data name="RemotingDestinationNotForMe" xml:space="preserve">
-    <value>Received packet not destined for logged-on user: user = {0}, packet destination = {1}.</value>
+    <value>Ricevuto pacchetto non destinato all'utente connesso: utente = {0}, destinazione pacchetto = {1}.</value>
   </data>
   <data name="ClientNegotiationTimeout" xml:space="preserve">
-    <value>The client negotiation timer has expired. The negotiation time-out interval is {0} milliseconds.</value>
+    <value>Il timer di negoziazione del client è scaduto. L'intervallo di timeout della negoziazione è {0} millisecondi.</value>
   </data>
   <data name="ClientNegotiationFailed" xml:space="preserve">
-    <value>PowerShell client does not support the {0} {1} negotiated by the server. Make sure the server is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
+    <value>Il client PowerShell non supporta le {0} {1} negoziate dal server. Verificare che il server sia compatibile con la compilazione {2} e la versione del protocollo {3} di PowerShell.</value>
   </data>
   <data name="ClientNotFoundCapabilityProperties" xml:space="preserve">
-    <value>{0}. Negotiation with the server failed. Make sure the server is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>{0}. La negoziazione con il server non è riuscita. Verificare che il server sia compatibile con la compilazione {1} e la versione del protocollo {2} di PowerShell.</value>
   </data>
   <data name="ServerRequestedToCloseSession" xml:space="preserve">
-    <value>The destination server has sent a request to close the session.</value>
+    <value>Il server di destinazione ha inviato una richiesta di chiusura della sessione.</value>
   </data>
   <data name="ServerNegotiationFailed" xml:space="preserve">
-    <value>The server that is running PowerShell does not support the {0} {1} negotiated by the client computer. Verify that the client computer is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
+    <value>Il server che esegue PowerShell non supporta il {0} {1} negoziato dal computer client. Verificare che il computer client sia compatibile con la compilazione {2} e la versione del protocollo {3} di PowerShell.</value>
   </data>
   <data name="ServerConnectFailedOnNegotiation" xml:space="preserve">
-    <value>The server that is running PowerShell does not support connect operations on the {0} {1}  that is negotiated by the client computer. Make sure the client computer is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
+    <value>Il server che esegue PowerShell non supporta operazioni di connessione su {0} {1} negoziato dal computer client. Verificare che il computer client sia compatibile con la compilazione {2} e la versione del protocollo {3} di PowerShell.</value>
   </data>
   <data name="ServerConnectFailedOnInputValidation" xml:space="preserve">
-    <value>The server that is running PowerShell cannot process the connect operation because the following information is not found or not valid: Client Capability information and Connect RunspacePool information.</value>
+    <value>Il server che esegue PowerShell non è in grado di elaborare l'operazione di connessione perché le informazioni seguenti non sono state trovate o non sono valide: informazioni sulle funzionalità client e informazioni sul RunspacePool di connessione.</value>
   </data>
   <data name="ServerConnectFailedOnServerStateValidation" xml:space="preserve">
-    <value>The server that is running PowerShell cannot process the connect operation because the server has either not been started, or it is shutting down.</value>
+    <value>Il server che esegue PowerShell non è in grado di elaborare l'operazione di connessione perché il server non è stato avviato oppure è in fase di arresto.</value>
   </data>
   <data name="ServerConnectFailedOnMismatchedRunspacePoolProperties" xml:space="preserve">
-    <value>The server that is running PowerShell cannot process the connect operation because the server runspace pool properties did not match the client computer specified properties.</value>
+    <value>Il server che esegue PowerShell non è in grado di elaborare l'operazione di connessione perché le proprietà del pool di spazi di esecuzione del server non corrispondono alle proprietà specificate del computer client.</value>
   </data>
   <data name="ServerNotFoundCapabilityProperties" xml:space="preserve">
-    <value>{0}. Negotiation with the client failed. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>{0}. La negoziazione con il client non è riuscita. Verificare che il client sia compatibile con la compilazione {1} e la versione del protocollo {2} di PowerShell.</value>
   </data>
   <data name="ServerNegotiationTimeout" xml:space="preserve">
-    <value>The server negotiation timer has expired. The negotiation time-out interval is {0} milliseconds.</value>
+    <value>Il timer di negoziazione del server è scaduto. L'intervallo di timeout della negoziazione è {0} millisecondi.</value>
   </data>
   <data name="ClientRequestedToCloseSession" xml:space="preserve">
-    <value>The client computer has sent a request to close the session.</value>
+    <value>Il computer client ha inviato una richiesta per chiudere la sessione.</value>
   </data>
   <data name="FatalErrorCausingClose" xml:space="preserve">
-    <value>An error has occurred which PowerShell cannot handle. A remote session might have ended.</value>
+    <value>Si è verificato un errore che PowerShell non è in grado di gestire. Una sessione remota potrebbe essere terminata.</value>
   </data>
   <data name="ClientKeyExchangeFailed" xml:space="preserve">
-    <value>The server did not respond with an encrypted session key within the specified time-out period.</value>
+    <value>Il server non ha risposto con una chiave di sessione crittografata entro il periodo di timeout specificato.</value>
   </data>
   <data name="ServerKeyExchangeFailed" xml:space="preserve">
-    <value>The client did not respond with a public key within the specified time-out period.</value>
+    <value>Il client non ha risposto con una chiave pubblica entro il periodo di timeout specificato.</value>
   </data>
   <data name="ConnectFailed" xml:space="preserve">
-    <value>Connection attempt failed.</value>
+    <value>Tentativo di connessione non riuscito.</value>
   </data>
   <data name="CloseIsCalled" xml:space="preserve">
-    <value>Attempting to close the session.</value>
+    <value>Tentativo di chiusura della sessione.</value>
   </data>
   <data name="ForceClosed" xml:space="preserve">
-    <value>PowerShell cannot close the remote session properly. The session is in an undefined state because it was not opened or connected after being disconnected. PowerShell will try to force the session to close on the local computer, but the session might not be closed on the remote computer. To close a remote session properly, first open it or connect it.</value>
+    <value>PowerShell non riesce a chiudere correttamente la sessione remota. La sessione si trova in uno stato indefinito perché non è stata aperta o connessa dopo essere stata disconnessa. PowerShell tenterà di forzare la chiusura della sessione nel computer locale, ma la sessione potrebbe non essere chiusa nel computer remoto. Per chiudere correttamente una sessione remota, aprirla prima o connettersi ad essa.</value>
   </data>
   <data name="CloseFailed" xml:space="preserve">
-    <value>Could not close the session.</value>
+    <value>Non è possibile chiudere la sessione.</value>
   </data>
   <data name="CloseCompleted" xml:space="preserve">
-    <value>The session is closed.</value>
+    <value>La sessione è chiusa.</value>
   </data>
   <data name="UnsupportedWaitHandleType" xml:space="preserve">
-    <value>The Wait handle type "{0}" is not supported.</value>
+    <value>Il tipo di handle Wait "{0}" non è supportato.</value>
   </data>
   <data name="ReceivedDataStreamIsNotStdout" xml:space="preserve">
-    <value>Received data has a stream ID index of "{0}". Only a Standard Output stream ID index of "0" is supported.</value>
+    <value>I dati ricevuti hanno un indice ID flusso di "{0}". È supportato solo un indice di ID flusso di output Standard pari a "0".</value>
   </data>
   <data name="StdInIsNotOpen" xml:space="preserve">
-    <value>The Standard Input handle is not open.</value>
+    <value>L'handle di standard input non è aperto.</value>
   </data>
   <data name="NativeWriteFileFailed" xml:space="preserve">
-    <value>Native API call to WriteFile failed. Error code is {0}.</value>
+    <value>Chiamata dell'API nativa a WriteFile non riuscita. Il codice errore è {0}.</value>
   </data>
   <data name="NativeReadFileFailed" xml:space="preserve">
-    <value>Native API call to ReadFile failed. Error code is {0}.</value>
+    <value>Chiamata API nativa a ReadFile non riuscita. Il codice errore è {0}.</value>
   </data>
   <data name="InvalidSchemeValue" xml:space="preserve">
-    <value>{0} is not a valid schema value. Valid values are "http" and "https".</value>
+    <value>{0} non corrisponde a un valore dello schema valido. I valori validi sono ''http'' e ''https''.</value>
   </data>
   <data name="ClientReceiveFailed" xml:space="preserve">
-    <value>Client side receive call failed.</value>
+    <value>La chiamata di ricezione lato client non è riuscita.</value>
   </data>
   <data name="ClientSendFailed" xml:space="preserve">
-    <value>Client side send call failed.</value>
+    <value>La chiamata di invio lato client non è riuscita.</value>
   </data>
   <data name="CommandHandleIsNull" xml:space="preserve">
-    <value>The command handle returned from the WinRS API WSManRunShellCommand is null.</value>
+    <value>L'handle di comando restituito dall'API WinRS WSManRunShellCommand è Null.</value>
   </data>
   <data name="StdInCannotBeSetToNoWait" xml:space="preserve">
-    <value>The Standard Input handle cannot be set to the 'no wait' state. The system error code is {0}.</value>
+    <value>L'handle di standrad input non può essere impostato sullo stato ''no wait''. Il codice di errore di sistema è {0}.</value>
   </data>
   <data name="PortIsOutOfRange" xml:space="preserve">
-    <value>The port number {0} is not within the range of valid values. The range of valid values is between 1 and 65535.</value>
+    <value>Il numero di porta {0} non è compreso nell'intervallo di valori validi. L'intervallo di valori validi è compreso tra 1 e 65535.</value>
   </data>
   <data name="ServerProcessExited" xml:space="preserve">
-    <value>The server process has exited.</value>
+    <value>Il processo del server è terminato.</value>
   </data>
   <data name="CannotGetStdInHandle" xml:space="preserve">
-    <value>The call to Windows API GetStdHandle to get the Standard Input handle resulted in an error code: {0}.</value>
+    <value>La chiamata all'API di Windows GetStdHandle per ottenere l'handle di inout ha restituito un codice di errore: {0}.</value>
   </data>
   <data name="CannotGetStdOutHandle" xml:space="preserve">
-    <value>The call to Windows API GetStdHandle to get the Standard Output handle resulted in an error code: {0}.</value>
+    <value>La chiamata all'API di Windows GetStdHandle per ottenere l'handle di output ha restituito un codice di errore: {0}.</value>
   </data>
   <data name="CannotGetStdErrHandle" xml:space="preserve">
-    <value>The call to Windows API GetStdHandle to get the Standard Error handle resulted in an error code: {0}.</value>
+    <value>La chiamata all'API di Windows GetStdHandle per ottenere l'handle di errore ha restituito un codice di errore: {0}.</value>
   </data>
   <data name="ConnectExFailed" xml:space="preserve">
-    <value>Connecting to remote server {0} failed.</value>
+    <value>Connessione al server remoto {0} non riuscita.</value>
   </data>
   <data name="ConnectExCallBackError" xml:space="preserve">
-    <value>Connecting to remote server {0} failed with the following error message : {1}</value>
+    <value>La connessione al server remoto {0} non è riuscita con il messaggio di errore seguente: {1}</value>
   </data>
   <data name="CloseExCallBackError" xml:space="preserve">
-    <value>Closing the remote server shell instance failed with the following error message : {0}</value>
+    <value>Chiusura dell'istanza della shell del server remoto non riuscita con il messaggio di errore seguente: {0}</value>
   </data>
   <data name="SendExFailed" xml:space="preserve">
-    <value>Sending data to remote server {0} failed.</value>
+    <value>Invio dei dati al server remoto {0} non riuscito.</value>
   </data>
   <data name="SendExCallBackError" xml:space="preserve">
-    <value>Sending data to remote server {0} failed with the following error message : {1}</value>
+    <value>L'invio dei dati al server remoto {0} non è riuscito con il messaggio di errore seguente: {1}</value>
   </data>
   <data name="ReceiveExFailed" xml:space="preserve">
-    <value>Receiving data from remote server {0} failed.</value>
+    <value>Ricezione dei dati dal server remoto {0} non riuscita.</value>
   </data>
   <data name="ReceiveExCallBackError" xml:space="preserve">
-    <value>Processing data from remote server {0} failed with the following error message: {1}</value>
+    <value>L'elaborazione dei dati dal server remoto {0} non è riuscita con il messaggio di errore seguente: {1}</value>
   </data>
   <data name="RunShellCommandExFailed" xml:space="preserve">
-    <value>Starting a command on the remote server failed.</value>
+    <value>Avvio di un comando nel server remoto non riuscito.</value>
   </data>
   <data name="RunShellCommandExCallBackError" xml:space="preserve">
-    <value>Starting a command on the remote server failed with the following error message : {0}</value>
+    <value>Avvio di un comando nel server remoto non riuscito con il messaggio di errore seguente: {0}</value>
   </data>
   <data name="ReconnectShellCommandExCallBackError" xml:space="preserve">
-    <value>Reconnecting to a command on the remote server failed with the following error message : {0}</value>
+    <value>Riconnessione a un comando nel server remoto non riuscito con il messaggio di errore seguente: {0}</value>
   </data>
   <data name="CommandSendExFailed" xml:space="preserve">
-    <value>Sending data to a remote command failed.</value>
+    <value>Invio dei dati a un comando remoto non riuscito.</value>
   </data>
   <data name="CommandSendExCallBackError" xml:space="preserve">
-    <value>Sending data to a remote command failed with the following error message: {0}</value>
+    <value>Invio dei dati a un comando remoto non riuscito con il seguente messaggio di errore: {0}</value>
   </data>
   <data name="CommandReceiveExFailed" xml:space="preserve">
-    <value>Receiving data for a remote command failed.</value>
+    <value>Ricezione dei dati per un comando remoto non riuscita.</value>
   </data>
   <data name="CommandReceiveExCallBackError" xml:space="preserve">
-    <value>Processing data for a remote command failed with the following error message: {0}</value>
+    <value>Elaborazione dei dati per un comando remoto non riuscita con il seguente messaggio di errore: {0}</value>
   </data>
   <data name="GeneralError" xml:space="preserve">
-    <value>Error with error code {0} occurred while calling method {1}.</value>
+    <value>Si è verificato un errore con codice {0} durante la chiamata del metodo {1}.</value>
   </data>
   <data name="TroubleShootingHelpTopic" xml:space="preserve">
-    <value>{0} For more information, see the about_Remote_Troubleshooting Help topic.</value>
+    <value>{0} Per ulteriori informazioni, vedere l'argomento della Guida about_Remote_Troubleshooting.</value>
   </data>
   <data name="DisconnectShellExFailed" xml:space="preserve">
-    <value>Failed to disconnect from the remote server {0}.</value>
+    <value>Disconnessione dal server remoto {0} non riuscita.</value>
   </data>
   <data name="DisconnectShellExCallBackErrr" xml:space="preserve">
-    <value>Disconnecting from the remote server failed with the following error message : {0}</value>
+    <value>La disconnessione al server remoto non è riuscita con il messaggio di errore seguente: {0}</value>
   </data>
   <data name="ReconnectShellExFailed" xml:space="preserve">
-    <value>Reconnecting to the remote server failed.</value>
+    <value>Riconnessione al server remoto non riuscita.</value>
   </data>
   <data name="ReconnectShellExCallBackErrr" xml:space="preserve">
-    <value>Reconnecting to the remote server {0} failed with the following error message : {1}</value>
+    <value>La riconnessione al server remoto{0} non è riuscita con il messaggio di errore seguente: {1}</value>
   </data>
   <data name="IPCTransportConnectError" xml:space="preserve">
-    <value>Inter-process communication (IPC) transport does not support connect operations.</value>
+    <value>Il trasporto IPC (Inter-Process Communication) non supporta le operazioni di connessione.</value>
   </data>
   <data name="NonExistentInitialSessionStateProvider" xml:space="preserve">
-    <value>An EndpointConfiguration with Id {0} does not exist on the remote server. Contact your PowerShell administrator, or the owner or creator of the endpoint configuration.</value>
+    <value>EndpointConfiguration con ID {0} non esiste nel server remoto. Contattare l'amministratore di PowerShell oppure il proprietario o l'autore della configurazione dell'endpoint.</value>
   </data>
   <data name="InitialSessionStateNull" xml:space="preserve">
-    <value>The EndpointConfiguration with the {0} identifier is not in a valid initial session state on the remote computer. Contact your PowerShell administrator, or the owner or creator of the endpoint configuration.</value>
+    <value>L'EndpointConfiguration con l'identificatore {0} non è in uno stato di sessione iniziale valido nel computer remoto. Contattare l'amministratore di PowerShell oppure il proprietario o l'autore della configurazione dell'endpoint.</value>
   </data>
   <data name="MandatoryValueNotPresent" xml:space="preserve">
-    <value>The mandatory value {0} is not specified for the {1} registry key.</value>
+    <value>Il valore obbligatorio {0} non è specificato per la chiave del Registro di sistema {1}.</value>
   </data>
   <data name="MandatoryValueNotInCorrectFormat" xml:space="preserve">
-    <value>The mandatory value {0} is not in the correct format for registry key {1}. The expected format is 'string'.</value>
+    <value>Il valore obbligatorio {0} non è nel formato corretto per la chiave del Registro di sistema {1}. Il formato previsto è ''string''.</value>
   </data>
   <data name="StartupScriptNotCorrect" xml:space="preserve">
-    <value>"{0}" must specify a PowerShell script file that ends with extension ".ps1".</value>
+    <value>"{0}" deve specificare un file script PowerShell con estensione ".ps1".</value>
   </data>
   <data name="DuplicateInitializationParameterFound" xml:space="preserve">
-    <value>The {0} parameter is already specified in the {1} section. Contact your administrator to make sure that {0} is specified only once.</value>
+    <value>Il parametro {0} è già specificato nella sezione {1}. Contattare l'amministratore per verificare che {0} sia specificato una sola volta.</value>
   </data>
   <data name="NoAttributesFoundForParamElement" xml:space="preserve">
-    <value>Expected "{0}" and "{1}" attributes in the "{2}" element.</value>
+    <value>Attributi "{0}" e "{1}" previsti nell'elemento "{2}".</value>
   </data>
   <data name="AssemblyLoadAttributesNotFound" xml:space="preserve">
-    <value>"{0}", "{1}" must be specified in the "{2}" section to dynamically load the assembly.</value>
+    <value>"{0}", "{1}" devono essere specificati nella sezione "{2}" per caricare dinamicamente l'assembly.</value>
   </data>
   <data name="UnableToLoadAssembly" xml:space="preserve">
-    <value>Unable to load the assembly "{0}" specified in the "{1}" section.</value>
+    <value>Non è possibile caricare l'assembly "{0}" specificata nella sezione "{1}".</value>
   </data>
   <data name="UnableToLoadType" xml:space="preserve">
-    <value>Unable to load the type "{0}" specified in the "{1}" section.</value>
+    <value>Non è possibile caricare il tipo "{0}" specificato nella sezione "{1}".</value>
   </data>
   <data name="TypeNeedsAssembly" xml:space="preserve">
-    <value>Both "{0}" and "{1}" must be specified in the "{2}" section.</value>
+    <value>È necessario specificare sia "{0}" sia "{1}" nella sezione "{2}".</value>
   </data>
   <data name="RedirectedURINotWellFormatted" xml:space="preserve">
-    <value>The destination "{0}" requested the connection to be redirected to "{1}". However "{1}" is not a well formatted URI.</value>
+    <value>La destinazione "{0}" ha richiesto il reindirizzamento della connessione a "{1}". Tuttavia, "{1}" non è un URI formattato correttamente.</value>
   </data>
   <data name="URIEndPointNotResolved" xml:space="preserve">
-    <value>{0}Redirect location reported: {1}.</value>
+    <value>{0}Percorso di reindirizzamento segnalato: {1}.</value>
   </data>
   <data name="URIRedirectWarningToHost" xml:space="preserve">
-    <value>Your connection has been redirected to the following URI: "{0}"</value>
+    <value>La connessione è stata reindirizzata al seguente URI: "{0}"</value>
   </data>
   <data name="URIRedirectionReported" xml:space="preserve">
-    <value>{0} To automatically connect to the redirected URI, verify the "{1}" property of the session preference variable "{2}", and use the "{3}" parameter on the cmdlet.</value>
+    <value>{0} Per connettersi automaticamente all'URI reindirizzato, verificare la proprietà "{1}" della variabile di preferenza della sessione "{2}" e usare il parametro "{3}" nel cmdlet.</value>
   </data>
   <data name="ReceivedObjectSizeExceededMaximumClient" xml:space="preserve">
-    <value>The current deserialized object size of the data received from the remote server exceeded the allowed maximum object size. The current deserialized object size is {0}. The allowed maximum object size is {1}.</value>
+    <value>Le dimensioni correnti dell'oggetto deserializzato dei dati ricevuti dal server remoto hanno superato le dimensioni massime consentite per l'oggetto. Le dimensioni correnti dell'oggetto deserializzato sono {0}. La dimensione massima consentita per l'oggetto è {1}.</value>
   </data>
   <data name="ReceivedDataSizeExceededMaximumClient" xml:space="preserve">
-    <value>The total data received from the remote server exceeded the allowed maximum. The allowed maximum is {0}.</value>
+    <value>La quantità totale di dati ricevuti dal server remoto ha superato il valore massimo consentito. Il valore massimo consentito è {0}.</value>
   </data>
   <data name="ReceivedObjectSizeExceededMaximumServer" xml:space="preserve">
-    <value>The current deserialized object size of the data received from the remote client computer exceeded the allowed maximum object size. The current deserialized object size is {0}. The allowed maximum object size is {1}.</value>
+    <value>Le dimensioni correnti dell'oggetto deserializzato dei dati ricevuti dal computer client remoto hanno superato le dimensioni massime consentite per l'oggetto. Le dimensioni correnti dell'oggetto deserializzato sono {0}. La dimensione massima consentita per l'oggetto è {1}.</value>
   </data>
   <data name="ReceivedDataSizeExceededMaximumServer" xml:space="preserve">
-    <value>The total data received from the remote client exceeded the allowed maximum. The allowed maximum is {0}.</value>
+    <value>La quantità totale di dati ricevuti dal client remoto ha superato il valore massimo consentito. Il valore massimo consentito è {0}.</value>
   </data>
   <data name="StartupScriptThrewTerminatingError" xml:space="preserve">
-    <value>Running startup script threw an error: {0}.</value>
+    <value>L'esecuzione dello script di avvio ha generato un errore: {0}.</value>
   </data>
   <data name="RemoteRunspaceInfoHasDuplicates" xml:space="preserve">
-    <value>Specified RemoteRunspaceInfo objects have duplicates.</value>
+    <value>Gli oggetti RemoteRunspaceInfo specificati sono duplicati.</value>
   </data>
   <data name="RemoteRunspaceInfoLimitExceeded" xml:space="preserve">
-    <value>Specified RemoteRunspaceInfo objects have exceeded the maximum allowable limit.</value>
+    <value>Gli oggetti RemoteRunspaceInfo specificati hanno superato il limite massimo consentito.</value>
   </data>
   <data name="RemoteRunspaceOpenUnknownState" xml:space="preserve">
-    <value>Opening the remote session failed with an unexpected state. State {0}.</value>
+    <value>Apertura della sessione remota non riuscita con uno stato imprevisto. Stato: {0}.</value>
   </data>
   <data name="UriSpecifiedNotValid" xml:space="preserve">
-    <value>Specified Uri {0} is not valid.</value>
+    <value>L'URI {0} specificato non è valido.</value>
   </data>
   <data name="RemoteRunspaceClosed" xml:space="preserve">
-    <value>Remote Session closed for Uri {0}.</value>
+    <value>Sessione remota chiusa per l'URI {0}.</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedComputer" xml:space="preserve">
-    <value>Remote session is not available for ComputerName {0}.</value>
+    <value>La sessione remota non è disponibile per ComputerName {0}.</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedRunspaceId" xml:space="preserve">
-    <value>Remote session is not available for {0}.</value>
+    <value>La sessione remota non è disponibile per {0}.</value>
   </data>
   <data name="StopPSJobWhatIfTarget" xml:space="preserve">
-    <value>Remote Command: {0}, associated with the job that has an ID of "{1}".</value>
+    <value>Comando remoto: {0}, associato al processo con ID "{1}".</value>
   </data>
   <data name="NewRunspaceAmbiguousAuthentication" xml:space="preserve">
-    <value>A {0} cannot be specified when {1} is specified.</value>
+    <value>Un {0} non può essere specificato quando {1} è specificato.</value>
   </data>
   <data name="WildCardErrorFilePathParameter" xml:space="preserve">
-    <value>Wildcard characters are not supported for the FilePath parameter. Specify a path without wildcard characters.</value>
+    <value>I caratteri jolly non sono supportati per il parametro FilePath. Specificare un percorso senza caratteri jolly.</value>
   </data>
   <data name="FilePathNotFromFileSystemProvider" xml:space="preserve">
-    <value>The path specified as the value of the FilePath parameter is not from the FileSystem provider.</value>
+    <value>Il percorso specificato come valore del parametro FilePath non proviene dal provider FileSystem.</value>
   </data>
   <data name="FilePathShouldPS1Extension" xml:space="preserve">
-    <value>The value of the FilePath parameter must be a PowerShell script file. Enter the path to a file with a .ps1 file name extension and try the command again.</value>
+    <value>Il valore del parametro FilePath deve essere un file di script PowerShell. Immettere il percorso di un file con estensione .ps1 e riprovare a eseguire il comando.</value>
   </data>
   <data name="InvalidComputerName" xml:space="preserve">
-    <value>One or more computer names are not valid. If you are trying to pass a URI, use the -ConnectionUri parameter, or pass URI objects instead of strings.</value>
+    <value>Uno o più nomi di computer non sono validi. Se si sta tentando di passare un URI, usare il parametro -ConnectionUri oppure passare oggetti URI anziché stringhe.</value>
   </data>
   <data name="InvalidJobStateGeneral" xml:space="preserve">
-    <value>The state of the current job instance is not valid for this operation.</value>
+    <value>Lo stato dell'istanza corrente del processo non è valido per questa operazione.</value>
   </data>
   <data name="JobWithSpecifiedNameNotFound" xml:space="preserve">
-    <value>The command cannot find the job because the job name {0} was not found. Verify the value of the Name parameter, and then try the command again.</value>
+    <value>Il comando non riesce a trovare il processo perché il nome del processo {0} non è stato trovato. Verificare il valore del parametro Name, quindi riprovare a eseguire il comando.</value>
   </data>
   <data name="JobWithSpecifiedInstanceIdNotFound" xml:space="preserve">
-    <value>The command cannot find a job with the instance identifier {0}. Verify the value of the InstanceId parameter, and then try the command again.</value>
+    <value>Il comando non riesce a trovare un processo con l'identificatore di istanza {0}. Verificare il valore del parametro InstanceId, quindi riprovare a eseguire il comando.</value>
   </data>
   <data name="JobWithSpecifiedSessionIdNotFound" xml:space="preserve">
-    <value>The command cannot find a job with the job ID {0}. Verify the value of the Id parameter and then try the command again.</value>
+    <value>Il comando non riesce a trovare un processo con ID processo {0}. Verificare il valore del parametro ID, quindi riprovare a eseguire il comando.</value>
   </data>
   <data name="JobWithSpecifiedNameNotCompleted" xml:space="preserve">
-    <value>The command cannot remove the job with the job ID {0} and the name {1} because the job is not finished. To remove the job, first stop the job, or use the Force parameter.</value>
+    <value>Non è possibile rimuovere il processon con l'ID processo {0} e il nome {1} perché non è stato completato. Per rimuovere il processo, arrestarlo prima oppure usare il parametro Force.</value>
   </data>
   <data name="JobWithSpecifiedSessionIdNotCompleted" xml:space="preserve">
-    <value>The command cannot remove the job with the job ID {0} because the job is not finished. To remove the job, first stop the job, or use the Force parameter.</value>
+    <value>Non è possibile rimuovere il processon con l'ID processo {0} perché non è stato completato. Per rimuovere il processo, arrestarlo prima oppure usare il parametro Force.</value>
   </data>
   <data name="JobWithSpecifiedInstanceIdNotCompleted" xml:space="preserve">
-    <value>The command cannot remove the job with the job ID {0} and the instance identifier {1} because the job is not finished. To remove the job, first stop the job or use the Force parameter.</value>
+    <value>Non è possibile rimuovere il processon con l'ID processo {0} e l'identificatore dell'istanza {1} perché non è stato completato. Per rimuovere il processo, arrestarlo prima oppure usare il parametro Force.</value>
   </data>
   <data name="RemovePSJobWhatIfTarget" xml:space="preserve">
-    <value>Remote Command: {0}, associated with a job that has an ID of "{1}".</value>
+    <value>Comando remoto: {0}, associato al processo con ID "{1}".</value>
   </data>
   <data name="ComputerNameParamNotSupported" xml:space="preserve">
-    <value>The command cannot retrieve the jobs of the specified computers. The ComputerName parameter can be used only with jobs created by using PowerShell remoting.</value>
+    <value>Non è possibile recuperare i processi dei computer specificati. Il parametro ComputerName può essere usato solo con processi creati usando la comunicazione remota di PowerShell.</value>
   </data>
   <data name="RunspaceParamNotSupported" xml:space="preserve">
-    <value>The Session parameter can be used only with PSRemotingJob objects.</value>
+    <value>Il parametro Session può essere usato solo con oggetti PSRemotingJob.</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedName" xml:space="preserve">
-    <value>The remote session with the name {0}  is not available.</value>
+    <value>La sessione remota con il nome {0} non è disponibile.</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedSessionId" xml:space="preserve">
-    <value>The remote session with the session ID {0} is not available.</value>
+    <value>La sessione remota con l'ID sessione {0} non è disponibile.</value>
   </data>
   <data name="ItemNotFoundInRepository" xml:space="preserve">
-    <value>{0} does not contain an item with ID of {1}.</value>
+    <value>{0} non contiene un elemento con ID {1}.</value>
   </data>
   <data name="CannotRemoveJob" xml:space="preserve">
-    <value>The command cannot remove the job because it does not exist or because it is a child job. Child jobs can be removed only by removing the parent job.</value>
+    <value>Il comando non può rimuovere il processo perché non esiste o perché è un processo figlio. I processi figlio possono essere rimossi solo rimuovendo il processo padre.</value>
   </data>
   <data name="CSCDoubleParameterOutOfRange" xml:space="preserve">
-    <value>{0} is not a valid value for the parameter {1}. The value must be greater than or equal to 0.</value>
+    <value>''{0}'' non è un valore valido per il parametro ''{1}''. Il valore deve essere maggiore o uguale a zero.</value>
   </data>
   <data name="ProxyAmbiguousAuthentication" xml:space="preserve">
-    <value>{0} cannot be specified as a proxy authentication mechanism. Only {1},{2} or {3} are supported for proxy authentication.</value>
+    <value>{0} non può essere specificato come meccanismo di autenticazione proxy. Per l'autenticazione proxy sono supportati solo {1},{2} o {3}.</value>
   </data>
   <data name="ProxyCredentialWithoutAccess" xml:space="preserve">
-    <value>Proxy credentials cannot be specified when using the following proxy access type: {0}. Either specify a different access type, or do not specify proxy credentials.</value>
+    <value>Non è possibile specificare le credenziali proxy quando si usa il seguente tipo di accesso proxy: {0}. Specificare un tipo di accesso diverso oppure non specificare le credenziali proxy.</value>
   </data>
   <data name="WrongSessionOptionValue" xml:space="preserve">
-    <value>A {0} value must be specified for session option {1}.</value>
+    <value>È necessario specificare {0} un valore per l'opzione di sessione {1}.</value>
   </data>
   <data name="PushedRunspaceMustBeOpen" xml:space="preserve">
-    <value>Session must be open.</value>
+    <value>La sessione deve essere aperta.</value>
   </data>
   <data name="HostDoesNotSupportPushRunspace" xml:space="preserve">
-    <value>The host does not support Enter-PSSession and Exit-PSSession.</value>
+    <value>L'host non supporta Enter-PSSession ed Exit-PSSession.</value>
   </data>
   <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId" xml:space="preserve">
-    <value>Multiple matches found for session ID {0}.</value>
+    <value>Sono state trovate più corrispondenze perl'ID sessione {0}.</value>
   </data>
   <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId" xml:space="preserve">
-    <value>Multiple matches found for session ID {0}.</value>
+    <value>Sono state trovate più corrispondenze perl'ID sessione {0}.</value>
   </data>
   <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedName" xml:space="preserve">
-    <value>Multiple matches found for name {0}.</value>
+    <value>Sono state trovate più corrispondenze per il nome {0}.</value>
   </data>
   <data name="RemoteRunspaceDoesNotSupportPushRunspace" xml:space="preserve">
-    <value>Enter-PSSession failed because the remote session does not provide required commands.</value>
+    <value>Enter-PSSession non è riuscito perché la sessione remota non fornisce i comandi necessari.</value>
   </data>
   <data name="HostInNestedPrompt" xml:space="preserve">
-    <value>You cannot run Enter-PSSession from a nested prompt.</value>
+    <value>Non è possibile eseguire Enter-PSSession da un prompt nidificato.</value>
   </data>
   <data name="WsmanMaxRedirectionCountVariableDescription" xml:space="preserve">
-    <value>The maximum number of WS-Man URI redirections to allow while connecting to a remote computer</value>
+    <value>Numero massimo di reindirizzamenti URI WS-Man consentiti durante la connessione a un computer remoto</value>
   </data>
   <data name="PSDefaultSessionOptionDescription" xml:space="preserve">
-    <value>Default session options for new remote sessions</value>
+    <value>Opzioni di sessione predefinite per le nuove sessioni remote</value>
   </data>
   <data name="PSSessionConfigurationName" xml:space="preserve">
-    <value>Name of the session configuration which will be loaded on the remote computer</value>
+    <value>Nome della configurazione di sessione che verrà caricata nel computer remoto</value>
   </data>
   <data name="PSSessionAppName" xml:space="preserve">
-    <value>AppName where the remote connection will be established</value>
+    <value>AppName in cui verrà stabilita la connessione remota</value>
   </data>
   <data name="PSSenderInfoDescription" xml:space="preserve">
-    <value>Contains information about the remote user starting the remote session. This variable is available only from a remote session.</value>
+    <value>Contiene informazioni sull'utente remoto che avvia la sessione remota. Questa variabile è disponibile solo da una sessione remota.</value>
   </data>
   <data name="CSCmdsTypeNeedsAssembly" xml:space="preserve">
-    <value>Either "{0}" and "{1}" must both be specified, or neither must not be specified.</value>
+    <value>È necessario specificare sia "{0}" sia "{1}", oppure non specificarne nessuno.</value>
   </data>
   <data name="CSCmdsShellNotFound" xml:space="preserve">
-    <value>Session configuration "{0}" was not found.</value>
+    <value>La configurazione della sessione "{0}" non è stata trovata.</value>
   </data>
   <data name="CSCmdsShellNotPowerShellBased" xml:space="preserve">
-    <value>Session configuration "{0}" is not a PowerShell-based shell.</value>
+    <value>La configurazione della sessione "{0}" non è una shell basata su PowerShell.</value>
   </data>
   <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
-    <value>Session configuration "{0}" is a PowerShell-based shell. Please use PowerShell 6+ to modify it.</value>
+    <value>La configurazione della sessione "{0}" è una shell basata su PowerShell. Usare PowerShell 6+ per modificarla.</value>
   </data>
   <data name="CSCmdsWindowsPowerShellCoreNotModifiable" xml:space="preserve">
-    <value>Session configuration "{0}" is a Windows PowerShell-based shell. Please use Windows PowerShell to modify it.</value>
+    <value>La configurazione della sessione "{0}" è una shell basata su Windows PowerShell. Usare Windows PowerShell per modificarla.</value>
   </data>
   <data name="CustomShellNotFound" xml:space="preserve">
-    <value>No session configuration matches criteria "{0}".</value>
+    <value>Nessuna configurazione di sessione corrisponde ai criteri "{0}".</value>
   </data>
   <data name="CSShouldProcessAction" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="CSShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0}</value>
+    <value>Nome: {0}</value>
   </data>
   <data name="CSShouldProcessTargetAdminEnable" xml:space="preserve">
-    <value>Name: {0}. This lets administrators remotely run PowerShell commands on this computer.</value>
+    <value>Nome: {0}. Consente agli amministratori di eseguire in remoto i comandi di PowerShell in questo computer.</value>
   </data>
   <data name="NcsCannotDeleteFile" xml:space="preserve">
-    <value>Cannot delete temporary file {0}. Reason for failure: {1}.</value>
+    <value>Non è possibile eliminare il file temporaneo {0}. Motivo dell'errore: {1}.</value>
   </data>
   <data name="NcsCannotDeleteFileAfterInstall" xml:space="preserve">
-    <value>The new shell was successfully registered, but PowerShell cannot delete the temporary file {0}. Reason for failure: {1}.</value>
+    <value>La nuova shell è stata registrata correttamente, ma PowerShell non è in grado di eliminare il file temporaneo {0}. Motivo dell'errore: {1}.</value>
   </data>
   <data name="NcsCannotWritePluginContent" xml:space="preserve">
-    <value>Cannot write the shell configuration data into the temporary file {0}. Reason for failure: {1}.</value>
+    <value>Non è possibile scrivere i dati di configurazione della shell nel file temporaneo {0}. Motivo dell'errore: {1}.</value>
   </data>
   <data name="NcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to create a new session configuration.</value>
+    <value>Esecuzione del comando "{0}" per creare una nuova configurazione di sessione.</value>
   </data>
   <data name="NcsShouldProcessTargetSDDL" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This lets selected users remotely run PowerShell commands on this computer.</value>
+    <value>Nome: {0} SDDL: {1}. Consente agli utenti selezionati di eseguire in remoto i comandi di PowerShell in questo computer.</value>
   </data>
   <data name="RcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to remove a session configuration.</value>
+    <value>Esecuzione del comando "{0}" per rimuovere una configurazione di sessione.</value>
   </data>
   <data name="GcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to get PowerShell-based session configurations.</value>
+    <value>Esecuzione del comando "{0}" per ottenere le configurazioni di sessione basate su PowerShell.</value>
   </data>
   <data name="ScsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to update the session configuration properties.</value>
+    <value>Esecuzione del comando "{0}" per aggiornare le proprietà di configurazione della sessione.</value>
   </data>
   <data name="ScsShouldProcessTargetSDDL" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}</value>
+    <value>Nome: {0} SDDL: {1}</value>
   </data>
   <data name="EcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to enable the session configuration.</value>
+    <value>Esecuzione del comando "{0}" per abilitare la configurazione della sessione.</value>
   </data>
   <data name="EcsWSManQCCaption" xml:space="preserve">
-    <value>WinRM Quick Configuration</value>
+    <value>Configurazione rapida di Gestione remota Windows</value>
   </data>
   <data name="EcsWSManQCQuery" xml:space="preserve">
-    <value>Running command "{0}" to enable remote management of this computer by using the Windows Remote Management (WinRM) service.
- This includes:
-    1. Starting or restarting (if already started) the WinRM service
-    2. Setting the WinRM service startup type to Automatic
-    3. Creating a listener to accept requests on any IP address
-    4. Enabling Windows Firewall inbound rule exceptions for WS-Management traffic (for http only).
+    <value>Esecuzione del comando "{0}" per abilitare la gestione remota del computer tramite il servizio Windows Remote Management (WinRM).
+ Ciò include:
+    1. Avviare o riavviare (se già avviato) il servizio WinRM
+    2. Impostazione del tipo di avvio del servizio Gestione remota Windows su Automatico
+    3. Creazione di un listener per accettare richieste su qualsiasi indirizzo IP
+    4. Abilitare le eccezioni delle regole in entrata di Windows Firewall per il traffico WS-Management (solo per HTTP).
 
-Do you want to continue?</value>
+Continuare?</value>
   </data>
   <data name="EcsWSManShouldProcessDesc" xml:space="preserve">
-    <value>Performing operation "{0}".</value>
+    <value>Esecuzione dell'operazione: ''{0}''.</value>
   </data>
   <data name="EcsShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This lets selected users remotely run PowerShell commands on this computer.</value>
+    <value>Nome: {0} SDDL: {1}. Consente agli utenti selezionati di eseguire in remoto i comandi di PowerShell in questo computer.</value>
   </data>
   <data name="DcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to disable the session configuration.</value>
+    <value>Esecuzione del comando "{0}" per disabilitare la configurazione della sessione.</value>
   </data>
   <data name="DcsShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This denies access to this session configuration for everyone.</value>
+    <value>Nome: {0} SDDL: {1}. Questo nega l'accesso remoto a questa configurazione di sessione per tutti gli utenti.</value>
   </data>
   <data name="DcsWarningMessage" xml:space="preserve">
-    <value>Disabling the session configurations does not undo all the changes made by the Enable-PSRemoting or Enable-PSSessionConfiguration cmdlet. You might have to manually undo the changes by following these steps:
-    1. Stop and disable the WinRM service.
-    2. Delete the listener that accepts requests on any IP address.
-    3. Disable the firewall exceptions for WS-Management communications.
-    4. Restore the value of the LocalAccountTokenFilterPolicy to 0, which restricts remote access to members of the Administrators group on the computer.</value>
+    <value>La disabilitazione delle configurazioni di sessione non annulla tutte le modifiche apportate dal cmdlet Enable-PSRemoting o Enable-PSSessionConfiguration. Potrebbe essere necessario annullare manualmente le modifiche seguendo questi passaggi:
+    1. Arrestare e disabilitare il servizio WinRM.
+    2. Eliminare il listener che accetta richieste in qualsiasi indirizzo IP.
+    3. Disabilitare le eccezioni del firewall per le comunicazioni di WS-Management.
+    4. Ripristinare il valore di LocalAccountTokenFilterPolicy su 0, che limita l'accesso remoto ai membri del gruppo Administrators nel computer.</value>
   </data>
   <data name="EDcsRequiresElevation" xml:space="preserve">
-    <value>Access is denied. To run this cmdlet, start PowerShell with the "Run as administrator" option.</value>
+    <value>Accesso negato. Per eseguire questo cmdlet, avviare PowerShell con l'opzione "Esegui come amministratore".</value>
   </data>
   <data name="RestartWSManServiceMessageV" xml:space="preserve">
-    <value>Restarting WinRM service</value>
+    <value>Riavvio del servizio Gestione remota Windows</value>
   </data>
   <data name="RestartWSManServiceAction" xml:space="preserve">
-    <value>"Restart-Service"</value>
+    <value>''Riavvia-servizio''</value>
   </data>
   <data name="RestartWSManServiceTarget" xml:space="preserve">
-    <value>Name: {0}</value>
+    <value>Nome: {0}</value>
   </data>
   <data name="RestartWSManRequiredShowUI" xml:space="preserve">
-    <value>The WinRM service must be restarted before a UI can be displayed for the SecurityDescriptor selection. Restart the WinRM service, and then run the following command: "{0}"</value>
+    <value>È necessario riavviare il servizio Gestione remota Windows prima di visualizzare un'interfaccia utente per la selezione di SecurityDescriptor. Riavviare il servizio Gestione remota Windows, quindi eseguire il comando seguente: "{0}"</value>
   </data>
   <data name="ERemotingCaption" xml:space="preserve">
-    <value>Registering session configuration</value>
+    <value>Registrazione della configurazione della sessione</value>
   </data>
   <data name="ERemotingQuery" xml:space="preserve">
-    <value>The session configuration "{0}" was not found. Running command "{1}" to create the "{0}" session configuration. Running this command restarts the WinRM service.</value>
+    <value>La configurazione della sessione "{0}" non è stata trovata. Esecuzione del comando "{1}" per creare la configurazione della sessione "{0}". L'esecuzione di questo comando riavvia il servizio WinRM.</value>
   </data>
   <data name="ShowUIAndSDDLCannotExist" xml:space="preserve">
-    <value>"{0}" and "{1}" parameters cannot be specified together. Specify either "{0}" or  "{1}" parameter.</value>
+    <value>I parametri "{0}" e "{1}" non possono essere specificati insieme. Specificare il parametro "{0}" oppure quello "{1}".</value>
   </data>
   <data name="RestartWinRMMessage" xml:space="preserve">
-    <value>This operation might restart the WinRM service. Do you want to continue?</value>
+    <value>Questa operazione potrebbe riavviare il servizio Gestione remota Windows. Continuare?</value>
   </data>
   <data name="IPCUnknownNodeType" xml:space="preserve">
-    <value>Cannot process an element with node type "{0}". Only {1} and {2} node types are supported.</value>
+    <value>Non è possibile elaborare un elemento con tipo di nodo "{0}". Sono supportati solo i tipi di nodo {1} e {2}.</value>
   </data>
   <data name="IPCInsufficientDataforElement" xml:space="preserve">
-    <value>Not enough data is available to process the {0} element.</value>
+    <value>Non sono disponibili dati sufficienti per elaborare l'elemento {0}.</value>
   </data>
   <data name="IPCWrongAttributeCountForDataElement" xml:space="preserve">
-    <value>Expected only two attributes with the names "{0}" and "{1}" in the {2} element.</value>
+    <value>Sono previsti solo due attributi con i nomi "{0}" e "{1}" nell'elemento {2}.</value>
   </data>
   <data name="IPCOnlyTextExpectedInDataElement" xml:space="preserve">
-    <value>Node type "{0}" is unknown in the {1} element. Only the "{2}" node type is expected in the {1} element.</value>
+    <value>Tipo di nodo "{0}" sconosciuto nell'elemento {1}. Nell'elemento {2} è previsto solo il tipo di nodo "{1}".</value>
   </data>
   <data name="IPCWrongAttributeCountForElement" xml:space="preserve">
-    <value>Expected only one attribute with the name "{0}" in the {1} element.</value>
+    <value>È previsto un solo attributo con il nome "{0}" nell'elemento {1}.</value>
   </data>
   <data name="IPCUnknownElementReceived" xml:space="preserve">
-    <value>An unknown element "{0}" was received. This can happen if the remote process closed or ended abnormally.</value>
+    <value>È stato ricevuto un elemento sconosciuto "{0}". Questo problema può verificarsi se il processo remoto è stato chiuso o terminato in modo anomalo.</value>
   </data>
   <data name="IPCSupportsOnlyDefaultAuth" xml:space="preserve">
-    <value>The specified authentication mechanism "{0}" is not supported. Only "{1}" is supported for this operation.</value>
+    <value>Il meccanismo di autenticazione specificato "{0}" non è supportato. Per questa operazione è supportato solo "{1}".</value>
   </data>
   <data name="IPCPwshExecutableNotFound" xml:space="preserve">
-    <value>The pwsh executable cannot be found at "{0}".
-Note that 'Start-Job' is not supported by design in scenarios where PowerShell is being hosted in other applications. Instead, usage of the 'ThreadJob' module is recommended in such scenarios.</value>
+    <value>Non è possibile trovare l'eseguibile pwsh in "{0}".
+Si noti che ''Start-Job'' non è supportato per progettazione negli scenari in cui PowerShell è ospitato in altre applicazioni. In tali scenari, è invece consigliabile usare il modulo ''ThreadJob''.</value>
   </data>
   <data name="RunAs32NotSupported" xml:space="preserve">
-    <value>Cannot start a 32-bit 'pwsh' process from the 64-bit 'pwsh' installation. Install the 32-bit 'pwsh' if you need to run PowerShell in a 32-bit process.</value>
+    <value>Non è possibile avviare un processo ''pwsh'' a 32 bit dall'installazione ''pwsh'' a 64 bit. Installare ''pwsh'' a 32 bit se è necessario eseguire PowerShell in un processo a 32 bit.</value>
   </data>
   <data name="IPCServerProcessReportedError" xml:space="preserve">
-    <value>The background process reported an error with the following message: {0}.</value>
+    <value>Il processo in background ha segnalato un errore con il messaggio seguente: {0}.</value>
   </data>
   <data name="IPCServerProcessExited" xml:space="preserve">
-    <value>The background process closed or ended abnormally: {0}.</value>
+    <value>Il processo in background è stato chiuso o terminato in modo anomalo: {0}.</value>
   </data>
   <data name="IPCErrorProcessingServerData" xml:space="preserve">
-    <value>There is an error processing data from the background process. Error reported: {0}.</value>
+    <value>Si è verificato un errore durante l'elaborazione dei dati dal processo in background. Errore segnalato: {0}.</value>
   </data>
   <data name="IPCUnknownCommandGuid" xml:space="preserve">
-    <value>Data for an inactive command with the identifier {0} was received. Received data: {1}.</value>
+    <value>Sono stati ricevuti dati per un comando inattivo con identificatore {0}. Dati ricevuti: {1}.</value>
   </data>
   <data name="IPCNoSignalForSession" xml:space="preserve">
-    <value>A {0} message to a session is not supported. A {0} message can be sent only to a command.</value>
+    <value>Un messaggio {0} destinato a una sessione non è supportato. Un messaggio {0} può essere inviato solo a un comando.</value>
   </data>
   <data name="IPCSignalTimedOut" xml:space="preserve">
-    <value>The client did not receive a response for a signal operation in the specified time interval. This can happen when a command is not responding to a Stop message in a timely manner.</value>
+    <value>Il client non ha ricevuto una risposta per un'operazione di segnale nell'intervallo di tempo specificato. Ciò può verificarsi quando un comando non risponde a un messaggio di arresto in modo tempestivo.</value>
   </data>
   <data name="IPCCloseTimedOut" xml:space="preserve">
-    <value>The client did not receive a response for a Close operation in the specified time interval. This can happen when a command is not responding to a Stop message in a timely manner.</value>
+    <value>Il client non ha ricevuto una risposta per un'operazione di chiusura nell'intervallo di tempo specificato. Ciò può verificarsi quando un comando non risponde a un messaggio di arresto in modo tempestivo.</value>
   </data>
   <data name="IPCExceptionLaunchingProcess" xml:space="preserve">
-    <value>An error occurred while starting the background process. Error reported: {0}.</value>
+    <value>Si è verificato un errore durante l'avvio del processo in background. Errore segnalato: {0}.</value>
   </data>
   <data name="ThrottlingJobChildAlreadyRunning" xml:space="preserve">
-    <value>The ThrottlingJob.AddChildJob method accepts only child jobs in the NotStarted state.</value>
+    <value>Il metodo ThrottlingJob.AddChildJob accetta solo processi figlio nello stato NotStarted.</value>
     <comment>{StrContains="ThrottlingJob.AddChildJob"}
 {StrContains="NotStarted"}</comment>
   </data>
   <data name="ThrottlingJobChildAddedAfterEndOfChildJobs" xml:space="preserve">
-    <value>The ThrottlingJob.AddChildJob method cannot be called after a call to the ThrottlingJob.EndOfChildJobs method.</value>
+    <value>Il metodo ThrottlingJob.AddChildJob non può essere chiamato dopo una chiamata al metodo ThrottlingJob.EndOfChildJobs.</value>
     <comment>{StrContains="ThrottlingJob.AddChildJob"}
 {StrContains="ThrottlingJob.EndOfChildJobs"}</comment>
   </data>
   <data name="ThrottlingJobStatusMessage" xml:space="preserve">
-    <value>{0}/{1} completed</value>
+    <value>{0}/{1} completato</value>
     <comment>{0} is a placeholder for a number of completed child jobs
 {1} is a placeholder for a total number of child jobs</comment>
   </data>
   <data name="NestedPipelineMissingRunspace" xml:space="preserve">
-    <value>Invoking a nested pipeline requires a valid runspace.</value>
+    <value>Per richiamare una pipeline annidata è necessario uno spazio di esecuzione valido.</value>
   </data>
   <data name="JobSourceAdapterError" xml:space="preserve">
-    <value>A {1} job source adapter threw an exception with the following message: {0}</value>
+    <value>Un adattatore di origine del processo {1} ha generato un'eccezione con il messaggio seguente: {0}</value>
   </data>
   <data name="PSVersionParameterOutOfRange" xml:space="preserve">
-    <value>The value {0} is not valid for the {1} parameter. The only allowed value is 5.1.</value>
+    <value>Il valore {0} non è valido per il parametro {1}. L'unico valore consentito è 5.1.</value>
   </data>
   <data name="BlockCannotBeUsedWithKeep" xml:space="preserve">
-    <value>The Wait and Keep parameters cannot be used together in the same command.</value>
+    <value>I parametri Wait e Keep non possono essere usati insieme nello stesso comando.</value>
   </data>
   <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
+    <value>Il parametro WriteEvents non può essere usato senza il parametro Wait.</value>
   </data>
   <data name="PowerShellVersionNotSupported" xml:space="preserve">
-    <value>PowerShell remoting endpoint versioning is not supported on PowerShell 7+.</value>
+    <value>Il controllo delle versioni dell'endpoint di comunicazione remota di PowerShell non è supportato in PowerShell 7+.</value>
   </data>
   <data name="JobManagerRegistrationConstructorError" xml:space="preserve">
-    <value>The following type cannot be instantiated because its constructor is not public: {0}.</value>
+    <value>Il tipo seguente non può essere creato come istanza perché il relativo costruttore non è pubblico: {0}.</value>
   </data>
   <data name="JobSourceAdapterNotFound" xml:space="preserve">
-    <value>The job operation (Create, Get, or Remove) could not be performed because the JobSourceAdapter type specified in the JobDefinition is not registered. Register the JobSourceAdapter type either by using an explicit call, or by calling the Import-Module cmdlet, and then specifying an assembly.</value>
+    <value>Non è possibile eseguire l'operazione del processo (Create, Get o Remove) perché il tipo JobSourceAdapter specificato in JobDefinition non è registrato. Registrare il tipo JobSourceAdapter tramite una chiamata esplicita oppure chiamando il cmdlet Import-Module e specificando quindi un assembly.</value>
   </data>
   <data name="NewJobSpecificationError" xml:space="preserve">
-    <value>The job could not be created because the JobInvocationInfo does not contain a JobDefinition. Start the JobInvocationInfo with a JobDefinition.</value>
+    <value>Non è possibile creare il processo perché JobInvocationInfo non contiene una JobDefinition. Avviare JobInvocationInfo con una JobDefinition.</value>
   </data>
   <data name="InvalidJobStateSpecific" xml:space="preserve">
-    <value>The state of the current job instance is {0}. This state is not valid for the attempted operation. {1}</value>
+    <value>Lo stato dell'istanza del processo corrente è {0}. Questo stato non è valido per l'operazione tentata.{1}</value>
   </data>
   <data name="JobConnectFailed" xml:space="preserve">
-    <value>Unable to connect job "{0}" to the remote server.</value>
+    <value>Non è possibile connettere il processo ''{0}'' al server remoto.</value>
   </data>
   <data name="RunspaceDisconnectFailed" xml:space="preserve">
-    <value>The Disconnect-PSSession operation failed for runspace Id = {0}.</value>
+    <value>Operazione Disconnect-PSSession non riuscita per l'ID spazio di esecuzione = {0}.</value>
   </data>
   <data name="RunspaceConnectFailed" xml:space="preserve">
-    <value>The connect operation failed for session {0}. The Runspace state is {1} instead of Opened.</value>
+    <value>Operazione di connessione non riuscita per la sessione {0}. Lo stato dello spazio di esecuzione è {1} anziché Opened.</value>
   </data>
   <data name="RunspaceQueryFailed" xml:space="preserve">
-    <value>The Disconnected PSSession query failed for computer "{0}".</value>
+    <value>La query PSSession disconnessa non è riuscita per il computer "{0}".</value>
   </data>
   <data name="RunspaceCannotBeConnected" xml:space="preserve">
-    <value>Cannot connect PSSession "{0}", either because it is not in the Disconnected state, or it is not available for connection.</value>
+    <value>Non è possibile connettere PSSession "{0}" perché non si trova nello stato Disconnesso o non è disponibile per la connessione.</value>
   </data>
   <data name="RunspaceCannotBeConnectedForVMContainerSession" xml:space="preserve">
-    <value>Session connect is not supported for PSSession "{0}" on target "{1}" because the target computer type is "{2}".</value>
+    <value>La connessione di sessione non è supportata per PSSession "{0}" nella destinazione "{1}" perché il tipo di computer di destinazione è "{2}".</value>
   </data>
   <data name="RunspaceCannotBeDisconnected" xml:space="preserve">
-    <value>Cannot disconnect PSSession "{0}" because it is not in the Opened state.</value>
+    <value>Non è possibile disconnettere PSSession "{0}" perché non si trova nello stato Aperto.</value>
   </data>
   <data name="RunspaceCannotBeDisconnectedForVMContainerSession" xml:space="preserve">
-    <value>Session disconnect is not supported for PSSession "{0}" on target "{1}" because the target computer type is "{2}".</value>
+    <value>La disconnessione della sessione non è supportata per la PSSession "{0}" nel target "{1}" perché il tipo di computer di destinazione è "{2}".</value>
   </data>
   <data name="RunspaceCannotBeReceivedForVMContainerSession" xml:space="preserve">
-    <value>Receive-PSSession does not support PSSession "{0}" on target "{1}" because the target computer type is "{2}".</value>
+    <value>Receive-PSSession non supporta PSSession "{0}" sulla destinazione "{1}" perché il tipo di computer di destinazione è "{2}".</value>
   </data>
   <data name="JobActionInvalidWithNullChild" xml:space="preserve">
-    <value>The command cannot finish because the ChildJobs property contains a value that is not valid.</value>
+    <value>Non è possibile completare il comando. La proprietà ChildJobs contiene un valore non valido.</value>
   </data>
   <data name="JobSuspendNotSupported" xml:space="preserve">
-    <value>Cannot suspend the job that has an ID of {0}. Suspending jobs is not supported for some job types. For more information about support for suspending jobs, see the Help topic for the job type.</value>
+    <value>Non è possibile sospendere il processo con ID {0}. La sospensione dei processi non è supportata per alcuni tipi di processo. Per ulteriori informazioni sul supporto per la sospensione dei processi, vedere l'argomento della Guida relativo al tipo di processo.</value>
   </data>
   <data name="JobResumeNotSupported" xml:space="preserve">
-    <value>Cannot resume the job that has an ID of {0}. Resuming jobs is not supported for some job types. For more information about support for resuming jobs, see the Help topic for the job type.</value>
+    <value>Non è possibile riprendere il processo con ID {0}. La ripresa dei processi non è supportata per alcuni tipi di processo. Per ulteriori informazioni sul supporto per la ripresa dei processi, vedere l'argomento della Guida relativo al tipo di processo.</value>
   </data>
   <data name="AsJobAndDisconnectedError" xml:space="preserve">
-    <value>You cannot use the Invoke-Command cmdlet with both the AsJob and Disconnected parameters in the same command.</value>
+    <value>Non è possibile utilizzare il cmdlet Invoke-Command con entrambi i parametri AsJob e Disconnected nello stesso comando.</value>
   </data>
   <data name="QueryForRunspacesFailed" xml:space="preserve">
-    <value>The remote session query failed for {0} with the following error message: {1}</value>
+    <value>Query della sessione remota non riuscita per {0} con il messaggio di errore seguente: {1}</value>
   </data>
   <data name="JobIdNotYetAssigned" xml:space="preserve">
-    <value>Attempted to create a job with ID {0}. A job with this ID cannot be created now. Verify that the ID has already been assigned once on this computer.</value>
+    <value>Tentativo di creare un processo con ID {0}. Non è possibile creare un processo con questo ID in questo momento. Verificare che l'ID non sia già stato assegnato una volta in questo computer.</value>
   </data>
   <data name="JobSessionIdLessThanOne" xml:space="preserve">
-    <value>Cannot create a job with an ID of {0}; this is not a valid ID. Provide an integer for the job ID that is greater than 0.</value>
+    <value>Non è possibile creare un processo con ID {0}; questo non è un ID valido. Specificare un numero intero maggiore di 0 per l'ID processo.</value>
   </data>
   <data name="JobIdentifierNull" xml:space="preserve">
-    <value>The JobIdentifier provided must not be null. Please provide a valid JobIdentifier.</value>
+    <value>L'elemento JobIdentifier specificato non deve essere Null. Specificare un JobIdentifier valido.</value>
   </data>
   <data name="JobBlockedSoWaitJobCannotContinue" xml:space="preserve">
-    <value>The Wait-Job cmdlet cannot finish working, because one or more jobs are blocked waiting for user interaction.  Process interactive job output by using the Receive-Job cmdlet, and then try again.</value>
+    <value>Il cmdlet Wait-Job non può terminare l'esecuzione perché uno o più processi sono bloccati in attesa dell'interazione dell'utente.  Elaborare l'output del processo interattivo usando il cmdlet Receive-Job, quindi riprovare.</value>
   </data>
   <data name="RemoveRunspaceNotConnected" xml:space="preserve">
-    <value>Remote session {0} could not be connected and could not be removed from the server. The client remote session object will be removed from the server, but the state of the remote session on the server is unknown.</value>
+    <value>Non è possibile connettere {0} alla sessione remota e rimuoverla dal server. L'oggetto della sessione remota client verrà rimosso dal server, ma lo stato della sessione remota nel server è sconosciuto.</value>
   </data>
   <data name="RunspaceDisconnectFailedWithReason" xml:space="preserve">
-    <value>Disconnect-PSSession operation failed for runspace Id = {0} for the following reason: {1}</value>
+    <value>Operazione Disconnect-PSSession non riuscita per l'ID spazio di esecuzione = {0} per il seguente motivo: {1}</value>
   </data>
   <data name="StopJobNotConnected" xml:space="preserve">
-    <value>Job "{0}" could not be connected to the server and so could not be stopped.</value>
+    <value>Non è possibile connettere il processo "{0}" al server e quindi non è possibile arrestarlo.</value>
   </data>
   <data name="SessionIdMatchFailed" xml:space="preserve">
-    <value>The command cannot find a PSSession with an InstanceId value of "{0}".</value>
+    <value>Il comando non riesce a trovare una PSSession con un valore InstanceId di "{0}".</value>
   </data>
   <data name="SessionNameMatchFailed" xml:space="preserve">
-    <value>The command cannot find a PSSession that has the name "{0}".</value>
+    <value>Il comando non riesce a trovare una PSSession con il nome "{0}".</value>
   </data>
   <data name="WinPERemotingNotSupported" xml:space="preserve">
-    <value>PowerShell remoting is not supported in the Windows Preinstallation Environment (WinPE).</value>
+    <value>La comunicazione remota di PowerShell non è supportata in Windows Preinstallation Environment (WinPE).</value>
   </data>
   <data name="WinRMRequiresRestart" xml:space="preserve">
-    <value>Changes made by {0} cannot take effect until the WinRM service is restarted.</value>
+    <value>Le modifiche apportate da {0} avranno effetto solo dopo il riavvio del servizio WinRM.</value>
   </data>
   <data name="WinRMRestartWarning" xml:space="preserve">
-    <value>{0} may need to restart the WinRM service if a configuration using this name has recently been unregistered, certain system data structures may still be cached. In that case, a restart of WinRM may be required.
-All WinRM sessions connected to PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
+    <value>{0} potrebbe essere necessario riavviare il servizio WinRM se di recente è stata annullata la registrazione di una configurazione con questo nome, perché alcune strutture di dati di sistema potrebbero essere ancora memorizzate nella cache. In tal caso, potrebbe essere necessario riavviare WinRM.
+Tutte le sessioni di WinRM connesse alle configurazioni di sessione di PowerShell, ad esempio Microsoft.PowerShell, e alle configurazioni di sessione create con il cmdlet Register-PSSessionConfiguration, vengono disconnesse.</value>
   </data>
   <data name="WinRMForceRestartWarning" xml:space="preserve">
-    <value>You are running in a remote session and have selected the Force option which means the WinRM service may restart.If the WinRM service restarts then this remote session will be terminated and you will need to create a new session to continue</value>
+    <value>Si è in esecuzione in una sessione remota ed è stata selezionata l'opzione Force, il che significa che il servizio WinRM potrebbe riavviarsi. Se il servizio WinRM viene riavviato, questa sessione remota verrà terminata e sarà necessario crearne una nuova per continuare</value>
   </data>
   <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
-    <value>The job was null when trying to save identifiers. Specify a job to save its identifiers.</value>
+    <value>Il processo era Null durante il tentativo di salvare gli identificatori. Specificare un processo per salvarne gli identificatori.</value>
   </data>
   <data name="NoPowerShellForJob" xml:space="preserve">
-    <value>A running command could not be found for this PSSession.</value>
+    <value>Non è stato trovato alcun comando in esecuzione per questa PSSession.</value>
   </data>
   <data name="NetFrameWorkV2NotInstalled" xml:space="preserve">
-    <value>The Microsoft .NET Framework 2.0, which is required for Windows PowerShell 2.0, is not installed. Install the .NET Framework 2.0 and retry.</value>
+    <value>Microsoft .NET Framework 2.0, necessario per Windows PowerShell 2.0, non è installato. Installare .NET Framework 2.0 e riprovare.</value>
   </data>
   <data name="PipelineFailedWithoutReason" xml:space="preserve">
-    <value>The remote pipeline failed.</value>
+    <value>La pipeline remota non è riuscita.</value>
   </data>
   <data name="PipelineFailedWithReason" xml:space="preserve">
-    <value>The remote pipeline failed for the following reason: {0}</value>
+    <value>La pipeline remota non è riuscita per il motivo seguente: {0}</value>
   </data>
   <data name="ResumeJobInvalidJobState" xml:space="preserve">
-    <value>One or more jobs could not be resumed because the state was not valid for the operation.</value>
+    <value>Uno o più processi non possono essere ripresi perché lo stato non è valido per l'operazione.</value>
   </data>
   <data name="RemoteHostNullClientHost" xml:space="preserve">
-    <value>No client computer was specified for the remote runspace that is running a client-side method.</value>
+    <value>Non è stato specificato alcun computer client per lo spazio di esecuzione remoto che esegue un metodo lato client.</value>
   </data>
   <data name="DisableRemotingShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This denies remote access to this session configuration.</value>
+    <value>Nome: {0} SDDL: {1}. Questo nega l'accesso remoto a questa configurazione di sessione.</value>
   </data>
   <data name="SetEnabledFalseTarget" xml:space="preserve">
-    <value>Enabled: False. This configures the WS-Management service to deny the connection request.</value>
+    <value>Abilitato: False. In questo modo il servizio WS-Management viene configurato per negare la richiesta di connessione.</value>
   </data>
   <data name="SetEnabledTrueTarget" xml:space="preserve">
-    <value>Enabled: True. This configures the WS-Management service to accept the connection request.</value>
+    <value>Abilitato: True. In questo modo il servizio WS-Management viene configurato per accettare la richiesta di connessione.</value>
   </data>
   <data name="DISCAliasDefinitionsComment" xml:space="preserve">
-    <value>Aliases to be defined when applied to a session</value>
+    <value>Alias da definire quando vengono applicati a una sessione</value>
   </data>
   <data name="DISCAssembliesToLoadComment" xml:space="preserve">
-    <value>Assemblies to load when applied to a session</value>
+    <value>Assembly da caricare quando vengono applicati a una sessione</value>
   </data>
   <data name="DISCAuthorComment" xml:space="preserve">
-    <value>Author of this document</value>
+    <value>Autore di questo documento</value>
   </data>
   <data name="DISCCLRVersionComment" xml:space="preserve">
-    <value>Version of the CLR to use when applied to a session</value>
+    <value>Versione di CLR da usare quando viene applicata a una sessione</value>
   </data>
   <data name="DISCCompanyNameComment" xml:space="preserve">
-    <value>Company associated with this document</value>
+    <value>Società associata a questo documento</value>
   </data>
   <data name="DISCCopyrightComment" xml:space="preserve">
-    <value>Copyright statement for this document</value>
+    <value>Informativa sul copyright per questo documento</value>
   </data>
   <data name="DISCDescriptionComment" xml:space="preserve">
-    <value>Description of the functionality provided by these settings</value>
+    <value>Descrizione della funzionalità fornita da queste impostazioni</value>
   </data>
   <data name="DISCEnvironmentVariablesComment" xml:space="preserve">
-    <value>Environment variables to define when applied to a session</value>
+    <value>Variabili ambiente da definire quando vengono applicate a una sessione</value>
   </data>
   <data name="DISCExecutionPolicyComment" xml:space="preserve">
-    <value>Execution policy to apply when applied to a session</value>
+    <value>Criterio di esecuzione da applicare a una sessione</value>
   </data>
   <data name="DISCFormatsToProcessComment" xml:space="preserve">
-    <value>Format files (.ps1xml) to load when applied to a session</value>
+    <value>File di formato (.ps1xml) da caricare quando applicati a una sessione</value>
   </data>
   <data name="DISCFunctionDefinitionsComment" xml:space="preserve">
-    <value>Functions to define when applied to a session</value>
+    <value>Funzioni da definire quando vengono applicate a una sessione</value>
   </data>
   <data name="DISCGUIDComment" xml:space="preserve">
-    <value>ID used to uniquely identify this document</value>
+    <value>ID utilizzato per identificare in modo univoco il documento</value>
   </data>
   <data name="DISCInitialSessionStateComment" xml:space="preserve">
-    <value>Session type defaults to apply for this session configuration. Can be 'RestrictedRemoteServer' (recommended), 'Empty', or 'Default'</value>
+    <value>Per questa configurazione di sessione vengono applicati i valori predefiniti del tipo di sessione. Può essere ''RestrictedRemoteServer'' (scelta consigliata), ''Empty'' o ''Default''</value>
   </data>
   <data name="DISCTranscriptDirectoryComment" xml:space="preserve">
-    <value>Directory to place session transcripts for this session configuration</value>
+    <value>Directory in cui inserire le trascrizioni della sessione per questa configurazione di sessione</value>
   </data>
   <data name="DISCRunAsVirtualAccountComment" xml:space="preserve">
-    <value>Whether to run this session configuration as the machine's (virtual) administrator account</value>
+    <value>Indica se eseguire questa configurazione di sessione come account amministratore (virtuale) del computer</value>
   </data>
   <data name="DISCLanguageModeComment" xml:space="preserve">
-    <value>Language mode to apply when applied to a session. Can be 'NoLanguage' (recommended), 'RestrictedLanguage', 'ConstrainedLanguage', or 'FullLanguage'</value>
+    <value>Modalità di linguaggio da applicare quando viene applicata a una sessione. Può essere ''NoLanguage'' (scelta consigliata), ''RestrictedLanguage'', ''ConstrainedLanguage'' o ''FullLanguage''</value>
   </data>
   <data name="DISCModulesToImportComment" xml:space="preserve">
-    <value>Modules to import when applied to a session</value>
+    <value>Moduli da importare quando vengono applicati a una sessione</value>
   </data>
   <data name="DISCPowerShellVersionComment" xml:space="preserve">
-    <value>Version of the PowerShell engine to use when applied to a session</value>
+    <value>Versione del motore di PowerShell da usare quando applicata a una sessione</value>
   </data>
   <data name="DISCProcessorArchitectureComment" xml:space="preserve">
-    <value>Processor architecture to use when applied to a session</value>
+    <value>Architettura del processore da usare quando applicata a una sessione</value>
   </data>
   <data name="DISCSchemaVersionComment" xml:space="preserve">
-    <value>Version number of the schema used for this document</value>
+    <value>Numero di versione dello schema usato per questo documento</value>
   </data>
   <data name="DISCScriptsToProcessComment" xml:space="preserve">
-    <value>Scripts to run when applied to a session</value>
+    <value>Script da eseguire quando vengono applicati a una sessione</value>
   </data>
   <data name="DISCTypesToAddComment" xml:space="preserve">
-    <value>Types to add when applied to a session</value>
+    <value>Tipi da aggiungere quando vengono applicati a una sessione</value>
   </data>
   <data name="DISCTypesToProcessComment" xml:space="preserve">
-    <value>Type files (.ps1xml) to load when applied to a session</value>
+    <value>File di tipo (.ps1xml) da caricare quando applicati a una sessione</value>
   </data>
   <data name="DISCVariableDefinitionsComment" xml:space="preserve">
-    <value>Variables to define when applied to a session</value>
+    <value>Variabili da definire quando vengono applicate a una sessione</value>
   </data>
   <data name="DISCRoleDefinitionsComment" xml:space="preserve">
-    <value>User roles (security groups), and the role capabilities that should be applied to them when applied to a session</value>
+    <value>Ruoli utente (gruppi di sicurezza) e funzionalità del ruolo che devono essere applicate quando applicate a una sessione</value>
   </data>
   <data name="DISCVisibleAliasesComment" xml:space="preserve">
-    <value>Aliases to make visible when applied to a session</value>
+    <value>Alias da rendere visibili quando vengono applicati a una sessione</value>
   </data>
   <data name="DISCVisibleCmdletsComment" xml:space="preserve">
-    <value>Cmdlets to make visible when applied to a session</value>
+    <value>Cmdlet da rendere visibili quando vengono applicati a una sessione</value>
   </data>
   <data name="DISCCommandModificationSyntax" xml:space="preserve">
-    <value>Could not parse visible command definition for '{0}'. The visible command definition must be a hashtable with the keys of 'Name' and 'Parameters'. The value of the 'Parameters' key must be a collection of hashtables with the keys 'Name', and optionally either 'ValidateSet' or 'ValidatePattern'.</value>
+    <value>Non è possibile analizzare la definizione del comando visibile per ''{0}''. La definizione del comando visibile deve essere una hashtable con le chiavi ''Name'' e ''Parameters''. Il valore della chiave ''Parameters'' deve essere una raccolta di hashtable con le chiavi ''Name'' e, facoltativamente, ''ValidateSet'' oppure ''ValidatePattern''.</value>
   </data>
   <data name="DISCVisibleFunctionsComment" xml:space="preserve">
-    <value>Functions to make visible when applied to a session</value>
+    <value>Funzioni da rendere visibili quando vengono applicati a una sessione</value>
   </data>
   <data name="DISCVisibleProvidersComment" xml:space="preserve">
-    <value>Providers to make visible when applied to a session</value>
+    <value>Provider da rendere visibili quando vengono applicati a una sessione</value>
   </data>
   <data name="DISCVisibleExternalCommandsComment" xml:space="preserve">
-    <value>External commands (scripts and applications) to make visible when applied to a session</value>
+    <value>Comandi esterni (script e applicazioni) da rendere visibili quando applicati a una sessione</value>
   </data>
   <data name="InvalidPSSessionConfigurationFilePath" xml:space="preserve">
-    <value>PSSession Configuration file path '{0}' is not valid. The path argument must resolve to a single file in the file system with a '.pssc' extension. Please fix the path specification and try again.</value>
+    <value>Il percorso del file di configurazione PSSession ''{0}'' non è valido. L'argomento del percorso deve risolvere un singolo file nel file system con estensione ''.pssc''. Correggere la specifica del percorso e riprovare.</value>
   </data>
   <data name="InvalidRoleCapabilityFilePath" xml:space="preserve">
-    <value>Role Capability file path '{0}' is not valid. The path argument must resolve to a single file in the file system with a '.psrc' extension. Please fix the path specification and try again.</value>
+    <value>Il percorso del file Role Capability ''{0}'' non è valido. L'argomento del percorso deve risolvere un singolo file nel file system con estensione ''.psrc''. Correggere la specifica del percorso e riprovare.</value>
   </data>
   <data name="InvalidRoleEntry" xml:space="preserve">
-    <value>The 'Roles' entry must be a hashtable, but was a {0}.</value>
+    <value>La voce ''Roles'' deve essere una tabella hash, ma era una {0}.</value>
   </data>
   <data name="InvalidRoleValue" xml:space="preserve">
-    <value>Could not convert the value of the '{0}' role entry to a hashtable. The 'Roles' entry must be a hashtable with group names for keys, where the value associated with each key is another hashtable of session configuration properties for that role.</value>
+    <value>Non é possibile convertire il valore della voce di ruolo ''{0}'' in una tabella hash. La voce ''Roles'' deve essere una tabella hash con i nomi dei gruppi come chiavi, dove il valore associato a ogni chiave è un'altra tabella hash delle proprietà di configurazione della sessione per tale ruolo.</value>
   </data>
   <data name="CouldNotFindRoleCapability" xml:space="preserve">
-    <value>Could not find the role capability, '{0}'. The role capability must be a file named '{1}' within a 'RoleCapabilities' directory in a module in the current module path.</value>
+    <value>Non è possibile trovare la funzionalità di ruolo ''{0}''. La funzionalità di ruolo deve essere un file denominato ''{1}'' all'interno di una cartella 'RoleCapabilities'' in un modulo nel percorso dei moduli corrente.</value>
   </data>
   <data name="InvalidRegisterPSSessionConfigurationModulePath" xml:space="preserve">
-    <value>Cannot find module path to import. The value of the ModulesToImport parameter {0} does not exist or is not a module directory. Correct the value and try the command again.</value>
+    <value>Non è possibile trovare il percorso del modulo da importare. Il valore del parametro ModulesToImport {0} non esiste o non è una directory di moduli. Correggere il valore e riprovare a eseguire il comando.</value>
   </data>
   <data name="PSSessionConfigurationFileNotFound" xml:space="preserve">
-    <value>The specified configuration file '{0}' was not loaded because no valid configuration file was found.</value>
+    <value>Il file di configurazione specificato ''{0}'' non è stato caricato perché non è stato trovato alcun file di configurazione valido.</value>
   </data>
   <data name="RCAutoDisconnected" xml:space="preserve">
-    <value>Computer {0} has been successfully disconnected.</value>
+    <value>Il computer {0} è stato disconnesso.</value>
   </data>
   <data name="RCAutoDisconnectingWarning" xml:space="preserve">
-    <value>The reconnection attempt to {0} failed. Attempting to disconnect the session...</value>
+    <value>Tentativo di riconnessione a {0} non riuscito. Tentativo di disconnessione della sessione in corso...</value>
   </data>
   <data name="RCConnectionRetryAttempt" xml:space="preserve">
-    <value>Attempting to reconnect to {0} ...</value>
+    <value>Verrà effettuato un tentativo di riconnessione a {0}...</value>
   </data>
   <data name="RCInternalError" xml:space="preserve">
-    <value>Network connectivity to {0} has been lost and the attempt to reconnect has failed. Please repair the network connection and reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>La connettività di rete a {0} è stata interrotta e il tentativo di riconnessione non è riuscito. Ripristinare la connessione di rete e riconnettersi usando Connect-PSSession o Receive-PSSession.</value>
   </data>
   <data name="RCNetworkFailureDetected" xml:space="preserve">
-    <value>The network connection to {0} has been interrupted. Attempting to reconnect for up to {1} minutes...</value>
+    <value>La connessione di rete a {0} è stata ripristinata. Tentativo di riconnessione per un massimo di {1} minuti...</value>
   </data>
   <data name="RCReconnectSucceeded" xml:space="preserve">
-    <value>The network connection to {0} has been restored.</value>
+    <value>La connessione di rete a {0} è stata ripristinata.</value>
   </data>
   <data name="AuthenticationMechanismRequiresCredential" xml:space="preserve">
-    <value>{0} authentication requires an explicit user name and password.  Specify the user name and password by using the -Credential parameter and try the command again.</value>
+    <value>L'autenticazione {0} richiede un nome utente e una password espliciti.  Specificare il nome utente e la password usando il parametro -Credential, quindi riprovare a eseguire il comando.</value>
   </data>
   <data name="BasicAuthOverHttpNotSupported" xml:space="preserve">
-    <value>Basic authentication is not supported over HTTP on Unix.</value>
+    <value>L'autenticazione di base non è supportata su HTTP in Unix.</value>
   </data>
   <data name="StartJobDefinitionNotFound1" xml:space="preserve">
-    <value>Cannot find a scheduled job with name {0}.</value>
+    <value>Non è possibile trovare un processo pianificato con nome {0}.</value>
     <comment>{0} is the job definition name</comment>
   </data>
   <data name="StartJobManyDefNameMatches" xml:space="preserve">
-    <value>More than one job definition was found with name {0}. Try including the -DefinitionType parameter to Start-Job in order to narrow the search for the job definition to a single job source adapter.</value>
+    <value>Sono state trovate più definizioni di processo con nome {0}. Provare a includere il parametro -DefinitionType in Start-Job per limitare la ricerca della definizione del processo a un singolo adattatore di origine del processo.</value>
   </data>
   <data name="DISCMissingSchemaVersion" xml:space="preserve">
-    <value>The member 'SchemaVersion' is not present in the configuration file. This member must exist and be assigned a version number of the form 'n.n.n.n'. Please add the missing member to the file {0}.</value>
+    <value>Il membro ''SchemaVersion'' non è presente nel file di configurazione. Questo membro deve esistere ed essere assegnato a un numero di versione nel formato ''n.n.n.n''. Aggiungere il membro mancante al file {0}.</value>
   </data>
   <data name="DISCTypeMustBeString" xml:space="preserve">
-    <value>The member '{0}' must be a string. Change the member to the correct type in the file {1}.</value>
+    <value>Il membro ''{0}'' deve essere una stringa. Modificare il membro in modo che usi il tipo corretto nel file {1}.</value>
   </data>
   <data name="DISCTypeMustBeStringArray" xml:space="preserve">
-    <value>The member '{0}' must be a string array. Change the member to the correct type in the file {1}.</value>
+    <value>Il membro ''{0}'' deve essere una matrice di stringhe. Modificare il membro in modo che usi il tipo corretto nel file {1}.</value>
   </data>
   <data name="DISCTypeMustBeHashtable" xml:space="preserve">
-    <value>The member '{0}' must be a hashtable. Change the member to the correct type in the file {1}.</value>
+    <value>Il membro ''{0}'' deve essere una tabella hash. Modificare il membro in modo che usi il tipo corretto nel file {1}.</value>
   </data>
   <data name="DISCTypeMustBeHashtableArray" xml:space="preserve">
-    <value>The member '{0}' must be a hashtable array. Change the member to the correct type in the file {1}.</value>
+    <value>Il membro ''{0}'' deve essere una matrice hash. Modificare il membro in modo che usi il tipo corretto nel file {1}.</value>
   </data>
   <data name="DISCInvalidKey" xml:space="preserve">
-    <value>The member '{0}' is not a valid key. Please change the member to a valid key in the file {1}.</value>
+    <value>Il membro ''{0}'' non è una chiave valida. Modificare il membro con una chiave valida nel file {1}.</value>
   </data>
   <data name="DISCTypeMustBeValidEnum" xml:space="preserve">
-    <value>The member '{0}' must be a valid enumeration type "{1}". Valid enumeration values are "{2}". Change the member to the correct type in the file {3}.</value>
+    <value>Il membro ''{0}'' deve essere un tipo di enumerazione valido "{1}". I valori di enumerazione validi sono "{2}". Modificare il membro in modo che usi il tipo corretto nel file {3}.</value>
   </data>
   <data name="DISCErrorParsingConfigFile" xml:space="preserve">
-    <value>Error parsing configuration file {0} with the following message: {1}</value>
+    <value>Errore durante l'analisi del file di configurazione {0} con il seguente messaggio: {1}</value>
   </data>
   <data name="WriteJobInResultsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -WriteJobInResults parameter cannot be used without the -Wait parameter</value>
+    <value>Non è possibile utilizzare il parametro -WriteJobInResults senza il parametro -Wait</value>
   </data>
   <data name="DISCPathsMustBeAbsolute" xml:space="preserve">
-    <value>The member '{0}' is not an absolute path {1}. Change the member to an absolute path in the file {2}.</value>
+    <value>Il membro ''{0}'' non è un percorso assoluto {1}. Modificare il membro con un percorso assoluto nel file {2}.</value>
   </data>
   <data name="DISCTypeContainsInvalidKey" xml:space="preserve">
-    <value>The key '{0}' in the member '{1}' is not valid. Change the key in the file {2}.</value>
+    <value>La chiave ''{0}'' nel membro ''{1}'' non è valida. Modificare la chiave nel file {2}.</value>
   </data>
   <data name="DISCTypeMustContainKey" xml:space="preserve">
-    <value>The member '{0}' must contain the required key '{1}'. Add the require key to the file {2}.</value>
+    <value>Il membro ''{0}'' deve contenere la chiave richiesta ''{1}''. Aggiungere la chiave richiesta al file {2}.</value>
   </data>
   <data name="DISCInvalidExtension" xml:space="preserve">
-    <value>The key '{0}' contains an extension {1} that is not valid. Specify an extension from the following list: {{{2}}}.</value>
+    <value>La chiave ''{0}'' contiene un'estensione {1} non valida. Specificare un'estensione dall'elenco seguente: {{{2}}}.</value>
   </data>
   <data name="DISCKeyMustBeScriptBlock" xml:space="preserve">
-    <value>The key '{0}' in the member '{1}' must be a script block. Change the key to the correct type in the file {2}.</value>
+    <value>La chiave ''{0}'' nel membro ''{1}'' deve essere un blocco di script. Modificare la chiave in modo che usi il tipo corretto nel file {2}.</value>
   </data>
   <data name="InvalidPSSessionConfigurationFile" xml:space="preserve">
-    <value>The session configuration file {0} is not valid. Specify a valid session configuration file and try the command again.</value>
+    <value>Il file di configurazione della sessione {0} non è valido. Specificare un file di configurazione della sessione valido e riprovare il comando.</value>
   </data>
   <data name="RCProgressActivity" xml:space="preserve">
-    <value>Network connection interrupted</value>
+    <value>Connessione di rete interrotta</value>
   </data>
   <data name="RCProgressStatus" xml:space="preserve">
-    <value>Attempting to reconnect to {0} ...</value>
+    <value>Verrà effettuato un tentativo di riconnessione a {0}...</value>
   </data>
   <data name="RCDisconnectedJob" xml:space="preserve">
-    <value>Job {0} has been created for reconnection.</value>
+    <value>Il processo {0} è stato creato per la riconnessione.</value>
   </data>
   <data name="RCDisconnectSession" xml:space="preserve">
-    <value>Session {0} with instance ID {1} on computer {2} has been successfully disconnected.</value>
+    <value>La sessione {0} con ID istanza {1} nel computer {2} è stata disconnessa correttamente.</value>
   </data>
   <data name="RCDisconnectSessionCreated" xml:space="preserve">
-    <value>Session {0} with instance ID {1} has been created for reconnection.</value>
+    <value>La sessione {0} con ID istanza {1} è stata creata per la riconnessione.</value>
   </data>
   <data name="SessionNameWithoutInvokeDisconnected" xml:space="preserve">
-    <value>The SessionName parameter can only be used with the Disconnected switch parameter.</value>
+    <value>Il parametro SessionName può essere usato solo con il parametro di interruttore Disconnected.</value>
   </data>
   <data name="SessionConnectFailed" xml:space="preserve">
-    <value>A failure occurred while attempting to connect the PSSession.</value>
+    <value>Si è verificato un errore durante il tentativo di connessione della sessione PSSession.</value>
   </data>
   <data name="VMSessionConnectFailed" xml:space="preserve">
-    <value>A failure occurred while attempting to connect to the target virtual machine.</value>
+    <value>Si è verificato un errore durante il tentativo di connessione alla macchina virtuale di destinazione.</value>
   </data>
   <data name="ContainerSessionConnectFailed" xml:space="preserve">
-    <value>A failure occurred while attempting to connect to the target container.</value>
+    <value>Questo errore si è verificato durante il tentativo di connessione al contenitore di destinazione {0}.</value>
   </data>
   <data name="SessionNotAvailableForConnection" xml:space="preserve">
-    <value>The PSSession is in a disconnected state and is not available for connection.</value>
+    <value>PsSession si trova in uno stato disconnesso e non è disponibile per la connessione.</value>
   </data>
   <data name="HyperVModuleNotAvailable" xml:space="preserve">
-    <value>The Hyper-V Module for PowerShell is not available on this machine.</value>
+    <value>Il modulo Hyper-V per PowerShell non è disponibile in questo computer.</value>
   </data>
   <data name="CannotCreateProcessInContainer" xml:space="preserve">
-    <value>Failed to launch PowerShell process ({1}) inside container with id {0} with error: {2}.</value>
+    <value>Non è possibile avviare il processo di PowerShell ({1}) all'interno del contenitore con ID {0} con errore: {2}.</value>
   </data>
   <data name="ContainersFeatureNotEnabled" xml:space="preserve">
-    <value>The Containers feature may not be enabled on this machine.</value>
+    <value>La funzionalità Contenitori potrebbe non essere abilitata in questo computer.</value>
   </data>
   <data name="CannotTerminateProcessInContainer" xml:space="preserve">
-    <value>Failed to terminate PowerShell process with id {0} inside container with id {1}.</value>
+    <value>Non è possibile terminare il processo di PowerShell con ID {0} all'interno del contenitore con ID {1}.</value>
   </data>
   <data name="InvalidContainerId" xml:space="preserve">
-    <value>The input ContainerId {0} does not exist, or the corresponding container is not running.</value>
+    <value>Il ContainerId di input {0} non esiste oppure il contenitore corrispondente non è in esecuzione.</value>
   </data>
   <data name="InvalidVMId" xml:space="preserve">
-    <value>The input VMId parameter does not resolve to a single virtual machine.</value>
+    <value>Il parametro di input VMId non viene risolto in una singola macchina virtuale.</value>
   </data>
   <data name="InvalidVMIdNotSingle" xml:space="preserve">
-    <value>The input VMId {0} does not resolve to a single virtual machine.</value>
+    <value>Il VMId di input {0} non viene risolto in una singola macchina virtuale.</value>
   </data>
   <data name="InvalidVMNameNoVM" xml:space="preserve">
-    <value>The input VMName parameter does not resolve to any virtual machine.</value>
+    <value>Il parametro VMName di input non viene risolto in alcuna macchina virtuale.</value>
   </data>
   <data name="InvalidVMNameMultipleVM" xml:space="preserve">
-    <value>The input VMName parameter resolves to multiple virtual machines.</value>
+    <value>Il parametro di input VMName corrisponde a più macchine virtuali.</value>
   </data>
   <data name="InvalidVMNameNotSingle" xml:space="preserve">
-    <value>The input VMName {0} does not resolve to a single virtual machine.</value>
+    <value>Il VMName di input {0} non viene risolto in una singola macchina virtuale.</value>
   </data>
   <data name="InvalidVMState" xml:space="preserve">
-    <value>The virtual machine {0} is not in running state.</value>
+    <value>La macchina virtuale {0} non è in esecuzione.</value>
   </data>
   <data name="InvalidCredential" xml:space="preserve">
-    <value>The credential is invalid.</value>
+    <value>La credenziale non è valida.</value>
   </data>
   <data name="InvalidUsername" xml:space="preserve">
-    <value>The input username cannot be empty.</value>
+    <value>Il nome utente di input non può essere vuoto.</value>
   </data>
   <data name="EnterPSSessionBrokenSession" xml:space="preserve">
-    <value>Cannot enter session {0} because it is not in the disconnected state or is not available for connection. Retrieve the remote session using Get-PSSession -ComputerName {1} -InstanceId {2}.</value>
+    <value>Non è possibile immettere la sessione {0} perché non si trova nello stato disconnesso o non è disponibile per la connessione. Recuperare la sessione remota usando Get-PSSession -ComputerName {1} -InstanceId {2}.</value>
   </data>
   <data name="EnterPSSessionDisconnected" xml:space="preserve">
-    <value>Cannot enter session {0} because it is not in the disconnected state or is not available for connection. Reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>Non è possibile immettere la sessione {0} perché non si trova nello stato disconnesso o non è disponibile per la connessione. Riconnettersi usando Connect-PSSession o Receive-PSSession.</value>
   </data>
   <data name="RCAutoDisconnectingError" xml:space="preserve">
-    <value>Network connectivity to {0} has been lost and the reconnection attempt failed. Please repair the network connection and reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>La connettività di rete a {0} è stata interrotta e il tentativo di riconnessione non è riuscito. Ripristinare la connessione di rete e riconnettersi usando Connect-PSSession o Receive-PSSession.</value>
   </data>
   <data name="RemoteSessionHyperVSocketClientConstructorSetSocketOptionFailure" xml:space="preserve">
-    <value>Failed to create an instance of RemoteSessionHyperVSocketClient due to SetSocketOption failure.</value>
+    <value>Non è possibile creare un'istanza di RemoteSessionHyperVSocketClient a causa di un errore SetSocketOption.</value>
   </data>
   <data name="RemoteSessionHyperVSocketServerConstructorFailure" xml:space="preserve">
-    <value>Failed to create an instance of RemoteSessionHyperVSocketServer.</value>
+    <value>Non è possibile creare un'istanza di RemoteSessionHyperVSocketServer.</value>
   </data>
   <data name="StopCommandOnRetry" xml:space="preserve">
-    <value>Reconnection attempt canceled. Please repair the network connection and reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>Tentativo di riconnessione annullato. Ripristinare la connessione di rete e riconnettersi usando Connect-PSSession o Receive-PSSession.</value>
   </data>
   <data name="SuspendJobInvalidJobState" xml:space="preserve">
-    <value>One or more jobs could not be suspended because the state was not valid for the operation.</value>
+    <value>Uno o più processi non possono essere sospesi perché lo stato non è valido per l'operazione.</value>
   </data>
   <data name="AutoRemoveCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -AutoRemoveJob parameter cannot be used without the -Wait parameter</value>
+    <value>Il parametro AutoRemoveJob non può essere usato senza il parametro Wait</value>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
-    <value>The WS-Management service cannot process the request. Cannot find the {0} session configuration in the WSMan: drive on the {1} computer. For more information, see the about_Remote_Troubleshooting Help topic.</value>
+    <value>Il servizio WS-Management non può elaborare la richiesta. Non é possibile trovare la configurazione della sessione {0} nell'unità WSMan: del computer {1}. Per ulteriori informazioni, vedere l'argomento della Guida about_Remote_Troubleshooting.</value>
   </data>
   <data name="BadRunspaceTypeForJob" xml:space="preserve">
-    <value>A job could not be created from the {0} specification because the provided runspace is not a local runspace. Try again using a local runspace, or specify a RunspaceMode argument.</value>
+    <value>Non è possibile creare un processo dalla specifica {0} perché lo spazio di esecuzione specificato non è locale. Riprovare usando uno spazio di esecuzione locale oppure specificare un argomento RunspaceMode.</value>
   </data>
   <data name="CannotDisconnectSessionWithInvalidIdleTimeout" xml:space="preserve">
-    <value>The session {0} cannot be disconnected because the specified idle time-out value {1} (seconds) is either greater than the server maximum allowed {2} (seconds), or less than the minimum allowed {3} (seconds).  Specify an idle time-out value that is within the allowed range, and try again.</value>
+    <value>Non è possibile disconnettere la sessione {0} perché il valore di timeout di inattività specificato {1} (secondi) è maggiore del valore massimo consentito dal server {2} (secondi) oppure minore del valore minimo consentito {3} (secondi).  Specificare un valore di timeout di inattività compreso nell'intervallo consentito e riprovare.</value>
     <comment>{0} is a placeholder for the session name
 {1} is a placeholder for the provided idletimeout value
 {2} is a placeholder for the maximum allowed idletimeout value
 {3} is a placeholder for the minimum allowed idletimeout value</comment>
   </data>
   <data name="InvalidIdleTimeoutOption" xml:space="preserve">
-    <value>The specified IdleTimeout session option {0} (seconds) is not a valid period.  Specify an IdleTimeout value that is greater than or equal to the minimum allowed {1} (seconds).</value>
+    <value>L'opzione di sessione IdleTimeout specificata {0} (secondi) non è un intervallo valido.  Specificare un valore di IdleTimeout maggiore o uguale al minimo consentito {1} (secondi).</value>
     <comment>{0} is a placeholder for the provided idletimeout
 {1} is a placeholder for the minimum allowed idletimeout value</comment>
   </data>
   <data name="DISCVisibilityAndAutoLoadingCannotBeBothSpecified" xml:space="preserve">
-    <value>The cmdlet "{0}" or the alias "{1}" cannot be present when "{2}","{3}","{4}" or "{5}" keys are specified in the session configuration file.</value>
+    <value>Il cmdlet "{0}" o l'alias "{1}" non possono essere presenti quando nel file di configurazione della sessione sono specificate le chiavi "{2}", "{3}", "{4}" o "{5}".</value>
   </data>
   <data name="InvalidConfigurationXMLAttribute" xml:space="preserve">
-    <value>"The transport option is not valid. Parameter "{0}" can be non-zero only if parameter "{1}" is set to true."</value>
+    <value>"L'opzione di trasporto non è valida. Il parametro "{0}" può essere diverso da zero solo se il parametro "{1}" è impostato su true".</value>
   </data>
   <data name="DISCTypeMustBeStringOrHashtableArray" xml:space="preserve">
-    <value>The member '{0}' must be an array consisting of either string or hashtable elements.</value>
+    <value>Il membro ''{0}'' deve essere una matrice costituita da elementi stringa o tabella hash.</value>
   </data>
   <data name="DISCTypeMustBeStringOrHashtableArrayInFile" xml:space="preserve">
-    <value>The member '{0}' must be an array consisting of either string or hashtable elements. Change the member to the correct type in the file {1}.</value>
+    <value>Il membro ''{0}'' deve essere una matrice costituita da elementi stringa o tabella hash. Modificare il membro in modo che usi il tipo corretto nel file {1}.</value>
   </data>
   <data name="StartJobDefinitionPathInvalidNotFSProvider" xml:space="preserve">
-    <value>Cannot retrieve the job definition '{0}' because path '{1}' refers to a '{2}' provider path.  Change the path parameter to a file system path.</value>
+    <value>Non è possibile recuperare la definizione del processo ''{0}'' perché il percorso ''{1}'' fa riferimento a un percorso del provider ''{2}''.  Modificare il parametro del percorso in un percorso del file system.</value>
     <comment>{0} is job definition name
 {1} is the user provided path
 {2} is the path provider</comment>
   </data>
   <data name="StartJobDefinitionPathInvalidNotSingle" xml:space="preserve">
-    <value>Cannot retrieve the job definition '{0}' because path '{1}' resolves to multiple file paths.  Change the path parameter so that it is a single path.</value>
+    <value>Non è possibile recuperare la definizione del processo ''{0}'' perché il percorso ''{1}'' si risolve in più percorsi di file.  Modificare il parametro percorso in modo che corrisponda a un unico percorso.</value>
     <comment>{0} is job definition name
 {1} is the user provided path</comment>
   </data>
   <data name="StartJobDefinitionNotFound2" xml:space="preserve">
-    <value>Cannot find a scheduled job with type {0} and name {1}.</value>
+    <value>Non è possibile trovare un processo pianificato con tipo {0} e nome {1}.</value>
     <comment>{0} is the job definition type and {1} is the job definition name.</comment>
   </data>
   <data name="StartJobWorkingDirectoryNotFound" xml:space="preserve">
-    <value>Cannot find the WorkingDirectory path {0}.</value>
+    <value>Non è possibile trovare il percorso WorkingDirectory {0}.</value>
   </data>
   <data name="CannotFindSessionForConnect" xml:space="preserve">
-    <value>Cannot connect to session {0}.  The session no longer exists on computer {1}.</value>
+    <value>Non è possibile connettersi alla sessione {0}.  La sessione non esiste più nel computer {1}.</value>
     <comment>{0} is the session name that cannot be found.
 {1} is the computer name where the session was.</comment>
   </data>
   <data name="RunspaceConnectFailedWithMessage" xml:space="preserve">
-    <value>The connect operation failed for session {0} with the following error message: {1}</value>
+    <value>Operazione di connessione non riuscita per la sessione {0} con il seguente messaggio di errore: {1}</value>
   </data>
   <data name="ForceCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -Force parameter cannot be used without the -Wait parameter.</value>
+    <value>Il parametro -Froce non può essere usato senza il parametro Wait.</value>
   </data>
   <data name="JobSuspendedDisconnectedWaitWithForce" xml:space="preserve">
-    <value>One or more jobs are in a suspended or disconnected state, and cannot continue without additional user input.  Specify the -Force parameter to continue to a completed, failed, or stopped state.</value>
+    <value>Uno o più processi sono in stato sospeso o disconnesso e non possono continuare senza input utente aggiuntivo.  Specificare il parametro -Force per passare a uno stato completato, non riuscito o arrestato.</value>
   </data>
   <data name="RunAsSessionConfigurationSecurityWarning" xml:space="preserve">
-    <value>When RunAs is enabled in a PowerShell session configuration, the Windows security model cannot enforce a security boundary between different user sessions that are created by using this endpoint. Verify that the PowerShell runspace configuration is restricted to only the necessary set of cmdlets and capabilities.</value>
+    <value>Quando RunAs è abilitato in una configurazione di sessione di PowerShell, il modello di sicurezza di Windows non può applicare un limite di sicurezza tra sessioni utente diverse create tramite questo endpoint. Verificare che la configurazione dell'area di esecuzione di PowerShell sia limitata solo al set necessario di cmdlet e funzionalità.</value>
   </data>
   <data name="ForceSuspendJob" xml:space="preserve">
-    <value>The job was suspended successfully by adding the Force parameter.</value>
+    <value>Il processo è stato sospeso correttamente aggiungendo il parametro Force.</value>
   </data>
   <data name="InvalidPSSessionConfigurationFileErrorProcessing" xml:space="preserve">
-    <value>The session configuration file {0} is not valid. Specify a valid session configuration file and try the command again. Error parsing configuration file: {1}.</value>
+    <value>Il file di configurazione della sessione {0} non è valido. Specificare un file di configurazione della sessione valido e riprovare il comando. Errore durante l'analisi del file di configurazione: {1}.</value>
   </data>
   <data name="ErrorParsingTheKeyInPSSessionConfigurationFile" xml:space="preserve">
-    <value>Register-PSSessionConfiguration : The '{0}' key in the {1}. session configuration file contains a value that is not valid. Correct the file and try the command again. </value>
+    <value>Register-PSSessionConfiguration: la chiave ''{0}'' nel file di configurazione della sessione {1}. contiene un valore non valido. Correggere il file e riprovare a eseguire il comando. </value>
   </data>
   <data name="EndpointDoesNotSupportDisconnect" xml:space="preserve">
-    <value>Disconnected sessions are supported only when the remote computer is running PowerShell 3.0 or a later version of PowerShell.</value>
+    <value>Le sessioni disconnesse sono supportate solo quando il computer remoto esegue PowerShell 3.0 o una versione successiva di PowerShell.</value>
   </data>
   <data name="ThrottlingJobFlowControlMemoryWarning" xml:space="preserve">
-    <value>Memory usage of a cmdlet has exceeded a warning level. To avoid this situation, try one of the following: 1) Lower the rate at which CIM operations produce data (for example, by passing a low value to the ThrottleLimit parameter), 2) Increase the rate at which data is consumed by downstream cmdlets, or 3) Use the Invoke-Command cmdlet to run the whole pipeline on the server. The cmdlet that exceeded a warning level of memory usage was started by the following command line: {0}</value>
+    <value>L'utilizzo della memoria di un cmdlet ha superato il livello di avviso. Per evitare questa situazione, provare una delle soluzioni seguenti: 1) ridurre la velocità con cui le operazioni CIM producono dati (ad esempio, passando un valore basso al parametro ThrottleLimit), 2) aumentare la velocità con cui i dati vengono utilizzati dai cmdlet downstream oppure 3) usare il cmdlet Invoke-Command per eseguire l'intera pipeline nel server. Il cmdlet che ha superato un livello di avviso di utilizzo della memoria è stato avviato dalla seguente riga di comando: {0}</value>
   </data>
   <data name="EnableNetworkAccessWarning" xml:space="preserve">
-    <value>PSSession {0} was created using the EnableNetworkAccess parameter and can only be reconnected from the local computer.</value>
+    <value>PSSession {0} è stata creata usando il parametro EnableNetworkAccess e può essere riconnessa solo dal computer locale.</value>
   </data>
   <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
-    <value>Cannot start job. The language mode for this session is incompatible with the system-wide language mode.</value>
+    <value>Non è possibile avviare il processo. La modalità linguaggio per questa sessione non è compatibile con la modalità linguaggio a livello di sistema.</value>
   </data>
   <data name="CannotCreateRunspaceInconsistentState" xml:space="preserve">
-    <value>Cannot create runspace. The language mode for this configuration is incompatible with the system-wide language mode.</value>
+    <value>Non è possibile creare lo spazio di esecuzione. La modalità linguaggio per questa confiurazione non è compatibile con la modalità linguaggio a livello di sistema.</value>
   </data>
   <data name="CannotExitNestedPipeline" xml:space="preserve">
-    <value>Cannot exit a nested pipeline because the pipeline is not in the nested state.</value>
+    <value>Non è possibile uscire da una pipeline annidata perché la pipeline non è nello stato annidato.</value>
   </data>
   <data name="PowerShellInvokerInvalidState" xml:space="preserve">
-    <value>The PowerShell server session is not in a valid state for running nested commands.  No nested commands can be run in this session.</value>
+    <value>La sessione del server PowerShell non è in uno stato valido per l'esecuzione di comandi annidati.  In questa sessione non è possibile eseguire comandi annidati.</value>
   </data>
   <data name="CannotInvokeNestedCommandNestedCommandRunning" xml:space="preserve">
-    <value>Cannot invoke a nested command on the remote session because a nested command is already running.</value>
+    <value>Non è possibile richiamare un comando annidato nella sessione remota perché un comando annidato è già in esecuzione.</value>
   </data>
   <data name="ServerSideNestedCommandInvokeFailed" xml:space="preserve">
-    <value>The remote session was unable to invoke command {0} with error: {1}.</value>
+    <value>La sessione remota non è stata in grado di richiamare il comando {0} con l'errore: {1}.</value>
   </data>
   <data name="ReceivePSSessionInDebugMode" xml:space="preserve">
-    <value>The remote session command is currently stopped in the debugger.  Use the Enter-PSSession cmdlet to connect interactively to the remote session and automatically enter into the console debugger.</value>
+    <value>Il comando della sessione remota è attualmente arrestato nel debugger.  Usare il cmdlet Enter-PSSession per connettersi in modo interattivo alla sessione remota ed entrare automaticamente nel debugger della console.</value>
   </data>
   <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
-    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell 4.0 or greater.</value>
+    <value>La sessione remota a cui si è connessi non supporta il debug remoto. È necessario connettersi a un computer remoto che esegue PowerShell 4.0 o versioni successive.</value>
   </data>
   <data name="ICMInvalidSessionState" xml:space="preserve">
-    <value>Because the session state for session {0}, {1}, {2} is not equal to Open, you cannot run a command in the session.  The session state is {3}.</value>
+    <value>Poiché lo stato della sessione {0}, {1}, {2} non è uguale a Open, non è possibile eseguire un comando nella sessione.  Lo stato della sessione è {3}.</value>
   </data>
   <data name="ICMNoValidRunspaces" xml:space="preserve">
-    <value>No valid sessions were specified.  Ensure you provide valid sessions that are in the Opened state and are available to run commands.</value>
+    <value>Non sono state specificate sessioni valide.  Assicurarsi di fornire sessioni valide che siano nello stato Opened e disponibili per l'esecuzione di comandi.</value>
   </data>
   <data name="ICMInvalidSessionAvailability" xml:space="preserve">
-    <value>The session {0}, {1}, {2} is not available to run commands.  The session availability is {3}.</value>
+    <value>La sessione {0}, {1}, {2} non è disponibile per l'esecuzione di comandi.  La disponibilità della sessione è {3}.</value>
   </data>
   <data name="JobActionInvalidWithNoChildJobs" xml:space="preserve">
-    <value>The command cannot run because the ChildJobs property is empty.</value>
+    <value>Non è possibile eseguire il comando perché la proprietà ChildJobs è vuota.</value>
   </data>
   <data name="CannotDebugJobNoHostDebugger" xml:space="preserve">
-    <value>The job cannot be debugged because there is no PowerShell host debugger available.  Make sure you are running this command in a host that supports debugging.</value>
+    <value>Non è possibile eseguire il debug del processo perché non è disponibile alcun host debugger di PowerShell.  Assicurarsi di eseguire questo comando in un host che supporta il debug.</value>
   </data>
   <data name="CannotFindJobWithId" xml:space="preserve">
-    <value>Cannot find job with id {0}.</value>
+    <value>Non è possibile trovare il processo coon ID {0}.</value>
   </data>
   <data name="CannotFindJobWithInstanceId" xml:space="preserve">
-    <value>Cannot find job with Instance Id {0}.</value>
+    <value>Non è possibile trovare il processo con ID istanza {0}.</value>
   </data>
   <data name="CannotFindJobWithName" xml:space="preserve">
-    <value>Cannot find job with name {0}.</value>
+    <value>Non è possibile trovare il processo denominato {0}.</value>
   </data>
   <data name="CannotDebugJobNoHostUI" xml:space="preserve">
-    <value>The job cannot be debugged because there is no host UI available.  Make sure you are running this command in a PowerShell host that implements PSHostUserInterface.</value>
+    <value>Non è possibile eseguire il debug del processo perché non è disponibile alcuna interfaccia utente host.  Assicurarsi di eseguire questo comando in un host PowerShell che implementa PSHostUserInterface.</value>
   </data>
   <data name="CannotDebugJobInvalidDebuggerMode" xml:space="preserve">
-    <value>The job cannot be debugged because the host debugger mode is set to None or Default.  The host debugger mode must be LocalScript and/or RemoteScript.</value>
+    <value>Non è possibile eseguire il debug del processo perché la modalità host debugger è impostata su Nessuno o su Predefinito.  La modalità host debugger deve essere LocalScript e/o RemoteScript.</value>
   </data>
   <data name="FoundMultipleJobsWithId" xml:space="preserve">
-    <value>Multiple jobs were found with Id {0}.  Debug-Job can debug only one job at a time.</value>
+    <value>Sono stati trovati più processi con ID {0}.  Debug-Job può eseguire il debug di un solo processo alla volta.</value>
   </data>
   <data name="FoundMultipleJobsWithName" xml:space="preserve">
-    <value>Multiple jobs were found with the name {0}.  Debug-Job can debug only one job at a time.</value>
+    <value>Sono stati trovati più processi con il nome {0}.  Debug-Job può eseguire il debug di un solo processo alla volta.</value>
   </data>
   <data name="NamedPipeAlreadyListening" xml:space="preserve">
-    <value>The Named Pipe server listener used for process attach is already running.</value>
+    <value>Il listener del server Named Pipe utilizzato per il collegamento di processi è già in esecuzione.</value>
   </data>
   <data name="EnterPSHostProcessCantEnterSameProcess" xml:space="preserve">
-    <value>Enter-PSHostProcess does not support entering the same PowerShell session it is running in.</value>
+    <value>Enter-PSHostProcess non supporta l'accesso alla stessa sessione di PowerShell in cui è in esecuzione.</value>
   </data>
   <data name="EnterPSHostProcessMultipleProcessesFoundWithName" xml:space="preserve">
-    <value>Multiple processes were found with this name {0}. Use the process Id to specify a single process to enter.</value>
+    <value>Sono stati trovati più processi con questo nome {0}. Usare l'ID del processo per specificare un solo processo a cui accedere.</value>
   </data>
   <data name="EnterPSHostProcessNoPowerShell" xml:space="preserve">
-    <value>Cannot enter process with Id '{0}' because it has not loaded the PowerShell engine or the named-pipe listener was disabled.</value>
+    <value>Non è possibile entrare nel processo con ID ''{0}'' perché non ha caricato il motore di PowerShell oppure il listener named pipe è stato disabilitato.</value>
   </data>
   <data name="EnterPSHostProcessNoProcessFoundWithId" xml:space="preserve">
-    <value>No process was found with Id: {0}.</value>
+    <value>Non è stato trovato alcun processo con ID: {0}.</value>
   </data>
   <data name="EnterPSHostProcessNoProcessFoundWithName" xml:space="preserve">
-    <value>No process was found with Name: {0}.</value>
+    <value>Non è stato trovato alcun processo con nome: {0}.</value>
   </data>
   <data name="EnterPSHostProcessNoNamedPipeFound" xml:space="preserve">
-    <value>No named pipe was found with CustomPipeName: {0}.</value>
+    <value>Non è stata trovata alcuna named pipe con CustomPipeName: {0}.</value>
   </data>
   <data name="CustomPipeNameTooLong" xml:space="preserve">
-    <value>Cannot process the command because the pipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+    <value>Non è possibile elaborare il comando perché il pipeName specificato è troppo lungo. I nomi delle pipe in questa piattaforma possono contenere fino a {0} caratteri. Il nome della pipe ''{1}'' contiene {2} caratteri.</value>
   </data>
   <data name="HostDoesNotSupportIASession" xml:space="preserve">
-    <value>The current host does not support the Enter-PSHostProcess cmdlet.</value>
+    <value>L'host corrente non supporta il cmdlet Enter-PSHostProcess.</value>
   </data>
   <data name="NamedPipeTransportProcessEnded" xml:space="preserve">
-    <value>"The named pipe target process has ended."</value>
+    <value>"Il processo di destinazione della named pipe è terminato."</value>
   </data>
   <data name="HyperVSocketTransportProcessEnded" xml:space="preserve">
-    <value>"The Hyper-V socket target process has ended."</value>
+    <value>"Il processo di destinazione del socket Hyper-V è terminato."</value>
   </data>
   <data name="EnterPSHostProcessPrompt" xml:space="preserve">
-    <value>{0}[Process:{1}]: {2}</value>
+    <value>{0}[Processo:{1}]: {2}</value>
   </data>
   <data name="EnterVMSessionPrompt" xml:space="preserve">
     <value>{0}[{1}]: {2}</value>
   </data>
   <data name="EnterPSHostProcessCannotConnectToProcess" xml:space="preserve">
-    <value>Unable to connect to application domain name {0} of process {1}.  Error: {2}.</value>
+    <value>Non è possibile connettersi al nome del dominio dell'applicazione {0} del processo {1}.  Errore: {2}..</value>
   </data>
   <data name="EnterPSHostProcessCannotConnectToPipe" xml:space="preserve">
-    <value>Unable to connect to pipe with name {0}.  Error: {1}.</value>
+    <value>Non è possibile connettersi alla pipe con nome {0}.  Errore: {1}.</value>
   </data>
   <data name="WSManPluginConnectNoNegotiationData" xml:space="preserve">
-    <value>PowerShell plugin cannot process the Connect operation as required negotiation information is either missing or not complete.</value>
+    <value>Il plug-in PowerShell non è in grado di elaborare l'operazione di connessione perché le informazioni di negoziazione richieste sono mancanti o incomplete.</value>
   </data>
   <data name="WSManPluginConnectOperationFailed" xml:space="preserve">
-    <value>PowerShell plugin failed to process to connect operation.</value>
+    <value>Il plug-in PowerShell non è riuscito a elaborare l'operazione di connessione.</value>
   </data>
   <data name="WSManPluginContextNotFound" xml:space="preserve">
-    <value>The supplied plugin context is not valid.</value>
+    <value>Il contesto del plug-in specificato non è valido.</value>
   </data>
   <data name="WSManPluginInvalidArgSet" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error while processing {0} arguments.</value>
+    <value>Il plug-in PowerShell ha rilevato un errore irreversibile durante l'elaborazione degli argomenti {0}.</value>
   </data>
   <data name="WSManPluginInvalidCommandContext" xml:space="preserve">
-    <value>The supplied command context is not valid.</value>
+    <value>Il contesto di comando specificato non è valido.</value>
   </data>
   <data name="WSManPluginInvalidInputDataType" xml:space="preserve">
-    <value>The supplied input data is not valid. Only input data of type {0} is supported.</value>
+    <value>I dati di input specificati non sono validi. Sono supportati solo dati di input di tipo {0}.</value>
   </data>
   <data name="WSManPluginInvalidInputStream" xml:space="preserve">
-    <value>The supplied input stream is not valid. Only {0} is supported as input stream.</value>
+    <value>Il flusso di input specificato non è valido. Come flusso di input è supportato solo {0}.</value>
   </data>
   <data name="WSManPluginInvalidOutputStream" xml:space="preserve">
-    <value>The supplied output stream set is not valid. Only {0} is supported as output stream.</value>
+    <value>Il set di flussi di output specificato non è valido. Come flusso di output è supportato solo {0}.</value>
   </data>
   <data name="WSManPluginInvalidSenderDetails" xml:space="preserve">
-    <value>The supplied WSMAN_SENDER_DETAILS is not valid. Cannot process null WSMAN_SENDER_DETAILS.</value>
+    <value>Il WSMAN_SENDER_DETAILS specificato non è valido. Non è possibile elaborare WSMAN_SENDER_DETAILS null.</value>
   </data>
   <data name="WSManPluginInvalidShellContext" xml:space="preserve">
-    <value>The supplied shell context is not valid.</value>
+    <value>Il contesto della shell fornito non è valido.</value>
   </data>
   <data name="WSManPluginManagedException" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="WSManPluginNullInvalidInput" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>Il valore NULL non è consentito per {0} con il metodo del plug-in {1}.</value>
   </data>
   <data name="WSManPluginNullInvalidStreamSet" xml:space="preserve">
-    <value>NULL value is not allowed for input stream and output stream sets. {0} and {1} are the supported input and output streams.</value>
+    <value>Il valore NULL non è consentito per i set di flussi di input e output. {0} e {1} sono i flussi di input e output supportati.</value>
   </data>
   <data name="WSManPluginNullPluginContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>Il valore NULL non è consentito per {0} con il metodo del plug-in {1}.</value>
   </data>
   <data name="WSManPluginNullShellContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>Il valore NULL non è consentito per {0} con il metodo del plug-in {1}.</value>
   </data>
   <data name="WSManPluginOperationClose" xml:space="preserve">
-    <value>PowerShell plugin operation is shutting down. This may happen if the hosting service or application is shutting down.</value>
+    <value>L'operazione del plug-in PowerShell viene arrestata. Questo può accadere se il servizio o l'applicazione host viene arrestato.</value>
   </data>
   <data name="WSManPluginOptionNotUnderstood" xml:space="preserve">
-    <value>PowerShell plugin does not understand the option {0}. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>Il plug-in PowerShell non riconosce l'opzione {0}. Verificare che il client sia compatibile con la compilazione {1} e la versione del protocollo {2} di PowerShell.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
-    <value>An option with name {0} is expected from the client. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>È prevista un'opzione con nome {0} dal client. Verificare che il client sia compatibile con la compilazione {1} e la versione del protocollo {2} di PowerShell.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
-    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Powershell plugin does not support the protocol version {2} requested by client.&lt;/PSProtocolVersionError&gt;</value>
+    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Il plug-in PowerShell non supporta la versione del protocollo {2} richiesta dal client.&lt;/PSProtocolVersionError&gt;</value>
   </data>
   <data name="WSManPluginReportContextFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error while reporting context to WSMan service.</value>
+    <value>Il plug-in PowerShell ha rilevato un errore irreversibile durante la segnalazione del contesto al servizio WSMan.</value>
   </data>
   <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
-    <value>Unable to create managed server session.</value>
+    <value>Non è possibile creare una sessione del server gestito.</value>
   </data>
   <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error registering a wait handle for shutdown notification.</value>
+    <value>Il plug-in PowerShell ha rilevato un errore irreversibile durante la registrazione di un handle di attesa per la notifica di arresto.</value>
   </data>
   <data name="ServerDriverRemoteHostAlreadyPushed" xml:space="preserve">
-    <value>Cannot enter Runspace because a Runspace is already pushed in this session.</value>
+    <value>Non è possibile entrare nello spazio di esecuzione perché in questa sessione è già stato eseguito il push di uno spazio di esecuzione.</value>
   </data>
   <data name="ServerDriverRemoteHostNoDebuggerToPush" xml:space="preserve">
-    <value>Cannot enter Runspace because there is no server remote debugger available.</value>
+    <value>Non è possibile entrare nello spazio di esecuzione perché non è disponibile alcun debugger remoto del server.</value>
   </data>
   <data name="ServerDriverRemoteHostNotRemoteRunspace" xml:space="preserve">
-    <value>Cannot enter Runspace because it is not a remote Runspace.</value>
+    <value>Non è possibile entrare nello spazio di esecuzione perché non è uno spazio di esecuzione remoto.</value>
   </data>
   <data name="RemoteTransportError" xml:space="preserve">
-    <value>Remote transport error: {0}</value>
+    <value>Errore di trasporto remoto: {0}</value>
   </data>
   <data name="CannotConnectContainerNamedPipe" xml:space="preserve">
-    <value>Unable to open pipe connection for PowerShell in container. Error code: {0}.</value>
+    <value>Non è possibile aprire la connessione pipe per PowerShell nel contenitore. Codice errore: {0}.</value>
   </data>
   <data name="CannotCreateNamedPipe" xml:space="preserve">
-    <value>Unable to create PowerShell IPC named pipe. Error code: {0}.</value>
+    <value>Non è possibile creare la named pipe IPC di PowerShell. Codice errore: {0}.</value>
   </data>
   <data name="ConnectNamedPipeTimeout" xml:space="preserve">
-    <value>Timeout expired before connection could be made to named pipe.</value>
+    <value>Timeout scaduto prima che fosse possibile stabilire la connessione alla named pipe.</value>
   </data>
   <data name="WSManInitFailed" xml:space="preserve">
-    <value>WSMan Initialization failed with error code: {0}.</value>
+    <value>Inizializzazione WSMan non riuscita. Codice di errore: {0}.</value>
   </data>
   <data name="NamedPipeServerCannotStart" xml:space="preserve">
-    <value>Unable to start named pipe server while in server mode.</value>
+    <value>Non è possibile avviare il server named pipe in modalità server.</value>
   </data>
   <data name="CouldNotResolveRoleDefinitionPrincipal" xml:space="preserve">
-    <value>Could not grant remote access to '{0}': '{1}'. The session configuration has been registered, but this group does not have access. To resolve this error, provide a valid group name and register the session configuration again.</value>
+    <value>Non è possibile concedere l'accesso remoto a ''{0}'': ''{1}''. La configurazione della sessione è stata registrata, ma questo gruppo non ha accesso. Per risolvere l'errore, specificare un nome di gruppo valido e registrare di nuovo la configurazione della sessione.</value>
   </data>
   <data name="SessionConfigurationMustBeFileBased" xml:space="preserve">
-    <value>Could not get the session capabilities for the session configuration '{0}': this configuration was not registered with a session configuration file (.pssc), such as one created by the New-PSSessionConfigurationFile cmdlet.</value>
+    <value>Non è possibile ottenere le funzionalità della sessione per la configurazione di sessione''{0}'': questa configurazione non è stata registrata con un file di configurazione della sessione (.pssc), ad esempio uno creato dal cmdlet New-PSSessionConfigurationFile.</value>
   </data>
   <data name="CouldNotResolveUsername" xml:space="preserve">
-    <value>Could not resolve username '{0}'. Verify the username and try again.</value>
+    <value>Non è possibile risolvere il nome utente ''{0}''. Verificare il nome utente e riprovare.</value>
   </data>
   <data name="DISCRunAsVirtualAccountGroupsComment" xml:space="preserve">
-    <value>Groups associated with machine's (virtual) administrator account</value>
+    <value>Gruppi associati all'account amministratore (virtuale) del computer</value>
   </data>
   <data name="CannotCreateConfiguredRunspace" xml:space="preserve">
-    <value>Cannot create or open the configuration session {0}.</value>
+    <value>Non è possibile creare o aprire la sessione di configurazione {0}.</value>
   </data>
   <data name="DISCEnforceInputParameterValidation" xml:space="preserve">
-    <value>Enforces script input parameter validation. This is automatically enabled when MountUserDrive is specified.</value>
+    <value>Applica la convalida dei parametri di input dello script. Questa opzione viene abilitata automaticamente quando si specifica MountUserDrive.</value>
   </data>
   <data name="DISCMountUserDriveComment" xml:space="preserve">
-    <value>Creates a 'User' PSDrive in the session for use with Copy-Item when File System provider is not visible.</value>
+    <value>Crea un PSDrive ''User'' nella sessione da usare con Copy-Item quando il provider File System non è visibile.</value>
   </data>
   <data name="DISCTypeMustBeBoolean" xml:space="preserve">
-    <value>The member '{0}' must be a boolean. Change the member to the correct type in the file {1}.</value>
+    <value>Il membro ''{0}'' deve essere una tabella hash. Modificare il membro in modo che usi il tipo corretto nel file {1}.</value>
   </data>
   <data name="DISCTypeMustBeInteger" xml:space="preserve">
-    <value>The member '{0}' must be an integer. Change the member to the correct type in the file {1}.</value>
+    <value>Il membro "{0}" deve essere un numero intero. Modificare il membro in modo che usi il tipo corretto nel file {1}.</value>
   </data>
   <data name="UserDriveProcessingThrewTerminatingError" xml:space="preserve">
-    <value>Processing the User drive threw an error {0}.</value>
+    <value>L'elaborazione dell'unità utente ha generato un errore {0}.</value>
   </data>
   <data name="DISCUserDriveMaxSizeComment" xml:space="preserve">
-    <value>Optional maximum size in bytes of user drive created with MountUserDrive parameter. Default maximum size for User drive is 50MB.</value>
+    <value>Dimensione massima facoltativa, in byte, dell'unità utente creata con il parametro MountUserDrive. La dimensione massima predefinita dell'unità utente è 50 MB.</value>
   </data>
   <data name="UserDriveCannotGetFileSystemProvider" xml:space="preserve">
-    <value>Cannot find the file system provider.</value>
+    <value>Non è possibile trovare il provider del file system.</value>
   </data>
   <data name="DISCGMSAComment" xml:space="preserve">
-    <value>Group managed service account name under which the configuration will run</value>
+    <value>Nome dell'account del servizio gestito del gruppo in cui verrà eseguita la configurazione</value>
   </data>
   <data name="InvalidGMSAName" xml:space="preserve">
-    <value>Invalid Group Managed Service account name. Account name must be of the form 'DomainName\UserName'.</value>
+    <value>Nome account del servizio gestito del grupponon valido. Il formato del nome account deve essere ''DomainName\UserName''.</value>
   </data>
   <data name="DISCRequiredGroupsComment" xml:space="preserve">
-    <value>Group accounts for which membership is required to use the session.</value>
+    <value>Account di gruppo per i quali l'appartenenza è necessaria per usare la sessione.</value>
   </data>
   <data name="BadSDDLMismatchedParens" xml:space="preserve">
-    <value>Cannot parse sddl string because it contains mismatched parentheses: {0}.</value>
+    <value>Non è possibile analizzare la stringa sddl perché contiene parentesi non corrispondenti: {0}.</value>
   </data>
   <data name="RequiredGroupsHashMultipleKeys" xml:space="preserve">
-    <value>RequiredGroups property hashtable must contain only a single key.</value>
+    <value>La tabella hash della proprietà RequiredGroups deve contenere una sola chiave.</value>
   </data>
   <data name="RequiredGroupsNotHashTable" xml:space="preserve">
-    <value>The RequiredGroups property is not in a name/value pair hashtable format.  This must be a hashtable of the form (using PowerShell syntax): RequiredGroups = @{ Or = 'Administrators' }.</value>
+    <value>La proprietà RequiredGroups non è in un formato di tabella hash con coppia nome-valore.  Deve essere una tabella hash nel formato (usando la sintassi di PowerShell): RequiredGroups = @{ Or = 'Administrators' }.</value>
   </data>
   <data name="UnknownGroupMembershipKey" xml:space="preserve">
-    <value>Unknown key in Required Groups configuration.  Required Groups hashtable can only contain 'And' and 'Or' hash keys for logical membership groupings.</value>
+    <value>Chiave sconosciuta nella configurazione dei Gruppi obbligatori.  La tabella hash Gruppi obbligatori può contenere solo chiavi hash ''And'' e ''Or'' per i raggruppamenti di appartenenza logica.</value>
   </data>
   <data name="UnknownGroupMembershipValue" xml:space="preserve">
-    <value>Unknown value in Required Groups configuration.  Required Groups hashtable can only contain values that are either group names or another logical hashtable.</value>
+    <value>Valore sconosciuto nella configurazione dei Gruppi obbligatori.  La tabella hash Gruppi obbligatori può contenere solo valori che sono nomi di gruppo o un'altra tabella hash logica.</value>
   </data>
   <data name="RequiredGroupsMalformedACE" xml:space="preserve">
-    <value>Malformed ACE {0}.  Regular ACEs must have exactly 6 sections.</value>
+    <value>ACE in formato non valido {0}.  Gli ACE regolari devono avere esattamente 6 sezioni.</value>
   </data>
   <data name="InvalidUserDriveName" xml:space="preserve">
-    <value>Cannot create a session User Drive because the current user name contains invalid file path characters.</value>
+    <value>Non è possibile creare un'unità utente di sessione perché il nome utente corrente contiene caratteri non validi nel percorso del file.</value>
   </data>
   <data name="InvalidRoleCapabilityKey" xml:space="preserve">
-    <value>Invalid role capability key: {0}. Make sure the role capability name is spelled correctly and is a valid session configuration property.</value>
+    <value>Chiave della funzionalità del ruolo non valida: {0}. Verificare che il nome della funzionalità di ruolo sia digitato correttamente e che sia una proprietà di configurazione di sessione valida.</value>
   </data>
   <data name="InvalidRoleCapabilityKeyType" xml:space="preserve">
-    <value>Invalid role capability key type: {0}. Role capability keys must be strings that identify a valid session configuration property.</value>
+    <value>Tipo di chiave della funzionalità del ruolo non valido: {0}. Le chiavi delle funzionalità di ruolo devono essere stringhe che identificano una proprietà di configurazione di sessione valida.</value>
   </data>
   <data name="InvalidRoleKeyType" xml:space="preserve">
-    <value>Invalid role key type: {0}. Role keys must be strings that identify a security group.</value>
+    <value>Tipo di chiave del ruolo non valido: {0}. Le chiavi ruolo devono essere stringhe che identificano un gruppo di sicurezza.</value>
   </data>
   <data name="RemotingErrorNoLogonSessionExist" xml:space="preserve">
-    <value> Other Possible Cause:
-  -The domain or computer name was not included with the specified credential, for example: DOMAIN\UserName or COMPUTER\UserName.</value>
+    <value> Altre cause possibili: 
+  -Il nome del dominio o del computer non è stato incluso con le credenziali specificate, ad esempio: DOMINIO\NomeUtente o COMPUTER\NomeUtente.</value>
   </data>
   <data name="CannotStartSSHClient" xml:space="preserve">
-    <value>Failed to start the SSH client process needed for the remoting connection with error: {0}.</value>
+    <value>Non è possibile avviare il processo client SSH necessario per la connessione remota con l'errore: {0}.</value>
   </data>
   <data name="KeyFileNotFound" xml:space="preserve">
-    <value>The specified key file {0} was not found.</value>
+    <value>Non è possibile trovare il file di chiave specificato {0}.</value>
   </data>
   <data name="SSHClientEndWithErrorMessage" xml:space="preserve">
-    <value>The SSH client session has ended with error message: {0}</value>
+    <value>La sessione client SSH è terminata con il messaggio di errore: {0}</value>
   </data>
   <data name="SSHClientConnectTimeout" xml:space="preserve">
-    <value>SSH connection attempt failed after time out: {0} seconds.</value>
+    <value>Tentativo di connessione SSH non riuscito dopo il timeout: {0} secondi.</value>
   </data>
   <data name="SSHClientConnectProcessTerminated" xml:space="preserve">
     <value>
-SSH client process terminated before connection could be established.</value>
+Il processo client SSH è terminato prima che fosse possibile stabilire la connessione.</value>
   </data>
   <data name="MissingRequiredSSHParameter" xml:space="preserve">
-    <value>The provided SSHConnection hashtable is missing the required ComputerName or HostName parameter.</value>
+    <value>Nella tabella hash SSHConnection specificata manca il parametro obbligatorio ComputerName o HostName.</value>
   </data>
   <data name="InvalidSSHConnectionParameter" xml:space="preserve">
-    <value>The provided SSHConnection hashtable parameter name or element is null or empty.</value>
+    <value>Il nome o l'elemento del parametro hashtable SSHConnection specificato è Null o vuoto.</value>
   </data>
   <data name="UnknownSSHConnectionParameter" xml:space="preserve">
-    <value>The provided SSHConnection hashtable parameter {0} is not supported.</value>
+    <value>Il parametro della tabella hash SSHConnection specificato {0} non è supportato.</value>
   </data>
   <data name="SSHConnectionDuplicateHostName" xml:space="preserve">
-    <value>The provided SSHConnection hashtable contains both a ComputerName and HostName parameter.  Only one can be specified.</value>
+    <value>La tabella hash SSHConnection specificata contiene sia un parametro ComputerName sia un parametro HostName.  È possibile specificarne solo uno.</value>
   </data>
   <data name="SSHConnectionDuplicateKeyPath" xml:space="preserve">
-    <value>The provided SSHConnection hashtable contains both a KeyFilePath and IdentityFilePath parameter.  Only one can be specified.</value>
+    <value>La tabella hash SSHConnection specificata contiene sia un parametro KeyFilePath sia un parametro IdentityFilePath.  È possibile specificarne solo uno.</value>
   </data>
   <data name="CouldNotFindRoleCapabilityFile" xml:space="preserve">
-    <value>Could not find the provided role capability file {0}.</value>
+    <value>Non è possibile trovare il file delle funzionalità del ruolo specificato {0}.</value>
   </data>
   <data name="InvalidRoleCapabilityFileExtension" xml:space="preserve">
-    <value>The provided role capability file {0} does not have the required .psrc extension.</value>
+    <value>Il file di funzionalità del ruolo specificato {0} non ha l'estensione .psrc richiesta.</value>
   </data>
   <data name="SSHAbruptlyTerminated" xml:space="preserve">
-    <value>The SSH transport process has abruptly terminated causing this remote session to break.</value>
+    <value>Il processo di trasporto SSH è stato terminato improvvisamente, causando l'interruzione di questa sessione remota.</value>
   </data>
   <data name="InvalidProcessorArchitecture" xml:space="preserve">
-    <value>PowerShell 6+ does not support WOW64. The binary must match the architecture of the processor.</value>
+    <value>PowerShell 6+ non supporta WOW64. Il file binario deve corrispondere all'architettura del processore.</value>
   </data>
   <data name="WowComponentNotPresent" xml:space="preserve">
-    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
+    <value>Il file eseguibile "{0}" non è stato trovato. Verificare che la funzionalità WOW64 sia installata.</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
-    <value>Unable to install plugin {0} to directory {1}.</value>
+    <value>Non è possibile installare il plug-in {0} nella directory {1}.</value>
   </data>
   <data name="PluginDllMissing" xml:space="preserve">
-    <value>The WinRM plugin DLL {0} is missing for PowerShell. Please run Enable-PSRemoting and then retry this command.</value>
+    <value>La DLL del plug-in WinRM {0} per PowerShell è mancante. Eseguire Enable-PSRemoting e riprovare il comando.</value>
   </data>
   <data name="WSManClientDllNotAvailable" xml:space="preserve">
-    <value>This parameter set requires WSMan, and no supported WSMan client library was found. WSMan is either not installed or unavailable for this system.</value>
+    <value>Questo set di parametri richiede WSMan e non è stata trovata alcuna libreria client WSMan supportata. WSMan non è installato o non è disponibile per questo sistema.</value>
   </data>
   <data name="ProcessExitInfo" xml:space="preserve">
     <value>
-      Exit code: {0}
-      Stdout: '{1}'
-      Stderr: '{2}'
+      Codice di uscita: {0}
+      Stdout: ''{1}''
+      Stderr: ''{2}''
     </value>
   </data>
   <data name="ProcessInfoNotRecoverable" xml:space="preserve">
-    <value>Information about the process could not be read: '{0}'.</value>
+    <value>Non è possibile leggere le informazioni sul processo: ''{0}''.</value>
   </data>
   <data name="CannotGetHostInteropTypes" xml:space="preserve">
-    <value>Host system does not have the correct version of Hyper-V schema.</value>
+    <value>Il sistema host non dispone della versione corretta dello schema Hyper-V.</value>
   </data>
   <data name="UnixOnlyHttpsWithoutSkipCACheckNotSupported" xml:space="preserve">
-    <value>HTTPS on Unix does not currently support CA or CN checks. Use the PSSessionOption -SkipCACheck and -SkipCNCheck if you are certain you trust the server you are connecting to and the network in between.</value>
+    <value>HTTPS su Unix attualmente non supporta i controlli CA o CN. Usare PSSessionOption -SkipCACheck e -SkipCNCheck se si è certi di potersi fidare del server a cui ci si connette e della rete intermedia.</value>
   </data>
   <data name="PSCoreRemotingDisableWarning" xml:space="preserve">
-    <value>PowerShell remoting has been disabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.
+    <value>La comunicazione remota di PowerShell è stata disabilitata solo per le configurazioni di PowerShell 6+ e non influisce sulle configurazioni di comunicazione remota di Windows PowerShell. Eseguire questo cmdlet in Windows PowerShell per influire su tutte le configurazioni di comunicazione remota di PowerShell.
 </value>
   </data>
   <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
-    <value>PowerShell remoting has been enabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.</value>
+    <value>La comunicazione remota di PowerShell è stata abilitata solo per le configurazioni di PowerShell 6+ e non influisce sulle configurazioni di comunicazione remota di Windows PowerShell. Eseguire questo cmdlet in Windows PowerShell per influire su tutte le configurazioni di comunicazione remota di PowerShell.</value>
   </data>
   <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
-    <value>Enter-PSHostProcess cmdlet is disabled because an application control policy such as 'AppLocker' or 'Windows Defender Application Control' is in enforcement.</value>
+    <value>Il cmdlet Enter-PSHostProcess è disabilitato perché è in vigore un criterio di controllo delle applicazioni, ad esempio ''AppLocker'' o ''Windows Defender Application Control''.</value>
   </data>
   <data name="RemoteDebuggerError" xml:space="preserve">
-    <value>Remote debugger exception: {0}, error message: {1}</value>
+    <value>Eccezione del debugger remoto: {0}, messaggio di errore: {1}</value>
   </data>
   <data name="WindowsPowerShellNotPresent" xml:space="preserve">
-    <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
+    <value>Non è possibile creare il processo di Windows PowerShell perché Windows PowerShell non è stato trovato in questo dispositivo.</value>
   </data>
   <data name="InvalidPSSessionArgument" xml:space="preserve">
-    <value>The Runspace argument to Create must be a non-null RemoteRunspace object.</value>
+    <value>L'argomento Runspace passato a Create deve essere un oggetto RemoteRunspace non Null.</value>
   </data>
   <data name="DISCInvalidConfigKeyType" xml:space="preserve">
-    <value>The session configuration hash table contains an invalid key type. Keys should be string types.</value>
+    <value>La tabella hash di configurazione della sessione contiene un tipo di chiave non valido. Le chiavi devono essere di tipo stringa.</value>
   </data>
   <data name="DISCUnsupportedConfigName" xml:space="preserve">
-    <value>The session configuration file contains an unsupported configuration option: {0}. This is a remoting endpoint configuration option, that does not apply to PowerShell session state.</value>
+    <value>Il file di configurazione della sessione contiene un'opzione di configurazione non supportata: {0}. Si tratta di un'opzione di configurazione dell'endpoint di comunicazione remota che non si applica allo stato della sessione di PowerShell.</value>
   </data>
   <data name="DISCUnknownConfigName" xml:space="preserve">
-    <value>The session configuration file contains an unknown configuration option: {0}.</value>
+    <value>Il file di configurazione della sessione contiene un'opzione di configurazione sconosciuta: {0}.</value>
   </data>
   <data name="WDACGetPowerShellLogTitle" xml:space="preserve">
-    <value>Expression Evaluation May Fail</value>
+    <value>La valutazione dell'espressione potrebbe non riuscire</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in Constrained Language mode, unless the expression represents a constant value.</value>
+    <value>La creazione di un oggetto PowerShell da un blocco di script può richiedere la valutazione di alcune espressioni all'interno del blocco di script. La valutazione dell'espressione avrà esito negativo in modo invisibile all'utente e restituirà ''null'' in modalità linguaggio vincolato, a meno che l'espressione non rappresenti un valore costante.</value>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
-    <value>Failed to get Hyper-V VM State. The value was of the type {0} but was expected to be Microsoft.HyperV.PowerShell.VMState or System.String.</value>
+    <value>Non è possibile ottenere lo stato della VM Hyper-V. Il valore era di tipo {0} ma era previsto Microsoft.HyperV.PowerShell.VMState o System.String.</value>
   </data>
   <data name="HyperVInvalidResponse" xml:space="preserve">
-    <value>Hyper-V {0} sent an invalid {1} response during the connection negotiation.</value>
+    <value>Hyper-V {0} ha inviato una risposta non valida {1} durante la negoziazione della connessione.</value>
   </data>
   <data name="HyperVNegotiationFailed" xml:space="preserve">
-    <value>Negotiating a secure connection to Hyper-V failed. Make sure the Host and Guest are updated with all relevant Microsoft Updates.</value>
+    <value>La negoziazione di una connessione sicura a Hyper-V non è riuscita. Assicurarsi che Host e Guest siano aggiornati con tutti gli Aggiornamenti Microsoft pertinenti.</value>
   </data>
 </root>

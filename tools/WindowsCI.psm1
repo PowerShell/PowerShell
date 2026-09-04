@@ -45,7 +45,6 @@ function ConvertTo-NtAccount
 
 <#
   Add a user to a local security group
-  Requires Windows PowerShell
 #>
 function Add-UserToGroup
 {
