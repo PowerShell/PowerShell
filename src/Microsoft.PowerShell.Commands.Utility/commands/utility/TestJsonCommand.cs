@@ -195,7 +195,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (Exception e) when (e is FileNotFoundException)
+            catch (Exception e) when (
+                // Handle exceptions related to file/directory/drive existence to provide more specific error message
+                // https://learn.microsoft.com/dotnet/standard/io/handling-io-errors
+                e is FileNotFoundException ||
+                e is DirectoryNotFoundException ||
+                e is System.IO.DriveNotFoundException
+            )
             {
                 Exception exception = new(
                     string.Format(
