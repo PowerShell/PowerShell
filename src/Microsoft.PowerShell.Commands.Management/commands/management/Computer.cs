@@ -1727,7 +1727,7 @@ $result
                                 // If successful and the Restart parameter is specified, restart the computer
                                 object[] flags = new object[]
                                                  {
-                                                    (uint)0,
+                                                    0u,
                                                     StringUtil.Format(ComputerResources.RestartcomputerAfterRename, newName),
                                                     (uint)ShutdownReason.OperatingSystemReconfigPlanned,
                                                     6,
