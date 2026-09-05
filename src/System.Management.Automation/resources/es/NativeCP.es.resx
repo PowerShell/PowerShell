@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IncorrectValueForCommandParameter" xml:space="preserve">
-    <value>ScriptBlock should only be specified as a value of the Command parameter.</value>
+    <value>ScriptBlock solo debe especificarse como un valor del parámetro Command.</value>
   </data>
   <data name="NoValueForCommandParameter" xml:space="preserve">
-    <value>No value was specified for the Command parameter.</value>
+    <value>No se especificó ningún valor para el parámetro Command.</value>
   </data>
   <data name="IncorrectValueForFormatParameter" xml:space="preserve">
-    <value>A value that is not valid ({6}) was specified for the {7} parameter. Valid values are Text and Xml.</value>
+    <value>Se especificó un valor no válido ({6}) para el {7} parámetro. Los valores válidos son Text y Xml.</value>
   </data>
   <data name="NoValueForInputFormatParameter" xml:space="preserve">
-    <value>No value was specified for the InputFormat parameter. Valid values are Text and Xml.</value>
+    <value>No se especificó ningún valor para el parámetro InputFormat. Los valores válidos son Text y Xml.</value>
   </data>
   <data name="NoValueForOutputFormatParameter" xml:space="preserve">
-    <value>No value was specified for the OutputFormat parameter. Valid values are text and XML.</value>
+    <value>No se especificó ningún valor para el parámetro OutputFormat. Los valores válidos son texto y XML.</value>
   </data>
   <data name="StringValueExpectedForFormatParameter" xml:space="preserve">
-    <value>The {6} parameter requires a string value.</value>
+    <value>El parámetro {6} requiere un valor de cadena.</value>
   </data>
   <data name="NoValuesSpecifiedForArgs" xml:space="preserve">
-    <value>No value was specified for the Args parameter.</value>
+    <value>No se especificó ningún valor para el parámetro Args.</value>
   </data>
   <data name="ParameterSpecifiedAlready" xml:space="preserve">
-    <value>The {6} parameter was already specified.</value>
+    <value>El parámetro {6} ya se especificó.</value>
   </data>
   <data name="CliXmlError" xml:space="preserve">
-    <value>Cannot process the XML from the '{0}' stream of '{1}': {2}</value>
+    <value>No se puede procesar el XML de la secuencia "{0}" de "{1}": {2}</value>
   </data>
 </root>

@@ -118,63 +118,63 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LineLessThanOne" xml:space="preserve">
-    <value>Line cannot be less than 1.</value>
+    <value>Wiersz nie może być mniejszy niż 1.</value>
   </data>
   <data name="BreakpointIdNotFound" xml:space="preserve">
-    <value>There is no breakpoint with ID '{0}'.</value>
+    <value>Brak punktu przerwania o identyfikatorze „{0}”.</value>
   </data>
   <data name="FileDoesNotExist" xml:space="preserve">
     <value>Plik „{0}” nie istnieje.</value>
   </data>
   <data name="WrongExtension" xml:space="preserve">
-    <value>Cannot set breakpoint on file '{0}'; only *.ps1 and *.psm1 files are valid.</value>
+    <value>Nie można ustawić punktu przerwania w pliku „{0}”; tylko pliki *.ps1 i *.psm1 są prawidłowe.</value>
   </data>
   <data name="RemoteDebuggerNotSupported" xml:space="preserve">
-    <value>Debugging is not supported on remote sessions.</value>
+    <value>Debugowanie nie jest obsługiwane w sesjach zdalnych.</value>
   </data>
   <data name="CannotSetBreakpointInconsistentLanguageMode" xml:space="preserve">
-    <value>Cannot set breakpoint. The language mode for this session is incompatible with the system-wide language mode.</value>
+    <value>Nie można ustawić punktu przerwania. Tryb językowy dla tej sesji jest niezgodny z trybem języka w całym systemie.</value>
   </data>
   <data name="RemoteDebuggerNotSupportedInHost" xml:space="preserve">
-    <value>Breakpoints cannot be set in the remote session because remote debugging is not supported by the current host.</value>
+    <value>Nie można ustawić punktów przerwania w sesji zdalnej, ponieważ zdalne debugowanie nie jest obsługiwane przez bieżącego hosta.</value>
   </data>
   <data name="RunspaceDebuggingCannotDebugDefaultRunspace" xml:space="preserve">
-    <value>You cannot debug the default host Runspace using this cmdlet. To debug the default Runspace use the normal debugging commands from the host.</value>
+    <value>Za pomocą tego polecenia cmdlet nie można debugować domyślnego obszaru działania hosta. Aby debugować domyślny obszar działania, użyj normalnych poleceń debugowania z hosta.</value>
   </data>
   <data name="RunspaceDebuggingNoHostRunspaceOrDebugger" xml:space="preserve">
-    <value>Cannot debug Runspace. The host has no debugger. Try debugging the Runspace inside the PowerShell console or with Visual Studio Code, both of which have built-in debuggers.</value>
+    <value>Nie można debugować obszaru działania. Host nie ma debugera. Spróbuj debugować obszar działania w konsoli programu PowerShell lub za pomocą programu Visual Studio Code, z których oba mają wbudowane debugery.</value>
   </data>
   <data name="RunspaceDebuggingNoHost" xml:space="preserve">
-    <value>Cannot debug Runspace. There is no host or host UI. The debugger requires a host and host UI for debugging.</value>
+    <value>Nie można debugować obszaru działania. Brak hosta lub interfejsu użytkownika hosta. Debuger wymaga hosta i interfejsu użytkownika hosta do debugowania.</value>
   </data>
   <data name="RunspaceDebuggingTooManyRunspacesFound" xml:space="preserve">
-    <value>More than one Runspace was found. Only one Runspace can be debugged at a time.</value>
+    <value>Znaleziono więcej niż jeden obszar działania. Jednocześnie można debugować tylko jeden obszar działania.</value>
   </data>
   <data name="RunspaceDebuggingEndSession" xml:space="preserve">
-    <value>To end the debugging session type the 'Detach' command at the debugger prompt, or type 'Ctrl+C' otherwise.</value>
+    <value>Aby zakończyć sesję debugowania, wpisz polecenie „Detach” w wierszu polecenia debugera lub wpisz „Ctrl+C” w przeciwnym razie.</value>
   </data>
   <data name="RunspaceDebuggingScriptCompleted" xml:space="preserve">
-    <value>Command or script completed.</value>
+    <value>Zakończono wykonywanie polecenia lub skryptu.</value>
   </data>
   <data name="RunspaceDebuggingStarted" xml:space="preserve">
-    <value>Debugging Runspace: {0}</value>
+    <value>Debugowanie obszaru działania: {0}</value>
   </data>
   <data name="RunspaceOptionInvalidRunspaceState" xml:space="preserve">
-    <value>Cannot set debug options on Runspace {0} because it is not in the Opened state.</value>
+    <value>Nie można ustawić opcji debugowania w obszarze działania {0}, ponieważ nie jest on w stanie Otwarty.</value>
   </data>
   <data name="PersistDebugPreferenceFailure" xml:space="preserve">
-    <value>Failed to persist debug options for Process {0}.</value>
+    <value>Nie można utrwalić opcji debugowania dla procesu {0}.</value>
   </data>
   <data name="RunspaceOptionNoDebugger" xml:space="preserve">
-    <value>No debugger was found for Runspace {0}.</value>
+    <value>Nie znaleziono debugera dla obszaru działania {0}.</value>
   </data>
   <data name="RunspaceDebuggingNoRunspaceFound" xml:space="preserve">
-    <value>No Runspace was found.</value>
+    <value>Nie znaleziono obszaru działania.</value>
   </data>
   <data name="DebugBreakMessage" xml:space="preserve">
-    <value>Wait-Debugger called on line {0} in {1}.</value>
+    <value>Wywołano funkcję Wait-Debugger w wierszu {0} w {1}.</value>
   </data>
   <data name="RunspaceInstanceIdNotFound" xml:space="preserve">
-    <value>A breakpoint associated with another runspace cannot be updated because there is no runspace with instance ID '{0}'.</value>
+    <value>Nie można zaktualizować punktu przerwania skojarzonego z innym obszarem działania, ponieważ nie ma obszaru działania o identyfikatorze wystąpienia „{0}”.</value>
   </data>
 </root>

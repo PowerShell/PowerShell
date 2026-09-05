@@ -229,12 +229,12 @@
     <value>'{0}' 매개 변수에 제공할 인수가 필요합니다.</value>
   </data>
   <data name="FileOnlyEntryRequired" xml:space="preserve">
-    <value>The parameter "-File" is required by policy.</value>
+    <value>정책상 매개 변수 "-File"이 필요합니다.</value>
   </data>
   <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
-    <value>The parameter "-NoExit" is disallowed by policy.</value>
+    <value>정책상 매개 변수 "-NoExit"를 사용할 수 없습니다.</value>
   </data>
   <data name="FileOnlyEntryServerMode" xml:space="preserve">
-    <value>Server mode is disallowed by policy.</value>
+    <value>정책상 서버 모드는 사용할 수 없습니다.</value>
   </data>
 </root>

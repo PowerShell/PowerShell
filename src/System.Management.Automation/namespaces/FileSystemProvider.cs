@@ -8420,7 +8420,6 @@ namespace System.Management.Automation.Internal
             [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"")]
             [Parameter(ParameterSetName=""PSCopyAlternateStreamToRemoteSession"")]
             {0}
-
             [string] $copyToFilePath,
 
             [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"", Mandatory=$false)]
@@ -8440,12 +8439,10 @@ namespace System.Management.Automation.Internal
 
             [Parameter(ParameterSetName=""PSTargetSupportsAlternateStreams"", Mandatory=$true)]
             {0}
-
             [string] $supportAltStreamPath,
 
             [Parameter(ParameterSetName=""PSSetFileMetadata"", Mandatory=$true)]
             {0}
-
             [string] $metaDataFilePath,
 
             [Parameter(ParameterSetName=""PSSetFileMetadata"", Mandatory=$true)]
@@ -8454,17 +8451,14 @@ namespace System.Management.Automation.Internal
 
             [Parameter(ParameterSetName=""PSRemoteDestinationPathIsFile"", Mandatory=$true)]
             {0}
-
             [string] $isFilePath,
 
             [Parameter(ParameterSetName=""PSGetRemotePathInfo"", Mandatory=$true)]
             {0}
-
             [string] $remotePath,
 
             [Parameter(ParameterSetName=""PSCreateDirectoryOnRemoteSession"", Mandatory=$true)]
             {0}
-
             [string] $createDirectoryPath,
 
             [Parameter(ParameterSetName=""PSCreateDirectoryOnRemoteSession"")]
@@ -8601,7 +8595,13 @@ namespace System.Management.Automation.Internal
                 CheckPSDriveSize $resolvedPath $fragment.Length
 
                 # Write the stream
-                Microsoft.PowerShell.Management\Add-Content -Path ($resolvedPath.ProviderPath) -Value $fragment -Encoding Byte -Stream $streamName -ErrorAction Stop
+                if ($PSVersionTable.PSEdition -eq 'Desktop') {{
+                    Microsoft.PowerShell.Management\Add-Content -Path ($resolvedPath.ProviderPath) -Value $fragment -Encoding Byte -Stream $streamName -ErrorAction Stop
+                }}
+                else {{
+                    Microsoft.PowerShell.Management\Add-Content -Path ($resolvedPath.ProviderPath) -Value $fragment -AsByteStream -Stream $streamName -ErrorAction Stop
+                }}
+
                 $op['BytesWritten'] = $fragment.Length
             }}
             catch
@@ -8886,7 +8886,6 @@ namespace System.Management.Automation.Internal
         param (
             [Parameter(ParameterSetName=""PSCopyFileFromRemoteSession"", Mandatory=$true)]
             {0}
-
             [string] $copyFromFilePath,
 
             [Parameter(ParameterSetName=""PSCopyFileFromRemoteSession"", Mandatory=$true)]
@@ -8909,22 +8908,18 @@ namespace System.Management.Automation.Internal
 
             [Parameter(ParameterSetName=""PSSourceSupportsAlternateStreams"", Mandatory=$true)]
             {0}
-
             [string] $supportAltStreamPath,
 
             [Parameter(ParameterSetName=""PSGetFileMetadata"", Mandatory=$true)]
             {0}
-
             [string] $getMetaFilePath,
 
             [Parameter(ParameterSetName=""PSGetPathItems"", Mandatory=$true)]
             {0}
-
             [string] $getPathItems,
 
             [Parameter(ParameterSetName=""PSGetPathDirAndFiles"", Mandatory=$true)]
             {0}
-
             [string] $getPathDir
         )
 
@@ -8973,7 +8968,12 @@ namespace System.Management.Automation.Internal
                 {{
                     if ($isAlternateStream)
                     {{
-                        $content = Microsoft.PowerShell.Management\Get-Content $filePath -stream $streamName -Encoding Byte -Raw
+                        $content = if ($PSVersionTable.PSEdition -eq 'Desktop') {{
+                            Microsoft.PowerShell.Management\Get-Content $filePath -stream $streamName -Encoding Byte -Raw
+                        }}
+                        else {{
+                            Microsoft.PowerShell.Management\Get-Content $filePath -stream $streamName -AsByteStream -Raw
+                        }}
                         $rstream = [System.IO.MemoryStream]::new($content)
                     }}
                     else

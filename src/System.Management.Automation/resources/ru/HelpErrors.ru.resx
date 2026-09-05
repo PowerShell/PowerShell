@@ -190,4 +190,7 @@
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>Невозможно получить помощь из сетевого расположения в режиме ограниченного доступа.</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>Command not allowed in a restricted session.</value>
+  </data>
 </root>

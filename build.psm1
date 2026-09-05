@@ -8,7 +8,6 @@ param(
 
 . "$PSScriptRoot\tools\buildCommon\startNativeExecution.ps1"
 
-# CI runs with PowerShell 5.0, so don't use features like ?: && ||
 Set-StrictMode -Version 3.0
 
 # On Unix paths is separated by colon.
@@ -565,9 +564,11 @@ Fix steps:
     # as well as .zip packages, we only support the default en-US culture.
     # Therefore, we only produce satellite assemblies for win7-x64, win7-x86, and win-arm64 by default (excluding min-size build),
     # unless the caller wants to force produce localized resources.
+    $RemovePowerShellSatelliteAssemblies = $false
     if (!$ForceProduceLocalizedResources -and ($Options.Runtime -notmatch '^(win7-x64|win7-x86|win-arm64)$' -or $ForMinimalSize)) {
-        # Disable satellite assemblies for other cultures.
+        # Disable satellite assemblies from package/runtime assets for other cultures.
         $Arguments += "/property:SatelliteResourceLanguages=en"
+        $RemovePowerShellSatelliteAssemblies = $true
     }
 
     if ($Output -or $SMAOnly) {
@@ -743,6 +744,21 @@ Fix steps:
     } finally {
         Pop-Location
     }
+
+    if ($RemovePowerShellSatelliteAssemblies) {
+        $smaResDll = 'System.Management.Automation.resources.dll'
+        $resDirs = Get-ChildItem -Path $publishPath -Filter $smaResDll -Recurse -Depth 1 | ForEach-Object DirectoryName
+
+        if ($resDirs) {
+            Write-Log -message "PowerShell satellite assemblies found under '$publishPath':"
+            $relatives = $resDirs | ForEach-Object { Resolve-Path $_ -Relative -RelativeBasePath $publishPath }
+            Write-Log -message ($relatives -join ", ")
+
+            $resDirs | Remove-Item -Recurse -Force -ErrorAction Stop
+            Write-Log -message "Removed PowerShell satellite assemblies under '$publishPath'."
+        }
+    }
+
     Write-LogGroupEnd -Title "Build PowerShell"
 
     # No extra post-building task will run if '-SMAOnly' is specified, because its purpose is for a quick update of S.M.A.dll after full build.
@@ -949,10 +965,11 @@ function Switch-PSNugetConfig {
         Set-PipelineVariable -Name 'EARLY_ACCESS_FEED_URL' -Value $earlyAccessFeedUrl
 
         $earlyAccessFeed = [NugetPackageSource] @{Url = $earlyAccessFeedUrl; Name = 'earlyaccess' }
+        $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'; Name = 'powershell' }
 
-        New-NugetConfigFile -NugetPackageSource $earlyAccessFeed -Destination "$PSScriptRoot/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $gallery -Destination "$PSScriptRoot/src/Modules/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $gallery -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $earlyAccessFeed -Destination "$PSScriptRoot/"
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } else {
         throw "Unknown source: $Source"
     }

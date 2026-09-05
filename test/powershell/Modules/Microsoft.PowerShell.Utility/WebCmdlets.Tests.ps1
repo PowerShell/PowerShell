@@ -1153,7 +1153,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Content.Method | Should -Be $redirectedMethod
         }
 
-        It "Validates Invoke-WebRequest -PreserveHttpMethodOnRedirect keeps the authorization header redirects and do remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests {
+        It "Validates Invoke-WebRequest -PreserveHttpMethodOnRedirect strips the authorization header and remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests {
             param($redirectType)
             $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
             $response = ExecuteRedirectRequest -PreserveHttpMethodOnRedirect -Uri $uri -Method 'POST'
@@ -1161,7 +1161,21 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error | Should -BeNullOrEmpty
             # ensure user-agent is present (i.e., no false positives )
             $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-            # ensure Authorization header has been kept.
+            # ensure Authorization header has been removed.
+            $response.Content.Headers."Authorization" | Should -BeNullOrEmpty
+            # ensure POST doesn't change.
+            $response.Content.Method | Should -Be 'POST'
+        }
+
+        It "Validates Invoke-WebRequest -PreserveHttpMethodOnRedirect -PreserveAuthorizationOnRedirect keeps the authorization header and remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests {
+            param($redirectType)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+            $response = ExecuteRedirectRequest -PreserveAuthorizationOnRedirect -PreserveHttpMethodOnRedirect -Uri $uri -Method 'POST'
+
+            $response.Error | Should -BeNullOrEmpty
+            # ensure user-agent is present (i.e., no false positives )
+            $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+            # ensure Authorization header has been preserved.
             $response.Content.Headers."Authorization" | Should -BeExactly 'test'
             # ensure POST doesn't change.
             $response.Content.Method | Should -Be 'POST'
@@ -3035,18 +3049,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         1..$maxLinksToFollow | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
     }
 
-    It "Validate Invoke-RestMethod -FollowRelLink keeps the authorization header on relation links within the origin" {
-        # A rel link is a URL the same server advertised in its own 'Link' header, so the credentials
-        # the caller supplied for the API being paged still apply. Dropping the header here leaves
-        # -FollowRelLink unable to page an authenticated API, and does so silently against a server
-        # that permits anonymous reads: see #27861.
+    It "Validate Invoke-RestMethod -FollowRelLink strips the authorization header on followed relation links by default" {
         $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 3}
         $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink -Headers @{Authorization = 'test'}"
         $result = ExecuteWebCommand -command $command
 
         $result.Error | Should -BeNullOrEmpty
         $result.Output.Count | Should -BeExactly 3
-        1..3 | ForEach-Object { $result.Output[$_ - 1].headers.Authorization | Should -BeExactly 'test' }
+        $result.Output[0].headers.Authorization | Should -BeExactly 'test'
+        $result.Output[1].headers.Authorization | Should -BeNullOrEmpty
+        $result.Output[2].headers.Authorization | Should -BeNullOrEmpty
     }
 
     It "Validate Invoke-RestMethod quietly ignores invalid Link Headers if -FollowRelLink is specified: <type>" -TestCases @(
@@ -3254,7 +3266,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Content.Method | Should -Be $redirectedMethod
     }
 
-    It "Validates Invoke-RestMethod -PreserveHttpMethodOnRedirect keeps the authorization header redirects and remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod -PreserveHttpMethodOnRedirect strips the authorization header and remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
         $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
         $response = ExecuteRedirectRequest -PreserveHttpMethodOnRedirect -Cmdlet 'Invoke-RestMethod' -Uri $uri -Method 'POST'
@@ -3262,7 +3274,21 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Error | Should -BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
         $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-        # ensure Authorization header has been kept.
+        # ensure Authorization header has been removed.
+        $response.Content.Headers."Authorization" | Should -BeNullOrEmpty
+        # ensure POST doesn't change.
+        $response.Content.Method | Should -Be 'POST'
+    }
+
+    It "Validates Invoke-RestMethod -PreserveHttpMethodOnRedirect -PreserveAuthorizationOnRedirect keeps the authorization header and remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests {
+        param($redirectType)
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest -PreserveAuthorizationOnRedirect -PreserveHttpMethodOnRedirect -Cmdlet 'Invoke-RestMethod' -Uri $uri -Method 'POST'
+
+        $response.Error | Should -BeNullOrEmpty
+        # ensure user-agent is present (i.e., no false positives )
+        $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+        # ensure Authorization header has been preserved.
         $response.Content.Headers."Authorization" | Should -BeExactly 'test'
         # ensure POST doesn't change.
         $response.Content.Method | Should -Be 'POST'

@@ -567,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(linkVerboseMsg);
                     }
 
-                    using (HttpRequestMessage request = GetRequest(uri))
+                    using (HttpRequestMessage request = GetRequest(uri, isRedirect: followedRelLink > 0))
                     {
                         FillRequestStream(request);
                         try
@@ -1055,7 +1055,7 @@ namespace Microsoft.PowerShell.Commands
             return client;
         }
 
-        internal virtual HttpRequestMessage GetRequest(Uri uri)
+        internal virtual HttpRequestMessage GetRequest(Uri uri, bool isRedirect = false)
         {
             Uri requestUri = PrepareUri(uri);
             HttpMethod httpMethod = string.IsNullOrEmpty(CustomMethod) ? GetHttpMethod(Method) : new HttpMethod(CustomMethod);
@@ -1080,6 +1080,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
+                        if (isRedirect && !PreserveAuthorizationOnRedirect && entry.Key is HttpKnownHeaderNames.Authorization)
+                        {
+                            continue;
+                        }
+
                         if (SkipHeaderValidation)
                         {
                             request.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
@@ -1147,6 +1152,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     request.Headers.Range = new RangeHeaderValue(0, null);
                 }
+            }
+
+            if (isRedirect && !PreserveAuthorizationOnRedirect && request.Headers.Contains(HttpKnownHeaderNames.Authorization))
+            {
+                request.Headers.Remove(HttpKnownHeaderNames.Authorization);
             }
 
             return request;
@@ -1346,7 +1356,8 @@ namespace Microsoft.PowerShell.Commands
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
 
                     // Continue to handle redirection
-                    using HttpRequestMessage redirectRequest = GetRequest(currentUri);
+                    using HttpRequestMessage redirectRequest = GetRequest(currentUri, isRedirect: true);
+
                     response.Dispose();
                     response = GetResponse(client, redirectRequest, handleRedirect);
                 }

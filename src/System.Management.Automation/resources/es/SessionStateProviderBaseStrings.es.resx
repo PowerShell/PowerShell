@@ -118,39 +118,39 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetItemAction" xml:space="preserve">
-    <value>Set Item</value>
+    <value>Establecer elemento</value>
   </data>
   <data name="SetItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Value: {1}</value>
+    <value>Elemento: {0} Valor: {1}</value>
   </data>
   <data name="ClearItemAction" xml:space="preserve">
-    <value>Clear Item</value>
+    <value>Borrar elemento</value>
   </data>
   <data name="ClearItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>Elemento: {0}</value>
   </data>
   <data name="RemoveItemAction" xml:space="preserve">
-    <value>Remove Item</value>
+    <value>Eliminar elemento</value>
   </data>
   <data name="RemoveItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>Elemento: {0}</value>
   </data>
   <data name="NewItemAction" xml:space="preserve">
-    <value>New Item</value>
+    <value>Nuevo elemento</value>
   </data>
   <data name="NewItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Type: {1} Value: {2}</value>
+    <value>Elemento: {0} Tipo: {1} Valor: {2}</value>
   </data>
   <data name="CopyItemAction" xml:space="preserve">
-    <value>Copy Item</value>
+    <value>Copiar elemento</value>
   </data>
   <data name="CopyItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>Elemento: {0} Destino: {1}</value>
   </data>
   <data name="RenameItemAction" xml:space="preserve">
-    <value>Rename Item</value>
+    <value>Cambiar nombre de elemento</value>
   </data>
   <data name="RenameItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} NewName: {1}</value>
+    <value>Elemento: {0} NewName: {1}</value>
   </data>
 </root>

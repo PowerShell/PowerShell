@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoPingResult" xml:space="preserve">
-    <value>Testing connection to computer '{0}' failed: {1}</value>
+    <value>測試與電腦 '{0}' 的連線失敗: {1}</value>
   </data>
   <data name="CannotResolveTargetName" xml:space="preserve">
-    <value>Cannot resolve the target name.</value>
+    <value>無法解析目標名稱。</value>
   </data>
   <data name="TargetAddressAbsent" xml:space="preserve">
-    <value>Target IPv4/IPv6 address absent.</value>
+    <value>缺少目標 IPv4/IPv6 位址。</value>
   </data>
   <data name="MaxHopsExceeded" xml:space="preserve">
-    <value>Cannot complete traceroute to destination '{0}': Number of hops required to reach host exceeds MaxHops ({1}).</value>
+    <value>無法完成到目的地 '{0}' 的路由追蹤: 到達主機所需的躍點數超過 MaxHops ({1})。</value>
   </data>
 </root>

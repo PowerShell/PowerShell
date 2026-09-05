@@ -190,4 +190,7 @@ Para actualizar estos temas de Ayuda, inicie PowerShell con el comando "Ejecutar
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>No se puede obtener Ayuda de una ubicación de red cuando se está en una sesión restringida.</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>Command not allowed in a restricted session.</value>
+  </data>
 </root>

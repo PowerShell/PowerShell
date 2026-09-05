@@ -62,6 +62,10 @@ jobs:
     - checkout: self
       clean: true
 
+    - template: /.pipelines/templates/SetVersionVariables.yml@self
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+
     - template: release-SetReleaseTagandContainerName.yml@self
 
     - download: PSPackagesOfficial
@@ -80,7 +84,8 @@ jobs:
     - template: /.pipelines/templates/install-dotnet.yml@self
       parameters:
         architecture: ${{ parameters.dotnetArch }}
-        ob_restore_phase: false
+        ${{ if eq(parameters.IsEarlyAccess, true) }}:
+          ob_restore_phase: false
 
     - pwsh: |
         $artifactName = '$(artifactName)'

@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ResourceBaseNameFailure" xml:space="preserve">
-    <value>Cannot load a resource with base name "{0}".</value>
+    <value>無法載入基底名稱為 "{0}" 的資源。</value>
   </data>
   <data name="ResourceIdFailure" xml:space="preserve">
-    <value>Cannot load a resource string with ID "{0}".</value>
+    <value>無法載入識別碼為 "{0}" 的資源字串。</value>
   </data>
   <data name="ActionPreferenceStop" xml:space="preserve">
-    <value>Running commands is prevented by Stop policy settings.</value>
+    <value>「停止」原則設定會防止執行命令。</value>
   </data>
   <data name="AssemblyNotRegistered" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}" because an assembly was not registered.</value>
+    <value>無法擷取訊息 "{0}" "{1}" "{2}"，因為未註冊組件。</value>
   </data>
   <data name="BadTemplate" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}". A template string format is not valid in template string "{3}".</value>
+    <value>無法擷取訊息 "{0}" "{1}" "{2}"。範本字串格式在範本字串 "{3}" 中無效。</value>
   </data>
   <data name="BlankTemplate" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}". A template string exists, but its value is empty or blank.</value>
+    <value>無法擷取訊息 "{0}" "{1}" "{2}"。範本字串存在，但其值為空或空白。</value>
   </data>
   <data name="PipelineStoppedException" xml:space="preserve">
-    <value>The pipeline has been stopped.</value>
+    <value>管線已停止。</value>
   </data>
   <data name="ScriptCallDepthException" xml:space="preserve">
-    <value>The script failed due to call depth overflow.</value>
+    <value>指令碼因呼叫深度溢位而失敗。</value>
   </data>
   <data name="PipelineDepthException" xml:space="preserve">
-    <value>The pipeline failed due to call depth overflow.</value>
+    <value>管線因呼叫深度溢位而失敗。</value>
   </data>
 </root>

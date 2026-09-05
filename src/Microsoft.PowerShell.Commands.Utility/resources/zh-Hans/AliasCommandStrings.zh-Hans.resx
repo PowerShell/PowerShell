@@ -118,54 +118,54 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetAliasAction" xml:space="preserve">
-    <value>Set Alias</value>
+    <value>设置别名</value>
   </data>
   <data name="SetAliasTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>名称: {0} 值: {1}</value>
   </data>
   <data name="NewAliasAction" xml:space="preserve">
-    <value>New Alias</value>
+    <value>新建别名</value>
   </data>
   <data name="NewAliasTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>名称: {0} 值: {1}</value>
   </data>
   <data name="ImportAliasAction" xml:space="preserve">
-    <value>Import Alias</value>
+    <value>导入别名</value>
   </data>
   <data name="ImportAliasTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>名称: {0} 值: {1}</value>
   </data>
   <data name="ExportAliasFileOpenFailed" xml:space="preserve">
-    <value>Cannot open file {0} to export the alias. {1}</value>
+    <value>无法打开文件 {0} 以导出别名。{1}</value>
   </data>
   <data name="ExportAliasHeaderTitle" xml:space="preserve">
-    <value>Alias File</value>
+    <value>别名文件</value>
   </data>
   <data name="ExportAliasHeaderUser" xml:space="preserve">
-    <value>Exported by : {0}</value>
+    <value>导出者: {0}</value>
   </data>
   <data name="ExportAliasHeaderDate" xml:space="preserve">
-    <value>Date/Time : {0:F}</value>
+    <value>日期/时间 : {0:F}</value>
   </data>
   <data name="ExportAliasHeaderMachine" xml:space="preserve">
-    <value>Computer : {0}</value>
+    <value>计算机: {0}</value>
   </data>
   <data name="ImportAliasFromFileSystemOnly" xml:space="preserve">
-    <value>Cannot import the alias because the specified path '{0}' referred to a '{1}' provider path. Change the value of the Path parameter to a file system path.</value>
+    <value>无法导入别名，因为指定的路径 "{0}" 引用了 "{1}" 提供程序路径。请将 Path 参数更改为文件系统路径。</value>
   </data>
   <data name="ImportAliasPathResolvedToMultiple" xml:space="preserve">
-    <value>Cannot import alias because path '{0}' contains wildcard characters that resolve to multiple paths. Aliases can be imported from only one file. Change the value of the Path parameter to a path that resolves to a single file.</value>
+    <value>无法导入别名，因为路径 "{0}" 包含会解析为多个路径的通配符。别名只能从一个文件导入。请将 Path 参数的值更改为可解析为单个文件的路径。</value>
   </data>
   <data name="ImportAliasFileOpenFailed" xml:space="preserve">
-    <value>Cannot open file {0} to import the alias. {1}</value>
+    <value>无法打开文件 {0} 以导出别名。{1}</value>
   </data>
   <data name="ImportAliasFileInvalidFormat" xml:space="preserve">
-    <value>Cannot import an alias. Line number {1} in the file '{0}' is not a properly-formatted, comma-separated values (CSV) line for aliases. Change the line to contain four values separated by commas. If the value text itself contains a comma, then the value must be contained in quotation marks.</value>
+    <value>无法导入别名。文件 "{0}" 中的第 {1} 行不是格式正确的逗号分隔值(CSV)别名行。请将该行更改为包含四个由逗号分隔的值。如果值文本本身包含逗号，则该值必须用引号括起来。</value>
   </data>
   <data name="ImportAliasOptionsError" xml:space="preserve">
-    <value>Cannot import the alias because line number {1} in the file '{0}' contains an option that is not recognized for aliases. Change the file to contain valid options.</value>
+    <value>无法导入别名，因为文件 "{0}" 中的第 {1} 行包含别名无法识别的选项。请更改文件，使其包含有效选项。</value>
   </data>
   <data name="NoAliasFound" xml:space="preserve">
-    <value>This command cannot find a matching alias because an alias with the {0} '{1}' does not exist.</value>
+    <value>此命令找不到匹配的别名，因为名为 {0} "{1}" 的别名不存在。</value>
   </data>
 </root>

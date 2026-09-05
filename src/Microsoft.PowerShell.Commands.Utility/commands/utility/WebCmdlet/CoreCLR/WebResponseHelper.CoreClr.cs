@@ -42,7 +42,9 @@ namespace Microsoft.PowerShell.Commands
             // Get file name from last segment of Uri
             string? lastUriSegment = System.Net.WebUtility.UrlDecode(response.RequestMessage?.RequestUri?.Segments[^1]);
 
-            return Directory.Exists(qualifiedOutFile) ? Path.Join(qualifiedOutFile, lastUriSegment) : qualifiedOutFile;
+            return Directory.Exists(qualifiedOutFile)
+                ? Path.Join(qualifiedOutFile, Path.GetFileName(lastUriSegment))
+                : qualifiedOutFile;
         }
 
         internal static string GetProtocol(HttpResponseMessage response) => string.Create(CultureInfo.InvariantCulture, $"HTTP/{response.Version}");

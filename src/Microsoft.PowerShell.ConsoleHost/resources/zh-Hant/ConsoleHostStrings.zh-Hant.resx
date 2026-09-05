@@ -118,74 +118,74 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TooManyNestedPromptsError" xml:space="preserve">
-    <value>Cannot display prompt because too many nested prompts are already running.</value>
+    <value>無法顯示提示，因為已經執行太多巢狀提示。</value>
   </data>
   <data name="InputExitCurrentLoopOutOfSyncError" xml:space="preserve">
-    <value>Cannot process input loop. ExitCurrentLoop was called when no InputLoops were running.</value>
+    <value>無法處理輸入迴圈。在沒有任何 InputLoops 執行時呼叫了 ExitCurrentLoop。</value>
   </data>
   <data name="DefaultPrompt" xml:space="preserve">
     <value>PS&gt;</value>
   </data>
   <data name="ShellCannotBeStarted" xml:space="preserve">
-    <value>The shell cannot be started. A failure occurred during initialization:</value>
+    <value>無法啟動殼層。初始化期間發生失敗:</value>
   </data>
   <data name="ShellCannotBeStartedWithConfigConflict" xml:space="preserve">
-    <value>The shell cannot be started. An InitialSessionState object has been provided along with a -ConfigurationFile argument. Both configuration directives cannot be used at the same time.</value>
+    <value>無法啟動殼層。已提供 InitialSessionState 物件以及 -ConfigurationFile 引數。這兩個組態指示項無法同時使用。</value>
   </data>
   <data name="UnhandledExceptionShutdownMessage" xml:space="preserve">
-    <value>An error has occurred that was not properly handled. Additional information is shown below. The PowerShell process will exit.</value>
+    <value>發生未妥善處理的錯誤。其他資訊如下。PowerShell 處理序將結束。</value>
   </data>
   <data name="TranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
-Username  : {1}\{2}
-Machine   : {3} ({4})
+PowerShell 文字記錄開始
+開始時間: {0:yyyyMMddHHmmss}
+使用者名稱: {1}\{2}
+機器: {3} ({4})
 **********************</value>
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
     <value>**********************
-PowerShell transcript end
-End time: {0:yyyyMMddHHmmss}
+PowerShell 文字記錄結束
+結束時間: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="InitialCommandNotExecuted" xml:space="preserve">
-    <value>Command '{0}' could not be run because some PowerShell Snap-Ins did not load.</value>
+    <value>無法執行命令 '{0}'，因為某些 PowerShell Snap-In 未載入。</value>
   </data>
   <data name="CommandNotExecuted" xml:space="preserve">
-    <value>Command '{0}' was not run as the session in which it was intended to run was either closed or broken</value>
+    <value>命令 '{0}' 未執行，因為其原本要執行的工作階段已關閉或中斷</value>
   </data>
   <data name="EnteringDebugger" xml:space="preserve">
-    <value>Entering debug mode. Use h or ? for help. </value>
+    <value>正在進入偵錯模式。使用合貨 h 或者 ? 以尋求協助。</value>
   </data>
   <data name="HitBreakpoint" xml:space="preserve">
-    <value>Hit {0}</value>
+    <value>點擊 {0}</value>
   </data>
   <data name="DebuggerSourceCodeFormat" xml:space="preserve">
     <value>{0}:{1,-3} {2}</value>
   </data>
   <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
     <value>
-The current session does not support debugging; execution will continue.
+目前的工作階段不支援偵錯；執行將繼續。
 
 </value>
   </data>
   <data name="CannotLoadPSReadline" xml:space="preserve">
-    <value>Cannot load PSReadline module.  Console is running without PSReadline.</value>
+    <value>無法載入 PSReadline 模組。 主控台將在不使用 PSReadline 的情況下執行。</value>
   </data>
   <data name="ConflictingServerModeParameters" xml:space="preserve">
-    <value>More than one server mode parameter was specified. Server mode parameters must be used exclusively.</value>
+    <value>指定了多個伺服器模式參數。伺服器模式參數必須專一使用。</value>
   </data>
   <data name="SlowProfileLoadingMessage" xml:space="preserve">
-    <value>Loading personal and system profiles took {0}ms.</value>
+    <value>載入個人和系統設定檔花費了 {0} 毫秒。</value>
   </data>
   <data name="RunAsAdministrator" xml:space="preserve">
-    <value>Run as Administrator</value>
+    <value>以系統管理員身分執行</value>
   </data>
   <data name="PushRunspaceNotRemote" xml:space="preserve">
-    <value>PushRunspace can only push a remote runspace.</value>
+    <value>PushRunspace 只能推送遠端 Runspace。</value>
   </data>
   <data name="MissingMandatoryParameter" xml:space="preserve">
-    <value>The '{0}' parameter is mandatory and must be specified when using the '{1}' parameter.</value>
+    <value>'{0}' 參數是必要的，而且在使用 '{1}' 參數時必須指定。</value>
   </data>
 </root>

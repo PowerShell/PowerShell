@@ -190,4 +190,7 @@ Para atualizar esses tópicos da Ajuda, inicie o PowerShell usando o comando "Ex
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>Não é possível obter ajuda de um local de rede em uma sessão restrita.</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>Command not allowed in a restricted session.</value>
+  </data>
 </root>

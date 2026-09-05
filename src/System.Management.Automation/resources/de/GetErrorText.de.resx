@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ResourceBaseNameFailure" xml:space="preserve">
-    <value>Cannot load a resource with base name "{0}".</value>
+    <value>Eine Ressource mit dem Basisnamen „{0}“ kann nicht geladen werden.</value>
   </data>
   <data name="ResourceIdFailure" xml:space="preserve">
-    <value>Cannot load a resource string with ID "{0}".</value>
+    <value>Eine Ressourcenzeichenfolge mit der ID „{0}“ kann nicht geladen werden.</value>
   </data>
   <data name="ActionPreferenceStop" xml:space="preserve">
-    <value>Running commands is prevented by Stop policy settings.</value>
+    <value>Das Ausführen von Befehlen wird durch die Einstellungen der Stop-Richtlinie verhindert.</value>
   </data>
   <data name="AssemblyNotRegistered" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}" because an assembly was not registered.</value>
+    <value>Die Nachricht „{0}“ „{1}“ „{2}“ kann nicht abgerufen werden, da keine Assembly registriert wurde.</value>
   </data>
   <data name="BadTemplate" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}". A template string format is not valid in template string "{3}".</value>
+    <value>Die Nachricht „{0}“ „{1}“ „{2}“ kann nicht abgerufen werden. Ein Vorlagenzeichenfolgenformat ist in der Vorlagenzeichenfolge „{3}“ ungültig.</value>
   </data>
   <data name="BlankTemplate" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}". A template string exists, but its value is empty or blank.</value>
+    <value>Die Nachricht „{0}“ „{1}“ „{2}“ kann nicht abgerufen werden. Eine Vorlagenzeichenfolge ist vorhanden, aber ihr Wert ist leer oder nur aus Leerzeichen bestehend.</value>
   </data>
   <data name="PipelineStoppedException" xml:space="preserve">
-    <value>The pipeline has been stopped.</value>
+    <value>Die Pipeline wurde angehalten.</value>
   </data>
   <data name="ScriptCallDepthException" xml:space="preserve">
-    <value>The script failed due to call depth overflow.</value>
+    <value>Das Skript ist aufgrund eines Überlaufs der Aufruftiefe fehlgeschlagen.</value>
   </data>
   <data name="PipelineDepthException" xml:space="preserve">
-    <value>The pipeline failed due to call depth overflow.</value>
+    <value>Die Pipeline ist aufgrund eines Überlaufs der Aufruftiefe fehlgeschlagen.</value>
   </data>
 </root>

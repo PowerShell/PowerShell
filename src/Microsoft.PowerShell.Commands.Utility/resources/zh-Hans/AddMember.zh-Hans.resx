@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WrongMemberCount" xml:space="preserve">
-    <value>To add a member, only one member type can be specified. The member types specified are: "{0}"</value>
+    <value>若要添加成员，只能指定一种成员类型。指定的成员类型为“{0}”</value>
   </data>
   <data name="CannotAddMemberType" xml:space="preserve">
-    <value>Cannot add a member with type "{0}". Specify a different type for the MemberTypes parameter.</value>
+    <value>无法添加类型为“{0}”的成员。请为 MemberTypes 参数指定其他类型。</value>
   </data>
   <data name="Value2ShouldNotBeSpecified" xml:space="preserve">
-    <value>The SecondValue parameter is not necessary for a member of type "{0}", and should not be specified. Do not specify the SecondValue parameter when you add members of this type.</value>
+    <value>对于类型为“{0}”的成员，SecondValue 参数不是必需项，因此不应指定。添加此类型的成员时，不要指定 SecondValue 参数。</value>
   </data>
   <data name="Value1Prompt" xml:space="preserve">
-    <value>The Value parameter is required for a member of type "{0}". Specify the Value parameter when adding members of this type.</value>
+    <value>类型为“{0}”的成员需要 Value 参数。添加此类型的成员时，请指定 Value 参数。</value>
   </data>
   <data name="Value1AndValue2AreNotBothNull" xml:space="preserve">
-    <value>Both Value and SecondValue parameters should not be null for a member of type "{0}". Specify a non-null value for one of the two parameters.</value>
+    <value>对于类型为“{0}”的成员，Value 和 SecondValue 参数不能同时为 null。请为这两个参数中的一个指定非 null 值。</value>
   </data>
   <data name="MemberAlreadyExists" xml:space="preserve">
-    <value>Cannot add a member with the name "{0}" because a member with that name already exists. To overwrite the member anyway, add the Force parameter to your command.</value>
+    <value>无法添加名称为“{0}”的成员，因为已存在同名成员。若仍要覆盖该成员，请在命令中添加 Force 参数。</value>
   </data>
   <data name="CannotRemoveTypeDataMember" xml:space="preserve">
-    <value>Cannot force the member with name "{0}" and type "{1}" to be added. A member with that name and type already exists, and the existing member is not an instance extension.</value>
+    <value>无法强制添加名称为“{0}”、类型为“{1}”的成员。已存在同名同类型的成员，且该现有成员不是实例扩展。</value>
   </data>
   <data name="AliasReferenceShouldNotBeNullOrEmpty" xml:space="preserve">
-    <value>The member referenced by this alias should not be null or empty.</value>
+    <value>此别名引用的成员不应为 null 或空。</value>
   </data>
   <data name="Value1ShouldNotBeNull" xml:space="preserve">
-    <value>The Value parameter should not be null for a member of type "{0}". Specify a non-null value for the Value parameter when adding members of this type.</value>
+    <value>对于类型为“{0}”的成员，Value 参数不应为 null。添加此类型的成员时，请为 Value 参数指定非 null 值。</value>
   </data>
   <data name="Value2ShouldNotBeNull" xml:space="preserve">
-    <value>The SecondValue parameter should not be null for a member of type "{0}". Specify a non-null value for the SecondValue parameter when adding members of this type.</value>
+    <value>对于类型为“{0}”的成员，SecondValue 参数不应为 null。添加此类型的成员时，请为 SecondValue 参数指定非 null 值。</value>
   </data>
   <data name="InvalidValueForNotePropertyName" xml:space="preserve">
-    <value>The parameter NotePropertyName cannot take values that could be converted to the type {0}. To define the name of a member with those values, use Add-Member, and specify the member type.</value>
+    <value>NotePropertyName 参数不能使用可转换为类型“{0}”的值。若要使用这些值定义成员名称，请使用 Add-Member，并指定成员类型。</value>
   </data>
   <data name="NotePropertyNameShouldNotBeNull" xml:space="preserve">
-    <value>The name for a NoteProperty member should not be null or an empty string.</value>
+    <value>NoteProperty 成员的名称不应为 null 或空字符串。</value>
   </data>
   <data name="TypeNameShouldNotBeEmpty" xml:space="preserve">
-    <value>The TypeName parameter should not be null, empty, or contain only white spaces.</value>
+    <value>TypeName 参数不能为 null、不能为空，也不能仅包含空格。</value>
   </data>
 </root>

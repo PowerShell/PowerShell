@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SiPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:schemas-microsoft-com:sipolicy">
+  <VersionEx>10.4.0.0</VersionEx>
+  <PolicyTypeID>{A244370E-44C9-4C06-B551-F6016E563076}</PolicyTypeID>
+  <PlatformID>{2E07F7E4-194C-4D20-B7C9-6F44A6C5A234}</PlatformID>
+  <!-- Do not inherit the default policy: this policy must accept only the signer below. -->
+  <Rules />
+  <EKUs>
+    <EKU ID="ID_EKU_WINDOWS" Value="010A2B0601040182370A0306" FriendlyName="Windows EKU - 1.3.6.1.4.1.311.10.3.6" />
+    <EKU ID="ID_EKU_WHQL" Value="010A2B0601040182370A0305" FriendlyName="WHQL EKU - 1.3.6.1.4.1.311.10.3.5" />
+    <EKU ID="ID_EKU_ELAM" Value="010A2B0601040182373D0401" FriendlyName="Early Launch AntiMalware EKU - 1.3.6.1.4.1.311.61.4.1" />
+    <EKU ID="ID_EKU_HAL_EXT" Value="010A2B0601040182373D0501" FriendlyName="Hardware Abstraction Layer EKU - 1.3.6.1.4.1.311.61.5.1" />
+    <EKU ID="ID_EKU_RT_EXT" Value="010A2B0601040182370A0315" FriendlyName="Windows RT EKU - 1.3.6.1.4.1.311.10.3.21" />
+    <EKU ID="ID_EKU_STORE" Value="010A2B0601040182374C0301" FriendlyName="Windows Store EKU - 1.3.6.1.4.1.311.76.3.1" />
+    <EKU ID="ID_EKU_DCODEGEN" Value="010A2B0601040182374C0501" FriendlyName="Dynamic Code Generation EKU - 1.3.6.1.4.1.311.76.5.1" />
+    <EKU ID="ID_EKU_AM" Value="010A2B0601040182374C0B01" FriendlyName="AntiMalware EKU - 1.3.6.1.4.1.311.76.11.1" />
+    <EKU ID="ID_EKU_ENCLAVE" Value="010A2B0601040182370A032A" FriendlyName="Enclave EKU - 1.3.6.1.4.1.311.10.3.42" />
+  </EKUs>
+  <FileRules>
+    <FileAttrib ID="ID_FILEATTRIB_REFRESH_POLICY" FriendlyName="RefreshPolicy.exe FileAttribute" FileName="RefreshPolicy.exe" MinimumFileVersion="10.0.19042.0" />
+  </FileRules>
+  <!--
+    The vPack pipeline signs every .dll, .exe and every signed .ps1/.psm1/.psd1/.ps1xml with the
+    Windows build tools certificate (windows_build_tools_cert_id / CP-458204). This policy therefore
+    allows the "Windows Internal Build Tools CodeSign" publisher and nothing else, so that any file
+    that is not signed with the tools certificate is reported by CodeSign Validation.
+    CodeSign Validation evaluates these payload files under the user mode (UMCI) scenario.
+  -->
+  <Signers>
+    <Signer Name="Windows Internal Build Tools PCA 2020" ID="ID_SIGNER_S_0">
+      <CertRoot Type="TBS" Value="0B0692273CF07E96C7A9EC4177E3044368B383CBF8E03BAC215C3E3BC5C203482262169804ACD1F473C57C2831A3F191" />
+      <CertPublisher Value="Windows Internal Build Tools CodeSign" />
+    </Signer>
+  </Signers>
+  <SigningScenarios>
+    <SigningScenario ID="ID_SIGNINGSCENARIO_KMCI" FriendlyName="Kernel Mode Signing Scenario" Value="131">
+      <ProductSigners />
+    </SigningScenario>
+    <SigningScenario ID="ID_SIGNINGSCENARIO_UMCI" FriendlyName="User Mode Signing Scenario" Value="12">
+      <ProductSigners>
+        <AllowedSigners>
+          <AllowedSigner SignerId="ID_SIGNER_S_0" />
+        </AllowedSigners>
+      </ProductSigners>
+    </SigningScenario>
+  </SigningScenarios>
+  <UpdatePolicySigners />
+  <CiSigners>
+    <CiSigner SignerId="ID_SIGNER_S_0" />
+  </CiSigners>
+  <HvciOptions>0</HvciOptions>
+  <Settings>
+    <Setting Provider="PolicyInfo" Key="Information" ValueName="Name">
+      <Value>
+        <String>CodeSignCustomPolicy_2026-08-31</String>
+      </Value>
+    </Setting>
+    <Setting Provider="PolicyInfo" Key="Information" ValueName="Id">
+      <Value>
+        <String>2026-08-31</String>
+      </Value>
+    </Setting>
+  </Settings>
+</SiPolicy>

@@ -118,439 +118,439 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TypeNotFound" xml:space="preserve">
-    <value>Unable to find type [{0}].</value>
+    <value>형식 [{0}]을(를) 찾을 수 없습니다.</value>
   </data>
   <data name="TypeNotFoundWithMessage" xml:space="preserve">
-    <value>Unable to find type [{0}]. Details: {1}</value>
+    <value>형식 [{0}]을(를) 찾을 수 없습니다. 세부 정보: {1}</value>
   </data>
   <data name="IncompleteString" xml:space="preserve">
-    <value>Incomplete string token.</value>
+    <value>문자열 토큰이 완전하지 않습니다.</value>
   </data>
   <data name="InvalidUnicodeEscapeSequence" xml:space="preserve">
-    <value>The Unicode escape sequence is not valid. A valid sequence is `u{ followed by one to six hex digits and a closing '}'.</value>
+    <value>유니코드 이스케이프 시퀀스가 잘못되었습니다. 올바른 시퀀스는 `u{ 뒤에 1~6개의 16진수와 닫는 '}'가 오는 형식입니다.</value>
   </data>
   <data name="InvalidUnicodeEscapeSequenceValue" xml:space="preserve">
-    <value>The Unicode escape sequence value is out of range. The maximum value is 0x10FFFF.</value>
+    <value>유니코드 이스케이프 시퀀스 값이 범위를 벗어났습니다. 최댓값은 0x10FFFF입니다.</value>
   </data>
   <data name="MissingUnicodeEscapeSequenceTerminator" xml:space="preserve">
-    <value>The Unicode escape sequence is missing the closing '}'.</value>
+    <value>유니코드 이스케이프 시퀀스에 닫는 '}'가 없습니다.</value>
   </data>
   <data name="TooManyDigitsInUnicodeEscapeSequence" xml:space="preserve">
-    <value>The Unicode escape sequence contains more than the maximum of six hex digits between braces.</value>
+    <value>유니코드 이스케이프 시퀀스의 중괄호 안에 16진수는 최대 6자리까지만 사용할 수 있습니다.</value>
   </data>
   <data name="ReferenceNeedsToBeByItselfInTypeConstraint" xml:space="preserve">
-    <value>Cannot use [ref] with other types in a type constraint.</value>
+    <value>형식 제약 조건에서는 [ref]을(를) 다른 형식과 함께 사용할 수 없습니다.</value>
   </data>
   <data name="ReferenceNeedsToBeLastTypeInTypeConversion" xml:space="preserve">
-    <value>[ref] can only be the final type in type conversion sequence.</value>
+    <value>[ref]은(는) 형식 변환 시퀀스의 마지막 형식으로만 사용할 수 있습니다.</value>
   </data>
   <data name="ReferenceNeedsToBeByItselfInTypeSequence" xml:space="preserve">
-    <value>Cannot have two occurrences of [ref] in a type sequence.</value>
+    <value>형식 시퀀스에는 [ref]을(를) 두 번 포함할 수 없습니다.</value>
   </data>
   <data name="BadNumericConstant" xml:space="preserve">
-    <value>The numeric constant {0} is not valid.</value>
+    <value>숫자 상수 {0}이(가) 유효하지 않습니다.</value>
   </data>
   <data name="InvalidRegularExpression" xml:space="preserve">
-    <value>The regular expression pattern {0} is not valid.</value>
+    <value>정규식 패턴 {0}이(가) 유효하지 않습니다.</value>
   </data>
   <data name="EmptyVariableReference" xml:space="preserve">
-    <value>An empty ${} variable reference was found. A name is required inside the braces.</value>
+    <value>빈 ${} 변수 참조를 찾았습니다. 중괄호 안에 이름이 필요합니다.</value>
   </data>
   <data name="InvalidVariableReference" xml:space="preserve">
-    <value>Variable reference is not valid. '$' was not followed by a valid variable name character. Consider using ${} to delimit the name.</value>
+    <value>변수 참조가 올바르지 않습니다. '$' 뒤에 올바른 변수 이름 문자가 없습니다. 이름을 구분하려면 ${}를 사용해 보세요.</value>
   </data>
   <data name="InvokeMethodOnNull" xml:space="preserve">
-    <value>You cannot call a method on a null-valued expression.</value>
+    <value>null 값 식에서 메서드를 호출할 수 없습니다.</value>
   </data>
   <data name="MethodNotFound" xml:space="preserve">
-    <value>Method invocation failed because [{0}] does not contain a method named '{1}'.</value>
+    <value>메서드 호출에 실패했습니다. [{0}]에 '{1}'(이)라는 메서드가 없습니다.</value>
   </data>
   <data name="ParameterizedPropertyAssignmentFailed" xml:space="preserve">
-    <value>Assignment failed because [{0}] does not contain a property '{1}()' that can be set.</value>
+    <value>할당할 수 있는 속성 '{0}()'이(가) [{1}]에 없어서 할당하지 못했습니다.</value>
   </data>
   <data name="UnexpectedToken" xml:space="preserve">
-    <value>Unexpected token '{0}' in expression or statement.</value>
+    <value>식 또는 문에 예기치 않은 토큰 '{0}'이(가) 있습니다.</value>
   </data>
   <data name="SplattingNotPermitted" xml:space="preserve">
-    <value>The splatting operator '@' cannot be used to reference variables in an expression. '@{0}' can be used only as an argument to a command. To reference variables in an expression use '${0}'.</value>
+    <value>스플랫 연산자 '@'은(는) 식에서 변수를 참조하는 데 사용할 수 없습니다. '@{0}'은(는) 명령의 인수로만 사용할 수 있습니다. 식에서 변수를 참조하려면 '${0}'을(를) 사용하세요.</value>
   </data>
   <data name="InvalidParameter" xml:space="preserve">
-    <value>Parameter '{0}' is not valid</value>
+    <value>매개 변수 '{0}'이(가) 유효하지 않습니다.</value>
   </data>
   <data name="MissingExpression" xml:space="preserve">
-    <value>Missing expression after '{0}' in pipeline element.</value>
+    <value>파이프라인 요소에서 '{0}' 뒤에 식이 없습니다.</value>
   </data>
   <data name="BadExpression" xml:space="preserve">
-    <value>The expression after '{0}' in a pipeline element produced an object that was not valid. It must result in a command name, a script block, or a CommandInfo object.</value>
+    <value>파이프라인 요소에서 '{0}' 뒤의 식이 유효하지 않은 개체를 생성했습니다. 결과는 명령 이름, 스크립트 블록 또는 CommandInfo 개체여야 합니다.</value>
   </data>
   <data name="ParameterRequiresArgument" xml:space="preserve">
-    <value>Parameter {0} requires an argument.</value>
+    <value>매개 변수 {0}에는 인수가 필요합니다.</value>
   </data>
   <data name="ParameterCannotHaveArgument" xml:space="preserve">
-    <value>Parameter {0} cannot have an argument.</value>
+    <value>매개 변수 {0}에는 인수를 사용할 수 없습니다.</value>
   </data>
   <data name="DuplicateFormalParameter" xml:space="preserve">
-    <value>Duplicate parameter ${0} in parameter list.</value>
+    <value>매개 변수 목록에서 매개 변수 ${0} 이(가) 중복되었습니다.</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
-    <value>Missing argument in parameter list.</value>
+    <value>매개 변수 목록에 인수가 없습니다.</value>
   </data>
   <data name="SplattingNotPermittedInArgumentList" xml:space="preserve">
-    <value>Splatted variables like '@{0}' cannot be part of a comma-separated list of arguments.</value>
+    <value>'@{0}'와(과) 같은 스플랫된 변수는 쉼표로 구분된 인수 목록의 일부가 될 수 없습니다.</value>
   </data>
   <data name="MissingFileSpecification" xml:space="preserve">
-    <value>Missing file specification after redirection operator.</value>
+    <value>리디렉션 연산자 뒤에 파일 사양이 없습니다.</value>
   </data>
   <data name="RedirectionNotSupported" xml:space="preserve">
-    <value>The '{0}' operator is reserved for future use.</value>
+    <value>'{0}' 연산자는 나중에 사용하도록 예약되어 있습니다.</value>
   </data>
   <data name="RedirectionFailed" xml:space="preserve">
-    <value>Redirection to '{0}' failed: {1}</value>
+    <value>'{0}'(으)로 리디렉션하지 못했습니다. {1}</value>
   </data>
   <data name="ExpressionsMustBeFirstInPipeline" xml:space="preserve">
-    <value>Expressions are only allowed as the first element of a pipeline.</value>
+    <value>식은 파이프라인의 첫 번째 요소로만 사용할 수 있습니다.</value>
   </data>
   <data name="EmptyPipeElement" xml:space="preserve">
-    <value>An empty pipe element is not allowed.</value>
+    <value>빈 파이프 요소는 허용되지 않습니다.</value>
   </data>
   <data name="InvalidLeftHandSide" xml:space="preserve">
-    <value>The assignment expression is not valid. The input to an assignment operator must be an object that is able to accept assignments, such as a variable or a property.</value>
+    <value>대입 식이 올바르지 않습니다. 대입 연산자에 전달되는 입력은 대입을 받을 수 있는 개체(변수, 속성 등)여야 합니다.</value>
   </data>
   <data name="AddHashTableToNonHashTable" xml:space="preserve">
-    <value>A hash table can only be added to another hash table.</value>
+    <value>해시 테이블은 다른 해시 테이블에만 추가할 수 있습니다.</value>
   </data>
   <data name="IsOperatorRequiresType" xml:space="preserve">
-    <value>The right operand of '-is' must be a type.</value>
+    <value>'-is'의 오른쪽 피연산자는 형식이어야 합니다.</value>
   </data>
   <data name="AsOperatorRequiresType" xml:space="preserve">
-    <value>The right operand of '-as' must be a type.</value>
+    <value>'-as'의 오른쪽 피연산자는 형식이어야 합니다.</value>
   </data>
   <data name="FormatError" xml:space="preserve">
-    <value>Error formatting a string: {0}.</value>
+    <value>{0} 문자열의 서식을 지정하는 동안 오류가 발생했습니다.</value>
   </data>
   <data name="BadOperatorArgument" xml:space="preserve">
-    <value>The argument to operator '{0}' is not valid: {1}.</value>
+    <value>'{0}' 연산자의 인수가 잘못되었습니다. {1}</value>
   </data>
   <data name="OperatorFailed" xml:space="preserve">
-    <value>The '{0}' operator failed: {1}.</value>
+    <value>'{0}' 연산자가 실패했습니다: {1}</value>
   </data>
   <data name="BadReplaceArgument" xml:space="preserve">
-    <value>The {0} operator allows only two elements to follow it, not {1}.</value>
+    <value>{0} 연산자 뒤에는 두 개의 요소만 올 수 있으며 {1}은(는) 허용되지 않습니다.</value>
   </data>
   <data name="ExpectedValueExpression" xml:space="preserve">
-    <value>You must provide a value expression following the '{0}' operator.</value>
+    <value>'{0}' 연산자 뒤에 값 식을 제공해야 합니다.</value>
   </data>
   <data name="OperatorRequiresVariableOrProperty" xml:space="preserve">
-    <value>The '{0}' operator works only on variables or on properties.</value>
+    <value>'{0}' 연산자는 변수나 속성에만 사용할 수 있습니다.</value>
   </data>
   <data name="OrderedAttributeOnlyOnHashLiteralNode" xml:space="preserve">
-    <value>The {0} attribute can be specified only on a hash literal node.</value>
+    <value>{0} 특성은 해시 리터럴 노드에만 지정할 수 있습니다.</value>
   </data>
   <data name="MissingArrayIndexExpression" xml:space="preserve">
-    <value>Array index expression is missing or not valid.</value>
+    <value>배열 인덱스 식이 없거나 올바르지 않습니다.</value>
   </data>
   <data name="MissingPropertyName" xml:space="preserve">
-    <value>Missing property name after reference operator.</value>
+    <value>참조 연산자 뒤에 속성 이름이 없습니다.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property '{0}' cannot be found on this object. Verify that the property exists and can be set.</value>
+    <value>이 개체에서 '{0}' 속성을 찾을 수 없습니다. 속성이 있는지, 그리고 설정할 수 있는지 확인하세요.</value>
   </data>
   <data name="PropertyNotFoundStrict" xml:space="preserve">
-    <value>The property '{0}' cannot be found on this object. Verify that the property exists.</value>
+    <value>이 개체에서 '{0}' 속성을 찾을 수 없습니다. 속성이 있는지 확인하세요.</value>
   </data>
   <data name="NullArrayIndex" xml:space="preserve">
-    <value>Index operation failed; the array index evaluated to null.</value>
+    <value>인덱스 작업이 실패했습니다. 배열 인덱스가 null로 평가되었습니다.</value>
   </data>
   <data name="NullArray" xml:space="preserve">
-    <value>Cannot index into a null array.</value>
+    <value>null 배열로 인덱싱할 수 없습니다.</value>
   </data>
   <data name="CannotIndex" xml:space="preserve">
-    <value>Unable to index into an object of type "{0}".</value>
+    <value>형식이 "{0}"인 개체를 인덱싱할 수 없습니다.</value>
   </data>
   <data name="CannotIndexWithByRefLikeReturnType" xml:space="preserve">
-    <value>Unable to index into an object of type "{0}" with the ByRef-like return type "{1}". ByRef-like types are not supported in PowerShell.</value>
+    <value>ByRef와 유사한 반환 형식 "{0}"을(를) 사용하는 "{1}" 형식의 개체는 인덱싱할 수 없습니다. PowerShell에서는 ByRef와 유사한 형식이 지원되지 않습니다.</value>
   </data>
   <data name="ArrayHasTooManyDimensions" xml:space="preserve">
-    <value>The array has too many dimensions: {0}. The number of dimensions for an array must be less than or equal to 32.</value>
+    <value>배열의 차원이 너무 많습니다. {0} 배열의 차원 수는 32보다 작거나 같아야 합니다.</value>
   </data>
   <data name="ArraySliceAssignmentFailed" xml:space="preserve">
-    <value>Array assignment to [{0}] failed because assignment to slices is not supported.</value>
+    <value>슬라이스에 대한 할당은 지원되지 않으므로 [{0}]에 대한 배열 할당에 실패했습니다.</value>
   </data>
   <data name="NeedMultidimensionalIndex" xml:space="preserve">
-    <value>You cannot index into a {0} dimensional array with index [{1}].</value>
+    <value>인덱스 [{0}]을(를) 사용하여 {1}차원 배열에 인덱싱할 수 없습니다.</value>
   </data>
   <data name="IndexOutOfRange" xml:space="preserve">
-    <value>Array assignment failed because index '{0}' was out of range.</value>
+    <value>인덱스 '{0}'이(가) 범위를 벗어나 배열 할당에 실패했습니다.</value>
   </data>
   <data name="MissingExpressionAfterToken" xml:space="preserve">
-    <value>Missing expression after '{0}'.</value>
+    <value>'{0}' 뒤에 식이 없습니다.</value>
   </data>
   <data name="IncompleteDollarVariableReference" xml:space="preserve">
-    <value>${{variable}} reference starting is missing the closing '}}'.</value>
+    <value>${{variable}} 참조 시작에 닫는 '}}'가 없습니다.</value>
   </data>
   <data name="IncompleteDollarSubexpressionReference" xml:space="preserve">
-    <value>$(subexpression) is missing the closing ')'.</value>
+    <value>$(subexpression)에 닫는 ')'가 없습니다.</value>
   </data>
   <data name="UnexpectedUnaryOperator" xml:space="preserve">
-    <value>Internal error - unexpected unary operator {0}.</value>
+    <value>내부 오류 - 예기치 않은 단항 연산자 {0}입니다.</value>
   </data>
   <data name="NonExistingVariableReference" xml:space="preserve">
-    <value>[ref] cannot be applied to a variable that does not exist.</value>
+    <value>존재하지 않는 변수에는 [ref]을(를) 적용할 수 없습니다.</value>
   </data>
   <data name="VariableIsUndefined" xml:space="preserve">
-    <value>The variable '${0}' cannot be retrieved because it has not been set.</value>
+    <value>'${0}' 변수는 설정되지 않았으므로 가져올 수 없습니다.</value>
   </data>
   <data name="DuplicateKeyInHashLiteral" xml:space="preserve">
-    <value>Duplicate keys '{0}' are not allowed in hash literals.</value>
+    <value>해시 리터럴에서는 중복 키 '{0}'을(를) 사용할 수 없습니다.</value>
   </data>
   <data name="DuplicateNamedArgument" xml:space="preserve">
-    <value>Duplicate named arguments '{0}' are not allowed.</value>
+    <value>중복된 명명된 인수 '{0}'은(는) 허용되지 않습니다.</value>
   </data>
   <data name="OperatorRequiresNumber" xml:space="preserve">
-    <value>The '{0}' operator works only on numbers. The operand is a '{1}'.</value>
+    <value>'{0}' 연산자는 숫자에만 사용할 수 있습니다. 피연산자는 '{1}'입니다.</value>
   </data>
   <data name="ExpectedExpression" xml:space="preserve">
-    <value>An expression was expected after '('.</value>
+    <value>'(' 뒤에 식이 필요합니다.</value>
   </data>
   <data name="MissingEqualsInHashLiteral" xml:space="preserve">
-    <value>Missing '=' operator after key in hash literal.</value>
+    <value>해시 리터럴의 키 뒤에 '=' 연산자가 없습니다.</value>
   </data>
   <data name="MissingStatementInHashLiteral" xml:space="preserve">
-    <value>Missing statement after '=' in hash literal.</value>
+    <value>해시 리터럴에서 '=' 뒤에 문이 없습니다.</value>
   </data>
   <data name="MissingExpressionInNamedArgument" xml:space="preserve">
-    <value>Missing statement after '=' in named argument.</value>
+    <value>명명된 인수에서 '=' 뒤에 문이 없습니다.</value>
   </data>
   <data name="MissingPropertyTerminator" xml:space="preserve">
-    <value>Missing ';' or end-of-line in property definition.</value>
+    <value>속성 정의에 ';' 또는 줄의 끝이 없습니다.</value>
   </data>
   <data name="MissingExpressionAfterOperator" xml:space="preserve">
-    <value>Missing expression after unary operator '{0}'.</value>
+    <value>단항 연산자 '{0}' 뒤에 식이 없습니다.</value>
   </data>
   <data name="IfStatementMissingCondition" xml:space="preserve">
-    <value>Missing condition in if statement after '{0} ('.</value>
+    <value>if 문에서 '{0} (' 뒤에 조건이 없습니다.</value>
   </data>
   <data name="MissingStatementBlock" xml:space="preserve">
-    <value>Missing statement block after {0} ( condition ).</value>
+    <value>{0}( 조건 ) 뒤에 문 블록이 없습니다.</value>
   </data>
   <data name="MissingStatementBlockAfterElse" xml:space="preserve">
-    <value>Missing statement block after 'else' keyword.</value>
+    <value>'else' 키워드 뒤에 문 블록이 없습니다.</value>
   </data>
   <data name="FileReadError" xml:space="preserve">
-    <value>The file could not be read: {0}.</value>
+    <value>파일을 읽을 수 없습니다. {0}</value>
   </data>
   <data name="FileOpenError" xml:space="preserve">
-    <value>The current provider ({0}) cannot open a file.</value>
+    <value>현재 공급자({0})는 파일을 열 수 없습니다.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>No files matching '{0}' were found.</value>
+    <value>'{0}'와(과) 일치하는 파일을 찾을 수 없습니다.</value>
   </data>
   <data name="AmbiguousPath" xml:space="preserve">
-    <value>The path cannot be processed because it resolved to more than one file; only one file at a time can be processed.</value>
+    <value>경로가 둘 이상의 파일로 확인되었기 때문에 처리할 수 없습니다. 한 번에 파일 하나만 처리할 수 있습니다.</value>
   </data>
   <data name="KeywordParameterReservedForFutureUse" xml:space="preserve">
-    <value>The {0} '-{1}' parameter is reserved for future use.</value>
+    <value>{0} '-{1}' 매개 변수는 나중에 사용하도록 예약되어 있습니다.</value>
   </data>
   <data name="MissingFilenameOption" xml:space="preserve">
-    <value>Cannot process the 'switch' statement because of a missing file name argument to the -file option.</value>
+    <value>-file 옵션에 파일 이름 인수가 없어서 'switch' 문을 처리할 수 없습니다.</value>
   </data>
   <data name="InvalidFilenameOption" xml:space="preserve">
-    <value>The file name argument to -file in the switch statement is not valid.</value>
+    <value>switch 문의 -file에 지정한 파일 이름 인수가 올바르지 않습니다.</value>
   </data>
   <data name="InvalidSwitchFlag" xml:space="preserve">
-    <value>The parameter {0} is not valid for the switch statement.</value>
+    <value>매개 변수 {0}은(는) switch 문에 사용할 수 없습니다.</value>
   </data>
   <data name="InvalidForeachFlag" xml:space="preserve">
-    <value>The parameter {0} is not valid for the foreach statement.</value>
+    <value>foreach 문에는 {0} 매개 변수를 사용할 수 없습니다.</value>
   </data>
   <data name="PipelineValueRequired" xml:space="preserve">
-    <value>A switch statement must have one of the following:  '-file file_name' or '( expression )'.</value>
+    <value>switch 문에는 다음 중 하나가 있어야 합니다. '-file file_name' 또는 '( expression )'.</value>
   </data>
   <data name="MissingSwitchConditionExpression" xml:space="preserve">
-    <value>Missing condition in switch statement clause.</value>
+    <value>switch 문 절에 조건이 없습니다.</value>
   </data>
   <data name="MultipleSwitchDefaultClauses" xml:space="preserve">
-    <value>A switch statement can have only one default clause.</value>
+    <value>switch 문에는 기본 절을 하나만 사용할 수 있습니다.</value>
   </data>
   <data name="MissingSwitchStatementClause" xml:space="preserve">
-    <value>Missing statement block in switch statement clause.</value>
+    <value>switch 문 절에 문 블록이 없습니다.</value>
   </data>
   <data name="MissingForeachExpression" xml:space="preserve">
-    <value>Missing expression in foreach loop.
-The correct form is: foreach ($a in $b) {...}</value>
+    <value>foreach 루프에 식이 없습니다.
+올바른 형식은 foreach ($a in $b) {...}입니다.</value>
   </data>
   <data name="MissingForeachStatement" xml:space="preserve">
-    <value>Missing statement body in foreach loop.
-The correct form is: foreach ($a in $b) {...}</value>
+    <value>foreach 루프에 문 본문이 없습니다.
+올바른 형식은 foreach ($a in $b) {...}입니다.</value>
   </data>
   <data name="OnlyOneParameterListAllowed" xml:space="preserve">
-    <value>The param statement cannot be used if arguments were specified in the function declaration.</value>
+    <value>함수 선언에 인수가 지정된 경우 param 문을 사용할 수 없습니다.</value>
   </data>
   <data name="NotADefinedOperationForType" xml:space="preserve">
-    <value>The operation '[{0}] {1} [{2}]' is not defined.</value>
+    <value>작업 '[{0}] {1} [{2}]'이(가) 정의되지 않았습니다.</value>
   </data>
   <data name="BadEnumeration" xml:space="preserve">
-    <value>An error occurred while enumerating through a collection: {0}.</value>
+    <value>컬렉션을 열거하는 동안 오류가 발생했습니다. {0}</value>
   </data>
   <data name="COMException" xml:space="preserve">
-    <value>An unhandled COM interop exception occurred: {0}</value>
+    <value>처리되지 않은 COM interop 예외가 발생했습니다. {0}</value>
   </data>
   <data name="InvalidComObjectException" xml:space="preserve">
-    <value>A COM object was accessed after it was already released: {0}</value>
+    <value>이미 해제된 COM 개체에 액세스했습니다. {0}</value>
   </data>
   <data name="ScriptTooComplicated" xml:space="preserve">
-    <value>Processing was stopped because the script is too complex.</value>
+    <value>스크립트가 너무 복잡하여 처리가 중지되었습니다.</value>
   </data>
   <data name="ScriptsNotAllowed" xml:space="preserve">
-    <value>The syntax is not supported by this runspace. This can occur if the runspace is in no-language mode.</value>
+    <value>이 구문은 runspace에서는 지원되지 않습니다. 이 문제는 runspace가 비언어 모드인 경우 발생할 수 있습니다.</value>
   </data>
   <data name="InvalidSplitOptionCombination" xml:space="preserve">
-    <value>The combination of options with the -split operator is not valid.</value>
+    <value>-split 연산자와 함께 사용하는 옵션 조합이 유효하지 않습니다.</value>
   </data>
   <data name="InvalidSplitOptionWithPredicate" xml:space="preserve">
-    <value>Options are not allowed on the -split operator with a predicate.</value>
+    <value>조건자가 있는 -split 연산자에는 옵션을 사용할 수 없습니다.</value>
   </data>
   <data name="InvalidEndOfLine" xml:space="preserve">
-    <value>The token '{0}' is not a valid statement separator in this version.</value>
+    <value>토큰 '{0}'은(는) 이 버전에서 올바른 문 구분 기호가 아닙니다.</value>
   </data>
   <data name="ReservedKeywordNotAllowed" xml:space="preserve">
-    <value>The '{0}' keyword is not supported in this version of the language.</value>
+    <value>이 언어 버전에서는 '{0}' 키워드가 지원되지 않습니다.</value>
   </data>
   <data name="MissingExpressionAfterKeyword" xml:space="preserve">
-    <value>Missing expression after '{0}' in loop.</value>
+    <value>루프에서 '{0}' 뒤에 식이 없습니다.</value>
   </data>
   <data name="MissingLoopStatement" xml:space="preserve">
-    <value>Missing statement body in {0} loop.</value>
+    <value>{0} 루프에 문 본문이 없습니다.</value>
   </data>
   <data name="MissingTrapStatement" xml:space="preserve">
-    <value>The 'trap' statement was incomplete. A trap statement requires a body.</value>
+    <value>'trap' 문이 완전하지 않습니다. trap 문에는 본문이 필요합니다.</value>
   </data>
   <data name="MissingTryStatement" xml:space="preserve">
-    <value>Incomplete 'try' statement. A try statement requires a body.</value>
+    <value>'try' 문이 완전하지 않습니다. try 문에는 본문이 필요합니다.</value>
   </data>
   <data name="InvalidFunctionParameter" xml:space="preserve">
-    <value>Parameter declarations are a comma-separated list of variable names with optional initializer expressions.</value>
+    <value>매개 변수 선언은 선택적 초기화 식이 있는 변수 이름의 쉼표로 구분된 목록입니다.</value>
   </data>
   <data name="MissingFunctionBody" xml:space="preserve">
-    <value>Missing function body in function declaration.</value>
+    <value>함수 선언에 함수 본문이 없습니다.</value>
   </data>
   <data name="DuplicateScriptCommandClause" xml:space="preserve">
-    <value>Script command clause '{0}' has already been defined.</value>
+    <value>스크립트 명령 절 '{0}'은(는) 이미 정의되어 있습니다.</value>
   </data>
   <data name="MissingNamedBlocks" xml:space="preserve">
-    <value>unexpected token '{0}', expected 'begin', 'process', 'end', 'clean', or 'dynamicparam'.</value>
+    <value>예기치 않은 토큰 '{0}'입니다. 'begin', 'process', 'end', 'clean' 또는 'dynamicparam'이 필요합니다.</value>
   </data>
   <data name="MissingEndCurlyBrace" xml:space="preserve">
-    <value>Missing closing '}' in statement block or type definition.</value>
+    <value>문 블록이나 형식 정의에서 닫는 '}'가 없습니다.</value>
   </data>
   <data name="MissingEndParenthesisInMethodCall" xml:space="preserve">
-    <value>Missing ')' in method call.</value>
+    <value>메서드 호출에 ')'가 없습니다.</value>
   </data>
   <data name="MissingEndSquareBracket" xml:space="preserve">
-    <value>Missing ']' after array index expression.</value>
+    <value>배열 인덱스 식 뒤에 ']'가 없습니다.</value>
   </data>
   <data name="MissingEndParenthesisInExpression" xml:space="preserve">
-    <value>Missing closing ')' in expression.</value>
+    <value>식에 닫는 ')'가 없습니다.</value>
   </data>
   <data name="MissingEndParenthesisInSubexpression" xml:space="preserve">
-    <value>Missing closing ')' in subexpression.</value>
+    <value>하위 식에 닫는 ')'가 없습니다.</value>
   </data>
   <data name="MissingOpenParenthesisInIfStatement" xml:space="preserve">
-    <value>Missing '(' after '{0}' in if statement.</value>
+    <value>if 문에서 '{0}' 뒤에 '('가 없습니다.</value>
   </data>
   <data name="MissingEndParenthesisInSwitchStatement" xml:space="preserve">
-    <value>Missing ')' after expression in switch statement.</value>
+    <value>switch 문의 식 뒤에 ')'가 없습니다.</value>
   </data>
   <data name="MissingCurlyBraceInSwitchStatement" xml:space="preserve">
-    <value>Missing '{' in switch statement.</value>
+    <value>switch 문에 '{'가 없습니다.</value>
   </data>
   <data name="MissingVariableNameAfterForeach" xml:space="preserve">
-    <value>Missing variable name after foreach.
-The correct form is: foreach ($a in $b) {...}</value>
+    <value>foreach 뒤에 변수 이름이 없습니다.
+올바른 형식은 foreach ($a in $b) {...}입니다.</value>
   </data>
   <data name="MissingInInForeach" xml:space="preserve">
-    <value>Missing 'in' after variable in foreach loop.
-The correct form is: foreach ($a in $b) {...}</value>
+    <value>foreach 루프의 변수 뒤에 'in'이 없습니다.
+올바른 형식은 foreach ($a in $b) {...}입니다.</value>
   </data>
   <data name="MissingEndParenthesisAfterForeach" xml:space="preserve">
-    <value>Missing closing ')' after expression part of foreach loop.
-The correct form is: foreach ($a in $b) {...}</value>
+    <value>foreach 루프의 식 부분 뒤에 닫는 ')'가 없습니다.
+올바른 형식은 foreach ($a in $b) {...}입니다.</value>
   </data>
   <data name="MissingOpenParenthesisAfterKeyword" xml:space="preserve">
-    <value>Missing opening '(' after keyword '{0}'.</value>
+    <value>키워드 '{0}' 뒤에 여는 '('가 없습니다.</value>
   </data>
   <data name="MissingWhileOrUntilInDoWhile" xml:space="preserve">
-    <value>Missing while or until keyword in do loop.</value>
+    <value>do 루프에 while 또는 until 키워드가 없습니다.</value>
   </data>
   <data name="MissingEndParenthesisAfterStatement" xml:space="preserve">
-    <value>Missing closing ')' after expression in '{0}' statement.</value>
+    <value>'{0}' 문의 식 뒤에 닫는 ')'가 없습니다.</value>
   </data>
   <data name="MissingNameAfterKeyword" xml:space="preserve">
-    <value>Missing name after {0} keyword.</value>
+    <value>{0} 키워드 뒤에 이름이 없습니다.</value>
   </data>
   <data name="MissingEndParenthesisInFunctionParameterList" xml:space="preserve">
-    <value>Missing ')' in function parameter list.</value>
+    <value>함수 매개 변수 목록에 ')'가 없습니다.</value>
   </data>
   <data name="BackupParserMessage" xml:space="preserve">
-    <value>An error '{0}' occurred while processing this script. Text describing this error could not be loaded.</value>
+    <value>이 스크립트를 처리하는 동안 오류 '{0}'이(가) 발생했습니다. 이 오류를 설명하는 텍스트를 로드할 수 없습니다.</value>
   </data>
   <data name="BackupParserMessageWithException" xml:space="preserve">
-    <value>An error '{0}' occurred while processing this script. Text describing this error could not be loaded due to error '{1}'.</value>
+    <value>이 스크립트를 처리하는 동안 오류 '{0}'이(가) 발생했습니다. '{1}' 오류 때문에 이 오류를 설명하는 텍스트를 로드할 수 없습니다.</value>
   </data>
   <data name="ScriptBlockDelegateInvokedFromWrongThread" xml:space="preserve">
-    <value>There is no Runspace available to run scripts in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The script block you attempted to invoke was: {0}</value>
+    <value>이 스레드에서 스크립트를 실행할 수 있는 Runspace가 없습니다. System.Management.Automation.Runspaces.Runspace 형식의 DefaultRunspace 속성에서 Runspace를 제공할 수 있습니다. 호출하려고 한 스크립트 블록은 다음과 같습니다. {0}</value>
   </data>
   <data name="UnrecognizedToken" xml:space="preserve">
-    <value>Unrecognized token in source text.</value>
+    <value>원본 텍스트에 인식할 수 없는 토큰이 있습니다.</value>
   </data>
   <data name="ExceptionActionPromptCaption" xml:space="preserve">
-    <value>Action to take for this exception:</value>
+    <value>이 예외에 대해 수행할 작업:</value>
   </data>
   <data name="ContinueLabel" xml:space="preserve">
-    <value>&amp;Continue</value>
+    <value>계속(&amp;C)</value>
   </data>
   <data name="ContinueHelpMessage" xml:space="preserve">
-    <value>Report the error then continue with the next script statement.</value>
+    <value>오류를 보고한 후 다음 스크립트 문을 계속 진행하세요.</value>
   </data>
   <data name="SilentlyContinueLabel" xml:space="preserve">
-    <value>S&amp;ilently Continue</value>
+    <value>자동으로 계속(&amp;I)</value>
   </data>
   <data name="SilentlyContinueHelpMessage" xml:space="preserve">
-    <value>Do not report this error, just continue with the next script statement.</value>
+    <value>이 오류는 보고하지 말고 다음 스크립트 문을 계속 실행하세요.</value>
   </data>
   <data name="BreakLabel" xml:space="preserve">
-    <value>&amp;Break</value>
+    <value>중단(&amp;B)</value>
   </data>
   <data name="BreakHelpMessage" xml:space="preserve">
-    <value>Do not continue processing, throw the exception instead.</value>
+    <value>처리를 계속하지 말고 대신 예외를 throw하세요.</value>
   </data>
   <data name="SuspendLabel" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>일시 중단(&amp;S)</value>
   </data>
   <data name="SuspendHelpMessage" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type exit to resume operation when you are done.</value>
+    <value>현재 파이프라인을 일시 중지하고 명령 프롬프트로 돌아갑니다. 작업을 마치면 exit를 입력해 다시 시작하세요.</value>
   </data>
   <data name="CantActivateDocumentInPipeline" xml:space="preserve">
-    <value>Cannot run a document in the middle of a pipeline: {0}.</value>
+    <value>파이프라인 중간에서는 문서를 실행할 수 없습니다. {0}</value>
   </data>
   <data name="ProgramFailedToExecute" xml:space="preserve">
-    <value>Program '{0}' failed to run: {1}{2}.</value>
+    <value>프로그램 '{0}'을(를) 실행하지 못했습니다: {1}{2}</value>
   </data>
   <data name="CantInvokeInBinaryModule" xml:space="preserve">
-    <value>Cannot use '&amp;' to invoke in the context of binary module '{0}'. Specify a non-binary module after the '&amp;' and try the operation again.</value>
+    <value>이진 모듈 '{0}'의 컨텍스트에서는 '&amp;'를 사용하여 호출할 수 없습니다. '&amp;' 뒤에 이진이 아닌 모듈을 지정한 다음 작업을 다시 시도하세요.</value>
   </data>
   <data name="CantInvokeInNonImportedModule" xml:space="preserve">
-    <value>Cannot use '&amp;' to invoke in the context of module '{0}' because it is not imported. Import the module '{0}' and try the operation again.</value>
+    <value>모듈 '{0}'을(를) 가져오지 않았기 때문에 '&amp;'를 사용하여 해당 컨텍스트에서 호출할 수 없습니다. 모듈 '{0}'을(를) 가져온 다음 작업을 다시 시도하세요.</value>
   </data>
   <data name="TokenAfterEndOfValidScriptText" xml:space="preserve">
-    <value>Executable script code found in signature block.</value>
+    <value>서명 블록에서 실행 가능한 스크립트 코드를 찾았습니다.</value>
   </data>
   <data name="TextForWordLine" xml:space="preserve">
-    <value>line</value>
+    <value>줄</value>
   </data>
   <data name="TextForPositionMessage" xml:space="preserve">
-    <value>At {0}:{1} char:{2}
-+ {3}</value>
+    <value>{0}:{1} char:{2}
++ {3}에서</value>
   </data>
   <data name="TraceScriptLineMessage" xml:space="preserve">
     <value>{0,4}+ {1}</value>
@@ -559,818 +559,818 @@ The correct form is: foreach ($a in $b) {...}</value>
     <value>    ! SET ${0} = '{1}'.</value>
   </data>
   <data name="TraceEnteringFunction" xml:space="preserve">
-    <value>    ! CALL function '{0}'</value>
+    <value>    ! CALL 함수 '{0}'</value>
   </data>
   <data name="TraceEnteringFunctionDefinedInFile" xml:space="preserve">
-    <value>    ! CALL function '{0}'  (defined in file '{1}')</value>
+    <value>    ! CALL 함수 '{0}'('{1}' 파일에 정의됨)</value>
   </data>
   <data name="TraceMethodCall" xml:space="preserve">
-    <value>    ! CALL method '{0}'</value>
+    <value>    ! CALL 메서드 '{0}'</value>
   </data>
   <data name="TerminatorExpectedAtEndOfString" xml:space="preserve">
-    <value>The string is missing the terminator: {0}.</value>
+    <value>문자열에 종결자 {0}이(가) 없습니다.</value>
   </data>
   <data name="WhitespaceBeforeHereStringFooter" xml:space="preserve">
-    <value>White space is not allowed before the string terminator.</value>
+    <value>문자열 종결자 앞에는 공백을 사용할 수 없습니다.</value>
   </data>
   <data name="EndSquareBracketExpectedAtEndOfType" xml:space="preserve">
-    <value>Missing ] at end of type token.</value>
+    <value>형식 토큰 끝에 ]가 없습니다.</value>
   </data>
   <data name="OpenBraceNeedsToBeBackTickedInVariableName" xml:space="preserve">
-    <value>Use `{ instead of { in variable names.</value>
+    <value>변수 이름에는 { 대신 `{를 사용하세요.</value>
   </data>
   <data name="MissingStatementBlockForDataSection" xml:space="preserve">
-    <value>The Data section is missing its statement block.</value>
+    <value>Data 섹션에 문 블록이 없습니다.</value>
   </data>
   <data name="InvalidParameterForDataSectionStatement" xml:space="preserve">
-    <value>The "{0}" parameter of the Data section is not valid. The valid Data section parameter is SupportedCommand.</value>
+    <value>Data 섹션의 "{0}" 매개 변수가 유효하지 않습니다. 유효한 Data 섹션 매개 변수는 SupportedCommand입니다.</value>
   </data>
   <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>Array references are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 배열 참조를 사용할 수 없습니다.</value>
   </data>
   <data name="AssignmentStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Assignment statements are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 Assignment 문을 사용할 수 없습니다.</value>
   </data>
   <data name="RedirectionNotSupportedInDataSection" xml:space="preserve">
-    <value>Redirection is not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드나 Data 섹션에서는 리디렉션을 사용할 수 없습니다.</value>
   </data>
   <data name="DoWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Do and While statements are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 Do 및 While 문을 사용할 수 없습니다.</value>
   </data>
   <data name="ExpandableStringNotSupportedInDataSection" xml:space="preserve">
-    <value>Expandable strings are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 확장 가능한 문자열을 사용할 수 없습니다.</value>
   </data>
   <data name="OperatorNotSupportedInDataSection" xml:space="preserve">
-    <value>The '{0}' operator is not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드나 Data 섹션에서는 '{0}' 연산자를 사용할 수 없습니다.</value>
   </data>
   <data name="TrapStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Trap statement is not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드나 Data 섹션에서는 Trap 문을 사용할 수 없습니다.</value>
   </data>
   <data name="TryStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Try statement is not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 Try 문을 사용할 수 없습니다.</value>
   </data>
   <data name="FlowControlStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Flow control statements such as Break, Continue, Return, Exit, and Throw are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 Break, Continue, Return, Exit, Throw 같은 흐름 제어 문을 사용할 수 없습니다.</value>
   </data>
   <data name="ForeachStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Foreach statements are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 Foreach 문을 사용할 수 없습니다.</value>
   </data>
   <data name="ForWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>For and While statements are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 For 및 While 문을 사용할 수 없습니다.</value>
   </data>
   <data name="FunctionDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>Function declarations are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 함수 선언을 사용할 수 없습니다.</value>
   </data>
   <data name="MethodCallNotSupportedInDataSection" xml:space="preserve">
-    <value>Method calls are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 메서드 호출을 사용할 수 없습니다.</value>
   </data>
   <data name="ParameterDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>Parameter declarations are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드나 Data 섹션에서는 매개 변수 선언을 사용할 수 없습니다.</value>
   </data>
   <data name="PropertyReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>Property references are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드나 Data 섹션에서는 속성 참조를 사용할 수 없습니다.</value>
   </data>
   <data name="ScriptBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>Script block literals are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 스크립트 블록 리터럴을 사용할 수 없습니다.</value>
   </data>
   <data name="SwitchStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The switch statement is not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 switch 문을 사용할 수 없습니다.</value>
   </data>
   <data name="VariableReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>A variable that cannot be referenced in restricted language mode or a Data section is being referenced. Variables that can be referenced include the following: {0}.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서 참조할 수 없는 변수를 참조하고 있습니다. 참조할 수 있는 변수에는 다음이 포함됩니다. {0}</value>
   </data>
   <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
-    <value>The command '{0}' is not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 '{0}' 명령을 사용할 수 없습니다.</value>
   </data>
   <data name="DataSectionStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The data statement is not allowed in restricted language mode or another Data section.</value>
+    <value>제한된 언어 모드 또는 다른 Data 섹션에서는 Data 문을 사용할 수 없습니다.</value>
   </data>
   <data name="MissingValueForSupportedCommandInDataSectionStatement" xml:space="preserve">
-    <value>The SupportedCommand parameter of the Data section is missing a value. Supply a cmdlet or function name to the parameter.</value>
+    <value>Data 섹션의 SupportedCommand 매개 변수에 값이 없습니다. 매개 변수에 cmdlet 또는 함수 이름을 지정하세요.</value>
   </data>
   <data name="InvalidScriptBlockInDataSection" xml:space="preserve">
-    <value>A Begin statement block, Process statement block, or parameter statement is not allowed in a Data section.</value>
+    <value>Data 섹션에서는 Begin 문 블록, Process 문 블록 또는 매개 변수 문을 사용할 수 없습니다.</value>
   </data>
   <data name="StringMultiplyToolongInDataSection" xml:space="preserve">
-    <value>String multiplication results with more than "{0}" characters are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 "{0}"자를 초과하는 문자열 곱셈 결과를 사용할 수 없습니다.</value>
   </data>
   <data name="ArrayMultiplyToolongInDataSection" xml:space="preserve">
-    <value>Array multiplication resulting in more than {0} elements is not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 {0}개보다 많은 요소를 만드는 배열 곱셈을 사용할 수 없습니다.</value>
   </data>
   <data name="DotSourcingNotSupportedInDataSection" xml:space="preserve">
-    <value>Dot sourcing is not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 도트 소싱을 사용할 수 없습니다.</value>
   </data>
   <data name="ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock" xml:space="preserve">
-    <value>Attribute argument must be a constant or a script block.</value>
+    <value>특성 인수는 상수 또는 스크립트 블록이어야 합니다.</value>
   </data>
   <data name="CustomAttributeTypeNotFound" xml:space="preserve">
-    <value>Cannot find the type for custom attribute '{0}'. Make sure that the assembly that contains this type is loaded.</value>
+    <value>사용자 지정 특성 '{0}'의 형식을 찾을 수 없습니다. 이 형식을 포함하는 어셈블리가 로드되는지 확인하세요.</value>
   </data>
   <data name="PropertyNotFoundForType" xml:space="preserve">
-    <value>Property '{0}' cannot be found for type '{1}'.</value>
+    <value>유형 '{1}'에 대한 속성 '{0}'을(를) 찾을 수 없습니다.</value>
   </data>
   <data name="UnexpectedAttribute" xml:space="preserve">
-    <value>Unexpected attribute '{0}'.</value>
+    <value>예기치 않은 특성 '{0}'입니다.</value>
   </data>
   <data name="EndSquareBracketExpectedAtEndOfAttribute" xml:space="preserve">
-    <value>Missing ] at end of attribute or type literal.</value>
+    <value>특성 또는 형식 리터럴 끝에 ]가 없습니다.</value>
   </data>
   <data name="StrictModeFunctionCallWithParens" xml:space="preserve">
-    <value>The function or command was called as if it were a method. Parameters should be separated by spaces. For information about parameters, see the about_Parameters Help topic.</value>
+    <value>함수 또는 명령이 메서드인 것처럼 호출되었습니다. 매개 변수는 공백으로 구분해야 합니다. 매개 변수에 대한 자세한 내용은 about_Parameters 도움말 항목을 참조하세요.</value>
   </data>
   <data name="MissingTryStatementBlock" xml:space="preserve">
-    <value>The Try statement is missing its statement block.</value>
+    <value>Try 문에 문 블록이 없습니다.</value>
   </data>
   <data name="MissingCatchOrFinally" xml:space="preserve">
-    <value>The Try statement is missing its Catch or Finally block.</value>
+    <value>Try 문에 Catch 또는 Finally 블록이 없습니다.</value>
   </data>
   <data name="MissingCatchHandlerBlock" xml:space="preserve">
-    <value>The Catch block is missing its statement block.</value>
+    <value>Catch 블록에 문 블록이 없습니다.</value>
   </data>
   <data name="MissingFinallyStatementBlock" xml:space="preserve">
-    <value>The Finally block is missing its statement block.</value>
+    <value>Finally 블록에 문 블록이 없습니다.</value>
   </data>
   <data name="ExceptionTypeAlreadyCaught" xml:space="preserve">
-    <value>Exception type {0} is already handled by a previous handler.</value>
+    <value>예외 형식 {0}은(는) 이전 처리기에서 이미 처리되었습니다.</value>
   </data>
   <data name="EmptyCatchNotLast" xml:space="preserve">
-    <value>Catch block must be the last catch block.</value>
+    <value>Catch 블록은 마지막 Catch 블록이어야 합니다.</value>
   </data>
   <data name="MissingTypeLiteralToken" xml:space="preserve">
-    <value>Missing type literal.</value>
+    <value>형식 리터럴이 없습니다.</value>
   </data>
   <data name="MissingTerminatorMultiLineComment" xml:space="preserve">
-    <value>The terminator '#&gt;' is missing from the multiline comment.</value>
+    <value>여러 줄 주석에 종결자 '#&gt;'이(가) 없습니다.</value>
   </data>
   <data name="UnexpectedCharactersAfterHereStringHeader" xml:space="preserve">
-    <value>No characters are allowed after a here-string header but before the end of the line.</value>
+    <value>here-string 헤더 뒤에는 줄 끝 전까지 문자를 사용할 수 없습니다.</value>
   </data>
   <data name="ErrorCollection" xml:space="preserve">
-    <value>Parser errors were detected.</value>
+    <value>파서 오류가 발견되었습니다.</value>
   </data>
   <data name="MissingNamedStatementBlock" xml:space="preserve">
-    <value>Missing statement block after '{0}'.</value>
+    <value>'{0}' 뒤에 문 블록이 없습니다.</value>
   </data>
   <data name="TypeNotAllowedBeforeParam" xml:space="preserve">
-    <value>Unexpected type [{0}] was found in the parameter statement.</value>
+    <value>매개 변수 문에서 예상하지 못한 형식 [{0}]을(를) 찾았습니다.</value>
   </data>
   <data name="TypeNotAllowedBeforeStatement" xml:space="preserve">
-    <value>Unexpected type [{0}] was found before statement.</value>
+    <value>문 앞에 예기치 않은 형식[{0}]이(가) 있습니다.</value>
   </data>
   <data name="InvalidNullKey" xml:space="preserve">
-    <value>A null key is not allowed in a hash literal.</value>
+    <value>해시 리터럴에는 null 키를 사용할 수 없습니다.</value>
   </data>
   <data name="AttributeNotSupportedInDataSection" xml:space="preserve">
-    <value>Attributes are not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드 또는 Data 섹션에서는 특성을 사용할 수 없습니다.</value>
   </data>
   <data name="TypeNotAllowedInDataSection" xml:space="preserve">
-    <value>The type {0} is not allowed in restricted language mode or a Data section.</value>
+    <value>제한된 언어 모드나 Data 섹션에서는 형식 {0}을(를) 사용할 수 없습니다.</value>
   </data>
   <data name="PropertyIsReadOnly" xml:space="preserve">
-    <value>'{0}' is a ReadOnly property.</value>
+    <value>'{0}'은(는) 읽기 전용 속성입니다.</value>
   </data>
   <data name="MissingAssemblyNameSpecification" xml:space="preserve">
-    <value>The type name is missing the assembly name specification.</value>
+    <value>형식 이름에 어셈블리 이름 지정이 없습니다.</value>
   </data>
   <data name="ControlLeavingFinally" xml:space="preserve">
-    <value>Flow of control cannot leave a Finally block.</value>
+    <value>제어 흐름은 Finally 블록을 벗어날 수 없습니다.</value>
   </data>
   <data name="UnrecoverableParserError" xml:space="preserve">
-    <value>Unrecoverable error in PowerShell.</value>
+    <value>PowerShell에서 복구할 수 없는 오류가 발생했습니다.</value>
   </data>
   <data name="AstIsReused" xml:space="preserve">
-    <value>An AST cannot be used as the child of more than one AST. To use this AST in another AST, call the Copy() method and use its result.</value>
+    <value>AST는 둘 이상의 AST의 자식으로 사용할 수 없습니다. 이 AST를 다른 AST에서 사용하려면 Copy() 메서드를 호출한 다음 그 결과를 사용하세요.</value>
   </data>
   <data name="InvalidUsingExpression" xml:space="preserve">
-    <value>Expression is not allowed in a Using expression.</value>
+    <value>Using 식에는 식을 사용할 수 없습니다.</value>
   </data>
   <data name="UsingWithoutInvokeCommand" xml:space="preserve">
-    <value>A Using variable cannot be retrieved. A Using variable can be used only with Invoke-Command, Start-Job, or InlineScript in the script workflow. When it is used with Invoke-Command, the Using variable is valid only if the script block is invoked on a remote computer.</value>
+    <value>Using 변수는 검색할 수 없습니다. Using 변수는 스크립트 워크플로에서 Invoke-Command, Start-Job 또는 InlineScript와만 함께 사용할 수 있습니다. Invoke-Command와 함께 사용하는 경우에는 원격 컴퓨터에서 스크립트 블록이 호출될 때만 Using 변수가 유효합니다.</value>
   </data>
   <data name="InvalidBracedVariableReference" xml:space="preserve">
-    <value>Variable reference is not valid. The variable name is missing.</value>
+    <value>변수 참조가 유효하지 않습니다. 변수 이름이 없습니다.</value>
   </data>
   <data name="InvalidVariableReferenceWithDrive" xml:space="preserve">
-    <value>Variable reference is not valid. ':' was not followed by a valid variable name character. Consider using ${} to delimit the name.</value>
+    <value>변수 참조가 올바르지 않습니다. ':' 뒤에 올바른 변수 이름 문자가 없습니다. 이름을 구분하려면 ${}를 사용해 보세요.</value>
   </data>
   <data name="TooManyErrors" xml:space="preserve">
-    <value>Not all parse errors were reported.  Correct the reported errors and try again.</value>
+    <value>모든 구문 분석 오류가 보고되지는 않았습니다.  보고된 오류를 수정한 다음 다시 시도하세요.</value>
   </data>
   <data name="MissingTypename" xml:space="preserve">
-    <value>Missing type name after '['.</value>
+    <value>'[' 뒤에 형식 이름이 없습니다.</value>
   </data>
   <data name="AllStream" xml:space="preserve">
-    <value>* stream</value>
+    <value>* 스트림</value>
   </data>
   <data name="DebugStream" xml:space="preserve">
-    <value>debug stream</value>
+    <value>디버그 스트림</value>
   </data>
   <data name="ErrorStream" xml:space="preserve">
-    <value>error stream</value>
+    <value>오류 스트림</value>
   </data>
   <data name="OutputStream" xml:space="preserve">
-    <value>output stream</value>
+    <value>출력 스트림(output stream)</value>
   </data>
   <data name="StreamAlreadyRedirected" xml:space="preserve">
-    <value>The {0} for this command is already redirected.</value>
+    <value>이 명령에 대한 {0}이(가) 이미 리디렉션되었습니다.</value>
   </data>
   <data name="VerboseStream" xml:space="preserve">
-    <value>verbose stream</value>
+    <value>자세한 정보 표시 스트림</value>
   </data>
   <data name="WarningStream" xml:space="preserve">
-    <value>warning stream</value>
+    <value>경고 스트림</value>
   </data>
   <data name="MissingStatementAfterKeyword" xml:space="preserve">
-    <value>Missing statement body after keyword '{0}'.</value>
+    <value>키워드 '{0}' 뒤에 문 본문이 없습니다.</value>
   </data>
   <data name="ParallelAndSequenceBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>Parallel and sequence blocks are not allowed in restricted language mode or a Data section.</value>
+    <value>병렬 및 시퀀스 블록은 제한된 언어 모드나 Data 섹션에서는 사용할 수 없습니다.</value>
   </data>
   <data name="UnexpectedKeyword" xml:space="preserve">
-    <value>Unexpected keyword '{0}'.</value>
+    <value>예기치 않은 키워드 '{0}'입니다.</value>
   </data>
   <data name="VoidTypeConstraintNotAllowed" xml:space="preserve">
-    <value>[void] cannot be used as a parameter type, or on the left side of an assignment.</value>
+    <value>[void]은(는) 매개 변수 형식으로 사용하거나 할당의 왼쪽에 사용할 수 없습니다.</value>
   </data>
   <data name="CannotInvoke" xml:space="preserve">
-    <value>The method cannot be invoked.</value>
+    <value>메서드를 호출할 수 없습니다.</value>
   </data>
   <data name="HashtableToObjectConversionNotSupportedInDataSection" xml:space="preserve">
-    <value>Cannot convert hashtable to an object of the following type: {0}. Hashtable-to-Object conversion is not supported in restricted language mode or a Data section.</value>
+    <value>해시 테이블을 {0} 형식의 개체로 변환할 수 없습니다. 제한된 언어 모드 또는 Data 섹션에서는 해시 테이블을 개체로 변환하는 기능이 지원되지 않습니다.</value>
   </data>
   <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
-    <value>Argument must be constant.</value>
+    <value>인수는 상수여야 합니다.</value>
   </data>
   <data name="RequiresInvalidStringArgument" xml:space="preserve">
-    <value>The argument for the {0} parameter is not valid. Specify a valid string argument.</value>
+    <value>{0} 매개 변수의 인수가 유효하지 않습니다. 올바른 문자열 인수를 지정하세요.</value>
   </data>
   <data name="RequiresModuleInvalid" xml:space="preserve">
-    <value>The argument for the Module parameter is not valid. {0}</value>
+    <value>Module 매개 변수에 대한 인수가 유효하지 않습니다. {0}</value>
   </data>
   <data name="RequiresVersionInvalid" xml:space="preserve">
-    <value>The argument for the Version parameter is not valid. Specify a valid PowerShell version, in the format major.minor version.</value>
+    <value>Version 매개 변수에 대한 인수가 올바르지 않습니다. major.minor 버전 형식의 유효한 PowerShell 버전을 지정하세요.</value>
   </data>
   <data name="RequiresPSEditionInvalid" xml:space="preserve">
-    <value>The argument for the {0} parameter is not valid. Specify a valid PowerShell edition.</value>
+    <value>{0} 매개 변수의 인수가 유효하지 않습니다. 유효한 PowerShell edition을 지정하세요.</value>
   </data>
   <data name="RequiresPSEditionValueIsAlreadySpecified" xml:space="preserve">
-    <value>The argument for the {0} parameter contains duplicate values. Do not specify duplicate PowerShell edition values.</value>
+    <value>{0} 매개 변수에 대한 인수에 중복된 값이 있습니다. 중복된 PowerShell edition 값을 지정하지 마세요.</value>
   </data>
   <data name="WildCardModuleNameError" xml:space="preserve">
-    <value>Wildcard characters are not supported for module names.</value>
+    <value>모듈 이름에는 와일드카드 문자를 사용할 수 없습니다.</value>
   </data>
   <data name="InvokeMethodConstrainedLanguage" xml:space="preserve">
-    <value>Cannot invoke method. Method invocation is supported only on core types in this language mode.</value>
+    <value>메서드를 호출할 수 없습니다. 메서드 호출은 이 언어 모드의 코어 형식에서만 지원됩니다.</value>
   </data>
   <data name="PropertySetConstrainedLanguage" xml:space="preserve">
-    <value>Cannot set property. Property setting is supported only on core types in this language mode.</value>
+    <value>속성을 설정할 수 없습니다. 속성 설정은 이 언어 모드의 코어 형식에서만 지원됩니다.</value>
   </data>
   <data name="ConfigurationInvalidPropertyName" xml:space="preserve">
-    <value>An attribute name for resource '{0}' was found that is not valid. An attribute name must be a simple string, and cannot contain variables or expressions. Replace '{1}' with a simple string.</value>
+    <value>리소스 '{0}'의 특성 이름이 유효하지 않습니다. 특성 이름은 단순 문자열이어야 하며 변수나 식을 포함할 수 없습니다. '{1}'을(를) 단순 문자열로 바꾸세요.</value>
   </data>
   <data name="InvalidInstanceProperty" xml:space="preserve">
-    <value>The member '{0}' is not valid. Valid members are
-'{1}'.</value>
+    <value>구성원 '{0}'은(는) 유효하지 않습니다. 유효한 구성원은 
+'{1}'입니다.</value>
   </data>
   <data name="MissingBraceInObjectDefinition" xml:space="preserve">
-    <value>Missing '{' in object definition.</value>
+    <value>개체 정의에 '{'가 없습니다.</value>
   </data>
   <data name="RequiredNameOrExpressionMissing" xml:space="preserve">
-    <value>A required name or expression was missing.</value>
+    <value>필요한 이름 또는 식이 없습니다.</value>
   </data>
   <data name="SchemaFileNotFound" xml:space="preserve">
-    <value>The schema file {0} was not found. Verify that any modules specified in a configuration statement contain a schema.mof file, and then try running the script again.</value>
+    <value>스키마 파일 {0}을(를) 찾을 수 없습니다. 구성 문에 지정된 모듈에 schema.mof 파일이 포함되어 있는지 확인한 다음 스크립트를 다시 실행해 보세요.</value>
   </data>
   <data name="DataSectionAllowedCommandDisallowed" xml:space="preserve">
-    <value>Cannot define data section. Definition of additional supported commands is not supported in this language mode.</value>
+    <value>데이터 섹션을 정의할 수 없습니다. 이 언어 모드에서는 추가 지원 명령이 지원되지 않습니다.</value>
   </data>
   <data name="MissingCurlyInConfigurationStatement" xml:space="preserve">
-    <value>Missing '{' in configuration statement.</value>
+    <value>구성 문에 '{'가 없습니다.</value>
   </data>
   <data name="ExceptionParsingMOFFile" xml:space="preserve">
-    <value>Exception parsing MOF file '{0}':{1}.</value>
+    <value>MOF 파일 '{0}'을(를) 구문 분석하는 동안 예외가 발생했습니다. {1}</value>
   </data>
   <data name="MissingConfigurationName" xml:space="preserve">
-    <value>The name for the configuration is missing. Provide the missing name as a simple name, string, or string-valued expression.</value>
+    <value>구성 이름이 없습니다. 누락된 이름을 간단한 이름, 문자열 또는 문자열 값 식으로 제공하세요.</value>
   </data>
   <data name="ModuleNotFoundDuringParse" xml:space="preserve">
-    <value>Could not find the module '{0}'.</value>
+    <value>모듈 '{0}'을(를) 찾을 수 없습니다.</value>
   </data>
   <data name="MultipleModuleEntriesFoundDuringParse" xml:space="preserve">
-    <value>Multiple versions of the module '{0}' were found. You can run 'Get-Module -ListAvailable -FullyQualifiedName {0}' to see available versions on the system, and then use the fully qualified name '@{{ModuleName="{0}"; RequiredVersion="Version"}}'.</value>
+    <value>모듈 '{0}'의 여러 버전을 찾았습니다. 시스템에서 사용할 수 있는 버전을 보려면 'Get-Module -ListAvailable -FullyQualifiedName {0}'을(를) 실행한 다음, 정규화된 이름 '@{{ModuleName="{0}"; RequiredVersion="Version"}}'를 사용하세요.</value>
   </data>
   <data name="MissingThrottleLimit" xml:space="preserve">
-    <value>The ThrottleLimit parameter of the foreach statement is missing a value. Supply a throttle limit to the parameter.</value>
+    <value>foreach 문의 ThrottleLimit 매개 변수에 값이 없습니다. 매개 변수에 스로틀 제한 값을 지정하세요.</value>
     <comment>'ThrottleLimit' must not be localized.</comment>
   </data>
   <data name="ThrottleLimitRequiresParallelFlag" xml:space="preserve">
-    <value>The ThrottleLimit parameter is only supported on foreach statements that use the Parallel parameter.</value>
+    <value>ThrottleLimit 매개 변수는 Parallel 매개 변수를 사용하는 foreach 문에서만 지원됩니다.</value>
     <comment>'ThrottleLimit' and 'Parallel' must not be localized.</comment>
   </data>
   <data name="ConfigurationBodyEmpty" xml:space="preserve">
-    <value>The configuration block results were null or empty. Verify that configurations were defined in the block.</value>
+    <value>구성 블록 결과가 null이거나 비어 있습니다. 블록에 구성이 정의되어 있는지 확인하세요.</value>
   </data>
   <data name="UnexpectedNameForType" xml:space="preserve">
-    <value>The '{0}' resource can only be used once per configuration, and therefore cannot have a name. Remove '{1}', and then run the script again.</value>
+    <value>'{0}' 리소스는 구성당 한 번만 사용할 수 있으므로 이름을 지정할 수 없습니다. '{1}'을(를) 제거한 다음 스크립트를 다시 실행하세요.</value>
   </data>
   <data name="IncompletePropertyAssignmentBlock" xml:space="preserve">
-    <value>There is an incomplete property assignment block in the instance definition.</value>
+    <value>인스턴스 정의에 속성 할당 블록이 완전하지 않습니다.</value>
   </data>
   <data name="MissingEqualsInPropertyAssignmentBlock" xml:space="preserve">
-    <value>Missing '=' operator after key in property assignment.</value>
+    <value>속성 할당에서 키 뒤에 '=' 연산자가 없습니다.</value>
   </data>
   <data name="DuplicatePropertyInInstanceDefinition" xml:space="preserve">
-    <value>Duplicate property assignments are not allowed in an instance definition.</value>
+    <value>인스턴스 정의에서는 중복 속성 할당이 허용되지 않습니다.</value>
   </data>
   <data name="DuplicateCimClassDefinition" xml:space="preserve">
-    <value>A second CIM class definition for '{0}' was found while processing the schema file '{1}'. This class was already defined in the file(s) '{2}'. Remove the redundant definition, and then try again.</value>
+    <value>스키마 파일 '{1}'을(를) 처리하는 동안 '{0}'에 대한 두 번째 CIM 클래스 정의를 찾았습니다. 이 클래스는 파일 '{2}'에 이미 정의되어 있습니다. 중복 정의를 제거한 다음 다시 시도하세요.</value>
   </data>
   <data name="DuplicateKeywordDefinition" xml:space="preserve">
-    <value>Resource name '{0}' is already being used by another Resource or Configuration.</value>
+    <value>리소스 이름 '{0}'은(는) 이미 다른 리소스 또는 구성에서 사용되고 있습니다.</value>
   </data>
   <data name="ClassNameNotSameAsDefiningFile" xml:space="preserve">
-    <value>The class name '{0}' does not match '{1}', the name of the file in which it is defined. Rename either the file name to match the class name or vice versa</value>
+    <value>클래스 이름 '{0}'이(가) 정의된 파일의 이름 '{1}'과(와) 일치하지 않습니다. 파일 이름을 클래스 이름에 맞게 바꾸거나, 클래스 이름을 파일 이름에 맞게 바꾸세요.</value>
   </data>
   <data name="DuplicateResourceIdInNodeStatement" xml:space="preserve">
-    <value>A duplicate resource identifier '{0}' was found while processing the specification for node '{1}'. Change the name of this resource so that it is unique within the node specification.</value>
+    <value>노드 '{0}'에 대한 사양을 처리하는 동안 중복된 리소스 식별자 '{1}'이(가) 발견되었습니다. 이 리소스의 이름을 노드 사양 내에서 고유하도록 변경하세요.</value>
   </data>
   <data name="UnexpectedTokenInDynamicKeyword" xml:space="preserve">
-    <value>There is no whitespace between the name and the scriptblock in dynamic keyword '{0}' body statement.</value>
+    <value>동적 키워드 '{0}' 본문 문에서 이름과 스크립트 블록 사이에 공백이 없습니다.</value>
   </data>
   <data name="EmptyFunctionNameInFunctionDefinitionDictionary" xml:space="preserve">
-    <value>The key property for an entry in the dictionary of functions to define cannot be empty because the key property is used as the function name. Specify a non-empty string as the value of the key property, and then try the operation again.</value>
+    <value>키 속성은 함수 이름으로 사용되므로 함수를 정의할 사전의 항목에 대한 키 속성을 비워 둘 수 없습니다. 키 속성 값으로 비어 있지 않은 문자열을 지정한 다음 작업을 다시 시도하세요.</value>
   </data>
   <data name="GetBadlyFormedRequiredResourceId" xml:space="preserve">
-    <value>The format of the resource reference '{0}' in the Requires list for resource '{1}' is not valid. A required resource name should be in the format '[&lt;typename&gt;]&lt;name&gt;', with alphanumeric characters, spaces, '_', '-', '.' and '\'.</value>
+    <value>리소스 '{0}'의 Requires 목록에 있는 리소스 참조 '{1}'의 형식이 올바르지 않습니다. 필수 리소스 이름은 영숫자, 공백, '_', '-', '.' 및 '\'를 포함하는 '[&lt;typename&gt;]&lt;name&gt;' 형식이어야 합니다.</value>
     <comment>The capitalized word Requires should not be localized. The words &lt;typename&gt; and &lt;name&gt; should be localized but the &lt;&gt; characters must be preserved.</comment>
   </data>
   <data name="GetBadlyFormedExclusiveResourceId" xml:space="preserve">
-    <value>The format of the resource reference '{0}' in the exclusive list for resource '{1}' is not valid. An exclusive resource name should be in the format '&lt;typename&gt;\&lt;name&gt;', with no spaces.</value>
+    <value>리소스 '{0}'의 exclusive 목록에 있는 리소스 참조 '{1}'의 형식이 올바르지 않습니다. exclusive 리소스 이름은 공백 없이 '&lt;typename&gt;\&lt;name&gt;' 형식이어야 합니다.</value>
   </data>
   <data name="GetPullModeNeedConfigurationSource" xml:space="preserve">
-    <value>The PartialConfiguration '{0}' is set to pull mode which requires a ConfigurationSource property.</value>
+    <value>PartialConfiguration '{0}'이(가) ConfigurationSource 속성이 필요한 pull 모드로 설정되어 있습니다.</value>
   </data>
   <data name="NullEntryInVariablesDefinitionList" xml:space="preserve">
-    <value>A null entry was found in the list of variable entries to create in the script block scope. Remove the entry at index {0}, or replace it with a non-null entry, and then try again.</value>
+    <value>스크립트 블록 범위에 만들 변수 항목 목록에서 null 항목이 발견되었습니다. 인덱스 {0}에 있는 항목을 제거하거나 null이 아닌 항목으로 바꾼 다음 다시 시도하세요.</value>
   </data>
   <data name="NullFunctionBodyInFunctionDefinitionDictionary" xml:space="preserve">
-    <value>The script block that defines function '{0}' cannot be null or empty. Provide a non-empty script block in the function definition dictionary, and then try the operation again.</value>
+    <value>함수 '{0}'을(를) 정의하는 스크립트 블록은 null이거나 비워 둘 수 없습니다. 함수 정의 사전에 비어 있지 않은 스크립트 블록을 제공한 후 작업을 다시 시도하세요.</value>
   </data>
   <data name="ImportDscResourceNeedParams" xml:space="preserve">
-    <value>The syntax of the Import-DscResource dynamic keyword is:
+    <value>Import-DscResource 동적 키워드의 구문은 다음과 같습니다.
 
 Import-DscResource  [-Name &lt;ResourceName(s)&gt;]  [-ModuleName  &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;].
 
-Name          : Names of one or more resources to import.
-ModuleName    : Module names or ModuleSpecification objects of one or more modules to import.
-ModuleVersion : Version of module to import. If used, ModuleName must represent only one module by name.</value>
+Name: 가져오려는 하나 이상의 리소스의 이름입니다.
+ModuleName: 가져오려는 하나 이상의 모듈 이름 또는 ModuleSpecification 개체입니다.
+ModuleVersion: 가져오려는 모듈의 버전입니다. 사용될 경우 ModuleName은 이름으로 하나의 모듈만 나타내야 합니다.</value>
   </data>
   <data name="ImportDscResourceMultipleModulesNotSupportedWithName" xml:space="preserve">
-    <value>Import-DscResource dynamic keyword supports only one module when Name parameter is specified.</value>
+    <value>Name 매개 변수가 지정된 경우 Import-DscResource 동적 키워드는 모듈 하나만 지원합니다.</value>
   </data>
   <data name="ImportDscResourcePositionalParamsNotSupported" xml:space="preserve">
-    <value>Positional parameters are not supported for the Import-DscResource dynamic keyword. The syntax of Import-DscResource dynamic keyword is: "Import-DscResource  [-Name &lt;ResourceName(s)&gt;] [-ModuleName &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;]</value>
+    <value>Import-DscResource 동적 키워드에는 위치 매개 변수를 사용할 수 없습니다. Import-DscResource 동적 키워드의 구문은 다음과 같습니다. "Import-DscResource  [-Name &lt;ResourceName(s)&gt;] [-ModuleName &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;]</value>
   </data>
   <data name="DscResourcesNotFoundDuringParsing" xml:space="preserve">
-    <value>Unable to load resource '{0}': Resource not found.</value>
+    <value>리소스 '{0}'(를)를 로드할 수 없습니다. 리소스를 찾을 수 없습니다.</value>
   </data>
   <data name="ConfigurationNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>Configuration keyword is not allowed in constrainedLanguage mode.</value>
+    <value>constrainedLanguage 모드에서는 구성 키워드를 사용할 수 없습니다.</value>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
-    <value>The configuration name '{0}' is not valid. Standard names may only contain letters (a-z, A-Z), numbers (0-9), period (.), hyphen (-) and underscore (_). The name may not be null or empty, and should start with a letter.</value>
+    <value>구성 이름 '{0}'이(가) 유효하지 않습니다. 표준 이름에는 문자(a-z, A-Z), 숫자(0~9), 마침표(.), 하이픈(-), 밑줄(_)만 포함할 수 있습니다. 이름은 null이거나 비어 있을 수 없으며 문자로 시작해야 합니다.</value>
   </data>
   <data name="UnsupportedNamedBlockInConfiguration" xml:space="preserve">
-    <value>Configuration only supports the End block in its body. Begin, Process and DynamicParam blocks are not allowed in a configuration.</value>
+    <value>구성은 본문에서 End 블록만 지원합니다. 구성에서는 Begin, Process, DynamicParam 블록을 사용할 수 없습니다.</value>
   </data>
   <data name="CimDeserializationError" xml:space="preserve">
-    <value>Cim deserializer threw an error when deserializing file {0}.</value>
+    <value>CIM 역직렬 변환기에서 파일 {0}을(를) 역직렬화하는 동안 오류가 발생했습니다.</value>
   </data>
   <data name="InvalidValueForProperty" xml:space="preserve">
-    <value>'{0}' is not a valid value for property '{1}' on class '{2}'. Please change the value to one of the following strings: {3}.</value>
+    <value>'{0}'은(는) 클래스 '{2}'의 '{1}' 속성에 대한 유효한 값이 아닙니다. 값을 다음 문자열 중 하나로 바꾸세요. {3}</value>
   </data>
   <data name="UnsupportedValueForProperty" xml:space="preserve">
-    <value>At least one of the values '{0}' is not supported or valid for property '{1}' on class '{2}'. Please specify only supported values:
+    <value>클래스 '{2}'의 속성 '{1}'에 대해 값 '{0}' 중 하나 이상이 지원되지 않거나 유효하지 않습니다. 다음과 같은 지원되는 값만 지정하세요. 
 {3}.</value>
   </data>
   <data name="MissingValueForMandatoryProperty" xml:space="preserve">
-    <value>Resource '{0}' requires that a value of type '{1}' be provided for property '{2}'.</value>
+    <value>리소스 '{0}'에는 속성 '{2}'에 대해 '{1}' 형식의 값이 필요합니다.</value>
   </data>
   <data name="ValueNotInRange" xml:space="preserve">
-    <value>Property '{0}' of Resource '{1}' has value '{2}' which is not between valid range '{3}' and '{4}'.</value>
+    <value>리소스 '{1}'의 속성 '{0}'에 유효한 범위 '{3}'과(와) '{4}' 사이에 있지 않은 값 '{2}'이(가) 있습니다.</value>
   </data>
   <data name="CannotLoadPowerShellDataFile" xml:space="preserve">
-    <value>Failed to load the PowerShell data file '{0}' with the following error:
+    <value>다음 오류로 인해 PowerShell 데이터 파일 '{0}'을(를) 로드하지 못했습니다. 
 {1}</value>
   </data>
   <data name="CannotResolvePowerShellDataFilePath" xml:space="preserve">
-    <value>Cannot resolve the path '{0}' to a single .psd1 file.</value>
+    <value>경로 '{0}'을(를) 단일 .psd1 파일로 확인할 수 없습니다.</value>
   </data>
   <data name="InvalidPowerShellDataFile" xml:space="preserve">
-    <value>The PowerShell data file '{0}' is invalid since it cannot be evaluated into a Hashtable object.</value>
+    <value>PowerShell 데이터 파일 '{0}'은(는) Hashtable 개체로 계산할 수 없으므로 유효하지 않습니다.</value>
   </data>
   <data name="ConfigurationNotAllowedOnWinPE" xml:space="preserve">
-    <value>Configuration is not supported on WinPE.</value>
+    <value>WinPE에서는 구성이 지원되지 않습니다.</value>
   </data>
   <data name="EmptyExpressionRequiresANonDefaultMode" xml:space="preserve">
-    <value>If the expression passed to the Where() operator is null then you must specify a non-Default value for the selection mode argument. Please change the value of the mode argument to a value other than Default and try running your script again.</value>
+    <value>Where() 연산자에 전달된 식이 null이면 선택 모드 인수에 Default가 아닌 값을 지정해야 합니다. mode 인수 값을 Default 이외의 값으로 변경한 다음 스크립트를 다시 실행해 보세요.</value>
   </data>
   <data name="ForEachBadGenericConversionTypeSpecified" xml:space="preserve">
-    <value>The generic collection type [{0}] passed to ForEach() has too many type arguments. Please change the specified type to be a generic collection with only one type argument then try running your script again.</value>
+    <value>ForEach()에 전달된 제네릭 컬렉션 형식 [{0}]에 형식 인수가 너무 많습니다. 지정한 형식을 형식 인수가 하나만 있는 제네릭 컬렉션으로 바꾼 다음 스크립트를 다시 실행하세요.</value>
   </data>
   <data name="ForEachTypeConversionFailed" xml:space="preserve">
-    <value>Unable to convert input to the target type [{0}] passed to the ForEach() operator. Please check the specified type and try running your script again.</value>
+    <value>입력을 ForEach() 연산자에 전달된 대상 형식 [{0}]으로 변환할 수 없습니다. 지정된 형식을 확인한 다음 스크립트를 다시 실행해 보세요.</value>
   </data>
   <data name="ForEachNotSupportCleanBlock" xml:space="preserve">
-    <value>Script block with a 'clean' block is not supported by the 'ForEach' method.</value>
+    <value>'clean' 블록이 있는 스크립트 블록은 'ForEach' 메서드에서 지원되지 않습니다.</value>
   </data>
   <data name="NumberToReturnMustBeGreaterThanZero" xml:space="preserve">
-    <value>The 'numberToReturn' value provided to the third argument of the Where() operator must be greater than zero. Please correct the argument's value and try running your script again.</value>
+    <value>Where() 연산자의 세 번째 인수에 제공된 'numberToReturn' 값은 0보다 커야 합니다. 인수 값을 수정한 다음 스크립트를 다시 실행하세요.</value>
   </data>
   <data name="RedirectionStreamCanOnlyMergeToOutputStream" xml:space="preserve">
-    <value>Redirection only allows another stream to be merged with the output stream. Please correct the redirection operation to merge into the output stream then try running your script again.</value>
+    <value>리디렉션 중에는 다른스트림은 출력 스트림과 병합하는 경우에만 허용됩니다. 출력 스트림으로 병합되도록 리디렉션 작업을 수정한 다음 스크립트를 다시 실행해 보세요.</value>
   </data>
   <data name="ForEachNonexistentMemberReference" xml:space="preserve">
-    <value>The ForEach() operator could not find a member '{0}' on the target object. Please verify that the named member exists and then try running your script again.</value>
+    <value>ForEach() 연산자가 대상 개체에서 구성원 '{0}'을(를) 찾을 수 없습니다. 지정한 구성원이 있는지 확인한 다음 스크립트를 다시 실행하세요.</value>
   </data>
   <data name="UnsupportedReservedKeyword" xml:space="preserve">
-    <value>The '{0}' keyword is not supported in this version of the language.</value>
+    <value>이 언어 버전에서는 '{0}' 키워드가 지원되지 않습니다.</value>
   </data>
   <data name="UnsupportedReservedProperty" xml:space="preserve">
-    <value>The '{0}' property is not supported in this version of the language.</value>
+    <value>'{0}' 속성은 이 언어 버전에서 지원되지 않습니다.</value>
   </data>
   <data name="DuplicateQualifier" xml:space="preserve">
-    <value>Duplicate '{0}' qualifier</value>
+    <value>중복 '{0}' 한정자</value>
   </data>
   <data name="ModifiersCannotBeCombined" xml:space="preserve">
-    <value>Modifier '{0}' cannot be combined with '{1}'</value>
+    <value>한정자 '{0}'은(는) '{1}과과(와) 함께 사용할 수 없습니다.</value>
   </data>
   <data name="MissingUsingStatementDirective" xml:space="preserve">
-    <value>Missing using directive</value>
+    <value>using 지시문이 없습니다.</value>
   </data>
   <data name="MissingNamespaceAlias" xml:space="preserve">
-    <value>Missing namespace alias</value>
+    <value>네임스페이스 별칭이 없습니다.</value>
   </data>
   <data name="MissingEqualsInUsingAlias" xml:space="preserve">
-    <value>Missing '=' operator</value>
+    <value>'=' 연산자가 없습니다.</value>
   </data>
   <data name="MissingUsingItemName" xml:space="preserve">
-    <value>Missing using name</value>
+    <value>using 이름이 없습니다.</value>
   </data>
   <data name="VariableNotLocal" xml:space="preserve">
-    <value>Variable is not assigned in the method.</value>
+    <value>변수가 메서드에 할당되지 않았습니다.</value>
   </data>
   <data name="IncompleteMemberDefinition" xml:space="preserve">
-    <value>Missing a property name or method definition.</value>
+    <value>속성 이름 또는 메서드 정의가 없습니다.</value>
   </data>
   <data name="MemberAlreadyDefined" xml:space="preserve">
-    <value>The member '{0}' is already defined.</value>
+    <value>구성원 '{0}'이(가) 이미 정의되어 있습니다.</value>
   </data>
   <data name="TooManyTypes" xml:space="preserve">
-    <value>Only one type may be specified on class members.</value>
+    <value>클래스 구성원에는 하나의 형식만 지정할 수 있습니다.</value>
   </data>
   <data name="TypeCreationError" xml:space="preserve">
-    <value>Error during creation of type "{0}". Error message:
+    <value>형식 "{0}"을(를) 만드는 중 오류가 발생했습니다. 오류 메시지:
 {1}</value>
   </data>
   <data name="CannotConvertValue" xml:space="preserve">
-    <value>Cannot convert the value to type "{0}".</value>
+    <value>값을 "{0}" 형식으로 변환할 수 없습니다.</value>
   </data>
   <data name="PropertyNotFoundForAttribute" xml:space="preserve">
-    <value>Property '{0}' cannot be found for attribute '{1}'. Specify one of the following properties: {2}.</value>
+    <value>특성 '{1}'에 대한 속성 '{0}'을(를) 찾을 수 없습니다. 다음 속성 중 하나를 지정하십시오. {2}</value>
   </data>
   <data name="AttributeNotAllowedOnDeclaration" xml:space="preserve">
-    <value>Attribute '{0}' is not valid on this declaration. It is valid on '{1}' declarations only.</value>
+    <value>이 선언에서는 '{0}' 특성이 유효하지 않습니다. 이 특성은 '{1}' 선언에서만 유효합니다.</value>
   </data>
   <data name="ParameterAttributeArgumentNeedsToBeConstant" xml:space="preserve">
-    <value>Attribute argument must be a constant.</value>
+    <value>특성 인수는 상수여야 합니다.</value>
   </data>
   <data name="ResourceNotDefined" xml:space="preserve">
-    <value>Undefined DSC resource '{0}'. Use Import-DSCResource to import the resource.</value>
+    <value>정의되지 않은 DSC 리소스 '{0}'입니다. Import-DSCResource를 사용하여 리소스를 가져오세요.</value>
   </data>
   <data name="DynamicKeywordPreParseException" xml:space="preserve">
-    <value>Exception occurred when pre-parsing dynamic keyword '{0}' with details '{1}'.</value>
+    <value>동적 키워드 '{0}'을(를) 세부 정보 '{1}'와 함께 사전 구문 분석하는 동안 예외가 발생했습니다.</value>
   </data>
   <data name="DynamicKeywordPostParseException" xml:space="preserve">
-    <value>Exception occurred when post-parsing dynamic keyword '{0}' with details '{1}'.</value>
+    <value>동적 키워드 '{0}'을(를) 세부 정보 '{1}'와(과) 함께 사후 구문 분석하는 동안 예외가 발생했습니다.</value>
   </data>
   <data name="WorkflowNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Workflow is not supported in PowerShell 6+.</value>
+    <value>PowerShell 6 이상에서는 워크플로를 지원하지 않습니다.</value>
   </data>
   <data name="MetaConfigurationUsedInRegularConfig" xml:space="preserve">
-    <value>Meta Configuration resource {0} is not allowed in the regular configuration. Use meta configuration resources in a configuration with [DscLocalConfigurationManager()] attribute.</value>
+    <value>메타 구성 리소스 {0}은(는) 일반 구성에서 허용되지 않습니다. [DscLocalConfigurationManager()] 특성이 있는 구성에서 메타 구성 리소스를 사용하세요.</value>
   </data>
   <data name="RegularResourceUsedInMetaConfig" xml:space="preserve">
-    <value>Regular DSC resource {0} is not allowed in the meta configuration. </value>
+    <value>일반 DSC 리소스 {0}은(는) 메타 구성에서 허용되지 않습니다. </value>
   </data>
   <data name="GetSteppablePipelineFromWrongThread" xml:space="preserve">
-    <value>There is no Runspace available to get and run the SteppablePipeline in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The script block you attempted to get SteppablePipeline from was: {0}</value>
+    <value>이 스레드에서는 SteppablePipeline을 가져오고 실행할 수 있는 Runspace가 없습니다. System.Management.Automation.Runspaces.Runspace 형식의 DefaultRunspace 속성에서 Runspace를 제공할 수 있습니다. SteppablePipeline을 가져오려고 시도한 스크립트 블록은 다음과 같습니다. {0}</value>
   </data>
   <data name="AmbiguousConversion" xml:space="preserve">
-    <value>There are valid conversions from {0} to {1}.</value>
+    <value>{0}에서 {1}(으)로의 유효한 변환이 있습니다.</value>
   </data>
   <data name="CannotCall" xml:space="preserve">
-    <value>Cannot perform call.</value>
+    <value>호출할 수 없습니다.</value>
   </data>
   <data name="CannotRetrieveTypeInformation" xml:space="preserve">
-    <value>Cannot retrieve type information.</value>
+    <value>형식 정보를 검색할 수 없습니다.</value>
   </data>
   <data name="CouldNotGetDispId" xml:space="preserve">
-    <value>Could not get dispatch ID for {0} (error: {1}).</value>
+    <value>{0}에 대한 Dispatch ID를 가져올 수 없습니다(오류: {1}).</value>
   </data>
   <data name="DispBadParamCount" xml:space="preserve">
-    <value>Cannot find an overload for "{0}" and the argument count: "{1}"</value>
+    <value>"{0}"에 대한 오버로드를 찾을 수 없으며, 인수 개수는 "{1}"입니다.</value>
   </data>
   <data name="DispMemberNotFound" xml:space="preserve">
-    <value>Error while invoking {0}. Could not find member.</value>
+    <value>{0}을(를) 호출하는 동안 오류가 발생했습니다. 구성원을 찾을 수 없습니다.</value>
   </data>
   <data name="DispNoNamedArgs" xml:space="preserve">
-    <value>Error while invoking {0}. Named arguments are not supported.</value>
+    <value>{0}을(를) 호출하는 동안 오류가 발생했습니다. 명명된 인수가 지원되지 않습니다.</value>
   </data>
   <data name="DispOverflow" xml:space="preserve">
-    <value>Error while invoking {0}. Overflow detected.</value>
+    <value>{0}을(를) 호출하는 동안 오류가 발생했습니다. 오버플로가 검색되었습니다.</value>
   </data>
   <data name="DispParamNotOptional" xml:space="preserve">
-    <value>Error while invoking {0}. A required parameter was omitted.</value>
+    <value>{0}을(를) 호출하는 동안 오류가 발생했습니다. 필수 매개 변수를 생략했습니다.</value>
   </data>
   <data name="DispTypeMismatch" xml:space="preserve">
-    <value>Exception setting "{0}": Cannot convert the "{1}" value of type "{2}" to type "{3}".</value>
+    <value>"{0}" 설정 중 예외가 발생했습니다. "{1}" 형식의 값 "{2}"을(를) "{3}" 형식으로 변환할 수 없습니다.</value>
   </data>
   <data name="GetIDsOfNamesInvalid" xml:space="preserve">
-    <value>IDispatch::GetIDsOfNames behaved unexpectedly for {0}.</value>
+    <value>IDispatch::GetIDsOfNames가 {0}에 대해 예기치 않은 방식으로 동작했습니다.</value>
   </data>
   <data name="SetComObjectDataFailed" xml:space="preserve">
-    <value>Marshal.SetComObjectData failed.</value>
+    <value>Marshal.SetComObjectData가 실패했습니다.</value>
   </data>
   <data name="UnexpectedVarEnum" xml:space="preserve">
-    <value>Unexpected VarEnum {0}.</value>
+    <value>예기치 않은 VarEnum {0}입니다.</value>
   </data>
   <data name="UnsupportedHandlerType" xml:space="preserve">
-    <value>Attempting to pass an event handler of an unsupported type.</value>
+    <value>지원되지 않는 형식의 이벤트 처리기를 전달하려고 합니다.</value>
   </data>
   <data name="ConfigurationNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Configuration keyword is not supported in PowerShell 6+.</value>
+    <value>PowerShell 6 이상에서는 구성 키워드를 지원하지 않습니다.</value>
   </data>
   <data name="MethodHasCodePathNotReturn" xml:space="preserve">
-    <value>Not all code path returns value within method.</value>
+    <value>메서드 내의 모든 코드 경로가 값을 반환하는 것은 아닙니다.</value>
   </data>
   <data name="VoidMethodHasReturn" xml:space="preserve">
-    <value>Invalid return statement within void method.</value>
+    <value>void 메서드에 있는 return 문이 잘못되었습니다.</value>
   </data>
   <data name="NonVoidMethodMissingReturnValue" xml:space="preserve">
-    <value>Invalid return statement within non-void method.</value>
+    <value>void가 아닌 메서드에 있는 return 문이 유효하지 않습니다.</value>
   </data>
   <data name="MissingTypeBody" xml:space="preserve">
-    <value>Missing '{0}' body in '{0}' declaration.</value>
+    <value>'{0}' 선언에 '{0}' 본문이 없습니다.</value>
   </data>
   <data name="CycleInEnumInitializers" xml:space="preserve">
-    <value>Cannot define enum because of a cycle in the initialization expressions.</value>
+    <value>초기화 식의 순환 참조 때문에 열거형을 정의할 수 없습니다.</value>
   </data>
   <data name="EnumeratorValueOutOfBounds" xml:space="preserve">
-    <value>Enumerator value is either too large or too small for {0}.</value>
+    <value>{0}에 대해 열거자 값이 너무 크거나 작습니다.</value>
   </data>
   <data name="EnumeratorValueMustBeConstant" xml:space="preserve">
-    <value>Enumerator value must be a constant value.</value>
+    <value>열거자 값은 상수 값이어야 합니다.</value>
   </data>
   <data name="DynamicKeywordSemanticCheckException" xml:space="preserve">
-    <value>Exception occurred when performing semantic check for dynamic keyword '{0}' with details '{1}'.</value>
+    <value>동적 키워드 '{0}'에 대해 세부 정보 '{1}'와(과) 함께 의미 체계 검사를 수행하는 동안 예외가 발생했습니다.</value>
   </data>
   <data name="UnsupportedPropertyTypeOfDSCResourceClass" xml:space="preserve">
-    <value>The '{0}' property with type '{1}' of DSC resource class '{2}' is not supported.</value>
+    <value>DSC 리소스 클래스 '{0}'의 '{1}' 속성은 형식 '{2}'을(를) 지원하지 않습니다.</value>
   </data>
   <data name="MissingMethodParameterList" xml:space="preserve">
-    <value>Missing '(' in class method parameter list.</value>
+    <value>클래스 메서드 매개 변수 목록에 '('가 없습니다.</value>
   </data>
   <data name="NamedBlockNotAllowedInMethod" xml:space="preserve">
-    <value>A named block is not allowed in a class method.</value>
+    <value>명명된 블록은 클래스 메서드에 사용할 수 없습니다.</value>
   </data>
   <data name="ParamBlockNotAllowedInMethod" xml:space="preserve">
-    <value>A param block is not allowed in a class method.</value>
+    <value>클래스 메서드에는 param 블록을 사용할 수 없습니다.</value>
   </data>
   <data name="SealedBaseClass" xml:space="preserve">
-    <value>Cannot inherit from sealed class '{0}'.</value>
+    <value>sealed 클래스 '{0}'에서는 상속할 수 없습니다.</value>
   </data>
   <data name="TypeNameExpected" xml:space="preserve">
-    <value>Type name expected.</value>
+    <value>형식 이름이 필요합니다.</value>
   </data>
   <data name="InvalidUnderlyingType" xml:space="preserve">
-    <value>'{0}' is not a valid underlying type for enums. Expected a builtin integral type (one of byte, sbyte, short, ushort, int, uint, long or ulong)</value>
+    <value>'{0}'은(는) 열거형의 유효한 기본 형식이 아닙니다. 기본 제공 정수 형식(byte, sbyte, short, ushort, int, uint, long, ulong 중 하나)이 필요합니다.</value>
   </data>
   <data name="InterfaceNameExpected" xml:space="preserve">
-    <value>'{0}': Interface name expected.</value>
+    <value>'{0}': 인터페이스 이름이 필요합니다.</value>
   </data>
   <data name="BaseClassNoDefaultCtor" xml:space="preserve">
-    <value>Base class '{0}' does not contain a parameterless constructor.</value>
+    <value>기본 클래스 '{0}'에 매개 변수가 없는 생성자가 없습니다.</value>
   </data>
   <data name="SubtypeArray" xml:space="preserve">
-    <value>Invalid base type '{0}'. Base type cannot be an array.</value>
+    <value>기본 형식 '{0}'이(가) 유효하지 않습니다. 기본 형식은 배열일 수 없습니다.</value>
   </data>
   <data name="SubtypeUnclosedGeneric" xml:space="preserve">
-    <value>Invalid base type '{0}'. Base type cannot be a generic with unspecified parameters.</value>
+    <value>기본 형식 '{0}'이(가) 유효하지 않습니다. 기본 형식은 지정되지 않은 매개 변수가 있는 제네릭일 수 없습니다.</value>
   </data>
   <data name="MissingBaseCtorCall" xml:space="preserve">
-    <value>Missing 'base' after ':' in a base class constructor call.</value>
+    <value>기본 클래스 생성자 호출의 ':' 뒤에 'base'가 없습니다.</value>
   </data>
   <data name="ConstructorCantHaveReturnType" xml:space="preserve">
-    <value>A constructor cannot specify a return type.</value>
+    <value>생성자는 반환 형식을 지정할 수 없습니다.</value>
   </data>
   <data name="DscResourceMissingDefaultConstructor" xml:space="preserve">
-    <value>The DSC resource '{0}' has no default constructor.</value>
+    <value>DSC 리소스 '{0}'에 기본 생성자가 없습니다.</value>
   </data>
   <data name="DscResourceMissingGetMethod" xml:space="preserve">
-    <value>The DSC resource '{0}' is missing a Get method that returns [{0}] and accepts no parameters.</value>
+    <value>DSC 리소스 '{0}'에 [{0}]을(를) 반환하고 매개 변수를 받지 않는 Get 메서드가 없습니다.</value>
   </data>
   <data name="DscResourceMissingKeyProperty" xml:space="preserve">
-    <value>The DSC resource '{0}' must have at least one key property (using the syntax [DscProperty(Key)].)</value>
+    <value>DSC 리소스 '{0}'에는 [DscProperty(Key)] 구문을 사용하는 하나 이상의 키 속성이 있어야 합니다.</value>
   </data>
   <data name="DscResourceMissingSetMethod" xml:space="preserve">
-    <value>The DSC resource '{0}' is missing a Set method that returns [void] and accepts no parameters.</value>
+    <value>DSC 리소스 '{0}'에 [void]를 반환하고 매개 변수를 받지 않는 Set 메서드가 없습니다.</value>
   </data>
   <data name="DscResourceMissingTestMethod" xml:space="preserve">
-    <value>The DSC resource '{0}' is missing a Test method that returns [bool] and accepts no parameters.</value>
+    <value>DSC 리소스 '{0}'에 [bool]을 반환하고 매개 변수를 받지 않는 Test 메서드가 없습니다.</value>
   </data>
   <data name="StaticConstructorCantHaveParameters" xml:space="preserve">
-    <value>A static constructor cannot have any parameters.</value>
+    <value>정적 생성자에는 매개 변수를 사용할 수 없습니다.</value>
   </data>
   <data name="TypeNotAllowedForProperty" xml:space="preserve">
-    <value>The type '{0}' is not allowed on a property.</value>
+    <value>속성에는 '{0}' 형식을 사용할 수 없습니다.</value>
   </data>
   <data name="TypeNotAllowedForParameter" xml:space="preserve">
-    <value>The type '{0}' is not allowed on a parameter.</value>
+    <value>매개 변수에 '{0}' 형식을 사용할 수 없습니다.</value>
   </data>
   <data name="NonStaticMemberAccessInStaticMember" xml:space="preserve">
-    <value>Cannot access the non-static member '{0}' in a static method or initializer of a static property.</value>
+    <value>정적 메서드 또는 정적 속성의 초기화 코드에서 비정적 구성원 '{0}'에 액세스할 수 없습니다.</value>
   </data>
   <data name="FailToParseModuleScriptFile" xml:space="preserve">
-    <value>Failed to parse module script file '{0}' with error
+    <value>오류가 발생하여 모듈 스크립트 파일 '{0}'을(를) 구문 분석하지 못했습니다. 
 '{1}'.</value>
   </data>
   <data name="CantActivateDocumentInPowerShellCore" xml:space="preserve">
-    <value>Cannot run a document in PowerShell: {0}.</value>
+    <value>PowerShell에서 문서를 실행할 수 없습니다. {0}</value>
   </data>
   <data name="MultipleTypeConstraintsOnMethodParam" xml:space="preserve">
-    <value>Multiple type constraints are not allowed on a method parameter.</value>
+    <value>메서드 매개 변수에는 여러 형식 제약 조건을 사용할 수 없습니다.</value>
   </data>
   <data name="ScriptContainedMaliciousContent" xml:space="preserve">
-    <value>This script contains malicious content and has been blocked by your antivirus software.</value>
+    <value>이 스크립트에는 악성 콘텐츠가 포함되어 있어 바이러스 백신 소프트웨어에서 차단했습니다.</value>
   </data>
   <data name="InvalidLocalConfigurationManagerProperty" xml:space="preserve">
-    <value>'{0}' cannot be specified in LocalConfigurationManager resource. Please switch to Settings instead or use only following values: {1}.</value>
+    <value>LocalConfigurationManager 리소스에 '{0}'을(를) 지정할 수 없습니다. 대신 Settings로 전환하거나 다음 값만 사용하세요. {1}</value>
   </data>
   <data name="PropertyInGenericType" xml:space="preserve">
-    <value>'{0}' is defined in a generic type.</value>
+    <value>'{0}'은(는) 제네릭 형식에 정의되어 있습니다.</value>
   </data>
   <data name="AmbiguousTypeReference" xml:space="preserve">
-    <value>Type name '{0}' is ambiguous, it could be '{1}' or '{2}'.</value>
+    <value>형식 이름 '{0}'이(가) 모호합니다. '{1}' 또는 '{2}'일 수 있습니다.</value>
   </data>
   <data name="UsingMustBeAtStartOfScript" xml:space="preserve">
-    <value>A 'using' statement must appear before any other statements in a script.</value>
+    <value>'using' 문은 스크립트의 다른 문보다 먼저 와야 합니다.</value>
   </data>
   <data name="UsingStatementNotSupported" xml:space="preserve">
-    <value>This syntax of the 'using' statement is not supported.</value>
+    <value>'using' 문의 구문이 지원되지 않습니다.</value>
   </data>
   <data name="InvalidNamespaceValue" xml:space="preserve">
-    <value>The specified namespace in the 'using' statement contains invalid characters.</value>
+    <value>'using' 문의 지정된 네임스페이스에 잘못된 문자가 있습니다.</value>
   </data>
   <data name="InformationStream" xml:space="preserve">
-    <value>information stream</value>
+    <value>정보 스트림</value>
   </data>
   <data name="DscResourceInvalidKeyProperty" xml:space="preserve">
-    <value>Invalid key property. The key property must be of [string], signed/unsigned integer, or Enum types.</value>
+    <value>키 속성이 유효하지 않습니다. 키 속성은 [string], 부호 있는 정수, 부호 없는 정수 또는 열거형 형식이어야 합니다.</value>
   </data>
   <data name="DscResourceInvalidGetMethod" xml:space="preserve">
-    <value>Invalid Get method. Get method must return [{0}] and accepts no parameters.</value>
+    <value>Get 메서드가 잘못되었습니다. Get 메서드는 [{0}]을(를) 반환해야 하며 매개 변수를 받지 않아야 합니다.</value>
   </data>
   <data name="ErrorLoadingAssembly" xml:space="preserve">
     <value>'{0}' 어셈블리를 로드할 수 없습니다.</value>
   </data>
   <data name="CannotLoadAssemblyFromUncPath" xml:space="preserve">
-    <value>Cannot use assembly with an UNC path: '{0}'.</value>
+    <value>UNC 경로 '{0}'을(를) 사용하는 어셈블리는 사용할 수 없습니다.</value>
   </data>
   <data name="CannotLoadAssemblyWithUriSchema" xml:space="preserve">
-    <value>Cannot use assembly with uri schema '{0}'.</value>
+    <value>URI 스키마 '{0}'을(를) 사용하는 어셈블리는 사용할 수 없습니다.</value>
   </data>
   <data name="MissingStatementTerminator" xml:space="preserve">
-    <value>Missing a newline or semicolon.</value>
+    <value>줄 바꿈 또는 세미콜론이 없습니다.</value>
   </data>
   <data name="MissingThis" xml:space="preserve">
-    <value>Cannot assign property, use '{0}{1}'.</value>
+    <value>속성을 할당할 수 없습니다. '{0}{1}'을(를) 사용하세요.</value>
   </data>
   <data name="InvalidValueForUsingItemName" xml:space="preserve">
-    <value>'{0}' is not a valid value for using name.</value>
+    <value>'{0}'은(는) 이름 사용에 유효하지 않은 값입니다.</value>
   </data>
   <data name="MissingTypeInStaticPropertyAssignment" xml:space="preserve">
-    <value>Cannot assign property, use '{0}{1}'.</value>
+    <value>속성을 할당할 수 없습니다. '{0}{1}'을(를) 사용하세요.</value>
   </data>
   <data name="DebugModeShouldHaveOneValue" xml:space="preserve">
-    <value>DebugMode should only have one value.</value>
+    <value>DebugMode에는 하나의 값만 있어야 합니다.</value>
   </data>
   <data name="LabelNotFound" xml:space="preserve">
-    <value>Label '{0}' not found inside the method.</value>
+    <value>메서드 내에서 레이블 '{0}'을(를) 찾을 수 없습니다.</value>
   </data>
   <data name="ConvertCimPropertyToObjectPropertyFailed" xml:space="preserve">
-    <value>Failed to convert the value of CimProperty {0} to the property value of class {1}.</value>
+    <value>CimProperty {0}의 값을 클래스 {1}의 속성 값으로 변환하지 못했습니다.</value>
   </data>
   <data name="ExpectArrayTypeOfPropertyInPSClass" xml:space="preserve">
-    <value>Property {0} of PowerShell class {1} is not declared as array type, but defined in its configuration instance as instance array type.</value>
+    <value>PowerShell 클래스 {0}의 속성 {1}이(가) 배열 형식으로 선언되지 않았지만 구성 인스턴스에서는 배열 형식으로 정의되어 있습니다.</value>
   </data>
   <data name="InstantiatePSClassObjectFailed" xml:space="preserve">
-    <value>Failed to create an object of PowerShell class {0}.</value>
+    <value>PowerShell 클래스 {0}의 개체를 만들지 못했습니다.</value>
   </data>
   <data name="InvalidHashtable" xml:space="preserve">
-    <value>The hashtable supplied to the Desired State Configuration resource {0} is not valid. The key or value cannot be null or empty.</value>
+    <value>Desired State Configuration 리소스 {0}에 제공된 해시 테이블이 유효하지 않습니다. 키나 값은 null이거나 비어 있을 수 없습니다.</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>The username supplied to the Desired State Configuration resource {0} is not valid. The username cannot be null or empty.</value>
+    <value>Desired State Configuration 리소스 {0} 에 제공된 사용자 이름이 유효하지 않습니다. 사용자 이름은 null이거나 비워둘 수 없습니다.</value>
   </data>
   <data name="InvalidUserName" xml:space="preserve">
-    <value>The username supplied to the Desired State Configuration resource {0} is not valid. The username cannot be null or empty.</value>
+    <value>Desired State Configuration 리소스 {0} 에 제공된 사용자 이름이 유효하지 않습니다. 사용자 이름은 null이거나 비워둘 수 없습니다.</value>
   </data>
   <data name="PropertyNotDeclaredInPSClass" xml:space="preserve">
-    <value>Property {0} is not declared in PowerShell class {1}, but defined in its configuration instance.</value>
+    <value>속성 {0}은(는) PowerShell 클래스 {1}에 선언되어 있지 않지만 구성 인스턴스에 정의되어 있습니다.</value>
   </data>
   <data name="DisabledRefreshModeNotValidForPartialConfig" xml:space="preserve">
-    <value>PartialConfiguration '{0}' has a Refresh Mode set to Disabled which is not a valid mode for Partial Configurations. Use Pull or Push refresh mode. </value>
+    <value>PartialConfiguration '{0}'의 새로 고침 모드가 Disabled로 설정되어 있습니다. 이 모드는 부분 구성에 유효하지 않습니다. Pull 또는 Push 새로 고침 모드를 사용하세요. </value>
   </data>
   <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
-    <value>Cannot create type. Only core types are supported in this language mode.</value>
+    <value>형식을 만들 수 없습니다. 이 언어 모드에서는 핵심 형식만 지원됩니다.</value>
   </data>
   <data name="ImportDscResourceInsideNode" xml:space="preserve">
-    <value>Import-DscResource cannot be specified inside of Node context</value>
+    <value>노드 컨텍스트 안에서는 Import-DscResource를 지정할 수 없습니다.</value>
   </data>
   <data name="DefaultAllowedVariablesInDataSection" xml:space="preserve">
     <value>$PSCulture, $PSUICulture, $true, $false, $null</value>
   </data>
   <data name="AssignmentStatementToAutomaticNotSupported" xml:space="preserve">
-    <value>Cannot assign automatic variable '{0}' with type '{1}'</value>
+    <value>형식 '{1}'의 자동 변수 '{0}'을(를) 할당할 수 없습니다.</value>
   </data>
   <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
-    <value>Conflict in using PsDscRunAsCredential for Resource {0} because it already specifies PsDscRunAsCredential value. We can only use one PsDscRunAsCredential for the composite resource. </value>
+    <value>리소스 {0}에 이미 PsDscRunAsCredential 값이 지정되어 있어 PsDscRunAsCredential을 사용할 때 충돌이 발생합니다. 복합 리소스에는 PsDscRunAsCredential을 하나만 사용할 수 있습니다. </value>
   </data>
   <data name="PsDscMissingSchemaStore" xml:space="preserve">
-    <value>Unable to find DSC schema store at "{0}". Please ensure PSDesiredStateConfiguration v3 module is installed.</value>
+    <value>"{0}"에서 DSC 스키마 저장소를 찾을 수 없습니다. PSDesiredStateConfiguration v3 모듈이 설치되어 있는지 확인하세요.</value>
   </data>
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="ScriptHasAdminBlockedContent" xml:space="preserve">
-    <value>This script contains content that has been flagged as suspicious through a policy setting and has been blocked with error code {0}. Contact your administrator for more information.</value>
+    <value>이 스크립트에는 정책 설정에서 의심스러운 것으로 표시된 콘텐츠가 포함되어 있으며 오류 코드 {0}이(가) 발생했습니다. 자세한 내용은 관리자에게 문의하십시오.</value>
   </data>
   <data name="CantInvokeCallOperatorAcrossLanguageBoundaries" xml:space="preserve">
-    <value>Cannot use '&amp;' or '.' operators to invoke a module scope command across language boundaries.</value>
+    <value>언어 경계를 넘어 모듈 scope 명령을 호출하는 데는 '&amp;' 또는 '.' 연산자를 사용할 수 없습니다.</value>
   </data>
   <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>Class keyword is not allowed in ConstrainedLanguage mode.</value>
+    <value>ConstrainedLanguage 모드에서는 클래스 키워드를 사용할 수 없습니다.</value>
   </data>
   <data name="MissingColonInTernaryExpression" xml:space="preserve">
-    <value>Missing ':' in the ternary expression.</value>
+    <value>3항 식에 ':'이 없습니다.</value>
   </data>
   <data name="EmptyPipelineChainElement" xml:space="preserve">
-    <value>A pipeline chain operator must be followed by a pipeline.</value>
+    <value>파이프라인 체인 연산자 뒤에는 파이프라인이 와야 합니다.</value>
   </data>
   <data name="BackgroundOperatorInPipelineChain" xml:space="preserve">
-    <value>Background operators can only be used at the end of a pipeline chain.</value>
+    <value>백그라운드 연산자는 파이프라인 체인의 끝에서만 사용할 수 있습니다.</value>
   </data>
   <data name="InvokingCleanBlockNotSupported" xml:space="preserve">
-    <value>Directly invoking the 'clean' block of a script block is not supported.</value>
+    <value>스크립트 블록의 'clean' 블록을 직접 호출하는 것은 지원되지 않습니다.</value>
   </data>
   <data name="WDACParserConfigKeywordLogTitle" xml:space="preserve">
-    <value>Parser Configuration Keyword</value>
+    <value>파서 구성 키워드</value>
   </data>
   <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
-    <value>The Configuration keyword will not be allowed in Constrained Language mode for untrusted script.</value>
+    <value>신뢰할 수 없는 스크립트에 대해서는 제한된 언어 모드에서 Configuration 키워드를 사용할 수 없습니다.</value>
   </data>
   <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
-    <value>Parser Class Keyword</value>
+    <value>파서 클래스 키워드</value>
   </data>
   <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
-    <value>The Class keyword will not be allowed in Constrained Language mode for untrusted script.</value>
+    <value>신뢰할 수 없는 스크립트에 대해서는 Constrained Language 모드에서 Class 키워드를 사용할 수 없습니다.</value>
   </data>
   <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
-    <value>Parser Data Section SupportedCommand</value>
+    <value>파서 데이터 섹션 SupportedCommand</value>
   </data>
   <data name="WDACParserDSSupportedCommandLogMessage" xml:space="preserve">
-    <value>The Data Section that includes the SupportedCommand parameter would be disallowed in Constrained Language mode for untrusted script.</value>
+    <value>신뢰할 수 없는 스크립트에 대해서는 Constrained Language 모드에서 SupportedCommand 매개 변수를 포함하는 Data Section을 사용할 수 없습니다.</value>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogTitle" xml:space="preserve">
-    <value>Module Scope Call Operator</value>
+    <value>모듈 범위 호출 연산자</value>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogMessage" xml:space="preserve">
-    <value>The module scope call operator will be denied in Constrained Language mode.</value>
+    <value>Constrained Language 모드에서는 모듈 범위 호출 연산자가 거부됩니다.</value>
   </data>
   <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
-    <value>ForEach Keyword Method Invocation</value>
+    <value>ForEach 키워드 메서드 호출</value>
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
-    <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in Constrained Language mode.</value>
+    <value>Constrained Language 모드에서 실행하면 ForEach 키워드는 반복 항목 메서드 호출 '{0}'에 실패합니다.</value>
   </data>
   <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
-    <value>Expression Evaluation May Fail</value>
+    <value>식 계산이 실패할 수 있습니다.</value>
   </data>
   <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
-    <value>Creating a steppable pipeline from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in Constrained Language mode, unless the expression represents a constant value.</value>
+    <value>스크립트 블록에서 스테퍼블 파이프라인을 만들려면 스크립트 블록 안의 일부 식을 평가해야 할 수 있습니다. 식이 상수 값을 나타내지 않는 한, 식 평가는 제한된 언어 모드에서 오류 없이 실패하고 'null'을 반환합니다.</value>
   </data>
   <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">
-    <value>Configuration keyword is not supported on ARM64 processors.</value>
+    <value>ARM64 프로세서에서는 구성 키워드를 지원하지 않습니다.</value>
   </data>
 </root>

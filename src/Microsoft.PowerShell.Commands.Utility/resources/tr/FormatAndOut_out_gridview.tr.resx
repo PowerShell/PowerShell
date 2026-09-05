@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DataNotQualifiedForGridView" xml:space="preserve">
-    <value>The data format is not supported by Out-GridView.</value>
+    <value>Veri biçimi Out-GridView tarafından desteklenmiyor.</value>
   </data>
   <data name="RestartPowerShell" xml:space="preserve">
-    <value>Microsoft .NET Framework 4.5 was installed while one or more PowerShell sessions were running. To use the {0} cmdlet, close all PowerShell windows, and then open a new PowerShell window.</value>
+    <value>Microsoft .NET Framework 4.5, bir veya daha fazla windows PowerShell oturumu çalışırken yüklendi. {0} cmdlet'ini kullanmak için tüm windows PowerShell pencerelerini kapatın ve ardından yeni bir windows PowerShell penceresi açın.</value>
   </data>
   <data name="TypeColumnName" xml:space="preserve">
-    <value>Type</value>
+    <value>Tür</value>
   </data>
   <data name="ValueColumnName" xml:space="preserve">
     <value>Değer</value>
   </data>
   <data name="IndexColumnName" xml:space="preserve">
-    <value>Index</value>
+    <value>Dizin</value>
   </data>
   <data name="CommandNotFound" xml:space="preserve">
-    <value>A command named '{0}' was not found.</value>
+    <value>‘{0}' adlı bir komut bulunamadı.</value>
   </data>
   <data name="MoreThanOneCommand" xml:space="preserve">
-    <value>More than one command named '{0}' was found. Start '{1}' with no parameters, and then type '{0}' to filter the results.</value>
+    <value>‘{0}' adlı birden fazla komut bulundu. Sonuçları filtrelemek için önce '{1}' ile hiçbir parametre olmadan başlatın, ardından '{0}' yazın.</value>
   </data>
   <data name="CannotWriteToConsoleInputBuffer" xml:space="preserve">
-    <value>Cannot write to console input buffer.</value>
+    <value>Konsola giriş arabelleğine yazılamıyor.</value>
   </data>
   <data name="PropertyValidate" xml:space="preserve">
-    <value>{0} should be smaller than {1}.</value>
+    <value>{0}, {1} değerinden küçük olmalıdır.</value>
     <comment>{0} is the property "Height"
 {1} is the maximum allowed value for the height property.</comment>
   </data>

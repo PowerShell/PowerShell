@@ -118,36 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidIdGetHistory" xml:space="preserve">
-    <value>The identifier {0} is not a valid value for a History identifier. Specify a positive number, and then try again.</value>
+    <value>El identificador {0} no es un valor válido para un identificador de historial. Especifique un número positivo e inténtelo de nuevo.</value>
   </data>
   <data name="NoHistoryForId" xml:space="preserve">
-    <value>Cannot locate the history for Id {0}.</value>
+    <value>No se puede localizar el historial del Id {0}.</value>
   </data>
   <data name="NoCountWithMultipleIds" xml:space="preserve">
-    <value>The count cannot be combined with multiple Ids.</value>
+    <value>El recuento no se puede combinar con varios identificadores.</value>
   </data>
   <data name="NoHistoryForCommandline" xml:space="preserve">
-    <value>Cannot locate the history for command line {0}.</value>
+    <value>No se encuentra el historial de la línea de comandos {0}.</value>
   </data>
   <data name="NoLastHistoryEntryFound" xml:space="preserve">
-    <value>Cannot locate most recent history.</value>
+    <value>No se encuentra el historial más reciente.</value>
   </data>
   <data name="InvokeHistoryLoopDetected" xml:space="preserve">
-    <value>The Invoke-History cmdlet is called repeatedly, in a loop.</value>
+    <value>El cmdlet Invoke-History se llama repetidamente, en un bucle.</value>
   </data>
   <data name="InvokeHistoryMultipleCommandsError" xml:space="preserve">
-    <value>Cannot process multiple history commands. You can only run a single command by using Invoke-History.</value>
+    <value>No se pueden procesar varios comandos de historial. Solo puede ejecutar un único comando mediante Invoke-History.</value>
   </data>
   <data name="AddHistoryInvalidInput" xml:space="preserve">
-    <value>Cannot add history because the input object has a format that is not valid.</value>
+    <value>No se puede agregar el historial porque el objeto de entrada tiene un formato no válido.</value>
   </data>
   <data name="InvalidCountValue" xml:space="preserve">
-    <value>The identifier {0} is not valid. Specify a positive number, and then try again.</value>
+    <value>El identificador {0} no es válido. Especifique un número positivo e inténtelo de nuevo.</value>
   </data>
   <data name="ClearHistoryWarning" xml:space="preserve">
-    <value>This command will clear all the entries from the session history.</value>
+    <value>Este comando borrará todas las entradas del historial de sesiones.</value>
   </data>
   <data name="NoCountWithMultipleCmdLine" xml:space="preserve">
-    <value>The count cannot be combined with multiple CommandLine parameters.</value>
+    <value>El recuento no se puede combinar con varios parámetros CommandLine.</value>
   </data>
 </root>

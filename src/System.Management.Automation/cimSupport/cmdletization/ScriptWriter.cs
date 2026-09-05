@@ -29,36 +29,36 @@ namespace Microsoft.PowerShell.Cmdletization
 
         static ScriptWriter()
         {
-            //
-            // XmlReaderSettings
-            //
-            ScriptWriter.s_xmlReaderSettings = new XmlReaderSettings();
-            // general settings
-            ScriptWriter.s_xmlReaderSettings.CheckCharacters = true;
-            ScriptWriter.s_xmlReaderSettings.CloseInput = false;
-            ScriptWriter.s_xmlReaderSettings.ConformanceLevel = ConformanceLevel.Document;
-            ScriptWriter.s_xmlReaderSettings.IgnoreComments = true;
-            ScriptWriter.s_xmlReaderSettings.IgnoreProcessingInstructions = true;
-            ScriptWriter.s_xmlReaderSettings.IgnoreWhitespace = false;
-            ScriptWriter.s_xmlReaderSettings.MaxCharactersFromEntities = 16384; // generous guess for the upper bound
-            ScriptWriter.s_xmlReaderSettings.MaxCharactersInDocument = 128 * 1024 * 1024; // generous guess for the upper bound
+            s_xmlReaderSettings = new XmlReaderSettings()
+            {
+                CheckCharacters = true,
+                CloseInput = false,
+                ConformanceLevel = ConformanceLevel.Document,
+                IgnoreComments = true,
+                IgnoreProcessingInstructions = true,
+                IgnoreWhitespace = false,
 
-#if CORECLR // The XML Schema file 'cmdlets-over-objects.xsd' is missing in Github, and it's likely the resource string
-            // 'CmdletizationCoreResources.Xml_cmdletsOverObjectsXsd' needs to be reworked to work in .NET Core.
-            ScriptWriter.s_xmlReaderSettings.DtdProcessing = DtdProcessing.Ignore;
-#else
-            ScriptWriter.s_xmlReaderSettings.DtdProcessing = DtdProcessing.Parse; // Allowing DTD parsing with limits of MaxCharactersFromEntities/MaxCharactersInDocument
-            ScriptWriter.s_xmlReaderSettings.XmlResolver = null; // do not fetch external documents
-            // xsd schema related settings
-            ScriptWriter.s_xmlReaderSettings.ValidationFlags = XmlSchemaValidationFlags.ProcessIdentityConstraints |
-                                                XmlSchemaValidationFlags.ReportValidationWarnings;
-            ScriptWriter.s_xmlReaderSettings.ValidationType = ValidationType.Schema;
-            string cmdletizationXsd = CmdletizationCoreResources.Xml_cmdletsOverObjectsXsd;
-            XmlReader cmdletizationSchemaReader = XmlReader.Create(new StringReader(cmdletizationXsd), ScriptWriter.s_xmlReaderSettings);
-            ScriptWriter.s_xmlReaderSettings.Schemas = new XmlSchemaSet();
-            ScriptWriter.s_xmlReaderSettings.Schemas.Add(null, cmdletizationSchemaReader);
-            ScriptWriter.s_xmlReaderSettings.Schemas.XmlResolver = null; // do not fetch external documents
-#endif
+                // Generous guess for the upper bound.
+                MaxCharactersFromEntities = 16384,
+                // Generous guess for the upper bound.
+                MaxCharactersInDocument = 128 * 1024 * 1024,
+
+                // Allowing DTD parsing with limits of MaxCharactersFromEntities/MaxCharactersInDocument.
+                DtdProcessing = DtdProcessing.Parse,
+                // Do not fetch external documents
+                XmlResolver = null,
+
+                // xsd schema related settings
+                ValidationFlags = XmlSchemaValidationFlags.ProcessIdentityConstraints | XmlSchemaValidationFlags.ReportValidationWarnings,
+                ValidationType = ValidationType.Schema,
+            };
+
+            using Stream xsdStream = typeof(ScriptWriter).Assembly.GetManifestResourceStream("cmdlets-over-objects.xsd");
+            XmlReader cmdletizationSchemaReader = XmlReader.Create(xsdStream, s_xmlReaderSettings);
+
+            s_xmlReaderSettings.Schemas = new XmlSchemaSet();
+            s_xmlReaderSettings.Schemas.Add(null, cmdletizationSchemaReader);
+            s_xmlReaderSettings.Schemas.XmlResolver = null; // do not fetch external documents
         }
 
         #endregion Static code reused for reading cmdletization xml

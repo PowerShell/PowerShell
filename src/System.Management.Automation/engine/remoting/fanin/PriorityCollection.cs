@@ -500,17 +500,46 @@ namespace System.Management.Automation.Remoting
                     }
 
                     int totalLengthOfFragment = 0;
+                    int totalSizeToBeReceived = 0;
 
                     try
                     {
                         totalLengthOfFragment = checked(FragmentedRemoteObject.HeaderLength + blobLength);
                     }
-                    catch (System.OverflowException)
+                    catch (OverflowException)
                     {
                         s_baseTracer.WriteLine("Fragment too big.");
                         ResetReceiveData();
                         PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIsTooBig);
                         throw e;
+                    }
+
+                    // Ensure object size limit is not reached
+                    if (_maxReceivedObjectSize.HasValue)
+                    {
+                        totalSizeToBeReceived = unchecked(_totalReceivedObjectSizeSoFar + totalLengthOfFragment);
+                        if (totalSizeToBeReceived < 0 || totalSizeToBeReceived > _maxReceivedObjectSize.Value)
+                        {
+                            s_baseTracer.WriteLine("ObjectSize > MaxReceivedObjectSize. ObjectSize is {0}. MaxReceivedObjectSize is {1}",
+                                totalSizeToBeReceived, _maxReceivedObjectSize);
+                            PSRemotingTransportException e = null;
+
+                            if (_isCreateByClientTM)
+                            {
+                                e = new PSRemotingTransportException(PSRemotingErrorId.ReceivedObjectSizeExceededMaximumClient,
+                                    RemotingErrorIdStrings.ReceivedObjectSizeExceededMaximumClient,
+                                      totalSizeToBeReceived, _maxReceivedObjectSize);
+                            }
+                            else
+                            {
+                                e = new PSRemotingTransportException(PSRemotingErrorId.ReceivedObjectSizeExceededMaximumServer,
+                                    RemotingErrorIdStrings.ReceivedObjectSizeExceededMaximumServer,
+                                      totalSizeToBeReceived, _maxReceivedObjectSize);
+                            }
+
+                            ResetReceiveData();
+                            throw e;
+                        }
                     }
 
                     if (_pendingDataStream.Length < totalLengthOfFragment)
@@ -520,32 +549,10 @@ namespace System.Management.Automation.Remoting
                         return;
                     }
 
-                    // ensure object size limit is not reached
+                    // Update the real object size we received so far only when we have received the complete fragment.
                     if (_maxReceivedObjectSize.HasValue)
                     {
-                        _totalReceivedObjectSizeSoFar = unchecked(_totalReceivedObjectSizeSoFar + totalLengthOfFragment);
-                        if ((_totalReceivedObjectSizeSoFar < 0) || (_totalReceivedObjectSizeSoFar > _maxReceivedObjectSize.Value))
-                        {
-                            s_baseTracer.WriteLine("ObjectSize > MaxReceivedObjectSize. ObjectSize is {0}. MaxReceivedObjectSize is {1}",
-                                _totalReceivedObjectSizeSoFar, _maxReceivedObjectSize);
-                            PSRemotingTransportException e = null;
-
-                            if (_isCreateByClientTM)
-                            {
-                                e = new PSRemotingTransportException(PSRemotingErrorId.ReceivedObjectSizeExceededMaximumClient,
-                                    RemotingErrorIdStrings.ReceivedObjectSizeExceededMaximumClient,
-                                      _totalReceivedObjectSizeSoFar, _maxReceivedObjectSize);
-                            }
-                            else
-                            {
-                                e = new PSRemotingTransportException(PSRemotingErrorId.ReceivedObjectSizeExceededMaximumServer,
-                                    RemotingErrorIdStrings.ReceivedObjectSizeExceededMaximumServer,
-                                      _totalReceivedObjectSizeSoFar, _maxReceivedObjectSize);
-                            }
-
-                            ResetReceiveData();
-                            throw e;
-                        }
+                        _totalReceivedObjectSizeSoFar = totalSizeToBeReceived;
                     }
 
                     // appears like stream doesn't have individual position marker for read and write

@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoPingResult" xml:space="preserve">
-    <value>Testing connection to computer '{0}' failed: {1}</value>
+    <value>Le test de connexion à l’ordinateur « {0} » a échoué : {1}</value>
   </data>
   <data name="CannotResolveTargetName" xml:space="preserve">
-    <value>Cannot resolve the target name.</value>
+    <value>Impossible de résoudre le nom cible.</value>
   </data>
   <data name="TargetAddressAbsent" xml:space="preserve">
-    <value>Target IPv4/IPv6 address absent.</value>
+    <value>Adresse IPv4/IPv6 cible absente.</value>
   </data>
   <data name="MaxHopsExceeded" xml:space="preserve">
-    <value>Cannot complete traceroute to destination '{0}': Number of hops required to reach host exceeds MaxHops ({1}).</value>
+    <value>Impossible d’effectuer le traceroute vers la destination « {0} » : le nombre de sauts requis pour atteindre l’hôte dépasse MaxHops ({1}).</value>
   </data>
 </root>

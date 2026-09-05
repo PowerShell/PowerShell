@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TranscriptionStarted" xml:space="preserve">
-    <value>Transcript started, output file is {0}</value>
+    <value>Transkript başlatıldı, çıkış dosyası {0}</value>
   </data>
   <data name="TranscriptionStopped" xml:space="preserve">
-    <value>Transcript stopped, output file is {0}</value>
+    <value>Transkript durduruldu, çıkış dosyası {0}</value>
   </data>
   <data name="CannotStartTranscription" xml:space="preserve">
-    <value>Transcription cannot be started due to the error: {0}</value>
+    <value>Şu hata nedeniyle transkripsiyon başlatılamadı: {0}</value>
   </data>
   <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>The current provider ({0}) cannot open a file.</value>
+    <value>Geçerli sağlayıcı ({0}) bir dosyayı açamıyor.</value>
   </data>
   <data name="TranscriptFileReadOnly" xml:space="preserve">
-    <value>File {0} is read-only. Cannot write to this file. "Start-Transcript -Force" will clear the read-only attribute.</value>
+    <value>{0} dosyası salt okunur. Bu dosyaya yazılamaz. "Start-Transcript -Force" salt okunur özniteliğini temizler.</value>
   </data>
   <data name="MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>Yol birden fazla dosyaya çözümlendiği için işlem gerçekleştirilemiyor. Bu komut birden fazla dosya üzerinde çalışamaz.</value>
   </data>
   <data name="TranscriptFileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>Dosya {0} zaten var ve {1} belirtildi.</value>
   </data>
   <data name="ErrorStoppingTranscript" xml:space="preserve">
-    <value>An error occurred stopping transcription: {0}</value>
+    <value>Transkripsiyon durdurulurken bir hata oluştu: {0}</value>
   </data>
 </root>

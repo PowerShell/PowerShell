@@ -118,36 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BadMonadVersion" xml:space="preserve">
-    <value>Incorrect PowerShell version {0}. PowerShell version {1} is supported on this computer.</value>
+    <value>Nieprawidłowa wersja programu PowerShell {0}. Wersja {1} programu PowerShell jest obsługiwana na tym komputerze.</value>
   </data>
   <data name="ConsoleLoadFailure" xml:space="preserve">
-    <value>The following errors occurred when loading console {0}: {1}</value>
+    <value>Podczas ładowania konsoli {0}wystąpiły następujące błędy: {1}</value>
   </data>
   <data name="PSSnapInLoadFailure" xml:space="preserve">
-    <value>Cannot load PowerShell snap-in {0} because of the following error: {1}</value>
+    <value>Nie można załadować przystawki {0} programu PowerShell z powodu następującego błędu: {1}</value>
   </data>
   <data name="PSSnapInLoadWarning" xml:space="preserve">
-    <value>PowerShell snap-in "{0}" loaded with the following warnings: {1}</value>
+    <value>Załadowano przystawkę programu PowerShell „{0}” z następującymi ostrzeżeniami: {1}</value>
   </data>
   <data name="PSSnapInAssemblyNameMismatch" xml:space="preserve">
-    <value>The PowerShell snap-in module {0} does not have the required PowerShell snap-in strong name {1}.</value>
+    <value>Moduł {0} przystawki programu PowerShell nie ma wymaganej silnej nazwy {1}przystawki programu PowerShell.</value>
   </data>
   <data name="PSSnapInDuplicateCmdlets" xml:space="preserve">
-    <value>The cmdlet '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
+    <value>Polecenie cmdlet „{0}” nie powinno występować więcej niż raz w przystawce programu PowerShell „{1}”.</value>
   </data>
   <data name="PSSnapInDuplicateProviders" xml:space="preserve">
-    <value>PowerShell provider '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
+    <value>Dostawca programu PowerShell „{0}” nie powinien występować więcej niż raz w przystawce programu PowerShell „{1}”.</value>
   </data>
   <data name="AddPSSnapInBadMonadVersion" xml:space="preserve">
-    <value>PowerShell {0} is not supported in the current console. PowerShell {1} is supported in the current console.</value>
+    <value>Program PowerShell {0} nie jest obsługiwany w bieżącej konsoli. Program PowerShell {1} jest obsługiwany w bieżącej konsoli.</value>
   </data>
   <data name="FileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>Plik {0} już istnieje i określono {1}.</value>
   </data>
   <data name="ConfigurationFileDoesNotExist" xml:space="preserve">
-    <value>The provided configuration file '{0}' does not exist.</value>
+    <value>Podany plik konfiguracji „{0}” nie istnieje.</value>
   </data>
   <data name="NotConfigurationFile" xml:space="preserve">
-    <value>The provided configuration file '{0}' must have a .pssc file extension.</value>
+    <value>Podany plik konfiguracji „{0}” musi mieć rozszerzenie pliku .pssc.</value>
   </data>
 </root>

@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="RenamingMultipleResults" xml:space="preserve">
-    <value>Cannot rename multiple results.</value>
+    <value>Birden çok sonuç yeniden adlandırılamıyor.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>Property "{0}" cannot be found.</value>
+    <value>"{0}" özelliği bulunamadı.</value>
   </data>
   <data name="MutlipleExpandProperties" xml:space="preserve">
-    <value>Multiple properties cannot be expanded.</value>
+    <value>Birden çok özellik genişletilemiyor.</value>
   </data>
   <data name="AlreadyExistingProperty" xml:space="preserve">
-    <value>The property cannot be processed because the property "{0}" already exists.</value>
+    <value>"{0}" özelliği zaten mevcut olduğu için özellik işlenemiyor.</value>
   </data>
   <data name="EmptyScriptBlockAndNoName" xml:space="preserve">
-    <value>A property is an empty script block and does not provide a name.</value>
+    <value>Özellik, boş bir betik bloğudur ve ad sağlamaz.</value>
   </data>
 </root>

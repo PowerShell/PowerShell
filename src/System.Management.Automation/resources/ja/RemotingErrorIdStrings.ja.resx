@@ -118,819 +118,819 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DefaultRemotingExceptionMessage" xml:space="preserve">
-    <value>An error of type "{0}" has occurred.</value>
+    <value>"{0}" の種類のエラーが発生しました。</value>
   </data>
   <data name="OutOfMemory" xml:space="preserve">
-    <value>Out of process memory.</value>
+    <value>プロセスメモリが不足しています。</value>
   </data>
   <data name="UnsupportedOSForRemoteEnumeration" xml:space="preserve">
-    <value>Remote PSSession enumeration with -ComputerName is only supported on Windows and not "{0}".</value>
+    <value>-ComputerName を使用したリモート PSSession 列挙型は、Windows でのみサポートされ、"{0}" ではサポートされません。</value>
   </data>
   <data name="PipelineIdsDoNotMatch" xml:space="preserve">
-    <value>Pipeline ID "{0}" does not match the InstanceId of the pipeline that is currently running, "{1}".</value>
+    <value>パイプライン ID "{0}" が、現在実行中のパイプラインの InstanceId "{1}" と一致しません。</value>
   </data>
   <data name="PipelineNotFoundOnServer" xml:space="preserve">
-    <value>Pipeline Id "{0}" was not found on the server.</value>
+    <value>パイプライン ID "{0}" がサーバーで見つかりませんでした。</value>
   </data>
   <data name="PipelineStopped" xml:space="preserve">
-    <value>The remote pipeline has been stopped.</value>
+    <value>リモート パイプラインが停止しました。</value>
   </data>
   <data name="RunspaceAlreadyExists" xml:space="preserve">
-    <value>The session already exists. Trying to create the session again with the same InstanceId {0} is not allowed.</value>
+    <value>セッションが既に存在します。同じ InstanceId {0} でセッションを再度作成することは許可されていません。</value>
   </data>
   <data name="RunspaceIdsDoNotMatch" xml:space="preserve">
-    <value>The specified client session InstanceId "{0}" does not match the existing session's InstanceId "{1}".</value>
+    <value>指定されたクライアント セッション InstanceId "{0}" が、既存のセッションの InstanceId "{1}" と一致しません。</value>
   </data>
   <data name="RemoteRunspaceOpenFailed" xml:space="preserve">
-    <value>Opening the remote session failed.</value>
+    <value>リモート セッションを開くことができませんでした。</value>
   </data>
   <data name="RunspaceCannotBeFound" xml:space="preserve">
-    <value>The specified remote session with a client InstanceId of "{0}" cannot be found.</value>
+    <value>クライアント InstanceId が "{0}" の指定されたリモート セッションが見つかりません。</value>
   </data>
   <data name="ResponsePromptIdCannotBeFound" xml:space="preserve">
-    <value>Prompt response has a prompt id "{0}" that cannot be found.</value>
+    <value>プロンプト応答に、見つからないプロンプト ID "{0}" があります。</value>
   </data>
   <data name="RemoteHostCallFailed" xml:space="preserve">
-    <value>Remote host call to "{0}" failed.</value>
+    <value>"{0}" へのリモート ホスト呼び出しに失敗しました。</value>
   </data>
   <data name="RemoteHostMethodNotImplemented" xml:space="preserve">
-    <value>Remote host method {0} is not implemented.</value>
+    <value>リモート ホスト メソッド {0} は実装されていません。</value>
   </data>
   <data name="RemoteHostDataEncodingNotSupported" xml:space="preserve">
-    <value>Remote host method data encoding is not supported for type {0}.</value>
+    <value>リモート ホスト メソッドのデータ エンコードは、型 {0}ではサポートされていません。</value>
   </data>
   <data name="RemoteHostDataDecodingNotSupported" xml:space="preserve">
-    <value>Remote host method data decoding is not supported for type {0}.</value>
+    <value>リモート ホスト メソッドのデータ デコードは、型 {0} ではサポートされていません。</value>
   </data>
   <data name="NestedPipelineNotSupported" xml:space="preserve">
-    <value>Creation of nested pipelines is not supported.</value>
+    <value>入れ子になったパイプラインの作成はサポートされていません。</value>
   </data>
   <data name="RelativeUriForRunspacePathNotSupported" xml:space="preserve">
-    <value>Relative URIs are not supported in the creation of remote sessions.</value>
+    <value>相対 URI は、リモート セッションの作成ではサポートされていません。</value>
   </data>
   <data name="RemoteHostDecodingFailed" xml:space="preserve">
-    <value>A failure occurred while decoding data from the remote host. There was an error in the network data.</value>
+    <value>リモート ホストからのデータのデコード中にエラーが発生しました。ネットワーク データにエラーが発生しました。</value>
   </data>
   <data name="MustBeAdminToOverrideThreadOptions" xml:space="preserve">
-    <value>Only administrators can override the Thread Options remotely.</value>
+    <value>スレッド オプションをリモートでオーバーライドできるのは管理者だけです。</value>
   </data>
   <data name="RemoteHostPromptForCredentialModifiedCaption" xml:space="preserve">
-    <value>PowerShell Credential Request: {0}</value>
+    <value>PowerShell 資格情報の要求: {0}</value>
   </data>
   <data name="RemoteHostPromptForCredentialModifiedMessage" xml:space="preserve">
-    <value>Warning: A script or application on the remote computer {0} is requesting your credentials. Enter your credentials only if you trust the remote computer and the application or script that is requesting them.
+    <value>警告: リモート コンピューター {0} 上のスクリプトまたはアプリケーションが資格情報を要求しています。リモート コンピューターと、それらを要求するアプリケーションまたはスクリプトを信頼する場合にのみ、資格情報を入力してください。
 
 {1}</value>
   </data>
   <data name="RemoteHostReadLineAsSecureStringPrompt" xml:space="preserve">
-    <value>A script or application on the remote computer {0} is asking to read a line securely. Enter sensitive information, such as your credentials, only if you trust the remote computer and the application or script that is requesting it.</value>
+    <value>リモート コンピューター {0} 上のスクリプトまたはアプリケーションが行を安全に読み取るように求めています。リモート コンピューターと、それを要求するアプリケーションまたはスクリプトを信頼する場合にのみ、資格情報などの機密情報を入力してください。</value>
   </data>
   <data name="RemoteHostGetBufferContents" xml:space="preserve">
-    <value>A script or application on the remote computer {0} is attempting to read the buffer contents on the PowerShell host. For security reasons, this is not allowed; the call has been suppressed.</value>
+    <value>リモート コンピューター {0} 上のスクリプトまたはアプリケーションが PowerShell ホスト上のバッファーの内容を読み取ろうとしています。セキュリティ上の理由から、これは許可されていません。呼び出しが抑制されました。</value>
   </data>
   <data name="RemoteHostPromptSecureStringPrompt" xml:space="preserve">
-    <value>A script or application on the remote computer {0} is sending a prompt request. When you are prompted, enter sensitive information, such as credentials or passwords, only if you trust the remote computer and the application or script that is requesting the data.</value>
+    <value>リモート コンピューター {0} 上のスクリプトまたはアプリケーションがプロンプト要求を送信しています。プロンプトが表示されたら、リモート コンピューターとデータを要求するアプリケーションまたはスクリプトを信頼する場合にのみ、資格情報やパスワードなどの機密情報を入力してください。</value>
   </data>
   <data name="ReceivedUnsupportedRemoteHostCall" xml:space="preserve">
-    <value>Received unsupported remote host call: {0}.</value>
+    <value>サポートされていないリモート ホスト呼び出しを受信しました: {0}。</value>
   </data>
   <data name="ReceivedUnsupportedAction" xml:space="preserve">
-    <value>Received remoting data with unsupported action: {0}.</value>
+    <value>サポートされていないアクションでリモート処理データを受信しました: {0}。</value>
   </data>
   <data name="ReceivedUnsupportedDataType" xml:space="preserve">
-    <value>Received remoting data with unsupported data type: {0}.</value>
+    <value>サポートされていないデータ型でリモート処理データを受信しました: {0}。</value>
   </data>
   <data name="MissingDestination" xml:space="preserve">
-    <value>Remoting data is missing the destination property.</value>
+    <value>リモート処理データに destination プロパティがありません。</value>
   </data>
   <data name="MissingTarget" xml:space="preserve">
-    <value>Remoting data is missing target interface property.</value>
+    <value>リモート処理データにターゲット インターフェイス プロパティがありません。</value>
   </data>
   <data name="MissingRunspaceId" xml:space="preserve">
-    <value>Remoting data is missing Session InstanceId property.</value>
+    <value>リモート処理データに Session InstanceId プロパティがありません。</value>
   </data>
   <data name="MissingDataType" xml:space="preserve">
-    <value>Remoting data is missing RemotingDataType property.</value>
+    <value>リモート処理データに RemotingDataType プロパティがありません。</value>
   </data>
   <data name="MissingCallId" xml:space="preserve">
-    <value>Remoting data is missing CallId property.</value>
+    <value>リモート処理データに CallId プロパティがありません。</value>
   </data>
   <data name="MissingMethodName" xml:space="preserve">
-    <value>Remoting data is missing MethodName property.</value>
+    <value>リモート処理データに MethodName プロパティがありません。</value>
   </data>
   <data name="MissingIsStartFragment" xml:space="preserve">
-    <value>The IsStartFragment flag for the first fragment is not set.</value>
+    <value>最初のフラグメントに IsStartFragment フラグが設定されていません。</value>
   </data>
   <data name="MissingProperty" xml:space="preserve">
-    <value>Remoting data is missing {0} property.</value>
+    <value>リモート処理データにプロパティ {0} がありません。</value>
   </data>
   <data name="ObjectIdsNotMatching" xml:space="preserve">
-    <value>Unexpected ObjectId received. This can happen if the fragments are not properly constructed by the remote computer, or the data might have been corrupted or changed.</value>
+    <value>予期しない ObjectId を受信しました。これは、フラグメントがリモート コンピューターによって適切に構築されていない場合、またはデータが破損または変更された場合に発生する可能性があります。</value>
   </data>
   <data name="ObjectIdCannotBeLessThanZero" xml:space="preserve">
-    <value>ObjectId cannot be less than or equal to 0. This can happen if the fragments are not properly constructed by the remote computer, or the data has been changed by unauthorized users.</value>
+    <value>ObjectId を 0 以下にすることはできません。これは、フラグメントがリモート コンピューターによって適切に構築されていないか、承認されていないユーザーによってデータが変更された場合に発生する可能性があります。</value>
   </data>
   <data name="FragmentIdsNotInSequence" xml:space="preserve">
-    <value>The FragmentIDs of the same object must be in sequence, incrementally changing by 1. This can happen if the fragments are not properly constructed by the remote computer. The data might also have been corrupted or changed.</value>
+    <value>同じオブジェクトの FragmentID は、順番に 1 ずつ増分的に変更する必要があります。これは、フラグメントがリモート コンピューターによって適切に構築されていない場合に発生する可能性があります。データが破損または変更された可能性もあります。</value>
   </data>
   <data name="ObjectIsTooBig" xml:space="preserve">
-    <value>Remoting data is too large to be reassembled from the fragments. This can happen if the length of the data in a fragment is greater than Int32.Max. It can also occur if the data was changed by unauthorized users.</value>
+    <value>リモート処理データが大きすぎてフラグメントから再構築できません。これは、フラグメント内のデータの長さが Int32.Max より大きい場合に発生する可能性があります。また、承認されていないユーザーによってデータが変更された場合にも発生する可能性があります。</value>
   </data>
   <data name="MissingIsEndFragment" xml:space="preserve">
-    <value>The IsEndFragment flag is not set for the last fragment. This can happen if the fragments are not properly constructed by the remote computer, or if the data was corrupted or changed.</value>
+    <value>IsEndFragment フラグが最後のフラグメントに設定されていません。これは、フラグメントがリモート コンピューターによって適切に構築されていない場合、またはデータが破損または変更された場合に発生する可能性があります。</value>
   </data>
   <data name="DeserializedObjectIsNull" xml:space="preserve">
-    <value>Deserialized remoting data is null.</value>
+    <value>逆シリアル化されたリモート処理データが null です。</value>
   </data>
   <data name="BlobLengthNotInRange" xml:space="preserve">
-    <value>Fragment blob length is out of range: {0}</value>
+    <value>フラグメント BLOB の長さが範囲外です: {0}</value>
   </data>
   <data name="DecodingErrorForErrorRecord" xml:space="preserve">
-    <value>Error in decoding ErrorRecord.</value>
+    <value>ErrorRecord のデコード中にエラーが発生しました。</value>
   </data>
   <data name="DecodingErrorForPipelineStateInfo" xml:space="preserve">
-    <value>Error in decoding PipelineStateInfo.</value>
+    <value>PipelineStateInfo のデコード中にエラーが発生しました。</value>
   </data>
   <data name="DecodingErrorForRunspaceStateInfo" xml:space="preserve">
-    <value>Error in decoding RunspaceStateInfo.</value>
+    <value>RunspaceStateInfo のデコード中にエラーが発生しました。</value>
   </data>
   <data name="ReceivedUnsupportedRemotingTargetInterfaceType" xml:space="preserve">
-    <value>Received unsupported RemotingTargetInterface type: {0}</value>
+    <value>サポートされていない RemotingTargetInterface の種類を受信しました: {0}</value>
   </data>
   <data name="UnknownTargetClass" xml:space="preserve">
-    <value>Remote host method was invoked on an unknown target class: {0}</value>
+    <value>不明なターゲット クラスでリモート ホスト メソッドが呼び出されました: {0}</value>
   </data>
   <data name="MissingTargetClass" xml:space="preserve">
-    <value>Remote host method was invoked without specifying a target class.</value>
+    <value>ターゲット クラスを指定せずにリモート ホスト メソッドが呼び出されました。</value>
   </data>
   <data name="DecodingErrorForRunspacePoolStateInfo" xml:space="preserve">
-    <value>Error in decoding RunspacePoolStateInfo.</value>
+    <value>RunspacePoolStateInfo のデコード中にエラーが発生しました。</value>
   </data>
   <data name="DecodingErrorForMinRunspaces" xml:space="preserve">
-    <value>Error in decoding Minimum runspaces.</value>
+    <value>最小実行空間のデコード中にエラーが発生しました。</value>
   </data>
   <data name="DecodingErrorForMaxRunspaces" xml:space="preserve">
-    <value>Error in decoding Maximum runspaces.</value>
+    <value>最大実行空間のデコード中にエラーが発生しました。</value>
   </data>
   <data name="DecodingErrorForPowerShellStateInfo" xml:space="preserve">
-    <value>Error in decoding PowerShellStateInfo.</value>
+    <value>PowerShellStateInfo のデコード中にエラーが発生しました。</value>
   </data>
   <data name="CantCastPropertyToExpectedType" xml:space="preserve">
-    <value>Unexpected type of {0} property (expected {1}, got {2}).</value>
+    <value>予期しない型の {0} プロパティです ({1} が必要ですが、{2} を取得しました)。</value>
   </data>
   <data name="CantCastRemotingDataToPSObject" xml:space="preserve">
-    <value>Unexpected type of remoting data (expected PSObject, got {0}).</value>
+    <value>リモート処理データの型が予期しないものでした (PSObject が必要ですが、{0} でした)。</value>
   </data>
   <data name="CantCastCommandToPSObject" xml:space="preserve">
-    <value>Unexpected type of encoded command (expected PSObject, got {0}).</value>
+    <value>エンコードされたコマンドの型が予期しないものです (PSObject が必要ですが、{0} でした)。</value>
   </data>
   <data name="CantCastParameterToPSObject" xml:space="preserve">
-    <value>Unexpected type of encoded command parameter (expected PSObject, got {0}).</value>
+    <value>エンコードされたコマンド パラメーターの型が予期しないものです (PSObject が必要ですが、{0} でした)。</value>
   </data>
   <data name="NotEnoughHeaderForRemoteDataObject" xml:space="preserve">
-    <value>An error occurred while decoding data received from the remote computer. At least {0} bytes of data are required to decode a deserialized object that is received from a remote computer. This can happen if the fragments are not properly constructed by the remote computer, or if the data was corrupted or changed.</value>
+    <value>リモート コンピューターから受信したデータのデコード中にエラーが発生しました。リモート コンピューターから受信した逆シリアル化されたオブジェクトをデコードするには、少なくとも {0} バイトのデータが必要です。これは、フラグメントがリモート コンピューターによって適切に構築されていない場合、またはデータが破損または変更された場合に発生する可能性があります。</value>
   </data>
   <data name="RemotingDestinationNotForMe" xml:space="preserve">
-    <value>Received packet not destined for logged-on user: user = {0}, packet destination = {1}.</value>
+    <value>ログオン ユーザー宛てではないパケットを受信しました: ユーザー = {0}、パケット送信先 = {1}。</value>
   </data>
   <data name="ClientNegotiationTimeout" xml:space="preserve">
-    <value>The client negotiation timer has expired. The negotiation time-out interval is {0} milliseconds.</value>
+    <value>クライアントのネゴシエーション タイマーの有効期限が切れました。ネゴシエーション タイムアウト間隔は {0} ミリ秒です。</value>
   </data>
   <data name="ClientNegotiationFailed" xml:space="preserve">
-    <value>PowerShell client does not support the {0} {1} negotiated by the server. Make sure the server is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
+    <value>PowerShell クライアントは、サーバーによってネゴシエートされた {0} {1} をサポートしていません。サーバーがビルド {2} および PowerShell のプロトコル バージョン {3} と互換性があることを確認します。</value>
   </data>
   <data name="ClientNotFoundCapabilityProperties" xml:space="preserve">
-    <value>{0}. Negotiation with the server failed. Make sure the server is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>{0}。サーバーとのネゴシエーションに失敗しました。クライアントがビルド {1} および PowerShell のプロトコル バージョン {2} と互換性があることを確認してください。</value>
   </data>
   <data name="ServerRequestedToCloseSession" xml:space="preserve">
-    <value>The destination server has sent a request to close the session.</value>
+    <value>宛先サーバーがセッションを閉じる要求を送信しました。</value>
   </data>
   <data name="ServerNegotiationFailed" xml:space="preserve">
-    <value>The server that is running PowerShell does not support the {0} {1} negotiated by the client computer. Verify that the client computer is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
+    <value>PowerShell を実行しているサーバーは、クライアント コンピューターによってネゴシエートされた {0} {1} をサポートしていません。クライアント コンピューターがビルド {2} および PowerShell のプロトコル バージョン {3} と互換性があることを確認してください。</value>
   </data>
   <data name="ServerConnectFailedOnNegotiation" xml:space="preserve">
-    <value>The server that is running PowerShell does not support connect operations on the {0} {1}  that is negotiated by the client computer. Make sure the client computer is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
+    <value>PowerShell を実行しているサーバーは、クライアント コンピューターによってネゴシエートされる {0} {1} に対する接続操作をサポートしていません。クライアント コンピューターがビルド {2} および PowerShell のプロトコル バージョン {3} と互換性があることを確認してください。</value>
   </data>
   <data name="ServerConnectFailedOnInputValidation" xml:space="preserve">
-    <value>The server that is running PowerShell cannot process the connect operation because the following information is not found or not valid: Client Capability information and Connect RunspacePool information.</value>
+    <value>PowerShell を実行しているサーバーは、次の情報が見つからないか無効であるため、接続操作を処理できません: クライアント機能情報と Connect RunspacePool 情報。</value>
   </data>
   <data name="ServerConnectFailedOnServerStateValidation" xml:space="preserve">
-    <value>The server that is running PowerShell cannot process the connect operation because the server has either not been started, or it is shutting down.</value>
+    <value>PowerShell を実行しているサーバーは、サーバーが起動されていないか、シャットダウン中のため、接続操作を処理できません。</value>
   </data>
   <data name="ServerConnectFailedOnMismatchedRunspacePoolProperties" xml:space="preserve">
-    <value>The server that is running PowerShell cannot process the connect operation because the server runspace pool properties did not match the client computer specified properties.</value>
+    <value>PowerShell を実行しているサーバーは、サーバーの実行空間プールのプロパティがクライアント コンピューターで指定されたプロパティと一致しなかったため、接続操作を処理できません。</value>
   </data>
   <data name="ServerNotFoundCapabilityProperties" xml:space="preserve">
-    <value>{0}. Negotiation with the client failed. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>{0}。クライアントとのネゴシエーションに失敗しました。クライアントがビルド {1} および PowerShell のプロトコル バージョン {2} と互換性があることを確認します。</value>
   </data>
   <data name="ServerNegotiationTimeout" xml:space="preserve">
-    <value>The server negotiation timer has expired. The negotiation time-out interval is {0} milliseconds.</value>
+    <value>サーバーのネゴシエーション タイマーの有効期限が切れました。ネゴシエーション タイムアウト間隔は {0} ミリ秒です。</value>
   </data>
   <data name="ClientRequestedToCloseSession" xml:space="preserve">
-    <value>The client computer has sent a request to close the session.</value>
+    <value>クライアント コンピューターがセッションを閉じる要求を送信しました。</value>
   </data>
   <data name="FatalErrorCausingClose" xml:space="preserve">
-    <value>An error has occurred which PowerShell cannot handle. A remote session might have ended.</value>
+    <value>PowerShell で処理できないエラーが発生しました。リモート セッションが終了した可能性があります。</value>
   </data>
   <data name="ClientKeyExchangeFailed" xml:space="preserve">
-    <value>The server did not respond with an encrypted session key within the specified time-out period.</value>
+    <value>サーバーは、指定されたタイムアウト期間内に暗号化されたセッション キーで応答しませんでした。</value>
   </data>
   <data name="ServerKeyExchangeFailed" xml:space="preserve">
-    <value>The client did not respond with a public key within the specified time-out period.</value>
+    <value>クライアントは、指定されたタイムアウト期間内に公開キーで応答しませんでした。</value>
   </data>
   <data name="ConnectFailed" xml:space="preserve">
-    <value>Connection attempt failed.</value>
+    <value>接続の試行が失敗しました。</value>
   </data>
   <data name="CloseIsCalled" xml:space="preserve">
-    <value>Attempting to close the session.</value>
+    <value>セッションを閉じようとしています。</value>
   </data>
   <data name="ForceClosed" xml:space="preserve">
-    <value>PowerShell cannot close the remote session properly. The session is in an undefined state because it was not opened or connected after being disconnected. PowerShell will try to force the session to close on the local computer, but the session might not be closed on the remote computer. To close a remote session properly, first open it or connect it.</value>
+    <value>PowerShell はリモート セッションを正しく閉じることができません。このセッションは、切断後に開かれなかったか、接続されていなかったため、未定義の状態です。PowerShell は、ローカル コンピューターでセッションを強制的に閉じようとしますが、リモート コンピューター上ではセッションが閉じられない可能性があります。リモート セッションを正しく閉じるには、まずリモート セッションを開くか、接続してください。</value>
   </data>
   <data name="CloseFailed" xml:space="preserve">
-    <value>Could not close the session.</value>
+    <value>セッションを閉じることができませんでした。</value>
   </data>
   <data name="CloseCompleted" xml:space="preserve">
-    <value>The session is closed.</value>
+    <value>セッションは閉じられています。</value>
   </data>
   <data name="UnsupportedWaitHandleType" xml:space="preserve">
-    <value>The Wait handle type "{0}" is not supported.</value>
+    <value>待機ハンドルの種類 "{0}" はサポートされていません。</value>
   </data>
   <data name="ReceivedDataStreamIsNotStdout" xml:space="preserve">
-    <value>Received data has a stream ID index of "{0}". Only a Standard Output stream ID index of "0" is supported.</value>
+    <value>受信データのストリーム ID インデックスは "{0}" です。サポートされている標準出力ストリーム ID インデックスは "0" のみです。</value>
   </data>
   <data name="StdInIsNotOpen" xml:space="preserve">
-    <value>The Standard Input handle is not open.</value>
+    <value>標準入力ハンドルが開いていません。</value>
   </data>
   <data name="NativeWriteFileFailed" xml:space="preserve">
-    <value>Native API call to WriteFile failed. Error code is {0}.</value>
+    <value>WriteFile へのネイティブ API 呼び出しに失敗しました。エラー コードは {0} です。</value>
   </data>
   <data name="NativeReadFileFailed" xml:space="preserve">
-    <value>Native API call to ReadFile failed. Error code is {0}.</value>
+    <value>ReadFile へのネイティブ API 呼び出しに失敗しました。エラー コードは {0} です。</value>
   </data>
   <data name="InvalidSchemeValue" xml:space="preserve">
-    <value>{0} is not a valid schema value. Valid values are "http" and "https".</value>
+    <value>{0} は有効なスキーマ値ではありません。有効な値は、'HTTP' と 'HTTPS' です。</value>
   </data>
   <data name="ClientReceiveFailed" xml:space="preserve">
-    <value>Client side receive call failed.</value>
+    <value>クライアント側の受信呼び出しに失敗しました。</value>
   </data>
   <data name="ClientSendFailed" xml:space="preserve">
-    <value>Client side send call failed.</value>
+    <value>クライアント側の送信呼び出しに失敗しました。</value>
   </data>
   <data name="CommandHandleIsNull" xml:space="preserve">
-    <value>The command handle returned from the WinRS API WSManRunShellCommand is null.</value>
+    <value>WinRS API WSManRunShellCommand から返されたコマンド ハンドルが null です。</value>
   </data>
   <data name="StdInCannotBeSetToNoWait" xml:space="preserve">
-    <value>The Standard Input handle cannot be set to the 'no wait' state. The system error code is {0}.</value>
+    <value>標準入力ハンドルを 'no wait' 状態に設定することはできません。システム エラー コードは {0} です。</value>
   </data>
   <data name="PortIsOutOfRange" xml:space="preserve">
-    <value>The port number {0} is not within the range of valid values. The range of valid values is between 1 and 65535.</value>
+    <value>ポート番号 {0} が有効な値の範囲内にありません。有効な値の範囲は 1 ~ 65535 です。</value>
   </data>
   <data name="ServerProcessExited" xml:space="preserve">
-    <value>The server process has exited.</value>
+    <value>サーバー プロセスは終了しました。</value>
   </data>
   <data name="CannotGetStdInHandle" xml:space="preserve">
-    <value>The call to Windows API GetStdHandle to get the Standard Input handle resulted in an error code: {0}.</value>
+    <value>標準入力ハンドルを取得するための Windows API GetStdHandle への呼び出しで、エラー コード: {0} が返されました。</value>
   </data>
   <data name="CannotGetStdOutHandle" xml:space="preserve">
-    <value>The call to Windows API GetStdHandle to get the Standard Output handle resulted in an error code: {0}.</value>
+    <value>標準出力ハンドルを取得するための Windows API GetStdHandle への呼び出しで、エラー コード: {0} が返されました。</value>
   </data>
   <data name="CannotGetStdErrHandle" xml:space="preserve">
-    <value>The call to Windows API GetStdHandle to get the Standard Error handle resulted in an error code: {0}.</value>
+    <value>標準エラー ハンドルを取得するための Windows API GetStdHandle への呼び出しで、エラー コード: {0} が返されました。</value>
   </data>
   <data name="ConnectExFailed" xml:space="preserve">
-    <value>Connecting to remote server {0} failed.</value>
+    <value>リモート サーバー {0} への接続に失敗しました。</value>
   </data>
   <data name="ConnectExCallBackError" xml:space="preserve">
-    <value>Connecting to remote server {0} failed with the following error message : {1}</value>
+    <value>リモート サーバー {0} への接続が次のエラー メッセージで失敗しました: {1}</value>
   </data>
   <data name="CloseExCallBackError" xml:space="preserve">
-    <value>Closing the remote server shell instance failed with the following error message : {0}</value>
+    <value>次のエラー メッセージによりリモート サーバー シェル インスタンスを閉じることができませんでした: {0}</value>
   </data>
   <data name="SendExFailed" xml:space="preserve">
-    <value>Sending data to remote server {0} failed.</value>
+    <value>リモート サーバー {0} にデータを送信できませんでした。</value>
   </data>
   <data name="SendExCallBackError" xml:space="preserve">
-    <value>Sending data to remote server {0} failed with the following error message : {1}</value>
+    <value>リモート サーバー {0} へのデータの送信が次のエラー メッセージで失敗しました: {1}</value>
   </data>
   <data name="ReceiveExFailed" xml:space="preserve">
-    <value>Receiving data from remote server {0} failed.</value>
+    <value>リモート サーバー {0} からのデータを受信に失敗しました。</value>
   </data>
   <data name="ReceiveExCallBackError" xml:space="preserve">
-    <value>Processing data from remote server {0} failed with the following error message: {1}</value>
+    <value>リモート サーバーからデータ {0} 処理が次のエラー メッセージで失敗しました: {1}</value>
   </data>
   <data name="RunShellCommandExFailed" xml:space="preserve">
-    <value>Starting a command on the remote server failed.</value>
+    <value>リモート サーバーでコマンドを開始できませんでした。</value>
   </data>
   <data name="RunShellCommandExCallBackError" xml:space="preserve">
-    <value>Starting a command on the remote server failed with the following error message : {0}</value>
+    <value>リモート サーバーでコマンドの開始が次のエラー メッセージで失敗しました: {0}</value>
   </data>
   <data name="ReconnectShellCommandExCallBackError" xml:space="preserve">
-    <value>Reconnecting to a command on the remote server failed with the following error message : {0}</value>
+    <value>リモート サーバーのコマンドへの再接続が次のエラー メッセージで失敗しました: {0}</value>
   </data>
   <data name="CommandSendExFailed" xml:space="preserve">
-    <value>Sending data to a remote command failed.</value>
+    <value>リモート コマンドにデータを送信できませんでした。</value>
   </data>
   <data name="CommandSendExCallBackError" xml:space="preserve">
-    <value>Sending data to a remote command failed with the following error message: {0}</value>
+    <value>次のエラー メッセージによりリモート コマンドにデータを送信できませんでした: {0}</value>
   </data>
   <data name="CommandReceiveExFailed" xml:space="preserve">
-    <value>Receiving data for a remote command failed.</value>
+    <value>リモート コマンドのデータを受信できませんでした。</value>
   </data>
   <data name="CommandReceiveExCallBackError" xml:space="preserve">
-    <value>Processing data for a remote command failed with the following error message: {0}</value>
+    <value>次のエラー メッセージによりリモート コマンドのデータを処理できませんでした: {0}</value>
   </data>
   <data name="GeneralError" xml:space="preserve">
-    <value>Error with error code {0} occurred while calling method {1}.</value>
+    <value>メソッド {1} の呼び出し中にエラー コード {0} のエラーが発生しました。</value>
   </data>
   <data name="TroubleShootingHelpTopic" xml:space="preserve">
-    <value>{0} For more information, see the about_Remote_Troubleshooting Help topic.</value>
+    <value>{0} 詳細については、「about_Remote_Troubleshooting ヘルプ」トピックを参照してください。</value>
   </data>
   <data name="DisconnectShellExFailed" xml:space="preserve">
-    <value>Failed to disconnect from the remote server {0}.</value>
+    <value>リモート サーバー {0} から切断できませんでした。</value>
   </data>
   <data name="DisconnectShellExCallBackErrr" xml:space="preserve">
-    <value>Disconnecting from the remote server failed with the following error message : {0}</value>
+    <value>リモート サーバーからの切断が次のエラー メッセージで失敗しました: {0}</value>
   </data>
   <data name="ReconnectShellExFailed" xml:space="preserve">
-    <value>Reconnecting to the remote server failed.</value>
+    <value>リモート サーバーへの再接続に失敗しました。</value>
   </data>
   <data name="ReconnectShellExCallBackErrr" xml:space="preserve">
-    <value>Reconnecting to the remote server {0} failed with the following error message : {1}</value>
+    <value>リモート サーバー {0} への再接続が次のエラー メッセージで失敗しました: {1}</value>
   </data>
   <data name="IPCTransportConnectError" xml:space="preserve">
-    <value>Inter-process communication (IPC) transport does not support connect operations.</value>
+    <value>プロセス間通信 (IPC) トランスポートは、接続操作をサポートしていません。</value>
   </data>
   <data name="NonExistentInitialSessionStateProvider" xml:space="preserve">
-    <value>An EndpointConfiguration with Id {0} does not exist on the remote server. Contact your PowerShell administrator, or the owner or creator of the endpoint configuration.</value>
+    <value>ID {0} の EndpointConfiguration がリモート サーバーに存在しません。PowerShell 管理者、またはエンドポイント構成の所有者または作成者に問い合わせてください。</value>
   </data>
   <data name="InitialSessionStateNull" xml:space="preserve">
-    <value>The EndpointConfiguration with the {0} identifier is not in a valid initial session state on the remote computer. Contact your PowerShell administrator, or the owner or creator of the endpoint configuration.</value>
+    <value>{0} 識別子を持つ EndpointConfiguration は、リモート コンピューターの有効な初期セッション状態ではありません。PowerShell 管理者、またはエンドポイント構成の所有者または作成者に問い合わせてください。</value>
   </data>
   <data name="MandatoryValueNotPresent" xml:space="preserve">
-    <value>The mandatory value {0} is not specified for the {1} registry key.</value>
+    <value>{1} レジストリ キーに必須の値 {0} が指定されていません。</value>
   </data>
   <data name="MandatoryValueNotInCorrectFormat" xml:space="preserve">
-    <value>The mandatory value {0} is not in the correct format for registry key {1}. The expected format is 'string'.</value>
+    <value>必須の値 {0} は、レジストリ キー {1} に対して正しい形式ではありません。必要な形式は 'string' です。</value>
   </data>
   <data name="StartupScriptNotCorrect" xml:space="preserve">
-    <value>"{0}" must specify a PowerShell script file that ends with extension ".ps1".</value>
+    <value>"{0}" では、拡張子 ".ps1" で終わる PowerShell スクリプト ファイルを指定する必要があります。</value>
   </data>
   <data name="DuplicateInitializationParameterFound" xml:space="preserve">
-    <value>The {0} parameter is already specified in the {1} section. Contact your administrator to make sure that {0} is specified only once.</value>
+    <value>{0} パラメーターは、{1} セクションで既に指定されています。管理者に連絡して、{0} が 1 回だけ指定されていることを確認してください。</value>
   </data>
   <data name="NoAttributesFoundForParamElement" xml:space="preserve">
-    <value>Expected "{0}" and "{1}" attributes in the "{2}" element.</value>
+    <value>"{2}" 要素に "{0}" 属性と "{1}" 属性が必要です。</value>
   </data>
   <data name="AssemblyLoadAttributesNotFound" xml:space="preserve">
-    <value>"{0}", "{1}" must be specified in the "{2}" section to dynamically load the assembly.</value>
+    <value>アセンブリを動的に読み込むには、"{0}"、"{1}" を "{2}" セクションで指定する必要があります。</value>
   </data>
   <data name="UnableToLoadAssembly" xml:space="preserve">
-    <value>Unable to load the assembly "{0}" specified in the "{1}" section.</value>
+    <value>"{1}" セクションで指定されたアセンブリ "{0}" を読み込めません。</value>
   </data>
   <data name="UnableToLoadType" xml:space="preserve">
-    <value>Unable to load the type "{0}" specified in the "{1}" section.</value>
+    <value>"{1}" セクションで指定された型 "{0}" を読み込めません。</value>
   </data>
   <data name="TypeNeedsAssembly" xml:space="preserve">
-    <value>Both "{0}" and "{1}" must be specified in the "{2}" section.</value>
+    <value>"{0}" と "{1}" の両方を "{2}" セクションで指定する必要があります。</value>
   </data>
   <data name="RedirectedURINotWellFormatted" xml:space="preserve">
-    <value>The destination "{0}" requested the connection to be redirected to "{1}". However "{1}" is not a well formatted URI.</value>
+    <value>宛先 "{0}" は、接続を "{1}" にリダイレクトするように要求しました。ただし、"{1}" は適切な形式の URI ではありません。</value>
   </data>
   <data name="URIEndPointNotResolved" xml:space="preserve">
-    <value>{0}Redirect location reported: {1}.</value>
+    <value>{0}リダイレクトの場所が報告されました: {1}。</value>
   </data>
   <data name="URIRedirectWarningToHost" xml:space="preserve">
-    <value>Your connection has been redirected to the following URI: "{0}"</value>
+    <value>接続が次の URI にリダイレクトされました: "{0}"</value>
   </data>
   <data name="URIRedirectionReported" xml:space="preserve">
-    <value>{0} To automatically connect to the redirected URI, verify the "{1}" property of the session preference variable "{2}", and use the "{3}" parameter on the cmdlet.</value>
+    <value>{0} リダイレクトされた URI に自動的に接続するには、セッション基本設定変数 "{2}" の "{1}" プロパティを確認し、コマンドレットで "{3}" パラメーターを使用してください。</value>
   </data>
   <data name="ReceivedObjectSizeExceededMaximumClient" xml:space="preserve">
-    <value>The current deserialized object size of the data received from the remote server exceeded the allowed maximum object size. The current deserialized object size is {0}. The allowed maximum object size is {1}.</value>
+    <value>リモート サーバーから受信したデータの現在の逆シリアル化されたオブジェクト サイズが、許可されている最大オブジェクト サイズを超えました。現在の逆シリアル化されたオブジェクト サイズは {0} です。許容される最大オブジェクト サイズは {1} です。</value>
   </data>
   <data name="ReceivedDataSizeExceededMaximumClient" xml:space="preserve">
-    <value>The total data received from the remote server exceeded the allowed maximum. The allowed maximum is {0}.</value>
+    <value>リモート サーバーから受信したデータの合計が、許可されている最大値を超えました。許可される最大値は {0} です。</value>
   </data>
   <data name="ReceivedObjectSizeExceededMaximumServer" xml:space="preserve">
-    <value>The current deserialized object size of the data received from the remote client computer exceeded the allowed maximum object size. The current deserialized object size is {0}. The allowed maximum object size is {1}.</value>
+    <value>リモート クライアント コンピューターから受信したデータの現在の逆シリアル化されたオブジェクト サイズが、許可されている最大オブジェクト サイズを超えました。現在の逆シリアル化されたオブジェクト サイズは {0} です。許容される最大オブジェクト サイズは {1} です。</value>
   </data>
   <data name="ReceivedDataSizeExceededMaximumServer" xml:space="preserve">
-    <value>The total data received from the remote client exceeded the allowed maximum. The allowed maximum is {0}.</value>
+    <value>リモート クライアントから受信したデータの合計が、許可されている最大値を超えました。許可される最大値は {0} です。</value>
   </data>
   <data name="StartupScriptThrewTerminatingError" xml:space="preserve">
-    <value>Running startup script threw an error: {0}.</value>
+    <value>スタートアップ スクリプトを実行すると、次のエラーがスローされました: {0}。</value>
   </data>
   <data name="RemoteRunspaceInfoHasDuplicates" xml:space="preserve">
-    <value>Specified RemoteRunspaceInfo objects have duplicates.</value>
+    <value>指定された RemoteRunspaceInfo オブジェクトに重複があります。</value>
   </data>
   <data name="RemoteRunspaceInfoLimitExceeded" xml:space="preserve">
-    <value>Specified RemoteRunspaceInfo objects have exceeded the maximum allowable limit.</value>
+    <value>指定された RemoteRunspaceInfo オブジェクトが許容される上限を超えています。</value>
   </data>
   <data name="RemoteRunspaceOpenUnknownState" xml:space="preserve">
-    <value>Opening the remote session failed with an unexpected state. State {0}.</value>
+    <value>リモート セッションを予期しない状態で開けませんでした。状態: {0}。</value>
   </data>
   <data name="UriSpecifiedNotValid" xml:space="preserve">
-    <value>Specified Uri {0} is not valid.</value>
+    <value>指定された URI {0} は無効です。</value>
   </data>
   <data name="RemoteRunspaceClosed" xml:space="preserve">
-    <value>Remote Session closed for Uri {0}.</value>
+    <value>URI {0} のリモート セッションが閉じられました。</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedComputer" xml:space="preserve">
-    <value>Remote session is not available for ComputerName {0}.</value>
+    <value>ComputerName {0} ではリモート セッションを使用できません。</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedRunspaceId" xml:space="preserve">
-    <value>Remote session is not available for {0}.</value>
+    <value>リモート セッションは、{0} では使用できません。</value>
   </data>
   <data name="StopPSJobWhatIfTarget" xml:space="preserve">
-    <value>Remote Command: {0}, associated with the job that has an ID of "{1}".</value>
+    <value>リモート コマンド: {0}、ID が "{1}" のジョブに関連付けられています。</value>
   </data>
   <data name="NewRunspaceAmbiguousAuthentication" xml:space="preserve">
-    <value>A {0} cannot be specified when {1} is specified.</value>
+    <value>{1} が指定されている場合、{0} は指定できません。</value>
   </data>
   <data name="WildCardErrorFilePathParameter" xml:space="preserve">
     <value>FilePath パラメーターでは、ワイルドカード文字はサポートされていません。ワイルドカード文字を使用せずにパスを指定します。</value>
   </data>
   <data name="FilePathNotFromFileSystemProvider" xml:space="preserve">
-    <value>The path specified as the value of the FilePath parameter is not from the FileSystem provider.</value>
+    <value>FilePath パラメーターの値として指定されたパスが FileSystem プロバイダーのパスではありません。</value>
   </data>
   <data name="FilePathShouldPS1Extension" xml:space="preserve">
-    <value>The value of the FilePath parameter must be a PowerShell script file. Enter the path to a file with a .ps1 file name extension and try the command again.</value>
+    <value>FilePath パラメーターの値は、PowerShell スクリプト ファイルである必要があります。ファイル名拡張子が .ps1 のファイルへのパスを入力し、コマンドを再試行してください。</value>
   </data>
   <data name="InvalidComputerName" xml:space="preserve">
-    <value>One or more computer names are not valid. If you are trying to pass a URI, use the -ConnectionUri parameter, or pass URI objects instead of strings.</value>
+    <value>1 つ以上のコンピューター名が無効です。URI を渡そうとしている場合は、-ConnectionUri パラメーターを使用するか、文字列の代わりに URI オブジェクトを渡してください。</value>
   </data>
   <data name="InvalidJobStateGeneral" xml:space="preserve">
-    <value>The state of the current job instance is not valid for this operation.</value>
+    <value>現在の PowerShell インスタンスの状態は、この操作に対して無効です。</value>
   </data>
   <data name="JobWithSpecifiedNameNotFound" xml:space="preserve">
-    <value>The command cannot find the job because the job name {0} was not found. Verify the value of the Name parameter, and then try the command again.</value>
+    <value>ジョブ名 {0} が見つからなかったため、コマンドはジョブを見つけることができません。Name パラメーターの値を確認してから、コマンドを再試行してください。</value>
   </data>
   <data name="JobWithSpecifiedInstanceIdNotFound" xml:space="preserve">
-    <value>The command cannot find a job with the instance identifier {0}. Verify the value of the InstanceId parameter, and then try the command again.</value>
+    <value>このコマンドは、インスタンス識別子が {0} のジョブを見つけることができません。InstanceId パラメーターの値を確認してから、コマンドを再試行してください。</value>
   </data>
   <data name="JobWithSpecifiedSessionIdNotFound" xml:space="preserve">
-    <value>The command cannot find a job with the job ID {0}. Verify the value of the Id parameter and then try the command again.</value>
+    <value>このコマンドは、ジョブ ID {0} のジョブを見つけることができません。ID パラメーターの値を確認してから、コマンドを再試行してください。</value>
   </data>
   <data name="JobWithSpecifiedNameNotCompleted" xml:space="preserve">
-    <value>The command cannot remove the job with the job ID {0} and the name {1} because the job is not finished. To remove the job, first stop the job, or use the Force parameter.</value>
+    <value>ジョブが完了していないため、ジョブ ID {0} と名前 {1} のジョブを削除できません。ジョブを削除するには、まずジョブを停止するか、Force パラメーターを使用してください。</value>
   </data>
   <data name="JobWithSpecifiedSessionIdNotCompleted" xml:space="preserve">
-    <value>The command cannot remove the job with the job ID {0} because the job is not finished. To remove the job, first stop the job, or use the Force parameter.</value>
+    <value>ジョブが完了していないため、ジョブ ID {0} のジョブを削除できません。ジョブを削除するには、まずジョブを停止するか、Force パラメーターを使用してください。</value>
   </data>
   <data name="JobWithSpecifiedInstanceIdNotCompleted" xml:space="preserve">
-    <value>The command cannot remove the job with the job ID {0} and the instance identifier {1} because the job is not finished. To remove the job, first stop the job or use the Force parameter.</value>
+    <value>ジョブが完了していないため、ジョブ ID {0} とインスタンス識別子 {1} のジョブを削除できません。ジョブを削除するには、まずジョブを停止するか、Force パラメーターを使用してください。</value>
   </data>
   <data name="RemovePSJobWhatIfTarget" xml:space="preserve">
-    <value>Remote Command: {0}, associated with a job that has an ID of "{1}".</value>
+    <value>リモート コマンド: {0}、ID が "{1}" のジョブに関連付けられています。</value>
   </data>
   <data name="ComputerNameParamNotSupported" xml:space="preserve">
-    <value>The command cannot retrieve the jobs of the specified computers. The ComputerName parameter can be used only with jobs created by using PowerShell remoting.</value>
+    <value>コマンドは、指定されたコンピューターのジョブを取得できません。ComputerName パラメーターは、PowerShell リモート処理を使用して作成されたジョブでのみ使用できます。</value>
   </data>
   <data name="RunspaceParamNotSupported" xml:space="preserve">
-    <value>The Session parameter can be used only with PSRemotingJob objects.</value>
+    <value>Session パラメーターは、PSRemotingJob オブジェクトでのみ使用できます。</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedName" xml:space="preserve">
-    <value>The remote session with the name {0}  is not available.</value>
+    <value>{0} という名前のリモート セッションは使用できません。</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedSessionId" xml:space="preserve">
-    <value>The remote session with the session ID {0} is not available.</value>
+    <value>{0} というセッション ID のリモート セッションは使用できません。</value>
   </data>
   <data name="ItemNotFoundInRepository" xml:space="preserve">
-    <value>{0} does not contain an item with ID of {1}.</value>
+    <value>{0} には、ID が {1} の項目が含まれていません。</value>
   </data>
   <data name="CannotRemoveJob" xml:space="preserve">
-    <value>The command cannot remove the job because it does not exist or because it is a child job. Child jobs can be removed only by removing the parent job.</value>
+    <value>ジョブが存在しないか、子ジョブであるため、このコマンドはジョブを削除できません。子ジョブは、親ジョブを削除することによってのみ削除できます。</value>
   </data>
   <data name="CSCDoubleParameterOutOfRange" xml:space="preserve">
-    <value>{0} is not a valid value for the parameter {1}. The value must be greater than or equal to 0.</value>
+    <value>{0} はパラメーター {1} の有効な値ではありません。値は 0 に等しいか、またはそれより大きくなければなりません。</value>
   </data>
   <data name="ProxyAmbiguousAuthentication" xml:space="preserve">
-    <value>{0} cannot be specified as a proxy authentication mechanism. Only {1},{2} or {3} are supported for proxy authentication.</value>
+    <value>{0} をプロキシ認証メカニズムとして指定することはできません。プロキシ認証では、{1}、{2}、または {3} のみがサポートされます。</value>
   </data>
   <data name="ProxyCredentialWithoutAccess" xml:space="preserve">
-    <value>Proxy credentials cannot be specified when using the following proxy access type: {0}. Either specify a different access type, or do not specify proxy credentials.</value>
+    <value>次のプロキシ アクセスの種類を使用する場合は、プロキシ資格情報を指定できません: {0}。別のアクセスの種類を指定するか、プロキシ資格情報を指定しないでください。</value>
   </data>
   <data name="WrongSessionOptionValue" xml:space="preserve">
     <value>セッション オプション {1} には、{0} 値を指定する必要があります。</value>
   </data>
   <data name="PushedRunspaceMustBeOpen" xml:space="preserve">
-    <value>Session must be open.</value>
+    <value>セッションが開いている必要があります。</value>
   </data>
   <data name="HostDoesNotSupportPushRunspace" xml:space="preserve">
-    <value>The host does not support Enter-PSSession and Exit-PSSession.</value>
+    <value>ホストは Enter-PSSession と Exit-PSSession をサポートしていません。</value>
   </data>
   <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId" xml:space="preserve">
-    <value>Multiple matches found for session ID {0}.</value>
+    <value>セッション ID {0} に対して複数の一致が見つかりました。</value>
   </data>
   <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId" xml:space="preserve">
-    <value>Multiple matches found for session ID {0}.</value>
+    <value>セッション ID {0} に対して複数の一致が見つかりました。</value>
   </data>
   <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedName" xml:space="preserve">
-    <value>Multiple matches found for name {0}.</value>
+    <value>名前 {0} に対して複数の一致が見つかりました。</value>
   </data>
   <data name="RemoteRunspaceDoesNotSupportPushRunspace" xml:space="preserve">
-    <value>Enter-PSSession failed because the remote session does not provide required commands.</value>
+    <value>リモート セッションで必要なコマンドが提供されていないため、Enter-PSSession に失敗しました。</value>
   </data>
   <data name="HostInNestedPrompt" xml:space="preserve">
-    <value>You cannot run Enter-PSSession from a nested prompt.</value>
+    <value>入れ子になったプロンプトから Enter-PSSession を実行することはできません。</value>
   </data>
   <data name="WsmanMaxRedirectionCountVariableDescription" xml:space="preserve">
     <value>リモート コンピューターへの接続中に許可する WS-Man URI リダイレクトの最大数</value>
   </data>
   <data name="PSDefaultSessionOptionDescription" xml:space="preserve">
-    <value>Default session options for new remote sessions</value>
+    <value>新しいリモート セッションの既定のセッション オプション</value>
   </data>
   <data name="PSSessionConfigurationName" xml:space="preserve">
-    <value>Name of the session configuration which will be loaded on the remote computer</value>
+    <value>リモート コンピューターに読み込まれるセッション構成の名前</value>
   </data>
   <data name="PSSessionAppName" xml:space="preserve">
-    <value>AppName where the remote connection will be established</value>
+    <value>リモート接続が確立される AppName</value>
   </data>
   <data name="PSSenderInfoDescription" xml:space="preserve">
-    <value>Contains information about the remote user starting the remote session. This variable is available only from a remote session.</value>
+    <value>リモート セッションを開始するリモート ユーザーに関する情報が含まれます。この変数は、リモート セッションからのみ使用できます。</value>
   </data>
   <data name="CSCmdsTypeNeedsAssembly" xml:space="preserve">
-    <value>Either "{0}" and "{1}" must both be specified, or neither must not be specified.</value>
+    <value>"{0}" と "{1}" の両方を指定するか、どちらも指定しないでください。</value>
   </data>
   <data name="CSCmdsShellNotFound" xml:space="preserve">
-    <value>Session configuration "{0}" was not found.</value>
+    <value>セッション構成 "{0}" が見つかりませんでした。</value>
   </data>
   <data name="CSCmdsShellNotPowerShellBased" xml:space="preserve">
-    <value>Session configuration "{0}" is not a PowerShell-based shell.</value>
+    <value>セッション構成 "{0}" は PowerShell ベースのシェルではありません。</value>
   </data>
   <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
-    <value>Session configuration "{0}" is a PowerShell-based shell. Please use PowerShell 6+ to modify it.</value>
+    <value>セッション構成 "{0}" は PowerShell ベースのシェルです。変更するには PowerShell 6 以降を使用してください。</value>
   </data>
   <data name="CSCmdsWindowsPowerShellCoreNotModifiable" xml:space="preserve">
-    <value>Session configuration "{0}" is a Windows PowerShell-based shell. Please use Windows PowerShell to modify it.</value>
+    <value>セッション構成 "{0}" は、Windows PowerShell ベースのシェルです。Windows PowerShell を使用して変更してください。</value>
   </data>
   <data name="CustomShellNotFound" xml:space="preserve">
-    <value>No session configuration matches criteria "{0}".</value>
+    <value>条件 "{0}" に一致するセッション構成がありません。</value>
   </data>
   <data name="CSShouldProcessAction" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="CSShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0}</value>
+    <value>名前: {0}</value>
   </data>
   <data name="CSShouldProcessTargetAdminEnable" xml:space="preserve">
-    <value>Name: {0}. This lets administrators remotely run PowerShell commands on this computer.</value>
+    <value>名前: {0}。これにより、管理者はこのコンピューターで PowerShell コマンドをリモートで実行できます。</value>
   </data>
   <data name="NcsCannotDeleteFile" xml:space="preserve">
-    <value>Cannot delete temporary file {0}. Reason for failure: {1}.</value>
+    <value>一時ファイル {0} を削除できません。失敗の原因: {1}。</value>
   </data>
   <data name="NcsCannotDeleteFileAfterInstall" xml:space="preserve">
-    <value>The new shell was successfully registered, but PowerShell cannot delete the temporary file {0}. Reason for failure: {1}.</value>
+    <value>新しいシェルは正常に登録されましたが、PowerShell は一時ファイル {0} を削除できません。失敗の原因: {1}。</value>
   </data>
   <data name="NcsCannotWritePluginContent" xml:space="preserve">
-    <value>Cannot write the shell configuration data into the temporary file {0}. Reason for failure: {1}.</value>
+    <value>シェル構成データを一時ファイル {0} に書き込めません。失敗の原因: {1}。</value>
   </data>
   <data name="NcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to create a new session configuration.</value>
+    <value>コマンド "{0}" を実行して新しいセッション構成を作成しています。</value>
   </data>
   <data name="NcsShouldProcessTargetSDDL" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This lets selected users remotely run PowerShell commands on this computer.</value>
+    <value>名前: {0} SDDL: {1}。これにより、選択したユーザーはこのコンピューターで PowerShell コマンドをリモートで実行できます。</value>
   </data>
   <data name="RcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to remove a session configuration.</value>
+    <value>セッション構成を削除するコマンド "{0}" を実行しています。</value>
   </data>
   <data name="GcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to get PowerShell-based session configurations.</value>
+    <value>コマンド "{0}" を実行して PowerShell ベースのセッション構成を取得しています。</value>
   </data>
   <data name="ScsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to update the session configuration properties.</value>
+    <value>セッション構成プロパティを更新するためにコマンド "{0}" を実行しています。</value>
   </data>
   <data name="ScsShouldProcessTargetSDDL" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}</value>
+    <value>名前: {0} SDDL: {1}</value>
   </data>
   <data name="EcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to enable the session configuration.</value>
+    <value>セッション構成を有効にするコマンド "{0}" を実行しています。</value>
   </data>
   <data name="EcsWSManQCCaption" xml:space="preserve">
-    <value>WinRM Quick Configuration</value>
+    <value>WinRM クイック構成</value>
   </data>
   <data name="EcsWSManQCQuery" xml:space="preserve">
-    <value>Running command "{0}" to enable remote management of this computer by using the Windows Remote Management (WinRM) service.
- This includes:
-    1. Starting or restarting (if already started) the WinRM service
-    2. Setting the WinRM service startup type to Automatic
-    3. Creating a listener to accept requests on any IP address
-    4. Enabling Windows Firewall inbound rule exceptions for WS-Management traffic (for http only).
+    <value>コマンド "{0}" を実行して、Windows リモート管理 (WinRM) サービスを使用してこのコンピューターのリモート管理を有効にします。
+ これには次のものが含まれます: 
+    1. WinRM サービスを開始または再起動する (既に開始されている場合)
+    2. WinRM サービスのスタートアップの種類を自動に設定されます
+    3. 任意の IP アドレスで要求を受け入れるリスナーが作成されます
+    4. WS-Management トラフィックに対して Windows ファイアウォール受信規則の例外を有効にする (http の場合のみ)。
 
-Do you want to continue?</value>
+続行しますか?</value>
   </data>
   <data name="EcsWSManShouldProcessDesc" xml:space="preserve">
-    <value>Performing operation "{0}".</value>
+    <value>操作 "{0}" を実行しています。</value>
   </data>
   <data name="EcsShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This lets selected users remotely run PowerShell commands on this computer.</value>
+    <value>名前: {0} SDDL: {1}。これにより、選択したユーザーはこのコンピューターで PowerShell コマンドをリモートで実行できます。</value>
   </data>
   <data name="DcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to disable the session configuration.</value>
+    <value>セッション構成を無効にするコマンド "{0}" を実行しています。</value>
   </data>
   <data name="DcsShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This denies access to this session configuration for everyone.</value>
+    <value>名前: {0} SDDL: {1}。これにより、すべてのユーザーに対してこのセッション構成へのアクセスが拒否されます。</value>
   </data>
   <data name="DcsWarningMessage" xml:space="preserve">
-    <value>Disabling the session configurations does not undo all the changes made by the Enable-PSRemoting or Enable-PSSessionConfiguration cmdlet. You might have to manually undo the changes by following these steps:
-    1. Stop and disable the WinRM service.
-    2. Delete the listener that accepts requests on any IP address.
-    3. Disable the firewall exceptions for WS-Management communications.
-    4. Restore the value of the LocalAccountTokenFilterPolicy to 0, which restricts remote access to members of the Administrators group on the computer.</value>
+    <value>セッション構成を無効にしても、Enable-PSRemoting コマンドレットまたは Enable-PSSessionConfiguration コマンドレットによって行われたすべての変更が元に戻されるわけではありません。次の手順に従って、変更を手動で元に戻す必要がある場合があります: 
+    1. WinRM サービスを停止して無効にする。
+    2. 任意の IP アドレスで要求を受け入れるリスナーを削除する。
+    3. WS-Management 通信用のファイアウォールの例外を無効にする。
+    4. LocalAccountTokenFilterPolicy の値を 0 に復元して、リモート アクセスをコンピューターの Administrators グループのメンバーに制限する。</value>
   </data>
   <data name="EDcsRequiresElevation" xml:space="preserve">
-    <value>Access is denied. To run this cmdlet, start PowerShell with the "Run as administrator" option.</value>
+    <value>アクセスは拒否されました。このコマンドレットを実行するには、[管理者として実行] オプションを使用して PowerShell を起動します。</value>
   </data>
   <data name="RestartWSManServiceMessageV" xml:space="preserve">
-    <value>Restarting WinRM service</value>
+    <value>WinRM サービスを再起動しています</value>
   </data>
   <data name="RestartWSManServiceAction" xml:space="preserve">
-    <value>"Restart-Service"</value>
+    <value>"サービスを再開する"</value>
   </data>
   <data name="RestartWSManServiceTarget" xml:space="preserve">
-    <value>Name: {0}</value>
+    <value>名前: {0}</value>
   </data>
   <data name="RestartWSManRequiredShowUI" xml:space="preserve">
-    <value>The WinRM service must be restarted before a UI can be displayed for the SecurityDescriptor selection. Restart the WinRM service, and then run the following command: "{0}"</value>
+    <value>SecurityDescriptor の選択に UI を表示するには、WinRM サービスを再起動する必要があります。WinRM サービスを再起動してから、次のコマンドを実行してください: "{0}"</value>
   </data>
   <data name="ERemotingCaption" xml:space="preserve">
-    <value>Registering session configuration</value>
+    <value>セッション構成を登録しています</value>
   </data>
   <data name="ERemotingQuery" xml:space="preserve">
-    <value>The session configuration "{0}" was not found. Running command "{1}" to create the "{0}" session configuration. Running this command restarts the WinRM service.</value>
+    <value>セッション構成 "{0}" が見つかりませんでした。コマンド "{1}" を実行して"{0}" セッション構成を作成しています。このコマンドを実行すると、WinRM サービスが再起動されます。</value>
   </data>
   <data name="ShowUIAndSDDLCannotExist" xml:space="preserve">
-    <value>"{0}" and "{1}" parameters cannot be specified together. Specify either "{0}" or  "{1}" parameter.</value>
+    <value>"{0}" パラメーターと "{1}" パラメーターを一緒に指定することはできません。"{0}" パラメーターまたは "{1}" パラメーターを指定してください。</value>
   </data>
   <data name="RestartWinRMMessage" xml:space="preserve">
-    <value>This operation might restart the WinRM service. Do you want to continue?</value>
+    <value>この操作により、WinRM サービスが再起動される可能性があります。続行しますか?</value>
   </data>
   <data name="IPCUnknownNodeType" xml:space="preserve">
-    <value>Cannot process an element with node type "{0}". Only {1} and {2} node types are supported.</value>
+    <value>ノード型が "{0}" の要素を処理できません。サポートされているノード型は、{1} と {2} のみです。</value>
   </data>
   <data name="IPCInsufficientDataforElement" xml:space="preserve">
-    <value>Not enough data is available to process the {0} element.</value>
+    <value>{0} 要素を処理するのに十分なデータがありません。</value>
   </data>
   <data name="IPCWrongAttributeCountForDataElement" xml:space="preserve">
-    <value>Expected only two attributes with the names "{0}" and "{1}" in the {2} element.</value>
+    <value>{2} 要素では "{0}" と "{1}" という 2 つの名前の属性だけが想定されています。</value>
   </data>
   <data name="IPCOnlyTextExpectedInDataElement" xml:space="preserve">
-    <value>Node type "{0}" is unknown in the {1} element. Only the "{2}" node type is expected in the {1} element.</value>
+    <value>{1} 要素でノードの種類 "{0}" が不明です。{1} 要素には、"{2}" ノード型のみが想定されています。</value>
   </data>
   <data name="IPCWrongAttributeCountForElement" xml:space="preserve">
-    <value>Expected only one attribute with the name "{0}" in the {1} element.</value>
+    <value>{1} 要素には "{0}" という名前の属性が 1 つだけ必要です。</value>
   </data>
   <data name="IPCUnknownElementReceived" xml:space="preserve">
-    <value>An unknown element "{0}" was received. This can happen if the remote process closed or ended abnormally.</value>
+    <value>不明な要素 "{0}" を受信しました。これは、リモート プロセスが閉じられたか、異常終了した場合に発生する可能性があります。</value>
   </data>
   <data name="IPCSupportsOnlyDefaultAuth" xml:space="preserve">
-    <value>The specified authentication mechanism "{0}" is not supported. Only "{1}" is supported for this operation.</value>
+    <value>指定された認証メカニズム "{0}" はサポートされていません。この操作では、"{1}" のみがサポートされています。</value>
   </data>
   <data name="IPCPwshExecutableNotFound" xml:space="preserve">
-    <value>The pwsh executable cannot be found at "{0}".
-Note that 'Start-Job' is not supported by design in scenarios where PowerShell is being hosted in other applications. Instead, usage of the 'ThreadJob' module is recommended in such scenarios.</value>
+    <value>pwsh 実行可能ファイルが "{0}" に見つかりません。
+PowerShell が他のアプリケーションでホストされているシナリオでは、'Start-Job' は設計上サポートされていないことに注意してください。代わりに、このようなシナリオでは 'ThreadJob' モジュールの使用をお勧めします。</value>
   </data>
   <data name="RunAs32NotSupported" xml:space="preserve">
-    <value>Cannot start a 32-bit 'pwsh' process from the 64-bit 'pwsh' installation. Install the 32-bit 'pwsh' if you need to run PowerShell in a 32-bit process.</value>
+    <value>64 ビット 'pwsh' インストールから 32 ビット 'pwsh' プロセスを開始できません。32 ビット プロセスで PowerShell を実行する必要がある場合は、32 ビットの 'pwsh' をインストールしてください。</value>
   </data>
   <data name="IPCServerProcessReportedError" xml:space="preserve">
-    <value>The background process reported an error with the following message: {0}.</value>
+    <value>バックグラウンド プロセスで次のメッセージのエラーが報告されました: {0}。</value>
   </data>
   <data name="IPCServerProcessExited" xml:space="preserve">
-    <value>The background process closed or ended abnormally: {0}.</value>
+    <value>バックグラウンド プロセスが閉じたか異常終了しました: {0}。</value>
   </data>
   <data name="IPCErrorProcessingServerData" xml:space="preserve">
-    <value>There is an error processing data from the background process. Error reported: {0}.</value>
+    <value>バックグラウンド プロセスからのデータの処理中にエラーが発生しました。エラーが報告されました: {0}。</value>
   </data>
   <data name="IPCUnknownCommandGuid" xml:space="preserve">
-    <value>Data for an inactive command with the identifier {0} was received. Received data: {1}.</value>
+    <value>識別子 {0} の非アクティブなコマンドのデータを受信しました。受信したデータ: {1}。</value>
   </data>
   <data name="IPCNoSignalForSession" xml:space="preserve">
-    <value>A {0} message to a session is not supported. A {0} message can be sent only to a command.</value>
+    <value>セッションへの {0} メッセージはサポートされていません。{0} メッセージは、コマンドにのみ送信できます。</value>
   </data>
   <data name="IPCSignalTimedOut" xml:space="preserve">
-    <value>The client did not receive a response for a signal operation in the specified time interval. This can happen when a command is not responding to a Stop message in a timely manner.</value>
+    <value>クライアントは、指定された時間内にシグナル操作に対する応答を受信しませんでした。これは、コマンドが Stop メッセージに適切なタイミングで応答していない場合に発生することがあります。</value>
   </data>
   <data name="IPCCloseTimedOut" xml:space="preserve">
-    <value>The client did not receive a response for a Close operation in the specified time interval. This can happen when a command is not responding to a Stop message in a timely manner.</value>
+    <value>クライアントは、指定された時間内に Close 操作に対する応答を受信しませんでした。これは、コマンドが Stop メッセージに適切なタイミングで応答していない場合に発生することがあります。</value>
   </data>
   <data name="IPCExceptionLaunchingProcess" xml:space="preserve">
-    <value>An error occurred while starting the background process. Error reported: {0}.</value>
+    <value>バックグラウンド プロセスの開始中にエラーが発生しました。エラーが報告されました: {0}。</value>
   </data>
   <data name="ThrottlingJobChildAlreadyRunning" xml:space="preserve">
-    <value>The ThrottlingJob.AddChildJob method accepts only child jobs in the NotStarted state.</value>
+    <value>ThrottlingJob.AddChildJob メソッドは、NotStarted 状態の子ジョブのみを受け入れます。</value>
     <comment>{StrContains="ThrottlingJob.AddChildJob"}
 {StrContains="NotStarted"}</comment>
   </data>
   <data name="ThrottlingJobChildAddedAfterEndOfChildJobs" xml:space="preserve">
-    <value>The ThrottlingJob.AddChildJob method cannot be called after a call to the ThrottlingJob.EndOfChildJobs method.</value>
+    <value>ThrottlingJob.EndOfChildJobs メソッドの呼び出し後に ThrottlingJob.AddChildJob メソッドを呼び出すことはできません。</value>
     <comment>{StrContains="ThrottlingJob.AddChildJob"}
 {StrContains="ThrottlingJob.EndOfChildJobs"}</comment>
   </data>
   <data name="ThrottlingJobStatusMessage" xml:space="preserve">
-    <value>{0}/{1} completed</value>
+    <value>{1} 件中 {0} 件完了</value>
     <comment>{0} is a placeholder for a number of completed child jobs
 {1} is a placeholder for a total number of child jobs</comment>
   </data>
   <data name="NestedPipelineMissingRunspace" xml:space="preserve">
-    <value>Invoking a nested pipeline requires a valid runspace.</value>
+    <value>入れ子になったパイプラインを呼び出す場合は、有効な実行空間が必要です。</value>
   </data>
   <data name="JobSourceAdapterError" xml:space="preserve">
-    <value>A {1} job source adapter threw an exception with the following message: {0}</value>
+    <value>{1} ジョブ ソース アダプターが次のメッセージを含む例外をスローしました: {0}</value>
   </data>
   <data name="PSVersionParameterOutOfRange" xml:space="preserve">
-    <value>The value {0} is not valid for the {1} parameter. The only allowed value is 5.1.</value>
+    <value>{1} パラメーターでは値 {0} は有効ではありません。許可される値は 5.1 のみです。</value>
   </data>
   <data name="BlockCannotBeUsedWithKeep" xml:space="preserve">
-    <value>The Wait and Keep parameters cannot be used together in the same command.</value>
+    <value>Wait パラメーターと Keep パラメーターは、同じコマンドで一緒に使用することはできません。</value>
   </data>
   <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
     <value>WriteEvents パラメーターは、Wait パラメーターなしでは使用できません。</value>
   </data>
   <data name="PowerShellVersionNotSupported" xml:space="preserve">
-    <value>PowerShell remoting endpoint versioning is not supported on PowerShell 7+.</value>
+    <value>PowerShell リモート処理エンドポイントのバージョン管理は、PowerShell 7 以降ではサポートされていません。</value>
   </data>
   <data name="JobManagerRegistrationConstructorError" xml:space="preserve">
-    <value>The following type cannot be instantiated because its constructor is not public: {0}.</value>
+    <value>コンストラクターがパブリックではないため、次の型をインスタンス化できません: {0}。</value>
   </data>
   <data name="JobSourceAdapterNotFound" xml:space="preserve">
-    <value>The job operation (Create, Get, or Remove) could not be performed because the JobSourceAdapter type specified in the JobDefinition is not registered. Register the JobSourceAdapter type either by using an explicit call, or by calling the Import-Module cmdlet, and then specifying an assembly.</value>
+    <value>JobDefinition で指定された JobSourceAdapter 型が登録されていないため、ジョブ操作 (作成、取得、または削除) を実行できませんでした。明示的な呼び出しを使用するか、Import-Module コマンドレットを呼び出してアセンブリを指定することにより、JobSourceAdapter 型を登録してください。</value>
   </data>
   <data name="NewJobSpecificationError" xml:space="preserve">
-    <value>The job could not be created because the JobInvocationInfo does not contain a JobDefinition. Start the JobInvocationInfo with a JobDefinition.</value>
+    <value>JobInvocationInfo に JobDefinition が含まれていないため、ジョブを作成できませんでした。JobDefinition を使用して JobInvocationInfo を開始してください。</value>
   </data>
   <data name="InvalidJobStateSpecific" xml:space="preserve">
-    <value>The state of the current job instance is {0}. This state is not valid for the attempted operation. {1}</value>
+    <value>現在のジョブ インスタンスの状態は {0} です。この状態は、試行された操作では無効です。 {1}</value>
   </data>
   <data name="JobConnectFailed" xml:space="preserve">
-    <value>Unable to connect job "{0}" to the remote server.</value>
+    <value>リモート サーバーにジョブ {0} を接続できません。</value>
   </data>
   <data name="RunspaceDisconnectFailed" xml:space="preserve">
-    <value>The Disconnect-PSSession operation failed for runspace Id = {0}.</value>
+    <value>実行空間 ID = {0}の Disconnect-PSSession 操作に失敗しました。</value>
   </data>
   <data name="RunspaceConnectFailed" xml:space="preserve">
-    <value>The connect operation failed for session {0}. The Runspace state is {1} instead of Opened.</value>
+    <value>セッション {0} の接続操作に失敗しました。実行空間の状態は、Opened ではなく {1} です。</value>
   </data>
   <data name="RunspaceQueryFailed" xml:space="preserve">
-    <value>The Disconnected PSSession query failed for computer "{0}".</value>
+    <value>コンピューター "{0}" の切断された PSSession クエリに失敗しました。</value>
   </data>
   <data name="RunspaceCannotBeConnected" xml:space="preserve">
-    <value>Cannot connect PSSession "{0}", either because it is not in the Disconnected state, or it is not available for connection.</value>
+    <value>PSSession が切断状態ではないか、接続に使用できないため、PSSession "{0}" を接続できません。</value>
   </data>
   <data name="RunspaceCannotBeConnectedForVMContainerSession" xml:space="preserve">
-    <value>Session connect is not supported for PSSession "{0}" on target "{1}" because the target computer type is "{2}".</value>
+    <value>ターゲット コンピューターの種類が "{2}" であるため、ターゲット "{1}" の PSSession "{0}" ではセッション接続はサポートされていません。</value>
   </data>
   <data name="RunspaceCannotBeDisconnected" xml:space="preserve">
-    <value>Cannot disconnect PSSession "{0}" because it is not in the Opened state.</value>
+    <value>PSSession "{0}" は Opened 状態ではないため切断できません。</value>
   </data>
   <data name="RunspaceCannotBeDisconnectedForVMContainerSession" xml:space="preserve">
-    <value>Session disconnect is not supported for PSSession "{0}" on target "{1}" because the target computer type is "{2}".</value>
+    <value>ターゲット コンピューターの種類が "{2}" であるため、ターゲット "{1}" の PSSession "{0}" ではセッション切断はサポートされていません。</value>
   </data>
   <data name="RunspaceCannotBeReceivedForVMContainerSession" xml:space="preserve">
-    <value>Receive-PSSession does not support PSSession "{0}" on target "{1}" because the target computer type is "{2}".</value>
+    <value>ターゲット コンピューターの種類が "{2}" であるため、Receive-PSSession はターゲット "{1}" の PSSession "{0}" をサポートしていません。</value>
   </data>
   <data name="JobActionInvalidWithNullChild" xml:space="preserve">
-    <value>The command cannot finish because the ChildJobs property contains a value that is not valid.</value>
+    <value>ChildJobs プロパティに無効な値が含まれているため、コマンドを完了できません。</value>
   </data>
   <data name="JobSuspendNotSupported" xml:space="preserve">
-    <value>Cannot suspend the job that has an ID of {0}. Suspending jobs is not supported for some job types. For more information about support for suspending jobs, see the Help topic for the job type.</value>
+    <value>{0} の ID を持つジョブを中断できません。ジョブの中断は、一部のジョブの種類ではサポートされていません。ジョブの中断のサポートの詳細については、ジョブの種類のヘルプ トピックを参照してください。</value>
   </data>
   <data name="JobResumeNotSupported" xml:space="preserve">
-    <value>Cannot resume the job that has an ID of {0}. Resuming jobs is not supported for some job types. For more information about support for resuming jobs, see the Help topic for the job type.</value>
+    <value>ID が {0} のジョブを再開できません。ジョブの再開は、一部のジョブの種類ではサポートされていません。ジョブの再開のサポートの詳細については、ジョブの種類のヘルプ トピックを参照してください。</value>
   </data>
   <data name="AsJobAndDisconnectedError" xml:space="preserve">
-    <value>You cannot use the Invoke-Command cmdlet with both the AsJob and Disconnected parameters in the same command.</value>
+    <value>同一のコマンドで AsJob パラメーターと Disconnected パラメーターの両方で Invoke-Command コマンドレットを使用することはできません。</value>
   </data>
   <data name="QueryForRunspacesFailed" xml:space="preserve">
-    <value>The remote session query failed for {0} with the following error message: {1}</value>
+    <value>次のエラー メッセージが表示され、{0} のリモート セッション クエリに失敗しました: {1}</value>
   </data>
   <data name="JobIdNotYetAssigned" xml:space="preserve">
-    <value>Attempted to create a job with ID {0}. A job with this ID cannot be created now. Verify that the ID has already been assigned once on this computer.</value>
+    <value>ID {0} のジョブを作成しようとしました。この ID のジョブは現在作成できません。このコンピューターで ID が既に 1 回割り当てられていることを確認してください。</value>
   </data>
   <data name="JobSessionIdLessThanOne" xml:space="preserve">
-    <value>Cannot create a job with an ID of {0}; this is not a valid ID. Provide an integer for the job ID that is greater than 0.</value>
+    <value>ID が {0} のジョブを作成できません。これは有効な ID ではありません。ジョブ ID には 0 より大きい整数を指定してください。</value>
   </data>
   <data name="JobIdentifierNull" xml:space="preserve">
-    <value>The JobIdentifier provided must not be null. Please provide a valid JobIdentifier.</value>
+    <value>指定された JobIdentifier を null にすることはできません。有効な JobIdentifier を指定してください。</value>
   </data>
   <data name="JobBlockedSoWaitJobCannotContinue" xml:space="preserve">
-    <value>The Wait-Job cmdlet cannot finish working, because one or more jobs are blocked waiting for user interaction.  Process interactive job output by using the Receive-Job cmdlet, and then try again.</value>
+    <value>Wait-Job コマンドレットは、ユーザー操作の待機中の 1 つ以上のジョブがブロックされているため、作業を完了できません。 Receive-Job コマンドレットを使用して対話型ジョブ出力を処理してから、やり直してください。</value>
   </data>
   <data name="RemoveRunspaceNotConnected" xml:space="preserve">
-    <value>Remote session {0} could not be connected and could not be removed from the server. The client remote session object will be removed from the server, but the state of the remote session on the server is unknown.</value>
+    <value>リモート セッション {0} を接続できなかったため、サーバーから削除できませんでした。クライアント リモート セッション オブジェクトはサーバーから削除されますが、サーバー上のリモート セッションの状態は不明です。</value>
   </data>
   <data name="RunspaceDisconnectFailedWithReason" xml:space="preserve">
-    <value>Disconnect-PSSession operation failed for runspace Id = {0} for the following reason: {1}</value>
+    <value>次の理由により、実行空間 ID = {0} の Disconnect-PSSession 操作に失敗しました: {1}</value>
   </data>
   <data name="StopJobNotConnected" xml:space="preserve">
-    <value>Job "{0}" could not be connected to the server and so could not be stopped.</value>
+    <value>ジョブ "{0}" をサーバーに接続できなかったため、停止できませんでした。</value>
   </data>
   <data name="SessionIdMatchFailed" xml:space="preserve">
-    <value>The command cannot find a PSSession with an InstanceId value of "{0}".</value>
+    <value>InstanceId 値が "{0}" の PSSession が見つかりません。</value>
   </data>
   <data name="SessionNameMatchFailed" xml:space="preserve">
-    <value>The command cannot find a PSSession that has the name "{0}".</value>
+    <value>"{0}" という名前の PSSession が見つかりません。</value>
   </data>
   <data name="WinPERemotingNotSupported" xml:space="preserve">
     <value>PowerShell リモート処理は、Windows Preinstallation Environment (WinPE) ではサポートされていません。</value>
@@ -946,523 +946,523 @@ Microsoft.PowerShell や Register-PSSessionConfiguration コマンドレット�
     <value>リモート セッションで実行していて、"強制" オプションを選択しました。これは、WinRM サービスが再起動する可能性があることを意味します。WinRM サービスが再起動した場合、このリモート セッションは終了し、続行するには新しいセッションを作成する必要があります</value>
   </data>
   <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
-    <value>The job was null when trying to save identifiers. Specify a job to save its identifiers.</value>
+    <value>識別子を保存しようとしたときに、ジョブが null でした。識別子を保存するジョブを指定してください。</value>
   </data>
   <data name="NoPowerShellForJob" xml:space="preserve">
-    <value>A running command could not be found for this PSSession.</value>
+    <value>この PSSession で実行中のコマンドが見つかりませんでした。</value>
   </data>
   <data name="NetFrameWorkV2NotInstalled" xml:space="preserve">
-    <value>The Microsoft .NET Framework 2.0, which is required for Windows PowerShell 2.0, is not installed. Install the .NET Framework 2.0 and retry.</value>
+    <value>Windows PowerShell 2.0 に必要な Microsoft .NET Framework 2.0 がインストールされていません。.NET Framework 2.0 をインストールしてから再試行してください。</value>
   </data>
   <data name="PipelineFailedWithoutReason" xml:space="preserve">
-    <value>The remote pipeline failed.</value>
+    <value>リモート パイプラインが失敗しました。</value>
   </data>
   <data name="PipelineFailedWithReason" xml:space="preserve">
-    <value>The remote pipeline failed for the following reason: {0}</value>
+    <value>リモート パイプラインが次の理由で失敗しました: {0}</value>
   </data>
   <data name="ResumeJobInvalidJobState" xml:space="preserve">
-    <value>One or more jobs could not be resumed because the state was not valid for the operation.</value>
+    <value>状態が操作に対して有効でなかったため、1 つ以上のジョブを再開できませんでした。</value>
   </data>
   <data name="RemoteHostNullClientHost" xml:space="preserve">
-    <value>No client computer was specified for the remote runspace that is running a client-side method.</value>
+    <value>クライアント側メソッドを実行しているリモート実行空間にクライアント コンピューターが指定されていません。</value>
   </data>
   <data name="DisableRemotingShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This denies remote access to this session configuration.</value>
+    <value>名前: {0} SDDL: {1}。これにより、このセッション構成へのリモート アクセスが拒否されます。</value>
   </data>
   <data name="SetEnabledFalseTarget" xml:space="preserve">
-    <value>Enabled: False. This configures the WS-Management service to deny the connection request.</value>
+    <value>有効化: false。これにより、接続要求を拒否するように WS-Management サービスが構成されます。</value>
   </data>
   <data name="SetEnabledTrueTarget" xml:space="preserve">
-    <value>Enabled: True. This configures the WS-Management service to accept the connection request.</value>
+    <value>有効: True。これにより、接続要求を受け入れるように WS-Management サービスが構成されます。</value>
   </data>
   <data name="DISCAliasDefinitionsComment" xml:space="preserve">
-    <value>Aliases to be defined when applied to a session</value>
+    <value>セッションに適用されるときに定義されるエイリアス</value>
   </data>
   <data name="DISCAssembliesToLoadComment" xml:space="preserve">
-    <value>Assemblies to load when applied to a session</value>
+    <value>セッションに適用されたときに読み込むアセンブリ</value>
   </data>
   <data name="DISCAuthorComment" xml:space="preserve">
-    <value>Author of this document</value>
+    <value>このドキュメントの作成者</value>
   </data>
   <data name="DISCCLRVersionComment" xml:space="preserve">
-    <value>Version of the CLR to use when applied to a session</value>
+    <value>セッションに適用するときに使用する CLR のバージョン</value>
   </data>
   <data name="DISCCompanyNameComment" xml:space="preserve">
-    <value>Company associated with this document</value>
+    <value>このドキュメントに関連付けられている会社</value>
   </data>
   <data name="DISCCopyrightComment" xml:space="preserve">
-    <value>Copyright statement for this document</value>
+    <value>このドキュメントの著作権に関する声明</value>
   </data>
   <data name="DISCDescriptionComment" xml:space="preserve">
-    <value>Description of the functionality provided by these settings</value>
+    <value>この設定によって提供される機能の説明</value>
   </data>
   <data name="DISCEnvironmentVariablesComment" xml:space="preserve">
-    <value>Environment variables to define when applied to a session</value>
+    <value>セッションに適用されるときに定義する環境変数</value>
   </data>
   <data name="DISCExecutionPolicyComment" xml:space="preserve">
-    <value>Execution policy to apply when applied to a session</value>
+    <value>セッションに適用するときに適用する実行ポリシー</value>
   </data>
   <data name="DISCFormatsToProcessComment" xml:space="preserve">
-    <value>Format files (.ps1xml) to load when applied to a session</value>
+    <value>セッションに適用されたときに読み込むフォーマット ファイル (.ps1xml)</value>
   </data>
   <data name="DISCFunctionDefinitionsComment" xml:space="preserve">
-    <value>Functions to define when applied to a session</value>
+    <value>セッションに適用されたときに定義する関数</value>
   </data>
   <data name="DISCGUIDComment" xml:space="preserve">
-    <value>ID used to uniquely identify this document</value>
+    <value>このドキュメントを一意に識別するために使用される ID</value>
   </data>
   <data name="DISCInitialSessionStateComment" xml:space="preserve">
-    <value>Session type defaults to apply for this session configuration. Can be 'RestrictedRemoteServer' (recommended), 'Empty', or 'Default'</value>
+    <value>このセッション構成に適用するセッションの種類の既定値。'RestrictedRemoteServer' (推奨)、'Empty'、または 'Default' を指定できます</value>
   </data>
   <data name="DISCTranscriptDirectoryComment" xml:space="preserve">
-    <value>Directory to place session transcripts for this session configuration</value>
+    <value>このセッション構成のセッション トランスクリプトを配置するディレクトリ</value>
   </data>
   <data name="DISCRunAsVirtualAccountComment" xml:space="preserve">
-    <value>Whether to run this session configuration as the machine's (virtual) administrator account</value>
+    <value>このセッション構成をマシン (仮想) 管理者アカウントとして実行するかどうか</value>
   </data>
   <data name="DISCLanguageModeComment" xml:space="preserve">
-    <value>Language mode to apply when applied to a session. Can be 'NoLanguage' (recommended), 'RestrictedLanguage', 'ConstrainedLanguage', or 'FullLanguage'</value>
+    <value>セッションに適用するときに適用する言語モード。'NoLanguage' (推奨)、'RestrictedLanguage'、'ConstrainedLanguage'、または 'FullLanguage' を指定できます</value>
   </data>
   <data name="DISCModulesToImportComment" xml:space="preserve">
-    <value>Modules to import when applied to a session</value>
+    <value>セッションに適用されたときにインポートするモジュール</value>
   </data>
   <data name="DISCPowerShellVersionComment" xml:space="preserve">
-    <value>Version of the PowerShell engine to use when applied to a session</value>
+    <value>セッションに適用するときに使用する PowerShell エンジンのバージョン</value>
   </data>
   <data name="DISCProcessorArchitectureComment" xml:space="preserve">
-    <value>Processor architecture to use when applied to a session</value>
+    <value>セッションに適用するときに使用するプロセッサ アーキテクチャ</value>
   </data>
   <data name="DISCSchemaVersionComment" xml:space="preserve">
-    <value>Version number of the schema used for this document</value>
+    <value>このドキュメントに使用されるスキーマのバージョン番号</value>
   </data>
   <data name="DISCScriptsToProcessComment" xml:space="preserve">
-    <value>Scripts to run when applied to a session</value>
+    <value>セッションに適用されたときに実行するスクリプト</value>
   </data>
   <data name="DISCTypesToAddComment" xml:space="preserve">
-    <value>Types to add when applied to a session</value>
+    <value>セッションに適用されたときに追加する型</value>
   </data>
   <data name="DISCTypesToProcessComment" xml:space="preserve">
-    <value>Type files (.ps1xml) to load when applied to a session</value>
+    <value>セッションに適用されたときに読み込む種類ファイル (.ps1xml)</value>
   </data>
   <data name="DISCVariableDefinitionsComment" xml:space="preserve">
-    <value>Variables to define when applied to a session</value>
+    <value>セッションに適用されるときに定義する変数</value>
   </data>
   <data name="DISCRoleDefinitionsComment" xml:space="preserve">
-    <value>User roles (security groups), and the role capabilities that should be applied to them when applied to a session</value>
+    <value>ユーザー ロール (セキュリティ グループ)、およびセッションに適用するときに適用する必要があるロール機能</value>
   </data>
   <data name="DISCVisibleAliasesComment" xml:space="preserve">
-    <value>Aliases to make visible when applied to a session</value>
+    <value>セッションに適用されたときに表示するエイリアス</value>
   </data>
   <data name="DISCVisibleCmdletsComment" xml:space="preserve">
-    <value>Cmdlets to make visible when applied to a session</value>
+    <value>セッションに適用されたときに表示するコマンドレット</value>
   </data>
   <data name="DISCCommandModificationSyntax" xml:space="preserve">
-    <value>Could not parse visible command definition for '{0}'. The visible command definition must be a hashtable with the keys of 'Name' and 'Parameters'. The value of the 'Parameters' key must be a collection of hashtables with the keys 'Name', and optionally either 'ValidateSet' or 'ValidatePattern'.</value>
+    <value>'{0}' の表示可能なコマンド定義を解析できませんでした。表示可能なコマンド定義は、'Name' キーと 'Parameters' キーを持つハッシュ テーブルである必要があります。'Parameters' キーの値は、キーの 'Name' を持つハッシュ テーブルのコレクションで、必要に応じて 'ValidateSet' または 'ValidatePattern' のいずれかである必要があります。</value>
   </data>
   <data name="DISCVisibleFunctionsComment" xml:space="preserve">
-    <value>Functions to make visible when applied to a session</value>
+    <value>セッションに適用されたときに表示する関数</value>
   </data>
   <data name="DISCVisibleProvidersComment" xml:space="preserve">
-    <value>Providers to make visible when applied to a session</value>
+    <value>セッションに適用されたときに表示するプロバイダー</value>
   </data>
   <data name="DISCVisibleExternalCommandsComment" xml:space="preserve">
-    <value>External commands (scripts and applications) to make visible when applied to a session</value>
+    <value>セッションに適用されたときに表示される外部コマンド (スクリプトとアプリケーション)</value>
   </data>
   <data name="InvalidPSSessionConfigurationFilePath" xml:space="preserve">
-    <value>PSSession Configuration file path '{0}' is not valid. The path argument must resolve to a single file in the file system with a '.pssc' extension. Please fix the path specification and try again.</value>
+    <value>PSSession 構成ファイルのパス '{0}' が無効です。path 引数は、拡張子が '.pssc' のファイル システム内の 1 つのファイルに解決される必要があります。パスの指定を修正して、もう一度お試しください。</value>
   </data>
   <data name="InvalidRoleCapabilityFilePath" xml:space="preserve">
-    <value>Role Capability file path '{0}' is not valid. The path argument must resolve to a single file in the file system with a '.psrc' extension. Please fix the path specification and try again.</value>
+    <value>ロール機能ファイルのパス '{0}' が無効です。path 引数は、拡張子が '.psrc' のファイル システム内の 1 つのファイルに解決される必要があります。パスの指定を修正して、もう一度お試しください。</value>
   </data>
   <data name="InvalidRoleEntry" xml:space="preserve">
-    <value>The 'Roles' entry must be a hashtable, but was a {0}.</value>
+    <value>'Roles' エントリはハッシュ テーブルである必要がありますが、{0} でした。</value>
   </data>
   <data name="InvalidRoleValue" xml:space="preserve">
-    <value>Could not convert the value of the '{0}' role entry to a hashtable. The 'Roles' entry must be a hashtable with group names for keys, where the value associated with each key is another hashtable of session configuration properties for that role.</value>
+    <value>'{0}' ロール エントリの値をハッシュ テーブルに変換できませんでした。'Roles' エントリは、キーのグループ名を持つハッシュ テーブルである必要があります。各キーに関連付けられている値は、そのロールのセッション構成プロパティのもう 1 つのハッシュ テーブルです。</value>
   </data>
   <data name="CouldNotFindRoleCapability" xml:space="preserve">
-    <value>Could not find the role capability, '{0}'. The role capability must be a file named '{1}' within a 'RoleCapabilities' directory in a module in the current module path.</value>
+    <value>ロール機能 '{0}' が見つかりませんでした。ロール機能は、現在のモジュール パス内のモジュールの 'RoleCapabilities' ディレクトリ内の '{1}' という名前のファイルである必要があります。</value>
   </data>
   <data name="InvalidRegisterPSSessionConfigurationModulePath" xml:space="preserve">
-    <value>Cannot find module path to import. The value of the ModulesToImport parameter {0} does not exist or is not a module directory. Correct the value and try the command again.</value>
+    <value>インポートするモジュール パスが見つかりません。ModulesToImport パラメーター {0} の値が存在しないか、モジュール ディレクトリではありません。値を修正し、コマンドを再試行してください。</value>
   </data>
   <data name="PSSessionConfigurationFileNotFound" xml:space="preserve">
-    <value>The specified configuration file '{0}' was not loaded because no valid configuration file was found.</value>
+    <value>有効な構成ファイルが見つからなかったため、指定された構成ファイル '{0}' は読み込まれませんでした。</value>
   </data>
   <data name="RCAutoDisconnected" xml:space="preserve">
-    <value>Computer {0} has been successfully disconnected.</value>
+    <value>コンピューター {0} が正常に切断されました。</value>
   </data>
   <data name="RCAutoDisconnectingWarning" xml:space="preserve">
-    <value>The reconnection attempt to {0} failed. Attempting to disconnect the session...</value>
+    <value>{0} への再接続の試行に失敗しました。セッションを切断しようとしています...</value>
   </data>
   <data name="RCConnectionRetryAttempt" xml:space="preserve">
-    <value>Attempting to reconnect to {0} ...</value>
+    <value>{0} への接続を試みています...</value>
   </data>
   <data name="RCInternalError" xml:space="preserve">
-    <value>Network connectivity to {0} has been lost and the attempt to reconnect has failed. Please repair the network connection and reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>{0} へのネットワーク接続が失われ、再接続に失敗しました。ネットワーク接続を修復し、Connect-PSSession または Receive-PSSession を使用して再接続してください。</value>
   </data>
   <data name="RCNetworkFailureDetected" xml:space="preserve">
-    <value>The network connection to {0} has been interrupted. Attempting to reconnect for up to {1} minutes...</value>
+    <value>{0} へのネットワーク接続が中断されました。最大 {1} 分間再接続を試みています...</value>
   </data>
   <data name="RCReconnectSucceeded" xml:space="preserve">
-    <value>The network connection to {0} has been restored.</value>
+    <value>{0} へのネットワーク接続が復元されました。</value>
   </data>
   <data name="AuthenticationMechanismRequiresCredential" xml:space="preserve">
-    <value>{0} authentication requires an explicit user name and password.  Specify the user name and password by using the -Credential parameter and try the command again.</value>
+    <value>{0} 認証には明示的なユーザー名とパスワードが必要です。 -Credential パラメーターを使用してユーザー名とパスワードを指定し、コマンドを再試行してください。</value>
   </data>
   <data name="BasicAuthOverHttpNotSupported" xml:space="preserve">
-    <value>Basic authentication is not supported over HTTP on Unix.</value>
+    <value>Unix では、HTTP 経由での基本認証はサポートされていません。</value>
   </data>
   <data name="StartJobDefinitionNotFound1" xml:space="preserve">
-    <value>Cannot find a scheduled job with name {0}.</value>
+    <value>名前が {0} のスケジュールされたジョブが見つかりません。</value>
     <comment>{0} is the job definition name</comment>
   </data>
   <data name="StartJobManyDefNameMatches" xml:space="preserve">
-    <value>More than one job definition was found with name {0}. Try including the -DefinitionType parameter to Start-Job in order to narrow the search for the job definition to a single job source adapter.</value>
+    <value>{0} という名前のジョブ定義が複数見つかりました。ジョブ定義の検索を 1 つのジョブ ソース アダプターに絞り込むには、-DefinitionType パラメーターを Start-Job に含めてみてください。</value>
   </data>
   <data name="DISCMissingSchemaVersion" xml:space="preserve">
-    <value>The member 'SchemaVersion' is not present in the configuration file. This member must exist and be assigned a version number of the form 'n.n.n.n'. Please add the missing member to the file {0}.</value>
+    <value>メンバー 'SchemaVersion' が構成ファイルに存在しません。このメンバーは存在する必要があり、'n.n.n.n' という形式のバージョン番号が割り当てられている必要があります。見つからないメンバーをファイル {0} に追加してください。</value>
   </data>
   <data name="DISCTypeMustBeString" xml:space="preserve">
-    <value>The member '{0}' must be a string. Change the member to the correct type in the file {1}.</value>
+    <value>メンバー '{0}' は文字列である必要があります。ファイル {1} のメンバーを正しい種類に変更してください。</value>
   </data>
   <data name="DISCTypeMustBeStringArray" xml:space="preserve">
-    <value>The member '{0}' must be a string array. Change the member to the correct type in the file {1}.</value>
+    <value>メンバー '{0}' は文字列配列である必要があります。ファイル {1} のメンバーを正しい種類に変更してください。</value>
   </data>
   <data name="DISCTypeMustBeHashtable" xml:space="preserve">
-    <value>The member '{0}' must be a hashtable. Change the member to the correct type in the file {1}.</value>
+    <value>メンバー '{0}' はハッシュ テーブルである必要があります。ファイル {1} のメンバーを正しい種類に変更してください。</value>
   </data>
   <data name="DISCTypeMustBeHashtableArray" xml:space="preserve">
-    <value>The member '{0}' must be a hashtable array. Change the member to the correct type in the file {1}.</value>
+    <value>メンバー '{0}' はハッシュ テーブル配列である必要があります。ファイル {1} のメンバーを正しい種類に変更してください。</value>
   </data>
   <data name="DISCInvalidKey" xml:space="preserve">
-    <value>The member '{0}' is not a valid key. Please change the member to a valid key in the file {1}.</value>
+    <value>メンバー '{0}' は有効なキーではありません。メンバーをファイル {1} の有効なキーに変更してください。</value>
   </data>
   <data name="DISCTypeMustBeValidEnum" xml:space="preserve">
-    <value>The member '{0}' must be a valid enumeration type "{1}". Valid enumeration values are "{2}". Change the member to the correct type in the file {3}.</value>
+    <value>メンバー '{0}' は有効な列挙型 "{1}" である必要があります。有効な列挙値は "{2}" です。ファイル {3} のメンバーを正しい種類に変更してください。</value>
   </data>
   <data name="DISCErrorParsingConfigFile" xml:space="preserve">
-    <value>Error parsing configuration file {0} with the following message: {1}</value>
+    <value>構成ファイル {0} の解析中にエラーが発生しました。次のメッセージが返されました: {1}</value>
   </data>
   <data name="WriteJobInResultsCannotBeUsedWithoutWait" xml:space="preserve">
     <value>WriteJobInResults パラメーターは、-Wait パラメーターなしでは使用できません</value>
   </data>
   <data name="DISCPathsMustBeAbsolute" xml:space="preserve">
-    <value>The member '{0}' is not an absolute path {1}. Change the member to an absolute path in the file {2}.</value>
+    <value>メンバー '{0}' は絶対パス {1}ではありません。ファイル {2} のメンバーを絶対パスに変更してください。</value>
   </data>
   <data name="DISCTypeContainsInvalidKey" xml:space="preserve">
-    <value>The key '{0}' in the member '{1}' is not valid. Change the key in the file {2}.</value>
+    <value>メンバー '{1}' のキー '{0}' が無効です。ファイル {2} のキーを変更してください。</value>
   </data>
   <data name="DISCTypeMustContainKey" xml:space="preserve">
-    <value>The member '{0}' must contain the required key '{1}'. Add the require key to the file {2}.</value>
+    <value>メンバー '{0}' には、必要なキー '{1}' が含まれている必要があります。ファイル {2} に必須キーを追加してください。</value>
   </data>
   <data name="DISCInvalidExtension" xml:space="preserve">
-    <value>The key '{0}' contains an extension {1} that is not valid. Specify an extension from the following list: {{{2}}}.</value>
+    <value>キー '{0}' には、無効な拡張機能 {1} が含まれています。次の一覧から拡張機能を指定してください: {{{2}}}。</value>
   </data>
   <data name="DISCKeyMustBeScriptBlock" xml:space="preserve">
-    <value>The key '{0}' in the member '{1}' must be a script block. Change the key to the correct type in the file {2}.</value>
+    <value>メンバー '{1}' のキー '{0}' はスクリプト ブロックである必要があります。ファイル {2} のキーを正しい種類に変更してください。</value>
   </data>
   <data name="InvalidPSSessionConfigurationFile" xml:space="preserve">
-    <value>The session configuration file {0} is not valid. Specify a valid session configuration file and try the command again.</value>
+    <value>セッション構成ファイル {0} が無効です。有効なセッション構成ファイルを指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="RCProgressActivity" xml:space="preserve">
-    <value>Network connection interrupted</value>
+    <value>ネットワーク接続が中断されました</value>
   </data>
   <data name="RCProgressStatus" xml:space="preserve">
-    <value>Attempting to reconnect to {0} ...</value>
+    <value>{0} への接続を試みています...</value>
   </data>
   <data name="RCDisconnectedJob" xml:space="preserve">
-    <value>Job {0} has been created for reconnection.</value>
+    <value>再接続のためにジョブ {0} が作成されました。</value>
   </data>
   <data name="RCDisconnectSession" xml:space="preserve">
-    <value>Session {0} with instance ID {1} on computer {2} has been successfully disconnected.</value>
+    <value>コンピューター {2} 上のインスタンス ID {1} のセッション {0} が正常に切断されました。</value>
   </data>
   <data name="RCDisconnectSessionCreated" xml:space="preserve">
-    <value>Session {0} with instance ID {1} has been created for reconnection.</value>
+    <value>再接続のためにインスタンス ID {1} のセッション {0} が作成されました。</value>
   </data>
   <data name="SessionNameWithoutInvokeDisconnected" xml:space="preserve">
-    <value>The SessionName parameter can only be used with the Disconnected switch parameter.</value>
+    <value>SessionName パラメーターは、Disconnected スイッチ パラメーターとのみ併用できます。</value>
   </data>
   <data name="SessionConnectFailed" xml:space="preserve">
-    <value>A failure occurred while attempting to connect the PSSession.</value>
+    <value>PSSession の接続中にエラーが発生しました。</value>
   </data>
   <data name="VMSessionConnectFailed" xml:space="preserve">
-    <value>A failure occurred while attempting to connect to the target virtual machine.</value>
+    <value>ターゲット仮想マシンへの接続中にエラーが発生しました。</value>
   </data>
   <data name="ContainerSessionConnectFailed" xml:space="preserve">
-    <value>A failure occurred while attempting to connect to the target container.</value>
+    <value>ターゲット コンテナーへの接続中にエラーが発生しました。</value>
   </data>
   <data name="SessionNotAvailableForConnection" xml:space="preserve">
-    <value>The PSSession is in a disconnected state and is not available for connection.</value>
+    <value>PSSession は切断状態であり、接続できません。</value>
   </data>
   <data name="HyperVModuleNotAvailable" xml:space="preserve">
-    <value>The Hyper-V Module for PowerShell is not available on this machine.</value>
+    <value>このコンピューターでは、PowerShell 用 Hyper-V モジュールを使用できません。</value>
   </data>
   <data name="CannotCreateProcessInContainer" xml:space="preserve">
-    <value>Failed to launch PowerShell process ({1}) inside container with id {0} with error: {2}.</value>
+    <value>ID {0} のコンテナー内で PowerShell プロセス ({1}) を起動できませんでした。エラー: {2}。</value>
   </data>
   <data name="ContainersFeatureNotEnabled" xml:space="preserve">
-    <value>The Containers feature may not be enabled on this machine.</value>
+    <value>このコンピューターでは、コンテナー機能を有効にできません。</value>
   </data>
   <data name="CannotTerminateProcessInContainer" xml:space="preserve">
-    <value>Failed to terminate PowerShell process with id {0} inside container with id {1}.</value>
+    <value>ID {1} のコンテナー内の ID {0}の PowerShell プロセスを終了できませんでした。</value>
   </data>
   <data name="InvalidContainerId" xml:space="preserve">
-    <value>The input ContainerId {0} does not exist, or the corresponding container is not running.</value>
+    <value>入力 ContainerId {0} が存在しないか、対応するコンテナーが実行されていません。</value>
   </data>
   <data name="InvalidVMId" xml:space="preserve">
-    <value>The input VMId parameter does not resolve to a single virtual machine.</value>
+    <value>入力 VMId パラメーターが、1 つの仮想マシンに解決されません。</value>
   </data>
   <data name="InvalidVMIdNotSingle" xml:space="preserve">
-    <value>The input VMId {0} does not resolve to a single virtual machine.</value>
+    <value>入力 VMId {0} が 1 つの仮想マシンに解決されません。</value>
   </data>
   <data name="InvalidVMNameNoVM" xml:space="preserve">
-    <value>The input VMName parameter does not resolve to any virtual machine.</value>
+    <value>入力 VMName パラメーターが、どの仮想マシンにも解決されません。</value>
   </data>
   <data name="InvalidVMNameMultipleVM" xml:space="preserve">
-    <value>The input VMName parameter resolves to multiple virtual machines.</value>
+    <value>入力 VMName パラメーターは、複数の仮想マシンに解決しています。</value>
   </data>
   <data name="InvalidVMNameNotSingle" xml:space="preserve">
-    <value>The input VMName {0} does not resolve to a single virtual machine.</value>
+    <value>入力 VMName {0} は 1 つの仮想マシンに解決されません。</value>
   </data>
   <data name="InvalidVMState" xml:space="preserve">
-    <value>The virtual machine {0} is not in running state.</value>
+    <value>仮想マシン {0} が実行中の状態ではありません。</value>
   </data>
   <data name="InvalidCredential" xml:space="preserve">
-    <value>The credential is invalid.</value>
+    <value>資格情報が無効です。</value>
   </data>
   <data name="InvalidUsername" xml:space="preserve">
-    <value>The input username cannot be empty.</value>
+    <value>入力ユーザー名を空にすることはできません。</value>
   </data>
   <data name="EnterPSSessionBrokenSession" xml:space="preserve">
-    <value>Cannot enter session {0} because it is not in the disconnected state or is not available for connection. Retrieve the remote session using Get-PSSession -ComputerName {1} -InstanceId {2}.</value>
+    <value>セッション {0} に入れません。セッションは切断された状態ではないか、接続に使用できません。Get-PSSession -ComputerName {1} -InstanceId {2}を使用してリモート セッションを取得します。</value>
   </data>
   <data name="EnterPSSessionDisconnected" xml:space="preserve">
-    <value>Cannot enter session {0} because it is not in the disconnected state or is not available for connection. Reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>セッション {0} に入れません。セッションは切断された状態ではないか、接続に使用できません。Connect-PSSession または Receive-PSSession を使用して再接続してください。</value>
   </data>
   <data name="RCAutoDisconnectingError" xml:space="preserve">
-    <value>Network connectivity to {0} has been lost and the reconnection attempt failed. Please repair the network connection and reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>{0} へのネットワーク接続が失われ、再接続に失敗しました。ネットワーク接続を修復し、Connect-PSSession または Receive-PSSession を使用して再接続してください。</value>
   </data>
   <data name="RemoteSessionHyperVSocketClientConstructorSetSocketOptionFailure" xml:space="preserve">
-    <value>Failed to create an instance of RemoteSessionHyperVSocketClient due to SetSocketOption failure.</value>
+    <value>SetSocketOption エラーのため、RemoteSessionHyperVSocketClient のインスタンスを作成できませんでした。</value>
   </data>
   <data name="RemoteSessionHyperVSocketServerConstructorFailure" xml:space="preserve">
-    <value>Failed to create an instance of RemoteSessionHyperVSocketServer.</value>
+    <value>RemoteSessionHyperVSocketServer のインスタンスを作成できませんでした。</value>
   </data>
   <data name="StopCommandOnRetry" xml:space="preserve">
-    <value>Reconnection attempt canceled. Please repair the network connection and reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>再接続の試行が取り消されました。ネットワーク接続を修復し、Connect-PSSession または Receive-PSSession を使用して再接続してください。</value>
   </data>
   <data name="SuspendJobInvalidJobState" xml:space="preserve">
-    <value>One or more jobs could not be suspended because the state was not valid for the operation.</value>
+    <value>状態が操作に対して有効でなかったため、1 つ以上のジョブを中断できませんでした。</value>
   </data>
   <data name="AutoRemoveCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -AutoRemoveJob parameter cannot be used without the -Wait parameter</value>
+    <value>-AutoRemoveJob パラメーターは、-Wait パラメーターなしでは使用できません</value>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
-    <value>The WS-Management service cannot process the request. Cannot find the {0} session configuration in the WSMan: drive on the {1} computer. For more information, see the about_Remote_Troubleshooting Help topic.</value>
+    <value>WS-Management サービスは要求を処理できません。{0} セッション構成が、{1} コンピューターの WSMan: ドライブに見つかりません。詳細については、「about_Remote_Troubleshooting ヘルプ」トピックを参照してください。</value>
   </data>
   <data name="BadRunspaceTypeForJob" xml:space="preserve">
-    <value>A job could not be created from the {0} specification because the provided runspace is not a local runspace. Try again using a local runspace, or specify a RunspaceMode argument.</value>
+    <value>指定された実行空間がローカル実行空間ではないため、{0} 仕様からジョブを作成できませんでした。ローカル実行空間を使用してやり直すか、RunspaceMode 引数を指定してください。</value>
   </data>
   <data name="CannotDisconnectSessionWithInvalidIdleTimeout" xml:space="preserve">
-    <value>The session {0} cannot be disconnected because the specified idle time-out value {1} (seconds) is either greater than the server maximum allowed {2} (seconds), or less than the minimum allowed {3} (seconds).  Specify an idle time-out value that is within the allowed range, and try again.</value>
+    <value>指定されたアイドル タイムアウト値 {1} (秒) がサーバーの最大許容値 {2} (秒) を超えるか、許容される最小値 {3} (秒) より小さいため、セッション {0} を切断できません。 許容範囲内のアイドル タイムアウト値を指定してから、もう一度お試しください。</value>
     <comment>{0} is a placeholder for the session name
 {1} is a placeholder for the provided idletimeout value
 {2} is a placeholder for the maximum allowed idletimeout value
 {3} is a placeholder for the minimum allowed idletimeout value</comment>
   </data>
   <data name="InvalidIdleTimeoutOption" xml:space="preserve">
-    <value>The specified IdleTimeout session option {0} (seconds) is not a valid period.  Specify an IdleTimeout value that is greater than or equal to the minimum allowed {1} (seconds).</value>
+    <value>指定された IdleTimeout セッション オプション {0} (秒) は有効な期間ではありません。 許容される最小値 {1} (秒) 以上の IdleTimeout 値を指定してください。</value>
     <comment>{0} is a placeholder for the provided idletimeout
 {1} is a placeholder for the minimum allowed idletimeout value</comment>
   </data>
   <data name="DISCVisibilityAndAutoLoadingCannotBeBothSpecified" xml:space="preserve">
-    <value>The cmdlet "{0}" or the alias "{1}" cannot be present when "{2}","{3}","{4}" or "{5}" keys are specified in the session configuration file.</value>
+    <value>セッション構成ファイルで "{2}"、"{3}"、"{4}"、または "{5}" キーが指定されている場合、コマンドレット "{0}" またはエイリアス "{1}" は存在できません。</value>
   </data>
   <data name="InvalidConfigurationXMLAttribute" xml:space="preserve">
-    <value>"The transport option is not valid. Parameter "{0}" can be non-zero only if parameter "{1}" is set to true."</value>
+    <value>"トランスポート オプションが無効です。パラメーター "{0}" は、パラメーター "{1}" が true に設定されている場合にのみ 0 以外にすることができます。"</value>
   </data>
   <data name="DISCTypeMustBeStringOrHashtableArray" xml:space="preserve">
-    <value>The member '{0}' must be an array consisting of either string or hashtable elements.</value>
+    <value>メンバー '{0}' は、文字列要素またはハッシュ テーブル要素で構成される配列である必要があります。</value>
   </data>
   <data name="DISCTypeMustBeStringOrHashtableArrayInFile" xml:space="preserve">
-    <value>The member '{0}' must be an array consisting of either string or hashtable elements. Change the member to the correct type in the file {1}.</value>
+    <value>メンバー '{0}' は、文字列要素またはハッシュ テーブル要素で構成される配列である必要があります。ファイル {1} のメンバーを正しい種類に変更してください。</value>
   </data>
   <data name="StartJobDefinitionPathInvalidNotFSProvider" xml:space="preserve">
-    <value>Cannot retrieve the job definition '{0}' because path '{1}' refers to a '{2}' provider path.  Change the path parameter to a file system path.</value>
+    <value>パス '{1}' が '{2}' プロバイダー パスを参照しているため、ジョブ定義 '{0}' を取得できません。 path パラメーターをファイル システム パスに変更してください。</value>
     <comment>{0} is job definition name
 {1} is the user provided path
 {2} is the path provider</comment>
   </data>
   <data name="StartJobDefinitionPathInvalidNotSingle" xml:space="preserve">
-    <value>Cannot retrieve the job definition '{0}' because path '{1}' resolves to multiple file paths.  Change the path parameter so that it is a single path.</value>
+    <value>ジョブ定義 '{0}' を取得できません。パス '{1}' が複数のファイル パスに解決されるためです。 1 つのパスになるように path パラメーターを変更してください。</value>
     <comment>{0} is job definition name
 {1} is the user provided path</comment>
   </data>
   <data name="StartJobDefinitionNotFound2" xml:space="preserve">
-    <value>Cannot find a scheduled job with type {0} and name {1}.</value>
+    <value>種類が {0} で名前が {1} のスケジュールされたジョブが見つかりません。</value>
     <comment>{0} is the job definition type and {1} is the job definition name.</comment>
   </data>
   <data name="StartJobWorkingDirectoryNotFound" xml:space="preserve">
-    <value>Cannot find the WorkingDirectory path {0}.</value>
+    <value>WorkingDirectory パス {0} が見つかりません。</value>
   </data>
   <data name="CannotFindSessionForConnect" xml:space="preserve">
-    <value>Cannot connect to session {0}.  The session no longer exists on computer {1}.</value>
+    <value>セッション {0} に接続できません。 セッションはコンピューター {1} 上に存在しません。</value>
     <comment>{0} is the session name that cannot be found.
 {1} is the computer name where the session was.</comment>
   </data>
   <data name="RunspaceConnectFailedWithMessage" xml:space="preserve">
-    <value>The connect operation failed for session {0} with the following error message: {1}</value>
+    <value>セッション {0} の接続操作は、次のエラー メッセージで失敗しました: {1}</value>
   </data>
   <data name="ForceCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -Force parameter cannot be used without the -Wait parameter.</value>
+    <value>-Force パラメーターは、-Wait パラメーターなしでは使用できません。</value>
   </data>
   <data name="JobSuspendedDisconnectedWaitWithForce" xml:space="preserve">
-    <value>One or more jobs are in a suspended or disconnected state, and cannot continue without additional user input.  Specify the -Force parameter to continue to a completed, failed, or stopped state.</value>
+    <value>1 つ以上のジョブが中断状態または切断状態であり、追加のユーザー入力なしでは続行できません。 -Force パラメーターを指定して、完了、失敗、または停止状態に進んでください。</value>
   </data>
   <data name="RunAsSessionConfigurationSecurityWarning" xml:space="preserve">
-    <value>When RunAs is enabled in a PowerShell session configuration, the Windows security model cannot enforce a security boundary between different user sessions that are created by using this endpoint. Verify that the PowerShell runspace configuration is restricted to only the necessary set of cmdlets and capabilities.</value>
+    <value>PowerShell セッション構成で RunAs が有効になっている場合、Windows セキュリティ モデルは、このエンドポイントを使用して作成された異なるユーザー セッション間にセキュリティ境界を適用できません。PowerShell 実行空間の構成が、必要なコマンドレットと機能のセットのみに制限されていることを確認してください。</value>
   </data>
   <data name="ForceSuspendJob" xml:space="preserve">
-    <value>The job was suspended successfully by adding the Force parameter.</value>
+    <value>Force パラメーターを追加することで、ジョブは正常に中断されました。</value>
   </data>
   <data name="InvalidPSSessionConfigurationFileErrorProcessing" xml:space="preserve">
-    <value>The session configuration file {0} is not valid. Specify a valid session configuration file and try the command again. Error parsing configuration file: {1}.</value>
+    <value>セッション構成ファイル {0} が無効です。有効なセッション構成ファイルを指定してから、コマンドを再試行してください。構成ファイルの解析中にエラーが発生しました: {1}。</value>
   </data>
   <data name="ErrorParsingTheKeyInPSSessionConfigurationFile" xml:space="preserve">
-    <value>Register-PSSessionConfiguration : The '{0}' key in the {1}. session configuration file contains a value that is not valid. Correct the file and try the command again. </value>
+    <value>Register-PSSessionConfiguration: {1} セッション構成ファイルの '{0}' キーに無効な値が含まれています。ファイルを修正し、コマンドを再試行してください。</value>
   </data>
   <data name="EndpointDoesNotSupportDisconnect" xml:space="preserve">
-    <value>Disconnected sessions are supported only when the remote computer is running PowerShell 3.0 or a later version of PowerShell.</value>
+    <value>切断されたセッションは、リモート コンピューターが PowerShell 3.0 以降のバージョンの PowerShell を実行している場合にのみサポートされます。</value>
   </data>
   <data name="ThrottlingJobFlowControlMemoryWarning" xml:space="preserve">
-    <value>Memory usage of a cmdlet has exceeded a warning level. To avoid this situation, try one of the following: 1) Lower the rate at which CIM operations produce data (for example, by passing a low value to the ThrottleLimit parameter), 2) Increase the rate at which data is consumed by downstream cmdlets, or 3) Use the Invoke-Command cmdlet to run the whole pipeline on the server. The cmdlet that exceeded a warning level of memory usage was started by the following command line: {0}</value>
+    <value>コマンドレットのメモリ使用量が警告レベルを超えました。この状況を回避するには、次のいずれかを試してください。 1) CIM 操作がデータを生成する速度を下げる (ThrottleLimit パラメーターに低い値を渡すなど)、2) ダウンストリーム コマンドレットでデータが消費される速度を上げる、または 3) Invoke-Command コマンドレットを使用してサーバー上でパイプライン全体を実行します。メモリ使用量の警告レベルを超えたコマンドレットは、次のコマンド ラインによって開始されました: {0}</value>
   </data>
   <data name="EnableNetworkAccessWarning" xml:space="preserve">
-    <value>PSSession {0} was created using the EnableNetworkAccess parameter and can only be reconnected from the local computer.</value>
+    <value>PSSession {0} は EnableNetworkAccess パラメーターを使用して作成され、ローカル コンピューターからのみ再接続できます。</value>
   </data>
   <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
-    <value>Cannot start job. The language mode for this session is incompatible with the system-wide language mode.</value>
+    <value>ジョブを開始できませんでした。このセッションの言語モードは、システム全体の言語モードと互換性がありません。</value>
   </data>
   <data name="CannotCreateRunspaceInconsistentState" xml:space="preserve">
-    <value>Cannot create runspace. The language mode for this configuration is incompatible with the system-wide language mode.</value>
+    <value>実行空間を作成できません。この構成の言語モードは、システム全体の言語モードと互換性がありません。</value>
   </data>
   <data name="CannotExitNestedPipeline" xml:space="preserve">
-    <value>Cannot exit a nested pipeline because the pipeline is not in the nested state.</value>
+    <value>パイプラインが入れ子になった状態ではないため、入れ子になったパイプラインを終了できません。</value>
   </data>
   <data name="PowerShellInvokerInvalidState" xml:space="preserve">
-    <value>The PowerShell server session is not in a valid state for running nested commands.  No nested commands can be run in this session.</value>
+    <value>PowerShell サーバー セッションは、入れ子になったコマンドを実行するための有効な状態ではありません。 このセッションでは、入れ子になったコマンドを実行できません。</value>
   </data>
   <data name="CannotInvokeNestedCommandNestedCommandRunning" xml:space="preserve">
-    <value>Cannot invoke a nested command on the remote session because a nested command is already running.</value>
+    <value>入れ子になったコマンドが既に実行されているため、リモート セッションで入れ子になったコマンドを呼び出すことはできません。</value>
   </data>
   <data name="ServerSideNestedCommandInvokeFailed" xml:space="preserve">
-    <value>The remote session was unable to invoke command {0} with error: {1}.</value>
+    <value>リモート セッションはコマンド {0} を呼び出すことができませんでした。エラー: {1}。</value>
   </data>
   <data name="ReceivePSSessionInDebugMode" xml:space="preserve">
-    <value>The remote session command is currently stopped in the debugger.  Use the Enter-PSSession cmdlet to connect interactively to the remote session and automatically enter into the console debugger.</value>
+    <value>現在、リモート セッション コマンドはデバッガーで停止しています。 Enter-PSSession コマンドレットを使用して、リモート セッションに対話的に接続し、コンソール デバッガーに自動的に入ってください。</value>
   </data>
   <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
-    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell 4.0 or greater.</value>
+    <value>接続先のリモート セッションは、リモート デバッグをサポートしていません。PowerShell 4.0 以降を実行しているリモート コンピューターに接続する必要があります。</value>
   </data>
   <data name="ICMInvalidSessionState" xml:space="preserve">
-    <value>Because the session state for session {0}, {1}, {2} is not equal to Open, you cannot run a command in the session.  The session state is {3}.</value>
+    <value>セッション {0}、{1}、{2} のセッション状態が Open と等しくないため、セッションでコマンドを実行することはできません。 セッション状態は {3} です。</value>
   </data>
   <data name="ICMNoValidRunspaces" xml:space="preserve">
-    <value>No valid sessions were specified.  Ensure you provide valid sessions that are in the Opened state and are available to run commands.</value>
+    <value>有効なセッションが指定されませんでした。 Open 状態で、コマンドの実行に使用できる有効なセッションを指定してください。</value>
   </data>
   <data name="ICMInvalidSessionAvailability" xml:space="preserve">
-    <value>The session {0}, {1}, {2} is not available to run commands.  The session availability is {3}.</value>
+    <value>セッション {0}、{1}、{2} は、コマンドの実行に使用できません。 セッションの可用性が {3} です。</value>
   </data>
   <data name="JobActionInvalidWithNoChildJobs" xml:space="preserve">
-    <value>The command cannot run because the ChildJobs property is empty.</value>
+    <value>ChildJobs プロパティが空であるため、コマンドを実行できません。</value>
   </data>
   <data name="CannotDebugJobNoHostDebugger" xml:space="preserve">
-    <value>The job cannot be debugged because there is no PowerShell host debugger available.  Make sure you are running this command in a host that supports debugging.</value>
+    <value>使用可能な PowerShell ホスト デバッガーがないため、ジョブをデバッグできません。 デバッグをサポートするホストでこのコマンドを実行していることを確認してください。</value>
   </data>
   <data name="CannotFindJobWithId" xml:space="preserve">
-    <value>Cannot find job with id {0}.</value>
+    <value>ID {0} のジョブが見つかりません。</value>
   </data>
   <data name="CannotFindJobWithInstanceId" xml:space="preserve">
-    <value>Cannot find job with Instance Id {0}.</value>
+    <value>インスタンス ID {0} のジョブが見つかりません。</value>
   </data>
   <data name="CannotFindJobWithName" xml:space="preserve">
-    <value>Cannot find job with name {0}.</value>
+    <value>名前が {0} のジョブが見つかりません。</value>
   </data>
   <data name="CannotDebugJobNoHostUI" xml:space="preserve">
-    <value>The job cannot be debugged because there is no host UI available.  Make sure you are running this command in a PowerShell host that implements PSHostUserInterface.</value>
+    <value>使用可能なホスト UI がないため、ジョブをデバッグできません。 PSHostUserInterface を実装する PowerShell ホストでこのコマンドを実行していることを確認してください。</value>
   </data>
   <data name="CannotDebugJobInvalidDebuggerMode" xml:space="preserve">
-    <value>The job cannot be debugged because the host debugger mode is set to None or Default.  The host debugger mode must be LocalScript and/or RemoteScript.</value>
+    <value>ホスト デバッガー モードが None または Default に設定されているため、ジョブをデバッグできません。 ホスト デバッガー モードは LocalScript または RemoteScript である必要があります。</value>
   </data>
   <data name="FoundMultipleJobsWithId" xml:space="preserve">
-    <value>Multiple jobs were found with Id {0}.  Debug-Job can debug only one job at a time.</value>
+    <value>ID {0}のジョブが複数見つかりました。 Debug-Job は一度に 1 つのジョブのみをデバッグできます。</value>
   </data>
   <data name="FoundMultipleJobsWithName" xml:space="preserve">
-    <value>Multiple jobs were found with the name {0}.  Debug-Job can debug only one job at a time.</value>
+    <value>{0} という名前のジョブが複数見つかりました。 Debug-Job は一度に 1 つのジョブのみをデバッグできます。</value>
   </data>
   <data name="NamedPipeAlreadyListening" xml:space="preserve">
-    <value>The Named Pipe server listener used for process attach is already running.</value>
+    <value>プロセスのアタッチに使用される名前付きパイプ サーバー リスナーは既に実行されています。</value>
   </data>
   <data name="EnterPSHostProcessCantEnterSameProcess" xml:space="preserve">
-    <value>Enter-PSHostProcess does not support entering the same PowerShell session it is running in.</value>
+    <value>Enter-PSHostProcess では、それが実行されているのと同じ PowerShell セッションに入ることはできません。</value>
   </data>
   <data name="EnterPSHostProcessMultipleProcessesFoundWithName" xml:space="preserve">
-    <value>Multiple processes were found with this name {0}. Use the process Id to specify a single process to enter.</value>
+    <value>{0} という名前の複数のプロセスが見つかりました。プロセス ID を使用して、1 つのプロセスを指定してください。</value>
   </data>
   <data name="EnterPSHostProcessNoPowerShell" xml:space="preserve">
-    <value>Cannot enter process with Id '{0}' because it has not loaded the PowerShell engine or the named-pipe listener was disabled.</value>
+    <value>ID '{0}' のプロセスは PowerShell エンジンを読み込んでいないため、または名前付きパイプ リスナーが無効になっているため、プロセスに入ることができません。</value>
   </data>
   <data name="EnterPSHostProcessNoProcessFoundWithId" xml:space="preserve">
-    <value>No process was found with Id: {0}.</value>
+    <value>ID: {0} のプロセスが見つかりませんでした。</value>
   </data>
   <data name="EnterPSHostProcessNoProcessFoundWithName" xml:space="preserve">
-    <value>No process was found with Name: {0}.</value>
+    <value>名前: {0} のプロセスが見つかりませんでした。</value>
   </data>
   <data name="EnterPSHostProcessNoNamedPipeFound" xml:space="preserve">
-    <value>No named pipe was found with CustomPipeName: {0}.</value>
+    <value>CustomPipeName: {0} の名前付きパイプが見つかりませんでした。</value>
   </data>
   <data name="CustomPipeNameTooLong" xml:space="preserve">
-    <value>Cannot process the command because the pipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+    <value>指定された pipeName が長すぎるため、コマンドを処理できません。このプラットフォームのパイプ名は、最大 {0} 文字まで指定できます。パイプ名 '{1}' は {2} 文字です。</value>
   </data>
   <data name="HostDoesNotSupportIASession" xml:space="preserve">
-    <value>The current host does not support the Enter-PSHostProcess cmdlet.</value>
+    <value>現在のホストは、Enter-PSHostProcess コマンドレットをサポートしていません。</value>
   </data>
   <data name="NamedPipeTransportProcessEnded" xml:space="preserve">
-    <value>"The named pipe target process has ended."</value>
+    <value>"名前付きパイプ ターゲット プロセスが終了しました。"</value>
   </data>
   <data name="HyperVSocketTransportProcessEnded" xml:space="preserve">
-    <value>"The Hyper-V socket target process has ended."</value>
+    <value>"Hyper-V ソケット ターゲット プロセスが終了しました。"</value>
   </data>
   <data name="EnterPSHostProcessPrompt" xml:space="preserve">
-    <value>{0}[Process:{1}]: {2}</value>
+    <value>{0}[プロセス:{1}]: {2}</value>
   </data>
   <data name="EnterVMSessionPrompt" xml:space="preserve">
     <value>{0}[{1}]: {2}</value>
   </data>
   <data name="EnterPSHostProcessCannotConnectToProcess" xml:space="preserve">
-    <value>Unable to connect to application domain name {0} of process {1}.  Error: {2}.</value>
+    <value>プロセス {1} のアプリケーション ドメイン名 {0} に接続できません。 エラーは {2}。</value>
   </data>
   <data name="EnterPSHostProcessCannotConnectToPipe" xml:space="preserve">
-    <value>Unable to connect to pipe with name {0}.  Error: {1}.</value>
+    <value>名前 {0} のパイプに接続できません。 エラー: {1}。</value>
   </data>
   <data name="WSManPluginConnectNoNegotiationData" xml:space="preserve">
-    <value>PowerShell plugin cannot process the Connect operation as required negotiation information is either missing or not complete.</value>
+    <value>必要なネゴシエーション情報が不足しているか、完了していないため、PowerShell プラグインは Connect 操作を処理できません。</value>
   </data>
   <data name="WSManPluginConnectOperationFailed" xml:space="preserve">
-    <value>PowerShell plugin failed to process to connect operation.</value>
+    <value>PowerShell プラグインは接続操作を処理できませんでした。</value>
   </data>
   <data name="WSManPluginContextNotFound" xml:space="preserve">
-    <value>The supplied plugin context is not valid.</value>
+    <value>指定されたプラグイン コンテキストが無効です。</value>
   </data>
   <data name="WSManPluginInvalidArgSet" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error while processing {0} arguments.</value>
+    <value>Powershell プラグインで、{0} 引数の処理中に致命的なエラーが発生しました。</value>
   </data>
   <data name="WSManPluginInvalidCommandContext" xml:space="preserve">
-    <value>The supplied command context is not valid.</value>
+    <value>指定されたコマンド コンテキストが無効です。</value>
   </data>
   <data name="WSManPluginInvalidInputDataType" xml:space="preserve">
-    <value>The supplied input data is not valid. Only input data of type {0} is supported.</value>
+    <value>指定された入力データが無効です。{0} 型の入力データのみがサポートされています。</value>
   </data>
   <data name="WSManPluginInvalidInputStream" xml:space="preserve">
     <value>指定された入力ストリームが無効です。{0} のみが入力ストリームとしてサポートされます。</value>
@@ -1513,223 +1513,223 @@ Microsoft.PowerShell や Register-PSSessionConfiguration コマンドレット�
     <value>PowerShell プラグインで、シャットダウン通知の待機ハンドルの登録中に致命的なエラーが発生しました。</value>
   </data>
   <data name="ServerDriverRemoteHostAlreadyPushed" xml:space="preserve">
-    <value>Cannot enter Runspace because a Runspace is already pushed in this session.</value>
+    <value>このセッションで実行空間が既にプッシュされているため、実行空間に入れません。</value>
   </data>
   <data name="ServerDriverRemoteHostNoDebuggerToPush" xml:space="preserve">
-    <value>Cannot enter Runspace because there is no server remote debugger available.</value>
+    <value>使用可能なサーバー リモート デバッガーがないため、実行空間に入れません。</value>
   </data>
   <data name="ServerDriverRemoteHostNotRemoteRunspace" xml:space="preserve">
-    <value>Cannot enter Runspace because it is not a remote Runspace.</value>
+    <value>リモート実行空間ではないため、実行空間に入ることができません。</value>
   </data>
   <data name="RemoteTransportError" xml:space="preserve">
-    <value>Remote transport error: {0}</value>
+    <value>リモート トランスポート エラー: {0}</value>
   </data>
   <data name="CannotConnectContainerNamedPipe" xml:space="preserve">
-    <value>Unable to open pipe connection for PowerShell in container. Error code: {0}.</value>
+    <value>コンテナー内の PowerShell のパイプ接続を開くことができません。エラー コード: {0}。</value>
   </data>
   <data name="CannotCreateNamedPipe" xml:space="preserve">
-    <value>Unable to create PowerShell IPC named pipe. Error code: {0}.</value>
+    <value>PowerShell IPC 名前付きパイプを作成できません。エラー コード: {0}。</value>
   </data>
   <data name="ConnectNamedPipeTimeout" xml:space="preserve">
-    <value>Timeout expired before connection could be made to named pipe.</value>
+    <value>名前付きパイプに接続する前にタイムアウトが期限切れになりました。</value>
   </data>
   <data name="WSManInitFailed" xml:space="preserve">
-    <value>WSMan Initialization failed with error code: {0}.</value>
+    <value>エラー {0} で WSMan を初期化できませんでした。</value>
   </data>
   <data name="NamedPipeServerCannotStart" xml:space="preserve">
-    <value>Unable to start named pipe server while in server mode.</value>
+    <value>サーバー モードで名前付きパイプ サーバーを起動できません。</value>
   </data>
   <data name="CouldNotResolveRoleDefinitionPrincipal" xml:space="preserve">
-    <value>Could not grant remote access to '{0}': '{1}'. The session configuration has been registered, but this group does not have access. To resolve this error, provide a valid group name and register the session configuration again.</value>
+    <value>'{0}' へのリモート アクセスを許可できませんでした: '{1}'。セッション構成は登録されましたが、このグループにはアクセス権がありません。このエラーを解決するには、有効なグループ名を指定し、セッション構成をもう一度登録してください。</value>
   </data>
   <data name="SessionConfigurationMustBeFileBased" xml:space="preserve">
-    <value>Could not get the session capabilities for the session configuration '{0}': this configuration was not registered with a session configuration file (.pssc), such as one created by the New-PSSessionConfigurationFile cmdlet.</value>
+    <value>セッション構成 '{0}' のセッション機能を取得できませんでした: この構成は、New-PSSessionConfigurationFile コマンドレットによって作成されたセッション構成ファイル (.pssc) に登録されていませんでした。</value>
   </data>
   <data name="CouldNotResolveUsername" xml:space="preserve">
-    <value>Could not resolve username '{0}'. Verify the username and try again.</value>
+    <value>ユーザー名 '{0}' を解決できませんでした。ユーザー名を確認して、もう一度やり直してください。</value>
   </data>
   <data name="DISCRunAsVirtualAccountGroupsComment" xml:space="preserve">
-    <value>Groups associated with machine's (virtual) administrator account</value>
+    <value>マシン (仮想) 管理者アカウントに関連付けられているグループ</value>
   </data>
   <data name="CannotCreateConfiguredRunspace" xml:space="preserve">
-    <value>Cannot create or open the configuration session {0}.</value>
+    <value>構成セッション {0}を作成または開くことができません。</value>
   </data>
   <data name="DISCEnforceInputParameterValidation" xml:space="preserve">
-    <value>Enforces script input parameter validation. This is automatically enabled when MountUserDrive is specified.</value>
+    <value>スクリプト入力パラメーターの検証を強制します。これは、MountUserDrive が指定されている場合に自動的に有効になります。</value>
   </data>
   <data name="DISCMountUserDriveComment" xml:space="preserve">
-    <value>Creates a 'User' PSDrive in the session for use with Copy-Item when File System provider is not visible.</value>
+    <value>ファイル システム プロバイダーが表示されない場合に Copy-Item で使用するために、セッションで 'User' PSDrive を作成します。</value>
   </data>
   <data name="DISCTypeMustBeBoolean" xml:space="preserve">
-    <value>The member '{0}' must be a boolean. Change the member to the correct type in the file {1}.</value>
+    <value>メンバー '{0}' はブール値である必要があります。ファイル {1} のメンバーを正しい種類に変更してください。</value>
   </data>
   <data name="DISCTypeMustBeInteger" xml:space="preserve">
-    <value>The member '{0}' must be an integer. Change the member to the correct type in the file {1}.</value>
+    <value>メンバー '{0}' は整数である必要があります。ファイル {1} のメンバーを正しい種類に変更してください。</value>
   </data>
   <data name="UserDriveProcessingThrewTerminatingError" xml:space="preserve">
-    <value>Processing the User drive threw an error {0}.</value>
+    <value>ユーザー ドライブの処理でエラー {0} がスローされました。</value>
   </data>
   <data name="DISCUserDriveMaxSizeComment" xml:space="preserve">
-    <value>Optional maximum size in bytes of user drive created with MountUserDrive parameter. Default maximum size for User drive is 50MB.</value>
+    <value>MountUserDrive パラメーターを使用して作成されたユーザー ドライブのオプションの最大サイズ (バイト単位)。ユーザー ドライブの既定の最大サイズは 50 MB です。</value>
   </data>
   <data name="UserDriveCannotGetFileSystemProvider" xml:space="preserve">
-    <value>Cannot find the file system provider.</value>
+    <value>ファイル システム プロバイダーが見つかりません。</value>
   </data>
   <data name="DISCGMSAComment" xml:space="preserve">
-    <value>Group managed service account name under which the configuration will run</value>
+    <value>構成を実行するグループ管理されたサービス アカウント名</value>
   </data>
   <data name="InvalidGMSAName" xml:space="preserve">
-    <value>Invalid Group Managed Service account name. Account name must be of the form 'DomainName\UserName'.</value>
+    <value>無効なグループ管理されたサービス アカウント名。アカウント名は 'DomainName\UserName' の形式である必要があります。</value>
   </data>
   <data name="DISCRequiredGroupsComment" xml:space="preserve">
-    <value>Group accounts for which membership is required to use the session.</value>
+    <value>セッションを使用するためにメンバーシップが必要なグループ アカウント。</value>
   </data>
   <data name="BadSDDLMismatchedParens" xml:space="preserve">
-    <value>Cannot parse sddl string because it contains mismatched parentheses: {0}.</value>
+    <value>一致しないかっこが含まれているため、sddl 文字列を解析できません: {0}。</value>
   </data>
   <data name="RequiredGroupsHashMultipleKeys" xml:space="preserve">
-    <value>RequiredGroups property hashtable must contain only a single key.</value>
+    <value>RequiredGroups プロパティ ハッシュ テーブルには、1 つのキーのみを含める必要があります。</value>
   </data>
   <data name="RequiredGroupsNotHashTable" xml:space="preserve">
-    <value>The RequiredGroups property is not in a name/value pair hashtable format.  This must be a hashtable of the form (using PowerShell syntax): RequiredGroups = @{ Or = 'Administrators' }.</value>
+    <value>RequiredGroups プロパティが、名前と値のペアのハッシュ テーブル形式ではありません。 これは (PowerShell 構文を使用した) フォームのハッシュ テーブルである必要があります: RequiredGroups = @{ または = 'Administrators' }。</value>
   </data>
   <data name="UnknownGroupMembershipKey" xml:space="preserve">
-    <value>Unknown key in Required Groups configuration.  Required Groups hashtable can only contain 'And' and 'Or' hash keys for logical membership groupings.</value>
+    <value>Required Groups の構成に不明なキーがあります。 必要なグループ ハッシュ テーブルには、論理メンバーシップ グループの 'And' および 'Or' ハッシュ キーのみを含めることができます。</value>
   </data>
   <data name="UnknownGroupMembershipValue" xml:space="preserve">
-    <value>Unknown value in Required Groups configuration.  Required Groups hashtable can only contain values that are either group names or another logical hashtable.</value>
+    <value>Required Groups 構成の値が不明です。 必要なグループ ハッシュ テーブルには、グループ名または別の論理ハッシュ テーブルのいずれかの値のみを含めることができます。</value>
   </data>
   <data name="RequiredGroupsMalformedACE" xml:space="preserve">
-    <value>Malformed ACE {0}.  Regular ACEs must have exactly 6 sections.</value>
+    <value>ACE {0} の形式が正しくありません。 通常の ACE には、ちょうど 6 つのセクションが必要です。</value>
   </data>
   <data name="InvalidUserDriveName" xml:space="preserve">
-    <value>Cannot create a session User Drive because the current user name contains invalid file path characters.</value>
+    <value>現在のユーザー名に無効なファイル パス文字が含まれているため、セッション ユーザー ドライブを作成できません。</value>
   </data>
   <data name="InvalidRoleCapabilityKey" xml:space="preserve">
-    <value>Invalid role capability key: {0}. Make sure the role capability name is spelled correctly and is a valid session configuration property.</value>
+    <value>無効なロール機能キー: {0}。ロール機能名のスペルが正しく、有効なセッション構成プロパティであることを確認してください。</value>
   </data>
   <data name="InvalidRoleCapabilityKeyType" xml:space="preserve">
-    <value>Invalid role capability key type: {0}. Role capability keys must be strings that identify a valid session configuration property.</value>
+    <value>無効なロール機能キーの種類: {0}。ロール機能キーは、有効なセッション構成プロパティを識別する文字列である必要があります。</value>
   </data>
   <data name="InvalidRoleKeyType" xml:space="preserve">
-    <value>Invalid role key type: {0}. Role keys must be strings that identify a security group.</value>
+    <value>無効なロール キーの種類: {0}。ロール キーは、セキュリティ グループを識別する文字列である必要があります。</value>
   </data>
   <data name="RemotingErrorNoLogonSessionExist" xml:space="preserve">
-    <value> Other Possible Cause:
-  -The domain or computer name was not included with the specified credential, for example: DOMAIN\UserName or COMPUTER\UserName.</value>
+    <value> その他の考えられる原因:
+  -指定された資格情報にドメイン名またはコンピューター名が含まれていませんでした (例: DOMAIN\UserName または COMPUTER\UserName)。</value>
   </data>
   <data name="CannotStartSSHClient" xml:space="preserve">
-    <value>Failed to start the SSH client process needed for the remoting connection with error: {0}.</value>
+    <value>リモート処理接続に必要な SSH クライアント プロセスを次のエラーによって開始できませんでした。エラー: {0}。</value>
   </data>
   <data name="KeyFileNotFound" xml:space="preserve">
-    <value>The specified key file {0} was not found.</value>
+    <value>指定されたキー ファイル {0} が見つかりませんでした。</value>
   </data>
   <data name="SSHClientEndWithErrorMessage" xml:space="preserve">
-    <value>The SSH client session has ended with error message: {0}</value>
+    <value>SSH クライアント セッションが次のエラー メッセージで終了しました: {0}</value>
   </data>
   <data name="SSHClientConnectTimeout" xml:space="preserve">
-    <value>SSH connection attempt failed after time out: {0} seconds.</value>
+    <value>タイムアウト後に SSH 接続の試行に失敗しました: {0} 秒。</value>
   </data>
   <data name="SSHClientConnectProcessTerminated" xml:space="preserve">
     <value>
-SSH client process terminated before connection could be established.</value>
+接続を確立する前に SSH クライアント プロセスが終了しました。</value>
   </data>
   <data name="MissingRequiredSSHParameter" xml:space="preserve">
-    <value>The provided SSHConnection hashtable is missing the required ComputerName or HostName parameter.</value>
+    <value>指定された SSHConnection ハッシュ テーブルに、必要な ComputerName パラメーターまたは HostName パラメーターがありません。</value>
   </data>
   <data name="InvalidSSHConnectionParameter" xml:space="preserve">
-    <value>The provided SSHConnection hashtable parameter name or element is null or empty.</value>
+    <value>指定された SSHConnection ハッシュ テーブル パラメーター名または要素が null または空です。</value>
   </data>
   <data name="UnknownSSHConnectionParameter" xml:space="preserve">
-    <value>The provided SSHConnection hashtable parameter {0} is not supported.</value>
+    <value>指定された SSHConnection ハッシュ テーブル パラメーター {0} はサポートされていません。</value>
   </data>
   <data name="SSHConnectionDuplicateHostName" xml:space="preserve">
-    <value>The provided SSHConnection hashtable contains both a ComputerName and HostName parameter.  Only one can be specified.</value>
+    <value>指定された SSHConnection ハッシュ テーブルには、ComputerName パラメーターと HostName パラメーターの両方が含まれています。 指定できるのは 1 つだけです。</value>
   </data>
   <data name="SSHConnectionDuplicateKeyPath" xml:space="preserve">
-    <value>The provided SSHConnection hashtable contains both a KeyFilePath and IdentityFilePath parameter.  Only one can be specified.</value>
+    <value>指定された SSHConnection ハッシュ テーブルには、KeyFilePath パラメーターと IdentityFilePath パラメーターの両方が含まれています。 指定できるのは 1 つだけです。</value>
   </data>
   <data name="CouldNotFindRoleCapabilityFile" xml:space="preserve">
-    <value>Could not find the provided role capability file {0}.</value>
+    <value>指定されたロール機能ファイル {0} が見つかりませんでした。</value>
   </data>
   <data name="InvalidRoleCapabilityFileExtension" xml:space="preserve">
-    <value>The provided role capability file {0} does not have the required .psrc extension.</value>
+    <value>指定されたロール機能ファイル {0} には、必要な .psrc 拡張子がありません。</value>
   </data>
   <data name="SSHAbruptlyTerminated" xml:space="preserve">
-    <value>The SSH transport process has abruptly terminated causing this remote session to break.</value>
+    <value>SSH トランスポート プロセスが突然終了し、このリモート セッションが中断しました。</value>
   </data>
   <data name="InvalidProcessorArchitecture" xml:space="preserve">
-    <value>PowerShell 6+ does not support WOW64. The binary must match the architecture of the processor.</value>
+    <value>PowerShell 6+ は WOW64 をサポートしていません。バイナリはプロセッサのアーキテクチャと一致する必要があります。</value>
   </data>
   <data name="WowComponentNotPresent" xml:space="preserve">
     <value>"{0}" 実行可能ファイルが見つかりませんでした。WOW64 機能がインストールされていることを確認します。</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
-    <value>Unable to install plugin {0} to directory {1}.</value>
+    <value>ディレクトリ {1} にプラグイン {0}をインストールできません。</value>
   </data>
   <data name="PluginDllMissing" xml:space="preserve">
-    <value>The WinRM plugin DLL {0} is missing for PowerShell. Please run Enable-PSRemoting and then retry this command.</value>
+    <value>PowerShell 用の WinRM プラグイン DLL {0} がありません。Enable-PSRemoting を実行してから、このコマンドを再試行してください。</value>
   </data>
   <data name="WSManClientDllNotAvailable" xml:space="preserve">
-    <value>This parameter set requires WSMan, and no supported WSMan client library was found. WSMan is either not installed or unavailable for this system.</value>
+    <value>このパラメーター セットには WSMan が必要であり、サポートされている WSMan クライアント ライブラリが見つかりませんでした。WSMan がインストールされていないか、このシステムで使用できません。</value>
   </data>
   <data name="ProcessExitInfo" xml:space="preserve">
     <value>
-      Exit code: {0}
+      終了コード: {0}
       Stdout: '{1}'
       Stderr: '{2}'
     </value>
   </data>
   <data name="ProcessInfoNotRecoverable" xml:space="preserve">
-    <value>Information about the process could not be read: '{0}'.</value>
+    <value>プロセスに関する情報を読み取ることができませんでした: '{0}'。</value>
   </data>
   <data name="CannotGetHostInteropTypes" xml:space="preserve">
-    <value>Host system does not have the correct version of Hyper-V schema.</value>
+    <value>ホスト システムに正しいバージョンの Hyper-V スキーマがありません。</value>
   </data>
   <data name="UnixOnlyHttpsWithoutSkipCACheckNotSupported" xml:space="preserve">
-    <value>HTTPS on Unix does not currently support CA or CN checks. Use the PSSessionOption -SkipCACheck and -SkipCNCheck if you are certain you trust the server you are connecting to and the network in between.</value>
+    <value>Unix 上の HTTPS では、現在 CA または CN のチェックはサポートされていません。接続しているサーバーとその間のネットワークが信頼できる場合は、PSSessionOption -SkipCACheck と -SkipCNCheck を使用してください。</value>
   </data>
   <data name="PSCoreRemotingDisableWarning" xml:space="preserve">
-    <value>PowerShell remoting has been disabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.
+    <value>PowerShell リモート処理は PowerShell 6 以降の構成でのみ無効にされており、Windows PowerShell リモート処理構成には影響しません。すべての PowerShell リモート処理構成に影響を与えるには、Windows PowerShell でこのコマンドレットを実行してください。
 </value>
   </data>
   <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
-    <value>PowerShell remoting has been enabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.</value>
+    <value>PowerShell リモート処理は PowerShell 6 以降の構成でのみ有効になっており、Windows PowerShell リモート処理構成に影響しません。すべての PowerShell リモート処理構成に影響を与えるには、Windows PowerShell でこのコマンドレットを実行してください。</value>
   </data>
   <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
-    <value>Enter-PSHostProcess cmdlet is disabled because an application control policy such as 'AppLocker' or 'Windows Defender Application Control' is in enforcement.</value>
+    <value>'AppLocker' や 'Windows Defender Application Control' などのアプリケーション制御ポリシーが適用されているため、Enter-PSHostProcess コマンドレットは無効になっています。</value>
   </data>
   <data name="RemoteDebuggerError" xml:space="preserve">
-    <value>Remote debugger exception: {0}, error message: {1}</value>
+    <value>リモート デバッガーの例外: {0}、エラー メッセージ: {1}</value>
   </data>
   <data name="WindowsPowerShellNotPresent" xml:space="preserve">
     <value>このコンピューターでWindows PowerShellが見つからなかったため、Windows PowerShellプロセスを作成できません。</value>
   </data>
   <data name="InvalidPSSessionArgument" xml:space="preserve">
-    <value>The Runspace argument to Create must be a non-null RemoteRunspace object.</value>
+    <value>Create の Runspace 引数は、null 以外の RemoteRunspace オブジェクトである必要があります。</value>
   </data>
   <data name="DISCInvalidConfigKeyType" xml:space="preserve">
-    <value>The session configuration hash table contains an invalid key type. Keys should be string types.</value>
+    <value>セッション構成ハッシュ テーブルに無効なキーの種類が含まれています。キーは文字列型である必要があります。</value>
   </data>
   <data name="DISCUnsupportedConfigName" xml:space="preserve">
-    <value>The session configuration file contains an unsupported configuration option: {0}. This is a remoting endpoint configuration option, that does not apply to PowerShell session state.</value>
+    <value>セッション構成ファイルには、サポートされていない構成オプション: {0} が含まれています。これはリモート処理エンドポイント構成オプションであり、PowerShell セッション状態には適用されません。</value>
   </data>
   <data name="DISCUnknownConfigName" xml:space="preserve">
-    <value>The session configuration file contains an unknown configuration option: {0}.</value>
+    <value>セッション構成ファイルに不明な構成オプションが含まれています: {0}。</value>
   </data>
   <data name="WDACGetPowerShellLogTitle" xml:space="preserve">
-    <value>Expression Evaluation May Fail</value>
+    <value>式評価に失敗する可能性があります</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in Constrained Language mode, unless the expression represents a constant value.</value>
+    <value>PowerShell オブジェクトをスクリプト ブロックから作成するには、そのスクリプト ブロック内で何らかの式を評価することが必要な場合があります。この式評価は、制約付き言語モードでは、式が定数値を表していない限り警告なしに失敗して 'null' を返します。</value>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
-    <value>Failed to get Hyper-V VM State. The value was of the type {0} but was expected to be Microsoft.HyperV.PowerShell.VMState or System.String.</value>
+    <value>Hyper-V VM の状態を取得できませんでした。値は {0} 型でしたが、Microsoft.HyperV.PowerShell.VMState または System.String であることが必要でした。</value>
   </data>
   <data name="HyperVInvalidResponse" xml:space="preserve">
-    <value>Hyper-V {0} sent an invalid {1} response during the connection negotiation.</value>
+    <value>Hyper-V {0} は、接続ネゴシエーション中に無効な {1} 応答を送信しました。</value>
   </data>
   <data name="HyperVNegotiationFailed" xml:space="preserve">
-    <value>Negotiating a secure connection to Hyper-V failed. Make sure the Host and Guest are updated with all relevant Microsoft Updates.</value>
+    <value>Hyper-V への安全な接続のネゴシエートに失敗しました。ホストとゲストが関連するすべての Microsoft 更新プログラムで更新されていることを確認します。</value>
   </data>
 </root>

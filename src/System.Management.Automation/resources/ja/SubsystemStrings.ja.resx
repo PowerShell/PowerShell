@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MultipleRegistrationNotAllowed" xml:space="preserve">
-    <value>The subsystem '{0}' does not allow more than one implementation to be registered.</value>
+    <value>サブシステム '{0}' では、複数の実装を登録できません。</value>
   </data>
   <data name="ImplementationAlreadyRegistered" xml:space="preserve">
-    <value>The implementation with Id '{0}' was already registered for the subsystem '{1}'.</value>
+    <value>ID '{0}' の実装は、サブシステム '{1}' に既に登録されています。</value>
   </data>
   <data name="UnregistrationNotAllowed" xml:space="preserve">
-    <value>The subsystem '{0}' does not allow the unregistration of an implementation.</value>
+    <value>サブシステム '{0}' では、実装の登録解除は許可されていません。</value>
   </data>
   <data name="NoImplementationRegistered" xml:space="preserve">
-    <value>No implementation was registered for the subsystem '{0}'.</value>
+    <value>サブシステム '{0}' の実装が登録されていません。</value>
   </data>
   <data name="ImplementationNotFound" xml:space="preserve">
-    <value>A registered implementation with the Id '{0}' was not found.</value>
+    <value>ID '{0}' の登録済み実装が見つかりませんでした。</value>
   </data>
   <data name="SubsystemTypeUnknown" xml:space="preserve">
-    <value>The specified subsystem type '{0}' is unknown.</value>
+    <value>指定されたサブシステムの種類 '{0}' は不明です。</value>
   </data>
   <data name="MustUseConcreteSubsystemType" xml:space="preserve">
-    <value>You must specify a concrete subsystem type instead of the base interface 'ISubsystem'.</value>
+    <value>基本インターフェイス 'ISubsystem' ではなく、具象サブシステムの種類を指定する必要があります。</value>
   </data>
   <data name="SubsystemKindUnknown" xml:space="preserve">
-    <value>The specified subsystem kind '{0}' is unknown.</value>
+    <value>指定されたサブシステムの種類 '{0}' は不明です。</value>
   </data>
   <data name="ConcreteSubsystemNotImplemented" xml:space="preserve">
-    <value>For the target subsystem kind '{0}', the specified subsystem instance needs to implement the corresponding concrete interface or abstract class '{1}'.</value>
+    <value>ターゲット サブシステムの種類 '{0}' の場合、指定されたサブシステム インスタンスは、対応する具象インターフェイスまたは抽象クラス '{1}' を実装する必要があります。</value>
   </data>
   <data name="InvalidSubsystemInfo" xml:space="preserve">
-    <value>The declared metadata for subsystem kind '{0}' is invalid. A subsystem that requires cmdlets or functions to be defined cannot allow multiple registrations because that would result in one implementation overwriting the commands defined by another implementation.</value>
+    <value>サブシステムの種類 '{0}' の宣言されたメタデータが無効です。コマンドレットまたは関数を定義する必要があるサブシステムでは、複数の登録を許可できません。これにより、1 つの実装で別の実装によって定義されたコマンドが上書きされるためです。</value>
   </data>
   <data name="EmptyImplementationId" xml:space="preserve">
-    <value>The 'Id' property of an implementation for the subsystem '{0}' cannot be an empty GUID.</value>
+    <value>サブシステム '{0}' の実装の ”Id” プロパティを空の GUID にすることはできません。</value>
   </data>
   <data name="NullOrEmptyImplementationName" xml:space="preserve">
-    <value>The 'Name' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+    <value>サブシステム '{0}' の実装の ”Name” プロパティを null 値または空の文字列にすることはできません。</value>
   </data>
   <data name="NullOrEmptyImplementationDescription" xml:space="preserve">
-    <value>The 'Description' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+    <value>サブシステム '{0}' の実装の ”Description” プロパティを null 値または空の文字列にすることはできません。</value>
   </data>
 </root>

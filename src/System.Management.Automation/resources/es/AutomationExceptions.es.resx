@@ -118,93 +118,93 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Argument" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is not valid. Change the value of the "{0}" argument and run the operation again.</value>
+    <value>No se puede procesar el argumento porque el valor del argumento "{0}" no es válido. Cambie el valor del argumento "{0}" y vuelva a ejecutar la operación.</value>
   </data>
   <data name="InvalidScopeIdArgument" xml:space="preserve">
-    <value>Cannot process argument because the value of parameter "{0}" is not valid. Valid values are "Global", "Local", or "Script", or a number relative to the current scope (0 through the number of scopes where 0 is the current scope and 1 is its parent). Change the value of the "{0}" parameter and run the operation again.</value>
+    <value>No se puede procesar el argumento porque el valor del parámetro "{0}" no es válido. Los valores válidos son "Global", "Local" o "Script" o un número relacionado con el ámbito actual (de 0 hasta el número de ámbitos, donde 0 es el ámbito actual y 1 es su elemento primario). Cambie el valor del parámetro "{0}" y vuelva a ejecutar la operación.</value>
   </data>
   <data name="ArgumentNull" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is null. Change the value of argument "{0}" to a non-null value.</value>
+    <value>No se puede procesar el argumento porque el valor del argumento "{0}" es null. Cambie el valor del argumento "{0}" a un valor distinto de null.</value>
   </data>
   <data name="ArgumentOutOfRange" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is out of range. Change argument "{0}" to a value that is within range.</value>
+    <value>No se puede procesar el argumento porque el valor del argumento "{0}" está fuera del intervalo. Cambie el argumento "{0}" por un valor que esté dentro del intervalo.</value>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not valid. Remove operation "{0}", or investigate why it is not valid.</value>
+    <value>No se puede realizar la operación porque la operación "{0}" no es válida. Quite la operación "{0}" o investigue por qué no es válida.</value>
   </data>
   <data name="NotImplemented" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not implemented.</value>
+    <value>No se puede realizar la operación porque la operación "{0}" no está implementada.</value>
   </data>
   <data name="NotSupported" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not supported.</value>
+    <value>No se puede realizar la operación porque la operación "{0}" no se admite.</value>
   </data>
   <data name="ObjectDisposed" xml:space="preserve">
-    <value>Cannot perform operation because object "{0}" has already been disposed.</value>
+    <value>No se puede realizar la operación porque el objeto "{0}" ya se ha eliminado.</value>
   </data>
   <data name="ScriptBlockInvokeOnOneClauseOnly" xml:space="preserve">
-    <value>The script block cannot be invoked because it contains more than one clause. The Invoke() method can only be used on script blocks that contain a single clause.</value>
+    <value>No se puede invocar el bloque de script porque contiene más de una cláusula. El método Invoke() solo se puede usar en bloques de script que contienen una sola cláusula.</value>
   </data>
   <data name="CanConvertOneClauseOnly" xml:space="preserve">
-    <value>The script block cannot be converted because it contains more than one clause. Expressions or control structures are not permitted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>No se puede convertir el bloque de script porque contiene más de una cláusula. No se permiten expresiones ni estructuras de control. Compruebe que el bloque de script contiene exactamente una canalización o un comando.</value>
   </data>
   <data name="CantConvertEmptyPipeline" xml:space="preserve">
-    <value>An empty script block cannot be converted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>No se puede convertir un bloque de script vacío. Compruebe que el bloque de script contiene exactamente una canalización o un comando.</value>
   </data>
   <data name="CanOnlyConvertOnePipeline" xml:space="preserve">
-    <value>Only a script block that contains exactly one pipeline or command can be converted. Expressions or control structures are not permitted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>Solo se puede convertir un bloque de script que contenga exactamente una canalización o un comando. No se permiten expresiones ni estructuras de control. Compruebe que el bloque de script contiene exactamente una canalización o un comando.</value>
   </data>
   <data name="CantConvertScriptBlockWithTrap" xml:space="preserve">
-    <value>A script block that contains a top-level trap statement cannot be converted.</value>
+    <value>No se puede convertir un bloque de script que contiene una instrucción trap de nivel superior.</value>
   </data>
   <data name="CantConvertWithUndeclaredVariables" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock dereferencing variables undeclared in the param(...) block.  Name of undeclared variable: {0}.</value>
+    <value>No se puede generar un objeto de PowerShell para un ScriptBlock que desreferencia variables no declaradas en el bloque param(...).  Nombre de la variable no declarada: {0}.</value>
   </data>
   <data name="CantConvertWithNonConstantExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock evaluating non-constant expressions. Non-constant expression: {0}.</value>
+    <value>No se puede generar un objeto de PowerShell para un ScriptBlock que evalúe expresiones no constantes. Expresión no constante: {0}.</value>
   </data>
   <data name="CantConvertWithDynamicExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock evaluating dynamic expressions. Dynamic expression: {0}.</value>
+    <value>No se puede generar un objeto de PowerShell para un ScriptBlock que evalúa expresiones dinámicas. Expresión dinámica: {0}.</value>
   </data>
   <data name="CantConvertWithScriptBlocks" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that tries to pass other script blocks inside argument values.</value>
+    <value>No se puede generar un objeto de PowerShell para un ScriptBlock que intenta pasar otros bloques de script dentro de los valores de argumento.</value>
   </data>
   <data name="CantConvertWithCommandInvocations" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock which invokes pipelines, commands or functions to evaluate arguments of the main pipeline.</value>
+    <value>No se puede generar un objeto de PowerShell para un ScriptBlock que invoca canalizaciones, comandos o funciones para evaluar argumentos de la canalización principal.</value>
   </data>
   <data name="CantConvertWithDotSourcing" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that uses dot sourcing.</value>
+    <value>No se puede generar un objeto de PowerShell para un ScriptBlock que usa dot sourcing.</value>
   </data>
   <data name="CantConvertWithScriptBlockInvocation" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that invokes other script blocks.</value>
+    <value>No se puede generar un objeto de PowerShell para un ScriptBlock que invoca otros bloques de script.</value>
   </data>
   <data name="CanConvertOneOutputErrorRedir" xml:space="preserve">
-    <value>The script block cannot be converted to a PowerShell object because it contains forbidden redirection operators.</value>
+    <value>El bloque de script no se puede convertir en un objeto de PowerShell porque contiene operadores de redirección prohibidos.</value>
   </data>
   <data name="CantConvertScriptBlockWithNoContext" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that does not have an associated operation context.</value>
+    <value>No se puede generar un objeto de PowerShell para un ScriptBlock que no tiene un contexto de operación asociado.</value>
   </data>
   <data name="HaltCommandException" xml:space="preserve">
-    <value>The command was stopped by the user.</value>
+    <value>El usuario detuvo el comando.</value>
   </data>
   <data name="DynamicParametersWrongType" xml:space="preserve">
-    <value>Object "{0}" is the wrong type to return from the dynamicparam block. The dynamicparam block must return either $null, or an object with type [System.Management.Automation.RuntimeDefinedParameterDictionary].</value>
+    <value>El objeto "{0}" es el tipo incorrecto que se devuelve del bloque dynamicparam. El bloque dynamicparam debe devolver $null o un objeto del tipo [System.Management.Automation.RuntimeDefinedParameterDictionary].</value>
   </data>
   <data name="CantConvertScriptBlockToOpenGenericType" xml:space="preserve">
-    <value>The script block cannot be converted to an open generic type. Define an appropriate closed generic type, and then retry.</value>
+    <value>El bloque de script no se puede convertir en un tipo genérico abierto. Defina un tipo genérico cerrado adecuado y vuelva a intentarlo.</value>
   </data>
   <data name="CantConvertPipelineStartsWithExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that starts a pipeline with an expression.</value>
+    <value>No se puede generar un objeto de PowerShell para un ScriptBlock que inicia una canalización con una expresión.</value>
   </data>
   <data name="UsingVariableIsUndefined" xml:space="preserve">
-    <value>The value of the using variable '$using:{0}' cannot be retrieved because it has not been set in the local session.</value>
+    <value>No se puede recuperar el valor de la variable using "$using:{0}" porque no se ha establecido en la sesión local.</value>
   </data>
   <data name="CantGetUsingExpressionValueWithSpecifiedVariableDictionary" xml:space="preserve">
-    <value>Cannot get the value of the Using expression '{0}' in the specified variable dictionary. When creating a PowerShell instance from a script block, the Using expression cannot contain an indexing operation or member-accessing operation.</value>
+    <value>No se puede obtener el valor de la expresión Using "{0}" en el diccionario de variables especificado. Al crear una instancia de PowerShell a partir de un bloque de script, la expresión Using no puede contener una operación de indexación ni una operación de acceso a miembros.</value>
   </data>
   <data name="WDACCompiledScriptBlockLogTitle" xml:space="preserve">
-    <value>Compiled Script Block Dot Source</value>
+    <value>Origen de punto del bloque de script compilado</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>Script block '{0}' invocation into current scope will be disallowed in Constrained Language mode. Script language mode: {1}, Context language mode: {2}.</value>
+    <value>La invocación del bloque de script "{0}" en el ámbito actual no se permitirá en el modo de lenguaje restringido. Modo de lenguaje de script: {1}, modo de lenguaje de contexto: {2}.</value>
   </data>
 </root>

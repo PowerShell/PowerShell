@@ -121,172 +121,172 @@
     <value>NÁZEV</value>
   </data>
   <data name="Synopsis" xml:space="preserve">
-    <value>SYNOPSIS</value>
+    <value>SYNOPSE</value>
   </data>
   <data name="DetailedDescription" xml:space="preserve">
-    <value>DESCRIPTION</value>
+    <value>POPIS</value>
   </data>
   <data name="Syntax" xml:space="preserve">
-    <value>SYNTAX</value>
+    <value>SYNTAXE</value>
   </data>
   <data name="Parameters" xml:space="preserve">
-    <value>PARAMETERS</value>
+    <value>PARAMETRY</value>
   </data>
   <data name="InputType" xml:space="preserve">
-    <value>INPUTS</value>
+    <value>VSTUP</value>
   </data>
   <data name="ReturnType" xml:space="preserve">
-    <value>OUTPUTS</value>
+    <value>VÝSTUP</value>
   </data>
   <data name="TerminatingErrors" xml:space="preserve">
-    <value>TERMINATING ERRORS</value>
+    <value>UKONČUJÍCÍ CHYBY</value>
   </data>
   <data name="NonHyphenTerminatingErrors" xml:space="preserve">
-    <value>NON-TERMINATING ERRORS</value>
+    <value>NEUKONČUJÍCÍ CHYBY</value>
   </data>
   <data name="Notes" xml:space="preserve">
-    <value>NOTES</value>
+    <value>POZNÁMKY</value>
   </data>
   <data name="Examples" xml:space="preserve">
-    <value>EXAMPLES</value>
+    <value>PŘÍKLADY</value>
   </data>
   <data name="Example" xml:space="preserve">
     <value>Příklad</value>
   </data>
   <data name="ExampleUpperCase" xml:space="preserve">
-    <value>EXAMPLE</value>
+    <value>PŘÍKLAD</value>
   </data>
   <data name="Output" xml:space="preserve">
-    <value>OUTPUT</value>
+    <value>VÝSTUP</value>
   </data>
   <data name="RelatedLinks" xml:space="preserve">
-    <value>RELATED LINKS</value>
+    <value>SOUVISEJÍCÍ ODKAZY</value>
   </data>
   <data name="ShortDescription" xml:space="preserve">
-    <value>SHORT DESCRIPTION</value>
+    <value>KRÁTKÝ POPIS</value>
   </data>
   <data name="TitleColon" xml:space="preserve">
-    <value>Title:</value>
+    <value>Název:</value>
   </data>
   <data name="QuestionColon" xml:space="preserve">
-    <value>Question:</value>
+    <value>Otázka:</value>
   </data>
   <data name="Answer" xml:space="preserve">
     <value>Odpověď</value>
   </data>
   <data name="TermColon" xml:space="preserve">
-    <value>Term:</value>
+    <value>Období:</value>
   </data>
   <data name="DefinitionColon" xml:space="preserve">
-    <value>Definition:</value>
+    <value>Definice:</value>
   </data>
   <data name="ContentColon" xml:space="preserve">
-    <value>Content:</value>
+    <value>Obsah:</value>
   </data>
   <data name="ProviderName" xml:space="preserve">
-    <value>PROVIDER NAME</value>
+    <value>NÁZEV POSKYTOVATELE</value>
   </data>
   <data name="BaseCmdletInformation" xml:space="preserve">
-    <value>    This cmdlet supports the common parameters: Verbose, Debug,
+    <value>    Tato rutina podporuje společné parametry: Verbose, Debug,
     ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-    OutBuffer, PipelineVariable, and OutVariable. For more information, see
+    OutBuffer, PipelineVariable a OutVariable. Další informace viz
     about_CommonParameters (https://go.microsoft.com/fwlink/?LinkID=113216). </value>
   </data>
   <data name="ParameterRequired" xml:space="preserve">
-    <value>Required?                    </value>
+    <value>Požadováno?                    </value>
   </data>
   <data name="ParameterPosition" xml:space="preserve">
-    <value>Position?                    </value>
+    <value>Pozice?                    </value>
   </data>
   <data name="TypeColon" xml:space="preserve">
-    <value>Type: </value>
+    <value>Typ: </value>
   </data>
   <data name="TargetObjectTypeColon" xml:space="preserve">
-    <value>Target Object Type:   </value>
+    <value>Typ cílového objektu:   </value>
   </data>
   <data name="ParameterDefaultValue" xml:space="preserve">
-    <value>Default value                </value>
+    <value>Výchozí hodnota                </value>
   </data>
   <data name="AcceptsPipelineInput" xml:space="preserve">
-    <value>Accept pipeline input?       </value>
+    <value>Přijmout vstup z kanálu?       </value>
   </data>
   <data name="AcceptsWildCardCharacters" xml:space="preserve">
-    <value>Accept wildcard characters?  </value>
+    <value>Jsou podporovány zástupné znaky?  </value>
   </data>
   <data name="Category" xml:space="preserve">
-    <value>(Category: </value>
+    <value>(Kategorie: </value>
   </data>
   <data name="SuggestedActionColon" xml:space="preserve">
-    <value>Suggested Action: </value>
+    <value>Navrhovaná akce: </value>
   </data>
   <data name="VerboseHelpInfo" xml:space="preserve">
-    <value>For more information, type: </value>
+    <value>Další informace získáte zadáním: </value>
   </data>
   <data name="FullHelpInfo" xml:space="preserve">
-    <value>For technical information, type: </value>
+    <value>Pokud potřebujete technické informace, zadejte: </value>
   </data>
   <data name="ExampleHelpInfo" xml:space="preserve">
-    <value>To see the examples, type: </value>
+    <value>Pokud chcete zobrazit příklady, zadejte: </value>
   </data>
   <data name="RelatedLinksHelpInfo" xml:space="preserve">
-    <value>For online help, type: </value>
+    <value>Chcete-li získat online nápovědu, zadejte: </value>
   </data>
   <data name="CommonParameters" xml:space="preserve">
     <value>&lt;CommonParameters&gt;</value>
   </data>
   <data name="RemarksSection" xml:space="preserve">
-    <value>REMARKS</value>
+    <value>POZNÁMKY</value>
   </data>
   <data name="TrueShort" xml:space="preserve">
     <value>true</value>
   </data>
   <data name="NamedParameter" xml:space="preserve">
-    <value>Named</value>
+    <value>Pojmenované</value>
   </data>
   <data name="Drives" xml:space="preserve">
-    <value>DRIVES</value>
+    <value>JEDNOTKY</value>
   </data>
   <data name="Capabilities" xml:space="preserve">
-    <value>CAPABILITIES</value>
+    <value>SCHOPNOSTI</value>
   </data>
   <data name="Tasks" xml:space="preserve">
-    <value>TASKS</value>
+    <value>ÚLOHY</value>
   </data>
   <data name="Task" xml:space="preserve">
-    <value>TASK: </value>
+    <value>ÚLOHA: </value>
   </data>
   <data name="Filters" xml:space="preserve">
-    <value>FILTERS</value>
+    <value>FILTRY</value>
   </data>
   <data name="DynamicParameters" xml:space="preserve">
-    <value>DYNAMIC PARAMETERS</value>
+    <value>DYNAMICKÉ PARAMETRY</value>
   </data>
   <data name="CmdletsSupported" xml:space="preserve">
-    <value>Cmdlets Supported: </value>
+    <value>Podporované rutiny: </value>
   </data>
   <data name="AliasesSection" xml:space="preserve">
-    <value>ALIASES</value>
+    <value>ALIASY</value>
   </data>
   <data name="GetLatestHelpContent" xml:space="preserve">
-    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.
-    -- To download and install Help files for the module that includes this cmdlet, use Update-Help.
-    -- To view the Help topic for this cmdlet online, type: "Get-Help {0} -Online" or
-       go to {1}.</value>
+    <value>Get-Help nemůže v tomto počítači najít soubory nápovědy pro tuto rutinu. Zobrazuje pouze částečnou nápovědu.
+    -- Pokud chcete stáhnout a nainstalovat soubory nápovědy pro modul, který obsahuje tuto rutinu, použijte Update-Help.
+    Pokud chcete zobrazit téma nápovědy pro tuto rutinu online, zadejte: Get-Help {0} -Online nebo 
+       přejděte na {1}.</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>Žádné</value>
   </data>
   <data name="ParameterAliases" xml:space="preserve">
-    <value>Aliases                      </value>
+    <value>Aliasy                      </value>
   </data>
   <data name="ParameterIsDynamic" xml:space="preserve">
-    <value>Dynamic?                     </value>
+    <value>Dynamické?                     </value>
   </data>
   <data name="ParameterSetName" xml:space="preserve">
-    <value>Parameter set name           </value>
+    <value>Název sady parametrů           </value>
   </data>
   <data name="UnableToRetrieveHelpInfoXml" xml:space="preserve">
-    <value>Unable to retrieve the HelpInfo XML file for UI culture {0}. Make sure the HelpInfoUri property in the module manifest is valid or check your network connection and then try the command again.</value>
+    <value>Nepodařilo se načíst soubor XML HelpInfo pro jazykovou verzi uživatelského rozhraní {0}. Ověřte, že je vlastnost HelpInfoUri v manifestu modulu platná, nebo zkontrolujte síťové připojení a pak příkaz spusťte znovu.</value>
   </data>
   <data name="PipelineByPropertyName" xml:space="preserve">
     <value>ByPropertyName</value>
@@ -298,176 +298,176 @@
     <value>FromRemainingArguments</value>
   </data>
   <data name="HelpCultureNotSupported" xml:space="preserve">
-    <value>The specified culture is not supported: {0}. Specify a culture from the following list: {{{1}}}.</value>
+    <value>Zadaná jazyková verze není podporována: {0}. Zadejte jazykovou verzi z následujícího seznamu: {{{1}}}.</value>
   </data>
   <data name="HelpCultureNotSupportedFallback" xml:space="preserve">
-    <value>Postponing error and trying fallback cultures, will show as error if none of fallbacks are supported:
+    <value>Odkládá chybu a zkouší záložní jazykové verze. Pokud není podporována žádná záložní verze, zobrazí se jako chyba: 
 {0}</value>
   </data>
   <data name="ModuleBaseMustExist" xml:space="preserve">
-    <value>The ModuleBase directory cannot be found. Verify the directory and try again.</value>
+    <value>Adresář ModuleBase nelze najít. Ověřte adresář a zkuste to znovu.</value>
   </data>
   <data name="PathMustBeValidContainers" xml:space="preserve">
-    <value>The path {0} is not a valid directory. Make sure the directory exists and retry.</value>
+    <value>Cesta {0} není platný adresář. Ujistěte se, že adresář existuje, a zkuste to znovu.</value>
   </data>
   <data name="TooManyRedirections" xml:space="preserve">
-    <value>A Help URI cannot contain more than 10 redirections. Specify a valid Help URI.</value>
+    <value>Identifikátor URI nápovědy nemůže obsahovat více než 10 přesměrování. Zadejte platný identifikátor URI nápovědy.</value>
   </data>
   <data name="UpdateProgressActivity" xml:space="preserve">
-    <value>Updating Help</value>
+    <value>Aktualizuje se nápověda.</value>
   </data>
   <data name="UpdateProgressConnecting" xml:space="preserve">
-    <value>Connecting to Help Content...</value>
+    <value>Připojování k obsahu nápovědy...</value>
   </data>
   <data name="UpdateProgressDownloading" xml:space="preserve">
-    <value>Downloading Help Content...</value>
+    <value>Stahuje se obsah nápovědy...</value>
   </data>
   <data name="UpdateProgressInstalling" xml:space="preserve">
-    <value>Installing Help content...</value>
+    <value>Instaluje se obsah nápovědy...</value>
   </data>
   <data name="UpdateProgressLocating" xml:space="preserve">
-    <value>Locating Help Content...</value>
+    <value>Vyhledává se obsah nápovědy...</value>
   </data>
   <data name="AllParameterSetsName" xml:space="preserve">
-    <value>(All)</value>
+    <value>(vše)</value>
   </data>
   <data name="CannotMatchModulePattern" xml:space="preserve">
-    <value>No PowerShell modules were found that match the following pattern: {0}. Verify the pattern and then try the command again.</value>
+    <value>Nebyly nalezeny žádné moduly PowerShellu odpovídající následujícímu vzoru: {0}. Ověřte vzor a potom příkaz opakujte.</value>
   </data>
   <data name="ModuleNotFoundWithFullyQualifiedName" xml:space="preserve">
-    <value>No PowerShell modules were found that match the specified FullyQualifiedModule {0}. Verify the FullyQualifiedModule value and then try the command again.</value>
+    <value>Nebyly nalezeny žádné moduly PowerShellu, které odpovídají zadanému FullyQualifiedModule {0}. Ověřte hodnotu FullyQualifiedModule a potom příkaz spusťte znovu.</value>
   </data>
   <data name="HelpContentNotFound" xml:space="preserve">
-    <value>Help content cannot be found. Make sure the server is available and the help content location is properly defined in the HelpInfo XML.</value>
+    <value>Obsah nápovědy nebyl nalezen. Ujistěte se, že je server dostupný a že je umístění obsahu nápovědy správně definováno v souboru XML HelpInfo.</value>
   </data>
   <data name="HelpInfoUriNotFound" xml:space="preserve">
-    <value>The Update-Help command failed because the specified module does not support updatable help. Use Get-Help -Online or look online for help for the commands in this module.</value>
+    <value>Příkaz Update-Help selhal, protože zadaný modul nepodporuje aktualizovatelnou nápovědu. Použijte Get-Help -Online nebo vyhledejte online nápovědu k příkazům v tomto modulu.</value>
   </data>
   <data name="ModuleNameNullOrEmpty" xml:space="preserve">
-    <value>The following parameter must not be null or empty: Module.</value>
+    <value>Následující parametr nesmí mít hodnotu null ani být prázdný: Module.</value>
   </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
-    <value>The following parameter must not be null or empty: Path.</value>
+    <value>Následující parametr nesmí mít hodnotu null ani být prázdný: Path.</value>
   </data>
   <data name="UpdateHelpCompleted" xml:space="preserve">
-    <value>Update-Help has completed successfully.</value>
+    <value>Operace Update-Help byla úspěšně dokončena.</value>
   </data>
   <data name="UnzipFailure" xml:space="preserve">
-    <value>Error extracting Help content.</value>
+    <value>Při extrahování obsahu nápovědy došlo k chybě.</value>
   </data>
   <data name="UnableToConnect" xml:space="preserve">
-    <value>Unable to connect to Help content. The server on which Help content is stored might not be available. Verify that the server is available, or wait until the server is back online, and then try the command again.</value>
+    <value>Nelze se připojit k obsahu nápovědy. Server, na kterém je uložen obsah nápovědy, nemusí být dostupný. Ověřte, že je server dostupný, nebo počkejte, až bude server znovu online, a pak příkaz spusťte znovu.</value>
   </data>
   <data name="HelpContentXmlValidationFailure" xml:space="preserve">
-    <value>The Help content at the specified location is not valid. Specify a location that contains valid Help Content.</value>
+    <value>Obsah nápovědy v zadaném umístění není platný. Zadejte umístění, které obsahuje platný obsah nápovědy.</value>
   </data>
   <data name="HelpInfoXmlValidationFailure" xml:space="preserve">
-    <value>The HelpInfo XML is not valid. Specify valid HelpInfo XML.</value>
+    <value>Soubor XML HelpInfo není platný. Zadejte platný kód XML HelpInfo.</value>
   </data>
   <data name="SaveHelpCompleted" xml:space="preserve">
-    <value>Help content was successfully saved to the following location: {0}</value>
+    <value>Obsah nápovědy byl úspěšně uložen do tohoto umístění: {0}</value>
   </data>
   <data name="HelpContentXsdNotFound" xml:space="preserve">
-    <value>The Help content XSD file cannot be found in {0}. Verify that the XSD file exists at the specified location, and then retry the command.</value>
+    <value>Soubor XSD obsahu nápovědy nelze v {0} najít. Ověřte, že soubor XSD v zadaném umístění existuje, a pak příkaz zkuste spustit znovu.</value>
   </data>
   <data name="FailedToUpdateHelpForModule" xml:space="preserve">
-    <value>Failed to update Help for the module(s) :
-'{0}'
+    <value>Nepodařilo se aktualizovat nápovědu pro moduly: 
+{0} 
 {1}</value>
   </data>
   <data name="SaveProgressActivity" xml:space="preserve">
-    <value>Saving Help</value>
+    <value>Ukládá se nápověda.</value>
   </data>
   <data name="HelpContentContainsInvalidFiles" xml:space="preserve">
-    <value>Help content contains files that are not valid. Only .txt and .xml files are supported.</value>
+    <value>Obsah nápovědy obsahuje neplatné soubory. Podporovány jsou pouze soubory .txt a .xml.</value>
   </data>
   <data name="FailedToSaveHelpForModule" xml:space="preserve">
-    <value>Failed to save Help for the module(s) '{0}' : {1}</value>
+    <value>Nepodařilo se uložit nápovědu pro moduly {0}: {1}</value>
   </data>
   <data name="FailedToSaveHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to save Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
-English-US help content is available and can be saved using: Save-Help -UICulture en-US.</value>
+    <value>Nepodařilo se uložit nápovědu pro moduly {0} s jazykovými verzemi uživatelského rozhraní {{{1}}}: {2}. 
+Obsah nápovědy pro angličtinu (USA) je k dispozici a lze ho uložit pomocí příkazu Save-Help -UICulture en-US.</value>
   </data>
   <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
-English-US help content is available and can be installed using: Update-Help -UICulture en-US.</value>
+    <value>Nepodařilo se aktualizovat nápovědu pro moduly {0} s jazykovými verzemi uživatelského rozhraní {{{1}}} : {2}.
+Obsah nápovědy pro angličtinu (USA) je k dispozici a lze ho nainstalovat pomocí příkazu Update-Help -UICulture en-US.</value>
   </data>
   <data name="FailedToUpdateHelpWithLocaleNoUICulture" xml:space="preserve">
-    <value>Your current culture is ({0}), which is not associated with any language, consider changing your system culture or install the English-US help content using: Update-Help -UICulture en-US.</value>
+    <value>Vaše aktuální jazyková verze je {0} a není přidružená k žádnému jazyku. Zvažte změnu jazykové verze systému nebo instalaci obsahu nápovědy pro angličtinu (USA) pomocí příkazu Update-Help -UICulture en-US.</value>
   </data>
   <data name="FalseShort" xml:space="preserve">
     <value>false</value>
   </data>
   <data name="CannotSpecifyRecurseWithoutPath" xml:space="preserve">
-    <value>The -Recurse parameter is only available if a source path is specified.</value>
+    <value>Parametr -Recurse je k dispozici pouze v případě, že je zadána zdrojová cesta.</value>
   </data>
   <data name="ProviderIsNotFileSystem" xml:space="preserve">
-    <value>The path {0} does not contain a FileSystem provider. Verify that the specified path contains the FileSystem provider, and then retry the command.</value>
+    <value>Cesta {0} neobsahuje poskytovatele FileSystem. Ověřte, že zadaná cesta obsahuje poskytovatele FileSystem, a pak příkaz zkuste spustit znovu.</value>
   </data>
   <data name="SearchingForHelpContent" xml:space="preserve">
-    <value>Searching Help for {0} ...</value>
+    <value>Hledání v nápovědě pro {0}...</value>
   </data>
   <data name="CannotMatchUICulturePattern" xml:space="preserve">
-    <value>No UI culture was found that matches the following pattern: {0}. Verify the pattern and then try the command again.</value>
+    <value>Nebyla nalezena žádná jazyková verze uživatelského rozhraní odpovídající následujícímu vzoru: {0}. Ověřte vzor a potom příkaz opakujte.</value>
   </data>
   <data name="UseForceToSaveHelp" xml:space="preserve">
-    <value>Help was not saved for the module {0}, because the Save-Help command was run on this computer within the last 24 hours.
-To save help again, add the Force parameter to your command.</value>
+    <value>Nápověda pro modul {0} nebyla uložena, protože příkaz Save-Help byl na tomto počítači spuštěn během posledních 24 hodin.
+Pokud chcete nápovědu znovu uložit, přidejte do příkazu parametr Force.</value>
   </data>
   <data name="UseForceToUpdateHelp" xml:space="preserve">
-    <value>Help was not updated for the module {0}, because the Update-Help command was run on this computer within the last 24 hours.
-To update help again, add the Force parameter to your command.</value>
+    <value>Nápověda pro modul {0} nebyla aktualizována, protože příkaz Update-Help byl na tomto počítači spuštěn během posledních 24 hodin.
+Pokud chcete nápovědu znovu aktualizovat, přidejte do příkazu parametr Force.</value>
   </data>
   <data name="NewestContentAlreadyInstalled" xml:space="preserve">
-    <value>The most current Help files are already installed.</value>
+    <value>Nejnovější soubory nápovědy už jsou nainstalované.</value>
   </data>
   <data name="SuccessfullyUpdatedHelpContent" xml:space="preserve">
-    <value>{0}: {1}. Culture {2} Version {3}</value>
+    <value>{0}: {1}. Verze jazykové verze {2}: {3}</value>
   </data>
   <data name="UpdatedHelpContent" xml:space="preserve">
-    <value>Updated {0}</value>
+    <value>Aktualizováno: {0}</value>
   </data>
   <data name="InvalidHelpInfoUri" xml:space="preserve">
-    <value>The value of the HelpInfoUri key in the module manifest must resolve to a container or root URL on a website where the help files are stored. The HelpInfoUri '{0}' does not resolve to a container.</value>
+    <value>Hodnota klíče HelpInfoUri v manifestu modulu se musí přeložit na adresu URL kontejneru nebo kořenovou adresu URL na webu, kde jsou uložené soubory nápovědy. Identifikátor HelpInfoUri {0} se nepřekládá na kontejner.</value>
   </data>
   <data name="HelpContentMustBeInTargetNamespace" xml:space="preserve">
-    <value>Help content must be in the namespace {0}.</value>
+    <value>Obsah nápovědy musí být v oboru názvů {0}.</value>
   </data>
   <data name="GetLatestHelpContentWithoutHelpUri" xml:space="preserve">
-    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.
-    -- To download and install Help files for the module that includes this cmdlet, use Update-Help.</value>
+    <value>Get-Help nemůže v tomto počítači najít soubory nápovědy pro tuto rutinu. Zobrazuje pouze částečnou nápovědu.
+    -- Pokud chcete stáhnout a nainstalovat soubory nápovědy pro modul, který obsahuje tuto rutinu, použijte Update-Help.</value>
   </data>
   <data name="NewestContentAlreadyDownloaded" xml:space="preserve">
-    <value>The most current Help files are already downloaded.</value>
+    <value>Nejaktuálnější soubory nápovědy jsou již staženy.</value>
   </data>
   <data name="SavedHelpContent" xml:space="preserve">
-    <value>Saved {0}</value>
+    <value>Uloženo: {0}</value>
   </data>
   <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
-    <value>The HelpInfoURI {0} does not start with HTTP.</value>
+    <value>Identifikátor HelpInfoURI {0} nezačíná řetězcem HTTP.</value>
   </data>
   <data name="RootElementMustBeHelpItems" xml:space="preserve">
-    <value>The root level element of the help content must be "helpItems".</value>
+    <value>Kořenovým prvkem obsahu nápovědy musí být „helpItems“.</value>
   </data>
   <data name="SaveProgressActivityForModule" xml:space="preserve">
-    <value>Saving Help for module {0}</value>
+    <value>Ukládá se nápověda pro modul {0}.</value>
   </data>
   <data name="UpdateProgressActivityForModule" xml:space="preserve">
-    <value>Updating Help for module {0}</value>
+    <value>Aktualizuje se nápověda pro modul {0}</value>
   </data>
   <data name="UpdateHelpResolveUriVerbose" xml:space="preserve">
-    <value>Resolving URI: "{0}"</value>
+    <value>Překládá se identifikátor URI: {0}.</value>
   </data>
   <data name="OnlineHelpUri" xml:space="preserve">
-    <value>Help URI: {0}</value>
+    <value>Identifikátor URI nápovědy: {0}</value>
   </data>
   <data name="UpdateHelpShouldProcessActionMessage" xml:space="preserve">
-    <value>{0}, Current Version: {1}, Available Version: {2}, UICulture: {3}</value>
+    <value>{0}, aktuální verze: {1}, dostupná verze: {2}, jazyková verze uživatelského rozhraní (UICulture): {3}</value>
   </data>
   <data name="Properties" xml:space="preserve">
-    <value>PROPERTIES</value>
+    <value>VLASTNOSTI</value>
   </data>
   <data name="Methods" xml:space="preserve">
-    <value>METHODS</value>
+    <value>METODY</value>
   </data>
 </root>
