@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -423,7 +424,13 @@ namespace System.Management.Automation
             }
 
             PSObject examples = GetProperty<PSObject>(help, "examples");
-            PSObject[] example = GetProperty<PSObject[]>(examples, "example");
+            // Get-Help returns a single example as PSObject and multiple as PSObject[].
+            // Normalize both to IEnumerable<PSObject> so the loop handles either case.
+            PSObject[] exampleArray = GetProperty<PSObject[]>(examples, "example");
+            IEnumerable<PSObject> example = exampleArray
+                ?? (GetProperty<PSObject>(examples, "example") is PSObject singleEx
+                    ? new[] { singleEx }
+                    : null);
             if (example != null)
             {
                 foreach (PSObject ex in example)
@@ -461,7 +468,20 @@ namespace System.Management.Automation
 
                     if (exsb.Length > 0)
                     {
-                        sb.Append("\n\n.EXAMPLE\n\n");
+                        // The title property value may be stored as a PSObject wrapping a string,
+                        // so use ToString() on the raw Value rather than 'Value as string'.
+                        string exampleTitle = ExtractExampleTitle(ex.Properties["title"]?.Value?.ToString());
+                        if (!string.IsNullOrEmpty(exampleTitle))
+                        {
+                            sb.Append("\n\n.EXAMPLE ");
+                            sb.Append(exampleTitle);
+                            sb.Append("\n\n");
+                        }
+                        else
+                        {
+                            sb.Append("\n\n.EXAMPLE\n\n");
+                        }
+
                         sb.Append(exsb);
                     }
                 }
@@ -496,6 +516,33 @@ namespace System.Management.Automation
             AppendContent(sb, ".FUNCTIONALITY", GetProperty<PSObject>(help, "Functionality"));
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Extracts the title from a generated Get-Help example heading using its fixed border
+        /// and ": " delimiter, without interpreting the localized example label.
+        /// Titles without that border are preserved.
+        /// </summary>
+        private static string ExtractExampleTitle(string decoratedTitle)
+        {
+            if (string.IsNullOrWhiteSpace(decoratedTitle))
+            {
+                return null;
+            }
+
+            const string prefix = "-------------------------- ";
+            const string suffix = " --------------------------";
+            string title = decoratedTitle.Trim();
+            if (title.Length <= prefix.Length + suffix.Length
+                || !title.StartsWith(prefix, StringComparison.Ordinal)
+                || !title.EndsWith(suffix, StringComparison.Ordinal))
+            {
+                return title;
+            }
+
+            string heading = title.Substring(prefix.Length, title.Length - prefix.Length - suffix.Length);
+            int separatorIndex = heading.IndexOf(": ", StringComparison.Ordinal);
+            return separatorIndex < 0 ? null : heading.Substring(separatorIndex + 2).Trim();
         }
 
         #endregion
