@@ -3,9 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace System.Management.Automation
 {
@@ -435,10 +433,8 @@ namespace System.Management.Automation
                     : null);
             if (example != null)
             {
-                int exampleNumber = 0;
                 foreach (PSObject ex in example)
                 {
-                    exampleNumber++;
                     StringBuilder exsb = new StringBuilder();
 
                     PSObject[] introduction = GetProperty<PSObject[]>(ex, "introduction");
@@ -474,9 +470,7 @@ namespace System.Management.Automation
                     {
                         // The title property value may be stored as a PSObject wrapping a string,
                         // so use ToString() on the raw Value rather than 'Value as string'.
-                        string exampleTitle = ExtractExampleTitle(
-                            ex.Properties["title"]?.Value?.ToString(),
-                            exampleNumber);
+                        string exampleTitle = ExtractExampleTitle(ex.Properties["title"]?.Value?.ToString());
                         if (!string.IsNullOrEmpty(exampleTitle))
                         {
                             sb.Append("\n\n.EXAMPLE ");
@@ -525,68 +519,30 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Extracts the user-provided example title from a MAML title string.
-        /// Comment-based help generates titles with the format:
-        ///   "-------------------------- EXAMPLE N --------------------------" (untitled)
-        ///   "-------------------------- EXAMPLE N: Title --------------------------" (titled)
-        /// On localized builds, "EXAMPLE" is replaced by the localized
-        /// <see cref="HelpDisplayStrings.ExampleUpperCase"/> string. External MAML can use
-        /// arbitrary title text, so only a recognized generated heading is removed.
-        /// Returns the trimmed user title, the original MAML title when it is not a generated
-        /// heading, or null if the title is missing or generated without a user title.
+        /// Extracts the title from a generated Get-Help example heading using its fixed border
+        /// and ": " delimiter, without interpreting the localized example label.
+        /// Titles without that border are preserved.
         /// </summary>
-        private static string ExtractExampleTitle(string decoratedTitle, int exampleNumber)
+        private static string ExtractExampleTitle(string decoratedTitle)
         {
-            if (string.IsNullOrEmpty(decoratedTitle))
+            if (string.IsNullOrWhiteSpace(decoratedTitle))
             {
                 return null;
             }
 
-            string trimmedTitle = decoratedTitle.Trim();
-            Match match = Regex.Match(trimmedTitle, @"^-+\s*(?<inner>.*?)\s*-+$");
-            string inner = match.Success ? match.Groups["inner"].Value : trimmedTitle;
-            string ordinal = exampleNumber.ToString(CultureInfo.InvariantCulture);
-
-            string title;
-            if (TryExtractGeneratedExampleTitle(
-                    inner,
-                    $"{HelpDisplayStrings.ExampleUpperCase} {ordinal}",
-                    out title)
-                || (!string.Equals(HelpDisplayStrings.ExampleUpperCase, "EXAMPLE", StringComparison.OrdinalIgnoreCase)
-                    && TryExtractGeneratedExampleTitle(inner, $"EXAMPLE {ordinal}", out title)))
+            const string prefix = "-------------------------- ";
+            const string suffix = " --------------------------";
+            string title = decoratedTitle.Trim();
+            if (title.Length <= prefix.Length + suffix.Length
+                || !title.StartsWith(prefix, StringComparison.Ordinal)
+                || !title.EndsWith(suffix, StringComparison.Ordinal))
             {
                 return title;
             }
 
-            return trimmedTitle;
-        }
-
-        private static bool TryExtractGeneratedExampleTitle(string value, string generatedHeading, out string title)
-        {
-            title = null;
-            if (!value.StartsWith(generatedHeading, StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            string remainder = value.Substring(generatedHeading.Length).TrimStart();
-            if (remainder.Length == 0)
-            {
-                return true;
-            }
-
-            if (remainder[0] != ':')
-            {
-                return false;
-            }
-
-            title = remainder.Substring(1).Trim();
-            if (title.Length == 0)
-            {
-                title = null;
-            }
-
-            return true;
+            string heading = title.Substring(prefix.Length, title.Length - prefix.Length - suffix.Length);
+            int separatorIndex = heading.IndexOf(": ", StringComparison.Ordinal);
+            return separatorIndex < 0 ? null : heading.Substring(separatorIndex + 2).Trim();
         }
 
         #endregion

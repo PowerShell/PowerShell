@@ -317,100 +317,150 @@ End {{
 
             $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncSingleUntitled))
             $helpComments | Should -BeLike '*.EXAMPLE*Get-Service*'
-            $helpComments | Should -Not -BeLike '*.EXAMPLE:*'
-        }
-
-        It 'should handle title containing a colon' {
-            function HelpFuncColonTitle {
-                <#
-                  .SYNOPSIS
-                  Test colon in title.
-
-                  .EXAMPLE Step 1: Initialize the module
-                  Import-Module MyModule
-
-                  Imports the module
-
-                  .EXAMPLE
-                  Get-Module
-
-                  Lists modules
-                #>
-                param()
-            }
-
-            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncColonTitle))
-            $helpComments | Should -BeLike '*.EXAMPLE Step 1: Initialize the module*'
-        }
-
-        It 'should handle title containing dashes' {
-            function HelpFuncDashTitle {
-                <#
-                  .SYNOPSIS
-                  Test dashes in title.
-
-                  .EXAMPLE Using a non-standard path
-                  Get-Item -Path C:\my-folder
-
-                  Gets the item
-
-                  .EXAMPLE
-                  Get-Item -Path C:\
-
-                  Gets the root
-                #>
-                param()
-            }
-
-            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncDashTitle))
-            $helpComments | Should -BeLike '*.EXAMPLE Using a non-standard path*'
-        }
-
-        It 'should preserve arbitrary MAML title "<MamlTitle>"' -TestCases @(
-            @{ MamlTitle = 'Use a temporary directory'; ExpectedTitle = 'Use a temporary directory' }
-            @{ MamlTitle = 'Use C:\Temp'; ExpectedTitle = 'Use C:\Temp' }
-            @{ MamlTitle = 'Example 1: Standard title'; ExpectedTitle = 'Standard title' }
-        ) {
-            param($MamlTitle, $ExpectedTitle)
-
-            $example = [pscustomobject]@{
-                title = $MamlTitle
-                code = [pscustomobject]@{ Text = 'Get-Date' }
-            }
-            $helpObject = [pscustomobject]@{
-                Synopsis = 'Synthetic help object'
-                examples = [pscustomobject]@{ example = $example }
-            }
-            $helpObject.PSObject.TypeNames.Insert(0, 'Synthetic.HelpInfo')
-
-            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($helpObject)
             $exampleDirective = $helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
-            $exampleDirective | Should -BeExactly ".EXAMPLE $ExpectedTitle"
+            $exampleDirective | Should -BeExactly '.EXAMPLE'
         }
 
-        It 'should preserve a title generated under a localized UI culture' {
+        It 'should round-trip example title "<Title>"' -TestCases @(
+            @{ Title = 'Step 1: Initialize the module' }
+            @{ Title = 'Using a non-standard path' }
+            @{ Title = 'Step 1 -' }
+            @{ Title = 'Step 1: Use C:\Temp -' }
+            @{ Title = '---' }
+        ) {
+            param($Title)
+
+            $funcBody = @"
+<#
+    .SYNOPSIS
+    Test punctuation in an example title.
+
+    .EXAMPLE $Title
+    Get-Date
+#>
+param()
+"@
+            Set-Item -Path function:\HelpFuncExampleTitle -Value ([scriptblock]::Create($funcBody))
+            $help = Get-Help HelpFuncExampleTitle
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($help)
+            $exampleDirective = $helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
+            $exampleDirective | Should -BeExactly ".EXAMPLE $Title"
+
+            $proxyBody = "param()`n<#`n$helpComments`n#>"
+            Set-Item -Path function:\ProxyExampleTitle -Value ([scriptblock]::Create($proxyBody))
+            $roundTrippedHelp = Get-Help ProxyExampleTitle
+            @($roundTrippedHelp.examples.example).Count | Should -Be 1
+            $roundTrippedHelp.examples.example.title | Should -BeExactly $help.examples.example.title
+            $roundTrippedHelp.examples.example.code | Should -BeExactly $help.examples.example.code
+        }
+
+        It 'should extract the expected example title from "<Title>"' -TestCases @(
+            @{ Title = 'Use a temporary directory'; ExpectedTitle = 'Use a temporary directory' }
+            @{ Title = 'Use C:\Temp'; ExpectedTitle = 'Use C:\Temp' }
+            @{ Title = 'Example 1: Standard title'; ExpectedTitle = 'Example 1: Standard title' }
+            @{ Title = 'Configuration: Use C:\Temp'; ExpectedTitle = 'Configuration: Use C:\Temp' }
+            @{ Title = '  Step 1: Initialize -  '; ExpectedTitle = 'Step 1: Initialize -' }
+            @{ Title = '--- Example 1: Short border ---'; ExpectedTitle = '--- Example 1: Short border ---' }
+            @{ Title = '-------------------------- EXAMPLE 1: No closing border'; ExpectedTitle = '-------------------------- EXAMPLE 1: No closing border' }
+            @{ Title = 'EXAMPLE 1: No opening border --------------------------'; ExpectedTitle = 'EXAMPLE 1: No opening border --------------------------' }
+            @{ Title = '-------------------------- --------------------------'; ExpectedTitle = '-------------------------- --------------------------' }
+            # Foreign headings also exercise localization without satellite resource assemblies.
+            @{ Title = '-------------------------- BEISPIEL 1: Localized title --------------------------'; ExpectedTitle = 'Localized title' }
+            @{ Title = '-------------------------- BEISPIEL 1 --------------------------'; ExpectedTitle = '' }
+            @{ Title = $null; ExpectedTitle = '' }
+            @{ Title = ''; ExpectedTitle = '' }
+            @{ Title = '   '; ExpectedTitle = '' }
+        ) {
+            param($Title, $ExpectedTitle)
+
             $originalUICulture = [System.Globalization.CultureInfo]::CurrentUICulture
             try {
                 [System.Globalization.CultureInfo]::CurrentUICulture =
-                    [System.Globalization.CultureInfo]::GetCultureInfo('de-DE')
+                    [System.Globalization.CultureInfo]::GetCultureInfo('en-US')
 
-                function HelpFuncLocalizedTitle {
+                $example = [pscustomobject]@{
+                    code = [pscustomobject]@{ Text = 'Get-Date' }
+                }
+                if ($null -ne $Title) {
+                    $example | Add-Member -NotePropertyName title -NotePropertyValue $Title
+                }
+
+                $helpObject = [pscustomobject]@{
+                    Synopsis = 'Synthetic help object'
+                    examples = [pscustomobject]@{ example = $example }
+                }
+                $helpObject.PSObject.TypeNames.Insert(0, 'Synthetic.HelpInfo')
+
+                $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($helpObject)
+                $exampleDirective = $helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
+                if ([string]::IsNullOrEmpty($ExpectedTitle)) {
+                    $exampleDirective | Should -BeExactly '.EXAMPLE'
+                }
+                else {
+                    $exampleDirective | Should -BeExactly ".EXAMPLE $ExpectedTitle"
+                }
+            }
+            finally {
+                [System.Globalization.CultureInfo]::CurrentUICulture = $originalUICulture
+            }
+        }
+
+        It 'should round-trip examples generated under <SourceCulture> when consumed under <TargetCulture>' -TestCases @(
+            @{ SourceCulture = 'de-DE'; TargetCulture = 'de-DE' }
+            @{ SourceCulture = 'de-DE'; TargetCulture = 'en-US' }
+            @{ SourceCulture = 'en-US'; TargetCulture = 'de-DE' }
+        ) {
+            param($SourceCulture, $TargetCulture)
+
+            $originalUICulture = [System.Globalization.CultureInfo]::CurrentUICulture
+            try {
+                [System.Globalization.CultureInfo]::CurrentUICulture =
+                    [System.Globalization.CultureInfo]::GetCultureInfo($SourceCulture)
+
+                $functionName = "HelpFuncLocalizedTitle_${SourceCulture}_${TargetCulture}"
+                Set-Item -Path "function:\$functionName" -Value {
                     <#
                       .SYNOPSIS
                       Test a localized example heading.
 
                       .EXAMPLE Localized title
                       Get-Date
+
+                      .EXAMPLE
+                      Get-TimeZone
                     #>
                     param()
                 }
 
-                $help = Get-Help HelpFuncLocalizedTitle
-                $help.examples.example.title | Should -BeLike '*BEISPIEL 1: Localized title*'
+                $help = Get-Help -Name $functionName
+                $sourceExamples = @($help.examples.example)
+                $sourceExamples.Count | Should -Be 2
 
+                [System.Globalization.CultureInfo]::CurrentUICulture =
+                    [System.Globalization.CultureInfo]::GetCultureInfo($TargetCulture)
                 $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($help)
-                $exampleDirective = $helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
-                $exampleDirective | Should -BeExactly '.EXAMPLE Localized title'
+                $exampleDirectives = @($helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' })
+                $exampleDirectives.Count | Should -Be 2
+                $exampleDirectives[0] | Should -BeExactly '.EXAMPLE Localized title'
+                $exampleDirectives[1] | Should -BeExactly '.EXAMPLE'
+
+                # Compare with help authored directly under the target culture, including resource fallback.
+                $targetFunctionName = "${functionName}_Target"
+                Set-Item -Path "function:\$targetFunctionName" -Value (Get-Command -Name $functionName).ScriptBlock
+                $expectedExamples = @((Get-Help -Name $targetFunctionName).examples.example)
+                $expectedExamples.Count | Should -Be 2
+
+                $proxyName = "${functionName}_Proxy"
+                $proxyBody = "param()`n<#`n$helpComments`n#>"
+                Set-Item -Path "function:\$proxyName" -Value ([scriptblock]::Create($proxyBody))
+                $roundTrippedHelp = Get-Help -Name $proxyName
+                $roundTrippedExamples = @($roundTrippedHelp.examples.example)
+                $roundTrippedExamples.Count | Should -Be 2
+
+                for ($index = 0; $index -lt $sourceExamples.Count; $index++) {
+                    $roundTrippedExamples[$index].title | Should -BeExactly $expectedExamples[$index].title
+                    $roundTrippedExamples[$index].code | Should -BeExactly $sourceExamples[$index].code
+                }
             }
             finally {
                 [System.Globalization.CultureInfo]::CurrentUICulture = $originalUICulture
