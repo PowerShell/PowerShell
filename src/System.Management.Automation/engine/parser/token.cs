@@ -1453,7 +1453,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// This collection holds any tokens from variable references and sub-expressions within the string.
         /// For example:
-        ///     "In $([DateTime]::Now.Year - $age), $name was born"
+        ///     "In $([datetime]::Now.Year - $age), $name was born"
         /// has a nested expression with a sequence of tokens, plus the variable reference $name.
         /// </summary>
         public ReadOnlyCollection<Token> NestedTokens

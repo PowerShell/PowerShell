@@ -36,12 +36,12 @@ Describe "Serialization Tests" -tags "CI" {
     }
 
     It 'Test DateTimeUtc serialize and deserialize work as expected.' {
-        $inputObject = [System.DateTime]::UtcNow;
+        $inputObject = [datetime]::UtcNow;
         SerializeAndDeserialize($inputObject) | Should -Be $inputObject
     }
 
     It 'Test DateTime stamps serialize and deserialize work as expected.' {
-        $objs = [System.DateTime]::MaxValue, [System.DateTime]::MinValue, [System.DateTime]::Today, (New-Object System.DateTime), (New-Object System.DateTime 123456789)
+        $objs = [datetime]::MaxValue, [datetime]::MinValue, [datetime]::Today, (New-Object System.DateTime), (New-Object System.DateTime 123456789)
         foreach($inputObject in $objs)
         {
            SerializeAndDeserialize($inputObject) | Should -Be $inputObject
