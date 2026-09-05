@@ -272,6 +272,87 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
+        /// Entry point for the loader algorithm to load formatting data from an XML string.
+        /// </summary>
+        /// <param name="xmlData">XML string containing format data.</param>
+        /// <param name="info">Information needed to load the file (used for error reporting).</param>
+        /// <param name="db">Database instance to load the file into.</param>
+        /// <param name="expressionFactory">Expression factory to validate script blocks.</param>
+        /// <param name="preValidated">True if pre-validated.</param>
+        /// <returns>True if successful.</returns>
+        internal bool LoadXmlString(
+            string xmlData,
+            XmlFileLoadInfo info,
+            TypeInfoDataBase db,
+            PSPropertyExpressionFactory expressionFactory,
+            bool preValidated)
+        {
+            if (xmlData == null)
+                throw PSTraceSource.NewArgumentNullException(nameof(xmlData));
+
+            if (info == null)
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
+
+            if (db == null)
+                throw PSTraceSource.NewArgumentNullException(nameof(db));
+
+            if (expressionFactory == null)
+                throw PSTraceSource.NewArgumentNullException(nameof(expressionFactory));
+
+            this.displayResourceManagerCache = db.displayResourceManagerCache;
+            this.expressionFactory = expressionFactory;
+            this.SetDatabaseLoadingInfo(info);
+            this.ReportTrace("loading xml string started");
+
+            XmlDocument newDocument;
+            try
+            {
+                // Match the file-loading path: untrusted XML parsing with hardened defaults.
+                newDocument = InternalDeserializer.LoadUnsafeXmlDocument(
+                    xmlData,
+                    true, /* preserve whitespace, comments, etc. */
+                    null); /* default maxCharacters */
+            }
+            catch (XmlException e)
+            {
+                this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ErrorInFile, FilePath, e.Message));
+                return false;
+            }
+
+            bool previousSuppressValidation = _suppressValidation;
+            try
+            {
+                _suppressValidation = preValidated;
+
+                try
+                {
+                    this.LoadData(newDocument, db);
+                }
+                catch (TooManyErrorsException)
+                {
+                    return false;
+                }
+                catch (Exception e)
+                {
+                    this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ErrorInFile, FilePath, e.Message));
+                    throw;
+                }
+
+                if (this.HasErrors)
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                _suppressValidation = previousSuppressValidation;
+            }
+
+            this.ReportTrace("xml string loaded with no errors");
+            return true;
+        }
+
+        /// <summary>
         /// Entry point for the loader algorithm to load formatting data from ExtendedTypeDefinition.
         /// </summary>
         /// <param name="typeDefinition">The ExtendedTypeDefinition instance to load formatting data from.</param>
