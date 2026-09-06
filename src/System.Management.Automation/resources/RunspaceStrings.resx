@@ -240,4 +240,7 @@
   <data name="PrimaryRunspaceAlreadySet" xml:space="preserve">
     <value>The static PrimaryRunspace property can only be set once, and has already been set.</value>
   </data>
+  <data name="StopPipelinesTimedOut" xml:space="preserve">
+    <value>One or more pipelines did not stop within the allotted time of {0}.</value>
+  </data>
 </root>

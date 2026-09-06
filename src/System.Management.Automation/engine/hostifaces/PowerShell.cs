@@ -412,6 +412,12 @@ namespace System.Management.Automation
         /// layer supports this operation.
         /// </summary>
         internal bool InvokeAndDisconnect { get; set; }
+
+        /// <summary>
+        /// Maximum time to wait for synchronous operations (Invoke, Stop, Close).
+        /// Default is Timeout.InfiniteTimeSpan which preserves backwards compatibility.
+        /// </summary>
+        public TimeSpan Timeout { get; set; } = System.Threading.Timeout.InfiniteTimeSpan;
     }
 
     /// <summary>
@@ -449,6 +455,18 @@ namespace System.Management.Automation
         internal void Wait()
         {
             _completionEvent.WaitOne();
+        }
+
+        /// <summary>
+        /// Waits for the completion event with a timeout.
+        /// </summary>
+        internal void Wait(TimeSpan timeout)
+        {
+            if (!_completionEvent.WaitOne(timeout))
+            {
+                throw new TimeoutException(
+                    StringUtil.Format(PowerShellStrings.OperationTimedOut, timeout));
+            }
         }
 
         /// <summary>
@@ -3078,7 +3096,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The running PowerShell pipeline was stopped.
-        /// This occurs when <see cref="PowerShell.Stop"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
+        /// This occurs when <see cref="PowerShell.Stop()"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
         /// </exception>
         public Task<PSDataCollection<PSObject>> InvokeAsync()
             => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke(), _endInvokeMethod);
@@ -3123,7 +3141,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The running PowerShell pipeline was stopped.
-        /// This occurs when <see cref="PowerShell.Stop"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
+        /// This occurs when <see cref="PowerShell.Stop()"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
         /// </exception>
         public Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input)
             => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), _endInvokeMethod);
@@ -3181,7 +3199,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The running PowerShell pipeline was stopped.
-        /// This occurs when <see cref="PowerShell.Stop"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
+        /// This occurs when <see cref="PowerShell.Stop()"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
         /// </exception>
         public Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input, PSInvocationSettings settings, AsyncCallback callback, object state)
             => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), _endInvokeMethod);
@@ -3233,7 +3251,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The running PowerShell pipeline was stopped.
-        /// This occurs when <see cref="PowerShell.Stop"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
+        /// This occurs when <see cref="PowerShell.Stop()"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
         /// To collect partial output in this scenario,
         /// supply a <see cref="System.Management.Automation.PSDataCollection{T}" /> for the <paramref name="output"/> parameter,
         /// and either add a handler for the <see cref="System.Management.Automation.PSDataCollection{T}.DataAdding"/> event
@@ -3303,7 +3321,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The running PowerShell pipeline was stopped.
-        /// This occurs when <see cref="PowerShell.Stop"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
+        /// This occurs when <see cref="PowerShell.Stop()"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
         /// To collect partial output in this scenario,
         /// supply a <see cref="System.Management.Automation.PSDataCollection{T}" /> for the <paramref name="output"/> parameter,
         /// and either add a handler for the <see cref="System.Management.Automation.PSDataCollection{T}.DataAdding"/> event
@@ -3573,7 +3591,11 @@ namespace System.Management.Automation
                     // Queue a batch work item here.
                     // Calling CoreInvokeAsync / CoreInvoke here directly doesn't work and causes the thread to not respond.
                     ThreadPool.QueueUserWorkItem(new WaitCallback(BatchInvocationWorkItem), context);
-                    context.Wait();
+                    TimeSpan batchTimeout = _batchInvocationSettings?.Timeout ?? System.Threading.Timeout.InfiniteTimeSpan;
+                    if (batchTimeout == System.Threading.Timeout.InfiniteTimeSpan)
+                        context.Wait();
+                    else
+                        context.Wait(batchTimeout);
                 }
             }
         }
@@ -3677,7 +3699,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The running PowerShell pipeline was stopped.
-        /// This occurs when <see cref="PowerShell.Stop"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
+        /// This occurs when <see cref="PowerShell.Stop()"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
         /// To collect partial output in this scenario,
         /// supply a <see cref="System.Management.Automation.PSDataCollection{T}" /> to <see cref="PowerShell.BeginInvoke"/> for the <paramref name="output"/> parameter
         /// and either add a handler for the <see cref="System.Management.Automation.PSDataCollection{T}.DataAdding"/> event
@@ -3752,6 +3774,29 @@ namespace System.Management.Automation
             catch (ObjectDisposedException)
             {
                 // If it's already disposed, then the client doesn't need to know.
+            }
+        }
+
+        /// <summary>
+        /// Stop the currently running command with a bounded timeout.
+        /// </summary>
+        /// <param name="timeout">Maximum time to wait for stop to complete.</param>
+        /// <exception cref="TimeoutException">Thrown if stop does not complete within timeout.</exception>
+        public void Stop(TimeSpan timeout)
+        {
+            try
+            {
+                IAsyncResult asyncResult = CoreStop(true, null, null);
+                if (!asyncResult.AsyncWaitHandle.WaitOne(timeout))
+                {
+                    throw new TimeoutException(
+                        StringUtil.Format(PowerShellStrings.StopTimedOut, timeout));
+                }
+
+                ResetOutputBufferAsNeeded();
+            }
+            catch (ObjectDisposedException)
+            {
             }
         }
 
@@ -4521,7 +4566,13 @@ namespace System.Management.Automation
                         // getting the runspace asynchronously so that Stop can be supported from a different
                         // thread.
                         _worker.GetRunspaceAsyncResult = pool.BeginGetRunspace(null, null);
-                        _worker.GetRunspaceAsyncResult.AsyncWaitHandle.WaitOne();
+                        TimeSpan poolTimeout = settings?.Timeout ?? System.Threading.Timeout.InfiniteTimeSpan;
+                        if (!_worker.GetRunspaceAsyncResult.AsyncWaitHandle.WaitOne(poolTimeout))
+                        {
+                            throw new TimeoutException(
+                                StringUtil.Format(PowerShellStrings.OperationTimedOut, poolTimeout));
+                        }
+
                         rsToUse = pool.EndGetRunspace(_worker.GetRunspaceAsyncResult);
                     }
                     else
@@ -4547,8 +4598,39 @@ namespace System.Management.Automation
                         }
                     }
 
-                    // perform the work in the current thread
-                    _worker.CreateRunspaceIfNeededAndDoWork(rsToUse, true);
+                    // perform the work in the current thread (Phase 2: bounded when Timeout is set)
+                    TimeSpan invokeTimeout = settings?.Timeout ?? System.Threading.Timeout.InfiniteTimeSpan;
+                    if (invokeTimeout == System.Threading.Timeout.InfiniteTimeSpan)
+                    {
+                        // Backwards-compatible fast path: zero overhead, no extra allocation.
+                        _worker.CreateRunspaceIfNeededAndDoWork(rsToUse, true);
+                    }
+                    else
+                    {
+                        // Bounded path: spin invocation on a ThreadPool thread; join with timeout.
+                        // Note: Task.Run dispatches to an MTA thread. Scripts relying on STA COM
+                        // apartment state should use the InfiniteTimeSpan (default) path instead.
+                        var invokeTask = System.Threading.Tasks.Task.Run(
+                            () => _worker.CreateRunspaceIfNeededAndDoWork(rsToUse, true));
+                        bool invokeCompleted;
+                        try
+                        {
+                            invokeCompleted = invokeTask.Wait(invokeTimeout);
+                        }
+                        catch (AggregateException ae) when (ae.InnerExceptions.Count == 1)
+                        {
+                            // Unwrap so callers see the real exception type (e.g. RuntimeException).
+                            System.Runtime.ExceptionServices.ExceptionDispatchInfo
+                                .Capture(ae.InnerExceptions[0]).Throw();
+                            throw; // unreachable; satisfies compiler
+                        }
+                        if (!invokeCompleted)
+                        {
+                            CoreStop(true, null, null); // best-effort: signal pipeline to stop
+                            throw new TimeoutException(
+                                StringUtil.Format(PowerShellStrings.OperationTimedOut, invokeTimeout));
+                        }
+                    }
                 }
                 else
                 {
@@ -5146,7 +5228,11 @@ namespace System.Management.Automation
 
                     if (isSyncCall)
                     {
-                        _stopAsyncResult.AsyncWaitHandle.WaitOne();
+                        if (!_stopAsyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(30)))
+                        {
+                            throw new TimeoutException(
+                                StringUtil.Format(PowerShellStrings.StopTimedOut, TimeSpan.FromSeconds(30)));
+                        }
                     }
                 }
                 else
