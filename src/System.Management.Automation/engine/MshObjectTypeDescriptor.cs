@@ -17,7 +17,7 @@ namespace System.Management.Automation
     public class SettingValueExceptionEventArgs : EventArgs
     {
         /// <summary>
-        /// Gets and sets a <see cref="System.Boolean"/> indicating if the SetValue method of <see cref="PSObjectPropertyDescriptor"/>
+        /// Gets and sets a <see cref="bool"/> indicating if the SetValue method of <see cref="PSObjectPropertyDescriptor"/>
         /// should throw the exception associated with this event.
         /// </summary>
         /// <remarks>
@@ -53,7 +53,7 @@ namespace System.Management.Automation
     public class GettingValueExceptionEventArgs : EventArgs
     {
         /// <summary>
-        /// Gets and sets a <see cref="System.Boolean"/> indicating if the GetValue method of <see cref="PSObjectPropertyDescriptor"/>
+        /// Gets and sets a <see cref="bool"/> indicating if the GetValue method of <see cref="PSObjectPropertyDescriptor"/>
         /// should throw the exception associated with this event.
         /// </summary>
         public bool ShouldThrow { get; set; }
