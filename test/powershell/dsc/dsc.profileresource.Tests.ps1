@@ -3,6 +3,13 @@
 
 Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
     BeforeAll {
+
+        $isMsix = $pshome -like '*WindowsApps*'
+        if ($isMsix) {
+            Write-Verbose "Running in MSIX context. Marking tests as pending." -Verbose
+            return
+        }
+
         $DSC_ROOT = $env:DSC_ROOT
         $skipCleanup = $false
 
@@ -46,6 +53,10 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
             return
         }
 
+        if ($isMsix) {
+            return
+        }
+
         # Restore original profile
         $testProfilePathCurrentUserCurrentHost = $PROFILE.CurrentUserCurrentHost
         if (Test-Path "$TestDrive/currentuser-currenthost-profile.bak") {
@@ -69,6 +80,12 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
     }
 
     It 'DSC resource is located at $PSHome' {
+
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $resourceFile = Join-Path -Path $PSHome -ChildPath 'pwsh.profile.resource.ps1'
         $resourceFile | Should -Exist
 
@@ -77,39 +94,74 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
     }
 
     It 'DSC resource can be found' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         (& $dscExe resource list -o json | ConvertFrom-Json  | Select-Object -Property type).type | Should -Contain 'Microsoft.PowerShell/Profile'
     }
 
     It 'DSC resource can set current user current host profile' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $setOutput = (& $dscExe config set --file $PSScriptRoot/psprofile_currentuser_currenthost.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - CurrentUserCurrentHost!'"
         $setOutput.results.result.afterState.content | Should -BeExactly $expectedContent
     }
 
     It 'DSC resource can get current user current host profile' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $getOutput = (& $dscExe config get --file $PSScriptRoot/psprofile_currentuser_currenthost.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - CurrentUserCurrentHost!'"
         $getOutput.results.result.actualState.content | Should -BeExactly $expectedContent
     }
 
-    It 'DSC resource can set content as empty for current user current host profile' -Pending {
+    It 'DSC resource can set content as empty for current user current host profile' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $setOutput = (& $dscExe config set --file $PSScriptRoot/psprofile_currentuser_currenthost_emptycontent.dsc.yaml -o json) | ConvertFrom-Json
         $setOutput.results.result.afterState.content | Should -BeExactly ''
     }
 
     It 'DSC resource can set current user all hosts profile' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $setOutput = (& $dscExe config set --file $PSScriptRoot/psprofile_currentuser_allhosts.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - CurrentUserAllHosts!'"
         $setOutput.results.result.afterState.content | Should -BeExactly $expectedContent
     }
 
     It 'DSC resource can get current user all hosts profile' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $getOutput = (& $dscExe config get --file $PSScriptRoot/psprofile_currentuser_allhosts.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - CurrentUserAllHosts!'"
         $getOutput.results.result.actualState.content | Should -BeExactly $expectedContent
     }
 
     It 'DSC resource can export all profiles' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $exportOutput = (& $dscExe config export --file $PSScriptRoot/psprofile_export.dsc.yaml -o json) | ConvertFrom-Json
 
         $exportOutput.resources | Should -HaveCount 4
@@ -123,6 +175,12 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
 
 Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdminOnWindows', 'RequireSudoOnUnix' {
     BeforeAll {
+        $isMsix = $pshome -like '*WindowsApps*'
+        if ($isMsix) {
+            Write-Verbose "Running in MSIX context. Marking tests as pending." -Verbose
+            return
+        }
+
         $DSC_ROOT = $env:DSC_ROOT
         $skipCleanup = $false
 
@@ -166,6 +224,10 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
             return
         }
 
+        if ($isMsix) {
+            return
+        }
+
         $env:PATH = $originalPath
 
         $testProfilePathAllUsersCurrentHost = $PROFILE.AllUsersCurrentHost
@@ -189,24 +251,44 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
     }
 
     It 'DSC resource can set all users all hosts profile' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $setOutput = (& $dscExe config set --file $PSScriptRoot/psprofile_alluser_allhost.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - AllUsersAllHosts!'"
         $setOutput.results.result.afterState.content | Should -BeExactly $expectedContent
     }
 
     It 'DSC resource can get all users all hosts profile' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $getOutput = (& $dscExe config get --file $PSScriptRoot/psprofile_alluser_allhost.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - AllUsersAllHosts!'"
         $getOutput.results.result.actualState.content | Should -BeExactly $expectedContent
     }
 
     It 'DSC resource can set all users current hosts profile' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $setOutput = (& $dscExe config set --file $PSScriptRoot/psprofile_allusers_currenthost.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - AllUsersCurrentHost!'"
         $setOutput.results.result.afterState.content | Should -BeExactly $expectedContent
     }
 
     It 'DSC resource can get all users current hosts profile' {
+        if ($isMsix) {
+            Set-ItResult -Pending -Because "Running in MSIX context. Skipping test."
+            return
+        }
+
         $getOutput = (& $dscExe config get --file $PSScriptRoot/psprofile_allusers_currenthost.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - AllUsersCurrentHost!'"
         $getOutput.results.result.actualState.content | Should -BeExactly $expectedContent
