@@ -78,7 +78,15 @@ namespace mvc.Controllers
 
             if (!skipNextLink && maxLinks > 1 && linkNumber < maxLinks)
             {
-                linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber + 1, type: type, whitespace: whitespace, rel: "next"));
+                // 'nextorigin' takes an absolute URI, putting the next link on another origin.
+                string nextBaseUri = baseUri;
+                if (Request.Query.TryGetValue("nextorigin", out StringValues nextOriginSV)
+                    && Uri.TryCreate(nextOriginSV.FirstOrDefault(), UriKind.Absolute, out Uri nextOrigin))
+                {
+                    nextBaseUri = new Uri(nextOrigin, new Uri(baseUri).AbsolutePath).AbsoluteUri;
+                }
+
+                linkList.Add(GetLink(baseUri: nextBaseUri, maxLinks: maxLinks, linkNumber: linkNumber + 1, type: type, whitespace: whitespace, rel: "next"));
             }
 
             StringValues linkHeader;
