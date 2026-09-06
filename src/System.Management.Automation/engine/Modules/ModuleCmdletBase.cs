@@ -711,7 +711,7 @@ namespace Microsoft.PowerShell.Commands
             string extension = Path.GetExtension(moduleSpecification.Name);
 
             // First check for fully-qualified paths - either absolute or relative
-            string rootedPath = ResolveRootedFilePath(moduleSpecification.Name, this.Context);
+            string rootedPath = ResolveToFileSystemPathIfRooted(moduleSpecification.Name, this.Context);
             if (string.IsNullOrEmpty(rootedPath))
             {
                 // Use the name of the parent module if it's specified, otherwise, use the current module name.
@@ -1034,7 +1034,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Now we resolve the possible paths in case it is relative path/path contains wildcards
-                var modulePathCollection = GetResolvedPathCollection(modulePath, this.Context);
+                var modulePathCollection = ResolveToFileSystemPaths(modulePath, this.Context);
 
                 if (modulePathCollection != null)
                 {
@@ -2287,7 +2287,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(loadMessage);
 
                         bool isAlreadyLoaded = false;
-                        string resolvedFileName = ResolveRootedFilePath(fileName, Context) ?? fileName;
+                        string resolvedFileName = ResolveToFileSystemPathIfRooted(fileName, Context) ?? fileName;
                         foreach (var entry in Context.InitialSessionState.Types)
                         {
                             if (entry.FileName == null)
@@ -2295,7 +2295,7 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
-                            string resolvedEntryFileName = ResolveRootedFilePath(entry.FileName, Context) ?? entry.FileName;
+                            string resolvedEntryFileName = ResolveToFileSystemPathIfRooted(entry.FileName, Context) ?? entry.FileName;
                             if (resolvedEntryFileName.Equals(resolvedFileName, StringComparison.OrdinalIgnoreCase))
                             {
                                 isAlreadyLoaded = true;
@@ -4673,8 +4673,8 @@ namespace Microsoft.PowerShell.Commands
             // but it's safer to keep the original behavior to avoid unexpected breaking changes.
             string combinedPath = Path.Combine(moduleBase, fileName);
             string resolvedPath = IsRooted(fileName)
-                ? ResolveRootedFilePath(fileName, Context) ?? ResolveRootedFilePath(combinedPath, Context)
-                : ResolveRootedFilePath(combinedPath, Context);
+                ? ResolveToFileSystemPathIfRooted(fileName, Context) ?? ResolveToFileSystemPathIfRooted(combinedPath, Context)
+                : ResolveToFileSystemPathIfRooted(combinedPath, Context);
 
             // Return the path if successfully resolved.
             if (resolvedPath is not null)
@@ -4758,7 +4758,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">The filename to resolve.</param>
         /// <param name="context">Execution context.</param>
         /// <returns>The resolved filename.</returns>
-        internal static string ResolveRootedFilePath(string filePath, ExecutionContext context)
+        internal static string ResolveToFileSystemPathIfRooted(string filePath, ExecutionContext context)
         {
             // If the path is not fully qualified or relative rooted, then
             // we need to do path-based resolution...
@@ -4767,45 +4767,23 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            ProviderInfo provider = null;
-
             Collection<string> filePaths = null;
 
-            if (context.EngineSessionState.IsProviderLoaded(context.ProviderNames.FileSystem))
+            try
             {
-                try
-                {
-                    filePaths =
-                        context.SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, out provider);
-                }
-                catch (ItemNotFoundException)
-                {
-                    return null;
-                }
-
-                // Make sure that the path is in the file system - that's all we can handle currently...
-                if (!provider.NameEquals(context.ProviderNames.FileSystem))
-                {
-                    // "The current provider ({0}) cannot open a file"
-                    throw InterpreterError.NewInterpreterException(
-                        filePath,
-                        typeof(RuntimeException),
-                        errorPosition: null,
-                        "FileOpenError",
-                        ParserStrings.FileOpenError,
-                        provider.FullName);
-                }
+                filePaths = ResolveToFileSystemPathsThrowing(filePath, context, allowNonExistingPaths: false);
+            }
+            catch (ItemNotFoundException)
+            {
+                // Ignore.
             }
 
-            // Make sure at least one file was found...
             if (filePaths == null || filePaths.Count < 1)
             {
                 return null;
             }
-
-            if (filePaths.Count > 1)
+            else if (filePaths.Count > 1)
             {
-                // "The path resolved to more than one file; can only process one file at a time."
                 throw InterpreterError.NewInterpreterException(
                     filePaths,
                     typeof(RuntimeException),
@@ -4813,82 +4791,162 @@ namespace Microsoft.PowerShell.Commands
                     "AmbiguousPath",
                     ParserStrings.AmbiguousPath);
             }
-
-            return filePaths[0];
-        }
-
-        internal static string GetResolvedPath(string filePath, ExecutionContext context)
-        {
-            ProviderInfo provider = null;
-
-            Collection<string> filePaths;
-
-            if (context != null && context.EngineSessionState != null && context.EngineSessionState.IsProviderLoaded(context.ProviderNames.FileSystem))
-            {
-                try
-                {
-                    filePaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, true /* allowNonExistentPaths */, out provider);
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-                // Make sure that the path is in the file system - that's all we can handle currently...
-                if ((provider == null) || !provider.NameEquals(context.ProviderNames.FileSystem))
-                {
-                    return null;
-                }
-            }
             else
             {
-                filePaths = new Collection<string>();
-                filePaths.Add(filePath);
+                return filePaths[0];
+            }
+        }
+
+        /// <summary>
+        /// Resolves <paramref name="path"/> to a single file system path using the file system provider.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Path resolution is considered successful if <paramref name="path"/> resolves to exactly
+        ///         one file system path.
+        ///     </para>
+        /// </remarks>
+        /// <param name="path">The file path to resolve.</param>
+        /// <param name="context">The execution context.</param>
+        /// <returns>The resolved, fully qualified file system path if resolution succeeded; otherwise <see langword="null"/>.</returns>
+        internal static string ResolveToSingleFileSystemPath(string path, ExecutionContext context)
+        {
+            Collection<string> paths = null;
+
+            if (!TryResolveToFileSystemPaths(path, context, out paths, allowNonExistingPaths: true))
+            {
+                // Ported from legacy code to preserve behavior.
+                if (context?.EngineSessionState?.IsProviderLoaded(context.ProviderNames.FileSystem) != true)
+                {
+                    paths = [path];
+                }
             }
 
-            // Make sure at least one file was found...
-            if (filePaths == null || filePaths.Count < 1 || filePaths.Count > 1)
+            if (paths?.Count != 1)
             {
                 return null;
             }
 
-            return filePaths[0];
+            return paths[0];
         }
 
-        internal static Collection<string> GetResolvedPathCollection(string filePath, ExecutionContext context)
+        /// <summary>
+        /// Resolves <paramref name="path"/> to file system paths using the file system provider.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Path resolution is considered successful if <paramref name="path"/> resolves to
+        ///         at least one file system path.
+        ///     </para>
+        /// </remarks>
+        /// <param name="path">The path to resolve.</param>
+        /// <param name="context">The execution context.</param>
+        /// <returns>The resolved, fully qualified file system paths if path resolution succeeded; otherwise <see langword="null"/>.</returns>
+        internal static Collection<string> ResolveToFileSystemPaths(string path, ExecutionContext context)
         {
-            ProviderInfo provider = null;
+            Collection<string> paths;
 
-            Collection<string> filePaths;
-
-            if (context != null && context.EngineSessionState != null && context.EngineSessionState.IsProviderLoaded(context.ProviderNames.FileSystem))
+            if (!TryResolveToFileSystemPaths(path, context, out paths, allowNonExistingPaths: true))
             {
-                try
+                // Ported from legacy code to preserve behavior.
+                if (context?.EngineSessionState?.IsProviderLoaded(context.ProviderNames.FileSystem) == false)
                 {
-                    filePaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, true /* allowNonExistentPaths */, out provider);
+                    paths = [path];
                 }
-                catch (Exception)
-                {
-                    return null;
-                }
-                // Make sure that the path is in the file system - that's all we can handle currently...
-                if ((provider == null) || !provider.NameEquals(context.ProviderNames.FileSystem))
+                else
                 {
                     return null;
                 }
             }
-            else
-            {
-                filePaths = new Collection<string>();
-                filePaths.Add(filePath);
-            }
 
-            // Make sure at least one file was found...
-            if (filePaths == null || filePaths.Count < 1)
+            if (paths == null || paths.Count < 1)
             {
                 return null;
             }
 
-            return filePaths;
+            return paths;
+        }
+
+        /// <summary>
+        /// Resolves <paramref name="path"/> using the file system provider, without error handling.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         This method does not normalize <paramref name="path"/>'s directory separators.
+        ///     </para>
+        /// </remarks>
+        /// <param name="path">The path to resolve.</param>
+        /// <param name="context">The execution context.</param>
+        /// <param name="allowNonExistingPaths">Whether non-existing paths should be resolved.</param>
+        /// <returns>
+        ///     <list type="bullet">
+        ///         <item><see langword="null"/> if the file system provider isn't available.</item>
+        ///         <item>All resolved paths if resolution of <paramref name="path"/> succeeded.</item>
+        ///     </list>
+        /// </returns>
+        /// <exception cref="RuntimeException">Thrown if path resolution is not performed by the file system provider.</exception>
+        internal static Collection<string> ResolveToFileSystemPathsThrowing(string path, ExecutionContext context, bool allowNonExistingPaths = false)
+        {
+            if (context?.EngineSessionState?.IsProviderLoaded(context.ProviderNames.FileSystem) != true)
+            {
+                // We're only interested in resolving file system paths.
+                return null;
+            }
+
+            // TODO: Can path resolution succeed and return null?
+            Collection<string> resolvedPaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(path,
+                                                                                                           allowNonExistingPaths,
+                                                                                                           out ProviderInfo provider);
+
+            // Ported from legacy code to preserve behavior.
+            if (!provider.NameEquals(context.ProviderNames.FileSystem))
+            {
+                throw InterpreterError.NewInterpreterException(
+                    path,
+                    typeof(RuntimeException),
+                    errorPosition: null,
+                    "FileOpenError",
+                    ParserStrings.FileOpenError,
+                    provider.FullName);
+            }
+
+            return resolvedPaths;
+        }
+
+        /// <summary>
+        /// Resolves <paramref name="path"/> using the file system provider.
+        /// </summary>
+        /// <remarks>
+        ///     <list type="bullet">
+        ///         <item>This method does not normalize <paramref name="path"/>'s directory separators.</item>
+        ///         <item>This method does not throw.</item>
+        ///     </list>
+        /// </remarks>
+        /// <param name="path">The path to resolve.</param>
+        /// <param name="context">Execution context.</param>
+        /// <param name="allowNonExistingPaths">Whether non-existing paths should be resolved.</param>
+        /// <param name="resolvedPaths">All resolved file system paths if the return value is <see langword="true"/>, otherwise <see langword="null"/>.</param>
+        /// <returns>
+        /// <see langword="true"/> if path resolution through the file system provider succeeded, otherwise <see langword="false"/>.
+        /// </returns>
+        internal static bool TryResolveToFileSystemPaths(
+            string path,
+            ExecutionContext context,
+            out Collection<string> resolvedPaths,
+            bool allowNonExistingPaths = false)
+        {
+            resolvedPaths = null;
+
+            try
+            {
+                resolvedPaths = ResolveToFileSystemPathsThrowing(path, context, allowNonExistingPaths);
+            }
+            catch (Exception)
+            {
+                // Ignore.
+            }
+
+            return resolvedPaths != null;
         }
 
         internal static PSSession GetWindowsPowerShellCompatRemotingSession()
@@ -5440,7 +5498,7 @@ namespace Microsoft.PowerShell.Commands
                 string fileName = fileBaseName + ext;
 
                 // Get the resolved file name
-                fileName = GetResolvedPath(fileName, Context);
+                fileName = ResolveToSingleFileSystemPath(fileName, Context);
 
                 if (fileName == null)
                     continue;
