@@ -3049,9 +3049,29 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         1..$maxLinksToFollow | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
     }
 
-    It "Validate Invoke-RestMethod -FollowRelLink strips the authorization header on followed relation links by default" {
-        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 3}
+    It "Validate Invoke-RestMethod -FollowRelLink keeps the authorization header on relation links within the origin <name>" -TestCases @(
+        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 3}
+        @{name = '(URI with scheme)'; uri = $originalUri}
+        @{name = '(URI without scheme)'; uri = $originalUri.OriginalString.Split("//")[1]}
+    ) {
+        param($uri)
         $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink -Headers @{Authorization = 'test'}"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Error | Should -BeNullOrEmpty
+        $result.Output.Count | Should -BeExactly 3
+        $result.Output[0].headers.Authorization | Should -BeExactly 'test'
+        $result.Output[1].headers.Authorization | Should -BeExactly 'test'
+        $result.Output[2].headers.Authorization | Should -BeExactly 'test'
+    }
+
+    It "Validate Invoke-RestMethod -FollowRelLink strips the authorization header on every relation link past the origin" {
+        # The second and third pages are both served by the cross-origin listener, so the third link
+        # stays stripped only if each one is compared against the requested origin rather than the
+        # link before it.
+        $crossOrigin = Get-WebListenerUrl -Https
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 3; nextorigin = $crossOrigin.GetLeftPart([System.UriPartial]::Authority)}
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink -SkipCertificateCheck -Headers @{Authorization = 'test'}"
         $result = ExecuteWebCommand -command $command
 
         $result.Error | Should -BeNullOrEmpty
@@ -3059,6 +3079,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output[0].headers.Authorization | Should -BeExactly 'test'
         $result.Output[1].headers.Authorization | Should -BeNullOrEmpty
         $result.Output[2].headers.Authorization | Should -BeNullOrEmpty
+    }
+
+    It "Validate Invoke-RestMethod -FollowRelLink -PreserveAuthorizationOnRedirect keeps the authorization header across origins" {
+        $crossOrigin = Get-WebListenerUrl -Https
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 3; nextorigin = $crossOrigin.GetLeftPart([System.UriPartial]::Authority)}
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink -PreserveAuthorizationOnRedirect -SkipCertificateCheck -Headers @{Authorization = 'test'}"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Error | Should -BeNullOrEmpty
+        $result.Output.Count | Should -BeExactly 3
+        $result.Output[0].headers.Authorization | Should -BeExactly 'test'
+        $result.Output[1].headers.Authorization | Should -BeExactly 'test'
+        $result.Output[2].headers.Authorization | Should -BeExactly 'test'
     }
 
     It "Validate Invoke-RestMethod quietly ignores invalid Link Headers if -FollowRelLink is specified: <type>" -TestCases @(
