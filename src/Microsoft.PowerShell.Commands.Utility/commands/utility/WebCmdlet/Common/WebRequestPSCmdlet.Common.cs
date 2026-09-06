@@ -554,7 +554,10 @@ namespace Microsoft.PowerShell.Commands
                 HttpClient client = GetHttpClient(handleRedirect);
 
                 int followedRelLink = 0;
-                Uri uri = Uri;
+
+                // Normalized so a -Uri given without a scheme has an origin to compare against.
+                Uri requestedUri = CheckProtocol(Uri);
+                Uri uri = requestedUri;
                 do
                 {
                     if (followedRelLink > 0)
@@ -567,7 +570,11 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(linkVerboseMsg);
                     }
 
-                    using (HttpRequestMessage request = GetRequest(uri, isRedirect: followedRelLink > 0))
+                    // A rel link is not a redirect, so only one that leaves the origin drops credentials.
+                    bool relLinkLeavesOrigin = followedRelLink > 0
+                        && Uri.Compare(requestedUri, uri, UriComponents.SchemeAndServer, UriFormat.UriEscaped, StringComparison.OrdinalIgnoreCase) is not 0;
+
+                    using (HttpRequestMessage request = GetRequest(uri, isRedirect: relLinkLeavesOrigin))
                     {
                         FillRequestStream(request);
                         try
