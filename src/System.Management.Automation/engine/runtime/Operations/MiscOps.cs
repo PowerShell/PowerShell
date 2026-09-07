@@ -33,7 +33,7 @@ namespace System.Management.Automation
                                                        CommandBaseAst commandBaseAst,
                                                        CommandRedirection[] redirections,
                                                        ExecutionContext context)
-        {
+        {   
             var commandAst = commandBaseAst as CommandAst;
             var invocationToken = commandAst != null ? commandAst.InvocationOperator : TokenKind.Unknown;
             bool dotSource = invocationToken == TokenKind.Dot;
@@ -2500,22 +2500,19 @@ namespace System.Management.Automation
 
                     if (groups.Count > 0)
                     {
-                        Diagnostics.Assert(regex != null, "Logic above ensures regex is not null.");
-
                         Hashtable h = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
 
-                        foreach (string groupName in regex.GetGroupNames())
+                        foreach (Group g in groups)
                         {
-                            Group g = groups[groupName];
-                            if (g.Success)
+                            if (!g.Success)
                             {
-                                int keyInt;
-
-                                if (Int32.TryParse(groupName, out keyInt))
-                                    h.Add(keyInt, g.ToString());
-                                else
-                                    h.Add(groupName, g.ToString());
+                                continue;
                             }
+
+                            if (int.TryParse(g.Name, out int keyInt))
+                                h.Add(keyInt, g.Value);
+                            else
+                                h.Add(g.Name, g.Value);
                         }
 
                         context.SetVariable(SpecialVariables.MatchesVarPath, h);
