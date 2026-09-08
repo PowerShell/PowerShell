@@ -54,6 +54,22 @@ resources:
       type: git
       name: 1ESPipelineTemplates/1ESPipelineTemplates
       ref: refs/tags/release
+    # Reusable 1ES stage/job/step templates live in the engineering system repo.
+    # Pinned to an IMMUTABLE full commit SHA so a later template change can never
+    # retroactively alter what this pipeline compiles to. This is a release-critical
+    # property for Official builds: the shipped bits must be reproducible.
+    #
+    # The alias MUST remain `PowerShellEngineeringSystem`: templates in that repo
+    # reference their siblings as `@PowerShellEngineeringSystem`, and Azure DevOps
+    # resolves repository aliases from THIS (the consuming) pipeline's resources block.
+    #
+    # Declaring the resource does not check it out at runtime; it is used for
+    # compile-time template resolution only. Jobs still `checkout: self`, so all
+    # runtime script/asset paths and ESRP signing behaviour are unchanged.
+    - repository: PowerShellEngineeringSystem
+      type: git
+      name: PowerShellCore/PowerShell-Engineering-System
+      ref: 86413715d9401ecb24d91a954e8c5c41744c01d9
 
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
@@ -88,6 +104,6 @@ extends:
       apiscan:
         enabled: false
     stages:
-      - template: /.pipelines/1ES/templates/stages/PowerShell-Packages-Stages.yml@self
+      - template: /templates/1ES/stages/PowerShell-Packages-Stages.yml@PowerShellEngineeringSystem
         parameters:
           OfficialBuild: true
