@@ -58,6 +58,9 @@ Describe "LocProject.json file validation" -Tags "CI" {
             elseif ($item.SourceFile -like '*.xml') {
                 $xmlLocItemCount++
             }
+            else {
+                throw "Unexpected source file type: $($item.SourceFile)"
+            }
         }
 
         try {
