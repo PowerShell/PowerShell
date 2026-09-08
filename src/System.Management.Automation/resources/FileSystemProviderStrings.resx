@@ -354,4 +354,7 @@
   <data name="JunctionAbsolutePath" xml:space="preserve">
     <value>Creating a junction requires an absolute path for the target.</value>
   </data>
+  <data name="JunctionNotSupported" xml:space="preserve">
+    <value>Junctions are only supported on NTFS file systems. The current platform does not support creating junctions.</value>
+  </data>
 </root>
