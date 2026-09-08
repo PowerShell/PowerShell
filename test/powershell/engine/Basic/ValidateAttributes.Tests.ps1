@@ -496,4 +496,47 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             { MandatoryFunc -ByteList ([System.Collections.ObjectModel.Collection[byte]]@()) } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyCollectionNotAllowed,MandatoryFunc"
         }
     }
+
+    Context "ValidateSet" {
+        BeforeAll {
+            function ValidatingValidateSet
+            {
+                [CmdletBinding()]
+                param(
+                [ValidateSet("One","Of","These","Days")]
+                [string]
+                $Word
+                )
+
+                $Word
+            }
+        }
+
+        it 'Ensures a value is one of a number of potential strings' {
+            { ValidatingValidateSet -Word "Anything" } | Should -Throw
+        }
+
+        it 'Can be disabled' {
+            (Get-Command ValidatingValidateSet).Parameters.Values.Attributes |
+            Where-Object { $_ -is [ValidateSet] } |
+                Foreach-Object {
+                    $_.Disabled = $true
+                }
+
+            ValidatingValidateSet -Word "Anything" | Should -Be 'Anything'
+        }
+
+        it 'Can be updated' {
+            (Get-Command ValidatingValidateSet).Parameters.Values.Attributes |
+                Where-Object { $_ -is [ValidateSet] } |
+                Foreach-Object {
+                    $_.Disabled = $false
+                    $_.ValidValues = [string[]]@($_.ValidValues;"It";"Will";"Work")
+                }
+
+            ValidatingValidateSet -Word "It" | Should -Be 'It'
+            ValidatingValidateSet -Word "Will" | Should -Be 'Will'
+            ValidatingValidateSet -Word "Work" | Should -Be 'Work'
+        }
+    }
 }
