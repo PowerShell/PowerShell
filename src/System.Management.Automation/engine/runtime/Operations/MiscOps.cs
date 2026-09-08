@@ -33,7 +33,7 @@ namespace System.Management.Automation
                                                        CommandBaseAst commandBaseAst,
                                                        CommandRedirection[] redirections,
                                                        ExecutionContext context)
-        {   
+        {
             var commandAst = commandBaseAst as CommandAst;
             var invocationToken = commandAst != null ? commandAst.InvocationOperator : TokenKind.Unknown;
             bool dotSource = invocationToken == TokenKind.Dot;
