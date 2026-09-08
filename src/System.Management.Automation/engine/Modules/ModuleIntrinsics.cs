@@ -724,56 +724,63 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Takes the name of a module as used in a module specification
-        /// and either returns it as a simple name (if it was a simple name)
-        /// or a fully qualified, PowerShell-resolved path.
+        /// Takes a module name from a <strong>module specification</strong> and returns a
+        /// normalized module name.
         /// </summary>
-        /// <param name="moduleName">The name or path of the module from the specification.</param>
-        /// <param name="basePath">The path to base relative paths off.</param>
+        /// <remarks>
+        ///     <para>
+        ///         A normalized module name is either:
+        ///         <list type="bullet">
+        ///             <item>A simple module name if <paramref name="moduleNameOrPath"/> was a simple name.</item>
+        ///             <item>A fully qualified, PowerShell-resolved path.</item>
+        ///             <item>
+        ///                 A fully qualified path by combination of <paramref name="relativeTo"/> and
+        ///                 <paramref name="moduleNameOrPath"/> if PowerShell could not resolve the path.
+        ///             </item>
+        ///         </list>
+        ///     </para>
+        ///     <!-- <para>
+        ///         2018-11-09 rjmholt:
+        ///         There are several, possibly inconsistent, path handling mechanisms in the module cmdlets.
+        ///         After looking through all of them and seeing they all make some assumptions about their caller
+        ///         I wrote this method. Hopefully we can find a standard path resolution API to settle on.
+        ///     </para> -->
+        /// </remarks>
+        /// <param name="moduleNameOrPath">The name or path of the module from the specification.</param>
+        /// <param name="relativeTo">The path to base relative paths off.</param>
         /// <param name="executionContext">The current execution context.</param>
         /// <returns>
-        /// The simple module name if the given one was simple,
-        /// otherwise a fully resolved, absolute path to the module.
+        /// A simple module name if <paramref name="moduleNameOrPath"/> was a simple module
+        /// name, otherwise a fully qualified path to the module.
         /// </returns>
-        /// <remarks>
-        /// 2018-11-09 rjmholt:
-        /// There are several, possibly inconsistent, path handling mechanisms
-        /// in the module cmdlets. After looking through all of them and seeing
-        /// they all make some assumptions about their caller I wrote this method.
-        /// Hopefully we can find a standard path resolution API to settle on.
-        /// </remarks>
-        internal static string NormalizeModuleName(
-            string moduleName,
-            string basePath,
-            ExecutionContext executionContext)
+        internal static string NormalizeModuleName(string moduleNameOrPath, string relativeTo, ExecutionContext executionContext)
         {
-            if (moduleName == null)
+            ArgumentNullException.ThrowIfNull(moduleNameOrPath);
+            ArgumentNullException.ThrowIfNull(relativeTo);
+
+            if (!IsModuleNamePath(moduleNameOrPath))
             {
-                return null;
+                return moduleNameOrPath;
             }
 
-            // Check whether the module is a path -- if not, it is a simple name and we just return it.
-            if (!IsModuleNamePath(moduleName))
+            // Ensure OS default directory separators because
+            //      - Path.IsPathRooted("\some\path") returns false on *nix, and
+            //      - Path.IsPathRooted("/some/path") return false on Windows.
+            moduleNameOrPath = moduleNameOrPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+            // On Windows:
+            //      - Path.IsFullyQualified("\default\root") returns false, but
+            //      - Path.IsPathRooted("\default\root") returns true.
+            if (!Path.IsPathRooted(moduleNameOrPath))
             {
-                return moduleName;
+                moduleNameOrPath = Path.Join(relativeTo, moduleNameOrPath);
             }
 
-            // Standardize directory separators -- Path.IsPathRooted() will return false for "\path\here" on *nix and for "/path/there" on Windows
-            moduleName = moduleName.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+            // Resolving the path using ModuleCmdletBase.GetResolvedPath() may rarely return null.
+            string normalizedPath = ModuleCmdletBase.GetResolvedPath(moduleNameOrPath, executionContext)?.TrimEnd(StringLiterals.DefaultPathSeparator);
 
-            // Note: Path.IsFullyQualified("\default\root") is false on Windows, but Path.IsPathRooted returns true
-            if (!Path.IsPathRooted(moduleName))
-            {
-                moduleName = Path.Join(basePath, moduleName);
-            }
-
-            // Use the PowerShell filesystem provider to fully resolve the path
-            // If there is a problem, null could be returned -- so default back to the pre-normalized path
-            string normalizedPath = ModuleCmdletBase.GetResolvedPath(moduleName, executionContext)?.TrimEnd(StringLiterals.DefaultPathSeparator);
-
-            // ModuleCmdletBase.GetResolvePath will return null in the unlikely event that it failed.
-            // If it does, we return the fully qualified path generated before.
-            return normalizedPath ?? Path.GetFullPath(moduleName);
+            // If the resolved path is null, just return the fully qualified path generated before.
+            return normalizedPath ?? Path.GetFullPath(moduleNameOrPath);
         }
 
         /// <summary>
