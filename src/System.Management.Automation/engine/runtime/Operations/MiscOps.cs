@@ -2495,6 +2495,8 @@ namespace System.Management.Automation
 
                     if (groups.Count > 0)
                     {
+                        Diagnostics.Assert(regex != null, "Logic above ensures regex is not null.");
+
                         Hashtable h = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
 
                         foreach (string groupName in regex.GetGroupNames())
@@ -2503,6 +2505,7 @@ namespace System.Management.Automation
                             if (g.Success)
                             {
                                 int keyInt;
+
                                 if (Int32.TryParse(groupName, out keyInt))
                                     h.Add(keyInt, g.ToString());
                                 else
