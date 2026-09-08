@@ -298,5 +298,109 @@ namespace System.Management.Automation
             throw InterpreterError.NewInterpreterException(target, typeof(RuntimeException), null, "CannotIndex",
                                                            ParserStrings.CannotIndex, target.GetType());
         }
+
+        /// <summary>
+        /// Implements array division functionality for distributing array elements.
+        /// For arrays: [1,2,3,4] / 2 -> [[1,2], [3,4]] (divide into 2 sub-arrays)
+        /// For arrays with array divisor: [1,2,3,4,5,6] / [2,3] -> [[1,2], [3,4,5], [6]] (divide by sizes)
+        /// </summary>
+        /// <param name="lhs">Left-hand side array to divide.</param>
+        /// <param name="rhs">Right-hand side divisor (integer or array of integers).</param>
+        /// <returns>Array of sub-arrays based on division logic.</returns>
+        internal static object[] Divide(object[] lhs, object rhs)
+        {
+            if (lhs == null || lhs.Length == 0)
+            {
+                                    return Array.Empty<object>();
+            }
+
+            // Handle integer divisor - divide array into N equal sub-arrays
+            if (LanguagePrimitives.TryConvertTo<int>(rhs, out int divisor))
+            {
+                if (divisor <= 0)
+                {
+                    throw new ArgumentException("Array division requires a positive divisor");
+                }
+
+                if (divisor == 1)
+                {
+                    return new object[] { lhs };
+                }
+
+                var result = new object[divisor];
+                int elementsPerGroup = lhs.Length / divisor;
+                int remainder = lhs.Length % divisor;
+                int currentIndex = 0;
+
+                for (int i = 0; i < divisor; i++)
+                {
+                    int groupSize = elementsPerGroup + (i < remainder ? 1 : 0);
+                    var group = new object[groupSize];
+                    
+                    for (int j = 0; j < groupSize && currentIndex < lhs.Length; j++)
+                    {
+                        group[j] = lhs[currentIndex++];
+                    }
+                    
+                    result[i] = group;
+                }
+
+                return result;
+            }
+
+            // Handle array divisor - divide by specified sizes
+            if (rhs is object[] rhsArray)
+            {
+                var sizes = new List<int>();
+                foreach (object item in rhsArray)
+                {
+                    if (LanguagePrimitives.TryConvertTo<int>(item, out int size) && size > 0)
+                    {
+                        sizes.Add(size);
+                    }
+                }
+
+                if (sizes.Count == 0)
+                {
+                    throw new ArgumentException("Array division requires positive integer sizes");
+                }
+
+                var result = new List<object[]>();
+                int currentIndex = 0;
+
+                foreach (int size in sizes)
+                {
+                    if (currentIndex >= lhs.Length) break;
+                    
+                    int actualSize = Math.Min(size, lhs.Length - currentIndex);
+                    var group = new object[actualSize];
+                    
+                    for (int j = 0; j < actualSize; j++)
+                    {
+                        group[j] = lhs[currentIndex++];
+                    }
+                    
+                    result.Add(group);
+                }
+
+                // Add remaining elements if any
+                if (currentIndex < lhs.Length)
+                {
+                    int remainingSize = lhs.Length - currentIndex;
+                    var remainingGroup = new object[remainingSize];
+                    
+                    for (int j = 0; j < remainingSize; j++)
+                    {
+                        remainingGroup[j] = lhs[currentIndex++];
+                    }
+                    
+                    result.Add(remainingGroup);
+                }
+
+                return result.ToArray();
+            }
+
+            throw new ArgumentException("Array division requires an integer or array of integers as divisor");
+        }
     }
 }
