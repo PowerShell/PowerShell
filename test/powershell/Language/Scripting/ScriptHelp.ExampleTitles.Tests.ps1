@@ -252,24 +252,43 @@ function TestFunc {
             $helpInfo.ExampleTitles[1] | Should -BeExactly ''
         }
 
-        It 'line-comment style supports titled .EXAMPLE' {
-            $ast = [System.Management.Automation.Language.Parser]::ParseInput(@'
+        It 'line-comment style round-trips example title "<Title>"' -TestCases @(
+            @{ Title = 'Line comment title' }
+            @{ Title = 'Authentication - As a User' }
+            @{ Title = '--- Test - This is a title ---' }
+        ) {
+            param($Title)
+
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput(@"
 function TestFunc {
     # .SYNOPSIS
     #   Line-comment titled example.
     #
-    # .EXAMPLE Line comment title
+    # .EXAMPLE $Title
     #   Get-Process
     #
     #   Gets all processes
     param()
 }
-'@, [ref]$null, [ref]$null)
+"@, [ref]$null, [ref]$null)
 
             $helpInfo = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
             $helpInfo.Examples.Count | Should -Be 1
-            $helpInfo.ExampleTitles[0] | Should -BeExactly 'Line comment title'
+            $helpInfo.ExampleTitles.Count | Should -Be $helpInfo.Examples.Count
+            $helpInfo.ExampleTitles[0] | Should -BeExactly $Title
             $helpInfo.Examples[0] | Should -BeLike '*Get-Process*'
+
+            $commentBlock = $helpInfo.GetCommentBlock()
+            $parseErrors = $null
+            $roundTrippedAst = [System.Management.Automation.Language.Parser]::ParseInput(
+                "function TestFunc2 {`n$commentBlock`nparam()`n}", [ref]$null, [ref]$parseErrors)
+            $parseErrors | Should -BeNullOrEmpty
+            $roundTrippedHelp = $roundTrippedAst.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
+            $roundTrippedHelp.Examples.Count | Should -Be $helpInfo.Examples.Count
+            $roundTrippedHelp.ExampleTitles.Count | Should -Be $roundTrippedHelp.Examples.Count
+            $roundTrippedHelp.ExampleTitles[0] | Should -BeExactly $Title
+            # GetCommentBlock adds a newline between the example body and the closing comment.
+            $roundTrippedHelp.Examples[0].TrimEnd() | Should -BeExactly $helpInfo.Examples[0].TrimEnd()
         }
 
         It 'preserves a title that ends with a dash character' {

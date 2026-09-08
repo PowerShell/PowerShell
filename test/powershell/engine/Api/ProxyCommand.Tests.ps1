@@ -324,6 +324,8 @@ End {{
         It 'should round-trip example title "<Title>"' -TestCases @(
             @{ Title = 'Step 1: Initialize the module' }
             @{ Title = 'Using a non-standard path' }
+            @{ Title = 'Authentication - As a User' }
+            @{ Title = '--- Test - This is a title ---' }
             @{ Title = 'Step 1 -' }
             @{ Title = 'Step 1 --' }
             @{ Title = 'Step 1: Use C:\Temp -' }
@@ -367,6 +369,7 @@ param()
             @{ Title = '- EXAMPLE 1: Single dash -'; ExpectedTitle = 'Single dash' }
             @{ Title = '-------------------------------- EXAMPLE 1: Long border --------------------------------'; ExpectedTitle = 'Long border' }
             @{ Title = '--- EXAMPLE 1: Unequal borders -------'; ExpectedTitle = 'Unequal borders' }
+            @{ Title = '------------------ Example: --- Test - This is a title --- ---------------'; ExpectedTitle = '--- Test - This is a title ---' }
             @{ Title = '---   EXAMPLE 1: Extra spaces   ---'; ExpectedTitle = 'Extra spaces' }
             @{ Title = '--- EXAMPLE 1: Step 1 - ---'; ExpectedTitle = 'Step 1 -' }
             @{ Title = '--- EXAMPLE 1: Step 1 -- ---'; ExpectedTitle = 'Step 1 --' }
@@ -374,6 +377,8 @@ param()
             @{ Title = '--- EXAMPLE 1: -- Title -- ---'; ExpectedTitle = '-- Title --' }
             @{ Title = '--- EXAMPLE 1: Configuration: Use C:\Temp ---'; ExpectedTitle = 'Configuration: Use C:\Temp' }
             @{ Title = '--- EXAMPLE 1 ---'; ExpectedTitle = '' }
+            @{ Title = '--- EXAMPLE 1: ---'; ExpectedTitle = '' }
+            @{ Title = '--- EXAMPLE 1:  ---'; ExpectedTitle = '' }
             @{ Title = '---EXAMPLE 1: No opening space ---'; ExpectedTitle = '---EXAMPLE 1: No opening space ---' }
             @{ Title = '--- EXAMPLE 1: No closing space---'; ExpectedTitle = '--- EXAMPLE 1: No closing space---' }
             @{ Title = "---`tEXAMPLE 1: Opening tab ---"; ExpectedTitle = "---`tEXAMPLE 1: Opening tab ---" }
@@ -383,6 +388,10 @@ param()
             @{ Title = '-------------------------- EXAMPLE 1: No closing border'; ExpectedTitle = '-------------------------- EXAMPLE 1: No closing border' }
             @{ Title = 'EXAMPLE 1: No opening border --------------------------'; ExpectedTitle = 'EXAMPLE 1: No opening border --------------------------' }
             @{ Title = '-------------------------- --------------------------'; ExpectedTitle = '-------------------------- --------------------------' }
+            @{
+                Title = '--- ' + ('Label: ' * 256) + 'No closing border'
+                ExpectedTitle = '--- ' + ('Label: ' * 256) + 'No closing border'
+            }
             # Foreign headings also exercise localization without satellite resource assemblies.
             @{ Title = '-------------------------- BEISPIEL 1: Localized title --------------------------'; ExpectedTitle = 'Localized title' }
             @{ Title = '-------------------------- BEISPIEL 1 --------------------------'; ExpectedTitle = '' }

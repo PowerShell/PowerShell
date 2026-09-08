@@ -520,8 +520,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Extracts the title from a generated Get-Help example heading by removing dash borders
-        /// separated from the heading by spaces and splitting at the first ": " delimiter.
+        /// Extracts the title after the first ": " delimiter in a generated Get-Help example heading.
+        /// The outer dash borders must be separated from the heading by spaces.
         /// The localized example label is not interpreted. Titles without both borders are preserved.
         /// </summary>
         private static string ExtractExampleTitle(string decoratedTitle)
@@ -532,15 +532,15 @@ namespace System.Management.Automation
             }
 
             string title = decoratedTitle.Trim();
-            Match borderMatch = Regex.Match(title, @"\A-+ (?<heading>.*?) -+\z");
-            if (!borderMatch.Success)
+            // Avoid repeated delimiter scans when a malformed heading has no closing border.
+            Match titleMatch = Regex.Match(title, @"\A-+ .*?(?:: (?<title>.*?))? -+\z", RegexOptions.NonBacktracking);
+            if (!titleMatch.Success)
             {
                 return title;
             }
 
-            string heading = borderMatch.Groups["heading"].Value;
-            int separatorIndex = heading.IndexOf(": ", StringComparison.Ordinal);
-            return separatorIndex < 0 ? null : heading.Substring(separatorIndex + 2).Trim();
+            Group titleGroup = titleMatch.Groups["title"];
+            return titleGroup.Success ? titleGroup.Value.Trim() : null;
         }
 
         #endregion
