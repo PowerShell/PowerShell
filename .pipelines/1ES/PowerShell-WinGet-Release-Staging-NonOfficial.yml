@@ -1,0 +1,85 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+#
+# Staging-only WinGet pipeline. When manually queuing this pipeline, select the
+# PowerShellPackages resource run that matches every expectedProducer* parameter.
+# The current defaults are pinned to the verified NonOfficial package run 716943.
+#
+# This pipeline intentionally contains no ESRP Release task and cannot publish.
+
+trigger: none
+pr: none
+
+parameters:
+  - name: expectedProducerRunId
+    displayName: Expected NonOfficial package run ID
+    type: string
+    default: '716943'
+  - name: expectedProducerSourceBranch
+    displayName: Expected NonOfficial package source branch
+    type: string
+    default: refs/heads/rebuild/v7.6.99-rebuild.3
+  - name: expectedProducerSourceCommit
+    displayName: Expected NonOfficial package source commit
+    type: string
+    default: 500251276592e49fb4affb34359ca0fcee3de9bc
+  - name: expectedBundleName
+    displayName: Expected MSIX bundle name
+    type: string
+    default: PowerShellPreview-7.6.99-rebuild.3.msixbundle
+
+name: winget-stage-$(Build.BuildId)
+
+resources:
+  pipelines:
+    - pipeline: PowerShellPackages
+      project: PowerShellCore
+      source: PowerShell-Packages-NonOfficial-1ES
+      trigger: none
+  repositories:
+    - repository: 1ESPipelineTemplates
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+    - repository: PowerShellEngineeringSystem
+      type: git
+      name: PowerShellCore/PowerShell-Engineering-System
+      ref: 93c967e0c1952be70159326178c5ded2f4f36ba2
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    featureFlags:
+      autoEnableRoslynWithNewRuleset: false
+    pool:
+      name: PowerShell1ES
+      image: MMS2022
+      os: windows
+    sdl:
+      codeql:
+        compiled:
+          enabled: false
+      sbom:
+        enabled: true
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+      tsa:
+        enabled: true
+        configFile: $(Build.SourcesDirectory)\.config\tsaoptions.json
+      credscan:
+        enabled: true
+        scanFolder: $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      apiscan:
+        enabled: false
+    stages:
+      - template: /templates/1ES/stages/PowerShell-WinGet-Release-Staging-Stages.yml@PowerShellEngineeringSystem
+        parameters:
+          expectedProducerRunId: ${{ parameters.expectedProducerRunId }}
+          expectedProducerSourceBranch: ${{ parameters.expectedProducerSourceBranch }}
+          expectedProducerSourceCommit: ${{ parameters.expectedProducerSourceCommit }}
+          expectedBundleName: ${{ parameters.expectedBundleName }}
