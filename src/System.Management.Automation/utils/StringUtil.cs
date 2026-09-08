@@ -243,7 +243,7 @@ namespace System.Management.Automation.Internal
             }
             else
             {
-                int capacity = length + prependStr?.Length ?? 0 + appendStr?.Length ?? 0;
+                int capacity = length + (prependStr?.Length ?? 0) + (appendStr?.Length ?? 0);
                 return new StringBuilder(prependStr, capacity)
                     .Append(str, startOffset, length)
                     .Append(appendStr)
