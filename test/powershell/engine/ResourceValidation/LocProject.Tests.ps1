@@ -29,14 +29,36 @@ Describe "LocProject.json file validation" -Tags "CI" {
                 $realSourceFile = Join-Path $repoRoot $sourceFile
 
                 Test-Path -Path $realSourceFile | Should -BeTrue
-                $_.OutputPath | Should -BeExactly "$parentDir\"
-                $_.CopyOption | Should -BeExactly 'LangIDOnPathAndName'
+
+                if ($sourceFile -like '*.resx') {
+                    $_.OutputPath | Should -BeExactly "$parentDir\"
+                    $_.CopyOption | Should -BeExactly 'LangIDOnPathAndName'
+                }
+                elseif ($sourceFile -like '*.xml') {
+                    $_.OutputPath + "en-US" | Should -BeExactly $parentDir
+                    $_.CopyOption | Should -BeExactly 'LangIDOnPath'
+                }
+                else {
+                    throw "Unexpected source file type: $sourceFile"
+                }
             }
     }
 
     It 'Validate total resource count' -Skip:$skipTests {
         $srcDir = Join-Path $repoRoot 'src'
         $project = $locProject.Projects[0]
+
+        $resxLocItemCount = 0
+        $xmlLocItemCount = 0
+
+        foreach ($item in $project.LocItems) {
+            if ($item.SourceFile -like '*.resx') {
+                $resxLocItemCount++
+            }
+            elseif ($item.SourceFile -like '*.xml') {
+                $xmlLocItemCount++
+            }
+        }
 
         try {
             Push-Location -Path $srcDir
@@ -48,7 +70,8 @@ Describe "LocProject.json file validation" -Tags "CI" {
                 $totalResourceCount += $count
             }
 
-            $project.LocItems.Count | Should -Be $totalResourceCount
+            $resxLocItemCount | Should -Be $totalResourceCount
+            $xmlLocItemCount | Should -Be 1
         }
         finally {
             Pop-Location
