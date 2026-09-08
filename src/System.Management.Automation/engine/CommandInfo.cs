@@ -924,6 +924,30 @@ namespace System.Management.Automation
             return new PSSyntheticTypeName(typeName, typename.Type, members);
         }
 
+        /// <summary>
+        /// Creates the type name of an array whose elements are all of the given synthetic type.
+        /// The members of the element type are retained so that they can be recovered when the
+        /// array is enumerated again.
+        /// </summary>
+        /// <param name="elementType">The synthetic type of the array elements. Its type must be loaded.</param>
+        /// <returns>The type name of the array.</returns>
+        internal static PSSyntheticTypeName CreateArray(PSSyntheticTypeName elementType)
+        {
+            // The name of the element type already carries the member projection, for example
+            // "MyType#A:B", so the array name is built from the bare type name to avoid nesting
+            // one projection inside another.
+            int projectionIndex = elementType.Name.IndexOf('#');
+            string bareName = projectionIndex == -1
+                ? elementType.Name
+                : elementType.Name.Substring(0, projectionIndex);
+
+            return new PSSyntheticTypeName(
+                GetMemberTypeProjection(bareName + "[]", elementType.Members),
+                elementType.Type.MakeArrayType(),
+                elementType.Members,
+                elementType);
+        }
+
         private PSSyntheticTypeName(string typeName, Type type, IList<PSMemberNameAndType> membersTypes)
         : base(typeName, type)
         {
@@ -942,6 +966,12 @@ namespace System.Management.Automation
                     break;
                 }
             }
+        }
+
+        private PSSyntheticTypeName(string typeName, Type type, IList<PSMemberNameAndType> membersTypes, PSSyntheticTypeName elementType)
+        : this(typeName, type, membersTypes)
+        {
+            ElementType = elementType;
         }
 
         private static bool IsPSTypeName(in PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
@@ -974,6 +1004,12 @@ namespace System.Management.Automation
         }
 
         public IList<PSMemberNameAndType> Members { get; }
+
+        /// <summary>
+        /// Gets the synthetic type of the elements when this type name represents an array of
+        /// synthetic objects, or null when it represents a single object.
+        /// </summary>
+        internal PSSyntheticTypeName ElementType { get; }
     }
 
 #nullable enable

@@ -2566,6 +2566,8 @@ namespace System.Management.Automation
                 {
                     return new PSTypeName(typeof(object[]));
                 }
+
+                foundType = MergeArrayElementType(foundType, inferredType);
             }
 
             if (foundType == null)
@@ -2578,6 +2580,11 @@ namespace System.Management.Automation
                 return foundType;
             }
 
+            if (foundType is PSSyntheticTypeName syntheticType)
+            {
+                return PSSyntheticTypeName.CreateArray(syntheticType);
+            }
+
             Type enumeratedItemType = GetMostSpecificEnumeratedItemType(foundType.Type);
             if (enumeratedItemType != null)
             {
@@ -2585,6 +2592,23 @@ namespace System.Management.Automation
             }
 
             return new PSTypeName(foundType.Type.MakeArrayType());
+        }
+
+        /// <summary>
+        /// Combines the type inferred from an array element with the type inferred from the
+        /// elements before it.
+        /// </summary>
+        /// <param name="foundType">The type inferred from the previous elements.</param>
+        /// <param name="inferredType">The type inferred from the current element.</param>
+        /// <returns>The type that describes both.</returns>
+        private static PSTypeName MergeArrayElementType(PSTypeName foundType, PSTypeName inferredType)
+        {
+            // Elements can share a type, typically PSObject, while having different synthetic
+            // shapes. No single element type describes all of them, so the synthetic information
+            // is dropped and only the underlying type is kept.
+            return string.Equals(foundType.Name, inferredType.Name, StringComparison.OrdinalIgnoreCase)
+                ? foundType
+                : new PSTypeName(foundType.Type);
         }
 
         /// <summary>
@@ -2710,6 +2734,15 @@ namespace System.Management.Automation
             {
                 if (psType is PSSyntheticTypeName syntheticType)
                 {
+                    // Indexing an array of synthetic objects yields an element, while indexing a
+                    // single synthetic object, such as a hashtable, yields one of its members.
+                    if (syntheticType.ElementType is not null)
+                    {
+                        yield return syntheticType.ElementType;
+
+                        continue;
+                    }
+
                     foreach (var member in syntheticType.Members)
                     {
                         yield return member.PSTypeName;
@@ -2797,6 +2830,15 @@ namespace System.Management.Automation
         {
             foreach (PSTypeName maybeEnumerableType in enumerableTypes)
             {
+                // An array of synthetic objects keeps the type of its elements so that the
+                // inferred members survive being collected into an array and enumerated again.
+                if (maybeEnumerableType is PSSyntheticTypeName syntheticArray && syntheticArray.ElementType is not null)
+                {
+                    yield return syntheticArray.ElementType;
+
+                    continue;
+                }
+
                 Type type = maybeEnumerableType.Type;
                 if (type == null)
                 {
