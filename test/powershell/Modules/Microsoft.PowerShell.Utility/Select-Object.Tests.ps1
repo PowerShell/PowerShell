@@ -250,12 +250,12 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
         $results.Count | Should -Be 1
         $results[0] | Should -BeExactly "2"
     }
-    
+
     It "Select-Object with Skip and SkipLast should work with Skip overlapping SkipLast" {
         $results = "1", "2" | Select-Object -Skip 2 -SkipLast 1
         $results. Count | Should -Be 0
     }
-    
+
     It "Select-Object with Skip and SkipLast should work with skiplast overlapping skip" {
         $results = "1", "2" | Select-Object -Skip 1 -SkipLast 2
         $results. Count | Should -Be 0
@@ -383,7 +383,7 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
     }
 }
 
-Describe 'Select-Object behaviour with hashtable entries and actual members' -Tags CI {
+Describe 'Select-Object behaviour with hashtable entries and actual members' -Tags "CI" {
 
     It 'can retrieve a hashtable entry as a property' {
         $hashtable = @{ Entry = 100 }
@@ -422,3 +422,203 @@ Describe 'Select-Object behaviour with hashtable entries and actual members' -Ta
         $hashtable | Select-Object -ExpandProperty Count | Should -Be 3
     }
 }
+
+Describe "Select-Object with properties containing wildcard characters" -Tags "CI" {
+
+    It 'can select properties with literal wildcard characters using escaped names' {
+        $testObject = [PSCustomObject]@{ 'Foo[]' = 'bar'; 'NormalProp' = 'normal' }
+
+        # Test with escaped property name - should get exact match
+        $result = $testObject | Select-Object ([WildcardPattern]::Escape('Foo[]'))
+        $result.PSObject.Properties.Name | Should -Contain 'Foo[]'
+        $result.'Foo[]' | Should -Be 'bar'
+    }
+
+    It 'can select properties with wildcard characters alongside normal properties' {
+        $testObject = [PSCustomObject]@{ 'Foo[]' = 'bar'; 'NormalProp' = 'normal'; 'Other' = 'value' }
+
+        # Test selecting escaped literal alongside normal properties
+        $result = $testObject | Select-Object ([WildcardPattern]::Escape('Foo[]')), 'NormalProp'
+        (@($result.PSObject.Properties)).Count | Should -Be 2
+        $result.'Foo[]' | Should -Be 'bar'
+        $result.NormalProp | Should -Be 'normal'
+    }
+
+    It 'can expand properties with literal wildcard characters using escaped names' {
+        $innerObject = [PSCustomObject]@{ 'InnerProp' = 'innerValue' }
+        $testObject = [PSCustomObject]@{ 'Prop[]' = $innerObject }
+
+        # Test expanding property with escaped name
+        $result = $testObject | Select-Object -ExpandProperty ([WildcardPattern]::Escape('Prop[]'))
+        $result.InnerProp | Should -Be 'innerValue'
+    }
+
+    It 'can expand array properties with literal wildcard characters' {
+        $testObject = [PSCustomObject]@{ 'Array*Prop' = @('item1', 'item2', 'item3') }
+
+        # Test expanding array property with escaped name
+        $result = $testObject | Select-Object -ExpandProperty ([WildcardPattern]::Escape('Array*Prop'))
+        $result.Count | Should -Be 3
+        $result[0] | Should -Be 'item1'
+        $result[2] | Should -Be 'item3'
+    }
+
+    It 'handles properties with various wildcard characters' {
+        $testObject = [PSCustomObject]@{
+            'Prop*' = 'asterisk'
+            'Prop?' = 'question'
+            'Prop[]' = 'brackets'
+            'Prop[abc]' = 'charclass'
+            'Prop[0-9]' = 'range'
+        }
+
+        # Test each type of wildcard character
+        $result1 = $testObject | Select-Object ([WildcardPattern]::Escape('Prop*'))
+        $result1.'Prop*' | Should -Be 'asterisk'
+
+        $result2 = $testObject | Select-Object ([WildcardPattern]::Escape('Prop?'))
+        $result2.'Prop?' | Should -Be 'question'
+
+        $result3 = $testObject | Select-Object ([WildcardPattern]::Escape('Prop[]'))
+        $result3.'Prop[]' | Should -Be 'brackets'
+
+        $result4 = $testObject | Select-Object ([WildcardPattern]::Escape('Prop[abc]'))
+        $result4.'Prop[abc]' | Should -Be 'charclass'
+
+        $result5 = $testObject | Select-Object ([WildcardPattern]::Escape('Prop[0-9]'))
+        $result5.'Prop[0-9]' | Should -Be 'range'
+    }
+
+    It 'can select multiple properties with different wildcard characters' {
+        $testObject = [PSCustomObject]@{
+            'Test*' = 'star'
+            'Test?' = 'question'
+            'Normal' = 'normal'
+        }
+
+        # Test selecting multiple escaped properties at once
+        $result = $testObject | Select-Object ([WildcardPattern]::Escape('Test*')), ([WildcardPattern]::Escape('Test?')), 'Normal'
+        (@($result.PSObject.Properties)).Count | Should -Be 3
+        $result.'Test*' | Should -Be 'star'
+        $result.'Test?' | Should -Be 'question'
+        $result.'Normal' | Should -Be 'normal'
+    }
+
+    It 'returns null property when escaped pattern has no exact match' {
+        $testObject = [PSCustomObject]@{ 'FooBar' = 'value'; 'FooBaz' = 'other' }
+
+        # Test that escaped pattern that doesn't match exact property returns null property
+        $escapedPattern = [WildcardPattern]::Escape('Foo*')
+        $result = $testObject | Select-Object $escapedPattern
+        # The escaped Foo* should not match any exact property, so it creates a null property with that name
+        (@($result.PSObject.Properties)).Count | Should -Be 1
+        $result.PSObject.Properties.Name | Should -Contain $escapedPattern
+        $result.$escapedPattern | Should -BeNullOrEmpty
+    }
+
+    It 'works with calculated properties containing wildcards' {
+        $testObject = [PSCustomObject]@{ 'Calc[]' = 'original' }
+
+        # Test calculated property that references escaped wildcard property
+        $result = $testObject | Select-Object @{Name='NewName'; Expression={$_.'Calc[]'}}
+        $result.NewName | Should -Be 'original'
+    }
+
+    It 'preserves normal wildcard functionality' {
+        $testObject = [PSCustomObject]@{
+            'Foo1' = 'value1'
+            'Foo2' = 'value2'
+            'Foo[]' = 'brackets'
+            'Other' = 'different'
+        }
+
+        # Normal wildcards should still work and match multiple properties
+        $result = $testObject | Select-Object 'Foo*'
+        (@($result.PSObject.Properties)).Count | Should -Be 3  # Foo1, Foo2, Foo[]
+        $result.Foo1 | Should -Be 'value1'
+        $result.Foo2 | Should -Be 'value2'
+        $result.'Foo[]' | Should -Be 'brackets'
+    }
+
+    It 'emits error but continues when wildcard and escaped name match same property' {
+        $testObject = [PSCustomObject]@{ 'Foo[]' = 'bar' }
+
+        # This should emit a non-terminating error but still produce output
+        $result = $testObject | Select-Object 'Foo*', ([WildcardPattern]::Escape('Foo[]')) 2>&1
+
+        # Should get one error message about duplicate property
+        $errorRecords = $result | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
+        $errorRecords.Count | Should -Be 1
+        $errorRecords[0].FullyQualifiedErrorId | Should -Be 'AlreadyExistingUserSpecifiedPropertyNoExpand,Microsoft.PowerShell.Commands.SelectObjectCommand'
+
+        # Should still get output with the property (only once)
+        $outputRecords = $result | Where-Object { $_ -isnot [System.Management.Automation.ErrorRecord] }
+        $outputRecords.Count | Should -Be 1
+        $outputRecords[0].'Foo[]' | Should -Be 'bar'
+        (@($outputRecords[0].PSObject.Properties)).Count | Should -Be 1
+    }
+
+    It 'does not emit error when using wildcard or escaped separately' {
+        $testObject = [PSCustomObject]@{ 'Foo[]' = 'bar'; 'FooBar' = 'baz' }
+
+        # Test 1: Wildcard alone (should match both properties, no error)
+        $result1 = $testObject | Select-Object 'Foo*' 2>&1
+        $errorRecords1 = $result1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
+        $errorRecords1.Count | Should -Be 0
+        $outputRecords1 = $result1 | Where-Object { $_ -isnot [System.Management.Automation.ErrorRecord] }
+        (@($outputRecords1[0].PSObject.Properties)).Count | Should -Be 2
+
+        # Test 2: Escaped alone (should match exact property, no error)
+        $result2 = $testObject | Select-Object ([WildcardPattern]::Escape('Foo[]')) 2>&1
+        $errorRecords2 = $result2 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
+        $errorRecords2.Count | Should -Be 0
+        $outputRecords2 = $result2 | Where-Object { $_ -isnot [System.Management.Automation.ErrorRecord] }
+        (@($outputRecords2[0].PSObject.Properties)).Count | Should -Be 1
+        $outputRecords2[0].'Foo[]' | Should -Be 'bar'
+    }
+
+    It 'handles complex nested property names with wildcards' {
+        $testObject = [PSCustomObject]@{ 'Path[*].Name' = 'complex'; 'Simple' = 'value' }
+
+        # Test complex property name with multiple wildcard types
+        $result = $testObject | Select-Object ([WildcardPattern]::Escape('Path[*].Name'))
+        $result.'Path[*].Name' | Should -Be 'complex'
+    }
+
+    It 'works with ExpandProperty and error handling' {
+        $testObject = [PSCustomObject]@{ 'Valid[]' = 'exists'; 'Other' = 'value' }
+
+        # Test that ExpandProperty throws proper error for non-existent escaped property
+        $escapedPattern = [WildcardPattern]::Escape('NonExistent[]')
+        { $testObject | Select-Object -ExpandProperty $escapedPattern -ErrorAction Stop } |
+            Should -Throw -ErrorId 'ExpandPropertyNotFound,Microsoft.PowerShell.Commands.SelectObjectCommand'
+    }
+
+    Context 'Regression tests for GitHub issue #25982' {
+        It 'reproduces the exact scenario from the issue' {
+            # This is the exact scenario reported in the GitHub issue
+            $testObject = [PSCustomObject]@{ 'Foo[]' = 'bar' }
+            $result = $testObject | Select-Object ([WildcardPattern]::Escape('Foo[]'))
+
+            # Should successfully select the property
+            $result.'Foo[]' | Should -Be 'bar'
+            $result.PSObject.Properties.Name | Should -Contain 'Foo[]'
+        }
+
+        It 'works with the expected behavior from the issue description' {
+            # Testing that both wildcard and escaped approaches work (when not conflicting)
+            $testObject = [PSCustomObject]@{ 'Foo[]' = 'bar'; 'FooBar' = 'baz' }
+
+            # Test wildcard selection
+            $result1 = $testObject | Select-Object 'Foo*'
+            (@($result1.PSObject.Properties)).Count | Should -Be 2
+
+            # Test escaped selection
+            $result2 = $testObject | Select-Object ([WildcardPattern]::Escape('Foo[]'))
+            (@($result2.PSObject.Properties)).Count | Should -Be 1
+            $result2.'Foo[]' | Should -Be 'bar'
+        }
+    }
+}
+
+
