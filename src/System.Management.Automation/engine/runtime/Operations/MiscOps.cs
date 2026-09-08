@@ -2485,11 +2485,6 @@ namespace System.Management.Automation
                 {
                     pattern = PSObject.ToStringParser(context, condition);
 
-                    // Use the engine's regex cache, the same one '-match', '-replace' and '-split'
-                    // use.  The static 'Regex.Match' helper caches only 'Regex.CacheSize' patterns
-                    // (15 by default), and the 'Regex' constructor never consults that cache at
-                    // all, so pairing the two recompiled the pattern on every successful match
-                    // just to get at the group names.
                     regex = ParserOps.NewRegex(pattern, options);
                     m = regex.Match(str);
                 }
@@ -2502,17 +2497,17 @@ namespace System.Management.Automation
                     {
                         Hashtable h = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
 
-                        foreach (Group g in groups)
+                        foreach (string groupName in regex.GetGroupNames())
                         {
-                            if (!g.Success)
+                            Group g = groups[groupName];
+                            if (g.Success)
                             {
-                                continue;
+                                int keyInt;
+                                if (Int32.TryParse(groupName, out keyInt))
+                                    h.Add(keyInt, g.ToString());
+                                else
+                                    h.Add(groupName, g.ToString());
                             }
-
-                            if (int.TryParse(g.Name, out int keyInt))
-                                h.Add(keyInt, g.Value);
-                            else
-                                h.Add(g.Name, g.Value);
                         }
 
                         context.SetVariable(SpecialVariables.MatchesVarPath, h);
