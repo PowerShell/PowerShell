@@ -325,8 +325,11 @@ End {{
             @{ Title = 'Step 1: Initialize the module' }
             @{ Title = 'Using a non-standard path' }
             @{ Title = 'Step 1 -' }
+            @{ Title = 'Step 1 --' }
             @{ Title = 'Step 1: Use C:\Temp -' }
             @{ Title = '---' }
+            @{ Title = '-- Title --' }
+            @{ Title = 'Use the -- separator' }
         ) {
             param($Title)
 
@@ -360,7 +363,23 @@ param()
             @{ Title = 'Example 1: Standard title'; ExpectedTitle = 'Example 1: Standard title' }
             @{ Title = 'Configuration: Use C:\Temp'; ExpectedTitle = 'Configuration: Use C:\Temp' }
             @{ Title = '  Step 1: Initialize -  '; ExpectedTitle = 'Step 1: Initialize -' }
-            @{ Title = '--- Example 1: Short border ---'; ExpectedTitle = '--- Example 1: Short border ---' }
+            @{ Title = '--- Example 1: Short border ---'; ExpectedTitle = 'Short border' }
+            @{ Title = '- EXAMPLE 1: Single dash -'; ExpectedTitle = 'Single dash' }
+            @{ Title = '-------------------------------- EXAMPLE 1: Long border --------------------------------'; ExpectedTitle = 'Long border' }
+            @{ Title = '--- EXAMPLE 1: Unequal borders -------'; ExpectedTitle = 'Unequal borders' }
+            @{ Title = '---   EXAMPLE 1: Extra spaces   ---'; ExpectedTitle = 'Extra spaces' }
+            @{ Title = '--- EXAMPLE 1: Step 1 - ---'; ExpectedTitle = 'Step 1 -' }
+            @{ Title = '--- EXAMPLE 1: Step 1 -- ---'; ExpectedTitle = 'Step 1 --' }
+            @{ Title = '--- EXAMPLE 1: --- ---'; ExpectedTitle = '---' }
+            @{ Title = '--- EXAMPLE 1: -- Title -- ---'; ExpectedTitle = '-- Title --' }
+            @{ Title = '--- EXAMPLE 1: Configuration: Use C:\Temp ---'; ExpectedTitle = 'Configuration: Use C:\Temp' }
+            @{ Title = '--- EXAMPLE 1 ---'; ExpectedTitle = '' }
+            @{ Title = '---EXAMPLE 1: No opening space ---'; ExpectedTitle = '---EXAMPLE 1: No opening space ---' }
+            @{ Title = '--- EXAMPLE 1: No closing space---'; ExpectedTitle = '--- EXAMPLE 1: No closing space---' }
+            @{ Title = "---`tEXAMPLE 1: Opening tab ---"; ExpectedTitle = "---`tEXAMPLE 1: Opening tab ---" }
+            @{ Title = "--- EXAMPLE 1: Closing tab`t---"; ExpectedTitle = "--- EXAMPLE 1: Closing tab`t---" }
+            @{ Title = 'Prefix --- EXAMPLE 1: Not at the start ---'; ExpectedTitle = 'Prefix --- EXAMPLE 1: Not at the start ---' }
+            @{ Title = '--- EXAMPLE 1: Not at the end --- Suffix'; ExpectedTitle = '--- EXAMPLE 1: Not at the end --- Suffix' }
             @{ Title = '-------------------------- EXAMPLE 1: No closing border'; ExpectedTitle = '-------------------------- EXAMPLE 1: No closing border' }
             @{ Title = 'EXAMPLE 1: No opening border --------------------------'; ExpectedTitle = 'EXAMPLE 1: No opening border --------------------------' }
             @{ Title = '-------------------------- --------------------------'; ExpectedTitle = '-------------------------- --------------------------' }

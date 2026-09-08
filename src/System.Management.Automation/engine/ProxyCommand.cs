@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace System.Management.Automation
 {
@@ -519,9 +520,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Extracts the title from a generated Get-Help example heading using its fixed border
-        /// and ": " delimiter, without interpreting the localized example label.
-        /// Titles without that border are preserved.
+        /// Extracts the title from a generated Get-Help example heading by removing dash borders
+        /// separated from the heading by spaces and splitting at the first ": " delimiter.
+        /// The localized example label is not interpreted. Titles without both borders are preserved.
         /// </summary>
         private static string ExtractExampleTitle(string decoratedTitle)
         {
@@ -530,17 +531,14 @@ namespace System.Management.Automation
                 return null;
             }
 
-            const string prefix = "-------------------------- ";
-            const string suffix = " --------------------------";
             string title = decoratedTitle.Trim();
-            if (title.Length <= prefix.Length + suffix.Length
-                || !title.StartsWith(prefix, StringComparison.Ordinal)
-                || !title.EndsWith(suffix, StringComparison.Ordinal))
+            Match borderMatch = Regex.Match(title, @"\A-+ (?<heading>.*?) -+\z");
+            if (!borderMatch.Success)
             {
                 return title;
             }
 
-            string heading = title.Substring(prefix.Length, title.Length - prefix.Length - suffix.Length);
+            string heading = borderMatch.Groups["heading"].Value;
             int separatorIndex = heading.IndexOf(": ", StringComparison.Ordinal);
             return separatorIndex < 0 ? null : heading.Substring(separatorIndex + 2).Trim();
         }
