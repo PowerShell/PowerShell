@@ -94,9 +94,19 @@ namespace Microsoft.PowerShell.Commands
 
                     break;
                 case ListAvailableParameterSet:
-                    foreach (var cultureInfo in CultureInfo.GetCultures(CultureTypes.AllCultures))
+                    if (ListAvailable)
                     {
-                        WriteObject(cultureInfo);
+                        foreach (var cultureInfo in CultureInfo.GetCultures(CultureTypes.AllCultures))
+                        {
+                            WriteObject(cultureInfo);
+                        }
+                    }
+                    else
+                    {
+                        ci = NoUserOverrides
+                            ? CultureInfo.GetCultureInfo(Host.CurrentCulture.Name)
+                            : Host.CurrentCulture;
+                        WriteObject(ci);
                     }
 
                     break;
