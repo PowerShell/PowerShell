@@ -1232,6 +1232,7 @@ namespace System.Management.Automation.Language
             // considered a command argument.  This prevent arbitrary changes to the kind which should be safer.
             if (_kind != TokenKind.Identifier)
             {
+                _tokenFlags = _tokenFlags & ~_kind.GetTraits() | TokenKind.Generic.GetTraits();
                 _kind = TokenKind.Generic;
             }
         }
