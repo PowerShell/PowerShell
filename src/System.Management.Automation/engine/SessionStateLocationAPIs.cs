@@ -253,7 +253,7 @@ namespace System.Management.Automation
                         throw new InvalidOperationException(SessionStateStrings.LocationUndoStackIsEmpty);
                     }
 
-                    path = _setLocationHistory.Undo(this.CurrentLocation).Path;
+                    path = GetMshQualifiedEscapedLocationHistoryPath(_setLocationHistory.Undo(this.CurrentLocation));
                     break;
                 case string originalPathSwitch when !literalPath && originalPathSwitch.Equals("+", StringComparison.Ordinal):
                     if (_setLocationHistory.RedoCount <= 0)
@@ -261,7 +261,7 @@ namespace System.Management.Automation
                         throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
                     }
 
-                    path = _setLocationHistory.Redo(this.CurrentLocation).Path;
+                    path = GetMshQualifiedEscapedLocationHistoryPath(_setLocationHistory.Redo(this.CurrentLocation));
                     break;
                 default:
                     var pushPathInfo = GetNewPushPathInfo();
@@ -853,6 +853,13 @@ namespace System.Management.Automation
                 mshQualifiedPath);
 
             return newPushLocation;
+        }
+
+        private static string GetMshQualifiedEscapedLocationHistoryPath(PathInfo location)
+        {
+            return LocationGlobber.GetMshQualifiedPath(
+                WildcardPattern.Escape(location.Path),
+                location.GetDrive());
         }
 
         /// <summary>
