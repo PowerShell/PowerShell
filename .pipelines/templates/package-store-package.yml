@@ -104,7 +104,7 @@ jobs:
         Write-Verbose -Verbose "Product ID: $($config.ProductId)"
 
         # Update PDP.xml file
-        $pdpPath = '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP/en-US/PDP.xml'
+        $pdpPath = '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDPs/PDP/en-US/PDP.xml'
         if (Test-Path $pdpPath) {
           Write-Verbose -Verbose "Updating PDP file: $pdpPath"
 
@@ -208,8 +208,8 @@ jobs:
         sourceFolder: '$(StoreBundleDir)'
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
-        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
-        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
+        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDPs/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDPs/PDP-Media'
 
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package (Stable/LTS)'
@@ -220,8 +220,8 @@ jobs:
         sourceFolder: '$(StoreBundleDir)'
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
-        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
-        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
+        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDPs/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDPs/PDP-Media'
 
     - pwsh: |
         $outputDirectory = "$(ob_outputDirectory)"
