@@ -19,7 +19,7 @@
 
 <summary>
 
-<p>We thank the following contributors!</p>
+<p>Update to .NET SDK 11.0.0-rc.1.26425.128</p>
 
 </summary>
 
