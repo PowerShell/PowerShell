@@ -37,9 +37,6 @@ variables:
       ForceAzureBlobDelete: ${{ parameters.ForceAzureBlobDelete }}
       ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
       disableNetworkIsolation: ${{ parameters.disableNetworkIsolation }}
-  # Deliberately reuse the approved WIF request-auth metadata. Authenticode
-  # KeyCodes remain fixed to untrusted test certificates in protected templates.
-  - group: EsrpSigning-PowerShell
 
 resources:
   pipelines:
@@ -69,7 +66,7 @@ resources:
     - repository: PowerShellEngineeringSystem
       type: git
       name: PowerShellCore/PowerShell-Engineering-System
-      ref: 9e7d572ea0a50e0660b904efc88971fad917e093
+      ref: 8089380bfc3114cd96a823442d1f065bf62c7f2b
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates

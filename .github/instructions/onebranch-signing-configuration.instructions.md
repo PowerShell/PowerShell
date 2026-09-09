@@ -26,9 +26,11 @@ pipeline pattern instead:
   signing as explicit NonOfficial stubs; the supplied test certificates do not
   cover those technologies.
 - Validate NonOfficial output as a present, non-corrupt Authenticode signature
-  whose signer subject or issuer contains `DO NOT TRUST` and whose RSA key size
-  matches the selected test profile. Never accept `NotSigned`, a missing signer,
-  an arbitrary signer, or weaken Official validation.
+  with a `Code Sign Test (DO NOT TRUST)` subject, `Microsoft RSA Testing PCA
+  2020` issuer, Code Signing and Lifetime Signing EKUs, and the expected RSA key
+  size. Permit `UnknownError` only when its message is the explicit
+  untrusted-root chain error. Never accept `NotSigned`, a missing signer, an
+  arbitrary signer, or weaken Official validation.
 - Use newline-delimited minimatch values in `Pattern: |`; comma- or
   semicolon-delimited patterns do not select every file.
 - Publish job artifacts through `templateContext.outputs`.
