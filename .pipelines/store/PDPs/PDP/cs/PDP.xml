@@ -14,22 +14,22 @@
     <Keyword _locID="App_keyword2">
       <!-- _locComment_text="{MaxLength=30} App keyword 2" -->PowerShell</Keyword>
     <Keyword _locID="App_keyword3">
-      <!-- _locComment_text="{MaxLength=30} App keyword 3" -->Terminal</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 3" -->Terminál</Keyword>
     <Keyword _locID="App_keyword4">
-      <!-- _locComment_text="{MaxLength=30} App keyword 4" -->Command Line</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 4" -->Příkazový řádek</Keyword>
     <Keyword _locID="App_keyword5">
-      <!-- _locComment_text="{MaxLength=30} App keyword 5" -->Automation</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 5" -->Automatizace</Keyword>
     <Keyword _locID="App_keyword6">
-      <!-- _locComment_text="{MaxLength=30} App keyword 6" -->Task Automation</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 6" -->Automatizace úloh</Keyword>
     <Keyword _locID="App_keyword7">
-      <!-- _locComment_text="{MaxLength=30} App keyword 7" -->Scripting</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 7" -->Skriptování</Keyword>
   </Keywords>
   <Description _locID="App_Description">
-      <!-- _locComment_text="{MaxLength=10000} {Locked=Windows} App Description" -->PowerShell is a task-based command-line shell and scripting language built on .NET.  PowerShell helps system administrators and power-users rapidly automate task that manage operating systems (Linux, macOS, and Windows) and processes.
+      <!-- _locComment_text="{MaxLength=10000} {Locked=Windows} App Description" -->PowerShell je prostředí příkazového řádku a skriptovací jazyk založený na platformě .NET se zaměřením na úlohy.  PowerShell pomáhá správcům systému a pokročilým uživatelům rychle automatizovat úlohy, které spravují operační systémy (Linux, macOS a Windows) a procesy.
 
-PowerShell commands let you manage computers from the command line.  PowerShell providers let you access data stores, such as the registry and certificate store, as easily as you access the file system.  PowerShell includes a rich expression parser and a fully developed scripting language.
+Příkazy PowerShellu umožňují spravovat počítače z příkazového řádku.  Zprostředkovatelé PowerShellu umožňují přístup k úložištím dat, jako jsou registr a úložiště certifikátů, stejně snadno jako k systému souborů.  PowerShell obsahuje pokročilý analyzátor výrazů a plnohodnotný skriptovací jazyk.
 
-PowerShell is Open Source.  See https://github.com/powershell/powershell </Description>
+PowerShell je opensourcový.  Viz https://github.com/powershell/powershell </Description>
   <ShortDescription _locID="App_ShortDescription">
     <!-- Only used for games. This description appears in the Information section of the Game Hub on Xbox One, and helps customers understand more about your game. -->
     <!-- _locComment_text="{MaxLength=500} App ShortDescription" -->
@@ -51,7 +51,7 @@ PowerShell is Open Source.  See https://github.com/powershell/powershell </Descr
     <!-- _locComment_text="{MaxLength=255} App DevStudio" -->
   </DevStudio>
   <ReleaseNotes _locID="App_ReleaseNotes">
-    <!-- _locComment_text="{MaxLength=1500} {Locked=__VERSION_NUMBER__} App Release Note" -->Please see our GitHub releases page for additional details.</ReleaseNotes>
+    <!-- _locComment_text="{MaxLength=1500} {Locked=__VERSION_NUMBER__} App Release Note" -->Další podrobnosti najdete na naší stránce s vydáními na GitHubu.</ReleaseNotes>
   <ScreenshotCaptions>
     <!-- Valid length: 200 character limit, up to 9 elements per platform -->
     <!-- Valid attributes: any of DesktopImage, MobileImage, XboxImage, SurfaceHubImage, and HoloLensImage -->
@@ -71,11 +71,11 @@ PowerShell is Open Source.  See https://github.com/powershell/powershell </Descr
   <AppFeatures>
     <!-- Valid length: 200 character limit, up to 20 elements -->
     <AppFeature _locID="App_feature1">
-      <!-- _locComment_text="{MaxLength=200} App Feature 1" -->Interactive Shell</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 1" -->Interaktivní prostředí</AppFeature>
     <AppFeature _locID="App_feature2">
-      <!-- _locComment_text="{MaxLength=200} App Feature 2" -->Scripting Language</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 2" -->Skriptovací jazyk</AppFeature>
     <AppFeature _locID="App_feature3">
-      <!-- _locComment_text="{MaxLength=200} App Feature 3" -->Remote Management</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 3" -->Vzdálená správa</AppFeature>
     <AppFeature _locID="App_feature4">
       <!-- _locComment_text="{MaxLength=200} App Feature 4" -->
     </AppFeature>

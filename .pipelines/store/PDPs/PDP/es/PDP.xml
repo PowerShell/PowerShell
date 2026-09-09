@@ -25,11 +25,11 @@
       <!-- _locComment_text="{MaxLength=30} App keyword 7" -->Scripting</Keyword>
   </Keywords>
   <Description _locID="App_Description">
-      <!-- _locComment_text="{MaxLength=10000} {Locked=Windows} App Description" -->PowerShell is a task-based command-line shell and scripting language built on .NET.  PowerShell helps system administrators and power-users rapidly automate task that manage operating systems (Linux, macOS, and Windows) and processes.
+      <!-- _locComment_text="{MaxLength=10000} {Locked=Windows} App Description" -->PowerShell es un shell de línea de comandos basado en tareas y un lenguaje de scripting basado en .NET.  PowerShell ayuda a los administradores de sistemas y a los usuarios avanzados a automatizar rápidamente las tareas que administran los sistemas operativos (Linux, macOS y Windows) y los procesos.
 
-PowerShell commands let you manage computers from the command line.  PowerShell providers let you access data stores, such as the registry and certificate store, as easily as you access the file system.  PowerShell includes a rich expression parser and a fully developed scripting language.
+Los comandos de PowerShell le permiten administrar equipos desde la línea de comandos.  Los proveedores de PowerShell le permiten acceder a los almacenes de datos, como el registro y el almacén de certificados, con la misma facilidad con la que accede al sistema de archivos.  PowerShell incluye un analizador de expresiones enriquecido y un lenguaje de scripting completamente desarrollado.
 
-PowerShell is Open Source.  See https://github.com/powershell/powershell </Description>
+PowerShell es de código abierto.  Ver https://github.com/powershell/powershell</Description>
   <ShortDescription _locID="App_ShortDescription">
     <!-- Only used for games. This description appears in the Information section of the Game Hub on Xbox One, and helps customers understand more about your game. -->
     <!-- _locComment_text="{MaxLength=500} App ShortDescription" -->

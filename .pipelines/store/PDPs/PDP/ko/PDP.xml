@@ -10,26 +10,26 @@
   <Keywords>
     <!-- Valid length: 30 character limit, up to 7 elements -->
     <Keyword _locID="App_keyword1">
-      <!-- _locComment_text="{MaxLength=30} App keyword 1" -->Shell</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 1" -->셸</Keyword>
     <Keyword _locID="App_keyword2">
       <!-- _locComment_text="{MaxLength=30} App keyword 2" -->PowerShell</Keyword>
     <Keyword _locID="App_keyword3">
-      <!-- _locComment_text="{MaxLength=30} App keyword 3" -->Terminal</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 3" -->터미널</Keyword>
     <Keyword _locID="App_keyword4">
-      <!-- _locComment_text="{MaxLength=30} App keyword 4" -->Command Line</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 4" -->명령줄</Keyword>
     <Keyword _locID="App_keyword5">
-      <!-- _locComment_text="{MaxLength=30} App keyword 5" -->Automation</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 5" -->자동화</Keyword>
     <Keyword _locID="App_keyword6">
-      <!-- _locComment_text="{MaxLength=30} App keyword 6" -->Task Automation</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 6" -->작업 자동화</Keyword>
     <Keyword _locID="App_keyword7">
-      <!-- _locComment_text="{MaxLength=30} App keyword 7" -->Scripting</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 7" -->스크립팅</Keyword>
   </Keywords>
   <Description _locID="App_Description">
-      <!-- _locComment_text="{MaxLength=10000} {Locked=Windows} App Description" -->PowerShell is a task-based command-line shell and scripting language built on .NET.  PowerShell helps system administrators and power-users rapidly automate task that manage operating systems (Linux, macOS, and Windows) and processes.
+      <!-- _locComment_text="{MaxLength=10000} {Locked=Windows} App Description" -->PowerShell은 .NET에서 구축된 작업 기반 명령줄 셸 및 스크립팅 언어입니다.  PowerShell을 사용하면 시스템 관리자와 전원 사용자가 운영 체제(Linux, macOS 및 Windows) 및 프로세스를 관리하는 작업을 신속하게 자동화할 수 있습니다.
 
-PowerShell commands let you manage computers from the command line.  PowerShell providers let you access data stores, such as the registry and certificate store, as easily as you access the file system.  PowerShell includes a rich expression parser and a fully developed scripting language.
+PowerShell 명령을 사용하면 명령줄에서 컴퓨터를 관리할 수 있습니다.  PowerShell 공급자는 파일 시스템에 액세스하는 것처럼 쉽게, 레지스트리 및 인증서 저장소와 같은 데이터 저장소에 액세스하도록 지원합니다.  PowerShell에는 강력한 식 구문 분석기와 완성도 높은 스크립팅 언어가 포함되어 있습니다.
 
-PowerShell is Open Source.  See https://github.com/powershell/powershell </Description>
+PowerShell이 오픈 소스로 제공됨.  See https://github.com/powershell/powershell </Description>
   <ShortDescription _locID="App_ShortDescription">
     <!-- Only used for games. This description appears in the Information section of the Game Hub on Xbox One, and helps customers understand more about your game. -->
     <!-- _locComment_text="{MaxLength=500} App ShortDescription" -->
@@ -51,7 +51,7 @@ PowerShell is Open Source.  See https://github.com/powershell/powershell </Descr
     <!-- _locComment_text="{MaxLength=255} App DevStudio" -->
   </DevStudio>
   <ReleaseNotes _locID="App_ReleaseNotes">
-    <!-- _locComment_text="{MaxLength=1500} {Locked=__VERSION_NUMBER__} App Release Note" -->Please see our GitHub releases page for additional details.</ReleaseNotes>
+    <!-- _locComment_text="{MaxLength=1500} {Locked=__VERSION_NUMBER__} App Release Note" -->자세한 내용은 GitHub 릴리스 페이지를 참조하세요.</ReleaseNotes>
   <ScreenshotCaptions>
     <!-- Valid length: 200 character limit, up to 9 elements per platform -->
     <!-- Valid attributes: any of DesktopImage, MobileImage, XboxImage, SurfaceHubImage, and HoloLensImage -->
@@ -71,11 +71,11 @@ PowerShell is Open Source.  See https://github.com/powershell/powershell </Descr
   <AppFeatures>
     <!-- Valid length: 200 character limit, up to 20 elements -->
     <AppFeature _locID="App_feature1">
-      <!-- _locComment_text="{MaxLength=200} App Feature 1" -->Interactive Shell</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 1" -->대화형 셸</AppFeature>
     <AppFeature _locID="App_feature2">
-      <!-- _locComment_text="{MaxLength=200} App Feature 2" -->Scripting Language</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 2" -->스크립트 언어</AppFeature>
     <AppFeature _locID="App_feature3">
-      <!-- _locComment_text="{MaxLength=200} App Feature 3" -->Remote Management</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 3" -->원격 관리</AppFeature>
     <AppFeature _locID="App_feature4">
       <!-- _locComment_text="{MaxLength=200} App Feature 4" -->
     </AppFeature>

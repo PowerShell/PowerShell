@@ -16,20 +16,20 @@
     <Keyword _locID="App_keyword3">
       <!-- _locComment_text="{MaxLength=30} App keyword 3" -->Terminal</Keyword>
     <Keyword _locID="App_keyword4">
-      <!-- _locComment_text="{MaxLength=30} App keyword 4" -->Command Line</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 4" -->Befehlszeile</Keyword>
     <Keyword _locID="App_keyword5">
-      <!-- _locComment_text="{MaxLength=30} App keyword 5" -->Automation</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 5" -->Automatisierung</Keyword>
     <Keyword _locID="App_keyword6">
-      <!-- _locComment_text="{MaxLength=30} App keyword 6" -->Task Automation</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 6" -->Aufgabenautomatisierung</Keyword>
     <Keyword _locID="App_keyword7">
-      <!-- _locComment_text="{MaxLength=30} App keyword 7" -->Scripting</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 7" -->Skripterstellung</Keyword>
   </Keywords>
   <Description _locID="App_Description">
-      <!-- _locComment_text="{MaxLength=10000} {Locked=Windows} App Description" -->PowerShell is a task-based command-line shell and scripting language built on .NET.  PowerShell helps system administrators and power-users rapidly automate task that manage operating systems (Linux, macOS, and Windows) and processes.
+      <!-- _locComment_text="{MaxLength=10000} {Locked=Windows} App Description" -->PowerShell ist eine aufgabenbasierte Befehlszeilenshell und Skriptsprache, die auf .NET basiert.  PowerShell unterstützt Systemadministratoren und Power-User bei der schnellen Automatisierung von Aufgaben zur Verwaltung von Betriebssystemen (Linux, macOS und Windows) und Prozessen.
 
-PowerShell commands let you manage computers from the command line.  PowerShell providers let you access data stores, such as the registry and certificate store, as easily as you access the file system.  PowerShell includes a rich expression parser and a fully developed scripting language.
+Mit PowerShell-Befehlen können Sie Computer über die Befehlszeile verwalten.  Mit PowerShell-Anbietern können Sie genauso einfach auf Datenspeicher wie die Registrierung und den Zertifikatspeicher zugreifen wie auf das Dateisystem.  PowerShell enthält einen umfangreichen Ausdrucksparser und eine vollständig entwickelte Skriptsprache.
 
-PowerShell is Open Source.  See https://github.com/powershell/powershell </Description>
+PowerShell ist Open Source.  https://github.com/powershell/powershell anzeigen</Description>
   <ShortDescription _locID="App_ShortDescription">
     <!-- Only used for games. This description appears in the Information section of the Game Hub on Xbox One, and helps customers understand more about your game. -->
     <!-- _locComment_text="{MaxLength=500} App ShortDescription" -->
@@ -51,7 +51,7 @@ PowerShell is Open Source.  See https://github.com/powershell/powershell </Descr
     <!-- _locComment_text="{MaxLength=255} App DevStudio" -->
   </DevStudio>
   <ReleaseNotes _locID="App_ReleaseNotes">
-    <!-- _locComment_text="{MaxLength=1500} {Locked=__VERSION_NUMBER__} App Release Note" -->Please see our GitHub releases page for additional details.</ReleaseNotes>
+    <!-- _locComment_text="{MaxLength=1500} {Locked=__VERSION_NUMBER__} App Release Note" -->Weitere Informationen finden Sie auf unserer GitHub-Releaseseite.</ReleaseNotes>
   <ScreenshotCaptions>
     <!-- Valid length: 200 character limit, up to 9 elements per platform -->
     <!-- Valid attributes: any of DesktopImage, MobileImage, XboxImage, SurfaceHubImage, and HoloLensImage -->
@@ -71,11 +71,11 @@ PowerShell is Open Source.  See https://github.com/powershell/powershell </Descr
   <AppFeatures>
     <!-- Valid length: 200 character limit, up to 20 elements -->
     <AppFeature _locID="App_feature1">
-      <!-- _locComment_text="{MaxLength=200} App Feature 1" -->Interactive Shell</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 1" -->Interaktive Shell</AppFeature>
     <AppFeature _locID="App_feature2">
-      <!-- _locComment_text="{MaxLength=200} App Feature 2" -->Scripting Language</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 2" -->Skriptsprache</AppFeature>
     <AppFeature _locID="App_feature3">
-      <!-- _locComment_text="{MaxLength=200} App Feature 3" -->Remote Management</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 3" -->Remoteverwaltung</AppFeature>
     <AppFeature _locID="App_feature4">
       <!-- _locComment_text="{MaxLength=200} App Feature 4" -->
     </AppFeature>
