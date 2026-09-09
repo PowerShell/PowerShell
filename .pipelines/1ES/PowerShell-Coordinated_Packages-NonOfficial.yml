@@ -9,11 +9,10 @@
 # in ADO for validation.
 #
 # WHY UNOFFICIAL FIRST:
-# Migrating to Unofficial first lets us validate the YAML structure, pool
-# selection, SDL injection, and artifact production WITHOUT needing the
-# production ESRP service connections (which are still being onboarded).
-# Once this Unofficial pipeline is green end-to-end, we fork it to an
-# Official sibling that swaps in real ESRP signing.
+# Migrating to Unofficial first validates YAML structure, pool selection, SDL
+# injection, artifact production, and Authenticode mechanics with deliberately
+# untrusted test certificates. Production KeyCodes remain compile-time excluded;
+# production behavior is validated only through Official expanded-YAML preview.
 #
 # Translation summary (full notes in `files/onebranch-to-1es-migration.md`):
 #   - resources.repositories: OneBranch.Pipelines/GovernedTemplates @ refs/heads/main
@@ -70,62 +69,29 @@
 #   - `FORCE_CODEQL=true` is still useful for debugging: it switches
 #     CodeQL.Cadence from 24h to 1h so back-to-back uploads don't get throttled.
 #
-# STILL TODO (will be addressed in subsequent commits / Official sibling):
-#   - Stub signing: every onebranch.pipeline.signing@1 call replaced with a
-#     `pwsh: Write-Host "TODO: ESRP sign ..."` placeholder. Pipeline runs end-to-end
-#     but produces UNSIGNED artifacts — strictly for validating the migration scaffold.
-#   - Once Unofficial green, build Official sibling with real ESRP signing.
-#
-# ESRP TEST SIGNING (Phase B preview — opt-in, runtime-gated):
-#   Three of the five signing sites have a hybrid stub/real-task implementation
-#   gated by the runtime variable `EsrpTestConnectionName`. When this variable
-#   is empty (default), every signing site runs the original Write-Host stub
-#   and the pipeline stays UNSIGNED — preserving the green baseline. When the
-#   variable is non-empty, three sites switch to real `EsrpCodeSigning@5` tasks
-#   that exercise the ESRP signing path against MS-Sign Test KeyCodes.
-#
-#   TO ENABLE TEST SIGNING:
-#     1. Create a variable group named `EsrpSigningTest-PowerShell` in this
-#        ADO project with the following 6 variables (values come from the
-#        ESRP onboarding ticket):
-#          - EsrpTestConnectionName        (federated MI service connection)
-#          - EsrpTestAppRegClientId        (AAD app registration client ID)
-#          - EsrpTestAppRegTenantId        (AAD tenant ID)
-#          - EsrpTestAuthAkvName           (Azure Key Vault name)
-#          - EsrpTestAuthCertName          (auth cert name in the KV)
-#          - EsrpTestAuthSignCertName      (signing cert name in the KV)
-#     2. Confirm the AAD app registration is onboarded to the ESRP test ring
-#        AND authorised for KeyCodes CP-466277 (1P) and CP-466279 (3P).
-#     3. Attach the variable group to pipeline 4229 at queue time.
-#
-#   SIGNING-SITE MAPPING (when test signing enabled):
+# ESRP TEST SIGNING:
+#   Authenticode signing is compiled in unconditionally for this NonOfficial
+#   entry point. The protected Engineering System templates fix the endpoint to
+#   `PowerShell-ESRP-Release` and allow only the untrusted test KeyCodes below:
 #     ─────────────────────────────────────────────────────────────────────────
 #     Site                                         | TEST KeyCode  | Mode
 #     ─────────────────────────────────────────────────────────────────────────
-#     obp-file-signing.yml — 1P Authenticode       | CP-466277     | HYBRID
-#     obp-file-signing.yml — 3P Authenticode       | CP-466279     | HYBRID
-#     windows-hosted-build.yml — Sign obj files    | CP-466277     | HYBRID
+#     obp-file-signing.yml — 1P Authenticode       | CP-466277     | TEST
+#     obp-file-signing.yml — 3P Authenticode       | CP-466279     | TEST
+#     windows-hosted-build.yml — Sign obj files    | CP-466277     | TEST
 #     windows-hosted-build.yml — Sign nupkg files  | (none)        | STUB ONLY
 #     mac.yml — Apple CodeSign Mach-O binaries     | (none)        | STUB ONLY
 #     ─────────────────────────────────────────────────────────────────────────
-#     "STUB ONLY" sites stay as Write-Host placeholders even when test signing
-#     is enabled — no compatible test KeyCode currently exists for NuGet or
-#     Apple operations.
+#   Apple Developer ID, Linux PGP, and NuGet signing remain explicit unsigned
+#   stubs because the supplied Authenticode test certificates do not cover them.
 #
-#   PROD KeyCode swap path (Official sibling, post-AME-onboarding):
-#     CP-466277 -> CP-230012  (1P Authenticode prod)
-#     CP-466279 -> CP-231522  (3P Authenticode prod)
-#     CP-466277 -> CP-230012  (obj files / 1P prod)
-#     (nupkg)   -> CP-401405  (NuGet prod, needs new EsrpCodeSigning@5 task)
-#     (Apple)   -> CP-401337-Apple (MacAppDeveloperSign prod)
-#
-#   PREDICATE CAVEAT (test signing mode):
-#     In `obp-file-signing.yml`, the post-1P-signing predicate that flags
-#     files for 3P re-signing matches test cert issuers as "needs 3P signing".
-#     This means test-signed files will round-trip through BOTH the 1P and 3P
-#     paths — by design, exercising both code paths. Not a bug; documented in
-#     the playbook (`<session>/files/onebranch-to-1es-migration.md` gotcha
-#     #15) so future readers don't try to "fix" it.
+# SECURITY DECISION:
+#   By explicit user decision, NonOfficial reuses the production-capable
+#   AzureRM/WIF service connection and its request-auth metadata. Endpoint and
+#   KeyCodes are not parameters or runtime variables. Changes to the protected
+#   templates/branch remain security-sensitive. Post-signing validation requires
+#   a `DO NOT TRUST` signer and the expected RSA key size; it never accepts an
+#   absent signature or arbitrary signer.
 
 trigger: none
 
@@ -173,6 +139,9 @@ variables:
       SKIP_SIGNING: ${{ parameters.SKIP_SIGNING }}
       ENABLE_MSBUILD_BINLOGS: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
       FORCE_CODEQL: ${{ parameters.FORCE_CODEQL }}
+  # Request-auth metadata for the explicitly approved reuse of the existing WIF
+  # signing identity. It contains no caller-selectable signing KeyCode.
+  - group: EsrpSigning-PowerShell
 
 resources:
   repositories:
@@ -202,7 +171,7 @@ resources:
     - repository: PowerShellEngineeringSystem
       type: git
       name: PowerShellCore/PowerShell-Engineering-System
-      ref: 8089380bfc3114cd96a823442d1f065bf62c7f2b
+      ref: 9e7d572ea0a50e0660b904efc88971fad917e093
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates

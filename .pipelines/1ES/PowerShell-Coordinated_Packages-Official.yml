@@ -20,11 +20,10 @@
 #   The shared signing templates fork at COMPILE TIME on the `OfficialBuild` parameter
 #   threaded from the stages template:
 #     * OfficialBuild: true  (this pipeline)  -> real `EsrpCodeSigning@5` tasks against
-#       PROD KeyCodes using `PowerShell-ESRP-Release`. The stub/test tasks are compile-
-#       time excluded, so `$(EsrpTestConnectionName)` is never referenced here.
-#     * OfficialBuild: false (NonOfficial)    -> the existing stub / ESRP-test hybrid.
-#       The prod connection is compile-time excluded there, so the NonOfficial pipeline
-#       never triggers the Production Readiness Check.
+#       PROD KeyCodes using `PowerShell-ESRP-Release`. NonOfficial test operations
+#       are compile-time excluded.
+#     * OfficialBuild: false (NonOfficial)    -> fixed untrusted Authenticode test
+#       KeyCodes on the same WIF endpoint; non-Authenticode signing stays stubbed.
 #
 # PROD SIGNING-SITE MAPPING (this pipeline, OfficialBuild: true):
 #   ─────────────────────────────────────────────────────────────────────────────
@@ -130,7 +129,7 @@ resources:
     - repository: PowerShellEngineeringSystem
       type: git
       name: PowerShellCore/PowerShell-Engineering-System
-      ref: 8089380bfc3114cd96a823442d1f065bf62c7f2b
+      ref: 9e7d572ea0a50e0660b904efc88971fad917e093
 
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates

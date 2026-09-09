@@ -14,10 +14,21 @@ pipeline pattern instead:
 
 - Extend the official or unofficial 1ES v1 template.
 - Use `EsrpCodeSigning@5` for official production signing.
-- Compile-time exclude the production service connection from unofficial
-  pipelines and use an explicit stub there.
-- Authenticate the official task through `PowerShell-ESRP-Release` with
-  `UseMSIAuthentication: true` and the `EsrpSigning-PowerShell` variable group.
+- Select Official and NonOfficial signing branches with compile-time
+  `${{ if }}` expressions, never runtime endpoint/KeyCode conditions.
+- Authenticate through the fixed `PowerShell-ESRP-Release` AzureRM/WIF endpoint
+  with `UseMSIAuthentication: true` and the `EsrpSigning-PowerShell` request-auth
+  metadata.
+- In NonOfficial, compile `EsrpCodeSigning@5` only for Authenticode and hard-code
+  `CP-466277` for first-party files or `CP-466279` for third-party DLL/EXE files.
+  Do not expose the endpoint or KeyCode as a parameter or runtime variable.
+- Keep Apple Developer ID, Linux PGP, NuGet package, and Store/MSIX-bundle
+  signing as explicit NonOfficial stubs; the supplied test certificates do not
+  cover those technologies.
+- Validate NonOfficial output as a present, non-corrupt Authenticode signature
+  whose signer subject or issuer contains `DO NOT TRUST` and whose RSA key size
+  matches the selected test profile. Never accept `NotSigned`, a missing signer,
+  an arbitrary signer, or weaken Official validation.
 - Use newline-delimited minimatch values in `Pattern: |`; comma- or
   semicolon-delimited patterns do not select every file.
 - Publish job artifacts through `templateContext.outputs`.
@@ -46,6 +57,19 @@ Mariner/Azure Linux RPM packages use `CP-459159-Pgp`. Pair both key codes with
 `Dynamic-WINMSAPP1ST` is the OneBranch profile name. In an inline
 `EsrpCodeSigning@5` operation, configure it as `keyCode: Dynamic` with
 `CertTemplateName: WINMSAPP1ST` and the corresponding certificate subject.
+
+### Valid ESRP NonOfficial Authenticode test key codes
+
+Only these untrusted, default-access test profiles are allowed in a
+NonOfficial expanded pipeline:
+
+- `CP-466277` — RSA 2048 / SHA256 Code Sign Test 2; first-party Authenticode,
+  reference assemblies, global-tool object files, and standalone MSIX files.
+- `CP-466279` — RSA 3072 / SHA256 Code Sign Test 2; third-party DLL/EXE files.
+
+They use the same keys across regions and carry Lifetime EKU. They are not
+trusted inside or outside Microsoft. Do not use legacy test profile `CP-230072`.
+Preview every NonOfficial expansion and prove that no production KeyCode occurs.
 
 `ob_restore_phase` is a OneBranch-only phase marker. In a 1ES job it must not
 be used to order signing; preserve the step order directly and stage the repo
