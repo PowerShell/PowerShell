@@ -48,14 +48,17 @@ resources:
     # artifacts using `download: PSPackagesOfficial`, so changing this alias would break
     # them.
     #
-    # `trigger: none` keeps this a manually-queued, human-selected run. The OneBranch
-    # pipeline enables a resource trigger for `master` and `releases/*`; neither pattern
-    # can match the `rebuild/*` branches this pipeline consumes, and an auto-started
-    # release pipeline is not wanted here.
+    # Preserve the OneBranch NonOfficial resource-trigger behavior. Manual runs can still
+    # select any producer run through the Azure DevOps pipeline-resource picker; rebuild/*
+    # remains manual because it does not match these automatic-trigger branches.
     - pipeline: PSPackagesOfficial
       project: PowerShellCore
       source: PowerShell-Packages-NonOfficial-1ES
-      trigger: none
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
   repositories:
     - repository: 1ESPipelineTemplates
       type: git
