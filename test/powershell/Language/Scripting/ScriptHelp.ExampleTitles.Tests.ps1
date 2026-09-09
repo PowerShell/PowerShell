@@ -198,6 +198,46 @@ function TestFunc {
             $helpInfo2.ExampleTitles[1] | Should -BeExactly 'My Custom Title'
         }
 
+        It 'GetCommentBlock round-trips the mixed layout <Layout>' -TestCases @(
+            @{ Layout = 'titled, untitled'; Titles = @('Authentication - As a User', '') }
+            @{ Layout = 'untitled, titled'; Titles = @('', 'Authentication - As a User') }
+            @{ Layout = 'titled, untitled, titled'; Titles = @('--- Test - This is a title ---', '', 'Step 1 -') }
+            @{ Layout = 'untitled, titled, untitled'; Titles = @('', '--- Test - This is a title ---', '') }
+            @{ Layout = 'untitled, untitled, titled'; Titles = @('', '', 'Step 1: Initialize') }
+        ) {
+            param($Layout, $Titles)
+
+            # Each example gets a distinct body so a misaligned title is detectable.
+            $sections = for ($index = 0; $index -lt $Titles.Count; $index++) {
+                $directive = if ([string]::IsNullOrEmpty($Titles[$index])) { '.EXAMPLE' } else { ".EXAMPLE $($Titles[$index])" }
+                "    $directive`n    Get-Example$index`n`n    Remarks for example $index`n"
+            }
+
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput(
+                "function TestFunc {`n<#`n$($sections -join "`n")#>`n    param()`n}", [ref]$null, [ref]$null)
+            $helpInfo = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
+
+            $helpInfo.Examples.Count | Should -Be $Titles.Count
+            $helpInfo.ExampleTitles.Count | Should -Be $helpInfo.Examples.Count
+            for ($index = 0; $index -lt $Titles.Count; $index++) {
+                $helpInfo.ExampleTitles[$index] | Should -BeExactly $Titles[$index]
+                $helpInfo.Examples[$index] | Should -BeLike "*Get-Example$index*"
+            }
+
+            $parseErrors = $null
+            $roundTrippedAst = [System.Management.Automation.Language.Parser]::ParseInput(
+                "function TestFunc2 {`n$($helpInfo.GetCommentBlock())`nparam()`n}", [ref]$null, [ref]$parseErrors)
+            $parseErrors | Should -BeNullOrEmpty
+            $roundTrippedHelp = $roundTrippedAst.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
+
+            $roundTrippedHelp.Examples.Count | Should -Be $Titles.Count
+            $roundTrippedHelp.ExampleTitles.Count | Should -Be $roundTrippedHelp.Examples.Count
+            for ($index = 0; $index -lt $Titles.Count; $index++) {
+                $roundTrippedHelp.ExampleTitles[$index] | Should -BeExactly $Titles[$index]
+                $roundTrippedHelp.Examples[$index] | Should -BeLike "*Get-Example$index*"
+            }
+        }
+
         It 'multiple titled examples preserve each title' {
             $ast = [System.Management.Automation.Language.Parser]::ParseInput(@'
 function TestFunc {

@@ -495,6 +495,46 @@ param()
             }
         }
 
+        It 'should round-trip the mixed proxy layout <Layout>' -TestCases @(
+            @{ Layout = 'titled, untitled'; Titles = @('Authentication - As a User', '') }
+            @{ Layout = 'untitled, titled'; Titles = @('', 'Authentication - As a User') }
+            @{ Layout = 'untitled, titled, untitled'; Titles = @('', '--- Test - This is a title ---', '') }
+            @{ Layout = 'titled, untitled, titled'; Titles = @('Step 1 -', '', 'Configuration: Use C:\Temp') }
+        ) {
+            param($Layout, $Titles)
+
+            # Distinct code per example so a title bound to the wrong body is detectable.
+            $sections = for ($index = 0; $index -lt $Titles.Count; $index++) {
+                $directive = if ([string]::IsNullOrEmpty($Titles[$index])) { '.EXAMPLE' } else { ".EXAMPLE $($Titles[$index])" }
+                "    $directive`n    Get-Date -Year 200$index`n`n    Remarks for example $index`n"
+            }
+
+            Set-Item -Path function:\HelpFuncMixedLayout -Value ([scriptblock]::Create(
+                "<#`n    .SYNOPSIS`n    Mixed titled and untitled examples.`n`n$($sections -join "`n")#>`nparam()"))
+            $help = Get-Help HelpFuncMixedLayout
+            $sourceExamples = @($help.examples.example)
+            $sourceExamples.Count | Should -Be $Titles.Count
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($help)
+            $exampleDirectives = @($helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' })
+            $exampleDirectives.Count | Should -Be $Titles.Count
+            for ($index = 0; $index -lt $Titles.Count; $index++) {
+                $expectedDirective = if ([string]::IsNullOrEmpty($Titles[$index])) { '.EXAMPLE' } else { ".EXAMPLE $($Titles[$index])" }
+                $exampleDirectives[$index] | Should -BeExactly $expectedDirective
+            }
+
+            Set-Item -Path function:\ProxyMixedLayout -Value ([scriptblock]::Create("param()`n<#`n$helpComments`n#>"))
+            $roundTrippedExamples = @((Get-Help ProxyMixedLayout).examples.example)
+            $roundTrippedExamples.Count | Should -Be $Titles.Count
+            for ($index = 0; $index -lt $Titles.Count; $index++) {
+                $roundTrippedExamples[$index].title | Should -BeExactly $sourceExamples[$index].title
+                # Only the title is asserted here. Round-tripped example bodies merge the
+                # remarks into the code because the generated comment separates them with a
+                # single newline, which is pre-existing behavior unrelated to titles.
+                $roundTrippedExamples[$index].code | Should -BeLike "*Get-Date -Year 200$index*"
+            }
+        }
+
         It 'should handle a titled example alongside an untitled one' {
             function HelpFuncTitledPair {
                 <#
