@@ -29,10 +29,9 @@
 #
 # WHAT IT MUST NEVER DO
 # ---------------------
-# This pipeline is NonOfficial and non-releasing. It contains no EsrpRelease task, no
-# EsrpCodeSigning@5 task, no PowerShell-ESRP-Release service connection, no WinGet
-# publish/upload, and no automatic release side effect of any kind. It extends the
-# *Unofficial* 1ES template.
+# This pipeline is NonOfficial and non-releasing. It contains no signing or release task,
+# no production release service connection, no WinGet publish/upload, and no automatic
+# release side effect of any kind. It extends the *Unofficial* 1ES template.
 
 trigger: none
 pr: none
@@ -67,7 +66,7 @@ resources:
     - repository: PowerShellEngineeringSystem
       type: git
       name: PowerShellCore/PowerShell-Engineering-System
-      ref: 5734edf81c6372a246f7aad56e6a192616cf4771
+      ref: 558a61ef610f24e2ad44d633115f4d9e7cd2fe80
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
