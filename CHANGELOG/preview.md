@@ -4,7 +4,7 @@
 
 ### General Cmdlet Updates and Fixes
 
-- Handle MSIX installation specially when prepend to PATH (#27782)
+- Handle MSIX installation specially when prepending to PATH (#27782)
 - Add `GetImportModuleCommand` method back and check for session restriction in `ShowCommand` (#25557)
 - Remove the `<assembly>` element for from `CmdletizationCoreResources.resx` (#27900)
 
