@@ -1,40 +1,58 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 #
-# NonOfficial 1ES release entry point. It currently runs only the WinGet
-# release staging stage. When manually queuing this pipeline, select the
-# PowerShellPackages resource run that matches every expectedProducer*
-# parameter. The current defaults are pinned to the verified NonOfficial
-# package run 716943.
+# NonOfficial 1ES release entry point.
 #
-# This pipeline intentionally contains no ESRP Release task and cannot publish.
+# WHAT IT DOES
+# ------------
+# Runs the package-validation gates that the OneBranch NonOfficial release pipeline runs
+# (SDK hosting tests, .NET global tools, framework-dependent packages) against a run of
+# `PowerShell-Packages-NonOfficial-1ES`, and then stages the WinGet input for human
+# inspection. All of that lives in the Engineering System so it stays reusable; this file
+# is intentionally a thin entry point.
+#
+# HOW THE PACKAGE RUN IS SELECTED
+# -------------------------------
+# Through the `resources.pipelines` declaration below, i.e. through the Azure DevOps
+# resource picker in the queue dialog. There are deliberately NO free-form "run id",
+# "source branch", "source commit" or "bundle name" parameters: those were queue-time
+# strings that a queuer could set to anything, so validating the resource against them
+# proved nothing. Everything downstream reads the standard
+# `$(resources.pipeline.PSPackagesOfficial.*)` variables instead.
+#
+# The alias `PSPackagesOfficial` is intentionally identical to the alias used by the
+# OneBranch release pipelines (.pipelines/NonOfficial/PowerShell-Release-NonOfficial.yml
+# and .pipelines/PowerShell-Release-Official.yml). Keeping it identical is what lets the
+# ported validation templates use `download: PSPackagesOfficial` and
+# `$(Pipeline.Workspace)/PSPackagesOfficial/...` unchanged. The `source:` below is the
+# NonOfficial 1ES package pipeline; the alias says nothing about officialness.
+#
+# WHAT IT MUST NEVER DO
+# ---------------------
+# This pipeline is NonOfficial and non-releasing. It contains no EsrpRelease task, no
+# EsrpCodeSigning@5 task, no PowerShell-ESRP-Release service connection, no WinGet
+# publish/upload, and no automatic release side effect of any kind. It extends the
+# *Unofficial* 1ES template.
 
 trigger: none
 pr: none
-
-parameters:
-  - name: expectedProducerRunId
-    displayName: Expected NonOfficial package run ID
-    type: string
-    default: '716943'
-  - name: expectedProducerSourceBranch
-    displayName: Expected NonOfficial package source branch
-    type: string
-    default: refs/heads/rebuild/v7.6.99-rebuild.3
-  - name: expectedProducerSourceCommit
-    displayName: Expected NonOfficial package source commit
-    type: string
-    default: 500251276592e49fb4affb34359ca0fcee3de9bc
-  - name: expectedBundleName
-    displayName: Expected MSIX bundle name
-    type: string
-    default: PowerShellPreview-7.6.99-rebuild.3.msixbundle
 
 name: release-$(BUILD.SOURCEBRANCHNAME)-1ES-nonofficial-$(Build.BuildId)
 
 resources:
   pipelines:
-    - pipeline: PowerShellPackages
+    # NOTE: The alias name "PSPackagesOfficial" is intentionally reused here even for the
+    # NonOfficial pipeline source, exactly as the OneBranch NonOfficial release pipeline
+    # does. Downstream shared templates (release-validate-sdk.yml,
+    # release-validate-globaltools.yml, release-validate-fxdpackages.yml) reference
+    # artifacts using `download: PSPackagesOfficial`, so changing this alias would break
+    # them.
+    #
+    # `trigger: none` keeps this a manually-queued, human-selected run. The OneBranch
+    # pipeline enables a resource trigger for `master` and `releases/*`; neither pattern
+    # can match the `rebuild/*` branches this pipeline consumes, and an auto-started
+    # release pipeline is not wanted here.
+    - pipeline: PSPackagesOfficial
       project: PowerShellCore
       source: PowerShell-Packages-NonOfficial-1ES
       trigger: none
@@ -46,7 +64,7 @@ resources:
     - repository: PowerShellEngineeringSystem
       type: git
       name: PowerShellCore/PowerShell-Engineering-System
-      ref: 93c967e0c1952be70159326178c5ded2f4f36ba2
+      ref: 6480fd5fca46861f33e9b07328a441930e259143
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
@@ -79,9 +97,6 @@ extends:
       apiscan:
         enabled: false
     stages:
-      - template: /templates/1ES/stages/PowerShell-WinGet-Release-Staging-Stages.yml@PowerShellEngineeringSystem
+      - template: /templates/1ES/stages/PowerShell-Release-Staging-Stages.yml@PowerShellEngineeringSystem
         parameters:
-          expectedProducerRunId: ${{ parameters.expectedProducerRunId }}
-          expectedProducerSourceBranch: ${{ parameters.expectedProducerSourceBranch }}
-          expectedProducerSourceCommit: ${{ parameters.expectedProducerSourceCommit }}
-          expectedBundleName: ${{ parameters.expectedBundleName }}
+          packagePipelineAlias: PSPackagesOfficial
