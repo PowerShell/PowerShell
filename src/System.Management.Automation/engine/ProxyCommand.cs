@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace System.Management.Automation
 {
@@ -521,7 +520,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Extracts the title after the first ": " delimiter in a generated Get-Help example heading.
-        /// The outer dash borders must be separated from the heading by spaces.
+        /// The dash border before the first space and after the last space is removed.
         /// The localized example label is not interpreted. Titles without both borders are preserved.
         /// </summary>
         private static string ExtractExampleTitle(string decoratedTitle)
@@ -532,15 +531,37 @@ namespace System.Management.Automation
             }
 
             string title = decoratedTitle.Trim();
-            // Avoid repeated delimiter scans when a malformed heading has no closing border.
-            Match titleMatch = Regex.Match(title, @"\A-+ .*?(?:: (?<title>.*?))? -+\z", RegexOptions.NonBacktracking);
-            if (!titleMatch.Success)
+            int firstSpace = title.IndexOf(' ');
+            int lastSpace = title.LastIndexOf(' ');
+
+            // A generated heading has a dash border on both sides, so it needs an opening space
+            // and a distinct closing space. Anything else is a title to preserve as-is.
+            if (firstSpace <= 0 || lastSpace <= firstSpace || lastSpace == title.Length - 1)
             {
                 return title;
             }
 
-            Group titleGroup = titleMatch.Groups["title"];
-            return titleGroup.Success ? titleGroup.Value.Trim() : null;
+            if (!IsDashRun(title.AsSpan(0, firstSpace)) || !IsDashRun(title.AsSpan(lastSpace + 1)))
+            {
+                return title;
+            }
+
+            ReadOnlySpan<char> heading = title.AsSpan(firstSpace + 1, lastSpace - firstSpace - 1);
+            int separatorIndex = heading.IndexOf(": ", StringComparison.Ordinal);
+            return separatorIndex < 0 ? null : heading.Slice(separatorIndex + 2).Trim().ToString();
+        }
+
+        private static bool IsDashRun(ReadOnlySpan<char> border)
+        {
+            foreach (char character in border)
+            {
+                if (character != '-')
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         #endregion
