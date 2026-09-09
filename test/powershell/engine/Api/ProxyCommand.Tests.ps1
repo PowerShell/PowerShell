@@ -500,6 +500,8 @@ param()
             @{ Layout = 'untitled, titled'; Titles = @('', 'Authentication - As a User') }
             @{ Layout = 'untitled, titled, untitled'; Titles = @('', '--- Test - This is a title ---', '') }
             @{ Layout = 'titled, untitled, titled'; Titles = @('Step 1 -', '', 'Configuration: Use C:\Temp') }
+            @{ Layout = 'titled, titled, titled'; Titles = @('Authentication - As a User', '--- Test - This is a title ---', 'Configuration: Use C:\Temp') }
+            @{ Layout = 'untitled, untitled, untitled'; Titles = @('', '', '') }
         ) {
             param($Layout, $Titles)
 

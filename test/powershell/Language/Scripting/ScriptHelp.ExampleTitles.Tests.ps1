@@ -204,6 +204,8 @@ function TestFunc {
             @{ Layout = 'titled, untitled, titled'; Titles = @('--- Test - This is a title ---', '', 'Step 1 -') }
             @{ Layout = 'untitled, titled, untitled'; Titles = @('', '--- Test - This is a title ---', '') }
             @{ Layout = 'untitled, untitled, titled'; Titles = @('', '', 'Step 1: Initialize') }
+            @{ Layout = 'titled, titled, titled'; Titles = @('Authentication - As a User', '--- Test - This is a title ---', 'Step 1 -') }
+            @{ Layout = 'untitled, untitled, untitled'; Titles = @('', '', '') }
         ) {
             param($Layout, $Titles)
 
