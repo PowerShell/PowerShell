@@ -1,9 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 #
-# Staging-only WinGet pipeline. When manually queuing this pipeline, select the
-# PowerShellPackages resource run that matches every expectedProducer* parameter.
-# The current defaults are pinned to the verified NonOfficial package run 716943.
+# NonOfficial 1ES release entry point. It currently runs only the WinGet
+# release staging stage. When manually queuing this pipeline, select the
+# PowerShellPackages resource run that matches every expectedProducer*
+# parameter. The current defaults are pinned to the verified NonOfficial
+# package run 716943.
 #
 # This pipeline intentionally contains no ESRP Release task and cannot publish.
 
@@ -28,7 +30,7 @@ parameters:
     type: string
     default: PowerShellPreview-7.6.99-rebuild.3.msixbundle
 
-name: winget-stage-$(Build.BuildId)
+name: release-$(BUILD.SOURCEBRANCHNAME)-1ES-nonofficial-$(Build.BuildId)
 
 resources:
   pipelines:
