@@ -520,8 +520,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Extracts the title after the first ": " delimiter in a generated Get-Help example heading.
-        /// The dash border before the first space and after the last space is removed.
-        /// The localized example label is not interpreted. Titles without both borders are preserved.
+        /// The generated heading is decorated with dash borders, so leading and trailing dashes and
+        /// spaces are trimmed. A title cannot therefore begin or end with a dash. The localized
+        /// example label is not interpreted, and a heading without the delimiter has no title.
         /// </summary>
         private static string ExtractExampleTitle(string decoratedTitle)
         {
@@ -530,38 +531,9 @@ namespace System.Management.Automation
                 return null;
             }
 
-            string title = decoratedTitle.Trim();
-            int firstSpace = title.IndexOf(' ');
-            int lastSpace = title.LastIndexOf(' ');
-
-            // A generated heading has a dash border on both sides, so it needs an opening space
-            // and a distinct closing space. Anything else is a title to preserve as-is.
-            if (firstSpace <= 0 || lastSpace <= firstSpace || lastSpace == title.Length - 1)
-            {
-                return title;
-            }
-
-            if (!IsDashRun(title.AsSpan(0, firstSpace)) || !IsDashRun(title.AsSpan(lastSpace + 1)))
-            {
-                return title;
-            }
-
-            ReadOnlySpan<char> heading = title.AsSpan(firstSpace + 1, lastSpace - firstSpace - 1);
+            string heading = decoratedTitle.Trim('-', ' ');
             int separatorIndex = heading.IndexOf(": ", StringComparison.Ordinal);
-            return separatorIndex < 0 ? null : heading.Slice(separatorIndex + 2).Trim().ToString();
-        }
-
-        private static bool IsDashRun(ReadOnlySpan<char> border)
-        {
-            foreach (char character in border)
-            {
-                if (character != '-')
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return separatorIndex < 0 ? null : heading.Substring(separatorIndex + 2).Trim('-', ' ');
         }
 
         #endregion

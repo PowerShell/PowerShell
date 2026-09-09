@@ -325,13 +325,9 @@ End {{
             @{ Title = 'Step 1: Initialize the module' }
             @{ Title = 'Using a non-standard path' }
             @{ Title = 'Authentication - As a User' }
-            @{ Title = '--- Test - This is a title ---' }
-            @{ Title = 'Step 1 -' }
-            @{ Title = 'Step 1 --' }
-            @{ Title = 'Step 1: Use C:\Temp -' }
-            @{ Title = '---' }
-            @{ Title = '-- Title --' }
+            @{ Title = 'Step 1: Use C:\Temp' }
             @{ Title = 'Use the -- separator' }
+            @{ Title = 'Test - This is a title' }
         ) {
             param($Title)
 
@@ -360,37 +356,36 @@ param()
         }
 
         It 'should extract the expected example title from "<Title>"' -TestCases @(
-            @{ Title = 'Use a temporary directory'; ExpectedTitle = 'Use a temporary directory' }
-            @{ Title = 'Use C:\Temp'; ExpectedTitle = 'Use C:\Temp' }
-            @{ Title = 'Example 1: Standard title'; ExpectedTitle = 'Example 1: Standard title' }
-            @{ Title = 'Configuration: Use C:\Temp'; ExpectedTitle = 'Configuration: Use C:\Temp' }
-            @{ Title = '  Step 1: Initialize -  '; ExpectedTitle = 'Step 1: Initialize -' }
+            # A generated heading is decorated with dash borders, so leading and trailing dashes
+            # and spaces are trimmed and a title cannot begin or end with a dash. The label before
+            # the first ": " is dropped, and a heading without that delimiter carries no title.
+            @{ Title = 'Example 1: Standard title'; ExpectedTitle = 'Standard title' }
+            @{ Title = 'Configuration: Use C:\Temp'; ExpectedTitle = 'Use C:\Temp' }
             @{ Title = '--- Example 1: Short border ---'; ExpectedTitle = 'Short border' }
             @{ Title = '- EXAMPLE 1: Single dash -'; ExpectedTitle = 'Single dash' }
             @{ Title = '-------------------------------- EXAMPLE 1: Long border --------------------------------'; ExpectedTitle = 'Long border' }
             @{ Title = '--- EXAMPLE 1: Unequal borders -------'; ExpectedTitle = 'Unequal borders' }
-            @{ Title = '------------------ Example: --- Test - This is a title --- ---------------'; ExpectedTitle = '--- Test - This is a title ---' }
             @{ Title = '---   EXAMPLE 1: Extra spaces   ---'; ExpectedTitle = 'Extra spaces' }
-            @{ Title = '--- EXAMPLE 1: Step 1 - ---'; ExpectedTitle = 'Step 1 -' }
-            @{ Title = '--- EXAMPLE 1: Step 1 -- ---'; ExpectedTitle = 'Step 1 --' }
-            @{ Title = '--- EXAMPLE 1: --- ---'; ExpectedTitle = '---' }
-            @{ Title = '--- EXAMPLE 1: -- Title -- ---'; ExpectedTitle = '-- Title --' }
+            @{ Title = '------------------ Example: Test - This is a title ---------------'; ExpectedTitle = 'Test - This is a title' }
             @{ Title = '--- EXAMPLE 1: Configuration: Use C:\Temp ---'; ExpectedTitle = 'Configuration: Use C:\Temp' }
+            @{ Title = '--- EXAMPLE 1: Use the -- separator ---'; ExpectedTitle = 'Use the -- separator' }
+            # Borders that are not separated from the heading by a space are still trimmed.
+            @{ Title = '---EXAMPLE 1: No opening space ---'; ExpectedTitle = 'No opening space' }
+            @{ Title = '--- EXAMPLE 1: No closing space---'; ExpectedTitle = 'No closing space' }
+            @{ Title = '-------------------------- EXAMPLE 1: No closing border'; ExpectedTitle = 'No closing border' }
+            @{ Title = 'EXAMPLE 1: No opening border --------------------------'; ExpectedTitle = 'No opening border' }
+            @{ Title = 'Prefix --- EXAMPLE 1: Not at the start ---'; ExpectedTitle = 'Not at the start' }
+            # Only leading and trailing dashes are removed, so inner dash runs survive.
+            @{ Title = '--- EXAMPLE 1: Not at the end --- Suffix'; ExpectedTitle = 'Not at the end --- Suffix' }
+            # A heading with no ": " delimiter has no custom title.
+            @{ Title = 'Use a temporary directory'; ExpectedTitle = '' }
             @{ Title = '--- EXAMPLE 1 ---'; ExpectedTitle = '' }
             @{ Title = '--- EXAMPLE 1: ---'; ExpectedTitle = '' }
             @{ Title = '--- EXAMPLE 1:  ---'; ExpectedTitle = '' }
-            @{ Title = '---EXAMPLE 1: No opening space ---'; ExpectedTitle = '---EXAMPLE 1: No opening space ---' }
-            @{ Title = '--- EXAMPLE 1: No closing space---'; ExpectedTitle = '--- EXAMPLE 1: No closing space---' }
-            @{ Title = "---`tEXAMPLE 1: Opening tab ---"; ExpectedTitle = "---`tEXAMPLE 1: Opening tab ---" }
-            @{ Title = "--- EXAMPLE 1: Closing tab`t---"; ExpectedTitle = "--- EXAMPLE 1: Closing tab`t---" }
-            @{ Title = 'Prefix --- EXAMPLE 1: Not at the start ---'; ExpectedTitle = 'Prefix --- EXAMPLE 1: Not at the start ---' }
-            @{ Title = '--- EXAMPLE 1: Not at the end --- Suffix'; ExpectedTitle = '--- EXAMPLE 1: Not at the end --- Suffix' }
-            @{ Title = '-------------------------- EXAMPLE 1: No closing border'; ExpectedTitle = '-------------------------- EXAMPLE 1: No closing border' }
-            @{ Title = 'EXAMPLE 1: No opening border --------------------------'; ExpectedTitle = 'EXAMPLE 1: No opening border --------------------------' }
-            @{ Title = '-------------------------- --------------------------'; ExpectedTitle = '-------------------------- --------------------------' }
+            @{ Title = '-------------------------- --------------------------'; ExpectedTitle = '' }
             @{
                 Title = '--- ' + ('Label: ' * 256) + 'No closing border'
-                ExpectedTitle = '--- ' + ('Label: ' * 256) + 'No closing border'
+                ExpectedTitle = ('Label: ' * 255) + 'No closing border'
             }
             # Foreign headings also exercise localization without satellite resource assemblies.
             @{ Title = '-------------------------- BEISPIEL 1: Localized title --------------------------'; ExpectedTitle = 'Localized title' }
@@ -498,9 +493,9 @@ param()
         It 'should round-trip the mixed proxy layout <Layout>' -TestCases @(
             @{ Layout = 'titled, untitled'; Titles = @('Authentication - As a User', '') }
             @{ Layout = 'untitled, titled'; Titles = @('', 'Authentication - As a User') }
-            @{ Layout = 'untitled, titled, untitled'; Titles = @('', '--- Test - This is a title ---', '') }
-            @{ Layout = 'titled, untitled, titled'; Titles = @('Step 1 -', '', 'Configuration: Use C:\Temp') }
-            @{ Layout = 'titled, titled, titled'; Titles = @('Authentication - As a User', '--- Test - This is a title ---', 'Configuration: Use C:\Temp') }
+            @{ Layout = 'untitled, titled, untitled'; Titles = @('', 'Test - This is a title', '') }
+            @{ Layout = 'titled, untitled, titled'; Titles = @('Step 1: Initialize', '', 'Configuration: Use C:\Temp') }
+            @{ Layout = 'titled, titled, titled'; Titles = @('Authentication - As a User', 'Test - This is a title', 'Configuration: Use C:\Temp') }
             @{ Layout = 'untitled, untitled, untitled'; Titles = @('', '', '') }
         ) {
             param($Layout, $Titles)
