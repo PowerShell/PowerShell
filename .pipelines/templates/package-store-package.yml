@@ -177,9 +177,9 @@ jobs:
         sourceFolder: '$(StoreBundleDir)'
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
-        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDPs/PDP'
         # StoreBroker v3 requires a media root with a PDP root, even when the PDP has no media.
-        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDPs/PDP'
 
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package (Stable/LTS)'
@@ -190,9 +190,9 @@ jobs:
         sourceFolder: '$(StoreBundleDir)'
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
-        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDPs/PDP'
         # StoreBroker v3 requires a media root with a PDP root, even when the PDP has no media.
-        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDPs/PDP'
 
     - pwsh: |
         $outputDirectory = "$(ob_outputDirectory)"
