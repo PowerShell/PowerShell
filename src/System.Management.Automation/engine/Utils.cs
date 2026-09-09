@@ -475,6 +475,44 @@ namespace System.Management.Automation
 
             return string.Empty;
         }
+
+        private const int ErrorInsufficientBuffer = 122;
+        private const int AppModelErrorNoPackage = 15700;
+
+        [DllImport("kernel32.dll", EntryPoint = "GetCurrentPackageFamilyName", CharSet = CharSet.Unicode)]
+        private static extern int GetCurrentPackageFamilyNameNative(ref uint packageFamilyNameLength, [Out] StringBuilder packageFamilyName);
+
+        /// <summary>
+        /// Returns the package family name of the current process when it has package (MSIX) identity; otherwise null.
+        /// </summary>
+        internal static string GetCurrentPackageFamilyName()
+        {
+            try
+            {
+                uint length = 0;
+                int result = GetCurrentPackageFamilyNameNative(ref length, packageFamilyName: null);
+                if (result == AppModelErrorNoPackage)
+                {
+                    return null;
+                }
+
+                if (result != ErrorInsufficientBuffer || length == 0)
+                {
+                    return null;
+                }
+
+                var buffer = new StringBuilder((int)length);
+                result = GetCurrentPackageFamilyNameNative(ref length, buffer);
+                return result == 0 ? buffer.ToString() : null;
+            }
+            catch (Exception exception) when (
+                exception is DllNotFoundException
+                or EntryPointNotFoundException
+                or MarshalDirectiveException)
+            {
+                return null;
+            }
+        }
 #endif
 
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
@@ -491,6 +529,35 @@ namespace System.Management.Automation
             }
 
             return baseDirectory;
+        }
+
+#if !UNIX
+        private static string s_packagedMachineDataStorePath;
+        private static bool s_packagedMachineDataStorePathInitialized;
+#endif
+
+        /// <summary>
+        /// When running with MSIX package identity, returns the package-family-isolated ProgramData
+        /// directory used for writable machine-wide configuration. Returns null for unpackaged
+        /// processes and on non-Windows platforms.
+        /// </summary>
+        internal static string GetPackagedMachineDataStorePath()
+        {
+#if UNIX
+            return null;
+#else
+            if (s_packagedMachineDataStorePathInitialized)
+            {
+                return s_packagedMachineDataStorePath;
+            }
+
+            string packageFamilyName = GetCurrentPackageFamilyName();
+            s_packagedMachineDataStorePath = string.IsNullOrEmpty(packageFamilyName)
+                ? null
+                : Path.Combine(Platform.SystemConfigDirectory, packageFamilyName);
+            s_packagedMachineDataStorePathInitialized = true;
+            return s_packagedMachineDataStorePath;
+#endif
         }
 
         private static string[] s_productFolderDirectories;
@@ -705,10 +772,16 @@ namespace System.Management.Automation
         /// </summary>
         internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
-        internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
+        // Merge orders across the configuration scopes. ConfigScope.MachineFolder is the writable per-machine
+        // (admin) store of a packaged (MSIX) install; it has no backing file otherwise, so including it here
+        // is a no-op for non-packaged installs and these orders then collapse to the legacy behavior.
+        // Policy settings: admin (MachineFolder) > product ($PSHOME / AllUsers) > user (CurrentUser).
+        // Preference settings: user (CurrentUser) > admin (MachineFolder) > product (AllUsers).
+        // Note: Group Policy (registry) still takes precedence over all of these; see GetPolicySettingFromGPO.
+        internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.MachineFolder, ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
-        internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };
-        internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.AllUsers };
+        internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.MachineFolder, ConfigScope.AllUsers, ConfigScope.CurrentUser };
+        internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.MachineFolder, ConfigScope.AllUsers };
 
         internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
@@ -968,6 +1041,13 @@ namespace System.Management.Automation
 
             foreach (ConfigScope scope in preferenceOrder)
             {
+                // MachineFolder is a config-file-only scope (the packaged per-machine data store); it has no
+                // Group Policy / registry representation, so skip it here and let the config-file lookup handle it.
+                if (scope == ConfigScope.MachineFolder)
+                {
+                    continue;
+                }
+
                 if (InternalTestHooks.BypassGroupPolicyCaching)
                 {
                     policy = GetPolicySettingFromGPOImpl<T>(scope);
@@ -1682,6 +1762,19 @@ namespace System.Management.Automation.Internal
         {
             var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
             fieldInfo?.SetValue(null, value);
+        }
+
+        /// <summary>
+        /// Returns the current package family name for tests running inside an MSIX package,
+        /// or null when the current process has no package identity.
+        /// </summary>
+        public static string GetCurrentPackageFamilyName()
+        {
+#if UNIX
+            return null;
+#else
+            return Utils.GetCurrentPackageFamilyName();
+#endif
         }
 
         /// <summary>
