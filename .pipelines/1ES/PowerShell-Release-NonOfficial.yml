@@ -66,7 +66,7 @@ resources:
     - repository: PowerShellEngineeringSystem
       type: git
       name: PowerShellCore/PowerShell-Engineering-System
-      ref: 558a61ef610f24e2ad44d633115f4d9e7cd2fe80
+      ref: b63e210d99c6d7f7560dddff2b9007ccb1f90c04
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
