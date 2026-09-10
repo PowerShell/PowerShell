@@ -3,7 +3,7 @@
 #
 # 1ES PIPELINE TEMPLATES (1ES PT) MIGRATION — OFFICIAL
 # ----------------------------------------------------
-# Official sibling of `.pipelines/1ES/PowerShell-Coordinated_Packages-NonOfficial.yml`.
+# Official sibling of `.pipelines/1ES/NonOfficial/PowerShell-Coordinated_Packages-NonOfficial.yml`.
 # Same stages/templates, but it extends the 1ES PT *Official* template and runs REAL
 # production ESRP signing (OfficialBuild: true). The OneBranch original
 # (`.pipelines/PowerShell-Coordinated_Packages-Official.yml`) is left untouched so the
@@ -186,7 +186,7 @@ extends:
         exactToolVersion: 4.4.2
 
       # APIScan: not part of the build pipeline. Lives in
-      # `.pipelines/1ES/apiscan-gen-notice.yml`.
+      # `.pipelines/1ES/NonOfficial/apiscan-gen-notice.yml`.
       apiscan:
         enabled: false
 
