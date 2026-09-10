@@ -1272,6 +1272,21 @@ namespace System.Management.Automation
             return currentModulePath;
         }
 
+        internal static bool HasCustomPSModulePath(ExecutionContext context)
+        {
+            return context?.InitialSessionState?.PSModulePath != null;
+        }
+
+        private static string ResolveModulePath(ExecutionContext context)
+        {
+            if (HasCustomPSModulePath(context))
+            {
+                return context.InitialSessionState.PSModulePath;
+            }
+
+            return Environment.GetEnvironmentVariable(Constants.PSModulePathEnvVar) ?? SetModulePath();
+        }
+
 #if !UNIX
         /// <summary>
         /// Returns a PSModulePath suitable for Windows PowerShell by removing PowerShell's specific
@@ -1365,7 +1380,8 @@ namespace System.Management.Automation
         /// Include The system wide module path ($PSHOME\Modules) even if it's not in PSModulePath.
         /// In V3-V5, we prepended this path during module auto-discovery which incorrectly preferred
         /// $PSHOME\Modules over user installed modules that might have a command that overrides
-        /// a product-supplied command.
+        /// a product-supplied command. Setting InitialSessionState.PSModulePath will override this behavior
+        /// and will not include the $PSHOME\Modules path at all.
         /// For 5.1, we append $PSHOME\Modules in this case to avoid the rare case where PSModulePath
         /// does not contain the path, but a script depends on previous behavior.
         /// Note that appending is still a potential breaking change, but necessary to update in-box
@@ -1375,7 +1391,7 @@ namespace System.Management.Automation
         /// <returns>The module path as an array of strings.</returns>
         internal static IEnumerable<string> GetModulePath(bool includeSystemModulePath, ExecutionContext context)
         {
-            string modulePathString = Environment.GetEnvironmentVariable(Constants.PSModulePathEnvVar) ?? SetModulePath();
+            string modulePathString = ResolveModulePath(context);
 
             HashSet<string> processedPathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -1389,7 +1405,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (includeSystemModulePath)
+            if (includeSystemModulePath && !HasCustomPSModulePath(context))
             {
                 var processedPath = ProcessOneModulePath(context, GetPSHomeModulePath(), processedPathSet);
                 if (processedPath != null)
