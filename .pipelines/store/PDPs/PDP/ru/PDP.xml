@@ -10,26 +10,26 @@
   <Keywords>
     <!-- Valid length: 30 character limit, up to 7 elements -->
     <Keyword _locID="App_keyword1">
-      <!-- _locComment_text="{MaxLength=30} App keyword 1" -->Shell</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 1" -->Оболочка</Keyword>
     <Keyword _locID="App_keyword2">
       <!-- _locComment_text="{MaxLength=30} App keyword 2" -->PowerShell</Keyword>
     <Keyword _locID="App_keyword3">
-      <!-- _locComment_text="{MaxLength=30} App keyword 3" -->Terminal</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 3" -->Терминал</Keyword>
     <Keyword _locID="App_keyword4">
-      <!-- _locComment_text="{MaxLength=30} App keyword 4" -->Command Line</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 4" -->Командная строка</Keyword>
     <Keyword _locID="App_keyword5">
-      <!-- _locComment_text="{MaxLength=30} App keyword 5" -->Automation</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 5" -->Служба автоматизации</Keyword>
     <Keyword _locID="App_keyword6">
-      <!-- _locComment_text="{MaxLength=30} App keyword 6" -->Task Automation</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 6" -->Автоматизация задач</Keyword>
     <Keyword _locID="App_keyword7">
-      <!-- _locComment_text="{MaxLength=30} App keyword 7" -->Scripting</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 7" -->Создание скрипта</Keyword>
   </Keywords>
   <Description _locID="App_Description">
-      <!-- _locComment_text="{MaxLength=10000} {Locked=Windows} App Description" -->PowerShell is a task-based command-line shell and scripting language built on .NET.  PowerShell helps system administrators and power-users rapidly automate task that manage operating systems (Linux, macOS, and Windows) and processes.
+      <!-- _locComment_text="{MaxLength=10000} {Locked=Windows} App Description" -->PowerShell — это оболочка командной строки с поддержкой задач и язык скриптов на основе .NET.  PowerShell позволяет системным администраторам и опытным пользователям быстро автоматизировать задачи для управления процессами и операционными системами (Linux, macOS и Windows).
 
-PowerShell commands let you manage computers from the command line.  PowerShell providers let you access data stores, such as the registry and certificate store, as easily as you access the file system.  PowerShell includes a rich expression parser and a fully developed scripting language.
+Команды PowerShell позволяют управлять компьютерами из командной строки.  При использовании поставщиков PowerShell доступ к хранилищам данных, таким как реестр и хранилище сертификатов, становится таким же простым, как и доступ к файловой системе.  PowerShell включает многофункциональное средство синтаксического анализа выражений и полностью разработанный язык скриптов.
 
-PowerShell is Open Source.  See https://github.com/powershell/powershell </Description>
+PowerShell использует открытый код.  См. https://github.com/powershell/powershell </Description>
   <ShortDescription _locID="App_ShortDescription">
     <!-- Only used for games. This description appears in the Information section of the Game Hub on Xbox One, and helps customers understand more about your game. -->
     <!-- _locComment_text="{MaxLength=500} App ShortDescription" -->
@@ -71,11 +71,11 @@ PowerShell is Open Source.  See https://github.com/powershell/powershell </Descr
   <AppFeatures>
     <!-- Valid length: 200 character limit, up to 20 elements -->
     <AppFeature _locID="App_feature1">
-      <!-- _locComment_text="{MaxLength=200} App Feature 1" -->Interactive Shell</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 1" -->Интерактивная оболочка</AppFeature>
     <AppFeature _locID="App_feature2">
-      <!-- _locComment_text="{MaxLength=200} App Feature 2" -->Scripting Language</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 2" -->Язык сценариев</AppFeature>
     <AppFeature _locID="App_feature3">
-      <!-- _locComment_text="{MaxLength=200} App Feature 3" -->Remote Management</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 3" -->Удаленное управление</AppFeature>
     <AppFeature _locID="App_feature4">
       <!-- _locComment_text="{MaxLength=200} App Feature 4" -->
     </AppFeature>
@@ -138,7 +138,7 @@ PowerShell is Open Source.  See https://github.com/powershell/powershell </Descr
     <!-- Valid length: 200 character limit, up to 11 elements -->
   </MinimumHardware>
   <CopyrightAndTrademark _locID="App_CopyrightandTrademark">
-    <!-- _locComment_text="{MaxLength=200} Copyright and Trademark" -->Microsoft Corporation</CopyrightAndTrademark>
+    <!-- _locComment_text="{MaxLength=200} Copyright and Trademark" -->Корпорация Майкрософт</CopyrightAndTrademark>
   <AdditionalLicenseTerms _locID="App_AdditionalLicenseTerms">
     <!-- _locComment_text="{MaxLength=10000} Additional License Terms" -->
   </AdditionalLicenseTerms>

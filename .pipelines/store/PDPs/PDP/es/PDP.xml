@@ -16,11 +16,11 @@
     <Keyword _locID="App_keyword3">
       <!-- _locComment_text="{MaxLength=30} App keyword 3" -->Terminal</Keyword>
     <Keyword _locID="App_keyword4">
-      <!-- _locComment_text="{MaxLength=30} App keyword 4" -->Command Line</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 4" -->Línea de comandos</Keyword>
     <Keyword _locID="App_keyword5">
-      <!-- _locComment_text="{MaxLength=30} App keyword 5" -->Automation</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 5" -->Automatización</Keyword>
     <Keyword _locID="App_keyword6">
-      <!-- _locComment_text="{MaxLength=30} App keyword 6" -->Task Automation</Keyword>
+      <!-- _locComment_text="{MaxLength=30} App keyword 6" -->Automatización de tareas</Keyword>
     <Keyword _locID="App_keyword7">
       <!-- _locComment_text="{MaxLength=30} App keyword 7" -->Scripting</Keyword>
   </Keywords>
@@ -51,7 +51,7 @@ PowerShell es de código abierto.  Ver https://github.com/powershell/powershell<
     <!-- _locComment_text="{MaxLength=255} App DevStudio" -->
   </DevStudio>
   <ReleaseNotes _locID="App_ReleaseNotes">
-    <!-- _locComment_text="{MaxLength=1500} {Locked=__VERSION_NUMBER__} App Release Note" -->Please see our GitHub releases page for additional details.</ReleaseNotes>
+    <!-- _locComment_text="{MaxLength=1500} {Locked=__VERSION_NUMBER__} App Release Note" -->Consulte la página de versiones de GitHub para obtener más información.</ReleaseNotes>
   <ScreenshotCaptions>
     <!-- Valid length: 200 character limit, up to 9 elements per platform -->
     <!-- Valid attributes: any of DesktopImage, MobileImage, XboxImage, SurfaceHubImage, and HoloLensImage -->
@@ -71,11 +71,11 @@ PowerShell es de código abierto.  Ver https://github.com/powershell/powershell<
   <AppFeatures>
     <!-- Valid length: 200 character limit, up to 20 elements -->
     <AppFeature _locID="App_feature1">
-      <!-- _locComment_text="{MaxLength=200} App Feature 1" -->Interactive Shell</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 1" -->Shell interactivo</AppFeature>
     <AppFeature _locID="App_feature2">
-      <!-- _locComment_text="{MaxLength=200} App Feature 2" -->Scripting Language</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 2" -->Lenguaje de scripting</AppFeature>
     <AppFeature _locID="App_feature3">
-      <!-- _locComment_text="{MaxLength=200} App Feature 3" -->Remote Management</AppFeature>
+      <!-- _locComment_text="{MaxLength=200} App Feature 3" -->Administración remota</AppFeature>
     <AppFeature _locID="App_feature4">
       <!-- _locComment_text="{MaxLength=200} App Feature 4" -->
     </AppFeature>
