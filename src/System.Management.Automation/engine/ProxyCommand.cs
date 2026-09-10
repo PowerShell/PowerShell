@@ -520,20 +520,18 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Extracts the title after the first ": " delimiter in a generated Get-Help example heading.
-        /// The generated heading is decorated with dash borders, so leading and trailing dashes and
-        /// spaces are trimmed. A title cannot therefore begin or end with a dash. The localized
-        /// example label is not interpreted, and a heading without the delimiter has no title.
+        /// The final dash border and surrounding whitespace are trimmed, preserving authored dashes
+        /// separated from the border by a space. The localized example label is not interpreted,
+        /// and a heading without the delimiter has no title.
         /// </summary>
         private static string ExtractExampleTitle(string decoratedTitle)
         {
-            if (string.IsNullOrWhiteSpace(decoratedTitle))
-            {
-                return null;
-            }
-
-            string heading = decoratedTitle.Trim('-', ' ');
+            ReadOnlySpan<char> heading = decoratedTitle.AsSpan().Trim();
             int separatorIndex = heading.IndexOf(": ", StringComparison.Ordinal);
-            return separatorIndex < 0 ? null : heading.Substring(separatorIndex + 2).Trim('-', ' ');
+
+            return separatorIndex < 0
+                ? null
+                : heading.Slice(separatorIndex + 2).TrimEnd('-').Trim().ToString();
         }
 
         #endregion

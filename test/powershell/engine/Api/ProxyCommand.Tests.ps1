@@ -328,6 +328,22 @@ End {{
             @{ Title = 'Step 1: Use C:\Temp' }
             @{ Title = 'Use the -- separator' }
             @{ Title = 'Test - This is a title' }
+            @{ Title = '- test - something -' }
+            @{ Title = '--- Test - This is a title ---' }
+            @{ Title = 'Step 1 -' }
+            @{ Title = 'Step 1 --' }
+            @{ Title = 'Step 1: Use C:\Temp -' }
+            @{ Title = '---' }
+            @{ Title = '-- Title --' }
+            @{ Title = '--switch' }
+            @{ Title = 'Compare Example 1: with Example 2' }
+            @{ Title = 'A & B < C > D' }
+            @{ Title = '"quoted" ''text'' `code` $name' }
+            @{
+                Title = 'Unicode: ' + [char]0x00E9 + ' e' + [char]0x0301 +
+                    ' ' + [char]0x65E5 + [char]0x672C + [char]0x8A9E +
+                    ' ' + [char]::ConvertFromUtf32(0x1F527) + ' -'
+            }
         ) {
             param($Title)
 
@@ -352,13 +368,20 @@ param()
             $roundTrippedHelp = Get-Help ProxyExampleTitle
             @($roundTrippedHelp.examples.example).Count | Should -Be 1
             $roundTrippedHelp.examples.example.title | Should -BeExactly $help.examples.example.title
+            [string]::Equals(
+                $roundTrippedHelp.examples.example.title.ToString(),
+                $help.examples.example.title.ToString(),
+                [System.StringComparison]::Ordinal) | Should -BeTrue
             $roundTrippedHelp.examples.example.code | Should -BeExactly $help.examples.example.code
+
+            $repeatedComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($roundTrippedHelp)
+            $repeatedDirective = $repeatedComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
+            $repeatedDirective | Should -BeExactly ".EXAMPLE $Title"
         }
 
         It 'should extract the expected example title from "<Title>"' -TestCases @(
-            # A generated heading is decorated with dash borders, so leading and trailing dashes
-            # and spaces are trimmed and a title cannot begin or end with a dash. The label before
-            # the first ": " is dropped, and a heading without that delimiter carries no title.
+            # Remove the final dash border before trimming whitespace so authored dashes survive.
+            # The label before the first ": " is dropped; without that delimiter there is no title.
             @{ Title = 'Example 1: Standard title'; ExpectedTitle = 'Standard title' }
             @{ Title = 'Configuration: Use C:\Temp'; ExpectedTitle = 'Use C:\Temp' }
             @{ Title = '--- Example 1: Short border ---'; ExpectedTitle = 'Short border' }
@@ -369,13 +392,21 @@ param()
             @{ Title = '------------------ Example: Test - This is a title ---------------'; ExpectedTitle = 'Test - This is a title' }
             @{ Title = '--- EXAMPLE 1: Configuration: Use C:\Temp ---'; ExpectedTitle = 'Configuration: Use C:\Temp' }
             @{ Title = '--- EXAMPLE 1: Use the -- separator ---'; ExpectedTitle = 'Use the -- separator' }
+            @{ Title = '------ Example: - test - something - ------'; ExpectedTitle = '- test - something -' }
+            @{ Title = " `t------ Example: - test - something - ------ `t "; ExpectedTitle = '- test - something -' }
+            @{ Title = '------ Example:   - test - something -   ------'; ExpectedTitle = '- test - something -' }
+            @{ Title = '--- EXAMPLE 1: - ---'; ExpectedTitle = '-' }
+            @{ Title = '--- EXAMPLE 1: --- ---'; ExpectedTitle = '---' }
+            @{ Title = '--- EXAMPLE 1: -- Title -- ---'; ExpectedTitle = '-- Title --' }
+            @{ Title = '--- EXAMPLE 1: --switch ---'; ExpectedTitle = '--switch' }
+            @{ Title = '--- EXAMPLE 1: Step 1: Initialize - ---'; ExpectedTitle = 'Step 1: Initialize -' }
             # Borders that are not separated from the heading by a space are still trimmed.
             @{ Title = '---EXAMPLE 1: No opening space ---'; ExpectedTitle = 'No opening space' }
             @{ Title = '--- EXAMPLE 1: No closing space---'; ExpectedTitle = 'No closing space' }
             @{ Title = '-------------------------- EXAMPLE 1: No closing border'; ExpectedTitle = 'No closing border' }
             @{ Title = 'EXAMPLE 1: No opening border --------------------------'; ExpectedTitle = 'No opening border' }
             @{ Title = 'Prefix --- EXAMPLE 1: Not at the start ---'; ExpectedTitle = 'Not at the start' }
-            # Only leading and trailing dashes are removed, so inner dash runs survive.
+            # Only the final contiguous dash run is removed, so inner dash runs survive.
             @{ Title = '--- EXAMPLE 1: Not at the end --- Suffix'; ExpectedTitle = 'Not at the end --- Suffix' }
             # A heading with no ": " delimiter has no custom title.
             @{ Title = 'Use a temporary directory'; ExpectedTitle = '' }
@@ -446,7 +477,7 @@ param()
                       .SYNOPSIS
                       Test a localized example heading.
 
-                      .EXAMPLE Localized title
+                      .EXAMPLE --- Localized title -
                       Get-Date
 
                       .EXAMPLE
@@ -464,7 +495,7 @@ param()
                 $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($help)
                 $exampleDirectives = @($helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' })
                 $exampleDirectives.Count | Should -Be 2
-                $exampleDirectives[0] | Should -BeExactly '.EXAMPLE Localized title'
+                $exampleDirectives[0] | Should -BeExactly '.EXAMPLE --- Localized title -'
                 $exampleDirectives[1] | Should -BeExactly '.EXAMPLE'
 
                 # Compare with help authored directly under the target culture, including resource fallback.
@@ -497,6 +528,9 @@ param()
             @{ Layout = 'titled, untitled, titled'; Titles = @('Step 1: Initialize', '', 'Configuration: Use C:\Temp') }
             @{ Layout = 'titled, titled, titled'; Titles = @('Authentication - As a User', 'Test - This is a title', 'Configuration: Use C:\Temp') }
             @{ Layout = 'untitled, untitled, untitled'; Titles = @('', '', '') }
+            @{ Layout = 'untitled, dash-bordered, untitled'; Titles = @('', '- test - something -', '') }
+            @{ Layout = 'trailing dash, untitled, leading dash'; Titles = @('Step 1 -', '', '--switch') }
+            @{ Layout = 'all titled with boundary dashes'; Titles = @('--- Test - This is a title ---', '---', '-- Title --') }
         ) {
             param($Layout, $Titles)
 

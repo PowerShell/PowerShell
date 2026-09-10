@@ -198,8 +198,7 @@ function TestFunc {
             $helpInfo2.ExampleTitles[1] | Should -BeExactly 'My Custom Title'
         }
 
-        # The comment parser stores the authored title verbatim, so unlike proxy generation from
-        # Get-Help output, these titles keep leading and trailing dashes.
+        # The comment parser stores the authored title verbatim, including leading and trailing dashes.
         It 'GetCommentBlock round-trips the mixed layout <Layout>' -TestCases @(
             @{ Layout = 'titled, untitled'; Titles = @('Authentication - As a User', '') }
             @{ Layout = 'untitled, titled'; Titles = @('', 'Authentication - As a User') }
