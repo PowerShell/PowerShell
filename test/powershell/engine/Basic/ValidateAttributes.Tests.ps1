@@ -3,7 +3,7 @@
 Describe 'Validate Attributes Tests' -Tags 'CI' {
 
     Context "ValidateCount" {
-        BeforeAll {
+        BeforeDiscovery {
            $testCases = @(
                 @{
                     ScriptBlock              = { function Test-ArrayCount { param([ValidateCount(-1,2)] [string[]] $Items) }; Test-ArrayCount }
@@ -53,7 +53,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
     }
 
     Context "ValidateRange - ParameterConstructors" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = @(
                 @{
                     ScriptBlock             = { function Test-NumericRange { param([ValidateRange('xPositive')] $Number) }; Test-NumericRange }
@@ -88,7 +88,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
     }
     Context "ValidateRange - User Defined Range"{
-        BeforeAll {
+        BeforeDiscovery {
            $testCases = @(
                 @{
                     ScriptBlock             = { function Test-NumericRange { param([ValidateRange(1,10)] [int] $Number) }; Test-NumericRange -1 }
@@ -130,7 +130,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
     }
 
     Context "ValidateRange - Predefined Range" {
-        BeforeAll {
+        BeforeDiscovery {
            $testCases = @(
                 @{
                     ScriptBlock             = { function Test-NumericRange { param([ValidateRange("Positive")] [int] $Number) }; Test-NumericRange -1 }
@@ -264,7 +264,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
     }
 
     Context "ValidateLength" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = @(
                 @{
                     ScriptBlock             = { function Test-StringLength { param([ValidateLength(2, 5)] [string] $InputString) }; Test-StringLength "a" }
@@ -328,6 +328,23 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
     }
 
     Context "ValidateNotNull, ValidateNotNullOrEmpty, ValidateNotNullOrWhiteSpace and Not-Null-Or-Empty check for Mandatory parameter" {
+
+        BeforeDiscovery {
+            $testCases = @(
+                @{ ScriptBlock = { MandatoryFunc -ByteArray $byteArray } }
+                @{ ScriptBlock = { MandatoryFunc -ByteList $byteList } }
+                @{ ScriptBlock = { MandatoryFunc -ByteCollection $byteCollection } }
+                @{ ScriptBlock = { NotNullFunc -Value $byteArray } }
+                @{ ScriptBlock = { NotNullFunc -Value $byteList } }
+                @{ ScriptBlock = { NotNullFunc -Value $byteCollection } }
+                @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteArray } }
+                @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteList } }
+                @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteCollection } }
+                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteArray } }
+                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteList } }
+                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteCollection } }
+            )
+        }
 
         BeforeAll {
             function MandatoryFunc {
@@ -413,20 +430,6 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                 $null = New-Item -Path $TESTDRIVE/file1
             }
 
-            $testCases = @(
-                @{ ScriptBlock = { MandatoryFunc -ByteArray $byteArray } }
-                @{ ScriptBlock = { MandatoryFunc -ByteList $byteList } }
-                @{ ScriptBlock = { MandatoryFunc -ByteCollection $byteCollection } }
-                @{ ScriptBlock = { NotNullFunc -Value $byteArray } }
-                @{ ScriptBlock = { NotNullFunc -Value $byteList } }
-                @{ ScriptBlock = { NotNullFunc -Value $byteCollection } }
-                @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteArray } }
-                @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteList } }
-                @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteCollection } }
-                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteArray } }
-                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteList } }
-                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteCollection } }
-            )
         }
 
         It "Validate running time '<ScriptBlock>'" -TestCases $testCases {

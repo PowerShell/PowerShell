@@ -3,36 +3,15 @@
 
 Describe "Get-Module -ListAvailable" -Tags "CI" {
 
-    BeforeAll {
-        $originalPSModulePath = $env:PSModulePath
-
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\1.1" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\2.0" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\Download" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Zoo\Too" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Az" -Force > $null
-
-        New-ModuleManifest -Path "$testdrive\Modules\Foo\1.1\Foo.psd1" -ModuleVersion 1.1
-        New-ModuleManifest -Path "$testdrive\Modules\Foo\2.0\Foo.psd1" -ModuleVersion 2.0
-        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1"
-        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1"
-        New-ModuleManifest -Path "$testdrive\Modules\Az\Az.psd1" -ModuleVersion 1.1
-
-        New-Item -ItemType File -Path "$testdrive\Modules\Foo\1.1\Foo.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Foo\2.0\Foo.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Download\Download.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Zoo.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Too\Zoo.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Az\Az.psm1" > $null
-
+    BeforeDiscovery {
+        # $TestDrive unavailable during Discovery; use placeholder resolved at runtime
+        $tdPlaceholder = 'TESTDRIVE_PLACEHOLDER'
         $fullyQualifiedPathTestCases = @(
-            @{ ModPath = "$TestDrive/Modules\Foo"; Name = 'Foo'; Version = '2.0'; Count = 1 }
-            @{ ModPath = "$TestDrive\Modules/Foo\1.1/Foo.psd1"; Name = 'Foo'; Version = '1.1'; Count = 1 }
-            @{ ModPath = "$TestDrive\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0'; Count = 1 }
-            @{ ModPath = "$TestDrive\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0'; Count = 1 }
+            @{ ModPath = "$tdPlaceholder/Modules\Foo"; Name = 'Foo'; Version = '2.0'; Count = 1 }
+            @{ ModPath = "$tdPlaceholder\Modules/Foo\1.1/Foo.psd1"; Name = 'Foo'; Version = '1.1'; Count = 1 }
+            @{ ModPath = "$tdPlaceholder\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0'; Count = 1 }
+            @{ ModPath = "$tdPlaceholder\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0'; Count = 1 }
         )
-
         $listModuleNameTestCases = @(
             @{
                 Name = 'Foo'
@@ -61,6 +40,30 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
                 ModuleVersion = '7.0.0.0'
             }
         )
+    }
+
+    BeforeAll {
+        $originalPSModulePath = $env:PSModulePath
+
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\1.1" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\2.0" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\Download" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Zoo\Too" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Az" -Force > $null
+
+        New-ModuleManifest -Path "$testdrive\Modules\Foo\1.1\Foo.psd1" -ModuleVersion 1.1
+        New-ModuleManifest -Path "$testdrive\Modules\Foo\2.0\Foo.psd1" -ModuleVersion 2.0
+        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Az\Az.psd1" -ModuleVersion 1.1
+
+        New-Item -ItemType File -Path "$testdrive\Modules\Foo\1.1\Foo.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Foo\2.0\Foo.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Download\Download.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Zoo.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Too\Zoo.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Az\Az.psm1" > $null
 
         $env:PSModulePath = Join-Path $testdrive "Modules"
     }
@@ -145,10 +148,8 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     It "Get-Module -FullyQualifiedName @{ModuleName = '<Name>' ; ModuleVersion = '<ModuleVersion>'} -ListAvailable - <TestCaseName>" -TestCases $listModuleNameTestCases {
         param(
-            [Parameter(Mandatory = $true)]
             $Name,
             $TestCaseName,
-            [Parameter(Mandatory = $true)]
             $ExpectedName,
             $ModuleVersion
         )
@@ -162,10 +163,8 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     It "Get-Module -FullyQualifiedName @{ModuleName = '<Name>' ; ModuleVersion = '<ModuleVersion>'} - <TestCaseName>" -TestCases $loadedModuleNameTestCases {
         param(
-            [Parameter(Mandatory = $true)]
             $Name,
             $TestCaseName,
-            [Parameter(Mandatory = $true)]
             $ExpectedName,
             $ModuleVersion
         )
@@ -193,6 +192,9 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     It "Get-Module respects absolute paths in module specifications: <ModPath>" -TestCases $fullyQualifiedPathTestCases {
         param([string]$ModPath, [string]$Name, [string]$Version, [int]$Count)
+
+        # Resolve Discovery-time placeholder with actual $TestDrive
+        $ModPath = $ModPath.Replace('TESTDRIVE_PLACEHOLDER', $TestDrive)
 
         $modSpec = @{
             ModuleName = $ModPath
@@ -281,6 +283,16 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 }
 
 Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
+
+    BeforeDiscovery {
+        $v1 = '1.2.3'
+        $v2 = '4.8.3'
+        $versionTestCases = @(
+            @{ Version = $v1 }
+            @{ Version = $v2 }
+        )
+    }
+
     BeforeAll {
         $moduleName = 'Banana'
         $modulePath = Join-Path $TestDrive $moduleName
@@ -349,11 +361,8 @@ Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
         $modules[0].Version | Should -Be $v1
     }
 
-    It "Gets correct version by FullyQualifiedName with path with required version" -TestCases @(
-        @{ Version = $v1 }
-        @{ Version = $v2 }
-    ) {
-        param([version]$Version)
+    It "Gets correct version by FullyQualifiedName with path with required version" -TestCases $versionTestCases {
+        param($Version)
 
         switch ($Version)
         {

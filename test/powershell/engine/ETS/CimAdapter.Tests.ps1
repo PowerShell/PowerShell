@@ -1,10 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "CIM Objects are adapted properly" -Tag @("CI") {
+Describe "CIM Objects are adapted properly" -Tag @("CI") -Skip:(-not $IsWindows) {
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        
         function getIndex
         {
             param([string[]]$strings,[string]$pattern)
@@ -16,28 +14,20 @@ Describe "CIM Objects are adapted properly" -Tag @("CI") {
             return -1
         }
 
-        if ( ! $IsWindows ) {
-            $PSDefaultParameterValues["it:pending"] = $true
-        }
-        else {
-            $p = Get-CimInstance win32_process |Select-Object -First 1
+        $p = Get-CimInstance win32_process |Select-Object -First 1
 
-            $indexOf_namespaceQualified_Win32Process            = getIndex $p.PSTypeNames "*root?cimv2?Win32_Process"
-            $indexOf_namespaceQualified_CimProcess              = getIndex $p.PSTypeNames "*root?cimv2?CIM_Process"
-            $indexOf_namespaceQualified_CimLogicalElement       = getIndex $p.PSTypeNames "*root?cimv2?CIM_LogicalElement"
-            $indexOf_namespaceQualified_CimManagedSystemElement = getIndex $p.PSTypeNames "*root?cimv2?CIM_ManagedSystemElement"
+        $indexOf_namespaceQualified_Win32Process            = getIndex $p.PSTypeNames "*root?cimv2?Win32_Process"
+        $indexOf_namespaceQualified_CimProcess              = getIndex $p.PSTypeNames "*root?cimv2?CIM_Process"
+        $indexOf_namespaceQualified_CimLogicalElement       = getIndex $p.PSTypeNames "*root?cimv2?CIM_LogicalElement"
+        $indexOf_namespaceQualified_CimManagedSystemElement = getIndex $p.PSTypeNames "*root?cimv2?CIM_ManagedSystemElement"
 
-            $indexOf_className_Win32Process            = getIndex $p.PSTypeNames "*#Win32_Process"
-            $indexOf_className_CimProcess              = getIndex $p.PSTypeNames "*#CIM_Process"
-            $indexOf_className_CimLogicalElement       = getIndex $p.PSTypeNames "*#CIM_LogicalElement"
-            $indexOf_className_CimManagedSystemElement = getIndex $p.PSTypeNames "*#CIM_ManagedSystemElement"
-        }
-    }
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        $indexOf_className_Win32Process            = getIndex $p.PSTypeNames "*#Win32_Process"
+        $indexOf_className_CimProcess              = getIndex $p.PSTypeNames "*#CIM_Process"
+        $indexOf_className_CimLogicalElement       = getIndex $p.PSTypeNames "*#CIM_LogicalElement"
+        $indexOf_className_CimManagedSystemElement = getIndex $p.PSTypeNames "*#CIM_ManagedSystemElement"
     }
 
-    It "Namespace-qualified Win32_Process is present" -Skip:(!$IsWindows) {
+    It "Namespace-qualified Win32_Process is present" {
         $indexOf_namespaceQualified_Win32Process | Should -Not -Be (-1)
     }
     It "Namespace-qualified CIM_Process is present" {

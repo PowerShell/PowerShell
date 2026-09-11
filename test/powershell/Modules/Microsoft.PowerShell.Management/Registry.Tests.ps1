@@ -1,15 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-try {
-    #skip all tests on non-windows platform
-    $defaultParamValues = $PSDefaultParameterValues.Clone()
-    $PSDefaultParameterValues["it:skip"] = !$IsWindows
 
-Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") {
+Describe "Basic Registry Provider Tests" -Skip:(!$IsWindows) -Tags @("CI", "RequireAdminOnWindows") {
     BeforeAll {
         if ($IsWindows) {
             $restoreLocation = Get-Location
-            $registryBase = "HKLM:\software\Microsoft\PowerShell\3\"
+            $registryBase = "HKCU:\Software\"
             $parentKey = "TestKeyThatWillNotConflict"
             $testKey = "TestKey"
             $testKey2 = "TestKey2"
@@ -25,6 +21,8 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
         if ($IsWindows) {
             #restore the previous environment
             Set-Location -Path $restoreLocation
+            # Clean up in case AfterEach didn't run
+            Remove-Item -Path "HKCU:\Software\TestKeyThatWillNotConflict" -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
 
@@ -195,11 +193,11 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
     }
 }
 
-Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWindows") {
+Describe "Extended Registry Provider Tests" -Skip:(!$IsWindows) -Tags @("Feature", "RequireAdminOnWindows") {
     BeforeAll {
         if ($IsWindows) {
             $restoreLocation = Get-Location
-            $registryBase = "HKLM:\software\Microsoft\PowerShell\3\"
+            $registryBase = "HKCU:\Software\"
             $parentKey = "TestKeyThatWillNotConflict"
             $testKey = "TestKey"
             $testKey2 = "TestKey2"
@@ -212,6 +210,8 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         if ($IsWindows) {
             #restore the previous environment
             Set-Location -Path $restoreLocation
+            # Clean up in case AfterEach didn't run
+            Remove-Item -Path "HKCU:\Software\TestKeyThatWillNotConflict" -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
 
@@ -514,6 +514,4 @@ Windows Registry Editor Version 5.00
     }
 }
 
-} finally {
-    $global:PSdefaultParameterValues = $defaultParamValues
-}
+

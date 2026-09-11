@@ -1,6 +1,38 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Resolve-Path returns proper path" -Tag "CI" {
+    BeforeDiscovery {
+        $driveName = "RvpaTest"
+        # Use placeholder paths for discovery - actual values set in BeforeAll
+        $discoveryRoot = "PLACEHOLDER_ROOT"
+        $discoveryTestRoot = "PLACEHOLDER_TESTROOT"
+        $fakeRoot = "${driveName}:"
+        $sep = [System.IO.Path]::DirectorySeparatorChar
+
+        $relCases = @(
+            @{ CaseId = 'fakeRoot-to-testRoot'; wd_desc = $fakeRoot; target_desc = $discoveryTestRoot }
+            @{ CaseId = 'testRoot-to-fakeFile'; wd_desc = $discoveryTestRoot; target_desc = "${fakeRoot}${sep}file.txt" }
+        )
+
+        $rbpCases = @(
+            @{ Scenario = "Absolute Path, Absolute ReleativeBasePath"; Path = $discoveryRoot; Basepath = $discoveryTestRoot; Expected = @($discoveryRoot, ".${sep}fakeroot"); CD = $null }
+            @{ Scenario = "Relative Path, Absolute ReleativeBasePath"; Path = ".${sep}fakeroot"; Basepath = $discoveryTestRoot; Expected = @($discoveryRoot, ".${sep}fakeroot"); CD = $null }
+            @{ Scenario = "Relative Path, Relative ReleativeBasePath"; Path = ".${sep}fakeroot"; Basepath = ".${sep}"; Expected = @($discoveryRoot, ".${sep}fakeroot"); CD = $discoveryTestRoot }
+            @{ Scenario = "Invalid Path, Absolute ReleativeBasePath"; Path = "${discoveryTestRoot}${sep}ThisPathDoesNotExist"; Basepath = $discoveryRoot; Expected = $null; CD = $null }
+            @{ Scenario = "Invalid Path, Invalid ReleativeBasePath"; Path = "${discoveryTestRoot}${sep}ThisPathDoesNotExist"; Basepath = "${discoveryTestRoot}${sep}ThisPathDoesNotExist"; Expected = $null; CD = $null }
+        )
+
+        $hiddenFilePrefix = ($IsLinux -or $IsMacOS) ? '.' : ''
+        $hiddenCases = @(
+            @{ Path = ".${sep}${hiddenFilePrefix}test1.txt"; BasePath = 'PLACEHOLDER'; Force = $false; ExpectedResult = "PLACEHOLDER${sep}${hiddenFilePrefix}test1.txt" }
+            @{ Path = ".${sep}${hiddenFilePrefix}test2.txt"; BasePath = 'PLACEHOLDER'; Force = $false; ExpectedResult = "PLACEHOLDER${sep}${hiddenFilePrefix}test2.txt" }
+            @{ Path = ".${sep}${hiddenFilePrefix}test*.txt"; BasePath = 'PLACEHOLDER'; Force = $false; ExpectedResult = $null }
+            @{ Path = ".${sep}${hiddenFilePrefix}test1.txt"; BasePath = 'PLACEHOLDER'; Force = $true; ExpectedResult = "PLACEHOLDER${sep}${hiddenFilePrefix}test1.txt" }
+            @{ Path = ".${sep}${hiddenFilePrefix}test2.txt"; BasePath = 'PLACEHOLDER'; Force = $true; ExpectedResult = "PLACEHOLDER${sep}${hiddenFilePrefix}test2.txt" }
+            @{ Path = ".${sep}${hiddenFilePrefix}test*.txt"; BasePath = 'PLACEHOLDER'; Force = $true; ExpectedResult = "PLACEHOLDER" }
+        )
+    }
+
     BeforeAll {
         $driveName = "RvpaTest"
         $root = Join-Path $TestDrive "fakeroot"
@@ -11,11 +43,6 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
 
         $testRoot = Join-Path $TestDrive ""
         $fakeRoot = Join-Path "$driveName`:" ""
-
-        $relCases = @(
-            @{ wd = $fakeRoot; target = $testRoot; expected = $testRoot }
-            @{ wd = $testRoot; target = Join-Path $fakeRoot "file.txt"; expected = Join-Path "." "fakeroot" "file.txt" }
-        )
 
         $hiddenFilePrefix = ($IsLinux -or $IsMacOS) ? '.' : ''
 
@@ -57,54 +84,34 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         $result = Resolve-Path -LiteralPath "TestDrive:\\\\\"
         ($result.Path.TrimEnd('/\')) | Should -BeExactly "TestDrive:"
     }
-    It "Resolve-Path -Relative '<target>' should return correct path on '<wd>'" -TestCases $relCases {
-        param($wd, $target, $expected)
+    It "Resolve-Path -Relative '<target_desc>' should return correct path on '<wd_desc>'" -TestCases $relCases {
+        param($CaseId)
+        $relData = @{
+            'fakeRoot-to-testRoot'  = @{ wd = $fakeRoot; target = $testRoot; expected = $testRoot }
+            'testRoot-to-fakeFile'  = @{ wd = $testRoot; target = (Join-Path $fakeRoot "file.txt"); expected = (Join-Path "." "fakeroot" "file.txt") }
+        }
+        $tc = $relData[$CaseId]
         try {
-            Push-Location -Path $wd
-            Resolve-Path -Path $target -Relative | Should -BeExactly $expected
+            Push-Location -Path $tc.wd
+            Resolve-Path -Path $tc.target -Relative | Should -BeExactly $tc.expected
         }
         finally {
             Pop-Location
         }
     }
-    It 'Resolve-Path RelativeBasePath should handle <Scenario>' -TestCases @(
-        @{
-            Scenario = "Absolute Path, Absolute ReleativeBasePath"
-            Path     = $root
-            Basepath = $testRoot
-            Expected = $root, ".$([System.IO.Path]::DirectorySeparatorChar)fakeroot"
-            CD       = $null
+    It 'Resolve-Path RelativeBasePath should handle <Scenario>' -TestCases $rbpCases {
+        param($Scenario)
+
+        $sep = [System.IO.Path]::DirectorySeparatorChar
+        $rbpData = @{
+            "Absolute Path, Absolute ReleativeBasePath"  = @{ Path = $root;              Basepath = $testRoot; Expected = @($root, ".${sep}fakeroot"); CD = $null }
+            "Relative Path, Absolute ReleativeBasePath"  = @{ Path = ".${sep}fakeroot";  Basepath = $testRoot; Expected = @($root, ".${sep}fakeroot"); CD = $null }
+            "Relative Path, Relative ReleativeBasePath"  = @{ Path = ".${sep}fakeroot";  Basepath = ".${sep}"; Expected = @($root, ".${sep}fakeroot"); CD = $testRoot }
+            "Invalid Path, Absolute ReleativeBasePath"   = @{ Path = (Join-Path $testRoot ThisPathDoesNotExist); Basepath = $root; Expected = $null; CD = $null }
+            "Invalid Path, Invalid ReleativeBasePath"    = @{ Path = (Join-Path $testRoot ThisPathDoesNotExist); Basepath = (Join-Path $testRoot ThisPathDoesNotExist); Expected = $null; CD = $null }
         }
-        @{
-            Scenario = "Relative Path, Absolute ReleativeBasePath"
-            Path     = ".$([System.IO.Path]::DirectorySeparatorChar)fakeroot"
-            Basepath = $testRoot
-            Expected = $root, ".$([System.IO.Path]::DirectorySeparatorChar)fakeroot"
-            CD       = $null
-        }
-        @{
-            Scenario = "Relative Path, Relative ReleativeBasePath"
-            Path     = ".$([System.IO.Path]::DirectorySeparatorChar)fakeroot"
-            Basepath = ".$([System.IO.Path]::DirectorySeparatorChar)"
-            Expected = $root, ".$([System.IO.Path]::DirectorySeparatorChar)fakeroot"
-            CD       = $testRoot
-        }
-        @{
-            Scenario = "Invalid Path, Absolute ReleativeBasePath"
-            Path     = Join-Path $testRoot ThisPathDoesNotExist
-            Basepath = $root
-            Expected = $null
-            CD       = $null
-        }
-        @{
-            Scenario = "Invalid Path, Invalid ReleativeBasePath"
-            Path     = Join-Path $testRoot ThisPathDoesNotExist
-            Basepath = Join-Path $testRoot ThisPathDoesNotExist
-            Expected = $null
-            CD       = $null
-        }
-    ) -Test {
-        param($Path, $BasePath, $Expected, $CD)
+        $tc = $rbpData[$Scenario]
+        $Path = $tc.Path; $BasePath = $tc.Basepath; $Expected = $tc.Expected; $CD = $tc.CD
 
         if ($null -eq $Expected)
         {
@@ -134,45 +141,20 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         }
     }
 
-    It "Resolve-Path -Path '<Path>' -RelativeBasePath '<BasePath>' -Force:<Force> should return '<ExpectedResult>'" -TestCases @(
-        @{
-            Path           = $relativeHiddenFilePath1
-            BasePath       = $TestDrive
-            Force          = $false
-            ExpectedResult = $hiddenFilePath1
+    It "Resolve-Path -Path '<Path>' -RelativeBasePath '<BasePath>' -Force:<Force> should return '<ExpectedResult>'" -TestCases $hiddenCases {
+        param($Path, $BasePath, $Force)
+        # Use actual runtime values from BeforeAll
+        $Path = $Path -replace 'PLACEHOLDER', $TestDrive
+        $BasePath = $TestDrive
+        $ExpectedResult = if ($Path -match '\*' -and -not $Force) {
+            $null
+        } elseif ($Path -match '\*' -and $Force) {
+            @($hiddenFilePath1, $hiddenFilePath2)
+        } elseif ($Path -match 'test1') {
+            $hiddenFilePath1
+        } else {
+            $hiddenFilePath2
         }
-        @{
-            Path           = $relativeHiddenFilePath2
-            BasePath       = $TestDrive
-            Force          = $false
-            ExpectedResult = $hiddenFilePath2
-        }
-        @{
-            Path           = $relativeHiddenFileWildcardPath
-            BasePath       = $TestDrive
-            Force          = $false
-            ExpectedResult = $null
-        }
-        @{
-            Path           = $relativeHiddenFilePath1
-            BasePath       = $TestDrive
-            Force          = $true
-            ExpectedResult = $hiddenFilePath1
-        }
-        @{
-            Path           = $relativeHiddenFilePath2
-            BasePath       = $TestDrive
-            Force          = $true
-            ExpectedResult = $hiddenFilePath2
-        }
-        @{
-            Path           = $relativeHiddenFileWildcardPath
-            BasePath       = $TestDrive
-            Force          = $true
-            ExpectedResult = @($hiddenFilePath1, $hiddenFilePath2)
-        }
-    ) {
-        param($Path, $BasePath, $Force, $ExpectedResult)
         (Resolve-Path -Path $Path -RelativeBasePath $BasePath -Force:$Force).Path | Should -BeExactly $ExpectedResult
     }
 }

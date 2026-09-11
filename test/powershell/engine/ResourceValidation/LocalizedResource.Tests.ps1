@@ -3,6 +3,32 @@
 
 Describe "Localized resource files validation" -Tags "CI" {
 
+    BeforeDiscovery {
+        # -TestCases is read during Discovery, so the data has to be built here.
+        # The same lists are repeated in BeforeAll below, because variables set
+        # during discovery are not available during the run phase.
+        $langSet = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
+        $asmDirs = @(
+            'Microsoft.Management.Infrastructure.CimCmdlets'
+            'Microsoft.Management.UI.Internal'
+            'Microsoft.PowerShell.Commands.Diagnostics'
+            'Microsoft.PowerShell.Commands.Management'
+            'Microsoft.PowerShell.Commands.Utility'
+            'Microsoft.PowerShell.ConsoleHost'
+            'Microsoft.PowerShell.CoreCLR.Eventing'
+            'Microsoft.PowerShell.Security'
+            'Microsoft.WSMan.Management'
+            'System.Management.Automation'
+        )
+
+        $testCases1 = @(
+            $asmDirs | ForEach-Object { @{ AssemblyDir = $_ } }
+        )
+        $testCases2 = @(
+            $langSet | ForEach-Object { @{ Language = $_ } }
+        )
+    }
+
     BeforeAll {
         $repoSrcDir = (Resolve-Path (Join-Path $PSScriptRoot ../../../../src)).Path
         $skipSatelliteAssemblyTest = !$IsWindows
@@ -37,13 +63,6 @@ Describe "Localized resource files validation" -Tags "CI" {
                 $_
             }
         }
-
-        $testCases1 = @(
-            $asmDirs | ForEach-Object { @{ AssemblyDir = $_ } }
-        )
-        $testCases2 = @(
-            $langSet | ForEach-Object { @{ Language = $_ } }
-        )
     }
 
     It "Assembly folders with resources should match with records" {

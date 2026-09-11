@@ -1,15 +1,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Join-Path cmdlet tests" -Tags "CI" {
-  $SepChar=[io.path]::DirectorySeparatorChar
+  BeforeDiscovery {
+      $SepChar=[io.path]::DirectorySeparatorChar
+      $hasExtensionParameter = (Get-Command Join-Path).Parameters.ContainsKey('Extension')
+  }
   BeforeAll {
+    $SepChar=[io.path]::DirectorySeparatorChar
     $StartingLocation = Get-Location
   }
   AfterEach {
     Set-Location $StartingLocation
   }
   It "should output multiple paths when called with multiple -Path targets" {
-    Setup -Dir SubDir1
+    New-Item -Path (Join-Path $TestDrive "SubDir1") -ItemType Directory -Force | Out-Null
     (Join-Path -Path TestDrive:,$TestDrive -ChildPath "SubDir1" -Resolve).Length | Should -Be 2
   }
   It "should throw 'DriveNotFound' when called with -Resolve and drive does not exist" {
@@ -84,7 +88,7 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result = Join-Path -Path $Path -ChildPath $ChildPath
     $result | Should -BeExactly $ExpectedResult
   }
-  It "should handle extension parameter: <TestName>" -TestCases @(
+  It "should handle extension parameter: <TestName>" -Skip:(-not $hasExtensionParameter) -TestCases @(
     @{
       TestName = "change extension"
       ChildPath = "file.txt"
@@ -150,7 +154,7 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result = Join-Path -Path "folder" -ChildPath $ChildPath -Extension $Extension
     $result | Should -BeExactly "folder${SepChar}${ExpectedChildPath}"
   }
-  It "should handle extension parameter with multiple child path segments: <TestName>" -TestCases @(
+  It "should handle extension parameter with multiple child path segments: <TestName>" -Skip:(-not $hasExtensionParameter) -TestCases @(
     @{
       TestName = "change extension when joining multiple child path segments"
       ChildPaths = @("subfolder", "file.txt")
@@ -162,22 +166,22 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result = Join-Path -Path "folder" -ChildPath $ChildPaths -Extension $Extension
     $result | Should -BeExactly $ExpectedPath
   }
-  It "should change extension for multiple paths" {
+  It "should change extension for multiple paths" -Skip:(-not $hasExtensionParameter) {
     $result = Join-Path -Path "folder1", "folder2" -ChildPath "file.txt" -Extension ".log"
     $result.Count | Should -Be 2
     $result[0] | Should -BeExactly "folder1${SepChar}file.log"
     $result[1] | Should -BeExactly "folder2${SepChar}file.log"
   }
-  It "should resolve path when -Extension changes to existing file" {
+  It "should resolve path when -Extension changes to existing file" -Skip:(-not $hasExtensionParameter) {
     New-Item -Path TestDrive:\testfile.log -ItemType File -Force | Out-Null
     $result = Join-Path -Path TestDrive: -ChildPath "testfile.txt" -Extension ".log" -Resolve
     $result | Should -BeLike "*testfile.log"
   }
-  It "should throw error when -Extension changes to non-existing file with -Resolve" {
+  It "should throw error when -Extension changes to non-existing file with -Resolve" -Skip:(-not $hasExtensionParameter) {
     { Join-Path -Path TestDrive: -ChildPath "testfile.txt" -Extension ".nonexistent" -Resolve -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..." } |
       Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.JoinPathCommand"
   }
-  It "should accept Extension from pipeline by property name" {
+  It "should accept Extension from pipeline by property name" -Skip:(-not $hasExtensionParameter) {
     $obj = [PSCustomObject]@{ Path = "folder"; ChildPath = "file.txt"; Extension = ".log" }
     $result = $obj | Join-Path
     $result | Should -BeExactly "folder${SepChar}file.log"

@@ -5,11 +5,11 @@ Describe "ConvertTo-Html Tests" -Tags "CI" {
     BeforeAll {
         $customObject = [pscustomobject]@{"Name" = "John Doe"; "Age" = 42; "Friends" = ("Jack", "Jill")}
         $newLine = "`r`n"
-    }
 
-    function normalizeLineEnds([string]$text)
-    {
-        $text -replace "`r`n?|`n", "`r`n"
+        function normalizeLineEnds([string]$text)
+        {
+            $text -replace "`r`n?|`n", "`r`n"
+        }
     }
 
     It "Test ConvertTo-Html with no parameters" {

@@ -339,7 +339,7 @@ Describe "Get-Date" -Tags "CI" {
 }
 
 Describe "Get-Date -UFormat tests" -Tags "CI" {
-    BeforeAll {
+    BeforeDiscovery {
         $date1 = Get-Date -Date "2030-4-5 1:2:3.09"
         $date2 = Get-Date -Date "2030-4-15 13:2:3"
         $date3 = Get-Date -Date "2030-4-15 21:2:3"

@@ -4,8 +4,14 @@
 # This is a simple type check to validate that types in PowerShellStandard are present in System.Management.Automation.dll
 # It does not check member presence and info, just the properties of the type
 Describe "Types referenced by PowerShell Standard should not be missing"  -Tags "CI" {
-    BeforeAll {
+    BeforeDiscovery {
         $assets = [System.IO.Path]::Combine("$PSScriptRoot", "assets", "standardtypes.csv")
+        $tests = Import-Csv $assets | ForEach-Object {
+            @{ FullName = $_.FullName; TypeMetaData = $_ }
+        }
+    }
+
+    BeforeAll {
         # The properties of a type which should match PowerShell Standard
         # These are not members of the type
         $typeProperties = "IsCollectible",
@@ -54,10 +60,6 @@ Describe "Types referenced by PowerShell Standard should not be missing"  -Tags 
             "IsValueType",
             "IsSignatureType",
             "IsVisible"
-
-        $tests = Import-Csv $assets | ForEach-Object {
-            @{ FullName = $_.FullName; TypeMetaData = $_ }
-        }
     }
 
     It "Type '<FullName>' should be present with correct attributes" -TestCases $tests {

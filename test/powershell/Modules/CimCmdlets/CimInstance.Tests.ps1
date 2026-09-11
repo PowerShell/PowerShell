@@ -7,14 +7,14 @@ Describe "CimInstance cmdlet tests" -Tag @("CI") {
         $instance = Get-CimInstance CIM_ComputerSystem
     }
 
-    It "CimClass property should not be null" -Pending:(-not $IsWindows) {
+    It "CimClass property should not be null" -Skip:(-not $IsWindows) {
         # we can't use equals here as on windows cimclassname
         # is win32_computersystem, but that's not likely to be the
         # case on non-Windows systems
         $instance.CimClass.CimClassName | Should -Match _computersystem
     }
 
-    It "Property access should be case insensitive" -Pending:(-not $IsWindows) {
+    It "Property access should be case insensitive" -Skip:(-not $IsWindows) {
         foreach($property in $instance.psobject.properties.name) {
             $pUpper = $property.ToUpper()
             $pLower = $property.ToLower()
@@ -24,11 +24,11 @@ Describe "CimInstance cmdlet tests" -Tag @("CI") {
         }
     }
 
-    It "GetCimSessionInstanceId method invocation should return data" -Pending:(-not $IsWindows) {
+    It "GetCimSessionInstanceId method invocation should return data" -Skip:(-not $IsWindows) {
         $instance.GetCimSessionInstanceId() | Should -BeOfType Guid
     }
 
-    It "should produce an error for a non-existing classname" -Pending:(-not $IsWindows) {
+    It "should produce an error for a non-existing classname" -Skip:(-not $IsWindows) {
         { Get-CimInstance -ClassName thisnameshouldnotexist -ErrorAction Stop } |
             Should -Throw -ErrorId "HRESULT 0x80041010,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand"
     }

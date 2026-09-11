@@ -2,9 +2,7 @@
 # Licensed under the MIT License.
 
 Describe 'SuspiciousContentChecker verification' -Tags "CI" {
-    BeforeAll {
-        $type = [psobject].Assembly.GetType('System.Management.Automation.ScriptBlock+SuspiciousContentChecker')
-
+    BeforeDiscovery {
         $testCases = @(
             @{ id = 'Should Detect (1)'; text = "add-TyPe"; expected = "Add-Type" }
             @{ id = 'Should Detect (2)'; text = "GetDelegateForFunctionPointer"; expected = "GetDelegateForFunctionPointer" }
@@ -27,7 +25,11 @@ Describe 'SuspiciousContentChecker verification' -Tags "CI" {
         )
     }
 
-    It "Smoke testing the suspicious content detection - <id>" -TestCases $testCases {
+    BeforeAll {
+        $type = [psobject].Assembly.GetType('System.Management.Automation.ScriptBlock+SuspiciousContentChecker')
+    }
+
+    It "Smoke testing the suspicious content detection - <id>" -TestCases:$testCases {
         param($text, $expected)
 
         $type::Match($text) | Should -BeExactly $expected

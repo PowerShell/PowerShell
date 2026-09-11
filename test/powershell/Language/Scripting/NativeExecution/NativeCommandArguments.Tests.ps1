@@ -18,19 +18,16 @@ Describe "Behavior is specific for each platform" -tags "CI" {
         $result.Count | Should -Be 3
         $result[0] | Should -Be 1
         $result[1] | Should -Be 1
-        $result[2] | Should Be "a"
+        $result[2] | Should -Be "a"
     }
 
 }
 
-Describe "tests for multiple languages and extensions" -tags "CI" {
+Describe "tests for multiple languages and extensions" -tags "CI" -Skip:(-not $IsWindows) {
     AfterAll {
-        if (-not $IsWindows) {
-            return
-        }
         $PSNativeCommandArgumentPassing = $passingStyle
     }
-    BeforeAll {
+    BeforeDiscovery {
         $testCases = @(
             @{
                 Command = "cscript.exe"
@@ -119,21 +116,16 @@ echo Argument 4 is: ^<%4^>
 '@
             }
         )
+    }
 
-        # determine whether we should skip the tests we just defined
-        # doing it in this order ensures that the test output will show each skipped test
-        $skipTests = -not $IsWindows
-        if ($skipTests) {
-            return
-        }
-
+    BeforeAll {
         # save the passing style
         $passingStyle = $PSNativeCommandArgumentPassing
         # explicitely set the passing style to Windows
         $PSNativeCommandArgumentPassing = "Windows"
     }
 
-    It "Invoking '<Filename>' is compatible with PowerShell 5" -TestCases $testCases -Skip:$($skipTests) {
+    It "Invoking '<Filename>' is compatible with PowerShell 5" -TestCases $testCases {
         param ( $Command, $Arguments, $Filename, $Script, $ExpectedResults )
         cscript  //h:cscript //nologo //s
         $a = 'a"b c"d'
@@ -163,12 +155,15 @@ Describe "Will error correctly if an attempt to set variable to improper value" 
 }
 
 Describe "find.exe uses legacy behavior on Windows" -Tag 'CI' {
-    BeforeAll {
-        $currentSetting = $PSNativeCommandArgumentPassing
-        $PSNativeCommandArgumentPassing = "Windows"
+    BeforeDiscovery {
         $testCases = @{ pattern = "" },
             @{ pattern = "blat" },
             @{ pattern = "bl at" }
+    }
+
+    BeforeAll {
+        $currentSetting = $PSNativeCommandArgumentPassing
+        $PSNativeCommandArgumentPassing = "Windows"
     }
     AfterAll {
         $PSNativeCommandArgumentPassing = $currentSetting

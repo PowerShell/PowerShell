@@ -94,7 +94,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     It "Clear-Host does not injects data into PowerShell output stream" {
         if (Test-IsWindowsArm64) {
-            Set-ItResult -Pending -Because "ARM64 runs in non-interactively mode and Clear-Host does not work."
+            Set-ItResult -Inconclusive -Because "ARM64 runs in non-interactively mode and Clear-Host does not work."
         }
 
         & { Clear-Host; 'hi' } | Should -BeExactly 'hi'
@@ -125,10 +125,18 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             & $powershell -noprofile { $args[0] } -args 1,(2,3) | Should -Be 1
             (& $powershell -noprofile { $args[1] } -args 1,(2,3))[1]  | Should -Be 3
         }
-        foreach ($x in "--help", "-help", "-h", "-?", "--he", "-hel", "--HELP", "-hEl") {
-            It "Accepts '$x' as a parameter for help" {
-                & $powershell -noprofile $x | Where-Object { $_ -match "pwsh[.exe] -Help | -? | /?" } | Should -Not -BeNullOrEmpty
-            }
+        It "Accepts '<x>' as a parameter for help" -TestCases @(
+            @{ x = "--help" },
+            @{ x = "-help" },
+            @{ x = "-h" },
+            @{ x = "-?" },
+            @{ x = "--he" },
+            @{ x = "-hel" },
+            @{ x = "--HELP" },
+            @{ x = "-hEl" }
+        ) {
+            param($x)
+            & $powershell -noprofile $x | Where-Object { $_ -match "pwsh[.exe] -Help | -? | /?" } | Should -Not -BeNullOrEmpty
         }
 
         It "Should accept a Base64 encoded command" {
@@ -558,7 +566,7 @@ export $envVarName='$guid'
         # All of the following tests replace the prompt (either via an initial command or interactively)
         # so that we can read StandardOutput and reliably know exactly what the prompt is.
 
-        It "Interactive redirected input: <InteractiveSwitch>" -Pending:($IsWindows) -TestCases @(
+        It "Interactive redirected input: <InteractiveSwitch>" -Skip:($IsWindows) -TestCases @(
             @{InteractiveSwitch = ""}
             @{InteractiveSwitch = " -IntERactive"}
             @{InteractiveSwitch = " -i"}
@@ -585,7 +593,7 @@ export $envVarName='$guid'
             EnsureChildHasExited $process
         }
 
-        It "Interactive redirected input w/ initial command" -Pending:($IsWindows) {
+        It "Interactive redirected input w/ initial command" -Skip:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS> ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
@@ -599,7 +607,7 @@ export $envVarName='$guid'
             EnsureChildHasExited $process
         }
 
-        It "Redirected input explicit prompting (-File -)" -Pending:($IsWindows) {
+        It "Redirected input explicit prompting (-File -)" -Skip:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$function:prompt = { 'PS> ' }`n")
@@ -612,7 +620,7 @@ export $envVarName='$guid'
             EnsureChildHasExited $process
         }
 
-        It "Redirected input no prompting (-Command -)" -Pending:($IsWindows) {
+        It "Redirected input no prompting (-Command -)" -Skip:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -Command -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
@@ -645,7 +653,7 @@ foo
             EnsureChildHasExited $process
         }
 
-        It "Redirected input w/ nested prompt" -Pending:($IsWindows) {
+        It "Redirected input w/ nested prompt" -Skip:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$NestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$PSStyle.OutputRendering='plaintext'`n")
@@ -860,7 +868,7 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     Context "ApartmentState WPF tests" -Tag Slow {
 
         It "WPF requires STA and will work" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
-            Set-ItResult -Pending -Because "Disabled due to issue - https://github.com/dotnet/wpf/issues/11651 in .NET 11 Preview 5"
+            Set-ItResult -Inconclusive -Because "Disabled due to issue - https://github.com/dotnet/wpf/issues/11651 in .NET 11 Preview 5"
 
             Add-Type -AssemblyName presentationframework
 
@@ -1001,15 +1009,12 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     }
 }
 
-Describe "WindowStyle argument" -Tag Feature {
+Describe "WindowStyle argument" -Tag Feature -Skip:(-not $IsWindows) {
     BeforeAll {
-        $defaultParamValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:skip"] = !$IsWindows
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        $ExitCodeBadCommandLineParameter = 64
 
-        if ($IsWindows)
-        {
-            $ExitCodeBadCommandLineParameter = 64
-            Add-Type -Name User32 -Namespace Test -MemberDefinition @"
+        Add-Type -Name User32 -Namespace Test -MemberDefinition @"
 public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
 {
     WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
@@ -1048,14 +1053,9 @@ public enum ShowWindowCommands : int
     Maximized = 3,
 }
 "@
-        }
     }
 
-    AfterAll {
-        $global:PSDefaultParameterValues = $defaultParamValues
-    }
-
-    It "-WindowStyle <WindowStyle> should work on Windows" -Pending -TestCases @(
+    It "-WindowStyle <WindowStyle> should work on Windows" -Skip -TestCases @(
             @{WindowStyle="Normal"},
             @{WindowStyle="Minimized"},
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
@@ -1063,7 +1063,7 @@ public enum ShowWindowCommands : int
         param ($WindowStyle)
 
         if (Test-IsWindowsArm64) {
-            Set-ItResult -Pending -Because "All windows are showing up as hidden or ARM64"
+            Set-ItResult -Inconclusive -Because "All windows are showing up as hidden or ARM64"
         }
 
         try {
@@ -1097,7 +1097,8 @@ Describe "Console host api tests" -Tag CI {
             @{InputObject = "${esc}abc"; Length = 4; Name = "Malformed escape - no csi"},
             @{InputObject = "[31mabc"; Length = 7; Name = "Malformed escape - no escape"}
 
-        $testCases += if ($Host.UI.SupportsVirtualTerminal)
+        $supportsVT = try { $Host.UI.SupportsVirtualTerminal } catch { $false }
+        $testCases += if ($supportsVT)
         {
             @{InputObject = "$esc[31mabc"; Length = 3; Name = "Escape at start"}
             @{InputObject = "$esc[31mabc$esc[0m"; Length = 3; Name = "Escape at start and end"}

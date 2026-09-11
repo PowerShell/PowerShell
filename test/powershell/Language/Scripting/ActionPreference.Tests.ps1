@@ -2,33 +2,7 @@
 # Licensed under the MIT License.
 
 Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
-    $commonActionPreferenceParameterTestCases = foreach ($commonParameterName in [System.Management.Automation.Cmdlet]::CommonParameters | Select-String Action) {
-        @{
-            ActionPreferenceParameterName = $commonParameterName
-        }
-    }
-
-    $actionPreferenceVariableTestCases = foreach ($variable in Get-Variable -Name *Preference -Scope Global | Where-Object Value -Is [System.Management.Automation.ActionPreference]) {
-        @{
-            ActionPreferenceVariableName = $variable.Name
-            StreamName = $variable.Name -replace '(Action)?Preference$'
-        }
-    }
-
-    $actionPreferenceVariableValueTestCases = @(
-        @{
-            Value = [System.Management.Automation.ActionPreference]::Suspend
-            DisplayValue = '[System.Management.Automation.ActionPreference]::Suspend'
-        }
-        @{
-            Value        = 'Suspend'
-            DisplayValue = '''Suspend'''
-        }
-    )
-
-    BeforeAll {
-        $orgin = $GLOBAL:errorActionPreference
-
+    BeforeDiscovery {
         function Join-TestCase {
             [OutputType([Hashtable[]])]
             [CmdletBinding()]
@@ -42,6 +16,36 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                 }
             }
         }
+
+        $commonActionPreferenceParameterTestCases = foreach ($commonParameterName in [System.Management.Automation.Cmdlet]::CommonParameters | Select-String Action) {
+            @{
+                ActionPreferenceParameterName = $commonParameterName
+            }
+        }
+
+        $actionPreferenceVariableTestCases = foreach ($variable in Get-Variable -Name *Preference -Scope Global | Where-Object Value -Is [System.Management.Automation.ActionPreference]) {
+            @{
+                ActionPreferenceVariableName = $variable.Name
+                StreamName = $variable.Name -replace '(Action)?Preference$'
+            }
+        }
+
+        $actionPreferenceVariableValueTestCases = @(
+            @{
+                Value = [System.Management.Automation.ActionPreference]::Suspend
+                DisplayValue = '[System.Management.Automation.ActionPreference]::Suspend'
+            }
+            @{
+                Value        = 'Suspend'
+                DisplayValue = '''Suspend'''
+            }
+        )
+
+        $joinedTestCases = Join-TestCase -Set1 $actionPreferenceVariableTestCases -Set2 $actionPreferenceVariableValueTestCases
+    }
+
+    BeforeAll {
+        $orgin = $GLOBAL:errorActionPreference
 
         function Test-ActionPreferenceVariableSuspendValue {
             [CmdletBinding()]
@@ -71,10 +75,12 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
     }
 
     Context 'Setting ErrorActionPreference to stop prevents user from getting the error exception' {
-        $err = $null
-        try {
-            Get-ChildItem nosuchfile.nosuchextension -ErrorAction stop -ErrorVariable err
-        } catch { }
+        BeforeAll {
+            $err = $null
+            try {
+                Get-ChildItem nosuchfile.nosuchextension -ErrorAction stop -ErrorVariable err
+            } catch { }
+        }
 
         It '$err.Count' { $err.Count | Should -Be 1 }
         It '$err[0] should not be $null' { $err[0] | Should -Not -BeNullOrEmpty }
@@ -113,12 +119,12 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
 
         $e = {
             Set-Variable -Name $ActionPreferenceVariableName -Scope Global -Value ([System.Management.Automation.ActionPreference]::Suspend)
-        } | Should -Throw -ErrorId RuntimeException -PassThru
+        } | Should -Throw -ErrorId "RuntimeException*" -PassThru
 
         $e.CategoryInfo.Reason | Should -BeExactly 'ArgumentTransformationMetadataException'
     }
 
-    It 'A local $<ActionPreferenceVariableName> variable does not support <DisplayValue>' -TestCases (Join-TestCase -Set1 $actionPreferenceVariableTestCases -Set2 $actionPreferenceVariableValueTestCases) {
+    It 'A local $<ActionPreferenceVariableName> variable does not support <DisplayValue>' -TestCases $joinedTestCases {
         param(
             $ActionPreferenceVariableName,
             $StreamName,

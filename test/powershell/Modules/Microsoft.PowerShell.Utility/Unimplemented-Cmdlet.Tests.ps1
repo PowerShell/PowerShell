@@ -2,13 +2,14 @@
 # Licensed under the MIT License.
 Describe "Unimplemented Utility Cmdlet Tests" -Tags "CI" {
 
-    $Commands = @(
-        "ConvertFrom-SddlString"
-    )
+    BeforeDiscovery {
+        $testCases = @(
+            @{ Command = "ConvertFrom-SddlString" }
+        )
+    }
 
-    foreach ($Command in $Commands) {
-        It "$Command should only be available on Windows" {
-            [bool](Get-Command $Command -ErrorAction SilentlyContinue) | Should -Be $IsWindows
-        }
+    It "<Command> should only be available on Windows" -TestCases $testCases {
+        param($Command)
+        [bool](Get-Command $Command -ErrorAction SilentlyContinue) | Should -Be $IsWindows
     }
 }

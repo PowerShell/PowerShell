@@ -65,64 +65,66 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
         }
     }
 
-    $testCases = @(
-        @{
-            Name = "with mandatory parameters"
-            InputObject = $DefaultInputObject
-        }
-        @{
-            Name = "with ReplyTo"
-            InputObject = @{
-                From = "user01@example.com"
-                To = "user02@example.com"
-                ReplyTo = "noreply@example.com"
-                Subject = "Subject $(Get-Date)"
-                Body = "Body $(Get-Date)"
-                SmtpServer = "127.0.0.1"
+    BeforeDiscovery {
+        $testCases = @(
+            @{
+                Name = "with mandatory parameters"
+                InputObject = $DefaultInputObject
             }
-        }
-        @{
-            Name = "with multiple To"
-            InputObject = @{
-                From = "user01@example.com"
-                To = "user02@example.com","user03@example.com","user04@example.com"
-                Subject = "Subject $(Get-Date)"
-                Body = "Body $(Get-Date)"
-                SmtpServer = "127.0.0.1"
+            @{
+                Name = "with ReplyTo"
+                InputObject = @{
+                    From = "user01@example.com"
+                    To = "user02@example.com"
+                    ReplyTo = "noreply@example.com"
+                    Subject = "Subject $(Get-Date)"
+                    Body = "Body $(Get-Date)"
+                    SmtpServer = "127.0.0.1"
+                }
             }
-        }
-        @{
-            Name = "with multiple Cc"
-            InputObject = @{
-                From = "user01@example.com"
-                To = "user02@example.com"
-                Cc = "user03@example.com","user04@example.com"
-                Subject = "Subject $(Get-Date)"
-                Body = "Body $(Get-Date)"
-                SmtpServer = "127.0.0.1"
+            @{
+                Name = "with multiple To"
+                InputObject = @{
+                    From = "user01@example.com"
+                    To = "user02@example.com","user03@example.com","user04@example.com"
+                    Subject = "Subject $(Get-Date)"
+                    Body = "Body $(Get-Date)"
+                    SmtpServer = "127.0.0.1"
+                }
             }
-        }
-        @{
-            Name = "with multiple Bcc"
-            InputObject = @{
-                From = "user01@example.com"
-                To = "user02@example.com"
-                Bcc = "user03@example.com","user04@example.com"
-                Subject = "Subject $(Get-Date)"
-                Body = "Body $(Get-Date)"
-                SmtpServer = "127.0.0.1"
+            @{
+                Name = "with multiple Cc"
+                InputObject = @{
+                    From = "user01@example.com"
+                    To = "user02@example.com"
+                    Cc = "user03@example.com","user04@example.com"
+                    Subject = "Subject $(Get-Date)"
+                    Body = "Body $(Get-Date)"
+                    SmtpServer = "127.0.0.1"
+                }
             }
-        }
-        @{
-            Name = "with No Subject"
-            InputObject = @{
-                From = "user01@example.com"
-                To = "user02@example.com"
-                Body = "Body $(Get-Date)"
-                SmtpServer = "127.0.0.1"
+            @{
+                Name = "with multiple Bcc"
+                InputObject = @{
+                    From = "user01@example.com"
+                    To = "user02@example.com"
+                    Bcc = "user03@example.com","user04@example.com"
+                    Subject = "Subject $(Get-Date)"
+                    Body = "Body $(Get-Date)"
+                    SmtpServer = "127.0.0.1"
+                }
             }
-        }
-    )
+            @{
+                Name = "with No Subject"
+                InputObject = @{
+                    From = "user01@example.com"
+                    To = "user02@example.com"
+                    Body = "Body $(Get-Date)"
+                    SmtpServer = "127.0.0.1"
+                }
+            }
+        )
+    }
 
     It "Shows obsolete message for cmdlet" -skip:$script:SkipTest {
         $server | Should -Not -Be $null
@@ -174,7 +176,7 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
     It "Can send mail message using pipline named parameters <Name>" -TestCases $testCases -skip:$script:SkipTest {
         param($InputObject)
 
-        Set-TestInconclusive "As of right now the Send-MailMessage cmdlet does not support piping named parameters (see issue 7591)"
+        Set-ItResult -Inconclusive -Because "As of right now the Send-MailMessage cmdlet does not support piping named parameters (see issue 7591)"
 
         $server | Should -Not -Be $null
 

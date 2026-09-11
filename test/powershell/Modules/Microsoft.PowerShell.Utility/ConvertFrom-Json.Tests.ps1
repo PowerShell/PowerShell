@@ -1,38 +1,40 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-function New-NestedJson {
-    Param(
-        [ValidateRange(1, 2048)]
-        [int]
-        $Depth
-    )
+BeforeAll {
+    function New-NestedJson {
+        Param(
+            [ValidateRange(1, 2048)]
+            [int]
+            $Depth
+        )
 
-    $nestedJson = "true"
+        $nestedJson = "true"
 
-    $Depth..1 | ForEach-Object {
-        $nestedJson = '{"' + $_ + '":' + $nestedJson + '}'
+        $Depth..1 | ForEach-Object {
+            $nestedJson = '{"' + $_ + '":' + $nestedJson + '}'
+        }
+
+        return $nestedJson
     }
 
-    return $nestedJson
-}
+    function Count-ObjectDepth {
+        Param([PSCustomObject] $InputObject)
 
-function Count-ObjectDepth {
-    Param([PSCustomObject] $InputObject)
-
-    for ($i=1; $i -le 2048; $i++)
-    {
-        $InputObject = Select-Object -InputObject $InputObject -ExpandProperty $i
-        if ($InputObject -eq $true)
+        for ($i=1; $i -le 2048; $i++)
         {
-            return $i
+            $InputObject = Select-Object -InputObject $InputObject -ExpandProperty $i
+            if ($InputObject -eq $true)
+            {
+                return $i
+            }
         }
     }
 }
 
 Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
 
-    BeforeAll {
+    BeforeDiscovery {
         $testCasesWithAndWithoutAsHashtableSwitch = @(
             @{ AsHashtable = $true  }
             @{ AsHashtable = $false }
@@ -386,7 +388,7 @@ c                              3
 
 Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {
 
-    BeforeAll {
+    BeforeDiscovery {
         $testCasesJsonDepthWithAndWithoutAsHashtableSwitch = @(
             @{ Depth = 2;    AsHashtable = $true  }
             @{ Depth = 2;    AsHashtable = $false }

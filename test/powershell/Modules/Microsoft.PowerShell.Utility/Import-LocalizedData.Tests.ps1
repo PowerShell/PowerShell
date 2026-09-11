@@ -1,13 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-$assetsDir = Join-Path -Path $PSScriptRoot -ChildPath assets
-
 Describe "Import-LocalizedData" -Tags "CI" {
 
     BeforeAll {
-	$script = "localized.ps1"
-	$sunday = "Sunday"
-	$sundayInGerman = $sunday + " (in German)"
+    	$assetsDir = Join-Path -Path $PSScriptRoot -ChildPath assets
+    	$script = "localized.ps1"
+    	$sunday = "Sunday"
+    	$sundayInGerman = $sunday + " (in German)"
     }
 
     It "Should be able to import string using default culture" {

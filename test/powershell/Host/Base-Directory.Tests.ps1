@@ -9,6 +9,10 @@ Describe "Configuration file locations" -tags "CI","Slow" {
 
     Context "Default configuration file locations" {
 
+        BeforeDiscovery {
+            $ItArgs = @{}
+        }
+
         BeforeAll {
 
             if ($IsWindows) {
@@ -27,8 +31,6 @@ Describe "Configuration file locations" -tags "CI","Slow" {
                 $expectedProfile  = [io.path]::Combine($env:HOME,".config","powershell",$profileName)
                 $expectedReadline = [IO.Path]::Combine($env:HOME, ".local", "share", "powershell", "PSReadLine", "ConsoleHost_history.txt")
             }
-
-            $ItArgs = @{}
         }
 
         BeforeEach {
@@ -64,7 +66,7 @@ Describe "Configuration file locations" -tags "CI","Slow" {
     }
 
     Context "XDG Base Directory Specification is supported on Linux" {
-        BeforeAll {
+        BeforeDiscovery {
             # Using It @ItArgs, we automatically skip on Windows for all these tests
             if ($IsWindows) {
                 $ItArgs = @{ skip = $true }
@@ -130,7 +132,7 @@ Describe "Working directory on startup" -Tag "CI" {
     }
 
     # https://github.com/PowerShell/PowerShell/issues/5752
-    It "Can start in directory where name contains wildcard characters" -Pending {
+    It "Can start in directory where name contains wildcard characters" -Skip {
         Set-Location -LiteralPath $testPath.FullName
         if ($IsMacOS) {
             # on macOS, /tmp is a symlink to /private so the real path is under /private/tmp

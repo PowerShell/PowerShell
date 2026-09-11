@@ -1,15 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "UnixFileSystem additions" -Tag "CI" {
+Describe "UnixFileSystem additions" -Tag "CI" -Skip:$IsWindows {
     Context "Basic Validation" {
-        BeforeAll {
-            $PSDefaultParameterValues.Add('It:Skip', $IsWindows)
-        }
-
-        AfterAll {
-            $PSDefaultParameterValues.Remove('It:Skip')
-        }
-
         It "Should include a UnixStat property" {
             $i = Get-Item ${TestDrive}
             $i.UnixStat | Should -Not -BeNullOrEmpty
@@ -23,12 +15,8 @@ Describe "UnixFileSystem additions" -Tag "CI" {
     }
 
     Context "Validation of additional properties on file system objects" {
-        BeforeAll {
-            $PSDefaultParameterValues.Add('It:Skip', $IsWindows)
-
-            $testDir  = "${TestDrive}/TestDir"
+        BeforeDiscovery {
             $testFile = "${testDir}/TestFile"
-
             $testCase = @{ Mode = '000';  Perm = '----------'; Item = "${testFile}" },
                         @{ Mode = '111';  Perm = '---x--x--x'; Item = "${testFile}" },
                         @{ Mode = '222';  Perm = '--w--w--w-'; Item = "${testFile}" },
@@ -45,8 +33,9 @@ Describe "UnixFileSystem additions" -Tag "CI" {
                         @{ Mode = '1777'; Perm = 'drwxrwxrwt'; Item = "${testDir}"  }
         }
 
-        AfterAll {
-            $PSDefaultParameterValues.Remove('It:Skip')
+        BeforeAll {
+            $testDir  = "${TestDrive}/TestDir"
+            $testFile = "${testDir}/TestFile"
         }
 
         BeforeEach {
@@ -88,11 +77,6 @@ Describe "UnixFileSystem additions" -Tag "CI" {
 
     Context "Other properties of UnixStat object" {
         BeforeAll {
-            $PSDefaultParameterValues.Add('It:Skip', $IsWindows)
-            if ($IsWindows) {
-                return
-            }
-
             $testDir  = "${TestDrive}/TestDir"
             $testFile = "${testDir}/TestFile"
 
@@ -117,15 +101,10 @@ Describe "UnixFileSystem additions" -Tag "CI" {
                 @{ Expected = $expectedDirSize; Observed = $Dir.UnixStat.Size; Title = "DirSize" }
         }
 
-        AfterAll {
-            $PSDefaultParameterValues.Remove('It:Skip')
-        }
-
-        It "Should have correct values in UnixStat property for '<Title>'" -TestCases $testCases {
-            param ( $Title, $expected, $observed )
-
-            $observed | Should -Be $expected
-
+        It "Should have correct values in UnixStat property" {
+            foreach ($tc in $testCases) {
+                $tc.Observed | Should -Be $tc.Expected -Because $tc.Title
+            }
         }
     }
 

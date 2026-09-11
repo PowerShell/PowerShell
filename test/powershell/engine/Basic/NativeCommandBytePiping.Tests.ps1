@@ -5,7 +5,11 @@
 # Functional tests to verify that output from native executables is not encoded
 # and decoded when piping to another native executable.
 
-Describe 'Native command byte piping tests' -Tags 'CI' {
+BeforeDiscovery {
+    $skipTestExe = -not (Get-Command testexe -ErrorAction SilentlyContinue)
+}
+
+Describe 'Native command byte piping tests' -Tags 'CI' -Skip:$skipTestExe {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 

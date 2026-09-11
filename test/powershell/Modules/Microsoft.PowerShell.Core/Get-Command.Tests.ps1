@@ -244,7 +244,7 @@ Describe "Get-Command Tests" -Tags "CI" {
             Should -Throw -ErrorId "GetCommandMetadataError,Microsoft.PowerShell.Commands.GetCommandCommand"
     }
 
-    It "verify if get the proper dynamic parameter type skipped by issue #1430" -Pending {
+    It "verify if get the proper dynamic parameter type skipped by issue #1430" -Skip {
         $results = Get-Command TestGetCommand-DynamicParametersDCR -TestToRun returngenericparameter -ParameterType System.Diagnostics.Process
         VerifyParameterType -cmdlet $results[0] -parameterName "TypedValue" -parameterType System.Diagnostics.Process
     }
@@ -257,7 +257,7 @@ Describe "Get-Command Tests" -Tags "CI" {
     }
 
     #unsupported parameter: -synop
-    It "[Unsupported]It works with Single Cmdlet Using Verb&Noun ParameterSet With Synopsis" -Pending {
+    It "[Unsupported]It works with Single Cmdlet Using Verb&Noun ParameterSet With Synopsis" -Skip {
         $paramName = "Encoding"
         $results = Get-Command -Verb get -Noun content -encoding UTF8 -Synop
         VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $paramName

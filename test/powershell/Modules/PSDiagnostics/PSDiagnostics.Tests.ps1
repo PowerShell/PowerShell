@@ -1,22 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
+Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" -Skip:(-not $IsWindows) {
     BeforeAll {
         $LogType = 'Analytic'
-        $OriginalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (-not $IsWindows) {
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-        else{
-            $LogSettingBak = Get-LogProperties -Name PowerShellCore/$LogType
-        }
+        $LogSettingBak = Get-LogProperties -Name PowerShellCore/$LogType
     }
     AfterAll {
-        if ($IsWindows) {
-            Set-LogProperties -LogDetails $LogSettingBak -Force
-        }
-        $Global:PSDefaultParameterValues = $OriginalDefaultParameterValues
+        Set-LogProperties -LogDetails $LogSettingBak -Force
     }
 
     Context "Test for Enable-PSTrace and Disable-PSTrace cmdlets." {
@@ -87,7 +78,7 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
         }
 
         It "Should throw exception for invalid LogName." {
-            {Set-LogProperties -LogDetails 'Foo' -Force } | Should -Throw -ErrorId 'ParameterArgumentTransformationError'
+            {Set-LogProperties -LogDetails 'Foo' -Force } | Should -Throw -ErrorId 'ParameterArgumentTransformationError,*'
         }
     }
 }

@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 Describe "ProviderIntrinsics Tests" -tags "CI" {
     BeforeAll {
-        Setup -d TestDir
+        New-Item -Path (Join-Path $TestDrive 'TestDir') -ItemType Directory -Force > $null
     }
     It 'If a childitem exists, HasChild method returns $true' {
         $ExecutionContext.InvokeProvider.ChildItem.HasChild("$TESTDRIVE") | Should -BeTrue

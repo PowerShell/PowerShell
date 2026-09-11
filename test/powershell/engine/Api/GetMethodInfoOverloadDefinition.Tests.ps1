@@ -3,36 +3,7 @@
 
 Describe "Method definition Tests" -tags "CI" {
 
-    BeforeAll {
-        Add-Type -NameSpace OverloadDefinitionTest -Name TestClass -MemberDefinition @"
-public static void Bar() { }
-public static void Bar(int param) { }
-public static void Bar(int param1, string param2) { }
-public static string Bar(int? param1, string param2) { return param2; }
-"@
-
-        Add-Type -NameSpace MethodDefinitionTest -Name TestClass -MemberDefinition @"
-public static void TestMethod_Ref(ref int refParam) { }
-
-public static void TestMethod_InOut(in int inParam, out string outParam) { outParam = null; }
-
-public static void TestMethod_Params(params int[] intParams) { }
-
-public static void TestMethod_Generic1<T>(T param) { }
-
-public static void TestMethod_Generic2<T, U>(T param1, U param2) { }
-
-public static void TestMethod_OptInt(int optParam = int.MinValue) { }
-
-public static void TestMethod_OptString(string optParam = "test string") { }
-
-public static void TestMethod_OptStruct(DateTime optParam = new DateTime()) { }
-
-public static void TestMethod_OptEnum(UriKind optParam = UriKind.Relative) { }
-
-public static void TestMethod_OptGeneric<T>(T param = default) { }
-"@
-
+    BeforeDiscovery {
         $testCases = @(
             @{
                 Description = "parameter passed by reference";
@@ -85,6 +56,37 @@ public static void TestMethod_OptGeneric<T>(T param = default) { }
                 ExpectedDefinition = "static void TestMethod_OptGeneric[T](T param = default)"
             }
         )
+    }
+
+    BeforeAll {
+        Add-Type -NameSpace OverloadDefinitionTest -Name TestClass -MemberDefinition @"
+public static void Bar() { }
+public static void Bar(int param) { }
+public static void Bar(int param1, string param2) { }
+public static string Bar(int? param1, string param2) { return param2; }
+"@
+
+        Add-Type -NameSpace MethodDefinitionTest -Name TestClass -MemberDefinition @"
+public static void TestMethod_Ref(ref int refParam) { }
+
+public static void TestMethod_InOut(in int inParam, out string outParam) { outParam = null; }
+
+public static void TestMethod_Params(params int[] intParams) { }
+
+public static void TestMethod_Generic1<T>(T param) { }
+
+public static void TestMethod_Generic2<T, U>(T param1, U param2) { }
+
+public static void TestMethod_OptInt(int optParam = int.MinValue) { }
+
+public static void TestMethod_OptString(string optParam = "test string") { }
+
+public static void TestMethod_OptStruct(DateTime optParam = new DateTime()) { }
+
+public static void TestMethod_OptEnum(UriKind optParam = UriKind.Relative) { }
+
+public static void TestMethod_OptGeneric<T>(T param = default) { }
+"@
     }
 
     Context "Verify method definitions" {

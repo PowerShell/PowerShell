@@ -13,8 +13,7 @@ Describe "Breakpoints set on custom FileSystem provider files should work" -Tags
     #     </Summary>
     #  </Test>
     #
-    try
-    {
+    BeforeAll {
         #
         # Create a simple script
         #
@@ -35,19 +34,19 @@ Describe "Breakpoints set on custom FileSystem provider files should work" -Tags
         Push-Location tmpTestA1:\
         $breakpoint = Set-PSBreakpoint .\$scriptName 1 -Action { continue }
         & .\$scriptName
-
-	    It "Breakpoint hit count" {
-		    $breakpoint.HitCount | Should -Be 1
-	    }
     }
-    finally
-    {
+
+    AfterAll {
         Pop-Location
 
         if ($null -ne $breakpoint) { $breakpoint | Remove-PSBreakpoint }
         if (Test-Path $scriptFullName) { Remove-Item $scriptFullName -Force }
         if ($null -ne (Get-PSDrive -Name tmpTestA1 2> $null)) { Remove-PSDrive -Name tmpTestA1 -Force }
     }
+
+	    It "Breakpoint hit count" {
+		    $breakpoint.HitCount | Should -Be 1
+	    }
 }
 
 Describe "Tests line breakpoints on dot-sourced files" -Tags "CI" {
@@ -57,8 +56,7 @@ Describe "Tests line breakpoints on dot-sourced files" -Tags "CI" {
     #    <Summary>Unit tests for line breakpoints on dot-sourced files...</Summary>
     #  </Test>
 
-    try
-    {
+    BeforeAll {
         #
         # Create the repro script
         #
@@ -92,16 +90,16 @@ Describe "Tests line breakpoints on dot-sourced files" -Tags "CI" {
         $breakpoint = Set-PSBreakpoint $scriptFile 17 -Action { continue; }
 
         & $scriptFile
+    }
+
+    AfterAll {
+        if ($null -ne $breakpoint) { $breakpoint | Remove-PSBreakpoint }
+        if (Test-Path $scriptFile) { Remove-Item -Path $scriptFile -Force }
+    }
 
 	    It "Breakpoint on recursive function hit count" {
 		    $breakpoint.HitCount | Should -BeGreaterThan 0
 	    }
-    }
-    finally
-    {
-        if ($null -ne $breakpoint) { $breakpoint | Remove-PSBreakpoint }
-        if (Test-Path $scriptFile) { Remove-Item -Path $scriptFile -Force }
-    }
 }
 
 Describe "Function calls clear debugger cache too early" -Tags "CI" {
@@ -116,8 +114,7 @@ Describe "Function calls clear debugger cache too early" -Tags "CI" {
     #     </Summary>
     #  </Test>
     #
-    try
-    {
+    BeforeAll {
         #
         # Create the repro script
         #
@@ -141,6 +138,13 @@ Describe "Function calls clear debugger cache too early" -Tags "CI" {
         $breakpoint2 = Set-PSBreakpoint $scriptFile 9 -Action { continue; }
 
         & $scriptFile
+    }
+
+    AfterAll {
+        if ($null -ne $breakpoint1) { $breakpoint1 | Remove-PSBreakpoint }
+        if ($null -ne $breakpoint2) { $breakpoint2 | Remove-PSBreakpoint }
+        if (Test-Path $scriptFile) { Remove-Item $scriptFile -Force }
+    }
 
 	    It "Breakpoint before function call count" {
 		    $breakpoint1.HitCount | Should -Be 1
@@ -149,13 +153,6 @@ Describe "Function calls clear debugger cache too early" -Tags "CI" {
 	    It "Breakpoint after function call count" {
 		    $breakpoint2.HitCount | Should -Be 1
 	    }
-    }
-    finally
-    {
-        if ($null -ne $breakpoint1) { $breakpoint1 | Remove-PSBreakpoint }
-        if ($null -ne $breakpoint2) { $breakpoint2 | Remove-PSBreakpoint }
-        if (Test-Path $scriptFile) { Remove-Item $scriptFile -Force }
-    }
 }
 
 Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
@@ -170,10 +167,9 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
     #     </Summary>
     #  </Test>
 
-    $script = Join-Path ${TestDrive} ExposeBug588887.DRT.tmp.ps1
+    BeforeAll {
+        $script = Join-Path ${TestDrive} ExposeBug588887.DRT.tmp.ps1
 
-    try
-    {
         Set-Content $script @'
         1..3 |
         ForEach-Object { $_ } | sort-object |
@@ -183,6 +179,15 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
         $breakpoints = Set-PSBreakpoint $script 1,2,3 -Action { continue }
 
         $null = & $script
+    }
+
+    AfterAll {
+        if ($null -ne $breakpoints) { $breakpoints | Remove-PSBreakpoint }
+        if (Test-Path $script)
+        {
+            Remove-Item $script -Force
+        }
+    }
 
 	    It "Breakpoint on line 1 hit count" {
 		    $breakpoints[0].HitCount | Should -Be 1
@@ -195,15 +200,6 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
 	    It "Breakpoint on line 3 hit count" {
 		    $breakpoints[2].HitCount | Should -Be 1
 	    }
-    }
-    finally
-    {
-        if ($null -ne $breakpoints) { $breakpoints | Remove-PSBreakpoint }
-        if (Test-Path $script)
-        {
-            Remove-Item $script -Force
-        }
-    }
 
     Context "COM TESTS" {
         # DRT for 133807 SetBreakpointWithShortPath
@@ -249,136 +245,66 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
     #  </Test>
     param($path = $null)
 
-    if ($null -eq $path)
-    {
-        $path = Split-Path $MyInvocation.InvocationName
-    }
-
-    #
-    # Verifies that the given command returns the expected set of breakpoints
-    #
-    function Verify([ScriptBlock] $command, [System.Management.Automation.Breakpoint[]] $expected)
-    {
-        $actual = @(& $command)
-
-	    It "Script breakpoint count '${command}'|${expected}" {
-		    $actual.Count | Should -Be $expected.Count
-	    }
-
-        foreach ($breakpoint in $actual)
+    BeforeAll {
+        if ($null -eq $path)
         {
-	        It "Expected script breakpoints '${command}|${breakpoint}'" {
-		        ($expected -contains $breakpoint) | Should -BeTrue
-	        }
+            $path = Split-Path $MyInvocation.InvocationName
         }
+
+        #
+        # Verifies that the given command returns the expected set of breakpoints
+        #
+        # P5 incompatibility: P4 had It blocks inside Verify (59 dynamic tests from 16 calls).
+        # P5 cannot create It blocks at runtime from dynamic data — collapsed to soft assertions.
+        function Verify([ScriptBlock] $command, [System.Management.Automation.Breakpoint[]] $expected)
+        {
+            $actual = @(& $command)
+            $actual.Count | Should -Be $expected.Count -Because "breakpoint count for '$command'"
+            foreach ($breakpoint in $actual)
+            {
+                ($expected -contains $breakpoint) | Should -BeTrue -Because "expected breakpoint '$breakpoint' from '$command'"
+            }
+        }
+
+        #
+        # Verifies that the command fails with the given exception
+        #
+        function VerifyException([ScriptBlock] $command, [string] $exception)
+        {
+            $e = { & $command } | Should -Throw -PassThru
+            $e.Exception.GetType().Name | Should -Be $exception
+        }
+
+            #
+            # Ensure there are no breakpoints at start of test
+            #
+            Get-PSBreakpoint | Remove-PSBreakpoint
+
+            #
+            # Create a couple of scripts
+            #
+            $scriptFile1 = [io.path]::Combine([io.path]::GetTempPath(), "DebuggerScriptTests-Get-PsBreakpoint1.ps1")
+            $scriptFile2 = [io.path]::Combine([io.path]::GetTempPath(), "DebuggerScriptTests-Get-PsBreakpoint2.ps1")
+
+            Write-Output '' > $scriptFile1
+            Write-Output '' > $scriptFile2
+
+            #
+            # Set several breakpoints of different types
+            #
+            $line1 = Set-PSBreakpoint $scriptFile1 1
+            $line2 = Set-PSBreakpoint $scriptFile2 2
+
+            $cmd1 = Set-PSBreakpoint -c command1 -s $scriptFile1
+            $cmd2 = Set-PSBreakpoint -c command2 -s $scriptFile2
+            $cmd3 = Set-PSBreakpoint -c command3
+
+            $var1 = Set-PSBreakpoint -v variable1 -s $scriptFile1
+            $var2 = Set-PSBreakpoint -v variable2 -s $scriptFile2
+            $var3 = Set-PSBreakpoint -v variable3
     }
 
-    #
-    # Verifies that the command fails with the given exception
-    #
-    function VerifyException([ScriptBlock] $command, [string] $exception)
-    {
-        $e = { & $command } | Should -Throw -PassThru
-        $e.Exception.GetType().Name | Should -Be $exception
-    }
-
-    #
-    # Tests
-    #
-    try
-    {
-        #
-        # Ensure there are no breakpoints at start of test
-        #
-        Get-PSBreakpoint | Remove-PSBreakpoint
-
-        #
-        # Create a couple of scripts
-        #
-        $scriptFile1 = [io.path]::Combine([io.path]::GetTempPath(), "DebuggerScriptTests-Get-PsBreakpoint1.ps1")
-        $scriptFile2 = [io.path]::Combine([io.path]::GetTempPath(), "DebuggerScriptTests-Get-PsBreakpoint2.ps1")
-
-        Write-Output '' > $scriptFile1
-        Write-Output '' > $scriptFile2
-
-        #
-        # Set several breakpoints of different types
-        #
-        $line1 = Set-PSBreakpoint $scriptFile1 1
-        $line2 = Set-PSBreakpoint $scriptFile2 2
-
-        $cmd1 = Set-PSBreakpoint -c command1 -s $scriptFile1
-        $cmd2 = Set-PSBreakpoint -c command2 -s $scriptFile2
-        $cmd3 = Set-PSBreakpoint -c command3
-
-        $var1 = Set-PSBreakpoint -v variable1 -s $scriptFile1
-        $var2 = Set-PSBreakpoint -v variable2 -s $scriptFile2
-        $var3 = Set-PSBreakpoint -v variable3
-
-        #
-        # The default parameter set must return all breakpoints
-        #
-        Verify { Get-PSBreakpoint } $line1,$line2,$cmd1,$cmd2,$cmd3,$var1,$var2,$var3
-
-        #
-        # Query by ID
-        #
-        Verify { Get-PSBreakpoint -Id $line1.ID,$cmd1.ID,$var1.ID } $line1,$cmd1,$var1 # -id
-        Verify { Get-PSBreakpoint $line2.ID,$cmd2.ID,$var2.ID }     $line2,$cmd2,$var2 # positional
-        Verify { $cmd3.ID,$var3.ID | Get-PSBreakpoint }             $cmd3,$var3        # value from pipeline
-
-        VerifyException { Get-PSBreakpoint -Id $null } "ParameterBindingValidationException"
-        VerifyException { Get-PSBreakpoint -Id $line1.ID -Script $scriptFile1 } "ParameterBindingException"
-
-        #
-        # Query by Script
-        #
-        Verify { Get-PSBreakpoint -Script $scriptFile1 } $line1,$cmd1,$var1 # -script
-        Verify { Get-PSBreakpoint $scriptFile2 }         $line2,$cmd2,$var2 # positional
-        Verify { $scriptFile2 | Get-PSBreakpoint }       $line2,$cmd2,$var2 # value from pipeline
-
-        VerifyException { Get-PSBreakpoint -Script $null } "ParameterBindingValidationException"
-        VerifyException { Get-PSBreakpoint -Script $scriptFile1,$null } "ParameterBindingValidationException"
-
-        # Verify that relative paths are handled correctly
-        $directoryName = [System.IO.Path]::GetDirectoryName($scriptFile1)
-        $fileName = [System.IO.Path]::GetFileName($scriptFile1)
-
-        Push-Location $directoryName
-        Verify { Get-PSBreakpoint -Script $fileName } $line1,$cmd1,$var1
-        Pop-Location
-
-        #
-        # Query by Type
-        #
-        $commandType = [Microsoft.PowerShell.Commands.BreakpointType]"command"
-        $variableType = [Microsoft.PowerShell.Commands.BreakpointType]"variable"
-
-        Verify { Get-PSBreakpoint -Type "line" }                      $line1,$line2     # -type
-        Verify { Get-PSBreakpoint $commandType }                      $cmd1,$cmd2,$cmd3 # positional
-        Verify { $variableType | Get-PSBreakpoint }                   $var1,$var2,$var3 # value from pipeline
-        Verify { Get-PSBreakpoint -Type "line" -Script $scriptFile1 } @($line1)         # -script parameter
-
-        VerifyException { Get-PSBreakpoint -Type $null } "ParameterBindingValidationException"
-
-        #
-        # Query by Command
-        #
-        Verify { Get-PSBreakpoint -Command "command1","command2" }                       $cmd1,$cmd2 # -command
-        Verify { Get-PSBreakpoint -Command "command1","command2" -Script $scriptFile1 }  @($cmd1)    # -script parameter
-
-        VerifyException { Get-PSBreakpoint -Command $null } "ParameterBindingValidationException"
-
-        #
-        # Query by Variable
-        #
-        Verify { Get-PSBreakpoint -Variable "variable1","variable2" }                       $var1,$var2 # -command
-        Verify { Get-PSBreakpoint -Variable "variable1","variable2" -Script $scriptFile1 }  @($var1)    # -script parameter
-
-        VerifyException { Get-PSBreakpoint -Variable $null } "ParameterBindingValidationException"
-    }
-    finally
-    {
+    AfterAll {
         if ($null -ne $line1) { $line1 | Remove-PSBreakpoint }
         if ($null -ne $line2) { $line2 | Remove-PSBreakpoint }
         if ($null -ne $cmd1) { $cmd1 | Remove-PSBreakpoint }
@@ -391,6 +317,126 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
         if (Test-Path $scriptFile1) { Remove-Item $scriptFile1 -Force }
         if (Test-Path $scriptFile2) { Remove-Item $scriptFile2 -Force }
     }
+
+    #
+    # The default parameter set must return all breakpoints
+    #
+    It "Get-PSBreakpoint returns all breakpoints" {
+        Verify { Get-PSBreakpoint } $line1,$line2,$cmd1,$cmd2,$cmd3,$var1,$var2,$var3
+    }
+
+    #
+    # Query by ID
+    #
+    It "Get-PSBreakpoint -Id returns specified breakpoints" {
+        Verify { Get-PSBreakpoint -Id $line1.ID,$cmd1.ID,$var1.ID } $line1,$cmd1,$var1
+    }
+
+    It "Get-PSBreakpoint with positional Id returns specified breakpoints" {
+        Verify { Get-PSBreakpoint $line2.ID,$cmd2.ID,$var2.ID } $line2,$cmd2,$var2
+    }
+
+    It "Get-PSBreakpoint with pipeline Id returns specified breakpoints" {
+        Verify { $cmd3.ID,$var3.ID | Get-PSBreakpoint } $cmd3,$var3
+    }
+
+    It "Get-PSBreakpoint -Id with null throws ParameterBindingValidationException" {
+        VerifyException { Get-PSBreakpoint -Id $null } "ParameterBindingValidationException"
+    }
+
+    It "Get-PSBreakpoint -Id with -Script throws ParameterBindingException" {
+        VerifyException { Get-PSBreakpoint -Id $line1.ID -Script $scriptFile1 } "ParameterBindingException"
+    }
+
+    #
+    # Query by Script
+    #
+    It "Get-PSBreakpoint -Script returns breakpoints for specified script" {
+        Verify { Get-PSBreakpoint -Script $scriptFile1 } $line1,$cmd1,$var1
+    }
+
+    It "Get-PSBreakpoint with positional script returns breakpoints" {
+        Verify { Get-PSBreakpoint $scriptFile2 } $line2,$cmd2,$var2
+    }
+
+    It "Get-PSBreakpoint with pipeline script returns breakpoints" {
+        Verify { $scriptFile2 | Get-PSBreakpoint } $line2,$cmd2,$var2
+    }
+
+    It "Get-PSBreakpoint -Script with null throws ParameterBindingValidationException" {
+        VerifyException { Get-PSBreakpoint -Script $null } "ParameterBindingValidationException"
+    }
+
+    It "Get-PSBreakpoint -Script with null in array throws ParameterBindingValidationException" {
+        VerifyException { Get-PSBreakpoint -Script $scriptFile1,$null } "ParameterBindingValidationException"
+    }
+
+    # Verify that relative paths are handled correctly
+    It "Get-PSBreakpoint -Script with relative path returns correct breakpoints" {
+        $directoryName = [System.IO.Path]::GetDirectoryName($scriptFile1)
+        $fileName = [System.IO.Path]::GetFileName($scriptFile1)
+        Push-Location $directoryName
+        try {
+            Verify { Get-PSBreakpoint -Script $fileName } $line1,$cmd1,$var1
+        } finally {
+            Pop-Location
+        }
+    }
+
+    #
+    # Query by Type
+    #
+    It "Get-PSBreakpoint -Type line returns line breakpoints" {
+        Verify { Get-PSBreakpoint -Type "line" } $line1,$line2
+    }
+
+    It "Get-PSBreakpoint with positional command type returns command breakpoints" {
+        $commandType = [Microsoft.PowerShell.Commands.BreakpointType]"command"
+        Verify { Get-PSBreakpoint $commandType } $cmd1,$cmd2,$cmd3
+    }
+
+    It "Get-PSBreakpoint with pipeline variable type returns variable breakpoints" {
+        $variableType = [Microsoft.PowerShell.Commands.BreakpointType]"variable"
+        Verify { $variableType | Get-PSBreakpoint } $var1,$var2,$var3
+    }
+
+    It "Get-PSBreakpoint -Type line -Script returns filtered breakpoints" {
+        Verify { Get-PSBreakpoint -Type "line" -Script $scriptFile1 } @($line1)
+    }
+
+    It "Get-PSBreakpoint -Type with null throws ParameterBindingValidationException" {
+        VerifyException { Get-PSBreakpoint -Type $null } "ParameterBindingValidationException"
+    }
+
+    #
+    # Query by Command
+    #
+    It "Get-PSBreakpoint -Command returns command breakpoints" {
+        Verify { Get-PSBreakpoint -Command "command1","command2" } $cmd1,$cmd2
+    }
+
+    It "Get-PSBreakpoint -Command with -Script returns filtered breakpoints" {
+        Verify { Get-PSBreakpoint -Command "command1","command2" -Script $scriptFile1 } @($cmd1)
+    }
+
+    It "Get-PSBreakpoint -Command with null throws ParameterBindingValidationException" {
+        VerifyException { Get-PSBreakpoint -Command $null } "ParameterBindingValidationException"
+    }
+
+    #
+    # Query by Variable
+    #
+    It "Get-PSBreakpoint -Variable returns variable breakpoints" {
+        Verify { Get-PSBreakpoint -Variable "variable1","variable2" } $var1,$var2
+    }
+
+    It "Get-PSBreakpoint -Variable with -Script returns filtered breakpoints" {
+        Verify { Get-PSBreakpoint -Variable "variable1","variable2" -Script $scriptFile1 } @($var1)
+    }
+
+    It "Get-PSBreakpoint -Variable with null throws ParameterBindingValidationException" {
+        VerifyException { Get-PSBreakpoint -Variable $null } "ParameterBindingValidationException"
+    }
 }
 
 Describe "Unit tests for line breakpoints on dot-sourced files" -Tags "CI" {
@@ -402,13 +448,12 @@ Describe "Unit tests for line breakpoints on dot-sourced files" -Tags "CI" {
     #
     param($path = $null)
 
-    if ($null -eq $path)
-    {
-        $path = Split-Path $MyInvocation.InvocationName
-    }
+    BeforeAll {
+        if ($null -eq $path)
+        {
+            $path = Split-Path $MyInvocation.InvocationName
+        }
 
-    try
-    {
         #
         # Create a test script
         #
@@ -458,6 +503,14 @@ Describe "Unit tests for line breakpoints on dot-sourced files" -Tags "CI" {
 
         Function1
         Get-TestCmdlet
+    }
+
+    AfterAll {
+        if ($null -ne $breakpoint1) { $breakpoint1 | Remove-PSBreakpoint }
+        if ($null -ne $breakpoint2) { $breakpoint2 | Remove-PSBreakpoint }
+        if ($null -ne $breakpoint3) { $breakpoint3 | Remove-PSBreakpoint }
+        if (Test-Path $scriptFile) { Remove-Item $scriptFile -Force }
+    }
 
 	    It "Breakpoint on function hit count" {
 		    $breakpoint1.HitCount | Should -Be 1
@@ -470,14 +523,6 @@ Describe "Unit tests for line breakpoints on dot-sourced files" -Tags "CI" {
 	    It "Breakpoint on cmdlet hit count" {
 		    $breakpoint3.HitCount | Should -Be 1
 	    }
-    }
-    finally
-    {
-        if ($null -ne $breakpoint1) { $breakpoint1 | Remove-PSBreakpoint }
-        if ($null -ne $breakpoint2) { $breakpoint2 | Remove-PSBreakpoint }
-        if ($null -ne $breakpoint3) { $breakpoint3 | Remove-PSBreakpoint }
-        if (Test-Path $scriptFile) { Remove-Item $scriptFile -Force }
-    }
 }
 
 Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
@@ -487,9 +532,9 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
     #    <Summary>Unit tests for line breakpoints on modules...</Summary>
     #  </Test>
     #
-    $oldModulePath = $env:PSModulePath
-    try
-    {
+    BeforeAll {
+        $oldModulePath = $env:PSModulePath
+
         #
         # Create a test module
         #
@@ -555,6 +600,17 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
         ModuleFunction1
 
         Get-ModuleCmdlet
+    }
+
+    AfterAll {
+        $env:PSModulePath = $oldModulePath
+        if ($null -ne $breakpoint1) { Remove-PSBreakpoint $breakpoint1 }
+        if ($null -ne $breakpoint2) { Remove-PSBreakpoint $breakpoint2 }
+        if ($null -ne $breakpoint3) { Remove-PSBreakpoint $breakpoint3 }
+        if ($null -ne $breakpoint4) { Remove-PSBreakpoint $breakpoint4 }
+        Get-Module $moduleName | Remove-Module
+        if (Test-Path $moduleDirectory) { Remove-Item $moduleDirectory -Recurse -Force -ErrorAction silentlycontinue }
+    }
 
 	    It "Breakpoint1 on module function hit count" {
 		    $breakpoint1.HitCount | Should -Be 1
@@ -571,17 +627,6 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
 	    It "Breakpoint4 on module cmdlet hit count" {
 		    $breakpoint4.HitCount | Should -Be 1
 	    }
-    }
-    finally
-    {
-        $env:PSModulePath = $oldModulePath
-        if ($null -ne $breakpoint1) { Remove-PSBreakpoint $breakpoint1 }
-        if ($null -ne $breakpoint2) { Remove-PSBreakpoint $breakpoint2 }
-        if ($null -ne $breakpoint3) { Remove-PSBreakpoint $breakpoint3 }
-        if ($null -ne $breakpoint4) { Remove-PSBreakpoint $breakpoint4 }
-        Get-Module $moduleName | Remove-Module
-        if (Test-Path $moduleDirectory) { Remove-Item $moduleDirectory -Recurse -Force -ErrorAction silentlycontinue }
-    }
 }
 
 Describe "Sometimes line breakpoints are ignored" -Tags "CI" {
@@ -597,12 +642,11 @@ Describe "Sometimes line breakpoints are ignored" -Tags "CI" {
     #
     #####################################################################################
 
-    $path = [io.path]::GetTempPath();
-    $tempFileName1 = Join-Path -Path $path -ChildPath "TDBG47488F.ps1"
-    $tempFileName2 = Join-Path -Path $path -ChildPath "TDBG88473F.ps1"
+    BeforeAll {
+        $path = [io.path]::GetTempPath();
+        $tempFileName1 = Join-Path -Path $path -ChildPath "TDBG47488F.ps1"
+        $tempFileName2 = Join-Path -Path $path -ChildPath "TDBG88473F.ps1"
 
-    try
-    {
         @'
         while ($count -lt 5)
         {
@@ -623,25 +667,25 @@ Describe "Sometimes line breakpoints are ignored" -Tags "CI" {
         $bp1 = Set-PSBreakpoint -Script $tempFileName1 -Line 3 -Action {continue}
         & $tempFileName1
 
-	    It "Breakpoint 1 hit count" {
-		    $bp1.HitCount | Should -Be 6
-	    }
-
         $bp2 = Set-PSBreakpoint -Script $tempFileName2 -Line 3 -Action {continue}
         & $tempFileName2
-
-	    It "Breakpoint 2 hit count" {
-		    $bp2.HitCount | Should -Be 6
-	    }
     }
-    finally
-    {
+
+    AfterAll {
         if ($null -ne $bp1) { Remove-PSBreakpoint $bp1 }
         if ($null -ne $bp2) { Remove-PSBreakpoint $bp2 }
 
         if (Test-Path -Path $tempFileName1) { Remove-Item $tempFileName1 -Force }
         if (Test-Path -Path $tempFileName2) { Remove-Item $tempFileName2 -Force }
     }
+
+	    It "Breakpoint 1 hit count" {
+		    $bp1.HitCount | Should -Be 6
+	    }
+
+	    It "Breakpoint 2 hit count" {
+		    $bp2.HitCount | Should -Be 6
+	    }
 }
 
 Describe 'Breakpoints use case-insensitive match for script paths' -Tags 'CI' {

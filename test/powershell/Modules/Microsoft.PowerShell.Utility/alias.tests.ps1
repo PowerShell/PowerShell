@@ -5,62 +5,45 @@ Describe "Alias tests" -Tags "CI" {
     BeforeAll {
         $testPath = Join-Path testdrive:\ ("testAlias\.test")
         New-Item -ItemType Directory -Path $testPath -Force | Out-Null
-
-        class TestData
-        {
-            [string] $testName
-            [string] $testFile
-            [string] $expectedError
-
-            TestData($name, $file, $errorId)
-            {
-                $this.testName = $name
-                $this.testFile = $file
-                $this.expectedError = $errorId
-            }
-        }
     }
 
     Context "Export-Alias literal path" {
         BeforeAll {
             $csvFile = Join-Path $testPath "alias.csv"
             $ps1File = Join-Path $testPath "alias.ps1"
-
-            $testCases = @()
-            $testCases += [TestData]::new("CSV", $csvFile, [NullString]::Value)
-            $testCases += [TestData]::new("PS1", $ps1File, [NullString]::Value)
-            $testCases += [TestData]::new("Empty string", "", "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ExportAliasCommand")
-            $testCases += [TestData]::new("Null", [NullString]::Value, "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ExportAliasCommand")
-            $testCases += [TestData]::new("Non filesystem provider", 'env:\alias.ps1', "ReadWriteFileNotFileSystemProvider,Microsoft.PowerShell.Commands.ExportAliasCommand")
         }
 
-        $testCases | ForEach-Object {
+        BeforeDiscovery {
+            $testCases = @(
+                @{ testName = "CSV"; testFile = "alias.csv"; expectedError = $null; useTestPath = $true }
+                @{ testName = "PS1"; testFile = "alias.ps1"; expectedError = $null; useTestPath = $true }
+                @{ testName = "Empty string"; testFile = ""; expectedError = "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ExportAliasCommand"; useTestPath = $false }
+                @{ testName = "Null"; testFile = $null; expectedError = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ExportAliasCommand"; useTestPath = $false }
+                @{ testName = "Non filesystem provider"; testFile = 'env:\alias.ps1'; expectedError = "ReadWriteFileNotFileSystemProvider,Microsoft.PowerShell.Commands.ExportAliasCommand"; useTestPath = $false }
+            )
+        }
 
-            It "for $($_.testName)" {
-
-                $test = $_
-                try
-                {
-                    Export-Alias -LiteralPath $test.testFile -ErrorAction SilentlyContinue
-                }
-                catch
-                {
-                    $exportAliasError = $_
-                }
-
-                if($null -eq $test.expectedError)
-                {
-                   Test-Path -LiteralPath $test.testFile | Should -BeTrue
-                }
-                else
-                {
-                    $exportAliasError.FullyqualifiedErrorId | Should -Be $test.expectedError
-                }
+        It "for <testName>" -TestCases $testCases {
+            param($testName, $testFile, $expectedError, $useTestPath)
+            $actualFile = if ($useTestPath) { Join-Path $testPath $testFile } else { $testFile }
+            try {
+                Export-Alias -LiteralPath $actualFile -ErrorAction SilentlyContinue
+            }
+            catch {
+                $exportAliasError = $_
             }
 
-            AfterEach {
-                Remove-Item -LiteralPath $test.testFile -Force -ErrorAction SilentlyContinue
+            if ($null -eq $expectedError) {
+                Test-Path -LiteralPath $actualFile | Should -BeTrue
             }
+            else {
+                $exportAliasError.FullyqualifiedErrorId | Should -Be $expectedError
+            }
+        }
+
+        AfterEach {
+            Remove-Item -LiteralPath (Join-Path $testPath "alias.csv") -Force -ErrorAction SilentlyContinue
+            Remove-Item -LiteralPath (Join-Path $testPath "alias.ps1") -Force -ErrorAction SilentlyContinue
         }
 
         It "when file exists with NoClobber" {
@@ -92,23 +75,17 @@ Describe "Alias tests" -Tags "CI" {
 
     Context "Import-Alias literal path" {
 
-        BeforeAll {
-            $csvFile = Join-Path $testPath "alias.csv"
-            $ps1File = Join-Path $testPath "alias.ps1"
-
-            $testCases = @()
-            $testCases += [TestData]::new("Empty string", "", "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ImportAliasCommand")
-            $testCases += [TestData]::new("Null", [NullString]::Value, "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ImportAliasCommand")
-            $testCases += [TestData]::new("Non filesystem provider", 'env:\alias.ps1', "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand")
+        BeforeDiscovery {
+            $testCases = @(
+                @{ testName = "Empty string"; testFile = ""; expectedError = "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ImportAliasCommand" }
+                @{ testName = "Null"; testFile = $null; expectedError = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ImportAliasCommand" }
+                @{ testName = "Non filesystem provider"; testFile = 'env:\alias.ps1'; expectedError = "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand" }
+            )
         }
 
-        $testCases | ForEach-Object {
-
-            It "for $($_.testName)" {
-                $test = $_
-
-                { Import-Alias -LiteralPath $test.testFile -ErrorAction SilentlyContinue } | Should -Throw -ErrorId $test.expectedError
-            }
+        It "for <testName>" -TestCases $testCases {
+            param($testName, $testFile, $expectedError)
+            { Import-Alias -LiteralPath $testFile -ErrorAction SilentlyContinue } | Should -Throw -ErrorId $expectedError
         }
 
         It "can be done from a CSV file" {

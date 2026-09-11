@@ -27,6 +27,12 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
 
     Context 'Basic tests' {
 
+        $invalidPathTestCases = @(
+            @{ path = "This is an invalid path"; case = "invalid path"; errorId = "DirectoryNotFoundException,Microsoft.PowerShell.Commands.StartJobCommand"}
+            @{ path = ""; case = "empty string"; errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand"}
+            @{ path = " "; case = "whitespace string (single space)"; errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand"}
+        )
+
         BeforeAll {
             $invalidPathTestCases = @(
                 @{ path = "This is an invalid path"; case = "invalid path"; errorId = "DirectoryNotFoundException,Microsoft.PowerShell.Commands.StartJobCommand"}
@@ -141,14 +147,22 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
 
     Context 'Wait-Job tests' {
 
+        $waitJobTestCases = @(
+            @{ property = '-Name' }
+            @{ property = '-Id' }
+            @{ property = '-Job' }
+            @{ property = '-InstanceId' }
+            @{ property = '-State' }
+        )
+
         BeforeAll {
-            $waitJobTestCases = @(
-                @{ parameters = @{ Name = $startedJob.Name } ; property  = '-Name'},
-                @{ parameters = @{ Id = $startedJob.Id } ; property  = '-Id'},
-                @{ parameters = @{ Job = $startedJob } ; property  = '-Job'},
-                @{ parameters = @{ InstanceId = $startedJob.InstanceId } ; property  = '-InstanceId'},
-                @{ parameters = @{ State = $startedJob.State } ; property  = '-State'}
-            )
+            $waitJobParamsMap = @{
+                '-Name'       = @{ Name = $startedJob.Name }
+                '-Id'         = @{ Id = $startedJob.Id }
+                '-Job'        = @{ Job = $startedJob }
+                '-InstanceId' = @{ InstanceId = $startedJob.InstanceId }
+                '-State'      = @{ State = $startedJob.State }
+            }
         }
 
         AfterEach {
@@ -156,7 +170,8 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
         }
 
         It 'Can wait for jobs to complete using <property>' -TestCases $waitJobTestCases {
-            param($parameters)
+            param($property)
+            $parameters = $waitJobParamsMap[$property]
             $job = Wait-Job @parameters
             ValidateJobInfo -job $job -state 'Completed' -hasMoreData $true -command ' 1 + 1 '
         }
@@ -244,19 +259,37 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
     }
 
     Context 'Get-Job tests' {
-        BeforeAll {
-            $getJobTestCases = @(
-                @{ parameters = @{ Name = $startedJob.Name } ; property = 'Name'},
-                @{ parameters = @{ Id = $startedJob.Id } ; property = 'Id'},
-                @{ parameters = @{ InstanceId = $startedJob.InstanceId } ; property = 'InstanceId'},
-                @{ parameters = @{ State = $startedJob.State } ; property = 'State'}
-            )
+        $getJobTestCases = @(
+            @{ property = 'Name' }
+            @{ property = 'Id' }
+            @{ property = 'InstanceId' }
+            @{ property = 'State' }
+        )
 
-            $getJobSwitches = @(
-                @{ parameters = @{ Before = $timeAfterStartedJob }; property = '-Before'},
-                @{ parameters = @{ After = $timeBeforeStartedJob }; property = '-After'},
-                @{ parameters = @{ HasMoreData = $true }; property = '-HasMoreData'}
-            )
+        $getJobSwitches = @(
+            @{ property = '-Before' }
+            @{ property = '-After' }
+            @{ property = '-HasMoreData' }
+        )
+
+        $getJobChildJobs = @(
+            @{ parameters = @{ IncludeChildJob = $true }; property = '-IncludeChildJob'},
+            @{ parameters = @{ ChildJobState = 'Completed' }; property = '-ChildJobState'}
+        )
+
+        BeforeAll {
+            $getJobTestParamsMap = @{
+                'Name'       = @{ Name = $startedJob.Name }
+                'Id'         = @{ Id = $startedJob.Id }
+                'InstanceId' = @{ InstanceId = $startedJob.InstanceId }
+                'State'      = @{ State = $startedJob.State }
+            }
+
+            $getJobSwitchParamsMap = @{
+                '-Before'      = @{ Before = $timeAfterStartedJob }
+                '-After'       = @{ After = $timeBeforeStartedJob }
+                '-HasMoreData' = @{ HasMoreData = $true }
+            }
 
             $getJobChildJobs = @(
                 @{ parameters = @{ IncludeChildJob = $true }; property = '-IncludeChildJob'},
@@ -269,13 +302,15 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
         }
 
         It 'Can Get-Job with <property>' -TestCases $getJobTestCases {
-            param($parameters)
+            param($property)
+            $parameters = $getJobTestParamsMap[$property]
             $job = Get-Job @parameters
             ValidateJobInfo -job $job -state 'Completed' -hasMoreData $true -command ' 1 + 1 '
         }
 
         It 'Can Get-Job with <property>' -TestCases $getJobSwitches {
-            param($parameters)
+            param($property)
+            $parameters = $getJobSwitchParamsMap[$property]
             $job = Get-Job @parameters
             ValidateJobInfo -job $job -state 'Completed' -hasMoreData $true -Name 'StartedJob'
         }
@@ -293,6 +328,13 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
         # The test pattern used here is different from other tests since there is a scoping issue in Pester.
         # If BeforeEach is used then $removeJobTestCases does not bind when the It is called.
         # This implementation works around the problem by using a BeforeAll and creating a job inside the It.
+        $removeJobTestCases = @(
+            @{ property = 'Name'}
+            @{ property = 'Id'}
+            @{ property = 'InstanceId'}
+            @{ property = 'State'}
+        )
+
         BeforeAll {
             $removeJobTestCases = @(
                 @{ property = 'Name'}
@@ -315,6 +357,13 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
         # The test pattern used here is different from other tests since there is a scoping issue in Pester.
         # If BeforeEach is used then $stopJobTestCases does not bind when the It is called.
         # This implementation works around the problem by using a BeforeAll and creating a job inside the It.
+        $stopJobTestCases = @(
+            @{ property = 'Name'}
+            @{ property = 'Id'}
+            @{ property = 'InstanceId'}
+            @{ property = 'State'}
+        )
+
         BeforeAll {
             $stopJobTestCases = @(
                 @{ property = 'Name'}

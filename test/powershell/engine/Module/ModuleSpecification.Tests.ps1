@@ -56,7 +56,23 @@ $rangeOptionalConstraints = @{ MaximumVersion = "3.2.0"; Guid = $guid }
 
 Describe "ModuleSpecification objects and logic" -Tag "CI" {
 
-    BeforeAll {
+    BeforeDiscovery {
+        $guid = [guid]::NewGuid()
+
+        $modSpecRequired = @{
+            ModuleName = "ModSpecRequired"
+            RequiredVersion = "3.0.2"
+        }
+
+        $requiredOptionalConstraints = @{ Guid = $guid }
+
+        $modSpecRange = @{
+            ModuleName = "ModSpecRequired"
+            ModuleVersion = "3.0.1"
+        }
+
+        $rangeOptionalConstraints = @{ MaximumVersion = "3.2.0"; Guid = $guid }
+
         $testCases = [System.Collections.Generic.List[hashtable]]::new()
 
         foreach ($case in (PermuteHashtable -InitialTable $modSpecRequired -KeyValues $requiredOptionalConstraints))
@@ -76,34 +92,32 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
         }
 
         $testCases = $testCases.ToArray()
+
+        $differentFieldCases = @(
+            @{
+                TestName = "Guid"
+                ModSpec1 = @{ Guid = [guid]::NewGuid(); ModuleName = "TestModule"; ModuleVersion = "1.0" }
+                ModSpec2 = @{ Guid = [guid]::NewGuid(); ModuleName = "TestModule"; ModuleVersion = "1.0" }
+            },
+            @{
+                TestName = "RequiredVersion"
+                ModSpec1 = @{ ModuleName = "Module"; RequiredVersion = "3.0" }
+                ModSpec2 = @{ ModuleName = "Module"; RequiredVersion = "3.1" }
+            },
+            @{
+                TestName = "Version/MaxVersion-present"
+                ModSpec1 = @{ ModuleName = "ThirdModule"; ModuleVersion = "2.1" }
+                ModSpec2 = @{ ModuleName = "ThirdModule"; MaximumVersion = "2.1" }
+            },
+            @{
+                TestName = "RequiredVersion/Version-present"
+                ModSpec1 = @{ ModuleName = "FourthModule"; RequiredVersion = "3.0" }
+                ModSpec2 = @{ ModuleName = "FourthModule"; ModuleVersion = "3.0" }
+            }
+        )
     }
 
     Context "ModuleSpecification construction and string parsing" {
-
-        BeforeAll {
-            $differentFieldCases = @(
-                @{
-                    TestName = "Guid"
-                    ModSpec1 = @{ Guid = [guid]::NewGuid(); ModuleName = "TestModule"; ModuleVersion = "1.0" }
-                    ModSpec2 = @{ Guid = [guid]::NewGuid(); ModuleName = "TestModule"; ModuleVersion = "1.0" }
-                },
-                @{
-                    TestName = "RequiredVersion"
-                    ModSpec1 = @{ ModuleName = "Module"; RequiredVersion = "3.0" }
-                    ModSpec2 = @{ ModuleName = "Module"; RequiredVersion = "3.1" }
-                },
-                @{
-                    TestName = "Version/MaxVersion-present"
-                    ModSpec1 = @{ ModuleName = "ThirdModule"; ModuleVersion = "2.1" }
-                    ModSpec2 = @{ ModuleName = "ThirdModule"; MaximumVersion = "2.1" }
-                },
-                @{
-                    TestName = "RequiredVersion/Version-present"
-                    ModSpec1 = @{ ModuleName = "FourthModule"; RequiredVersion = "3.0" }
-                    ModSpec2 = @{ ModuleName = "FourthModule"; ModuleVersion = "3.0" }
-                }
-            )
-        }
 
         It "Can be created from a name" {
             $ms = [ModuleSpecification]::new("NamedModule")
@@ -224,7 +238,7 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
     }
 
     Context "Invalid ModuleSpecification initialization" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = @(
                 @{
                     TestName = "Version+RequiredVersion"

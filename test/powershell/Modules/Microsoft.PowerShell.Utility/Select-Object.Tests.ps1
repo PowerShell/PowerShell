@@ -1,10 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-. (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
-Add-TestDynamicType
-
 Describe "Select-Object" -Tags "CI" {
+    BeforeAll {
+        . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
+        Add-TestDynamicType
+    }
+
     BeforeEach {
         $dirObject = GetFileMock
         $TestLength = 3

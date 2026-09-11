@@ -51,9 +51,11 @@ namespace Dummy
     }
 
     Context 'Property.Instance.ValidateSet.String' {
-        class C1 { [ValidateSet("Present", "Absent")][string]$Ensure }
-        # This call should not throw exception
-        [C1]::new().Ensure = "Present"
+        BeforeAll {
+            class C1 { [ValidateSet("Present", "Absent")][string]$Ensure }
+            # This call should not throw exception
+            [C1]::new().Ensure = "Present"
+        }
 
         It 'Error when ValidateSet should be ExceptionWhenSetting' {
             { [C1]::new().Ensure = "foo" } | Should -Throw -ErrorId 'ExceptionWhenSetting'
@@ -61,38 +63,46 @@ namespace Dummy
     }
 
     Context 'Property.Static.ValidateSet.String' {
-        class C1 { static [ValidateSet("Present", "Absent")][string]$Ensure }
-        # This call should not throw exception
-        [C1]::Ensure = "Present"
+        BeforeAll {
+            class C1 { static [ValidateSet("Present", "Absent")][string]$Ensure }
+            # This call should not throw exception
+            [C1]::Ensure = "Present"
+        }
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
             { [C1]::Ensure = "foo" } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
     }
 
     Context 'Property.Instance.ValidateRange.Int' {
-        class C1 { [ValidateRange(1, 10)][int]$f }
-        # This call should not throw exception
-        [C1]::new().f = 10
-        [C1]::new().f = 1
+        BeforeAll {
+            class C1 { [ValidateRange(1, 10)][int]$f }
+            # This call should not throw exception
+            [C1]::new().f = 10
+            [C1]::new().f = 1
+        }
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
             { [C1]::new().f = 20 } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
     }
 
     Context 'Property.Static.ValidateRange.Int' {
-        class C1 { static [ValidateRange(1, 10)][int]$f }
-        # This call should not throw exception
-        [C1]::f = 5
+        BeforeAll {
+            class C1 { static [ValidateRange(1, 10)][int]$f }
+            # This call should not throw exception
+            [C1]::f = 5
+        }
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
             { [C1]::f = 20 } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
     }
 
     Context 'Property.Static.ValidateSet.ImplicitObject' {
-        class C1 { static [ValidateSet("abc", 5)]$o }
-        # This call should not throw exception
-        [C1]::o = "abc"
-        [C1]::o = 5
+        BeforeAll {
+            class C1 { static [ValidateSet("abc", 5)]$o }
+            # This call should not throw exception
+            [C1]::o = "abc"
+            [C1]::o = 5
+        }
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
             { [C1]::o = 1 } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
@@ -106,7 +116,9 @@ namespace Dummy
     #
 
     Context 'Property.Instance.Transformation.ImplicitObject' {
-        $c = [scriptblock]::Create('class C1 { [Dummy.DoubleStringTransformation()]$arg }; [C1]::new()').Invoke()[0]
+        BeforeAll {
+            $c = [scriptblock]::Create('class C1 { [Dummy.DoubleStringTransformation()]$arg }; [C1]::new()').Invoke()[0]
+        }
 
         It 'Implicitly Transform to 100' {
             $c.arg = 100
@@ -119,7 +131,9 @@ namespace Dummy
     }
 
     Context 'Property.Instance.Transformation.String' {
-        $c = [scriptblock]::Create('class C1 { [Dummy.DoubleStringTransformation()][string]$arg }; [C1]::new()').Invoke()[0]
+        BeforeAll {
+            $c = [scriptblock]::Create('class C1 { [Dummy.DoubleStringTransformation()][string]$arg }; [C1]::new()').Invoke()[0]
+        }
         It 'set to foo' {
             $c.arg = "foo"
             $c.arg | Should -BeExactly "foofoo"
@@ -127,7 +141,9 @@ namespace Dummy
     }
 
     Context Property.Instance.Transformation.Int {
-        $c = [scriptblock]::Create('class C1 { [Dummy.DoubleInt()][int]$arg }; [C1]::new()').Invoke()[0]
+        BeforeAll {
+            $c = [scriptblock]::Create('class C1 { [Dummy.DoubleInt()][int]$arg }; [C1]::new()').Invoke()[0]
+        }
         It 'arg should be 200' {
             $c.arg = 100
             $c.arg | Should -Be 200
@@ -138,7 +154,9 @@ namespace Dummy
     }
 
     Context Property.Instance.Transformation.Nullable {
-        $c = [scriptblock]::Create('class C1 { [Nullable[int]][Dummy.DoubleStringTransformation()]$arg }; [C1]::new()').Invoke()[0]
+        BeforeAll {
+            $c = [scriptblock]::Create('class C1 { [Nullable[int]][Dummy.DoubleStringTransformation()]$arg }; [C1]::new()').Invoke()[0]
+        }
         It 'arg should be 100' {
             $c.arg = 100
             $c.arg | Should -Be 100
@@ -146,7 +164,9 @@ namespace Dummy
     }
 
     Context Property.Instance.Transformation.Order {
-        $c = [scriptblock]::Create('class C1 { [Dummy.DoubleStringTransformation()][Dummy.AppendStringTransformation()]$arg }; [C1]::new()').Invoke()[0]
+        BeforeAll {
+            $c = [scriptblock]::Create('class C1 { [Dummy.DoubleStringTransformation()][Dummy.AppendStringTransformation()]$arg }; [C1]::new()').Invoke()[0]
+        }
         It 'arg should be 100' {
             $c.arg = 100
             $c.arg | Should -Be 100

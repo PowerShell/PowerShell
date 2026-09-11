@@ -15,6 +15,10 @@ Set-StrictMode -Version 3.0
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $script:Options = $null
 
+# The Pester version the test suite is built against. 'Restore-PSPester' saves exactly
+# this version, and 'Start-PSPester' restores it when the build output has a different one.
+$script:PesterVersion = '6.0.0'
+
 $dotnetMetadata = Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json
 $dotnetCLIChannel = $dotnetMetadata.Sdk.Channel
 $dotnetCLIQuality = $dotnetMetadata.Sdk.Quality
@@ -1191,9 +1195,9 @@ function Restore-PSPester
 {
     <#
     .SYNOPSIS
-        Downloads and saves the Pester module (v4.x) from the PowerShell Gallery.
+        Downloads and saves the Pester module (v6.x) from the PowerShell Gallery.
     .DESCRIPTION
-        Uses Save-Module to install Pester up to version 4.99 into the target directory.
+        Uses Save-Module to install the pinned Pester version into the target directory.
     .PARAMETER Destination
         Directory to save Pester into. Defaults to the Modules folder of the current build output.
     #>
@@ -1201,7 +1205,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -MaximumVersion 4.99
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion $script:PesterVersion
 }
 
 function Compress-TestContent {
@@ -1789,7 +1793,7 @@ function Start-PSPester {
         Switch-PSNugetConfig -Source Public
     }
 
-    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
+    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -eq $script:PesterVersion } ))
     {
         Restore-PSPester
     }
@@ -1890,29 +1894,51 @@ function Start-PSPester {
         }
     }
 
-    $command += "Invoke-Pester "
+    # PassThru is always on: the run summary is written to disk in every mode, because the NUnit
+    # file cannot express a file that failed outside a test (see $summaryFile below).
+    $runProps = "Path = @('$($Path -join "','")'); "
+    $runProps += 'PassThru = $true; '
+    # Pester 6 fails discovery on an empty/`$null -ForEach or -TestCases by default.
+    # Keep the Pester 5 behavior (empty set = zero tests, no error) for this suite.
+    $runProps += 'FailOnNullOrEmptyForEach = $false'
 
-    $command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
+    $command += "`$pesterConfig = [PesterConfiguration]@{"
+    $command += " Run = @{ ${runProps} }"
+    $command += "; TestResult = @{ Enabled = `$true; OutputPath = '${OutputFile}'; OutputFormat = '${OutputFormat}' }"
+
     if ($ExcludeTag -and ($ExcludeTag -ne "")) {
-        $command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
+        $command += "; Filter = @{ ExcludeTag = @('" + (${ExcludeTag} -join "','") + "')"
+        if ($Tag) {
+            $command += "; Tag = @('" + (${Tag} -join "','") + "')"
+        }
+        $command += " }"
     }
-    if ($Tag) {
-        $command += "-Tag @('" + (${Tag} -join "','") + "') "
+    elseif ($Tag) {
+        $command += "; Filter = @{ Tag = @('" + (${Tag} -join "','") + "') }"
     }
+
     # sometimes we need to eliminate Pester output, especially when we're
     # doing a daily build as the log file is too large
     if ( $Quiet ) {
-        $command += "-Quiet "
+        $command += "; Output = @{ Verbosity = 'None' }"
     }
-    if ( $PassThru ) {
-        $command += "-PassThru "
+    else {
+        # Pester's default 'Normal' verbosity prints neither the Describe/Context headers
+        # nor a line per passing or skipped test, which is what 'Write-Terse' collapses into
+        # '+' and '!'. 'Detailed' prints them, and gives the same CI output as Pester 4 did.
+        $command += "; Output = @{ Verbosity = 'Detailed' }"
     }
 
-    $command += "'" + ($Path -join "','") + "'"
-    if ($Unelevate)
-    {
-        $command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
-    }
+    $projection = Get-PSPesterSummaryProjection
+
+    # Written by the child process, read back by Test-PSPesterResults. It sits next to the
+    # NUnit file so that callers which only have the result file path can still find it.
+    $summaryFile = Get-PSPesterSummaryPath -TestResultsFile $OutputFile
+    Remove-Item $summaryFile -Force -ErrorAction SilentlyContinue
+
+    $command += " }; "
+    $command += Get-PSPesterRunCommand -Projection $projection -SummaryFile $summaryFile `
+        -BufferPath $(if ($Unelevate) { $outputBufferFilePath } else { $null })
 
     Write-Verbose $command -Verbose
 
@@ -2055,36 +2081,20 @@ function Start-PSPester {
         {
             if ($PassThru.IsPresent)
             {
-                if ($environment.IsWindows) {
-                    $passThruFile = [System.IO.Path]::GetTempFileName()
-                }
-                else {
-                    $passThruFile = Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName())
+                $passThruCommand = { & $powershell $PSFlags -c $command }
+                if ($Sudo.IsPresent) {
+                    # -E says to preserve the environment
+                    $passThruCommand =  { & sudo -E $powershell $PSFlags -c $command }
                 }
 
-                try
+                $writeCommand = { Write-Host $_ }
+                if ($Terse)
                 {
-                    $command += "| Export-Clixml -Path '$passThruFile' -Force"
-
-                    $passThruCommand = { & $powershell $PSFlags -c $command }
-                    if ($Sudo.IsPresent) {
-                        # -E says to preserve the environment
-                        $passThruCommand =  { & sudo -E $powershell $PSFlags -c $command }
-                    }
-
-                    $writeCommand = { Write-Host $_ }
-                    if ($Terse)
-                    {
-                        $writeCommand = { Write-Terse $_ }
-                    }
-
-                    Start-NativeExecution -sb $passThruCommand | ForEach-Object $writeCommand
-                    Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
+                    $writeCommand = { Write-Terse $_ }
                 }
-                finally
-                {
-                    Remove-Item $passThruFile -ErrorAction SilentlyContinue -Force
-                }
+
+                Start-NativeExecution -sb $passThruCommand | ForEach-Object $writeCommand
+                Import-PSPesterSummary -TestResultsFile $OutputFile
             }
             else
             {
@@ -2220,6 +2230,172 @@ function script:Start-UnelevatedProcess
     runas.exe /trustlevel:0x20000 "$process $arguments"
 }
 
+function Get-PSPesterSummaryProjection
+{
+    <#
+    .SYNOPSIS
+        Returns the pipeline fragment that flattens a Pester run object into a summary.
+    .DESCRIPTION
+        Emitted into the command that 'Start-PSPester' runs in the child process, and appended
+        directly after 'Invoke-Pester'. Returned as text rather than a scriptblock because it is
+        spliced into a command string that a separate pwsh process parses.
+
+        Pester 5/6's Run object is a deeply nested tree of containers, blocks, tests and
+        ScriptBlock references. Serializing it produces a CliXml graph that exceeds the
+        deserializer's hard MaxDepthBelowTopLevel of 50 (see
+        src/System.Management.Automation/engine/serialization.cs) and crashes Import-Clixml with
+        "Serialized XML is nested too deeply". So everything below is flattened to strings and
+        simple objects.
+
+        Result is what decides pass or fail. Counting failed tests is not enough: a file that
+        fails outside a test reports FailedCount 0. That covers a Discovery phase that throws,
+        and also a teardown that throws, for example when TestDrive cannot be removed because
+        something still holds a file open. A failing AfterAll reports FailedCount 0 as well.
+        Result covers all of them, and stays 'Passed' for runs that are only inconclusive,
+        skipped, filtered to nothing, or empty.
+
+        TestResult collects all three error sources, because they do not overlap. In particular a
+        test that failed because its BeforeAll threw carries no ErrorRecord of its own; the
+        message exists only on the corresponding FailedBlocks entry.
+    #>
+    return @'
+| ForEach-Object {
+    $run = $_
+    $flatten = {
+        param($kind, $where, $name, $errors)
+        [pscustomobject]@{
+            Passed = $false
+            Kind = $kind
+            Describe = [string]$where
+            Context = ''
+            Name = [string]$name
+            FailureMessage = $(if ($errors) { (($errors | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine) } else { '' })
+            StackTrace = $(if ($errors -and $errors.Count -gt 0 -and $errors[0].ScriptStackTrace) { [string]$errors[0].ScriptStackTrace } else { '' })
+        }
+    }
+
+    $failures = @()
+    foreach ($t in @($run.Failed)) {
+        $failures += & $flatten 'Test' $(if ($t.Block -and $t.Block.Path) { ($t.Block.Path -join '/') } else { '' }) $t.Name $t.ErrorRecord
+    }
+    foreach ($b in @($run.FailedBlocks)) {
+        $failures += & $flatten 'Block' $(if ($b.ScriptBlock) { [string]$b.ScriptBlock.File } else { '' }) $($b.Path -join '/') $b.ErrorRecord
+    }
+    foreach ($c in @($run.FailedContainers)) {
+        $failures += & $flatten 'Container' ([string]$c.Item) "Discovery in $($c.Item)" $c.ErrorRecord
+    }
+
+    [pscustomobject]@{
+        Result = [string]$run.Result
+        TotalCount = [int]$run.TotalCount
+        FailedCount = [int]$run.FailedCount
+        FailedBlocksCount = [int]$run.FailedBlocksCount
+        FailedContainersCount = [int]$run.FailedContainersCount
+        PassedCount = [int]$run.PassedCount
+        SkippedCount = [int]$run.SkippedCount
+        NotRunCount = [int]$run.NotRunCount
+        InconclusiveCount = [int]$run.InconclusiveCount
+        TestResult = $failures
+    }
+}
+'@
+}
+
+function Get-PSPesterRunCommand
+{
+    <#
+    .SYNOPSIS
+        Builds the Invoke-Pester call that 'Start-PSPester' runs in the child process.
+    .DESCRIPTION
+        Returned as text because it is spliced into a command string that a separate pwsh
+        process parses.
+
+        When a buffer path is given, for the unelevated run, the pipeline is wrapped in '& { }'
+        before the '*>' redirection. A redirection written after a pipeline binds to its last
+        command only, so without the wrapper everything Pester prints escapes to the detached
+        process's stdout, where nothing reads it, and the buffer file that 'Start-PSPester' tails
+        ends up holding only the end marker.
+    .PARAMETER Projection
+        The pipeline fragment from 'Get-PSPesterSummaryProjection'.
+    .PARAMETER SummaryFile
+        Where the child writes the run summary.
+    .PARAMETER BufferPath
+        For the unelevated run, the file the child redirects all of its output into. Omit for a
+        normal run, where the output is streamed back through the pipe instead.
+    #>
+    param(
+        [Parameter(Mandatory)]
+        [string] $Projection,
+
+        [Parameter(Mandatory)]
+        [string] $SummaryFile,
+
+        [string] $BufferPath
+    )
+
+    $pipeline = "Invoke-Pester -Configuration `$pesterConfig$Projection | Export-Clixml -Path '$SummaryFile' -Force"
+
+    if ([string]::IsNullOrEmpty($BufferPath))
+    {
+        return $pipeline
+    }
+
+    return "& { $pipeline } *> $BufferPath; '__UNELEVATED_TESTS_THE_END__' >> $BufferPath"
+}
+
+function Get-PSPesterSummaryPath
+{
+    <#
+    .SYNOPSIS
+        Returns the path of the run-summary file that sits next to a Pester result file.
+    .DESCRIPTION
+        'Start-PSPester' writes a shallow projection of the Pester run object to this path so
+        that callers holding only the NUnit result file path can still see the run Result.
+        The NUnit file cannot express a failed Discovery or a failed AfterAll.
+    .PARAMETER TestResultsFile
+        Path of the NUnit result file the summary belongs to.
+    #>
+    param(
+        [Parameter(Mandatory)]
+        [string] $TestResultsFile
+    )
+
+    return "$TestResultsFile.summary.clixml"
+}
+
+function Import-PSPesterSummary
+{
+    <#
+    .SYNOPSIS
+        Reads the run summary written next to a Pester result file, if there is one.
+    .DESCRIPTION
+        Returns $null when the summary is missing or unreadable, so that callers working with
+        result files produced by something other than 'Start-PSPester' keep working.
+    .PARAMETER TestResultsFile
+        Path of the NUnit result file the summary belongs to.
+    #>
+    param(
+        [Parameter(Mandatory)]
+        [string] $TestResultsFile
+    )
+
+    $summaryFile = Get-PSPesterSummaryPath -TestResultsFile $TestResultsFile
+    if (-not (Test-Path $summaryFile))
+    {
+        return $null
+    }
+
+    try
+    {
+        return Import-Clixml -Path $summaryFile
+    }
+    catch
+    {
+        Write-Verbose -Verbose "Could not read Pester run summary '$summaryFile': $_"
+        return $null
+    }
+}
+
 function Show-PSPesterError
 {
     <#
@@ -2255,6 +2431,11 @@ function Show-PSPesterError
         $name = $testFailureObject.Name
         $message = $testFailureObject.FailureMessage
         $stack_trace = $testFailureObject.StackTrace
+        # 'Kind' is absent on summaries written before it was added, and on NUnit-derived objects.
+        if ($testFailureObject.Kind -and $testFailureObject.Kind -ne 'Test')
+        {
+            $description = "$($testFailureObject.Kind) failure: $description"
+        }
     }
     else
     {
@@ -2476,6 +2657,15 @@ function Test-PSPesterResults
             Write-LogGroupEnd -Title 'TEST FAILURES'
             throw "$($x.'test-results'.failures) tests in $TestArea failed"
         }
+
+        # A run can fail in ways the NUnit file does not record at all: a file whose Discovery
+        # phase throws is simply absent from it, and a failing AfterAll leaves no trace either.
+        # 'Start-PSPester' writes a summary next to the result file for exactly this case.
+        $summary = Import-PSPesterSummary -TestResultsFile $TestResultsFile
+        if ($null -ne $summary)
+        {
+            Assert-PSPesterRunPassed -Summary $summary -TestArea $TestArea
+        }
     }
     elseif ($PSCmdlet.ParameterSetName -eq 'PesterPassThruObject')
     {
@@ -2492,18 +2682,81 @@ function Test-PSPesterResults
                 throw 'NO TESTS RUN'
             }
         }
-        elseif ($ResultObject.FailedCount -gt 0)
-        {
-            Write-LogGroupStart -Title 'TEST FAILURES'
 
-            $ResultObject.TestResult | Where-Object {$_.Passed -eq $false} | ForEach-Object {
-                Show-PSPesterError -testFailureObject $_
-            }
-            Write-LogGroupEnd -Title 'TEST FAILURES'
-
-            throw "$($ResultObject.FailedCount) tests in $TestArea failed"
-        }
+        # Not an 'elseif': the failure check has to run whether or not an empty result is allowed.
+        Assert-PSPesterRunPassed -Summary $ResultObject -TestArea $TestArea
     }
+}
+
+function Assert-PSPesterRunPassed
+{
+    <#
+    .SYNOPSIS
+        Throws when a Pester run summary reports anything other than a passing run.
+    .DESCRIPTION
+        Decides on the 'Result' property rather than on failure counts. Counting failed tests
+        misses a file whose Discovery phase threw (FailedCount stays 0) and a failing AfterAll
+        (FailedCount stays 0 as well). 'Result' covers all three, and stays 'Passed' for runs
+        that are only inconclusive, skipped, filtered to nothing, or empty.
+
+        Falls back to the failure counts for summaries produced before 'Result' was recorded.
+    .PARAMETER Summary
+        A Pester run summary, either a PassThru object or one read by 'Import-PSPesterSummary'.
+    .PARAMETER TestArea
+        Label for the test area, used in the error message.
+    #>
+    param(
+        [Parameter(Mandatory)]
+        [pscustomobject] $Summary,
+
+        [string] $TestArea = 'test/powershell'
+    )
+
+    # Properties are read through PSObject, because 'Set-StrictMode -Version 3' is in effect for
+    # this module and touching a missing property throws. Summaries can be missing properties:
+    # older ones predate 'Result', and callers may pass a Pester object built elsewhere.
+    $read = {
+        param($name, $fallback)
+        $property = $Summary.PSObject.Properties[$name]
+        if ($null -eq $property) { return $fallback }
+        return $property.Value
+    }
+
+    $result = & $read 'Result' $null
+    if ($null -ne $result)
+    {
+        $failed = $result -ne 'Passed'
+        $reason = "Pester reported '$result'"
+    }
+    else
+    {
+        $failed = ((& $read 'FailedCount' 0) -gt 0) -or
+                  ((& $read 'FailedBlocksCount' 0) -gt 0) -or
+                  ((& $read 'FailedContainersCount' 0) -gt 0)
+        $reason = 'Pester reported failures'
+    }
+
+    if (-not $failed)
+    {
+        return
+    }
+
+    Write-LogGroupStart -Title 'TEST FAILURES'
+    & $read 'TestResult' @() | Where-Object { $_.Passed -eq $false } | ForEach-Object {
+        Show-PSPesterError -testFailureObject $_
+    }
+    Write-LogGroupEnd -Title 'TEST FAILURES'
+
+    $counts = @()
+    $failedTests = & $read 'FailedCount' 0
+    $failedBlocks = & $read 'FailedBlocksCount' 0
+    $failedContainers = & $read 'FailedContainersCount' 0
+    if ($failedTests -gt 0) { $counts += "$failedTests failed tests" }
+    if ($failedBlocks -gt 0) { $counts += "$failedBlocks failed setup/teardown blocks" }
+    if ($failedContainers -gt 0) { $counts += "$failedContainers files that failed outside a test, during discovery or teardown" }
+    $detail = if ($counts) { $counts -join ', ' } else { 'no failure was attributed to a test, block or file' }
+
+    throw "$reason for ${TestArea}: $detail"
 }
 
 function Start-PSxUnit {

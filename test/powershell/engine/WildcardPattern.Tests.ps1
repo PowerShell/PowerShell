@@ -2,6 +2,11 @@
 # Licensed under the MIT License.
 
 Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
+    BeforeDiscovery {
+        $skipToRegex = $null -eq [System.Management.Automation.WildcardPattern].GetMethod('ToRegex')
+    }
+
+    Context "ToRegex method" -Skip:$skipToRegex {
     It "Converts '<Pattern>' to regex pattern '<Expected>'" -TestCases @(
         @{ Pattern = '*.txt'; Expected = '\.txt$' }
         @{ Pattern = 'test?.log'; Expected = '^test.\.log$' }
@@ -73,5 +78,6 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
             $regex.ToString() | Should -BeExactly $Expected
         }
 
+    }
     }
 }

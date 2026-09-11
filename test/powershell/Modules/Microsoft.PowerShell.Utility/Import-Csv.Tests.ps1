@@ -23,6 +23,23 @@ Describe "Import-Csv DRT Unit Tests" -Tags "CI" {
 }
 
 Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
+    BeforeDiscovery {
+        $empyValueCsv = @'
+        a1""a3
+        v1"v2"v3
+'@
+
+        $withValueCsv = @'
+        a1"a2"a3
+        v1"v2"v3
+'@
+
+        $quotedCharacterCsv = @'
+        a1,a2,a3
+        v1,"v2",v3
+'@
+    }
+
     BeforeAll {
         $empyValueCsv = @'
         a1""a3
@@ -89,22 +106,20 @@ Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
 }
 
 Describe "Import-Csv File Format Tests" -Tags "CI" {
+    BeforeDiscovery {
+        $assetsDir = Join-Path $PSScriptRoot -ChildPath assets
+        $testCSVfiles = @(
+            @{ testCsv = (Join-Path $assetsDir "TestImportCsv_NoHeader.csv"); FileName = "TestImportCsv_NoHeader.csv" }
+            @{ testCsv = (Join-Path $assetsDir "TestImportCsv_WithHeader.csv"); FileName = "TestImportCsv_WithHeader.csv" }
+            @{ testCsv = (Join-Path $assetsDir "TestImportCsv_W3C_ELF.csv"); FileName = "TestImportCsv_W3C_ELF.csv" }
+        )
+    }
     BeforeAll {
-        # The file is w/o header
-        $TestImportCsv_NoHeader = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsv_NoHeader.csv
-        # The file is with header
-        $TestImportCsv_WithHeader = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsv_WithHeader.csv
-        # The file is W3C Extended Log File Format
-        $TestImportCsv_W3C_ELF = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsv_W3C_ELF.csv
-
-        $testCSVfiles = $TestImportCsv_NoHeader, $TestImportCsv_WithHeader, $TestImportCsv_W3C_ELF
         $orginalHeader = "Column1","Column2","Column 3"
         $customHeader = "test1","test2","test3"
     }
-    # Test set is the same for all file formats
-    foreach ($testCsv in $testCSVfiles) {
-       $FileName = (Get-ChildItem $testCsv).Name
-        Context "Next test file: $FileName" {
+
+    Context "Next test file: <FileName>" -ForEach $testCSVfiles {
             BeforeAll {
                 $CustomHeaderParams = @{Header = $customHeader; Delimiter = ","}
                 if ($FileName -eq "TestImportCsv_NoHeader.csv") {
@@ -138,7 +153,6 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
                 $actual[0].'Column 3' | Should -BeExactly "A"
             }
 
-        }
     }
 }
 

@@ -105,7 +105,7 @@ Describe "Native Command Processor" -tags "Feature" {
 
     # If powershell receives a StopProcessing, it should kill the native process and all child processes
     # this test should pass and no longer Pending when #2561 is fixed
-    It "Should kill native process tree" -Pending {
+    It "Should kill native process tree" -Skip {
 
         # make sure no test processes are running
         Get-Process testexe -ErrorAction SilentlyContinue | Stop-Process
@@ -146,7 +146,7 @@ Describe "Native Command Processor" -tags "Feature" {
 
     It "Should not block running Windows executables" -Skip:(!$IsWindows -or !(Get-Command notepad.exe)) {
         if (Test-IsWindowsArm64) {
-            Set-ItResult -Pending -Because "Needs investigation"
+            Set-ItResult -Inconclusive -Because "Needs investigation"
         }
 
         function FindNewNotepad
@@ -277,7 +277,7 @@ Categories=Application;
 
     It "Should open text file without error" -Skip:(!$supportedEnvironment) {
         if ($IsMacOS) {
-            Set-TestInconclusive -Message "AppleScript is not currently reliable on Az Pipelines"
+            Set-ItResult -Inconclusive -Because "AppleScript is not currently reliable on Az Pipelines"
             $expectedTitle = Split-Path $TestFile -Leaf
             open -F -a TextEdit
             $beforeCount = [int]('tell application "TextEdit" to count of windows' | osascript)
@@ -368,7 +368,7 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
 
     It "Should run 'whoami.exe' from FAT file system without error" -Skip:(!$IsWindows) {
         if ((Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
-            Set-ItResult -Pending -Because "Marking as pending since whomai.exe is not found on T:\ on 2012R2 and 2016 after copying to VHD"
+            Set-ItResult -Inconclusive -Because "Marking as pending since whomai.exe is not found on T:\ on 2012R2 and 2016 after copying to VHD"
             return
         }
 
@@ -393,7 +393,7 @@ Describe "Native application invocation and getting cursor position" -Tags 'CI' 
         }
         if ($missing.count -ne 0) {
             $message = "missing command(s) {0}" -f ($missing -join ", ")
-            Set-ItResult -Pending -Because $message
+            Set-ItResult -Inconclusive -Because $message
         }
 
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"

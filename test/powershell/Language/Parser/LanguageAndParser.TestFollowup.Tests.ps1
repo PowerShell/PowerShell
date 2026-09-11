@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-$powershellexe = (Get-Process -Id $PID).mainmodule.filename
+BeforeAll {
+    $powershellexe = (Get-Process -Id $PID).mainmodule.filename
+}
 
 Describe "Clone array" -Tags "CI" {
     It "Cast in target expr" {
@@ -19,9 +21,11 @@ Describe "Clone array" -Tags "CI" {
 }
 
 Describe "Set fields through PSMemberInfo" -Tags "CI" {
-    Add-Type @"
+    BeforeAll {
+        Add-Type @"
     public struct AStruct { public string s; }
 "@
+    }
 
     It "via cast" {
         ([AStruct]@{s = "abc" }).s | Should -BeExactly "abc"
@@ -67,7 +71,9 @@ Describe "MSFT:3309783" -Tags "CI" {
 
 Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags "CI" {
 
-    $e = $null
+    BeforeAll {
+        $e = $null
+    }
 
     It "with parse error" {
         $ast = [System.Management.Automation.Language.Parser]::ParseInput('function ', [ref]$null, [ref]$e)
@@ -83,7 +89,8 @@ Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags "CI" {
 }
 
 Describe "Hashtable key property syntax" -Tags "CI" {
-    $script = @'
+    BeforeAll {
+        $script = @'
     # First create a hashtable wrapped in PSObject
     $hash = New-Object hashtable
     $key = [ConsoleColor]::Red
@@ -93,6 +100,7 @@ Describe "Hashtable key property syntax" -Tags "CI" {
     # works in PS 2,3,4. Fails in PS 5:
     $hash.$key
 '@
+    }
 
     It "In current process" {
         # Run in current process, but something that ran earlier could influence
@@ -109,23 +117,24 @@ Describe "Hashtable key property syntax" -Tags "CI" {
 
 Describe "Assign automatic variables" -Tags "CI" {
 
-    $autos = '_', 'args', 'this', 'input', 'pscmdlet', 'psboundparameters', 'myinvocation', 'psscriptroot', 'pscommandpath'
+    BeforeDiscovery {
+        $autos = '_', 'args', 'this', 'input', 'pscmdlet', 'psboundparameters', 'myinvocation', 'psscriptroot', 'pscommandpath'
+        $autosCases = $autos | ForEach-Object { @{ auto = $_ } }
+    }
 
-    foreach ($auto in $autos)
-    {
-        It "Assign auto w/ invalid type constraint - $auto" {
-            { & ([ScriptBlock]::Create("[datetime]`$$auto = 1")) } | Should -Throw $auto
-            { . ([ScriptBlock]::Create("[datetime]`$$auto = 1")) } | Should -Throw $auto
-            { & ([ScriptBlock]::Create("[runspace]`$$auto = 1")) } | Should -Throw $auto
-            { . ([ScriptBlock]::Create("[runspace]`$$auto = 1")) } | Should -Throw $auto
-            { & ([ScriptBlock]::Create("[notexist]`$$auto = 1")) } | Should -Throw $auto
-            { . ([ScriptBlock]::Create("[notexist]`$$auto = 1")) } | Should -Throw $auto
+    Context "Invalid type constraint - <auto>" -ForEach $autosCases {
+        It "Assign auto w/ invalid type constraint" {
+            { & ([ScriptBlock]::Create("[datetime]`$$auto = 1")) } | Should -Throw -ExpectedMessage "*$auto*"
+            { . ([ScriptBlock]::Create("[datetime]`$$auto = 1")) } | Should -Throw -ExpectedMessage "*$auto*"
+            { & ([ScriptBlock]::Create("[runspace]`$$auto = 1")) } | Should -Throw -ExpectedMessage "*$auto*"
+            { . ([ScriptBlock]::Create("[runspace]`$$auto = 1")) } | Should -Throw -ExpectedMessage "*$auto*"
+            { & ([ScriptBlock]::Create("[notexist]`$$auto = 1")) } | Should -Throw -ExpectedMessage "*$auto*"
+            { . ([ScriptBlock]::Create("[notexist]`$$auto = 1")) } | Should -Throw -ExpectedMessage "*$auto*"
         }
     }
 
-    foreach ($auto in $autos)
-    {
-        It "Assign auto w/o type constraint - $auto" {
+    Context "No type constraint - <auto>" -ForEach $autosCases {
+        It "Assign auto w/o type constraint" {
             & ([ScriptBlock]::Create("`$$auto = 1; `$$auto")) | Should -Be 1
             . ([ScriptBlock]::Create("`$$auto = 1; `$$auto")) | Should -Be 1
         }
@@ -145,24 +154,26 @@ Describe "Assign automatic variables" -Tags "CI" {
 
 Describe "Assign readonly/constant variables" -Tags "CI" {
 
-    $testCase = @(
-        @{ sb_wo_conversion = { $? = 1 }; name = '$? = 1' }
-        @{ sb_wo_conversion = { $HOME = 1 }; name = '$HOME = 1' }
-        @{ sb_wo_conversion = { $PID = 1 }; name = '$PID = 1' }
-    )
-
+    BeforeDiscovery {
+        $testCase = @(
+            @{ sb_wo_conversion = { $? = 1 }; name = '$? = 1' }
+            @{ sb_wo_conversion = { $HOME = 1 }; name = '$HOME = 1' }
+            @{ sb_wo_conversion = { $PID = 1 }; name = '$PID = 1' }
+        )
+    }
     It "Assign readonly/constant variables w/o type constraint - '<name>'" -TestCases $testCase {
         param($sb_wo_conversion)
         { & $sb_wo_conversion } | Should -Throw -ErrorId "VariableNotWritable"
         { . $sb_wo_conversion } | Should -Throw -ErrorId "VariableNotWritable"
     }
 
-    $testCase = @(
-        @{ sb_w_conversion = { [datetime]$? = 1 }; name = '[datetime]$? = 1' }
-        @{ sb_w_conversion = { [datetime]$HOME = 1 }; name = '[datetime]$HOME = 1' }
-        @{ sb_w_conversion = { [datetime]$PID = 1 }; name = '[datetime]$PID = 1' }
-    )
-
+    BeforeDiscovery {
+        $testCase = @(
+            @{ sb_w_conversion = { [datetime]$? = 1 }; name = '[datetime]$? = 1' }
+            @{ sb_w_conversion = { [datetime]$HOME = 1 }; name = '[datetime]$HOME = 1' }
+            @{ sb_w_conversion = { [datetime]$PID = 1 }; name = '[datetime]$PID = 1' }
+        )
+    }
     It "Assign readonly/constant variables w/ type constraint - '<name>'" -TestCases $testCase {
         param($sb_w_conversion)
         { & $sb_w_conversion } | Should -Throw -ErrorId "VariableNotWritable"
@@ -214,8 +225,7 @@ Describe "Members of System.Type" -Tags "CI" {
 }
 
 Describe "Hash expression with if statement as value" -Tags "CI" {
-    BeforeAll {
-        # With no extra new lines after if-statement
+    BeforeDiscovery {
         $hash1 = @{
             a = if (1) {'a'}
             b = 'b'
@@ -226,8 +236,6 @@ Describe "Hash expression with if statement as value" -Tags "CI" {
             g = if (0) {2} else {'g'}
             h = 'h'
         }
-
-        # With extra new lines after if-statement
         $hash2 = @{
             a = if (1) {'a'}
 
@@ -242,8 +250,6 @@ Describe "Hash expression with if statement as value" -Tags "CI" {
 
             h = 'h'
         }
-
-        # With expanded if-statement
         $hash3 = @{
             a = if (1)
                 {
@@ -282,7 +288,6 @@ Describe "Hash expression with if statement as value" -Tags "CI" {
                 }
             h = 'h'
         }
-
         $testCases = @(
             @{ name = "No extra new lines"; hash = $hash1 }
             @{ name = "With extra new lines"; hash = $hash2 }
