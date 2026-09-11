@@ -71,8 +71,9 @@ namespace System.Management.Automation
         {
             bool sawVerbatimArgumentMarker = false;
             bool first = true;
-            foreach (CommandParameterInternal parameter in parameters)
+            for (int i = 0; i < parameters.Count; i++)
             {
+                var parameter = parameters[i];
                 if (!first)
                 {
                     _arguments.Append(' ');
@@ -83,6 +84,16 @@ namespace System.Management.Automation
                 if (parameter.ParameterNameSpecified)
                 {
                     Diagnostics.Assert(!parameter.ParameterText.Contains(' '), "Parameters cannot have whitespace");
+                    // We may need to cook up a new parameter in some cases
+                    // e.g., in the case of -foo=bar.baz the PS parser sees this as multiple tokens (and others - see the tests), which requires special handling.
+                    int combinedParameterCount = CombineNativeParameters(Context, parameters, i, out CommandParameterInternal combinedParameter);
+
+                    if (combinedParameterCount > 0)
+                    {
+                        parameter = combinedParameter;
+                        i += combinedParameterCount;
+                    }
+
                     PossiblyGlobArg(parameter.ParameterText, parameter, usedQuotes: false);
 
                     if (parameter.SpaceAfterParameter)
@@ -508,6 +519,93 @@ namespace System.Management.Automation
             }
 
             return " , ";
+        }
+
+        /// <summary>
+        /// Combine multiple parameters into a single parameter.
+        /// The the parser will find something that looks like this:
+        ///   -parameterName=text.part1.part2
+        /// and turn it into multiple parameters.
+        /// We need to look for those tokens which are not separated by spaces and recombine them to be sure the
+        /// native executable gets an arguably more reasonable parameter.
+        /// Note:
+        /// The complexity of properly resolving variables is non-trivial, so we create a non-expandable string representation of the string provided
+        /// on the command line. This means that parameters which contain variable references will not have those variables resolved, so executions like:
+        /// nativeapp -p1=$a.$b.$c
+        /// will now be treated as an non-expandable string.
+        /// If variables are desired in a parameter to a native app when '=' is used, they should be provided as explicit expandable strings:
+        /// nativeapp -p1="$a.$b.$c"
+        /// </summary>
+        /// <param name="context">The execution context for the current command, needed to expand a string.</param>
+        /// <param name="parameters">The parameters for the current command.</param>
+        /// <param name="currentOffset">The current offset within the parameters array.</param>
+        /// <param name="combinedParameter">The combined parameter.</param>
+        /// <returns>an int representing the number of combined parameters</returns>
+        private static int CombineNativeParameters(ExecutionContext context, IList<CommandParameterInternal> parameters, int currentOffset, out CommandParameterInternal combinedParameter)
+        {
+            combinedParameter = null;
+            var parameter = currentOffset >= parameters.Count ? null : parameters[currentOffset];
+            var nextParameter = currentOffset + 1 >= parameters.Count ? null : parameters[currentOffset + 1];
+
+            // don't combine if one of the parameters is null, or if the next parameter actually has a parameterAst
+            // which indicates that it is a separate parameter (i.e., it has a prepended '-')
+            if (parameter is null || nextParameter is null || nextParameter.ParameterAst is not null || nextParameter.ArgumentAst is null)
+            {
+                return 0;
+            }
+
+            if (parameter.ParameterAst.Extent.EndScriptPosition.Offset != nextParameter.ArgumentAst.Extent.StartScriptPosition.Offset)
+            {
+                return 0;
+            }
+
+            StringBuilder paramText = new StringBuilder();
+            paramText.Append(parameter.ParameterText);
+            if (parameter.ArgumentAst is not null)
+            {
+                paramText.Append(parameter.ArgumentAst.Extent.Text);
+            }
+
+            // combine the parameters that should be combined
+            int parameterCombineCount = 0;
+            var startOffset = parameter.ParameterAst.Extent.EndScriptPosition.Offset;
+            var endOffset = nextParameter.ArgumentAst.Extent.StartScriptPosition.Offset;
+
+            // loop through the parameters where there is no separating space
+            while (startOffset == endOffset)
+            {
+                parameterCombineCount++;
+                // stitch the next segment from the next parameter argumentAst text to the parameter
+                paramText.Append(nextParameter.ArgumentAst.Extent.Text);
+
+                var parameterOffset = currentOffset + parameterCombineCount;
+
+                parameter = nextParameter;
+                nextParameter = parameterOffset + 1 < parameters.Count ? parameters[parameterOffset + 1] : null;
+
+                if (nextParameter is null || nextParameter.ArgumentAst is null)
+                {
+                    break;
+                }
+
+                startOffset = parameter.ArgumentAst.Extent.EndScriptPosition.Offset;
+                endOffset = nextParameter.ArgumentAst.Extent.StartScriptPosition.Offset;
+            }
+
+#if EXPANDARG
+            if (context is not null)
+            {
+                var expandedString = context.SessionState.InvokeCommand.ExpandString(paramText.ToString());
+                combinedParameter = CommandParameterInternal.CreateParameter(expandedString, expandedString);
+            }
+            else
+            {
+                combinedParameter = CommandParameterInternal.CreateParameter(paramText.ToString(), paramText.ToString());
+            }
+#else
+            combinedParameter = CommandParameterInternal.CreateParameter(paramText.ToString(), paramText.ToString());
+#endif
+            return parameterCombineCount;
         }
 
         /// <summary>
