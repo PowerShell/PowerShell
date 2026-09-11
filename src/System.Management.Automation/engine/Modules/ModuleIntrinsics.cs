@@ -789,6 +789,31 @@ namespace System.Management.Automation
                 || moduleName.Equals(".");
         }
 
+        internal static (Version PowerShellVersion, Version ModuleVersion) GetManifestPowerShellAndModuleVersion(string manifestPath)
+        {
+            try
+            {
+                Hashtable dataFileSetting =
+                    PsUtils.GetModuleManifestProperties(
+                        manifestPath,
+                        PsUtils.ManifestPowerShellAndModuleVersionPropertyNames);
+
+                object moduleVersionValue = dataFileSetting["ModuleVersion"];
+                object powerShellVersionValue = dataFileSetting["PowerShellVersion"];
+                if (moduleVersionValue != null)
+                {
+                    if (LanguagePrimitives.TryConvertTo(moduleVersionValue, out Version moduleVersion) &&
+                        LanguagePrimitives.TryConvertTo(powerShellVersionValue, out Version powerShellVersion))
+                    {
+                        return (powerShellVersion, moduleVersion);
+                    }
+                }
+            }
+            catch (PSInvalidOperationException) { }
+
+            return (new Version(), new Version());
+        }
+
         internal static Version GetManifestModuleVersion(string manifestPath)
         {
             try
