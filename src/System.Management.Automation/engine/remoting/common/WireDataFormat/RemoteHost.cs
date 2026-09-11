@@ -379,17 +379,6 @@ namespace System.Management.Automation.Remoting
                         Type fieldType = InternalHostUserInterface.GetFieldType(fieldDesc);
                         if (fieldType != null)
                         {
-                            // Unwrap the element type for array-typed sensitive fields so
-                            // that PSCredential[] and SecureString[] receive the same
-                            // client-side remoting protections (caption/message rewrite,
-                            // SecureString prerequisite warning) as their scalar forms.
-                            // The host's Prompt implementation walks any IList field and
-
-                            // invokes PromptForSingleItem with the element type if the field is an array (otherwise no type is specified),
-                            // which surfaces the typed credential dialog / secure-string
-                            // input per element. Without this unwrap those per-element
-                            // prompts run under attacker-controlled caption/message with
-                            // no remote-origin indication.
                             Type effectiveType = fieldType.IsArray ? fieldType.GetElementType() : fieldType;
                             if (effectiveType == typeof(PSCredential))
                             {
