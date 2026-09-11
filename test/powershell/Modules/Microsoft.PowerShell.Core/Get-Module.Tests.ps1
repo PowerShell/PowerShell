@@ -280,6 +280,97 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     }
 }
 
+Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
+    BeforeAll {
+        $oldPSModulePath = $env:PSModulePath
+        $psModulePath = New-Item -ItemType Directory (Join-Path $TestDrive modules)
+        $env:PSModulePath = $psModulePath
+    }
+
+    AfterAll {
+        $env:PSModulePath = $oldPSModulePath
+    }
+
+    It 'wrongly returns module information instead of $null or error for missing script module' {
+        $path = [System.IO.Path]::GetFullPath((Join-Path $pwd missing.psm1))
+        Test-Path $path | Should -BeFalse
+        Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+        Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+    }
+
+    It 'wrongly returns module information instead of $null or error for missing script module under $env:PSModulePath' {
+        $path = [System.IO.Path]::GetFullPath((Join-Path $psModulePath missing.psm1))
+        Test-Path $path | Should -BeFalse
+        Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+        Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+    }
+
+    It 'writes error for missing manifest module' {
+        $path = [System.IO.Path]::GetFullPath((Join-Path $pwd missing))
+        Test-Path $path | Should -BeFalse
+
+        $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+        $err = { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+    }
+
+    It 'writes error for missing manifest module under $env:PSModulePath' {
+        $path = [System.IO.Path]::GetFullPath((Join-Path $psModulePath missing))
+        Test-Path $path | Should -BeFalse
+
+        $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+        $err = { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+    }
+
+    Context 'Locating existing script module' {
+        BeforeAll {
+            $psModulePath = $env:PSModulePath
+
+            # Script modules
+            #
+            # Under $env:PSModulePath. TODO: Is this a supported scenario?
+            $inPSModulePathLooseFilePath = Join-Path $psModulePath 'loose.psm1'
+            New-Item -ItemType File -Force $inPSModulePathLooseFilePath > $null
+            #
+            # Under $pwd
+            $inCwdLooseFilePath = Join-Path $pwd 'loose.psm1'
+            New-Item -ItemType File -Force $inCwdLooseFilePath > $null
+        }
+
+        AfterAll {
+            Remove-Item $inPSModulePathLooseFilePath
+            Remove-Item $inCwdLooseFilePath
+        }
+
+        # TODO: This looks like a bug.
+        It 'wrongly writes error instead of returning module information for existing script module under $env:PSModulePath using basename' {
+            Test-Path (Join-Path $psModulePath loose.psm1) | Should -BeTrue
+
+            $err = { Get-Module -ListAvailable -Name (Join-Path $psModulePath loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+            $err = { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $psModulePath loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+        }
+
+        # TODO: This looks like a bug.
+        It 'wrongly writes error instead of returning module information for existing script module using basename' {
+            Test-Path (Join-Path $pwd loose.psm1) | Should -BeTrue
+
+            $err = { Get-Module -ListAvailable -Name (Join-Path $pwd loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+            $err = { Get-Module -ListAvailable -FullyQualifiedName (Join-Path $pwd loose) -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+        }
+    }
+}
+
 Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
     BeforeAll {
         $moduleName = 'Banana'
