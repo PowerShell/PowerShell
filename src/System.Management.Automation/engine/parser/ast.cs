@@ -9820,7 +9820,7 @@ namespace System.Management.Automation.Language
 
     /// <summary>
     /// The ast that represents a double quoted string (here string or normal string) and can have nested variable
-    /// references or sub-expressions, e.g. <c>"Name: $name`nAge: $([DateTime]::Now.Year - $dob.Year)"</c>.
+    /// references or sub-expressions, e.g. <c>"Name: $name`nAge: $([datetime]::Now.Year - $dob.Year)"</c>.
     /// </summary>
     public class ExpandableStringExpressionAst : ExpressionAst
     {
