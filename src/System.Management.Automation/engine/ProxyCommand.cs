@@ -470,8 +470,8 @@ namespace System.Management.Automation
                     {
                         // The title property value may be stored as a PSObject wrapping a string,
                         // so use ToString() on the raw Value rather than 'Value as string'.
-                        string exampleTitle = ExtractExampleTitle(ex.Properties["title"]?.Value?.ToString());
-                        if (!string.IsNullOrEmpty(exampleTitle))
+                        ReadOnlySpan<char> exampleTitle = ExtractExampleTitle(ex.Properties["title"]?.Value?.ToString());
+                        if (!exampleTitle.IsEmpty)
                         {
                             sb.Append("\n\n.EXAMPLE ");
                             sb.Append(exampleTitle);
@@ -524,14 +524,14 @@ namespace System.Management.Automation
         /// separated from the border by a space. The localized example label is not interpreted,
         /// and a heading without the delimiter has no title.
         /// </summary>
-        private static string ExtractExampleTitle(string decoratedTitle)
+        private static ReadOnlySpan<char> ExtractExampleTitle(string decoratedTitle)
         {
-            ReadOnlySpan<char> heading = decoratedTitle.AsSpan().Trim();
+            ReadOnlySpan<char> heading = decoratedTitle.AsSpan();
             int separatorIndex = heading.IndexOf(": ", StringComparison.Ordinal);
 
-            return separatorIndex < 0
-                ? null
-                : heading.Slice(separatorIndex + 2).TrimEnd('-').Trim().ToString();
+            return separatorIndex < 0 || separatorIndex + 2 >= heading.Length
+                ? default
+                : heading.Slice(separatorIndex + 2).TrimEnd('-').Trim();
         }
 
         #endregion
