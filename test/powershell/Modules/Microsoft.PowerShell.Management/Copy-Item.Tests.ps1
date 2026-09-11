@@ -2,6 +2,17 @@
 # Licensed under the MIT License.
 
 Describe "Validate Copy-Item locally" -Tags "CI" {
+    BeforeAll {
+        $canRemoteNameCausePathTraversalMethod = [Microsoft.PowerShell.Commands.FileSystemProvider].GetMethod(
+            'CanRemoteNameCausePathTraversal',
+            [System.Reflection.BindingFlags]::NonPublic -bor [System.Reflection.BindingFlags]::Static)
+
+        function CanRemoteNameCausePathTraversal {
+            param ([string]$name)
+            return $canRemoteNameCausePathTraversalMethod.Invoke($null, @($name))
+        }
+    }
+
     It "Copy-Item has non-terminating error if destination is in use" -Skip:(!$IsWindows) {
         Copy-Item -Path $env:windir\system32\cmd.exe -Destination TestDrive:\
         $cmd = Start-Process -FilePath TestDrive:\cmd.exe -PassThru
@@ -11,6 +22,34 @@ Describe "Validate Copy-Item locally" -Tags "CI" {
         finally {
             $cmd | Stop-Process
         }
+    }
+
+    It "Validate remote name <Name> for path traversal" -TestCases @(
+        @{ Name = "evil.txt"; CanTraverse = $false }
+        @{ Name = "my.file.name"; CanTraverse = $false }
+        @{ Name = "Zone.Identifier"; CanTraverse = $false }
+        @{ Name = "has space.txt"; CanTraverse = $false }
+        @{ Name = "COM10"; CanTraverse = $false }
+
+        @{ Name = ".."; CanTraverse = $true }
+        @{ Name = "."; CanTraverse = $true }
+        @{ Name = "..\..\evil.txt"; CanTraverse = $true }
+        @{ Name = "a\b"; CanTraverse = $true }
+        @{ Name = "a/b"; CanTraverse = $true }
+        @{ Name = "\evil"; CanTraverse = $true }
+        @{ Name = "C:\evil"; CanTraverse = $true }
+        @{ Name = "..\"; CanTraverse = $true }
+
+        ## The char ':' is not allowed on Windows, but allowed on Unix platforms.
+        @{ Name = "x:evil"; CanTraverse = $isWindows }
+        @{ Name = ":bad"; CanTraverse = $isWindows }
+    ) {
+        param(
+            [string]$Name,
+            [bool]$CanTraverse
+        )
+
+        CanRemoteNameCausePathTraversal $Name | Should -Be $CanTraverse
     }
 }
 
