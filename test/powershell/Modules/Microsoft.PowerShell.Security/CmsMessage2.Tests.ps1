@@ -7,7 +7,7 @@ using namespace System.Security.Cryptography
 function New-CmsRecipient {
     [CmdletBinding(SupportsShouldProcess = $true)]
     [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
-    param([String]$Name, [Switch]$Invalid, [String]$OutPfxFile)
+    param([string]$Name, [Switch]$Invalid, [string]$OutPfxFile)
     $hash = [HashAlgorithmName]::SHA256
     $pad = [RSASignaturePadding]::Pkcs1
     $oids = [OidCollection]::new()

@@ -16,7 +16,7 @@ Describe "Attribute tests" -Tags "CI" {
 [CmdletBinding()]
 Param (
 [Parameter($attribute="")]
-[String]`$Parameter1
+[string]`$Parameter1
 )
 Write-Output "Hello"
 "@

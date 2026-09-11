@@ -4291,15 +4291,15 @@ function New-PSOptionsObject
         $RootInfo,
 
         [Parameter(Mandatory)]
-        [String]
+        [string]
         $Top,
 
         [Parameter(Mandatory)]
-        [String]
+        [string]
         $Runtime,
 
         [Parameter(Mandatory)]
-        [String]
+        [string]
         $Configuration,
 
         [Parameter(Mandatory)]
@@ -4307,11 +4307,11 @@ function New-PSOptionsObject
         $PSModuleRestore,
 
         [Parameter(Mandatory)]
-        [String]
+        [string]
         $Framework,
 
         [Parameter(Mandatory)]
-        [String]
+        [string]
         $Output,
 
         [Parameter(Mandatory)]
@@ -4599,7 +4599,7 @@ function New-NugetPackageSource {
     return [NugetPackageSource] @{Url = $Url; Name = $Name }
 }
 
-$script:NuGetEndpointCredentials = [System.Collections.Generic.Dictionary[String,System.Object]]::new()
+$script:NuGetEndpointCredentials = [System.Collections.Generic.Dictionary[string,System.Object]]::new()
 function New-NugetConfigFile {
     <#
     .SYNOPSIS

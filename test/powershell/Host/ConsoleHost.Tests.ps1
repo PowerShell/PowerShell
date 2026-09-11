@@ -762,7 +762,7 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             param($testArg, $expectedMatches)
             $output = & $powershell $testArg -File foo 2>&1
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
-            $outString = [String]::Join(",", $output)
+            $outString = [string]::Join(",", $output)
             foreach ($expectedMatch in $expectedMatches)
             {
                 $outString | Should -Match $expectedMatch

@@ -4042,7 +4042,7 @@ function Enable-PSSessionConfiguration
 [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact=""Medium"")]
 param(
     [Parameter(Position=0, ValueFromPipeline=$true)]
-    [System.String]
+    [string]
     $Name,
 
     [Parameter()]
@@ -4429,7 +4429,7 @@ function Disable-PSSessionConfiguration
 [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact=""Low"")]
 param(
     [Parameter(Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-    [System.String]
+    [string]
     $Name,
 
     [Parameter()]

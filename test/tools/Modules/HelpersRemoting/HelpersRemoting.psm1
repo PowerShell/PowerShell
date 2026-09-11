@@ -138,7 +138,7 @@ function CreateParameters
     if ($Name) {
         if($CimSession.IsPresent)
         {
-            $parameters["Name"] = [String] $Name
+            $parameters["Name"] = [string] $Name
         }
         else
         {
