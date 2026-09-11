@@ -240,6 +240,15 @@
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
     <value>Impossible de traiter le chemin d’accès « {0} », car la cible représente un nom d’appareil réservé.</value>
   </data>
+  <data name="DirectoryNamePathTraversal" xml:space="preserve">
+    <value>Cannot process the remote directory name '{0}' because it may result in path traversal.</value>
+  </data>
+  <data name="FileNamePathTraversal" xml:space="preserve">
+    <value>Cannot process the remote file name '{0}' because it may result in path traversal.</value>
+  </data>
+  <data name="ADSPathTraversal" xml:space="preserve">
+    <value>Cannot process the remote Alternate Data Stream name '{0}' because it may result in path traversal.</value>
+  </data>
   <data name="EncodingNotUsed" xml:space="preserve">
     <value>L’encodage n’est pas utilisé quand « -AsByteStream » est spécifié.</value>
   </data>
