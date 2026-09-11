@@ -321,7 +321,25 @@ End {{
             $exampleDirective | Should -BeExactly '.EXAMPLE'
         }
 
+        It 'should not emit examples when the function has none' {
+            function HelpFuncWithoutExamples {
+                <#
+                  .SYNOPSIS
+                  Help without examples.
+                #>
+                param()
+            }
+
+            $help = Get-Help -Name HelpFuncWithoutExamples
+            $help.examples | Should -BeNullOrEmpty
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($help)
+            $helpComments | Should -Not -Match '(?m)^\.EXAMPLE(?:\s|$)'
+        }
+
         It 'should round-trip example title "<Title>"' -TestCases @(
+            @{ Title = 'Plain example title' }
+            @{ Title = 'Example 1: Standard title' }
+            @{ Title = 'Configuration: Use C:\Temp' }
             @{ Title = 'Step 1: Initialize the module' }
             @{ Title = 'Using a non-standard path' }
             @{ Title = 'Authentication - As a User' }
@@ -344,13 +362,22 @@ End {{
                     ' ' + [char]0x65E5 + [char]0x672C + [char]0x8A9E +
                     ' ' + [char]::ConvertFromUtf32(0x1F527) + ' -'
             }
+            @{ Title = 'Label: '; ExpectedTitle = 'Label:' }
+            @{ Title = ''; ExpectedTitle = '' }
+            @{ Title = '   '; ExpectedTitle = '' }
+            @{ Title = "`t`t"; ExpectedTitle = '' }
+            @{ Title = '  Title with authored spaces  '; ExpectedTitle = 'Title with authored spaces' }
+            @{ Title = "`tTitle with authored tabs`t"; ExpectedTitle = 'Title with authored tabs' }
+            @{ Title = '  --- Title with authored dashes ---  '; ExpectedTitle = '--- Title with authored dashes ---' }
+            @{ Title = "Title with`tinternal whitespace" }
+            @{ Title = ('Label: ' * 256) + 'Final label' }
         ) {
-            param($Title)
+            param($Title, $ExpectedTitle = $Title)
 
             $funcBody = @"
 <#
     .SYNOPSIS
-    Test punctuation in an example title.
+    Test generated example help.
 
     .EXAMPLE $Title
     Get-Date
@@ -359,9 +386,17 @@ param()
 "@
             Set-Item -Path function:\HelpFuncExampleTitle -Value ([scriptblock]::Create($funcBody))
             $help = Get-Help HelpFuncExampleTitle
+            $sourceExamples = @($help.examples.example)
+            $sourceExamples.Count | Should -Be 1
+            $heading = $sourceExamples[0].title.ToString()
+            $heading | Should -Match '^-+ .+ -+$'
+            $heading | Should -Not -Match '^\s|\s$'
+
             $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($help)
-            $exampleDirective = $helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
-            $exampleDirective | Should -BeExactly ".EXAMPLE $Title"
+            $expectedDirective = if ([string]::IsNullOrEmpty($ExpectedTitle)) { '.EXAMPLE' } else { ".EXAMPLE $ExpectedTitle" }
+            $exampleDirectives = @($helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' })
+            $exampleDirectives.Count | Should -Be 1
+            $exampleDirectives[0] | Should -BeExactly $expectedDirective
 
             $proxyBody = "param()`n<#`n$helpComments`n#>"
             Set-Item -Path function:\ProxyExampleTitle -Value ([scriptblock]::Create($proxyBody))
@@ -376,87 +411,7 @@ param()
 
             $repeatedComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($roundTrippedHelp)
             $repeatedDirective = $repeatedComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
-            $repeatedDirective | Should -BeExactly ".EXAMPLE $Title"
-        }
-
-        It 'should extract the expected example title from "<Title>"' -TestCases @(
-            # Remove the final dash border before trimming whitespace so authored dashes survive.
-            # The label before the first ": " is dropped; without that delimiter there is no title.
-            @{ Title = 'Example 1: Standard title'; ExpectedTitle = 'Standard title' }
-            @{ Title = 'Configuration: Use C:\Temp'; ExpectedTitle = 'Use C:\Temp' }
-            @{ Title = '--- Example 1: Short border ---'; ExpectedTitle = 'Short border' }
-            @{ Title = '- EXAMPLE 1: Single dash -'; ExpectedTitle = 'Single dash' }
-            @{ Title = '-------------------------------- EXAMPLE 1: Long border --------------------------------'; ExpectedTitle = 'Long border' }
-            @{ Title = '--- EXAMPLE 1: Unequal borders -------'; ExpectedTitle = 'Unequal borders' }
-            @{ Title = '---   EXAMPLE 1: Extra spaces   ---'; ExpectedTitle = 'Extra spaces' }
-            @{ Title = '------------------ Example: Test - This is a title ---------------'; ExpectedTitle = 'Test - This is a title' }
-            @{ Title = '--- EXAMPLE 1: Configuration: Use C:\Temp ---'; ExpectedTitle = 'Configuration: Use C:\Temp' }
-            @{ Title = '--- EXAMPLE 1: Use the -- separator ---'; ExpectedTitle = 'Use the -- separator' }
-            @{ Title = '------ Example: - test - something - ------'; ExpectedTitle = '- test - something -' }
-            @{ Title = " `t------ Example: - test - something - ------ `t "; ExpectedTitle = '- test - something -' }
-            @{ Title = '------ Example:   - test - something -   ------'; ExpectedTitle = '- test - something -' }
-            @{ Title = '--- EXAMPLE 1: - ---'; ExpectedTitle = '-' }
-            @{ Title = '--- EXAMPLE 1: --- ---'; ExpectedTitle = '---' }
-            @{ Title = '--- EXAMPLE 1: -- Title -- ---'; ExpectedTitle = '-- Title --' }
-            @{ Title = '--- EXAMPLE 1: --switch ---'; ExpectedTitle = '--switch' }
-            @{ Title = '--- EXAMPLE 1: Step 1: Initialize - ---'; ExpectedTitle = 'Step 1: Initialize -' }
-            # Borders that are not separated from the heading by a space are still trimmed.
-            @{ Title = '---EXAMPLE 1: No opening space ---'; ExpectedTitle = 'No opening space' }
-            @{ Title = '--- EXAMPLE 1: No closing space---'; ExpectedTitle = 'No closing space' }
-            @{ Title = '-------------------------- EXAMPLE 1: No closing border'; ExpectedTitle = 'No closing border' }
-            @{ Title = 'EXAMPLE 1: No opening border --------------------------'; ExpectedTitle = 'No opening border' }
-            @{ Title = 'Prefix --- EXAMPLE 1: Not at the start ---'; ExpectedTitle = 'Not at the start' }
-            # Only the final contiguous dash run is removed, so inner dash runs survive.
-            @{ Title = '--- EXAMPLE 1: Not at the end --- Suffix'; ExpectedTitle = 'Not at the end --- Suffix' }
-            # A heading with no ": " delimiter has no custom title.
-            @{ Title = 'Use a temporary directory'; ExpectedTitle = '' }
-            @{ Title = '--- EXAMPLE 1 ---'; ExpectedTitle = '' }
-            @{ Title = '--- EXAMPLE 1: ---'; ExpectedTitle = '' }
-            @{ Title = '--- EXAMPLE 1:  ---'; ExpectedTitle = '' }
-            @{ Title = '-------------------------- --------------------------'; ExpectedTitle = '' }
-            @{
-                Title = '--- ' + ('Label: ' * 256) + 'No closing border'
-                ExpectedTitle = ('Label: ' * 255) + 'No closing border'
-            }
-            # Foreign headings also exercise localization without satellite resource assemblies.
-            @{ Title = '-------------------------- BEISPIEL 1: Localized title --------------------------'; ExpectedTitle = 'Localized title' }
-            @{ Title = '-------------------------- BEISPIEL 1 --------------------------'; ExpectedTitle = '' }
-            @{ Title = $null; ExpectedTitle = '' }
-            @{ Title = ''; ExpectedTitle = '' }
-            @{ Title = '   '; ExpectedTitle = '' }
-        ) {
-            param($Title, $ExpectedTitle)
-
-            $originalUICulture = [System.Globalization.CultureInfo]::CurrentUICulture
-            try {
-                [System.Globalization.CultureInfo]::CurrentUICulture =
-                    [System.Globalization.CultureInfo]::GetCultureInfo('en-US')
-
-                $example = [pscustomobject]@{
-                    code = [pscustomobject]@{ Text = 'Get-Date' }
-                }
-                if ($null -ne $Title) {
-                    $example | Add-Member -NotePropertyName title -NotePropertyValue $Title
-                }
-
-                $helpObject = [pscustomobject]@{
-                    Synopsis = 'Synthetic help object'
-                    examples = [pscustomobject]@{ example = $example }
-                }
-                $helpObject.PSObject.TypeNames.Insert(0, 'Synthetic.HelpInfo')
-
-                $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($helpObject)
-                $exampleDirective = $helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
-                if ([string]::IsNullOrEmpty($ExpectedTitle)) {
-                    $exampleDirective | Should -BeExactly '.EXAMPLE'
-                }
-                else {
-                    $exampleDirective | Should -BeExactly ".EXAMPLE $ExpectedTitle"
-                }
-            }
-            finally {
-                [System.Globalization.CultureInfo]::CurrentUICulture = $originalUICulture
-            }
+            $repeatedDirective | Should -BeExactly $expectedDirective
         }
 
         It 'should round-trip examples generated under <SourceCulture> when consumed under <TargetCulture>' -TestCases @(

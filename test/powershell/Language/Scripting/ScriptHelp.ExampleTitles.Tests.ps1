@@ -36,6 +36,37 @@ Describe 'get-help comment-based help example titles' -Tags "CI" {
         It 'example 2 remarks' { $script:x.examples.example[1].remarks[0].text | Should -BeExactly 'Lists all files and folders in C:\Temp' }
     }
 
+    Context 'get-help generates normalized example headings' {
+        It 'normalizes the authored title "<Title>" before decorating it' -TestCases @(
+            @{ Title = 'Plain title'; ExpectedTitle = 'Plain title' }
+            @{ Title = '  Title with authored spaces  '; ExpectedTitle = 'Title with authored spaces' }
+            @{ Title = "`tTitle with authored tabs`t"; ExpectedTitle = 'Title with authored tabs' }
+            @{ Title = '  --- Title with authored dashes ---  '; ExpectedTitle = '--- Title with authored dashes ---' }
+            @{ Title = 'Step 1 -'; ExpectedTitle = 'Step 1 -' }
+        ) {
+            param($Title, $ExpectedTitle)
+
+            $body = @"
+<#
+    .SYNOPSIS
+    Test generated example headings.
+
+    .EXAMPLE $Title
+    Get-Date
+#>
+param()
+"@
+            Set-Item -Path function:\HelpFuncNormalizedExampleTitle -Value ([scriptblock]::Create($body))
+            $help = Get-Help -Name HelpFuncNormalizedExampleTitle -Full
+            $examples = @($help.examples.example)
+            $examples.Count | Should -Be 1
+            $heading = $examples[0].title.ToString()
+            $heading | Should -Not -Match '^\s|\s$'
+            $heading | Should -Match ('^-+ .+: ' + [regex]::Escape($ExpectedTitle) + ' -+$')
+            $examples[0].code | Should -BeExactly 'Get-Date'
+        }
+    }
+
     Context 'get-help .EXAMPLE mixed titled and untitled examples' {
         BeforeAll {
             function helpFuncMixedExamples {
