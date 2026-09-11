@@ -240,6 +240,15 @@
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
     <value>ターゲットが予約済みデバイス名を表しているため、パス '{0}' を処理できません。</value>
   </data>
+  <data name="DirectoryNamePathTraversal" xml:space="preserve">
+    <value>Cannot process the remote directory name '{0}' because it may result in path traversal.</value>
+  </data>
+  <data name="FileNamePathTraversal" xml:space="preserve">
+    <value>Cannot process the remote file name '{0}' because it may result in path traversal.</value>
+  </data>
+  <data name="ADSPathTraversal" xml:space="preserve">
+    <value>Cannot process the remote Alternate Data Stream name '{0}' because it may result in path traversal.</value>
+  </data>
   <data name="EncodingNotUsed" xml:space="preserve">
     <value>エンコードは、'-AsByteStream' が指定されている場合は使用されません。</value>
   </data>
