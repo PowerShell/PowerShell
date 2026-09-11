@@ -472,3 +472,59 @@ Describe 'Roundtrippable Conversions for Bare-string Numeric Literals passed to 
         Invoke-Expression "Test-AdvancedStringValue -Value $Argument" | Should -BeExactly $Argument
     }
 }
+
+Describe 'Scalar PSObject binding to non-generic IList parameters' -Tags 'CI' {
+    BeforeAll {
+        $typeDefinition = @'
+using System.Collections.Specialized;
+using System.Management.Automation;
+
+namespace ScalarPSObjectCollectionBinding
+{
+    [Cmdlet(VerbsDiagnostic.Test, "ScalarStringCollectionBinding")]
+    [OutputType(typeof(string))]
+    public sealed class TestScalarStringCollectionBindingCommand : PSCmdlet
+    {
+        [Parameter(Mandatory = true)]
+        public StringCollection Value { get; set; }
+
+        protected override void ProcessRecord()
+        {
+            WriteObject(Value[0]);
+        }
+    }
+}
+'@
+
+        $types = Add-Type -PassThru -TypeDefinition $typeDefinition
+        Import-Module $types[0].Assembly
+    }
+
+    It 'binds a scalar PSObject wrapping a string to StringCollection' {
+        $value = @('expected', 'expected') | Select-Object -Unique
+
+        # Confirm that this is the specific problematic input shape.
+        $value.GetType().FullName | Should -BeExactly 'System.String'
+        ($value -is [System.Management.Automation.PSObject]) |
+            Should -BeTrue
+
+        Test-ScalarStringCollectionBinding -Value $value |
+            Should -BeExactly 'expected'
+    }
+
+    It 'continues to bind a plain scalar string' {
+        Test-ScalarStringCollectionBinding -Value 'expected' |
+            Should -BeExactly 'expected'
+    }
+
+    It 'continues to bind multiple pipeline-produced strings' {
+        $value = @('first', 'second') | Select-Object -Unique
+
+        $result = @(
+            Test-ScalarStringCollectionBinding -Value $value
+        )
+
+        # The test cmdlet writes Value[0], proving binding succeeded.
+        $result | Should -BeExactly 'first'
+    }
+}
