@@ -42,6 +42,23 @@ try
             }
         }
 
+        It "Should support -Comment parameter" -Skip:(!$IsWindows) {
+            $comment = "Testing comment"
+            Stop-Computer -Comment $comment -ErrorAction Stop | Should -BeNullOrEmpty
+        }
+
+        It "Should support -ShutdownDelaySec parameter" -Skip:(!$IsWindows) {
+            $shutdownDelaySec = 30
+            Stop-Computer -ShutdownDelaySec $shutdownDelaySec -ErrorAction Stop | Should -BeNullOrEmpty
+        }
+
+        It "Should support Reason types" -Skip:(!$IsWindows) {
+            $ReasonList = [System.Enum]::GetNames([Microsoft.PowerShell.Commands.ShutdownReason])
+            foreach ( $reason in $ReasonList ) {
+                Stop-Computer -Reason $reason -ErrorAction Stop | Should -BeNullOrEmpty
+            }
+        }
+
         Context "Stop-Computer Error Conditions" {
             It "Should return the proper error when it occurs" {
                 Set-TesthookResult -testhookName $stopTesthookResultName -Value 0x300000

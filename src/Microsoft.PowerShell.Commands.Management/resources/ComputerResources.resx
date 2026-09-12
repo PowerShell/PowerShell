@@ -159,6 +159,9 @@
   <data name="RestartcomputerFailed" xml:space="preserve">
     <value>Failed to restart the computer {0} with the following error message: {1}.</value>
   </data>
+  <data name="RestartcomputerAfterRename" xml:space="preserve">
+    <value>Restarting after renaming the computer name to: {0}.</value>
+  </data>
   <data name="OperationFailed" xml:space="preserve">
     <value>This command cannot be run on target computer('{1}') due to following error: {0}.{2}</value>
   </data>
