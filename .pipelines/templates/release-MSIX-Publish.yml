@@ -52,23 +52,42 @@ jobs:
         }
 
         $endURL = $tagString -replace '^v','' -replace '\.',''
-        $message = "Changelog: https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
+        $changelogLink = "https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
         Write-Verbose -Verbose "Release Notes for the Store:"
-        Write-Verbose -Verbose "$message"
         $jsonPath = "$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json"
         $json = Get-Content $jsonPath -Raw | ConvertFrom-Json
 
-        $json.listings.'en-us'.baseListing.releaseNotes = $message
+        $releaseNoteVariables = @{
+          '___VERSION___' = $tagString
+          '___CHANGELOGLINK___' = $changelogLink
+        }
 
-        # Add PowerShell version to the top of the description
-        $description = $json.listings.'en-us'.baseListing.description
-        $version = "$(ReleaseTag)"
-        $updatedDescription = "Version: $version`n`n$description"
-        $json.listings.'en-us'.baseListing.description = $updatedDescription
-        Write-Verbose -Verbose "Updated description: $updatedDescription"
+        $listingProperties = @($json.listings.PSObject.Properties)
+        if ($listingProperties.Count -eq 0) {
+          throw "Store listings are missing from '$jsonPath'."
+        }
+
+        foreach ($listingProperty in $listingProperties) {
+          $language = $listingProperty.Name
+          $releaseNotes = $listingProperty.Value.baseListing.releaseNotes
+          if ([string]::IsNullOrWhiteSpace($releaseNotes)) {
+            throw "Store release notes for '$language' are missing from '$jsonPath'."
+          }
+
+          foreach ($placeholder in $releaseNoteVariables.Keys) {
+            if (-not $releaseNotes.Contains($placeholder)) {
+              throw "Store release notes for '$language' do not contain the required placeholder '$placeholder'."
+            }
+            $releaseNotes = $releaseNotes.Replace($placeholder, $releaseNoteVariables[$placeholder])
+          }
+
+          $listingProperty.Value.baseListing.releaseNotes = $releaseNotes
+          Write-Verbose -Verbose "Release notes for '$language':"
+          Write-Verbose -Verbose $releaseNotes
+        }
 
         $json | ConvertTo-Json -Depth 100 | Set-Content $jsonPath -Encoding UTF8
-    displayName: 'Add Changelog Link and Version Number to SBJSON'
+    displayName: 'Set Store Release Note Variables'
 
   - task: PowerShell@2
     condition: or(eq(variables['LTS'], 'true'), eq(variables['STABLE'], 'true'), eq(variables['PREVIEW'], 'true'))
