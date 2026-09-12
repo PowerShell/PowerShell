@@ -1,0 +1,75 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+#
+# Official 1ES release validation and staging entry point.
+#
+# This pipeline consumes an explicitly selected run of
+# `PowerShell-Packages-Official-1ES` (definition 4267), executes the shared SDK,
+# .NET global-tool, and framework-dependent package validation gates, and stages
+# the WinGet input for inspection. The complete stage graph remains in the
+# PowerShell Engineering System; this file only establishes the Official trust
+# boundary and exact package-pipeline resource.
+#
+# `PSPackagesOfficial` is the established release-template alias. The shared
+# validation templates use it for artifact downloads and workspace paths, so the
+# alias must remain unchanged.
+#
+# This pipeline deliberately has no automatic CI, PR, or pipeline-resource
+# trigger. A caller must choose a package run explicitly in Azure DevOps. It has
+# no publishing, signing, upload, submission, or public-release stages.
+
+trigger: none
+pr: none
+
+name: release-$(BUILD.SOURCEBRANCHNAME)-1ES-official-$(Build.BuildId)
+
+resources:
+  pipelines:
+    - pipeline: PSPackagesOfficial
+      project: PowerShellCore
+      source: PowerShell-Packages-Official-1ES
+      trigger: none
+  repositories:
+    - repository: 1ESPipelineTemplates
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+    - repository: PowerShellEngineeringSystem
+      type: git
+      name: PowerShellCore/PowerShell-Engineering-System
+      ref: 8d6d0badc82a3336e8631f2bbba3e9ce20da970a
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    featureFlags:
+      autoEnableRoslynWithNewRuleset: false
+    pool:
+      name: PowerShell1ES
+      image: MMS2022
+      os: windows
+    sdl:
+      codeql:
+        compiled:
+          enabled: false
+      sbom:
+        enabled: true
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+      tsa:
+        enabled: true
+        configFile: $(Build.SourcesDirectory)\.config\tsaoptions.json
+      credscan:
+        enabled: true
+        scanFolder: $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      apiscan:
+        enabled: false
+    stages:
+      - template: /templates/1ES/stages/PowerShell-Release-Staging-Stages.yml@PowerShellEngineeringSystem
+        parameters:
+          packagePipelineAlias: PSPackagesOfficial

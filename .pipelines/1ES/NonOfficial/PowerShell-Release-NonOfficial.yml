@@ -1,0 +1,104 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+#
+# NonOfficial 1ES release entry point.
+#
+# WHAT IT DOES
+# ------------
+# Runs the package-validation gates that the OneBranch NonOfficial release pipeline runs
+# (SDK hosting tests, .NET global tools, framework-dependent packages) against a run of
+# `PowerShell-Packages-NonOfficial-1ES`, and then stages the WinGet input for human
+# inspection. All of that lives in the Engineering System so it stays reusable; this file
+# is intentionally a thin entry point.
+#
+# HOW THE PACKAGE RUN IS SELECTED
+# -------------------------------
+# Through the `resources.pipelines` declaration below, i.e. through the Azure DevOps
+# resource picker in the queue dialog. There are deliberately NO free-form "run id",
+# "source branch", "source commit" or "bundle name" parameters: those were queue-time
+# strings that a queuer could set to anything, so validating the resource against them
+# proved nothing. Everything downstream reads the standard
+# `$(resources.pipeline.PSPackagesOfficial.*)` variables instead.
+#
+# The alias `PSPackagesOfficial` is intentionally identical to the alias used by the
+# OneBranch release pipelines (.pipelines/NonOfficial/PowerShell-Release-NonOfficial.yml
+# and .pipelines/PowerShell-Release-Official.yml). Keeping it identical is what lets the
+# ported validation templates use `download: PSPackagesOfficial` and
+# `$(Pipeline.Workspace)/PSPackagesOfficial/...` unchanged. The `source:` below is the
+# NonOfficial 1ES package pipeline; the alias says nothing about officialness.
+#
+# WHAT IT MUST NEVER DO
+# ---------------------
+# This pipeline is NonOfficial and non-releasing. It contains no signing or release task,
+# no production release service connection, no WinGet publish/upload, and no automatic
+# release side effect of any kind. It extends the *Unofficial* 1ES template.
+
+trigger: none
+pr: none
+
+name: release-$(BUILD.SOURCEBRANCHNAME)-1ES-nonofficial-$(Build.BuildId)
+
+resources:
+  pipelines:
+    # NOTE: The alias name "PSPackagesOfficial" is intentionally reused here even for the
+    # NonOfficial pipeline source, exactly as the OneBranch NonOfficial release pipeline
+    # does. Downstream shared templates (release-validate-sdk.yml,
+    # release-validate-globaltools.yml, release-validate-fxdpackages.yml) reference
+    # artifacts using `download: PSPackagesOfficial`, so changing this alias would break
+    # them.
+    #
+    # Preserve the OneBranch NonOfficial resource-trigger behavior. Manual runs can still
+    # select any producer run through the Azure DevOps pipeline-resource picker; rebuild/*
+    # remains manual because it does not match these automatic-trigger branches.
+    - pipeline: PSPackagesOfficial
+      project: PowerShellCore
+      source: PowerShell-Packages-NonOfficial-1ES
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
+  repositories:
+    - repository: 1ESPipelineTemplates
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+    - repository: PowerShellEngineeringSystem
+      type: git
+      name: PowerShellCore/PowerShell-Engineering-System
+      ref: 8d6d0badc82a3336e8631f2bbba3e9ce20da970a
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    featureFlags:
+      autoEnableRoslynWithNewRuleset: false
+    pool:
+      name: PowerShell1ES
+      image: MMS2022
+      os: windows
+    sdl:
+      codeql:
+        compiled:
+          enabled: false
+      sbom:
+        enabled: true
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+      tsa:
+        enabled: true
+        configFile: $(Build.SourcesDirectory)\.config\tsaoptions.json
+      credscan:
+        enabled: true
+        scanFolder: $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      apiscan:
+        enabled: false
+    stages:
+      - template: /templates/1ES/stages/PowerShell-Release-Staging-Stages.yml@PowerShellEngineeringSystem
+        parameters:
+          packagePipelineAlias: PSPackagesOfficial
