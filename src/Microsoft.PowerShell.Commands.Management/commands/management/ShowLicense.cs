@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Show, "PowerShellLicense")]
     public class ShowLicense : Cmdlet
     {
-        protected override void processRecord()
+        protected override void ProcessRecord()
         {
             string systemLicense = "Copyright (C) Microsoft Corporation and licensed under the MIT License.";
             WriteObject(systemLicense);
