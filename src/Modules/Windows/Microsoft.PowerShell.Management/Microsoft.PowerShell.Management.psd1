@@ -71,5 +71,5 @@ CmdletsToExport=@("Add-Content",
     "Set-TimeZone",
     "Get-HotFix",
     "Clear-RecycleBin",
-    "Show-PowerShellLicense")
+    "Get-PowerShellLicense")
 }
