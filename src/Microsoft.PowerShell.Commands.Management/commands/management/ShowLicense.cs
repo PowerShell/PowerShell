@@ -5,18 +5,20 @@ using System;
 
 using System.Management.Automation;
 
-namespace Microsoft.PowerShell.Commands {
+namespace Microsoft.PowerShell.Commands 
+{
     // --- The Class of Module: Show the License ---
-    [ Cmdlet(VerbsCommon.Show, "PowerShellLicense") ]
-    public class ShowLicense : Cmdlet {
-        protected override void ProcessRecord() {
+    [Cmdlet(VerbsCommon.Show, "PowerShellLicense")]
+    public class ShowLicense : Cmdlet 
+    {
+        protected override void ProcessRecord()
+         {
             string SystemLicense = "Copyright (C) Microsoft Corporation and licensed under the MIT License.";
             WriteObject(SystemLicense);
         }
     }
     // --- End of Class, Module: Show the License ---
 }
-
 
 /** Notes:
  * I´m create this File for contribute with Microsoft,
