@@ -14,13 +14,13 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Show, "PowerShellLicense")]
     public class ShowLicense : Cmdlet
     {
-        protected override void ProcessRecord()
+        protected override void processRecord()
         {
             string systemLicense = "Copyright (C) Microsoft Corporation and licensed under the MIT License.";
             WriteObject(systemLicense);
         }
     }
-    
+
     // --- End of Class, Module: Show the License ---
 }
 
