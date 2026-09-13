@@ -8,12 +8,16 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     // --- The Class of Module: Show the License ---
+
     /// <summary>
     /// Show the MIT License.
     /// </summary>
     [Cmdlet(VerbsCommon.Show, "PowerShellLicense")]
     public class ShowLicense : Cmdlet
     {
+        /// <summary>
+        /// Executes the cmdlet logic.
+        /// </summary>
         protected override void ProcessRecord()
         {
             string systemLicense = "Copyright (C) Microsoft Corporation and licensed under the MIT License.";
