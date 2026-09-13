@@ -666,12 +666,21 @@ namespace System.Management.Automation.Internal.Host
 
         internal static bool IsSecuritySensitiveType(string typeName)
         {
-            if (typeName.Equals(nameof(PSCredential), StringComparison.OrdinalIgnoreCase))
+            string effectiveName = typeName;
+            int suffixIndex = effectiveName.IndexOfAny(new char[] { '[', ',' });
+            if (suffixIndex >= 0)
+            {
+                effectiveName = effectiveName.Substring(0, suffixIndex);
+            }
+
+            if (effectiveName.Equals(nameof(PSCredential), StringComparison.OrdinalIgnoreCase) ||
+                effectiveName.Equals(typeof(PSCredential).FullName, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            if (typeName.Equals(nameof(SecureString), StringComparison.OrdinalIgnoreCase))
+            if (effectiveName.Equals(nameof(SecureString), StringComparison.OrdinalIgnoreCase) ||
+                effectiveName.Equals(typeof(SecureString).FullName, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
