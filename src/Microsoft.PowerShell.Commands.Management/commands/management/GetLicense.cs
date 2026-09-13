@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// Show the MIT License.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PowerShellLicense")]
-    public class ShowLicense : Cmdlet
+    public class GetLicense : Cmdlet
     {
         /// <summary>
         /// Executes the cmdlet logic.
