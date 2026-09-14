@@ -190,4 +190,7 @@
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>在受限制的工作階段中，無法從網路位置取得說明。</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>受限工作階段中不允許命令。</value>
+  </data>
 </root>

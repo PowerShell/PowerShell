@@ -121,7 +121,6 @@
     <value>'{0}' 클래스의 cmdlet</value>
     <comment>{0} is a placeholder for a name of a CIM class.  Example: "ROOT\cimv2\Win32_Process"</comment>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ScriptWriter_DuplicateQueryParameterName" xml:space="preserve">
     <value>{0} 요소에 정의된 두 cmdlet 매개 변수의 이름이 같습니다: {1}.  Cmdlet 정의 XML에서 충돌을 해결한 다음 다시 시도하세요.</value>
     <comment>{0} is a placeholder for a name of an XML element.  Example: &lt;GetCmdletParameters&gt;

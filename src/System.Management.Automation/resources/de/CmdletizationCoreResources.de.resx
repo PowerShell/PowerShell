@@ -121,7 +121,6 @@
     <value>Cmdlets über „{0}“-Klasse</value>
     <comment>{0} is a placeholder for a name of a CIM class.  Example: "ROOT\cimv2\Win32_Process"</comment>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ScriptWriter_DuplicateQueryParameterName" xml:space="preserve">
     <value>Zwei im {0} Element definierte cmdlet-Parameter haben den gleichen Namen: {1}.  Lösen Sie den Konflikt im XML-Code der Cmdlet-Definition, und wiederholen Sie den Vorgang.</value>
     <comment>{0} is a placeholder for a name of an XML element.  Example: &lt;GetCmdletParameters&gt;

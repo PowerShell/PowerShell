@@ -121,7 +121,6 @@
     <value>Cmdlets de la classe « {0} »</value>
     <comment>{0} is a placeholder for a name of a CIM class.  Example: "ROOT\cimv2\Win32_Process"</comment>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ScriptWriter_DuplicateQueryParameterName" xml:space="preserve">
     <value>Deux paramètres de cmdlet définis dans l’élément {0} portent le même nom : {1}.  Résolvez le conflit dans le fichier XML de définition de l’applet de commande, puis réessayez.</value>
     <comment>{0} is a placeholder for a name of an XML element.  Example: &lt;GetCmdletParameters&gt;

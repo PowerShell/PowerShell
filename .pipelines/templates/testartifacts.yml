@@ -65,6 +65,7 @@ jobs:
     retryCountOnTaskFailure: 1
     env:
       ob_restore_phase: true
+      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
   - pwsh: |
       Write-Host "This doesn't do anything but make the build phase run."
@@ -132,6 +133,7 @@ jobs:
     retryCountOnTaskFailure: 1
     env:
       ob_restore_phase: true
+      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
   - pwsh: |
       Write-Host "This doesn't do anything but make the build phase run."

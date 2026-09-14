@@ -121,7 +121,6 @@
     <value>'{0}' クラスのコマンドレット</value>
     <comment>{0} is a placeholder for a name of a CIM class.  Example: "ROOT\cimv2\Win32_Process"</comment>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ScriptWriter_DuplicateQueryParameterName" xml:space="preserve">
     <value>{0} 要素内で定義された 2 つのコマンドレット パラメーターの名前が同じです: {1}。 Cmdlet Definition XML の競合を解決してから、再試行してください。</value>
     <comment>{0} is a placeholder for a name of an XML element.  Example: &lt;GetCmdletParameters&gt;

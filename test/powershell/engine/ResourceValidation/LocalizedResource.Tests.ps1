@@ -5,6 +5,12 @@ Describe "Localized resource files validation" -Tags "CI" {
 
     BeforeAll {
         $repoSrcDir = (Resolve-Path (Join-Path $PSScriptRoot ../../../../src)).Path
+        $skipSatelliteAssemblyTest = !$IsWindows
+        if (!$skipSatelliteAssemblyTest -and $env:PIPELINE_REPOSITORY_NAME -eq 'Release-Automation') {
+            ## Only MSIX packages include the localized satellite assemblies.
+            $isMSIXApp = Test-Path -Path (Join-Path $PSHOME 'AppxManifest.xml')
+            $skipSatelliteAssemblyTest = -not $isMSIXApp
+        }
 
         # Folders that exist in 'resources' folder but are not a localized resource directory.
         $excludeDirs = @('Graphics')
@@ -87,7 +93,7 @@ Describe "Localized resource files validation" -Tags "CI" {
         }
     }
 
-    It "Satellite assemblies should be produced for '<Language>'" -TestCases $testCases2 -Skip:(!$IsWindows) {
+    It "Satellite assemblies should be produced for '<Language>'" -TestCases $testCases2 -Skip:$skipSatelliteAssemblyTest {
         param($Language)
 
         $satDir = Join-Path $PSHOME $Language

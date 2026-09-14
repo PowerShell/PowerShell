@@ -190,4 +190,7 @@
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>制限されたセッションでは、ネットワークの場所からヘルプを取得できません。</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>制限されたセッションではコマンドを使用できません。</value>
+  </data>
 </root>
