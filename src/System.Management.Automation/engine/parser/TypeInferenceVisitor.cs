@@ -178,6 +178,17 @@ namespace System.Management.Automation
             Func<object, bool> filterToCall = filter;
             if (typename is PSSyntheticTypeName synthetic)
             {
+                if (synthetic.ElementType is not null)
+                {
+                    // The members of an array take precedence over the members of its elements,
+                    // the same way member enumeration only reaches the elements for members the
+                    // array itself does not have.
+                    AddMembersByInferredTypesClrType(typename, isStatic, filter, filterToCall, results);
+                    AddElementMembers(synthetic.Members, results);
+
+                    return results;
+                }
+
                 foreach (var mem in synthetic.Members)
                 {
                     results.Add(new PSInferredProperty(mem.Name, mem.PSTypeName));
@@ -223,6 +234,33 @@ namespace System.Management.Automation
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// Adds the members of the elements of an array, skipping the ones the array already has.
+        /// </summary>
+        /// <param name="elementMembers">The members inferred for the elements of the array.</param>
+        /// <param name="results">The members found for the array itself.</param>
+        private static void AddElementMembers(IList<PSMemberNameAndType> elementMembers, List<object> results)
+        {
+            int arrayMemberCount = results.Count;
+            foreach (var mem in elementMembers)
+            {
+                bool foundOnArray = false;
+                for (int i = 0; i < arrayMemberCount; i++)
+                {
+                    if (TypeInferenceVisitor.GetMemberName(results[i]).Equals(mem.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        foundOnArray = true;
+                        break;
+                    }
+                }
+
+                if (!foundOnArray)
+                {
+                    results.Add(new PSInferredProperty(mem.Name, mem.PSTypeName));
+                }
+            }
         }
 
         internal void AddMembersByInferredTypesClrType(PSTypeName typename, bool isStatic, Func<object, bool> filter, Func<object, bool> filterToCall, List<object> results)
@@ -1868,7 +1906,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static string GetMemberName(object member)
+        internal static string GetMemberName(object member)
         {
             var name = string.Empty;
             switch (member)
@@ -2606,9 +2644,47 @@ namespace System.Management.Automation
             // Elements can share a type, typically PSObject, while having different synthetic
             // shapes. No single element type describes all of them, so the synthetic information
             // is dropped and only the underlying type is kept.
-            return string.Equals(foundType.Name, inferredType.Name, StringComparison.OrdinalIgnoreCase)
-                ? foundType
-                : new PSTypeName(foundType.Type);
+            if (!string.Equals(foundType.Name, inferredType.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                return new PSTypeName(foundType.Type);
+            }
+
+            // The name only encodes the member names, so elements that give the same member
+            // different types still have different shapes.
+            if (foundType is PSSyntheticTypeName foundSynthetic
+                && inferredType is PSSyntheticTypeName inferredSynthetic
+                && !HaveSameMemberTypes(foundSynthetic, inferredSynthetic))
+            {
+                return new PSTypeName(foundType.Type);
+            }
+
+            return foundType;
+        }
+
+        /// <summary>
+        /// Determines whether two synthetic types infer the same type for each of their members.
+        /// The members are sorted by name and the callers have already established that the names
+        /// match, so the members can be compared pairwise.
+        /// </summary>
+        /// <param name="first">The first synthetic type.</param>
+        /// <param name="second">The second synthetic type.</param>
+        /// <returns>True when every member is inferred as the same type.</returns>
+        private static bool HaveSameMemberTypes(PSSyntheticTypeName first, PSSyntheticTypeName second)
+        {
+            if (first.Members.Count != second.Members.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < first.Members.Count; i++)
+            {
+                if (!string.Equals(first.Members[i].PSTypeName?.Name, second.Members[i].PSTypeName?.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
