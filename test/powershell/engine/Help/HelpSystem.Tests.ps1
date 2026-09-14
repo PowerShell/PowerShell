@@ -121,6 +121,15 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
             $output = Get-Help Import-Module -Parameter NoClobber | Out-String
             $output | Should -Match "Accept pipeline input\?.*\n\s+Aliases\s+NoOverwrite.*\n\s+Accept wildcard characters\?.*"
         }
+
+        It "Validate 'Remarks' recommends parameter help" {
+            ## The auto-generated REMARKS section should recommend 'Get-Help <cmdlet> -Parameter <parametername>'.
+            $output = Get-Help Import-Module | Out-String
+            $output | Should -Match 'For parameter help, type: "Get-Help Import-Module -Parameter <parametername>"'
+
+            $output = Get-Help Import-Module -Detailed | Out-String
+            $output | Should -Match 'For parameter help, type: "Get-Help Import-Module -Parameter <parametername>"'
+        }
     }
 }
 
