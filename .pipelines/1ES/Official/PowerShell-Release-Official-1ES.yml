@@ -37,7 +37,10 @@ resources:
     - repository: PowerShellEngineeringSystem
       type: git
       name: PowerShellCore/PowerShell-Engineering-System
-      ref: 8d6d0badc82a3336e8631f2bbba3e9ce20da970a
+      # Official intentionally exposes no queue-time ref parameter. Azure Pipelines
+      # snapshots protected main before external template expansion and records the
+      # concrete commit for the run; a runtime REST lookup is too late.
+      ref: refs/heads/main
 
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates

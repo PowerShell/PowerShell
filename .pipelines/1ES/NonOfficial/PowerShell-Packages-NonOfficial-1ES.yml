@@ -27,6 +27,12 @@ parameters:
   - name: disableNetworkIsolation
     type: boolean
     default: false
+  # NonOfficial callers may override this compile-time ref for pre-merge canary
+  # previews. The committed default always tracks protected Engineering System main.
+  - name: PowerShellEngineeringSystemRef
+    displayName: PowerShell Engineering System ref
+    type: string
+    default: refs/heads/main
 
 name: pkgs-$(BUILD.SOURCEBRANCHNAME)-1ES-nonofficial-$(Build.BuildId)
 
@@ -55,7 +61,9 @@ resources:
     - repository: PowerShellEngineeringSystem
       type: git
       name: PowerShellCore/PowerShell-Engineering-System
-      ref: 8d6d0badc82a3336e8631f2bbba3e9ce20da970a
+      # Azure Pipelines snapshots this compile-time ref before external template
+      # expansion and records the resolved commit. A runtime REST lookup is too late.
+      ref: ${{ parameters.PowerShellEngineeringSystemRef }}
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates

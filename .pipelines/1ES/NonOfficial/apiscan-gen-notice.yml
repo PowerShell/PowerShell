@@ -59,6 +59,12 @@ parameters:
     displayName: Debugging - Enable CodeQL and set cadence to 1 hour
     type: boolean
     default: false
+  # NonOfficial callers may override this compile-time ref for pre-merge canary
+  # previews. The committed default always tracks protected Engineering System main.
+  - name: PowerShellEngineeringSystemRef
+    displayName: PowerShell Engineering System ref
+    type: string
+    default: refs/heads/main
 
 variables:
   # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
@@ -125,10 +131,9 @@ resources:
       type: git
       name: 1ESPipelineTemplates/1ESPipelineTemplates
       ref: refs/tags/release
-    # Reusable 1ES stage/job/step templates live in the engineering system repo.
-    # Pinned to an IMMUTABLE full commit SHA so a later template change can never
-    # retroactively alter what this pipeline compiles to.
-    #
+    # Azure Pipelines resolves this compile-time ref once, before expanding external
+    # templates, and records the concrete commit for the run. A runtime REST lookup
+    # is too late to change template selection.
     # The alias MUST remain `PowerShellEngineeringSystem`: templates in that repo
     # reference their siblings as `@PowerShellEngineeringSystem`, and Azure DevOps
     # resolves repository aliases from THIS (the consuming) pipeline's resources block.
@@ -139,7 +144,7 @@ resources:
     - repository: PowerShellEngineeringSystem
       type: git
       name: PowerShellCore/PowerShell-Engineering-System
-      ref: 8d6d0badc82a3336e8631f2bbba3e9ce20da970a
+      ref: ${{ parameters.PowerShellEngineeringSystemRef }}
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
