@@ -2139,7 +2139,7 @@ function Get-PackageDependencies
             $Dependencies = @(
                 "glibc"
                 "libgcc"
-                "krb5"
+                "krb5-libs"
                 "libstdc++"
                 "zlib"
                 "icu"
