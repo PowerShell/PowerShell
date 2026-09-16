@@ -10,20 +10,13 @@
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
     <Compile Remove="WindowsTaskbarJumpList\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="singleshell\installer\EngineInstaller.cs" />
-    <Compile Remove="singleshell\installer\MshHostMshSnapin.cs" />
-    <Compile Remove="gen\HostMshSnapinResources.cs" />
-
-    <EmbeddedResource Remove="resources\HostMshSnapinResources.resx" />
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
   </ItemGroup>
-
 </Project>

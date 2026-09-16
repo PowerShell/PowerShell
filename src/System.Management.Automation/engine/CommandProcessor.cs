@@ -778,7 +778,9 @@ namespace System.Management.Automation
             InitCommon();
 
             // If the script has been dotted, throw an error if it's from a different language mode.
-            if (!this.UseLocalScope)
+            // Unless it was a script loaded through -File, in which case the danger of dotting other
+            // language modes (getting internal functions in the user's state) isn't a danger.
+            if (!this.UseLocalScope && !scriptCmdlet.ShouldRethrowExitException)
             {
                 ValidateCompatibleLanguageMode(scriptCommandInfo.ScriptBlock, _context, Command.MyInvocation);
             }

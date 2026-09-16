@@ -1,0 +1,473 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Name" xml:space="preserve">
+    <value>NAME</value>
+  </data>
+  <data name="Synopsis" xml:space="preserve">
+    <value>ZUSAMMENFASSUNG</value>
+  </data>
+  <data name="DetailedDescription" xml:space="preserve">
+    <value>BESCHREIBUNG</value>
+  </data>
+  <data name="Syntax" xml:space="preserve">
+    <value>SYNTAX</value>
+  </data>
+  <data name="Parameters" xml:space="preserve">
+    <value>PARAMETER</value>
+  </data>
+  <data name="InputType" xml:space="preserve">
+    <value>EINGABEN</value>
+  </data>
+  <data name="ReturnType" xml:space="preserve">
+    <value>AUSGABEN</value>
+  </data>
+  <data name="TerminatingErrors" xml:space="preserve">
+    <value>FEHLER MIT ABBRUCH</value>
+  </data>
+  <data name="NonHyphenTerminatingErrors" xml:space="preserve">
+    <value>FEHLER OHNE ABBRUCH</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>HINWEISE</value>
+  </data>
+  <data name="Examples" xml:space="preserve">
+    <value>BEISPIELE</value>
+  </data>
+  <data name="Example" xml:space="preserve">
+    <value>Beispiel</value>
+  </data>
+  <data name="ExampleUpperCase" xml:space="preserve">
+    <value>BEISPIEL</value>
+  </data>
+  <data name="Output" xml:space="preserve">
+    <value>AUSGABE</value>
+  </data>
+  <data name="RelatedLinks" xml:space="preserve">
+    <value>VERWANDTE LINKS</value>
+  </data>
+  <data name="ShortDescription" xml:space="preserve">
+    <value>KURZE BESCHREIBUNG</value>
+  </data>
+  <data name="TitleColon" xml:space="preserve">
+    <value>Titel:</value>
+  </data>
+  <data name="QuestionColon" xml:space="preserve">
+    <value>Frage:</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Antwort</value>
+  </data>
+  <data name="TermColon" xml:space="preserve">
+    <value>Laufzeit:</value>
+  </data>
+  <data name="DefinitionColon" xml:space="preserve">
+    <value>Definition:</value>
+  </data>
+  <data name="ContentColon" xml:space="preserve">
+    <value>Inhalt:</value>
+  </data>
+  <data name="ProviderName" xml:space="preserve">
+    <value>ANBIETERNAME</value>
+  </data>
+  <data name="BaseCmdletInformation" xml:space="preserve">
+    <value>    Dieses Cmdlet unterstützt folgende allgemeine Parameter: Verbose, Debug,
+    ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+    OutBuffer, PipelineVariable und OutVariable. Weitere Informationen finden Sie unter
+    about_CommonParameters (https://go.microsoft.com/fwlink/?LinkID=113216). </value>
+  </data>
+  <data name="ParameterRequired" xml:space="preserve">
+    <value>Erforderlich?                    </value>
+  </data>
+  <data name="ParameterPosition" xml:space="preserve">
+    <value>Position?                    </value>
+  </data>
+  <data name="TypeColon" xml:space="preserve">
+    <value>Typ: </value>
+  </data>
+  <data name="TargetObjectTypeColon" xml:space="preserve">
+    <value>Zielobjekttyp:   </value>
+  </data>
+  <data name="ParameterDefaultValue" xml:space="preserve">
+    <value>Standardwert                </value>
+  </data>
+  <data name="AcceptsPipelineInput" xml:space="preserve">
+    <value>Pipelineeingabe akzeptieren?       </value>
+  </data>
+  <data name="AcceptsWildCardCharacters" xml:space="preserve">
+    <value>Platzhalterzeichen akzeptieren?  </value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>(Kategorie: </value>
+  </data>
+  <data name="SuggestedActionColon" xml:space="preserve">
+    <value>Vorgeschlagene Aktion: </value>
+  </data>
+  <data name="VerboseHelpInfo" xml:space="preserve">
+    <value>Geben Sie folgenden Befehl ein, um weitere Informationen zu erhalten: </value>
+  </data>
+  <data name="FullHelpInfo" xml:space="preserve">
+    <value>Geben Sie Folgendes ein, um technische Daten anzuzeigen: </value>
+  </data>
+  <data name="ExampleHelpInfo" xml:space="preserve">
+    <value>Geben Sie Folgendes ein, um die Beispiele anzuzeigen: </value>
+  </data>
+  <data name="RelatedLinksHelpInfo" xml:space="preserve">
+    <value>Geben Sie Folgendes ein, um die Onlinehilfe anzuzeigen: </value>
+  </data>
+  <data name="CommonParameters" xml:space="preserve">
+    <value>&lt;CommonParameters&gt;</value>
+  </data>
+  <data name="RemarksSection" xml:space="preserve">
+    <value>ANMERKUNGEN</value>
+  </data>
+  <data name="TrueShort" xml:space="preserve">
+    <value>wahr</value>
+  </data>
+  <data name="NamedParameter" xml:space="preserve">
+    <value>Benannt</value>
+  </data>
+  <data name="Drives" xml:space="preserve">
+    <value>LAUFWERKE</value>
+  </data>
+  <data name="Capabilities" xml:space="preserve">
+    <value>FUNKTIONEN</value>
+  </data>
+  <data name="Tasks" xml:space="preserve">
+    <value>TASKS</value>
+  </data>
+  <data name="Task" xml:space="preserve">
+    <value>TASK: </value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>FILTER</value>
+  </data>
+  <data name="DynamicParameters" xml:space="preserve">
+    <value>DYNAMISCHE PARAMETER</value>
+  </data>
+  <data name="CmdletsSupported" xml:space="preserve">
+    <value>Unterstützte Cmdlets: </value>
+  </data>
+  <data name="AliasesSection" xml:space="preserve">
+    <value>ALIASE</value>
+  </data>
+  <data name="GetLatestHelpContent" xml:space="preserve">
+    <value>Get-Help kann die Hilfedateien für dieses Cmdlet auf diesem Computer nicht finden. Es wird nur eine unvollständige Hilfe angezeigt.
+    – Um die Hilfedateien für das Modul herunterzuladen und zu installieren, das dieses Cmdlet enthält, verwenden Sie Update-Help.
+    – Um das Hilfethema für dieses Cmdlet online anzuzeigen, geben Sie Folgendes ein: „Get-Help {0} -Online“ oder
+       wechseln Sie zu „{1}“.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="ParameterAliases" xml:space="preserve">
+    <value>Aliase                      </value>
+  </data>
+  <data name="ParameterIsDynamic" xml:space="preserve">
+    <value>Dynamisch?                     </value>
+  </data>
+  <data name="ParameterSetName" xml:space="preserve">
+    <value>Parametersatzname           </value>
+  </data>
+  <data name="UnableToRetrieveHelpInfoXml" xml:space="preserve">
+    <value>Die XML-Datei „HelpInfo“ für die Benutzeroberflächenkultur „{0}“ konnte nicht abgerufen werden. Stellen Sie sicher, dass die HelpInfoUri-Eigenschaft im Modulmanifest gültig ist, oder überprüfen Sie Ihre Netzwerkverbindung, und versuchen Sie den Befehl dann erneut.</value>
+  </data>
+  <data name="PipelineByPropertyName" xml:space="preserve">
+    <value>ByPropertyName</value>
+  </data>
+  <data name="PipelineByValue" xml:space="preserve">
+    <value>ByValue</value>
+  </data>
+  <data name="PipelineFromRemainingArguments" xml:space="preserve">
+    <value>FromRemainingArguments</value>
+  </data>
+  <data name="HelpCultureNotSupported" xml:space="preserve">
+    <value>Die angegebene Kultur wird nicht unterstützt: {0}. Geben Sie eine Kultur aus der folgenden Liste an: {{{1}}}.</value>
+  </data>
+  <data name="HelpCultureNotSupportedFallback" xml:space="preserve">
+    <value>Das Verschieben des Fehlers und der Versuch mit Fallbackkulturen wird als Fehler angezeigt, wenn keine der Fallbacks unterstützt wird:
+{0}</value>
+  </data>
+  <data name="ModuleBaseMustExist" xml:space="preserve">
+    <value>Das ModuleBase-Verzeichnis wurde nicht gefunden. Überprüfen Sie das Verzeichnis, und versuchen Sie es erneut.</value>
+  </data>
+  <data name="PathMustBeValidContainers" xml:space="preserve">
+    <value>Der Pfad „{0}“ ist kein gültiges Verzeichnis. Stellen Sie sicher, dass das Verzeichnis vorhanden ist, und versuchen Sie es erneut.</value>
+  </data>
+  <data name="TooManyRedirections" xml:space="preserve">
+    <value>Ein Hilfe-URI darf nicht mehr als 10 Umleitungen enthalten. Geben Sie einen gültigen Hilfe-URI an.</value>
+  </data>
+  <data name="UpdateProgressActivity" xml:space="preserve">
+    <value>Aktualisieren der Hilfe</value>
+  </data>
+  <data name="UpdateProgressConnecting" xml:space="preserve">
+    <value>Verbindung mit Hilfeinhalt wird hergestellt...</value>
+  </data>
+  <data name="UpdateProgressDownloading" xml:space="preserve">
+    <value>Hilfeinhalt wird heruntergeladen...</value>
+  </data>
+  <data name="UpdateProgressInstalling" xml:space="preserve">
+    <value>Hilfeinhalt wird installiert...</value>
+  </data>
+  <data name="UpdateProgressLocating" xml:space="preserve">
+    <value>Hilfeinhalt wird gesucht...</value>
+  </data>
+  <data name="AllParameterSetsName" xml:space="preserve">
+    <value>(Alle)</value>
+  </data>
+  <data name="CannotMatchModulePattern" xml:space="preserve">
+    <value>Es wurden keine PowerShell-Module gefunden, die dem folgenden Muster entsprechen: {0}. Bestätigen Sie das Muster, und wiederholen Sie dann den Befehl.</value>
+  </data>
+  <data name="ModuleNotFoundWithFullyQualifiedName" xml:space="preserve">
+    <value>Es wurden keine PowerShell-Module gefunden, die mit dem angegebenen FullyQualifiedModule „{0}“ übereinstimmen. Überprüfen Sie den FullyQualifiedModule-Wert, und versuchen Sie den Befehl dann erneut.</value>
+  </data>
+  <data name="HelpContentNotFound" xml:space="preserve">
+    <value>Der Hilfeinhalt wurde nicht gefunden. Stellen Sie sicher, dass der Server verfügbar ist und der Speicherort des Hilfeinhalts in der HelpInfo-XML korrekt definiert ist.</value>
+  </data>
+  <data name="HelpInfoUriNotFound" xml:space="preserve">
+    <value>Der Befehl „Update-Help“ ist fehlgeschlagen, weil das angegebene Modul aktualisierbare Hilfe nicht unterstützt. Verwenden Sie „Get-Help -Online“, oder suchen Sie online nach Hilfe zu den Befehlen in diesem Modul.</value>
+  </data>
+  <data name="ModuleNameNullOrEmpty" xml:space="preserve">
+    <value>Der folgende Parameter darf nicht NULL oder leer sein: Module.</value>
+  </data>
+  <data name="PathNullOrEmpty" xml:space="preserve">
+    <value>Der folgende Parameter darf nicht NULL oder leer sein: Pfad</value>
+  </data>
+  <data name="UpdateHelpCompleted" xml:space="preserve">
+    <value>Update-Help wurde erfolgreich abgeschlossen.</value>
+  </data>
+  <data name="UnzipFailure" xml:space="preserve">
+    <value>Fehler beim Extrahieren des Hilfeinhalts.</value>
+  </data>
+  <data name="UnableToConnect" xml:space="preserve">
+    <value>Es kann keine Verbindung mit dem Hilfeinhalt hergestellt werden. Der Server, auf dem der Hilfeinhalt gespeichert ist, ist möglicherweise nicht verfügbar. Überprüfen Sie, ob der Server verfügbar ist, oder warten Sie, bis der Server wieder online ist, und versuchen Sie den Befehl dann erneut.</value>
+  </data>
+  <data name="HelpContentXmlValidationFailure" xml:space="preserve">
+    <value>Der Hilfeinhalt am angegebenen Speicherort ist ungültig. Geben Sie einen Speicherort an, der gültigen Hilfeinhalt enthält.</value>
+  </data>
+  <data name="HelpInfoXmlValidationFailure" xml:space="preserve">
+    <value>Die HelpInfo-XML ist ungültig. Geben Sie gültige HelpInfo-XML an.</value>
+  </data>
+  <data name="SaveHelpCompleted" xml:space="preserve">
+    <value>Der Hilfeinhalt wurde erfolgreich am folgenden Speicherort gespeichert: {0}</value>
+  </data>
+  <data name="HelpContentXsdNotFound" xml:space="preserve">
+    <value>Die XSD-Datei für den Hilfeinhalt wurde in „{0}“ nicht gefunden. Stellen Sie sicher, dass die XSD-Datei am angegebenen Speicherort vorhanden ist, und versuchen Sie den Befehl dann erneut.</value>
+  </data>
+  <data name="FailedToUpdateHelpForModule" xml:space="preserve">
+    <value>Fehler beim Aktualisieren der Hilfe für das/die Modul(e): 
+„{0}“
+{1}</value>
+  </data>
+  <data name="SaveProgressActivity" xml:space="preserve">
+    <value>Hilfe wird gespeichert</value>
+  </data>
+  <data name="HelpContentContainsInvalidFiles" xml:space="preserve">
+    <value>Der Hilfeinhalt enthält ungültige Dateien. Es werden nur TXT- und XML-Dateien unterstützt.</value>
+  </data>
+  <data name="FailedToSaveHelpForModule" xml:space="preserve">
+    <value>Fehler beim Speichern der Hilfe für das/die Modul(e) „{0}“: {1}</value>
+  </data>
+  <data name="FailedToSaveHelpForModuleWithCulture" xml:space="preserve">
+    <value>Fehler beim Speichern der Hilfe für das/die Modul(e) „{0}“ mit den Benutzeroberflächenkulturen {{{1}}}: {2}.
+Englisch-US-Hilfeinhalte sind verfügbar und können mit folgendem Befehl gespeichert werden: Save-Help -UICulture en-US.</value>
+  </data>
+  <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
+    <value>Fehler beim Aktualisieren der Hilfe für das/die Modul(e) „{0}“ mit den Benutzeroberflächenkulturen {{{1}}}: {2}.
+Englisch-US-Hilfeinhalte sind verfügbar und können mit folgendem Befehl installiert werden: Update-Help -UICulture en-US.</value>
+  </data>
+  <data name="FailedToUpdateHelpWithLocaleNoUICulture" xml:space="preserve">
+    <value>Ihre aktuelle Kultur ist ({0}) und ist keiner Sprache zugeordnet. Erwägen Sie, Ihre Systemkultur zu ändern, oder installieren Sie den Hilfeinhalt für Englisch-US mit: Update-Help -UICulture en-US.</value>
+  </data>
+  <data name="FalseShort" xml:space="preserve">
+    <value>falsch</value>
+  </data>
+  <data name="CannotSpecifyRecurseWithoutPath" xml:space="preserve">
+    <value>Der Parameter „-Recurse“ ist nur verfügbar, wenn ein Quellpfad angegeben ist.</value>
+  </data>
+  <data name="ProviderIsNotFileSystem" xml:space="preserve">
+    <value>Der Pfad „{0}“ enthält keinen FileSystem-Anbieter. Stellen Sie sicher, dass der angegebene Pfad den FileSystem-Anbieter enthält, und versuchen Sie den Befehl dann erneut.</value>
+  </data>
+  <data name="SearchingForHelpContent" xml:space="preserve">
+    <value>Suche nach Hilfe für „{0}“...</value>
+  </data>
+  <data name="CannotMatchUICulturePattern" xml:space="preserve">
+    <value>Es wurde keine Benutzeroberflächenkultur gefunden, die dem folgenden Muster entspricht: {0}. Bestätigen Sie das Muster, und wiederholen Sie dann den Befehl.</value>
+  </data>
+  <data name="UseForceToSaveHelp" xml:space="preserve">
+    <value>Die Hilfe für das Modul „{0}“ wurde nicht gespeichert, da der Befehl Save-Help innerhalb der letzten 24 Stunden auf diesem Computer ausgeführt wurde.
+Um die Hilfe erneut zu speichern, fügen Sie dem Befehl den Force-Parameter hinzu.</value>
+  </data>
+  <data name="UseForceToUpdateHelp" xml:space="preserve">
+    <value>Die Hilfe für das Modul „{0}“ wurde nicht aktualisiert, da der Befehl Update-Help innerhalb der letzten 24 Stunden auf diesem Computer ausgeführt wurde.
+Um die Hilfe erneut zu aktualisieren, fügen Sie dem Befehl den Force-Parameter hinzu.</value>
+  </data>
+  <data name="NewestContentAlreadyInstalled" xml:space="preserve">
+    <value>Die aktuellsten Hilfedateien wurden bereits installiert.</value>
+  </data>
+  <data name="SuccessfullyUpdatedHelpContent" xml:space="preserve">
+    <value>{0}: {1}. Kultur {2} Version {3}</value>
+  </data>
+  <data name="UpdatedHelpContent" xml:space="preserve">
+    <value>„{0}“ aktualisiert</value>
+  </data>
+  <data name="InvalidHelpInfoUri" xml:space="preserve">
+    <value>Der Wert des HelpInfoUri-Schlüssels im Modulmanifest muss zu einer Container- oder Stamm-URL auf einer Website aufgelöst werden, auf der die Hilfedateien gespeichert sind. Die HelpInfoUri „{0}“ wird nicht zu einem Container aufgelöst.</value>
+  </data>
+  <data name="HelpContentMustBeInTargetNamespace" xml:space="preserve">
+    <value>Der Hilfeinhalt muss sich im Namespace „{0}“ befinden.</value>
+  </data>
+  <data name="GetLatestHelpContentWithoutHelpUri" xml:space="preserve">
+    <value>Get-Help kann die Hilfedateien für dieses Cmdlet auf diesem Computer nicht finden. Es wird nur eine unvollständige Hilfe angezeigt.
+    – Um die Hilfedateien für das Modul herunterzuladen und zu installieren, das dieses Cmdlet enthält, verwenden Sie Update-Help.</value>
+  </data>
+  <data name="NewestContentAlreadyDownloaded" xml:space="preserve">
+    <value>Die aktuellsten Hilfedateien wurden bereits heruntergeladen.</value>
+  </data>
+  <data name="SavedHelpContent" xml:space="preserve">
+    <value>„{0}“ wurde gespeichert</value>
+  </data>
+  <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
+    <value>Der HelpInfoURI „{0}“ beginnt nicht mit HTTP.</value>
+  </data>
+  <data name="RootElementMustBeHelpItems" xml:space="preserve">
+    <value>Das Element auf Stammebene des Hilfeinhalts muss „helpItems“ lauten.</value>
+  </data>
+  <data name="SaveProgressActivityForModule" xml:space="preserve">
+    <value>Hilfe für Modul „{0}“ wird gespeichert.</value>
+  </data>
+  <data name="UpdateProgressActivityForModule" xml:space="preserve">
+    <value>Hilfe für Modul „{0}“ wird aktualisiert.</value>
+  </data>
+  <data name="UpdateHelpResolveUriVerbose" xml:space="preserve">
+    <value>URI wird aufgelöst: „{0}“</value>
+  </data>
+  <data name="OnlineHelpUri" xml:space="preserve">
+    <value>Hilfe-URI: {0}</value>
+  </data>
+  <data name="UpdateHelpShouldProcessActionMessage" xml:space="preserve">
+    <value>{0}, Aktuelle Version: {1}, Verfügbare Version: {2}, UICulture: {3}</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value>EIGENSCHAFTEN</value>
+  </data>
+  <data name="Methods" xml:space="preserve">
+    <value>METHODEN</value>
+  </data>
+</root>

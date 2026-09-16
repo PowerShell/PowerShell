@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -239,6 +239,15 @@
   </data>
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
     <value>Cannot process path '{0}' because the target represents a reserved device name.</value>
+  </data>
+  <data name="DirectoryNamePathTraversal" xml:space="preserve">
+    <value>Cannot process the remote directory name '{0}' because it may result in path traversal.</value>
+  </data>
+  <data name="FileNamePathTraversal" xml:space="preserve">
+    <value>Cannot process the remote file name '{0}' because it may result in path traversal.</value>
+  </data>
+  <data name="ADSPathTraversal" xml:space="preserve">
+    <value>Cannot process the remote Alternate Data Stream name '{0}' because it may result in path traversal.</value>
   </data>
   <data name="EncodingNotUsed" xml:space="preserve">
     <value>Encoding not used when '-AsByteStream' specified.</value>

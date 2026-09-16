@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MonadRootRegistryAccessFailed" xml:space="preserve">
+    <value>PowerShell 레지스트리 정보에 액세스할 수 없습니다.</value>
+  </data>
+  <data name="MonadEngineRegistryAccessFailed" xml:space="preserve">
+    <value>PowerShell 엔진 레지스트리 정보에 액세스할 수 없습니다.</value>
+  </data>
+  <data name="PublicKeyTokenAccessFailed" xml:space="preserve">
+    <value>PublicKeyToken 정보에 액세스할 수 없습니다.</value>
+  </data>
+  <data name="SpecifiedVersionNotFound" xml:space="preserve">
+    <value>이 컴퓨터에서는 PowerShell 버전 {0}을(를) 사용할 수 없습니다.</value>
+  </data>
+  <data name="MshSnapinDoesNotExist" xml:space="preserve">
+    <value>이 컴퓨터에는 PowerShell 스냅인 '{0}'이(가) 설치되어 있지 않습니다.</value>
+  </data>
+  <data name="MandatoryValueNotPresent" xml:space="preserve">
+    <value>레지스트리 키 {0}에 대해 필수 값 {1}이(가) 지정되지 않았습니다.</value>
+  </data>
+  <data name="MandatoryValueNotInCorrectFormat" xml:space="preserve">
+    <value>필수 값 {0}이(가) 레지스트리 키 {1}의 올바른 형식이 아닙니다.  예상 형식은 'string'입니다.</value>
+  </data>
+  <data name="MandatoryValueNotInCorrectFormatMultiString" xml:space="preserve">
+    <value>필수 값 {0}이(가) 레지스트리 키 {1}의 올바른 형식이 아닙니다.  예상 형식은 'multistring'입니다.</value>
+  </data>
+  <data name="DefaultMshSnapinNotPresent" xml:space="preserve">
+    <value>레지스트리에서 필요한 정보를 찾을 수 없거나 키 파일이 없습니다.  일부 cmdlet을 로드할 수 없습니다.</value>
+  </data>
+  <data name="NoMshSnapinPresentForVersion" xml:space="preserve">
+    <value>PowerShell 버전 {0}에 등록된 스냅인이 없습니다.</value>
+  </data>
+  <data name="ResourceReaderDisposed" xml:space="preserve">
+    <value>판독기가 삭제되었으므로 문자열 리소스를 검색할 수 없습니다.</value>
+  </data>
+  <data name="VersionValueInCorrect" xml:space="preserve">
+    <value>버전 값 {0}이(가) 지정되지 않았거나 레지스트리 키 {1}에 대해 올바르지 않습니다.</value>
+  </data>
+  <data name="PSVersionAttributeNotExist" xml:space="preserve">
+    <value>PowerShell 유형 {0}에 대한 [PSVersion] 특성을 찾을 수 없습니다. [PSVersion(PowerShell SnapinBase.PSEngineVersion)]을 사용하여 해당 형식에 PSVersion 특성을 추가하세요.</value>
+  </data>
+</root>

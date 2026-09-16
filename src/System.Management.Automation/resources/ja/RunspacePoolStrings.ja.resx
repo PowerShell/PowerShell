@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MaxPoolLessThan1" xml:space="preserve">
+    <value>プールの最大サイズを 1 未満にすることはできません。</value>
+  </data>
+  <data name="MinPoolLessThan1" xml:space="preserve">
+    <value>最小プール サイズを 1 未満にすることはできません。</value>
+  </data>
+  <data name="MinPoolGreaterThanMaxPool" xml:space="preserve">
+    <value>最小プール サイズを最大プール サイズより大きくすることはできません。</value>
+  </data>
+  <data name="InvalidRunspacePoolStateGeneral" xml:space="preserve">
+    <value>この操作では、実行空間プールの状態が無効です。</value>
+  </data>
+  <data name="InvalidRunspacePoolState" xml:space="preserve">
+    <value>実行空間プールが '{0}' 状態ではないため、操作を実行できません。現在の状態は '{1}' です。</value>
+  </data>
+  <data name="CannotOpenAgain" xml:space="preserve">
+    <value>実行空間プールは 'BeforeOpen' 状態ではないため、開けません。現在の状態は '{0}' です。</value>
+  </data>
+  <data name="AsyncResultNotOwned" xml:space="preserve">
+    <value>{0} オブジェクトは、現在の RunspacePool インスタンスで {1} を呼び出すことによって作成されませんでした。</value>
+  </data>
+  <data name="RunspaceNotBelongsToPool" xml:space="preserve">
+    <value>実行空間が現在のプールに属していないため、実行空間を現在のプールに解放できません。</value>
+  </data>
+  <data name="ChangePropertyAfterOpen" xml:space="preserve">
+    <value>このプロパティは、実行空間プールを開いた後は変更できません。</value>
+  </data>
+  <data name="RunspaceDisconnectConnectNotSupported" xml:space="preserve">
+    <value>この実行空間では、切断操作と接続操作はサポートされていません。</value>
+  </data>
+  <data name="CannotWhileDisconnected" xml:space="preserve">
+    <value>実行空間プールが切断状態であるため、操作を実行できません。</value>
+  </data>
+  <data name="DisconnectNotSupportedOnServer" xml:space="preserve">
+    <value>切断操作はサーバーではサポートされていません。 リモート実行空間プールの切断をサポートするには、サーバーが PowerShell 3.0 以降を実行している必要があります。</value>
+  </data>
+  <data name="CannotReconstructCommands" xml:space="preserve">
+    <value>この実行空間プール {0} は、リモート サーバーで実行されているコマンドに対して切断された PowerShell オブジェクトを提供するように構成されていません。 RunspacePool クラス GetRunspacePools() 静的メソッドを使用して、サーバーにクエリを実行し、これを実行するように構成されている実行空間プール オブジェクトを返します。</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>対応するサーバー側の実行空間プールが別のクライアントに接続されているため、この実行空間プールを接続できません。</value>
+  </data>
+  <data name="ResetRunspaceStateNotSupportedOnServer" xml:space="preserve">
+    <value>ResetRunspaceState はサーバーではサポートされていません。 サーバーが PowerShell 5.0 以上を実行している必要があります。</value>
+  </data>
+</root>

@@ -205,8 +205,8 @@
     <AppHostDotNetSearch>AppLocal</AppHostDotNetSearch>
   </PropertyGroup>
 
-  <!-- Enable ready-to-run only for Release configuration -->
-  <PropertyGroup Condition=" '$(AppDeployment)' == 'SelfContained' And '$(Configuration)' == 'Release' ">
+  <!-- Enable ready-to-run only for Release configuration except for the min-size build -->
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'SelfContained' And '$(Configuration)' == 'Release' And '$(ForMinimalSize)' != 'True' ">
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
   </PropertyGroup>

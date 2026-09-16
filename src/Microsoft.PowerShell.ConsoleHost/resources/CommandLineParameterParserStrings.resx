@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -227,5 +227,14 @@ Valid formats are:
   </data>
   <data name="MissingMandatoryArgument" xml:space="preserve">
     <value>An argument is required to be supplied to the '{0}' parameter.</value>
+  </data>
+  <data name="FileOnlyEntryRequired" xml:space="preserve">
+    <value>The parameter "-File" is required by policy.</value>
+  </data>
+  <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
+    <value>The parameter "-NoExit" is disallowed by policy.</value>
+  </data>
+  <data name="FileOnlyEntryServerMode" xml:space="preserve">
+    <value>Server mode is disallowed by policy.</value>
   </data>
 </root>

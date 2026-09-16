@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NamedParameterNotFound" xml:space="preserve">
+    <value>找不到与参数名称 '{1}' 匹配的参数。</value>
+  </data>
+  <data name="PositionalParameterNotFound" xml:space="preserve">
+    <value>找不到接受自变量 '{1}' 的位置参数。</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>参数 '{1}' 缺少自变量。请指定一个类型为 '{2}' 的参数，然后重试。</value>
+  </data>
+  <data name="AmbiguousParameter" xml:space="preserve">
+    <value>无法处理参数，因为参数名称 '{1}' 存在歧义。可能的匹配项包括:{6}。</value>
+  </data>
+  <data name="CannotConvertArgument" xml:space="preserve">
+    <value>无法将 '{6}' 转换为参数 '{1}' 所需的类型 '{2}'。{7}</value>
+  </data>
+  <data name="CannotConvertArgumentNoMessage" xml:space="preserve">
+    <value>无法绑定参数 '{1}'。{6}</value>
+  </data>
+  <data name="AmbiguousPositionalParameter" xml:space="preserve">
+    <value>无法绑定位置参数 '{1}'。</value>
+  </data>
+  <data name="AmbiguousPositionalParameterNoName" xml:space="preserve">
+    <value>无法绑定位置参数，因为未提供名称。</value>
+  </data>
+  <data name="AmbiguousParameterSet" xml:space="preserve">
+    <value>无法使用指定的命名参数解析参数集。发出的一个或多个参数不能一起使用，或者提供的参数数量不足。</value>
+  </data>
+  <data name="MissingMandatoryParameter" xml:space="preserve">
+    <value>无法处理命令，因为缺少一个或多个必需参数:{1}。</value>
+  </data>
+  <data name="ParameterNotInParameterSet" xml:space="preserve">
+    <value>无法在参数集 '{6}' 中指定参数 '{1}'。</value>
+  </data>
+  <data name="ParameterAlreadyBound" xml:space="preserve">
+    <value>无法绑定参数，因为多次指定了参数 '{1}'。若要向可接受多个值的参数提供多个值，请使用数组语法。例如，"-parameter value1,value2,value3"。</value>
+  </data>
+  <data name="ScriptBlockArgumentNoInput" xml:space="preserve">
+    <value>无法计算参数 '{1}'，因为其自变量被指定为脚本块，并且没有输入。在没有输入的情况下，无法计算脚本块。</value>
+  </data>
+  <data name="ScriptBlockArgumentInvocationFailed" xml:space="preserve">
+    <value>参数 '{1}' 的脚本块输入失败。{6}</value>
+  </data>
+  <data name="ScriptBlockArgumentNoOutput" xml:space="preserve">
+    <value>无法计算参数 '{1}'，因为它的自变量输入未产生任何输出。</value>
+  </data>
+  <data name="InputObjectNotBound" xml:space="preserve">
+    <value>输入对象无法绑定到该命令的任何参数，因为该命令不接受管道输入，或者输入及其属性与任何接受管道输入的参数都不匹配。</value>
+  </data>
+  <data name="InputObjectMissingMandatory" xml:space="preserve">
+    <value>无法绑定该输入对象，因为它不包含绑定所有必需参数所需的信息: {6}</value>
+  </data>
+  <data name="GetDefaultValueFailed" xml:space="preserve">
+    <value>无法处理管道输入，因为无法检索参数 '{1}' 的默认值。{6}</value>
+  </data>
+  <data name="GetDynamicParametersException" xml:space="preserve">
+    <value>无法检索该 cmdlet 的动态参数。{6}</value>
+  </data>
+  <data name="PromptMessage" xml:space="preserve">
+    <value>请提供以下参数的值:</value>
+  </data>
+  <data name="PromptCaption" xml:space="preserve">
+    <value>cmdlet {0} 位于命令管道位置 {1}</value>
+  </data>
+  <data name="ParameterArgumentTransformationError" xml:space="preserve">
+    <value>无法处理参数 '{1}' 上的自变量转换。{6}</value>
+  </data>
+  <data name="ParameterArgumentTransformationErrorMessageOnly" xml:space="preserve">
+    <value>{6}</value>
+  </data>
+  <data name="ParameterArgumentValidationError" xml:space="preserve">
+    <value>无法验证参数 '{1}' 上的自变量。{6}</value>
+  </data>
+  <data name="ParameterBindingFailed" xml:space="preserve">
+    <value>无法将参数 '{1}' 绑定到目标。{6}</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorNullNotAllowed" xml:space="preserve">
+    <value>无法将自变量绑定到参数 '{1}'，因为它为 null。</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyStringNotAllowed" xml:space="preserve">
+    <value>无法将自变量绑定到参数 '{1}'，因为它是空字符串。</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyCollectionNotAllowed" xml:space="preserve">
+    <value>无法将自变量绑定到参数 '{1}'，因为它是空集合。</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyArrayNotAllowed" xml:space="preserve">
+    <value>无法将自变量绑定到参数 '{1}'，因为它是空数组。</value>
+  </data>
+  <data name="DuplicateParameterDefinition" xml:space="preserve">
+    <value>无法处理命令。多次定义了参数 '{0}'。</value>
+  </data>
+  <data name="CannotExtractAddMethod" xml:space="preserve">
+    <value>无法绑定 cmdlet {0}，因为参数 '{1}' 的类型为 '{2}'，且无法识别 Add() 方法，或存在多个 Add() 方法。{6}</value>
+  </data>
+  <data name="RuntimeDefinedParameterNameMismatch" xml:space="preserve">
+    <value>无法绑定 cmdlet {0}，因为运行时定义的参数 '{1}' 已使用键 '{6}' 添加到 RuntimeDefinedParameterDictionary。该键必须与 RuntimeDefinedParameter.Name 相同。</value>
+  </data>
+  <data name="MismatchedPSTypeName" xml:space="preserve">
+    <value>无法将自变量绑定到参数 '{1}'，因为该自变量的 PSTypeNames 与参数所需的 PSTypeName 不匹配: {6}。</value>
+  </data>
+  <data name="DifferentValuesAssignedToSingleParameter" xml:space="preserve">
+    <value>在 $PSDefaultParameterValues 中，为匹配以下名称或别名的参数定义了多个不同的默认值: {0}。已忽略这些默认值。</value>
+  </data>
+  <data name="MultipleParametersMatched" xml:space="preserve">
+    <value>在 $PSDefaultParameterValues 中为此 cmdlet 定义的以下名称或别名将解析为多个参数: {0}。已忽略默认值。</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationMultiple" xml:space="preserve">
+    <value>{6} 此错误可能是由于应用默认参数绑定造成的。你可以通过将 $PSDefaultParameterValues["Disabled"] 设置为 $true 来禁用 $PSDefaultParameterValues 中的默认参数绑定，然后重试。发生错误时，已成功为此 cmdlet 绑定以下默认参数:{7}</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationSingle" xml:space="preserve">
+    <value>{6} 此失败可能是由于应用默认参数绑定造成的。你可以通过将 $PSDefaultParameterValues["Disabled"] 设置为 $true 来禁用 $PSDefaultParameterValues 中的默认参数绑定，然后重试。发生错误时，已成功为此 cmdlet 绑定以下默认参数:{7}</value>
+  </data>
+  <data name="FailToBindDefaultParameter" xml:space="preserve">
+    <value>将默认值 '{0}' 绑定到参数 '{1}' 失败: {2}</value>
+  </data>
+  <data name="SingleKeyInBadFormat" xml:space="preserve">
+    <value>键 '{0}' 的格式无效。有关正确格式的信息，请参阅 https://go.microsoft.com/fwlink/?LinkId=228266 处的 about_Parameters_Default_Values。</value>
+  </data>
+  <data name="MultipleKeysInBadFormat" xml:space="preserve">
+    <value>键 '{0}' 的格式无效。有关正确格式的信息，请参阅 https://go.microsoft.com/fwlink/?LinkId=228266 处的 about_Parameters_Default_Values。</value>
+  </data>
+  <data name="UseOfDeprecatedParameterWarning" xml:space="preserve">
+    <value>参数 '{0}' 已过时。{1}</value>
+  </data>
+  <data name="StringValueKeyExpected" xml:space="preserve">
+    <value>类型为 '{1}' 的键 '{0}' 不是字符串值。DefaultParameterDictionary 仅接受字符串值键。</value>
+  </data>
+  <data name="KeyAlreadyAdded" xml:space="preserve">
+    <value>已将键 '{0}' 添加到字典。</value>
+  </data>
+  <data name="WDACBinderInvocationLogTitle" xml:space="preserve">
+    <value>不允许方法或属性调用</value>
+  </data>
+  <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
+    <value>对于不受信任的脚本，在受约束语言模式下，不允许调用类型 '{1}' 上的方法或属性 '{0}'。</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
+    <value>不允许创建类型</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
+    <value>在受约束语言模式下，不允许在为不受信任的脚本进行参数绑定时创建类型 '{0}'。</value>
+  </data>
+</root>

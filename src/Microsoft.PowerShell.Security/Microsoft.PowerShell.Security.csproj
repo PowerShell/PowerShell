@@ -11,10 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="singleshell\installer\MshSecurityMshSnapin.cs" />
-    <Compile Remove="gen\SecurityMshSnapinResources.cs" />
-
-    <EmbeddedResource Remove="resources\SecurityMshSnapinResources.resx" />
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
   </ItemGroup>
-
 </Project>

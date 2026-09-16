@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WrongMemberCount" xml:space="preserve">
+    <value>メンバーを追加するには、1 つのメンバー型のみを指定できます。指定されたメンバー型は "{0}" です</value>
+  </data>
+  <data name="CannotAddMemberType" xml:space="preserve">
+    <value>型が "{0}" のメンバーを追加できません。MemberTypes パラメーターに別の型を指定します。</value>
+  </data>
+  <data name="Value2ShouldNotBeSpecified" xml:space="preserve">
+    <value>SecondValue パラメーターは、型 "{0}" のメンバーには必要ありません。指定しないでください。この型のメンバーを追加するときは、SecondValue パラメーターを指定しないでください。</value>
+  </data>
+  <data name="Value1Prompt" xml:space="preserve">
+    <value>型 "{0}" のメンバーには Value パラメーターが必要です。この型のメンバーを追加するときは、Value パラメーターを指定します。</value>
+  </data>
+  <data name="Value1AndValue2AreNotBothNull" xml:space="preserve">
+    <value>型 "{0}" のメンバーの Value パラメーターと SecondValue パラメーターの両方を null 値にすることはできません。2 つのパラメーターのいずれかに null 値以外の値を指定します。</value>
+  </data>
+  <data name="MemberAlreadyExists" xml:space="preserve">
+    <value>"{0}" という名前のメンバーは既に存在するため、追加できません。メンバーを上書きするには、Force パラメーターをコマンドに追加します。</value>
+  </data>
+  <data name="CannotRemoveTypeDataMember" xml:space="preserve">
+    <value>名前が "{0}"、型 ”{1}” のメンバーを強制的に追加できません。その名前と型のメンバーは既に存在し、既存のメンバーはインスタンス拡張機能ではありません。</value>
+  </data>
+  <data name="AliasReferenceShouldNotBeNullOrEmpty" xml:space="preserve">
+    <value>このエイリアスによって参照されるメンバーを null または空にすることはできません。</value>
+  </data>
+  <data name="Value1ShouldNotBeNull" xml:space="preserve">
+    <value>型 "{0}" のメンバーの Value パラメーターを null 値にすることはできません。この型のメンバーを追加するときに、Value パラメーターに null 値以外の値を指定します。</value>
+  </data>
+  <data name="Value2ShouldNotBeNull" xml:space="preserve">
+    <value>型 "{0}" のメンバーに対して SecondValue パラメーターを null 値にすることはできません。この型のメンバーを追加するときは、SecondValue パラメーターに null 値以外の値を指定します。</value>
+  </data>
+  <data name="InvalidValueForNotePropertyName" xml:space="preserve">
+    <value>パラメーター NotePropertyName は、型 {0} に変換できる値を受け取ることはできません。これらの値を持つメンバーの名前を定義するには、Add-Member を使用し、メンバーの種類を指定します。</value>
+  </data>
+  <data name="NotePropertyNameShouldNotBeNull" xml:space="preserve">
+    <value>NoteProperty メンバーの名前を null 値または空の文字列にすることはできません。</value>
+  </data>
+  <data name="TypeNameShouldNotBeEmpty" xml:space="preserve">
+    <value>TypeName パラメーターには、null 値、空、または空白のみを含めることはできません。</value>
+  </data>
+</root>

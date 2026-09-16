@@ -379,12 +379,13 @@ namespace System.Management.Automation.Remoting
                         Type fieldType = InternalHostUserInterface.GetFieldType(fieldDesc);
                         if (fieldType != null)
                         {
-                            if (fieldType == typeof(PSCredential))
+                            Type effectiveType = fieldType.IsArray ? fieldType.GetElementType() : fieldType;
+                            if (effectiveType == typeof(PSCredential))
                             {
                                 havePSCredential = true;
                                 fieldDesc.ModifiedByRemotingProtocol = true;
                             }
-                            else if (fieldType == typeof(System.Security.SecureString))
+                            else if (effectiveType == typeof(System.Security.SecureString))
                             {
                                 prerequisiteCalls.Add(ConstructWarningMessageForSecureString(
                                     computerName, RemotingErrorIdStrings.RemoteHostPromptSecureStringPrompt));

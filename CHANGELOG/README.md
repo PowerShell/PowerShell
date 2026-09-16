@@ -1,6 +1,8 @@
 # Changelogs
 
 - [Current preview changelog](preview.md)
+- [7.6 changelog](7.6.md)
+- [7.5 changelog](7.5.md)
 - [7.4 changelog](7.4.md)
 - [7.3 changelog](7.3.md)
 - [7.2 changelog](7.2.md)

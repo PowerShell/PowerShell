@@ -1,0 +1,493 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ShellBannerPowerShell" xml:space="preserve">
+    <value>PowerShell {0}</value>
+  </data>
+  <data name="ShellBannerCLMode" xml:space="preserve">
+    <value>[Kısıtlı Dil Modu]</value>
+  </data>
+  <data name="ShellBannerCLAuditMode" xml:space="preserve">
+    <value>[Kısıtlı Dil DENETİM Modu: Kısıtlama Yok]</value>
+  </data>
+  <data name="ShellBannerNLMode" xml:space="preserve">
+    <value>[Dil Modu Yok]</value>
+  </data>
+  <data name="ShellBannerRLMode" xml:space="preserve">
+    <value>[Kısıtlı Dil Modu]</value>
+  </data>
+  <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} Yeni bir PowerShell önizleme sürümü kullanıma sunuldu: v{0} {2}
+  {1} Hemen yükseltin veya şu adresten sürüm sayfasına göz atın:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="StableUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} Yeni bir PowerShell kararlı sürümü kullanıma sunuldu: v{0} {2}
+  {1} Hemen yükseltin veya şu adresten sürüm sayfasına göz atın:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="LTSUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} Yeni bir PowerShell LTS sürümü kullanıma sunuldu: v{0} {2}
+  {1} Hemen yükseltin veya şu adresten sürüm sayfasına göz atın:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="UsageHelp" xml:space="preserve">
+    <value>Kullanım: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
+                  [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
+                                | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
+                  [-CommandWithArgs &lt;string&gt; [&lt;CommandParameters&gt;]
+                  [-ConfigurationName &lt;string&gt;] [-ConfigurationFile &lt;filePath&gt;]
+                  [-CustomPipeName &lt;string&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
+                  [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
+                  [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+                  [-NoProfileLoadTime] [-OutputFormat {Text | XML}]
+                  [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA]
+                  [-Version] [-WindowStyle &lt;style&gt;]
+                  [-WorkingDirectory &lt;directoryPath&gt;]
+
+       pwsh[.exe] -h | -Help | -? | /?
+
+PowerShell Çevrimiçi Yardım https://aka.ms/powershell-docs
+
+Tüm parametreler büyük/küçük harfe duyarsızdır.</value>
+  </data>
+  <data name="ExtendedHelp" xml:space="preserve">
+    <value>
+
+-File | -f
+
+    File değerinin "-" olması durumunda komut metni standart girişten okunur.
+    Yönlendirilmiş standart giriş olmadan "pwsh -File -" komutunun çalıştırılması normal bir
+    oturum başlatır. Bu, File parametresini hiç belirtmemekle aynıdır.
+
+    Hiç parametre yoksa ancak komut satırında değerler varsa bu varsayılan
+    parametredir. Belirtilen betik yerel kapsamda
+    ("dot-sourced") çalışır, böylece betiğin oluşturduğu işlevler ve değişkenler
+    geçerli oturumda kullanılabilir. Betik dosyası yolunu
+    ve varsa parametreleri girin. File, komuttaki son parametre olmalıdır, çünkü
+    File parametresi adından sonra yazılan tüm karakterler
+    betik dosyası yolu ve ardından betik parametreleri olarak yorumlanır.
+
+    Genellikle bir betiğin anahtar parametreleri ya eklenir ya da
+    atlanır. Örneğin aşağıdaki komut
+    Get-Script.ps1 betik dosyasının All parametresini kullanır: "-File .\Get-Script.ps1 -All"
+
+    Nadir durumlarda bir anahtar parametresi için bir BOOLEAN değeri sağlamanız
+    gerekebilir. FILE parametresinin değerinde bir anahtar parametresine BOOLEAN
+    değeri sağlamak için, parametreyi normal şekilde kullanın; ardından hemen bir iki nokta üst üste
+    ve boole değeri ekleyin, örneğin:
+    "-File .\Get-Script.ps1 -All:$False".
+
+    Betiğe geçirilen parametreler geçerli kabuk tarafından yorumlandıktan sonra
+    değişmez dizeler olarak geçirilir. Örneğin cmd.exe içindeyseniz ve
+    bir ortam değişkeni değeri geçirmek istiyorsanız cmd.exe
+    söz dizimini kullanmanız gerekir: "pwsh -File .\test.ps1 -TestParam %windir%"
+
+    Buna karşılık cmd.exe içinde "pwsh -File .\test.ps1 -TestParam $env:windir" komutunu
+    çalıştırırsanız betik değişmez "$env:windir" dizesini alır.
+    Çünkü bunun geçerli cmd.exe kabuğunda özel bir anlamı yoktur. 
+    "$env:windir" biçimindeki ortam değişkeni başvurusu bir
+    Command parametresi içinde kullanılabilir, çünkü orada PowerShell kodu olarak yorumlanır.
+
+    Benzer şekilde aynı komutu bir Batch betiğinden çalıştırmak istiyorsanız
+    geçerli yürütme dizinini göstermek için ".\" veya "$PSScriptRoot" yerine "%~dp0" kullanmanız gerekir:
+    "pwsh -File %~dp0test.ps1 -TestParam %windir%". Bunun yerine
+    ".\test.ps1" kullandıysanız, PowerShell
+    ".\test.ps1" değişmez yolunu bulamadığından hata verir.
+
+    Çağrılan betik dosyası bir çıkış komutuyla sonlandırıldığında işlem
+    çıkış kodu, çıkış komutuyla kullanılan sayısal bağımsız değişkene ayarlanır. 
+    Normal sonlandırmada çıkış kodu her zaman 0'dır.
+
+    -Command komutuna benzer şekilde, betik sonlandırma hatası oluştuğunda çıkış kodu
+    1 olarak ayarlanır. Bununla birlikte, -Command komutunun aksine
+    çıkış kodu 0 olduğunda yürütme Ctrl-C ile kesilir.
+
+-Command | -c
+
+    Belirtilen komutları (ve tüm parametreleri) PowerShell komut istemine
+    yazılmış gibi yürütür ve ardından NoExit parametresi
+    belirtilmediyse çıkar.
+
+    Command değeri "-", betik bloğu veya dize olabilir. Command değerinin
+    "-" olması durumunda komut metni standart girişten okunur.
+
+    Command parametresi yalnızca Command'a geçirilen değeri bir ScriptBlock türü
+    olarak tanıdığında betik bloğunu yürütme için kabul eder. Bu yalnızca
+    pwsh başka bir PowerShell ana bilgisayar tarafından çalıştırıldığında mümkündür. ScriptBlock
+    türü mevcut bir değişkende olabilir, bir ifadeden döndürülebilir
+    veya PowerShell ana bilgisayarı tarafından
+    küme ayraçları "{}" içine alınmış sabit bir betik bloğu olarak ayrıştırılarak pwsh'ye geçirilebilir.
+
+        pwsh -Command {Get-WinEvent -LogName security}
+
+    cmd.exe'de, betik bloğu (veya ScriptBlock türü) gibi bir kavram yoktur
+    bu nedenle Command'a geçirilen değer her zaman bir dize olur. Dize içinde bir
+    betik bloğu yazabilirsiniz ancak yürütülmek yerine
+    normal bir PowerShell isteminde yazılmış gibi davranarak
+    betik bloğunun içeriğini size geri yazdırır.
+
+    Command'a geçirilen bir dize yine de PowerShell betiği olarak yürütülür, bu nedenle
+    betik bloğu küme ayraçları genellikle cmd.exe'den çalıştırılırken
+    gerekli değildir. Bir dize içinde tanımlanan satır içi betik bloğunu yürütmek için
+    "&amp;" çağrı işleci kullanılabilir:
+
+        pwsh -Command "&amp; {Get-WinEvent -LogName security}"
+
+    Command değeri bir dize ise Command, pwsh için son parametre
+    olmalıdır, çünkü onu takip eden tüm bağımsız değişkenler yürütülecek komutun
+    parçası olarak yorumlanır.
+
+    Mevcut bir PowerShell oturumu içinden çağrıldığında, sonuçlar
+    üst kabukta canlı nesneler değil seri durumdan çıkarılmış XML nesneleri olarak döndürülür.
+    Diğer kabuklar için sonuçlar dize olarak döndürülür.
+
+    Command değerinin "-" olması durumunda komut metni standart girişten
+    okunur. Command parametresini standart girişle kullanırken standart girişi
+    yeniden yönlendirmeniz gerekir. Örneğin:
+
+        @'
+        "in"
+
+        "hi" |
+        % { "$_ there" }
+
+        "out"
+        '@ | powershell -NoProfile -Command -
+
+    Bu örnek şu çıkışı oluşturur:
+
+        in
+        hi there
+        out
+
+    İşlem çıkış kodu, betik bloğundaki son (yürütülen) güncelleştirmenin
+    durumuna göre belirlenir. Çıkış kodu, $? $true olduğunda 0 veya
+    $? $false olduğunda 1 olur. Son komut bir dış program veya
+    0 veya 1 dışında bir çıkış kodunu açıkça ayarlayan bir PowerShell betiğiyse
+    çıkış kodu, işlem çıkış kodu için 1'e dönüştürülür. Belirli çıkış kodunu
+    korumak için, komut dizenize veya betik bloğunuza exit $LASTEXITCODE ekleyin.
+
+    Benzer şekilde, bir throw veya -ErrorAction Stop gibi
+    betik sonlandıran (çalışma alanı sonlandıran) bir hata oluşursa
+    1 değeri döndürülür.
+
+-CommandWithArgs | -cwa
+
+    [Deneysel]
+    Bağımsız değişkenlerle bir PowerShell komutu yürütür.  `-Command` komutunun aksine bu
+    parametre, komut tarafından kullanılabilecek '$args yerleşik değişkenini
+    doldurur.
+
+    İlk dize komuttur ve boşlukla ayrılmış sonraki dizeler
+    bağımsız değişkenlerdir.
+
+    Örneğin:
+
+        pwsh -CommandWithArgs '$args | % { "arg: $_" }' arg1 arg2
+
+    Bu örnek şu çıkışı oluşturur:
+
+        arg: arg1
+        arg: arg2
+
+-ConfigurationName | -config
+
+    PowerShell'in çalıştırılacağı yapılandırma uç noktasını belirtir. Bu,
+    varsayılan PowerShell uzak uç noktaları veya belirli kullanıcı rolü özelliklerine sahip
+    özel bir uç nokta dahil, yerel makinede kayıtlı herhangi bir uç nokta
+    olabilir.
+
+    Örnek: "pwsh -ConfigurationName AdminRoles"
+
+-ConfigurationFile
+
+    Bir oturum yapılandırması (.pssc) dosya yolunu belirtir. Yapılandırma
+    dosyasındaki yapılandırma, PowerShell oturumuna
+    uygulanır.
+
+    Örnek: "pwsh -ConfigurationFile "C:\ProgramData\PowerShell\MyConfig.pssc"
+
+-CustomPipeName
+
+    Hata ayıklama ve diğer işlemler arası iletişimler için kullanılan
+    ek bir IPC sunucusu (adlandırılmış kanal) için kullanılacak adı belirtir. Bu,
+    diğer PowerShell örneklerine bağlanmak için öngörülebilir bir mekanizma sunar.
+    Genellikle "Enter-PSHostProcess" üzerinde CustomPipeName parametresiyle kullanılır.
+
+    Bu parametre PowerShell 6.2'de kullanıma sunulmuştur.
+
+    Örneğin:
+
+        # PowerShell örneği 1
+        pwsh -CustomPipeName mydebugpipe
+        # PowerShell örneği 2
+        Enter-PSHostProcess -CustomPipeName mydebugpipe
+
+-EncodedCommand | -e | -ec
+
+    Bir komutun Base64 kodlu dize sürümünü kabul eder. Bu parametreyi
+    karmaşık, iç içe alıntı gerektiren komutları PowerShell'e göndermek için kullanın. 
+    Base64 gösterimi UTF-16 ile kodlanmış bir dize olmalıdır.
+
+    Örneğin:
+
+        $command = 'dir "c:\program files" '
+        $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
+        $encodedCommand = [Convert]::ToBase64String($bytes)
+        pwsh -encodedcommand $encodedCommand
+
+-ExecutionPolicy | -ex | -ep
+
+    Geçerli oturum için varsayılan yürütme ilkesini ayarlar ve bunu
+    $env:PSExecutionPolicyPreference ortam değişkenine kaydeder. Bu parametre
+    kalıcı olarak yapılandırılmış yürütme ilkelerini değiştirmez.
+
+    Bu parametre yalnızca Windows bilgisayarlarda geçerlidir. 
+    $env:PSExecutionPolicyPreference ortam değişkeni, Windows olmayan
+    platformlarda bulunmaz.
+
+-InputFormat | -inp | -if
+
+    PowerShell'e gönderilen verilerin biçimini açıklar. Geçerli değerler "Text"
+    (metin dizeleri) veya "XML" (serileştirilmiş CLIXML biçimi).
+
+-Interactive | -i
+
+    Kullanıcıya etkileşimli bir istem sunar. NonInteractive parametresinin
+    tersidir.
+
+-Login | -l
+
+    Linux ve macOS'ta, PowerShell'i oturum açma kabuğu olarak başlatarak /bin/sh kullanarak
+    /etc/profile ve ~/.profile gibi oturum açma profillerini yürütür. Windows'da,
+    bu anahtar hiçbir şey yapmaz.
+
+    [!ÖNEMLİ] PowerShell'i oturum açma kabuğu olarak başlatmak için bu parametrenin önce
+    geçirilmesi gerekir. Parametre başka bir konumda geçirilirse yoksayılır.
+
+    UNIX benzeri işletim sistemlerinde pwsh'yi oturum açma kabuğu olarak ayarlamak için:
+
+    - Pwsh için tam mutlak yolun /etc/shells altında listelendiğini doğrulayın
+
+      - Bu yol genellikle Linux üzerinde /usr/bin/pwsh veya
+        macOS üzerinde /usr/local/bin/pwsh gibi görünür
+      - Bazı yükleme yöntemleriyle, bu giriş
+        yükleme sırasında otomatik olarak eklenir
+      - pwsh /etc/shells içinde yoksa bir düzenleyici kullanarak
+        pwsh yolunu son satıra ekleyin. Bunu düzenlemek için yükseltilmiş ayrıcalıklar
+        gerekir.
+
+    - Geçerli kullanıcı kabuğunu pwsh olarak ayarlamak için chsh yardımcı programını kullanın:
+
+        chsh -s /usr/bin/pwsh
+
+    [!UYARI] pwsh'yi oturum açma kabuğu olarak ayarlama işlemi şu anda
+    Linux için Windows Alt Sistemi (WSL) üzerinde desteklenmez ve pwsh'yi burada oturum açma kabuğu olarak
+    ayarlamayı denemek WSL'nin etkileşimli olarak başlatılamamasına neden olabilir.
+
+-MTA
+
+    Çok iş parçacıklı bölme kullanarak PowerShell'i başlatın. Bu anahtar yalnızca
+    Windows'da kullanılabilir.
+
+-NoExit | -noe
+
+    Başlangıç komutlarını çalıştırdıktan sonra çıkılmaz.
+
+    Örnek: "pwsh -NoExit -Command Get-Date"
+
+-NoLogo | -nol
+
+    Etkileşimli oturumların başlangıcında başlık metnini gizler.
+
+-NonInteractive | -noni
+
+    Bu anahtar, kullanıcı girişi gerektirmeyen oturumlar oluşturmak için kullanılır.
+    Bu, zamanlanmış görevlerde veya CI/CD işlem hatlarında çalışan betikler için yararlıdır.
+    'Read-Host' veya onay istemleri gibi etkileşimli özellikleri kullanmaya yönelik herhangi bir girişim
+    askıda kalmak yerine deyimi sonlandıran hatalara neden olur.
+
+-NoProfile | -nop
+
+    PowerShell profillerini yüklemez.
+
+-NoProfileLoadTime
+
+    Yükleme süresi 500 milisaniyeyi aştığında, başlangıçta gösterilen PowerShell profili yükleme süresi
+    metnini gizler.
+
+-OutputFormat | -o | -of
+
+    PowerShell'den çıkışın nasıl biçimlendirildiğini belirtir. Geçerli değerler "Text"
+    (metin dizeleri) veya "XML" (serileştirilmiş CLIXML biçimi).
+
+    Örnek: "pwsh -o XML -c Get-Date"
+
+    Bir PowerShell oturumunda çağrıldığında, seri durumdan çıkarılan nesneleri
+    düz dizeler yerine çıkış olarak alırsınız. Diğer kabuklardan çağrıldığında çıkış,
+    CLIXML metni olarak biçimlendirilmiş dize verileri olur.
+
+-SettingsFile | -settings
+
+    Oturum için sistem genelindeki "powershell.config.json" ayarları dosyasını geçersiz
+    kılar. Varsayılan olarak, sistem genelindeki ayarlar
+    "$PSHOME" dizinindeki "powershell.config.json" dosyasından okunur.
+
+    Bu ayarların "-ConfigurationName" bağımsız değişkeniyle belirtilen uç nokta tarafından
+    kullanılmadığını unutmayın.
+
+    Örnek: "pwsh -SettingsFile c:\myproject\powershell.config.json"
+
+-SSHServerMode | -sshs
+
+    PowerShell'i bir SSH alt sistemi olarak çalıştırmak için sshd_config içinde kullanılır. Başka
+    hiçbir kullanım için tasarlanmamıştır veya desteklenmez.
+
+-STA
+
+    Tek iş parçacıklı bölme kullanarak PowerShell'i başlatın. Bu varsayılandır.
+    Bu anahtar yalnızca Windows'da kullanılabilir.
+
+-Version | -v
+
+    PowerShell sürümünü görüntüler. Ek parametreler yok sayılır.
+
+-WindowStyle | -w
+
+    Oturum için pencere stilini ayarlar. Geçerli değerler Normal, Minimized,
+    Maximized ve Hidden.
+
+-WorkingDirectory | -wd
+
+    Başlangıçta yürüterek ilk çalışma dizinini ayarlar. Geçerli herhangi bir
+    PowerShell dosya yolu desteklenir.
+
+    PowerShell'i giriş dizininizde başlatmak için şu komutu kullanın: pwsh -WorkingDirectory ~
+
+-Help, -?, /?
+
+    Pwsh için yardımı görüntüler. PowerShell'de bir pwsh komutu yazıyorsanız
+    komut parametrelerinin başına eğik çizgi (/) değil kısa çizgi (-) ekleyin.
+    </value>
+  </data>
+</root>

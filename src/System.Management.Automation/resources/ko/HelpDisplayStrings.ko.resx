@@ -1,0 +1,473 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Name" xml:space="preserve">
+    <value>이름</value>
+  </data>
+  <data name="Synopsis" xml:space="preserve">
+    <value>개요</value>
+  </data>
+  <data name="DetailedDescription" xml:space="preserve">
+    <value>설명</value>
+  </data>
+  <data name="Syntax" xml:space="preserve">
+    <value>SYNTAX</value>
+  </data>
+  <data name="Parameters" xml:space="preserve">
+    <value>매개 변수</value>
+  </data>
+  <data name="InputType" xml:space="preserve">
+    <value>입력</value>
+  </data>
+  <data name="ReturnType" xml:space="preserve">
+    <value>출력</value>
+  </data>
+  <data name="TerminatingErrors" xml:space="preserve">
+    <value>종료 오류</value>
+  </data>
+  <data name="NonHyphenTerminatingErrors" xml:space="preserve">
+    <value>종료되지 않는 오류</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>참고</value>
+  </data>
+  <data name="Examples" xml:space="preserve">
+    <value>예</value>
+  </data>
+  <data name="Example" xml:space="preserve">
+    <value>예제</value>
+  </data>
+  <data name="ExampleUpperCase" xml:space="preserve">
+    <value>예</value>
+  </data>
+  <data name="Output" xml:space="preserve">
+    <value>출력</value>
+  </data>
+  <data name="RelatedLinks" xml:space="preserve">
+    <value>관련 링크</value>
+  </data>
+  <data name="ShortDescription" xml:space="preserve">
+    <value>간단한 설명</value>
+  </data>
+  <data name="TitleColon" xml:space="preserve">
+    <value>제목:</value>
+  </data>
+  <data name="QuestionColon" xml:space="preserve">
+    <value>질문:</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>답변</value>
+  </data>
+  <data name="TermColon" xml:space="preserve">
+    <value>용어:</value>
+  </data>
+  <data name="DefinitionColon" xml:space="preserve">
+    <value>정의:</value>
+  </data>
+  <data name="ContentColon" xml:space="preserve">
+    <value>콘텐츠:</value>
+  </data>
+  <data name="ProviderName" xml:space="preserve">
+    <value>공급자 이름</value>
+  </data>
+  <data name="BaseCmdletInformation" xml:space="preserve">
+    <value>    이 cmdlet은 다음 공통 매개 변수를 지원합니다. Verbose, Debug,
+    ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+    OutBuffer, PipelineVariable 및 OutVariable입니다. 자세한 내용은 다음을 참조하세요.
+    about_CommonParameters (https://go.microsoft.com/fwlink/?LinkID=113216). </value>
+  </data>
+  <data name="ParameterRequired" xml:space="preserve">
+    <value>필수인가요?                    </value>
+  </data>
+  <data name="ParameterPosition" xml:space="preserve">
+    <value>위치                    </value>
+  </data>
+  <data name="TypeColon" xml:space="preserve">
+    <value>형식: </value>
+  </data>
+  <data name="TargetObjectTypeColon" xml:space="preserve">
+    <value>대상 개체 유형:   </value>
+  </data>
+  <data name="ParameterDefaultValue" xml:space="preserve">
+    <value>기본값                </value>
+  </data>
+  <data name="AcceptsPipelineInput" xml:space="preserve">
+    <value>파이프라인 입력 허용       </value>
+  </data>
+  <data name="AcceptsWildCardCharacters" xml:space="preserve">
+    <value>와일드카드 문자 허용  </value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>(범주: </value>
+  </data>
+  <data name="SuggestedActionColon" xml:space="preserve">
+    <value>추천 동작: </value>
+  </data>
+  <data name="VerboseHelpInfo" xml:space="preserve">
+    <value>더 자세한 내용을 보려면 다음을 입력하세요. </value>
+  </data>
+  <data name="FullHelpInfo" xml:space="preserve">
+    <value>기술 정보를 보려면 다음을 입력하세요. </value>
+  </data>
+  <data name="ExampleHelpInfo" xml:space="preserve">
+    <value>예제를 보려면 다음을 입력하세요. </value>
+  </data>
+  <data name="RelatedLinksHelpInfo" xml:space="preserve">
+    <value>온라인 도움말을 보려면 다음을 입력하세요. </value>
+  </data>
+  <data name="CommonParameters" xml:space="preserve">
+    <value>&lt;CommonParameters&gt;</value>
+  </data>
+  <data name="RemarksSection" xml:space="preserve">
+    <value>REMARKS</value>
+  </data>
+  <data name="TrueShort" xml:space="preserve">
+    <value>true</value>
+  </data>
+  <data name="NamedParameter" xml:space="preserve">
+    <value>명명됨</value>
+  </data>
+  <data name="Drives" xml:space="preserve">
+    <value>드라이브</value>
+  </data>
+  <data name="Capabilities" xml:space="preserve">
+    <value>기능</value>
+  </data>
+  <data name="Tasks" xml:space="preserve">
+    <value>작업</value>
+  </data>
+  <data name="Task" xml:space="preserve">
+    <value>작업: </value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>필터</value>
+  </data>
+  <data name="DynamicParameters" xml:space="preserve">
+    <value>동적 매개 변수</value>
+  </data>
+  <data name="CmdletsSupported" xml:space="preserve">
+    <value>지원되는 cmdlet: </value>
+  </data>
+  <data name="AliasesSection" xml:space="preserve">
+    <value>별칭</value>
+  </data>
+  <data name="GetLatestHelpContent" xml:space="preserve">
+    <value>Get-Help에서 이 cmdlet의 도움말 파일을 이 컴퓨터에서 찾을 수 없습니다. 부분적인 도움말만 표시됩니다.
+    -- 이 cmdlet을 포함하는 모듈의 도움말 파일을 다운로드하여 설치하려면 Update-Help를 사용하세요.
+    -- 이 cmdlet의 도움말 항목을 온라인으로 보려면 "Get-Help {0} -Online"을 입력하거나
+       {1}(으)로 이동</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>없음</value>
+  </data>
+  <data name="ParameterAliases" xml:space="preserve">
+    <value>별칭                      </value>
+  </data>
+  <data name="ParameterIsDynamic" xml:space="preserve">
+    <value>동적 여부                     </value>
+  </data>
+  <data name="ParameterSetName" xml:space="preserve">
+    <value>매개 변수 집합 이름           </value>
+  </data>
+  <data name="UnableToRetrieveHelpInfoXml" xml:space="preserve">
+    <value>UI 문화권 {0}에 대한 HelpInfo XML 파일을 검색할 수 없습니다. 모듈 매니페스트의 HelpInfoUri 속성이 올바른지 확인하거나 네트워크 연결을 확인한 다음 명령을 다시 시도하세요.</value>
+  </data>
+  <data name="PipelineByPropertyName" xml:space="preserve">
+    <value>ByPropertyName</value>
+  </data>
+  <data name="PipelineByValue" xml:space="preserve">
+    <value>ByValue</value>
+  </data>
+  <data name="PipelineFromRemainingArguments" xml:space="preserve">
+    <value>FromRemainingArguments</value>
+  </data>
+  <data name="HelpCultureNotSupported" xml:space="preserve">
+    <value>지정한 문화권은 지원되지 않습니다. {0}. 다음 목록에서 문화권을 지정하세요: {{{1}}}.</value>
+  </data>
+  <data name="HelpCultureNotSupportedFallback" xml:space="preserve">
+    <value>오류 처리를 미루고 대체 문화권을 시도합니다. 대체 문화권이 모두 지원되지 않으면 다음과 같이 오류가 표시됩니다:
+{0}</value>
+  </data>
+  <data name="ModuleBaseMustExist" xml:space="preserve">
+    <value>ModuleBase 디렉터리를 찾을 수 없습니다. 디렉터리를 확인한 다음 다시 시도하세요.</value>
+  </data>
+  <data name="PathMustBeValidContainers" xml:space="preserve">
+    <value>경로 {0}은(는) 올바른 디렉터리가 아닙니다. 디렉터리가 있는지 확인한 다음 다시 시도하세요.</value>
+  </data>
+  <data name="TooManyRedirections" xml:space="preserve">
+    <value>도움말 URI에는 10개를 초과하는 리디렉션을 포함할 수 없습니다. 올바른 Help URI를 지정하세요.</value>
+  </data>
+  <data name="UpdateProgressActivity" xml:space="preserve">
+    <value>도움말 업데이트</value>
+  </data>
+  <data name="UpdateProgressConnecting" xml:space="preserve">
+    <value>도움말 콘텐츠에 연결하는 중...</value>
+  </data>
+  <data name="UpdateProgressDownloading" xml:space="preserve">
+    <value>도움말 콘텐츠 다운로드 중...</value>
+  </data>
+  <data name="UpdateProgressInstalling" xml:space="preserve">
+    <value>도움말 콘텐츠를 설치하는 중...</value>
+  </data>
+  <data name="UpdateProgressLocating" xml:space="preserve">
+    <value>도움말 콘텐츠를 찾는 중...</value>
+  </data>
+  <data name="AllParameterSetsName" xml:space="preserve">
+    <value>(모두)</value>
+  </data>
+  <data name="CannotMatchModulePattern" xml:space="preserve">
+    <value>다음 패턴과 일치하는 PowerShell 모듈을 찾을 수 없습니다. {0}. 패턴을 확인한 다음 명령을 다시 시도하세요.</value>
+  </data>
+  <data name="ModuleNotFoundWithFullyQualifiedName" xml:space="preserve">
+    <value>지정된 FullyQualifiedModule {0}과(와) 일치하는 PowerShell 모듈을 찾을 수 없습니다. FullyQualifiedModule 값을 확인한 다음 명령을 다시 시도하세요.</value>
+  </data>
+  <data name="HelpContentNotFound" xml:space="preserve">
+    <value>도움말 콘텐츠를 찾을 수 없습니다. 서버를 사용할 수 있는지, 그리고 도움말 콘텐츠 위치가 HelpInfo XML에 올바르게 정의되어 있는지 확인하세요.</value>
+  </data>
+  <data name="HelpInfoUriNotFound" xml:space="preserve">
+    <value>지정한 모듈이 업데이트 가능한 도움말을 지원하지 않으므로 Update-Help 명령이 실패했습니다. Get-Help -Online을 사용하거나 온라인에서 이 모듈의 명령에 대한 도움말을 찾아보세요.</value>
+  </data>
+  <data name="ModuleNameNullOrEmpty" xml:space="preserve">
+    <value>다음 매개 변수는 null이거나 비워 둘 수 없습니다. Module.</value>
+  </data>
+  <data name="PathNullOrEmpty" xml:space="preserve">
+    <value>다음 매개 변수는 null이거나 비워 둘 수 없습니다. Path.</value>
+  </data>
+  <data name="UpdateHelpCompleted" xml:space="preserve">
+    <value>Update-Help가 완료되었습니다.</value>
+  </data>
+  <data name="UnzipFailure" xml:space="preserve">
+    <value>도움말 콘텐츠를 추출하는 중 오류가 발생했습니다.</value>
+  </data>
+  <data name="UnableToConnect" xml:space="preserve">
+    <value>도움말 콘텐츠에 연결할 수 없습니다. 도움말 콘텐츠가 저장된 서버를 사용할 수 없을 수 있습니다. 서버를 사용할 수 있는지 확인하거나 서버가 다시 온라인 상태가 될 때까지 기다린 다음 명령을 다시 시도하세요.</value>
+  </data>
+  <data name="HelpContentXmlValidationFailure" xml:space="preserve">
+    <value>지정한 위치의 도움말 콘텐츠가 올바르지 않습니다. 유효한 도움말 콘텐츠가 포함된 위치를 지정하세요.</value>
+  </data>
+  <data name="HelpInfoXmlValidationFailure" xml:space="preserve">
+    <value>HelpInfo XML이 올바르지 않습니다. 유효한 HelpInfo XML을 지정하세요.</value>
+  </data>
+  <data name="SaveHelpCompleted" xml:space="preserve">
+    <value>도움말 내용이 다음 위치에 저장되었습니다. {0}</value>
+  </data>
+  <data name="HelpContentXsdNotFound" xml:space="preserve">
+    <value>{0}에서 도움말 콘텐츠 XSD 파일을 찾을 수 없습니다. 지정된 위치에 XSD 파일이 있는지 확인한 다음 명령을 다시 시도하세요.</value>
+  </data>
+  <data name="FailedToUpdateHelpForModule" xml:space="preserve">
+    <value>모듈에 대한 도움말을 업데이트하지 못했습니다:
+'{0}'
+{1}</value>
+  </data>
+  <data name="SaveProgressActivity" xml:space="preserve">
+    <value>도움말 저장 중</value>
+  </data>
+  <data name="HelpContentContainsInvalidFiles" xml:space="preserve">
+    <value>도움말 콘텐츠에 올바르지 않은 파일이 포함되어 있습니다. .txt 및 .xml 파일만 지원됩니다.</value>
+  </data>
+  <data name="FailedToSaveHelpForModule" xml:space="preserve">
+    <value>모듈 '{0}'에 대한 도움말을 저장하지 못했습니다. {1}</value>
+  </data>
+  <data name="FailedToSaveHelpForModuleWithCulture" xml:space="preserve">
+    <value>UI 문화권이 {{{1}}}인 모듈 '{0}'에 대한 도움말을 저장하지 못했습니다: {2}.
+영어-US 도움말 콘텐츠를 사용할 수 있으며 Save-Help -UICulture en-US를 사용하여 저장할 수 있습니다.</value>
+  </data>
+  <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
+    <value>UI 문화권이 {{{1}}}인 모듈 '{0}'에 대한 도움말을 업데이트하지 못했습니다: {2}.
+영어-US 도움말 콘텐츠를 사용할 수 있으며 Update-Help -UICulture en-US를 사용하여 설치할 수 있습니다.</value>
+  </data>
+  <data name="FailedToUpdateHelpWithLocaleNoUICulture" xml:space="preserve">
+    <value>현재 문화권은 ({0})이며, 어떤 언어와도 연결되어 있지 않습니다. 시스템 문화권을 변경하거나 Update-Help -UICulture en-US를 사용하여 영어-US 도움말 콘텐츠를 설치하는 것이 좋습니다.</value>
+  </data>
+  <data name="FalseShort" xml:space="preserve">
+    <value>false</value>
+  </data>
+  <data name="CannotSpecifyRecurseWithoutPath" xml:space="preserve">
+    <value>-Recurse 매개 변수는 원본 경로가 지정된 경우에만 사용할 수 있습니다.</value>
+  </data>
+  <data name="ProviderIsNotFileSystem" xml:space="preserve">
+    <value>경로 {0}에 FileSystem 공급자가 없습니다. 지정한 경로에 FileSystem 공급자가 포함되어 있는지 확인한 다음 명령을 다시 시도하세요.</value>
+  </data>
+  <data name="SearchingForHelpContent" xml:space="preserve">
+    <value>{0}에 대한 도움말을 검색하는 중...</value>
+  </data>
+  <data name="CannotMatchUICulturePattern" xml:space="preserve">
+    <value>다음 패턴과 일치하는 UI 문화권을 찾을 수 없습니다. {0}. 패턴을 확인한 다음 명령을 다시 시도하세요.</value>
+  </data>
+  <data name="UseForceToSaveHelp" xml:space="preserve">
+    <value>이 컴퓨터에서 지난 24시간 이내에 Save-Help 명령이 실행되었기 때문에 모듈 {0}에 대한 도움말이 저장되지 않았습니다.
+도움말을 다시 저장하려면 명령에 Force 매개 변수를 추가하세요.</value>
+  </data>
+  <data name="UseForceToUpdateHelp" xml:space="preserve">
+    <value>이 컴퓨터에서 지난 24시간 이내에 Update-Help 명령이 실행되었기 때문에 모듈 {0}에 대한 도움말이 업데이트되지 않았습니다.
+도움말을 다시 업데이트하려면 명령에 Force 매개 변수를 추가하세요.</value>
+  </data>
+  <data name="NewestContentAlreadyInstalled" xml:space="preserve">
+    <value>가장 최신의 도움말 파일이 이미 설치되어 있습니다.</value>
+  </data>
+  <data name="SuccessfullyUpdatedHelpContent" xml:space="preserve">
+    <value>{0}: {1}. 문화권 {2} 버전 {3}</value>
+  </data>
+  <data name="UpdatedHelpContent" xml:space="preserve">
+    <value>{0}에 업데이트됨</value>
+  </data>
+  <data name="InvalidHelpInfoUri" xml:space="preserve">
+    <value>모듈 매니페스트의 HelpInfoUri 키 값은 도움말 파일이 저장된 웹 사이트의 컨테이너 또는 루트 URL을 가리켜야 합니다. HelpInfoUri '{0}'은(는) 컨테이너를 가리키지 않습니다.</value>
+  </data>
+  <data name="HelpContentMustBeInTargetNamespace" xml:space="preserve">
+    <value>도움말 콘텐츠는 네임스페이스 {0}에 있어야 합니다.</value>
+  </data>
+  <data name="GetLatestHelpContentWithoutHelpUri" xml:space="preserve">
+    <value>Get-Help에서 이 cmdlet의 도움말 파일을 이 컴퓨터에서 찾을 수 없습니다. 부분적인 도움말만 표시됩니다.
+    -- 이 cmdlet을 포함하는 모듈의 도움말 파일을 다운로드하여 설치하려면 Update-Help를 사용하세요.</value>
+  </data>
+  <data name="NewestContentAlreadyDownloaded" xml:space="preserve">
+    <value>최신 도움말 파일이 이미 다운로드되어 있습니다.</value>
+  </data>
+  <data name="SavedHelpContent" xml:space="preserve">
+    <value>{0} 저장됨</value>
+  </data>
+  <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
+    <value>HelpInfoURI {0}이(가) HTTP로 시작하지 않습니다.</value>
+  </data>
+  <data name="RootElementMustBeHelpItems" xml:space="preserve">
+    <value>도움말 콘텐츠의 루트 수준 요소는 "helpItems"여야 합니다.</value>
+  </data>
+  <data name="SaveProgressActivityForModule" xml:space="preserve">
+    <value>모듈 {0}에 대한 도움말을 저장하는 중</value>
+  </data>
+  <data name="UpdateProgressActivityForModule" xml:space="preserve">
+    <value>모듈 {0}에 대한 도움말을 업데이트하는 중</value>
+  </data>
+  <data name="UpdateHelpResolveUriVerbose" xml:space="preserve">
+    <value>URI를 확인하는 중: "{0}”</value>
+  </data>
+  <data name="OnlineHelpUri" xml:space="preserve">
+    <value>도움말 URI: {0}</value>
+  </data>
+  <data name="UpdateHelpShouldProcessActionMessage" xml:space="preserve">
+    <value>{0}, 현재 버전: {1}, 사용 가능한 버전: {2}, UICulture: {3}</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value>속성</value>
+  </data>
+  <data name="Methods" xml:space="preserve">
+    <value>방법</value>
+  </data>
+</root>

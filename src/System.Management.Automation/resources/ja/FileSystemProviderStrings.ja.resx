@@ -1,0 +1,357 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvokeItemAction" xml:space="preserve">
+    <value>Invoke-Item</value>
+  </data>
+  <data name="InvokeItemResourceFileTemplate" xml:space="preserve">
+    <value>項目: {0}</value>
+  </data>
+  <data name="RemoveItemActionFile" xml:space="preserve">
+    <value>ファイルの削除</value>
+  </data>
+  <data name="RemoveItemActionDirectory" xml:space="preserve">
+    <value>ディレクトリの削除</value>
+  </data>
+  <data name="CopyItemActionFile" xml:space="preserve">
+    <value>ファイルをコピーする</value>
+  </data>
+  <data name="CopyItemResourceFileTemplate" xml:space="preserve">
+    <value>項目: {0} 宛先: {1}</value>
+  </data>
+  <data name="CopyItemActionDirectory" xml:space="preserve">
+    <value>ディレクトリのコピー</value>
+  </data>
+  <data name="RenameItemActionFile" xml:space="preserve">
+    <value>ファイル名を変更する</value>
+  </data>
+  <data name="RenameItemActionDirectory" xml:space="preserve">
+    <value>ディレクトリ名の変更</value>
+  </data>
+  <data name="RenameItemResourceFileTemplate" xml:space="preserve">
+    <value>項目: {0} 宛先: {1}</value>
+  </data>
+  <data name="MoveItemActionFile" xml:space="preserve">
+    <value>ファイルの移動</value>
+  </data>
+  <data name="MoveItemActionDirectory" xml:space="preserve">
+    <value>ディレクトリの移動</value>
+  </data>
+  <data name="MoveItemResourceFileTemplate" xml:space="preserve">
+    <value>項目: {0} 宛先: {1}</value>
+  </data>
+  <data name="SetPropertyActionFile" xml:space="preserve">
+    <value>プロパティ ファイルの設定</value>
+  </data>
+  <data name="SetPropertyActionDirectory" xml:space="preserve">
+    <value>プロパティ ディレクトリの設定</value>
+  </data>
+  <data name="SetPropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} プロパティ {1}: 値: {2}</value>
+  </data>
+  <data name="ClearPropertyActionFile" xml:space="preserve">
+    <value>プロパティ ファイルをクリア</value>
+  </data>
+  <data name="ClearPropertyActionDirectory" xml:space="preserve">
+    <value>プロパティ ディレクトリのクリア</value>
+  </data>
+  <data name="ClearPropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} プロパティ: {1}</value>
+  </data>
+  <data name="NewItemActionFile" xml:space="preserve">
+    <value>ファイルの作成</value>
+  </data>
+  <data name="NewItemActionDirectory" xml:space="preserve">
+    <value>ディレクトリの作成</value>
+  </data>
+  <data name="NewItemActionTemplate" xml:space="preserve">
+    <value>宛先: {0}</value>
+  </data>
+  <data name="ClearContentActionFile" xml:space="preserve">
+    <value>コンテンツのクリア</value>
+  </data>
+  <data name="ClearContentesourceTemplate" xml:space="preserve">
+    <value>項目: {0}</value>
+  </data>
+  <data name="ItemNotFound" xml:space="preserve">
+    <value>項目 {0} が見つかりませんでした。</value>
+  </data>
+  <data name="CannotRemoveItem" xml:space="preserve">
+    <value>アイテム {0} を削除できません: {1}</value>
+  </data>
+  <data name="CannotRestoreAttributes" xml:space="preserve">
+    <value>項目 {0}の属性を復元できません: {1}</value>
+  </data>
+  <data name="ItemDoesNotExist" xml:space="preserve">
+    <value>指定されたパス {0} のオブジェクトは存在しません。</value>
+  </data>
+  <data name="DirectoryNotEmpty" xml:space="preserve">
+    <value>ディレクトリ {0} は空ではないので、削除できません。</value>
+  </data>
+  <data name="UnknownType" xml:space="preserve">
+    <value>この型は、ファイル システムの既知の型ではありません。"file"、"directory" または "symboliclink" のみを指定できます。</value>
+  </data>
+  <data name="PathOutSideBasePath" xml:space="preserve">
+    <value>指定されたパスが basePath の外部にある項目を参照しているため、パスを処理できません。</value>
+  </data>
+  <data name="DriveRootError" xml:space="preserve">
+    <value>指定されたドライブ ルート "{0}" が存在しないか、フォルダーではありません。</value>
+  </data>
+  <data name="DirectoryExist" xml:space="preserve">
+    <value>指定された名前 {0} の項目は既に存在します。</value>
+  </data>
+  <data name="DelimiterError" xml:space="preserve">
+    <value>ストリームを一度に 1 バイトずつ読み取る場合、区切り記号を指定することはできません。</value>
+  </data>
+  <data name="CopyError" xml:space="preserve">
+    <value>項目 {0} をそれ自体で上書きすることはできません。</value>
+  </data>
+  <data name="RenameError" xml:space="preserve">
+    <value>指定したターゲットは、パスまたはデバイス名を表しているため、名前を変更できません。</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>プロパティ {0} が存在しないか、見つかりませんでした。</value>
+  </data>
+  <data name="PermissionError" xml:space="preserve">
+    <value>この操作を実行するための十分なアクセス権がないか、項目が非表示、システム、または読み取り専用です。</value>
+  </data>
+  <data name="AttributesNotSupported" xml:space="preserve">
+    <value>属性がサポートされていないため、属性を設定できません。設定できる属性は、Archive、Hidden、Normal、ReadOnly、または System のみです。</value>
+  </data>
+  <data name="CannotClearProperty" xml:space="preserve">
+    <value>プロパティがサポートされていないため、プロパティをクリアできません。Attributes プロパティのみをクリアできます。</value>
+  </data>
+  <data name="TargetCannotContainDeviceName" xml:space="preserve">
+    <value>ターゲットが予約済みデバイス名を表しているため、パス '{0}' を処理できません。</value>
+  </data>
+  <data name="EncodingNotUsed" xml:space="preserve">
+    <value>エンコードは、'-AsByteStream' が指定されている場合は使用されません。</value>
+  </data>
+  <data name="ByteEncodingError" xml:space="preserve">
+    <value>バイト エンコードを続行できません。バイト エンコードを使用する場合、コンテンツはバイト型である必要があります。</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>ファイル {0} が見つからなかったため、ファイルを処理できません。</value>
+  </data>
+  <data name="DirectoryDisplayGrouping" xml:space="preserve">
+    <value>    ディレクトリ:</value>
+  </data>
+  <data name="ReadBackward_Encoding_NotSupport" xml:space="preserve">
+    <value>ファイルのエンコードを検出できません。指定されたエンコード {0} は、コンテンツを逆方向に読み取る場合にはサポートされていません。</value>
+  </data>
+  <data name="AlternateDataStreamNotFound" xml:space="preserve">
+    <value>ファイル '{1}' の代替データ ストリーム '{0}' を開けませんでした。</value>
+  </data>
+  <data name="StreamAction" xml:space="preserve">
+    <value>ファイル '{1}' のストリーム '{0}'。</value>
+  </data>
+  <data name="RawAndWaitCannotCoexist" xml:space="preserve">
+    <value>Raw パラメーターと Wait パラメーターを同じコマンドで指定することはできません。</value>
+  </data>
+  <data name="InvalidDriveName" xml:space="preserve">
+    <value>Persist スイッチ パラメーターを使用するには、オペレーティング システムでドライブ名がサポートされている必要があります (ドライブ文字 A ~ Z など)。</value>
+  </data>
+  <data name="PersistNotSupported" xml:space="preserve">
+    <value>Persist パラメーターを使用する場合、ルートはリモート コンピューター上のファイル システムの場所である必要があります。</value>
+  </data>
+  <data name="NoFirstLastWaitForRaw" xml:space="preserve">
+    <value>'{0}' パラメーターと '{1}' パラメーターを同じコマンドで指定することはできません。</value>
+  </data>
+  <data name="ItemNotDirectory" xml:space="preserve">
+    <value>この操作にはディレクトリが必要です。項目 '{0}' はディレクトリではありません。</value>
+  </data>
+  <data name="NewItemActionJunction" xml:space="preserve">
+    <value>ジャンクションの作成</value>
+  </data>
+  <data name="NewItemActionSymbolicLink" xml:space="preserve">
+    <value>シンボリック リンクの作成</value>
+  </data>
+  <data name="ElevationRequired" xml:space="preserve">
+    <value>この操作には管理者特権が必要です。</value>
+  </data>
+  <data name="NewItemActionHardLink" xml:space="preserve">
+    <value>ハード リンクの作成</value>
+  </data>
+  <data name="ItemNotFile" xml:space="preserve">
+    <value>この操作にはファイルが必要です。項目 '{0}' はファイルではありません。</value>
+  </data>
+  <data name="HardLinkNotSupported" xml:space="preserve">
+    <value>ハード リンクは、指定されたパスではサポートされていません。</value>
+  </data>
+  <data name="SymbolicLinkNotSupported" xml:space="preserve">
+    <value>シンボリック リンクは、指定されたパスではサポートされていません。</value>
+  </data>
+  <data name="CopyItemRemotelyProgressActivity" xml:space="preserve">
+    <value>{0} を {1} にコピーしています</value>
+  </data>
+  <data name="CopyItemRemoteDestinationIsFile" xml:space="preserve">
+    <value>宛先パス {0} は、ターゲットの宛先に既に存在するファイルです。</value>
+  </data>
+  <data name="CopyItemRemotelyFailed" xml:space="preserve">
+    <value>ファイル {0} をリモート ターゲットのコピー先にコピーできませんでした。</value>
+  </data>
+  <data name="CopyItemRemotelyStatusDescription" xml:space="preserve">
+    <value>{0} から {1} へ</value>
+  </data>
+  <data name="CopyItemRemotelyDestinationIsFile" xml:space="preserve">
+    <value>ディレクトリ '{0}' をファイル '{0}' にコピーできません</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToGetDirectoryChildItems" xml:space="preserve">
+    <value>ディレクトリ {0} の子項目を取得できませんでした。</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToReadFile" xml:space="preserve">
+    <value>リモート ファイル '{0}' を読み取ることができませんでした。</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToValidateIfDestinationIsFile" xml:space="preserve">
+    <value>リモートの宛先 {0} がファイルかどうかを検証できません。</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
+    <value>リモート宛先にディレクトリ '{0}' を作成できませんでした。</value>
+  </data>
+  <data name="DriveMaxSizeError" xml:space="preserve">
+    <value>ドライブの最大サイズを超えました: {0}。</value>
+  </data>
+  <data name="SymlinkItemExists" xml:space="preserve">
+    <value>パスが既に存在するため、リンクを作成できません: {0}。</value>
+  </data>
+  <data name="AlreadyListedDirectory" xml:space="preserve">
+    <value>既にアクセス済みのディレクトリ {0} をスキップします。</value>
+  </data>
+  <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
+    <value>宛先パスをソースのサブディレクトリまたはソース自体にすることはできません: {0}。</value>
+  </data>
+  <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
+    <value>ターゲットとパスを同じにすることはできません。</value>
+  </data>
+  <data name="CopyingLocalFileActivity" xml:space="preserve">
+    <value>{1} 個のファイルのうち {0} 個がコピーされました</value>
+  </data>
+  <data name="CopyingLocalBytesStatus" xml:space="preserve">
+    <value>{0}/{1} ({2:0.0} MB/秒)</value>
+  </data>
+  <data name="RemovingLocalFileActivity" xml:space="preserve">
+    <value>{1} 個中 {0} 個のファイルを削除しました</value>
+  </data>
+  <data name="RemovingLocalBytesStatus" xml:space="preserve">
+    <value>{0}/{1} ({2:0.0} MB/秒)</value>
+  </data>
+  <data name="JunctionAbsolutePath" xml:space="preserve">
+    <value>ジャンクションを作成するには、ターゲットの絶対パスが必要です。</value>
+  </data>
+</root>

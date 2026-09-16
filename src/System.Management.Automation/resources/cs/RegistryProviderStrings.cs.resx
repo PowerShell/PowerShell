@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetItemAction" xml:space="preserve">
+    <value>Nastavit položku</value>
+  </data>
+  <data name="SetItemResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Hodnota: {1}</value>
+  </data>
+  <data name="ClearItemAction" xml:space="preserve">
+    <value>Vymazat položku</value>
+  </data>
+  <data name="ClearItemResourceTemplate" xml:space="preserve">
+    <value>Položka: {0}</value>
+  </data>
+  <data name="NewItemAction" xml:space="preserve">
+    <value>Nová položka</value>
+  </data>
+  <data name="NewItemResourceTemplate" xml:space="preserve">
+    <value>Položka: {0}</value>
+  </data>
+  <data name="RemoveKeyAction" xml:space="preserve">
+    <value>Odebrat klíč</value>
+  </data>
+  <data name="RemoveKeyResourceTemplate" xml:space="preserve">
+    <value>Položka: {0}</value>
+  </data>
+  <data name="CopyKeyAction" xml:space="preserve">
+    <value>Kopírovat klíč</value>
+  </data>
+  <data name="CopyKeyResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Cíl: {1}</value>
+  </data>
+  <data name="RenameItemAction" xml:space="preserve">
+    <value>Přejmenovat položku</value>
+  </data>
+  <data name="RenameItemResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Nový název: {1}</value>
+  </data>
+  <data name="MoveItemAction" xml:space="preserve">
+    <value>Přesunout položku</value>
+  </data>
+  <data name="MoveItemResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Cíl: {1}</value>
+  </data>
+  <data name="SetPropertyAction" xml:space="preserve">
+    <value>Nastavit vlastnost</value>
+  </data>
+  <data name="SetPropertyResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Vlastnost: {1}</value>
+  </data>
+  <data name="ClearPropertyAction" xml:space="preserve">
+    <value>Vymazat vlastnost</value>
+  </data>
+  <data name="ClearPropertyResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Vlastnost: {1}</value>
+  </data>
+  <data name="NewPropertyAction" xml:space="preserve">
+    <value>Nová vlastnost</value>
+  </data>
+  <data name="NewPropertyResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Vlastnost: {1}</value>
+  </data>
+  <data name="RemovePropertyAction" xml:space="preserve">
+    <value>Odebrat vlastnost</value>
+  </data>
+  <data name="RemovePropertyResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Vlastnost: {1}</value>
+  </data>
+  <data name="RenamePropertyAction" xml:space="preserve">
+    <value>Přejmenovat vlastnost.</value>
+  </data>
+  <data name="RenamePropertyResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Zdrojová vlastnost: {1} Cílová vlastnost: {2}</value>
+  </data>
+  <data name="CopyPropertyAction" xml:space="preserve">
+    <value>Kopírovat vlastnost</value>
+  </data>
+  <data name="CopyPropertyResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Zdrojová vlastnost: {1} Cílová položka: {2} Cílová vlastnost: {3}</value>
+  </data>
+  <data name="MovePropertyAction" xml:space="preserve">
+    <value>Přesunout vlastnost</value>
+  </data>
+  <data name="MovePropertyResourceTemplate" xml:space="preserve">
+    <value>Položka: {0} Zdrojová vlastnost: {1} Cílová položka: {2} Cílová vlastnost: {3}</value>
+  </data>
+  <data name="ContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>Operace nebyla zpracována. Zadané umístění tuto operaci nepovoluje.</value>
+  </data>
+  <data name="SourceContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>Operace není ve zdrojovém umístění povolená.</value>
+  </data>
+  <data name="DestinationContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>Operace není v cílovém umístění povolená.</value>
+  </data>
+  <data name="HKLMDriveDescription" xml:space="preserve">
+    <value>Nastavení konfigurace pro místní počítač</value>
+  </data>
+  <data name="HKCUDriveDescription" xml:space="preserve">
+    <value>Nastavení softwaru pro aktuálního uživatele</value>
+  </data>
+  <data name="KeyAlreadyExists" xml:space="preserve">
+    <value>Klíč v této cestě už existuje.</value>
+  </data>
+  <data name="DestinationChildOfSource" xml:space="preserve">
+    <value>Operaci nejde provést, protože cílová cesta je podřízená zdrojové cestě.</value>
+  </data>
+  <data name="PropertyAlreadyExists" xml:space="preserve">
+    <value>Vlastnost už existuje.</value>
+  </data>
+  <data name="PropertyNotAtPath" xml:space="preserve">
+    <value>Vlastnost {0} na cestě {1} neexistuje.</value>
+  </data>
+  <data name="KeyDoesNotExist" xml:space="preserve">
+    <value>Klíč registru na zadané cestě neexistuje.</value>
+  </data>
+  <data name="TypeParameterBindingFailure" xml:space="preserve">
+    <value>Parametr Type se nepovedlo svázat. Hodnotu {0} se nepovedlo převést na {1}. Možné hodnoty výčtu jsou String, ExpandString, Binary, DWord, MultiString, QWord, Unknown.</value>
+  </data>
+  <data name="KeyCreatedValueFailed" xml:space="preserve">
+    <value>Klíč {0} byl vytvořený, ale nepovedlo se nastavit výchozí hodnotu.</value>
+  </data>
+  <data name="NewDriveRootDoesNotExist" xml:space="preserve">
+    <value>Jednotku se zadaným kořenovým adresářem nejde vytvořit. Kořenová cesta neexistuje.</value>
+  </data>
+  <data name="RenameItemAlreadyExists" xml:space="preserve">
+    <value>Položku nejde přejmenovat, protože ve stejném kontejneru už existuje položka s tímto názvem.</value>
+  </data>
+  <data name="Arg_RegInvalidKeyName" xml:space="preserve">
+    <value>Název klíče registru musí začínat platným názvem základního klíče.</value>
+  </data>
+  <data name="ArgRegKeyDelHive" xml:space="preserve">
+    <value>Argument podklíče není platný.</value>
+  </data>
+  <data name="Arg_RegSubKeyAbsent" xml:space="preserve">
+    <value>Strom podklíčů nejde odstranit, protože podklíč neexistuje.</value>
+  </data>
+  <data name="Arg_RegSubKeyValueAbsent" xml:space="preserve">
+    <value>Hodnota s tímto názvem neexistuje.</value>
+  </data>
+  <data name="Arg_EnumIllegalVal" xml:space="preserve">
+    <value>Hodnota výčtu {0} není platná.</value>
+  </data>
+  <data name="Arg_Value" xml:space="preserve">
+    <value>Musí být zadaný argument hodnoty.</value>
+  </data>
+  <data name="Arg_Name" xml:space="preserve">
+    <value>Musí být zadaný argument názvu.</value>
+  </data>
+  <data name="Arg_RegBadKeyKind" xml:space="preserve">
+    <value>Zadaná hodnota RegistryValueKind není platná.</value>
+  </data>
+  <data name="Arg_RegSetStrArrNull" xml:space="preserve">
+    <value>RegistryKey.SetValue nepovoluje String[], které obsahuje řetězcový odkaz s hodnotou null.</value>
+  </data>
+  <data name="Arg_RegKeyStrLenBug" xml:space="preserve">
+    <value>Podklíče registru nesmí být delší než 255 znaků.</value>
+  </data>
+  <data name="Arg_RegKeyStrEmpty" xml:space="preserve">
+    <value>Musí být zadaný neprázdný název podklíče.</value>
+  </data>
+  <data name="Arg_RegSetMismatchedKind" xml:space="preserve">
+    <value>Typ objektu hodnoty neodpovídá zadanému RegistryValueKind nebo objekt nejde správně převést.</value>
+  </data>
+  <data name="Arg_RegSetBadArrType" xml:space="preserve">
+    <value>RegistryKey.SetValue nepodporuje pole typu {0}. Podporují se jen Byte[] a String[].</value>
+  </data>
+  <data name="Arg_RegKeyNotFound" xml:space="preserve">
+    <value>Zadaný klíč registru neexistuje.</value>
+  </data>
+  <data name="Arg_RegValueNameStrLenBug" xml:space="preserve">
+    <value>Délka zadaného názvu hodnoty překračuje maximum 16383 znaků.</value>
+  </data>
+  <data name="Arg_ValueDataLenBug" xml:space="preserve">
+    <value>Velikost zadaných dat hodnoty překračuje maximum 1 MB.</value>
+  </data>
+  <data name="ArgumentException_RegSubKeyAbsent" xml:space="preserve">
+    <value>Zadaný podklíč registru neexistuje.</value>
+  </data>
+  <data name="Argument_InvalidRegistryKeyPermissionCheck" xml:space="preserve">
+    <value>Zadaná hodnota RegistryKeyPermissionCheck není platná.</value>
+  </data>
+  <data name="InvalidOperation_RegRemoveSubKey" xml:space="preserve">
+    <value>Klíč registru obsahuje podklíče. Tato metoda nepodporuje rekurzivní odebrání.</value>
+  </data>
+  <data name="InvalidOperation_NeedTransaction" xml:space="preserve">
+    <value>Popisovač KTM nejde vytvořit bez Transaction.Current nebo zadané transakce.</value>
+  </data>
+  <data name="InvalidOperation_MustUseSameTransaction" xml:space="preserve">
+    <value>Zadaná transakce nebo Transaction.Current musí odpovídat transakci použité k vytvoření nebo otevření objektu TransactedRegistryKey.</value>
+  </data>
+  <data name="InvalidOperation_NotAssociatedWithTransaction" xml:space="preserve">
+    <value>Objekt TransactedRegistryKey není přidružený k transakci, protože se vztahuje k předdefinovanému klíči.</value>
+  </data>
+  <data name="Security_RegistryPermission" xml:space="preserve">
+    <value>Požadovaný přístup k registru není povolený.</value>
+  </data>
+  <data name="UnauthorizedAccess_RegistryKeyGeneric_Key" xml:space="preserve">
+    <value>Přístup ke klíči registru {0} byl odepřen.</value>
+  </data>
+  <data name="UnauthorizedAccess_RegistryNoWrite" xml:space="preserve">
+    <value>Do klíče registru nejde zapisovat.</value>
+  </data>
+  <data name="ObjectDisposed_RegKeyClosed" xml:space="preserve">
+    <value>K zavřenému klíči registru nejde získat přístup.</value>
+  </data>
+  <data name="UnknownError_Num" xml:space="preserve">
+    <value>Neznámá chyba: {0}.</value>
+  </data>
+  <data name="NotSupported_KernelTransactions" xml:space="preserve">
+    <value>Transakce registru nejsou na této platformě podporované.</value>
+  </data>
+  <data name="AccessControl_InvalidHandle" xml:space="preserve">
+    <value>Zadaný popisovač není platný.</value>
+  </data>
+</root>

@@ -745,8 +745,8 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     }
 
     Context "PATH environment variable" {
-        It "`$PSHOME should be in front so that pwsh.exe starts current running PowerShell" {
-            & $powershell -v | Should -Match $PSVersionTable.GitCommitId
+        It "Running 'pwsh' should start the currently running PowerShell" {
+            pwsh -v | Should -Match $PSVersionTable.GitCommitId
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {

@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>Доступ к пути "{0}" запрещен.</value>
+  </data>
+  <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
+    <value>Этот командлет не может обеспечить защиту секретов в виде обычного текста по незашифрованным сетям. Чтобы отключить это предупреждение и отправлять секреты в виде обычного текста по незашифрованным сетям, повторно выполните команду, указав параметр AllowUnencryptedAuthentication.</value>
+  </data>
+  <data name="AuthenticationConflict" xml:space="preserve">
+    <value>Командлет не может быть запущен, поскольку указаны следующие конфликтующие параметры: Authentication и UseDefaultCredentials. Authentication не поддерживает учетные данные по умолчанию. Укажите Authentication или UseDefaultCredentials, затем повторите попытку.</value>
+  </data>
+  <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
+    <value>Не удается выполнить командлет, так как не указан следующий параметр: Credential. Для указанного типа проверки подлинности требуется параметр Credential. Укажите параметр Credential, затем повторите попытку.</value>
+  </data>
+  <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
+    <value>Не удается выполнить командлет, так как не указан следующий параметр: Token. Для указанного типа проверки подлинности требуется параметр Token. Укажите параметр Token, затем повторите попытку.</value>
+  </data>
+  <data name="AuthenticationTokenConflict" xml:space="preserve">
+    <value>Командлет не может быть запущен, поскольку указаны следующие конфликтующие параметры: Credential и Token. Укажите либо Credential, либо Token, затем повторите попытку.</value>
+  </data>
+  <data name="BodyConflict" xml:space="preserve">
+    <value>Не удается выполнить командлет, так как указаны следующие конфликтующие параметры: Body и InFile. Укажите либо Body, либо InFile, затем повторите попытку.  </value>
+  </data>
+  <data name="BodyFormConflict" xml:space="preserve">
+    <value>Не удается выполнить командлет, так как указаны следующие конфликтующие параметры: Body и Form. Укажите либо Body, либо Form, затем повторите попытку.  </value>
+  </data>
+  <data name="FormInFileConflict" xml:space="preserve">
+    <value>Не удается выполнить командлет, так как указаны следующие конфликтующие параметры: InFile и Form. Укажите либо InFile, либо Form, затем повторите попытку.  </value>
+  </data>
+  <data name="ContentTypeException" xml:space="preserve">
+    <value>Не удается запустить командлет, так как параметр -ContentType не является допустимым заголовком Content-Type. Укажите допустимый Content-Type для -ContentType, затем повторите попытку. Чтобы отключить проверку заголовков, укажите параметр -SkipHeaderValidation.</value>
+  </data>
+  <data name="CredentialConflict" xml:space="preserve">
+    <value>Командлет не может быть запущен, поскольку указаны следующие конфликтующие параметры: Credential и UseDefaultCredentials. Укажите Credential или UseDefaultCredentials, затем повторите попытку.</value>
+  </data>
+  <data name="DirectoryPathSpecified" xml:space="preserve">
+    <value>Путь {0} указывает на каталог. Укажите путь с именем файла, затем повторите команду.</value>
+  </data>
+  <data name="EmptyKeyInJsonString" xml:space="preserve">
+    <value>Предоставленный JSON включает свойство с пустым именем. Это поддерживается только при использовании переключателя -AsHashTable.</value>
+  </data>
+  <data name="DuplicateKeysInJsonString" xml:space="preserve">
+    <value>Не удается преобразовать строку JSON, так как словарь, преобразованный из этой строки, содержит повторяющийся ключ {0}.</value>
+  </data>
+  <data name="IEDomNotSupported" xml:space="preserve">
+    <value>Не удалось проанализировать содержимое ответа, так как движок Internet Explorer недоступен или не завершена первоначальная настройка Internet Explorer при первом запуске. Укажите параметр UseBasicParsing и повторите попытку. </value>
+  </data>
+  <data name="InsecureRedirection" xml:space="preserve">
+    <value>По умолчанию переход по небезопасному перенаправлению не выполняется. Повторно выполните команду, указав переключатель -AllowInsecureRedirect. </value>
+  </data>
+  <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
+    <value>Не удается преобразовать строку JSON, так как она содержит ключи с разным регистром. Используйте переключатель -AsHashTable. Ключ, который пытались добавить к существующему ключу {0}, был {1}.</value>
+  </data>
+  <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
+    <value>Превышено максимальное число перенаправлений. Чтобы увеличить количество разрешенных перенаправлений, укажите большее значение для параметра -MaximumRedirection.</value>
+  </data>
+  <data name="MultiplePathsResolved" xml:space="preserve">
+    <value>Путь {0} может быть разрешен в несколько путей.</value>
+  </data>
+  <data name="NonStringKeyInDictionary" xml:space="preserve">
+    <value>Тип {0} не поддерживается для сериализации или десериализации словаря. Ключи должны быть строками.</value>
+  </data>
+  <data name="NoPathResolved" xml:space="preserve">
+    <value>Не удается разрешить путь {0} к файлу.</value>
+  </data>
+  <data name="NotFilesystemPath" xml:space="preserve">
+    <value>Путь {0} не является путем файловой системы. Укажите путь к файлу в файловой системе.</value>
+  </data>
+  <data name="OutFileMissing" xml:space="preserve">
+    <value>Не удается выполнить командлет, так как не указан следующий параметр: OutFile. Укажите допустимое значение параметра OutFile при использовании параметра {0}, затем повторите попытку.</value>
+  </data>
+  <data name="OutFileWritingSkipped" xml:space="preserve">
+    <value>Файл не будет загружен повторно, так как размер удаленного файла совпадает с размером файла OutFile: {0}</value>
+  </data>
+  <data name="ProxyCredentialConflict" xml:space="preserve">
+    <value>Командлет не может быть запущен, поскольку указаны следующие конфликтующие параметры: ProxyCredential и ProxyUseDefaultCredentials. Укажите либо ProxyCredential, либо ProxyUseDefaultCredentials, затем повторите попытку.</value>
+  </data>
+  <data name="ProxyUriNotSupplied" xml:space="preserve">
+    <value>Не удается выполнить командлет, так как не указан следующий параметр: Proxy. Укажите допустимый URI прокси-сервера для параметра Proxy при использовании параметров ProxyCredential или ProxyUseDefaultCredentials, затем повторите попытку.</value>
+  </data>
+  <data name="ReadResponseComplete" xml:space="preserve">
+    <value>Чтение потока веб-ответа завершено. Скачано байт: {0}</value>
+  </data>
+  <data name="ReadResponseProgressActivity" xml:space="preserve">
+    <value>Чтение потока веб-ответа</value>
+  </data>
+  <data name="ReadResponseProgressStatus" xml:space="preserve">
+    <value>Загружено: {0} из {1}</value>
+  </data>
+  <data name="ResumeNotFilePath" xml:space="preserve">
+    <value>Параметр Resume можно использовать только в том случае, если OutFile указывает на файл, но фактически ссылается на каталог: {0}.</value>
+  </data>
+  <data name="SessionConflict" xml:space="preserve">
+    <value>Не удается выполнить командлет, так как указаны следующие конфликтующие параметры: Session и SessionVariable. Укажите либо Session, либо SessionVariable, затем повторите попытку.</value>
+  </data>
+  <data name="ThumbprintNotFound" xml:space="preserve">
+    <value>Не удалось получить сертификаты, так как отпечаток недействителен. Проверьте отпечаток и повторите попытку. </value>
+  </data>
+  <data name="WriteRequestComplete" xml:space="preserve">
+    <value>Веб-запрос выполнен. (Число обработанных байт: {0})</value>
+  </data>
+  <data name="WriteRequestCancelled" xml:space="preserve">
+    <value>Веб-запрос отменен. (Число обработанных байт: {0})</value>
+  </data>
+  <data name="WriteRequestProgressActivity" xml:space="preserve">
+    <value>Состояние веб-запроса</value>
+  </data>
+  <data name="WriteRequestProgressStatus" xml:space="preserve">
+    <value>Загружено: {0} из {1}</value>
+  </data>
+  <data name="JsonDeserializationFailed" xml:space="preserve">
+    <value>Не удалось преобразовать JSON. Ошибка: {0}</value>
+  </data>
+  <data name="ResponseStatusCodeFailure" xml:space="preserve">
+    <value>Код состояния отклика не указывает на успешное выполнение: {0} ({1}).</value>
+  </data>
+  <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
+    <value>Переход по rel-ссылке {0}</value>
+  </data>
+  <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
+    <value>Удаленный сервер сообщил, что не может возобновить загрузку. Локальный файл будет перезаписан.</value>
+  </data>
+  <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
+    <value>Получен ответ HTTP/{0} с типом содержимого {1} неизвестного размера</value>
+  </data>
+  <data name="RetryVerboseMsg" xml:space="preserve">
+    <value>Повторная попытка через интервал в {0} секунд. Код состояния предыдущей попытки: {1}</value>
+  </data>
+  <data name="JsonMaxDepthReached" xml:space="preserve">
+    <value>Результирующий JSON усечен, так как при сериализации была превышена заданная глубина в {0}.</value>
+  </data>
+  <data name="WebSessionConnectionRecreated" xml:space="preserve">
+    <value>Свойства WebSession были изменены в промежутке между запросами, что привело к необходимости повторного создания всех HTTP-соединений в рамках сеанса.</value>
+  </data>
+</root>

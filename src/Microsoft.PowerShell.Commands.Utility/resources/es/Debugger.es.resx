@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LineLessThanOne" xml:space="preserve">
+    <value>La línea no puede ser menor que 1.</value>
+  </data>
+  <data name="BreakpointIdNotFound" xml:space="preserve">
+    <value>No hay ningún punto de interrupción con el identificador "{0}".</value>
+  </data>
+  <data name="FileDoesNotExist" xml:space="preserve">
+    <value>El archivo '{0}' no existe.</value>
+  </data>
+  <data name="WrongExtension" xml:space="preserve">
+    <value>No se puede establecer el punto de interrupción en el archivo "{0}"; solo los archivos *.ps1 y *.psm1 son válidos.</value>
+  </data>
+  <data name="RemoteDebuggerNotSupported" xml:space="preserve">
+    <value>No se admite la depuración en sesiones remotas.</value>
+  </data>
+  <data name="CannotSetBreakpointInconsistentLanguageMode" xml:space="preserve">
+    <value>No se puede establecer el punto de interrupción. El modo de idioma para esta sesión no es compatible con el modo de lenguaje de todo el sistema.</value>
+  </data>
+  <data name="RemoteDebuggerNotSupportedInHost" xml:space="preserve">
+    <value>No se pueden establecer puntos de interrupción en la sesión remota porque el host actual no admite la depuración remota.</value>
+  </data>
+  <data name="RunspaceDebuggingCannotDebugDefaultRunspace" xml:space="preserve">
+    <value>No se puede depurar el espacio de ejecución del host predeterminado mediante este cmdlet. Para depurar el espacio de ejecución predeterminado, use los comandos de depuración normales del host.</value>
+  </data>
+  <data name="RunspaceDebuggingNoHostRunspaceOrDebugger" xml:space="preserve">
+    <value>No se puede depurar el espacio de ejecución. El host no tiene depurador. Pruebe a depurar el espacio de ejecución dentro de la consola de PowerShell o con Visual Studio Code, que tienen depuradores integrados.</value>
+  </data>
+  <data name="RunspaceDebuggingNoHost" xml:space="preserve">
+    <value>No se puede depurar el espacio de ejecución. No hay ninguna interfaz de usuario de host o host. El depurador requiere un host y una interfaz de usuario de host para la depuración.</value>
+  </data>
+  <data name="RunspaceDebuggingTooManyRunspacesFound" xml:space="preserve">
+    <value>Se encontró más de un espacio de ejecución. Solo se puede depurar un espacio de ejecución a la vez.</value>
+  </data>
+  <data name="RunspaceDebuggingEndSession" xml:space="preserve">
+    <value>Para finalizar la sesión de depuración, escriba el comando "Desasociar" en el símbolo del sistema del depurador o escriba "Ctrl+C" en caso contrario.</value>
+  </data>
+  <data name="RunspaceDebuggingScriptCompleted" xml:space="preserve">
+    <value>Comando o script completado.</value>
+  </data>
+  <data name="RunspaceDebuggingStarted" xml:space="preserve">
+    <value>Depuración del espacio de ejecución: {0}</value>
+  </data>
+  <data name="RunspaceOptionInvalidRunspaceState" xml:space="preserve">
+    <value>No se pueden establecer opciones de depuración en el espacio {0} de ejecución porque no está en el estado Abierto.</value>
+  </data>
+  <data name="PersistDebugPreferenceFailure" xml:space="preserve">
+    <value>No se pudieron conservar las opciones de depuración del proceso {0}.</value>
+  </data>
+  <data name="RunspaceOptionNoDebugger" xml:space="preserve">
+    <value>No se encontró ningún depurador para el espacio de ejecución {0}.</value>
+  </data>
+  <data name="RunspaceDebuggingNoRunspaceFound" xml:space="preserve">
+    <value>No se encontró ningún espacio de ejecución.</value>
+  </data>
+  <data name="DebugBreakMessage" xml:space="preserve">
+    <value>Wait-Debugger se llamó en la línea {0} en {1}.</value>
+  </data>
+  <data name="RunspaceInstanceIdNotFound" xml:space="preserve">
+    <value>No se puede actualizar un punto de interrupción asociado a otro espacio de ejecución porque no hay ningún espacio de ejecución con el identificador de instancia '{0}'.</value>
+  </data>
+</root>

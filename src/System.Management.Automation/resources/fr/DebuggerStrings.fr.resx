@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="VariableBreakpointString" xml:space="preserve">
+    <value>Point d’arrêt de variable sur « ${0} » ({1} accès)</value>
+  </data>
+  <data name="VariableScriptBreakpointString" xml:space="preserve">
+    <value>Point d’arrêt de variable sur « {0} :${1} » (accès {2})</value>
+  </data>
+  <data name="LineBreakpointString" xml:space="preserve">
+    <value>Point d’arrêt de ligne sur « {0} :{1} »</value>
+  </data>
+  <data name="StatementBreakpointString" xml:space="preserve">
+    <value>Point d’arrêt de ligne sur « {0} :{1}, {2} »</value>
+  </data>
+  <data name="CommandBreakpointString" xml:space="preserve">
+    <value>Point d’arrêt de commande sur « {0} »</value>
+  </data>
+  <data name="CommandScriptBreakpointString" xml:space="preserve">
+    <value>Point d’arrêt de commande sur « {0} :{1} »</value>
+  </data>
+  <data name="WarningBreakpointWillNotBeHit" xml:space="preserve">
+    <value>Le point d’arrêt {0} ne sera pas atteint</value>
+  </data>
+  <data name="StepHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Étape unique (pas à pas dans les fonctions, scripts, etc.)</value>
+  </data>
+  <data name="StepOverHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Passer à l’instruction suivante (pas à pas principal dans les fonctions, les scripts, etc.)</value>
+  </data>
+  <data name="StepOutHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Quittez la fonction, le script, etc.</value>
+  </data>
+  <data name="ContinueHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Continuer l’opération</value>
+  </data>
+  <data name="StopHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Arrêter l’opération et quitter le débogueur</value>
+  </data>
+  <data name="GetStackTraceHelp" xml:space="preserve">
+    <value> {0}, Get-PSCallStack Afficher la pile des appels</value>
+  </data>
+  <data name="ListHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Répertoriez le code source du script actif.  </value>
+  </data>
+  <data name="AdditionalListHelp1" xml:space="preserve">
+    <value>                     Utiliser « list » pour commencer à partir de la ligne active, « list &lt;m&gt; »  </value>
+  </data>
+  <data name="AdditionalListHelp2" xml:space="preserve">
+    <value>                     pour commencer à partir de la ligne &lt;m&gt;, et « list &lt;m&gt; &lt;n&gt; » pour répertorier &lt;n&gt; </value>
+  </data>
+  <data name="AdditionalListHelp3" xml:space="preserve">
+    <value>                     lignes à partir de la ligne &lt;m&gt;</value>
+  </data>
+  <data name="EnterHelp" xml:space="preserve">
+    <value> &lt;enter&gt;             Répéter la dernière commande si elle était {0}, {1} ou {2}</value>
+  </data>
+  <data name="HelpCommandHelp" xml:space="preserve">
+    <value> {0}, {1,-16} affiche ce message d’aide.</value>
+  </data>
+  <data name="PromptHelp" xml:space="preserve">
+    <value>Pour obtenir des instructions sur la personnalisation de l’invite de votre débogueur, tapez « help about_prompt ».</value>
+  </data>
+  <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
+    <value>
+La session active ne prend pas en charge le débogage, l’opération se poursuivra.
+
+</value>
+  </data>
+  <data name="LocationFormat" xml:space="preserve">
+    <value>{0} : ligne {1}</value>
+  </data>
+  <data name="NoSourceCode" xml:space="preserve">
+    <value>Aucun code source n’est disponible.</value>
+  </data>
+  <data name="BadStartFormat" xml:space="preserve">
+    <value>La ligne de départ doit être un entier positif inférieur ou égal à {0}</value>
+  </data>
+  <data name="BadCountFormat" xml:space="preserve">
+    <value>Le nombre de lignes doit être un entier positif.</value>
+  </data>
+  <data name="NoFile" xml:space="preserve">
+    <value>&lt;No file&gt;</value>
+  </data>
+  <data name="StackTraceFormat" xml:space="preserve">
+    <value>sur {0}, {1} : ligne {2}</value>
+  </data>
+  <data name="CannotProcessDebuggerCommandNotStopped" xml:space="preserve">
+    <value>Le débogueur ne peut pas traiter les commandes tant qu’il n’est pas à l’état Arrêté.</value>
+  </data>
+  <data name="CannotSetDebuggerAction" xml:space="preserve">
+    <value>SetDebugAction n’est pas implémenté pour le débogueur de script local.</value>
+  </data>
+  <data name="CannotSetRemoteDebuggerAction" xml:space="preserve">
+    <value>Le débogueur ne peut pas définir d’action de reprise, car le débogueur de la session distante n’est pas à l’état Arrêté.</value>
+  </data>
+  <data name="CannotStartJobDebuggingDebuggerBusy" xml:space="preserve">
+    <value>Nous ne pouvons pas déboguer le travail, car le débogueur est actuellement occupé.</value>
+  </data>
+  <data name="NoDebuggableJobsFound" xml:space="preserve">
+    <value>Le travail fourni et tous les travaux enfants ont été passés en revue, mais aucun travail pouvant être débogué n’a été trouvé.  Pour déboguer un travail ou un travail enfant, celui-ci doit prendre en charge le débogage et être à l’état en cours d’exécution.</value>
+  </data>
+  <data name="CannotEnableDebuggerSteppingInvalidMode" xml:space="preserve">
+    <value>Le débogueur ne peut pas être activé pour le mode pas à pas, car il est désactivé avec le mode de débogage défini sur Aucun.</value>
+  </data>
+  <data name="RunspaceDebuggingDebuggerBusy" xml:space="preserve">
+    <value>Nous ne pouvons pas déboguer l’instance d’exécution, car le débogueur hôte est actuellement occupé.</value>
+  </data>
+  <data name="RunspaceDebuggingDebuggerIsOff" xml:space="preserve">
+    <value>Nous ne pouvons pas déboguer l’instance d’exécution. Le débogueur d’instance d’exécution est actuellement désactivé (DebugMode a la valeur « Aucun »).</value>
+  </data>
+  <data name="RunspaceDebuggingInvalidRunspaceState" xml:space="preserve">
+    <value>Nous ne pouvons pas déboguer une instance d’exécution qui n’est pas à l’état Ouvert. L’état de cette instance d’exécution est {0}.</value>
+  </data>
+  <data name="RunspaceDebuggingNoRunspaceDebugger" xml:space="preserve">
+    <value>Nous ne pouvons pas déboguer l’instance d’exécution. L’instance d’exécution {0} n’a aucun débogueur associé.</value>
+  </data>
+  <data name="RemoteServerDebuggerAlreadyPushed" xml:space="preserve">
+    <value>Le débogueur est déjà remplacé.</value>
+  </data>
+  <data name="RemoteServerDebuggerCannotPushSelf" xml:space="preserve">
+    <value>Nous ne pouvons pas envoyer un objet de débogueur sur lui-même.</value>
+  </data>
+  <data name="CommandNotSupportedForRemoteUseInServerDebugger" xml:space="preserve">
+    <value>La commande {0} n’est pas prise en charge pour une utilisation à distance dans la version de PowerShell qui s’exécute dans l’instance d’exécution distante.</value>
+  </data>
+  <data name="NestedRunspaceDebuggerPromptProcessName" xml:space="preserve">
+    <value>Processus</value>
+  </data>
+  <data name="DetachHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Poursuivez l’opération et détachez le débogueur.</value>
+  </data>
+  <data name="InvalidDetachCommand" xml:space="preserve">
+    <value>La commande de détachement du débogueur n’est pas applicable.  La commande de détachement s’applique uniquement lors du débogage de travaux et d’instances d’exécution avec les cmdlets Debug-Job ou Debug-Runspace.</value>
+  </data>
+  <data name="InvalidRunspaceId" xml:space="preserve">
+    <value>ID d’instance d’exécution non valide : {0}</value>
+  </data>
+  <data name="UnableToGetRunspace" xml:space="preserve">
+    <value>Nous ne pouvons pas obtenir l’instance d’exécution.</value>
+  </data>
+  <data name="BreakpointOrBreakpointListNotSpecified" xml:space="preserve">
+    <value>Un point d’arrêt ou une BreakpointList doit être spécifiée.</value>
+  </data>
+  <data name="BreakpointListContainedANonBreakpoint" xml:space="preserve">
+    <value>La BreakpointList contenait un élément qui n’était pas un point d’arrêt.</value>
+  </data>
+</root>

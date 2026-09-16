@@ -1,0 +1,687 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ModuleNotFound" xml:space="preserve">
+    <value>No se cargó el módulo especificado "{0}" porque no se encontró ningún archivo de módulo válido en ningún directorio de módulos.</value>
+  </data>
+  <data name="ModuleWithVersionNotFound" xml:space="preserve">
+    <value>El módulo especificado "{0}" con la versión "{1}" no se cargó porque no se encontró ningún archivo de módulo válido en ningún directorio de módulo.</value>
+  </data>
+  <data name="MaximumVersionFormatIncorrect" xml:space="preserve">
+    <value>El valor de MaximumVersion "{0}" especificado no era correcto. Si usa "*", MaximumVersion solo admite un "*" y siempre debe colocarse al final de MaximumVersion.</value>
+  </data>
+  <data name="MaximumVersionNotFound" xml:space="preserve">
+    <value>El módulo especificado "{0}" con MaximumVersion "{1}" no se cargó porque no se encontró ningún archivo de módulo válido en ningún directorio de módulos.</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionNotFound" xml:space="preserve">
+    <value>No se cargó el módulo especificado "{0}" con MinimumVersion "{1}" y MaximumVersion "{2}" porque no se encontró ningún archivo de módulo válido en ningún directorio de módulos.</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionInvalidRange" xml:space="preserve">
+    <value>MinimumVersion "{0}" no debe ser mayor que MaximumVersion "{1}".</value>
+  </data>
+  <data name="ModuleAssemblyFound" xml:space="preserve">
+    <value>No se cargó el ensamblado "{0}" porque no se encontró ningún ensamblado con ese nombre. Compruebe el nombre del ensamblado e inténtelo de nuevo.</value>
+  </data>
+  <data name="ManifestMemberNotFound" xml:space="preserve">
+    <value>El módulo que se va a procesar "{0}", incluido en el campo "{1}" del manifiesto del módulo "{2}", no se procesó porque no se encontró ningún módulo válido en ningún directorio de módulos.</value>
+  </data>
+  <data name="CantUseAsCustomObjectWithBinaryModule" xml:space="preserve">
+    <value>No se devolvió ningún objeto personalizado para el módulo "{0}" porque el parámetro -AsCustomObject solo se puede usar con módulos de script.</value>
+  </data>
+  <data name="InvalidModuleManifest" xml:space="preserve">
+    <value>No se pudo procesar el manifiesto del módulo "{0}" porque no es un archivo de manifiesto de módulo de PowerShell válido. Quite los elementos que no están permitidos: {1}</value>
+  </data>
+  <data name="EmptyModuleManifest" xml:space="preserve">
+    <value>El procesamiento del archivo de manifiesto de módulo "{0}" no dio como resultado un objeto de manifiesto válido. Actualice el archivo para que contenga un manifiesto de módulo de PowerShell válido. Puede crear un manifiesto válido con el cmdlet New-ModuleManifest.</value>
+  </data>
+  <data name="InvalidModuleManifestMember" xml:space="preserve">
+    <value>No se puede importar el módulo "{0}" porque su manifiesto contiene uno o varios miembros que no son válidos. Los miembros de manifiesto válidos son ({1}). Quite los miembros que no son válidos ({2}) e intente importar el módulo de nuevo.</value>
+  </data>
+  <data name="InvalidModuleSpecificationMember" xml:space="preserve">
+    <value>La tabla hash que describe un módulo contiene uno o varios miembros que no son válidos. Los miembros válidos son ({0}). Quite los miembros que no son válidos ({1}) e inténtelo de nuevo.</value>
+  </data>
+  <data name="ModuleTooDeeplyNested" xml:space="preserve">
+    <value>No se puede cargar el módulo "{0}" porque se ha superado el límite de anidamiento del módulo. Los módulos solo se pueden anidar a {1} niveles. Evalúe y cambie el orden en que se cargan los módulos para evitar superar el límite de anidamiento e intente ejecutar el script de nuevo.</value>
+  </data>
+  <data name="ModuleManifestMissingModuleVersion" xml:space="preserve">
+    <value>El miembro "ModuleVersion" no está presente en el manifiesto del módulo. Este miembro debe existir y tener asignado un número de versión con el formato "n.n.n.n". Agregue el miembro que falta al archivo ''{0}".</value>
+  </data>
+  <data name="ModuleManifestInvalidValue" xml:space="preserve">
+    <value>El miembro "{0}" no es válido en el archivo de manifiesto de módulo ''{2}": {1}</value>
+  </data>
+  <data name="ModuleManifestInsufficientModuleVersion" xml:space="preserve">
+    <value>La versión "{0}" del módulo "{1}" no cumple la versión mínima requerida ''{2}. Compruebe que se admite el número de versión e intente cargar el módulo de nuevo.</value>
+  </data>
+  <data name="ModuleManifestInsufficientPowerShellVersion" xml:space="preserve">
+    <value>La versión de PowerShell en este equipo es ''{0}". El módulo "{1}" requiere una versión mínima de PowerShell de "{2}" para ejecutarse. Compruebe que tiene instalada la versión mínima necesaria de PowerShell e inténtelo de nuevo.</value>
+  </data>
+  <data name="ModuleManifestNestedModulesCantGoWithModuleToProcess" xml:space="preserve">
+    <value>No se puede usar el miembro de manifiesto de módulo "NestedModules" si el miembro 'ModuleToProcess' es un módulo binario. Edite el archivo de manifiesto del módulo en "{0}" e inténtelo de nuevo.</value>
+  </data>
+  <data name="ModuleManifestInvalidManifestMember" xml:space="preserve">
+    <value>El miembro "{0}" del manifiesto del módulo no es válido: {1}. Compruebe que se ha especificado un valor válido para este campo en el archivo ''{2}".</value>
+  </data>
+  <data name="InvalidModuleManifestPath" xml:space="preserve">
+    <value>La ruta de acceso del manifiesto del módulo "{0}" no es válida. El valor del argumento Path debe resolverse en un único archivo que tenga una extensión ".psd1". Cambie el valor del argumento Path para que apunte a un archivo psd1 válido e inténtelo de nuevo.</value>
+  </data>
+  <data name="InvalidModuleManifestVersion" xml:space="preserve">
+    <value>La clave ModuleVersion del manifiesto del módulo "{0}" especifica la versión del módulo "{1}", que no coincide con el nombre de la carpeta de versión en "{2}". Cambie el valor de la clave ModuleVersion para que coincida con el nombre de la carpeta de versión.</value>
+  </data>
+  <data name="InvalidNestedModuleinModuleManifest" xml:space="preserve">
+    <value>La entrada NestedModule especificada "{0}" en el manifiesto del módulo "{1}" no es válida. Vuelva a intentarlo después de actualizar esta entrada con valores válidos.</value>
+  </data>
+  <data name="InvalidRequiredAssembliesInModuleManifest" xml:space="preserve">
+    <value>La entrada RequiredAssemblies especificada "{0}" en el manifiesto del módulo "{1}" no es válida. Vuelva a intentarlo después de actualizar esta entrada con valores válidos.</value>
+  </data>
+  <data name="InvalidFilePathinModuleManifest" xml:space="preserve">
+    <value>La entrada FileList especificada "{0}" en el manifiesto de módulo "{1}" no es válida. Vuelva a intentarlo después de actualizar esta entrada con valores válidos.</value>
+  </data>
+  <data name="InvalidRequiredModulesinModuleManifest" xml:space="preserve">
+    <value>La entrada RequiredModules especificada "{0}" en el manifiesto del módulo "{1}" no es válida. Vuelva a intentarlo después de actualizar esta entrada con valores válidos.</value>
+  </data>
+  <data name="InvalidModuleListinModuleManifest" xml:space="preserve">
+    <value>La entrada ModuleList especificada "{0}" en el manifiesto de módulo "{1}" no es válida. Vuelva a intentarlo después de actualizar esta entrada con valores válidos.</value>
+  </data>
+  <data name="InvalidPowerShellVersionInModuleManifest" xml:space="preserve">
+    <value>El manifiesto del módulo "{0}" se especifica con la clave CompatiblePSEditions, que solo se admite en la versión "5.1" o posterior de PowerShell. Actualice el valor de la clave PowerShellVersion a "5.1" o superior e inténtelo de nuevo.</value>
+  </data>
+  <data name="DuplicateEntriesInCompatiblePSEditions" xml:space="preserve">
+    <value>El valor especificado "{0}" para CompatiblePSEditions contiene nombres duplicados de la edición de PowerShell. Vuelva a intentarlo después de quitar los nombres duplicados de la edición de PowerShell.</value>
+  </data>
+  <data name="ModuleVersionEqualsToVersionFolder" xml:space="preserve">
+    <value>La versión especificada en la clave ModuleVersion es igual al nombre de la carpeta de versión.</value>
+  </data>
+  <data name="SkippingInvalidModuleVersionFolder" xml:space="preserve">
+    <value>Omitiendo la carpeta {0} Versión en Módulo {1} porque no tiene un archivo de manifiesto de módulo válido.</value>
+  </data>
+  <data name="RequiredModuleMissingModuleName" xml:space="preserve">
+    <value>El miembro 'ModuleName' no existe en la tabla hash que describe este módulo.</value>
+  </data>
+  <data name="RequiredModuleMissingModuleVersion" xml:space="preserve">
+    <value>Los miembros "ModuleVersion", "MaximumVersion" y "RequiredVersion" no existen en la tabla hash que describe este módulo. Debe existir uno de estos tres miembros y se le debe asignar un número de versión con el formato "n.n.n.n".</value>
+  </data>
+  <data name="RequiredModuleNotLoaded" xml:space="preserve">
+    <value>El módulo necesario "{1}" no está cargado. Cargue el módulo o quítelo de "RequiredModules" en el archivo "{0}".</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongGuid" xml:space="preserve">
+    <value>El módulo necesario "{1}" con GUID "{2}" no está cargado. Cargue el módulo o quítelo de "RequiredModules" en el archivo "{0}".</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongVersion" xml:space="preserve">
+    <value>El módulo necesario "{1}" con la versión "{2}" no está cargado. Cargue el módulo o quítelo de "RequiredModules" en el archivo "{0}".</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMaximumVersion" xml:space="preserve">
+    <value>El módulo necesario "{1}" con MaximumVersion "{2}" no está cargado. Cargue el módulo o quítelo de "RequiredModules" en el archivo "{0}".</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion" xml:space="preserve">
+    <value>El módulo necesario "{1}" con MinimumVersion "{2}" y MaximumVersion "{3}" no está cargado. Cargue el módulo o quítelo de "RequiredModules" en el archivo "{0}".</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleVersion" xml:space="preserve">
+    <value>No se encuentra el módulo "{0}" con ModuleVersion "{1}".</value>
+  </data>
+  <data name="RequiredModuleNotFoundRequiredVersion" xml:space="preserve">
+    <value>No se encuentra el módulo "{0}" con RequiredVersion "{1}".</value>
+  </data>
+  <data name="RequiredModuleNotFoundMaximumVersion" xml:space="preserve">
+    <value>No se encuentra el módulo "{0}" con MaximumVersion "{1}".</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleAndMaximumVersion" xml:space="preserve">
+    <value>No se encuentra el módulo "{0}" con ModuleVersion "{1}" y MaximumVersion ''{2}".</value>
+  </data>
+  <data name="RequiredModuleNotFoundWithoutVersion" xml:space="preserve">
+    <value>No se encuentra el módulo "{0}".</value>
+  </data>
+  <data name="NoModulesRemoved" xml:space="preserve">
+    <value>No se quitó ningún módulo. Compruebe que la especificación de los módulos que se van a quitar es correcta y que esos módulos existen en el espacio de ejecución.</value>
+  </data>
+  <data name="UnableToRemoveModuleMember" xml:space="preserve">
+    <value>El miembro "{0}", que se importó desde el módulo ''{1}", no se puede quitar por el siguiente motivo: {2}</value>
+  </data>
+  <data name="ModuleIsReadOnly" xml:space="preserve">
+    <value>No se puede quitar el módulo "{0}" porque es de solo lectura. Agregue el parámetro Force al comando para quitar módulos de solo lectura.</value>
+  </data>
+  <data name="ModuleIsConstant" xml:space="preserve">
+    <value>No se puede quitar el módulo "{0}" porque está marcado como "constant". No se puede quitar un módulo si está marcado como "constant".</value>
+  </data>
+  <data name="ModuleIsRequired" xml:space="preserve">
+    <value>No se puede quitar el módulo "{0}" porque lo requiere "{1}". Agregue el parámetro Force al comando para quitar el módulo.</value>
+  </data>
+  <data name="CanOnlyBeUsedFromWithinAModule" xml:space="preserve">
+    <value>Solo se puede llamar al cmdlet Export-ModuleMember desde dentro de un módulo.</value>
+  </data>
+  <data name="InvalidModuleExtension" xml:space="preserve">
+    <value>La extensión "{0}" no es una extensión de módulo válida. Las extensiones de módulo admitidas son ".dll", ".ps1", ".psm1", ".psd1" y ".cdxml". Corrija la extensión y vuelva a intentar agregar el archivo "{1}".</value>
+  </data>
+  <data name="InvalidOperationOnBinaryModule" xml:space="preserve">
+    <value>Esta operación no se puede realizar en un módulo binario. Solo se puede realizar en un módulo de script.</value>
+  </data>
+  <data name="ScriptsToProcessIncorrectExtension" xml:space="preserve">
+    <value>No se permite el archivo "{0}" porque no tiene la extensión ".ps1".</value>
+  </data>
+  <data name="DefaultCompanyName" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="DefaultCopyrightMessage" xml:space="preserve">
+    <value>(c) {0}. Todos los derechos reservados.</value>
+  </data>
+  <data name="RemovingImportedFunction" xml:space="preserve">
+    <value>Quitando la función "{0}" importada.</value>
+  </data>
+  <data name="RemovingImportedAlias" xml:space="preserve">
+    <value>Quitando el alias "{0}" importado.</value>
+  </data>
+  <data name="RemovingImportedVariable" xml:space="preserve">
+    <value>Quitando la variable "{0}" importada.</value>
+  </data>
+  <data name="LoadingModule" xml:space="preserve">
+    <value>Cargando módulo desde la ruta de acceso "{0}".</value>
+  </data>
+  <data name="LoadingFile" xml:space="preserve">
+    <value>Cargando "{0}" desde la ruta de acceso "{1}".</value>
+  </data>
+  <data name="DottingScriptFile" xml:space="preserve">
+    <value>Dot-sourcing del archivo de script ''{0}".</value>
+  </data>
+  <data name="ImportingFunction" xml:space="preserve">
+    <value>Importando función "{0}".</value>
+  </data>
+  <data name="ImportingCmdlet" xml:space="preserve">
+    <value>Importando cmdlet "{0}".</value>
+  </data>
+  <data name="ImportingAlias" xml:space="preserve">
+    <value>Importando alias "{0}".</value>
+  </data>
+  <data name="ImportingVariable" xml:space="preserve">
+    <value>Importando variable ''{0}".</value>
+  </data>
+  <data name="ExportingCmdlet" xml:space="preserve">
+    <value>Exportando cmdlet "{0}".</value>
+  </data>
+  <data name="ExportingFunction" xml:space="preserve">
+    <value>Exportando función "{0}".</value>
+  </data>
+  <data name="ExportingAlias" xml:space="preserve">
+    <value>Exportando alias "{0}".</value>
+  </data>
+  <data name="ExportingVariable" xml:space="preserve">
+    <value>Exportando variable "{0}".</value>
+  </data>
+  <data name="ImportingNonStandardVerb" xml:space="preserve">
+    <value>Los nombres de algunos comandos importados del módulo "{0}" incluyen verbos no aprobados que podrían hacer que sean menos reconocibles. Para buscar los comandos con verbos no aprobados, vuelva a ejecutar el comando Import-Module con el parámetro Verbose. Para obtener una lista de verbos aprobados, escriba Get-Verb.</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerbose" xml:space="preserve">
+    <value>Se importó el comando "{0}" del módulo "{1}", pero como su nombre no incluye un verbo aprobado, puede ser difícil de encontrar. Para obtener una lista de verbos aprobados, escriba Get-Verb.</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerboseSuggestion" xml:space="preserve">
+    <value>Se importó el comando "{0}" del módulo "{2}", pero como su nombre no incluye un verbo aprobado, puede ser difícil de encontrar. Los verbos alternativos sugeridos son "{1}".</value>
+  </data>
+  <data name="ImportingNonStandardNoun" xml:space="preserve">
+    <value>Algunos nombres de comando importados contienen uno o varios de los siguientes caracteres restringidos: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="ImportingNonStandardNounVerbose" xml:space="preserve">
+    <value>El nombre de comando "{0}" del módulo "{1}" contiene uno o varios de los siguientes caracteres restringidos: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="CreatingModuleManifestFile" xml:space="preserve">
+    <value>Creando el archivo de manifiesto del módulo "{0}".</value>
+  </data>
+  <data name="ConfirmRemoveModule" xml:space="preserve">
+    <value>{0} (ruta de acceso: "{1}")</value>
+  </data>
+  <data name="InvalidProcessorArchitecture" xml:space="preserve">
+    <value>La arquitectura actual del procesador es: {0}. El módulo "{1}" requiere la arquitectura siguiente: {2}.</value>
+  </data>
+  <data name="InvalidPowerShellHostName" xml:space="preserve">
+    <value>El nombre del host de PowerShell actual es: "{0}". El módulo "{1}" requiere el siguiente host de PowerShell: "{2}".</value>
+  </data>
+  <data name="InvalidPowerShellHostVersion" xml:space="preserve">
+    <value>El host de PowerShell actual es: "{0}" (versión {1}). El módulo "{2}" requiere una versión mínima del host de PowerShell de "{3}" para ejecutarse.</value>
+  </data>
+  <data name="ManifestHeaderLine1" xml:space="preserve">
+    <value>Manifiesto de módulo para el módulo "{0}"</value>
+  </data>
+  <data name="ManifestHeaderLine2" xml:space="preserve">
+    <value>Generado por: {0}</value>
+  </data>
+  <data name="ManifestHeaderLine3" xml:space="preserve">
+    <value>Generado el: {0}</value>
+  </data>
+  <data name="RootModule" xml:space="preserve">
+    <value>Módulo de script o archivo de módulo binario asociado a este manifiesto.</value>
+  </data>
+  <data name="NestedModules" xml:space="preserve">
+    <value>Módulos que se van a importar como módulos anidados del módulo especificado en RootModule/ModuleToProcess</value>
+  </data>
+  <data name="GUID" xml:space="preserve">
+    <value>Id. usado para identificar de forma única este módulo</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Autor de este módulo</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>Empresa o proveedor de este módulo</value>
+  </data>
+  <data name="Copyright" xml:space="preserve">
+    <value>Declaración de copyright para este módulo</value>
+  </data>
+  <data name="ModuleVersion" xml:space="preserve">
+    <value>Número de versión de este módulo.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descripción de la funcionalidad proporcionada por este módulo</value>
+  </data>
+  <data name="PowerShellVersion" xml:space="preserve">
+    <value>Versión mínima del motor de PowerShell requerida por este módulo</value>
+  </data>
+  <data name="CLRVersion" xml:space="preserve">
+    <value>Versión mínima de Common Language Runtime (CLR) requerida por este módulo. {0}</value>
+  </data>
+  <data name="RequiredModules" xml:space="preserve">
+    <value>Módulos que se deben importar en el entorno global antes de importar este módulo</value>
+  </data>
+  <data name="ScriptsToProcess" xml:space="preserve">
+    <value>Archivos de script (.ps1) que se ejecutan en el entorno del autor de la llamada antes de importar este módulo.</value>
+  </data>
+  <data name="TypesToProcess" xml:space="preserve">
+    <value>Archivos de tipo (.ps1xml) que se cargarán al importar este módulo</value>
+  </data>
+  <data name="FormatsToProcess" xml:space="preserve">
+    <value>Archivos de formato (.ps1xml) que se cargarán al importar este módulo</value>
+  </data>
+  <data name="RequiredAssemblies" xml:space="preserve">
+    <value>Ensamblados que deben cargarse antes de importar este módulo</value>
+  </data>
+  <data name="FileList" xml:space="preserve">
+    <value>Lista de todos los archivos empaquetados con este módulo</value>
+  </data>
+  <data name="PrivateData" xml:space="preserve">
+    <value>Datos privados que se van a pasar al módulo especificado en RootModule/ModuleToProcess. También puede contener una tabla hash PSData con metadatos de módulo adicionales usados por PowerShell.</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Etiquetas aplicadas a este módulo. Esto ayuda con la detección de módulos en galerías en línea.</value>
+  </data>
+  <data name="ProjectUri" xml:space="preserve">
+    <value>Una dirección URL al sitio web principal de este proyecto.</value>
+  </data>
+  <data name="LicenseUri" xml:space="preserve">
+    <value>Una dirección URL a la licencia de este módulo.</value>
+  </data>
+  <data name="IconUri" xml:space="preserve">
+    <value>Dirección URL a un icono que representa este módulo.</value>
+  </data>
+  <data name="ReleaseNotes" xml:space="preserve">
+    <value>Notas de la versión de este módulo</value>
+  </data>
+  <data name="Prerelease" xml:space="preserve">
+    <value>Cadena de versión preliminar de este módulo</value>
+  </data>
+  <data name="RequireLicenseAcceptance" xml:space="preserve">
+    <value>Marca para indicar si el módulo requiere la aceptación explícita del usuario para instalar, actualizar o guardar</value>
+  </data>
+  <data name="ExternalModuleDependencies" xml:space="preserve">
+    <value>Módulos dependientes externos de este módulo</value>
+  </data>
+  <data name="EndOfManifestHashTable" xml:space="preserve">
+    <value>Final de {0} tabla hash</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableError" xml:space="preserve">
+    <value>El valor del parámetro PrivateData debe ser una tabla hash para crear el manifiesto del módulo con los siguientes valores de parámetro Tags, ProjectUri, LicenseUri, IconUri o ReleaseNotes. Quite los valores de los parámetros Tags, ProjectUri, LicenseUri, IconUri o ReleaseNotes o encapsule el contenido de PrivateData en una tabla hash.</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableWarning" xml:space="preserve">
+    <value>PrivateData debe definirse como una tabla hash, pero este manifiesto de módulo lo define como un objeto. Considere la posibilidad de encapsular el contenido de PrivateData en una tabla hash. Esto le permitirá agregar las propiedades Tags, ProjectUri, LicenseUri, IconUri y ReleaseNotes al manifiesto del módulo más adelante.</value>
+  </data>
+  <data name="InvalidParameterValue" xml:space="preserve">
+    <value>El valor especificado "{0}" no es válido; inténtelo de nuevo con un valor válido.</value>
+  </data>
+  <data name="FunctionsToExport" xml:space="preserve">
+    <value>Las funciones para exportar desde este módulo, para obtener el mejor rendimiento, no usan caracteres comodín y no eliminan la entrada, use una matriz vacía si no hay ninguna función para exportar.</value>
+  </data>
+  <data name="AliasesToExport" xml:space="preserve">
+    <value>Los alias para exportar desde este módulo, para obtener el mejor rendimiento, no usan caracteres comodín y no eliminan la entrada, usan una matriz vacía si no hay ningún alias para exportar.</value>
+  </data>
+  <data name="CmdletsToExport" xml:space="preserve">
+    <value>Los cmdlets para exportar desde este módulo, para obtener el mejor rendimiento, no usan caracteres comodín y no eliminan la entrada, usan una matriz vacía si no hay cmdlets para exportar.</value>
+  </data>
+  <data name="VariablesToExport" xml:space="preserve">
+    <value>Variables para exportar desde este módulo</value>
+  </data>
+  <data name="DscResourcesToExport" xml:space="preserve">
+    <value>Recursos de DSC para exportar desde este módulo</value>
+  </data>
+  <data name="CompatiblePSEditions" xml:space="preserve">
+    <value>PSEditions admitidas</value>
+  </data>
+  <data name="ProcessorArchitecture" xml:space="preserve">
+    <value>Arquitectura de procesador (None, X86, Amd64) requerida por este módulo</value>
+  </data>
+  <data name="ModuleList" xml:space="preserve">
+    <value>Lista de todos los módulos empaquetados con este módulo</value>
+  </data>
+  <data name="DotNetFrameworkVersion" xml:space="preserve">
+    <value>Versión mínima de Microsoft .NET Framework requerida por este módulo. {0}</value>
+  </data>
+  <data name="PowerShellHostName" xml:space="preserve">
+    <value>Nombre del host de PowerShell requerido por este módulo</value>
+  </data>
+  <data name="PowerShellHostVersion" xml:space="preserve">
+    <value>Versión mínima del host de PowerShell requerida por este módulo</value>
+  </data>
+  <data name="HelpInfoURI" xml:space="preserve">
+    <value>URI de HelpInfo de este módulo</value>
+  </data>
+  <data name="ModuleDriveInUse" xml:space="preserve">
+    <value>Dado que el {0} módulo proporciona el PSDrive en la sesión actual de PowerShell, no se quitó ningún módulo. Cambie el proveedor de PSDrive actual e intente quitar módulos de nuevo.</value>
+  </data>
+  <data name="ImportModuleNoClobberForCmdlet" xml:space="preserve">
+    <value>No se importó el cmdlet "{0}" porque hay un miembro con el mismo nombre en el ámbito actual.</value>
+  </data>
+  <data name="ImportModuleNoClobberForAlias" xml:space="preserve">
+    <value>No se importó el alias "{0}" porque hay un miembro con el mismo nombre en el ámbito actual.</value>
+  </data>
+  <data name="ImportModuleNoClobberForFunction" xml:space="preserve">
+    <value>No se importó la función "{0}" porque hay un miembro con el mismo nombre en el ámbito actual.</value>
+  </data>
+  <data name="ImportModuleNoClobberForVariable" xml:space="preserve">
+    <value>No se importó la variable "{0}" porque hay un miembro con el mismo nombre en el ámbito actual.</value>
+  </data>
+  <data name="WildCardNotAllowedInModuleToProcessAndInNestedModules" xml:space="preserve">
+    <value>No se permiten caracteres comodín en los miembros "ModuleToProcess", "RootModule" o "NestedModules" en el manifiesto de módulo "{0}".</value>
+  </data>
+  <data name="CoreModuleCannotBeRemoved" xml:space="preserve">
+    <value>El módulo "{0}" es un módulo principal de PowerShell. Agregue el parámetro Force al comando para quitar los módulos principales.</value>
+  </data>
+  <data name="ModuleManifestCannotContainBothModuleToProcessAndRootModule" xml:space="preserve">
+    <value>El manifiesto del módulo no puede contener los miembros "ModuleToProcess" y "RootModule". Cambie el archivo de manifiesto del módulo para quitar uno de estos miembros en ''{0}" e inténtelo de nuevo.</value>
+  </data>
+  <data name="ModuleToProcessFieldDeprecated" xml:space="preserve">
+    <value>El miembro del manifiesto de módulo "ModuleToProcess" está en desuso. En su lugar, use el miembro "RootModule".</value>
+  </data>
+  <data name="DefaultCommandPrefix" xml:space="preserve">
+    <value>Prefijo predeterminado para los comandos exportados desde este módulo. Invalide el prefijo predeterminado mediante Import-Module -Prefix.</value>
+  </data>
+  <data name="GlobalAndScopeParameterCannotBeSpecifiedTogether" xml:space="preserve">
+    <value>Los parámetros "Global" y "Scope" no se pueden especificar juntos. Quite uno de estos parámetros e intente ejecutar el comando de nuevo.</value>
+  </data>
+  <data name="RequiredModulesCyclicDependency" xml:space="preserve">
+    <value>El módulo necesario "{0}" no está cargado. El módulo "{0}" tiene un requiredModule "{1}" en su manifiesto de módulo "{2}" que apunta a una dependencia cíclica.</value>
+  </data>
+  <data name="RequiredModuleNotFound" xml:space="preserve">
+    <value>No se cargó el módulo necesario "{0}" porque no se encontró ningún archivo de módulo válido en ningún directorio de módulos.</value>
+  </data>
+  <data name="MixedModuleOverCimSessionWarning" xml:space="preserve">
+    <value>Algunos comandos del módulo {0} no se pueden importar a través de una CimSession. Para obtener todos los comandos, compruebe que el servidor remoto tiene habilitada la administración remota de PowerShell e intente agregar el parámetro PSSession a un cmdlet Import-Module.</value>
+  </data>
+  <data name="WinCompatModuleWarning" xml:space="preserve">
+    <value>El módulo {0} se carga en Windows PowerShell mediante {1} la sesión remota; tenga en cuenta que toda la entrada y salida de los comandos de este módulo serán objetos deserializados. Si desea cargar este módulo en PowerShell, use la sintaxis "Import-Module -SkipEditionCheck".</value>
+  </data>
+  <data name="WinCompatRequredVersionError" xml:space="preserve">
+    <value>Se detectó Windows PowerShell versión {0}. Se requiere Windows PowerShell 5.1 para cargar módulos mediante la característica de compatibilidad con Windows PowerShell. Instale Windows Management Framework (WMF) 5.1 desde https://aka.ms/WMF5Download para habilitar esta característica.</value>
+  </data>
+  <data name="WinCompatModuleInDenyList" xml:space="preserve">
+    <value>La configuración "WindowsPowerShellCompatibilityModuleDenyList" del archivo de configuración de PowerShell bloquea la carga del módulo "{0}" mediante la característica de compatibilidad de Windows PowerShell.</value>
+  </data>
+  <data name="PsModuleOverCimSessionError" xml:space="preserve">
+    <value>No se puede importar el módulo {0} a través de una CimSession. Pruebe a usar el parámetro PSSession del cmdlet Import-Module.</value>
+  </data>
+  <data name="InvalidProcessorArchitectureInManifest" xml:space="preserve">
+    <value>No se admite el valor de arquitectura de procesador de {0}. Vuelva a ejecutar el comando New-ModuleManifest y especifique uno de los siguientes valores de enumeración admitidos para la arquitectura del procesador: None, MSIL, X86, Amd64, Arm</value>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyInListAvailableMode" xml:space="preserve">
+    <value>La ejecución del cmdlet Get-Module en un equipo remoto solo puede enumerar los módulos disponibles. Agregue el parámetro ListAvailable al comando e inténtelo de nuevo.</value>
+  </data>
+  <data name="ModuleLoadedAsASnapin" xml:space="preserve">
+    <value>No se importó el módulo "{0}" porque ya se importó el complemento ''{0}".</value>
+  </data>
+  <data name="WildCardNotAllowedInRequiredAssemblies" xml:space="preserve">
+    <value>No se permiten caracteres comodín en el miembro "RequiredAssemblies" del manifiesto de módulo "{0}".</value>
+  </data>
+  <data name="CmdletizationDoesSupportRexportingNestedModules" xml:space="preserve">
+    <value>El valor de la {0} clave en {1} es {2} y el módulo tiene módulos anidados. Cuando un archivo CDXML es el módulo raíz, se produce un error en el comando Import-Module porque los comandos de los módulos anidados no se pueden exportar. Mueva el archivo CDXML a la clave NestedModules e intente el comando de nuevo.</value>
+    <comment>{0} is equal to either ModuleToProcess or RootModule
+{1} is a placeholder for a file path to psd1 file
+{2} is a placeholder for a file path to cdxml file</comment>
+  </data>
+  <data name="RemoteDiscoveryRemotePsrpCommandFailed" xml:space="preserve">
+    <value>Error del comando remoto: {0}{{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToGenerateProxyForRemoteModule" xml:space="preserve">
+    <value>No se pudieron generar servidores proxy para el módulo remoto "{0}". {{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToProcessRemoteModule" xml:space="preserve">
+    <value>No se pudo procesar el módulo remoto {0}. {1}</value>
+  </data>
+  <data name="RemoteDiscoveryFailureFromDiscoveryProvider" xml:space="preserve">
+    <value>No se pudieron recibir los datos del módulo de la CimSession remota. {0}</value>
+  </data>
+  <data name="RequiredModuleNotFoundWrongGuidVersion" xml:space="preserve">
+    <value>El módulo necesario "{0}" con el GUID "{1}" y la versión "{2}" no se cargó porque no se encontró ningún archivo de módulo válido en ningún directorio de módulos.</value>
+  </data>
+  <data name="RemoteDiscoveryProviderNotFound" xml:space="preserve">
+    <value>No se encontró un proveedor CIM para la detección de módulos en el servidor CIM. {0}</value>
+    <comment>{0} is a placeholder for a more detailed error message</comment>
+  </data>
+  <data name="CannotDetectNetFrameworkVersion" xml:space="preserve">
+    <value>No se puede comprobar la versión {0} de Microsoft .NET Framework porque no está incluida en la lista de versiones permitidas.</value>
+  </data>
+  <data name="ScriptAnalysisModule" xml:space="preserve">
+    <value>Analizando {0}.</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="ScriptAnalysisPreparing" xml:space="preserve">
+    <value>Preparando los módulos para su primer uso.</value>
+  </data>
+  <data name="DeterminingAvailableModules" xml:space="preserve">
+    <value>Buscando módulos disponibles</value>
+  </data>
+  <data name="SearchingUncShare" xml:space="preserve">
+    <value>Buscando el recurso compartido UNC {0}.</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>La ejecución del cmdlet Get-Module en un equipo remoto solo se puede realizar para nombres de módulo que no incluyan una ruta de acceso. El parámetro Name tiene este elemento "{0}" que se resuelve en una ruta de acceso. Actualice el parámetro Name para que no tenga elementos de ruta de acceso e inténtelo de nuevo.</value>
+  </data>
+  <data name="ModuleDiscoveryForLoadedModulesWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>No se admite la ejecución del cmdlet Get-Module sin el parámetro ListAvailable para los nombres de módulo que incluyen una ruta de acceso. El parámetro Name tiene este elemento "{0}" que se resuelve en una ruta de acceso. Actualice el parámetro Name para que no tenga elementos de ruta de acceso e inténtelo de nuevo.</value>
+  </data>
+  <data name="ModuleNotFoundForGetModule" xml:space="preserve">
+    <value>No se encontró el módulo especificado "{0}". Actualice el parámetro Name para que apunte a una ruta de acceso válida e inténtelo de nuevo. </value>
+  </data>
+  <data name="PopulatingRepositorySourceLocation" xml:space="preserve">
+    <value>Rellenando la propiedad RepositorySourceLocation para el módulo {0}.</value>
+  </data>
+  <data name="ManifestMemberNotValid" xml:space="preserve">
+    <value>El módulo que se va a procesar "{0}", incluido en el campo "{1}" del manifiesto del módulo "{2}", no se procesó. {3}</value>
+  </data>
+  <data name="PrerequisiteForDesktopEditionOnly" xml:space="preserve">
+    <value>Este requisito previo solo es válido para la edición de PowerShell Desktop.</value>
+  </data>
+  <data name="PSEditionNotSupported" xml:space="preserve">
+    <value>El módulo "{0}" no admite la edición actual de PowerShell "{1}". Sus ediciones admitidas son ''{2}". Use "Import-Module -SkipEditionCheck" para omitir la compatibilidad de este módulo.</value>
+  </data>
+  <data name="ImplicitWinCompatDisabled" xml:space="preserve">
+    <value>El módulo "{0}" admite la edición de PowerShell "{1}" y no se puede cargar implícitamente mediante la característica compatibilidad de Windows porque está deshabilitado en el archivo de configuración. Use "Import-Module -UseWindowsPowerShell" para cargar este módulo con Windows PowerShell o "Import-Module -SkipEditionCheck" para intentar cargar el módulo con el PowerShell actual.</value>
+  </data>
+  <data name="ExperimentalFeatureNameMissingOrEmpty" xml:space="preserve">
+    <value>Se debe especificar un valor de cadena no vacío para una característica experimental declarada en el manifiesto del módulo.</value>
+  </data>
+  <data name="InvalidExperimentalFeatureName" xml:space="preserve">
+    <value>Se encontraron uno o varios nombres de características experimentales no válidos: {0}. El nombre de una característica experimental de módulo debe seguir esta convención: "ModuleName.FeatureName".</value>
+  </data>
+  <data name="SkipEditionCheckNotSupportedWithoutListAvailable" xml:space="preserve">
+    <value>El parámetro de modificador -SkipEditionCheck no se puede usar sin el parámetro de modificador -ListAvailable.</value>
+  </data>
+  <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>No se permite importar archivos *.ps1 como módulos en el modo ConstrainedLanguage.</value>
+  </data>
+  <data name="MismatchedLanguageModes" xml:space="preserve">
+    <value>Error al cargar el módulo {0} de script porque tiene un modo de lenguaje diferente al manifiesto del módulo. El modo de lenguaje del manifiesto es {1} y el modo de lenguaje del módulo es {2}. Asegúrese de que todos los archivos de módulo están firmados o forman parte de la configuración de la lista de permitidos de la aplicación.</value>
+  </data>
+  <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
+    <value>Este módulo usa el operador dot-source al exportar funciones con caracteres comodín, y esto no se permite cuando el sistema está bajo aplicación estricta de la verificación de aplicaciones.</value>
+  </data>
+  <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
+    <value>No se pueden exportar los miembros del módulo de un módulo que tiene un modo de lenguaje diferente al de la sesión en ejecución.</value>
+  </data>
+  <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
+    <value>No se puede crear un nuevo módulo mientras la sesión está en modo ConstrainedLanguage.</value>
+  </data>
+  <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
+    <value>No se encuentra el módulo integrado "{0}" compatible con la edición "Core". Asegúrese de que los módulos integrados de PowerShell están disponibles. Normalmente vienen con el paquete de PowerShell en la ruta de acceso del módulo $PSHOME y son necesarios para que PowerShell funcione correctamente.</value>
+  </data>
+  <data name="WDACExportModuleCommandLogTitle" xml:space="preserve">
+    <value>Cmdlet Export-ModuleMember</value>
+  </data>
+  <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
+    <value>Se producirá un error en la exportación de los miembros del módulo en el modo de lenguaje restringido porque el módulo "{0}" tiene un modo de lenguaje "{1}" que es diferente de la sesión actual "{2}".</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
+    <value>Exportación de funciones implícitas del módulo</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
+    <value>Se denegará la exportación implícita de funciones para el módulo "{0}" porque es de confianza (se ejecuta en modo de lenguaje completo), pero la sesión no es de confianza (se ejecuta en modo de lenguaje restringido). Se recomienda exportar siempre las funciones del módulo individualmente por nombre completo.</value>
+  </data>
+  <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
+    <value>Importando archivo de script como módulo</value>
+  </data>
+  <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
+    <value>La importación del archivo de script "{0}" como módulo no se permitirá en el modo ConstrainedLanguage.</value>
+  </data>
+  <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
+    <value>El módulo contiene el operador dot-source</value>
+  </data>
+  <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
+    <value>La importación del módulo "{0}" producirá un error en el modo de lenguaje restringido porque exporta funciones con caracteres comodín mientras también usa el operador dot-source.</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
+    <value>"Funciones de exportación de módulos</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
+    <value>El módulo "{0}" exporta funciones con caracteres comodín de nombre. Los nombres de función de módulo anidados se quitarán cuando se ejecuten en modo de lenguaje restringido.</value>
+  </data>
+  <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
+    <value>"Cmdlet New-Module</value>
+  </data>
+  <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
+    <value>Se bloqueará un nuevo módulo de una sesión de lenguaje restringido que no sea de confianza para que no proporcione el bloque de script FullLanguage.</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
+    <value>"Modos de idioma no coincidentes del módulo</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
+    <value>Se está cargando un módulo dependiente que tiene un modo de lenguaje diferente al primario. Esto no se permitirá cuando esté en modo de lenguaje restringido.</value>
+  </data>
+</root>

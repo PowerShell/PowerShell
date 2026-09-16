@@ -27,6 +27,25 @@ parameters: # parameters are shown up in ADO UI in a build queue time
   - name: disableNetworkIsolation
     type: boolean
     default: false
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: EarlyAccessFeed
+    displayName: Early Access Feed
+    type: string
+    default: 'net10'
+    values:
+      - 'net8'
+      - 'net9'
+      - 'net10'
+  - name: DOTNET_RUNTIME_VERSION
+    displayName: Runtime version of early access build
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    displayName: SDK version of early access build
+    type: string
+    default: ' '
 
 name: pkgs-$(BUILD.SOURCEBRANCHNAME)-prod-$(Build.BuildId)
 
@@ -37,6 +56,8 @@ variables:
       ForceAzureBlobDelete: ${{ parameters.ForceAzureBlobDelete }}
       ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
       disableNetworkIsolation: ${{ parameters.disableNetworkIsolation }}
+      EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
 
 resources:
   pipelines:
@@ -95,3 +116,8 @@ extends:
     - template: templates/stages/PowerShell-Packages-Stages.yml
       parameters:
         OfficialBuild: true
+        IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+        DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+        DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+        EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
+

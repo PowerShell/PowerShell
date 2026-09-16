@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Reason_DoNotRun" xml:space="preserve">
+    <value>Nie można załadować pliku {0}, ponieważ nie chcesz teraz uruchamiać tego oprogramowania.</value>
+  </data>
+  <data name="Reason_NeverRun" xml:space="preserve">
+    <value>Nie można załadować pliku {0}, ponieważ wybrano opcję nigdy nie uruchamiania oprogramowania od tego wydawcy.</value>
+  </data>
+  <data name="Reason_NotTrusted" xml:space="preserve">
+    <value>Plik {0} został opublikowany przez {1}. Ten wydawca został jawnie oznaczony jako niezaufany w Twoim systemie. Skrypt nie zostanie uruchomiony w systemie. Aby uzyskać więcej informacji, uruchom polecenie „get-help about_signing”.</value>
+  </data>
+  <data name="Reason_RestrictedMode" xml:space="preserve">
+    <value>Nie można załadować pliku {0}, ponieważ uruchomione skrypty są wyłączone w tym systemie. Aby uzyskać więcej informacji, zobacz about_Execution_Policies pod adresem https://go.microsoft.com/fwlink/?LinkID=135170.</value>
+  </data>
+  <data name="Reason_Unknown" xml:space="preserve">
+    <value>Nie można załadować pliku {0}. {1}.</value>
+  </data>
+  <data name="Reason_DisallowedBySafer" xml:space="preserve">
+    <value>Nie można załadować pliku {0}, ponieważ jego działanie jest blokowane przez zasady ograniczeń oprogramowania, takie jak zasady utworzone przy użyciu zasad grupy.</value>
+  </data>
+  <data name="Reason_FileContentUnavailable" xml:space="preserve">
+    <value>Nie można załadować pliku {0}, ponieważ nie można odczytać jego zawartości.</value>
+  </data>
+  <data name="CertNotGoodForSigning" xml:space="preserve">
+    <value>Nie można podpisać kodu. Określony certyfikat nie jest odpowiedni do podpisywania kodu.</value>
+  </data>
+  <data name="TimeStampUrlRequired" xml:space="preserve">
+    <value>Nie można podpisać kodu. Adres URL serwera TimeStamp musi być w pełni kwalifikowany i w formacie http://&lt;serwer url&gt; lub adres URL serwera https://&lt;&gt;.</value>
+  </data>
+  <data name="InvalidHashAlgorithm" xml:space="preserve">
+    <value>Nie można podpisać kodu. Algorytm skrótu nie jest obsługiwany.</value>
+  </data>
+  <data name="AuthenticodePromptCaption" xml:space="preserve">
+    <value>Czy chcesz uruchomić oprogramowanie od tego niezaufanego wydawcy?</value>
+  </data>
+  <data name="AuthenticodePromptText" xml:space="preserve">
+    <value>Plik {0} został opublikowany przez {1} i nie jest zaufany w Twoim systemie. Uruchamiaj tylko skrypty od zaufanych wydawców.</value>
+  </data>
+  <data name="AuthenticodePromptText_UnknownPublisher" xml:space="preserve">
+    <value>Oprogramowanie {0} zostało opublikowane przez nieznanego wydawcę. Zaleca się, aby nie uruchamiać tego oprogramowania.</value>
+  </data>
+  <data name="RemoteFilePromptCaption" xml:space="preserve">
+    <value>Ostrzeżenie o zabezpieczeniach</value>
+  </data>
+  <data name="RemoteFilePromptText" xml:space="preserve">
+    <value>Uruchamiaj tylko skrypty, którym ufasz. Skrypty z Internetu mogą być przydatne, ale ten skrypt może potencjalnie uszkodzić Twój komputer. Jeśli ufasz temu skryptowi, użyj polecenia cmdlet Unblock-File, aby zezwolić na jego uruchomienie bez tego komunikatu ostrzegawczego. Czy chcesz uruchomić {0}?</value>
+  </data>
+  <data name="Choice_NeverRun" xml:space="preserve">
+    <value>Ni&amp;gdy nie uruchamiaj</value>
+  </data>
+  <data name="Choice_NeverRun_Help" xml:space="preserve">
+    <value>Nie uruchamiaj teraz skryptu od tego wydawcy i nie monituj mnie o uruchomienie tego skryptu w przyszłości. Przyszłe próby uruchomienia tego skryptu zakończą się cichym niepowodzeniem.</value>
+  </data>
+  <data name="Choice_DoNotRun" xml:space="preserve">
+    <value>&amp;Nie uruchamiaj</value>
+  </data>
+  <data name="Choice_DoNotRun_Help" xml:space="preserve">
+    <value>Nie uruchamiaj teraz skryptu od tego wydawcy i w przyszłości nadal wyświetlaj monit o uruchomienie tego skryptu.</value>
+  </data>
+  <data name="Choice_RunOnce" xml:space="preserve">
+    <value>&amp;Uruchom raz</value>
+  </data>
+  <data name="Choice_RunOnce_Help" xml:space="preserve">
+    <value>Uruchom teraz skrypt od tego wydawcy i w przyszłości nadal wyświetlaj monit o uruchomienie tego skryptu.</value>
+  </data>
+  <data name="Choice_AlwaysRun" xml:space="preserve">
+    <value>&amp;Zawsze uruchamiaj</value>
+  </data>
+  <data name="Choice_AlwaysRun_Help" xml:space="preserve">
+    <value>Uruchom teraz skrypt od tego wydawcy i nie monituj mnie o uruchomienie tego skryptu w przyszłości.</value>
+  </data>
+  <data name="Choice_Suspend" xml:space="preserve">
+    <value>&amp;Wstrzymaj</value>
+  </data>
+  <data name="Choice_Suspend_Help" xml:space="preserve">
+    <value>Wstrzymaj bieżący potok i wróć do wiersza polecenia. Gdy skończysz, wpisz wyjście, aby wznowić działanie.</value>
+  </data>
+</root>

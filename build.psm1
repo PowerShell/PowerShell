@@ -8,7 +8,6 @@ param(
 
 . "$PSScriptRoot\tools\buildCommon\startNativeExecution.ps1"
 
-# CI runs with PowerShell 5.0, so don't use features like ?: && ||
 Set-StrictMode -Version 3.0
 
 # On Unix paths is separated by colon.
@@ -361,6 +360,8 @@ function Start-PSBuild {
         Indicates a CI build; restores the Pester module to the output directory.
     .PARAMETER ForMinimalSize
         Produces a build optimized for minimal binary size (linux-x64, win7-x64, or osx-x64 only).
+    .PARAMETER ForceProduceLocalizedResources
+        Forces the build to produce satellite assemblies for all cultures, even when not required.
     .PARAMETER SkipExperimentalFeatureGeneration
         Skips the step that runs the built pwsh to produce the experimental-features list.
     .PARAMETER SMAOnly
@@ -401,6 +402,7 @@ function Start-PSBuild {
         [switch]$NoPSModuleRestore,
         [switch]$CI,
         [switch]$ForMinimalSize,
+        [switch]$ForceProduceLocalizedResources,
 
         # Skips the step where the pwsh that's been built is used to create a configuration
         # Useful when changing parsing/compilation, since bugs there can mean we can't get past this step
@@ -463,8 +465,8 @@ function Start-PSBuild {
     }
 
     if ($ForMinimalSize) {
-        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
-            throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
+        if ($Runtime -and "linux-x64", "linux-arm64", "win7-x64", "win-arm64", "osx-x64", "osx-arm64" -notcontains $Runtime) {
+            throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'linux-arm64', 'win7-x64', 'win-arm64', 'osx-x64', 'osx-arm64'"
         }
     }
 
@@ -553,11 +555,22 @@ Fix steps:
         Stop-DevPowerShell
     }
 
-    # setup arguments
-    # adding ErrorOnDuplicatePublishOutputFiles=false due to .NET SDk issue: https://github.com/dotnet/sdk/issues/15748
-    # removing --no-restore due to .NET SDK issue: https://github.com/dotnet/sdk/issues/18999
-    # $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
-    $Arguments = @("publish","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
+    # Setup arguments
+    # Added ErrorOnDuplicatePublishOutputFiles=false due to .NET SDK issue: https://github.com/dotnet/sdk/issues/15748
+    # Removed the option "--no-restore" due to .NET SDK issue: https://github.com/dotnet/sdk/issues/18999
+    $Arguments = @("publish", "/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
+
+    # Today, we only support localization for MSIX packages. For Linux and macOS packages, fxdependent and min-size packages,
+    # as well as .zip packages, we only support the default en-US culture.
+    # Therefore, we only produce satellite assemblies for win7-x64, win7-x86, and win-arm64 by default (excluding min-size build),
+    # unless the caller wants to force produce localized resources.
+    $RemovePowerShellSatelliteAssemblies = $false
+    if (!$ForceProduceLocalizedResources -and ($Options.Runtime -notmatch '^(win7-x64|win7-x86|win-arm64)$' -or $ForMinimalSize)) {
+        # Disable satellite assemblies from package/runtime assets for other cultures.
+        $Arguments += "/property:SatelliteResourceLanguages=en"
+        $RemovePowerShellSatelliteAssemblies = $true
+    }
+
     if ($Output -or $SMAOnly) {
         $Arguments += "--output", (Split-Path $Options.Output)
     }
@@ -596,7 +609,7 @@ Fix steps:
 
     # We pass in the AppDeployment property to indicate which type of deployment we are doing.
     # This allows the PowerShell.Common.props to set the correct properties for the build.
-    $AppDeployment = if(($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) -and $Options.Runtime -notmatch $optimizedFddRegex) {
+    $AppDeployment = if($Options.Runtime -like 'fxdependent*' -and $Options.Runtime -notmatch $optimizedFddRegex) {
         # Global and zip files
         "FxDependent"
     }
@@ -612,6 +625,12 @@ Fix steps:
     }
 
     $Arguments += "/property:AppDeployment=$AppDeployment"
+
+    if ($ForMinimalSize) {
+        # Skip Ready-to-Run compilation in 'PowerShell.Common.props' to keep binary size smaller
+        $Arguments += "/property:ForMinimalSize=True"
+    }
+
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
 
@@ -725,6 +744,21 @@ Fix steps:
     } finally {
         Pop-Location
     }
+
+    if ($RemovePowerShellSatelliteAssemblies) {
+        $smaResDll = 'System.Management.Automation.resources.dll'
+        $resDirs = Get-ChildItem -Path $publishPath -Filter $smaResDll -Recurse -Depth 1 | ForEach-Object DirectoryName
+
+        if ($resDirs) {
+            Write-Log -message "PowerShell satellite assemblies found under '$publishPath':"
+            $relatives = $resDirs | ForEach-Object { Resolve-Path $_ -Relative -RelativeBasePath $publishPath }
+            Write-Log -message ($relatives -join ", ")
+
+            $resDirs | Remove-Item -Recurse -Force -ErrorAction Stop
+            Write-Log -message "Removed PowerShell satellite assemblies under '$publishPath'."
+        }
+    }
+
     Write-LogGroupEnd -Title "Build PowerShell"
 
     # No extra post-building task will run if '-SMAOnly' is specified, because its purpose is for a quick update of S.M.A.dll after full build.
@@ -881,7 +915,7 @@ function Switch-PSNugetConfig {
     param(
         [Parameter(Mandatory = $true, ParameterSetName = 'user')]
         [Parameter(Mandatory = $true, ParameterSetName = 'nouser')]
-        [ValidateSet('Public', 'Private', 'NuGetOnly')]
+        [ValidateSet('Public', 'Private', 'NuGetOnly', 'EarlyAccess')]
         [string] $Source,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'user')]
@@ -916,6 +950,24 @@ function Switch-PSNugetConfig {
         $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'; Name = 'powershell' }
 
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
+    } elseif ($Source -eq 'EarlyAccess') {
+        $earlyAccess = $env:EARLY_ACCESS_FEED
+
+        $earlyAccessFeedUrl = switch ($earlyAccess) {
+            'net8' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-8-early-access/nuget/v3/index.json' }
+            'net9' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-9-early-access/nuget/v3/index.json' }
+            'net10' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-10-early-access/nuget/v3/index.json' }
+            default { throw "Unknown early access feed URL: $earlyAccess" }
+        }
+
+        Set-PipelineVariable -Name 'EARLY_ACCESS_FEED_URL' -Value $earlyAccessFeedUrl
+
+        $earlyAccessFeed = [NugetPackageSource] @{Url = $earlyAccessFeedUrl; Name = 'earlyaccess' }
+        $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'; Name = 'powershell' }
+
+        New-NugetConfigFile -NugetPackageSource $earlyAccessFeed -Destination "$PSScriptRoot/"
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } else {
@@ -2559,6 +2611,62 @@ function Start-PSxUnit {
     }
 }
 
+function Get-DotnetEarlyAccess {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$DestinationPath,
+
+        [Parameter(Mandatory)]
+        [ValidateSet('win-x64', 'win-x86', 'win-arm64', 'linux-x64', 'linux-arm64', 'linux-alpine-x64', 'linux-alpine-arm64', 'osx-x64', 'osx-arm64', 'all')]
+        [string]$Architecture,
+
+        [Parameter(Mandatory)]
+        [string]$DOTNET_PRIVATE_SAS
+    )
+
+    $baseUrl = $env:DOTNET_PRIVATE_BLOB_BASE_URL
+    $DOTNET_RUNTIME_VERSION = $env:DOTNET_RUNTIME_VERSION
+    $DOTNET_SDK_VERSION = $env:DOTNET_SDK_VERSION
+
+    $fileName = switch ($Architecture) {
+        'win-x64' { "dotnet-sdk-$DOTNET_SDK_VERSION-win-x64.zip" }
+        'win-x86' { "dotnet-sdk-$DOTNET_SDK_VERSION-win-x86.zip" }
+        'win-arm64' { "dotnet-sdk-$DOTNET_SDK_VERSION-win-arm64.zip" }
+        'linux-x64' { "dotnet-sdk-$DOTNET_SDK_VERSION-linux-x64.tar.gz" }
+        'linux-arm64' { "dotnet-sdk-$DOTNET_SDK_VERSION-linux-arm64.tar.gz" }
+        'linux-alpine-x64' { "dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-x64.tar.gz" }
+        'linux-alpine-arm64' { "dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-arm64.tar.gz" }
+        'osx-x64' { "dotnet-sdk-$DOTNET_SDK_VERSION-osx-x64.tar.gz" }
+        'osx-arm64' { "dotnet-sdk-$DOTNET_SDK_VERSION-osx-arm64.tar.gz" }
+        'all' { @(
+            "dotnet-sdk-$DOTNET_SDK_VERSION-win-x64.zip"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-win-x86.zip"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-win-arm64.zip"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-linux-x64.tar.gz"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-linux-arm64.tar.gz"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-x64.tar.gz"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-arm64.tar.gz"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-osx-x64.tar.gz"
+            "dotnet-sdk-$DOTNET_SDK_VERSION-osx-arm64.tar.gz"
+        ) }
+        default { throw "Unsupported architecture: $Architecture" }
+    }
+
+    $fileName | ForEach-Object {
+        $destFile = "$DestinationPath/$_"
+        Write-Verbose -Verbose "Downloading $_ from $baseUrl/$DOTNET_RUNTIME_VERSION to $destFile"
+
+        try {
+            Invoke-WebRequest -Uri "$baseUrl/$DOTNET_RUNTIME_VERSION/$_$DOTNET_PRIVATE_SAS" -OutFile $destFile -RetryIntervalSec 5 -MaximumRetryCount 3
+        }
+        catch {
+            Write-Error "Failed to download $_ from $baseUrl/$DOTNET_RUNTIME_VERSION"
+            throw
+        }
+    }
+}
+
 function Install-Dotnet {
     <#
     .SYNOPSIS
@@ -3192,7 +3300,7 @@ function Start-TypeGen
 
     Push-Location "$PSScriptRoot/src/TypeCatalogGen"
     try {
-        Start-NativeExecution { dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs $IncFileName }
+        Start-NativeExecution { dotnet run -- ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs $IncFileName }
     } finally {
         Pop-Location
     }

@@ -1,0 +1,1376 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="TypeNotFound" xml:space="preserve">
+    <value>型 [{0}] が見つかりません。</value>
+  </data>
+  <data name="TypeNotFoundWithMessage" xml:space="preserve">
+    <value>型 [{0}] が見つかりません。詳細: {1}</value>
+  </data>
+  <data name="IncompleteString" xml:space="preserve">
+    <value>文字列トークンが不完全です。</value>
+  </data>
+  <data name="InvalidUnicodeEscapeSequence" xml:space="preserve">
+    <value>Unicode エスケープ シーケンスが無効です。有効なシーケンスは、`u{ で始まり、次に 1 から 6 桁の 16 進数が続き、最後に '}' で終了します。</value>
+  </data>
+  <data name="InvalidUnicodeEscapeSequenceValue" xml:space="preserve">
+    <value>Unicode エスケープ シーケンスの値が範囲外です。最大値は 0x10FFFF です。</value>
+  </data>
+  <data name="MissingUnicodeEscapeSequenceTerminator" xml:space="preserve">
+    <value>Unicode エスケープ シーケンスに末尾の '}' がありません。</value>
+  </data>
+  <data name="TooManyDigitsInUnicodeEscapeSequence" xml:space="preserve">
+    <value>Unicode エスケープ シーケンスの中かっこ内に、上限の 6 桁を超える長さの 16 進数字が含まれています。</value>
+  </data>
+  <data name="ReferenceNeedsToBeByItselfInTypeConstraint" xml:space="preserve">
+    <value>型制約内で [ref] を他の型と一緒に使用することはできません。</value>
+  </data>
+  <data name="ReferenceNeedsToBeLastTypeInTypeConversion" xml:space="preserve">
+    <value>[ref] は、型変換シーケンスの最後の型に対してのみ指定できます。</value>
+  </data>
+  <data name="ReferenceNeedsToBeByItselfInTypeSequence" xml:space="preserve">
+    <value>1 つの型シーケンスに [ref] を 2 回含めることはできません。</value>
+  </data>
+  <data name="BadNumericConstant" xml:space="preserve">
+    <value>数値定数 {0} は無効です。</value>
+  </data>
+  <data name="InvalidRegularExpression" xml:space="preserve">
+    <value>正規表現パターン {0} は無効です。</value>
+  </data>
+  <data name="EmptyVariableReference" xml:space="preserve">
+    <value>空の ${} 変数参照が見つかりました。中かっこ内の名前は必須です。</value>
+  </data>
+  <data name="InvalidVariableReference" xml:space="preserve">
+    <value>変数参照が無効です。'$' の後に有効な変数名の文字がありませんでした。${} で名前を区切ることを検討してください。</value>
+  </data>
+  <data name="InvokeMethodOnNull" xml:space="preserve">
+    <value>null 値の式に対してメソッドを呼び出すことはできません。</value>
+  </data>
+  <data name="MethodNotFound" xml:space="preserve">
+    <value>[{0}] には '{1}' という名前のメソッドが含まれていないため、メソッドを呼び出せませんでした。</value>
+  </data>
+  <data name="ParameterizedPropertyAssignmentFailed" xml:space="preserve">
+    <value>設定可能なプロパティ '{1}()' が [{0}] に含まれていないため、代入できませんでした。</value>
+  </data>
+  <data name="UnexpectedToken" xml:space="preserve">
+    <value>式またはステートメント内に予期しないトークン '{0}' があります。</value>
+  </data>
+  <data name="SplattingNotPermitted" xml:space="preserve">
+    <value>式の中でスプラッティング演算子 '@' を使用して変数を参照することはできません。'@{0}' はコマンドの引数としてのみ使用できます。式の中で変数を参照するには '${0}' を使用してください。</value>
+  </data>
+  <data name="InvalidParameter" xml:space="preserve">
+    <value>'{0}' パラメーターは無効です。</value>
+  </data>
+  <data name="MissingExpression" xml:space="preserve">
+    <value>パイプライン要素の '{0}' の後に式がありません。</value>
+  </data>
+  <data name="BadExpression" xml:space="preserve">
+    <value>パイプライン要素内で、'{0}' の後の式によって無効なオブジェクトが生成されました。結果はコマンド名、スクリプト ブロック、CommandInfo オブジェクトのいずれかになる必要があります。</value>
+  </data>
+  <data name="ParameterRequiresArgument" xml:space="preserve">
+    <value>パラメーター {0} には引数が必要です。</value>
+  </data>
+  <data name="ParameterCannotHaveArgument" xml:space="preserve">
+    <value>パラメーター {0} に引数を指定することはできません。</value>
+  </data>
+  <data name="DuplicateFormalParameter" xml:space="preserve">
+    <value>パラメーター リスト内のパラメーター ${0} が重複しています。</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>パラメーター リストに引数がありません。</value>
+  </data>
+  <data name="SplattingNotPermittedInArgumentList" xml:space="preserve">
+    <value>スプラッティングされた '@{0}' のような変数を、コンマ区切りの引数リストに含めることはできません。</value>
+  </data>
+  <data name="MissingFileSpecification" xml:space="preserve">
+    <value>リダイレクト演算子の後にファイル指定がありません。</value>
+  </data>
+  <data name="RedirectionNotSupported" xml:space="preserve">
+    <value>'{0}' 演算子は将来使用するために予約されています。</value>
+  </data>
+  <data name="RedirectionFailed" xml:space="preserve">
+    <value>'{0}' へのリダイレクトができませんでした: {1}</value>
+  </data>
+  <data name="ExpressionsMustBeFirstInPipeline" xml:space="preserve">
+    <value>式は、パイプラインの最初の要素としてのみ使用できます。</value>
+  </data>
+  <data name="EmptyPipeElement" xml:space="preserve">
+    <value>空のパイプ要素は使用できません。</value>
+  </data>
+  <data name="InvalidLeftHandSide" xml:space="preserve">
+    <value>代入式が無効です。代入演算子への入力は、代入を受け付けるオブジェクト (例: 変数、プロパティなど) である必要があります。</value>
+  </data>
+  <data name="AddHashTableToNonHashTable" xml:space="preserve">
+    <value>ハッシュテーブルは、別のハッシュテーブルにのみ追加できます。</value>
+  </data>
+  <data name="IsOperatorRequiresType" xml:space="preserve">
+    <value>'-is' の右オペランドは型である必要があります。</value>
+  </data>
+  <data name="AsOperatorRequiresType" xml:space="preserve">
+    <value>'-as' の右オペランドは型である必要があります。</value>
+  </data>
+  <data name="FormatError" xml:space="preserve">
+    <value>文字列の書式設定でエラーが発生しました: {0}。</value>
+  </data>
+  <data name="BadOperatorArgument" xml:space="preserve">
+    <value>演算子 '{0}' の引数が無効です: {1}。</value>
+  </data>
+  <data name="OperatorFailed" xml:space="preserve">
+    <value>'{0}' 演算子が失敗しました: {1}。</value>
+  </data>
+  <data name="BadReplaceArgument" xml:space="preserve">
+    <value>{0} 演算子で使用できるのは後続の要素 2 つのみです。{1} つではありません。</value>
+  </data>
+  <data name="ExpectedValueExpression" xml:space="preserve">
+    <value>'{0}' 演算子の後には値式を指定してください。</value>
+  </data>
+  <data name="OperatorRequiresVariableOrProperty" xml:space="preserve">
+    <value>'{0}' 演算子は、変数またはプロパティに対してのみ使用できます。</value>
+  </data>
+  <data name="OrderedAttributeOnlyOnHashLiteralNode" xml:space="preserve">
+    <value>{0} 属性は、ハッシュ リテラル ノードでのみ指定できます。</value>
+  </data>
+  <data name="MissingArrayIndexExpression" xml:space="preserve">
+    <value>配列インデックス式が見つからないか、無効です。</value>
+  </data>
+  <data name="MissingPropertyName" xml:space="preserve">
+    <value>参照演算子の後にプロパティ名がありません。</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>このオブジェクトにはプロパティ '{0}' が見つかりません。プロパティが存在すること、設定可能であることを確認してください。</value>
+  </data>
+  <data name="PropertyNotFoundStrict" xml:space="preserve">
+    <value>このオブジェクトにはプロパティ '{0}' が見つかりません。プロパティが存在することを確認してください。</value>
+  </data>
+  <data name="NullArrayIndex" xml:space="preserve">
+    <value>インデックス操作に失敗しました。配列のインデックスが null 値と評価されました。</value>
+  </data>
+  <data name="NullArray" xml:space="preserve">
+    <value>null 配列内にインデックス アクセスすることはできません。</value>
+  </data>
+  <data name="CannotIndex" xml:space="preserve">
+    <value>型 "{0}" のオブジェクト内にインデックス アクセスすることはできません。</value>
+  </data>
+  <data name="CannotIndexWithByRefLikeReturnType" xml:space="preserve">
+    <value>ByRef ライクな戻り値の型 "{1}" を持つ型 "{0}" のオブジェクト内にインデックス アクセスすることはできません。ByRef ライクな型は、PowerShell ではサポートされていません。</value>
+  </data>
+  <data name="ArrayHasTooManyDimensions" xml:space="preserve">
+    <value>配列の次元数が多すぎます: {0}。配列の次元数は 32 以下である必要があります。</value>
+  </data>
+  <data name="ArraySliceAssignmentFailed" xml:space="preserve">
+    <value>[{0}] に対して配列の代入ができませんでした。スライスへの代入はサポートされていません。</value>
+  </data>
+  <data name="NeedMultidimensionalIndex" xml:space="preserve">
+    <value>{0} 次元配列内にインデックス [{1}] を使用してインデックス アクセスすることはできません。</value>
+  </data>
+  <data name="IndexOutOfRange" xml:space="preserve">
+    <value>インデックス '{0}' が範囲外のため、配列の代入ができませんでした。</value>
+  </data>
+  <data name="MissingExpressionAfterToken" xml:space="preserve">
+    <value>'{0}' の後に式がありません。</value>
+  </data>
+  <data name="IncompleteDollarVariableReference" xml:space="preserve">
+    <value>${{variable}} 参照の先頭に対応する末尾の '}}' がありません。</value>
+  </data>
+  <data name="IncompleteDollarSubexpressionReference" xml:space="preserve">
+    <value>$(subexpression) に末尾の ')' がありません。</value>
+  </data>
+  <data name="UnexpectedUnaryOperator" xml:space="preserve">
+    <value>内部エラー - 予期しない単項演算子 {0} があります。</value>
+  </data>
+  <data name="NonExistingVariableReference" xml:space="preserve">
+    <value>[ref] は、存在しない変数には適用できません。</value>
+  </data>
+  <data name="VariableIsUndefined" xml:space="preserve">
+    <value>変数 '${0}' は設定されていないため、取得できません。</value>
+  </data>
+  <data name="DuplicateKeyInHashLiteral" xml:space="preserve">
+    <value>ハッシュ リテラル内では、キー '{0}' の重複は許可されません。</value>
+  </data>
+  <data name="DuplicateNamedArgument" xml:space="preserve">
+    <value>名前付き引数 '{0}' の重複は許可されません。</value>
+  </data>
+  <data name="OperatorRequiresNumber" xml:space="preserve">
+    <value>'{0}' 演算子は数値に対してのみ使用できます。オペランドは '{1}' です。</value>
+  </data>
+  <data name="ExpectedExpression" xml:space="preserve">
+    <value>'(' の後には式が必要です。</value>
+  </data>
+  <data name="MissingEqualsInHashLiteral" xml:space="preserve">
+    <value>ハッシュ リテラル内のキーの後に '=' 演算子がありません。</value>
+  </data>
+  <data name="MissingStatementInHashLiteral" xml:space="preserve">
+    <value>ハッシュ リテラル内の '=' の後にステートメントがありません。</value>
+  </data>
+  <data name="MissingExpressionInNamedArgument" xml:space="preserve">
+    <value>名前付き引数の '=' の後にステートメントがありません。</value>
+  </data>
+  <data name="MissingPropertyTerminator" xml:space="preserve">
+    <value>プロパティ定義に ';' または改行がありません。</value>
+  </data>
+  <data name="MissingExpressionAfterOperator" xml:space="preserve">
+    <value>単項演算子 '{0}' の後に式がありません。</value>
+  </data>
+  <data name="IfStatementMissingCondition" xml:space="preserve">
+    <value>if ステートメントの '{0} (' の後に条件がありません。</value>
+  </data>
+  <data name="MissingStatementBlock" xml:space="preserve">
+    <value>{0} ( 条件 ) の後にステートメント ブロックがありません。</value>
+  </data>
+  <data name="MissingStatementBlockAfterElse" xml:space="preserve">
+    <value>'else' キーワードの後にステートメント ブロックがありません。</value>
+  </data>
+  <data name="FileReadError" xml:space="preserve">
+    <value>ファイルを読み取れませんでした: {0}。</value>
+  </data>
+  <data name="FileOpenError" xml:space="preserve">
+    <value>現在のプロバイダー ({0}) はファイルを開けません。</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>'{0}' に一致するファイルは見つかりませんでした。</value>
+  </data>
+  <data name="AmbiguousPath" xml:space="preserve">
+    <value>このパスは複数のファイルに解決されるため、処理できません。一度に処理できるファイルは 1 つだけです。</value>
+  </data>
+  <data name="KeywordParameterReservedForFutureUse" xml:space="preserve">
+    <value>{0} '-{1}' パラメーターは将来使用するために予約されています。</value>
+  </data>
+  <data name="MissingFilenameOption" xml:space="preserve">
+    <value>-file オプションのファイル名引数がないため、'switch' ステートメントを処理できません。</value>
+  </data>
+  <data name="InvalidFilenameOption" xml:space="preserve">
+    <value>switch ステートメントの -file に対するファイル名引数が無効です。</value>
+  </data>
+  <data name="InvalidSwitchFlag" xml:space="preserve">
+    <value>パラメーター {0} は switch ステートメントに対して無効です。</value>
+  </data>
+  <data name="InvalidForeachFlag" xml:space="preserve">
+    <value>パラメーター {0} は foreach ステートメントに対して無効です。</value>
+  </data>
+  <data name="PipelineValueRequired" xml:space="preserve">
+    <value>switch ステートメントには、'-file file_name' または '( expression )' のいずれかが必要です。</value>
+  </data>
+  <data name="MissingSwitchConditionExpression" xml:space="preserve">
+    <value>switch ステートメント句に条件がありません。</value>
+  </data>
+  <data name="MultipleSwitchDefaultClauses" xml:space="preserve">
+    <value>1 つの switch ステートメントに指定できる default 句は 1 つだけです。</value>
+  </data>
+  <data name="MissingSwitchStatementClause" xml:space="preserve">
+    <value>switch ステートメント句にステートメント ブロックがありません。</value>
+  </data>
+  <data name="MissingForeachExpression" xml:space="preserve">
+    <value>foreach ループに式がありません。
+正しい形式: foreach ($a in $b) {...}</value>
+  </data>
+  <data name="MissingForeachStatement" xml:space="preserve">
+    <value>foreach ループにステートメント本文がありません。
+正しい形式: foreach ($a in $b) {...}</value>
+  </data>
+  <data name="OnlyOneParameterListAllowed" xml:space="preserve">
+    <value>param ステートメントは、関数宣言内で引数が指定されている場合には使用できません。</value>
+  </data>
+  <data name="NotADefinedOperationForType" xml:space="preserve">
+    <value>操作 '[{0}] {1} [{2}]' は定義されていません。</value>
+  </data>
+  <data name="BadEnumeration" xml:space="preserve">
+    <value>コレクションを列挙中にエラーが発生しました: {0}。</value>
+  </data>
+  <data name="COMException" xml:space="preserve">
+    <value>COM 相互運用機能のハンドルされない例外が発生しました: {0}</value>
+  </data>
+  <data name="InvalidComObjectException" xml:space="preserve">
+    <value>既に解放された COM オブジェクトへのアクセスが行われました: {0}</value>
+  </data>
+  <data name="ScriptTooComplicated" xml:space="preserve">
+    <value>スクリプトが複雑すぎるため、処理が停止されました。</value>
+  </data>
+  <data name="ScriptsNotAllowed" xml:space="preserve">
+    <value>この構文は、この実行空間ではサポートされていません。これは実行空間が NoLanguage モードの場合に発生することがあります。</value>
+  </data>
+  <data name="InvalidSplitOptionCombination" xml:space="preserve">
+    <value>オプションと -split 演算子の組み合わせが無効です。</value>
+  </data>
+  <data name="InvalidSplitOptionWithPredicate" xml:space="preserve">
+    <value>述語付きの -split 演算子にはオプションを使用できません。</value>
+  </data>
+  <data name="InvalidEndOfLine" xml:space="preserve">
+    <value>トークン '{0}' は、このバージョンの有効なステートメント区切り記号ではありません。</value>
+  </data>
+  <data name="ReservedKeywordNotAllowed" xml:space="preserve">
+    <value>この言語バージョンでは '{0}' キーワードがサポートされていません。</value>
+  </data>
+  <data name="MissingExpressionAfterKeyword" xml:space="preserve">
+    <value>ループの '{0}' の後に式がありません。</value>
+  </data>
+  <data name="MissingLoopStatement" xml:space="preserve">
+    <value>{0} ループにステートメント本文がありません。</value>
+  </data>
+  <data name="MissingTrapStatement" xml:space="preserve">
+    <value>'trap' ステートメントが不完全です。trap ステートメントには本文が必要です。</value>
+  </data>
+  <data name="MissingTryStatement" xml:space="preserve">
+    <value>'try' ステートメントが不完全です。try ステートメントには本文が必要です。</value>
+  </data>
+  <data name="InvalidFunctionParameter" xml:space="preserve">
+    <value>パラメーター宣言は、変数名のコンマ区切りリスト (必要に応じて初期化式を指定可能) です。</value>
+  </data>
+  <data name="MissingFunctionBody" xml:space="preserve">
+    <value>関数宣言に関数本文がありません。</value>
+  </data>
+  <data name="DuplicateScriptCommandClause" xml:space="preserve">
+    <value>スクリプト コマンド句 '{0}' は既に定義されています。</value>
+  </data>
+  <data name="MissingNamedBlocks" xml:space="preserve">
+    <value>予期しないトークン '{0}' があります。'begin'、'process'、'end'、'clean'、または 'dynamicparam' が必要です。</value>
+  </data>
+  <data name="MissingEndCurlyBrace" xml:space="preserve">
+    <value>ステートメント ブロックまたは型定義に末尾の '}' がありません。</value>
+  </data>
+  <data name="MissingEndParenthesisInMethodCall" xml:space="preserve">
+    <value>メソッド呼び出しに ')' がありません。</value>
+  </data>
+  <data name="MissingEndSquareBracket" xml:space="preserve">
+    <value>配列インデックス式の後に ']' がありません。</value>
+  </data>
+  <data name="MissingEndParenthesisInExpression" xml:space="preserve">
+    <value>式に末尾の ')' がありません。</value>
+  </data>
+  <data name="MissingEndParenthesisInSubexpression" xml:space="preserve">
+    <value>部分式に末尾の ')' がありません。</value>
+  </data>
+  <data name="MissingOpenParenthesisInIfStatement" xml:space="preserve">
+    <value>if ステートメントの '{0}' の後に '(' がありません。</value>
+  </data>
+  <data name="MissingEndParenthesisInSwitchStatement" xml:space="preserve">
+    <value>switch ステートメント内の式の後に ')' がありません。</value>
+  </data>
+  <data name="MissingCurlyBraceInSwitchStatement" xml:space="preserve">
+    <value>switch ステートメントに '{' がありません。</value>
+  </data>
+  <data name="MissingVariableNameAfterForeach" xml:space="preserve">
+    <value>foreach の後に変数名がありません。
+正しい形式: foreach ($a in $b) {...}</value>
+  </data>
+  <data name="MissingInInForeach" xml:space="preserve">
+    <value>foreach ループの変数の後に 'in' がありません。
+正しい形式: foreach ($a in $b) {...}</value>
+  </data>
+  <data name="MissingEndParenthesisAfterForeach" xml:space="preserve">
+    <value>foreach ループの式部分の後に末尾の ')' がありません。
+正しい形式: foreach ($a in $b) {...}</value>
+  </data>
+  <data name="MissingOpenParenthesisAfterKeyword" xml:space="preserve">
+    <value>キーワード '{0}' の後に先頭の '(' がありません。</value>
+  </data>
+  <data name="MissingWhileOrUntilInDoWhile" xml:space="preserve">
+    <value>do ループに while または until キーワードがありません。</value>
+  </data>
+  <data name="MissingEndParenthesisAfterStatement" xml:space="preserve">
+    <value>'{0}' ステートメント内の式の後に末尾の ')' がありません。</value>
+  </data>
+  <data name="MissingNameAfterKeyword" xml:space="preserve">
+    <value>{0} キーワードの後に名前がありません。</value>
+  </data>
+  <data name="MissingEndParenthesisInFunctionParameterList" xml:space="preserve">
+    <value>関数パラメーター リストに ')' がありません。</value>
+  </data>
+  <data name="BackupParserMessage" xml:space="preserve">
+    <value>このスクリプトを処理中にエラー '{0}' が発生しました。このエラーを説明するテキストを読み込めませんでした。</value>
+  </data>
+  <data name="BackupParserMessageWithException" xml:space="preserve">
+    <value>このスクリプトを処理中にエラー '{0}' が発生しました。このエラーを説明するテキストは、エラー '{1}' が原因で読み込めませんでした。</value>
+  </data>
+  <data name="ScriptBlockDelegateInvokedFromWrongThread" xml:space="preserve">
+    <value>このスレッドには、スクリプトを実行するために使用できる実行空間がありません。System.Management.Automation.Runspaces.Runspace 型の DefaultRunspace プロパティで提供してください。呼び出そうとしたスクリプト ブロックは次のとおりです: {0}</value>
+  </data>
+  <data name="UnrecognizedToken" xml:space="preserve">
+    <value>ソース テキスト内に認識されないトークンがあります。</value>
+  </data>
+  <data name="ExceptionActionPromptCaption" xml:space="preserve">
+    <value>この例外に対して行うべきアクション:</value>
+  </data>
+  <data name="ContinueLabel" xml:space="preserve">
+    <value>続行(&amp;C)</value>
+  </data>
+  <data name="ContinueHelpMessage" xml:space="preserve">
+    <value>エラーを報告し、次のスクリプト ステートメントから続行します。</value>
+  </data>
+  <data name="SilentlyContinueLabel" xml:space="preserve">
+    <value>確認を表示せずに続行(&amp;I)</value>
+  </data>
+  <data name="SilentlyContinueHelpMessage" xml:space="preserve">
+    <value>このエラーを報告せず、次のスクリプト ステートメントから続行します。</value>
+  </data>
+  <data name="BreakLabel" xml:space="preserve">
+    <value>中断(&amp;B)</value>
+  </data>
+  <data name="BreakHelpMessage" xml:space="preserve">
+    <value>処理を続行せず、代わりに例外をスローします。</value>
+  </data>
+  <data name="SuspendLabel" xml:space="preserve">
+    <value>一時停止(&amp;S)</value>
+  </data>
+  <data name="SuspendHelpMessage" xml:space="preserve">
+    <value>現在のパイプラインを一時停止し、コマンド プロンプトに戻ります。作業終了後、「exit」と入力して操作を再開してください。</value>
+  </data>
+  <data name="CantActivateDocumentInPipeline" xml:space="preserve">
+    <value>パイプラインの途中でドキュメントを実行することはできません: {0}。</value>
+  </data>
+  <data name="ProgramFailedToExecute" xml:space="preserve">
+    <value>プログラム '{0}' を実行できませんでした: {1}{2}。</value>
+  </data>
+  <data name="CantInvokeInBinaryModule" xml:space="preserve">
+    <value>バイナリ モジュール '{0}' のコンテキストで、'&amp;' を使用して呼び出すことはできません。'&amp;' の後にバイナリ以外のモジュールを指定して、もう一度お試しください。</value>
+  </data>
+  <data name="CantInvokeInNonImportedModule" xml:space="preserve">
+    <value>モジュール '{0}' はインポートされていないため、このモジュールのコンテキストで '&amp;' を使用した呼び出しはできません。モジュール '{0}' をインポートして、操作をもう一度お試しください。</value>
+  </data>
+  <data name="TokenAfterEndOfValidScriptText" xml:space="preserve">
+    <value>署名ブロック内に実行可能なスクリプト コードが見つかりました。</value>
+  </data>
+  <data name="TextForWordLine" xml:space="preserve">
+    <value>行</value>
+  </data>
+  <data name="TextForPositionMessage" xml:space="preserve">
+    <value>位置 {0}:{1} 文字:{2}
++ {3}</value>
+  </data>
+  <data name="TraceScriptLineMessage" xml:space="preserve">
+    <value>{0,4}+ {1}</value>
+  </data>
+  <data name="TraceVariableAssignment" xml:space="preserve">
+    <value>    ! SET ${0} = '{1}'。</value>
+  </data>
+  <data name="TraceEnteringFunction" xml:space="preserve">
+    <value>    ! CALL 関数 '{0}'</value>
+  </data>
+  <data name="TraceEnteringFunctionDefinedInFile" xml:space="preserve">
+    <value>    ! CALL 関数 '{0}' (ファイル '{1}' で定義)</value>
+  </data>
+  <data name="TraceMethodCall" xml:space="preserve">
+    <value>    ! CALL メソッド '{0}'</value>
+  </data>
+  <data name="TerminatorExpectedAtEndOfString" xml:space="preserve">
+    <value>文字列に終端記号 {0} がありません。</value>
+  </data>
+  <data name="WhitespaceBeforeHereStringFooter" xml:space="preserve">
+    <value>文字列終端記号の前に空白を置くことはできません。</value>
+  </data>
+  <data name="EndSquareBracketExpectedAtEndOfType" xml:space="preserve">
+    <value>型トークンの末尾に ] がありません。</value>
+  </data>
+  <data name="OpenBraceNeedsToBeBackTickedInVariableName" xml:space="preserve">
+    <value>変数名には { ではなく `{ を使用してください。</value>
+  </data>
+  <data name="MissingStatementBlockForDataSection" xml:space="preserve">
+    <value>Data セクションにステートメント ブロックがありません。</value>
+  </data>
+  <data name="InvalidParameterForDataSectionStatement" xml:space="preserve">
+    <value>Data セクションの "{0}" パラメーターは無効です。有効な Data セクション パラメーターは SupportedCommand です。</value>
+  </data>
+  <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
+    <value>配列参照は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="AssignmentStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>代入ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="RedirectionNotSupportedInDataSection" xml:space="preserve">
+    <value>リダイレクトは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="DoWhileStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Do および While ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="ExpandableStringNotSupportedInDataSection" xml:space="preserve">
+    <value>展開可能な文字列は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="OperatorNotSupportedInDataSection" xml:space="preserve">
+    <value>'{0}' 演算子は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="TrapStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Trap ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="TryStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Try ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="FlowControlStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Break、Continue、Return、Exit、Throw などのフロー制御ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="ForeachStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Foreach ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="ForWhileStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>For および While ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="FunctionDeclarationNotSupportedInDataSection" xml:space="preserve">
+    <value>関数宣言は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="MethodCallNotSupportedInDataSection" xml:space="preserve">
+    <value>メソッド呼び出しは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="ParameterDeclarationNotSupportedInDataSection" xml:space="preserve">
+    <value>パラメーター宣言は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="PropertyReferenceNotSupportedInDataSection" xml:space="preserve">
+    <value>プロパティ参照は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="ScriptBlockNotSupportedInDataSection" xml:space="preserve">
+    <value>スクリプト ブロック リテラルは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="SwitchStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>switch ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="VariableReferenceNotSupportedInDataSection" xml:space="preserve">
+    <value>制限付き言語モードまたは Data セクション内で参照してはならない変数が参照されています。参照できる変数は次のとおりです: {0}。</value>
+  </data>
+  <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
+    <value>コマンド '{0}' は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="DataSectionStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>data ステートメントは、制限付き言語モードまたは別の Data セクション内では使用できません。</value>
+  </data>
+  <data name="MissingValueForSupportedCommandInDataSectionStatement" xml:space="preserve">
+    <value>Data セクションの SupportedCommand パラメーターに値がありません。パラメーターにコマンドレット名または関数名を指定してください。</value>
+  </data>
+  <data name="InvalidScriptBlockInDataSection" xml:space="preserve">
+    <value>Begin ステートメント ブロック、Process ステートメント ブロック、parameter ステートメントは、Data セクション内では使用できません。</value>
+  </data>
+  <data name="StringMultiplyToolongInDataSection" xml:space="preserve">
+    <value>結果の文字数が "{0}" 文字を超える文字列乗算は、制限付き言語モードまたは Data セクション内では許可されません。</value>
+  </data>
+  <data name="ArrayMultiplyToolongInDataSection" xml:space="preserve">
+    <value>結果の要素数が {0} 個を超える配列乗算は、制限付き言語モードまたは Data セクション内では許可されません。</value>
+  </data>
+  <data name="DotSourcingNotSupportedInDataSection" xml:space="preserve">
+    <value>ドット ソースは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock" xml:space="preserve">
+    <value>属性引数は、定数またはスクリプト ブロックである必要があります。</value>
+  </data>
+  <data name="CustomAttributeTypeNotFound" xml:space="preserve">
+    <value>カスタム属性 '{0}' の型が見つかりません。この型を含んだアセンブリが読み込まれることを確認してください。</value>
+  </data>
+  <data name="PropertyNotFoundForType" xml:space="preserve">
+    <value>型 '{1}' のプロパティ '{0}' が見つかりません。</value>
+  </data>
+  <data name="UnexpectedAttribute" xml:space="preserve">
+    <value>予期しない属性 '{0}' があります。</value>
+  </data>
+  <data name="EndSquareBracketExpectedAtEndOfAttribute" xml:space="preserve">
+    <value>属性または型リテラルの末尾に ] がありません。</value>
+  </data>
+  <data name="StrictModeFunctionCallWithParens" xml:space="preserve">
+    <value>関数またはコマンドが、メソッドのような方法で呼び出されました。パラメーターの間はスペースで区切る必要があります。パラメーターの詳細については、about_Parameters ヘルプ トピックを参照してください。</value>
+  </data>
+  <data name="MissingTryStatementBlock" xml:space="preserve">
+    <value>Try ステートメントにステートメント ブロックがありません。</value>
+  </data>
+  <data name="MissingCatchOrFinally" xml:space="preserve">
+    <value>Try ステートメントに対応する Catch または Finally ブロックがありません。</value>
+  </data>
+  <data name="MissingCatchHandlerBlock" xml:space="preserve">
+    <value>Catch ブロックにステートメント ブロックがありません。</value>
+  </data>
+  <data name="MissingFinallyStatementBlock" xml:space="preserve">
+    <value>Finally ブロックにステートメント ブロックがありません。</value>
+  </data>
+  <data name="ExceptionTypeAlreadyCaught" xml:space="preserve">
+    <value>例外の種類 {0} は、既に前のハンドラーによってハンドルされています。</value>
+  </data>
+  <data name="EmptyCatchNotLast" xml:space="preserve">
+    <value>catch ブロックは最後の catch ブロックである必要があります。</value>
+  </data>
+  <data name="MissingTypeLiteralToken" xml:space="preserve">
+    <value>型リテラルがありません。</value>
+  </data>
+  <data name="MissingTerminatorMultiLineComment" xml:space="preserve">
+    <value>複数行コメントに終端記号 '#&gt;' がありません。</value>
+  </data>
+  <data name="UnexpectedCharactersAfterHereStringHeader" xml:space="preserve">
+    <value>here-string ヘッダーの後、行末までの間に文字があってはなりません。</value>
+  </data>
+  <data name="ErrorCollection" xml:space="preserve">
+    <value>パーサー エラーが検出されました。</value>
+  </data>
+  <data name="MissingNamedStatementBlock" xml:space="preserve">
+    <value>'{0}' の後にステートメント ブロックがありません。</value>
+  </data>
+  <data name="TypeNotAllowedBeforeParam" xml:space="preserve">
+    <value>パラメーター ステートメント内に予期しない型 [{0}] が見つかりました。</value>
+  </data>
+  <data name="TypeNotAllowedBeforeStatement" xml:space="preserve">
+    <value>ステートメントの前に予期しない型 [{0}] が見つかりました。</value>
+  </data>
+  <data name="InvalidNullKey" xml:space="preserve">
+    <value>ハッシュ リテラル内では null キーは使用できません。</value>
+  </data>
+  <data name="AttributeNotSupportedInDataSection" xml:space="preserve">
+    <value>属性は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="TypeNotAllowedInDataSection" xml:space="preserve">
+    <value>型 {0} は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="PropertyIsReadOnly" xml:space="preserve">
+    <value>'{0}' は読み取り専用プロパティです。</value>
+  </data>
+  <data name="MissingAssemblyNameSpecification" xml:space="preserve">
+    <value>型名にアセンブリ名の指定がありません。</value>
+  </data>
+  <data name="ControlLeavingFinally" xml:space="preserve">
+    <value>制御フローを Finally ブロックから脱出させることはできません。</value>
+  </data>
+  <data name="UnrecoverableParserError" xml:space="preserve">
+    <value>PowerShell に回復不能なエラーが発生しました。</value>
+  </data>
+  <data name="AstIsReused" xml:space="preserve">
+    <value>1 つの AST を複数の AST の子として使用することはできません。この AST を別の AST 内で使用するには、Copy() メソッドを呼び出してその結果を使用してください。</value>
+  </data>
+  <data name="InvalidUsingExpression" xml:space="preserve">
+    <value>Using 式の中では式を使用できません。</value>
+  </data>
+  <data name="UsingWithoutInvokeCommand" xml:space="preserve">
+    <value>Using 変数は取得できません。Using 変数は、スクリプト ワークフロー内の Invoke-Command、Start-Job、または InlineScript でのみ使用できます。Invoke-Command で使用する場合、Using 変数は、スクリプト ブロックがリモート コンピューター上で呼び出された場合にのみ有効です。</value>
+  </data>
+  <data name="InvalidBracedVariableReference" xml:space="preserve">
+    <value>変数参照が無効です。変数名がありません。</value>
+  </data>
+  <data name="InvalidVariableReferenceWithDrive" xml:space="preserve">
+    <value>変数参照が無効です。':' の後に有効な変数名の文字がありませんでした。${} で名前を区切ることを検討してください。</value>
+  </data>
+  <data name="TooManyErrors" xml:space="preserve">
+    <value>報告されなかった解析エラーがあります。 報告されたエラーを修正して、もう一度お試しください。</value>
+  </data>
+  <data name="MissingTypename" xml:space="preserve">
+    <value>'[' の後に型名がありません。</value>
+  </data>
+  <data name="AllStream" xml:space="preserve">
+    <value>* ストリーム</value>
+  </data>
+  <data name="DebugStream" xml:space="preserve">
+    <value>ストリームのデバッグ</value>
+  </data>
+  <data name="ErrorStream" xml:space="preserve">
+    <value>エラー ストリーム</value>
+  </data>
+  <data name="OutputStream" xml:space="preserve">
+    <value>出力ストリーム</value>
+  </data>
+  <data name="StreamAlreadyRedirected" xml:space="preserve">
+    <value>このコマンドの {0} は既にリダイレクトされています。</value>
+  </data>
+  <data name="VerboseStream" xml:space="preserve">
+    <value>詳細ストリーム</value>
+  </data>
+  <data name="WarningStream" xml:space="preserve">
+    <value>警告ストリーム</value>
+  </data>
+  <data name="MissingStatementAfterKeyword" xml:space="preserve">
+    <value>キーワード '{0}' の後にステートメント本文がありません。</value>
+  </data>
+  <data name="ParallelAndSequenceBlockNotSupportedInDataSection" xml:space="preserve">
+    <value>Parallel および sequence ブロックは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+  </data>
+  <data name="UnexpectedKeyword" xml:space="preserve">
+    <value>予期しないキーワード '{0}' があります。</value>
+  </data>
+  <data name="VoidTypeConstraintNotAllowed" xml:space="preserve">
+    <value>[void] は、パラメーター型として使用することや、代入の左辺として使用することはできません。</value>
+  </data>
+  <data name="CannotInvoke" xml:space="preserve">
+    <value>このメソッドは呼び出せません。</value>
+  </data>
+  <data name="HashtableToObjectConversionNotSupportedInDataSection" xml:space="preserve">
+    <value>ハッシュテーブルを次の型のオブジェクトに変換できません: {0}。ハッシュテーブルからオブジェクトへの変換は、制限付き言語モードまたは Data セクション内ではサポートされていません。</value>
+  </data>
+  <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
+    <value>引数は定数である必要があります。</value>
+  </data>
+  <data name="RequiresInvalidStringArgument" xml:space="preserve">
+    <value>{0} パラメーターの引数が無効です。有効な文字列引数を指定してください。</value>
+  </data>
+  <data name="RequiresModuleInvalid" xml:space="preserve">
+    <value>Module パラメーターの引数が無効です。{0}</value>
+  </data>
+  <data name="RequiresVersionInvalid" xml:space="preserve">
+    <value>Version パラメーターの引数が無効です。有効な PowerShell バージョンを major.minor 形式で指定してください。</value>
+  </data>
+  <data name="RequiresPSEditionInvalid" xml:space="preserve">
+    <value>{0} パラメーターの引数が無効です。有効な PowerShell エディションを指定してください。</value>
+  </data>
+  <data name="RequiresPSEditionValueIsAlreadySpecified" xml:space="preserve">
+    <value>{0} パラメーターの引数に重複する値が含まれています。重複する PowerShell エディション値を指定しないでください。</value>
+  </data>
+  <data name="WildCardModuleNameError" xml:space="preserve">
+    <value>モジュール名に対してワイルドカード文字はサポートされていません。</value>
+  </data>
+  <data name="InvokeMethodConstrainedLanguage" xml:space="preserve">
+    <value>メソッドを呼び出せません。メソッドの呼び出しは、この言語モードではコア型に対してのみサポートされています。</value>
+  </data>
+  <data name="PropertySetConstrainedLanguage" xml:space="preserve">
+    <value>プロパティを設定できません。プロパティの設定は、この言語モードではコア型に対してのみサポートされています。</value>
+  </data>
+  <data name="ConfigurationInvalidPropertyName" xml:space="preserve">
+    <value>リソース '{0}' の属性名が見つかりましたが、これは無効です。属性名は単純な文字列である必要があり、変数や式を含むことはできません。'{1}' を単純な文字列に置き換えてください。</value>
+  </data>
+  <data name="InvalidInstanceProperty" xml:space="preserve">
+    <value>メンバー '{0}' は無効です。有効なメンバー:
+'{1}'。</value>
+  </data>
+  <data name="MissingBraceInObjectDefinition" xml:space="preserve">
+    <value>オブジェクト定義に '{' がありません。</value>
+  </data>
+  <data name="RequiredNameOrExpressionMissing" xml:space="preserve">
+    <value>必要な名前または式がありませんでした。</value>
+  </data>
+  <data name="SchemaFileNotFound" xml:space="preserve">
+    <value>スキーマ ファイル {0} が見つかりませんでした。構成ステートメントで指定されたモジュールに schema.mof ファイルが含まれていることを確認して、スクリプトをもう一度実行してください。</value>
+  </data>
+  <data name="DataSectionAllowedCommandDisallowed" xml:space="preserve">
+    <value>データ セクションを定義できません。追加でサポートされるコマンドの定義は、この言語モードではサポートされていません。</value>
+  </data>
+  <data name="MissingCurlyInConfigurationStatement" xml:space="preserve">
+    <value>構成ステートメントに '{' がありません。</value>
+  </data>
+  <data name="ExceptionParsingMOFFile" xml:space="preserve">
+    <value>MOF ファイル '{0}':{1} の解析で例外が発生しました。</value>
+  </data>
+  <data name="MissingConfigurationName" xml:space="preserve">
+    <value>構成の名前がありません。不足している名前を、単純な名前か、文字列、または文字列値の式で指定してください。</value>
+  </data>
+  <data name="ModuleNotFoundDuringParse" xml:space="preserve">
+    <value>モジュール '{0}' が見つかりません。</value>
+  </data>
+  <data name="MultipleModuleEntriesFoundDuringParse" xml:space="preserve">
+    <value>モジュール '{0}' のバージョンが複数見つかりました。このシステムで使用できるバージョンを 'Get-Module -ListAvailable -FullyQualifiedName {0}' で確認し、完全修飾名 '@{{ModuleName="{0}"; RequiredVersion="Version"}}' を使用してください。</value>
+  </data>
+  <data name="MissingThrottleLimit" xml:space="preserve">
+    <value>foreach ステートメントの ThrottleLimit パラメーターに値がありません。パラメーターにスロットル制限を指定してください。</value>
+    <comment>'ThrottleLimit' must not be localized.</comment>
+  </data>
+  <data name="ThrottleLimitRequiresParallelFlag" xml:space="preserve">
+    <value>ThrottleLimit パラメーターは、Parallel パラメーターを使用する foreach ステートメントでのみサポートされます。</value>
+    <comment>'ThrottleLimit' and 'Parallel' must not be localized.</comment>
+  </data>
+  <data name="ConfigurationBodyEmpty" xml:space="preserve">
+    <value>構成ブロックの結果が null 値または空でした。ブロック内に構成が定義されていることを確認してください。</value>
+  </data>
+  <data name="UnexpectedNameForType" xml:space="preserve">
+    <value>'{0}' リソースは構成 1 つにつき 1 回しか使用できないため、名前を付けることはできません。'{1}' を削除して、スクリプトをもう一度実行してください。</value>
+  </data>
+  <data name="IncompletePropertyAssignmentBlock" xml:space="preserve">
+    <value>インスタンス定義内に不完全なプロパティ代入ブロックがあります。</value>
+  </data>
+  <data name="MissingEqualsInPropertyAssignmentBlock" xml:space="preserve">
+    <value>プロパティ代入内のキーの後に '=' 演算子がありません。</value>
+  </data>
+  <data name="DuplicatePropertyInInstanceDefinition" xml:space="preserve">
+    <value>1 つのインスタンス定義内で、重複するプロパティ割り当てを行うことはできません。</value>
+  </data>
+  <data name="DuplicateCimClassDefinition" xml:space="preserve">
+    <value>スキーマ ファイル '{1}' の処理中に、'{0}' の 2 つ目の CIM クラス定義が見つかりました。このクラスは、ファイル '{2}' で既に定義されています。冗長な定義を削除して、もう一度お試しください。</value>
+  </data>
+  <data name="DuplicateKeywordDefinition" xml:space="preserve">
+    <value>リソース名 '{0}' は、既に別のリソースまたは構成によって使用されています。</value>
+  </data>
+  <data name="ClassNameNotSameAsDefiningFile" xml:space="preserve">
+    <value>クラス名 '{0}' は、それが定義されているファイルの名前 '{1}' と一致しません。ファイル名とクラス名のいずれかを変更して一致させてください</value>
+  </data>
+  <data name="DuplicateResourceIdInNodeStatement" xml:space="preserve">
+    <value>ノード '{1}' の仕様の処理中に、重複するリソース識別子 '{0}' が見つかりました。このリソースの名前を変更し、ノードの仕様内で一意になるようにしてください。</value>
+  </data>
+  <data name="UnexpectedTokenInDynamicKeyword" xml:space="preserve">
+    <value>動的キーワード '{0}' body ステートメント内の名前とスクリプト ブロックの間に空白がありません。</value>
+  </data>
+  <data name="EmptyFunctionNameInFunctionDefinitionDictionary" xml:space="preserve">
+    <value>定義する関数のディクショナリに含めるエントリのキー プロパティは、関数名として使用されるため、空にすることはできません。空でない文字列をキー プロパティの値に指定して、操作をもう一度お試しください。</value>
+  </data>
+  <data name="GetBadlyFormedRequiredResourceId" xml:space="preserve">
+    <value>リソース '{1}' の Requires リストに含まれるリソース参照 '{0}' の形式が無効です。必須リソース名は '[&lt;型名&gt;]&lt;名前&gt;' の形式にする必要があり、使用できる文字は英字、数字、スペース、'_'、'-'、'.' および '\' です。</value>
+    <comment>The capitalized word Requires should not be localized. The words &lt;typename&gt; and &lt;name&gt; should be localized but the &lt;&gt; characters must be preserved.</comment>
+  </data>
+  <data name="GetBadlyFormedExclusiveResourceId" xml:space="preserve">
+    <value>リソース '{1}' の exclusive リストに含まれるリソース参照 '{0}' の形式が無効です。排他リソース名は '&lt;型名&gt;\&lt;名前&gt;' の形式にする必要があり、スペースを含めることはできません。</value>
+  </data>
+  <data name="GetPullModeNeedConfigurationSource" xml:space="preserve">
+    <value>PartialConfiguration '{0}' は、ConfigurationSource プロパティを必要とする Pull モードに設定されています。</value>
+  </data>
+  <data name="NullEntryInVariablesDefinitionList" xml:space="preserve">
+    <value>スクリプト ブロック スコープに作成する変数エントリのリスト内に null 値エントリが見つかりました。インデックス {0} のエントリを削除するか、null 値以外のエントリに置き換えて、もう一度お試しください。</value>
+  </data>
+  <data name="NullFunctionBodyInFunctionDefinitionDictionary" xml:space="preserve">
+    <value>関数 '{0}' を定義するスクリプト ブロックを null 値または空にすることはできません。関数定義ディクショナリに空でないスクリプト ブロックを指定して、操作をもう一度お試しください。</value>
+  </data>
+  <data name="ImportDscResourceNeedParams" xml:space="preserve">
+    <value>Import-DscResource 動的キーワードの構文は次のとおりです:
+
+Import-DscResource  [-Name &lt;ResourceName(s)&gt;]  [-ModuleName  &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;]。
+
+Name          : インポートする 1 つまたは複数のリソースの名前。
+ModuleName    : インポートする 1 つまたは複数のモジュールを表す、モジュール名または ModuleSpecification オブジェクト。
+ModuleVersion : インポートするモジュールのバージョン。これを使用する場合、ModuleName は 1 つのモジュールのみを表す名前である必要があります。</value>
+  </data>
+  <data name="ImportDscResourceMultipleModulesNotSupportedWithName" xml:space="preserve">
+    <value>Import-DscResource 動的キーワードは、Name パラメーターが指定されている場合には 1 つのモジュールのみをサポートします。</value>
+  </data>
+  <data name="ImportDscResourcePositionalParamsNotSupported" xml:space="preserve">
+    <value>位置指定パラメーターは、Import-DscResource 動的キーワードではサポートされていません。Import-DscResource 動的キーワードの構文は次のとおりです: "Import-DscResource  [-Name &lt;ResourceName(s)&gt;] [-ModuleName &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;]</value>
+  </data>
+  <data name="DscResourcesNotFoundDuringParsing" xml:space="preserve">
+    <value>リソース '{0}' を読み込めません: リソースが見つかりません。</value>
+  </data>
+  <data name="ConfigurationNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>構成キーワードは constrainedLanguage モードでは使用できません。</value>
+  </data>
+  <data name="InvalidConfigurationName" xml:space="preserve">
+    <value>構成名 '{0}' は無効です。標準的な名前に使用できる文字は、英字 (a-z、A-Z)、数字 (0-9)、ピリオド (.)、ハイフン (-)、アンダースコア (_) のみです。名前を null 値または空にすることはできません。先頭は英字である必要があります。</value>
+  </data>
+  <data name="UnsupportedNamedBlockInConfiguration" xml:space="preserve">
+    <value>構成では本文内の End ブロックのみサポートされています。Begin、Process、および DynamicParam ブロックは、構成内では使用できません。</value>
+  </data>
+  <data name="CimDeserializationError" xml:space="preserve">
+    <value>CIM 逆シリアライザーで、ファイル {0} の逆シリアル化中にエラーが発生しました。</value>
+  </data>
+  <data name="InvalidValueForProperty" xml:space="preserve">
+    <value>'{0}' は、クラス '{2}' のプロパティ '{1}' の値として有効ではありません。値を次の文字列のいずれかに変更してください: {3}。</value>
+  </data>
+  <data name="UnsupportedValueForProperty" xml:space="preserve">
+    <value>'{0}' の値のうち少なくとも 1 つは、サポートされていないか、クラス '{2}' のプロパティ '{1}' に対して有効ではありません。サポートされている以下の値のみ指定できます:
+{3}。</value>
+  </data>
+  <data name="MissingValueForMandatoryProperty" xml:space="preserve">
+    <value>リソース '{0}' では、型 '{1}' の値をプロパティ '{2}' 用に指定する必要があります。</value>
+  </data>
+  <data name="ValueNotInRange" xml:space="preserve">
+    <value>リソース '{1}' のプロパティ '{0}' の値 '{2}' は、有効である '{3}' から '{4}' の範囲から外れています。</value>
+  </data>
+  <data name="CannotLoadPowerShellDataFile" xml:space="preserve">
+    <value>以下のエラーが発生したため、PowerShell データ ファイル '{0}' を読み込めませんでした:
+{1}</value>
+  </data>
+  <data name="CannotResolvePowerShellDataFilePath" xml:space="preserve">
+    <value>パス '{0}' を単一の .psd1 ファイルに解決できません。</value>
+  </data>
+  <data name="InvalidPowerShellDataFile" xml:space="preserve">
+    <value>PowerShell データ ファイル '{0}' は、ハッシュテーブル オブジェクトとして評価できないため無効です。</value>
+  </data>
+  <data name="ConfigurationNotAllowedOnWinPE" xml:space="preserve">
+    <value>構成は WinPE ではサポートされていません。</value>
+  </data>
+  <data name="EmptyExpressionRequiresANonDefaultMode" xml:space="preserve">
+    <value>Where() 演算子に渡す式が null 値の場合、選択モード引数には Default 以外の値を指定する必要があります。mode 引数の値を Default 以外に変更して、もう一度スクリプトを実行してください。</value>
+  </data>
+  <data name="ForEachBadGenericConversionTypeSpecified" xml:space="preserve">
+    <value>ForEach() に渡されたジェネリック コレクション型 [{0}] の型引数が多すぎます。指定された型を、型引数が 1 つだけのジェネリック コレクションに変更して、スクリプトをもう一度実行してください。</value>
+  </data>
+  <data name="ForEachTypeConversionFailed" xml:space="preserve">
+    <value>ForEach() 演算子に渡されたターゲット型 [{0}] に入力を変換できません。指定した型をチェックして、スクリプトをもう一度実行してください。</value>
+  </data>
+  <data name="ForEachNotSupportCleanBlock" xml:space="preserve">
+    <value>'clean' ブロックを含むスクリプト ブロックは、'ForEach' メソッドではサポートされていません。</value>
+  </data>
+  <data name="NumberToReturnMustBeGreaterThanZero" xml:space="preserve">
+    <value>Where() 演算子の第 3 引数に指定する 'numberToReturn' は 0 よりも大きい値である必要があります。引数の値を修正して、スクリプトをもう一度実行してください。</value>
+  </data>
+  <data name="RedirectionStreamCanOnlyMergeToOutputStream" xml:space="preserve">
+    <value>リダイレクトでは、出力ストリームに別のストリームをマージすることのみ可能です。リダイレクト操作を修正して出力ストリーム内にマージしてから、スクリプトをもう一度実行してください。</value>
+  </data>
+  <data name="ForEachNonexistentMemberReference" xml:space="preserve">
+    <value>ForEach() 演算子が、ターゲット オブジェクトのメンバー '{0}' を見つけられませんでした。指定されたメンバーが存在することを確認して、スクリプトをもう一度実行してください。</value>
+  </data>
+  <data name="UnsupportedReservedKeyword" xml:space="preserve">
+    <value>この言語バージョンでは '{0}' キーワードがサポートされていません。</value>
+  </data>
+  <data name="UnsupportedReservedProperty" xml:space="preserve">
+    <value>この言語バージョンでは '{0}' プロパティがサポートされていません。</value>
+  </data>
+  <data name="DuplicateQualifier" xml:space="preserve">
+    <value>'{0}' 修飾子が重複しています</value>
+  </data>
+  <data name="ModifiersCannotBeCombined" xml:space="preserve">
+    <value>修飾子 '{0}' を '{1}' と組み合わせることはできません</value>
+  </data>
+  <data name="MissingUsingStatementDirective" xml:space="preserve">
+    <value>using ディレクティブがありません</value>
+  </data>
+  <data name="MissingNamespaceAlias" xml:space="preserve">
+    <value>名前空間エイリアスがありません</value>
+  </data>
+  <data name="MissingEqualsInUsingAlias" xml:space="preserve">
+    <value>演算子 '=' がありません</value>
+  </data>
+  <data name="MissingUsingItemName" xml:space="preserve">
+    <value>using 名がありません</value>
+  </data>
+  <data name="VariableNotLocal" xml:space="preserve">
+    <value>変数がメソッド内で代入されていません。</value>
+  </data>
+  <data name="IncompleteMemberDefinition" xml:space="preserve">
+    <value>プロパティ名またはメソッド定義がありません。</value>
+  </data>
+  <data name="MemberAlreadyDefined" xml:space="preserve">
+    <value>メンバー '{0}' は既に定義されています。</value>
+  </data>
+  <data name="TooManyTypes" xml:space="preserve">
+    <value>クラス メンバーに対して指定できる型は 1 つだけです。</value>
+  </data>
+  <data name="TypeCreationError" xml:space="preserve">
+    <value>型 "{0}" の作成中にエラーが発生しました。エラー メッセージ:
+{1}</value>
+  </data>
+  <data name="CannotConvertValue" xml:space="preserve">
+    <value>値を型 "{0}" に変換できません。</value>
+  </data>
+  <data name="PropertyNotFoundForAttribute" xml:space="preserve">
+    <value>属性 '{1}' のプロパティ '{0}' が見つかりません。次のいずれかのプロパティを指定してください: {2}。</value>
+  </data>
+  <data name="AttributeNotAllowedOnDeclaration" xml:space="preserve">
+    <value>属性 '{0}' は、この宣言に対しては無効です。有効なのは '{1}' 宣言に対してのみです。</value>
+  </data>
+  <data name="ParameterAttributeArgumentNeedsToBeConstant" xml:space="preserve">
+    <value>属性引数は定数である必要があります。</value>
+  </data>
+  <data name="ResourceNotDefined" xml:space="preserve">
+    <value>DSC リソース '{0}' は定義されていません。Import-DSCResource を使用してリソースをインポートしてください。</value>
+  </data>
+  <data name="DynamicKeywordPreParseException" xml:space="preserve">
+    <value>動的キーワード '{0}' と詳細 '{1}' の前解析処理で例外が発生しました。</value>
+  </data>
+  <data name="DynamicKeywordPostParseException" xml:space="preserve">
+    <value>動的キーワード '{0}' と詳細 '{1}' の後解析処理で例外が発生しました。</value>
+  </data>
+  <data name="WorkflowNotSupportedInPowerShellCore" xml:space="preserve">
+    <value>ワークフローは PowerShell 6+ ではサポートされていません。</value>
+  </data>
+  <data name="MetaConfigurationUsedInRegularConfig" xml:space="preserve">
+    <value>メタ構成リソース {0} は、通常の構成内では使用できません。メタ構成リソースは [DscLocalConfigurationManager()] 属性を持つ構成内でを使用してください。</value>
+  </data>
+  <data name="RegularResourceUsedInMetaConfig" xml:space="preserve">
+    <value>通常の DSC リソース {0} は、メタ構成内では使用できません。</value>
+  </data>
+  <data name="GetSteppablePipelineFromWrongThread" xml:space="preserve">
+    <value>このスレッドには、SteppablePipeline を取得して実行するために使用できる実行空間がありません。System.Management.Automation.Runspaces.Runspace 型の DefaultRunspace プロパティで提供してください。あなたが SteppablePipeline を得ようとした取得元スクリプト ブロックはこちらです: {0}</value>
+  </data>
+  <data name="AmbiguousConversion" xml:space="preserve">
+    <value>{0} から {1} への有効な変換が複数存在します。</value>
+  </data>
+  <data name="CannotCall" xml:space="preserve">
+    <value>呼び出しを実行できません。</value>
+  </data>
+  <data name="CannotRetrieveTypeInformation" xml:space="preserve">
+    <value>型情報を取得できません。</value>
+  </data>
+  <data name="CouldNotGetDispId" xml:space="preserve">
+    <value>{0} のディスパッチ ID を取得できませんでした (エラー: {1})。</value>
+  </data>
+  <data name="DispBadParamCount" xml:space="preserve">
+    <value>"{0}" および引数の数 "{1}" に対するオーバーロードが見つかりません</value>
+  </data>
+  <data name="DispMemberNotFound" xml:space="preserve">
+    <value>{0} の呼び出し中にエラーが発生しました。メンバーが見つかりませんでした。</value>
+  </data>
+  <data name="DispNoNamedArgs" xml:space="preserve">
+    <value>{0} の呼び出し中にエラーが発生しました。名前付き引数はサポートされていません。</value>
+  </data>
+  <data name="DispOverflow" xml:space="preserve">
+    <value>{0} の呼び出し中にエラーが発生しました。オーバーフローが検出されました。</value>
+  </data>
+  <data name="DispParamNotOptional" xml:space="preserve">
+    <value>{0} の呼び出し中にエラーが発生しました。必須のパラメーターが省略されています。</value>
+  </data>
+  <data name="DispTypeMismatch" xml:space="preserve">
+    <value>"{0}" の設定時に例外が発生しました: 型 "{2}" の値 "{1}" を型 "{3}" に変換できません。</value>
+  </data>
+  <data name="GetIDsOfNamesInvalid" xml:space="preserve">
+    <value>IDispatch::GetIDsOfNames が、{0} に対して予期しない動作をしました。</value>
+  </data>
+  <data name="SetComObjectDataFailed" xml:space="preserve">
+    <value>Marshal.SetComObjectData に失敗しました。</value>
+  </data>
+  <data name="UnexpectedVarEnum" xml:space="preserve">
+    <value>予期しない VarEnum {0} があります。</value>
+  </data>
+  <data name="UnsupportedHandlerType" xml:space="preserve">
+    <value>サポートされていない型のイベント ハンドラーを渡そうとしています。</value>
+  </data>
+  <data name="ConfigurationNotSupportedInPowerShellCore" xml:space="preserve">
+    <value>構成キーワードは PowerShell 6+ ではサポートされていません。</value>
+  </data>
+  <data name="MethodHasCodePathNotReturn" xml:space="preserve">
+    <value>メソッド内の一部のコード パスは値を返していません。</value>
+  </data>
+  <data name="VoidMethodHasReturn" xml:space="preserve">
+    <value>void メソッド内の return ステートメントは無効です。</value>
+  </data>
+  <data name="NonVoidMethodMissingReturnValue" xml:space="preserve">
+    <value>void ではないメソッド内に無効な return ステートメントがあります。</value>
+  </data>
+  <data name="MissingTypeBody" xml:space="preserve">
+    <value>宣言 '{0}' に '{0}' 本文がありません。</value>
+  </data>
+  <data name="CycleInEnumInitializers" xml:space="preserve">
+    <value>初期化式に循環が含まれているため、列挙型を定義できません。</value>
+  </data>
+  <data name="EnumeratorValueOutOfBounds" xml:space="preserve">
+    <value>列挙子の値が {0} に対して大きすぎ、または小さすぎます。</value>
+  </data>
+  <data name="EnumeratorValueMustBeConstant" xml:space="preserve">
+    <value>列挙子の値は定数値である必要があります。</value>
+  </data>
+  <data name="DynamicKeywordSemanticCheckException" xml:space="preserve">
+    <value>動的キーワード '{0}' と詳細 '{1}' のセマンティック チェックを実行中に例外が発生しました。</value>
+  </data>
+  <data name="UnsupportedPropertyTypeOfDSCResourceClass" xml:space="preserve">
+    <value>DSC リソース クラス '{2}' の型 '{1}' を持つ '{0}' プロパティはサポートされていません。</value>
+  </data>
+  <data name="MissingMethodParameterList" xml:space="preserve">
+    <value>クラス メソッド パラメーター リストに '(' がありません。</value>
+  </data>
+  <data name="NamedBlockNotAllowedInMethod" xml:space="preserve">
+    <value>名前付きブロックは、クラス メソッド内では使用できません。</value>
+  </data>
+  <data name="ParamBlockNotAllowedInMethod" xml:space="preserve">
+    <value>param ブロックは、クラス メソッド内では使用できません。</value>
+  </data>
+  <data name="SealedBaseClass" xml:space="preserve">
+    <value>シールド クラス '{0}' から継承することはできません。</value>
+  </data>
+  <data name="TypeNameExpected" xml:space="preserve">
+    <value>型名が必要です。</value>
+  </data>
+  <data name="InvalidUnderlyingType" xml:space="preserve">
+    <value>'{0}' は列挙型の基になる型として有効ではありません。組み込み整数型 (byte、sbyte、short、ushort、int、uint、long、ulong) のいずれかにしてください</value>
+  </data>
+  <data name="InterfaceNameExpected" xml:space="preserve">
+    <value>'{0}': インターフェイス名が必要です。</value>
+  </data>
+  <data name="BaseClassNoDefaultCtor" xml:space="preserve">
+    <value>基底クラス '{0}' に、引数なしのコンストラクターがありません。</value>
+  </data>
+  <data name="SubtypeArray" xml:space="preserve">
+    <value>基本型 '{0}' は無効です。配列を基本型にすることはできません。</value>
+  </data>
+  <data name="SubtypeUnclosedGeneric" xml:space="preserve">
+    <value>基本型 '{0}' は無効です。パラメーターが指定されていないジェネリックを基本型にすることはできません。</value>
+  </data>
+  <data name="MissingBaseCtorCall" xml:space="preserve">
+    <value>基底クラス コンストラクター呼び出しの ':' の後に 'base' がありません。</value>
+  </data>
+  <data name="ConstructorCantHaveReturnType" xml:space="preserve">
+    <value>コンストラクターは戻り値の型を指定できません。</value>
+  </data>
+  <data name="DscResourceMissingDefaultConstructor" xml:space="preserve">
+    <value>DSC リソース '{0}' には既定のコンストラクターがありません。</value>
+  </data>
+  <data name="DscResourceMissingGetMethod" xml:space="preserve">
+    <value>DSC リソース '{0}' には、パラメーターを取らず [{0}] を返す Get メソッドがありません。</value>
+  </data>
+  <data name="DscResourceMissingKeyProperty" xml:space="preserve">
+    <value>DSC リソース '{0}' には、少なくとも 1 つのキー プロパティが必要です (構文 [DscProperty(Key)] を使用)。</value>
+  </data>
+  <data name="DscResourceMissingSetMethod" xml:space="preserve">
+    <value>DSC リソース '{0}' には、パラメーターを取らず [void] を返す Set メソッドがありません。</value>
+  </data>
+  <data name="DscResourceMissingTestMethod" xml:space="preserve">
+    <value>DSC リソース '{0}' には、パラメーターを取らず [bool] を返す Test メソッドがありません。</value>
+  </data>
+  <data name="StaticConstructorCantHaveParameters" xml:space="preserve">
+    <value>静的コンストラクターがパラメーターを取ることはできません。</value>
+  </data>
+  <data name="TypeNotAllowedForProperty" xml:space="preserve">
+    <value>型 '{0}' はプロパティに対しては使用できません。</value>
+  </data>
+  <data name="TypeNotAllowedForParameter" xml:space="preserve">
+    <value>型 '{0}' はパラメーターに対しては使用できません。</value>
+  </data>
+  <data name="NonStaticMemberAccessInStaticMember" xml:space="preserve">
+    <value>静的メソッドの中や静的プロパティの初期化子の中では、静的でないメンバー '{0}' にはアクセスできません。</value>
+  </data>
+  <data name="FailToParseModuleScriptFile" xml:space="preserve">
+    <value>モジュール スクリプト ファイル '{0}' を解析できませんでした。エラー:
+'{1}'。</value>
+  </data>
+  <data name="CantActivateDocumentInPowerShellCore" xml:space="preserve">
+    <value>PowerShell ではドキュメントを実行できません: {0}。</value>
+  </data>
+  <data name="MultipleTypeConstraintsOnMethodParam" xml:space="preserve">
+    <value>メソッド パラメーターに対して複数の型制約は許可されません。</value>
+  </data>
+  <data name="ScriptContainedMaliciousContent" xml:space="preserve">
+    <value>このスクリプトには悪意あるコンテンツが含まれており、ウイルス対策ソフトウェアによってブロックされました。</value>
+  </data>
+  <data name="InvalidLocalConfigurationManagerProperty" xml:space="preserve">
+    <value>LocalConfigurationManager リソース内では '{0}' を指定できません。代わりに Settings を使用するか、次の値のみを使用してください: {1}。</value>
+  </data>
+  <data name="PropertyInGenericType" xml:space="preserve">
+    <value>'{0}' はジェネリック型の中で定義されています。</value>
+  </data>
+  <data name="AmbiguousTypeReference" xml:space="preserve">
+    <value>型名 '{0}' はあいまいです。'{1}' または '{2}' が正しいと思われます。</value>
+  </data>
+  <data name="UsingMustBeAtStartOfScript" xml:space="preserve">
+    <value>'using' ステートメントは、スクリプト内に他のいかなるステートメントよりも早く出現する必要があります。</value>
+  </data>
+  <data name="UsingStatementNotSupported" xml:space="preserve">
+    <value>この 'using' ステートメントの構文はサポートされていません。</value>
+  </data>
+  <data name="InvalidNamespaceValue" xml:space="preserve">
+    <value>'using' ステートメントで指定された名前空間に無効な文字が含まれています。</value>
+  </data>
+  <data name="InformationStream" xml:space="preserve">
+    <value>情報ストリーム</value>
+  </data>
+  <data name="DscResourceInvalidKeyProperty" xml:space="preserve">
+    <value>キー プロパティが無効です。キー プロパティは、[string]、符号付き/符号なし整数、または列挙型である必要があります。</value>
+  </data>
+  <data name="DscResourceInvalidGetMethod" xml:space="preserve">
+    <value>Get メソッドが無効です。Get メソッドは、パラメーターを取らず [{0}] を返す必要があります。</value>
+  </data>
+  <data name="ErrorLoadingAssembly" xml:space="preserve">
+    <value>アセンブリ '{0}' を読み込むことができません。</value>
+  </data>
+  <data name="CannotLoadAssemblyFromUncPath" xml:space="preserve">
+    <value>UNC パス '{0}' のアセンブリは使用できません。</value>
+  </data>
+  <data name="CannotLoadAssemblyWithUriSchema" xml:space="preserve">
+    <value>URI スキーマ '{0}' のアセンブリを使用できません。</value>
+  </data>
+  <data name="MissingStatementTerminator" xml:space="preserve">
+    <value>改行またはセミコロンがありません。</value>
+  </data>
+  <data name="MissingThis" xml:space="preserve">
+    <value>プロパティの割り当てができません。'{0}{1}' を使用してください。</value>
+  </data>
+  <data name="InvalidValueForUsingItemName" xml:space="preserve">
+    <value>'{0}' は using 名に対して無効な値です。</value>
+  </data>
+  <data name="MissingTypeInStaticPropertyAssignment" xml:space="preserve">
+    <value>プロパティの割り当てができません。'{0}{1}' を使用してください。</value>
+  </data>
+  <data name="DebugModeShouldHaveOneValue" xml:space="preserve">
+    <value>DebugMode には値を 1 つだけ指定してください。</value>
+  </data>
+  <data name="LabelNotFound" xml:space="preserve">
+    <value>メソッド内にラベル '{0}' が見つかりません。</value>
+  </data>
+  <data name="ConvertCimPropertyToObjectPropertyFailed" xml:space="preserve">
+    <value>CimProperty {0} の値をクラス {1} のプロパティ値に変換できませんでした。</value>
+  </data>
+  <data name="ExpectArrayTypeOfPropertyInPSClass" xml:space="preserve">
+    <value>PowerShell クラス {1} のプロパティ {0} は、配列型として宣言されていませんが、構成インスタンス内でインスタンス配列型として定義されています。</value>
+  </data>
+  <data name="InstantiatePSClassObjectFailed" xml:space="preserve">
+    <value>PowerShell クラス {0} のオブジェクトを作成できませんでした。</value>
+  </data>
+  <data name="InvalidHashtable" xml:space="preserve">
+    <value>Desired State Configuration リソース {0} に指定されたハッシュテーブルが無効です。キーまたは値を null 値または空にすることはできません。</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>Desired State Configuration リソース {0} に対して指定されたユーザー名が無効です。ユーザー名を null 値または空にすることはできません。</value>
+  </data>
+  <data name="InvalidUserName" xml:space="preserve">
+    <value>Desired State Configuration リソース {0} に対して指定されたユーザー名が無効です。ユーザー名を null 値または空にすることはできません。</value>
+  </data>
+  <data name="PropertyNotDeclaredInPSClass" xml:space="preserve">
+    <value>プロパティ {0} は、PowerShell クラス {1} 内で宣言されていませんが、構成インスタンス内で定義されています。</value>
+  </data>
+  <data name="DisabledRefreshModeNotValidForPartialConfig" xml:space="preserve">
+    <value>PartialConfiguration '{0}' の更新モードが Disabled に設定されていますが、これは部分構成用のモードとして有効ではありません。更新モード Pull または Push を使用してください。</value>
+  </data>
+  <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
+    <value>型を作成できません。この言語モードでは、コア型のみサポートされています。</value>
+  </data>
+  <data name="ImportDscResourceInsideNode" xml:space="preserve">
+    <value>Import-DscResource を Node コンテキスト内で指定することはできません</value>
+  </data>
+  <data name="DefaultAllowedVariablesInDataSection" xml:space="preserve">
+    <value>$PSCulture、$PSUICulture、$true、$false、$null</value>
+  </data>
+  <data name="AssignmentStatementToAutomaticNotSupported" xml:space="preserve">
+    <value>型 '{1}' の自動変数 '{0}' に対する代入はできません</value>
+  </data>
+  <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
+    <value>Resource {0} では PsDscRunAsCredential 値が既に指定されているため、PsDscRunAsCredential の使用が競合しています。この複合リソースで使用できる PsDscRunAsCredential は 1 つだけです。</value>
+  </data>
+  <data name="PsDscMissingSchemaStore" xml:space="preserve">
+    <value>"{0}" に DSC スキーマ ストアが見つかりません。PSDesiredStateConfiguration v3 モジュールがインストールされていることを確認してください。</value>
+  </data>
+  <data name="ParserError" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="ScriptHasAdminBlockedContent" xml:space="preserve">
+    <value>このスクリプトは、ポリシー設定によって疑わしいコンテンツのフラグが付けられた内容を含んでおり、エラー コード {0} でブロックされました。詳しくは、管理者にお問い合わせください。</value>
+  </data>
+  <data name="CantInvokeCallOperatorAcrossLanguageBoundaries" xml:space="preserve">
+    <value>演算子 '&amp;' または '.' を使用して、言語の境界を越えたモジュール スコープ コマンドを呼び出すことはできません。</value>
+  </data>
+  <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>クラス キーワードは constrainedLanguage モードでは使用できません。</value>
+  </data>
+  <data name="MissingColonInTernaryExpression" xml:space="preserve">
+    <value>3 項式に ':' がありません。</value>
+  </data>
+  <data name="EmptyPipelineChainElement" xml:space="preserve">
+    <value>パイプライン チェーン演算子の後にはパイプラインが必須です。</value>
+  </data>
+  <data name="BackgroundOperatorInPipelineChain" xml:space="preserve">
+    <value>バックグラウンド演算子は、パイプライン チェーンの末尾でのみ使用できます。</value>
+  </data>
+  <data name="InvokingCleanBlockNotSupported" xml:space="preserve">
+    <value>スクリプト ブロックの 'clean' ブロックに対する直接呼び出しはサポートされていません。</value>
+  </data>
+  <data name="WDACParserConfigKeywordLogTitle" xml:space="preserve">
+    <value>パーサー構成キーワード</value>
+  </data>
+  <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
+    <value>Configuration キーワードは、信頼されていないスクリプトの制約付き言語モードでは使用できません。</value>
+  </data>
+  <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
+    <value>パーサー クラス キーワード</value>
+  </data>
+  <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
+    <value>Class キーワードは、信頼されていないスクリプトの制約付き言語モードでは使用できません。</value>
+  </data>
+  <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
+    <value>パーサー データ セクション SupportedCommand</value>
+  </data>
+  <data name="WDACParserDSSupportedCommandLogMessage" xml:space="preserve">
+    <value>SupportedCommand パラメーターを含んだ Data セクションは、信頼されていないスクリプトの制限付き言語モードでは使用できません。</value>
+  </data>
+  <data name="WDACParserModuleScopeCallOperatorLogTitle" xml:space="preserve">
+    <value>モジュール スコープ呼び出し演算子</value>
+  </data>
+  <data name="WDACParserModuleScopeCallOperatorLogMessage" xml:space="preserve">
+    <value>制約付き言語モードでは、モジュール スコープ呼び出し演算子は拒否されます。</value>
+  </data>
+  <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
+    <value>ForEach キーワード メソッド呼び出し</value>
+  </data>
+  <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
+    <value>制約付き言語モードで実行された場合、ForEach キーワードによる '{0}' イテレーション項目メソッドの呼び出しは失敗します。</value>
+  </data>
+  <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
+    <value>式評価に失敗する可能性があります</value>
+  </data>
+  <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
+    <value>ステップ可能なパイプラインをスクリプト ブロックから作成するには、そのスクリプト ブロック内で何らかの式を評価することが必要な場合があります。この式評価は、制約付き言語モードでは、式が定数値を表していない限り警告なしに失敗して 'null' を返します。</value>
+  </data>
+  <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">
+    <value>構成キーワードは ARM64 プロセッサではサポートされていません。</value>
+  </data>
+</root>

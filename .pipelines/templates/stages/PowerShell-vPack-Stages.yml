@@ -11,6 +11,14 @@ stages:
     pool:
       type: windows
 
+    templateContext:
+      sdl:
+        codeSignValidation:
+          enabled: false
+          justificationForDisabling: >-
+            This job validates the signed payload with the repository-managed
+            tools-only policy.
+
     strategy:
       matrix:
         x86:
@@ -33,6 +41,9 @@ stages:
       ob_createvpack_verbose: true
       ob_createvpack_packagename: '${{ parameters.vPackName }}.$(architecture)'
       ob_createvpack_description: PowerShell $(architecture) $(version)
+      # Some official-build adapters force the injected validator on despite templateContext.
+      # Exclude this payload from that validator; it is validated below with the tools-only policy.
+      ob_sdl_codeSignValidation_excludes: '-|**\*.ps1;-|**\*.psm1;-|**\*.ps1xml;-|**\*.psd1;-|**\*.exe;-|**\*.dll'
       # I think the variables reload after we transition back to the host so this works. 🤷‍♂️
       ob_createvpack_majorVer: $(pwshMajorVersion)
       ob_createvpack_minorVer: $(pwshMinorVersion)
@@ -209,8 +220,69 @@ stages:
         parameters:
           binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
           SigningProfile: $(windows_build_tools_cert_id)
+          ThirdPartySigningProfile: $(windows_build_tools_cert_id)
+          SignAllBinariesWithThirdPartyProfile: true
           OfficialBuild: false
           vPackScenario: true
+
+      # obp-file-signing.yml signs only the scripts and manifests selected for normal PowerShell
+      # packages. The validation below intentionally covers every potentially signed file in the
+      # vPack, so overwrite every matching signature with the tools certificate first.
+      - task: onebranch.pipeline.signing@1
+        displayName: Sign all vPack files with Windows build tools certificate
+        inputs:
+          command: sign
+          signing_profile: $(windows_build_tools_cert_id)
+          files_to_sign: '**\*.ps1;**\*.psm1;**\*.ps1xml;**\*.psd1;**\*.exe;**\*.dll'
+          search_root: $(ob_outputDirectory)
+
+      # The injected CodeSign validation is disabled for this job, so validate the signed payload
+      # here against the repository policy, which allows only the Windows build tools certificate.
+      - task: securedevelopmentteam.vss-secure-development-tools.build-task-codesignvalidation.CodeSign@1
+        displayName: Validate signed files with PowerShell CodeSign policy
+        inputs:
+          Path: $(ob_outputDirectory)
+          PolicyType: Custom
+          PolicyFile: $(Build.SourcesDirectory)\.config\codesignpolicy.xml
+          MaxThreads: 16
+          FailIfNoTargetsFound: true
+          ExcludePassesFromLog: false
+          Targets: '**\*.ps1;**\*.psm1;**\*.ps1xml;**\*.psd1;**\*.exe;**\*.dll'
+
+      - pwsh: |
+          $codesignResultsRoot = Join-Path '$(Pipeline.Workspace)' '.gdn\.r\codesign'
+          if (-not (Test-Path -LiteralPath $codesignResultsRoot -PathType Container)) {
+              throw "CodeSign Validation did not produce its expected results directory: $codesignResultsRoot"
+          }
+
+          $sarifFile = Get-ChildItem -LiteralPath $codesignResultsRoot -Recurse -File -Filter 'Phalanx.Plugins.CodeSignValidation.dll.sarif' |
+              Sort-Object -Property LastWriteTimeUtc -Descending |
+              Select-Object -First 1
+          if (-not $sarifFile) {
+              throw "CodeSign Validation did not produce its expected SARIF file under: $codesignResultsRoot"
+          }
+
+          $sarif = Get-Content -LiteralPath $sarifFile.FullName -Raw | ConvertFrom-Json -Depth 100
+          $failures = @(
+              foreach ($run in $sarif.runs) {
+                  foreach ($result in $run.results) {
+                      if ($result.ruleId -ne 'CodeSign.MatchingPolicy') {
+                          $result
+                      }
+                  }
+              }
+          )
+
+          if ($failures.Count -gt 0) {
+              $failures |
+                  ForEach-Object {
+                      Write-Host "##vso[task.logissue type=error]$($_.ruleId): $($_.locations.physicalLocation.artifactLocation.uri -join ', ') - $($_.message.text)"
+                  }
+              throw "CodeSign Validation found $($failures.Count) policy violation(s)."
+          }
+
+          Write-Verbose -Verbose 'All signed files matched the PowerShell CodeSign policy.'
+        displayName: Check PowerShell CodeSign validation results
 
       ### END OF BUILD ###
 

@@ -1,0 +1,687 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ModuleNotFound" xml:space="preserve">
+    <value>Il modulo specificato '{0}' non è stato caricato perché nelle directory dei moduli non è stato trovato alcun file di modulo valido.</value>
+  </data>
+  <data name="ModuleWithVersionNotFound" xml:space="preserve">
+    <value>Il modulo specificato '{0}' con versione '{1}' non è stato caricato perché nelle directory dei moduli non è stato trovato alcun file di modulo valido.</value>
+  </data>
+  <data name="MaximumVersionFormatIncorrect" xml:space="preserve">
+    <value>Il valore specificato per MaximumVersion '{0}' non è corretto. Se si usa '*', MaximumVersion supporta un solo '*' e deve essere sempre posizionato alla fine di MaximumVersion.</value>
+  </data>
+  <data name="MaximumVersionNotFound" xml:space="preserve">
+    <value>Il modulo specificato '{0}' con MaximumVersion '{1}' non è stato caricato perché nelle directory dei moduli non è stato trovato alcun file di modulo valido.</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionNotFound" xml:space="preserve">
+    <value>Il modulo specificato '{0}' con MinimumVersion '{1}' e MaximumVersion '{2}' non è stato caricato perché nelle directory dei moduli non è stato trovato alcun file di modulo valido.</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionInvalidRange" xml:space="preserve">
+    <value>Il valore MinimumVersion '{0}' non deve essere maggiore di MaximumVersion '{1}'.</value>
+  </data>
+  <data name="ModuleAssemblyFound" xml:space="preserve">
+    <value>L'assembly '{0}' non è stato caricato perché non è stato trovato un assembly con questo nome. Verificare il nome dell'assembly, quindi riprovare.</value>
+  </data>
+  <data name="ManifestMemberNotFound" xml:space="preserve">
+    <value>Il modulo da elaborare '{0}', elencato nel campo '{1}' del manifesto del modulo '{2}', non è stato elaborato perché nelle directory dei moduli non è stato trovato alcun modulo valido.</value>
+  </data>
+  <data name="CantUseAsCustomObjectWithBinaryModule" xml:space="preserve">
+    <value>Non è stato restituito alcun oggetto personalizzato per il modulo '{0}' perché il parametro -AsCustomObject può essere usato solo con i moduli di script.</value>
+  </data>
+  <data name="InvalidModuleManifest" xml:space="preserve">
+    <value>Il manifesto del modulo '{0}' non è stato elaborato perché non è un file manifesto del modulo PowerShell valido. Rimuovere gli elementi non consentiti: {1}</value>
+  </data>
+  <data name="EmptyModuleManifest" xml:space="preserve">
+    <value>L'elaborazione del file manifesto del modulo '{0}' non ha prodotto un oggetto manifesto valido. Aggiornare il file in modo che contenga un manifesto del modulo PowerShell valido. È possibile creare un manifesto valido usando il cmdlet New-ModuleManifest.</value>
+  </data>
+  <data name="InvalidModuleManifestMember" xml:space="preserve">
+    <value>Non è possibile importare il modulo '{0}' perché il relativo manifesto contiene uno o più membri non validi. I membri del manifesto validi sono ({1}). Rimuovere i membri non validi ({2}), quindi riprovare a importare il modulo.</value>
+  </data>
+  <data name="InvalidModuleSpecificationMember" xml:space="preserve">
+    <value>La tabella hash che descrive un modulo contiene uno o più membri non validi. I membri validi sono ({0}). Rimuovere i membri non validi ({1}), quindi riprovare.</value>
+  </data>
+  <data name="ModuleTooDeeplyNested" xml:space="preserve">
+    <value>Non è possibile caricare il modulo '{0}' perché il limite di annidamento dei moduli è stato superato. I moduli possono essere annidati solo per {1} livelli. Valutare e modificare l'ordine di caricamento dei moduli per evitare di superare il limite di annidamento, quindi riprovare a eseguire lo script.</value>
+  </data>
+  <data name="ModuleManifestMissingModuleVersion" xml:space="preserve">
+    <value>Il membro 'ModuleVersion' non è presente nel manifesto del modulo. Questo membro deve esistere e deve avere un numero di versione nel formato 'n.n.n.n'. Aggiungere il membro mancante al file '{0}'.</value>
+  </data>
+  <data name="ModuleManifestInvalidValue" xml:space="preserve">
+    <value>Il membro '{0}' non è valido nel file manifesto del modulo '{2}': {1}</value>
+  </data>
+  <data name="ModuleManifestInsufficientModuleVersion" xml:space="preserve">
+    <value>La versione '{0}' del modulo '{1}' non soddisfa il requisito della versione minima '{2}'. Verificare che il numero di versione sia supportato, quindi provare di nuovo a caricare il modulo.</value>
+  </data>
+  <data name="ModuleManifestInsufficientPowerShellVersion" xml:space="preserve">
+    <value>La versione di PowerShell installata in questo computer è '{0}'. Il modulo '{1}' richiede una versione minima di PowerShell di '{2}' per l'esecuzione. Verificare che sia installata la versione minima richiesta di PowerShell, quindi riprovare.</value>
+  </data>
+  <data name="ModuleManifestNestedModulesCantGoWithModuleToProcess" xml:space="preserve">
+    <value>Non è possibile usare il membro del manifesto del modulo 'NestedModules' se il membro 'ModuleToProcess' è un modulo binario. Modificare il file manifesto del modulo in '{0}', quindi riprovare.</value>
+  </data>
+  <data name="ModuleManifestInvalidManifestMember" xml:space="preserve">
+    <value>Il membro '{0}' nel manifesto del modulo non è valido: {1}. Verificare che sia specificato un valore valido per questo campo nel file '{2}'.</value>
+  </data>
+  <data name="InvalidModuleManifestPath" xml:space="preserve">
+    <value>Il percorso del manifesto del modulo '{0}' non è valido. Il valore dell'argomento Path deve essere risolto in un unico file con estensione '.psd1'. Modificare il valore dell'argomento Path in modo che punti a un file psd1 valido, quindi riprovare.</value>
+  </data>
+  <data name="InvalidModuleManifestVersion" xml:space="preserve">
+    <value>La chiave ModuleVersion nel manifesto del modulo '{0}' specifica la versione del modulo '{1}', che non corrisponde al nome della cartella della versione in '{2}'. Modificare il valore della chiave ModuleVersion in modo che corrisponda al nome della cartella della versione.</value>
+  </data>
+  <data name="InvalidNestedModuleinModuleManifest" xml:space="preserve">
+    <value>La voce NestedModule specificata '{0}' nel manifesto del modulo '{1}' non è valida. Riprovare dopo aver aggiornato la voce con valori validi.</value>
+  </data>
+  <data name="InvalidRequiredAssembliesInModuleManifest" xml:space="preserve">
+    <value>La voce RequiredAssemblies specificata '{0}' nel manifesto del modulo '{1}' non è valida. Riprovare dopo aver aggiornato la voce con valori validi.</value>
+  </data>
+  <data name="InvalidFilePathinModuleManifest" xml:space="preserve">
+    <value>La voce FileList specificata '{0}' nel manifesto del modulo '{1}' non è valida. Riprovare dopo aver aggiornato la voce con valori validi.</value>
+  </data>
+  <data name="InvalidRequiredModulesinModuleManifest" xml:space="preserve">
+    <value>La voce RequiredModules specificata '{0}' nel manifesto del modulo '{1}' non è valida. Riprovare dopo aver aggiornato la voce con valori validi.</value>
+  </data>
+  <data name="InvalidModuleListinModuleManifest" xml:space="preserve">
+    <value>La voce ModuleList specificata '{0}' nel manifesto del modulo '{1}' non è valida. Riprovare dopo aver aggiornato la voce con valori validi.</value>
+  </data>
+  <data name="InvalidPowerShellVersionInModuleManifest" xml:space="preserve">
+    <value>Il manifesto del modulo '{0}' è specificato con la chiave CompatiblePSEditions, che è supportata solo in PowerShell versione '5.1' o successiva. Aggiornare il valore della chiave PowerShellVersion a '5.1' o versione successiva e riprovare.</value>
+  </data>
+  <data name="DuplicateEntriesInCompatiblePSEditions" xml:space="preserve">
+    <value>Il valore specificato '{0}' per CompatiblePSEditions contiene nomi di edizione di PowerShell duplicati. Riprovare dopo aver rimosso i nomi delle edizioni di PowerShell duplicati.</value>
+  </data>
+  <data name="ModuleVersionEqualsToVersionFolder" xml:space="preserve">
+    <value>La versione specificata nella chiave ModuleVersion è uguale al nome della cartella della versione.</value>
+  </data>
+  <data name="SkippingInvalidModuleVersionFolder" xml:space="preserve">
+    <value>La cartella della versione {0} nel modulo {1} verrà ignorata perché non dispone di un file manifesto del modulo valido.</value>
+  </data>
+  <data name="RequiredModuleMissingModuleName" xml:space="preserve">
+    <value>Il membro 'ModuleName' non esiste nella tabella hash che descrive questo modulo.</value>
+  </data>
+  <data name="RequiredModuleMissingModuleVersion" xml:space="preserve">
+    <value>I membri 'ModuleVersion', 'MaximumVersion' e 'RequiredVersion' non esistono nella tabella hash che descrive questo modulo. Uno di questi tre membri deve esistere e deve avere un numero di versione nel formato 'n.n.n.n'.</value>
+  </data>
+  <data name="RequiredModuleNotLoaded" xml:space="preserve">
+    <value>Il modulo richiesto '{1}' non è caricato. Caricare il modulo oppure rimuoverlo da 'RequiredModules' nel file '{0}'.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongGuid" xml:space="preserve">
+    <value>Il modulo obbligatorio '{1}' con GUID '{2}' non è caricato. Caricare il modulo oppure rimuoverlo da 'RequiredModules' nel file '{0}'.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongVersion" xml:space="preserve">
+    <value>Il modulo obbligatorio '{1}' con versione '{2}' non è caricato. Caricare il modulo oppure rimuoverlo da 'RequiredModules' nel file '{0}'.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMaximumVersion" xml:space="preserve">
+    <value>Il modulo obbligatorio '{1}' con MaximumVersion '{2}' non è caricato. Caricare il modulo oppure rimuoverlo da 'RequiredModules' nel file '{0}'.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion" xml:space="preserve">
+    <value>Il modulo richiesto '{1}' con MinimumVersion '{2}' e MaximumVersion '{3}' non è stato caricato. Caricare il modulo oppure rimuoverlo da 'RequiredModules' nel file '{0}'.</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleVersion" xml:space="preserve">
+    <value>Non è possibile trovare il modulo '{0}' con ModuleVersion '{1}'.</value>
+  </data>
+  <data name="RequiredModuleNotFoundRequiredVersion" xml:space="preserve">
+    <value>Non è possibile trovare il modulo '{0}' con RequiredVersion '{1}'.</value>
+  </data>
+  <data name="RequiredModuleNotFoundMaximumVersion" xml:space="preserve">
+    <value>Non è possibile trovare il modulo '{0}' con MaximumVersion '{1}'.</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleAndMaximumVersion" xml:space="preserve">
+    <value>Non è possibile trovare il modulo '{0}' con ModuleVersion '{1}' e MaximumVersion '{2}'.</value>
+  </data>
+  <data name="RequiredModuleNotFoundWithoutVersion" xml:space="preserve">
+    <value>Non è possibile trovare il modulo '{0}'.</value>
+  </data>
+  <data name="NoModulesRemoved" xml:space="preserve">
+    <value>Nessun modulo è stato rimosso. Verificare che la specifica dei moduli da rimuovere sia corretta e che tali moduli esistano nello spazio di esecuzione.</value>
+  </data>
+  <data name="UnableToRemoveModuleMember" xml:space="preserve">
+    <value>Non è possibile rimuovere il membro '{0}', importato dal modulo '{1}', per il motivo seguente: {2}</value>
+  </data>
+  <data name="ModuleIsReadOnly" xml:space="preserve">
+    <value>Non è possibile rimuovere il modulo '{0}' perché è di sola lettura. Aggiungere il parametro Force al comando per rimuovere i moduli di sola lettura.</value>
+  </data>
+  <data name="ModuleIsConstant" xml:space="preserve">
+    <value>Non è possibile rimuovere il modulo '{0}' perché è contrassegnato come 'constant'. Un modulo non può essere rimosso se è contrassegnato come 'constant'.</value>
+  </data>
+  <data name="ModuleIsRequired" xml:space="preserve">
+    <value>Non è possibile rimuovere il modulo '{0}' perché è richiesto da '{1}'. Aggiungere il parametro Force al comando per rimuovere il modulo.</value>
+  </data>
+  <data name="CanOnlyBeUsedFromWithinAModule" xml:space="preserve">
+    <value>Il cmdlet Export-ModuleMember può essere chiamato solo dall'interno di un modulo.</value>
+  </data>
+  <data name="InvalidModuleExtension" xml:space="preserve">
+    <value>L'estensione '{0}' non è un'estensione del modulo valida. Le estensioni del modulo supportate sono '.dll', '.ps1', '.psm1', '.psd1' e '.cdxml'. Correggere l'estensione, quindi provare ad aggiungere di nuovo il file '{1}'.</value>
+  </data>
+  <data name="InvalidOperationOnBinaryModule" xml:space="preserve">
+    <value>Non è possibile eseguire questa operazione su un modulo binario. Può essere eseguita solo su un modulo di script.</value>
+  </data>
+  <data name="ScriptsToProcessIncorrectExtension" xml:space="preserve">
+    <value>Il file '{0}' non è consentito perché non ha l'estensione '.ps1'.</value>
+  </data>
+  <data name="DefaultCompanyName" xml:space="preserve">
+    <value>Sconosciuto</value>
+  </data>
+  <data name="DefaultCopyrightMessage" xml:space="preserve">
+    <value>(c) {0}. Tutti i diritti sono riservati.</value>
+  </data>
+  <data name="RemovingImportedFunction" xml:space="preserve">
+    <value>Rimozione della funzione "{0}" importata.</value>
+  </data>
+  <data name="RemovingImportedAlias" xml:space="preserve">
+    <value>Rimozione dell'alias "{0}" importato.</value>
+  </data>
+  <data name="RemovingImportedVariable" xml:space="preserve">
+    <value>Rimozione della variabile "{0}" importata.</value>
+  </data>
+  <data name="LoadingModule" xml:space="preserve">
+    <value>Caricamento del modulo dal percorso '{0}'.</value>
+  </data>
+  <data name="LoadingFile" xml:space="preserve">
+    <value>Caricamento di '{0}' dal percorso '{1}'.</value>
+  </data>
+  <data name="DottingScriptFile" xml:space="preserve">
+    <value>Dot-sourcing del file di script '{0}'.</value>
+  </data>
+  <data name="ImportingFunction" xml:space="preserve">
+    <value>Importazione della funzione '{0}'.</value>
+  </data>
+  <data name="ImportingCmdlet" xml:space="preserve">
+    <value>Importazione del cmdlet '{0}'.</value>
+  </data>
+  <data name="ImportingAlias" xml:space="preserve">
+    <value>Importazione dell'alias '{0}'.</value>
+  </data>
+  <data name="ImportingVariable" xml:space="preserve">
+    <value>Importazione della variabile '{0}'.</value>
+  </data>
+  <data name="ExportingCmdlet" xml:space="preserve">
+    <value>Esportazione del cmdlet '{0}'.</value>
+  </data>
+  <data name="ExportingFunction" xml:space="preserve">
+    <value>Esportazione della funzione '{0}'.</value>
+  </data>
+  <data name="ExportingAlias" xml:space="preserve">
+    <value>Esportazione dell'alias '{0}'.</value>
+  </data>
+  <data name="ExportingVariable" xml:space="preserve">
+    <value>Esportazione della variabile '{0}'.</value>
+  </data>
+  <data name="ImportingNonStandardVerb" xml:space="preserve">
+    <value>I nomi di alcuni comandi importati dal modulo '{0}' includono verbi non approvati che potrebbero renderli meno individuabili. Per trovare i comandi con verbi non approvati, eseguire di nuovo il comando Import-Module con il parametro Verbose. Per un elenco dei verbi approvati, digitare Get-Verb.</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerbose" xml:space="preserve">
+    <value>Il comando '{0}' nel modulo {1}' è stato importato, ma poiché il nome non include un verbo approvato, potrebbe risultare difficile da trovare. Per un elenco dei verbi approvati, digitare Get-Verb.</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerboseSuggestion" xml:space="preserve">
+    <value>Il comando '{0}' nel modulo {2}' è stato importato, ma poiché il nome non include un verbo approvato, potrebbe risultare difficile da trovare. I verbi alternativi suggeriti sono "{1}".</value>
+  </data>
+  <data name="ImportingNonStandardNoun" xml:space="preserve">
+    <value>Alcuni nomi di comandi importati contengono uno o più dei caratteri non consentiti seguenti: # , ( ) {{ }} [ ] &amp; - / \ $ ^; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="ImportingNonStandardNounVerbose" xml:space="preserve">
+    <value>Il nome del comando '{0}' del modulo '{1}' contiene uno o più dei seguenti caratteri non consentiti: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="CreatingModuleManifestFile" xml:space="preserve">
+    <value>Creazione del file manifesto del modulo "{0}".</value>
+  </data>
+  <data name="ConfirmRemoveModule" xml:space="preserve">
+    <value>{0} (Percorso: '{1}')</value>
+  </data>
+  <data name="InvalidProcessorArchitecture" xml:space="preserve">
+    <value>L'architettura del processore corrente è: {0}. Il modulo '{1}' richiede l'architettura seguente: {2}.</value>
+  </data>
+  <data name="InvalidPowerShellHostName" xml:space="preserve">
+    <value>Il nome dell'host di PowerShell corrente è: '{0}'. Il modulo '{1}' richiede l'host di PowerShell seguente: '{2}'.</value>
+  </data>
+  <data name="InvalidPowerShellHostVersion" xml:space="preserve">
+    <value>L'host di PowerShell corrente è: '{0}' (versione {1}). Il modulo '{2}' richiede una versione dell'host di PowerShell minima di '{3}' per l'esecuzione.</value>
+  </data>
+  <data name="ManifestHeaderLine1" xml:space="preserve">
+    <value>Manifesto del modulo per il modulo '{0}'</value>
+  </data>
+  <data name="ManifestHeaderLine2" xml:space="preserve">
+    <value>Generato da: {0}</value>
+  </data>
+  <data name="ManifestHeaderLine3" xml:space="preserve">
+    <value>Data di generazione: {0}</value>
+  </data>
+  <data name="RootModule" xml:space="preserve">
+    <value>File del modulo di script o del modulo binario associato a questo manifesto.</value>
+  </data>
+  <data name="NestedModules" xml:space="preserve">
+    <value>Moduli da importare come moduli annidati del modulo specificato in RootModule/ModuleToProcess</value>
+  </data>
+  <data name="GUID" xml:space="preserve">
+    <value>ID usato per identificare in modo univoco il modulo</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Autore di questo modulo</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>Società o fornitore di questo modulo</value>
+  </data>
+  <data name="Copyright" xml:space="preserve">
+    <value>Informativa sul copyright per questo modulo</value>
+  </data>
+  <data name="ModuleVersion" xml:space="preserve">
+    <value>Numero di versione di questo modulo.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descrizione delle funzionalità fornite da questo modulo</value>
+  </data>
+  <data name="PowerShellVersion" xml:space="preserve">
+    <value>Versione minima del motore di PowerShell richiesta da questo modulo</value>
+  </data>
+  <data name="CLRVersion" xml:space="preserve">
+    <value>Versione minima del Common Language Runtime (CLR) richiesta da questo modulo. {0}</value>
+  </data>
+  <data name="RequiredModules" xml:space="preserve">
+    <value>Moduli che devono essere importati nell'ambiente globale prima di importare questo modulo</value>
+  </data>
+  <data name="ScriptsToProcess" xml:space="preserve">
+    <value>File di script (.ps1) eseguiti nell'ambiente del chiamante prima dell'importazione di questo modulo.</value>
+  </data>
+  <data name="TypesToProcess" xml:space="preserve">
+    <value>File di tipo (.ps1xml) da caricare durante l'importazione di questo modulo</value>
+  </data>
+  <data name="FormatsToProcess" xml:space="preserve">
+    <value>File di formato (.ps1xml) da caricare durante l'importazione di questo modulo</value>
+  </data>
+  <data name="RequiredAssemblies" xml:space="preserve">
+    <value>Assembly da caricare prima di importare questo modulo</value>
+  </data>
+  <data name="FileList" xml:space="preserve">
+    <value>Elenco di tutti i file inclusi in questo modulo</value>
+  </data>
+  <data name="PrivateData" xml:space="preserve">
+    <value>Dati privati da passare al modulo specificato in RootModule/ModuleToProcess. Può anche contenere una tabella hash PSData con i metadati del modulo aggiuntivi usati da PowerShell.</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Tag applicati a questo modulo. Sono utili per l'individuazione dei moduli nelle raccolte online.</value>
+  </data>
+  <data name="ProjectUri" xml:space="preserve">
+    <value>URL del sito Web principale di questo progetto.</value>
+  </data>
+  <data name="LicenseUri" xml:space="preserve">
+    <value>URL della licenza di questo modulo.</value>
+  </data>
+  <data name="IconUri" xml:space="preserve">
+    <value>URL di un'icona che rappresenta questo modulo.</value>
+  </data>
+  <data name="ReleaseNotes" xml:space="preserve">
+    <value>ReleaseNotes di questo modulo</value>
+  </data>
+  <data name="Prerelease" xml:space="preserve">
+    <value>Stringa della versione preliminare di questo modulo</value>
+  </data>
+  <data name="RequireLicenseAcceptance" xml:space="preserve">
+    <value>Flag per indicare se il modulo richiede l'accettazione esplicita da parte dell'utente per l'installazione, l'aggiornamento o il salvataggio</value>
+  </data>
+  <data name="ExternalModuleDependencies" xml:space="preserve">
+    <value>Moduli dipendenti esterni di questo modulo</value>
+  </data>
+  <data name="EndOfManifestHashTable" xml:space="preserve">
+    <value>Fine della tabella hash {0}</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableError" xml:space="preserve">
+    <value>Il valore del parametro PrivateData deve essere una tabella hash per creare il manifesto del modulo con i valori di parametro seguenti: Tags, ProjectUri, LicenseUri, IconUri o ReleaseNotes. Rimuovere i valori dei parametri Tags, ProjectUri, LicenseUri, IconUri o ReleaseNotes oppure eseguire il wrapping del contenuto di PrivateData in una tabella hash.</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableWarning" xml:space="preserve">
+    <value>PrivateData deve essere definito come tabella hash, ma questo manifesto del modulo lo definisce come oggetto. Provare a eseguire il wrapping del contenuto di PrivateData in una tabella hash. In questo modo sarà possibile aggiungere le proprietà Tags, ProjectUri, LicenseUri, IconUri e ReleaseNotes al manifesto del modulo in un secondo momento.</value>
+  </data>
+  <data name="InvalidParameterValue" xml:space="preserve">
+    <value>Il valore specificato '{0}' non è valido. Riprovare con un valore valido.</value>
+  </data>
+  <data name="FunctionsToExport" xml:space="preserve">
+    <value>Funzioni da esportare da questo modulo. Per ottenere prestazioni ottimali, non usare caratteri jolly e non eliminare la voce. Usare una matrice vuota se non sono presenti funzioni da esportare.</value>
+  </data>
+  <data name="AliasesToExport" xml:space="preserve">
+    <value>Alias da esportare da questo modulo. Per ottenere prestazioni ottimali, non usare caratteri jolly e non eliminare la voce. Usare una matrice vuota se non sono presenti alias da esportare.</value>
+  </data>
+  <data name="CmdletsToExport" xml:space="preserve">
+    <value>Cmdlet da esportare da questo modulo. Per ottenere prestazioni ottimali, non usare caratteri jolly e non eliminare la voce. Usare una matrice vuota se non sono presenti cmdlet da esportare.</value>
+  </data>
+  <data name="VariablesToExport" xml:space="preserve">
+    <value>Variabili da esportare da questo modulo</value>
+  </data>
+  <data name="DscResourcesToExport" xml:space="preserve">
+    <value>Risorse DSC da esportare da questo modulo</value>
+  </data>
+  <data name="CompatiblePSEditions" xml:space="preserve">
+    <value>PSEditions supportate</value>
+  </data>
+  <data name="ProcessorArchitecture" xml:space="preserve">
+    <value>Architettura del processore (None, X86, Amd64) richiesta da questo modulo</value>
+  </data>
+  <data name="ModuleList" xml:space="preserve">
+    <value>Elenco di tutti i moduli inclusi in questo modulo</value>
+  </data>
+  <data name="DotNetFrameworkVersion" xml:space="preserve">
+    <value>Versione minima di Microsoft .NET Framework richiesta da questo modulo. {0}</value>
+  </data>
+  <data name="PowerShellHostName" xml:space="preserve">
+    <value>Nome dell'host di PowerShell richiesto da questo modulo</value>
+  </data>
+  <data name="PowerShellHostVersion" xml:space="preserve">
+    <value>Versione minima dell'host di PowerShell richiesta da questo modulo</value>
+  </data>
+  <data name="HelpInfoURI" xml:space="preserve">
+    <value>URI HelpInfo di questo modulo</value>
+  </data>
+  <data name="ModuleDriveInUse" xml:space="preserve">
+    <value>Poiché il modulo {0} fornisce PSDrive nella sessione corrente di PowerShell, non è stato rimosso alcun modulo. Modificare il provider PSDrive corrente, quindi riprovare a rimuovere i moduli.</value>
+  </data>
+  <data name="ImportModuleNoClobberForCmdlet" xml:space="preserve">
+    <value>Il cmdlet '{0}' non è stato importato perché nell'ambito corrente è presente un membro con lo stesso nome.</value>
+  </data>
+  <data name="ImportModuleNoClobberForAlias" xml:space="preserve">
+    <value>L'alias '{0}' non è stato importato perché nell'ambito corrente è presente un membro con lo stesso nome.</value>
+  </data>
+  <data name="ImportModuleNoClobberForFunction" xml:space="preserve">
+    <value>La funzione '{0}' non è stata importata perché nell'ambito corrente è presente un membro con lo stesso nome.</value>
+  </data>
+  <data name="ImportModuleNoClobberForVariable" xml:space="preserve">
+    <value>La variabile '{0}' non è stata importata perché nell'ambito corrente è presente un membro con lo stesso nome.</value>
+  </data>
+  <data name="WildCardNotAllowedInModuleToProcessAndInNestedModules" xml:space="preserve">
+    <value>I caratteri jolly non sono consentiti nei membri 'ModuleToProcess', 'RootModule' o 'NestedModules' nel manifesto del modulo '{0}'.</value>
+  </data>
+  <data name="CoreModuleCannotBeRemoved" xml:space="preserve">
+    <value>Il modulo '{0}' è un modulo principale per PowerShell. Aggiungere il parametro Force al comando per rimuovere i moduli principali.</value>
+  </data>
+  <data name="ModuleManifestCannotContainBothModuleToProcessAndRootModule" xml:space="preserve">
+    <value>Il manifesto del modulo non può contenere entrambi i membri 'ModuleToProcess' e 'RootModule'. Modificare il file manifesto del modulo per rimuoverne uno in '{0}', quindi riprovare.</value>
+  </data>
+  <data name="ModuleToProcessFieldDeprecated" xml:space="preserve">
+    <value>Il membro del manifesto del modulo 'ModuleToProcess' è deprecato. Usare invece il membro 'RootModule'.</value>
+  </data>
+  <data name="DefaultCommandPrefix" xml:space="preserve">
+    <value>Prefisso predefinito per i comandi esportati da questo modulo. Eseguire l'override del prefisso predefinito con Import-Module -Prefix.</value>
+  </data>
+  <data name="GlobalAndScopeParameterCannotBeSpecifiedTogether" xml:space="preserve">
+    <value>I parametri 'Global' e 'Scope' non possono essere specificati insieme. Rimuovere uno di questi parametri, quindi riprovare a eseguire il comando.</value>
+  </data>
+  <data name="RequiredModulesCyclicDependency" xml:space="preserve">
+    <value>Il modulo richiesto '{0}' non è caricato. Il modulo '{0}' ha un elemento requiredModule '{1}' nel manifesto del modulo '{2}' che punta a una dipendenza ciclica.</value>
+  </data>
+  <data name="RequiredModuleNotFound" xml:space="preserve">
+    <value>Il modulo richiesto '{0}' non è stato caricato perché nelle directory dei moduli non è stato trovato alcun file di modulo valido.</value>
+  </data>
+  <data name="MixedModuleOverCimSessionWarning" xml:space="preserve">
+    <value>Alcuni comandi del modulo {0} non possono essere importati tramite una CimSession. Per ottenere tutti i comandi, verificare che nel server remoto sia abilitata la gestione remota di PowerShell, quindi provare ad aggiungere il parametro PSSession a un cmdlet Import-Module.</value>
+  </data>
+  <data name="WinCompatModuleWarning" xml:space="preserve">
+    <value>Il modulo {0} viene caricato in Windows PowerShell usando una sessione di comunicazione remota {1}. Notare che tutti gli input e gli output dei comandi di questo modulo saranno oggetti deserializzati. Se si vuole caricare questo modulo in PowerShell, usare la sintassi 'Import-Module -SkipEditionCheck'.</value>
+  </data>
+  <data name="WinCompatRequredVersionError" xml:space="preserve">
+    <value>È stata rilevata la versione di Windows PowerShell {0}. Per caricare moduli usando la funzionalità di compatibilità di Windows PowerShell è richiesto Windows PowerShell 5.1. Installare Windows Management Framework (WMF) 5.1 da https://aka.ms/WMF5Download per abilitare questa funzionalità.</value>
+  </data>
+  <data name="WinCompatModuleInDenyList" xml:space="preserve">
+    <value>Il caricamento del modulo '{0}' tramite la funzionalità di compatibilità di Windows PowerShell è bloccato da un'impostazione 'WindowsPowerShellCompatibilityModuleDenyList' nel file di configurazione di PowerShell.</value>
+  </data>
+  <data name="PsModuleOverCimSessionError" xml:space="preserve">
+    <value>Non è possibile importare il modulo {0} tramite CimSession. Provare a usare il parametro PSSession del cmdlet Import-Module.</value>
+  </data>
+  <data name="InvalidProcessorArchitectureInManifest" xml:space="preserve">
+    <value>Il valore dell'architettura del processore di {0} non è supportato. Eseguire di nuovo il comando New-ModuleManifest, specificando uno dei valori di enumerazione supportati seguenti per l'architettura del processore: None, MSIL, X86, Amd64, Arm</value>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyInListAvailableMode" xml:space="preserve">
+    <value>L'esecuzione del cmdlet Get-Module su un computer remoto consente di elencare solo i moduli disponibili. Aggiungere il parametro ListAvailable al comando, quindi riprovare.</value>
+  </data>
+  <data name="ModuleLoadedAsASnapin" xml:space="preserve">
+    <value>Il modulo '{0}' non è stato importato perché lo snap-in '{0}' era già stato importato.</value>
+  </data>
+  <data name="WildCardNotAllowedInRequiredAssemblies" xml:space="preserve">
+    <value>I caratteri jolly non sono consentiti nel membro 'RequiredAssemblies' del manifesto del modulo '{0}'.</value>
+  </data>
+  <data name="CmdletizationDoesSupportRexportingNestedModules" xml:space="preserve">
+    <value>Il valore della chiave {0} in {1} è {2} e il modulo contiene moduli annidati. Quando un file CDXML è il modulo radice, il comando Import-Module ha esito negativo perché i comandi nei moduli annidati non possono essere esportati. Spostare il file CDXML nella chiave NestedModules e riprovare a eseguire il comando.</value>
+    <comment>{0} is equal to either ModuleToProcess or RootModule
+{1} is a placeholder for a file path to psd1 file
+{2} is a placeholder for a file path to cdxml file</comment>
+  </data>
+  <data name="RemoteDiscoveryRemotePsrpCommandFailed" xml:space="preserve">
+    <value>Errore del comando remoto: {0}: {{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToGenerateProxyForRemoteModule" xml:space="preserve">
+    <value>Non è possibile generare proxy per il modulo remoto '{0}'. {{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToProcessRemoteModule" xml:space="preserve">
+    <value>Non è possibile elaborare il modulo remoto {0}. {1}</value>
+  </data>
+  <data name="RemoteDiscoveryFailureFromDiscoveryProvider" xml:space="preserve">
+    <value>Non è possibile ricevere i dati del modulo dalla CimSession remota. {0}</value>
+  </data>
+  <data name="RequiredModuleNotFoundWrongGuidVersion" xml:space="preserve">
+    <value>Il modulo richiesto '{0}' con GUID '{1}' e versione '{2}' non è stato caricato perché nelle directory dei moduli non è stato trovato alcun file di modulo valido.</value>
+  </data>
+  <data name="RemoteDiscoveryProviderNotFound" xml:space="preserve">
+    <value>Non è stato trovato alcun provider CIM per l'individuazione dei moduli nel server CIM. {0}</value>
+    <comment>{0} is a placeholder for a more detailed error message</comment>
+  </data>
+  <data name="CannotDetectNetFrameworkVersion" xml:space="preserve">
+    <value>No è possibile verificare la versione di Microsoft .NET Framework {0} perché non è inclusa nell'elenco delle versioni consentite.</value>
+  </data>
+  <data name="ScriptAnalysisModule" xml:space="preserve">
+    <value>Analisi di {0}.</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="ScriptAnalysisPreparing" xml:space="preserve">
+    <value>Preparazione dei moduli per il primo utilizzo.</value>
+  </data>
+  <data name="DeterminingAvailableModules" xml:space="preserve">
+    <value>Ricerca dei moduli disponibili in corso</value>
+  </data>
+  <data name="SearchingUncShare" xml:space="preserve">
+    <value>Ricerca nella condivisione UNC {0}.</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>L'esecuzione del cmdlet Get-Module su un computer remoto può essere eseguita solo per i nomi di modulo che non includono un percorso. Il parametro Name contiene l'elemento '{0}', che viene risolto in un percorso. Aggiornare il parametro Name in modo che non contenga elementi di percorso, quindi riprovare.</value>
+  </data>
+  <data name="ModuleDiscoveryForLoadedModulesWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>L'esecuzione del cmdlet Get-Module senza il parametro ListAvailable non è supportata per i nomi di modulo che includono un percorso. Il parametro Name contiene l'elemento '{0}', che viene risolto in un percorso. Aggiornare il parametro Name in modo che non contenga elementi di percorso, quindi riprovare.</value>
+  </data>
+  <data name="ModuleNotFoundForGetModule" xml:space="preserve">
+    <value>Il modulo specificato '{0}' non è stato trovato. Aggiornare il parametro Name in modo che punti a un percorso valido, quindi riprovare. </value>
+  </data>
+  <data name="PopulatingRepositorySourceLocation" xml:space="preserve">
+    <value>Popolamento della proprietà RepositorySourceLocation per il modulo {0}.</value>
+  </data>
+  <data name="ManifestMemberNotValid" xml:space="preserve">
+    <value>Il modulo da elaborare '{0}', elencato nel campo '{1}' del manifesto del modulo '{2}', non è stato elaborato. {3}</value>
+  </data>
+  <data name="PrerequisiteForDesktopEditionOnly" xml:space="preserve">
+    <value>Questo prerequisito è valido solo per l'edizione Desktop di PowerShell.</value>
+  </data>
+  <data name="PSEditionNotSupported" xml:space="preserve">
+    <value>Il modulo '{0}' non supporta l'edizione corrente di PowerShell '{1}'. Le edizioni supportate sono '{2}'. Usare 'Import-Module -SkipEditionCheck' per ignorare il controllo di compatibilità di questo modulo.</value>
+  </data>
+  <data name="ImplicitWinCompatDisabled" xml:space="preserve">
+    <value>Il modulo '{0}' supporta l'edizione di PowerShell '{1}' e non può essere caricato in modo implicito usando la funzionalità di compatibilità con Windows perché è disabilitata nel file delle impostazioni. Usare 'Import-Module -UseWindowsPowerShell' per caricare questo modulo con Windows PowerShell oppure 'Import-Module -SkipEditionCheck' per provare a caricare il modulo con PowerShell corrente.</value>
+  </data>
+  <data name="ExperimentalFeatureNameMissingOrEmpty" xml:space="preserve">
+    <value>Per una funzionalità sperimentale dichiarata nel manifesto del modulo è necessario specificare un valore stringa non vuoto.</value>
+  </data>
+  <data name="InvalidExperimentalFeatureName" xml:space="preserve">
+    <value>Sono stati trovati uno o più nomi di funzionalità sperimentali non validi: {0}. Il nome di una funzionalità sperimentale del modulo deve seguire questa convenzione: 'ModuleName.FeatureName'.</value>
+  </data>
+  <data name="SkipEditionCheckNotSupportedWithoutListAvailable" xml:space="preserve">
+    <value>Il parametro opzionale -SkipEditionCheck non può essere usato senza il parametro opzionale -ListAvailable.</value>
+  </data>
+  <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>L'importazione di file *.ps1 come moduli non è consentita in modalità ConstrainedLanguage.</value>
+  </data>
+  <data name="MismatchedLanguageModes" xml:space="preserve">
+    <value>Si è verificato un errore durante il caricamento del modulo di script {0} perché ha una modalità di linguaggio diversa rispetto al manifesto del modulo. La modalità di linguaggio del manifesto è {1} e la modalità di linguaggio del modulo è {2}. Assicurarsi che tutti i file del modulo siano firmati o facciano comunque parte della configurazione dell'elenco di elementi consentiti dell'applicazione.</value>
+  </data>
+  <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
+    <value>Questo modulo usa l'operatore dot-source per esportare funzioni utilizzando caratteri jolly e questo non è consentito quando nel sistema è applicata la verifica delle applicazioni.</value>
+  </data>
+  <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
+    <value>Non è possibile esportare membri del modulo da un modulo con una modalità linguaggio diversa da quella della sessione in esecuzione.</value>
+  </data>
+  <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
+    <value>Non è possibile creare un nuovo modulo mentre la sessione è in modalità ConstrainedLanguage.</value>
+  </data>
+  <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
+    <value>Non è possibile trovare il modulo predefinito '{0}' compatibile con l'edizione 'Core'. Assicurarsi che i moduli predefiniti di PowerShell siano disponibili. In genere sono inclusi nel pacchetto PowerShell nel percorso del modulo $PSHOME e sono necessari per il corretto funzionamento di PowerShell.</value>
+  </data>
+  <data name="WDACExportModuleCommandLogTitle" xml:space="preserve">
+    <value>Cmdlet Export-ModuleMember</value>
+  </data>
+  <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
+    <value>L'esportazione dei membri del modulo avrà esito negativo in modalità linguaggio vincolato perché il modulo '{0}', ha una modalità di linguaggio '{1}' diversa rispetto a quella della sessione corrente '{2}'.</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
+    <value>Esportazione implicita di funzioni del modulo</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
+    <value>L'esportazione implicita delle funzioni per il modulo '{0}' verrà negata, perché è attendibile (viene eseguito in modalità linguaggio completo), ma la sessione non è attendibile (viene eseguita in modalità linguaggio vincolato). È consigliabile esportare sempre le funzioni del modulo singolarmente usando il nome completo.</value>
+  </data>
+  <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
+    <value>Importazione del file di script come modulo</value>
+  </data>
+  <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
+    <value>L'importazione del file di script '{0}' come modulo non sarà consentita in modalità ConstrainedLanguage.</value>
+  </data>
+  <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
+    <value>Il modulo contiene l'operatore dot-source</value>
+  </data>
+  <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
+    <value>L'importazione del modulo '{0}' avrà esito negativo in modalità linguaggio vincolato perché esporta le funzioni usando caratteri jolly e usando anche l'operatore dot-source.</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
+    <value>"Funzioni di esportazione del modulo</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
+    <value>Il modulo '{0}' esporta funzioni usando caratteri jolly nel nome. I nomi di funzione dei moduli annidati verranno rimossi quando si esegue il codice in modalità linguaggio vincolato.</value>
+  </data>
+  <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
+    <value>"Cmdlet New-Module</value>
+  </data>
+  <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
+    <value>A un nuovo modulo di una sessione di linguaggio vincolato non attendibile verrà impedito di fornire il blocco di script FullLanguage.</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
+    <value>"Modalità di linguaggio del modulo non corrispondenti</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
+    <value>È in corso il caricamento di un modulo dipendente con una modalità di linguaggio diversa da quella del modulo padre. Questa operazione non sarà consentita in modalità linguaggio vincolato.</value>
+  </data>
+</root>

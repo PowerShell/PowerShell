@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CimJob_InvalidClassName" xml:space="preserve">
+    <value>No se encuentra la clase {0} en el servidor CIM {1}.  Compruebe el valor del atributo XML ClassName en xml de definición de cmdlet y vuelva a intentarlo. Ejemplo de nombre de clase válido: ROOT\cimv2\Win32_Process.</value>
+    <comment>{StrContains="ClassName"} {StrContains="ROOT\cimv2\Win32_Process"}
+{0} is a placeholder for a name of a (potentially misspelled) CIM class.  Example: "Win32_Process".
+{1} is a placeholder for a server name.  Example: "localhost".</comment>
+  </data>
+  <data name="CimJob_MethodDescription" xml:space="preserve">
+    <value>Método CIM {1} en el objeto CIM {0} </value>
+    <comment>{0} is a placeholder for a CIM path. Example: \\SERVER1\ROOT\cimv2:Win32_Process.Handle="11828"
+{1} is a placeholder for a CIM method name. Example: Create</comment>
+  </data>
+  <data name="CimJob_GenericCimFailure" xml:space="preserve">
+    <value>No se pudo ejecutar {1}.  {0}</value>
+    <comment>{0} is a placeholder for a generic CIM failure.  Example: 'Invalid namespace' or '9'
+{1} is a placeholder for a description of CIM operation.  This most likely comes from CimJob_MethodDescription or CimJob_QueryDescription</comment>
+  </data>
+  <data name="CimJob_VerboseExecutionMessage" xml:space="preserve">
+    <value>Ejecutando la siguiente operación: {0}.</value>
+    <comment>{0} is a placeholder for a description of CIM operation.  This most likely comes from CimJob_MethodDescription or CimJob_QueryDescription</comment>
+  </data>
+  <data name="SessionBasedWrapper_ShouldProcessVsJobConflict" xml:space="preserve">
+    <value>Los cmdlets de CIM no admiten el parámetro {0} junto con el parámetro AsJob.  Quite uno de estos parámetros y vuelva a intentarlo.</value>
+    <comment>{StrContains="AsJob"}
+{0} is a placeholder for 'WhatIf' or 'Confirm' cmdlet parameters</comment>
+  </data>
+  <data name="CimJob_SafeQueryDescription" xml:space="preserve">
+    <value>Consulta CIM para instancias de la clase {0} en el servidor CIM {1}: {2}</value>
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
+{1} is a placeholder for a server name.  Example: "localhost".</comment>
+  </data>
+  <data name="CimJob_ErrorCodeFromMethod" xml:space="preserve">
+    <value>El método CIM devolvió el siguiente código de error: {0}</value>
+    <comment>{0} is a placeholder for an error code returned from a CIM method.  Example: 123</comment>
+  </data>
+  <data name="CimJob_SafeMethodDescription" xml:space="preserve">
+    <value>El método CIM {2} expuesto por la clase {0} en el servidor CIM {1} </value>
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
+{1} is a placeholder for a server name.  Example: "localhost".
+{2} is a placeholder for a CIM method name. Example: Create</comment>
+  </data>
+  <data name="CimConversion_CimIntrinsicValue" xml:space="preserve">
+    <value>Tipo intrínseco CIM</value>
+  </data>
+  <data name="CimConversion_WqlQuery" xml:space="preserve">
+    <value>Literal WQL</value>
+  </data>
+  <data name="CimJob_InvalidOutputParameterName" xml:space="preserve">
+    <value>No se encuentra el parámetro de salida {2} del método {1} del objeto CIM {0}.  Compruebe el valor del atributo ParameterName en el XML de definición de cmdlet e inténtelo de nuevo.</value>
+    <comment>{StrContains="ParameterName"}
+{0} is a placeholder for a CIM path. Example: \\SERVER1\ROOT\cimv2:Win32_Process.Handle="11828"
+{1} is a placeholder for a name of a (potentially misspelled) CIM method.  Example: "Terminate".
+{2} is a placeholder for a name of a (potentially misspelled) method parameter.
+</comment>
+  </data>
+  <data name="CimJob_NotFound_ComplexCase" xml:space="preserve">
+    <value>No se encontraron objetos coincidentes {1} por {0}. Compruebe los parámetros de consulta y vuelva a intentarlo.</value>
+  </data>
+  <data name="CimJob_NotFound_SimpleGranularCase_Equality" xml:space="preserve">
+    <value>No se encontraron objetos {2} con la propiedad "{0}" igual a "{1}".  Compruebe el valor de la propiedad y vuelva a intentarlo.</value>
+  </data>
+  <data name="CimJob_MismatchedTypeOfPropertyReturnedByQuery" xml:space="preserve">
+    <value>El tipo de la propiedad {0} ({1}) no coincide con el tipo CIM ({2}) asociado con el tipo declarado en el XML de definición de cmdlet.</value>
+  </data>
+  <data name="CimJob_SafeAssociationDescription" xml:space="preserve">
+    <value>Consulta CIM para enumerar la instancia asociada de la clase {0} en el servidor CIM {1} </value>
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
+{1} is a placeholder for a server name.  Example: "localhost".</comment>
+  </data>
+  <data name="CimJob_AssociationDescription" xml:space="preserve">
+    <value>Consulta CIM para enumerar instancias de la clase {0} en el servidor CIM {1}, que están asociadas con la siguiente instancia: {2}</value>
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
+{1} is a placeholder for a server name.  Example: "localhost".
+{2} is a placeholder for a string describing a CimInstance.  Example: "Win32_Process[Handle=123]".</comment>
+  </data>
+  <data name="CimJob_SleepAndRetryVerboseMessage" xml:space="preserve">
+    <value>No se puede completar el comando {0} porque el servidor {1} está ocupado actualmente.  El comando se reanudará automáticamente en {2:f2} segundos.</value>
+    <comment>{0} is a placeholder for a command name.  Example: "Get-NetAdapter"
+{1} is a placeholder for a computer name.  Example: "localhost"
+{2} is a placeholder for a number of seconds.  Example: 1.23</comment>
+  </data>
+  <data name="CimJob_BrokenSession" xml:space="preserve">
+    <value>No se puede conectar con el servidor CIM. {0}</value>
+    <comment>{0} is a placeholder for a more detailed error message.</comment>
+  </data>
+  <data name="CimCmdletAdapter_DebugInquire" xml:space="preserve">
+    <value>El cmdlet no admite totalmente la acción Inquire para los mensajes de depuración.  La operación del cmdlet continuará durante el símbolo del sistema.  Seleccione otra preferencia de acción mediante el modificador -Debug o la variable $DebugPreference, e inténtelo de nuevo.</value>
+    <comment>{StrContains="Debug"} {StrContains="DebugPreference"} {StrContains="Inquire"}</comment>
+  </data>
+  <data name="CimCmdletAdapter_WarningInquire" xml:space="preserve">
+    <value>El cmdlet no admite totalmente la acción Inquire para advertencias.  La operación del cmdlet continuará durante el símbolo del sistema.  Seleccione otra preferencia de acción a través del parámetro -WarningAction o $WarningPreference variable e inténtelo de nuevo.</value>
+    <comment>{StrContains="WarningAction"} {StrContains="WarningPreference"} {StrContains="Inquire"}</comment>
+  </data>
+  <data name="CimCmdletAdapter_WarningStop" xml:space="preserve">
+    <value>El cmdlet no admite por completo la acción Stop para las advertencias.  La operación del cmdlet se detendrá con un retraso.  Seleccione otra preferencia de acción a través del parámetro -WarningAction o $WarningPreference variable e inténtelo de nuevo.</value>
+    <comment>{StrContains="WarningAction"} {StrContains="WarningPreference"} {StrContains="Stop"}</comment>
+  </data>
+  <data name="CimJob_ComputerNameConcatenationTemplate" xml:space="preserve">
+    <value>{0}: {1}</value>
+    <comment>{0} is a placeholder for a computername.  Example: "localhost"
+{1} is a placeholder for the original message.  Example: "Deleting managed resource"</comment>
+  </data>
+  <data name="CimCmdletAdapter_RemoteDcomDoesntSupportExtendedSemantics" xml:space="preserve">
+    <value>{0}: una CimSession al servidor CIM usa el protocolo DCOM, que no admite el modificador {1}.</value>
+    <comment>{0} is a placeholder for a name of a computer
+{1} is a placeholder for 'Confirm' or 'WhatIf'</comment>
+  </data>
+  <data name="CimJob_NotFound_SimpleGranularCase_Wildcard" xml:space="preserve">
+    <value>No se encontraron objetos {2} con la propiedad "{0}" que coincidan con "{1}".  Compruebe el valor de la propiedad y vuelva a intentarlo.</value>
+  </data>
+</root>

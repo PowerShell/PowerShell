@@ -1,0 +1,610 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
+    <value>El resultado de la finalización con tabulación no se puede deserializar correctamente porque el espacio de ejecución remoto no contiene una instancia de TypeTable.</value>
+  </data>
+  <data name="NoAccessToProperties" xml:space="preserve">
+    <value>No se puede acceder a las propiedades de una instancia null del tipo CompletionResult.</value>
+  </data>
+  <data name="bnotOperatorDescription" xml:space="preserve">
+    <value>No bit a bit</value>
+  </data>
+  <data name="notOperatorDescription" xml:space="preserve">
+    <value>Operador lógico no. Niega la instrucción que le sigue.</value>
+  </data>
+  <data name="eqOperatorDescription" xml:space="preserve">
+    <value>Igual a: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son iguales que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es igual que el operando derecho.</value>
+  </data>
+  <data name="ieqOperatorDescription" xml:space="preserve">
+    <value>Igual a: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son iguales que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es igual que el operando derecho.</value>
+  </data>
+  <data name="ceqOperatorDescription" xml:space="preserve">
+    <value>Igual a: distingue mayúsculas de minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son iguales que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es igual que el operando derecho.</value>
+  </data>
+  <data name="neOperatorDescription" xml:space="preserve">
+    <value>No es igual a: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que no es igual que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo no es igual que el operando derecho.</value>
+  </data>
+  <data name="ineOperatorDescription" xml:space="preserve">
+    <value>No es igual a: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que no es igual que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo no es igual que el operando derecho.</value>
+  </data>
+  <data name="cneOperatorDescription" xml:space="preserve">
+    <value>No es igual a: distingue mayúsculas de minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que no es igual que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo no es igual que el operando derecho.</value>
+  </data>
+  <data name="geOperatorDescription" xml:space="preserve">
+    <value>Mayor que o igual a: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son mayores o iguales que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es mayor o igual que el operando derecho.</value>
+  </data>
+  <data name="igeOperatorDescription" xml:space="preserve">
+    <value>Mayor que o igual a: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son mayores o iguales que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es mayor o igual que el operando derecho.</value>
+  </data>
+  <data name="cgeOperatorDescription" xml:space="preserve">
+    <value>Mayor o igual que: distingue mayúsculas de minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son mayores o iguales que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es mayor o igual que el operando derecho.</value>
+  </data>
+  <data name="gtOperatorDescription" xml:space="preserve">
+    <value>Mayor que: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son mayores que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es mayor que el operando derecho.</value>
+  </data>
+  <data name="igtOperatorDescription" xml:space="preserve">
+    <value>Mayor que: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son mayores que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es mayor que el operando derecho.</value>
+  </data>
+  <data name="cgtOperatorDescription" xml:space="preserve">
+    <value>Mayor que: distingue mayúsculas de minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son mayores que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es mayor que el operando derecho.</value>
+  </data>
+  <data name="ltOperatorDescription" xml:space="preserve">
+    <value>Menor que: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son menores que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es menor que el operando derecho.</value>
+  </data>
+  <data name="iltOperatorDescription" xml:space="preserve">
+    <value>Menor que: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son menores que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es menor que el operando derecho.</value>
+  </data>
+  <data name="cltOperatorDescription" xml:space="preserve">
+    <value>Menor que: distingue mayúsculas de minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son menores que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es menor que el operando derecho.</value>
+  </data>
+  <data name="leOperatorDescription" xml:space="preserve">
+    <value>Menor o igual que: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son menores o iguales que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es menor o igual que el operando derecho.</value>
+  </data>
+  <data name="ileOperatorDescription" xml:space="preserve">
+    <value>Menor o igual que: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son menores o iguales que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es menor o igual que el operando derecho.</value>
+  </data>
+  <data name="cleOperatorDescription" xml:space="preserve">
+    <value>Menor o igual que: distingue mayúsculas de minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que son menores o iguales que el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo es menor o igual que el operando derecho.</value>
+  </data>
+  <data name="likeOperatorDescription" xml:space="preserve">
+    <value>Carácter comodín que coincide con el operador: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo coincide con el operando derecho.</value>
+  </data>
+  <data name="ilikeOperatorDescription" xml:space="preserve">
+    <value>Carácter comodín que coincide con el operador: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo coincide con el operando derecho.</value>
+  </data>
+  <data name="clikeOperatorDescription" xml:space="preserve">
+    <value>Carácter comodín que coincide con el operador: distingue mayúsculas de minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo coincide con el operando derecho.</value>
+  </data>
+  <data name="notlikeOperatorDescription" xml:space="preserve">
+    <value>Carácter comodín que coincide con el operador: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que no coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo no coincide con el operando derecho.</value>
+  </data>
+  <data name="inotlikeOperatorDescription" xml:space="preserve">
+    <value>Carácter comodín que coincide con el operador: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que no coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo no coincide con el operando derecho.</value>
+  </data>
+  <data name="cnotlikeOperatorDescription" xml:space="preserve">
+    <value>Carácter comodín que coincide con el operador: distingue mayúsculas de minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que no coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo no coincide con el operando derecho.</value>
+  </data>
+  <data name="matchOperatorDescription" xml:space="preserve">
+    <value>Expresión regular que coincide con el operador: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo coincide con el operando derecho.</value>
+  </data>
+  <data name="imatchOperatorDescription" xml:space="preserve">
+    <value>Expresión regular que coincide con el operador: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo coincide con el operando derecho.</value>
+  </data>
+  <data name="cmatchOperatorDescription" xml:space="preserve">
+    <value>Expresión regular que coincide con el operador: distingue mayúsculas de minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo coincide con el operando derecho.</value>
+  </data>
+  <data name="notmatchOperatorDescription" xml:space="preserve">
+    <value>Expresión regular que coincide con el operador: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que no coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo no coincide con el operando derecho.</value>
+  </data>
+  <data name="inotmatchOperatorDescription" xml:space="preserve">
+    <value>Expresión regular que coincide con el operador: no distingue entre mayúsculas y minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que no coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo no coincide con el operando derecho.</value>
+  </data>
+  <data name="cnotmatchOperatorDescription" xml:space="preserve">
+    <value>Expresión regular que coincide con el operador: distingue mayúsculas de minúsculas. Cuando el operando izquierdo es una colección, devuelve los valores de la colección que no coinciden con el operando derecho; en caso contrario, devuelve TRUE si el operando izquierdo no coincide con el operando derecho.</value>
+  </data>
+  <data name="replaceOperatorDescription" xml:space="preserve">
+    <value>Operador de reemplazo: no distingue entre mayúsculas y minúsculas. Cambia el operando izquierdo. Ejemplo: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="ireplaceOperatorDescription" xml:space="preserve">
+    <value>Operador de reemplazo: no distingue entre mayúsculas y minúsculas. Cambia el operando izquierdo. Ejemplo: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="creplaceOperatorDescription" xml:space="preserve">
+    <value>Operador de reemplazo: distingue mayúsculas de minúsculas. Cambia el operando izquierdo. Ejemplo: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="containsOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: no distingue entre mayúsculas y minúsculas. Devuelve TRUE cuando el valor de prueba (operando derecho) coincide exactamente con al menos uno de los valores del operando izquierdo.</value>
+  </data>
+  <data name="icontainsOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: no distingue entre mayúsculas y minúsculas. Devuelve TRUE cuando el valor de prueba (operando derecho) coincide exactamente con al menos uno de los valores del operando izquierdo.</value>
+  </data>
+  <data name="ccontainsOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: distingue mayúsculas de minúsculas. Devuelve TRUE solo cuando el valor de prueba (operando derecho) coincide exactamente con al menos uno de los valores del operando izquierdo.</value>
+  </data>
+  <data name="notcontainsOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: no distingue entre mayúsculas y minúsculas. Devuelve TRUE cuando el valor de prueba (operando derecho) no coincide exactamente con ninguno de los valores del operando izquierdo.</value>
+  </data>
+  <data name="inotcontainsOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: no distingue entre mayúsculas y minúsculas. Devuelve TRUE cuando el valor de prueba (operando derecho) no coincide exactamente con ninguno de los valores del operando izquierdo.</value>
+  </data>
+  <data name="cnotcontainsOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: distingue mayúsculas de minúsculas. Devuelve TRUE cuando el valor de prueba (operando derecho) no coincide exactamente con ninguno de los valores del operando izquierdo.</value>
+  </data>
+  <data name="inOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: no distingue entre mayúsculas y minúsculas. Devuelve TRUE cuando el valor de prueba (operando izquierdo) coincide exactamente con al menos uno de los valores del operando derecho.</value>
+  </data>
+  <data name="iinOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: no distingue entre mayúsculas y minúsculas. Devuelve TRUE cuando el valor de prueba (operando izquierdo) coincide exactamente con al menos uno de los valores del operando derecho.</value>
+  </data>
+  <data name="cinOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: distingue mayúsculas de minúsculas. Devuelve TRUE cuando el valor de prueba (operando izquierdo) coincide exactamente con al menos uno de los valores del operando derecho.</value>
+  </data>
+  <data name="notinOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: distingue mayúsculas de minúsculas. Devuelve TRUE cuando el valor de prueba (operando izquierdo) no coincide exactamente con ninguno de los valores del operando derecho.</value>
+  </data>
+  <data name="inotinOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: no distingue entre mayúsculas y minúsculas. Devuelve TRUE cuando el valor de prueba (operando izquierdo) no coincide exactamente con ninguno de los valores del operando derecho.</value>
+  </data>
+  <data name="cnotinOperatorDescription" xml:space="preserve">
+    <value>Operador de independencia: distingue mayúsculas de minúsculas. Devuelve TRUE cuando el valor de prueba (operando izquierdo) no coincide exactamente con ninguno de los valores del operando derecho.</value>
+  </data>
+  <data name="splitOperatorDescription" xml:space="preserve">
+    <value>Dividir: no distingue entre mayúsculas y minúsculas. Divide una o varias cadenas en substrings.
+-Dividir &lt;String&gt;
+
+&lt;String&gt; -Dividir &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Dividir {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isplitOperatorDescription" xml:space="preserve">
+    <value>Dividir: no distingue entre mayúsculas y minúsculas. Divide una o varias cadenas en substrings.
+-Dividir &lt;String&gt;
+
+&lt;String&gt; -Dividir &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Dividir {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="csplitOperatorDescription" xml:space="preserve">
+    <value>Dividir: distingue mayúsculas de minúsculas. Divide una o varias cadenas en substrings.
+-Dividir &lt;String&gt;
+
+&lt;String&gt; -Dividir &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Dividir {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isnotOperatorDescription" xml:space="preserve">
+    <value>Devuelve TRUE cuando el operando izquierdo no es una instancia del tipo de .NET Framework especificado (operando derecho).</value>
+  </data>
+  <data name="isOperatorDescription" xml:space="preserve">
+    <value>Devuelve TRUE cuando el operando izquierdo es una instancia del tipo de .NET Framework especificado (operando derecho).</value>
+  </data>
+  <data name="asOperatorDescription" xml:space="preserve">
+    <value>Convierte el operando izquierdo al tipo .NET Framework especificado (operando derecho).</value>
+  </data>
+  <data name="fOperatorDescription" xml:space="preserve">
+    <value>Da formato a las cadenas mediante el método de formato de los objetos de cadena.</value>
+  </data>
+  <data name="andOperatorDescription" xml:space="preserve">
+    <value>Operador lógico and. Devuelve TRUE cuando ambas instrucciones son TRUE.</value>
+  </data>
+  <data name="bandOperatorDescription" xml:space="preserve">
+    <value>Bit a bit Y</value>
+  </data>
+  <data name="orOperatorDescription" xml:space="preserve">
+    <value>Operador lógico or. TRUE cuando una o ambas instrucciones son TRUE.</value>
+  </data>
+  <data name="borOperatorDescription" xml:space="preserve">
+    <value>Bit a bit O (inclusivo)</value>
+  </data>
+  <data name="xorOperatorDescription" xml:space="preserve">
+    <value>Operador lógico or exclusivo. Devuelve TRUE cuando una de las instrucciones es TRUE y la otra es FALSE.</value>
+  </data>
+  <data name="bxorOperatorDescription" xml:space="preserve">
+    <value>Bit a bit O (exclusivo)</value>
+  </data>
+  <data name="joinOperatorDescription" xml:space="preserve">
+    <value>Unir: combina varias cadenas en una sola.
+-Unir &lt;String[]&gt;
+&lt;String[]&gt; -Unir &lt;Delimiter&gt;</value>
+  </data>
+  <data name="shlOperatorDescription" xml:space="preserve">
+    <value>Operador de bits de desplazamiento a la izquierda. Inserta un cero en la posición del bit más a la derecha.</value>
+  </data>
+  <data name="shrOperatorDescription" xml:space="preserve">
+    <value>Operador de bits de desplazamiento a la derecha. Inserta un cero en la posición del bit más a la izquierda. En los valores con signo, se conserva el bit de signo.</value>
+  </data>
+  <data name="NameHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Especifica el nombre de la propiedad que se va a crear.</value>
+  </data>
+  <data name="LabelHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Especifica el nombre de la propiedad que se va a crear.</value>
+  </data>
+  <data name="ExpressionHashtableKeyDescription" xml:space="preserve">
+    <value>[scriptblock]
+Bloque de script que se usa para calcular el valor de la nueva propiedad.</value>
+  </data>
+  <data name="AlignmentHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Define cómo se muestran los valores en una columna.
+Los valores válidos son "left", "center" o "right".</value>
+  </data>
+  <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Especifica una cadena de formato que define cómo se da formato al valor para la salida.</value>
+  </data>
+  <data name="WidthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+Especifica el ancho máximo de columna en una tabla cuando se muestra el valor.
+El valor debe ser mayor que 0.</value>
+  </data>
+  <data name="DepthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+La clave de profundidad especifica la profundidad de expansión por propiedad.</value>
+  </data>
+  <data name="AscendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+Especifica el orden de ordenación de una o más propiedades.</value>
+  </data>
+  <data name="DescendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+Especifica el orden de ordenación de una o más propiedades.</value>
+  </data>
+  <data name="LogNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Especifica los nombres de registro de los que se obtendrán eventos.
+Admite caracteres comodín.</value>
+  </data>
+  <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Especifica los proveedores del registro de eventos de los que se obtendrán eventos.
+Admite caracteres comodín.</value>
+  </data>
+  <data name="PathHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Especifica las rutas de acceso a los archivos de registro de los que se van a obtener eventos.
+Los formatos de archivo válidos son: .etl, .evt y .evtx</value>
+  </data>
+  <data name="KeywordsHashtableKeyDescription" xml:space="preserve">
+    <value>[Long[]]
+Selecciona eventos con las máscaras de bits de palabra clave especificadas.
+Las siguientes son palabras clave estándar:
+4503599627370496: AuditFailure
+9007199254740992: AuditSuccess
+4503599627370496: CorrelationHint
+18014398509481984: CorrelationHint2
+36028797018963968: EventLogClassic
+281474976710656: ResponseTime
+2251799813685248: Sqm
+562949953421312: WdiContext
+1125899906842624: WdiDiagnostic</value>
+  </data>
+  <data name="IDHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+Selecciona eventos con los identificadores de evento especificados.</value>
+  </data>
+  <data name="LevelHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+Selecciona eventos con los niveles de registro especificados.
+Los siguientes niveles de registro son válidos:
+1: Crítico
+2: Error
+3: Advertencia
+4: Información
+5: Detallado</value>
+  </data>
+  <data name="StartTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+Selecciona eventos creados después de la fecha y hora especificadas.</value>
+  </data>
+  <data name="EndTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+Selecciona eventos creados antes de la fecha y hora especificadas.</value>
+  </data>
+  <data name="UserIDHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Selecciona eventos generados por el usuario especificado.
+Puede ser una representación de cadena de un SID o un dominio y nombre de usuario con el formato DOMAIN\USERNAME o USERNAME@DOMAIN</value>
+  </data>
+  <data name="DataHashtableKeyDescription" xml:space="preserve">
+    <value>[string[]]
+Selecciona eventos con cualquiera de los valores especificados en la sección EventData.</value>
+  </data>
+  <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
+    <value>[hashtable]
+Excluye los eventos que coinciden con los valores especificados en la tabla hash.</value>
+  </data>
+  <data name="RequiresModulesParameterDescription" xml:space="preserve">
+    <value>[string] o [hashtable]
+Especifica una matriz de módulos de PowerShell que requiere el script.
+Cada elemento puede ser una cadena con el nombre del módulo como valor o una tabla hash con las siguientes claves:
+Nombre: nombre del módulo
+GUID: GUID del módulo
+Uno de los siguientes:
+ModuleVersion: especifica la versión mínima aceptable del módulo.
+RequiredVersion: especifica una versión exacta y obligatoria del módulo.
+MaximumVersion: especifica la versión máxima aceptable del módulo.</value>
+  </data>
+  <data name="RequiresPSEditionParameterDescription" xml:space="preserve">
+    <value>[string]
+Especifica una edición de PowerShell que requiere el script.
+Los valores válidos son "Core" y "Desktop"</value>
+  </data>
+  <data name="RequiresRunAsAdministratorParameterDescription" xml:space="preserve">
+    <value>[switch]
+Especifica que PowerShell debe ejecutarse como administrador en Windows.
+Debe ser el último parámetro de la línea de la instrucción #requires.</value>
+  </data>
+  <data name="RequiresVersionParameterDescription" xml:space="preserve">
+    <value>[version]
+Especifica la versión mínima de PowerShell que requiere el script.</value>
+  </data>
+  <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
+    <value>Especifica que el script requiere PowerShell 7+* para ejecutarse.</value>
+  </data>
+  <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
+    <value>Especifica que el script requiere Windows PowerShell 5.1 para ejecutarse.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
+    <value>[string]
+Obligatorio. Especifica el nombre del módulo.</value>
+  </data>
+  <data name="RequiresModuleSpecGUIDDescription" xml:space="preserve">
+    <value>[string]
+Opcional. Especifica el GUID del módulo.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleVersionDescription" xml:space="preserve">
+    <value>[string]
+Especifica la versión mínima aceptable del módulo.</value>
+  </data>
+  <data name="RequiresModuleSpecRequiredVersionDescription" xml:space="preserve">
+    <value>[string]
+Especifica una versión exacta y obligatoria del módulo.</value>
+  </data>
+  <data name="RequiresModuleSpecMaximumVersionDescription" xml:space="preserve">
+    <value>[string]
+Especifica la versión máxima aceptable del módulo.</value>
+  </data>
+  <data name="CommentHelpSYNOPSISKeywordDescription" xml:space="preserve">
+    <value>Una descripción breve de la función o script.
+Esta palabra clave solo se puede usar una vez en cada tema.</value>
+  </data>
+  <data name="CommentHelpDESCRIPTIONKeywordDescription" xml:space="preserve">
+    <value>Una descripción detallada de la función o script.
+Esta palabra clave solo se puede usar una vez en cada tema.</value>
+  </data>
+  <data name="CommentHelpPARAMETERKeywordDescription" xml:space="preserve">
+    <value>.PARAMETER  &lt;Parameter-Name&gt;
+La descripción de un parámetro.
+Agregue la palabra clave .PARAMETER para cada parámetro en la sintaxis de la función o del script.</value>
+  </data>
+  <data name="CommentHelpEXAMPLEKeywordDescription" xml:space="preserve">
+    <value>Comando de ejemplo que usa la función o el script, seguido opcionalmente de una salida de ejemplo y una descripción.
+Repita esta palabra clave para cada ejemplo.</value>
+  </data>
+  <data name="CommentHelpINPUTSKeywordDescription" xml:space="preserve">
+    <value>Los tipos .NET de los objetos que se pueden canalizar a la función o script.
+También puede incluir una descripción de los objetos de entrada.</value>
+  </data>
+  <data name="CommentHelpOUTPUTSKeywordDescription" xml:space="preserve">
+    <value>Tipo de .NET de los objetos que devuelve el cmdlet.
+También puede incluir una descripción de los objetos devueltos.</value>
+  </data>
+  <data name="CommentHelpNOTESKeywordDescription" xml:space="preserve">
+    <value>Información adicional sobre la función o script.</value>
+  </data>
+  <data name="CommentHelpLINKKeywordDescription" xml:space="preserve">
+    <value>Nombre de un tema relacionado.
+Repita la palabra clave .LINK para cada tema relacionado.
+El contenido de la palabra clave .Link también puede incluir un URI en una versión en línea del mismo tema de ayuda.</value>
+  </data>
+  <data name="CommentHelpCOMPONENTKeywordDescription" xml:space="preserve">
+    <value>Nombre de la tecnología o característica que usa la función o el script, o con la que está relacionada.</value>
+  </data>
+  <data name="CommentHelpROLEKeywordDescription" xml:space="preserve">
+    <value>El nombre del rol de usuario para el tema de ayuda.</value>
+  </data>
+  <data name="CommentHelpFUNCTIONALITYKeywordDescription" xml:space="preserve">
+    <value>Las palabras clave que describen el uso previsto de la función.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPTARGETNAMEKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPTARGETNAME &lt;Command-Name&gt;
+Redirige al tema de ayuda del comando especificado.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPCATEGORYKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPCATEGORY &lt;Category&gt;
+Especifica la categoría de ayuda del elemento en .ForwardHelpTargetName</value>
+  </data>
+  <data name="CommentHelpREMOTEHELPRUNSPACEKeywordDescription" xml:space="preserve">
+    <value>.REMOTEHELPRUNSPACE &lt;PSSession-variable&gt;
+Especifica una sesión que contiene el tema de ayuda.
+Escriba una variable que contenga un objeto PSSession.</value>
+  </data>
+  <data name="CommentHelpEXTERNALHELPKeywordDescription" xml:space="preserve">
+    <value>.EXTERNALHELP &lt;XML Help File&gt;
+La palabra clave .ExternalHelp es necesaria cuando una función o un script se documenta en archivos XML.</value>
+  </data>
+  <data name="AssemblyKeywordDescription" xml:space="preserve">
+    <value>Especifica la ruta de acceso a un ensamblado .NET que se va a cargar.
+
+usando el ensamblado &lt;.NET-assembly-path&gt;</value>
+  </data>
+  <data name="ModuleKeywordDescription" xml:space="preserve">
+    <value>Especifica un módulo de PowerShell desde el que cargar clases.
+
+usando módulo &lt;ModuleName o Path&gt;
+
+usando módulo &lt;tabla hash ModuleSpecification&gt;</value>
+  </data>
+  <data name="NamespaceKeywordDescription" xml:space="preserve">
+    <value>Especifica un espacio de nombres .NET desde el que resolver tipos o un alias de espacio de nombres.
+
+usando el espacio de nombres &lt;.NET-namespace&gt;
+
+usando el espacio de nombres &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
+  </data>
+  <data name="TypeKeywordDescription" xml:space="preserve">
+    <value>Especifica un alias para un tipo de .NET.
+
+usando el tipo &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
+  </data>
+  <data name="RegistryStringToolTip" xml:space="preserve">
+    <value>Una cadena normal.</value>
+  </data>
+  <data name="RegistryExpandStringToolTip" xml:space="preserve">
+    <value>Una cadena que contiene referencias no expandidas a variables de entorno que se expanden cuando se recupera el valor.</value>
+  </data>
+  <data name="RegistryBinaryToolTip" xml:space="preserve">
+    <value>Datos binarios en cualquier formulario.</value>
+  </data>
+  <data name="RegistryDWordToolTip" xml:space="preserve">
+    <value>Un número binario de 32 bits.</value>
+  </data>
+  <data name="RegistryMultiStringToolTip" xml:space="preserve">
+    <value>Una matriz de cadenas.</value>
+  </data>
+  <data name="RegistryQWordToolTip" xml:space="preserve">
+    <value>Un número binario de 64 bits.</value>
+  </data>
+  <data name="RegistryUnknownToolTip" xml:space="preserve">
+    <value>Un tipo de datos del Registro no admitido.</value>
+  </data>
+  <data name="SeparatorCommaToolTip" xml:space="preserve">
+    <value>",": coma</value>
+  </data>
+  <data name="SeparatorCommaSpaceToolTip" xml:space="preserve">
+    <value>", ": coma y espacio</value>
+  </data>
+  <data name="SeparatorSemiColonToolTip" xml:space="preserve">
+    <value>";": punto y coma</value>
+  </data>
+  <data name="SeparatorSemiColonSpaceToolTip" xml:space="preserve">
+    <value>"; ": punto y coma y espacio</value>
+  </data>
+  <data name="SeparatorNewlineToolTip" xml:space="preserve">
+    <value>{0} - Newline</value>
+  </data>
+  <data name="SeparatorDashToolTip" xml:space="preserve">
+    <value>"-": guion</value>
+  </data>
+  <data name="SeparatorSpaceToolTip" xml:space="preserve">
+    <value>" ": espacio</value>
+  </data>
+</root>

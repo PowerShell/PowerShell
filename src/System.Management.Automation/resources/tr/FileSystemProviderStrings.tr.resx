@@ -1,0 +1,357 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvokeItemAction" xml:space="preserve">
+    <value>Öğeyi Çağır</value>
+  </data>
+  <data name="InvokeItemResourceFileTemplate" xml:space="preserve">
+    <value>Öğe: {0}</value>
+  </data>
+  <data name="RemoveItemActionFile" xml:space="preserve">
+    <value>Dosyayı Kaldır</value>
+  </data>
+  <data name="RemoveItemActionDirectory" xml:space="preserve">
+    <value>Dizini Kaldır</value>
+  </data>
+  <data name="CopyItemActionFile" xml:space="preserve">
+    <value>Dosyayı Kopyala</value>
+  </data>
+  <data name="CopyItemResourceFileTemplate" xml:space="preserve">
+    <value>Öğe: {0} Hedef: {1}</value>
+  </data>
+  <data name="CopyItemActionDirectory" xml:space="preserve">
+    <value>Dizini Kopyala</value>
+  </data>
+  <data name="RenameItemActionFile" xml:space="preserve">
+    <value>Dosyayı Yeniden Adlandır</value>
+  </data>
+  <data name="RenameItemActionDirectory" xml:space="preserve">
+    <value>Dizini Yeniden Adlandır</value>
+  </data>
+  <data name="RenameItemResourceFileTemplate" xml:space="preserve">
+    <value>Öğe: {0} Hedef: {1}</value>
+  </data>
+  <data name="MoveItemActionFile" xml:space="preserve">
+    <value>Dosyayı Taşı</value>
+  </data>
+  <data name="MoveItemActionDirectory" xml:space="preserve">
+    <value>Dizini Taşı</value>
+  </data>
+  <data name="MoveItemResourceFileTemplate" xml:space="preserve">
+    <value>Öğe: {0} Hedef: {1}</value>
+  </data>
+  <data name="SetPropertyActionFile" xml:space="preserve">
+    <value>Özellik Dosyasını Ayarla</value>
+  </data>
+  <data name="SetPropertyActionDirectory" xml:space="preserve">
+    <value>Özellik Dizinini Ayarla</value>
+  </data>
+  <data name="SetPropertyResourceTemplate" xml:space="preserve">
+    <value>Öğe: {0} Özellik: {1} Değer: {2}</value>
+  </data>
+  <data name="ClearPropertyActionFile" xml:space="preserve">
+    <value>Özellik Dosyasını Temizle</value>
+  </data>
+  <data name="ClearPropertyActionDirectory" xml:space="preserve">
+    <value>Özellik Dizinini Temizle</value>
+  </data>
+  <data name="ClearPropertyResourceTemplate" xml:space="preserve">
+    <value>Öğe: {0} Özellik: {1}</value>
+  </data>
+  <data name="NewItemActionFile" xml:space="preserve">
+    <value>Dosya Oluştur</value>
+  </data>
+  <data name="NewItemActionDirectory" xml:space="preserve">
+    <value>Dizin Oluştur</value>
+  </data>
+  <data name="NewItemActionTemplate" xml:space="preserve">
+    <value>Hedef: {0}</value>
+  </data>
+  <data name="ClearContentActionFile" xml:space="preserve">
+    <value>İçeriği Temizle</value>
+  </data>
+  <data name="ClearContentesourceTemplate" xml:space="preserve">
+    <value>Öğe: {0}</value>
+  </data>
+  <data name="ItemNotFound" xml:space="preserve">
+    <value>{0} öğesi bulunamadı.</value>
+  </data>
+  <data name="CannotRemoveItem" xml:space="preserve">
+    <value>{0} öğesi kaldırılamıyor: {1}</value>
+  </data>
+  <data name="CannotRestoreAttributes" xml:space="preserve">
+    <value>{0} öğesinde öznitelikler geri yüklenemiyor: {1}</value>
+  </data>
+  <data name="ItemDoesNotExist" xml:space="preserve">
+    <value>Belirtilen {0} yolunda bir nesne yok.</value>
+  </data>
+  <data name="DirectoryNotEmpty" xml:space="preserve">
+    <value>{0} dizini boş olmadığından kaldırılamıyor.</value>
+  </data>
+  <data name="UnknownType" xml:space="preserve">
+    <value>Tür, dosya sistemi için bilinen bir tür değil. Yalnızca "file", "directory" veya "symboliclink" belirtilebilir.</value>
+  </data>
+  <data name="PathOutSideBasePath" xml:space="preserve">
+    <value>Belirtilen yol basePath dışındaki bir öğeye başvurduğundan, yol işlenemiyor.</value>
+  </data>
+  <data name="DriveRootError" xml:space="preserve">
+    <value>Belirtilen "{0}" sürücü kökü yok veya bir klasör değil.</value>
+  </data>
+  <data name="DirectoryExist" xml:space="preserve">
+    <value>Belirtilen {0} adına sahip bir öğe zaten var.</value>
+  </data>
+  <data name="DelimiterError" xml:space="preserve">
+    <value>Akış her seferinde bir bayt okunurken sınırlayıcı belirtilemez.</value>
+  </data>
+  <data name="CopyError" xml:space="preserve">
+    <value>{0} öğesi kendi üzerinde yazılamaz.</value>
+  </data>
+  <data name="RenameError" xml:space="preserve">
+    <value>Belirtilen hedef bir yol veya cihaz adını temsil ettiğinden, yeniden adlandırılamıyor.</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>{0} özelliği yok veya bulunamadı.</value>
+  </data>
+  <data name="PermissionError" xml:space="preserve">
+    <value>Bu işlemi gerçekleştirmek için yeterli erişim hakkınız yok veya öğe gizli, sistem öğesi veya salt okunur.</value>
+  </data>
+  <data name="AttributesNotSupported" xml:space="preserve">
+    <value>Öznitelikler desteklenmediğinden öznitelik ayarlanamıyor. Yalnızca şu öznitelikler ayarlanabilir: Archive, Hidden, Normal, ReadOnly veya System.</value>
+  </data>
+  <data name="CannotClearProperty" xml:space="preserve">
+    <value>Özellik desteklenmediğinden temizlenemiyor. Yalnızca Attributes özelliği temizlenebilir.</value>
+  </data>
+  <data name="TargetCannotContainDeviceName" xml:space="preserve">
+    <value>Hedef ayrılmış bir cihaz adını temsil ettiğinden '{0}' yolu işlenemiyor.</value>
+  </data>
+  <data name="EncodingNotUsed" xml:space="preserve">
+    <value>'-AsByteStream' belirtildiğinde kodlama kullanılmaz.</value>
+  </data>
+  <data name="ByteEncodingError" xml:space="preserve">
+    <value>Bayt kodlamasına devam edilemiyor. Bayt kodlaması kullanılırken içerik bayt türünde olmalıdır.</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>{0} dosyası bulunamadığı için dosya işlenemiyor.</value>
+  </data>
+  <data name="DirectoryDisplayGrouping" xml:space="preserve">
+    <value>    Dizin: </value>
+  </data>
+  <data name="ReadBackward_Encoding_NotSupport" xml:space="preserve">
+    <value>Dosyanın kodlaması algılanamadı. Belirtilen {0} kodlaması, içerik tersten okunduğunda desteklenmez.</value>
+  </data>
+  <data name="AlternateDataStreamNotFound" xml:space="preserve">
+    <value>'{1}' dosyasının '{0}' alternatif veri akışı açılamadı.</value>
+  </data>
+  <data name="StreamAction" xml:space="preserve">
+    <value>'{1}' dosyasının '{0}' akışı.</value>
+  </data>
+  <data name="RawAndWaitCannotCoexist" xml:space="preserve">
+    <value>Raw ve Wait parametreleri aynı komutta belirtilemez.</value>
+  </data>
+  <data name="InvalidDriveName" xml:space="preserve">
+    <value>Persist anahtar parametresini kullanmak için sürücü adının işletim sistemi tarafından desteklenmesi gerekir (örneğin, A-Z sürücü harfleri).</value>
+  </data>
+  <data name="PersistNotSupported" xml:space="preserve">
+    <value>Persist parametresini kullandığınızda, kök uzak bilgisayardaki bir dosya sistemi konumu olmalıdır.</value>
+  </data>
+  <data name="NoFirstLastWaitForRaw" xml:space="preserve">
+    <value>'{0}' ve '{1}' parametreleri aynı komutta belirtilemez.</value>
+  </data>
+  <data name="ItemNotDirectory" xml:space="preserve">
+    <value>İşlem için bir dizin gerekiyor. '{0}' öğesi bir dizin değil.</value>
+  </data>
+  <data name="NewItemActionJunction" xml:space="preserve">
+    <value>Birleşim Oluştur</value>
+  </data>
+  <data name="NewItemActionSymbolicLink" xml:space="preserve">
+    <value>Sembolik Bağlantı Oluştur</value>
+  </data>
+  <data name="ElevationRequired" xml:space="preserve">
+    <value>Bu işlem için Yönetici ayrıcalığı gerekir.</value>
+  </data>
+  <data name="NewItemActionHardLink" xml:space="preserve">
+    <value>Sabit Bağlantı Oluştur</value>
+  </data>
+  <data name="ItemNotFile" xml:space="preserve">
+    <value>İşlem için bir dosya gerekiyor. '{0}' öğesi bir dosya değil.</value>
+  </data>
+  <data name="HardLinkNotSupported" xml:space="preserve">
+    <value>Belirtilen yol için sabit bağlantılar desteklenmiyor.</value>
+  </data>
+  <data name="SymbolicLinkNotSupported" xml:space="preserve">
+    <value>Belirtilen yol için sembolik bağlantılar desteklenmiyor.</value>
+  </data>
+  <data name="CopyItemRemotelyProgressActivity" xml:space="preserve">
+    <value>{0} dosyasını {1} klasörüne kopyalama</value>
+  </data>
+  <data name="CopyItemRemoteDestinationIsFile" xml:space="preserve">
+    <value>{0} hedef yolu, hedef konumda zaten mevcut olan bir dosyadır.</value>
+  </data>
+  <data name="CopyItemRemotelyFailed" xml:space="preserve">
+    <value>{0} dosyası uzak hedef konuma kopyalanamadı.</value>
+  </data>
+  <data name="CopyItemRemotelyStatusDescription" xml:space="preserve">
+    <value>Başlangıç: {0} Bitiş: {1}</value>
+  </data>
+  <data name="CopyItemRemotelyDestinationIsFile" xml:space="preserve">
+    <value>'{0}' dizini '{0}' dosyasına kopyalanamıyor</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToGetDirectoryChildItems" xml:space="preserve">
+    <value>{0} dizini alt öğeleri alınamadı.</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToReadFile" xml:space="preserve">
+    <value>'{0}' uzak dosyası okunamadı.</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToValidateIfDestinationIsFile" xml:space="preserve">
+    <value>{0} uzak hedefinin bir dosya olup olmadığı doğrulanamıyor.</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
+    <value>Uzak hedefte '{0}' dizini oluşturulamadı.</value>
+  </data>
+  <data name="DriveMaxSizeError" xml:space="preserve">
+    <value>Sürücü için maksimum boyut aşıldı: {0}.</value>
+  </data>
+  <data name="SymlinkItemExists" xml:space="preserve">
+    <value>Yol zaten mevcut olduğundan bağlantı oluşturulamıyor: {0}.</value>
+  </data>
+  <data name="AlreadyListedDirectory" xml:space="preserve">
+    <value>Daha önce ziyaret edilmiş olan {0} dizinini atlayın.</value>
+  </data>
+  <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
+    <value>Hedef yol, kaynağın bir alt dizini veya kaynağın kendisi olamaz: {0}.</value>
+  </data>
+  <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
+    <value>Hedef ve yol aynı olamaz.</value>
+  </data>
+  <data name="CopyingLocalFileActivity" xml:space="preserve">
+    <value>{1} dosyasının {0} tanesi kopyalandı</value>
+  </data>
+  <data name="CopyingLocalBytesStatus" xml:space="preserve">
+    <value>{0}/{1} ({2:0.0} MB/sn)</value>
+  </data>
+  <data name="RemovingLocalFileActivity" xml:space="preserve">
+    <value>{1} dosyanın {0} tanesi kaldırıldı</value>
+  </data>
+  <data name="RemovingLocalBytesStatus" xml:space="preserve">
+    <value>{0}/{1} ({2:0.0} MB/sn)</value>
+  </data>
+  <data name="JunctionAbsolutePath" xml:space="preserve">
+    <value>Bir birleşim oluşturmak için hedefin mutlak bir yolu olması gerekir.</value>
+  </data>
+</root>

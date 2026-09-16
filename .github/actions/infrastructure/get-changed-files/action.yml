@@ -13,6 +13,9 @@ outputs:
   files:
     description: 'JSON array of changed file paths'
     value: ${{ steps.get-files.outputs.files }}
+  files_path:
+    description: 'Path to temp file containing the JSON array of changed file paths'
+    value: ${{ steps.get-files.outputs.files_path }}
   count:
     description: 'Number of changed files'
     value: ${{ steps.get-files.outputs.count }}
@@ -109,7 +112,17 @@ runs:
           core.endGroup();
 
           console.log(`Found ${changedFiles.length} changed files`);
+
+          // Write files to a temp file to avoid exceeding ARG_MAX for large PRs
+          const fs = require('fs');
+          const path = require('path');
+          const tempDir = process.env.RUNNER_TEMP || '/tmp';
+          const tempFile = path.join(tempDir, 'changed-files.json');
+          fs.writeFileSync(tempFile, JSON.stringify(changedFiles));
+          console.log(`File list written to ${tempFile}`);
+
           core.setOutput('files', JSON.stringify(changedFiles));
+          core.setOutput('files_path', tempFile);
           core.setOutput('count', changedFiles.length);
 
 branding:

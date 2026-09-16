@@ -31,7 +31,7 @@ Describe "Debug-Runspace" -Tag "CI" {
         $rs1.Debugger.SetDebugMode("None")
         { Debug-Runspace -Runspace $rs1 -ErrorAction stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
     }
-    
+
     It "Should write attach event and mark runspace as having a remote debugger attached" {
         $onAttachName = [System.Management.Automation.PSEngineEvent]::OnDebugAttach
 

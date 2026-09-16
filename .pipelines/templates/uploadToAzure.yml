@@ -59,6 +59,14 @@ jobs:
   - task: DownloadPipelineArtifact@2
     inputs:
       buildType: 'current'
+      artifact: drop_linux_package_deb_arm64
+      itemPattern: '**/*.deb'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download deb arm64 package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
       artifact: drop_linux_package_fxdependent
       itemPattern: '**/*.tar.gz'
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
@@ -83,10 +91,18 @@ jobs:
   - task: DownloadPipelineArtifact@2
     inputs:
       buildType: 'current'
-      artifact: drop_linux_package_minSize
+      artifact: drop_linux_package_minSize_x64
       itemPattern: '**/*.tar.gz'
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
-    displayName: Download linux minSize package
+    displayName: Download linux minSize x64 package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_minSize_arm64
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux minSize arm64 package
 
   - task: DownloadPipelineArtifact@2
     inputs:
@@ -173,10 +189,18 @@ jobs:
   - task: DownloadPipelineArtifact@2
     inputs:
       buildType: 'current'
-      artifact: drop_windows_package_package_win_minsize
+      artifact: drop_windows_package_package_win_x64_minsize
       itemPattern: '**/*.zip'
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
-    displayName: Download windows minsize packages
+    displayName: Download windows x64 minsize packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_arm64_minsize
+      itemPattern: '**/*.zip'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download windows arm64 minsize packages
 
   - task: DownloadPipelineArtifact@2
     inputs:

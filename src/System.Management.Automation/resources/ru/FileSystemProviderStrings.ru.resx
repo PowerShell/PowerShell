@@ -1,0 +1,357 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvokeItemAction" xml:space="preserve">
+    <value>Вызвать элемент</value>
+  </data>
+  <data name="InvokeItemResourceFileTemplate" xml:space="preserve">
+    <value>Элемент: {0}</value>
+  </data>
+  <data name="RemoveItemActionFile" xml:space="preserve">
+    <value>Удалить файл</value>
+  </data>
+  <data name="RemoveItemActionDirectory" xml:space="preserve">
+    <value>Удалить каталог</value>
+  </data>
+  <data name="CopyItemActionFile" xml:space="preserve">
+    <value>Копировать файл</value>
+  </data>
+  <data name="CopyItemResourceFileTemplate" xml:space="preserve">
+    <value>Элемент: {0} Назначение: {1}</value>
+  </data>
+  <data name="CopyItemActionDirectory" xml:space="preserve">
+    <value>Копировать каталог</value>
+  </data>
+  <data name="RenameItemActionFile" xml:space="preserve">
+    <value>Переименовать файл</value>
+  </data>
+  <data name="RenameItemActionDirectory" xml:space="preserve">
+    <value>Переименовать каталог</value>
+  </data>
+  <data name="RenameItemResourceFileTemplate" xml:space="preserve">
+    <value>Элемент: {0} Назначение: {1}</value>
+  </data>
+  <data name="MoveItemActionFile" xml:space="preserve">
+    <value>Переместить файл</value>
+  </data>
+  <data name="MoveItemActionDirectory" xml:space="preserve">
+    <value>Переместить каталог</value>
+  </data>
+  <data name="MoveItemResourceFileTemplate" xml:space="preserve">
+    <value>Элемент: {0} Назначение: {1}</value>
+  </data>
+  <data name="SetPropertyActionFile" xml:space="preserve">
+    <value>Задать файл свойств</value>
+  </data>
+  <data name="SetPropertyActionDirectory" xml:space="preserve">
+    <value>Задать каталог свойств</value>
+  </data>
+  <data name="SetPropertyResourceTemplate" xml:space="preserve">
+    <value>Элемент: {0} Свойство: {1} Значение: {2}</value>
+  </data>
+  <data name="ClearPropertyActionFile" xml:space="preserve">
+    <value>Очистить файл свойств</value>
+  </data>
+  <data name="ClearPropertyActionDirectory" xml:space="preserve">
+    <value>Очистить каталог свойств</value>
+  </data>
+  <data name="ClearPropertyResourceTemplate" xml:space="preserve">
+    <value>Элемент: {0} Свойство: {1}</value>
+  </data>
+  <data name="NewItemActionFile" xml:space="preserve">
+    <value>Создать файл</value>
+  </data>
+  <data name="NewItemActionDirectory" xml:space="preserve">
+    <value>Создать каталог</value>
+  </data>
+  <data name="NewItemActionTemplate" xml:space="preserve">
+    <value>Назначение: {0}</value>
+  </data>
+  <data name="ClearContentActionFile" xml:space="preserve">
+    <value>Очистить содержимое</value>
+  </data>
+  <data name="ClearContentesourceTemplate" xml:space="preserve">
+    <value>Элемент: {0}</value>
+  </data>
+  <data name="ItemNotFound" xml:space="preserve">
+    <value>Не удалось найти элемент {0}.</value>
+  </data>
+  <data name="CannotRemoveItem" xml:space="preserve">
+    <value>Не удается удалить элемент {0}: {1}</value>
+  </data>
+  <data name="CannotRestoreAttributes" xml:space="preserve">
+    <value>Не удается восстановить атрибуты элемента {0}: {1}</value>
+  </data>
+  <data name="ItemDoesNotExist" xml:space="preserve">
+    <value>Объект по указанному пути {0} не существует.</value>
+  </data>
+  <data name="DirectoryNotEmpty" xml:space="preserve">
+    <value>Невозможно удалить {0}, так как этот объект не пуст.</value>
+  </data>
+  <data name="UnknownType" xml:space="preserve">
+    <value>Тип не является известным типом файловой системы. Можно указать только "file", "directory" или "symboliclink".</value>
+  </data>
+  <data name="PathOutSideBasePath" xml:space="preserve">
+    <value>Невозможно обработать путь, так как указанный путь ссылается на элемент за пределами basePath.</value>
+  </data>
+  <data name="DriveRootError" xml:space="preserve">
+    <value>Указанный корень диска "{0}" не существует или не является папкой.</value>
+  </data>
+  <data name="DirectoryExist" xml:space="preserve">
+    <value>Файл с указанным именем {0} уже существует.</value>
+  </data>
+  <data name="DelimiterError" xml:space="preserve">
+    <value>Невозможно указать разделитель при чтении потока по одному байту за раз.</value>
+  </data>
+  <data name="CopyError" xml:space="preserve">
+    <value>Невозможно перезаписать элемент {0} самим собой.</value>
+  </data>
+  <data name="RenameError" xml:space="preserve">
+    <value>Невозможно переименовать указанный целевой объект, поскольку он представляет путь или имя устройства.</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>Свойство {0} не существует или не найдено.</value>
+  </data>
+  <data name="PermissionError" xml:space="preserve">
+    <value>У вас недостаточно прав доступа для выполнения этой операции, либо элемент является скрытым, системным или доступным только для чтения.</value>
+  </data>
+  <data name="AttributesNotSupported" xml:space="preserve">
+    <value>Невозможно задать атрибут, так как атрибуты не поддерживаются. Можно задать только следующие атрибуты:: Archive, Hidden, Normal, ReadOnly или System.</value>
+  </data>
+  <data name="CannotClearProperty" xml:space="preserve">
+    <value>Свойство не может быть очищено, так как оно не поддерживается. Можно очистить только свойство Attributes.</value>
+  </data>
+  <data name="TargetCannotContainDeviceName" xml:space="preserve">
+    <value>Невозможно обработать путь "{0}", так как целевой объект представляет зарезервированное имя устройства.</value>
+  </data>
+  <data name="EncodingNotUsed" xml:space="preserve">
+    <value>Кодирование не используется, если указан параметр "-AsByteStream".</value>
+  </data>
+  <data name="ByteEncodingError" xml:space="preserve">
+    <value>Невозможно продолжить байтовое кодирование. При использовании байтового кодирования содержимое должно иметь тип byte.</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>Невозможно обработать файл, так как файл {0} не найден.</value>
+  </data>
+  <data name="DirectoryDisplayGrouping" xml:space="preserve">
+    <value>    Каталог: </value>
+  </data>
+  <data name="ReadBackward_Encoding_NotSupport" xml:space="preserve">
+    <value>Не удается определить кодировку файла. Указанная кодировка {0} не поддерживается при чтении содержимого в обратном направлении.</value>
+  </data>
+  <data name="AlternateDataStreamNotFound" xml:space="preserve">
+    <value>Не удалось открыть альтернативный поток данных "{0}" файла "{1}".</value>
+  </data>
+  <data name="StreamAction" xml:space="preserve">
+    <value>Поток "{0}" файла "{1}".</value>
+  </data>
+  <data name="RawAndWaitCannotCoexist" xml:space="preserve">
+    <value>Параметры Raw и Wait не могут быть указаны в одной команде.</value>
+  </data>
+  <data name="InvalidDriveName" xml:space="preserve">
+    <value>Для использования параметра Persist имя диска должно поддерживаться операционной системой (например, буквы дисков A–Z).</value>
+  </data>
+  <data name="PersistNotSupported" xml:space="preserve">
+    <value>При использовании параметра Persist корень должен быть расположением в файловой системе на удаленном компьютере.</value>
+  </data>
+  <data name="NoFirstLastWaitForRaw" xml:space="preserve">
+    <value>Параметры "{0}" и "{1}" нельзя указывать в одной команде.</value>
+  </data>
+  <data name="ItemNotDirectory" xml:space="preserve">
+    <value>Для операции требуется каталог. Элемент "{0}" не является каталогом.</value>
+  </data>
+  <data name="NewItemActionJunction" xml:space="preserve">
+    <value>Создать соединение</value>
+  </data>
+  <data name="NewItemActionSymbolicLink" xml:space="preserve">
+    <value>Создать символьную ссылку</value>
+  </data>
+  <data name="ElevationRequired" xml:space="preserve">
+    <value>Для этой операции требуются права администратора.</value>
+  </data>
+  <data name="NewItemActionHardLink" xml:space="preserve">
+    <value>Создать жесткую связь</value>
+  </data>
+  <data name="ItemNotFile" xml:space="preserve">
+    <value>Для операции требуется файл. Элемент "{0}" не является файлом.</value>
+  </data>
+  <data name="HardLinkNotSupported" xml:space="preserve">
+    <value>Жесткие связи для указанного пути не поддерживаются.</value>
+  </data>
+  <data name="SymbolicLinkNotSupported" xml:space="preserve">
+    <value>Символьные ссылки для указанного пути не поддерживаются.</value>
+  </data>
+  <data name="CopyItemRemotelyProgressActivity" xml:space="preserve">
+    <value>Копирование {0} в {1}</value>
+  </data>
+  <data name="CopyItemRemoteDestinationIsFile" xml:space="preserve">
+    <value>Путь назначения {0} — это файл, который уже существует в конечном расположении.</value>
+  </data>
+  <data name="CopyItemRemotelyFailed" xml:space="preserve">
+    <value>Не удалось скопировать файл {0} в удаленное целевое расположение.</value>
+  </data>
+  <data name="CopyItemRemotelyStatusDescription" xml:space="preserve">
+    <value>Из {0} в {1}</value>
+  </data>
+  <data name="CopyItemRemotelyDestinationIsFile" xml:space="preserve">
+    <value>Не удается скопировать каталог "{0}" в файл "{0}"</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToGetDirectoryChildItems" xml:space="preserve">
+    <value>Не удалось получить дочерние элементы каталога {0}.</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToReadFile" xml:space="preserve">
+    <value>Не удалось прочитать удаленный файл "{0}".</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToValidateIfDestinationIsFile" xml:space="preserve">
+    <value>Не удается проверить, является ли файлом удаленное назначение {0}.</value>
+  </data>
+  <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
+    <value>Не удалось создать каталог "{0}" в удаленном расположении.</value>
+  </data>
+  <data name="DriveMaxSizeError" xml:space="preserve">
+    <value>Превышен максимальный размер диска: {0}.</value>
+  </data>
+  <data name="SymlinkItemExists" xml:space="preserve">
+    <value>Не удается создать ссылку, так как путь уже существует: {0}.</value>
+  </data>
+  <data name="AlreadyListedDirectory" xml:space="preserve">
+    <value>Пропустить уже посещенный каталог {0}.</value>
+  </data>
+  <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
+    <value>Путь назначения не может быть подкаталогом источника или самим источником: {0}.</value>
+  </data>
+  <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
+    <value>Конечный объект и путь не могут совпадать.</value>
+  </data>
+  <data name="CopyingLocalFileActivity" xml:space="preserve">
+    <value>Скопировано {0} из {1} файлов</value>
+  </data>
+  <data name="CopyingLocalBytesStatus" xml:space="preserve">
+    <value>{0} из {1} ({2:0.0} МБ/с)</value>
+  </data>
+  <data name="RemovingLocalFileActivity" xml:space="preserve">
+    <value>Удалено {0} из {1} файлов</value>
+  </data>
+  <data name="RemovingLocalBytesStatus" xml:space="preserve">
+    <value>{0} из {1} ({2:0.0} МБ/с)</value>
+  </data>
+  <data name="JunctionAbsolutePath" xml:space="preserve">
+    <value>Для создания соединения требуется абсолютный путь к целевому объекту.</value>
+  </data>
+</root>

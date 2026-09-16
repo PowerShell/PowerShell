@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AttributeExpected" xml:space="preserve">
+    <value>{0} se esperaba el atributo.</value>
+  </data>
+  <data name="InvalidElementTag" xml:space="preserve">
+    <value>{0} No se reconoce la etiqueta XML.</value>
+  </data>
+  <data name="InvalidReferenceId" xml:space="preserve">
+    <value>No se encontró ningún objeto para referenceId {0}</value>
+  </data>
+  <data name="InvalidDictionaryKeyName" xml:space="preserve">
+    <value>El atributo de nombre para la clave del diccionario no se especificó correctamente.</value>
+  </data>
+  <data name="InvalidDictionaryValueName" xml:space="preserve">
+    <value>El atributo Name del valor del diccionario se ha especificado incorrectamente.</value>
+  </data>
+  <data name="InvalidVersion" xml:space="preserve">
+    <value>La versión de PSObject no es válida.</value>
+  </data>
+  <data name="UnexpectedVersion" xml:space="preserve">
+    <value>La versión del PSObject entrante es {0}. El valor esperado es 1.</value>
+  </data>
+  <data name="InvalidTypeHierarchyReferenceId" xml:space="preserve">
+    <value>No se pueden procesar los nombres porque no se encontró ningún TypeName para referenceId {0}.</value>
+  </data>
+  <data name="DepthOfOneRequired" xml:space="preserve">
+    <value>El valor del parámetro de profundidad debe ser mayor o igual que 1.</value>
+  </data>
+  <data name="InvalidNodeType" xml:space="preserve">
+    <value>El tipo de nodo actual es {0}. El tipo esperado es {1}.</value>
+  </data>
+  <data name="DictionaryKeyNotSpecified" xml:space="preserve">
+    <value>No se especificó la clave para la entrada del diccionario.</value>
+  </data>
+  <data name="DictionaryValueNotSpecified" xml:space="preserve">
+    <value>No se ha especificado el valor de la entrada del diccionario.</value>
+  </data>
+  <data name="ReadCalledAfterDone" xml:space="preserve">
+    <value>No hay más objetos para deserializar.</value>
+  </data>
+  <data name="NullAsDictionaryKey" xml:space="preserve">
+    <value>Null se especifica como clave del diccionario.</value>
+  </data>
+  <data name="InvalidPrimitiveType" xml:space="preserve">
+    <value>El contenido del {0} tipo primitivo no es válido.</value>
+  </data>
+  <data name="DeserializationTooDeep" xml:space="preserve">
+    <value>El XML serializado está demasiado anidado.</value>
+  </data>
+  <data name="Stopping" xml:space="preserve">
+    <value>Se cerró el serializador.</value>
+  </data>
+  <data name="DeserializationMemoryQuota" xml:space="preserve">
+    <value>Los datos del comando superaron el tamaño máximo permitido por la configuración de sesión. El máximo permitido es {0} MB. Cambie la entrada, use una configuración de sesión diferente o cambie las propiedades "{1}" y "{2}" de la configuración de sesión en el equipo remoto.</value>
+  </data>
+  <data name="DeserializeSecureStringFailed" xml:space="preserve">
+    <value>Error en la deserialización de la cadena segura cifrada</value>
+  </data>
+  <data name="PrimitiveHashtableInvalidKey" xml:space="preserve">
+    <value>El tipo de clave {0} no es válido. La clase PSPrimitiveDictionary solo acepta claves del tipo System.String.</value>
+  </data>
+  <data name="PrimitiveHashtableInvalidValue" xml:space="preserve">
+    <value>El tipo del valor {0} no es válido. La clase PSPrimitiveDictionary solo acepta valores de tipos que son totalmente serializables a través de la comunicación remota de PowerShell. Consulte el tema de ayuda about_Remoting para obtener una lista de tipos totalmente serializables.</value>
+  </data>
+  <data name="InvalidKey" xml:space="preserve">
+    <value>No se pudieron descifrar los datos. Los datos no se cifraron con esta clave.</value>
+  </data>
+  <data name="InvalidEncryptedString" xml:space="preserve">
+    <value>El valor de parámetro "{0}" no es una cadena cifrada válida.</value>
+  </data>
+  <data name="InvalidKeyLength" xml:space="preserve">
+    <value>El especificado {0} no es válido. Los valores de longitud válidos de {0} son 128 bits, 192 bits o 256 bits.</value>
+  </data>
+  <data name="DeserializeSecureStringNotSupported" xml:space="preserve">
+    <value>Actualmente, la deserialización de SecureString solo se admite en Windows.</value>
+  </data>
+</root>
