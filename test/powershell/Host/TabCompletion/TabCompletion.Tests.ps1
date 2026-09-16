@@ -135,6 +135,127 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Where('
     }
 
+    Context 'Intrinsic extension methods completion' {
+        It 'Should only return native ForEach method for instantiated List<T>' {
+            $list = [System.Collections.Generic.List[object]]::new()
+            $matches = (TabExpansion2 -inputScript '$list.For').CompletionMatches
+            $matches | Should -HaveCount 1
+            $matches[0].CompletionText | Should -BeExactly 'ForEach('
+            $matches[0].ResultType | Should -BeExactly ([System.Management.Automation.CompletionResultType]::Method)
+            $matches[0].ToolTip | Should -Match 'void ForEach'
+
+            # PSForEach, Where, and PSWhere remain accessible
+            $psForMatches = (TabExpansion2 -inputScript '$list.PSFor').CompletionMatches
+            $psForMatches | Should -HaveCount 1
+            $psForMatches[0].CompletionText | Should -BeExactly 'PSForEach('
+
+            $whereMatches = (TabExpansion2 -inputScript '$list.Wh').CompletionMatches
+            $whereMatches | Should -HaveCount 1
+            $whereMatches[0].CompletionText | Should -BeExactly 'Where('
+
+            $psWhereMatches = (TabExpansion2 -inputScript '$list.PSWh').CompletionMatches
+            $psWhereMatches | Should -HaveCount 1
+            $psWhereMatches[0].CompletionText | Should -BeExactly 'PSWhere('
+
+            # No duplicate ForEach when expanding all members
+            $allMatches = (TabExpansion2 -inputScript '$list.').CompletionMatches | Where-Object ListItemText -eq 'ForEach'
+            $allMatches | Should -HaveCount 1
+            $allMatches[0].ToolTip | Should -Match 'void ForEach'
+        }
+
+        It 'Should only return native ForEach method for type-inferred List<T>' {
+            $matches = (TabExpansion2 -inputScript '[System.Collections.Generic.List[object]]::new().For').CompletionMatches
+            $matches | Should -HaveCount 1
+            $matches[0].CompletionText | Should -BeExactly 'ForEach('
+            $matches[0].ResultType | Should -BeExactly ([System.Management.Automation.CompletionResultType]::Method)
+            $matches[0].ToolTip | Should -Match 'void ForEach'
+
+            $allMatches = (TabExpansion2 -inputScript '[System.Collections.Generic.List[object]]::new().').CompletionMatches | Where-Object ListItemText -eq 'ForEach'
+            $allMatches | Should -HaveCount 1
+            $allMatches[0].ToolTip | Should -Match 'void ForEach'
+        }
+
+        It 'Should return intrinsic extension methods for collections without native implementations' {
+            # Array
+            $arr = 1, 2, 3
+            $arrForMatches = (TabExpansion2 -inputScript '$arr.For').CompletionMatches
+            $arrForMatches | Should -HaveCount 1
+            $arrForMatches[0].CompletionText | Should -BeExactly 'ForEach('
+            $arrForMatches[0].ToolTip | Should -Match 'ForEach\(expression'
+
+            $arrWhereMatches = (TabExpansion2 -inputScript '$arr.Wh').CompletionMatches
+            $arrWhereMatches | Should -HaveCount 1
+            $arrWhereMatches[0].CompletionText | Should -BeExactly 'Where('
+
+            $arrPsForMatches = (TabExpansion2 -inputScript '$arr.PSFor').CompletionMatches
+            $arrPsForMatches | Should -HaveCount 1
+            $arrPsForMatches[0].CompletionText | Should -BeExactly 'PSForEach('
+
+            $arrPsWhereMatches = (TabExpansion2 -inputScript '$arr.PSWh').CompletionMatches
+            $arrPsWhereMatches | Should -HaveCount 1
+            $arrPsWhereMatches[0].CompletionText | Should -BeExactly 'PSWhere('
+
+            # Inferred array
+            $inferredArrMatches = (TabExpansion2 -inputScript '([int[]]::new(3)).For').CompletionMatches
+            $inferredArrMatches | Should -HaveCount 1
+            $inferredArrMatches[0].CompletionText | Should -BeExactly 'ForEach('
+            $inferredArrMatches[0].ToolTip | Should -Match 'ForEach\(expression'
+
+            # Queue<T> (instantiated and inferred)
+            $queue = [System.Collections.Generic.Queue[object]]::new()
+            $queueForMatches = (TabExpansion2 -inputScript '$queue.For').CompletionMatches
+            $queueForMatches | Should -HaveCount 1
+            $queueForMatches[0].CompletionText | Should -BeExactly 'ForEach('
+            $queueForMatches[0].ToolTip | Should -Match 'ForEach\(expression'
+
+            $inferredQueueMatches = (TabExpansion2 -inputScript '[System.Collections.Generic.Queue[object]]::new().For').CompletionMatches
+            $inferredQueueMatches | Should -HaveCount 1
+            $inferredQueueMatches[0].CompletionText | Should -BeExactly 'ForEach('
+            $inferredQueueMatches[0].ToolTip | Should -Match 'ForEach\(expression'
+        }
+
+        It 'Should return both property and intrinsic method when an enumerable defines a ForEach property' {
+            Add-Type -TypeDefinition '
+                using System.Collections;
+                public class ForEachPropertyCollectionTest : IEnumerable {
+                    public int ForEach { get; set; } = 42;
+                    public IEnumerator GetEnumerator() => (new int[] { 1, 2, 3 }).GetEnumerator();
+                }
+            '
+            $c = [ForEachPropertyCollectionTest]::new()
+            $matches = (TabExpansion2 -inputScript '$c.For').CompletionMatches
+            $matches | Should -HaveCount 2
+
+            $propMatch = $matches | Where-Object ResultType -eq ([System.Management.Automation.CompletionResultType]::Property)
+            $propMatch | Should -Not -BeNullOrEmpty
+            $propMatch.ListItemText | Should -BeExactly 'ForEach'
+
+            $methodMatch = $matches | Where-Object ResultType -eq ([System.Management.Automation.CompletionResultType]::Method)
+            $methodMatch | Should -Not -BeNullOrEmpty
+            $methodMatch.CompletionText | Should -BeExactly 'ForEach('
+            $methodMatch.ToolTip | Should -Match 'ForEach\(expression'
+        }
+
+        It 'Should suppress intrinsic Where when an enumerable defines a native Where method' {
+            Add-Type -TypeDefinition '
+                using System.Collections;
+                public class NativeWhereCollectionTest : IEnumerable {
+                    public void Where(string predicate) {}
+                    public IEnumerator GetEnumerator() => (new int[] { 1, 2, 3 }).GetEnumerator();
+                }
+            '
+            $c = [NativeWhereCollectionTest]::new()
+            $matches = (TabExpansion2 -inputScript '$c.Wh').CompletionMatches
+            $matches | Should -HaveCount 1
+            $matches[0].CompletionText | Should -BeExactly 'Where('
+            $matches[0].ToolTip | Should -Match 'void Where\(string predicate\)'
+
+            $psWhereMatches = (TabExpansion2 -inputScript '$c.PSWh').CompletionMatches
+            $psWhereMatches | Should -HaveCount 1
+            $psWhereMatches[0].CompletionText | Should -BeExactly 'PSWhere('
+        }
+    }
+
     It 'Should complete types' {
         $res = TabExpansion2 -inputScript '[pscu' -cursorColumn '[pscu'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'pscustomobject'
