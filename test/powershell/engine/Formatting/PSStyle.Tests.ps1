@@ -604,7 +604,11 @@ Billy Bob… Senior DevOps …  13
     }
 
     It "Force default formatting to use 'AutoSize'" {
+        $oldOutputRendering = $PSStyle.OutputRendering
+        $oldAutoSizeDefaultFormatting = $PSStyle.AutoSizeDefaultFormatting
+
         try {
+            $PSStyle.OutputRendering = 'PlainText'
             $defaultOutput = Get-Command Import-Module | Out-String
             $PSStyle.AutoSizeDefaultFormatting = $true
             $autoSizedOutput = Get-Command Import-Module | Out-String
@@ -621,7 +625,8 @@ Billy Bob… Senior DevOps …  13
             }
         }
         finally {
-            $PSStyle.AutoSizeDefaultFormatting = $false
+            $PSStyle.AutoSizeDefaultFormatting = $oldAutoSizeDefaultFormatting
+            $PSStyle.OutputRendering = $oldOutputRendering
         }
     }
 }
