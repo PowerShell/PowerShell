@@ -240,6 +240,15 @@
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
     <value>ターゲットが予約済みデバイス名を表しているため、パス '{0}' を処理できません。</value>
   </data>
+  <data name="DirectoryNamePathTraversal" xml:space="preserve">
+    <value>リモートのディレクトリ名 '{0}' は、パスのトラバーサルを引き起こす可能性があるため、処理できません。</value>
+  </data>
+  <data name="FileNamePathTraversal" xml:space="preserve">
+    <value>リモートのファイル名 '{0}' は、パスのトラバーサルを引き起こす可能性があるため、処理できません。</value>
+  </data>
+  <data name="ADSPathTraversal" xml:space="preserve">
+    <value>リモートの代替データ ストリーム名 '{0}' は、パスのトラバーサルを引き起こす可能性があるため、処理できません。</value>
+  </data>
   <data name="EncodingNotUsed" xml:space="preserve">
     <value>エンコードは、'-AsByteStream' が指定されている場合は使用されません。</value>
   </data>
