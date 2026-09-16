@@ -644,7 +644,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets whether to force the default implicit formatting to use 'AutoSize'.
         /// </summary>
-        public bool ForceAutoSizeInDefaultFormatting { get; set; }
+        public bool AutoSizeDefaultFormatting { get; set; }
 
         /// <summary>
         /// Gets value to turn off all attributes.

@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (PSStyle.Instance.ForceAutoSizeInDefaultFormatting)
+            if (PSStyle.Instance.AutoSizeDefaultFormatting)
             {
                 var parameters = new FormattingCommandLineParameters { autosize = true };
                 ((InnerFormatShapeCommand)this.implementation).SetCommandLineParameters(parameters);

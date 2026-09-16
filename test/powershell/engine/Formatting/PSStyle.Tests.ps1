@@ -602,4 +602,26 @@ Billy Bob… Senior DevOps …  13
 
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
+
+    It "Force default formatting to use 'AutoSize'" {
+        try {
+            $defaultOutput = Get-Command Import-Module | Out-String
+            $PSStyle.AutoSizeDefaultFormatting = $true
+            $autoSizedOutput = Get-Command Import-Module | Out-String
+
+            $defaultOutput = $defaultOutput.Trim().Split("`n")
+            $autoSizedOutput = $autoSizedOutput.Trim().Split("`n")
+
+            $defaultOutput.Count | Should -BeExactly $autoSizedOutput.Count
+            for ($i = 0; $i -lt $defaultOutput.Count; $i++) {
+                $defaultOutput[$i].Length | Should -BeGreaterThan $autoSizedOutput[$i].Length
+                $elements_1 = $defaultOutput[$i].Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+                $elements_2 = $autoSizedOutput[$i].Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+                $elements_1 -join ' ' | Should -BeExactly ($elements_2 -join ' ')
+            }
+        }
+        finally {
+            $PSStyle.AutoSizeDefaultFormatting = $false
+        }
+    }
 }
