@@ -138,11 +138,11 @@ Describe "TabCompletion" -Tags CI {
     Context 'Intrinsic extension methods completion' {
         It 'Should only return native ForEach method for instantiated List<T>' {
             $list = [System.Collections.Generic.List[object]]::new()
-            $matches = (TabExpansion2 -inputScript '$list.For').CompletionMatches
-            $matches | Should -HaveCount 1
-            $matches[0].CompletionText | Should -BeExactly 'ForEach('
-            $matches[0].ResultType | Should -BeExactly ([System.Management.Automation.CompletionResultType]::Method)
-            $matches[0].ToolTip | Should -Match 'void ForEach'
+            $forMatches = (TabExpansion2 -inputScript '$list.For').CompletionMatches
+            $forMatches | Should -HaveCount 1
+            $forMatches[0].CompletionText | Should -BeExactly 'ForEach('
+            $forMatches[0].ResultType | Should -BeExactly ([System.Management.Automation.CompletionResultType]::Method)
+            $forMatches[0].ToolTip | Should -Match 'void ForEach'
 
             # PSForEach, Where, and PSWhere remain accessible
             $psForMatches = (TabExpansion2 -inputScript '$list.PSFor').CompletionMatches
@@ -164,11 +164,11 @@ Describe "TabCompletion" -Tags CI {
         }
 
         It 'Should only return native ForEach method for type-inferred List<T>' {
-            $matches = (TabExpansion2 -inputScript '[System.Collections.Generic.List[object]]::new().For').CompletionMatches
-            $matches | Should -HaveCount 1
-            $matches[0].CompletionText | Should -BeExactly 'ForEach('
-            $matches[0].ResultType | Should -BeExactly ([System.Management.Automation.CompletionResultType]::Method)
-            $matches[0].ToolTip | Should -Match 'void ForEach'
+            $forMatches = (TabExpansion2 -inputScript '[System.Collections.Generic.List[object]]::new().For').CompletionMatches
+            $forMatches | Should -HaveCount 1
+            $forMatches[0].CompletionText | Should -BeExactly 'ForEach('
+            $forMatches[0].ResultType | Should -BeExactly ([System.Management.Automation.CompletionResultType]::Method)
+            $forMatches[0].ToolTip | Should -Match 'void ForEach'
 
             $allMatches = (TabExpansion2 -inputScript '[System.Collections.Generic.List[object]]::new().').CompletionMatches | Where-Object ListItemText -eq 'ForEach'
             $allMatches | Should -HaveCount 1
@@ -223,14 +223,14 @@ Describe "TabCompletion" -Tags CI {
                 }
             '
             $c = [ForEachPropertyCollectionTest]::new()
-            $matches = (TabExpansion2 -inputScript '$c.For').CompletionMatches
-            $matches | Should -HaveCount 2
+            $cMatches = (TabExpansion2 -inputScript '$c.For').CompletionMatches
+            $cMatches | Should -HaveCount 2
 
-            $propMatch = $matches | Where-Object ResultType -eq ([System.Management.Automation.CompletionResultType]::Property)
+            $propMatch = $cMatches | Where-Object ResultType -eq ([System.Management.Automation.CompletionResultType]::Property)
             $propMatch | Should -Not -BeNullOrEmpty
             $propMatch.ListItemText | Should -BeExactly 'ForEach'
 
-            $methodMatch = $matches | Where-Object ResultType -eq ([System.Management.Automation.CompletionResultType]::Method)
+            $methodMatch = $cMatches | Where-Object ResultType -eq ([System.Management.Automation.CompletionResultType]::Method)
             $methodMatch | Should -Not -BeNullOrEmpty
             $methodMatch.CompletionText | Should -BeExactly 'ForEach('
             $methodMatch.ToolTip | Should -Match 'ForEach\(expression'
@@ -245,10 +245,10 @@ Describe "TabCompletion" -Tags CI {
                 }
             '
             $c = [NativeWhereCollectionTest]::new()
-            $matches = (TabExpansion2 -inputScript '$c.Wh').CompletionMatches
-            $matches | Should -HaveCount 1
-            $matches[0].CompletionText | Should -BeExactly 'Where('
-            $matches[0].ToolTip | Should -Match 'void Where\(string predicate\)'
+            $whereMatches = (TabExpansion2 -inputScript '$c.Wh').CompletionMatches
+            $whereMatches | Should -HaveCount 1
+            $whereMatches[0].CompletionText | Should -BeExactly 'Where('
+            $whereMatches[0].ToolTip | Should -Match 'void Where\(string predicate\)'
 
             $psWhereMatches = (TabExpansion2 -inputScript '$c.PSWh').CompletionMatches
             $psWhereMatches | Should -HaveCount 1
