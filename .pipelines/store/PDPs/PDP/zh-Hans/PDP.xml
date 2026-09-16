@@ -44,9 +44,9 @@ PowerShell 是开放源代码。 请参阅 https://github.com/powershell/powersh
     <!-- _locComment_text="{MaxLength=255} App DevStudio" -->
   </DevStudio>
   <ReleaseNotes _locID="App_ReleaseNotes">
-    <!-- _locComment_text="{MaxLength=1500} {Locked=___VERSION___}{Locked=___CHANGELOGLINK___} App Release Note" -->Version: ___VERSION___
+    <!-- _locComment_text="{MaxLength=1500} {Locked=___VERSION___}{Locked=___CHANGELOGLINK___} App Release Note" -->版本: ___VERSION___
 
-Changelog: ___CHANGELOGLINK___</ReleaseNotes>
+更改日志: ___CHANGELOGLINK___</ReleaseNotes>
   <AppFeatures>
     <!-- Valid length: 200 character limit, up to 20 elements -->
     <AppFeature _locID="App_feature1">

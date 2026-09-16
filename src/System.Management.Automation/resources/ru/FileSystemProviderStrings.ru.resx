@@ -241,13 +241,13 @@
     <value>Невозможно обработать путь "{0}", так как целевой объект представляет зарезервированное имя устройства.</value>
   </data>
   <data name="DirectoryNamePathTraversal" xml:space="preserve">
-    <value>Cannot process the remote directory name '{0}' because it may result in path traversal.</value>
+    <value>Невозможно обработать имя удаленного каталога "{0}", поскольку это может привести к обходу пути.</value>
   </data>
   <data name="FileNamePathTraversal" xml:space="preserve">
-    <value>Cannot process the remote file name '{0}' because it may result in path traversal.</value>
+    <value>Невозможно обработать имя удаленного файла "{0}", поскольку это может привести к обходу пути.</value>
   </data>
   <data name="ADSPathTraversal" xml:space="preserve">
-    <value>Cannot process the remote Alternate Data Stream name '{0}' because it may result in path traversal.</value>
+    <value>Невозможно обработать имя удаленного альтернативного потока данных "{0}", поскольку это может привести к обходу пути.</value>
   </data>
   <data name="EncodingNotUsed" xml:space="preserve">
     <value>Кодирование не используется, если указан параметр "-AsByteStream".</value>
