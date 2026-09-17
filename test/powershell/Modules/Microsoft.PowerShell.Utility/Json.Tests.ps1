@@ -400,7 +400,7 @@ Describe "Json Tests" -Tags "Feature" {
 				$result."date-s-should-parse-as-datetime".ToString("U") | Should -Be "Monday, September 22, 2008 2:01:54 PM"
 				$result."date-s-should-parse-as-datetime".ToString("Y") | Should -Be "September 2008"
 				$result."date-s-should-parse-as-datetime".ToString("y") | Should -Be "September 2008"
-				$result."date-s-should-parse-as-datetime" | Should -BeOfType [DateTime]
+				$result."date-s-should-parse-as-datetime" | Should -BeOfType [datetime]
 
                 $result."date-upperO-should-parse-as-datetime" = [datetime]::SpecifyKind($result."date-upperO-should-parse-as-datetime", [System.DateTimeKind]::Utc)
 				$result."date-upperO-should-parse-as-datetime".ToString("d") | Should -Be "9/22/2008"
@@ -421,7 +421,7 @@ Describe "Json Tests" -Tags "Feature" {
 				$result."date-upperO-should-parse-as-datetime".ToString("U") | Should -Be "Monday, September 22, 2008 2:01:54 PM"
 				$result."date-upperO-should-parse-as-datetime".ToString("Y") | Should -Be "September 2008"
 				$result."date-upperO-should-parse-as-datetime".ToString("y") | Should -Be "September 2008"
-				$result."date-upperO-should-parse-as-datetime" | Should -BeOfType [DateTime]
+				$result."date-upperO-should-parse-as-datetime" | Should -BeOfType [datetime]
 
 				$result."date-o-should-parse-as-string" | Should -Be "2019-12-17T06:14:06 +06:00"
 				$result."date-o-should-parse-as-string" | Should -BeOfType [String]

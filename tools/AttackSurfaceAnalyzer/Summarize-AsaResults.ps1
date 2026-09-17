@@ -202,8 +202,8 @@ function Get-AsaSummary {
     # Calculate timespan if we have both run IDs
     if ($summary.Metadata.BaseRunId -and $summary.Metadata.CompareRunId) {
         try {
-            $baseTime = [DateTime]::Parse($summary.Metadata.BaseRunId)
-            $compareTime = [DateTime]::Parse($summary.Metadata.CompareRunId)
+            $baseTime = [datetime]::Parse($summary.Metadata.BaseRunId)
+            $compareTime = [datetime]::Parse($summary.Metadata.CompareRunId)
             $summary.TimeSpan = $compareTime - $baseTime
         }
         catch {
@@ -492,7 +492,7 @@ function Write-ConsoleSummary {
                             $notAfterValue = if ($file -is [hashtable]) { $file['NotAfter'] } else { $file.NotAfter }
                             if ($notAfterValue) {
                                 try {
-                                    $expirationDate = ([DateTime]::Parse($notAfterValue)).ToString('yyyy-MM-dd')
+                                    $expirationDate = ([datetime]::Parse($notAfterValue)).ToString('yyyy-MM-dd')
                                 }
                                 catch {
                                     $expirationDate = 'Unknown'

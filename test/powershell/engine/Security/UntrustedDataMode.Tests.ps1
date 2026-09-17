@@ -45,7 +45,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
 
                 [Parameter()]
                 [ValidateTrustedData()]
-                [DateTime] $Date,
+                [datetime] $Date,
 
                 [Parameter()]
                 [ValidateTrustedData()]
@@ -486,7 +486,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             $result | Should -Be "ParameterArgumentValidationError,Test-OtherParameterType"
         }
 
-        It "test 'ValidateTrustedDataAttribute' with value type param [DateTime]" {
+        It "test 'ValidateTrustedDataAttribute' with value type param [datetime]" {
             ## Run this in the global scope, so value of $globalVar will be marked as untrusted
             $result = Execute-Script -Script @'
             try {
