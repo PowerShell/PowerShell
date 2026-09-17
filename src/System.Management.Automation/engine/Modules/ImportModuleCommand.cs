@@ -662,7 +662,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // If null check for full-qualified paths - either absolute or relative
-                rootedPath ??= ResolveRootedFilePath(name, this.Context);
+                rootedPath ??= ResolveToFileSystemPathIfRooted(name, this.Context);
 
                 bool alreadyLoaded = false;
                 var manifestProcessingFlags = ManifestProcessingFlags.LoadElements | ManifestProcessingFlags.NullOnFirstError;
@@ -1387,7 +1387,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (string entry in manifestEntries)
             {
                 string tempName = entry.EndsWith(ps1xmlExt, StringComparison.OrdinalIgnoreCase) ? entry : entry + ps1xmlExt;
-                string resolvedPath = ResolveRootedFilePath(tempName, Context);
+                string resolvedPath = ResolveToFileSystemPathIfRooted(tempName, Context);
                 if (resolvedPath is not null && resolvedPath.EndsWith(fileName, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
