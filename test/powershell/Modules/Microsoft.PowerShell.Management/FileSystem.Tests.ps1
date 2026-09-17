@@ -703,6 +703,17 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $junctionToDir | Should -BeTrue
         }
 
+        It "New-Item junction fails with clear error on non-Windows and leaves no item behind" -Skip:$IsWindows {
+            $targetDir = New-Item -ItemType Directory -Path "$TestDrive/target"
+            $junctionPath = "$TestDrive/junction"
+            { New-Item -ItemType Junction -Path $junctionPath -Target $targetDir.FullName -ErrorAction Stop } |
+                Should -Throw -ErrorId "JunctionNotSupported,Microsoft.PowerShell.Commands.NewItemCommand"
+
+            # The early-return on non-Windows must not create a directory or leave any filesystem
+            # artefact at the requested path.
+            Test-Path -LiteralPath $junctionPath | Should -BeFalse
+        }
+
         It 'New-Item fails creating junction with relative path' -Skip:(!$IsWindows) {
             try {
                 Push-Location $TestDrive
