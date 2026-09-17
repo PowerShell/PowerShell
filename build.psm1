@@ -959,6 +959,7 @@ function Switch-PSNugetConfig {
             'net8' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-8-early-access/nuget/v3/index.json' }
             'net9' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-9-early-access/nuget/v3/index.json' }
             'net10' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-10-early-access/nuget/v3/index.json' }
+            'net11' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-11-early-access/nuget/v3/index.json' }
             default { throw "Unknown early access feed URL: $earlyAccess" }
         }
 

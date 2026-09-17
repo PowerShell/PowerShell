@@ -71,6 +71,7 @@ stages:
       IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
       DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
       DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
       dotnetArch: 'osx-x64'
 
   - template: /.pipelines/templates/release-validate-sdk.yml@self
@@ -82,6 +83,7 @@ stages:
       IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
       DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
       DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
       dotnetArch: 'linux-x64'
 
 - stage: gbltool
