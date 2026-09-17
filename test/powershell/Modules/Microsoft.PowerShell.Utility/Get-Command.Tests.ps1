@@ -197,4 +197,36 @@ Describe "Get-Command" -Tag CI {
             { Get-Command $value -ErrorAction Stop } | Should -Throw -ErrorId $expected
         }
     }
+
+    Context "-All tests" {
+        BeforeAll {
+            $testModulesPath = Join-Path $testdrive "Modules"
+            $testPSModulePath = [System.IO.Path]::PathSeparator + $testModulesPath
+            $null = New-Item -ItemType Directory -Path $testModulesPath -Force
+
+            $ModuleVersions = "1.0", "2.0"
+            $ManifestParams = @{
+                RootModule = 'AllParamTest.psm1'
+                Guid       = New-Guid
+                FunctionsToExport = 'Test-AllParam'
+            }
+            foreach ($Version in $ModuleVersions)
+            {
+                $VersionDir = Join-Path $testModulesPath -ChildPath "AllParamTest\$Version"
+                $null = New-Item -Path $VersionDir -ItemType Directory -Force
+                'function Test-AllParam{}' | Set-Content -Path (Join-Path $VersionDir AllParamTest.psm1) -Force
+                New-ModuleManifest @ManifestParams -Path (Join-Path $VersionDir AllParamTest.psd1) -ModuleVersion $Version
+            }
+        }
+
+        It "Returns multiple copies of a command with wildcard after the module has been imported" {
+            $results = & "$PSHOME/pwsh" -outputformat xml -command "`$env:PSModulePath += '$testPSModulePath';Import-Module -Name AllParamTest;Get-Command -Name Test-AllParam* -All"
+            $results | Should -HaveCount 2
+        }
+
+        It "Returns multiple copies of a command after the module has been imported" {
+            $results = & "$PSHOME/pwsh" -outputformat xml -command "`$env:PSModulePath += '$testPSModulePath';Import-Module -Name AllParamTest;Get-Command -Name Test-AllParam -All"
+            $results | Should -HaveCount 2
+        }
+    }
 }
