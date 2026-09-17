@@ -38,32 +38,40 @@ Describe "Get-FormatData" -Tags "CI" {
     }
 
     Context "Can override client version with -PowerShellVersion" {
-        BeforeAll {
-            $cmds = @(
+        function Get-TestCases
+        {
+            [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidAssignmentToAutomaticVariable', '')]
+            param()
+            @(
                 @{ shouldBeNull = $true; cmd = { Get-FormatData System.IO.FileInfo -PowerShellVersion 5.0 } }
                 @{ shouldBeNull = $false; cmd = { Get-FormatData System.IO.FileInfo -PowerShellVersion 5.1 } }
                 @{ shouldBeNull = $false; cmd = { $PSSenderInfo = [System.Management.Automation.Internal.InternalTestHooks]::GetCustomPSSenderInfo('foo', [version] '5.0'); Get-FormatData System.IO.FileInfo -PowerShellVersion 5.1 } }
             )
         }
-        It "<cmd> should return <shouldBeNull> for a null-output test" -TestCases $cmds {
+
+        It "<cmd> should return <shouldBeNull> for a null-output test" -TestCases (Get-TestCases) {
             param([scriptblock] $cmd, [bool] $shouldBeNull)
             $null -eq $(& $cmd) | Should -Be $shouldBeNull
         }
     }
 
     Context "Remote use: By default, don't get format data requiring v5.1+ for v5.0- clients" {
-        BeforeAll {
+        function Get-TestCases
+        {
+            [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidAssignmentToAutomaticVariable', '')]
+            param()
             # Simulated PSSenderInfo instances for various PowerShell versions.
             $pssiV50 = [System.Management.Automation.Internal.InternalTestHooks]::GetCustomPSSenderInfo('foo', [version] '5.0')
             $pssiV51 = [System.Management.Automation.Internal.InternalTestHooks]::GetCustomPSSenderInfo('foo', [version] '5.1')
             $pssiV70 = [System.Management.Automation.Internal.InternalTestHooks]::GetCustomPSSenderInfo('foo', [version] '7.0')
-            $cmds = @(
+            @(
                 @{ shouldBeNull = $true; cmd = { $PSSenderInfo = $pssiV50; Get-FormatData System.IO.FileInfo } }
                 @{ shouldBeNull = $false; cmd = { $PSSenderInfo = $pssiV51; Get-FormatData System.IO.FileInfo } }
                 @{ shouldBeNull = $false; cmd = { $PSSenderInfo = $pssiV70; Get-FormatData System.IO.FileInfo } }
             )
         }
-        It "When remoting, <cmd> should return <shouldBeNull> for a null-output test" -TestCases $cmds {
+
+        It "When remoting, <cmd> should return <shouldBeNull> for a null-output test" -TestCases (Get-TestCases) {
             param([scriptblock] $cmd, [bool] $shouldBeNull)
             $null -eq $(& $cmd) | Should -Be $shouldBeNull
         }

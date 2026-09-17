@@ -145,25 +145,35 @@ Describe "Assign automatic variables" -Tags "CI" {
 
 Describe "Assign readonly/constant variables" -Tags "CI" {
 
-    $testCase = @(
-        @{ sb_wo_conversion = { $? = 1 }; name = '$? = 1' }
-        @{ sb_wo_conversion = { $HOME = 1 }; name = '$HOME = 1' }
-        @{ sb_wo_conversion = { $PID = 1 }; name = '$PID = 1' }
-    )
+    function Get-WithoutTypeConstraintTestCases
+    {
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidAssignmentToAutomaticVariable', '')]
+        param()
+        @(
+            @{ sb_wo_conversion = { $? = 1 }; name = '$? = 1' }
+            @{ sb_wo_conversion = { $HOME = 1 }; name = '$HOME = 1' }
+            @{ sb_wo_conversion = { $PID = 1 }; name = '$PID = 1' }
+        )
+    }
 
-    It "Assign readonly/constant variables w/o type constraint - '<name>'" -TestCases $testCase {
+    It "Assign readonly/constant variables w/o type constraint - '<name>'" -TestCases (Get-WithoutTypeConstraintTestCases) {
         param($sb_wo_conversion)
         { & $sb_wo_conversion } | Should -Throw -ErrorId "VariableNotWritable"
         { . $sb_wo_conversion } | Should -Throw -ErrorId "VariableNotWritable"
     }
 
-    $testCase = @(
-        @{ sb_w_conversion = { [datetime]$? = 1 }; name = '[datetime]$? = 1' }
-        @{ sb_w_conversion = { [datetime]$HOME = 1 }; name = '[datetime]$HOME = 1' }
-        @{ sb_w_conversion = { [datetime]$PID = 1 }; name = '[datetime]$PID = 1' }
-    )
+    function Get-WithTypeConstraintTestCases
+    {
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidAssignmentToAutomaticVariable', '')]
+        param()
+        @(
+            @{ sb_w_conversion = { [datetime]$? = 1 }; name = '[datetime]$? = 1' }
+            @{ sb_w_conversion = { [datetime]$HOME = 1 }; name = '[datetime]$HOME = 1' }
+            @{ sb_w_conversion = { [datetime]$PID = 1 }; name = '[datetime]$PID = 1' }
+        )
+    }
 
-    It "Assign readonly/constant variables w/ type constraint - '<name>'" -TestCases $testCase {
+    It "Assign readonly/constant variables w/ type constraint - '<name>'" -TestCases (Get-WithTypeConstraintTestCases) {
         param($sb_w_conversion)
         { & $sb_w_conversion } | Should -Throw -ErrorId "VariableNotWritable"
         { . $sb_w_conversion } | Should -Throw -ErrorId "VariableNotWritable"
