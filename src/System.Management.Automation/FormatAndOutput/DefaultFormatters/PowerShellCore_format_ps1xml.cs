@@ -1264,16 +1264,16 @@ namespace System.Management.Automation.Runspaces
                                             }
                                         }
                                         else {
-                                            $message += $err.ErrorDetails.Message
+                                           $message += $err.ErrorDetails.Message
                                         }
+
+                                        # FIX #24108: Always normalize newlines for ConciseView consistency
+                                        $message = $message.Replace($newline, ' ').Replace("`n", ' ').Replace("`t", ' ')
 
                                         # if rendering line information, break up the message if it's wider than the console
                                         if ($myinv -and $myinv.ScriptName -or $err.CategoryInfo.Category -eq 'ParserError') {
                                             $prefixLength = [System.Management.Automation.Internal.StringDecorated]::new($prefix).ContentLength
                                             $prefixVtLength = $prefix.Length - $prefixLength
-
-                                            # replace newlines in message so it lines up correct
-                                            $message = $message.Replace($newline, ' ').Replace("`n", ' ').Replace("`t", ' ')
 
                                             $windowWidth = 120
                                             if ($Host.UI.RawUI -ne $null) {
