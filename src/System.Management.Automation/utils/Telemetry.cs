@@ -1009,15 +1009,15 @@ namespace Microsoft.PowerShell.Telemetry
             try
             {
                 // CreateUniqueIdentifierAndFile shouldn't throw, but the mutex might
-                using var m = new Mutex(true, "CreateUniqueUserId");
-                m.WaitOne();
+                using var mutex = new Mutex(initiallyOwned: false, name: "CreateUniqueUserId");
+                mutex.WaitOne();
                 try
                 {
                     return CreateUniqueIdentifierAndFile(s_uuidPath);
                 }
                 finally
                 {
-                    m.ReleaseMutex();
+                    mutex.ReleaseMutex();
                 }
             }
             catch (Exception)
