@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -84,5 +86,19 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _force;
         #endregion Parameters
+
+        /// <summary>
+        /// Validates the alias name is not the same as the value.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when the alias name is the same as the value.</exception>
+        protected internal void ValidateAliasName()
+        {
+            if (string.Equals(Name, Value, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException(
+                    StringUtil.Format(AliasCommandStrings.InvalidAliasName, Name),
+                    nameof(Name));
+            }
+        }
     }
 }
