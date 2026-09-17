@@ -2106,16 +2106,16 @@ function Get-PackageDependencies
                 "libicu"
             )
         } elseif ($Distribution -eq 'cm') {
-            # Taken from the list here:
-            # https://github.com/dotnet/dotnet-docker/blob/d451d6e9427f58c8508f1297c862663a27eb609f/src/runtime-deps/6.0/cbl-mariner1.0/amd64/Dockerfile#L6
+            # Azure Linux 3 and 4 use the same .NET 11 runtime dependencies:
+            # https://github.com/dotnet/dotnet-docker/blob/nightly/src/runtime-deps/11.0/azurelinux4.0/amd64/Dockerfile
             $Dependencies = @(
+                "ca-certificates"
                 "glibc"
-                "libgcc"
-                "krb5-libs"
-                "libstdc++"
-                "zlib"
                 "icu"
+                "libgcc"
+                "libstdc++"
                 "openssl-libs"
+                "tzdata"
             )
             if($Script:Options.Runtime -like 'fx*') {
                 $Dependencies += @(
