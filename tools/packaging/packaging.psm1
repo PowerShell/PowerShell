@@ -2111,7 +2111,7 @@ function Get-PackageDependencies
             $Dependencies = @(
                 "glibc"
                 "libgcc"
-                "krb5"
+                "krb5-libs"
                 "libstdc++"
                 "zlib"
                 "icu"
@@ -2119,7 +2119,7 @@ function Get-PackageDependencies
             )
             if($Script:Options.Runtime -like 'fx*') {
                 $Dependencies += @(
-                    "dotnet-runtime-10.0"
+                    "dotnet-runtime-11.0"
                 )
             }
         } elseif ($Distribution -eq 'macOS') {
