@@ -936,8 +936,8 @@ namespace System.Management.Automation
                 var ac = units1[i];
                 var bc = units2[i];
                 int number1, number2;
-                var isNumber1 = Int32.TryParse(ac, out number1);
-                var isNumber2 = Int32.TryParse(bc, out number2);
+                var isNumber1 = int.TryParse(ac, out number1);
+                var isNumber2 = int.TryParse(bc, out number2);
 
                 if (isNumber1 && isNumber2)
                 {
@@ -1017,7 +1017,7 @@ namespace System.Management.Automation
                         // Regenerate the FormatException as would be thrown by Int32.Parse()
                         try
                         {
-                            Int32.Parse(_exceptionArgument, CultureInfo.InvariantCulture);
+                            int.Parse(_exceptionArgument, CultureInfo.InvariantCulture);
                         }
                         catch (FormatException e)
                         {

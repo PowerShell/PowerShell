@@ -32,7 +32,7 @@ namespace System.Management.Automation.Interpreter
     {
         internal static readonly object NoValue = new object();
 
-        internal const int RethrowOnReturn = Int32.MaxValue;
+        internal const int RethrowOnReturn = int.MaxValue;
 
         // zero: sync compilation
         // negative: default

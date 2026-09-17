@@ -538,7 +538,7 @@ namespace System.Management.Automation.Internal.Host
         /// </exception>
         public override
         void
-        WriteProgress(Int64 sourceId, ProgressRecord record)
+        WriteProgress(long sourceId, ProgressRecord record)
         {
             if (record == null)
             {
