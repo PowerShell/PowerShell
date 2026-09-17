@@ -188,8 +188,7 @@ namespace Microsoft.PowerShell.Commands
 
             object value = base.GetValueOfItem(item);
 
-            PSVariable var = item as PSVariable;
-            if (var != null)
+            if (item is PSVariable var)
             {
                 value = var.Value;
             }
@@ -211,8 +210,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            PSVariable variable = item as PSVariable;
-            if (variable != null)
+            if (item is PSVariable variable)
             {
                 if ((variable.Options & ScopedItemOptions.Constant) != 0 ||
                     ((variable.Options & ScopedItemOptions.ReadOnly) != 0 && !Force))
