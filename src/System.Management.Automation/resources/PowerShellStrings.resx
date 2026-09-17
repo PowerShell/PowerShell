@@ -177,4 +177,10 @@
   <data name="NoDefaultRunspaceForPSCreate" xml:space="preserve">
     <value>A PowerShell object cannot be created that uses the current runspace because there is no current runspace available.  The current runspace might be starting, such as when it is created with an Initial Session State.</value>
   </data>
+  <data name="OperationTimedOut" xml:space="preserve">
+    <value>The operation did not complete within the allotted time of {0}.</value>
+  </data>
+  <data name="StopTimedOut" xml:space="preserve">
+    <value>Stop did not complete within the allotted time of {0}.</value>
+  </data>
 </root>
