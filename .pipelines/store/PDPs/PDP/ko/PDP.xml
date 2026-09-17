@@ -44,9 +44,9 @@ PowerShell이 오픈 소스로 제공됨.  See https://github.com/powershell/pow
     <!-- _locComment_text="{MaxLength=255} App DevStudio" -->
   </DevStudio>
   <ReleaseNotes _locID="App_ReleaseNotes">
-    <!-- _locComment_text="{MaxLength=1500} {Locked=___VERSION___}{Locked=___CHANGELOGLINK___} App Release Note" -->Version: ___VERSION___
+    <!-- _locComment_text="{MaxLength=1500} {Locked=___VERSION___}{Locked=___CHANGELOGLINK___} App Release Note" -->버전: ___VERSION___
 
-Changelog: ___CHANGELOGLINK___</ReleaseNotes>
+변경 로그: ___CHANGELOGLINK___</ReleaseNotes>
   <AppFeatures>
     <!-- Valid length: 200 character limit, up to 20 elements -->
     <AppFeature _locID="App_feature1">
