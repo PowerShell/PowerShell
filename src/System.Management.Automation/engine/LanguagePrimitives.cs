@@ -4446,22 +4446,22 @@ namespace System.Management.Automation
         }
 
         private static readonly Type[] s_numericTypes = new Type[] {
-            typeof(Int16), typeof(Int32), typeof(Int64),
-            typeof(UInt16), typeof(UInt32), typeof(UInt64),
+            typeof(Int16), typeof(Int32), typeof(Int64), typeof(Int128),
+            typeof(UInt16), typeof(UInt32), typeof(UInt64), typeof(UInt128),
             typeof(sbyte), typeof(byte),
             typeof(Single), typeof(double), typeof(decimal),
             typeof(BigInteger)
         };
 
         private static readonly Type[] s_integerTypes = new Type[] {
-            typeof(Int16), typeof(Int32), typeof(Int64),
-            typeof(UInt16), typeof(UInt32), typeof(UInt64),
+            typeof(Int16), typeof(Int32), typeof(Int64), typeof(Int128),
+            typeof(UInt16), typeof(UInt32), typeof(UInt64), typeof(UInt128),
             typeof(sbyte), typeof(byte)
         };
 
         // Do not reorder the elements of these arrays, we depend on them being ordered by increasing size.
-        private static readonly Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64) };
-        private static readonly Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
+        private static readonly Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64), typeof(Int128) };
+        private static readonly Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64), typeof(UInt128) };
 
         private static readonly Type[] s_realTypes = new Type[] { typeof(Single), typeof(double), typeof(decimal) };
 
