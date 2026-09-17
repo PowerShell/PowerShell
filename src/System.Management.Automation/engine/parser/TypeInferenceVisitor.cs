@@ -1611,7 +1611,7 @@ namespace System.Management.Automation
                             properties = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Select(static c => c.Value).ToArray();
                             scriptBlockProperty = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Any();
                             break;
-                        case CommandElementAst _:
+                        case CommandElementAst:
                             scriptBlockProperty = true;
                             break;
                     }
@@ -1859,7 +1859,7 @@ namespace System.Management.Automation
         {
             switch (member)
             {
-                case PropertyInfo _:
+                case PropertyInfo:
                     return true;
                 case PSMemberInfo memberInfo:
                     return (memberInfo.MemberType & PSMemberTypes.Properties) == memberInfo.MemberType;
