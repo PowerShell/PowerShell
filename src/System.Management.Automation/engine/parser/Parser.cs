@@ -737,7 +737,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            if (!(statements[0] is PipelineAst pipelineAst))
+            if (statements[0] is not PipelineAst pipelineAst)
             {
                 return false;
             }
@@ -748,7 +748,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            if (!(expr is HashtableAst hashTableAst))
+            if (expr is not HashtableAst hashTableAst)
             {
                 return false;
             }
