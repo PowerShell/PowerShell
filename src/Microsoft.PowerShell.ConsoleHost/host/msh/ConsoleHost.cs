@@ -378,17 +378,21 @@ namespace Microsoft.PowerShell
 #if UNIX
             const string pwshName = "pwsh";
             const string dotnetToolPathSegment = "/.store/powershell/";
+            const StringComparison comparisonType = StringComparison.Ordinal;
 #else
             const string pwshName = "pwsh.exe";
             const string dotnetToolPathSegment = @"\.store\powershell\";
+            const StringComparison comparisonType = StringComparison.OrdinalIgnoreCase;
 #endif
 
             string psExePath = Environment.ProcessPath;
             string psExeHome = Path.GetDirectoryName(psExePath);
             string processName = Path.GetFileName(psExePath);
 
-            // Use 'Environment.ProcessPath' if it points to 'pwsh.exe' or 'pwsh'.
-            if (pwshName.Equals(processName, StringComparison.Ordinal))
+            // Use 'Environment.ProcessPath' if it points to 'pwsh.exe' or 'pwsh'. The 'ProcessPath' on Windows
+            // could be any case as it depends on the `lpCommandLine` argument passed to `CreateProcess`, so we
+            // compare with 'OrdinalIgnoreCase' on Windows.
+            if (pwshName.Equals(processName, comparisonType))
             {
 #if !UNIX
                 psExeHome = ResolveStablePathIfMsix(psExeHome);
@@ -398,7 +402,7 @@ namespace Microsoft.PowerShell
 
             psExeHome = Utils.DefaultPowerShellAppBase;
 
-            int index = psExeHome.IndexOf(dotnetToolPathSegment, StringComparison.Ordinal);
+            int index = psExeHome.IndexOf(dotnetToolPathSegment, comparisonType);
             if (index > 0)
             {
                 // We're running PowerShell dotnet tool. In this case the real entry executable should be the 'pwsh'
