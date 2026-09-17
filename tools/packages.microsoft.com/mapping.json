@@ -63,7 +63,7 @@
       {
           "url": "azurelinux-4.0-beta-microsoft-aarch64",
           "distribution": [
-              "bionic"
+              "azl"
           ],
           "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.aarch64.rpm",
           "channel": "stable"
@@ -71,7 +71,7 @@
       {
           "url": "azurelinux-4.0-beta-microsoft-x86_64",
           "distribution": [
-              "bionic"
+              "azl"
           ],
           "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.x86_64.rpm",
           "channel": "stable"
