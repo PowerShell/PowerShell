@@ -152,6 +152,25 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             "$destDir/$testDir/$testFile" | Should -Exist
         }
 
+        It "Verify Move-Item with wildcard preserves source directories when creating destination container" {
+            $installDir = Join-Path $TestDrive "install"
+            $copyDir = Join-Path $TestDrive "copy"
+            $destination = Join-Path $copyDir "app"
+
+            $null = New-Item -ItemType Directory -Path (Join-Path $installDir "bin") -ErrorAction Stop
+            $null = New-Item -ItemType File -Path (Join-Path (Join-Path $installDir "bin") "test.dll") -ErrorAction Stop
+            $null = New-Item -ItemType Directory -Path (Join-Path $installDir "lib") -ErrorAction Stop
+            $null = New-Item -ItemType File -Path (Join-Path $installDir "ReadMe.md") -ErrorAction Stop
+            $null = New-Item -ItemType Directory -Path $copyDir -ErrorAction Stop
+
+            Move-Item -Path (Join-Path $installDir "*") -Destination $destination -ErrorAction Stop
+
+            (Join-Path (Join-Path $destination "bin") "test.dll") | Should -Exist
+            (Join-Path $destination "lib") | Should -Exist
+            (Join-Path $destination "ReadMe.md") | Should -Exist
+            (Join-Path $destination "test.dll") | Should -Not -Exist
+        }
+
         It "Verify Move-Item across devices for directory" {
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ThrowExdevErrorOnMoveDirectory', $true)
             try
