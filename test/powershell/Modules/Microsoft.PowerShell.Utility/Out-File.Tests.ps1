@@ -143,4 +143,3 @@ Describe "Out-File" -Tags "CI" {
         { Out-File -Path $testfile } | Should -Not -Throw
     }
 }
-

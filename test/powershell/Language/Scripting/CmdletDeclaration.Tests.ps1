@@ -119,4 +119,3 @@ Describe "Cmdlet declaration statement" -Tags "CI" {
             $syntaxerrors.Count | Should -Be 0
         }
 }
-

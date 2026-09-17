@@ -15,4 +15,3 @@ Describe "ProviderIntrinsics Tests" -tags "CI" {
             Should -Throw -ErrorId 'ItemNotFoundException'
     }
 }
-
