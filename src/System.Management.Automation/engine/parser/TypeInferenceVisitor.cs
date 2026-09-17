@@ -478,7 +478,7 @@ namespace System.Management.Automation
                             psobjectPropertyList.Add(new PSMemberNameAndType(property.Name, propertyTypeName, property.Value));
                         }
 
-                        type = PSSyntheticTypeName.Create(typeObject, psobjectPropertyList);
+                        type = PSSyntheticTypeName.Create(typeof(PSCustomObject), psobjectPropertyList);
                     }
                     else
                     {
@@ -915,7 +915,10 @@ namespace System.Management.Automation
             {
                 if (InferTypes(hashtableAst).FirstOrDefault() is PSSyntheticTypeName syntheticTypeName)
                 {
-                    return new[] { PSSyntheticTypeName.Create(type, syntheticTypeName.Members) };
+                    var baseSyntheticType = convertExpressionAst.Type.TypeName.FullName.EqualsOrdinalIgnoreCase(nameof(PSCustomObject))
+                        ? typeof(PSCustomObject)
+                        : typeof(Hashtable);
+                    return new[] { PSSyntheticTypeName.Create(baseSyntheticType, syntheticTypeName.Members) };
                 }
             }
 
@@ -1780,7 +1783,7 @@ namespace System.Management.Automation
                     foreach (var t in InferTypes(previousPipelineElementAst))
                     {
                         var list = GetMemberNameAndTypeFromProperties(t, IsInPropertyArgument);
-                        inferredTypes.Add(PSSyntheticTypeName.Create(typeof(PSObject), list));
+                        inferredTypes.Add(PSSyntheticTypeName.Create(typeof(PSCustomObject), list));
                     }
                 }
             }
@@ -1944,7 +1947,7 @@ namespace System.Management.Automation
             var memberNameList = new List<string> { memberAsStringConst.Value };
             foreach (var type in exprType)
             {
-                if (type.Type == typeof(PSObject) && type is not PSSyntheticTypeName)
+                if (type.Type == typeof(PSObject))
                 {
                     continue;
                 }
