@@ -58,6 +58,12 @@ Describe "Get-Culture" -Tags "CI" {
         $ciArray[0] | Should -BeOfType CultureInfo
     }
 
+    It "Should return current culture when -ListAvailable:`$false is specified" {
+        $result = Get-Culture -ListAvailable:$false
+        $result | Should -BeOfType CultureInfo
+        $result.Name | Should -BeExactly (Get-Culture).Name
+    }
+
     It "Should write an error on unsupported culture name" {
 
         { Get-Culture -Name "abcdefghijkl" -ErrorAction Stop } | Should -PassThru -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCultureCommand"
