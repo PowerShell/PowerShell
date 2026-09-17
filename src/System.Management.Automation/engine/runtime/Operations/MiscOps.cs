@@ -28,6 +28,16 @@ namespace System.Management.Automation
 {
     internal static class PipelineOps
     {
+        /// <summary>
+        /// This method adds commands to be processed by PowerShell.
+        /// It is called while evaluating PowerShell and is responsible for command resolution and argument assignment.
+        /// </summary>
+        /// <param name="pipe">The pipeline processor.</param>
+        /// <param name="commandElements">The command elements.</param>
+        /// <param name="commandBaseAst">The current command's base AST.</param>
+        /// <param name="redirections">Any command redirections.</param>
+        /// <param name="context">The context used to execute the command.</param>
+        /// <returns></returns>
         private static CommandProcessorBase AddCommand(PipelineProcessor pipe,
                                                        CommandParameterInternal[] commandElements,
                                                        CommandBaseAst commandBaseAst,
@@ -207,8 +217,13 @@ namespace System.Management.Automation
             {
                 commandProcessor = CommandProcessorBase.CreateGetHelpCommandProcessor(context, helpTarget, helpCategory);
             }
-
+            
+            // This is roughly where scripts are wired up to their current invocation
+            // we were already tracking the extent of the AST.
             commandProcessor.Command.InvocationExtent = commandBaseAst.Extent;
+            // in order to enable additional context in dynamic parameters, we will attach the ast to the InternalCommand.
+            // This will likely be useful for other scenarios as well, since it saves the time and effort of performing a callstack peek.
+            commandProcessor.Command.InvocationAst = commandAst;
             commandProcessor.Command.MyInvocation.ScriptPosition = commandBaseAst.Extent;
             commandProcessor.Command.MyInvocation.InvocationName = invocationName;
 
