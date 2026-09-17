@@ -90,24 +90,25 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string field = entry.Key.ToString();
 
-                    if (field.Equals("ModuleName", StringComparison.OrdinalIgnoreCase))
+                    if (field.EqualsOrdinalIgnoreCase("ModuleName"))
                     {
                         moduleSpecification.Name = LanguagePrimitives.ConvertTo<string>(entry.Value);
                     }
-                    else if (field.Equals("ModuleVersion", StringComparison.OrdinalIgnoreCase))
+                    else if (field.EqualsOrdinalIgnoreCase("ModuleVersion"))
                     {
                         moduleSpecification.Version = LanguagePrimitives.ConvertTo<Version>(entry.Value);
                     }
-                    else if (field.Equals("RequiredVersion", StringComparison.OrdinalIgnoreCase))
+                    else if (field.EqualsOrdinalIgnoreCase("RequiredVersion"))
                     {
                         moduleSpecification.RequiredVersion = LanguagePrimitives.ConvertTo<Version>(entry.Value);
                     }
-                    else if (field.Equals("MaximumVersion", StringComparison.OrdinalIgnoreCase))
+                    else if (field.EqualsOrdinalIgnoreCase("MaximumVersion"))
                     {
                         moduleSpecification.MaximumVersion = LanguagePrimitives.ConvertTo<string>(entry.Value);
-                        ModuleCmdletBase.GetMaximumVersion(moduleSpecification.MaximumVersion);
+                        // Ensure max version is correctly formatted.
+                        _ = ModuleCmdletBase.GetMaximumVersion(moduleSpecification.MaximumVersion);
                     }
-                    else if (field.Equals("GUID", StringComparison.OrdinalIgnoreCase))
+                    else if (field.EqualsOrdinalIgnoreCase("GUID"))
                     {
                         moduleSpecification.Guid = LanguagePrimitives.ConvertTo<Guid?>(entry.Value);
                     }
@@ -339,7 +340,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Compares two ModuleSpecification objects for equality.
+    /// Compares two <see cref="ModuleSpecification"/> objects for structural equality.
     /// </summary>
     internal class ModuleSpecificationComparer : IEqualityComparer<ModuleSpecification>
     {
@@ -351,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if the specifications are equal, false otherwise.</returns>
         public bool Equals(ModuleSpecification x, ModuleSpecification y)
         {
-            if (x == y)
+            if (ReferenceEquals(x, y))
             {
                 return true;
             }
@@ -361,7 +362,7 @@ namespace Microsoft.PowerShell.Commands
                 && Guid.Equals(x.Guid, y.Guid)
                 && Version.Equals(x.RequiredVersion, y.RequiredVersion)
                 && Version.Equals(x.Version, y.Version)
-                && string.Equals(x.MaximumVersion, y.MaximumVersion);
+                && string.Equals(x.MaximumVersion, y.MaximumVersion, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
