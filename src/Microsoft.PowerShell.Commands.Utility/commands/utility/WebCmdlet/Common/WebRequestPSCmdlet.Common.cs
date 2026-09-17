@@ -448,6 +448,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the ContentType property.
         /// </summary>
         [Parameter]
+        [ArgumentCompleter(typeof(ContentTypeArgumentCompleter))]
         public virtual string ContentType { get; set; }
 
         /// <summary>
