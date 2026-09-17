@@ -238,6 +238,95 @@ try
                 $expectedError.FullyQualifiedErrorId | Should -BeExactly "CannotStartJobInconsistentLanguageMode,Microsoft.PowerShell.Commands.StartJobCommand"
             }
         }
+
+        Context "Background jobs in App Control audit mode" {
+
+            It "Verifies that Start-Job succeeds when ConstrainedLanguage was applied by an audit-mode policy" {
+
+                try
+                {
+                    # 0x80000008 = WLDP_LOCKDOWN_DEFINED_FLAG (0x80000000) | WLDP_LOCKDOWN_UMCIAUDIT_FLAG (8)
+                    # which the debug lockdown policy hook maps to SystemEnforcementMode.Audit.
+                    # Set the system-wide policy to audit mode before starting a fresh pwsh process so that
+                    # its start-up path applies audit-induced ConstrainedLanguage (issue #25109).
+                    [System.Environment]::SetEnvironmentVariable("__PSLockdownPolicy", "0x80000008", [System.EnvironmentVariableTarget]::Machine)
+
+                    $command = @'
+                    $languageMode = $ExecutionContext.SessionState.LanguageMode
+                    $job = Start-Job -ScriptBlock { "AuditJobResult" } | Wait-Job
+                    $output = Receive-Job -Job $job
+                    $job | Remove-Job
+                    "LanguageMode=$languageMode;Output=$output"
+'@
+                    $result = pwsh.exe -noprofile -nologo -c $command
+                }
+                finally
+                {
+                    [System.Environment]::SetEnvironmentVariable("__PSLockdownPolicy", $null, [System.EnvironmentVariableTarget]::Machine)
+                }
+
+                # The child session must be in ConstrainedLanguage (audit-induced) and the job must run.
+                $result | Should -BeLike "*LanguageMode=ConstrainedLanguage*"
+                $result | Should -BeLike "*Output=AuditJobResult*"
+            }
+        }
+
+        Context "Background jobs with explicit constrained language under App Control audit mode" {
+
+            It "Verifies that Start-Job remains denied for an explicitly constrained session even when audit mode is active" {
+
+                try
+                {
+                    # Audit mode is active system-wide (0x80000008 => SystemEnforcementMode.Audit), but this session
+                    # is explicitly constrained (for example, a session/JEA configuration). That security boundary
+                    # must be preserved and Start-Job must fail.
+                    [System.Environment]::SetEnvironmentVariable("__PSLockdownPolicy", "0x80000008", [System.EnvironmentVariableTarget]::Machine)
+                    $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                    Start-Job { [object]::Equals("A", "B") }
+                    throw "No Exception!"
+                }
+                catch
+                {
+                    $expectedError = $_
+                }
+                finally
+                {
+                    Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+                    [System.Environment]::SetEnvironmentVariable("__PSLockdownPolicy", $null, [System.EnvironmentVariableTarget]::Machine)
+                }
+
+                $expectedError.FullyQualifiedErrorId | Should -BeExactly "CannotStartJobInconsistentLanguageMode,Microsoft.PowerShell.Commands.StartJobCommand"
+            }
+        }
+
+        Context "Background jobs in a configured constrained-language runspace under App Control audit mode" {
+
+            It "Verifies that Start-Job remains denied in an InitialSessionState-configured ConstrainedLanguage runspace even under audit mode" {
+
+                try
+                {
+                    # Audit mode is active system-wide (0x80000008 => SystemEnforcementMode.Audit). A runspace
+                    # explicitly configured for ConstrainedLanguage via InitialSessionState (the mechanism used by
+                    # session/JEA configurations) is NOT audit-induced, so its security boundary must be preserved
+                    # and Start-Job must fail - even though an audit-induced session in the same process is allowed.
+                    [System.Environment]::SetEnvironmentVariable("__PSLockdownPolicy", "0x80000008", [System.EnvironmentVariableTarget]::Machine)
+
+                    $iss = [initialsessionstate]::CreateDefault2()
+                    $iss.LanguageMode = "ConstrainedLanguage"
+                    $rs = [runspacefactory]::CreateRunspace($iss)
+                    $rs.Open()
+                    $pl = $rs.CreatePipeline('try { Start-Job -ScriptBlock { 1 } | Out-Null; "NoError" } catch { $_.FullyQualifiedErrorId }')
+                    $result = $pl.Invoke()
+                    $rs.Dispose()
+                }
+                finally
+                {
+                    [System.Environment]::SetEnvironmentVariable("__PSLockdownPolicy", $null, [System.EnvironmentVariableTarget]::Machine)
+                }
+
+                $result[0] | Should -BeExactly "CannotStartJobInconsistentLanguageMode,Microsoft.PowerShell.Commands.StartJobCommand"
+            }
+        }
     }
 
     Describe "Add-Type in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
