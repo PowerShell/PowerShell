@@ -8,6 +8,23 @@ parameters:
   - name: netiso
     type: string
     default: 'R1'
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: EarlyAccessFeed
+    type: string
+    default: 'net10'
+    values:
+      - 'net8'
+      - 'net9'
+      - 'net10'
+      - 'net11'
+  - name: DOTNET_RUNTIME_VERSION
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    type: string
+    default: ' '
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -30,6 +47,14 @@ variables:
     value: none
   - name: ReleaseTagVar
     value: ${{ parameters.ReleaseTagVar }}
+  - name: IsEarlyAccess
+    value: ${{ parameters.IsEarlyAccess }}
+  - name: EARLY_ACCESS_FEED
+    value: ${{ parameters.EarlyAccessFeed }}
+  - name: DOTNET_RUNTIME_VERSION
+    value: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+  - name: DOTNET_SDK_VERSION
+    value: ${{ parameters.DOTNET_SDK_VERSION }}
   - group: Azure Blob variable group
   - group: certificate_logical_to_actual # used within signing task
   - group: DotNetPrivateBuildAccess

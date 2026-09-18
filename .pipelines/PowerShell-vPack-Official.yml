@@ -29,6 +29,26 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     - R1
     - Netlock
   default: "R1"
+- name: IsEarlyAccess
+  type: boolean
+  default: false
+- name: EarlyAccessFeed
+  displayName: Early Access Feed
+  type: string
+  default: 'net10'
+  values:
+    - 'net8'
+    - 'net9'
+    - 'net10'
+    - 'net11'
+- name: DOTNET_RUNTIME_VERSION
+  displayName: Runtime version of early access build
+  type: string
+  default: ' '
+- name: DOTNET_SDK_VERSION
+  displayName: SDK version of early access build
+  type: string
+  default: ' '
 
 name: vPack_$(Build.SourceBranchName)_Prod_Create.${{ parameters.createVPack }}_Name.${{ parameters.vPackName}}_$(date:yyyyMMdd).$(rev:rr)
 
@@ -38,6 +58,10 @@ variables:
       debug: ${{ parameters.debug }}
       ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
       netiso: ${{ parameters.netiso }}
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
 
 resources:
   repositories:
@@ -85,3 +109,7 @@ extends:
       parameters:
         createVPack: ${{ parameters.createVPack }}
         vPackName: ${{ parameters.vPackName }}
+        IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+        EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
+        DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+        DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
