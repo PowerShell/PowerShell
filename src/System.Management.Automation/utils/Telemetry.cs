@@ -1010,14 +1010,30 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 // CreateUniqueIdentifierAndFile shouldn't throw, but the mutex might
                 using var mutex = new Mutex(initiallyOwned: false, name: "CreateUniqueUserId");
-                mutex.WaitOne();
+                bool mutexAcquired = false;
                 try
                 {
-                    return CreateUniqueIdentifierAndFile(s_uuidPath);
+                    try
+                    {
+                        mutexAcquired = mutex.WaitOne(millisecondsTimeout: 200);
+                    }
+                    catch (AbandonedMutexException)
+                    {
+                        // WaitOne transfers ownership before throwing for an abandoned mutex.
+                        mutexAcquired = true;
+                    }
+
+                    if (mutexAcquired)
+                    {
+                        return CreateUniqueIdentifierAndFile(s_uuidPath);
+                    }
                 }
                 finally
                 {
-                    mutex.ReleaseMutex();
+                    if (mutexAcquired)
+                    {
+                        mutex.ReleaseMutex();
+                    }
                 }
             }
             catch (Exception)

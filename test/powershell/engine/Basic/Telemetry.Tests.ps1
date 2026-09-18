@@ -182,6 +182,43 @@ while (-not [System.IO.File]::Exists($StopPath)) {
         }
     }
 
+    It "Should stop creating the uuid file when the telemetry mutex times out" {
+        $env:POWERSHELL_TELEMETRY_OPTOUT = "no"
+        $mutex = [System.Threading.Mutex]::new($false, "CreateUniqueUserId")
+        $mutexAcquired = $false
+        $childProcess = $null
+        try {
+            try {
+                $mutexAcquired = $mutex.WaitOne(5000)
+            }
+            catch [System.Threading.AbandonedMutexException] {
+                $mutexAcquired = $true
+            }
+
+            $mutexAcquired | Should -BeTrue -Because "the test must own the mutex to force the child to time out"
+            $childProcess = Invoke-TelemetryTestProcess -Argument @("-NoProfile", "-Command", "exit")
+            $childProcess.WaitForExit(15000) | Should -BeTrue
+            $childProcess.ExitCode | Should -Be 0
+            $uuidPath | Should -Not -Exist
+        }
+        finally {
+            if ($childProcess -and -not $childProcess.HasExited) {
+                $childProcess.Kill($true)
+                $childProcess.WaitForExit()
+            }
+
+            if ($childProcess) {
+                $childProcess.Dispose()
+            }
+
+            if ($mutexAcquired) {
+                $mutex.ReleaseMutex()
+            }
+
+            $mutex.Dispose()
+        }
+    }
+
     It "Should create a uuid file by default" {
         if ( Test-Path env:POWERSHELL_TELEMETRY_OPTOUT ) { Remove-Item -Path env:POWERSHELL_TELEMETRY_OPTOUT }
         & $PWSH -NoProfile -Command "exit"
