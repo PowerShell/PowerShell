@@ -121,7 +121,8 @@
     <value>{0} no se puede modificar directamente, use {1} en su lugar.</value>
   </data>
   <data name="Columns" xml:space="preserve">
-    <value>Columnas</value>
+    <value>Columns</value>
+    <comment>{StrContains="Columns"}</comment>
   </data>
   <data name="ManagementListDateTimeColumnFormatString" xml:space="preserve">
     <value>{0:G}</value>
@@ -141,8 +142,10 @@
   </data>
   <data name="NotSupportAddingToItems" xml:space="preserve">
     <value>{0} no admite la adición a la colección Items, use {1} en su lugar.</value>
+    <comment>{StrContains="Items"}</comment>
   </data>
   <data name="ViewSetWithType" xml:space="preserve">
     <value>Si View se establece en un {0}, debe tener el tipo {1}.</value>
+    <comment>{StrContains="View"}</comment>
   </data>
 </root>
