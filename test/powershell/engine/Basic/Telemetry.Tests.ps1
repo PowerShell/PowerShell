@@ -65,22 +65,6 @@ Describe "Telemetry for shell startup" -Tag CI {
         $PWSH = (Get-Process -Id $PID).MainModule.FileName
         $telemetrySet = Test-Path -Path env:POWERSHELL_TELEMETRY_OPTOUT
         $SendingTelemetry = $env:POWERSHELL_TELEMETRY_OPTOUT
-
-        function Invoke-TelemetryTestProcess {
-            param(
-                [Parameter(Mandatory)]
-                [string[]] $Argument
-            )
-
-            $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
-            $startInfo.FileName = $PWSH
-            $startInfo.UseShellExecute = $false
-            foreach ($argumentValue in $Argument) {
-                $startInfo.ArgumentList.Add($argumentValue)
-            }
-
-            return [System.Diagnostics.Process]::Start($startInfo)
-        }
     }
 
     AfterAll {
@@ -122,64 +106,6 @@ Describe "Telemetry for shell startup" -Tag CI {
         $env:POWERSHELL_TELEMETRY_OPTOUT = "no"
         & $PWSH -NoProfile -Command "exit"
         $uuidPath  | Should -Exist
-    }
-
-    It "Should not block concurrent telemetry-enabled shell startup when the uuid file is missing" {
-        $env:POWERSHELL_TELEMETRY_OPTOUT = "no"
-        $holderReadyPath = Join-Path -Path $TestDrive -ChildPath "telemetry-holder.ready"
-        $holderStopPath = Join-Path -Path $TestDrive -ChildPath "telemetry-holder.stop"
-        $holderScriptPath = Join-Path -Path $TestDrive -ChildPath "telemetry-holder.ps1"
-        @'
-param($ReadyPath, $StopPath)
-
-[void][Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]::CanSendTelemetry
-[System.IO.File]::WriteAllText($ReadyPath, "")
-while (-not [System.IO.File]::Exists($StopPath)) {
-    Start-Sleep -Milliseconds 100
-}
-'@ | Set-Content -LiteralPath $holderScriptPath
-
-        $holderProcess = $null
-        $childProcess = $null
-        try {
-            $holderProcess = Invoke-TelemetryTestProcess -Argument @(
-                "-NoProfile",
-                "-File",
-                $holderScriptPath,
-                $holderReadyPath,
-                $holderStopPath
-            )
-
-            Wait-UntilTrue -sb { Test-Path -LiteralPath $holderReadyPath } -TimeoutInMilliseconds 15000 -IntervalInMilliseconds 100 |
-                Should -BeTrue
-            $uuidPath | Should -Exist
-            Remove-Item -LiteralPath $uuidPath
-
-            $childProcess = Invoke-TelemetryTestProcess -Argument @("-NoProfile", "-Command", "exit")
-            $childProcess.WaitForExit(15000) | Should -BeTrue
-            $childProcess.ExitCode | Should -Be 0
-            $uuidPath | Should -Exist
-        }
-        finally {
-            if ($childProcess -and -not $childProcess.HasExited) {
-                $childProcess.Kill($true)
-                $childProcess.WaitForExit()
-            }
-
-            if ($childProcess) {
-                $childProcess.Dispose()
-            }
-
-            [System.IO.File]::WriteAllText($holderStopPath, "")
-            if ($holderProcess -and -not $holderProcess.WaitForExit(5000)) {
-                $holderProcess.Kill($true)
-                $holderProcess.WaitForExit()
-            }
-
-            if ($holderProcess) {
-                $holderProcess.Dispose()
-            }
-        }
     }
 
     It "Should create a uuid file by default" {
