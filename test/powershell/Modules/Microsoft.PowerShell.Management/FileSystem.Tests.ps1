@@ -102,7 +102,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $topPath = Join-Path $TestDrive $longDir
             $longDirPath = Join-Path $topPath $longSubDir
             $longFilePath = Join-Path $longDirPath $fileName
-            $null = New-Item -itemtype file -path $longFilePath -force
+            $null = New-Item -ItemType file -Path $longFilePath -Force
 
             $longFilePath | Should -Exist
 
