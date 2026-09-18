@@ -3,7 +3,7 @@
 
 $script:JobId = -1
 
-function Start-PwshProcess
+function script:Start-PwshProcess
 {
     $job = Start-Job -ScriptBlock { Write-Output $PID; Start-Sleep -Seconds 300 }
     $script:JobId = $job.Id

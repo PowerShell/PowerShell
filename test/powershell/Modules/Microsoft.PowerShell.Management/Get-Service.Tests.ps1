@@ -1,22 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Get-Service cmdlet tests" -Tags "CI" {
-  # Service cmdlet is currently working on windows only
-  # So skip the tests on non-Windows
-  BeforeAll {
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    if ( -not $IsWindows ) {
-        $PSDefaultParameterValues["it:skip"] = $true
-    }
+Describe "Get-Service cmdlet tests" -Tags "CI" -Skip:(-not $IsWindows) {
+  BeforeDiscovery {
+      $testCases =
+        @{ data = $null          ; value = 'null' },
+        @{ data = [String]::Empty; value = 'empty string' }
   }
-  # Restore the defaults
-  AfterAll {
-      $global:PSDefaultParameterValues = $originalDefaultParameterValues
-  }
-
-  $testCases =
-    @{ data = $null          ; value = 'null' },
-    @{ data = [String]::Empty; value = 'empty string' }
 
   Context 'Check null or empty value to the -Name parameter' {
     It 'Should throw if <value> is passed to -Name parameter' -TestCases $testCases {
@@ -83,17 +72,7 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
   }
 }
 
-Describe 'Get-Service Admin tests' -Tag CI,RequireAdminOnWindows {
-  BeforeAll {
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    if ( -not $IsWindows ) {
-        $PSDefaultParameterValues["it:skip"] = $true
-    }
-  }
-  AfterAll {
-      $global:PSDefaultParameterValues = $originalDefaultParameterValues
-  }
-
+Describe 'Get-Service Admin tests' -Tag CI,RequireAdminOnWindows -Skip:(-not $IsWindows) {
   BeforeEach {
     $serviceParams = @{
       Name = "PowerShellTest-$([Guid]::NewGuid().Guid)"

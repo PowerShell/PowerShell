@@ -30,7 +30,9 @@ Describe "Tee-Object" -Tags "CI" {
             Get-Content $teefile | Should -BeExactly "teeobjecttest3"
         }
 
-        $unicodeTestString = "A1£ę௸🤔"
+        BeforeDiscovery {
+            $unicodeTestString = "A1£ę௸🤔"
+        }
         It "Should tee output to file using <encoding> encoding when selected" -TestCases @(
             @{ Encoding = "ascii"; Content = "teeobjecttest1"},
             @{ Encoding = "bigendianunicode"; Content = $unicodeTestString  },

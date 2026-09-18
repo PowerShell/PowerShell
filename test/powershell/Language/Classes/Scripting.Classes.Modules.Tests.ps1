@@ -8,33 +8,33 @@ Describe 'PSModuleInfo.GetExportedTypeDefinitions()' -Tags "CI" {
 }
 
 Describe 'use of a module from two runspaces' -Tags "CI" {
-    function New-TestModule {
-        param(
-            [string]$Name,
-            [string]$Content
-        )
+    BeforeAll {
+        function New-TestModule {
+            param(
+                [string]$Name,
+                [string]$Content
+            )
 
-        $TestModulePath = Join-Path -Path $TestDrive -ChildPath "TestModule"
-        $ModuleFolder = Join-Path -Path $TestModulePath -ChildPath $Name
-        New-Item -Path $ModuleFolder -ItemType Directory -Force > $null
+            $TestModulePath = Join-Path -Path $TestDrive -ChildPath "TestModule"
+            $ModuleFolder = Join-Path -Path $TestModulePath -ChildPath $Name
+            New-Item -Path $ModuleFolder -ItemType Directory -Force > $null
 
-        Set-Content -Path "$ModuleFolder\$Name.psm1" -Value $Content
+            Set-Content -Path "$ModuleFolder\$Name.psm1" -Value $Content
 
-        $manifestParams = @{
-            Path = "$ModuleFolder\$Name.psd1"
-            RootModule = "$Name.psm1"
+            $manifestParams = @{
+                Path = "$ModuleFolder\$Name.psd1"
+                RootModule = "$Name.psm1"
+            }
+            New-ModuleManifest @manifestParams
+
+            if ($env:PSModulePath -NotLike "*$TestModulePath*") {
+                $env:PSModulePath += "$([System.IO.Path]::PathSeparator)$TestModulePath"
+            }
         }
-        New-ModuleManifest @manifestParams
 
-        if ($env:PSModulePath -NotLike "*$TestModulePath*") {
-            $env:PSModulePath += "$([System.IO.Path]::PathSeparator)$TestModulePath"
-        }
-    }
+        $originalPSModulePath = $env:PSModulePath
 
-    $originalPSModulePath = $env:PSModulePath
-    try {
-
-        New-TestModule -Name 'Random' -Content @'
+            New-TestModule -Name 'Random' -Content @'
 $script:random = Get-Random
 class RandomWrapper
 {
@@ -44,6 +44,11 @@ class RandomWrapper
     }
 }
 '@
+    }
+
+    AfterAll {
+        $env:PSModulePath = $originalPSModulePath
+    }
 
         It 'use different sessionStates for different modules' {
             $ps = 1..2 | ForEach-Object { $p = [powershell]::Create().AddScript(@'
@@ -67,10 +72,6 @@ Import-Module Random
             $res[0] | Should -Be $res[2]
             $res[1] | Should -Be $res[3]
         }
-
-    } finally {
-        $env:PSModulePath = $originalPSModulePath
-    }
 
 }
 

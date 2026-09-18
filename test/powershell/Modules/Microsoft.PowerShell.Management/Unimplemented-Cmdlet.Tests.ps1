@@ -2,26 +2,24 @@
 # Licensed under the MIT License.
 Describe "Unimplemented Management Cmdlet Tests" -Tags "CI" {
 
-    $Commands = @(
-        "Get-Service",
-        "Stop-Service",
-        "Start-Service",
-        "Suspend-Service",
-        "Resume-Service",
-        "Restart-Service",
-        "Set-Service",
-        "New-Service",
+    BeforeDiscovery {
+        $testCases = @(
+            @{ Command = "Get-Service" },
+            @{ Command = "Stop-Service" },
+            @{ Command = "Start-Service" },
+            @{ Command = "Suspend-Service" },
+            @{ Command = "Resume-Service" },
+            @{ Command = "Restart-Service" },
+            @{ Command = "Set-Service" },
+            @{ Command = "New-Service" },
+            @{ Command = "Rename-Computer" },
+            @{ Command = "Get-ComputerInfo" },
+            @{ Command = "Set-TimeZone" }
+        )
+    }
 
-        "Rename-Computer",
-
-        "Get-ComputerInfo",
-
-        "Set-TimeZone"
-    )
-
-    foreach ($Command in $Commands) {
-        It "$Command should only be available on Windows" {
-            [bool](Get-Command $Command -ErrorAction SilentlyContinue) | Should -Be $IsWindows
-        }
+    It "<Command> should only be available on Windows" -TestCases $testCases {
+        param($Command)
+        [bool](Get-Command $Command -ErrorAction SilentlyContinue) | Should -Be $IsWindows
     }
 }

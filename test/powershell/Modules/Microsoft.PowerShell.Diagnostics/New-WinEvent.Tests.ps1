@@ -2,21 +2,12 @@
 # Licensed under the MIT License.
 Describe 'New-WinEvent' -Tags "CI" {
 
-    Context "New-WinEvent tests" {
+    Context "New-WinEvent tests" -Skip:(-not $IsWindows) {
 
         BeforeAll {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            if ( ! $IsWindows ) {
-                $PSDefaultParameterValues["it:skip"] = $true
-            }
-
             $ProviderName = 'Microsoft-Windows-PowerShell'
             $SimpleEventId = 40962
             $ComplexEventId = 32868
-        }
-
-        AfterAll {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
         }
 
         It 'Simple New-WinEvent without any payload' {

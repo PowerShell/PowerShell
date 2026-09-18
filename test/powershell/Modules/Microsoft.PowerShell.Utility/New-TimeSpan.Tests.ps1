@@ -21,22 +21,24 @@ Describe "New-TimeSpan" -Tags "CI" {
     }
 
     Context "Core Functionality Tests" {
-	New-Variable -Name testObject -Value $(New-TimeSpan -Days 2 -Hours 23 -Minutes 4 -Seconds 3 -Milliseconds 2) -Force
+	BeforeAll {
+    	New-Variable -Name testObject -Value $(New-TimeSpan -Days 2 -Hours 23 -Minutes 4 -Seconds 3 -Milliseconds 2) -Force
 
-	$expectedOutput = @{ "Days"              = "2";
-			     "Hours"             = "23";
-			     "Minutes"           = "4";
-			     "Seconds"           = "3";
-			     "Milliseconds"      = "2";
-			     "Ticks"             = "2558430020000";
-			     "TotalDays"         = "2.96114585648148";
-			     "TotalHours"        = "71.0675005555556";
-			     "TotalMinutes"      = "4264.05003333333";
-			     "TotalSeconds"      = "255843.002";
-			     "TotalMilliseconds" = "255843002"
-			   }
+    	$expectedOutput = @{ "Days"              = "2";
+    			     "Hours"             = "23";
+    			     "Minutes"           = "4";
+    			     "Seconds"           = "3";
+    			     "Milliseconds"      = "2";
+    			     "Ticks"             = "2558430020000";
+    			     "TotalDays"         = "2.96114585648148";
+    			     "TotalHours"        = "71.0675005555556";
+    			     "TotalMinutes"      = "4264.05003333333";
+    			     "TotalSeconds"      = "255843.002";
+    			     "TotalMilliseconds" = "255843002"
+    			   }
 
-	$TEN_MILLION = 10000000
+    	$TEN_MILLION = 10000000
+	}
 
 	It "Should have expected values for time properties set during creation" {
 	    $testObject.Days         | Should -Be $expectedOutput["Days"]

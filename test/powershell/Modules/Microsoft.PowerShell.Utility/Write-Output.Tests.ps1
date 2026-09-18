@@ -34,7 +34,9 @@ Describe "Write-Output DRT Unit Tests" -Tags "CI" {
 }
 
 Describe "Write-Output" -Tags "CI" {
-    $testString = $testString
+    BeforeAll {
+        $testString = $testString
+    }
     Context "Input Tests" {
         It "Should allow piped input" {
             { $testString | Write-Output } | Should -Not -Throw
@@ -71,7 +73,9 @@ Describe "Write-Output" -Tags "CI" {
     }
 
     Context "Enumerate Objects" {
-        $enumerationObject = @(1, 2, 3)
+        BeforeAll {
+            $enumerationObject = @(1, 2, 3)
+        }
         It "Should see individual objects when not using the NoEnumerate switch" {
             $singleCollection = $(Write-Output $enumerationObject| Measure-Object).Count
 

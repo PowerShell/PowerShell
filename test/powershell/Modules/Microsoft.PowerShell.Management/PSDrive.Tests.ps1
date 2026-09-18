@@ -109,7 +109,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
         }
 
         It "Verify Scope" {
-            $result = Get-PSDrive -Scope 1 #scope 1 because drive was created in BeforeAll
+            $result = Get-PSDrive -Scope 0 #scope 0 because drive is created in BeforeEach at the same scope as It in Pester 5
             $result.Name -contains $psDriveName | Should -BeTrue
         }
     }

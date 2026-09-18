@@ -4,8 +4,10 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
 
     # WaitHandle.WaitOne(milliseconds, exitContext) is not accurate.
     # The actual wait time can vary from 1450ms to 1700ms.
-    $minTime = 1450
-    $maxTime = 1700
+    BeforeAll {
+        $minTime = 1450
+        $maxTime = 1700
+    }
 
     It "Should work properly when sleeping with Second" {
         $watch = [System.Diagnostics.Stopwatch]::StartNew()

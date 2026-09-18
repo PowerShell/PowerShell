@@ -21,7 +21,7 @@ try
 
     Describe "File Only Entry throws for interactive or non-file scenarios" -Tags 'CI','RequireAdminOnWindows' {
 
-        BeforeAll {
+        BeforeDiscovery {
             function MakeTestCase {
                 param([Parameter(ValueFromRemainingArguments)] [string[]] $ArgumentList)
                 end {

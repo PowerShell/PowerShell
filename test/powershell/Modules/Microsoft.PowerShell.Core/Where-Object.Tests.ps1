@@ -1,9 +1,52 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Add-TestDynamicType
-
 Describe "Where-Object" -Tags "CI" {
+    BeforeDiscovery {
+        # Check if Where-Object supports switch parameter :$false syntax
+        $script:SupportsOperatorSwitchFalse = $true
+        try {
+            $null = @([PSCustomObject]@{Name='Test'}) | Where-Object Name -EQ:$false
+        } catch {
+            $script:SupportsOperatorSwitchFalse = $false
+        }
+    }
+
     BeforeAll {
+        # Define TestDynamic type inline if Add-TestDynamicType is not available
+        if (Get-Command -Name Add-TestDynamicType -ErrorAction SilentlyContinue) {
+            Add-TestDynamicType
+        } elseif (-not ([System.Management.Automation.PSTypeName]'TestDynamic').Type) {
+            Add-Type -TypeDefinition @'
+using System.Collections.Generic;
+using System.Dynamic;
+
+public class TestDynamic : DynamicObject
+{
+    private static readonly string[] s_dynamicMemberNames = new string[] { "FooProp", "BarProp", "FooMethod", "SerialNumber" };
+    private static int s_lastSerialNumber;
+    private readonly int _serialNumber;
+    public TestDynamic() { _serialNumber = ++s_lastSerialNumber; }
+    public override IEnumerable<string> GetDynamicMemberNames() { return s_dynamicMemberNames; }
+    public override bool TryGetMember(GetMemberBinder binder, out object result)
+    {
+        result = null;
+        if (binder.Name == "FooProp") { result = 123; return true; }
+        else if (binder.Name == "BarProp") { result = 456; return true; }
+        else if (binder.Name == "SerialNumber") { result = _serialNumber; return true; }
+        else if (binder.Name == "HiddenProp") { result = 789; return true; }
+        return false;
+    }
+    public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+    {
+        result = null;
+        if (binder.Name == "FooMethod") { result = "yes"; return true; }
+        else if (binder.Name == "HiddenMethod") { result = _serialNumber; return true; }
+        return false;
+    }
+}
+'@
+        }
+
         $Computers = @(
             [PSCustomObject]@{
                 ComputerName = "SPC-1234"
@@ -143,7 +186,7 @@ Describe "Where-Object" -Tags "CI" {
         $Result[1] | Should -Be $dynObj
     }
 
-    Context "Switch parameter explicit `$false handling" {
+    Context "Switch parameter explicit `$false handling" -Skip:(!$script:SupportsOperatorSwitchFalse) {
         BeforeAll {
             $testData = @(
                 [PSCustomObject]@{ Name = 'Alice'; Age = 25; City = 'New York' }

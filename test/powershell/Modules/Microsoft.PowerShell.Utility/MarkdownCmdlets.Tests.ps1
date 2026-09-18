@@ -128,15 +128,7 @@ Describe 'ConvertFrom-Markdown tests' -Tags 'CI' {
     }
 
     Context 'Basic tests' {
-        BeforeAll {
-            $mdFile = New-Item -Path $TestDrive/input.md -Value "Some **test string** to write in a file" -Force
-            $mdLiteralPath = New-Item -Path $TestDrive/LiteralPath.md -Value "Some **test string** to write in a file" -Force
-            $expectedStringFromFile = if ($hostSupportsVT100) {
-                "Some $esc[1mtest string$esc[0m to write in a file`n`n"
-            } else {
-                "Some test string to write in a file`n`n"
-            }
-
+        BeforeDiscovery {
             $codeBlock = @'
 ```
 bool function()
@@ -144,11 +136,9 @@ bool function()
 }
 ```
 '@
-
             $codeBlockText = @"
 bool function()`n{`n}
 "@
-
                 $TestCases = @(
                     @{ element = 'Header1'; InputMD = '# Header 1'; Text = 'Header 1'; VT100 = $true }
                     @{ element = 'Header2'; InputMD = '## Header 2'; Text = 'Header 2'; VT100 = $true }
@@ -176,6 +166,17 @@ bool function()`n{`n}
                     @{ element = 'Bold'; InputMD = '**bold text**'; Text = 'bold text' ; VT100 = $false}
                     @{ element = 'Italics'; InputMD = '*italics text*'; Text = 'italics text' ; VT100 = $false}
                 )
+        }
+
+        BeforeAll {
+            $mdFile = New-Item -Path $TestDrive/input.md -Value "Some **test string** to write in a file" -Force
+            $mdLiteralPath = New-Item -Path $TestDrive/LiteralPath.md -Value "Some **test string** to write in a file" -Force
+            $expectedStringFromFile = if ($hostSupportsVT100) {
+                "Some $esc[1mtest string$esc[0m to write in a file`n`n"
+            } else {
+                "Some test string to write in a file`n`n"
+            }
+
         }
 
         It 'Can convert element : <element> to vt100 using pipeline input - VT100 : <VT100>' -TestCases $TestCases {
@@ -290,12 +291,13 @@ bool function()`n{`n}
     }
 
     Context "ConvertFrom-Markdown empty or null content tests" {
-        BeforeAll {
+        BeforeDiscovery {
+            $esc = [char]0x1b
+            $hostSupportsVT100 = $Host.UI.SupportsVirtualTerminal
             $codeBlock = @'
 ```CSharp
 ```
 '@
-
             $testCases = @(
                 @{Type = "CodeBlock"; Markdown = "$codeBlock"; ExpectedOutput = ''}
                 @{Type = "Header1"; Markdown = "# "; ExpectedOutput = ''}
@@ -318,10 +320,6 @@ bool function()`n{`n}
     }
 
     Context "Get/Set-MarkdownOption tests" {
-
-        BeforeAll {
-            $esc = [char]0x1b
-        }
 
         BeforeEach {
             $originalOptions = Get-MarkdownOption

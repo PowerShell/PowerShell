@@ -2,7 +2,8 @@
 # Licensed under the MIT License.
 
 Describe 'Argument transformation attribute on optional argument with explicit $null' -Tags "CI" {
-    $tdefinition = @'
+    BeforeAll {
+        $tdefinition = @'
     using System;
     using System.Management.Automation;
     using System.Reflection;
@@ -47,26 +48,27 @@ Describe 'Argument transformation attribute on optional argument with explicit $
         }
     }
 '@
-    $mod = Add-Type -PassThru -TypeDefinition $tdefinition
+        $mod = Add-Type -PassThru -TypeDefinition $tdefinition
 
-    Import-Module $mod[0].Assembly -ErrorVariable ErrorImportingModule
+        Import-Module $mod[0].Assembly -ErrorVariable ErrorImportingModule
 
-    function Invoke-ScriptFunctionTakesObject
-    {
-        param([MSFT_1407291.AddressTransformation()]
-              [Parameter(Mandatory = $false)]
-              [object]$Address = "passed in null")
+        function Invoke-ScriptFunctionTakesObject
+        {
+            param([MSFT_1407291.AddressTransformation()]
+                  [Parameter(Mandatory = $false)]
+                  [object]$Address = "passed in null")
 
-        return $Address
-    }
+            return $Address
+        }
 
-    function Invoke-ScriptFunctionTakesUInt64
-    {
-        param([MSFT_1407291.AddressTransformation()]
-              [Parameter(Mandatory = $false)]
-              [Uint64]$Address = 11)
+        function Invoke-ScriptFunctionTakesUInt64
+        {
+            param([MSFT_1407291.AddressTransformation()]
+                  [Parameter(Mandatory = $false)]
+                  [Uint64]$Address = 11)
 
-        return $Address
+            return $Address
+        }
     }
 
     It "There was no error importing the in-memory module" {
@@ -434,7 +436,7 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
 
 Describe 'Roundtrippable Conversions for Bare-string Numeric Literals passed to [string] Parameters' -Tags CI {
 
-    BeforeAll {
+    BeforeDiscovery {
         $TestValues = @(
             @{ Argument = "34uy" }
             @{ Argument = "48y" }
@@ -447,7 +449,9 @@ Describe 'Roundtrippable Conversions for Bare-string Numeric Literals passed to 
             @{ Argument = "20d" }
             @{ Argument = "6n" }
         )
+    }
 
+    BeforeAll {
         function Test-SimpleStringValue([string] $Value) { $Value }
         function Test-AdvancedStringValue {
             [CmdletBinding()]
