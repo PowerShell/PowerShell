@@ -5,7 +5,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
             Set-StrictMode -v 2
             function list {
 
-            $l = [System.Collections.Generic.List[String]]::new()
+            $l = [System.Collections.Generic.List[string]]::new()
             $args | ForEach-Object {$l.Add($_)}
             , $l
             }
