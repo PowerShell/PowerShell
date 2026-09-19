@@ -2484,15 +2484,9 @@ namespace System.Management.Automation
                 else
                 {
                     pattern = PSObject.ToStringParser(context, condition);
-                    m = Regex.Match(str, pattern, options);
 
-                    if (m.Success && m.Groups.Count > 0)
-                    {
-                        // We used the static regex method for it's caching ability, but
-                        // we need the group names now.  Fortunately constructing another regex
-                        // isn't slow because it should be in the cache still.
-                        regex = new Regex(pattern, options);
-                    }
+                    regex = ParserOps.NewRegex(pattern, options);
+                    m = regex.Match(str);
                 }
 
                 if (m.Success)
