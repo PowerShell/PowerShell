@@ -8,7 +8,7 @@ parameters:
     default: false
   - name: EarlyAccessFeed
     type: string
-    default: 'net10'
+    default: 'net11'
   - name: DOTNET_RUNTIME_VERSION
     type: string
     default: ' '

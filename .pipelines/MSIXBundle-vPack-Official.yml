@@ -28,7 +28,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 - name: EarlyAccessFeed
   displayName: Early Access Feed
   type: string
-  default: 'net10'
+  default: 'net11'
   values:
     - 'net8'
     - 'net9'
