@@ -15,7 +15,7 @@
 - Prevent localization of WPF key gesture strings (#28020)
 - Improve pointer lifecycle handling in PdhHelper (#28008)
 - Improve validation for `Copy-Item -FromSession` (#28006)
-- Handle MSIX installation specially when prepend to PATH (#27782)
+- Handle MSIX installation specially when prepending to PATH (#27782)
 - Add `GetImportModuleCommand` method back and check for session restriction in `ShowCommand` (#25557)
 - Remove the `<assembly>` element for from `CmdletizationCoreResources.resx` (#27900)
 
