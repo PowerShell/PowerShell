@@ -240,6 +240,15 @@
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
     <value>Cestu {0} nejde zpracovat, protože cíl představuje rezervovaný název zařízení.</value>
   </data>
+  <data name="DirectoryNamePathTraversal" xml:space="preserve">
+    <value>Vzdálený název adresáře „{0}“ nejde zpracovat, protože by mohl vést k procházení cest.</value>
+  </data>
+  <data name="FileNamePathTraversal" xml:space="preserve">
+    <value>Vzdálený název souboru „{0}“ nejde zpracovat, protože by mohl vést k procházení cest.</value>
+  </data>
+  <data name="ADSPathTraversal" xml:space="preserve">
+    <value>Vzdálený název alternativního datového proudu „{0}“ nejde zpracovat, protože by mohl vést k procházení cest.</value>
+  </data>
   <data name="EncodingNotUsed" xml:space="preserve">
     <value>Při zadání -AsByteStream se kódování nepoužívá.</value>
   </data>
