@@ -36,13 +36,9 @@
 
 <summary>
 
-
-
 <p>Update to .NET SDK 11.0.100-rc.1.26425.128</p>
 
 <p>Update Microsoft.PowerShell.PSResourceGet to 1.3.0-preview2 (#28031)</p>
-
-<p>We thank the following contributors!</p>
 
 </summary>
 
