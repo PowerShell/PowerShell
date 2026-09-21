@@ -18,28 +18,21 @@ internal static partial class Interop
         /// </summary>
         internal static string? GetCurrentPackageFamilyName()
         {
-            const int ErrorInsufficientBuffer = 122;
-            const int AppModelErrorNoPackage = 15700;
+            const int ErrorSuccess = 0;
+            const int PackageFamilyNameMaxLength = 65; // Maximum name plus null terminator.
 
             try
             {
-                uint length = 0;
-                int result = GetCurrentPackageFamilyNameNative(ref length, Span<char>.Empty);
-                if (result is AppModelErrorNoPackage)
+                uint length = PackageFamilyNameMaxLength;
+                Span<char> buffer = stackalloc char[PackageFamilyNameMaxLength];
+                int result = GetCurrentPackageFamilyNameNative(ref length, buffer);
+                if (result is not ErrorSuccess || length is 0)
                 {
                     return null;
                 }
-
-                if (result is not ErrorInsufficientBuffer || length is 0)
-                {
-                    return null;
-                }
-
-                Span<char> buffer = stackalloc char[(int)length];
-                result = GetCurrentPackageFamilyNameNative(ref length, buffer);
 
                 // The returned length includes the null terminator, which we don't want in the managed string.
-                return result is 0 ? new string(buffer[..(int)(length - 1)]) : null;
+                return new string(buffer[..(int)(length - 1)]);
             }
             catch (Exception exception) when (exception is DllNotFoundException or EntryPointNotFoundException)
             {
