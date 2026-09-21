@@ -1,5 +1,80 @@
 # Preview Changelog
 
+## [7.7.0-preview.5]
+
+### Engine Updates and Fixes
+
+- Tolerate IO/JSON errors reading the per-user `powershell.config.json` (#27373)
+- Improve remote prompt handling for `PSCredential` and `SecureString` arrays (#28007)
+- Improve CAB extraction path handling (#28009)
+
+### General Cmdlet Updates and Fixes
+
+- Fix telemetry UUID mutex acquisition (#28026)
+- Allow user to force the default implicit formatting to use `AutoSize` (#28018)
+- Prevent localization of WPF key gesture strings (#28020)
+- Improve pointer lifecycle handling in PdhHelper (#28008)
+- Improve validation for `Copy-Item -FromSession` (#28006)
+- Handle MSIX installation specially when prepend to PATH (#27782)
+- Add `GetImportModuleCommand` method back and check for session restriction in `ShowCommand` (#25557)
+- Remove the `<assembly>` element for from `CmdletizationCoreResources.resx` (#27900)
+
+### Tools
+
+- Update `Install-Dotnet` to directly run the install script (#28022)
+
+### Tests
+
+- Mark DSC Profile tests pending on MSIX test runs (#27884)
+- Fix flaky `Debug-Runspace` attach event test (#27885)
+- Fix `LocProject.json` tests and trigger CIs on changes to `LocProject.json` (#27988)
+- Fix the localization tests for the Release Automation environment (#27944)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+
+</summary>
+
+<ul>
+<li>Enable .NET 11 early access across release pipelines (#28024)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2730146 (#28030)</li>
+<li>Update Microsoft.PowerShell.PSResourceGet to 1.3.0-preview2 (#28031)</li>
+<li>Support macOS signatures in nonofficial pipelines (#27976)</li>
+<li>Add Azure Linux 4 RPM support (#28021)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2726204 (#28025)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2725870 (#28023)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2724482 (#28010)</li>
+<li>Simplify Microsoft Store listing metadata (#27968)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2716742 (#27983)</li>
+<li>Move to the .NET SDK 11-rc.1 for preview release (#27992)</li>
+<li>Update <code>metadata.json</code> for September releases (#27989)</li>
+<li>Add <code>PDP.xml</code> to the <code>LocProject.json</code> file for localization (#27966)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2704971 (#27958)</li>
+<li>Enable early .NET builds in APIScan (#27952)</li>
+<li>Change Windows test CI to stop using PowerShell 5.1 (#27940)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2701735 (#27895)</li>
+<li>Update <code>metadata.json</code> for August releases (#27919)</li>
+<li>Update <code>AppxManifest.xml</code> to only declare <code>en-US</code> for the <code>&lt;Resources&gt;</code> element (#27939)</li>
+<li>Use Custom Validation Policy for vPack Pipeline (#27911)</li>
+<li>Bump actions/upload-artifact from 7.0.0 to 7.0.1 (#27261)</li>
+<li>Bump actions/setup-dotnet from 5.2.0 to 5.3.0 (#27539)</li>
+<li>Bump actions/github-script from 8.0.0 to 9.0.0 (#27249)</li>
+<li>Bump github/codeql-action from 4.35.4 to 4.36.0 (#27531)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Correct New-TemporaryDirectory help URI (#27934)
+
+[7.7.0-preview.5]: https://github.com/PowerShell/PowerShell/compare/v7.7.0-preview.4...v7.7.0-preview.5
+
 ## [7.7.0-preview.4]
 
 ### Engine Updates and Fixes
