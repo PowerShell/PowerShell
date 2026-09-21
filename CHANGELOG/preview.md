@@ -45,6 +45,7 @@
 <ul>
 <li>Enable .NET 11 early access across release pipelines (#28024)</li>
 <li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2730146 (#28030)</li>
+<li>Update Microsoft.PowerShell.PSResourceGet to 1.3.0-preview2 (#28031)</li>
 <li>Support macOS signatures in nonofficial pipelines (#27976)</li>
 <li>Add Azure Linux 4 RPM support (#28021)</li>
 <li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2726204 (#28025)</li>
