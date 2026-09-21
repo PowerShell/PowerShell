@@ -22,6 +22,26 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     - R1
     - Netlock
   default: "R1"
+- name: IsEarlyAccess
+  type: boolean
+  default: false
+- name: EarlyAccessFeed
+  displayName: Early Access Feed
+  type: string
+  default: 'net11'
+  values:
+    - 'net8'
+    - 'net9'
+    - 'net10'
+    - 'net11'
+- name: DOTNET_RUNTIME_VERSION
+  displayName: Runtime version of early access build
+  type: string
+  default: ' '
+- name: DOTNET_SDK_VERSION
+  displayName: SDK version of early access build
+  type: string
+  default: ' '
 
 name: msixbundle_vPack_$(Build.SourceBranchName)_Prod.True_Create.${{ parameters.createVPack }}_$(date:yyyyMMdd).$(rev:rr)
 
@@ -48,9 +68,19 @@ variables:
     value: ${{ parameters.ReleaseTagVar }}
   - name: netiso
     value: ${{ parameters.netiso }}
+  - name: IsEarlyAccess
+    value: ${{ parameters.IsEarlyAccess }}
+  - name: EARLY_ACCESS_FEED
+    value: ${{ parameters.EarlyAccessFeed }}
+  - name: DOTNET_RUNTIME_VERSION
+    value: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+  - name: DOTNET_SDK_VERSION
+    value: ${{ parameters.DOTNET_SDK_VERSION }}
   - group: certificate_logical_to_actual # used within signing task
   - group: MSIXSigningProfile
   - group: msixTools
+  - ${{ if eq(parameters.IsEarlyAccess, true) }}:
+    - group: DotNetPrivateBuildAccess
   - group: mscodehub-feed-read-general
   - group: mscodehub-feed-read-akv
 
@@ -95,9 +125,33 @@ extends:
       tsaOptionsFile: .config/tsaoptions.json
 
     stages:
+    - stage: prep
+      displayName: 'Prepare early access .NET'
+      dependsOn: []
+      jobs:
+      - ${{ if eq(parameters.IsEarlyAccess, true) }}:
+        - template: /.pipelines/templates/downloadDotnetEarlyAccess.yml@self
+          parameters:
+            DotnetRuntimeVersion: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+            DotnetSdkVersion: ${{ parameters.DOTNET_SDK_VERSION }}
+      - ${{ else }}:
+        - job: skip_download_dotnet_early_access
+          displayName: 'Skip early access .NET download'
+          pool:
+            type: windows
+          variables:
+          - name: ob_outputDirectory
+            value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+          - name: ob_signing_setup_enabled
+            value: false
+          - name: ob_sdl_codeSignValidation_enabled
+            value: false
+          steps:
+          - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET download.'
+
     - stage: Build_MSIX_Package
       displayName: 'Build and create MSIX packages'
-      dependsOn: []
+      dependsOn: [prep]
       jobs:
       - job: Build
         pool:
@@ -114,6 +168,10 @@ extends:
           ArtifactPlatform: 'windows'
           ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
           ob_artifactBaseName: drop_build_$(Architecture)
+          IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+          EARLY_ACCESS_FEED: ${{ parameters.EarlyAccessFeed }}
+          DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+          DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
 
         steps:
         - checkout: self
@@ -210,6 +268,9 @@ extends:
             Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
           displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols folder'
           env:
+            ${{ if eq(parameters.IsEarlyAccess, true) }}:
+              __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+              VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
             ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
         # Add CodeQL Finalize task right after your 'Build' step.
