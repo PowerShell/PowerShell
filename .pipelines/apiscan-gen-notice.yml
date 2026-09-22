@@ -142,6 +142,8 @@ extends:
                   value: false
                 - name: ob_sdl_codeSignValidation_enabled
                   value: false
+                - name: ob_sdl_apiscan_enabled
+                  value: false
               steps:
                 - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET download.'
       - stage: APIScan
