@@ -736,7 +736,8 @@ namespace Microsoft.PowerShell.Commands
                     if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
                     {
                         Marshal.FreeHGlobal(tokenUserInfo);
-                        tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+                        tokenUserInfo = IntPtr.Zero;
+                        tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);     
 
                         if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
                         {
