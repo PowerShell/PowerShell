@@ -227,4 +227,4 @@ jobs:
           exit 1
         }
       displayName: 'Upload StoreBroker Package'
-      condition: and(succeeded(), ne(variables['SkipStorePublish'], 'true'))
+      condition: and(succeeded(), ne(variables['SkipStorePublish'], 'true'))
