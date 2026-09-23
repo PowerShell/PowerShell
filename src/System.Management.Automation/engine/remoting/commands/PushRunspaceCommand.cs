@@ -55,8 +55,26 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
             ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public new string HostName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Hashtable containing options to be passed to OpenSSH.
+        /// </summary>
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public override Hashtable Options 
+        { 
+            get 
+            {
+                return base.Options;
+            }
+
+            set
+            {
+                base.Options = value;
+            }
+        }
 
         #endregion
 
@@ -152,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = VMIdParameterSet)]
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true,
                    ParameterSetName = VMNameParameterSet)]
-        [Credential()]
+        [Credential]
         public override PSCredential Credential
         {
             get { return base.Credential; }
@@ -247,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // for the console host and Graphical PowerShell host
-            // we want to skip pushing into the the runspace if
+            // we want to skip pushing into the runspace if
             // the host is in a nested prompt
             System.Management.Automation.Internal.Host.InternalHost chost =
                 this.Host as System.Management.Automation.Internal.Host.InternalHost;
@@ -314,7 +332,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // If runspace is null then the error record has already been written and we can exit.
-            if (remoteRunspace == null) { return; }
+            if (remoteRunspace == null)
+            {
+                return;
+            }
 
             // If the runspace is in a disconnected state try to connect.
             bool runspaceConnected = false;
@@ -1004,7 +1025,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // VM should be in running state.
             //
-            if ((VMState)results[0].Properties["State"].Value != VMState.Running)
+            if (GetVMStateProperty(results[0]) != VMState.Running)
             {
                 WriteError(
                     new ErrorRecord(
@@ -1262,7 +1283,7 @@ namespace Microsoft.PowerShell.Commands
         private RemoteRunspace GetRunspaceForSSHSession()
         {
             ParseSshHostName(HostName, out string host, out string userName, out int port);
-            var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout);
+            var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout, Options);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
 
             // Use the class _tempRunspace field while the runspace is being opened so that StopProcessing can be handled at that time.

@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
         /// The type name we want to update on.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = DynamicTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute()]
+        [ArgumentToTypeNameTransformation]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
@@ -792,9 +792,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ShouldProcess(formattedTarget, action))
                     {
-                        if (!fullFileNameHash.Contains(resolvedPath))
+                        if (fullFileNameHash.Add(resolvedPath))
                         {
-                            fullFileNameHash.Add(resolvedPath);
                             newTypes.Add(new SessionStateTypeEntry(prependPathTotal[i]));
                         }
                     }
@@ -806,9 +805,8 @@ namespace Microsoft.PowerShell.Commands
                     if (entry.FileName != null)
                     {
                         string resolvedPath = ModuleCmdletBase.ResolveRootedFilePath(entry.FileName, Context) ?? entry.FileName;
-                        if (!fullFileNameHash.Contains(resolvedPath))
+                        if (fullFileNameHash.Add(resolvedPath))
                         {
-                            fullFileNameHash.Add(resolvedPath);
                             newTypes.Add(entry);
                         }
                     }
@@ -825,9 +823,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ShouldProcess(formattedTarget, action))
                     {
-                        if (!fullFileNameHash.Contains(resolvedPath))
+                        if (fullFileNameHash.Add(resolvedPath))
                         {
-                            fullFileNameHash.Add(resolvedPath);
                             newTypes.Add(new SessionStateTypeEntry(appendPathTotalItem));
                         }
                     }
@@ -849,8 +846,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else if (sste.FileName != null)
                         {
-                            bool unused;
-                            Context.TypeTable.Update(sste.FileName, sste.FileName, errors, Context.AuthorizationManager, Context.InitialSessionState.Host, out unused);
+                            Context.TypeTable.Update(sste.FileName, sste.FileName, errors, Context.AuthorizationManager, Context.InitialSessionState.Host, out _);
                         }
                         else
                         {
@@ -972,9 +968,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ShouldProcess(formattedTarget, action))
                     {
-                        if (!fullFileNameHash.Contains(appendPathTotalItem))
+                        if (fullFileNameHash.Add(appendPathTotalItem))
                         {
-                            fullFileNameHash.Add(appendPathTotalItem);
                             newFormats.Add(new SessionStateFormatEntry(appendPathTotalItem));
                         }
                     }
@@ -1056,7 +1051,7 @@ namespace Microsoft.PowerShell.Commands
         /// The target type to remove.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = RemoveTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute()]
+        [ArgumentToTypeNameTransformation]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
@@ -1118,7 +1113,10 @@ namespace Microsoft.PowerShell.Commands
                 string removeFileTarget = UpdateDataStrings.UpdateTarget;
 
                 Collection<string> typeFileTotal = UpdateData.Glob(_typeFiles, "TypePathException", this);
-                if (typeFileTotal.Count == 0) { return; }
+                if (typeFileTotal.Count == 0)
+                {
+                    return;
+                }
 
                 // Key of the map is the name of the file that is in the cache. Value of the map is a index list. Duplicate files might
                 // exist in the cache because the user can add arbitrary files to the cache by $host.Runspace.InitialSessionState.Types.Add()
@@ -1130,7 +1128,10 @@ namespace Microsoft.PowerShell.Commands
                     for (int index = 0; index < Context.InitialSessionState.Types.Count; index++)
                     {
                         string fileName = Context.InitialSessionState.Types[index].FileName;
-                        if (fileName == null) { continue; }
+                        if (fileName == null)
+                        {
+                            continue;
+                        }
 
                         // Resolving the file path because the path to the types file in module manifest is now specified as
                         // ..\..\types.ps1xml which expands to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Core\..\..\types.ps1xml
@@ -1161,10 +1162,7 @@ namespace Microsoft.PowerShell.Commands
                     indicesToRemove.Sort();
                     for (int i = indicesToRemove.Count - 1; i >= 0; i--)
                     {
-                        if (Context.InitialSessionState != null)
-                        {
-                            Context.InitialSessionState.Types.RemoveItem(indicesToRemove[i]);
-                        }
+                        Context.InitialSessionState?.Types.RemoveItem(indicesToRemove[i]);
                     }
 
                     try
@@ -1337,7 +1335,6 @@ namespace Microsoft.PowerShell.Commands
             ValidateTypeName();
 
             Dictionary<string, TypeData> alltypes = Context.TypeTable.GetAllTypeData();
-            Collection<TypeData> typedefs = new();
 
             foreach (string type in alltypes.Keys)
             {
@@ -1345,16 +1342,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (pattern.IsMatch(type))
                     {
-                        typedefs.Add(alltypes[type]);
+                        WriteObject(alltypes[type]);
                         break;
                     }
                 }
-            }
-
-            // write out all the available type definitions
-            foreach (TypeData typedef in typedefs)
-            {
-                WriteObject(typedef);
             }
         }
     }

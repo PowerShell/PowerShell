@@ -7,6 +7,7 @@ Describe "Get-Command Feature tests" -Tag Feature {
             $cmds = Get-Command get-hlp -UseFuzzyMatch
             $cmds.Count | Should -BeGreaterThan 0
             $cmds[0].Name | Should -BeExactly 'Get-Help' -Because "This should be closest match so shows up first"
+            $cmds[0].Score | Should -Be 1
         }
 
         It "Should match native commands" {
@@ -19,6 +20,14 @@ Describe "Get-Command Feature tests" -Tag Feature {
             $cmds = Get-Command $input -UseFuzzyMatch
             $cmds.Count | Should -BeGreaterThan 0
             $cmds.Name | Should -Contain $expectedcmd
+        }
+
+        It "Should use minimum distance" {
+            $cmds = Get-Command get-hlp -UseFuzzyMatch -FuzzyMinimumDistance 3
+            $cmds.Count | Should -BeGreaterThan 0
+            foreach ($cmd in $cmds) {
+                $cmd.Score | Should -BeLessOrEqual 3
+            }
         }
     }
 

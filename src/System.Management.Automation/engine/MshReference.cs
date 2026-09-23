@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Define type for a reference object in Monad scripting language.
+    /// Define type for a reference object in PowerShell scripting language.
     /// </summary>
     /// <remarks>
     /// This class is used to describe both kinds of references:

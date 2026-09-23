@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true, Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
-        [Credential()]
+        [Credential]
         public override PSCredential Credential
         {
             get
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        [ValidateRange((int)1, (int)UInt16.MaxValue)]
+        [ValidateRange((int)1, (int)ushort.MaxValue)]
         public override int Port
         {
             get
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
-        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
+        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If that's
         /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -702,7 +702,7 @@ namespace Microsoft.PowerShell.Commands
             ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(Mandatory = true,
             ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override string[] HostName
         {
             get { return base.HostName; }
@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override string UserName
         {
             get { return base.UserName; }
@@ -728,7 +728,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [Alias("IdentityFilePath")]
         public override string KeyFilePath
         {
@@ -785,11 +785,30 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostHashParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostHashParameterSet, Mandatory = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override Hashtable[] SSHConnection
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Hashtable containing options to be passed to OpenSSH.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public override Hashtable Options
+        {
+            get 
+            {
+                return base.Options;
+            }
+
+            set 
+            {
+                base.Options = value;
+            }
         }
 
         #endregion
@@ -1007,7 +1026,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     // In order to support foreach remoting properly ( icm | % { icm } ), the server must
                                     // be using protocol version 2.2. Otherwise, we skip this and assume the old behavior.
-                                    if (version >= RemotingConstants.ProtocolVersionWin8RTM)
+                                    if (version >= RemotingConstants.ProtocolVersion_2_2)
                                     {
                                         // Suppress collection behavior
                                         _needToCollect = false;
@@ -1031,7 +1050,7 @@ namespace Microsoft.PowerShell.Commands
                 // create collection of input writers here
                 foreach (IThrottleOperation operation in Operations)
                 {
-                    if (!(operation is ExecutionCmdletHelperRunspace ecHelper))
+                    if (operation is not ExecutionCmdletHelperRunspace ecHelper)
                     {
                         // either all the operations will be of type ExecutionCmdletHelperRunspace
                         // or not...there is no mix.
@@ -1444,10 +1463,7 @@ namespace Microsoft.PowerShell.Commands
             operation.RunspaceDebugStop -= HandleRunspaceDebugStop;
 
             var hostDebugger = GetHostDebugger();
-            if (hostDebugger != null)
-            {
-                hostDebugger.QueueRunspaceForDebug(args.Runspace);
-            }
+            hostDebugger?.QueueRunspaceForDebug(args.Runspace);
         }
 
         private void HandleJobStateChanged(object sender, JobStateEventArgs e)
@@ -1464,10 +1480,7 @@ namespace Microsoft.PowerShell.Commands
                 // Signal that this job has been disconnected, or has ended.
                 lock (_jobSyncObject)
                 {
-                    if (_disconnectComplete != null)
-                    {
-                        _disconnectComplete.Set();
-                    }
+                    _disconnectComplete?.Set();
                 }
             }
         }
@@ -2071,11 +2084,8 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_asjob)
                 {
-                    if (_job != null)
-                    {
-                        // job will be null in the "InProcess" case
-                        _job.Dispose();
-                    }
+                    // job will be null in the "InProcess" case
+                    _job?.Dispose();
 
                     _throttleManager.ThrottleComplete -= HandleThrottleComplete;
                     _throttleManager.Dispose();
@@ -2157,10 +2167,7 @@ namespace System.Management.Automation.Internal
                 return;
             }
 
-            if (string.IsNullOrEmpty(computerName))
-            {
-                throw new ArgumentNullException(nameof(computerName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(computerName);
 
             lock (_syncObject)
             {

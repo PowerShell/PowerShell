@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MetadataMemberInitialization" xml:space="preserve">
+    <value>Atributy pro {0} nejde inicializovat: {1}</value>
+  </data>
+  <data name="ValidateRangeElementType" xml:space="preserve">
+    <value>Argument nejde ověřit, protože jeho typ {0} není stejný typ ({1}) jako maximální a minimální limity parametru. Ověřte, že je argument typu {1}, a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateRangePositiveFailure" xml:space="preserve">
+    <value>Argument {0} nejde ověřit, protože jeho hodnota není větší než nula.</value>
+  </data>
+  <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
+    <value>Argument {0} nejde ověřit, protože jeho hodnota není větší nebo rovna nule.</value>
+  </data>
+  <data name="ValidateRangeNegativeFailure" xml:space="preserve">
+    <value>Argument {0} nejde ověřit, protože jeho hodnota není menší než nula.</value>
+  </data>
+  <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
+    <value>Argument {0} nejde ověřit, protože jeho hodnota není menší nebo rovna nule.</value>
+  </data>
+  <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
+    <value>Zadaný minimální rozsah ({0}) nejde přijmout, protože není stejného typu jako zadaný maximální rozsah ({1}). Aktualizujte atribut ValidateRange pro parametr.</value>
+  </data>
+  <data name="ValidateRangeNotIComparable" xml:space="preserve">
+    <value>Typy parametrů MaxRange a MinRange nejde přijmout. Oba parametry musí být objekty implementující rozhraní IComparable.</value>
+  </data>
+  <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
+    <value>Zadaný maximální rozsah nejde přijmout, protože je menší než zadaný minimální rozsah. Aktualizujte atribut ValidateRange pro parametr.</value>
+  </data>
+  <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
+    <value>Argument {0} je větší než maximální povolený rozsah {1}. Zadejte argument menší nebo rovný {1} a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateRangeSmallerThanMinRangeFailure" xml:space="preserve">
+    <value>Argument {0} je menší než minimální povolený rozsah {1}. Zadejte argument větší nebo rovný {1} a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidatePatternFailure" xml:space="preserve">
+    <value>Argument {0} neodpovídá vzoru {1}. Zadejte argument odpovídající {1} a příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateCountNotInArray" xml:space="preserve">
+    <value>Atribut ValidateCount nejde použít u parametru, který není pole. Buď atribut z parametru odeberte, nebo nastavte parametr jako pole.</value>
+  </data>
+  <data name="ValidateCountExactFailure" xml:space="preserve">
+    <value>Požadovaný počet hodnot parametru: {0}. Počet zadaných hodnot: {1}.</value>
+  </data>
+  <data name="ValidateCountMinMaxFailure" xml:space="preserve">
+    <value>Parametr vyžaduje nejméně {0} a nejvýše {1} hodnot. Počet zadaných hodnot: {2}.</value>
+  </data>
+  <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>Zadaný maximální počet argumentů parametru je menší než zadaný minimální počet argumentů. Aktualizujte atribut ValidateCount pro parametr.</value>
+  </data>
+  <data name="ValidateLengthMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>Zadaná maximální délka argumentu ve znacích je kratší než zadaná minimální délka argumentu ve znacích. Aktualizujte atribut ValidateLength pro parametr.</value>
+  </data>
+  <data name="ValidateLengthNotString" xml:space="preserve">
+    <value>Atribut ValidateLength nejde použít u parametru, který není typu string nebo string[]. Nastavte parametr jako typ string nebo string[].</value>
+  </data>
+  <data name="ValidateLengthMinLengthFailure" xml:space="preserve">
+    <value>Délka argumentu ve znacích ({1}) je příliš krátká. Zadejte argument s délkou větší nebo rovnou {0} a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateLengthMaxLengthFailure" xml:space="preserve">
+    <value>Délka argumentu ve znacích ({1}) je příliš dlouhá. Zadejte argument s délkou menší nebo rovnou {0} a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateSetFailure" xml:space="preserve">
+    <value>Argument {0} nepatří do sady {1} zadané atributem ValidateSet. Zadejte argument, který je v sadě, a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateSetGeneratedValidValuesListIsNull" xml:space="preserve">
+    <value>Generátor platných hodnot vrátil hodnotu null.</value>
+  </data>
+  <data name="ValidateFailureResult" xml:space="preserve">
+    <value>{0} selhalo u vlastnosti {1} {2}</value>
+  </data>
+  <data name="ParsingTooManyParameterSets" xml:space="preserve">
+    <value>Příkaz nejde získat ani spustit. Byl překročen maximální počet sad parametrů pro tento příkaz.</value>
+  </data>
+  <data name="ArgumentTransformationArgumentsShouldBeStrings" xml:space="preserve">
+    <value>Argument nejde zpracovat, protože jeho hodnota není řetězec. Hodnoty argumentů parametrů se zadaným atributem ArgumentTransformationAttribute by měly být řetězce.</value>
+  </data>
+  <data name="InvalidValueFailure" xml:space="preserve">
+    <value>Proměnnou nejde ověřit, protože hodnota {1} není platná hodnota pro proměnnou {0}.</value>
+  </data>
+  <data name="InvalidMetadataForCurrentValue" xml:space="preserve">
+    <value>Atribut nejde přidat, protože proměnná {0} s hodnotou {1} by už nebyla platná.</value>
+  </data>
+  <data name="ValidateNotNullFailure" xml:space="preserve">
+    <value>Argument je null. Zadejte platnou hodnotu argumentu a potom zkuste příkaz spustit znovu.</value>
+  </data>
+  <data name="ValidateNotNullCollectionFailure" xml:space="preserve">
+    <value>Argument má hodnotu null nebo kolekce argumentů obsahuje prvek s hodnotou null. Zadejte kolekci, která neobsahuje žádné hodnoty null, a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyFailure" xml:space="preserve">
+    <value>Argument je null nebo prázdný. Zadejte argument, který není null ani prázdný, a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
+    <value>Argument je null, prázdný nebo kolekce argumentů obsahuje prvek s hodnotou null. Zadejte kolekci, která neobsahuje žádné hodnoty null, a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
+    <value>Argument je null, prázdný nebo obsahuje jen prázdné znaky. Zadejte argument, který obsahuje jiné než prázdné znaky, a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
+    <value>Prvek kolekce argumentů je null, prázdný nebo obsahuje jen prázdné znaky. Zadejte kolekci, která neobsahuje žádnou z těchto hodnot, a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>Parametr s názvem {0} byl pro příkaz definován několikrát.</value>
+  </data>
+  <data name="AliasParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>Alias parametru nejde zadat, protože alias s názvem {0} už byl pro příkaz definován několikrát.</value>
+  </data>
+  <data name="ParameterNameConflictsWithAlias" xml:space="preserve">
+    <value>Parametr {0} nejde zadat, protože je v konfliktu s aliasem stejného názvu pro parametr {1}.</value>
+  </data>
+  <data name="ValidateScriptFailure" xml:space="preserve">
+    <value>Ověřovací skript {1} pro argument s hodnotou {0} nevrátil výsledek True. Zjistěte, proč ověřovací skript selhal, a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateVersionFailure" xml:space="preserve">
+    <value>Argument {0} neobsahuje platnou verzi PowerShellu. Zadejte platné číslo verze a potom příkaz zkuste znovu.</value>
+  </data>
+  <data name="ValidateVariableName" xml:space="preserve">
+    <value>Argument {0} nejde ověřit, protože nejde o platný název proměnné.</value>
+  </data>
+  <data name="JobDefinitionMustDeriveFromIJobConverter" xml:space="preserve">
+    <value>Typ převodu úlohy musí být odvozený z IAstToScriptBlockConverter.</value>
+  </data>
+  <data name="ValidateDrivePathArgNotString" xml:space="preserve">
+    <value>Argument cesty není platný. Zadejte argument cesty typu string.</value>
+  </data>
+  <data name="ValidateDrivePathFailure" xml:space="preserve">
+    <value>Jednotka {0} v argumentu cesty nepatří do sady schválených jednotek: {1}. Zadejte argument cesty se schválenou jednotkou.</value>
+  </data>
+  <data name="ValidateDrivePathInvalidChar" xml:space="preserve">
+    <value>Argument cesty obsahuje neplatné znaky.</value>
+  </data>
+  <data name="ValidateDrivePathNoRoot" xml:space="preserve">
+    <value>Argument cesty nemá kořenovou jednotku.  Zadejte úplný argument cesty s kořenovou jednotkou.</value>
+  </data>
+  <data name="ArgumentNullOrEmpty" xml:space="preserve">
+    <value>Argument parametru {0} nemůže mít hodnotu null ani prázdný řetězec.</value>
+  </data>
+  <data name="InvalidEnumArgument" xml:space="preserve">
+    <value>Člen výčtu {0} není platná hodnota parametru {1}. Zadejte jednoho z těchto členů a zkuste to znovu: {2}.</value>
+  </data>
+  <data name="ValidateTrustedDataFailure" xml:space="preserve">
+    <value>Vstup nejde zpracovat. Argument {0} není důvěryhodný.</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
+    <value>Selhání kontroly atributu ValidateTrustedData</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
+    <value>Argument parametru {0} není důvěryhodný a v režimu Constrained Language neprojde kontrolou atributu parametru ValidateTrustedData.</value>
+  </data>
+</root>

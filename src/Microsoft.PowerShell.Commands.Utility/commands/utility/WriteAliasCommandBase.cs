@@ -61,6 +61,7 @@ namespace Microsoft.PowerShell.Commands
         /// The scope parameter for the command determines which scope the alias is set in.
         /// </summary>
         [Parameter]
+        [ArgumentCompleter(typeof(ScopeArgumentCompleter))]
         public string Scope { get; set; }
 
         /// <summary>

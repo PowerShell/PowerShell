@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Tests for $PSStyle automatic variable' {
+Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
     BeforeAll {
         $styleDefaults = @{
             Reset = "`e[0m"
@@ -9,6 +9,8 @@ Describe 'Tests for $PSStyle automatic variable' {
             Blink = "`e[5m"
             BoldOff = "`e[22m"
             Bold = "`e[1m"
+            DimOff = "`e[22m"
+            Dim = "`e[2m"
             HiddenOff = "`e[28m"
             Hidden = "`e[8m"
             ReverseOff = "`e[27m"
@@ -24,6 +26,7 @@ Describe 'Tests for $PSStyle automatic variable' {
         $formattingDefaults = @{
             FormatAccent = "`e[32;1m"
             TableHeader = "`e[32;1m"
+            CustomTableHeaderLabel = "`e[32;1;3m"
             ErrorAccent = "`e[36;1m"
             Error = "`e[31;1m"
             Debug = "`e[33;1m"
@@ -34,39 +37,39 @@ Describe 'Tests for $PSStyle automatic variable' {
         $foregroundDefaults = @{
             Black = "`e[30m"
             White = "`e[37m"
-            DarkGray = "`e[90m"
-            LightGray = "`e[97m"
+            BrightBlack = "`e[90m"
+            BrightWhite = "`e[97m"
             Red = "`e[31m"
-            LightRed = "`e[91m"
+            BrightRed = "`e[91m"
             Magenta = "`e[35m"
-            LightMagenta = "`e[95m"
+            BrightMagenta = "`e[95m"
             Blue = "`e[34m"
-            LightBlue = "`e[94m"
+            BrightBlue = "`e[94m"
             Cyan = "`e[36m"
-            LightCyan = "`e[96m"
+            BrightCyan = "`e[96m"
             Green = "`e[32m"
-            LightGreen = "`e[92m"
+            BrightGreen = "`e[92m"
             Yellow = "`e[33m"
-            LightYellow = "`e[93m"
+            BrightYellow = "`e[93m"
         }
 
         $backgroundDefaults = @{
             Black = "`e[40m"
             White = "`e[47m"
-            DarkGray = "`e[100m"
-            LightGray = "`e[107m"
+            BrightBlack = "`e[100m"
+            BrightWhite = "`e[107m"
             Red = "`e[41m"
-            LightRed = "`e[101m"
+            BrightRed = "`e[101m"
             Magenta = "`e[45m"
-            LightMagenta = "`e[105m"
+            BrightMagenta = "`e[105m"
             Blue = "`e[44m"
-            LightBlue = "`e[104m"
+            BrightBlue = "`e[104m"
             Cyan = "`e[46m"
-            LightCyan = "`e[106m"
+            BrightCyan = "`e[106m"
             Green = "`e[42m"
-            LightGreen = "`e[102m"
+            BrightGreen = "`e[102m"
             Yellow = "`e[43m"
-            LightYellow = "`e[103m"
+            BrightYellow = "`e[103m"
         }
 
         function Get-TestCases($hashtable) {
@@ -84,6 +87,10 @@ Describe 'Tests for $PSStyle automatic variable' {
     It '$PSStyle has correct default for OutputRendering' {
         $PSStyle | Should -Not -BeNullOrEmpty
         $PSStyle.OutputRendering | Should -BeExactly 'Host'
+    }
+
+    It '$PSStyle default view includes AutoSizeDefaultFormatting' {
+        $PSStyle | Out-String | Should -Match 'AutoSizeDefaultFormatting'
     }
 
     It '$PSStyle has correct defaults for style <key>' -TestCases (Get-TestCases $styleDefaults) {
@@ -151,6 +158,22 @@ Describe 'Tests for $PSStyle automatic variable' {
         }
     }
 
+    It '$PSStyle.Formatting.FormatAccent is ignored when it''s set to be an empty string' {
+        $old = $PSStyle.Formatting.FormatAccent
+        $oldRender = $PSStyle.OutputRendering
+
+        try {
+            $PSStyle.OutputRendering = 'Ansi'
+            $PSStyle.Formatting.FormatAccent = ''
+            $out = $PSVersionTable | Format-List | Out-String
+            $out.Contains("`e[") | Should -BeFalse
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+            $PSStyle.Formatting.FormatAccent = $old
+        }
+    }
+
     It '$PSStyle.Formatting.TableHeader is applied to Format-Table' {
         $old = $PSStyle.Formatting.TableHeader
         $oldRender = $PSStyle.OutputRendering
@@ -167,12 +190,49 @@ Describe 'Tests for $PSStyle automatic variable' {
         }
     }
 
+    It '$PSStyle.Formatting.TableHeader is ignored when it''s set to be an empty string' {
+        $old = $PSStyle.Formatting.TableHeader
+        $oldRender = $PSStyle.OutputRendering
+
+        try {
+            $PSStyle.OutputRendering = 'Ansi'
+            $PSStyle.Formatting.TableHeader = ''
+            $out = $PSVersionTable | Format-Table | Out-String
+            $out.Replace($PSStyle.Reset,'').Contains("`e[") | Should -BeFalse
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+            $PSStyle.Formatting.TableHeader = $old
+        }
+    }
+
+    It '$PSStyle.Formatting.CustomTableHeaderLabel is applied to Format-Table' {
+        $old = $PSStyle.Formatting.CustomTableHeaderLabel
+        $oldRender = $PSStyle.OutputRendering
+
+        try {
+            $PSStyle.OutputRendering = 'Ansi'
+            $PSStyle.Formatting.CustomTableHeaderLabel = $PSStyle.Foreground.Blue + $PSStyle.Background.White + $PSStyle.Bold
+            $out = Get-Process pwsh | Select-Object -First 1 | Format-Table | Out-String
+            $format = $PSStyle.Formatting.CustomTableHeaderLabel.Replace('[',"``[")
+            $header = $PSStyle.Formatting.TableHeader.Replace('[',"``[")
+            $reset = $PSStyle.Reset.Replace('[',"``[")
+            $out | Should -BeLike "*${format}*NPM(K)${reset}*${format}*PM(M)${reset}*${format}*WS(M)${reset}*${format}*CPU(s)${reset}*${header}*Id${reset}*${header}*SI${reset}*${header}*ProcessName${reset}*"
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+            $PSStyle.Formatting.CustomTableHeaderLabel = $old
+        }
+    }
+
     It 'Should fail if setting formatting contains printable characters: <member>.<submember>' -TestCases @(
         @{ Submember = 'Reset' }
         @{ Submember = 'BlinkOff' }
         @{ Submember = 'Blink' }
         @{ Submember = 'BoldOff' }
         @{ Submember = 'Bold' }
+        @{ Submember = 'DimOff' }
+        @{ Submember = 'Dim' }
         @{ Submember = 'HiddenOff' }
         @{ Submember = 'Hidden' }
         @{ Submember = 'ItalicOff' }
@@ -183,6 +243,7 @@ Describe 'Tests for $PSStyle automatic variable' {
         @{ Submember = 'Strikethrough' }
         @{ Member = 'Formatting'; Submember = 'FormatAccent' }
         @{ Member = 'Formatting'; Submember = 'TableHeader' }
+        @{ Member = 'Formatting'; Submember = 'CustomTableHeaderLabel' }
         @{ Member = 'Formatting'; Submember = 'ErrorAccent' }
         @{ Member = 'Formatting'; Submember = 'Error' }
         @{ Member = 'Formatting'; Submember = 'Warning' }
@@ -235,6 +296,477 @@ Describe 'Tests for $PSStyle automatic variable' {
         }
         finally {
             $PSStyle.Progress.MaxWidth = $maxWidth
+        }
+    }
+
+    It 'Do not use OSC indicator when the stdout is redirected' {
+        $pwsh = Join-Path $PSHOME 'pwsh'
+
+        ## In the case that the stdout is redirected, pwsh should not write the OSC indicator Ansi sequence.
+        $result = & $pwsh -noprofile -Command { $PSStyle.Progress.UseOSCIndicator = $true; 'hello'} | Format-List
+        $result | Out-String -Stream | Should -BeExactly 'hello'
+    }
+
+    It 'Able to handle Hyperlink ansi sequences' {
+        $word = "This is a link"
+        $hyperlink = $PSStyle.FormatHyperlink($word, "some random text as a link")
+        $strDec = [System.Management.Automation.Internal.StringDecorated]::new($hyperlink)
+        $strDec.IsDecorated | Should -BeTrue
+        $strDec.ContentLength | Should -Be $word.Length
+        $strDec.ToString("PlainText") | Should -Be $word
+    }
+
+    It "String intput to Out-String should be intact with OutputRendering='<OutputRendering>'" -TestCases @(
+        @{ OutputRendering = 'Ansi'; ContainsAnsi = $true }
+        @{ OutputRendering = 'Host'; ContainsAnsi = $false }
+        @{ OutputRendering = 'PlainText'; ContainsAnsi = $false }
+    ) {
+        param($OutputRendering, $ContainsAnsi)
+
+        $oldRender = $PSStyle.OutputRendering
+        $testStr = "`e[31mABC`e[0m"
+
+        try {
+            $PSStyle.OutputRendering = $OutputRendering
+            ## For input that actually goes through formatting, Out-String should remove VT sequences
+            ## from the formatting output based on the output rendering option that is in effect.
+            (Get-Verb -Verb Get | Out-String).Contains("`e[") | Should -Be $ContainsAnsi
+            ## For string input, since no formatting is applied, Out-String should keep the string intact.
+            ($testStr | Out-String).Trim() | Should -BeExactly $testStr
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+        }
+    }
+
+    It "String input to Out-File should be intact with OutputRendering='<OutputRendering>'" -TestCases @(
+        @{ OutputRendering = 'Ansi'; }
+        @{ OutputRendering = 'Host'; }
+        @{ OutputRendering = 'PlainText'; }
+    ) {
+        param($OutputRendering)
+
+        $oldRender = $PSStyle.OutputRendering
+        $content = "Read-Host -Prompt '`e[33mEnter your device code`e[0m'"
+        Set-Content -Path $TestDrive\test.ps1 -Value $content -Encoding utf8NoBOM
+
+        try {
+            $PSStyle.OutputRendering = $OutputRendering
+            Get-Content $TestDrive\test.ps1 > $TestDrive\copy.ps1
+            (Get-Content $TestDrive\copy.ps1 -Raw).Trim() | Should -BeExactly $content
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+            Remove-Item $TestDrive\test.ps1 -Force
+            Remove-Item $TestDrive\copy.ps1 -Force
+        }
+    }
+
+    It "Comment based help works with `$PSStyle when OutputRendering='<OutputRendering>'" -TestCases @(
+        @{ OutputRendering = 'Ansi'; ContainsAnsi = $true }
+        @{ OutputRendering = 'Host'; ContainsAnsi = $false }
+        @{ OutputRendering = 'PlainText'; ContainsAnsi = $false }
+    ) {
+        param($OutputRendering, $ContainsAnsi)
+
+        $oldRender = $PSStyle.OutputRendering
+
+        function Test-PSStyle {
+            <#
+            .Description
+            Get-Function [31mdisplays[0m the name and syntax of all functions in the session.
+            #>
+        }
+
+        try {
+            $PSStyle.OutputRendering = $OutputRendering
+            (Get-Help Test-PSStyle | Out-String).Contains("`e[31mdisplays`e[0m") | Should -Be $ContainsAnsi
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+        }
+    }
+}
+
+Describe 'Handle strings with escape sequences in formatting' -Tag 'CI' {
+
+    BeforeAll {
+        function Get-DemoObjects {
+            [PSCustomObject]@{PSTypeName = "User"; Name = "Bob Saggat"; Tenure = 2; Role = "Developer" }
+            [PSCustomObject]@{PSTypeName = "User"; Name = "John Seymour"; Tenure = 6; Role = "Sw Engineer" }
+            [PSCustomObject]@{PSTypeName = "User"; Name = "Billy Bob Thorton"; Tenure = 13; Role = "Senior DevOps Engineer" }
+        }
+
+        $oldOutputRendering = $PSStyle.OutputRendering
+        $PSStyle.OutputRendering = [System.Management.Automation.OutputRendering]::Ansi
+        $colors = @("`e[32m", "`e[34m", "`e[33m", "`e[31m", "`e[33m", "`e[34m", "`e[32m")
+        $outFile = "$TestDrive\outFile.txt"
+    }
+
+    AfterAll {
+        $PSStyle.OutputRendering = $oldOutputRendering
+    }
+
+    It 'Truncation for strings with no escape sequences' {
+        $expected = @"
+`e[32;1mName      `e[0m`e[32;1m Role           `e[0m`e[32;1m YIR`e[0m
+`e[32;1m----      `e[0m `e[32;1m----           `e[0m `e[32;1m---`e[0m
+Bob Saggat Developer         2
+John Seym… Sw Engineer       6
+Billy Bob… Senior DevOps …  13
+"@
+        Get-DemoObjects |
+            Format-Table @{Width = 10; Name = "Name"; E = { $_.Name }},
+                         @{Width = 15; Name = "Role";  E = { $_.Role }},
+                         @{Width = 3; Name = "YIR";  E = { $_.Tenure }} |
+            Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Truncation for strings with escape sequences - TableView-1" {
+        $expected = @"
+`e[32;1mName      `e[0m`e[32;1m Role           `e[0m`e[32;1m YIR`e[0m
+`e[32;1m----      `e[0m `e[32;1m----           `e[0m `e[32;1m---`e[0m
+`e[32mBob Saggat`e[39m`e[0m Developer         2
+`e[33mJohn Seym…`e[0m Sw Engineer       6
+`e[31mBilly Bob…`e[0m Senior DevOps …  13
+"@
+        Get-DemoObjects |
+            Format-Table @{Width = 10; Name = "Name"; E = {
+                                $index = [array]::BinarySearch(@(3, 5, 8), $_.Tenure)
+                                $color = $colors[$index]
+                                $color + $_.Name + "`e[39m"}
+                          },
+                         @{Width = 15; Name = "Role";  E = { $_.Role }},
+                         @{Width = 3; Name = "YIR";  E = { $_.Tenure }} |
+            Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Truncation for strings with escape sequences - TableView-2" {
+        $expected = @"
+`e[32;1mName      `e[0m`e[32;1m Role           `e[0m`e[32;1m YIR`e[0m
+`e[32;1m----      `e[0m `e[32;1m----           `e[0m `e[32;1m---`e[0m
+`e[32mBob Saggat`e[39m`e[0m Developer`e[0m         2
+`e[33mJohn Seym…`e[0m `e[1;33mSw Engineer`e[0m       6
+`e[31mBilly Bob…`e[0m `e[42m`e[1;33mSenior DevOps …`e[0m  13
+"@
+        Get-DemoObjects |
+            Format-Table @{Width = 10; Name = "Name"; E = {
+                                $index = [array]::BinarySearch(@(3, 5, 8), $_.Tenure)
+                                $color = $colors[$index]
+                                $color + $_.Name + "`e[39m"}
+                          },
+                         @{Width = 15; Name = "Role"; E = {
+                            $color = -join $(switch -regex ($_.Role){
+                                "Senior" { "`e[42m" }
+                                "Engineer" { "`e[1;33m" }
+                            })
+                            $color + $_.Role  + "`e[0m"}},
+                         @{Width = 3; Name = "YIR";  E = { $_.Tenure }} |
+            Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Truncation for strings with escape sequences - WideView" {
+        $expected = @"
+`e[32mBob Saggat`e[39m             `e[0m `e[33mJohn Seymour`e[39m`e[0m
+`e[31mBilly Bob Thorton`e[39m      `e[0m `e[32mBob Saggat`e[39m`e[0m
+`e[33mJohn Seymour`e[39m           `e[0m `e[31mBilly Bob Thorton`e[39m`e[0m
+"@
+        (Get-DemoObjects) + (Get-DemoObjects) |
+            Format-Wide @{E = {
+                            $index = [array]::BinarySearch(@(3, 5, 8), $_.Tenure)
+                            $color = $colors[$index]
+                            $color + $_.Name + "`e[39m" }
+                        } -Column 2 |
+            Out-String -Width 47 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Word wrapping for string with escape sequences (1)" {
+       $expected = @"
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell `e[0m
+                  `e[33mscripting `e[0m
+                  `e[33mlanguage`e[0m
+"@
+        $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell scripting language" }
+        $obj | Format-List | Out-String -Width 35 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Word wrapping for string with escape sequences (2)" {
+       $expected = @"
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell`e[0m 
+                  scripting 
+                  language
+"@
+        $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell`e[0m scripting language" }
+        $obj | Format-List | Out-String -Width 35 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Word wrapping for string with escape sequences (3)" {
+       $expected = @"
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell`e[0m 
+                  `e[32mscripting `e[0m
+                  `e[32mlanguage`e[0m
+"@
+        $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell`e[0m `e[32mscripting language" }
+        $obj | Format-List | Out-String -Width 35 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Word wrapping for string with escape sequences (4)" {
+       $expected = @"
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell`e[0m 
+                  `e[32mscripting`e[0m 
+                  language
+"@
+        $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell`e[0m `e[32mscripting`e[0m language" }
+        $obj | Format-List | Out-String -Width 35 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Splitting multi-line string with escape sequences (1)" {
+        $expected = @"
+`e[32;1mb : `e[0m`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m
+    `e[33mconsisting of a command-line shell and the associated scripting language`e[0m
+"@
+        $obj = [pscustomobject] @{ b = "`e[33mPowerShell is a task automation and configuration management program from Microsoft,`nconsisting of a command-line shell and the associated scripting language" }
+        $obj | Format-List | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Splitting multi-line string with escape sequences (2)" {
+        $expected = @"
+`e[32;1mb : `e[0m`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m
+    consisting of a command-line shell and the associated scripting language
+"@
+        $obj = [pscustomobject] @{ b = "`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m`nconsisting of a command-line shell and the associated scripting language" }
+        $obj | Format-List | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Splitting multi-line string with escape sequences (3)" {
+        $expected = @"
+`e[32;1mb : `e[0m`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m
+    `e[32mconsisting of a command-line shell and the associated scripting language`e[0m
+"@
+        $obj = [pscustomobject] @{ b = "`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m`n`e[32mconsisting of a command-line shell and the associated scripting language" }
+        $obj | Format-List | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Wrapping long word with escape sequences" {
+        $expected = @"
+`e[32;1mb : `e[0m`e[33mC:\repos\PowerShell\src\powershell-w`e[0m
+    `e[33min-core\bin\Debug\net8.0\win7-x64\pu`e[0m
+    `e[33mblish\pwsh.exe`e[0m
+"@
+        $obj = [pscustomobject] @{ b = "`e[33mC:\repos\PowerShell\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish\pwsh.exe" }
+        $obj | Format-List | Out-String -Width 40 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Format 'MatchInfo' object correctly" {
+        $expected = @"
+`e[32;1mb : `e[0mmouclass     `e[7mMouse`e[0m Class Driver     Mouse Class Driver     Kernel        Manual     Running    OK         TRUE        FALSE        12,288         `e[0m
+       32,768      0                                 C:\WINDOWS\system32\drivers\mouclass.sys         4,096
+"@
+
+        ## This string mimics the VT decorated string for a 'MatchInfo' object that matches the word 'mouse'.
+        $str = "mouclass     `e[7mMouse`e[0m Class Driver     Mouse Class Driver     Kernel        Manual     Running    OK         TRUE        FALSE        12,288            32,768      0                                 C:\WINDOWS\system32\drivers\mouclass.sys         4,096"
+        $obj = [pscustomobject] @{ b = $str }
+        $text = $obj | Format-List | Out-String -Width 150
+
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+}
+
+Describe 'Default formatting AutoSize override' -Tag 'CI' {
+    BeforeAll {
+        $formatFile = Join-Path $TestDrive 'AutoSizeDefaultFormatting.format.ps1xml'
+        @'
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>AutoSizeWide</Name>
+      <ViewSelectedBy>
+        <TypeName>Test.AutoSizeWide</TypeName>
+      </ViewSelectedBy>
+      <WideControl>
+        <WideEntries>
+          <WideEntry>
+            <WideItem>
+              <PropertyName>Name</PropertyName>
+            </WideItem>
+          </WideEntry>
+        </WideEntries>
+      </WideControl>
+    </View>
+    <View>
+      <Name>AutoSizeComplex</Name>
+      <ViewSelectedBy>
+        <TypeName>Test.AutoSizeComplex</TypeName>
+      </ViewSelectedBy>
+      <CustomControl>
+        <CustomEntries>
+          <CustomEntry>
+            <CustomItem>
+              <Text>Item</Text>
+              <NewLine />
+            </CustomItem>
+          </CustomEntry>
+        </CustomEntries>
+      </CustomControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
+'@ | Set-Content -Path $formatFile
+    }
+
+    It "Forces default table formatting to use 'AutoSize'" {
+        $oldOutputRendering = $PSStyle.OutputRendering
+        $oldAutoSizeDefaultFormatting = $PSStyle.AutoSizeDefaultFormatting
+
+        try {
+            $PSStyle.OutputRendering = 'PlainText'
+            $PSStyle.AutoSizeDefaultFormatting = $false
+            $defaultOutput = Get-Command Import-Module | Out-String
+            $PSStyle.AutoSizeDefaultFormatting = $true
+            $autoSizedOutput = Get-Command Import-Module | Out-String
+
+            $defaultOutput = $defaultOutput.Trim().Split("`n")
+            $autoSizedOutput = $autoSizedOutput.Trim().Split("`n")
+
+            $defaultOutput.Count | Should -BeExactly $autoSizedOutput.Count
+            for ($i = 0; $i -lt $defaultOutput.Count; $i++) {
+                $defaultOutput[$i].Length | Should -BeGreaterThan $autoSizedOutput[$i].Length
+                $elements_1 = $defaultOutput[$i].Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+                $elements_2 = $autoSizedOutput[$i].Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+                $elements_1 -join ' ' | Should -BeExactly ($elements_2 -join ' ')
+            }
+        }
+        finally {
+            $PSStyle.AutoSizeDefaultFormatting = $oldAutoSizeDefaultFormatting
+            $PSStyle.OutputRendering = $oldOutputRendering
+        }
+    }
+
+    It "Forces default wide formatting to use 'AutoSize'" {
+        $powerShell = [PowerShell]::Create()
+
+        try {
+            $result = $powerShell.AddScript({
+                param($Path)
+
+                Update-FormatData -PrependPath $Path
+                $oldOutputRendering = $PSStyle.OutputRendering
+                $oldAutoSizeDefaultFormatting = $PSStyle.AutoSizeDefaultFormatting
+
+                try {
+                    $PSStyle.OutputRendering = 'PlainText'
+                    $items = 1..6 | ForEach-Object {
+                        [pscustomobject]@{ PSTypeName = 'Test.AutoSizeWide'; Name = "Item$_" }
+                    }
+
+                    $PSStyle.AutoSizeDefaultFormatting = $false
+                    $defaultOutput = $items | Out-String -Width 40
+                    $PSStyle.AutoSizeDefaultFormatting = $true
+                    $autoSizedOutput = $items | Out-String -Width 40
+
+                    [pscustomobject]@{
+                        DefaultOutput = $defaultOutput
+                        AutoSizedOutput = $autoSizedOutput
+                    }
+                }
+                finally {
+                    $PSStyle.AutoSizeDefaultFormatting = $oldAutoSizeDefaultFormatting
+                    $PSStyle.OutputRendering = $oldOutputRendering
+                }
+            }).AddArgument($formatFile).Invoke()
+
+            $powerShell.HadErrors | Should -BeFalse
+            $defaultLines = $result.DefaultOutput.Trim().Split("`n")
+            $autoSizedLines = $result.AutoSizedOutput.Trim().Split("`n")
+            $defaultLines | Should -HaveCount 3
+            $autoSizedLines | Should -HaveCount 1
+            $autoSizedLines[0].Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries) | Should -HaveCount 6
+        }
+        finally {
+            $powerShell.Dispose()
+        }
+    }
+
+    It 'Does not buffer default <ViewType> formatting until pipeline completion' -TestCases @(
+        @{ ViewType = 'List' }
+        @{ ViewType = 'Complex' }
+    ) {
+        param($ViewType)
+
+        $powerShell = [PowerShell]::Create()
+
+        try {
+            $producerFinished = $powerShell.AddScript({
+                param($Path, $ViewType)
+
+                Update-FormatData -PrependPath $Path
+                $oldAutoSizeDefaultFormatting = $PSStyle.AutoSizeDefaultFormatting
+
+                try {
+                    $PSStyle.AutoSizeDefaultFormatting = $true
+                    $inputObject = $ViewType -eq 'List' ? $PSStyle : [pscustomobject]@{ PSTypeName = 'Test.AutoSizeComplex'; Name = 'Item' }
+
+                    $script:producerFinished = $false
+                    & {
+                        $inputObject
+                        $script:producerFinished = $true
+                    } |
+                        Out-String -Stream |
+                        Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |     ## Ignore the newline written out by 'Out-String'
+                        Select-Object -First 1 |
+                        Out-Null
+
+                    $script:producerFinished
+                }
+                finally {
+                    $PSStyle.AutoSizeDefaultFormatting = $oldAutoSizeDefaultFormatting
+                }
+            }).AddArgument($formatFile).AddArgument($ViewType).Invoke()
+
+            $powerShell.HadErrors | Should -BeFalse
+            # When rendering streams, the first non-whitespace string reaches 'Select-Object' before '$script:producerFinished = $true' runs. 'Select-Object -First 1' then stops
+            # the upstream script, so that assignment is never evaluated and '$producerFinished' remains false.
+            # If rendering is buffered, 'Out-String' emits no non-whitespace payload until the upstream script finishes and the assignment runs, making '$producerFinished' true.
+            $producerFinished | Should -BeFalse
+        }
+        finally {
+            $powerShell.Dispose()
         }
     }
 }

@@ -47,7 +47,57 @@ Describe 'native commands with pipeline' -tags 'Feature' {
     It 'native command should be killed when pipeline is disposed' -Skip:($IsWindows) {
         $yes = (Get-Process 'yes' -ErrorAction Ignore).Count
         yes | Select-Object -First 2
+        # wait a little to be sure that the process is ended
+        Start-Sleep -Milliseconds 500
         (Get-Process 'yes' -ErrorAction Ignore).Count | Should -Be $yes
+    }
+
+    It 'native command should still execute if the current working directory no longer exists with command: <command>' -Skip:($IsWindows) -TestCases @(
+        @{ command = 'ps' }
+        @{ command = 'start-process ps -nonewwindow'}
+    ){
+        param($command)
+
+        $wd = New-Item testdrive:/tmp -ItemType directory
+        $lock = New-Item testdrive:/lock -ItemType file
+        $script = @"
+            while (`$null -ne (Get-Item "$lock" -ErrorAction Ignore)) {
+                Start-Sleep -Seconds 1
+            }
+
+            try {
+                `$out = $command
+            }
+            catch {
+                `$null = Set-Content -Path "$testdrive/error" -Value (`$_ | Out-String)
+            }
+
+            `$null = Set-Content -Path "$testdrive/out" -Value `$out
+"@
+
+        $pwsh = Start-Process -FilePath "${PSHOME}/pwsh" -WorkingDirectory $wd -ArgumentList @('-noprofile','-command',$script)
+
+        Remove-Item -Path $wd -Force
+        Remove-Item $lock
+        $start = Get-Date
+
+        try {
+            while ($null -eq (Get-Item "$testdrive/error" -ErrorAction Ignore) -and $null -eq (Get-Item "$testdrive/out" -ErrorAction Ignore)) {
+                if (((Get-Date) - $start).TotalSeconds -gt 60) {
+                    throw "Timeout"
+                }
+
+                Start-Sleep -Seconds 1
+            }
+        }
+        finally {
+            $pwsh | Stop-Process -Force -ErrorAction Ignore
+        }
+
+        $err = Get-Item -Path "$testdrive/error" -ErrorAction Ignore
+        $err | Should -BeNullOrEmpty -Because $err
+        $out = Get-Item -Path "$testdrive/out" -ErrorAction Ignore
+        $out | Should -Not -BeNullOrEmpty
     }
 }
 
@@ -95,6 +145,10 @@ Describe "Native Command Processor" -tags "Feature" {
     }
 
     It "Should not block running Windows executables" -Skip:(!$IsWindows -or !(Get-Command notepad.exe)) {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "Needs investigation"
+        }
+
         function FindNewNotepad
         {
             Get-Process -Name notepad -ErrorAction Ignore | Where-Object { $_.Id -NotIn $dontKill }
@@ -158,6 +212,12 @@ Describe "Native Command Processor" -tags "Feature" {
         diskmgmt.msc
         Wait-UntilTrue -sb { (Get-Process mmc).Count -gt 0 } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 1000 | Should -BeTrue
         Get-Process mmc | Stop-Process
+    }
+
+    It 'Can redirect stdout and stderr to different files' {
+        testexe -stderrandout testing > $TestDrive/stdout.txt 2> $TestDrive/stderr.txt
+        Get-Content $TestDrive/stdout.txt | Should -Be testing
+        Get-Content $TestDrive/stderr.txt | Should -Be gnitset
     }
 }
 
@@ -250,5 +310,95 @@ Categories=Application;
 
     It "Opening a file with an unregistered extension on Windows should fail" -Skip:(!$IsWindows) {
         { $dllFile = "$PSHOME\System.Management.Automation.dll"; & $dllFile } | Should -Throw -ErrorId "NativeCommandFailed"
+    }
+}
+
+Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "RequireAdminOnWindows") {
+    BeforeAll {
+        if (-not $IsWindows) {
+            return;
+        }
+        else {
+            $storageModule = Get-Module -Name 'Storage' -ListAvailable -ErrorAction SilentlyContinue
+
+            if (-not $storageModule) {
+                Write-Verbose -Verbose "Storage module is not available."
+                return;
+            }
+        }
+
+        $vhdx = Join-Path -Path $TestDrive -ChildPath ncp.vhdx
+
+        if (Test-Path -Path $vhdx) {
+            Remove-item -Path $vhdx -Force
+        }
+
+        $create_vhdx = Join-Path -Path $TestDrive -ChildPath 'create_vhdx.txt'
+
+        Set-Content -Path $create_vhdx -Force -Value @"
+            create vdisk file="$vhdx" maximum=20 type=fixed
+            select vdisk file="$vhdx"
+            attach vdisk
+            convert mbr
+            create partition primary
+            format fs=fat
+            assign letter="T"
+            detach vdisk
+"@
+
+        diskpart.exe /s $create_vhdx
+        Mount-DiskImage -ImagePath $vhdx > $null
+
+        Copy-Item "$env:WinDir\System32\whoami.exe" "T:\whoami.exe"
+    }
+
+    AfterAll {
+        if ($IsWindows) {
+            $storageModule = Get-Module -Name 'Storage' -ListAvailable -ErrorAction SilentlyContinue
+
+            if (-not $storageModule) {
+                Write-Verbose -Verbose "Storage module is not available."
+                return;
+            }
+
+            Dismount-DiskImage -ImagePath $vhdx
+            Remove-Item $vhdx, $create_vhdx -Force
+        }
+    }
+
+    It "Should run 'whoami.exe' from FAT file system without error" -Skip:(!$IsWindows) {
+        if ((Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
+            Set-ItResult -Pending -Because "Marking as pending since whomai.exe is not found on T:\ on 2012R2 and 2016 after copying to VHD"
+            return
+        }
+
+        $expected = & "$env:WinDir\System32\whoami.exe"
+        $result = T:\whoami.exe
+        $result | Should -BeExactly $expected
+    }
+}
+
+Describe "Native application invocation and getting cursor position" -Tags 'CI' {
+    It "Invoking a native application should not collect the cursor position" -Skip:($IsWindows) {
+        $expectCmd = Get-Command expect -Type Application -ErrorAction Ignore
+        $dateCmd = Get-Command date -Type Application -ErrorAction Ignore
+        # if date or expect are missing mark the test as pending
+        # test setup will need to ensure that these programs are present.
+        $missing = @()
+        if ($null -eq $expectCmd) {
+            $missing += "expect"
+        }
+        if ($null -eq $dateCmd) {
+            $missing += "date"
+        }
+        if ($missing.count -ne 0) {
+            $message = "missing command(s) {0}" -f ($missing -join ", ")
+            Set-ItResult -Pending -Because $message
+        }
+
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        $commandString = "spawn $powershell -nopro -c /bin/date; expect eof"
+        [string]$result = expect -c $commandString
+        $result.IndexOf("`e[6n") | Should -Be -1 -Because $result.replace("`e","``e").replace("`u{7}","<BELL>")
     }
 }

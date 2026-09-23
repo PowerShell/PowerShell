@@ -304,7 +304,6 @@ namespace System.Management.Automation.Remoting.Client
                 /// <summary>
                 /// Making password secure.
                 /// </summary>
-                [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
                 internal IntPtr password;
             }
 
@@ -626,7 +625,6 @@ namespace System.Management.Automation.Remoting.Client
         {
             internal int bufferLength;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr data;
         }
 
@@ -637,10 +635,8 @@ namespace System.Management.Automation.Remoting.Client
         {
             private readonly WSManDataStruct _internalData;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _marshalledObject = IntPtr.Zero;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _marshalledBuffer = IntPtr.Zero;
 
             /// <summary>
@@ -933,7 +929,6 @@ namespace System.Management.Automation.Remoting.Client
         {
             internal int streamIDsCount;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr streamIDs;
         }
 
@@ -1085,7 +1080,6 @@ namespace System.Management.Automation.Remoting.Client
             /// <summary>
             /// Pointer to an array of WSManOption objects.
             /// </summary>
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr options;
 
             internal bool optionsMustUnderstand;
@@ -1223,13 +1217,11 @@ namespace System.Management.Automation.Remoting.Client
             {
                 internal int argsCount;
 
-                [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
                 internal IntPtr args;
             }
 
             private WSManCommandArgSetInternal _internalData;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private MarshalledObject _data;
 
             #region Managed to Unmanaged
@@ -1404,7 +1396,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Managed to unmanaged representation of WSMAN_SHELL_STARTUP_INFO.
         /// It converts managed values into an unmanaged compatible WSManShellStartupInfoStruct that
-        /// is marshaled into unmanaged memory.
+        /// is marshalled into unmanaged memory.
         /// </summary>
         internal struct WSManShellStartupInfo_ManToUn : IDisposable
         {
@@ -1733,7 +1725,6 @@ namespace System.Management.Automation.Remoting.Client
             // GC handle which prevents garbage collector from collecting this delegate.
             private GCHandle _gcHandle;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private readonly IntPtr _asyncCallback;
 
             internal WSManShellAsyncCallback(WSManShellCompletionFunction callback)
@@ -2006,13 +1997,13 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManPluginRequest
         {
             /// <summary>
-            /// Unmarshaled WSMAN_SENDER_DETAILS struct.
+            /// Unmarshalled WSMAN_SENDER_DETAILS struct.
             /// </summary>
             internal WSManSenderDetails senderDetails;
             internal string locale;
             internal string resourceUri;
             /// <summary>
-            /// Unmarshaled WSMAN_OPERATION_INFO struct.
+            /// Unmarshalled WSMAN_OPERATION_INFO struct.
             /// </summary>
             internal WSManOperationInfo operationInfo;
 
@@ -2100,7 +2091,7 @@ namespace System.Management.Automation.Remoting.Client
             internal string senderName;
             internal string authenticationMechanism;
             internal WSManCertificateDetails certificateDetails;
-            internal IntPtr clientToken; // TODO: How should this be marshaled?????
+            internal IntPtr clientToken; // TODO: How should this be marshalled?????
             internal string httpUrl;
 
             /// <summary>

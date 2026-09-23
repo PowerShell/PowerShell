@@ -8,8 +8,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-
-using Dbg = System.Management.Automation.Diagnostics;
+using System.Threading;
 
 namespace System.Management.Automation.Internal
 {
@@ -133,6 +132,13 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
+        /// Gets the CancellationToken that is signaled when the pipeline is stopping.
+        /// </summary>
+        internal CancellationToken StopToken => commandRuntime is MshCommandRuntime mcr
+            ? mcr.PipelineProcessor.PipelineStopToken
+            : default;
+
+        /// <summary>
         /// The information about the command.
         /// </summary>
         private CommandInfo _commandInfo;
@@ -230,6 +236,13 @@ namespace System.Management.Automation.Internal
         /// Default implementation in the base class just returns.
         /// </summary>
         internal virtual void DoStopProcessing()
+        {
+        }
+
+        /// <summary>
+        /// When overridden in the derived class, performs clean-up after the command execution.
+        /// </summary>
+        internal virtual void DoCleanResource()
         {
         }
 
@@ -390,11 +403,11 @@ namespace System.Management.Automation
     /// deriving from the PSCmdlet base class.  The Cmdlet base class is the primary means by
     /// which users create their own Cmdlets.  Extending this class provides support for the most
     /// common functionality, including object output and record processing.
-    /// If your Cmdlet requires access to the MSH Runtime (for example, variables in the session state,
+    /// If your Cmdlet requires access to the PowerShell Runtime (for example, variables in the session state,
     /// access to the host, or information about the current Cmdlet Providers,) then you should instead
     /// derive from the PSCmdlet base class.
     /// The public members defined by the PSCmdlet class are not designed to be overridden; instead, they
-    /// provided access to different aspects of the MSH runtime.
+    /// provided access to different aspects of the PowerShell runtime.
     /// In both cases, users should first develop and implement an object model to accomplish their
     /// task, extending the Cmdlet or PSCmdlet classes only as a thin management layer.
     /// </remarks>

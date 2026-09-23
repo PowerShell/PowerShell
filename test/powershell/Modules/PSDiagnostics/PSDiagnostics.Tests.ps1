@@ -9,7 +9,7 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
             $PSDefaultParameterValues["it:skip"] = $true
         }
         else{
-            $LogSettingBak = Get-LogProperties -Name Microsoft-Windows-PowerShell/$LogType
+            $LogSettingBak = Get-LogProperties -Name PowerShellCore/$LogType
         }
     }
     AfterAll {
@@ -20,37 +20,37 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
     }
 
     Context "Test for Enable-PSTrace and Disable-PSTrace cmdlets." {
-        It "Should enable $LogType logs for Microsoft-Windows-PowerShell." {
-            [XML]$CurrentSetting = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
+        It "Should enable $LogType logs for PowerShellCore." {
+            [XML]$CurrentSetting = & wevtutil gl PowerShellCore/$LogType /f:xml
             if($CurrentSetting.Channel.Enabled -eq 'true'){
-                & wevtutil sl Microsoft-Windows-PowerShell/$LogType /e:false /q
+                & wevtutil sl PowerShellCore/$LogType /e:false /q
             }
 
             Enable-PSTrace -Force
 
-            [XML]$ExpectedOutput = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
+            [XML]$ExpectedOutput = & wevtutil gl PowerShellCore/$LogType /f:xml
 
             $ExpectedOutput.Channel.enabled | Should -BeExactly 'true'
         }
 
-        It "Should disable $LogType logs for Microsoft-Windows-PowerShell." {
-            [XML]$CurrentState = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
+        It "Should disable $LogType logs for PowerShellCore." {
+            [XML]$CurrentState = & wevtutil gl PowerShellCore/$LogType /f:xml
             if($CurrentState.channel.enabled -eq 'false'){
-                & wevtutil sl Microsoft-Windows-PowerShell/$LogType /e:true /q
+                & wevtutil sl PowerShellCore/$LogType /e:true /q
             }
             Disable-PSTrace
 
-            [XML]$ExpectedOutput = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
+            [XML]$ExpectedOutput = & wevtutil gl PowerShellCore/$LogType /f:xml
 
             $ExpectedOutput.Channel.enabled | Should -Be 'false'
         }
     }
 
     Context "Test for Get-LogProperties cmdlet." {
-        It "Should return properties of $LogType logs for 'Microsoft-Windows-PowerShell'." {
-            [XML]$ExpectedOutput = wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
+        It "Should return properties of $LogType logs for 'PowerShellCore'." {
+            [XML]$ExpectedOutput = wevtutil gl PowerShellCore/$LogType /f:xml
 
-            $LogProperty = Get-LogProperties -Name Microsoft-Windows-PowerShell/$LogType
+            $LogProperty = Get-LogProperties -Name PowerShellCore/$LogType
 
             $LogProperty.Name       | Should -Be $ExpectedOutput.channel.Name
             $LogProperty.Enabled    | Should -Be $ExpectedOutput.channel.Enabled
@@ -67,7 +67,7 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
     Context "Test for Set-LogProperties cmdlet." {
         BeforeAll {
             if ($IsWindows) {
-                [XML]$WevtUtilBefore = wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
+                [XML]$WevtUtilBefore = wevtutil gl PowerShellCore/$LogType /f:xml
                 $LogPropertyToSet = [Microsoft.PowerShell.Diagnostics.LogDetails]::new($WevtUtilBefore.channel.Name,
                     [bool]::Parse($WevtUtilBefore.channel.Enabled),
                     $LogType,
@@ -78,12 +78,12 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
             }
         }
 
-        It "Should invert AutoBackup setting of $LogType logs for 'Microsoft-Windows-PowerShell'." {
+        It "Should invert AutoBackup setting of $LogType logs for 'PowerShellCore'." {
             $LogPropertyToSet.AutoBackup = -not $LogPropertyToSet.AutoBackup
             Set-LogProperties -LogDetails $LogPropertyToSet -Force
 
-            [XML]$ExpectedOutput = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
-            (Get-LogProperties -Name Microsoft-Windows-PowerShell/$LogType).AutoBackup | Should -Be ([bool]::Parse($ExpectedOutput.Channel.Logging.AutoBackup))
+            [XML]$ExpectedOutput = & wevtutil gl PowerShellCore/$LogType /f:xml
+            (Get-LogProperties -Name PowerShellCore/$LogType).AutoBackup | Should -Be ([bool]::Parse($ExpectedOutput.Channel.Logging.AutoBackup))
         }
 
         It "Should throw exception for invalid LogName." {

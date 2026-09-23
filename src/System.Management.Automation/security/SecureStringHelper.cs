@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="data">Input data.</param>
         /// <returns>A SecureString .</returns>
-        private static SecureString New(byte[] data)
+        internal static SecureString New(byte[] data)
         {
             if ((data.Length % 2) != 0)
             {
@@ -68,7 +68,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="s">Input string.</param>
         /// <returns>Contents of s (char[]) converted to byte[].</returns>
-        [ArchitectureSensitive]
         internal static byte[] GetData(SecureString s)
         {
             //
@@ -258,10 +257,7 @@ namespace Microsoft.PowerShell
             //
             using (Aes aes = Aes.Create())
             {
-                if (iv is null)
-                {
-                    iv = aes.IV;
-                }
+                iv ??= aes.IV;
 
                 //
                 // get clear text data from the input SecureString
@@ -434,10 +430,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
         {
-            if (userData == null)
-            {
-                throw new ArgumentNullException(nameof(userData));
-            }
+            ArgumentNullException.ThrowIfNull(userData);
 
             GCHandle pbDataIn = new GCHandle();
             GCHandle pOptionalEntropy = new GCHandle();
@@ -522,10 +515,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
         {
-            if (encryptedData == null)
-            {
-                throw new ArgumentNullException(nameof(encryptedData));
-            }
+            ArgumentNullException.ThrowIfNull(encryptedData);
 
             GCHandle pbDataIn = new GCHandle();
             GCHandle pOptionalEntropy = new GCHandle();
@@ -604,7 +594,7 @@ namespace Microsoft.PowerShell
         internal const int E_FILENOTFOUND = unchecked((int)0x80070002); // File not found
         internal const int ERROR_FILE_NOT_FOUND = 2;                    // File not found
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTOAPI_BLOB
         {
             internal uint cbData;

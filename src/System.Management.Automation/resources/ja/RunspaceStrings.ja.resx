@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidRunspaceStateGeneral" xml:space="preserve">
+    <value>この操作では、実行空間の状態が無効です。</value>
+  </data>
+  <data name="CannotOpenAgain" xml:space="preserve">
+    <value>実行空間が BeforeOpen 状態ではないため、開くことができません。実行空間の現在の状態は '{0}' です。</value>
+  </data>
+  <data name="RunspaceNotInOpenedState" xml:space="preserve">
+    <value>実行空間プールがオープン状態ではないため、操作を実行できません。実行空間の現在の状態は '{0}' です。</value>
+  </data>
+  <data name="RunspaceNotOpenForPipeline" xml:space="preserve">
+    <value>実行空間がオープン状態ではないため、パイプラインを呼び出せません。実行空間の現在の状態は '{0}' です。</value>
+  </data>
+  <data name="InvalidPipelineStateStateGeneral" xml:space="preserve">
+    <value>この操作では、パイプラインの状態が無効です。</value>
+  </data>
+  <data name="PipelineReInvokeNotAllowed" xml:space="preserve">
+    <value>パイプラインは既に呼び出されているため、呼び出せません。</value>
+  </data>
+  <data name="InvalidValueToResultError" xml:space="preserve">
+    <value>パラメーターの有効な値は PipelineResultTypes.Output です。</value>
+  </data>
+  <data name="NoCommandInPipeline" xml:space="preserve">
+    <value>パイプラインにコマンドが含まれていません。</value>
+  </data>
+  <data name="ConcurrentInvokeNotAllowed" xml:space="preserve">
+    <value>パイプラインは既に実行中のものがあるため実行されませんでした。Pipelines は同時に実行できません。</value>
+  </data>
+  <data name="NestedPipelineInvokeAsync" xml:space="preserve">
+    <value>入れ子になったパイプラインを非同期的に呼び出すことはできません。呼び出しメソッドを使用してください。</value>
+  </data>
+  <data name="NestedPipelineNoParentPipeline" xml:space="preserve">
+    <value>入れ子になったパイプラインは、実行中のパイプライン内からのみ実行してください。</value>
+  </data>
+  <data name="RunspaceCloseInvalidWhileSessionStateProxy" xml:space="preserve">
+    <value>SessionStateProxy メソッド呼び出しの進行中は、実行空間を閉じることはできません。</value>
+  </data>
+  <data name="NoPipelineWhenSessionStateProxyInProgress" xml:space="preserve">
+    <value>SessionStateProxy メソッド呼び出しの進行中は、パイプラインを呼び出すことはできません。</value>
+  </data>
+  <data name="AnotherSessionStateProxyInProgress" xml:space="preserve">
+    <value>SessionStateProxy メソッド呼び出しが進行中です。SessionStateProxy メソッドの同時呼び出しは許可されていません。</value>
+  </data>
+  <data name="NoSessionStateProxyWhenPipelineInProgress" xml:space="preserve">
+    <value>パイプラインは既に実行されています。SessionStateProxy メソッドの同時呼び出しは許可されていません。</value>
+  </data>
+  <data name="ChangePropertyAfterOpen" xml:space="preserve">
+    <value>このプロパティは、実行空間を開いた後は変更できません。</value>
+  </data>
+  <data name="ErrorLoadingModulesOnRunspaceOpen" xml:space="preserve">
+    <value>この実行空間の作成に使用された InitialSessionState オブジェクトで指定されたモジュール '{0}' の処理中に、1 つ以上のエラーが発生しました。全エラーの一覧については、ErrorRecords プロパティを参照してください。最初のエラーは次のとおりです: {1}</value>
+  </data>
+  <data name="InvalidThreadOptionsChange" xml:space="preserve">
+    <value>スレッド オプションを変更できるのは、アパートメント状態がマルチスレッド アパートメント (MTA) で、現在のオプションが UseNewThread または UseCurrentThread、かつ新しい値が ReuseThread の場合のみです。</value>
+  </data>
+  <data name="UseLocalScopeNotAllowed" xml:space="preserve">
+    <value>言語モードが {1} または {2} の場合、{0}を false にすることはできません。</value>
+  </data>
+  <data name="DisconnectNotSupported" xml:space="preserve">
+    <value>ローカル専用の実行空間は切断できません。</value>
+  </data>
+  <data name="ConnectNotSupported" xml:space="preserve">
+    <value>接続操作は、ローカルの実行空間ではサポートされていません。</value>
+  </data>
+  <data name="RunspaceNotReady" xml:space="preserve">
+    <value>セッションはビジー状態です。利用可能になり次第、セッションに接続されます。Enter-PSSession コマンドをキャンセルするには、Ctrl キーを押しながら C キーを押します。</value>
+  </data>
+  <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
+    <value>コマンドを完了できません。スクリプトの呼び出しは、このセッション構成ではサポートされていません。これは、セッション構成が no-language モードの場合に発生することがあります。</value>
+  </data>
+  <data name="DisconnectConnectNotSupported" xml:space="preserve">
+    <value>ローカルの実行空間では、切断および接続の操作は使用できません。</value>
+  </data>
+  <data name="RunspaceNotOpenForPipelineConnect" xml:space="preserve">
+    <value>実行空間がオープンの状態ではないため、パイプラインを接続できません。 実行空間の現在の状態は '{0}' です。</value>
+  </data>
+  <data name="InvalidRunspacePool" xml:space="preserve">
+    <value>RemoteRunspace を構築できません。指定された RunspacePool オブジェクトが無効です。</value>
+  </data>
+  <data name="NoDisconnectedCommand" xml:space="preserve">
+    <value>この実行空間に関連付けられている切断されたコマンドはありません。</value>
+  </data>
+  <data name="DisconnectNotSupportedOnServer" xml:space="preserve">
+    <value>リモート コンピューターでは切断操作はサポートされていません。切断をサポートするには、リモート コンピューターで Windows PowerShell 3.0 以降の Windows PowerShell を実行し、WSMan トランスポートを使用している必要があります。</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>セッションが切断済みの状態ではないか、接続に使用できないため、PSSession に接続できません。</value>
+  </data>
+  <data name="InvalidMyResultError" xml:space="preserve">
+    <value>パラメーターの値を PipelineResultTypes.None または PipelineResultTypes.Output にすることはできません。</value>
+  </data>
+  <data name="InvalidValueToResult" xml:space="preserve">
+    <value>パラメーターの有効な値は PipelineResultTypes.Output または PipelineResultTypes.Null です。</value>
+  </data>
+  <data name="DebugRedirectionNotSupported" xml:space="preserve">
+    <value>デバッグ ストリームのリダイレクトは、対象のリモート コンピューターではサポートされていません。</value>
+  </data>
+  <data name="VerboseRedirectionNotSupported" xml:space="preserve">
+    <value>詳細ストリームのリダイレクトは、対象のリモート コンピューターではサポートされていません。</value>
+  </data>
+  <data name="WarningRedirectionNotSupported" xml:space="preserve">
+    <value>警告ストリームのリダイレクトは、対象のリモート コンピューターではサポートされていません。</value>
+  </data>
+  <data name="InformationRedirectionNotSupported" xml:space="preserve">
+    <value>情報ストリームのリダイレクトは、対象のリモート コンピューターではサポートされていません。</value>
+  </data>
+  <data name="RunningCmdWithJob" xml:space="preserve">
+    <value>コマンドまたはスクリプトの実行中でビジー状態のセッションに入りました。 出力はジョブ "{0}" にルーティングされるため、コンソールには表示されません。 実行中のコマンドの完了を待つか、Ctrl-C を押してキャンセルし、入力プロンプトを表示します。
+</value>
+  </data>
+  <data name="RunningCmdWithoutJob" xml:space="preserve">
+    <value>コマンドまたはスクリプトの実行がビジー状態のセッションに入りました。出力はコンソールに表示されます。 実行中のコマンドの完了を待つか、Ctrl-C を押してキャンセルし、入力プロンプトを表示します。
+</value>
+  </data>
+  <data name="RunningCmdDebugStop" xml:space="preserve">
+    <value>実行中のコマンドまたはスクリプト内のデバッグ ブレークポイントで現在停止しているセッションに入りました。 PowerShell コマンド ライン デバッガーを使用して、デバッグを続行してください。
+</value>
+  </data>
+  <data name="RunspaceNotLocal" xml:space="preserve">
+    <value>DefaultRunspace は LocalRunspace である必要があります</value>
+  </data>
+  <data name="PrimaryRunspaceAlreadySet" xml:space="preserve">
+    <value>静的な PrimaryRunspace プロパティは 1 回しか設定できず、既に設定されています。</value>
+  </data>
+</root>

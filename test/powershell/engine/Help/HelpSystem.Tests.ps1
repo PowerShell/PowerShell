@@ -16,7 +16,8 @@ $script:cmdletsToSkip = @(
     "Get-ExperimentalFeature",
     "Enable-ExperimentalFeature",
     "Disable-ExperimentalFeature",
-    "Get-PSSubsystem"
+    "Get-PSSubsystem",
+    "Switch-Process"
 )
 
 function UpdateHelpFromLocalContentPath {
@@ -29,7 +30,8 @@ function UpdateHelpFromLocalContentPath {
         throw "Unable to find help content at '$helpContentPath'"
     }
 
-    Update-Help -Module $ModuleName -SourcePath $helpContentPath -Force -ErrorAction Stop -Scope $Scope
+    # Test files are 'en-US', set explicit culture so test does not fail on non-US systems
+    Update-Help -Module $ModuleName -SourcePath $helpContentPath -UICulture 'en-US' -Force -ErrorAction Stop -Scope $Scope
 }
 
 function GetCurrentUserHelpRoot {
@@ -41,6 +43,16 @@ function GetCurrentUserHelpRoot {
     }
 
     return $userHelpRoot
+}
+
+Describe 'Validate HelpInfo type' -Tags @('CI') {
+
+    It 'Category should be a string' {
+        $help = Get-Help *
+        $category = $help | ForEach-Object { $_.Category.GetType().FullName } | Select-Object -Unique
+        $category.Count | Should -Be 1 -Because 'All help categories should be strings, >1 indicates a type mismatch'
+        $category | Should -BeExactly 'System.String'
+    }
 }
 
 Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @('CI') {
@@ -57,6 +69,10 @@ Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @(
 Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') {
 
     It "Help doesn't fail when strict mode is on" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
 
         $help = & {
             # run in nested scope to keep strict mode from affecting other tests
@@ -96,13 +112,22 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
             $help.Description | Out-String | Should -Match $cmdletName
             $help.Examples | Out-String | Should -Match $cmdletName
         }
+
+        It "Validate 'Aliases' is present in help content formatting" {
+            ## The parameter help content should be formatted with the following section:
+            ##   Accept pipeline input?       xxxx
+            ##   Aliases                      NoOverwrite
+            ##   Accept wildcard characters?  xxxx
+            $output = Get-Help Import-Module -Parameter NoClobber | Out-String
+            $output | Should -Match "Accept pipeline input\?.*\n\s+Aliases\s+NoOverwrite.*\n\s+Accept wildcard characters\?.*"
+        }
     }
 }
 
 Describe "Testing Get-Help Progress" -Tags @('Feature') {
     It "Last ProgressRecord should be Completed" {
         try {
-            $j = Start-Job { Get-Help DoesNotExist }
+            $j = Start-Job { Get-Help ([guid]::NewGuid().ToString("N")) }
             $j | Wait-Job
             $j.ChildJobs[0].Progress[-1].RecordType | Should -Be ([System.Management.Automation.ProgressRecordType]::Completed)
         }
@@ -300,10 +325,6 @@ Describe "Get-Help should find help info within help files" -Tags @('CI') {
 
 Describe "Get-Help should find pattern help files" -Tags "CI" {
 
-    # There is a bug specific to Travis CI that suspends the test if "get-help" is used to search pattern string. This doesn't repro locally.
-    # This occurs even if Unix system just returns "Directory.GetFiles(path, pattern);" as the windows' code does.
-    # Since there's currently no way to get the vm from Travis CI and the test PASSES locally on both Ubuntu and MacOS, excluding pattern test under Unix system.
-
     BeforeAll {
         $helpFile1 = "about_testCase1.help.txt"
         $helpFile2 = "about_testCase.2.help.txt"
@@ -337,7 +358,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
         @{command = {Get-Help about_testCas?.2*}; testname = "test ?, * pattern with dot"; result = "about_test2"}
     )
 
-    It "Get-Help should find pattern help files - <testname>" -TestCases $testcases -Pending: (-not $IsWindows) {
+    It "Get-Help should find pattern help files - <testname>" -TestCases $testcases {
         param (
             $command,
             $result
@@ -396,16 +417,28 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
 
 Describe "help function uses full view by default" -Tags "CI" {
     It "help should return full view without -Full switch" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
     }
 
     It "help should return full view even with -Full switch" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
     }
 
     It "help should not append -Full when not using AllUsersView parameter set" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -BeNullOrEmpty
     }
@@ -575,7 +608,9 @@ Describe "Help failure cases" -Tags Feature {
     ) {
         param($command)
 
-        { & $command DoesNotExist -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
+        # under some conditions this does not throw, so include what we actually got
+        $helpTopic = [guid]::NewGuid().ToString("N")
+        { & $command $helpTopic -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand" -Because "A help topic was unexpectantly found for $helpTopic"
     }
 }
 
@@ -607,5 +642,74 @@ Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
 
     It 'help renders when using a PAGER with a space in the path' {
         help Get-Command | Should -Be "R2V0LUNvbW1hbmQ="
+    }
+}
+
+Describe 'Update-Help allows partial culture matches' -Tags 'CI' {
+    BeforeAll {
+        function Test-UpdateHelpAux($UICulture, $Pass)
+        {
+            # If null (in system culture tests), omit entirely
+            $CultureArg = $UICulture ? @{ UICulture = $UICulture } : @{}
+            $Args = @{
+                Module = 'Microsoft.PowerShell.Core'
+                SourcePath = Join-Path $PSScriptRoot 'assets'
+                Force = $true
+                ErrorAction = $Pass ? 'Stop' : 'SilentlyContinue'
+                ErrorVariable = 'ErrorVariable'
+            }
+
+            Update-Help @Args @CultureArg
+
+            if (-not $Pass) {
+                $ErrorVariable | Should -Match 'Failed to update Help for the module.*'
+            }
+        }
+    }
+
+    AfterEach {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('CurrentUICulture', $null)
+    }
+
+    It 'Checks culture match against en-US: <UICulture>' -TestCases @(
+        @{ UICulture = 'en-US' }
+        @{ UICulture = 'en' }
+        @{ UICulture = 'en-GB'; Pass = $false }
+        @{ UICulture = 'de-DE'; Pass = $false }
+    ) {
+        param($UICulture, $Pass = $true)
+
+        Test-UpdateHelpAux $UICulture $Pass
+    }
+
+    # When using system culture, "en-GB" will use "en" as fallback, so passes
+    It 'Checks system culture match against en-US: <UICulture>' -TestCases @(
+        @{ UICulture = 'en-US' }
+        @{ UICulture = 'en' }
+        @{ UICulture = 'en-GB' }
+        @{ UICulture = 'de-DE'; Pass = $false }
+    ) {
+        param($UICulture, $Pass = $true)
+
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('CurrentUICulture', [System.Globalization.CultureInfo]::new($UICulture))
+        Test-UpdateHelpAux $null $Pass
+    }
+}
+
+Describe 'InputTypes accurately describe pipelinable input' {
+    BeforeAll {
+        function invoke-inputtypetest {
+            [CmdletBinding()]
+            param (
+            [Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true)][string]$a,
+            [Parameter(Position=1,ValueFromRemainingArguments=$true)][object[]]$c)
+            Process { "$a $c" }
+        }
+    }
+
+    It 'Should have only 1 input type' {
+        $inputTypes = (Get-Help -full invoke-inputtypetest).inputtypes.inputtype.type.name.trim().split("`n")
+        $inputTypes.Count | Should -Be 1
+        $inputTypes | Should -Be "System.String"
     }
 }

@@ -269,10 +269,10 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// Helper method for asynchronous invoke
-        ///<returns>Unhandled FlowControl exception if InvocationSettings.ExposeFlowControlExceptions is true.</returns>
-        ///</summary>
+        /// </summary>
+        /// <returns>Unhandled FlowControl exception if InvocationSettings.ExposeFlowControlExceptions is true.</returns>
         private FlowControlException InvokeHelper()
         {
             FlowControlException flowControlException = null;
@@ -487,10 +487,7 @@ namespace System.Management.Automation.Runspaces
                     }
 
                     PSLocalEventManager eventManager = LocalRunspace.Events as PSLocalEventManager;
-                    if (eventManager != null)
-                    {
-                        eventManager.ProcessPendingActions();
-                    }
+                    eventManager?.ProcessPendingActions();
 
                     // restore the trap state...
                     this.LocalRunspace.ExecutionContext.PropagateExceptionsToEnclosingStatementBlock = oldTrapState;
@@ -733,7 +730,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Stop the running pipeline.
         /// </summary>
-        /// <param name="syncCall">If true pipeline is stoped synchronously
+        /// <param name="syncCall">If true pipeline is stopped synchronously
         /// else asynchronously.</param>
         protected override void ImplementStop(bool syncCall)
         {
@@ -972,7 +969,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// This method sets streams to their orignal states from execution context.
+        /// This method sets streams to their original states from execution context.
         /// This is done when Pipeline is completed/failed/stopped ie., termination state.
         /// </summary>
         private void ClearStreams()
@@ -1070,9 +1067,9 @@ namespace System.Management.Automation.Runspaces
         /// ExecutionContext, if it available in TLS
         /// Null, if ExecutionContext is not available in TLS
         /// </returns>
-        internal static System.Management.Automation.ExecutionContext GetExecutionContextFromTLS()
+        internal static ExecutionContext GetExecutionContextFromTLS()
         {
-            System.Management.Automation.Runspaces.Runspace runspace = Runspace.DefaultRunspace;
+            Runspace runspace = Runspace.DefaultRunspace;
             if (runspace == null)
             {
                 return null;

@@ -44,7 +44,6 @@ namespace System.Management.Automation
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
     [TypeDescriptionProvider(typeof(PSObjectTypeDescriptionProvider))]
-    [Serializable]
     public class PSObject : IFormattable, IComparable, ISerializable, IDynamicMetaObjectProvider
     {
         #region constructors
@@ -490,6 +489,7 @@ namespace System.Management.Automation
 
             if (result == null)
             {
+#if !UNIX
                 if (objectType.IsCOMObject)
                 {
                     // All WinRT types are COM types.
@@ -526,6 +526,9 @@ namespace System.Management.Automation
                 {
                     result = PSObject.s_dotNetInstanceAdapterSet;
                 }
+#else
+                result = PSObject.s_dotNetInstanceAdapterSet;
+#endif
             }
 
             var existingOrNew = s_adapterMapping.GetOrAdd(objectType, result);
@@ -589,7 +592,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
-            if (!(info.GetValue("CliXml", typeof(string)) is string serializedData))
+            if (info.GetValue("CliXml", typeof(string)) is not string serializedData)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
@@ -674,13 +677,10 @@ namespace System.Management.Automation
                 {
                     lock (_lockObject)
                     {
-                        if (_instanceMembers == null)
-                        {
-                            _instanceMembers =
-                                s_instanceMembersResurrectionTable.GetValue(
-                                    GetKeyForResurrectionTables(this),
-                                    _ => new PSMemberInfoInternalCollection<PSMemberInfo>());
-                        }
+                        _instanceMembers ??=
+                            s_instanceMembersResurrectionTable.GetValue(
+                                GetKeyForResurrectionTables(this),
+                                _ => new PSMemberInfoInternalCollection<PSMemberInfo>());
                     }
                 }
 
@@ -721,10 +721,7 @@ namespace System.Management.Automation
                 {
                     lock (_lockObject)
                     {
-                        if (_adapterSet == null)
-                        {
-                            _adapterSet = GetMappedAdapter(_immediateBaseObject, GetTypeTable());
-                        }
+                        _adapterSet ??= GetMappedAdapter(_immediateBaseObject, GetTypeTable());
                     }
                 }
 
@@ -743,10 +740,7 @@ namespace System.Management.Automation
                 {
                     lock (_lockObject)
                     {
-                        if (_members == null)
-                        {
-                            _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_memberCollection);
-                        }
+                        _members ??= new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_memberCollection);
                     }
                 }
 
@@ -765,10 +759,7 @@ namespace System.Management.Automation
                 {
                     lock (_lockObject)
                     {
-                        if (_properties == null)
-                        {
-                            _properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this, s_propertyCollection);
-                        }
+                        _properties ??= new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this, s_propertyCollection);
                     }
                 }
 
@@ -787,10 +778,7 @@ namespace System.Management.Automation
                 {
                     lock (_lockObject)
                     {
-                        if (_methods == null)
-                        {
-                            _methods = new PSMemberInfoIntegratingCollection<PSMethodInfo>(this, s_methodCollection);
-                        }
+                        _methods ??= new PSMemberInfoIntegratingCollection<PSMethodInfo>(this, s_methodCollection);
                     }
                 }
 
@@ -992,7 +980,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static object Base(object obj)
         {
-            if (!(obj is PSObject mshObj))
+            if (obj is not PSObject mshObj)
             {
                 return obj;
             }
@@ -1076,7 +1064,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static object GetKeyForResurrectionTables(object obj)
         {
-            if (!(obj is PSObject pso))
+            if (obj is not PSObject pso)
             {
                 return obj;
             }
@@ -1623,7 +1611,7 @@ namespace System.Management.Automation
             bool needToReAddInstanceMembersAndTypeNames = !object.ReferenceEquals(GetKeyForResurrectionTables(this), GetKeyForResurrectionTables(returnValue));
             if (needToReAddInstanceMembersAndTypeNames)
             {
-                Diagnostics.Assert(!returnValue.InstanceMembers.Any(), "needToReAddInstanceMembersAndTypeNames should mean that the new object has a fresh/empty list of instance members");
+                Diagnostics.Assert(returnValue.InstanceMembers.Count == 0, "needToReAddInstanceMembersAndTypeNames should mean that the new object has a fresh/empty list of instance members");
                 foreach (PSMemberInfo member in this.InstanceMembers)
                 {
                     if (member.IsHidden)
@@ -1863,7 +1851,7 @@ namespace System.Management.Automation
                 settings.ReplicateInstance(ownerObject);
             }
 
-            if (!(settings.Members[noteName] is PSNoteProperty note))
+            if (settings.Members[noteName] is not PSNoteProperty note)
             {
                 return defaultValue;
             }
@@ -2059,7 +2047,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="value">Object which is set as core.</param>
         /// <param name="overrideTypeInfo">If true, overwrite the type information.</param>
-        ///<remarks>This method is to be used only by Serialization code</remarks>
+        /// <remarks>This method is to be used only by Serialization code</remarks>
         internal void SetCoreOnDeserialization(object value, bool overrideTypeInfo)
         {
             Diagnostics.Assert(this.ImmediateBaseObjectIsEmpty, "BaseObject should be PSCustomObject for deserialized objects");

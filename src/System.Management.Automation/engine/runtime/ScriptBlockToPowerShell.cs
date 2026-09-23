@@ -230,10 +230,7 @@ namespace System.Management.Automation
         {
             ExecutionContext.CheckStackDepth();
 
-            if (args == null)
-            {
-                args = Array.Empty<object>();
-            }
+            args ??= Array.Empty<object>();
 
             // Perform validations on the ScriptBlock.  GetSimplePipeline can allow for more than one
             // pipeline if the first parameter is true, but Invoke-Command doesn't yet support multiple
@@ -324,16 +321,14 @@ namespace System.Management.Automation
         /// <param name = "scriptBlock">Scriptblock to search.</param>
         /// <param name = "isTrustedInput">True when input is trusted.</param>
         /// <param name = "context">Execution context.</param>
-        /// <param name = "foreachNames">List of foreach command names and aliases.</param>
         /// <returns>Dictionary of using variable map.</returns>
         internal static Dictionary<string, object> GetUsingValuesForEachParallel(
             ScriptBlock scriptBlock,
             bool isTrustedInput,
-            ExecutionContext context,
-            string[] foreachNames)
+            ExecutionContext context)
         {
-            // Using variables for Foreach-Object -Parallel use are restricted to be within the 
-            // Foreach-Object -Parallel call scope. This will filter the using variable map to variables 
+            // Using variables for Foreach-Object -Parallel use are restricted to be within the
+            // Foreach-Object -Parallel call scope. This will filter the using variable map to variables
             // only within the current (outer) Foreach-Object -Parallel call scope.
             var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(scriptBlock.Ast).ToList();
             UsingExpressionAst usingAst = null;
@@ -350,7 +345,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < usingAsts.Count; ++i)
                 {
                     usingAst = (UsingExpressionAst)usingAsts[i];
-                    if (IsInForeachParallelCallingScope(usingAst, foreachNames))
+                    if (IsInForeachParallelCallingScope(scriptBlock.Ast, usingAst))
                     {
                         var value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
                         string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
@@ -363,11 +358,11 @@ namespace System.Management.Automation
                 if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("VariableIsUndefined", StringComparison.Ordinal))
                 {
                     throw InterpreterError.NewInterpreterException(
-                        targetObject: null, 
+                        targetObject: null,
                         exceptionType: typeof(RuntimeException),
-                        errorPosition: usingAst.Extent, 
+                        errorPosition: usingAst.Extent,
                         resourceIdAndErrorId: "UsingVariableIsUndefined",
-                        resourceString: AutomationExceptions.UsingVariableIsUndefined, 
+                        resourceString: AutomationExceptions.UsingVariableIsUndefined,
                         args: rte.ErrorRecord.TargetObject);
                 }
             }
@@ -382,21 +377,65 @@ namespace System.Management.Automation
             return usingValueMap;
         }
 
+        // List of Foreach-Object command names and aliases.
+        // TODO: Look into using SessionState.Internal.GetAliasTable() to find all user created aliases.
+        //       But update Alias command logic to maintain reverse table that lists all aliases mapping
+        //       to a single command definition, for performance.
+        private static readonly string[] forEachNames = new string[]
+        {
+            "ForEach-Object",
+            "foreach",
+            "%"
+        };
+
+        private static bool FindForEachInCommand(CommandAst commandAst)
+        {
+            // Command name is always the first element in the CommandAst.
+            //  e.g., 'foreach -parallel {}'
+            var commandNameElement = (commandAst.CommandElements.Count > 0) ? commandAst.CommandElements[0] : null;
+            if (commandNameElement is StringConstantExpressionAst commandName)
+            {
+                bool found = false;
+                foreach (var foreachName in forEachNames)
+                {
+                    if (commandName.Value.Equals(foreachName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found)
+                {
+                    // Verify this is foreach-object with parallel parameter set.
+                    var bindingResult = StaticParameterBinder.BindCommand(commandAst);
+                    if (bindingResult.BoundParameters.ContainsKey("Parallel"))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Walks the using Ast to verify it is used within a foreach-object -parallel command
         /// and parameter set scope, and not from within a nested foreach-object -parallel call.
         /// </summary>
+        /// <param name="scriptblockAst">Scriptblock Ast containing this using Ast</param>
         /// <param name="usingAst">Using Ast to check.</param>
-        /// <param name-"foreachNames">List of foreach-object command names.</param>
         /// <returns>True if using expression is in current call scope.</returns>
         private static bool IsInForeachParallelCallingScope(
-            UsingExpressionAst usingAst,
-            string[] foreachNames)
+            Ast scriptblockAst,
+            UsingExpressionAst usingAst)
         {
+            Diagnostics.Assert(usingAst != null, "usingAst argument cannot be null.");
+
             /*
                 Example:
                 $Test1 = "Hello"
-                1 | ForEach-Object -Parallel { 
+                1 | ForEach-Object -Parallel {
                    $using:Test1
                    $Test2 = "Goodbye"
                    1 | ForEach-Object -Parallel {
@@ -405,54 +444,23 @@ namespace System.Management.Automation
                    }
                 }
             */
-            Diagnostics.Assert(usingAst != null, "usingAst argument cannot be null.");
 
             // Search up the parent Ast chain for 'Foreach-Object -Parallel' commands.
             Ast currentParent = usingAst.Parent;
-            int foreachNestedCount = 0;
-            while (currentParent != null)
+            while (currentParent != scriptblockAst)
             {
                 // Look for Foreach-Object outer commands
-                if (currentParent is CommandAst commandAst)
+                if (currentParent is CommandAst commandAst &&
+                    FindForEachInCommand(commandAst))
                 {
-                    foreach (var commandElement in commandAst.CommandElements)
-                    {
-                        if (commandElement is StringConstantExpressionAst commandName)
-                        {
-                            bool found = false;
-                            foreach (var foreachName in foreachNames)
-                            {
-                                if (commandName.Value.Equals(foreachName, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            
-                            if (found)
-                            {
-                                // Verify this is foreach-object with parallel parameter set.
-                                var bindingResult = StaticParameterBinder.BindCommand(commandAst);
-                                if (bindingResult.BoundParameters.ContainsKey("Parallel"))
-                                {
-                                    foreachNestedCount++;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (foreachNestedCount > 1)
-                {
-                    // This using expression Ast is outside the original calling scope.
+                    // Using Ast is outside the invoking foreach scope.
                     return false;
                 }
 
                 currentParent = currentParent.Parent;
             }
 
-            return foreachNestedCount == 1;
+            return true;
         }
 
         /// <summary>
@@ -534,7 +542,7 @@ namespace System.Management.Automation
 
                     if (variables != null)
                     {
-                        if (!(usingAst.SubExpression is VariableExpressionAst variableAst))
+                        if (usingAst.SubExpression is not VariableExpressionAst variableAst)
                         {
                             throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                                 usingAst.Extent, "CantGetUsingExpressionValueWithSpecifiedVariableDictionary", AutomationExceptions.CantGetUsingExpressionValueWithSpecifiedVariableDictionary, usingAst.Extent.Text);
@@ -938,7 +946,7 @@ namespace System.Management.Automation
 
             // first character in parameter name must be a dash
             _powershell.AddParameter(
-                string.Format(CultureInfo.InvariantCulture, "-{0}{1}", commandParameterAst.ParameterName, nameSuffix),
+                string.Create(CultureInfo.InvariantCulture, $"-{commandParameterAst.ParameterName}{nameSuffix}"),
                 argument);
         }
     }

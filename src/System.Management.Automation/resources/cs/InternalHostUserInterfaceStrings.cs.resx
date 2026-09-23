@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WriteDebugLineStoppedError" xml:space="preserve">
+    <value>WriteDebug se zastavilo, protože hodnota proměnné DebugPreference byla Stop.</value>
+  </data>
+  <data name="UnsupportedPreferenceError" xml:space="preserve">
+    <value>Hodnota {0} není podporovaná hodnota ActionPreference.</value>
+  </data>
+  <data name="PromptEmptyDescriptionsError" xml:space="preserve">
+    <value>Parametr {0} musí obsahovat alespoň jednu hodnotu.</value>
+  </data>
+  <data name="ShouldContinueYesLabel" xml:space="preserve">
+    <value>&amp;Ano</value>
+  </data>
+  <data name="ShouldContinueYesHelp" xml:space="preserve">
+    <value>Pokračovat.</value>
+  </data>
+  <data name="ShouldContinueYesToAllLabel" xml:space="preserve">
+    <value>An&amp;o pro všechny</value>
+  </data>
+  <data name="ShouldContinueYesToAllHelp" xml:space="preserve">
+    <value>Pokračovat a v této relaci se už znovu neptat, jestli chcete pokračovat.</value>
+  </data>
+  <data name="ShouldContinueNoLabel" xml:space="preserve">
+    <value>&amp;Ne</value>
+  </data>
+  <data name="ShouldContinueNoHelp" xml:space="preserve">
+    <value>Ukončit operaci s chybou.</value>
+  </data>
+  <data name="ShouldContinueNoToAllLabel" xml:space="preserve">
+    <value>Ne pro vš&amp;echny</value>
+  </data>
+  <data name="ShouldContinueNoToAllHelp" xml:space="preserve">
+    <value>Ukončit operaci s chybou. V této relaci nepožadovat obnovení operace.</value>
+  </data>
+  <data name="ShouldContinueSuspendLabel" xml:space="preserve">
+    <value>&amp;Pozastavit</value>
+  </data>
+  <data name="ShouldContinueSuspendHelp" xml:space="preserve">
+    <value>Pozastavit aktuální operaci a přejít na příkazový řádek. Pozastavenou operaci obnovíte zadáním exit.</value>
+  </data>
+  <data name="ShouldContinuePromptMessage" xml:space="preserve">
+    <value>Pokračovat v této operaci?</value>
+  </data>
+  <data name="DefaultChoice" xml:space="preserve">
+    <value>(výchozí hodnota je {0})</value>
+  </data>
+  <data name="DefaultChoicesForMultipleChoices" xml:space="preserve">
+    <value>(výchozí volby jsou {0})</value>
+  </data>
+  <data name="ChoiceMessage" xml:space="preserve">
+    <value>Volba[{0}]: </value>
+  </data>
+  <data name="EmptyChoicesError" xml:space="preserve">
+    <value>{0} musí mít alespoň jeden prvek.</value>
+  </data>
+  <data name="InvalidDefaultChoiceForMultipleSelection" xml:space="preserve">
+    <value>{0} musí být platný index do {1}. {2} není platný index.</value>
+  </data>
+  <data name="InvalidChoiceHotKeyError" xml:space="preserve">
+    <value>Klávesovou zkratku nelze zpracovat, protože otazník (?) nelze použít jako klávesovou zkratku.</value>
+  </data>
+  <data name="VerboseFormatString" xml:space="preserve">
+    <value>PODROBNÉ: {0}</value>
+  </data>
+  <data name="WarningFormatString" xml:space="preserve">
+    <value>UPOZORNĚNÍ: {0}</value>
+  </data>
+  <data name="DebugFormatString" xml:space="preserve">
+    <value>LADIT: {0}</value>
+  </data>
+  <data name="HostNotTranscribing" xml:space="preserve">
+    <value>Hostitel momentálně nezaznamenává přepis.</value>
+  </data>
+  <data name="CommandStartTime" xml:space="preserve">
+    <value>Čas spuštění příkazu: {0}</value>
+  </data>
+  <data name="TranscriptPrologue" xml:space="preserve">
+    <value>**********************
+Začátek přepisu PowerShellu
+Čas zahájení: {0:yyyyMMddHHmmss}
+Uživatelské jméno: {1}
+Uživatel RunAs: {2}
+Název konfigurace: {3}
+Počítač: {4} ({5})
+Hostitelská aplikace: {6}
+ID procesu: {7}
+{8}
+**********************</value>
+  </data>
+  <data name="MinimalTranscriptPrologue" xml:space="preserve">
+    <value>**********************
+Začátek přepisu PowerShellu
+Čas zahájení: {0:yyyyMMddHHmmss}
+**********************</value>
+  </data>
+  <data name="TranscriptEpilogue" xml:space="preserve">
+    <value>**********************
+Konec přepisu PowerShellu
+Čas ukončení: {0:yyyyMMddHHmmss}
+**********************</value>
+  </data>
+  <data name="InvalidTranscriptFilePath" xml:space="preserve">
+    <value>Cesta k souboru {0} odkazuje na adresář.</value>
+  </data>
+</root>

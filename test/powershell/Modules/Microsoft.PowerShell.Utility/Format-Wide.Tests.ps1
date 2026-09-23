@@ -105,4 +105,56 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
         $result | Should -Match " GroupingKey:"
         $result | Should -Match "name2\s+name3"
     }
+
+    Context 'ExcludeProperty parameter' {
+        It 'Should exclude specified property and display first remaining' {
+            # PSCustomObject properties are in definition order: Name, Age, City
+            $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle' }
+            # Exclude Name, should display Age (first remaining)
+            $result = $obj | Format-Wide -ExcludeProperty Name | Out-String
+            $result | Should -Match '30'
+            $result | Should -Not -Match 'Test'
+        }
+
+        It 'Should work with wildcard patterns' {
+            # Properties: Prop1, Prop2, Other
+            $obj = [pscustomobject]@{ Prop1 = 1; Prop2 = 2; Other = 3 }
+            # Exclude Prop*, should display Other (only remaining)
+            $result = $obj | Format-Wide -ExcludeProperty Prop* | Out-String
+            $result | Should -Match '3'
+            $result | Should -Not -Match '1'
+            $result | Should -Not -Match '2'
+        }
+
+        It 'Should work without Property parameter (implies -Property *)' {
+            # Properties: A, B, C
+            $obj = [pscustomobject]@{ A = 1; B = 2; C = 3 }
+            # Exclude B, C - should display A (first remaining)
+            $result = $obj | Format-Wide -ExcludeProperty B, C | Out-String
+            $result | Should -Match '1'
+            $result | Should -Not -Match '2'
+            $result | Should -Not -Match '3'
+        }
+
+        It 'Should display first remaining property after exclusion' {
+            # Properties: Name, Age, City, Country
+            $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle'; Country = 'USA' }
+            # Exclude Name and Age, should display City (first remaining)
+            $result = $obj | Format-Wide -ExcludeProperty Name, Age | Out-String
+            $result | Should -Match 'Seattle'
+            $result | Should -Not -Match 'Test'
+            $result | Should -Not -Match '30'
+            # USA might appear but not in the wide field, or might not appear at all since only first property is shown
+        }
+
+        It 'Should handle multiple excluded properties' {
+            # Properties: A, B, C, D
+            $obj = [pscustomobject]@{ A = 1; B = 2; C = 3; D = 4 }
+            # Exclude A and B, should display C (first remaining)
+            $result = $obj | Format-Wide -ExcludeProperty A, B | Out-String
+            $result | Should -Match '3'
+            $result | Should -Not -Match '1'
+            $result | Should -Not -Match '2'
+        }
+    }
 }

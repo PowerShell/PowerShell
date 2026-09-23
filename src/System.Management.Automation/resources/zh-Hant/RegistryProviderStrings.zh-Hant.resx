@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetItemAction" xml:space="preserve">
+    <value>設定項目</value>
+  </data>
+  <data name="SetItemResourceTemplate" xml:space="preserve">
+    <value>項目: {0} 值: {1}</value>
+  </data>
+  <data name="ClearItemAction" xml:space="preserve">
+    <value>清除項目</value>
+  </data>
+  <data name="ClearItemResourceTemplate" xml:space="preserve">
+    <value>項目: {0}</value>
+  </data>
+  <data name="NewItemAction" xml:space="preserve">
+    <value>新增項目</value>
+  </data>
+  <data name="NewItemResourceTemplate" xml:space="preserve">
+    <value>項目: {0}</value>
+  </data>
+  <data name="RemoveKeyAction" xml:space="preserve">
+    <value>移除機碼</value>
+  </data>
+  <data name="RemoveKeyResourceTemplate" xml:space="preserve">
+    <value>項目: {0}</value>
+  </data>
+  <data name="CopyKeyAction" xml:space="preserve">
+    <value>複製機碼</value>
+  </data>
+  <data name="CopyKeyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} 目的地: {1}</value>
+  </data>
+  <data name="RenameItemAction" xml:space="preserve">
+    <value>重新命名項目</value>
+  </data>
+  <data name="RenameItemResourceTemplate" xml:space="preserve">
+    <value>項目: {0} NewName: {1}</value>
+  </data>
+  <data name="MoveItemAction" xml:space="preserve">
+    <value>移動項目</value>
+  </data>
+  <data name="MoveItemResourceTemplate" xml:space="preserve">
+    <value>項目: {0} 目的地: {1}</value>
+  </data>
+  <data name="SetPropertyAction" xml:space="preserve">
+    <value>設定屬性</value>
+  </data>
+  <data name="SetPropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} 屬性: {1}</value>
+  </data>
+  <data name="ClearPropertyAction" xml:space="preserve">
+    <value>清除屬性</value>
+  </data>
+  <data name="ClearPropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} 屬性: {1}</value>
+  </data>
+  <data name="NewPropertyAction" xml:space="preserve">
+    <value>新增屬性</value>
+  </data>
+  <data name="NewPropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} 屬性: {1}</value>
+  </data>
+  <data name="RemovePropertyAction" xml:space="preserve">
+    <value>移除屬性</value>
+  </data>
+  <data name="RemovePropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} 屬性: {1}</value>
+  </data>
+  <data name="RenamePropertyAction" xml:space="preserve">
+    <value>重新命名屬性。</value>
+  </data>
+  <data name="RenamePropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} SourceProperty: {1} DestinationProperty: {2}</value>
+  </data>
+  <data name="CopyPropertyAction" xml:space="preserve">
+    <value>複製屬性</value>
+  </data>
+  <data name="CopyPropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
+  </data>
+  <data name="MovePropertyAction" xml:space="preserve">
+    <value>移動屬性</value>
+  </data>
+  <data name="MovePropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
+  </data>
+  <data name="ContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>未處理作業。提供的位置不允許此作業。</value>
+  </data>
+  <data name="SourceContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>來源位置不允許此作業。</value>
+  </data>
+  <data name="DestinationContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>目的地位置不允許此作業。</value>
+  </data>
+  <data name="HKLMDriveDescription" xml:space="preserve">
+    <value>本機電腦的組態設定</value>
+  </data>
+  <data name="HKCUDriveDescription" xml:space="preserve">
+    <value>目前使用者的軟體設定</value>
+  </data>
+  <data name="KeyAlreadyExists" xml:space="preserve">
+    <value>此路徑中已存在機碼。</value>
+  </data>
+  <data name="DestinationChildOfSource" xml:space="preserve">
+    <value>無法執行作業，因為目的地路徑是來源路徑的子路徑。</value>
+  </data>
+  <data name="PropertyAlreadyExists" xml:space="preserve">
+    <value>屬性已存在。</value>
+  </data>
+  <data name="PropertyNotAtPath" xml:space="preserve">
+    <value>屬性 {0} 不存在於路徑 {1}。</value>
+  </data>
+  <data name="KeyDoesNotExist" xml:space="preserve">
+    <value>指定路徑的登錄機碼不存在。</value>
+  </data>
+  <data name="TypeParameterBindingFailure" xml:space="preserve">
+    <value>無法繫結參數 'Type'。無法將 "{0}" 轉換成 "{1}"。可用的列舉值為「String、ExpandString、Binary、DWord、MultiString、QWord、Unknown」。</value>
+  </data>
+  <data name="KeyCreatedValueFailed" xml:space="preserve">
+    <value>已建立機碼 {0}，但無法設定預設值。</value>
+  </data>
+  <data name="NewDriveRootDoesNotExist" xml:space="preserve">
+    <value>無法使用指定的根目錄建立磁碟機。根路徑不存在。</value>
+  </data>
+  <data name="RenameItemAlreadyExists" xml:space="preserve">
+    <value>無法重新命名項目，因為同一個容器中已存在名稱相同的項目。</value>
+  </data>
+  <data name="Arg_RegInvalidKeyName" xml:space="preserve">
+    <value>登錄機碼名稱必須以有效的基底機碼名稱開頭。</value>
+  </data>
+  <data name="ArgRegKeyDelHive" xml:space="preserve">
+    <value>子機碼引數無效。</value>
+  </data>
+  <data name="Arg_RegSubKeyAbsent" xml:space="preserve">
+    <value>無法刪除子機碼樹狀，因為子機碼不存在。</value>
+  </data>
+  <data name="Arg_RegSubKeyValueAbsent" xml:space="preserve">
+    <value>找不到具有該名稱的值。</value>
+  </data>
+  <data name="Arg_EnumIllegalVal" xml:space="preserve">
+    <value>列舉值 {0} 無效。</value>
+  </data>
+  <data name="Arg_Value" xml:space="preserve">
+    <value>必須指定值引數。</value>
+  </data>
+  <data name="Arg_Name" xml:space="preserve">
+    <value>必須指定名稱引數。</value>
+  </data>
+  <data name="Arg_RegBadKeyKind" xml:space="preserve">
+    <value>指定的 RegistryValueKind 為無效的值。</value>
+  </data>
+  <data name="Arg_RegSetStrArrNull" xml:space="preserve">
+    <value>RegistryKey.SetValue 不允許包含 null 字串參考的 String[]。</value>
+  </data>
+  <data name="Arg_RegKeyStrLenBug" xml:space="preserve">
+    <value>登錄子機碼不應超過 255 個字元。</value>
+  </data>
+  <data name="Arg_RegKeyStrEmpty" xml:space="preserve">
+    <value>必須指定非空白的子機碼名稱。</value>
+  </data>
+  <data name="Arg_RegSetMismatchedKind" xml:space="preserve">
+    <value>值物件的型別與指定的 RegistryValueKind 不符，或無法正確轉換該物件。</value>
+  </data>
+  <data name="Arg_RegSetBadArrType" xml:space="preserve">
+    <value>RegistryKey.SetValue 不支援型別為 '{0}' 的陣列。僅支援 Byte[] 和 String[]。</value>
+  </data>
+  <data name="Arg_RegKeyNotFound" xml:space="preserve">
+    <value>指定的登錄機碼不存在。</value>
+  </data>
+  <data name="Arg_RegValueNameStrLenBug" xml:space="preserve">
+    <value>指定的值名稱長度超過 16383 個字元上限。</value>
+  </data>
+  <data name="Arg_ValueDataLenBug" xml:space="preserve">
+    <value>指定的值資料大小超過 1 MB 上限。</value>
+  </data>
+  <data name="ArgumentException_RegSubKeyAbsent" xml:space="preserve">
+    <value>指定的登錄子機碼不存在。</value>
+  </data>
+  <data name="Argument_InvalidRegistryKeyPermissionCheck" xml:space="preserve">
+    <value>指定的 RegistryKeyPermissionCheck 值無效。</value>
+  </data>
+  <data name="InvalidOperation_RegRemoveSubKey" xml:space="preserve">
+    <value>登錄機碼有子機碼; 此方法不支援遞迴移除。</value>
+  </data>
+  <data name="InvalidOperation_NeedTransaction" xml:space="preserve">
+    <value>無法在沒有 Transaction.Current 或指定交易的情況下建立 KTM 控制代碼。</value>
+  </data>
+  <data name="InvalidOperation_MustUseSameTransaction" xml:space="preserve">
+    <value>指定的交易或 Transaction.Current 必須與用來建立或開啟此 TransactedRegistryKey 的交易相符。</value>
+  </data>
+  <data name="InvalidOperation_NotAssociatedWithTransaction" xml:space="preserve">
+    <value>TransactedRegistryKey 物件與交易沒有關聯，因為它是針對預先定義的機碼。</value>
+  </data>
+  <data name="Security_RegistryPermission" xml:space="preserve">
+    <value>不允許要求的登錄存取。</value>
+  </data>
+  <data name="UnauthorizedAccess_RegistryKeyGeneric_Key" xml:space="preserve">
+    <value>存取登錄機碼 '{0}' 遭拒。</value>
+  </data>
+  <data name="UnauthorizedAccess_RegistryNoWrite" xml:space="preserve">
+    <value>無法寫入登錄機碼。</value>
+  </data>
+  <data name="ObjectDisposed_RegKeyClosed" xml:space="preserve">
+    <value>無法存取已關閉的登錄機碼。</value>
+  </data>
+  <data name="UnknownError_Num" xml:space="preserve">
+    <value>未知的錯誤: {0}。</value>
+  </data>
+  <data name="NotSupported_KernelTransactions" xml:space="preserve">
+    <value>此平台不支援登錄交易。</value>
+  </data>
+  <data name="AccessControl_InvalidHandle" xml:space="preserve">
+    <value>指定的控制代碼無效。</value>
+  </data>
+</root>

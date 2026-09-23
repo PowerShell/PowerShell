@@ -22,10 +22,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterSetInfo(CommandParameterSetInfo other)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             this.Name = other.Name;
             this.IsDefault = other.IsDefault;
@@ -41,10 +38,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterSetInfo(PSObject other)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             this.Name = other.Members["Name"].Value as string;
             this.IsDefault = (bool)(other.Members["IsDefault"].Value);

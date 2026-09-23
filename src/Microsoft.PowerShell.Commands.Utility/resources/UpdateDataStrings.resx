@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -134,9 +134,6 @@
   </data>
   <data name="CannotUpdateMemberType" xml:space="preserve">
     <value>Cannot update a member with type "{0}". Specify a different type for the MemberType parameter.</value>
-  </data>
-  <data name="SerializationDepthNegative" xml:space="preserve">
-    <value>The value of the SerializationDepth property should not be negative.</value>
   </data>
   <data name="ShouldBeSpecified" xml:space="preserve">
     <value>The {0} parameter is required for the type "{1}". Please specify the {0} parameter.</value>

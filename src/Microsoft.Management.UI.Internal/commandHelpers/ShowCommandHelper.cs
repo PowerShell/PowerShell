@@ -21,7 +21,7 @@ using Microsoft.PowerShell.Commands.ShowCommandExtension;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Implements thw WPF window part of the show-command cmdlet.
+    /// Implements the WPF window part of the show-command cmdlet.
     /// </summary>
     internal class ShowCommandHelper : IDisposable
     {
@@ -672,7 +672,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets an error message to be displayed when failed to import a module.
         /// </summary>
-        /// <param name="command">Command belongiong to the module to import.</param>
+        /// <param name="command">Command belonging to the module to import.</param>
         /// <param name="module">Module to import.</param>
         /// <param name="error">Error importing the module.</param>
         /// <returns>An error message to be displayed when failed to import a module.</returns>
@@ -710,7 +710,8 @@ Function PSGetSerializedShowCommandInfo
         /// <returns>The host window, if it is present or null if it is not.</returns>
         internal static Window GetHostWindow(PSCmdlet cmdlet)
         {
-            PSPropertyInfo windowProperty = cmdlet.Host.PrivateData.Properties["Window"];
+            // The value of 'PrivateData' property may be null for the default host or a custom host.
+            PSPropertyInfo windowProperty = cmdlet.Host.PrivateData?.Properties["Window"];
             if (windowProperty == null)
             {
                 return null;
@@ -1200,7 +1201,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Sets a succesfull dialog result and then closes the window.
+        /// Sets a successful dialog result and then closes the window.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>

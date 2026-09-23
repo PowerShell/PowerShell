@@ -92,10 +92,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand = new Command(command, false);
             _commands.Add(_currentCommand);
@@ -136,10 +133,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand = new Command(cmdlet, false, useLocalScope);
             _commands.Add(_currentCommand);
@@ -178,10 +172,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(script));
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand = new Command(script, true);
             _commands.Add(_currentCommand);
@@ -223,10 +214,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(script));
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand = new Command(script, true, useLocalScope);
             _commands.Add(_currentCommand);
@@ -261,10 +249,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand = command;
             _commands.Add(_currentCommand);
@@ -309,10 +294,7 @@ namespace System.Management.Automation
                                                                  new object[] { "PSCommand" });
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand.Parameters.Add(parameterName, value);
             return this;
@@ -352,10 +334,7 @@ namespace System.Management.Automation
                                                                  new object[] { "PSCommand" });
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand.Parameters.Add(parameterName, true);
             return this;
@@ -372,10 +351,7 @@ namespace System.Management.Automation
                                                                  new object[] { "PSCommand" });
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand.Parameters.Add(parameter);
             return this;
@@ -415,10 +391,7 @@ namespace System.Management.Automation
                                                                  new object[] { "PSCommand" });
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand.Parameters.Add(null, value);
             return this;

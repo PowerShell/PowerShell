@@ -2,9 +2,25 @@
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's System.Management.Automation project</Description>
-    <NoWarn>$(NoWarn);CS1570;CS1734;CA1416</NoWarn>
+    <NoWarn>$(NoWarn);CS1570;CS1734;CA1416;CA2022</NoWarn>
     <AssemblyName>System.Management.Automation</AssemblyName>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- we persist source generator files under 'gen' folder so that they are visible to IDEs -->
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>gen\SourceGenerated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- these properties are declared in 'PowerShell.Common.props' and used by source generator -->
+    <CompilerVisibleProperty Include="ProductVersion" />
+    <CompilerVisibleProperty Include="PSCoreBuildVersion" />
+    <CompilerVisibleProperty Include="PowerShellVersion" />
+    <CompilerVisibleProperty Include="ReleaseTag" />
+
+    <ProjectReference Include="SourceGenerators\PSVersionInfoGenerator\PSVersionInfoGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
@@ -12,60 +28,38 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <!-- the Application Insights package -->
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.18.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="6.0.0-rc.1.21451.13" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0-rc.1.21451.13" />
-    <PackageReference Include="System.DirectoryServices" Version="6.0.0-rc.1.21451.13" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" />
-    <PackageReference Include="System.Management" Version="6.0.0-rc.1.21451.13" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0-rc.1.21451.13" />
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.0-preview.5.21301.5" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.0-rc.1.21451.13" />
-    <PackageReference Include="System.Security.Permissions" Version="6.0.0-rc.1.21451.13" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0-rc.1.21451.13" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="11.0.0-rc.1.26425.128" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="11.0.0-rc.1.26425.128" />
+    <PackageReference Include="System.DirectoryServices" Version="11.0.0-rc.1.26425.128" />
+    <PackageReference Include="System.Management" Version="11.0.0-rc.1.26425.128" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0-rc.1.26425.128" />
+    <PackageReference Include="System.Security.Permissions" Version="11.0.0-rc.1.26425.128" />
     <!-- the following package(s) are from the powershell org -->
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.2.0-preview.2" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="700.0.0" />
+    <!-- Signing APIs -->
+    <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
-    <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
-    <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
-    <Compile Remove="engine\TransactedString.cs" />
-    <Compile Remove="engine\TransactionManager.cs" />
-    <Compile Remove="engine\hostifaces\NativeCultureResolver.cs" />
-    <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
-    <Compile Remove="engine\remoting\commands\ResumeJob.cs" />
-    <Compile Remove="engine\remoting\commands\SuspendJob.cs" />
-    <Compile Remove="logging\eventlog\EventLogLogProvider.cs" />
-    <Compile Remove="namespaces\SafeTransactionHandle.cs" />
-    <Compile Remove="namespaces\SafeRegistryHandle.cs" />
-    <Compile Remove="namespaces\TransactedRegistry.cs" />
-    <Compile Remove="namespaces\TransactedRegistryKey.cs" />
-    <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />
-    <Compile Remove="utils\BackgroundDispatcher.cs" />
-    <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
-    <Compile Remove="utils\perfCounters\CounterSetRegistrarBase.cs" />
-    <Compile Remove="utils\perfCounters\PSPerfCountersMgr.cs" />
-    <Compile Remove="gen\CoreMshSnapinResources.cs" />
-    <Compile Remove="gen\ErrorPackageRemoting.cs" />
+    <!-- exclude code of source generators from compilation and IDEs (e.g. vscode and visual studio) -->
+    <Compile Remove="SourceGenerators\**\*.cs" />
+    <!-- exclude the generated code for EventResource.resx, which is not directly used -->
     <Compile Remove="gen\EventResource.cs" />
 
-    <EmbeddedResource Remove="resources\CoreMshSnapinResources.resx" />
-    <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
+    <EmbeddedResource Include="cimSupport\cmdletization\xml\cmdlets-over-objects.xsd" LogicalName="cmdlets-over-objects.xsd" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
-    <Compile Remove="engine\ExtraAdapter.cs" />
-    <Compile Remove="engine\ManagementObjectAdapter.cs" />
+    <Compile Remove="engine\COM\**\*.cs" />
     <Compile Remove="engine\ComInterop\**\*.cs" />
+    <Compile Remove="engine\ExtraAdapter.cs" />
+    <Compile Remove="engine\Interop\Windows\**\*.cs" />
+    <Compile Remove="engine\ManagementObjectAdapter.cs" />
     <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
     <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
     <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
@@ -73,4 +67,13 @@
     <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
+    <Compile Remove="engine\Interop\Unix\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

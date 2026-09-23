@@ -19,9 +19,9 @@ Describe "Built-in type information tests" -Tag "CI" {
 
     It "Should have correct number of built-in type items in type table" {
         $expected = if ($IsWindows) {
-            273
-        } else {
             272
+        } else {
+            271
         }
         $types.Count | Should -BeExactly $expected
     }

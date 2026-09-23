@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Microsoft.Management.UI.Internal
@@ -15,10 +14,30 @@ namespace Microsoft.Management.UI.Internal
     /// The ValidatingValueBase class provides basic services for base
     /// classes to support validation via the IDataErrorInfo interface.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged
+    public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged, IDeepCloneable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatingValueBase"/> class.
+        /// </summary>
+        protected ValidatingValueBase()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the  <see cref="ValidatingValueBase"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        protected ValidatingValueBase(ValidatingValueBase source)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            validationRules.EnsureCapacity(source.validationRules.Count);
+            foreach (var rule in source.validationRules)
+            {
+                validationRules.Add((DataErrorInfoValidationRule)rule.DeepClone());
+            }
+        }
+
         #region Properties
 
         #region ValidationRules
@@ -27,7 +46,6 @@ namespace Microsoft.Management.UI.Internal
         private ReadOnlyCollection<DataErrorInfoValidationRule> readonlyValidationRules;
         private bool isValidationRulesCollectionDirty = true;
 
-        [field: NonSerialized]
         private DataErrorInfoValidationResult cachedValidationResult;
 
         /// <summary>
@@ -83,10 +101,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                if (string.IsNullOrEmpty(columnName))
-                {
-                    throw new ArgumentNullException("columnName");
-                }
+                ArgumentException.ThrowIfNullOrEmpty(columnName);
 
                 this.UpdateValidationResult(columnName);
                 return this.GetValidationResult().ErrorMessage;
@@ -124,7 +139,6 @@ namespace Microsoft.Management.UI.Internal
         /// <remarks>
         /// The listeners attached to this event are not serialized.
         /// </remarks>
-        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion PropertyChanged
@@ -132,6 +146,9 @@ namespace Microsoft.Management.UI.Internal
         #endregion Events
 
         #region Public Methods
+
+        /// <inheritdoc cref="IDeepCloneable.DeepClone()" />
+        public abstract object DeepClone();
 
         #region AddValidationRule
 
@@ -141,10 +158,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="rule">The validation rule to add.</param>
         public void AddValidationRule(DataErrorInfoValidationRule rule)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
 
             this.validationRules.Add(rule);
 
@@ -162,10 +176,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="rule">The rule to remove.</param>
         public void RemoveValidationRule(DataErrorInfoValidationRule rule)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
 
             this.validationRules.Remove(rule);
 
@@ -224,7 +235,7 @@ namespace Microsoft.Management.UI.Internal
                 DataErrorInfoValidationResult result = rule.Validate(value, cultureInfo);
                 if (result == null)
                 {
-                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "DataErrorInfoValidationResult not returned by ValidationRule: {0}", rule.ToString()));
+                    throw new InvalidOperationException(string.Create(CultureInfo.CurrentCulture, $"DataErrorInfoValidationResult not returned by ValidationRule: {rule}"));
                 }
 
                 if (!result.IsValid)
@@ -261,14 +272,12 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         protected void NotifyPropertyChanged(string propertyName)
         {
-            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             PropertyChangedEventHandler eh = this.PropertyChanged;
 
             if (eh != null)
             {
                 eh(this, new PropertyChangedEventArgs(propertyName));
             }
-            #pragma warning restore IDE1005
         }
 
         #endregion NotifyPropertyChanged

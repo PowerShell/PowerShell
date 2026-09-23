@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -14,60 +15,112 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
     /// Base class providing support for string manipulation.
-    /// This class is a tear off class provided by the LineOutput class
-    ///
-    /// Assumptions (in addition to the assumptions made for LineOutput):
-    /// - characters map to one or more character cells
-    ///
-    /// NOTE: we provide a base class that is valid for devices that have a
-    /// 1:1 mapping between a UNICODE character and a display cell.
+    /// This class is a tear off class provided by the LineOutput class.
     /// </summary>
     internal class DisplayCells
     {
-        internal virtual int Length(string str)
+        /// <summary>
+        /// Calculate the buffer cell length of the given string.
+        /// </summary>
+        /// <param name="str">String that may contain VT escape sequences.</param>
+        /// <returns>Number of buffer cells the string needs to take.</returns>
+        internal int Length(string str)
         {
             return Length(str, 0);
         }
 
+        /// <summary>
+        /// Calculate the buffer cell length of the given string.
+        /// </summary>
+        /// <param name="str">String that may contain VT escape sequences.</param>
+        /// <param name="offset">
+        /// When the string doesn't contain VT sequences, it's the starting index.
+        /// When the string contains VT sequences, it means starting from the 'n-th' char that doesn't belong to a escape sequence.</param>
+        /// <returns>Number of buffer cells the string needs to take.</returns>
         internal virtual int Length(string str, int offset)
         {
-            int length = 0;
-
-            foreach (char c in str)
+            if (string.IsNullOrEmpty(str))
             {
-                length += LengthInBufferCells(c);
+                return 0;
             }
 
-            return length - offset;
+            var valueStrDec = new ValueStringDecorated(str);
+            if (valueStrDec.IsDecorated)
+            {
+                str = valueStrDec.ToString(OutputRendering.PlainText);
+            }
+
+            int length = 0;
+            for (; offset < str.Length; offset++)
+            {
+                length += CharLengthInBufferCells(str[offset]);
+            }
+
+            return length;
         }
 
-        internal virtual int Length(char character) { return 1; }
-
-        internal virtual int GetHeadSplitLength(string str, int displayCells)
+        /// <summary>
+        /// Calculate the buffer cell length of the given character.
+        /// </summary>
+        /// <param name="character"></param>
+        /// <returns>Number of buffer cells the character needs to take.</returns>
+        internal virtual int Length(char character)
         {
-            return GetHeadSplitLength(str, 0, displayCells);
+            return CharLengthInBufferCells(character);
         }
 
-        internal virtual int GetHeadSplitLength(string str, int offset, int displayCells)
+        /// <summary>
+        /// Truncate from the tail of the string.
+        /// </summary>
+        /// <param name="str">String that may contain VT escape sequences.</param>
+        /// <param name="displayCells">Number of buffer cells to fit in.</param>
+        /// <returns>Number of non-escape-sequence characters from head of the string that can fit in the space.</returns>
+        internal int TruncateTail(string str, int displayCells)
         {
-            int len = str.Length - offset;
-            return (len < displayCells) ? len : displayCells;
+            return TruncateTail(str, offset: 0, displayCells);
         }
 
-        internal virtual int GetTailSplitLength(string str, int displayCells)
+        /// <summary>
+        /// Truncate from the tail of the string.
+        /// </summary>
+        /// <param name="str">String that may contain VT escape sequences.</param>
+        /// <param name="offset">
+        /// When the string doesn't contain VT sequences, it's the starting index.
+        /// When the string contains VT sequences, it means starting from the 'n-th' char that doesn't belong to a escape sequence.</param>
+        /// <param name="displayCells">Number of buffer cells to fit in.</param>
+        /// <returns>Number of non-escape-sequence characters from head of the string that can fit in the space.</returns>
+        internal int TruncateTail(string str, int offset, int displayCells)
         {
-            return GetTailSplitLength(str, 0, displayCells);
+            var valueStrDec = new ValueStringDecorated(str);
+            if (valueStrDec.IsDecorated)
+            {
+                str = valueStrDec.ToString(OutputRendering.PlainText);
+            }
+
+            return GetFitLength(str, offset, displayCells, startFromHead: true);
         }
 
-        internal virtual int GetTailSplitLength(string str, int offset, int displayCells)
+        /// <summary>
+        /// Truncate from the head of the string.
+        /// </summary>
+        /// <param name="str">String that may contain VT escape sequences.</param>
+        /// <param name="displayCells">Number of buffer cells to fit in.</param>
+        /// <returns>Number of non-escape-sequence characters from head of the string that should be skipped.</returns>
+        internal int TruncateHead(string str, int displayCells)
         {
-            int len = str.Length - offset;
-            return (len < displayCells) ? len : displayCells;
+            var valueStrDec = new ValueStringDecorated(str);
+            if (valueStrDec.IsDecorated)
+            {
+                str = valueStrDec.ToString(OutputRendering.PlainText);
+            }
+
+            int tailCount = GetFitLength(str, offset: 0, displayCells, startFromHead: false);
+            return str.Length - tailCount;
         }
 
         #region Helpers
 
-        protected static int LengthInBufferCells(char c)
+        protected static int CharLengthInBufferCells(char c)
         {
             // The following is based on http://www.cl.cam.ac.uk/~mgk25/c/wcwidth.c
             // which is derived from https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt
@@ -84,7 +137,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                  ((uint)(c - 0xffe0) <= (0xffe6 - 0xffe0)));
 
             // We can ignore these ranges because .Net strings use surrogate pairs
-            // for this range and we do not handle surrogage pairs.
+            // for this range and we do not handle surrogate pairs.
             // (c >= 0x20000 && c <= 0x2fffd) ||
             // (c >= 0x30000 && c <= 0x3fffd)
             return 1 + (isWide ? 1 : 0);
@@ -94,25 +147,26 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Given a string and a number of display cells, it computes how many
         /// characters would fit starting from the beginning or end of the string.
         /// </summary>
-        /// <param name="str">String to be displayed.</param>
+        /// <param name="str">String to be displayed, which doesn't contain any VT sequences.</param>
         /// <param name="offset">Offset inside the string.</param>
         /// <param name="displayCells">Number of display cells.</param>
-        /// <param name="head">If true compute from the head (i.e. k++) else from the tail (i.e. k--).</param>
+        /// <param name="startFromHead">If true compute from the head (i.e. k++) else from the tail (i.e. k--).</param>
         /// <returns>Number of characters that would fit.</returns>
-        protected int GetSplitLengthInternalHelper(string str, int offset, int displayCells, bool head)
+        protected int GetFitLength(string str, int offset, int displayCells, bool startFromHead)
         {
             int filledDisplayCellsCount = 0; // number of cells that are filled in
             int charactersAdded = 0; // number of characters that fit
             int currCharDisplayLen; // scratch variable
 
-            int k = (head) ? offset : str.Length - 1;
-            int kFinal = (head) ? str.Length - 1 : offset;
+            int k = startFromHead ? offset : str.Length - 1;
+            int kFinal = startFromHead ? str.Length - 1 : offset;
             while (true)
             {
-                if ((head && (k > kFinal)) || ((!head) && (k < kFinal)))
+                if ((startFromHead && k > kFinal) || (!startFromHead && k < kFinal))
                 {
                     break;
                 }
+
                 // compute the cell number for the current character
                 currCharDisplayLen = this.Length(str[k]);
 
@@ -121,6 +175,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // if we added this character it would not fit, we cannot continue
                     break;
                 }
+
                 // keep adding, we fit
                 filledDisplayCellsCount += currCharDisplayLen;
                 charactersAdded++;
@@ -132,13 +187,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     break;
                 }
 
-                k = (head) ? (k + 1) : (k - 1);
+                k = startFromHead ? (k + 1) : (k - 1);
             }
 
             return charactersAdded;
         }
-        #endregion
 
+        #endregion
     }
 
     /// <summary>
@@ -194,6 +249,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         ///     string to be written to the device
         /// </param>
         internal abstract void WriteLine(string s);
+
+        /// <summary>
+        /// Write a line of string as raw text to the output device, with no change to the string.
+        /// For example, keeping VT escape sequences intact in it.
+        /// </summary>
+        /// <param name="s">The raw text to be written to the device.</param>
+        internal virtual void WriteRawText(string s) => WriteLine(s);
 
         internal WriteStreamType WriteStream
         {
@@ -325,10 +387,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // check for line breaks
-            string[] lines = StringManipulationHelper.SplitLines(val);
+            List<string> lines = StringManipulationHelper.SplitLines(val);
 
             // process the substrings as separate lines
-            for (int k = 0; k < lines.Length; k++)
+            for (int k = 0; k < lines.Count; k++)
             {
                 // compute the display length of the string
                 int displayLength = _displayCells.Length(lines[k]);
@@ -354,11 +416,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     // the string is still too long to fit, write the first cols characters
                     // and go back for more wraparound
-                    int splitLen = _displayCells.GetHeadSplitLength(s, cols);
-                    WriteLineInternal(s.Substring(0, splitLen), cols);
+                    int headCount = _displayCells.TruncateTail(s, cols);
+                    WriteLineInternal(s.VtSubstring(0, headCount), cols);
 
                     // chop off the first fieldWidth characters, already printed
-                    s = s.Substring(splitLen);
+                    s = s.VtSubstring(headCount);
                     if (_displayCells.Length(s) <= cols)
                     {
                         // if we fit, print the tail of the string and we are done
@@ -376,7 +438,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// Implementation of the ILineOutput interface accepting an instance of a
     /// TextWriter abstract class.
     /// </summary>
-    internal class TextWriterLineOutput : LineOutput
+    internal sealed class TextWriterLineOutput : LineOutput
     {
         #region ILineOutput methods
 
@@ -412,9 +474,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="s"></param>
         internal override void WriteLine(string s)
         {
-            CheckStopProcessing();
+            WriteRawText(PSHostUserInterface.GetOutputString(s, isHost: false));
+        }
 
-            s = PSHostUserInterface.GetOutputString(s, isHost: false);
+        /// <summary>
+        /// Write a raw text by delegating to the writer underneath, with no change to the text.
+        /// For example, keeping VT escape sequences intact in it.
+        /// </summary>
+        /// <param name="s">The raw text to be written to the device.</param>
+        internal override void WriteRawText(string s)
+        {
+            CheckStopProcessing();
 
             if (_suppressNewline)
             {
@@ -425,6 +495,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _writer.WriteLine(s);
             }
         }
+
         #endregion
 
         /// <summary>

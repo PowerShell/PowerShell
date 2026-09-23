@@ -28,6 +28,9 @@ namespace Microsoft.PowerShell
         private const string StableBuildInfoURL = "https://aka.ms/pwsh-buildinfo-stable";
         private const string PreviewBuildInfoURL = "https://aka.ms/pwsh-buildinfo-preview";
 
+        private const int NotificationDelayDays = 7;
+        private const int UpdateCheckBackoffDays = 7;
+
         /// <summary>
         /// The version of new update is persisted using a file, not as the file content, but instead baked in the file name in the following template:
         ///  `update{notification-type}_{version}_{publish-date}` -- held by 's_updateFileNameTemplate',
@@ -57,12 +60,12 @@ namespace Microsoft.PowerShell
         static UpdatesNotification()
         {
             s_notificationType = GetNotificationType();
-            CanNotifyUpdates = s_notificationType != NotificationType.Off;
+            CanNotifyUpdates = s_notificationType != NotificationType.Off
+                && Platform.TryDeriveFromCache(PSVersionInfo.GitCommitId, out s_cacheDirectory);
 
             if (CanNotifyUpdates)
             {
                 s_enumOptions = new EnumerationOptions();
-                s_cacheDirectory = Path.Combine(Platform.CacheDirectory, PSVersionInfo.GitCommitId);
 
                 // Build the template/pattern strings for the configured notification type.
                 string typeNum = ((int)s_notificationType).ToString();
@@ -89,9 +92,18 @@ namespace Microsoft.PowerShell
             if (TryParseUpdateFile(
                     updateFilePath: out _,
                     out SemanticVersion lastUpdateVersion,
-                    lastUpdateDate: out _)
+                    out DateTime lastUpdateDate)
                && lastUpdateVersion != null)
             {
+                DateTime today = DateTime.UtcNow;
+                if ((today - lastUpdateDate).TotalDays < NotificationDelayDays)
+                {
+                    // The update was out less than 1 week ago and it's possible the packages are still rolling out.
+                    // We only show the notification when the update is at least 1 week old, to reduce the chance that
+                    // users see the notification but cannot get the new update when they try to install it.
+                    return;
+                }
+
                 string releaseTag = lastUpdateVersion.ToString();
                 string notificationMsgTemplate = s_notificationType == NotificationType.LTS
                     ? ManagedEntranceStrings.LTSUpdateNotificationMessage
@@ -108,7 +120,7 @@ namespace Microsoft.PowerShell
                 // We calculate how much whitespace we need to make it look nice
                 if (hostUI.SupportsVirtualTerminal)
                 {
-                    // Use Warning Color
+                    // Swaps foreground and background colors.
                     notificationColor = "\x1B[7m";
                     resetColor = "\x1B[0m";
 
@@ -126,6 +138,7 @@ namespace Microsoft.PowerShell
 
                 string notificationMsg = string.Format(CultureInfo.CurrentCulture, notificationMsgTemplate, releaseTag, notificationColor, resetColor, line2Padding, line3Padding);
 
+                hostUI.WriteLine();
                 hostUI.WriteLine(notificationMsg);
             }
         }
@@ -168,7 +181,7 @@ namespace Microsoft.PowerShell
                 out DateTime lastUpdateDate);
 
             DateTime today = DateTime.UtcNow;
-            if (parseSuccess && updateFilePath != null && (today - lastUpdateDate).TotalDays < 7)
+            if (parseSuccess && updateFilePath != null && (today - lastUpdateDate).TotalDays < UpdateCheckBackoffDays)
             {
                 // There is an existing update file, and the last update was less than 1 week ago.
                 // It's unlikely a new version is released within 1 week, so we can skip this check.
@@ -352,7 +365,7 @@ namespace Microsoft.PowerShell
 
             using var client = new HttpClient();
 
-            string userAgent = string.Format(CultureInfo.InvariantCulture, "PowerShell {0}", PSVersionInfo.GitCommitId);
+            string userAgent = string.Create(CultureInfo.InvariantCulture, $"PowerShell {PSVersionInfo.GitCommitId}");
             client.DefaultRequestHeaders.Add("User-Agent", userAgent);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

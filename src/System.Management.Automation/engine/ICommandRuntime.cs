@@ -15,8 +15,8 @@ namespace System.Management.Automation
     /// When a cmdlet is instantiated and run directly, all calls to the stream APIs will be proxied
     /// through to an instance of this class. For example, when a cmdlet calls WriteObject, the
     /// WriteObject implementation on the instance of the class implementing this interface will be
-    /// called. The Monad implementation provides a default implementation of this class for use with
-    /// standalone cmdlets as well as the implementation provided for running in the monad engine itself.
+    /// called. PowerShell implementation provides a default implementation of this class for use with
+    /// standalone cmdlets as well as the implementation provided for running in the engine itself.
     ///
     /// If you do want to run Cmdlet instances standalone and capture their output with more
     /// fidelity than is provided for with the default implementation, then you should create your own
@@ -174,7 +174,7 @@ namespace System.Management.Automation
         /// pipeline execution log.
         ///
         /// If LogPipelineExecutionDetail is turned on, this information will be written
-        /// to monad log under log category "Pipeline execution detail"
+        /// to PowerShell log under log category "Pipeline execution detail"
         /// </remarks>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteDebug(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteVerbose(string)"/>
@@ -457,11 +457,11 @@ namespace System.Management.Automation
         /// It may be displayed by some hosts, but not all.
         /// </param>
         /// <param name="yesToAll">
-        /// true iff user selects YesToAll.  If this is already true,
+        /// true if-and-only-if user selects YesToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return true.
         /// </param>
         /// <param name="noToAll">
-        /// true iff user selects NoToAll.  If this is already true,
+        /// true if-and-only-if user selects NoToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return false.
         /// </param>
         /// <returns>
@@ -592,11 +592,11 @@ namespace System.Management.Automation
         /// the default option selected in the selection menu is 'No'.
         /// </param>
         /// <param name="yesToAll">
-        /// true iff user selects YesToAll.  If this is already true,
+        /// true if-and-only-if user selects YesToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return true.
         /// </param>
         /// <param name="noToAll">
-        /// true iff user selects NoToAll.  If this is already true,
+        /// true if-and-only-if user selects NoToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return false.
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">

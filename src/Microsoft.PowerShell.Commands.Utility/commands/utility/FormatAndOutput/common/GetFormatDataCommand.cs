@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
@@ -129,6 +130,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (ViewDefinition definition in viewdefinitions)
             {
+                this.WriteVerbose(string.Format(CultureInfo.CurrentCulture, GetFormatDataStrings.ProcessViewDefinition, definition.name));
                 if (definition.isHelpFormatter)
                     continue;
 
@@ -139,22 +141,19 @@ namespace Microsoft.PowerShell.Commands
 
                 PSControl control;
 
-                var tableControlBody = definition.mainControl as TableControlBody;
-                if (tableControlBody != null)
+                if (definition.mainControl is TableControlBody tableControlBody)
                 {
                     control = new TableControl(tableControlBody, definition);
                 }
                 else
                 {
-                    var listControlBody = definition.mainControl as ListControlBody;
-                    if (listControlBody != null)
+                    if (definition.mainControl is ListControlBody listControlBody)
                     {
                         control = new ListControl(listControlBody, definition);
                     }
                     else
                     {
-                        var wideControlBody = definition.mainControl as WideControlBody;
-                        if (wideControlBody != null)
+                        if (definition.mainControl is WideControlBody wideControlBody)
                         {
                             control = new WideControl(wideControlBody, definition);
                             if (writeOldWay)

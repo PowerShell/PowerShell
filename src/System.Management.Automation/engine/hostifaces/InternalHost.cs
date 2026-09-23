@@ -448,7 +448,7 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         private IHostSupportsInteractiveSession GetIHostSupportsInteractiveSession()
         {
-            if (!(_externalHostRef.Value is IHostSupportsInteractiveSession host))
+            if (_externalHostRef.Value is not IHostSupportsInteractiveSession host)
             {
                 throw new PSNotImplementedException();
             }
@@ -537,7 +537,10 @@ namespace System.Management.Automation.Internal.Host
         internal void RevertHostRef()
         {
             // nothing to revert if Host reference is not set.
-            if (!IsHostRefSet) { return; }
+            if (!IsHostRefSet)
+            {
+                return;
+            }
 
             _externalHostRef.Revert();
             _internalUIRef.Revert();

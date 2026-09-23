@@ -22,6 +22,23 @@ namespace PSTests.Parallel
             Assert.False(Utils.IsWinPEHost());
         }
 
+        [Theory]
+        [InlineData(long.MinValue, "0 Bytes")]
+        [InlineData(-1, "0 Bytes")]
+        [InlineData(0, "0 Bytes")]
+        [InlineData(1, "1 Bytes")]
+        [InlineData(1024, "1.0 KB")]
+        [InlineData(3000, "2.9 KB")]
+        [InlineData(1024 * 1024, "1.0 MB")]
+        [InlineData(1024 * 1024 * 1024, "1.000 GB")]
+        [InlineData((long)(1024 * 1024 * 1024) * 1024, "1.00000 TB")]
+        [InlineData((long)(1024 * 1024 * 1024) * 1024 * 1024, "1.0000000 PB")]
+        [InlineData(long.MaxValue, "8.000000000 EB")]
+        public static void DisplayHumanReadableFileSize(long bytes, string expected)
+        {
+            Assert.Equal(expected, Utils.DisplayHumanReadableFileSize(bytes));
+        }
+
         [Fact]
         public static void TestHistoryStack()
         {
@@ -145,6 +162,18 @@ namespace PSTests.Parallel
 
             string json = JsonObject.ConvertToJson(hash, in context);
             Assert.Null(json);
+        }
+
+        [Fact]
+        public static void TestEmptyErrorRecordToString()
+        {
+            Assert.Equal(string.Empty, new ErrorRecord(new Exception(string.Empty), null, ErrorCategory.NotSpecified, null).ToString());
+        }
+
+        [Fact]
+        public static void TestNonEmptyErrorRecordToString()
+        {
+            Assert.Equal("test", new ErrorRecord(new Exception("test"), null, ErrorCategory.NotSpecified, null).ToString());
         }
     }
 }

@@ -7,19 +7,19 @@
     PowerShellVersion = "5.0"
     CmdletsToExport   = @()
     FunctionsToExport = @(
-        'Expand-ExePackageEngine'
         'Expand-PSSignedBuild'
-        'Compress-ExePackageEngine'
         'New-DotnetSdkContainerFxdPackage'
-        'New-ExePackage'
-        'New-GlobalToolNupkg'
-        'New-ILNugetPackage'
-        'New-MSIPatch'
+        'Start-PrepForGlobalToolNupkg'
+        'New-GlobalToolNupkgSource'
+        'New-GlobalToolNupkgFromSource'
+        'New-ILNugetPackageSource'
+        'New-ILNugetPackageFromSource'
         'New-PSBuildZip'
         'New-PSSignedBuildZip'
-        'Publish-NugetToMyGet'
         'Start-PSPackage'
+        'Test-PackageManifest'
         'Update-PSSignedBuildFolder'
+        'Get-MacOSPackageIdentifierInfo'
     )
     RootModule        = "packaging.psm1"
     RequiredModules   = @("build")

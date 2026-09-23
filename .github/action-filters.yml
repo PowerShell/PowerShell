@@ -1,0 +1,23 @@
+github: &github
+  - .github/actions/**
+  - .github/workflows/**-ci.yml
+tools: &tools
+  - tools/buildCommon/**
+  - tools/ci.psm1
+props: &props
+  - '**.props'
+tests: &tests
+  - test/powershell/**
+  - test/tools/**
+  - test/xUnit/**
+mainSource: &mainSource
+  - src/**
+buildModule: &buildModule
+  - build.psm1
+source:
+  - *github
+  - *tools
+  - *props
+  - *buildModule
+  - *mainSource
+  - *tests

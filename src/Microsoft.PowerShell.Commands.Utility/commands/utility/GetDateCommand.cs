@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
         /// Allows the user to override the year.
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute(1, 9999)]
+        [ValidateRange(1, 9999)]
         public int Year
         {
             get
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
         /// Allows the user to override the month.
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute(1, 12)]
+        [ValidateRange(1, 12)]
         public int Month
         {
             get
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
         /// Allows the user to override the day.
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute(1, 31)]
+        [ValidateRange(1, 31)]
         public int Day
         {
             get
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
         /// Allows the user to override the hour.
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute(0, 23)]
+        [ValidateRange(0, 23)]
         public int Hour
         {
             get
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
         /// Allows the user to override the minute.
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute(0, 59)]
+        [ValidateRange(0, 59)]
         public int Minute
         {
             get
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
         /// Allows the user to override the second.
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute(0, 59)]
+        [ValidateRange(0, 59)]
         public int Second
         {
             get
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
         /// Allows the user to override the millisecond.
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute(0, 999)]
+        [ValidateRange(0, 999)]
         public int Millisecond
         {
             get
@@ -376,8 +376,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static readonly DateTime s_epoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
         /// <summary>
         /// This is more an implementation of the UNIX strftime.
         /// </summary>
@@ -501,7 +499,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 's':
-                            sb.Append(StringUtil.Format("{0:0}", dateTime.ToUniversalTime().Subtract(s_epoch).TotalSeconds));
+                            sb.Append(StringUtil.Format("{0:0}", dateTime.ToUniversalTime().Subtract(DateTime.UnixEpoch).TotalSeconds));
                             break;
 
                         case 'T':

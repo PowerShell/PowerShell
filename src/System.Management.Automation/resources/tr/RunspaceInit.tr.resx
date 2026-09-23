@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="EnabledExperimentalFeatures" xml:space="preserve">
+    <value>Etkin deneysel özellik adlarını tutacak değişken</value>
+  </data>
+  <data name="PSHOMEDescription" xml:space="preserve">
+    <value>Geçerli çalışma alanının konak uygulamasının üst klasörü</value>
+  </data>
+  <data name="HOMEDescription" xml:space="preserve">
+    <value>Geçerli kullanıcının profilini içeren klasör</value>
+  </data>
+  <data name="PSHostDescription" xml:space="preserve">
+    <value>Geçerli runspace'in ana makinesine yapılan bir başvuru</value>
+  </data>
+  <data name="ExecutionContextDescription" xml:space="preserve">
+    <value>Cmdlet'ler için kullanılabilen çalıştırma nesneleri</value>
+  </data>
+  <data name="PSVersionTableDescription" xml:space="preserve">
+    <value>Geçerli Windows PowerShell oturumu için sürüm bilgisi</value>
+  </data>
+  <data name="PIDDescription" xml:space="preserve">
+    <value>Geçerli işlem kimliği</value>
+  </data>
+  <data name="DollarHookDescription" xml:space="preserve">
+    <value>Son komutun durumu</value>
+  </data>
+  <data name="PPIDDescription" xml:space="preserve">
+    <value>Üst işlem kimliği</value>
+  </data>
+  <data name="MshShellIdDescription" xml:space="preserve">
+    <value>ShellID, geçerli kabuğu tanımlar.  Bu, #Requires tarafından kullanılır.</value>
+  </data>
+  <data name="ConsoleDescription" xml:space="preserve">
+    <value>Geçerli konsol dosyasının adı</value>
+  </data>
+  <data name="OutputEncodingDescription" xml:space="preserve">
+    <value>Yerel yürütülebilir dosyaya metin aktarılırken kullanılan metin kodlaması</value>
+  </data>
+  <data name="PSApplicationOutputEncodingDescription" xml:space="preserve">
+    <value>Yerel yürütülebilir dosyadan çıktı metnini okurken kullanılan metin kodlaması</value>
+  </data>
+  <data name="PSStyleDescription" xml:space="preserve">
+    <value>Metnin nasıl oluşturulacağını denetleyen yapılandırma</value>
+  </data>
+  <data name="PSEmailServerDescription" xml:space="preserve">
+    <value>E-posta sunucusunun adını tutacak değişken. Bu, Send-MailMessage cmdlet'inde HostName parametresi yerine kullanılabilir.</value>
+  </data>
+  <data name="ConfirmPreferenceDescription" xml:space="preserve">
+    <value>Onay istenmesinin ne zaman yapılacağını belirler. İşlemin ConfirmImpact değeri $ConfirmPreference değerine eşit veya ondan büyük olduğunda onay istenir. $ConfirmPreference None ise, eylemler yalnızca Confirm belirtildiğinde onaylanır.</value>
+  </data>
+  <data name="DebugPreferenceDescription" xml:space="preserve">
+    <value>Hata ayıklama iletisi teslim edildiğinde yapılacak eylemi belirler</value>
+  </data>
+  <data name="ErrorActionPreferenceDescription" xml:space="preserve">
+    <value>Bir hata iletisi teslim edildiğinde yapılacak eylemi belirler</value>
+  </data>
+  <data name="ProgressPreferenceDescription" xml:space="preserve">
+    <value>İlerleme kayıtları teslim edildiğinde yapılacak eylemi belirler</value>
+  </data>
+  <data name="VerbosePreferenceDescription" xml:space="preserve">
+    <value>Ayrıntılı ileti teslim edildiğinde yapılacak eylemi belirler</value>
+  </data>
+  <data name="WarningPreferenceDescription" xml:space="preserve">
+    <value>Bir Warning iletisi teslim edildiğinde alınacak eylemi belirler</value>
+  </data>
+  <data name="InformationPreferenceDescription" xml:space="preserve">
+    <value>Bir komut Bilgi akışında bir öğe oluşturduğunda yapılacak eylemi belirler</value>
+  </data>
+  <data name="ErrorViewDescription" xml:space="preserve">
+    <value>Hatalar görüntülenirken kullanılacak görünüm modunu belirler</value>
+  </data>
+  <data name="NestedPromptLevelDescription" xml:space="preserve">
+    <value>Geçerli iç içe yerleştirme düzeyi için hangi tür istemin görüntüleneceğini belirler</value>
+  </data>
+  <data name="PSNativeCommandUseErrorActionPreferenceDescription" xml:space="preserve">
+    <value>True ise $ErrorActionPreference yerel yürütülebilir dosyalara uygulanır. Böylece sıfır olmayan çıkış kodları, hata eylemi ayarları tarafından yönetilen cmdlet tarzı hatalar oluşturur.</value>
+  </data>
+  <data name="WhatIfPreferenceDescription" xml:space="preserve">
+    <value>Doğruysa, WhatIf tüm komutlar için etkin kabul edilir.</value>
+  </data>
+  <data name="NativeCommandArgumentPassingDescription" xml:space="preserve">
+    <value>Yerel yürütülebilir dosyalara bağımsız değişkenlerin nasıl geçirileceğini belirler.</value>
+  </data>
+  <data name="FormatEnumerationLimitDescription" xml:space="preserve">
+    <value>Biçimlendirilmiş IEnumerable nesneleri üzerinde numaralandırma sınırını belirler</value>
+  </data>
+  <data name="ReportErrorShowStackTraceDescription" xml:space="preserve">
+    <value>Hataları yığın izlemesiyle görüntüler</value>
+  </data>
+  <data name="ReportErrorShowInnerExceptionDescription" xml:space="preserve">
+    <value>İç özel durumlarla hataları görüntüler</value>
+  </data>
+  <data name="ReportErrorShowSourceDescription" xml:space="preserve">
+    <value>Kaynaklarıyla birlikte hataları görüntüler</value>
+  </data>
+  <data name="ReportErrorShowExceptionClassDescription" xml:space="preserve">
+    <value>Hata sınıfının açıklamasıyla hataları görüntüler</value>
+  </data>
+  <data name="DollarPSCultureDescription" xml:space="preserve">
+    <value>Geçerli Windows PowerShell oturumunun kültürü</value>
+  </data>
+  <data name="DollarPSUICultureDescription" xml:space="preserve">
+    <value>Geçerli Windows PowerShell oturumunun kullanıcı arabirimi kültürü</value>
+  </data>
+  <data name="PSDefaultParameterValuesDescription" xml:space="preserve">
+    <value>Tüm varsayılan &lt;cmdlet:parameter, value&gt; çiftlerini tutacak değişken</value>
+  </data>
+  <data name="PauseDefinitionString" xml:space="preserve">
+    <value>Devam etmek için Enter tuşuna basın...</value>
+  </data>
+  <data name="PSEditionDescription" xml:space="preserve">
+    <value>Geçerli Windows PowerShell oturumu için sürüm bilgisi</value>
+  </data>
+</root>

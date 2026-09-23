@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="typeDefinition">The ExtendedTypeDefinition instance to load formatting data from.</param>
         /// <param name="db">Database instance to load the formatting data into.</param>
         /// <param name="expressionFactory">Expression factory to validate the script block.</param>
-        /// <param name="isBuiltInFormatData">Do we implicitly trust the script blocks (so they should run in full langauge mode)?</param>
+        /// <param name="isBuiltInFormatData">Do we implicitly trust the script blocks (so they should run in full language mode)?</param>
         /// <param name="isForHelp">True when the view is for help output.</param>
         /// <returns></returns>
         internal bool LoadFormattingData(
@@ -436,10 +436,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ViewDefinition view = LoadViewFromObjectModel(typeDefinition.TypeNames, formatView, viewIndex++);
                 if (view != null)
                 {
-                    ReportTrace(string.Format(CultureInfo.InvariantCulture,
+                    ReportTrace(string.Format(
+                        CultureInfo.InvariantCulture,
                         "{0} view {1} is loaded from the 'FormatViewDefinition' at index {2} in 'ExtendedTypeDefinition' with type name {3}",
                         ControlBase.GetControlShapeName(view.mainControl),
-                        view.name, viewIndex - 1, typeDefinition.TypeName));
+                        view.name,
+                        viewIndex - 1,
+                        typeDefinition.TypeName));
 
                     // we are fine, add the view to the list
                     db.viewDefinitionsSection.viewDefinitionList.Add(view);
@@ -1082,20 +1085,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private FormatToken LoadFormatTokenFromObjectModel(CustomItemBase item, int viewIndex, string typeName)
         {
-            var newline = item as CustomItemNewline;
-            if (newline != null)
+            if (item is CustomItemNewline newline)
             {
                 return new NewLineToken { count = newline.Count };
             }
 
-            var text = item as CustomItemText;
-            if (text != null)
+            if (item is CustomItemText text)
             {
                 return new TextToken { text = text.Text };
             }
 
-            var expr = item as CustomItemExpression;
-            if (expr != null)
+            if (item is CustomItemExpression expr)
             {
                 var cpt = new CompoundPropertyToken { enumerateCollection = expr.EnumerateCollection };
 
@@ -1763,9 +1763,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool LoadStringResourceReference(XmlNode n, out StringResourceReference resource)
         {
             resource = null;
-            XmlElement e = n as XmlElement;
 
-            if (e == null)
+            if (n is not XmlElement e)
             {
                 // Error at XPath {0} in file {1}: Node should be an XmlElement.
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NonXmlElementNode, ComputeCurrentXPath(), FilePath));

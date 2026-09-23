@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Flag that determines if we should include subscriptions used to support other subscriptions.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force { get; set; }
 
         #endregion parameters

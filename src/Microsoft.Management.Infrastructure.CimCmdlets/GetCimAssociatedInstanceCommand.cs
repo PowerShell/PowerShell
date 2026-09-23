@@ -232,8 +232,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimGetAssociatedInstance operation = this.GetOperationAgent();
-            if (operation != null)
-                operation.ProcessRemainActions(this.CmdletOperation);
+            operation?.ProcessRemainActions(this.CmdletOperation);
         }
 
         #endregion

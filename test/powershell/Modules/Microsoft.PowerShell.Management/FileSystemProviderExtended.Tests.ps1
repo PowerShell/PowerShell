@@ -658,3 +658,57 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
         }
     }
 }
+
+Describe "Validate Get-Item ResolvedTarget property" -Tags "Feature","RequireAdminOnWindows" {
+    BeforeAll {
+        $rootDir = Join-Path "TestDrive:" "TestDir"
+
+        Push-Location $rootDir
+        $null = New-Item -Path "realDir" -ItemType Directory
+        $null = New-Item -Path "toDel" -ItemType Directory
+        $null = New-Item -Path "brokenLinkedDir" -ItemType SymbolicLink -Value ".\toDel"
+        $null = New-Item -Path "linkedDir" -ItemType SymbolicLink -Value ".\realDir"
+        Remove-Item "toDel"
+        $null = New-Item -Path "realFile.fil" -ItemType File
+        $null = New-Item -Path "toDel.fil" -ItemType File
+        $null = New-Item -Path "brokenLinkedFile.fil" -ItemType SymbolicLink -Value ".\toDel.fil"
+        $null = New-Item -Path "linkedFile.fil" -ItemType SymbolicLink -Value ".\realFile.fil"
+        Remove-Item "toDel.fil"
+    }
+
+    AfterAll {
+        Pop-Location
+    }
+
+    Context 'Get-Item files and folders' {
+        It 'Get-Item "linkedDir"' {
+            $result = Get-Item "linkedDir"
+            $result.ResolvedTarget.EndsWith("realDir") | Should -BeTrue
+        }
+
+        It 'Get-Item "linkedFile.fil"' {
+            $result = Get-Item "linkedFile.fil"
+            $result.ResolvedTarget.EndsWith("realFile.fil") | Should -BeTrue
+        }
+
+        It 'Get-Item "brokenLinkedDir"' {
+            $result = Get-Item "brokenLinkedDir"
+            $result.ResolvedTarget.EndsWith("toDel") | Should -BeTrue
+        }
+
+        It 'Get-Item "brokenLinkedFile.fil"' {
+            $result = Get-Item "brokenLinkedFile.fil"
+            $result.ResolvedTarget.EndsWith("toDel.fil") | Should -BeTrue
+        }
+
+        It 'Get-Item "realDir"' {
+            $result = Get-Item "realDir"
+            $result.ResolvedTarget.EndsWith("realDir") | Should -BeTrue
+        }
+
+        It 'Get-Item "realFile.fil' {
+            $result = Get-Item "realFile.fil"
+            $result.ResolvedTarget.EndsWith("realFile.fil") | Should -BeTrue
+        }
+    }
+}

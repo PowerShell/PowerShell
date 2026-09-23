@@ -37,7 +37,7 @@ Describe "Format-List" -Tags "CI" {
     }
 
     It "Should produce the expected output" {
-        $expected = "${nl}testName : testValue${nl}${nl}${nl}"
+        $expected = "${nl}testName : testValue${nl}${nl}"
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
 
@@ -201,7 +201,6 @@ dbda : KM
 消息 : 千
 
 
-
 "@
         $expected = $expected -replace "`r`n", "`n"
 
@@ -209,9 +208,29 @@ dbda : KM
         $actual = $actual -replace "`r`n", "`n"
         $actual | Should -BeExactly $expected
     }
+
+    It 'Float, double, and decimal should not be truncated to number of decimals from current culture' {
+        $o = [PSCustomObject]@{
+            double = [double]1234.56789
+            float = [float]9876.543
+            decimal = [decimal]4567.123456789d
+        }
+
+        $expected = @"
+
+double  : 1234.56789
+float   : 9876.543
+decimal : 4567.123456789
+
+
+"@
+
+        $actual = $o | Format-List | Out-String
+        ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
+    }
 }
 
-Describe 'Format-List color tests' {
+Describe 'Format-List color tests' -Tag 'CI' {
     BeforeAll {
         $originalRendering = $PSStyle.OutputRendering
         $PSStyle.OutputRendering = 'Ansi'
@@ -228,5 +247,62 @@ Describe 'Format-List color tests' {
         $out.Count | Should -Be 2
         $out[0] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)Short      : $($PSStyle.Reset)1" -Because ($out[0] | Format-Hex)
         $out[1] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)LongLabelN : $($PSStyle.Reset)2"
+    }
+
+    It 'VT decorations in a property value should not be leaked in list view' {
+        $expected = @"
+`e[32;1ma : `e[0mHello
+`e[32;1mb : `e[0m`e[36mworld`e[0m
+"@
+        ## Format-List should append the 'reset' escape sequence to the value of 'b' property.
+        $obj = [pscustomobject]@{ a = "Hello"; b = $PSStyle.Foreground.Cyan + "world"; }
+        $obj | Format-List | Out-File "$TestDrive/outfile.txt"
+
+        $output = Get-Content "$TestDrive/outfile.txt" -Raw
+        $output.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    Context 'ExcludeProperty parameter' {
+        It 'Should exclude specified properties' {
+            $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle' }
+            $result = $obj | Format-List -ExcludeProperty Age | Out-String
+            $result | Should -Match 'Name'
+            $result | Should -Match 'City'
+            $result | Should -Not -Match 'Age'
+        }
+
+        It 'Should work with wildcard patterns' {
+            $obj = [pscustomobject]@{ Prop1 = 1; Prop2 = 2; Other = 3 }
+            $result = $obj | Format-List -ExcludeProperty Prop* | Out-String
+            $result | Should -Match 'Other'
+            $result | Should -Not -Match 'Prop1'
+            $result | Should -Not -Match 'Prop2'
+        }
+
+        It 'Should work without Property parameter (implies -Property *)' {
+            $obj = [pscustomobject]@{ A = 1; B = 2; C = 3 }
+            $result = $obj | Format-List -ExcludeProperty B | Out-String
+            $result | Should -Match 'A'
+            $result | Should -Match 'C'
+            $result | Should -Not -Match 'B'
+        }
+
+        It 'Should work with Property parameter' {
+            $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle'; Country = 'USA' }
+            $result = $obj | Format-List -Property Name, Age, City, Country -ExcludeProperty Age | Out-String
+            $result | Should -Match 'Name'
+            $result | Should -Match 'City'
+            $result | Should -Match 'Country'
+            $result | Should -Not -Match 'Age'
+        }
+
+        It 'Should handle multiple excluded properties' {
+            $obj = [pscustomobject]@{ A = 1; B = 2; C = 3; D = 4 }
+            $result = $obj | Format-List -ExcludeProperty B, D | Out-String
+            $result | Should -Match 'A'
+            $result | Should -Match 'C'
+            $result | Should -Not -Match 'B'
+            $result | Should -Not -Match 'D'
+        }
     }
 }

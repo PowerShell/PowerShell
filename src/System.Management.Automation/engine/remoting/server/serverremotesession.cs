@@ -69,7 +69,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class ServerRemoteSession : RemoteSession
     {
-        [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
+        [TraceSource("ServerRemoteSession", "ServerRemoteSession")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
 
         private readonly PSSenderInfo _senderInfo;
@@ -88,6 +88,10 @@ namespace System.Management.Automation.Remoting
         // Specifies an optional endpoint configuration for out-of-proc session use.
         // Creates a pushed remote runspace session created with this configuration name.
         private string _configurationName;
+
+        // Specifies an optional .pssc configuration file path for out-of-proc session use.
+        // The .pssc file is used to configure the runspace for the endpoint session.
+        private string _configurationFile;
 
         // Specifies an initial location of the powershell session.
         private string _initialLocation;
@@ -173,7 +177,9 @@ namespace System.Management.Automation.Remoting
         /// xml.
         /// </param>
         /// <param name="transportManager"></param>
+        /// <param name="initialCommand">Optional initial command used for OutOfProc sessions.</param>
         /// <param name="configurationName">Optional configuration endpoint name for OutOfProc sessions.</param>
+        /// <param name="configurationFile">Optional configuration file (.pssc) path for OutOfProc sessions.</param>
         /// <param name="initialLocation">Optional configuration initial location of the powershell session.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">
@@ -192,8 +198,10 @@ namespace System.Management.Automation.Remoting
             string configurationProviderId,
             string initializationParameters,
             AbstractServerSessionTransportManager transportManager,
-            string configurationName = null,
-            string initialLocation = null)
+            string initialCommand,
+            string configurationName,
+            string configurationFile,
+            string initialLocation)
         {
             Dbg.Assert(
                 (senderInfo != null) && (senderInfo.UserInfo != null),
@@ -215,7 +223,9 @@ namespace System.Management.Automation.Remoting
                 initializationParameters,
                 transportManager)
             {
+                _initScriptForOutOfProcRS = initialCommand,
                 _configurationName = configurationName,
+                _configurationFile = configurationFile,
                 _initialLocation = initialLocation
             };
 
@@ -223,33 +233,6 @@ namespace System.Management.Automation.Remoting
             RemoteSessionStateMachineEventArgs startEventArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CreateSession);
             result.SessionDataStructureHandler.StateMachine.RaiseEvent(startEventArg);
 
-            return result;
-        }
-
-        /// <summary>
-        /// Used by OutOfProcessServerMediator to create a remote session.
-        /// </summary>
-        /// <param name="senderInfo"></param>
-        /// <param name="initializationScriptForOutOfProcessRunspace"></param>
-        /// <param name="transportManager"></param>
-        /// <param name="configurationName"></param>
-        /// <param name="initialLocation"></param>
-        /// <returns></returns>
-        internal static ServerRemoteSession CreateServerRemoteSession(
-            PSSenderInfo senderInfo,
-            string initializationScriptForOutOfProcessRunspace,
-            AbstractServerSessionTransportManager transportManager,
-            string configurationName,
-            string initialLocation)
-        {
-            ServerRemoteSession result = CreateServerRemoteSession(
-                senderInfo,
-                "Microsoft.PowerShell",
-                string.Empty,
-                transportManager,
-                configurationName: configurationName,
-                initialLocation: initialLocation);
-            result._initScriptForOutOfProcRS = initializationScriptForOutOfProcessRunspace;
             return result;
         }
 
@@ -723,13 +706,7 @@ namespace System.Management.Automation.Remoting
         }
 
         // pass on application private data when session is connected from new client
-        internal void HandlePostConnect()
-        {
-            if (_runspacePoolDriver != null)
-            {
-                _runspacePoolDriver.SendApplicationPrivateDataToClient();
-            }
-        }
+        internal void HandlePostConnect() => _runspacePoolDriver?.SendApplicationPrivateDataToClient();
 
         /// <summary>
         /// </summary>
@@ -749,28 +726,18 @@ namespace System.Management.Automation.Remoting
             RemoteDataObject<PSObject> rcvdData = createRunspaceEventArg.ReceivedData;
             Dbg.Assert(rcvdData != null, "rcvdData must be non-null");
 
-            // set the PSSenderInfo sent in the first packets
-            // This is used by the initial session state configuration providers like Exchange.
-            if (Context != null)
-            {
-                _senderInfo.ClientTimeZone = Context.ClientCapability.TimeZone;
-            }
-
             _senderInfo.ApplicationArguments = RemotingDecoder.GetApplicationArguments(rcvdData.Data);
 
             // Get Initial Session State from custom session config suppliers
             // like Exchange.
             ConfigurationDataFromXML configurationData =
-                PSSessionConfiguration.LoadEndPointConfiguration(_configProviderId,
-                    _initParameters);
+                PSSessionConfiguration.LoadEndPointConfiguration(_configProviderId, _initParameters);
             // used by Out-Of-Proc (IPC) runspace.
             configurationData.InitializationScriptForOutOfProcessRunspace = _initScriptForOutOfProcRS;
             // start with data from configuration XML and then override with data
             // from EndPointConfiguration type.
             _maxRecvdObjectSize = configurationData.MaxReceivedObjectSizeMB;
             _maxRecvdDataSizeCommand = configurationData.MaxReceivedCommandSizeMB;
-
-            DISCPowerShellConfiguration discProvider = null;
 
             if (string.IsNullOrEmpty(configurationData.ConfigFilePath))
             {
@@ -779,11 +746,8 @@ namespace System.Management.Automation.Remoting
             else
             {
                 System.Security.Principal.WindowsPrincipal windowsPrincipal = new System.Security.Principal.WindowsPrincipal(_senderInfo.UserInfo.WindowsIdentity);
-
                 Func<string, bool> validator = (role) => windowsPrincipal.IsInRole(role);
-
-                discProvider = new DISCPowerShellConfiguration(configurationData.ConfigFilePath, validator);
-                _sessionConfigProvider = discProvider;
+                _sessionConfigProvider = new DISCPowerShellConfiguration(configurationData.ConfigFilePath, validator);
             }
 
             // exchange of ApplicationArguments and ApplicationPrivateData is be done as early as possible
@@ -794,6 +758,7 @@ namespace System.Management.Automation.Remoting
 
             if (configurationData.SessionConfigurationData != null)
             {
+                // Use the provided WinRM endpoint runspace configuration information.
                 try
                 {
                     rsSessionStateToUse =
@@ -804,8 +769,21 @@ namespace System.Management.Automation.Remoting
                     rsSessionStateToUse = _sessionConfigProvider.GetInitialSessionState(_senderInfo);
                 }
             }
+            else if (!string.IsNullOrEmpty(_configurationFile))
+            {
+                // Use the optional _configurationFile parameter to create the endpoint runspace configuration.
+                // This parameter is only used by Out-Of-Proc transports (not WinRM transports).
+                var discConfiguration = new Remoting.DISCPowerShellConfiguration(
+                    configFile: _configurationFile,
+                    roleVerifier: null, 
+                    validateFile: true);
+                rsSessionStateToUse = discConfiguration.GetInitialSessionState(_senderInfo);
+            }
             else
             {
+                // Create a runspace configuration based on the provided PSSessionConfiguration provider.
+                // This can be either a 'default' configuration, or third party configuration PSSessionConfiguration provider object.
+                // So far, only Exchange provides a custom PSSessionConfiguration provider implementation.
                 rsSessionStateToUse = _sessionConfigProvider.GetInitialSessionState(_senderInfo);
             }
 
@@ -824,32 +802,14 @@ namespace System.Management.Automation.Remoting
                     RemotingErrorIdStrings.PSSenderInfoDescription),
                 ScopedItemOptions.ReadOnly));
 
-            // check if the current scenario is Win7(client) to Win8(server). Add back the PSv2 version TabExpansion
-            // function if necessary.
+            // Get client PS version from PSSenderInfo.
             Version psClientVersion = null;
             if (_senderInfo.ApplicationArguments != null && _senderInfo.ApplicationArguments.ContainsKey("PSversionTable"))
             {
                 var value = PSObject.Base(_senderInfo.ApplicationArguments["PSversionTable"]) as PSPrimitiveDictionary;
-                if (value != null)
+                if (value != null && value.ContainsKey("PSVersion"))
                 {
-                    if (value.ContainsKey("WSManStackVersion"))
-                    {
-                        var wsmanStackVersion = PSObject.Base(value["WSManStackVersion"]) as Version;
-                        if (wsmanStackVersion != null && wsmanStackVersion.Major < 3)
-                        {
-                            // The client side is PSv2. This is the Win7 to Win8 scenario. We need to add the PSv2
-                            // TabExpansion function back in to keep the tab expansion functionable on the client side.
-                            rsSessionStateToUse.Commands.Add(
-                                new SessionStateFunctionEntry(
-                                    RemoteDataNameStrings.PSv2TabExpansionFunction,
-                                    RemoteDataNameStrings.PSv2TabExpansionFunctionText));
-                        }
-                    }
-
-                    if (value.ContainsKey("PSVersion"))
-                    {
-                        psClientVersion = PSObject.Base(value["PSVersion"]) as Version;
-                    }
+                    psClientVersion = PSObject.Base(value["PSVersion"]) as Version;
                 }
             }
 
@@ -907,7 +867,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This handler method runs the negotiation algorithm. It decides if the negotiation is succesful,
+        /// This handler method runs the negotiation algorithm. It decides if the negotiation is successful,
         /// or fails.
         /// </summary>
         /// <param name="sender"></param>
@@ -961,10 +921,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="eventArgs"></param>
         private void HandleSessionDSHandlerClosing(object sender, EventArgs eventArgs)
         {
-            if (_runspacePoolDriver != null)
-            {
-                _runspacePoolDriver.Close();
-            }
+            _runspacePoolDriver?.Close();
 
             // dispose the session configuration object..this will let them
             // clean their resources.
@@ -1016,35 +973,21 @@ namespace System.Management.Automation.Remoting
 
             if (onConnect)
             {
-                bool connectSupported = false;
-
-                // Win10 server can support reconstruct/reconnect for all 2.x protocol versions
-                // that support reconstruct/reconnect, Protocol 2.2+
-                // Major protocol version differences (2.x -> 3.x) are not supported.
-                // A reconstruct can only be initiated by a client that understands disconnect (2.2+),
-                // so we only need to check major versions from client and this server for compatibility.
-                if (clientProtocolVersion.Major == RemotingConstants.ProtocolVersion.Major)
+                // PS v7.6 server can support reconstruct/reconnect for all 2.x protocol versions that support reconstruct/reconnect (v2.2+).
+                // Major protocol version differences (2.x -> 3.x) are not supported. A reconstruct can only be initiated by a client that understands disconnect (v2.2+).
+                if (clientProtocolVersion == RemotingConstants.ProtocolVersion_2_2 ||
+                    clientProtocolVersion == RemotingConstants.ProtocolVersion_2_3)
                 {
-                    if (clientProtocolVersion.Minor == RemotingConstants.ProtocolVersionWin8RTM.Minor)
-                    {
-                        // Report that server is Win8 version to the client
-                        // Protocol: 2.2
-                        connectSupported = true;
-                        serverProtocolVersion = RemotingConstants.ProtocolVersionWin8RTM;
-                        Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
-                    }
-                    else if (clientProtocolVersion.Minor > RemotingConstants.ProtocolVersionWin8RTM.Minor)
-                    {
-                        // All other minor versions are supported and the server returns its full capability
-                        // Protocol: 2.3, 2.4, 2.5 ...
-                        connectSupported = true;
-                    }
+                    // Report the server as the same version to the client.
+                    // Client protocol: v2.2, v2.3
+                    serverProtocolVersion = clientProtocolVersion;
+                    Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
                 }
-
-                if (!connectSupported)
+                else if (!(clientProtocolVersion.Major == serverProtocolVersion.Major &&
+                           clientProtocolVersion.Minor >= serverProtocolVersion.Minor))
                 {
                     // Throw for protocol versions 2.x that don't support disconnect/reconnect.
-                    // Protocol: < 2.2
+                    // Client protocol: < 2.2
                     PSRemotingDataStructureException reasonOfFailure =
                         new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnNegotiation,
                             RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME,
@@ -1053,47 +996,23 @@ namespace System.Management.Automation.Remoting
                             RemotingConstants.ProtocolVersion);
                     throw reasonOfFailure;
                 }
+
+                // All other minor versions are supported and the server returns its full capability.
+                // Client protocol: v2.4, v2.5 ...
             }
             else
             {
-                // Win10 server can support Win8 client
-                if (clientProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM &&
-                    (
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM)
-                    ))
+                if (clientProtocolVersion == RemotingConstants.ProtocolVersion_2_0 ||
+                    clientProtocolVersion == RemotingConstants.ProtocolVersion_2_1 ||
+                    clientProtocolVersion == RemotingConstants.ProtocolVersion_2_2 ||
+                    clientProtocolVersion == RemotingConstants.ProtocolVersion_2_3)
                 {
-                    // - report that server is Win8 version to the client
-                    serverProtocolVersion = RemotingConstants.ProtocolVersionWin8RTM;
+                    // We support the those client versions and report the server as the same version to the client.
+                    serverProtocolVersion = clientProtocolVersion;
                     Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
                 }
-
-                // Win8, Win10 server can support Win7 client
-                if (clientProtocolVersion == RemotingConstants.ProtocolVersionWin7RTM &&
-                    (
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM) ||
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM)
-                    ))
-                {
-                    // - report that server is Win7 version to the client
-                    serverProtocolVersion = RemotingConstants.ProtocolVersionWin7RTM;
-                    Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
-                }
-
-                // Win7, Win8, Win10 server can support Win7 RC client
-                if (clientProtocolVersion == RemotingConstants.ProtocolVersionWin7RC &&
-                    (
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RTM) ||
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM) ||
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM)
-                    ))
-                {
-                    // - report that server is RC version to the client
-                    serverProtocolVersion = RemotingConstants.ProtocolVersionWin7RC;
-                    Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
-                }
-
-                if (!((clientProtocolVersion.Major == serverProtocolVersion.Major) &&
-                      (clientProtocolVersion.Minor >= serverProtocolVersion.Minor)))
+                else if (!(clientProtocolVersion.Major == serverProtocolVersion.Major &&
+                           clientProtocolVersion.Minor >= serverProtocolVersion.Minor))
                 {
                     PSRemotingDataStructureException reasonOfFailure =
                         new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerNegotiationFailed,

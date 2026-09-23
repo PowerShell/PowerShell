@@ -1,11 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-if($PSVersionTable.PSEdition -ne 'Desktop')
-{
-    throw 'Must be run from Windows PowerShell'
-}
-
 function New-LocalUser
 {
   <#
@@ -20,6 +15,8 @@ function New-LocalUser
     .OUTPUTS
     .NOTES
   #>
+  [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingUsernameAndPasswordParams', '')]
+  [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
   param(
     [Parameter(Mandatory=$true)]
     [string] $username,
@@ -48,7 +45,6 @@ function ConvertTo-NtAccount
 
 <#
   Add a user to a local security group
-  Requires Windows PowerShell
 #>
 function Add-UserToGroup
 {

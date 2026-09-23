@@ -33,15 +33,11 @@ namespace Microsoft.PowerShell.Commands
             // so we create the DebugRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteDebug().
             //
-            MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
-
-            if (mshCommandRuntime != null)
+            if (this.CommandRuntime is MshCommandRuntime mshCommandRuntime)
             {
                 DebugRecord record = new(Message);
 
-                InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-
-                if (invocationInfo != null)
+                if (GetVariableValue(SpecialVariables.MyInvocation) is InvocationInfo invocationInfo)
                 {
                     record.SetInvocationInfo(invocationInfo);
                 }
@@ -81,15 +77,11 @@ namespace Microsoft.PowerShell.Commands
             // so we create the VerboseRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteVerbose().
             //
-            MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
-
-            if (mshCommandRuntime != null)
+            if (this.CommandRuntime is MshCommandRuntime mshCommandRuntime)
             {
                 VerboseRecord record = new(Message);
 
-                InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-
-                if (invocationInfo != null)
+                if (GetVariableValue(SpecialVariables.MyInvocation) is InvocationInfo invocationInfo)
                 {
                     record.SetInvocationInfo(invocationInfo);
                 }
@@ -129,15 +121,11 @@ namespace Microsoft.PowerShell.Commands
             // so we create the WarningRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteWarning().
             //
-            MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
-
-            if (mshCommandRuntime != null)
+            if (this.CommandRuntime is MshCommandRuntime mshCommandRuntime)
             {
                 WarningRecord record = new(Message);
 
-                InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-
-                if (invocationInfo != null)
+                if (GetVariableValue(SpecialVariables.MyInvocation) is InvocationInfo invocationInfo)
                 {
                     record.SetInvocationInfo(invocationInfo);
                 }
@@ -234,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "ErrorRecord", Mandatory = true)]
         public ErrorRecord ErrorRecord { get; set; }
-        
+
         /// <summary>
         /// ErrorRecord.CategoryInfo.Category.
         /// </summary>
@@ -312,10 +300,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Exception e = this.Exception;
                 string msg = Message;
-                if (e == null)
-                {
-                    e = new WriteErrorException(msg);
-                }
+                e ??= new WriteErrorException(msg);
 
                 string errid = ErrorId;
                 if (string.IsNullOrEmpty(errid))
@@ -339,10 +324,7 @@ namespace Microsoft.PowerShell.Commands
             string recact = RecommendedAction;
             if (!string.IsNullOrEmpty(recact))
             {
-                if (errorRecord.ErrorDetails == null)
-                {
-                    errorRecord.ErrorDetails = new ErrorDetails(errorRecord.ToString());
-                }
+                errorRecord.ErrorDetails ??= new ErrorDetails(errorRecord.ToString());
 
                 errorRecord.ErrorDetails.RecommendedAction = recact;
             }
@@ -367,8 +349,7 @@ namespace Microsoft.PowerShell.Commands
 
             // 2005/07/14-913791 "write-error output is confusing and misleading"
             // set InvocationInfo to the script not the command
-            InvocationInfo myInvocation = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-            if (myInvocation != null)
+            if (GetVariableValue(SpecialVariables.MyInvocation) is InvocationInfo myInvocation)
             {
                 errorRecord.SetInvocationInfo(myInvocation);
                 errorRecord.PreserveInvocationInfoOnce = true;
@@ -428,7 +409,6 @@ namespace Microsoft.PowerShell.Commands
     /// when the user only specifies a string and not
     /// an Exception or ErrorRecord.
     /// </summary>
-    [Serializable]
     public class WriteErrorException : SystemException
     {
         #region ctor
@@ -471,10 +451,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected WriteErrorException(SerializationInfo info,
                                       StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
     }

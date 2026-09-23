@@ -281,7 +281,11 @@ namespace System.Management.Automation
             // ContractUtils.RequiresNotNull(tupleType, "tupleType");
 
             int count = 0;
-            lock (s_sizeDict) if (s_sizeDict.TryGetValue(tupleType, out count)) return count;
+            lock (s_sizeDict) if (s_sizeDict.TryGetValue(tupleType, out count))
+            {
+                return count;
+            }
+
             Stack<Type> types = new Stack<Type>(tupleType.GetGenericArguments());
 
             while (types.Count != 0)
@@ -298,7 +302,10 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                if (t == typeof(DynamicNull)) continue;
+                if (t == typeof(DynamicNull))
+                {
+                    continue;
+                }
 
                 count++;
             }
@@ -369,7 +376,7 @@ namespace System.Management.Automation
 
             foreach (int curIndex in GetAccessPath(size, index))
             {
-                PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", curIndex));
+                PropertyInfo pi = tupleType.GetProperty("Item" + string.Create(CultureInfo.InvariantCulture, $"{curIndex:D3}"));
                 Diagnostics.Assert(pi != null, "reflection should always find Item");
                 yield return pi;
                 tupleType = pi.PropertyType;
@@ -440,7 +447,7 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < size; i++)
                 {
-                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
+                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Create(CultureInfo.InvariantCulture, $"{i:D3}"));
                     res.SetValueImpl(i, MakeTuple(pi.PropertyType, null, null));
                 }
             }
@@ -540,7 +547,7 @@ namespace System.Management.Automation
                     int newStart = start + (i * multiplier);
                     int newEnd = System.Math.Min(end, start + ((i + 1) * multiplier));
 
-                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
+                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Create(CultureInfo.InvariantCulture, $"{i:D3}"));
 
                     newValues[i] = CreateNew(pi.PropertyType, newStart, newEnd, values);
                 }

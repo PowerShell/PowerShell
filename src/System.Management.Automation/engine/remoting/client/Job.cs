@@ -93,7 +93,6 @@ namespace System.Management.Automation
     /// Defines exception which is thrown when state of the PSJob is different
     /// from the expected state.
     /// </summary>
-    [Serializable]
     public class InvalidJobStateException : SystemException
     {
         /// <summary>
@@ -191,10 +190,11 @@ namespace System.Management.Automation
         /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected
         InvalidJobStateException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion
@@ -633,10 +633,7 @@ namespace System.Management.Automation
                 {
                     lock (syncObject)
                     {
-                        if (_childJobs == null)
-                        {
-                            _childJobs = new List<Job>();
-                        }
+                        _childJobs ??= new List<Job>();
                     }
                 }
 
@@ -644,7 +641,7 @@ namespace System.Management.Automation
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// Success status of the command execution.
         /// </summary>
         public abstract string StatusMessage { get; }
@@ -755,10 +752,10 @@ namespace System.Management.Automation
 
         private static Exception GetExceptionFromErrorRecord(ErrorRecord errorRecord)
         {
-            if (!(errorRecord.Exception is RuntimeException runtimeException))
+            if (errorRecord.Exception is not RuntimeException runtimeException)
                 return null;
 
-            if (!(runtimeException is RemoteException remoteException))
+            if (runtimeException is not RemoteException remoteException)
                 return null;
 
             PSPropertyInfo wasThrownFromThrow =
@@ -1014,11 +1011,17 @@ namespace System.Management.Automation
         /// </summary>
         public void LoadJobStreams()
         {
-            if (_jobStreamsLoaded) return;
+            if (_jobStreamsLoaded)
+            {
+                return;
+            }
 
             lock (syncObject)
             {
-                if (_jobStreamsLoaded) return;
+                if (_jobStreamsLoaded)
+                {
+                    return;
+                }
 
                 _jobStreamsLoaded = true;
             }
@@ -1451,10 +1454,7 @@ namespace System.Management.Automation
                 {
                     lock (syncObject)
                     {
-                        if (_finished != null)
-                        {
-                            _finished.Set();
-                        }
+                        _finished?.Set();
                     }
                 }
 #pragma warning restore 56500
@@ -1911,7 +1911,7 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (j is not PSRemotingChildJob child) continue;
                 if (string.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
                                 StringComparison.OrdinalIgnoreCase))
                 {
@@ -1934,7 +1934,7 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (j is not PSRemotingChildJob child) continue;
                 if (child.Runspace.InstanceId.Equals(runspace.InstanceId))
                 {
                     returnJobList.Add(child);
@@ -1957,7 +1957,7 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (j is not PSRemotingChildJob child) continue;
                 if (child.Helper.Equals(helper))
                 {
                     returnJobList.Add(child);
@@ -2360,7 +2360,7 @@ namespace System.Management.Automation
 
         #region finish logic
 
-        // This variable is set to true if atleast one child job failed.
+        // This variable is set to true if at least one child job failed.
         private bool _atleastOneChildJobFailed = false;
 
         // count of number of child jobs which have finished
@@ -3226,7 +3226,7 @@ namespace System.Management.Automation
             // no pipeline is created and no pipeline state changed event is raised.
             // We can wait for throttle complete, but it is raised only when all the
             // operations are completed and this means that status of job is not updated
-            // untill Operation Complete.
+            // until Operation Complete.
             ExecutionCmdletHelper helper = sender as ExecutionCmdletHelper;
             Dbg.Assert(helper != null, "Sender of OperationComplete has to be ExecutionCmdletHelper");
 
@@ -3313,8 +3313,7 @@ namespace System.Management.Automation
                     errorId = "InvalidSessionState";
                     if (!string.IsNullOrEmpty(failureException.Source))
                     {
-                        errorId = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                            "{0},{1}", errorId, failureException.Source);
+                        errorId = string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{errorId},{failureException.Source}");
                     }
                 }
 
@@ -3371,13 +3370,10 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (failureException == null)
-                {
-                    failureException = new RuntimeException(
-                        PSRemotingErrorInvariants.FormatResourceString(
-                            RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState,
-                            runspace.RunspaceStateInfo.State));
-                }
+                failureException ??= new RuntimeException(
+                    PSRemotingErrorInvariants.FormatResourceString(
+                        RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState,
+                        runspace.RunspaceStateInfo.State));
 
                 failureErrorRecord = new ErrorRecord(failureException, targetObject,
                                 fullyQualifiedErrorId, ErrorCategory.OpenError,
@@ -3926,7 +3922,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
         /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
-        /// <returns>A a breakpoint with the specified id.</returns>
+        /// <returns>A breakpoint with the specified id.</returns>
         public override Breakpoint GetBreakpoint(int id, int? runspaceId) =>
             _wrappedDebugger.GetBreakpoint(id, runspaceId);
 
@@ -4080,10 +4076,7 @@ namespace System.Management.Automation
         internal void CheckStateAndRaiseStopEvent()
         {
             RemoteDebugger remoteDebugger = _wrappedDebugger as RemoteDebugger;
-            if (remoteDebugger != null)
-            {
-                remoteDebugger.CheckStateAndRaiseStopEvent();
-            }
+            remoteDebugger?.CheckStateAndRaiseStopEvent();
         }
 
         /// <summary>
@@ -4131,13 +4124,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static void RestoreRemoteOutput(Pipeline runningCmd)
-        {
-            if (runningCmd != null)
-            {
-                runningCmd.ResumeIncomingData();
-            }
-        }
+        private static void RestoreRemoteOutput(Pipeline runningCmd) => runningCmd?.ResumeIncomingData();
 
         private void HandleBreakpointUpdated(object sender, BreakpointUpdatedEventArgs e)
         {

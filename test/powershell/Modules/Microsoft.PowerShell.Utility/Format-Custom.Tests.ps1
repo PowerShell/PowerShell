@@ -466,4 +466,48 @@ SelectScriptBlock
         $ps.Invoke() -replace '\r?\n', "^" | Should -BeExactly $expectedOutput
         $ps.Streams.Error | Should -BeNullOrEmpty
     }
+
+    Context 'ExcludeProperty parameter' {
+        It 'Should exclude specified properties' {
+            $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle' }
+            $result = $obj | Format-Custom -ExcludeProperty Age | Out-String
+            $result | Should -Match 'Name'
+            $result | Should -Match 'City'
+            $result | Should -Not -Match 'Age'
+        }
+
+        It 'Should work with wildcard patterns' {
+            $obj = [pscustomobject]@{ Prop1 = 1; Prop2 = 2; Other = 3 }
+            $result = $obj | Format-Custom -ExcludeProperty Prop* | Out-String
+            $result | Should -Match 'Other'
+            $result | Should -Not -Match 'Prop1'
+            $result | Should -Not -Match 'Prop2'
+        }
+
+        It 'Should work without Property parameter (implies -Property *)' {
+            $obj = [pscustomobject]@{ A = 1; B = 2; C = 3 }
+            $result = $obj | Format-Custom -ExcludeProperty B | Out-String
+            $result | Should -Match 'A\s*='
+            $result | Should -Match 'C\s*='
+            $result | Should -Not -Match 'B\s*='
+        }
+
+        It 'Should work with Property parameter' {
+            $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle'; Country = 'USA' }
+            $result = $obj | Format-Custom -Property Name, Age, City, Country -ExcludeProperty Age | Out-String
+            $result | Should -Match 'Name'
+            $result | Should -Match 'City'
+            $result | Should -Match 'Country'
+            $result | Should -Not -Match 'Age'
+        }
+
+        It 'Should handle multiple excluded properties' {
+            $obj = [pscustomobject]@{ A = 1; B = 2; C = 3; D = 4 }
+            $result = $obj | Format-Custom -ExcludeProperty B, D | Out-String
+            $result | Should -Match 'A\s*='
+            $result | Should -Match 'C\s*='
+            $result | Should -Not -Match 'B\s*='
+            $result | Should -Not -Match 'D\s*='
+        }
+    }
 }

@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets force parameter. This will allow to clear the recyclebin.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    internal static class NativeMethod
+    internal static partial class NativeMethod
     {
         // Internal code to SHEmptyRecycleBin
         internal enum RecycleFlags : uint
@@ -247,8 +247,8 @@ namespace Microsoft.PowerShell.Commands
             SHERB_NOSOUND = 0x00000004
         }
 
-        [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
-        internal static extern uint SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
+        [LibraryImport("Shell32.dll", StringMarshalling = StringMarshalling.Utf16, EntryPoint = "SHEmptyRecycleBinW")]
+        internal static partial uint SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
     }
 }
 #endif

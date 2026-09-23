@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// digital signature.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override Signature PerformAction(string sourcePathOrExtension, byte[] content)
         {
-            return SignatureHelper.GetSignature(sourcePathOrExtension, System.Text.Encoding.Unicode.GetString(content));
+            return SignatureHelper.GetSignature(sourcePathOrExtension, content);
         }
     }
 
@@ -374,10 +374,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = string.Empty;
-                }
+                value ??= string.Empty;
 
                 _timestampServer = value;
             }
@@ -404,12 +401,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _hashAlgorithm = null;
+        private string _hashAlgorithm = "SHA256";
 
         /// <summary>
         /// Property that sets force parameter.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get

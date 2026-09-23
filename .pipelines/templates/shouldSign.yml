@@ -1,0 +1,30 @@
+parameters:
+- name: ob_restore_phase
+  type: boolean
+  default: true
+
+steps:
+- powershell: |
+    $shouldSign = $true
+    $authenticodeCert = '$(authenticode_cert_id)'
+    $msixCert = '$(authenticode_cert_id)'
+    if($env:IS_DAILY -eq 'true')
+    {
+      $authenticodeCert = '$(authenticode_test_cert_id)'
+    }
+    if($env:SKIP_SIGNING -eq 'Yes')
+    {
+      $shouldSign = $false
+    }
+    $vstsCommandString = "vso[task.setvariable variable=SHOULD_SIGN]$($shouldSign.ToString().ToLowerInvariant())"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+    $vstsCommandString = "vso[task.setvariable variable=MSIX_CERT]$($msixCert)"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+    $vstsCommandString = "vso[task.setvariable variable=AUTHENTICODE_CERT]$($authenticodeCert)"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+  displayName: 'Set SHOULD_SIGN Variable'
+  env:
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}

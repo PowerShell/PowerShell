@@ -1,0 +1,17 @@
+# This template checks if the current branch is a rebuild branch
+# and sets an output variable IsRebuildBranch that can be used by other templates
+steps:
+- pwsh: |
+    # Check if this is a rebuild branch (e.g., rebuild/v7.4.13-rebuild.5)
+    $isRebuildBranch = '$(Build.SourceBranch)' -match 'refs/heads/rebuild/.*-rebuild\.'
+
+    $value = if ($isRebuildBranch) { 'true' } else { 'false' }
+    Write-Verbose -Message "IsRebuildBranch: $value" -Verbose
+
+    if ($isRebuildBranch) {
+        Write-Verbose -Message "Rebuild branch detected: $(Build.SourceBranch)" -Verbose
+    }
+
+    Write-Host "##vso[task.setvariable variable=IsRebuildBranch;isOutput=true]$value"
+  name: RebuildBranchCheck
+  displayName: Check if Rebuild Branch

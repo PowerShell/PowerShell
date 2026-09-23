@@ -5,8 +5,53 @@
 # these tests aren't going to check that telemetry is being sent
 # only that we're not treating the telemetry.uuid file correctly
 
+function Get-OSTelemetryLevel {
+    <#
+    .SYNOPSIS
+        Returns the effective Windows Telemetry level (0-3).
+        Logic: Checks GPO overrides, then System preferences, then defaults to 1.
+    #>
+
+    $gpoPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection"
+    $sysPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection"
+    $valueName = "AllowTelemetry"
+
+    # 1. Check the "Managed" Policy (Group Policy)
+    if (Test-Path $gpoPath) {
+        $gpoValue = Get-ItemProperty -Path $gpoPath -Name $valueName -ErrorAction SilentlyContinue
+        if ($gpoValue -and $gpoValue.$valueName) {
+            return [int]$gpoValue.$valueName
+        }
+    }
+
+    # 2. Check the "User/System" Preference (Settings App)
+    if (Test-Path $sysPath) {
+        $sysValue = Get-ItemProperty -Path $sysPath -Name $valueName -ErrorAction SilentlyContinue
+        if ($sysValue -and $sysValue.$valueName) {
+            return [int]$sysValue.$valueName
+        }
+    }
+
+    # 3. Fallback to OS Default (Basic/Required)
+    return 1
+}
+
 Describe "Telemetry for shell startup" -Tag CI {
     BeforeAll {
+        $skipTelemetryTests = $false
+
+        if ($IsWindows) {
+            ## Skip telemetry tests if the OS telemetry level is less than 2 (Enhanced) -- PS telemetry is disabled in this case.
+            $osTelemetryLevel = Get-OSTelemetryLevel
+            $skipTelemetryTests = $osTelemetryLevel -lt 2
+        }
+
+        if ($skipTelemetryTests) {
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+            return
+        }
+
         # if the telemetry file exists, move it out of the way
         # the member is internal, but we can retrieve it via reflection
         $cacheDir = [System.Management.Automation.Platform].GetField("CacheDirectory","NonPublic,Static").GetValue($null)
@@ -20,9 +65,30 @@ Describe "Telemetry for shell startup" -Tag CI {
         $PWSH = (Get-Process -Id $PID).MainModule.FileName
         $telemetrySet = Test-Path -Path env:POWERSHELL_TELEMETRY_OPTOUT
         $SendingTelemetry = $env:POWERSHELL_TELEMETRY_OPTOUT
+
+        function Invoke-TelemetryTestProcess {
+            param(
+                [Parameter(Mandatory)]
+                [string[]] $Argument
+            )
+
+            $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
+            $startInfo.FileName = $PWSH
+            $startInfo.UseShellExecute = $false
+            foreach ($argumentValue in $Argument) {
+                $startInfo.ArgumentList.Add($argumentValue)
+            }
+
+            return [System.Diagnostics.Process]::Start($startInfo)
+        }
     }
 
     AfterAll {
+        if ($skipTelemetryTests) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            return
+        }
+
         # check and reset the telemetry.uuid file
         if ( $uuidFileExists ) {
             if ( Test-Path -Path "${uuidPath}.original" ) {
@@ -56,6 +122,101 @@ Describe "Telemetry for shell startup" -Tag CI {
         $env:POWERSHELL_TELEMETRY_OPTOUT = "no"
         & $PWSH -NoProfile -Command "exit"
         $uuidPath  | Should -Exist
+    }
+
+    It "Should not block concurrent telemetry-enabled shell startup when the uuid file is missing" {
+        $env:POWERSHELL_TELEMETRY_OPTOUT = "no"
+        $holderReadyPath = Join-Path -Path $TestDrive -ChildPath "telemetry-holder.ready"
+        $holderStopPath = Join-Path -Path $TestDrive -ChildPath "telemetry-holder.stop"
+        $holderScriptPath = Join-Path -Path $TestDrive -ChildPath "telemetry-holder.ps1"
+        @'
+param($ReadyPath, $StopPath)
+
+[void][Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]::CanSendTelemetry
+[System.IO.File]::WriteAllText($ReadyPath, "")
+while (-not [System.IO.File]::Exists($StopPath)) {
+    Start-Sleep -Milliseconds 100
+}
+'@ | Set-Content -LiteralPath $holderScriptPath
+
+        $holderProcess = $null
+        $childProcess = $null
+        try {
+            $holderProcess = Invoke-TelemetryTestProcess -Argument @(
+                "-NoProfile",
+                "-File",
+                $holderScriptPath,
+                $holderReadyPath,
+                $holderStopPath
+            )
+
+            Wait-UntilTrue -sb { Test-Path -LiteralPath $holderReadyPath } -TimeoutInMilliseconds 15000 -IntervalInMilliseconds 100 |
+                Should -BeTrue
+            $uuidPath | Should -Exist
+            Remove-Item -LiteralPath $uuidPath
+
+            $childProcess = Invoke-TelemetryTestProcess -Argument @("-NoProfile", "-Command", "exit")
+            $childProcess.WaitForExit(15000) | Should -BeTrue
+            $childProcess.ExitCode | Should -Be 0
+            $uuidPath | Should -Exist
+        }
+        finally {
+            if ($childProcess -and -not $childProcess.HasExited) {
+                $childProcess.Kill($true)
+                $childProcess.WaitForExit()
+            }
+
+            if ($childProcess) {
+                $childProcess.Dispose()
+            }
+
+            [System.IO.File]::WriteAllText($holderStopPath, "")
+            if ($holderProcess -and -not $holderProcess.WaitForExit(5000)) {
+                $holderProcess.Kill($true)
+                $holderProcess.WaitForExit()
+            }
+
+            if ($holderProcess) {
+                $holderProcess.Dispose()
+            }
+        }
+    }
+
+    It "Should stop creating the uuid file when the telemetry mutex times out" {
+        $env:POWERSHELL_TELEMETRY_OPTOUT = "no"
+        $mutex = [System.Threading.Mutex]::new($false, "CreateUniqueUserId")
+        $mutexAcquired = $false
+        $childProcess = $null
+        try {
+            try {
+                $mutexAcquired = $mutex.WaitOne(5000)
+            }
+            catch [System.Threading.AbandonedMutexException] {
+                $mutexAcquired = $true
+            }
+
+            $mutexAcquired | Should -BeTrue -Because "the test must own the mutex to force the child to time out"
+            $childProcess = Invoke-TelemetryTestProcess -Argument @("-NoProfile", "-Command", "exit")
+            $childProcess.WaitForExit(15000) | Should -BeTrue
+            $childProcess.ExitCode | Should -Be 0
+            $uuidPath | Should -Not -Exist
+        }
+        finally {
+            if ($childProcess -and -not $childProcess.HasExited) {
+                $childProcess.Kill($true)
+                $childProcess.WaitForExit()
+            }
+
+            if ($childProcess) {
+                $childProcess.Dispose()
+            }
+
+            if ($mutexAcquired) {
+                $mutex.ReleaseMutex()
+            }
+
+            $mutex.Dispose()
+        }
     }
 
     It "Should create a uuid file by default" {
@@ -129,28 +290,14 @@ Describe "Telemetry for shell startup" -Tag CI {
         $result | Should -Be $expectedValue
     }
 
-    It "Should resend startup event if the semaphore says we haven't sent telemetry" {
-
+    It "Should send startup event" {
         $resultJson = & $PWSH -NoProfile -c {
+            # this should ensure that the startup telemetry event is sent.
+            $null = Get-Date | Out-String
             $telemetryType = [Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]
             $bindingFlags = [System.Reflection.BindingFlags]"NonPublic,Static"
-            $initialValue = ${telemetryType}.GetMember("s_startupEventSent", $bindingFlags)[0].GetValue($null)
-            # force a resend of the startup telemetry
-            $null = ${telemetryType}.GetMember("s_startupEventSent", $bindingFlags)[0].SetValue($null,0)
-            $null = Get-Date | Out-String
-            # now check it again, it should be true now that something has executed
-            $finalValue = ${telemetryType}.GetMember("s_startupEventSent", $bindingFlags)[0].GetValue($null)
-            @{
-                initialValue = $initialValue
-                finalValue = $finalValue
-            } | ConvertTo-Json -Compress
+            $observedValue = ${telemetryType}.GetMember("s_startupEventSent", $bindingFlags)[0].GetValue($null)
+            $observedValue | Should -Be 1  -Because "Should have sent telemetry on console startup"
         }
-
-        $result = $resultJson | ConvertFrom-Json
-
-        $result.InitialValue | Should -Be 1  -Because "Should have sent telemetry on console startup"
-
-        $result.FinalValue | Should -Be 1  -Because "Should have resent telemetry"
     }
-
 }

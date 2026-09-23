@@ -88,10 +88,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void AddFilterRulePanelItem(FilterRulePanelItem item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("item");
-            }
+            ArgumentNullException.ThrowIfNull(item);
 
             int insertionIndex = this.GetInsertionIndex(item);
             this.filterRulePanelItems.Insert(insertionIndex, item);
@@ -116,10 +113,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void RemoveFilterRulePanelItem(FilterRulePanelItem item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("item");
-            }
+            ArgumentNullException.ThrowIfNull(item);
 
             item.Rule.EvaluationResultInvalidated -= this.Rule_EvaluationResultInvalidated;
 
@@ -266,13 +260,11 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         protected virtual void NotifyFilterExpressionChanged()
         {
-            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             EventHandler eh = this.FilterExpressionChanged;
             if (eh != null)
             {
                 eh(this, new EventArgs());
             }
-            #pragma warning restore IDE1005
         }
 
         #endregion Notify Filter Expression Changed

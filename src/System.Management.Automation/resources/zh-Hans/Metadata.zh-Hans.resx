@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MetadataMemberInitialization" xml:space="preserve">
+    <value>无法初始化“{0}”的属性:“{1}”</value>
+  </data>
+  <data name="ValidateRangeElementType" xml:space="preserve">
+    <value>无法验证该参数，因为其类型“{0}”与参数的最大和最小限制类型({1})不同。请确保参数类型为 {1}，然后重试该命令。</value>
+  </data>
+  <data name="ValidateRangePositiveFailure" xml:space="preserve">
+    <value>无法验证参数“{0}”，因为其值不大于零。</value>
+  </data>
+  <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
+    <value>无法验证参数“{0}”，因为其值不大于或等于零。</value>
+  </data>
+  <data name="ValidateRangeNegativeFailure" xml:space="preserve">
+    <value>无法验证参数“{0}”，因为其值不小于零。</value>
+  </data>
+  <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
+    <value>无法验证参数“{0}”，因为其值不小于或等于零。</value>
+  </data>
+  <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
+    <value>无法接受指定的最小范围({0})，因为它与指定的最大范围({1})的类型不同。更新参数的 ValidateRange 属性。</value>
+  </data>
+  <data name="ValidateRangeNotIComparable" xml:space="preserve">
+    <value>无法接受 MaxRange 和 MinRange 参数类型。这两个参数都必须是实现 IComparable 接口的对象。</value>
+  </data>
+  <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
+    <value>无法接受指定的最大范围，因为它小于指定的最小范围。更新参数的 ValidateRange 属性。</value>
+  </data>
+  <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
+    <value>参数 {0} 大于允许的最大范围 {1}。提供小于或等于 {1} 的参数，然后重试该命令。</value>
+  </data>
+  <data name="ValidateRangeSmallerThanMinRangeFailure" xml:space="preserve">
+    <value>参数 {0} 小于允许的最小范围 {1}。提供大于或等于 {1} 的参数，然后重试该命令。</value>
+  </data>
+  <data name="ValidatePatternFailure" xml:space="preserve">
+    <value>参数“{0}”与“{1}”模式不匹配。提供与“{1}”匹配的参数，然后重试该命令。</value>
+  </data>
+  <data name="ValidateCountNotInArray" xml:space="preserve">
+    <value>ValidateCount 属性不能应用于非数组参数。从参数中移除属性或将参数设为数组参数。</value>
+  </data>
+  <data name="ValidateCountExactFailure" xml:space="preserve">
+    <value>该参数确切需要 {0} 个值 - 系统提供了 {1} 个值。</value>
+  </data>
+  <data name="ValidateCountMinMaxFailure" xml:space="preserve">
+    <value>参数至少需要 {0} 个值，并且不超过 {1} 个值 - 已提供 {2} 个值。</value>
+  </data>
+  <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>参数的指定最大实参数小于指定的最小实参数。更新参数的 ValidateCount 属性。</value>
+  </data>
+  <data name="ValidateLengthMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>参数的指定最大字符长度短于指定的最小参数字符长度。更新参数的 ValidateLength 属性。</value>
+  </data>
+  <data name="ValidateLengthNotString" xml:space="preserve">
+    <value>无法将 ValidateLength 属性应用于不是字符串的参数或 string[] 参数。将参数设为字符串或 string[] 参数。</value>
+  </data>
+  <data name="ValidateLengthMinLengthFailure" xml:space="preserve">
+    <value>参数的字符长度({1})太短。指定长度大于或等于“{0}”的参数，然后重试该命令。</value>
+  </data>
+  <data name="ValidateLengthMaxLengthFailure" xml:space="preserve">
+    <value>参数的字符长度({1})太长。指定长度小于或等于“{0}”的参数，然后重试该命令。</value>
+  </data>
+  <data name="ValidateSetFailure" xml:space="preserve">
+    <value>参数“{0}”不属于 ValidateSet 属性指定的集“{1}”。请提供位于集中的参数，然后重试该命令。</value>
+  </data>
+  <data name="ValidateSetGeneratedValidValuesListIsNull" xml:space="preserve">
+    <value>有效值生成器返回 null 值。</value>
+  </data>
+  <data name="ValidateFailureResult" xml:space="preserve">
+    <value>属性“{1}”{2} 上的“{0}”失败</value>
+  </data>
+  <data name="ParsingTooManyParameterSets" xml:space="preserve">
+    <value>无法获取或运行该命令。已超过此命令的最大参数集数。</value>
+  </data>
+  <data name="ArgumentTransformationArgumentsShouldBeStrings" xml:space="preserve">
+    <value>无法处理参数，因为参数值不是字符串。指定了 ArgumentTransformationAttribute 的参数实参值应为字符串。</value>
+  </data>
+  <data name="InvalidValueFailure" xml:space="preserve">
+    <value>无法验证该变量，因为该值 {1} 不是变量 {0} 的有效值。</value>
+  </data>
+  <data name="InvalidMetadataForCurrentValue" xml:space="preserve">
+    <value>无法添加属性，因为值为 {1} 的变量 {0} 将不再有效。</value>
+  </data>
+  <data name="ValidateNotNullFailure" xml:space="preserve">
+    <value>参数为 null。提供参数的有效值，然后再次尝试运行该命令。</value>
+  </data>
+  <data name="ValidateNotNullCollectionFailure" xml:space="preserve">
+    <value>参数具有 null 值，或者参数集合的元素包含 null 值。提供不包含任何 null 值的集合，然后重试该命令。</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyFailure" xml:space="preserve">
+    <value>参数为 Null 或空。提供不为 Null 或空的参数，然后重试该命令。</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
+    <value>参数为 null、空，或参数集合的元素包含 null 值。提供不包含任何 null 值的集合，然后重试该命令。</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
+    <value>参数为 null、空或仅由空格字符组成。提供包含非空空格字符的参数，然后重试该命令。</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
+    <value>参数集合的元素为 null、空或仅由空格字符组成。提供不包含任何这些值的集合，然后重试该命令。</value>
+  </data>
+  <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>已为命令多次定义名为“{0}”的参数。</value>
+  </data>
+  <data name="AliasParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>无法指定参数别名，因为已为命令多次定义名为“{0}”的别名。</value>
+  </data>
+  <data name="ParameterNameConflictsWithAlias" xml:space="preserve">
+    <value>无法指定参数“{0}”，因为它与参数“{1}”的同名参数别名冲突。</value>
+  </data>
+  <data name="ValidateScriptFailure" xml:space="preserve">
+    <value>值为“{0}”的参数的“{1}”验证脚本未返回结果 True。确定验证脚本失败的原因，然后重试该命令。</value>
+  </data>
+  <data name="ValidateVersionFailure" xml:space="preserve">
+    <value>“{0}”参数不包含有效的 PowerShell 版本。提供有效的版本号，然后重试该命令。</value>
+  </data>
+  <data name="ValidateVariableName" xml:space="preserve">
+    <value>无法验证参数“{0}”，因为它不是有效的变量名称。</value>
+  </data>
+  <data name="JobDefinitionMustDeriveFromIJobConverter" xml:space="preserve">
+    <value>作业转换类型必须派生自 IAstToScriptBlockConverter。</value>
+  </data>
+  <data name="ValidateDrivePathArgNotString" xml:space="preserve">
+    <value>路径参数无效。提供字符串类型的路径参数。</value>
+  </data>
+  <data name="ValidateDrivePathFailure" xml:space="preserve">
+    <value>路径参数驱动器 {0} 不属于已批准的驱动器集: {1}。使用批准的驱动器提供路径参数。</value>
+  </data>
+  <data name="ValidateDrivePathInvalidChar" xml:space="preserve">
+    <value>路径参数包含无效字符。</value>
+  </data>
+  <data name="ValidateDrivePathNoRoot" xml:space="preserve">
+    <value>路径参数没有根驱动器。 提供包含根驱动器的完整路径参数。</value>
+  </data>
+  <data name="ArgumentNullOrEmpty" xml:space="preserve">
+    <value>参数“{0}”的参数值不能为 null 或空字符串。</value>
+  </data>
+  <data name="InvalidEnumArgument" xml:space="preserve">
+    <value>枚举成员“{0}”不是参数“{1}”的有效值。请指定以下成员之一，然后重试: {2}。</value>
+  </data>
+  <data name="ValidateTrustedDataFailure" xml:space="preserve">
+    <value>无法处理输入。参数“{0}”不受信任。</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
+    <value>ValidateTrustedData 属性检查失败</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
+    <value>参数实参“{0}”不受信任，且在约束语言模式下无法通过 ValidateTrustedData 参数属性检查。</value>
+  </data>
+</root>

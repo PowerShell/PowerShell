@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="UpdateData_WrongProviderError" xml:space="preserve">
+    <value>無法開啟檔案，因為目前的提供者是 "{0}"，而此命令需要檔案。</value>
+  </data>
+  <data name="UpdateData_WrongExtension" xml:space="preserve">
+    <value>無法讀取檔案 "{0}"，因為它沒有副檔名 "{1}"。</value>
+  </data>
+  <data name="UpdateTypeDataAction" xml:space="preserve">
+    <value>更新 TypeData</value>
+  </data>
+  <data name="UpdateFormatDataAction" xml:space="preserve">
+    <value>更新 FormatData</value>
+  </data>
+  <data name="UpdateTarget" xml:space="preserve">
+    <value>FileName: {0}</value>
+  </data>
+  <data name="CannotUpdateMemberType" xml:space="preserve">
+    <value>無法使用類型 "{0}" 更新成員。請為 MemberTypes 參數指定不同的類型。</value>
+  </data>
+  <data name="ShouldBeSpecified" xml:space="preserve">
+    <value>類型 "{1}" 需要 {0} 參數。請指定 {0} 參數。</value>
+  </data>
+  <data name="ShouldNotBeNull" xml:space="preserve">
+    <value>對於類型 "{1}" 的成員，{0} 參數不應為 null 或空字串。更新此成員類型時，請為 {0} 參數指定非 null 值。</value>
+  </data>
+  <data name="ShouldNotBeSpecified" xml:space="preserve">
+    <value>類型 "{1}" 的成員不需要 {0} 參數，因此不應指定此參數。更新此成員類型時，請勿指定 {0} 參數。</value>
+  </data>
+  <data name="TypeDataEmpty" xml:space="preserve">
+    <value>未為類型 "{0}" 的更新指定成員。</value>
+  </data>
+  <data name="TargetTypeNameEmpty" xml:space="preserve">
+    <value>目標類型名稱不應為 null、空白，或只包含空白字元。</value>
+  </data>
+  <data name="Value1AndValue2AreNotBothNull" xml:space="preserve">
+    <value>類型為 "{0}" 的成員，其 Value 和 SecondValue 參數不應同時為 null。請為這兩個參數的其中一個指定非 null 值。</value>
+  </data>
+  <data name="WrongMemberCount" xml:space="preserve">
+    <value>只能指定一種成員類型。指定的成員類型為: "{0}"。請只使用一種成員類型更新此類型。</value>
+  </data>
+  <data name="MemberTypeIsMissing" xml:space="preserve">
+    <value>若未指定 MemberType 參數，則無法指定 MemberName、Value 及 SecondValue 參數。</value>
+  </data>
+  <data name="RemoveTypeDataAction" xml:space="preserve">
+    <value>移除 TypeData</value>
+  </data>
+  <data name="RemoveTypeDataTarget" xml:space="preserve">
+    <value>將移除的類型名稱: {0}</value>
+  </data>
+  <data name="UpdateTypeDataTarget" xml:space="preserve">
+    <value>要更新的類型: {0}</value>
+  </data>
+  <data name="RemoveTypeFileAction" xml:space="preserve">
+    <value>移除類型檔案</value>
+  </data>
+  <data name="TypeFileNotExistsInCurrentSession" xml:space="preserve">
+    <value>檔案 {0} 未匯入目前的工作階段。</value>
+  </data>
+  <data name="FormatUpdatesDisabled" xml:space="preserve">
+    <value>此 Runspace 不允許更新格式資料。建立 Runspace 時，已將 'DisableFormatUpdates' 屬性設為 True。</value>
+  </data>
+  <data name="CannotUpdateFormatWithFormatTable" xml:space="preserve">
+    <value>無法使用 FormatTable 執行個體更新格式資料。</value>
+  </data>
+  <data name="CannotUpdateTypeWithTypeTable" xml:space="preserve">
+    <value>無法使用 TypeTable 執行個體更新類型資料。</value>
+  </data>
+</root>

@@ -28,7 +28,6 @@ namespace System.Management.Automation.Help
     /// <summary>
     /// Updatable help system exception.
     /// </summary>
-    [Serializable]
     internal class UpdatableHelpSystemException : Exception
     {
         /// <summary>
@@ -294,19 +293,13 @@ namespace System.Management.Automation.Help
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
 
-            while (culture != null)
+            // Allow tests to override system culture
+            if (InternalTestHooks.CurrentUICulture != null)
             {
-                if (string.IsNullOrEmpty(culture.Name))
-                {
-                    yield break;
-                }
-
-                yield return culture.Name;
-
-                culture = culture.Parent;
+                culture = InternalTestHooks.CurrentUICulture;
             }
 
-            yield break;
+            return CultureSpecificUpdatableHelp.GetCultureFallbackChain(culture);
         }
 
         #region Help Metadata Retrieval
@@ -426,6 +419,7 @@ namespace System.Management.Automation.Help
                         using (HttpClient client = new HttpClient(handler))
                         {
                             client.Timeout = new TimeSpan(0, 0, 30); // Set 30 second timeout
+                            // codeql[cs/ssrf] - This is expected Poweshell behavior and the user assumes trust for the module they download and any URIs it references. The URIs are also not executables or scripts that would be invoked by this method.
                             Task<HttpResponseMessage> responseMessage = client.GetAsync(uri);
                             using (HttpResponseMessage response = responseMessage.Result)
                             {
@@ -555,7 +549,10 @@ namespace System.Management.Automation.Help
             }
             catch (XmlException e)
             {
-                if (ignoreValidationException) { return null; }
+                if (ignoreValidationException)
+                {
+                    return null;
+                }
 
                 throw new UpdatableHelpSystemException(HelpInfoXmlValidationFailure,
                     e.Message, ErrorCategory.InvalidData, null, e);
@@ -591,13 +588,9 @@ namespace System.Management.Automation.Help
 
             if (!string.IsNullOrEmpty(currentCulture))
             {
-                IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
-                    globPatterns: new[] { currentCulture },
-                    options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-
                 for (int i = 0; i < updatableHelpItem.Length; i++)
                 {
-                    if (SessionStateUtilities.MatchesAnyWildcardPattern(updatableHelpItem[i].Culture.Name, patternList, true))
+                    if (updatableHelpItem[i].IsCultureSupported(currentCulture))
                     {
                         helpInfo.HelpContentUriCollection.Add(new UpdatableHelpUri(moduleName, moduleGuid, updatableHelpItem[i].Culture, uri));
                     }
@@ -791,6 +784,7 @@ namespace System.Management.Automation.Help
                 using (HttpClient client = new HttpClient(handler))
                 {
                     client.Timeout = _defaultTimeout;
+                    // codeql[cs/ssrf] - This is expected Poweshell behavior and the user assumes trust for the module they download and any URIs it references. The URIs are also not executables or scripts that would be invoked by this method.
                     Task<HttpResponseMessage> responseMsg = client.GetAsync(new Uri(uri), _cancelTokenSource.Token);
 
                     // TODO: Should I use a continuation to write the stream to a file?
@@ -1097,14 +1091,14 @@ namespace System.Management.Automation.Help
 #if UNIX
         private static bool ExpandArchive(string source, string destination)
         {
-            bool sucessfulDecompression = false;
+            bool successfulDecompression = false;
 
             try
             {
                 using (ZipArchive zipArchive = ZipFile.Open(source, ZipArchiveMode.Read))
                 {
                     zipArchive.ExtractToDirectory(destination);
-                    sucessfulDecompression = true;
+                    successfulDecompression = true;
                 }
             }
             catch (ArgumentException) { }
@@ -1116,7 +1110,7 @@ namespace System.Management.Automation.Help
             catch (UnauthorizedAccessException) { }
             catch (ObjectDisposedException) { }
 
-            return sucessfulDecompression;
+            return successfulDecompression;
         }
 #endif
 
@@ -1137,9 +1131,9 @@ namespace System.Management.Automation.Help
             }
 
             string sourceDirectory = Path.GetDirectoryName(srcPath);
-            bool sucessfulDecompression = false;
+            bool successfulDecompression = false;
 #if UNIX
-            sucessfulDecompression = ExpandArchive(Path.Combine(sourceDirectory, Path.GetFileName(srcPath)), destPath);
+            successfulDecompression = ExpandArchive(Path.Combine(sourceDirectory, Path.GetFileName(srcPath)), destPath);
 #else
             // Cabinet API doesn't handle the trailing back slash
             if (!sourceDirectory.EndsWith('\\'))
@@ -1152,9 +1146,9 @@ namespace System.Management.Automation.Help
                 destPath += "\\";
             }
 
-            sucessfulDecompression = CabinetExtractorFactory.GetCabinetExtractor().Extract(Path.GetFileName(srcPath), sourceDirectory, destPath);
+            successfulDecompression = CabinetExtractorFactory.GetCabinetExtractor().Extract(Path.GetFileName(srcPath), sourceDirectory, destPath);
 #endif
-            if (!sucessfulDecompression)
+            if (!successfulDecompression)
             {
                 throw new UpdatableHelpSystemException("UnableToExtract", StringUtil.Format(HelpDisplayStrings.UnzipFailure),
                     ErrorCategory.InvalidOperation, null, null);

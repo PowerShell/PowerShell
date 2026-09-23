@@ -316,10 +316,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (context == null)
-            {
-                context = new CmdletProviderContext(this.ExecutionContext);
-            }
+            context ??= new CmdletProviderContext(this.ExecutionContext);
 
             if (CurrentDrive != null)
             {

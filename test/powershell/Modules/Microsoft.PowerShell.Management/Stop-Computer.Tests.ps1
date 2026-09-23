@@ -58,3 +58,16 @@ finally
     Disable-Testhook -testhookName $stopTesthook
     Set-TesthookResult -testhookName $stopTesthookResultName -Value $DefaultResultValue
 }
+
+Describe 'Non-admin on Unix' {
+    BeforeAll {
+        $skip = $false
+        if ($IsWindows -or [environment]::IsPrivilegedProcess -or ($null -eq (Get-Command shutdown -CommandType Application -ErrorAction Ignore))) {
+            $skip = $true
+        }
+    }
+
+    It 'Reports error if not run under sudo' -Skip:($skip) {
+        { Stop-Computer -ErrorAction Stop } | Should -Throw -ErrorId "CommandFailed,Microsoft.PowerShell.Commands.StopComputerCommand"
+    }
+}

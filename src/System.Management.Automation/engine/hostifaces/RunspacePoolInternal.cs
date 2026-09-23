@@ -16,7 +16,7 @@ namespace System.Management.Automation.Runspaces.Internal
     /// <summary>
     /// Class which supports pooling local powerShell runspaces.
     /// </summary>
-    internal class RunspacePoolInternal
+    internal class RunspacePoolInternal : IDisposable
     {
         #region Private data
 
@@ -231,10 +231,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 lock (this.syncObject)
                 {
-                    if (_applicationPrivateData == null)
-                    {
-                        _applicationPrivateData = new PSPrimitiveDictionary();
-                    }
+                    _applicationPrivateData ??= new PSPrimitiveDictionary();
                 }
             }
 
@@ -817,12 +814,22 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
+        /// Release all resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
         /// Dispose off the current runspace pool.
         /// </summary>
         /// <param name="disposing">
         /// true to release all the internal resources.
         /// </param>
-        public virtual void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!_isDisposed)
             {
@@ -1306,7 +1313,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Cleans the pool closing the runspaces that are idle.
         /// This method is called as part of a timer callback.
-        /// This method will make sure atleast minPoolSz number
+        /// This method will make sure at least minPoolSz number
         /// of Runspaces are active.
         /// </summary>
         /// <param name="state"></param>

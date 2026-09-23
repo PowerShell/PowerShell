@@ -7,11 +7,11 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
 {
-    ///<summary>
+    /// <summary>
     /// This is the object used by Runspace,pipeline,host to send data
     /// to remote end. Transport layer owns breaking this into fragments
     /// and sending to other end
-    ///</summary>
+    /// </summary>
     internal class RemoteDataObject<T>
     {
         #region Private Members

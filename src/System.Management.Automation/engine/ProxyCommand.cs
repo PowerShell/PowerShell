@@ -247,6 +247,30 @@ namespace System.Management.Automation
             return commandMetadata.GetEndBlock();
         }
 
+        /// <summary>
+        /// This method constructs a string representing the clean block of the command
+        /// specified by <paramref name="commandMetadata"/>. The returned string only contains the
+        /// script, it is not enclosed in "clean { }".
+        /// </summary>
+        /// <param name="commandMetadata">
+        /// An instance of CommandMetadata representing a command.
+        /// </param>
+        /// <returns>
+        /// A string representing the end block of the command.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="commandMetadata"/> is null.
+        /// </exception>
+        public static string GetClean(CommandMetadata commandMetadata)
+        {
+            if (commandMetadata == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
+            }
+
+            return commandMetadata.GetCleanBlock();
+        }
+
         private static T GetProperty<T>(PSObject obj, string property) where T : class
         {
             T result = null;
@@ -352,10 +376,7 @@ namespace System.Management.Automation
         /// <exception cref="System.InvalidOperationException">When the help argument is not recognized as a HelpInfo object.</exception>
         public static string GetHelpComments(PSObject help)
         {
-            if (help == null)
-            {
-                throw new ArgumentNullException(nameof(help));
-            }
+            ArgumentNullException.ThrowIfNull(help);
 
             bool isHelpObject = false;
             foreach (string typeName in help.InternalTypeNames)

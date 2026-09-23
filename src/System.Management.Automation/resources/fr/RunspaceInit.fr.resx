@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="EnabledExperimentalFeatures" xml:space="preserve">
+    <value>Variable qui contient les noms des fonctionnalités expérimentales activées</value>
+  </data>
+  <data name="PSHOMEDescription" xml:space="preserve">
+    <value>Dossier parent de l’application hôte de l’instance d’exécution actuelle</value>
+  </data>
+  <data name="HOMEDescription" xml:space="preserve">
+    <value>Dossier contenant le profil de l’utilisateur actuel</value>
+  </data>
+  <data name="PSHostDescription" xml:space="preserve">
+    <value>Une référence à l’hôte de l’instance d’exécution actuel</value>
+  </data>
+  <data name="ExecutionContextDescription" xml:space="preserve">
+    <value>Objets d’exécution disponibles pour les cmdlets</value>
+  </data>
+  <data name="PSVersionTableDescription" xml:space="preserve">
+    <value>Informations sur la version pour la session PowerShell actuelle</value>
+  </data>
+  <data name="PIDDescription" xml:space="preserve">
+    <value>ID du processus actuel</value>
+  </data>
+  <data name="DollarHookDescription" xml:space="preserve">
+    <value>État de la dernière commande</value>
+  </data>
+  <data name="PPIDDescription" xml:space="preserve">
+    <value>ID du processus parent</value>
+  </data>
+  <data name="MshShellIdDescription" xml:space="preserve">
+    <value>Le ShellID identifie le shell actuel.  Ceci est utilisé par #Requires.</value>
+  </data>
+  <data name="ConsoleDescription" xml:space="preserve">
+    <value>Nom du fichier de console actuel</value>
+  </data>
+  <data name="OutputEncodingDescription" xml:space="preserve">
+    <value>Encodage de texte utilisé lors de l’envoi du texte vers un fichier exécutable natif</value>
+  </data>
+  <data name="PSApplicationOutputEncodingDescription" xml:space="preserve">
+    <value>Encodage de texte utilisé lors de la lecture du texte de sortie d’un fichier exécutable natif</value>
+  </data>
+  <data name="PSStyleDescription" xml:space="preserve">
+    <value>Configuration qui contrôle le rendu du texte.</value>
+  </data>
+  <data name="PSEmailServerDescription" xml:space="preserve">
+    <value>Variable qui contient le nom du serveur de messagerie. Vous pouvez l’utiliser à la place du paramètre HostName dans la cmdlet Send-MailMessage.</value>
+  </data>
+  <data name="ConfirmPreferenceDescription" xml:space="preserve">
+    <value>Détermine quand une confirmation doit être demandée. La confirmation est demandée lorsque la valeur ConfirmImpact de l’opération est égale ou supérieure à $ConfirmPreference. Si $ConfirmPreference a la valeur None, les actions ne sont confirmées que lorsque Confirm est spécifié.</value>
+  </data>
+  <data name="DebugPreferenceDescription" xml:space="preserve">
+    <value>Indique l’action effectuée lorsqu’un message Déboguer est remis</value>
+  </data>
+  <data name="ErrorActionPreferenceDescription" xml:space="preserve">
+    <value>Indique l’action effectuée lorsqu’un message d’erreur est remis</value>
+  </data>
+  <data name="ProgressPreferenceDescription" xml:space="preserve">
+    <value>Indique l’action effectuée lorsque des enregistrements de progression sont remis</value>
+  </data>
+  <data name="VerbosePreferenceDescription" xml:space="preserve">
+    <value>Indique l’action effectuée lorsqu’un message Détaillé est remis</value>
+  </data>
+  <data name="WarningPreferenceDescription" xml:space="preserve">
+    <value>Indique l’action effectuée lorsqu’un message Avertissement est remis</value>
+  </data>
+  <data name="InformationPreferenceDescription" xml:space="preserve">
+    <value>Indique l’action effectuée lorsqu’une commande génère un élément dans le flux Informations</value>
+  </data>
+  <data name="ErrorViewDescription" xml:space="preserve">
+    <value>Détermine le mode d’affichage à utiliser lors de l’affichage des erreurs</value>
+  </data>
+  <data name="NestedPromptLevelDescription" xml:space="preserve">
+    <value>Indique le type de requête à afficher pour le niveau d’imbrication actuel</value>
+  </data>
+  <data name="PSNativeCommandUseErrorActionPreferenceDescription" xml:space="preserve">
+    <value>Si la valeur est true, $ErrorActionPreference s’applique aux exécutables natifs, afin que les codes de sortie non nuls génèrent des erreurs de type cmdlet régies par les paramètres d’action pour l’erreur</value>
+  </data>
+  <data name="WhatIfPreferenceDescription" xml:space="preserve">
+    <value>Si la valeur est true, WhatIf est considéré comme activé pour toutes les commandes.</value>
+  </data>
+  <data name="NativeCommandArgumentPassingDescription" xml:space="preserve">
+    <value>Détermine la manière dont les arguments sont passés aux exécutables natifs.</value>
+  </data>
+  <data name="FormatEnumerationLimitDescription" xml:space="preserve">
+    <value>Indique la limite d’énumération lors de la mise en forme des objets IEnumerable</value>
+  </data>
+  <data name="ReportErrorShowStackTraceDescription" xml:space="preserve">
+    <value>Affiche les erreurs avec une trace</value>
+  </data>
+  <data name="ReportErrorShowInnerExceptionDescription" xml:space="preserve">
+    <value>Affiche les erreurs avec les exceptions internes</value>
+  </data>
+  <data name="ReportErrorShowSourceDescription" xml:space="preserve">
+    <value>Affiche les erreurs avec leur source</value>
+  </data>
+  <data name="ReportErrorShowExceptionClassDescription" xml:space="preserve">
+    <value>Affiche les erreurs avec une description de la classe d’erreur</value>
+  </data>
+  <data name="DollarPSCultureDescription" xml:space="preserve">
+    <value>Culture de la session PowerShell actuelle</value>
+  </data>
+  <data name="DollarPSUICultureDescription" xml:space="preserve">
+    <value>Culture de l’interface utilisateur de la session PowerShell actuelle</value>
+  </data>
+  <data name="PSDefaultParameterValuesDescription" xml:space="preserve">
+    <value>Variable pour stocker toutes les paires par défaut &lt;cmdlet:parameter, value&gt;</value>
+  </data>
+  <data name="PauseDefinitionString" xml:space="preserve">
+    <value>Appuyez sur ENTRÉE pour continuer...</value>
+  </data>
+  <data name="PSEditionDescription" xml:space="preserve">
+    <value>Informations d’édition pour la session PowerShell actuelle</value>
+  </data>
+</root>

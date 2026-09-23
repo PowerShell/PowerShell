@@ -9,7 +9,7 @@ namespace System.Management.Automation.Provider
     #region DriveCmdletProvider
 
     /// <summary>
-    /// The base class for Cmdlet providers that can be exposed through MSH drives.
+    /// The base class for Cmdlet providers that can be exposed through PSDrives.
     /// </summary>
     /// <remarks>
     /// Although it is possible to derive from this base class to implement a Cmdlet Provider, in most

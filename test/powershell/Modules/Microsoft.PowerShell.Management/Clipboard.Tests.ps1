@@ -36,6 +36,13 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
             Get-Clipboard -Raw | Should -BeExactly "1$([Environment]::NewLine)2"
         }
 
+        It 'Get-Clipboard -Delimiter should return items based on the delimiter' {
+            Set-Clipboard -Value "Line1`r`nLine2`nLine3"
+            $result = Get-Clipboard -Delimiter "`r`n", "`n"
+            $result.Count | Should -Be 3
+            $result | ForEach-Object -Process {$_.Length | Should -Be "LineX".Length}
+        }
+
         It 'Set-Clipboard -Append will add text' {
             'hello' | Set-Clipboard
             'world' | Set-Clipboard -Append

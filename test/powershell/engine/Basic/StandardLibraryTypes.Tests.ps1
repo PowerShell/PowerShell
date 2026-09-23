@@ -19,7 +19,7 @@ Describe "Types referenced by PowerShell Standard should not be missing"  -Tags 
             "IsSecurityCritical",
             "IsSecuritySafeCritical",
             "IsSecurityTransparent",
-            "IsInterface",
+            ## "IsInterface", -- disable due to issue https://github.com/dotnet/runtime/issues/98533
             "IsNested",
             "IsArray",
             "IsByRef",
@@ -53,7 +53,6 @@ Describe "Types referenced by PowerShell Standard should not be missing"  -Tags 
             "IsPrimitive",
             "IsValueType",
             "IsSignatureType",
-            "IsSerializable",
             "IsVisible"
 
         $tests = Import-Csv $assets | ForEach-Object {

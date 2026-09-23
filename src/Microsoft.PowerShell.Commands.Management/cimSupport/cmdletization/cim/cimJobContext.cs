@@ -9,7 +9,7 @@ using Microsoft.Management.Infrastructure;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
-    internal class CimJobContext
+    internal sealed class CimJobContext
     {
         internal CimJobContext(
             CimCmdletInvocationContext cmdletInvocationContext,

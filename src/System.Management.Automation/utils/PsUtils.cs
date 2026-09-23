@@ -74,38 +74,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return true/false to indicate whether the processor architecture is ARM.
+        /// Return true/false to indicate whether the process architecture is ARM.
         /// </summary>
         /// <returns></returns>
-        internal static bool IsRunningOnProcessorArchitectureARM()
+        internal static bool IsRunningOnProcessArchitectureARM()
         {
-            Architecture arch = RuntimeInformation.OSArchitecture;
+            Architecture arch = RuntimeInformation.ProcessArchitecture;
             return arch == Architecture.Arm || arch == Architecture.Arm64;
-        }
-
-        /// <summary>
-        /// Get a temporary directory to use, needs to be unique to avoid collision.
-        /// </summary>
-        internal static string GetTemporaryDirectory()
-        {
-            string tempDir = string.Empty;
-            string tempPath = Path.GetTempPath();
-            do
-            {
-                tempDir = Path.Combine(tempPath, System.Guid.NewGuid().ToString());
-            }
-            while (Directory.Exists(tempDir));
-
-            try
-            {
-                Directory.CreateDirectory(tempDir);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                tempDir = string.Empty; // will become current working directory
-            }
-
-            return tempDir;
         }
 
         internal static string GetHostName()
@@ -130,14 +105,8 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.NonWindowsGetThreadId();
 #else
-            return NativeMethods.GetCurrentThreadId();
+            return Interop.Windows.GetCurrentThreadId();
 #endif
-        }
-
-        private static class NativeMethods
-        {
-            [DllImport(PinvokeDllNames.GetCurrentThreadIdDllName)]
-            internal static extern uint GetCurrentThreadId();
         }
 
         #region ASTUtils
@@ -242,11 +211,20 @@ namespace System.Management.Automation
                                      bool allowEnvironmentVariables,
                                      bool skipPathValidation)
         {
-            if (!skipPathValidation && string.IsNullOrEmpty(parameterName)) { throw PSTraceSource.NewArgumentNullException(nameof(parameterName)); }
+            if (!skipPathValidation && string.IsNullOrEmpty(parameterName))
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterName));
+            }
 
-            if (string.IsNullOrEmpty(psDataFilePath)) { throw PSTraceSource.NewArgumentNullException(nameof(psDataFilePath)); }
+            if (string.IsNullOrEmpty(psDataFilePath))
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(psDataFilePath));
+            }
 
-            if (context == null) { throw PSTraceSource.NewArgumentNullException(nameof(context)); }
+            if (context == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
+            }
 
             string resolvedPath;
             if (skipPathValidation)
@@ -330,7 +308,7 @@ namespace System.Management.Automation
                          ex.Message);
             }
 
-            if (!(evaluationResult is Hashtable retResult))
+            if (evaluationResult is not Hashtable retResult)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                          ParserStrings.InvalidPowerShellDataFile,
@@ -362,7 +340,7 @@ namespace System.Management.Automation
 
         internal static Hashtable GetModuleManifestProperties(string psDataFilePath, string[] keys)
         {
-            string dataFileContents = ScriptAnalysis.ReadScript(psDataFilePath);
+            string dataFileContents = File.ReadAllText(psDataFilePath, Encoding.Default);
             ParseError[] parseErrors;
             var ast = (new Parser()).Parse(psDataFilePath, dataFileContents, null, out parseErrors, ParseMode.ModuleAnalysis);
             if (parseErrors.Length > 0)
@@ -375,36 +353,29 @@ namespace System.Management.Automation
                     pe.Message);
             }
 
-            string unused1;
-            string unused2;
-            var pipeline = ast.GetSimplePipeline(false, out unused1, out unused2);
-            if (pipeline != null)
+            var pipeline = ast.GetSimplePipeline(false, out _, out _);
+            if (pipeline?.GetPureExpression() is HashtableAst hashtableAst)
             {
-                var hashtableAst = pipeline.GetPureExpression() as HashtableAst;
-                if (hashtableAst != null)
+                var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
+                foreach (var pair in hashtableAst.KeyValuePairs)
                 {
-                    var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
-                    foreach (var pair in hashtableAst.KeyValuePairs)
+                    if (pair.Item1 is StringConstantExpressionAst key && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
                     {
-                        var key = pair.Item1 as StringConstantExpressionAst;
-                        if (key != null && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
+                        try
                         {
-                            try
-                            {
-                                var val = pair.Item2.SafeGetValue();
-                                result[key.Value] = val;
-                            }
-                            catch
-                            {
-                                throw PSTraceSource.NewInvalidOperationException(
-                                         ParserStrings.InvalidPowerShellDataFile,
-                                         psDataFilePath);
-                            }
+                            var val = pair.Item2.SafeGetValue();
+                            result[key.Value] = val;
+                        }
+                        catch
+                        {
+                            throw PSTraceSource.NewInvalidOperationException(
+                                        ParserStrings.InvalidPowerShellDataFile,
+                                        psDataFilePath);
                         }
                     }
-
-                    return result;
                 }
+
+                return result;
             }
 
             throw PSTraceSource.NewInvalidOperationException(
@@ -482,14 +453,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            if (!(dso is PSObject mo))
+            if (dso is not PSObject mo)
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            if (!(mo.BaseObject is ArrayList argsList))
+            if (mo.BaseObject is not ArrayList argsList)
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
@@ -556,7 +527,7 @@ namespace System.Management.Automation
         internal static string ComputeHash(string input)
         {
             byte[] hashBytes = ComputeHash(Encoding.UTF8.GetBytes(input));
-            return BitConverter.ToString(hashBytes).Replace("-", string.Empty);
+            return Convert.ToHexString(hashBytes);
         }
     }
 

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-01-01/serviceModel.json",
+  "contentVersion": "1.0.0.0",
+  "serviceMetadata": {
+    "serviceGroup": "OneBranch-PowerShellDocker",
+    "environment": "Test"
+  },
+  "serviceResourceGroupDefinitions": [
+    {
+      "name": "OneBranch-PowerShellDocker-RGDef",
+      "serviceResourceDefinitions": [
+        {
+          "name": "OneBranch-PowerShellDocker.Shell-SRDef",
+          "composedOf": {
+            "extension": {
+              "shell": [
+                {
+                  "type": "Run",
+                  "properties": {
+                    "imageName": "adm-azurelinux-30-l",
+                    "imageVersion": "v2"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "serviceResourceGroups": [
+    {
+      "azureResourceGroupName": "default",
+      "location": "West US 3",
+      "instanceOf": "OneBranch-PowerShellDocker-RGDef",
+      "azureSubscriptionId": "default",
+        "scopeTags": [
+          {
+            "name": "Global"
+          }
+        ],
+      "serviceResources": [
+        {
+          "Name": "LinuxContainerUpload",
+          "InstanceOf": "OneBranch-PowerShellDocker.Shell-SRDef",
+          "RolloutParametersPath": "UploadLinux.Rollout.json"
+        }
+      ]
+    }
+  ]
+}

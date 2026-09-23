@@ -1078,7 +1078,10 @@ namespace System.Management.Automation.Interpreter
 
             foreach (T item in collection)
             {
-                if (!predicate(item)) return false;
+                if (!predicate(item))
+                {
+                    return false;
+                }
             }
 
             return true;

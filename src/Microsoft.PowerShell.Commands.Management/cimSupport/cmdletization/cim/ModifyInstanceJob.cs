@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Job wrapping invocation of a ModifyInstance intrinsic CIM method.
     /// </summary>
-    internal class ModifyInstanceJob : PropertySettingJob<CimInstance>
+    internal sealed class ModifyInstanceJob : PropertySettingJob<CimInstance>
     {
         private CimInstance _resultFromModifyInstance;
         private bool _resultFromModifyInstanceHasBeenPassedThru;

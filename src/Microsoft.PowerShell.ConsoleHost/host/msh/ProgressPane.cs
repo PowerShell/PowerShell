@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell
     /// ProgressPane is a class that represents the "window" in which outstanding activities for which the host has received
     /// progress updates are shown.
     ///
-    ///</summary>
+    /// </summary>
     internal
     class ProgressPane
     {
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell
         internal
         ProgressPane(ConsoleHostUserInterface ui)
         {
-            if (ui == null) throw new ArgumentNullException(nameof(ui));
+            ArgumentNullException.ThrowIfNull(ui);
             _ui = ui;
             _rawui = ui.RawUI;
         }
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell
         /// <value>
         /// true if the pane is visible, false if not.
         ///
-        ///</value>
+        /// </value>
         internal
         bool
         IsShowing
@@ -301,7 +301,17 @@ namespace Microsoft.PowerShell
         {
             if (_content is not null)
             {
+                // On Windows, we can check if the cursor is currently visible and not change it to visible
+                // if it is intentionally hidden.  On Unix, it is not currently supported to read the cursor visibility.
+#if UNIX
                 Console.CursorVisible = false;
+#else
+                bool currentCursorVisible = Console.CursorVisible;
+                if (currentCursorVisible)
+                {
+                    Console.CursorVisible = false;
+                }
+#endif
 
                 var currentPosition = _rawui.CursorPosition;
                 _rawui.CursorPosition = _location;
@@ -319,7 +329,11 @@ namespace Microsoft.PowerShell
                 }
 
                 _rawui.CursorPosition = currentPosition;
+#if UNIX
                 Console.CursorVisible = true;
+#else
+                Console.CursorVisible = currentCursorVisible;
+#endif
             }
         }
 

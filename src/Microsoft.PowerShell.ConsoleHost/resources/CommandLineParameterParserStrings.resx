@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -118,10 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandAlreadySpecified" xml:space="preserve">
-    <value>Cannot process command because a command is already specified with -Command or -EncodedCommand.</value>
-  </data>
-  <data name="CannotReadFile" xml:space="preserve">
-    <value>Unable to read from file '{0}'.</value>
+    <value>Cannot process command because a command is already specified with -Command, -CommandWithArgs, or -EncodedCommand.</value>
   </data>
   <data name="MissingCommandParameter" xml:space="preserve">
     <value>Cannot process the command because of a missing parameter. A command must follow -Command.</value>
@@ -187,7 +184,10 @@ Valid formats are:
     <value>Cannot process the command because -STA and -MTA are both specified. Specify either -STA or -MTA.</value>
   </data>
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -Configuration requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+    <value>Cannot process the command because -ConfigurationName requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+  </data>
+  <data name="MissingConfigurationFileArgument" xml:space="preserve">
+    <value>Cannot process the command because -ConfigurationFile requires an argument that is a session configuration (.pssc) file path. Specify this argument and try again.</value>
   </data>
   <data name="MissingCustomPipeNameArgument" xml:space="preserve">
     <value>Cannot process the command because -CustomPipeName requires an argument that is a name of the pipe you want to use. Specify this argument and try again.</value>
@@ -221,5 +221,20 @@ Valid formats are:
   </data>
   <data name="NullElementInArgs" xml:space="preserve">
     <value>The specified arguments must not contain null elements.</value>
+  </data>
+  <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
+    <value>Invalid ExecutionPolicy value '{0}'.</value>
+  </data>
+  <data name="MissingMandatoryArgument" xml:space="preserve">
+    <value>An argument is required to be supplied to the '{0}' parameter.</value>
+  </data>
+  <data name="FileOnlyEntryRequired" xml:space="preserve">
+    <value>The parameter "-File" is required by policy.</value>
+  </data>
+  <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
+    <value>The parameter "-NoExit" is disallowed by policy.</value>
+  </data>
+  <data name="FileOnlyEntryServerMode" xml:space="preserve">
+    <value>Server mode is disallowed by policy.</value>
   </data>
 </root>

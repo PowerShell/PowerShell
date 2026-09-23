@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Security;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -86,7 +87,7 @@ namespace System.Management.Automation
     /// <see cref="ValidateArgumentsAttribute"/> validates the argument as a whole. If the argument value may
     /// be an enumerable, you can derive from <see cref="ValidateEnumeratedArgumentsAttribute"/>
     /// which will take care of unrolling the enumerable and validate each element individually.
-    /// It is also recommended to override <see cref="System.Object.ToString"/> to return a readable string
+    /// It is also recommended to override <see cref="object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example "[ValidateRangeAttribute(5,10)]".
     /// If this attribute is applied to a string parameter, the string command argument will be validated.
     /// If this attribute is applied to a string[] parameter, the string[] command argument will be validated.
@@ -153,7 +154,7 @@ namespace System.Management.Automation
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute"/> and override the
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute.ValidateElement"/>
     /// abstract method, after which they can apply the attribute to their parameters.
-    /// It is also recommended to override <see cref="System.Object.ToString"/> to return a readable string
+    /// It is also recommended to override <see cref="object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example "[ValidateRangeAttribute(5,10)]".
     /// If this attribute is applied to a string parameter, the string command argument will be validated.
     /// If this attribute is applied to a string[] parameter, each string command argument will be validated.
@@ -843,7 +844,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         protected override void ValidateElement(object element)
         {
-            if (!(element is string objectString))
+            if (element is not string objectString)
             {
                 throw new ValidationMetadataException(
                     "ValidateLengthNotString",
@@ -1088,6 +1089,12 @@ namespace System.Management.Automation
 
         private static void ValidateRange(object element, ValidateRangeKind rangeKind)
         {
+            if (element is TimeSpan ts)
+            {
+                ValidateTimeSpanRange(ts, rangeKind);
+                return;
+            }
+
             Type commonType = GetCommonType(typeof(int), element.GetType());
             if (commonType == null)
             {
@@ -1212,6 +1219,59 @@ namespace System.Management.Automation
             }
         }
 
+        private static void ValidateTimeSpanRange(TimeSpan element, ValidateRangeKind rangeKind)
+        {
+            TimeSpan zero = TimeSpan.Zero;
+
+            switch (rangeKind)
+            {
+                case ValidateRangeKind.Positive:
+                    if (zero.CompareTo(element) >= 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangePositiveFailure",
+                            null,
+                            Metadata.ValidateRangePositiveFailure,
+                            element.ToString());
+                    }
+
+                    break;
+                case ValidateRangeKind.NonNegative:
+                    if (zero.CompareTo(element) > 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangeNonNegativeFailure",
+                            null,
+                            Metadata.ValidateRangeNonNegativeFailure,
+                            element.ToString());
+                    }
+
+                    break;
+                case ValidateRangeKind.Negative:
+                    if (zero.CompareTo(element) <= 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangeNegativeFailure",
+                            null,
+                            Metadata.ValidateRangeNegativeFailure,
+                            element.ToString());
+                    }
+
+                    break;
+                case ValidateRangeKind.NonPositive:
+                    if (zero.CompareTo(element) < 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangeNonPositiveFailure",
+                            null,
+                            Metadata.ValidateRangeNonPositiveFailure,
+                            element.ToString());
+                    }
+
+                    break;
+            }
+        }
+
         private static Type GetCommonType(Type minType, Type maxType)
         {
             Type resultType = null;
@@ -1252,6 +1312,28 @@ namespace System.Management.Automation
 
             return resultType;
         }
+
+        /// <summary>
+        /// Returns only the elements that passed the attribute's validation.
+        /// </summary>
+        /// <param name="elementsToValidate">The objects to validate.</param>
+        internal IEnumerable GetValidatedElements(IEnumerable elementsToValidate)
+        {
+            foreach (var el in elementsToValidate)
+            {
+                try
+                {
+                    ValidateElement(el);
+                }
+                catch (ValidationMetadataException)
+                {
+                    // Element was not in range - drop
+                    continue;
+                }
+
+                yield return el;
+            }
+        }
     }
 
     /// <summary>
@@ -1274,11 +1356,11 @@ namespace System.Management.Automation
         /// Gets or sets the custom error message pattern that is displayed to the user.
         /// The text representation of the object being validated and the validating regex is passed as
         /// the first and second formatting parameters to the ErrorMessage formatting pattern.
-        /// <example>
+        /// <c>
         /// <code>
         /// [ValidatePattern("\s+", ErrorMessage="The text '{0}' did not pass validation of regex '{1}'")]
         /// </code>
-        /// </example>
+        /// </c>
         /// </summary>
         public string ErrorMessage { get; set; }
 
@@ -1340,11 +1422,11 @@ namespace System.Management.Automation
         /// Gets or sets the custom error message that is displayed to the user.
         /// The item being validated and the validating scriptblock is passed as the first and second
         /// formatting argument.
-        /// <example>
+        /// <c>
         /// <code>
         /// [ValidateScript("$_ % 2", ErrorMessage = "The item '{0}' did not pass validation of script '{1}'")]
         /// </code>
-        /// </example>
+        /// </c>
         /// </summary>
         public string ErrorMessage { get; set; }
 
@@ -1605,11 +1687,11 @@ namespace System.Management.Automation
         /// Gets or sets the custom error message that is displayed to the user.
         /// The item being validated and a text representation of the validation set is passed as the
         /// first and second formatting argument to the <see cref="ErrorMessage"/> formatting pattern.
-        /// <example>
+        /// <c>
         /// <code>
         /// [ValidateSet("A","B","C", ErrorMessage="The item '{0}' is not part of the set '{1}'.")
         /// </code>
-        /// </example>
+        /// </c>
         /// </summary>
         public string ErrorMessage { get; set; }
 
@@ -1770,11 +1852,21 @@ namespace System.Management.Automation
             {
                 if (ExecutionContext.IsMarkedAsUntrusted(arguments))
                 {
-                    throw new ValidationMetadataException(
-                        "ValidateTrustedDataFailure",
-                        null,
-                        Metadata.ValidateTrustedDataFailure,
-                        arguments);
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateTrustedDataFailure",
+                            null,
+                            Metadata.ValidateTrustedDataFailure,
+                            arguments);
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: null,
+                        title: Metadata.WDACParameterArgNotTrustedLogTitle,
+                        message: StringUtil.Format(Metadata.WDACParameterArgNotTrustedMessage, arguments),
+                        fqid: "ParameterArgumentNotTrusted",
+                        dropIntoDebugger: true);
                 }
             }
         }
@@ -1785,7 +1877,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Allows a NULL as the argument to a mandatory parameter.
     /// </summary>
-    [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowNullAttribute : CmdletMetadataAttribute
     {
         /// <summary>
@@ -1797,7 +1889,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Allows an empty string as the argument to a mandatory string parameter.
     /// </summary>
-    [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowEmptyStringAttribute : CmdletMetadataAttribute
     {
         /// <summary>
@@ -1809,7 +1901,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Allows an empty collection as the argument to a mandatory collection parameter.
     /// </summary>
-    [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowEmptyCollectionAttribute : CmdletMetadataAttribute
     {
         /// <summary>
@@ -1864,7 +1956,7 @@ namespace System.Management.Automation
                     Metadata.ValidateNotNullFailure);
             }
 
-            if (!(arguments is string path))
+            if (arguments is not string path)
             {
                 throw new ValidationMetadataException(
                     "PathArgumentIsNotValid",
@@ -1994,7 +2086,10 @@ namespace System.Management.Automation
             {
                 // If the element of the collection is of value type, then no need to check for null
                 // because a value-type value cannot be null.
-                if (isElementValueType) { return; }
+                if (isElementValueType)
+                {
+                    return;
+                }
 
                 IEnumerator enumerator = LanguagePrimitives.GetEnumerator(arguments);
                 while (enumerator.MoveNext())
@@ -2013,15 +2108,30 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Validates that the parameters's argument is not null, is not an empty string, and is not
-    /// an empty collection.
+    /// Validates that the parameters's argument is not null, is not an empty string or a
+    /// string with white-space characters only, and is not an empty collection.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ValidateNotNullOrEmptyAttribute : NullValidationAttributeBase
+    public abstract class ValidateNotNullOrAttributeBase : NullValidationAttributeBase
     {
+        /// <summary>
+        /// Used to check the type of string validation to perform.
+        /// </summary>
+        protected readonly bool _checkWhiteSpace;
+
+        /// <summary>
+        /// Validates that the parameters's argument is not null, is not an empty string or a
+        /// string with white-space characters only, and is not an empty collection.
+        /// </summary>
+        protected ValidateNotNullOrAttributeBase(bool checkWhiteSpace)
+        {
+            _checkWhiteSpace = checkWhiteSpace;
+        }
+
         /// <summary>
         /// Validates that the parameters's argument is not null, is not an empty string, and is
         /// not an empty collection. If argument is a collection, each argument is verified.
+        /// It can also validate that the parameters's argument is not a string that consists
+        /// only of white-space characters.
         /// </summary>
         /// <param name="arguments">The arguments to verify.</param>
         /// <param name="engineIntrinsics">
@@ -2041,7 +2151,17 @@ namespace System.Management.Automation
             }
             else if (arguments is string str)
             {
-                if (string.IsNullOrEmpty(str))
+                if (_checkWhiteSpace)
+                {
+                    if (string.IsNullOrWhiteSpace(str))
+                    {
+                        throw new ValidationMetadataException(
+                            "ArgumentIsEmptyOrWhiteSpace",
+                            null,
+                            Metadata.ValidateNotNullOrWhiteSpaceFailure);
+                    }
+                }
+                else if (string.IsNullOrEmpty(str))
                 {
                     throw new ValidationMetadataException(
                         "ArgumentIsEmpty",
@@ -2053,7 +2173,10 @@ namespace System.Management.Automation
             {
                 bool isEmpty = true;
                 IEnumerator enumerator = LanguagePrimitives.GetEnumerator(arguments);
-                if (enumerator.MoveNext()) { isEmpty = false; }
+                if (enumerator.MoveNext())
+                {
+                    isEmpty = false;
+                }
 
                 // If the element of the collection is of value type, then no need to check for null
                 // because a value-type value cannot be null.
@@ -2072,7 +2195,17 @@ namespace System.Management.Automation
 
                         if (element is string elementAsString)
                         {
-                            if (string.IsNullOrEmpty(elementAsString))
+                            if (_checkWhiteSpace)
+                            {
+                                if (string.IsNullOrWhiteSpace(elementAsString))
+                                {
+                                    throw new ValidationMetadataException(
+                                        "ArgumentCollectionContainsEmptyOrWhiteSpace",
+                                        null,
+                                        Metadata.ValidateNotNullOrWhiteSpaceCollectionFailure);
+                                }
+                            }
+                            else if (string.IsNullOrEmpty(elementAsString))
                             {
                                 throw new ValidationMetadataException(
                                     "ArgumentCollectionContainsEmpty",
@@ -2104,6 +2237,42 @@ namespace System.Management.Automation
         }
     }
 
+    /// <summary>
+    /// Validates that the parameters's argument is not null, is not an empty string, and is
+    /// not an empty collection. If argument is a collection, each argument is verified.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidateNotNullOrEmptyAttribute : ValidateNotNullOrAttributeBase
+    {
+        /// <summary>
+        /// Validates that the parameters's argument is not null, is not an empty string, and is
+        /// not an empty collection. If argument is a collection, each argument is verified.
+        /// </summary>
+        public ValidateNotNullOrEmptyAttribute()
+            : base(checkWhiteSpace: false)
+        {
+        }
+    }
+
+    /// <summary>
+    /// Validates that the parameters's argument is not null, is not an empty string, is not a string that
+    /// consists only of white-space characters, and is not an empty collection. If argument is a collection,
+    /// each argument is verified.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidateNotNullOrWhiteSpaceAttribute : ValidateNotNullOrAttributeBase
+    {
+        /// <summary>
+        /// Validates that the parameters's argument is not null, is not an empty string, is not a string that
+        /// consists only of white-space characters, and is not an empty collection. If argument is a collection,
+        /// each argument is verified.
+        /// </summary>
+        public ValidateNotNullOrWhiteSpaceAttribute()
+            : base(checkWhiteSpace: true)
+        {
+        }
+    }
+
     #endregion NULL validation attributes
 
     #endregion Data validate Attributes
@@ -2123,7 +2292,7 @@ namespace System.Management.Automation
     /// <see cref="ArgumentTransformationAttribute"/> and override the
     /// <see cref="ArgumentTransformationAttribute.Transform"/> abstract method, after which they
     /// can apply the attribute to their parameters.
-    /// It is also recommended to override <see cref="System.Object.ToString"/> to return a readable
+    /// It is also recommended to override <see cref="object.ToString"/> to return a readable
     /// string similar to the attribute declaration, for example "[ValidateRangeAttribute(5,10)]".
     /// If multiple transformations are defined on a parameter, they will be invoked in series,
     /// each getting the output of the previous transformation.

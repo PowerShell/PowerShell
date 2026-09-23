@@ -314,7 +314,7 @@ namespace System.Management.Automation.Language
         public bool HasReservedProperties { get; set; }
 
         /// <summary>
-        /// A list of the properties allowed for this constuctor.
+        /// A list of the properties allowed for this constructor.
         /// </summary>
         public Dictionary<string, DynamicKeywordProperty> Properties
         {
@@ -327,7 +327,7 @@ namespace System.Management.Automation.Language
         private Dictionary<string, DynamicKeywordProperty> _properties;
 
         /// <summary>
-        /// A list of the parameters allowed for this constuctor.
+        /// A list of the parameters allowed for this constructor.
         /// </summary>
         public Dictionary<string, DynamicKeywordParameter> Parameters
         {
@@ -635,23 +635,23 @@ namespace System.Management.Automation.Language
         /*A*/    "configuration",           "public",           "private",          "static",                     /*A*/
         /*B*/    "interface",               "enum",             "namespace",        "module",                     /*B*/
         /*C*/    "type",                    "assembly",         "command",          "hidden",                     /*C*/
-        /*D*/    "base",                    "default",                                                            /*D*/
+        /*D*/    "base",                    "default",          "clean",                                          /*D*/
         };
 
         private static readonly TokenKind[] s_keywordTokenKind = new TokenKind[] {
-        /*1*/    TokenKind.ElseIf,          TokenKind.If,       TokenKind.Else,      TokenKind.Switch,            /*1*/
-        /*2*/    TokenKind.Foreach,         TokenKind.From,     TokenKind.In,        TokenKind.For,               /*2*/
-        /*3*/    TokenKind.While,           TokenKind.Until,    TokenKind.Do,        TokenKind.Try,               /*3*/
-        /*4*/    TokenKind.Catch,           TokenKind.Finally,  TokenKind.Trap,      TokenKind.Data,              /*4*/
-        /*5*/    TokenKind.Return,          TokenKind.Continue, TokenKind.Break,     TokenKind.Exit,              /*5*/
-        /*6*/    TokenKind.Throw,           TokenKind.Begin,    TokenKind.Process,   TokenKind.End,               /*6*/
-        /*7*/    TokenKind.Dynamicparam,    TokenKind.Function, TokenKind.Filter,    TokenKind.Param,             /*7*/
-        /*8*/    TokenKind.Class,           TokenKind.Define,   TokenKind.Var,       TokenKind.Using,             /*8*/
-        /*9*/    TokenKind.Workflow,        TokenKind.Parallel, TokenKind.Sequence,  TokenKind.InlineScript,      /*9*/
-        /*A*/    TokenKind.Configuration,   TokenKind.Public,   TokenKind.Private,   TokenKind.Static,            /*A*/
-        /*B*/    TokenKind.Interface,       TokenKind.Enum,     TokenKind.Namespace, TokenKind.Module,            /*B*/
-        /*C*/    TokenKind.Type,            TokenKind.Assembly, TokenKind.Command,   TokenKind.Hidden,            /*C*/
-        /*D*/    TokenKind.Base,            TokenKind.Default,                                                    /*D*/
+        /*1*/    TokenKind.ElseIf,          TokenKind.If,       TokenKind.Else,      TokenKind.Switch,             /*1*/
+        /*2*/    TokenKind.Foreach,         TokenKind.From,     TokenKind.In,        TokenKind.For,                /*2*/
+        /*3*/    TokenKind.While,           TokenKind.Until,    TokenKind.Do,        TokenKind.Try,                /*3*/
+        /*4*/    TokenKind.Catch,           TokenKind.Finally,  TokenKind.Trap,      TokenKind.Data,               /*4*/
+        /*5*/    TokenKind.Return,          TokenKind.Continue, TokenKind.Break,     TokenKind.Exit,               /*5*/
+        /*6*/    TokenKind.Throw,           TokenKind.Begin,    TokenKind.Process,   TokenKind.End,                /*6*/
+        /*7*/    TokenKind.Dynamicparam,    TokenKind.Function, TokenKind.Filter,    TokenKind.Param,              /*7*/
+        /*8*/    TokenKind.Class,           TokenKind.Define,   TokenKind.Var,       TokenKind.Using,              /*8*/
+        /*9*/    TokenKind.Workflow,        TokenKind.Parallel, TokenKind.Sequence,  TokenKind.InlineScript,       /*9*/
+        /*A*/    TokenKind.Configuration,   TokenKind.Public,   TokenKind.Private,   TokenKind.Static,             /*A*/
+        /*B*/    TokenKind.Interface,       TokenKind.Enum,     TokenKind.Namespace, TokenKind.Module,             /*B*/
+        /*C*/    TokenKind.Type,            TokenKind.Assembly, TokenKind.Command,   TokenKind.Hidden,             /*C*/
+        /*D*/    TokenKind.Base,            TokenKind.Default,  TokenKind.Clean,                                   /*D*/
         };
 
         internal static readonly string[] _operatorText = new string[] {
@@ -1218,10 +1218,7 @@ namespace System.Management.Automation.Language
 
         private T SaveToken<T>(T token) where T : Token
         {
-            if (TokenList != null)
-            {
-                TokenList.Add(token);
-            }
+            TokenList?.Add(token);
 
             // Keep track of the first and last token even if we're not saving tokens
             // for the special variables $$ and $^.
@@ -1234,10 +1231,7 @@ namespace System.Management.Automation.Language
                     // Don't remember these tokens, they aren't useful in $$ and $^.
                     break;
                 default:
-                    if (FirstToken == null)
-                    {
-                        FirstToken = token;
-                    }
+                    FirstToken ??= token;
 
                     LastToken = token;
                     break;
@@ -1807,8 +1801,7 @@ namespace System.Management.Automation.Language
             }
             else if (matchedRequires && _nestedTokensAdjustment == 0)
             {
-                if (RequiresTokens == null)
-                    RequiresTokens = new List<Token>();
+                RequiresTokens ??= new List<Token>();
                 RequiresTokens.Add(token);
             }
         }
@@ -1945,10 +1938,7 @@ namespace System.Management.Automation.Language
                             PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
                         {
                             snapinSpecified = true;
-                            if (requiredSnapins == null)
-                            {
-                                requiredSnapins = new List<PSSnapInSpecification>();
-                            }
+                            requiredSnapins ??= new List<PSSnapInSpecification>();
 
                             break;
                         }
@@ -1986,9 +1976,6 @@ namespace System.Management.Automation.Language
                 RequiredPSEditions = requiredEditions != null
                                                     ? new ReadOnlyCollection<string>(requiredEditions)
                                                     : ScriptRequirements.EmptyEditionCollection,
-                RequiresPSSnapIns = requiredSnapins != null
-                                                   ? new ReadOnlyCollection<PSSnapInSpecification>(requiredSnapins)
-                                                   : ScriptRequirements.EmptySnapinCollection,
                 RequiredAssemblies = requiredAssemblies != null
                                                     ? new ReadOnlyCollection<string>(requiredAssemblies)
                                                     : ScriptRequirements.EmptyAssemblyCollection,
@@ -2214,8 +2201,7 @@ namespace System.Management.Automation.Language
                         return;
                     }
 
-                    if (requiredModules == null)
-                        requiredModules = new List<ModuleSpecification>();
+                    requiredModules ??= new List<ModuleSpecification>();
                     requiredModules.Add(moduleSpecification);
                 }
             }
@@ -2238,8 +2224,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                if (requiredAssemblies == null)
-                    requiredAssemblies = new List<string>();
+                requiredAssemblies ??= new List<string>();
 
                 if (!requiredAssemblies.Contains((string)arg))
                 {
@@ -2261,8 +2246,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                if (requiredEditions == null)
-                    requiredEditions = new List<string>();
+                requiredEditions ??= new List<string>();
 
                 var edition = (string)arg;
                 if (!Utils.IsValidPSEditionValue(edition))
@@ -2576,7 +2560,7 @@ namespace System.Management.Automation.Language
 
             // Make sure we didn't consume anything because we didn't find
             // any nested tokens (no variable or subexpression.)
-            Diagnostics.Assert(PeekChar() == c1, "We accidently consumed a character we shouldn't have.");
+            Diagnostics.Assert(PeekChar() == c1, "We accidentally consumed a character we shouldn't have.");
 
             return false;
         }
@@ -3923,7 +3907,8 @@ namespace System.Management.Automation.Language
                     return ScanGenericToken(GetStringBuilder());
                 }
 
-                ReportError(_currentIndex,
+                ReportError(
+                    NewScriptExtent(_tokenStart, _currentIndex),
                     nameof(ParserStrings.BadNumericConstant),
                     ParserStrings.BadNumericConstant,
                     _script.Substring(_tokenStart, _currentIndex - _tokenStart));

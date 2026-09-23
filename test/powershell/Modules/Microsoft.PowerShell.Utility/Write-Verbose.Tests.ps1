@@ -31,8 +31,12 @@ Describe "Write-Verbose" -Tags "CI" {
 
     It "Should not have added line breaks" {
         $text = "0123456789"
-        while ($text.Length -lt [Console]::WindowWidth) {
-            $text += $text
+        try {
+            while ($text.Length -lt [Console]::WindowWidth) {
+                $text += $text
+            }
+        } catch {
+            # Ignore errors if the console doesn't support WindowWidth
         }
         $origVerbosePref = $VerbosePreference
         $VerbosePreference = "continue"

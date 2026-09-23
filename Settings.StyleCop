@@ -162,6 +162,7 @@
           <Value>op</Value>
           <Value>my</Value>
           <Value>sb</Value>
+          <Value>vt</Value>
         </CollectionProperty>
       </AnalyzerSettings>
     </Analyzer>

@@ -93,8 +93,7 @@ namespace System.Management.Automation
                 {
                     lock (_syncobject)
                     {
-                        if (_parameters == null)
-                            _parameters = new List<CommandParameterCollection>();
+                        _parameters ??= new List<CommandParameterCollection>();
                     }
                 }
 
@@ -506,7 +505,7 @@ namespace System.Management.Automation
 
         private const int DisposedTrue = 1;
         private const int DisposedFalse = 0;
-        // This variable is set to true if atleast one child job failed.
+        // This variable is set to true if at least one child job failed.
 
         // count of number of child jobs which have finished
         private int _finishedChildJobsCount = 0;
@@ -707,10 +706,8 @@ namespace System.Management.Automation
         public void AddChildJob(Job2 childJob)
         {
             AssertNotDisposed();
-            if (childJob == null)
-            {
-                throw new ArgumentNullException(nameof(childJob));
-            }
+
+            ArgumentNullException.ThrowIfNull(childJob);
 
             _tracer.WriteMessage(TraceClassName, "AddChildJob", Guid.Empty, childJob, "Adding Child to Parent with InstanceId : ", InstanceId.ToString());
 
@@ -2022,11 +2019,8 @@ namespace System.Management.Automation
                     job.Dispose();
                 }
 
-                if (_jobRunning != null)
-                    _jobRunning.Dispose();
-
-                if (_jobSuspendedOrAborted != null)
-                    _jobSuspendedOrAborted.Dispose();
+                _jobRunning?.Dispose();
+                _jobSuspendedOrAborted?.Dispose();
             }
             finally
             {
@@ -2112,7 +2106,6 @@ namespace System.Management.Automation
     /// Container exception for jobs that can map errors and exceptions
     /// to specific lines in their input.
     /// </summary>
-    [Serializable]
     public class JobFailedException : SystemException
     {
         /// <summary>
@@ -2157,11 +2150,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializationInfo">Serialization info.</param>
         /// <param name="streamingContext">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected JobFailedException(SerializationInfo serializationInfo, StreamingContext streamingContext)
-            : base(serializationInfo, streamingContext)
         {
-            _reason = (Exception)serializationInfo.GetValue("Reason", typeof(Exception));
-            _displayScriptPosition = (ScriptExtent)serializationInfo.GetValue("DisplayScriptPosition", typeof(ScriptExtent));
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -2177,22 +2169,6 @@ namespace System.Management.Automation
         public ScriptExtent DisplayScriptPosition { get { return _displayScriptPosition; } }
 
         private readonly ScriptExtent _displayScriptPosition;
-
-        /// <summary>
-        /// Gets the information for serialization.
-        /// </summary>
-        /// <param name="info">The standard SerializationInfo.</param>
-        /// <param name="context">The standard StreaminContext.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-                throw new ArgumentNullException(nameof(info));
-
-            base.GetObjectData(info, context);
-
-            info.AddValue("Reason", _reason);
-            info.AddValue("DisplayScriptPosition", _displayScriptPosition);
-        }
 
         /// <summary>
         /// Returns the reason for this exception.

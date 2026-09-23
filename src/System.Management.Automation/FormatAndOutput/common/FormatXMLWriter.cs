@@ -385,8 +385,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void WriteCustomItem(CustomItemBase item)
         {
-            var newline = item as CustomItemNewline;
-            if (newline != null)
+            if (item is CustomItemNewline newline)
             {
                 for (int i = 0; i < newline.Count; i++)
                 {
@@ -396,15 +395,13 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            var text = item as CustomItemText;
-            if (text != null)
+            if (item is CustomItemText text)
             {
                 _writer.WriteElementString("Text", text.Text);
                 return;
             }
 
-            var expr = item as CustomItemExpression;
-            if (expr != null)
+            if (item is CustomItemExpression expr)
             {
                 _writer.WriteStartElement("ExpressionBinding");
                 if (expr.EnumerateCollection)

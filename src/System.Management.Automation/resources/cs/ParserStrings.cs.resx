@@ -1,0 +1,1376 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="TypeNotFound" xml:space="preserve">
+    <value>Typ [{0}] nejde najít.</value>
+  </data>
+  <data name="TypeNotFoundWithMessage" xml:space="preserve">
+    <value>Typ [{0}] nejde najít. Podrobnosti: {1}</value>
+  </data>
+  <data name="IncompleteString" xml:space="preserve">
+    <value>Neúplný token řetězce.</value>
+  </data>
+  <data name="InvalidUnicodeEscapeSequence" xml:space="preserve">
+    <value>Řídicí sekvence Unicode není platná. Platná sekvence je `u{ následovaná jednou až šesti šestnáctkovými číslicemi a ukončovací }.</value>
+  </data>
+  <data name="InvalidUnicodeEscapeSequenceValue" xml:space="preserve">
+    <value>Hodnota řídicí sekvence Unicode je mimo rozsah. Maximální hodnota je 0x10FFFF.</value>
+  </data>
+  <data name="MissingUnicodeEscapeSequenceTerminator" xml:space="preserve">
+    <value>V řídicí sekvenci Unicode chybí ukončovací }.</value>
+  </data>
+  <data name="TooManyDigitsInUnicodeEscapeSequence" xml:space="preserve">
+    <value>Řídicí sekvence Unicode obsahuje mezi složenými závorkami více než maximálních šest šestnáctkových číslic.</value>
+  </data>
+  <data name="ReferenceNeedsToBeByItselfInTypeConstraint" xml:space="preserve">
+    <value>[ref] nejde v omezení typu použít s jinými typy.</value>
+  </data>
+  <data name="ReferenceNeedsToBeLastTypeInTypeConversion" xml:space="preserve">
+    <value>[ref] může být v posloupnosti převodu typů jen posledním typem.</value>
+  </data>
+  <data name="ReferenceNeedsToBeByItselfInTypeSequence" xml:space="preserve">
+    <value>V posloupnosti typů nemůžou být dva výskyty [ref].</value>
+  </data>
+  <data name="BadNumericConstant" xml:space="preserve">
+    <value>Číselná konstanta {0} není platná.</value>
+  </data>
+  <data name="InvalidRegularExpression" xml:space="preserve">
+    <value>Vzor regulárního výrazu {0} není platný.</value>
+  </data>
+  <data name="EmptyVariableReference" xml:space="preserve">
+    <value>Byl nalezen prázdný odkaz na proměnnou ${}. Uvnitř složených závorek je vyžadovaný název.</value>
+  </data>
+  <data name="InvalidVariableReference" xml:space="preserve">
+    <value>Odkaz na proměnnou není platný. Za $ nenásledoval platný znak názvu proměnné. Zvažte použití ${} k oddělení názvu.</value>
+  </data>
+  <data name="InvokeMethodOnNull" xml:space="preserve">
+    <value>Metodu nelze volat u výrazu s hodnotou null.</value>
+  </data>
+  <data name="MethodNotFound" xml:space="preserve">
+    <value>Vyvolání metody se nepovedlo, protože [{0}] neobsahuje metodu s názvem {1}.</value>
+  </data>
+  <data name="ParameterizedPropertyAssignmentFailed" xml:space="preserve">
+    <value>Přiřazení se nepovedlo, protože [{0}] neobsahuje nastavitelnou vlastnost {1}().</value>
+  </data>
+  <data name="UnexpectedToken" xml:space="preserve">
+    <value>Neočekávaný token {0} ve výrazu nebo příkazu.</value>
+  </data>
+  <data name="SplattingNotPermitted" xml:space="preserve">
+    <value>Operátor rozbalení @ nejde použít k odkazování na proměnné ve výrazu. @{0} je možné použít jen jako argument příkazu. K odkazování na proměnné ve výrazu použijte ${0}.</value>
+  </data>
+  <data name="InvalidParameter" xml:space="preserve">
+    <value>Parametr {0} není platný</value>
+  </data>
+  <data name="MissingExpression" xml:space="preserve">
+    <value>Za {0} v prvku kanálu chybí výraz.</value>
+  </data>
+  <data name="BadExpression" xml:space="preserve">
+    <value>Výraz za {0} v prvku kanálu vytvořil neplatný objekt. Výsledkem musí být název příkazu, blok skriptu nebo objekt CommandInfo.</value>
+  </data>
+  <data name="ParameterRequiresArgument" xml:space="preserve">
+    <value>Parametr {0} vyžaduje argument.</value>
+  </data>
+  <data name="ParameterCannotHaveArgument" xml:space="preserve">
+    <value>Parametr {0} nemůže mít argument.</value>
+  </data>
+  <data name="DuplicateFormalParameter" xml:space="preserve">
+    <value>Duplicitní parametr ${0} v seznamu parametrů.</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>V seznamu parametrů chybí argument.</value>
+  </data>
+  <data name="SplattingNotPermittedInArgumentList" xml:space="preserve">
+    <value>Rozbalené proměnné, například @{0}, nemůžou být součástí seznamu argumentů oddělených čárkami.</value>
+  </data>
+  <data name="MissingFileSpecification" xml:space="preserve">
+    <value>Za operátorem přesměrování chybí specifikace souboru.</value>
+  </data>
+  <data name="RedirectionNotSupported" xml:space="preserve">
+    <value>Operátor {0} je vyhrazený pro budoucí použití.</value>
+  </data>
+  <data name="RedirectionFailed" xml:space="preserve">
+    <value>Přesměrování do {0} se nepovedlo: {1}</value>
+  </data>
+  <data name="ExpressionsMustBeFirstInPipeline" xml:space="preserve">
+    <value>Výrazy jsou povolené jen jako první prvek kanálu.</value>
+  </data>
+  <data name="EmptyPipeElement" xml:space="preserve">
+    <value>Prázdný prvek kanálu není povolený.</value>
+  </data>
+  <data name="InvalidLeftHandSide" xml:space="preserve">
+    <value>Výraz přiřazení není platný. Vstupem operátoru přiřazení musí být objekt, který může přijímat přiřazení, například proměnná nebo vlastnost.</value>
+  </data>
+  <data name="AddHashTableToNonHashTable" xml:space="preserve">
+    <value>Hashovací tabulku je možné přidat jen k jiné hashovací tabulce.</value>
+  </data>
+  <data name="IsOperatorRequiresType" xml:space="preserve">
+    <value>Pravý operand operátoru -is musí být typ.</value>
+  </data>
+  <data name="AsOperatorRequiresType" xml:space="preserve">
+    <value>Pravý operand operátoru -as musí být typ.</value>
+  </data>
+  <data name="FormatError" xml:space="preserve">
+    <value>Chyba při formátování řetězce: {0}.</value>
+  </data>
+  <data name="BadOperatorArgument" xml:space="preserve">
+    <value>Argument operátoru {0} není platný: {1}.</value>
+  </data>
+  <data name="OperatorFailed" xml:space="preserve">
+    <value>Operátor {0} selhal: {1}.</value>
+  </data>
+  <data name="BadReplaceArgument" xml:space="preserve">
+    <value>Za operátorem {0} můžou následovat jen dva prvky, ne {1}.</value>
+  </data>
+  <data name="ExpectedValueExpression" xml:space="preserve">
+    <value>Za operátorem {0} musíte zadat výraz s hodnotou.</value>
+  </data>
+  <data name="OperatorRequiresVariableOrProperty" xml:space="preserve">
+    <value>Operátor {0} funguje jen s proměnnými nebo vlastnostmi.</value>
+  </data>
+  <data name="OrderedAttributeOnlyOnHashLiteralNode" xml:space="preserve">
+    <value>Atribut {0} je možné zadat jen v uzlu literálu hashovací tabulky.</value>
+  </data>
+  <data name="MissingArrayIndexExpression" xml:space="preserve">
+    <value>Výraz indexu pole chybí nebo není platný.</value>
+  </data>
+  <data name="MissingPropertyName" xml:space="preserve">
+    <value>Za operátorem odkazu chybí název vlastnosti.</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>Vlastnost {0} se u tohoto objektu nepodařilo najít. Ověřte, že vlastnost existuje a je možné ji nastavit.</value>
+  </data>
+  <data name="PropertyNotFoundStrict" xml:space="preserve">
+    <value>Vlastnost {0} se u tohoto objektu nepodařilo najít. Ověřte, že vlastnost existuje.</value>
+  </data>
+  <data name="NullArrayIndex" xml:space="preserve">
+    <value>Operace indexování se nepovedla. Index pole byl vyhodnocen jako null.</value>
+  </data>
+  <data name="NullArray" xml:space="preserve">
+    <value>Do pole s hodnotou null nejde indexovat.</value>
+  </data>
+  <data name="CannotIndex" xml:space="preserve">
+    <value>Do objektu typu {0} nejde indexovat.</value>
+  </data>
+  <data name="CannotIndexWithByRefLikeReturnType" xml:space="preserve">
+    <value>Do objektu typu {0} s návratovým typem podobným ByRef {1} nejde indexovat. PowerShell nepodporuje typy podobné ByRef.</value>
+  </data>
+  <data name="ArrayHasTooManyDimensions" xml:space="preserve">
+    <value>Pole má příliš mnoho rozměrů: {0}. Počet rozměrů pole musí být menší nebo roven 32.</value>
+  </data>
+  <data name="ArraySliceAssignmentFailed" xml:space="preserve">
+    <value>Přiřazení pole k [{0}] se nepovedlo, protože přiřazení k řezům není podporované.</value>
+  </data>
+  <data name="NeedMultidimensionalIndex" xml:space="preserve">
+    <value>Do pole s počtem rozměrů {0} nejde indexovat pomocí indexu [{1}].</value>
+  </data>
+  <data name="IndexOutOfRange" xml:space="preserve">
+    <value>Přiřazení pole se nepovedlo, protože index {0} je mimo rozsah.</value>
+  </data>
+  <data name="MissingExpressionAfterToken" xml:space="preserve">
+    <value>Za {0} chybí výraz.</value>
+  </data>
+  <data name="IncompleteDollarVariableReference" xml:space="preserve">
+    <value>V odkazu ${{variable}} chybí ukončovací }}.</value>
+  </data>
+  <data name="IncompleteDollarSubexpressionReference" xml:space="preserve">
+    <value>V $(subexpression) chybí ukončovací ).</value>
+  </data>
+  <data name="UnexpectedUnaryOperator" xml:space="preserve">
+    <value>Interní chyba – neočekávaný unární operátor {0}.</value>
+  </data>
+  <data name="NonExistingVariableReference" xml:space="preserve">
+    <value>[ref] nejde použít na proměnnou, která neexistuje.</value>
+  </data>
+  <data name="VariableIsUndefined" xml:space="preserve">
+    <value>Proměnnou ${0} nejde načíst, protože nebyla nastavená.</value>
+  </data>
+  <data name="DuplicateKeyInHashLiteral" xml:space="preserve">
+    <value>Duplicitní klíče {0} nejsou v literálech hashovací tabulky povolené.</value>
+  </data>
+  <data name="DuplicateNamedArgument" xml:space="preserve">
+    <value>Duplicitní pojmenované argumenty {0} nejsou povolené.</value>
+  </data>
+  <data name="OperatorRequiresNumber" xml:space="preserve">
+    <value>Operátor {0} funguje jen s čísly. Operand je {1}.</value>
+  </data>
+  <data name="ExpectedExpression" xml:space="preserve">
+    <value>Za ( se očekával výraz.</value>
+  </data>
+  <data name="MissingEqualsInHashLiteral" xml:space="preserve">
+    <value>Za klíčem v literálu hashovací tabulky chybí operátor =.</value>
+  </data>
+  <data name="MissingStatementInHashLiteral" xml:space="preserve">
+    <value>Za = v literálu hashovací tabulky chybí příkaz.</value>
+  </data>
+  <data name="MissingExpressionInNamedArgument" xml:space="preserve">
+    <value>Za = v pojmenovaném argumentu chybí příkaz.</value>
+  </data>
+  <data name="MissingPropertyTerminator" xml:space="preserve">
+    <value>V definici vlastnosti chybí ; nebo konec řádku.</value>
+  </data>
+  <data name="MissingExpressionAfterOperator" xml:space="preserve">
+    <value>Za unárním operátorem {0} chybí výraz.</value>
+  </data>
+  <data name="IfStatementMissingCondition" xml:space="preserve">
+    <value>V příkazu if chybí podmínka za {0} (.</value>
+  </data>
+  <data name="MissingStatementBlock" xml:space="preserve">
+    <value>Za {0} ( condition ) chybí blok příkazů.</value>
+  </data>
+  <data name="MissingStatementBlockAfterElse" xml:space="preserve">
+    <value>Za klíčovým slovem else chybí blok příkazů.</value>
+  </data>
+  <data name="FileReadError" xml:space="preserve">
+    <value>Soubor se nepodařilo načíst: {0}.</value>
+  </data>
+  <data name="FileOpenError" xml:space="preserve">
+    <value>Aktuální zprostředkovatel ({0}) nemůže otevřít soubor.</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>Nenašly se žádné soubory odpovídající {0}.</value>
+  </data>
+  <data name="AmbiguousPath" xml:space="preserve">
+    <value>Cestu nejde zpracovat, protože se přeložila na více než jeden soubor. Zpracovat je možné vždy jen jeden soubor.</value>
+  </data>
+  <data name="KeywordParameterReservedForFutureUse" xml:space="preserve">
+    <value>Parametr {0} -{1} je vyhrazený pro budoucí použití.</value>
+  </data>
+  <data name="MissingFilenameOption" xml:space="preserve">
+    <value>Příkaz switch nejde zpracovat, protože u možnosti -file chybí argument názvu souboru.</value>
+  </data>
+  <data name="InvalidFilenameOption" xml:space="preserve">
+    <value>Argument názvu souboru pro -file v příkazu switch není platný.</value>
+  </data>
+  <data name="InvalidSwitchFlag" xml:space="preserve">
+    <value>Parametr {0} není pro příkaz switch platný.</value>
+  </data>
+  <data name="InvalidForeachFlag" xml:space="preserve">
+    <value>Parametr {0} není pro příkaz foreach platný.</value>
+  </data>
+  <data name="PipelineValueRequired" xml:space="preserve">
+    <value>Příkaz switch musí obsahovat jednu z následujících možností: -file file_name nebo ( expression ).</value>
+  </data>
+  <data name="MissingSwitchConditionExpression" xml:space="preserve">
+    <value>V klauzuli příkazu switch chybí podmínka.</value>
+  </data>
+  <data name="MultipleSwitchDefaultClauses" xml:space="preserve">
+    <value>Příkaz switch může mít jen jednu výchozí klauzuli.</value>
+  </data>
+  <data name="MissingSwitchStatementClause" xml:space="preserve">
+    <value>V klauzuli příkazu switch chybí blok příkazů.</value>
+  </data>
+  <data name="MissingForeachExpression" xml:space="preserve">
+    <value>Ve smyčce foreach chybí výraz.
+Správný tvar je: foreach ($a in $b) {...}</value>
+  </data>
+  <data name="MissingForeachStatement" xml:space="preserve">
+    <value>Ve smyčce foreach chybí tělo příkazu.
+Správný tvar je: foreach ($a in $b) {...}</value>
+  </data>
+  <data name="OnlyOneParameterListAllowed" xml:space="preserve">
+    <value>Příkaz param nejde použít, pokud byly v deklaraci funkce zadané argumenty.</value>
+  </data>
+  <data name="NotADefinedOperationForType" xml:space="preserve">
+    <value>Operace [{0}] {1} [{2}] není definovaná.</value>
+  </data>
+  <data name="BadEnumeration" xml:space="preserve">
+    <value>Při procházení kolekce došlo k chybě: {0}.</value>
+  </data>
+  <data name="COMException" xml:space="preserve">
+    <value>Došlo k neošetřené výjimce interoperability COM: {0}</value>
+  </data>
+  <data name="InvalidComObjectException" xml:space="preserve">
+    <value>K objektu COM se přistoupilo poté, co už byl uvolněný: {0}</value>
+  </data>
+  <data name="ScriptTooComplicated" xml:space="preserve">
+    <value>Zpracování se zastavilo, protože skript je příliš složitý.</value>
+  </data>
+  <data name="ScriptsNotAllowed" xml:space="preserve">
+    <value>Tato syntaxe není v tomto runspace podporovaná. K tomu může dojít, pokud je runspace v režimu bez jazyka.</value>
+  </data>
+  <data name="InvalidSplitOptionCombination" xml:space="preserve">
+    <value>Kombinace možností s operátorem -split není platná.</value>
+  </data>
+  <data name="InvalidSplitOptionWithPredicate" xml:space="preserve">
+    <value>Při použití predikátu nejsou u operátoru -split povolené možnosti.</value>
+  </data>
+  <data name="InvalidEndOfLine" xml:space="preserve">
+    <value>Token {0} není v této verzi platný oddělovač příkazů.</value>
+  </data>
+  <data name="ReservedKeywordNotAllowed" xml:space="preserve">
+    <value>Klíčové slovo {0} není v této verzi jazyka podporované.</value>
+  </data>
+  <data name="MissingExpressionAfterKeyword" xml:space="preserve">
+    <value>Za {0} ve smyčce chybí výraz.</value>
+  </data>
+  <data name="MissingLoopStatement" xml:space="preserve">
+    <value>Ve smyčce {0} chybí tělo příkazu.</value>
+  </data>
+  <data name="MissingTrapStatement" xml:space="preserve">
+    <value>Příkaz trap byl neúplný. Příkaz trap vyžaduje tělo.</value>
+  </data>
+  <data name="MissingTryStatement" xml:space="preserve">
+    <value>Neúplný příkaz try. Příkaz try vyžaduje tělo.</value>
+  </data>
+  <data name="InvalidFunctionParameter" xml:space="preserve">
+    <value>Deklarace parametrů jsou seznam názvů proměnných oddělených čárkami s volitelnými inicializačními výrazy.</value>
+  </data>
+  <data name="MissingFunctionBody" xml:space="preserve">
+    <value>V deklaraci funkce chybí tělo funkce.</value>
+  </data>
+  <data name="DuplicateScriptCommandClause" xml:space="preserve">
+    <value>Klauzule příkazu skriptu {0} už byla definovaná.</value>
+  </data>
+  <data name="MissingNamedBlocks" xml:space="preserve">
+    <value>Neočekávaný token {0}. Očekávalo se begin, process, end, clean nebo dynamicparam.</value>
+  </data>
+  <data name="MissingEndCurlyBrace" xml:space="preserve">
+    <value>V bloku příkazů nebo definici typu chybí ukončovací }.</value>
+  </data>
+  <data name="MissingEndParenthesisInMethodCall" xml:space="preserve">
+    <value>Ve volání metody chybí ).</value>
+  </data>
+  <data name="MissingEndSquareBracket" xml:space="preserve">
+    <value>Za výrazem indexu pole chybí ].</value>
+  </data>
+  <data name="MissingEndParenthesisInExpression" xml:space="preserve">
+    <value>Ve výrazu chybí ukončovací ).</value>
+  </data>
+  <data name="MissingEndParenthesisInSubexpression" xml:space="preserve">
+    <value>V podvýrazu chybí ukončovací ).</value>
+  </data>
+  <data name="MissingOpenParenthesisInIfStatement" xml:space="preserve">
+    <value>Za {0} v příkazu if chybí (.</value>
+  </data>
+  <data name="MissingEndParenthesisInSwitchStatement" xml:space="preserve">
+    <value>Za výrazem v příkazu switch chybí ).</value>
+  </data>
+  <data name="MissingCurlyBraceInSwitchStatement" xml:space="preserve">
+    <value>V příkazu switch chybí {.</value>
+  </data>
+  <data name="MissingVariableNameAfterForeach" xml:space="preserve">
+    <value>Za foreach chybí název proměnné.
+Správný tvar je: foreach ($a in $b) {...}</value>
+  </data>
+  <data name="MissingInInForeach" xml:space="preserve">
+    <value>Ve smyčce foreach chybí za proměnnou in.
+Správný tvar je: foreach ($a in $b) {...}</value>
+  </data>
+  <data name="MissingEndParenthesisAfterForeach" xml:space="preserve">
+    <value>Za výrazovou částí smyčky foreach chybí ukončovací ).
+Správný tvar je: foreach ($a in $b) {...}</value>
+  </data>
+  <data name="MissingOpenParenthesisAfterKeyword" xml:space="preserve">
+    <value>Za klíčovým slovem {0} chybí otevírací (.</value>
+  </data>
+  <data name="MissingWhileOrUntilInDoWhile" xml:space="preserve">
+    <value>Ve smyčce do chybí klíčové slovo while nebo until.</value>
+  </data>
+  <data name="MissingEndParenthesisAfterStatement" xml:space="preserve">
+    <value>Za výrazem v příkazu {0} chybí ukončovací ).</value>
+  </data>
+  <data name="MissingNameAfterKeyword" xml:space="preserve">
+    <value>Za klíčovým slovem {0} chybí název.</value>
+  </data>
+  <data name="MissingEndParenthesisInFunctionParameterList" xml:space="preserve">
+    <value>V seznamu parametrů funkce chybí ).</value>
+  </data>
+  <data name="BackupParserMessage" xml:space="preserve">
+    <value>Při zpracování tohoto skriptu došlo k chybě {0}. Text popisující tuto chybu se nepodařilo načíst.</value>
+  </data>
+  <data name="BackupParserMessageWithException" xml:space="preserve">
+    <value>Při zpracování tohoto skriptu došlo k chybě {0}. Text popisující tuto chybu se kvůli chybě {1} nepodařilo načíst.</value>
+  </data>
+  <data name="ScriptBlockDelegateInvokedFromWrongThread" xml:space="preserve">
+    <value>V tomto vlákně není k dispozici žádný Runspace pro spouštění skriptů. Můžete ho zadat ve vlastnosti DefaultRunspace typu System.Management.Automation.Runspaces.Runspace. Blok skriptu, který jste se pokusili vyvolat, byl: {0}</value>
+  </data>
+  <data name="UnrecognizedToken" xml:space="preserve">
+    <value>Ve zdrojovém textu byl nerozpoznaný token.</value>
+  </data>
+  <data name="ExceptionActionPromptCaption" xml:space="preserve">
+    <value>Akce, která se má provést při této výjimce:</value>
+  </data>
+  <data name="ContinueLabel" xml:space="preserve">
+    <value>&amp;Pokračovat</value>
+  </data>
+  <data name="ContinueHelpMessage" xml:space="preserve">
+    <value>Nahlaste chybu a potom pokračujte dalším příkazem skriptu.</value>
+  </data>
+  <data name="SilentlyContinueLabel" xml:space="preserve">
+    <value>Pokračovat &amp;bez upozornění</value>
+  </data>
+  <data name="SilentlyContinueHelpMessage" xml:space="preserve">
+    <value>Tuto chybu nehlaste. Pokračujte dalším příkazem skriptu.</value>
+  </data>
+  <data name="BreakLabel" xml:space="preserve">
+    <value>Přer&amp;ušit</value>
+  </data>
+  <data name="BreakHelpMessage" xml:space="preserve">
+    <value>Nepokračujte ve zpracování a místo toho vyvolejte výjimku.</value>
+  </data>
+  <data name="SuspendLabel" xml:space="preserve">
+    <value>&amp;Pozastavit</value>
+  </data>
+  <data name="SuspendHelpMessage" xml:space="preserve">
+    <value>Pozastavit aktuální kanál a vrátit se na příkazový řádek. Po dokončení operace můžete pokračovat zadáním příkazu exit.</value>
+  </data>
+  <data name="CantActivateDocumentInPipeline" xml:space="preserve">
+    <value>Dokument nejde spustit uprostřed kanálu: {0}.</value>
+  </data>
+  <data name="ProgramFailedToExecute" xml:space="preserve">
+    <value>Program {0} se nepodařilo spustit: {1}{2}.</value>
+  </data>
+  <data name="CantInvokeInBinaryModule" xml:space="preserve">
+    <value>Operátor &amp; nejde použít k vyvolání v kontextu binárního modulu {0}. Za operátorem &amp; zadejte nebinární modul a zkuste operaci znovu.</value>
+  </data>
+  <data name="CantInvokeInNonImportedModule" xml:space="preserve">
+    <value>Operátor &amp; nejde použít k vyvolání v kontextu modulu {0}, protože modul není importovaný. Importujte modul {0} a zkuste operaci znovu.</value>
+  </data>
+  <data name="TokenAfterEndOfValidScriptText" xml:space="preserve">
+    <value>V bloku podpisu byl nalezen spustitelný kód skriptu.</value>
+  </data>
+  <data name="TextForWordLine" xml:space="preserve">
+    <value>řádek</value>
+  </data>
+  <data name="TextForPositionMessage" xml:space="preserve">
+    <value>Na {0}:{1} znak:{2}
++ {3}</value>
+  </data>
+  <data name="TraceScriptLineMessage" xml:space="preserve">
+    <value>{0,4}+ {1}</value>
+  </data>
+  <data name="TraceVariableAssignment" xml:space="preserve">
+    <value>    ! SET ${0} = {1}.</value>
+  </data>
+  <data name="TraceEnteringFunction" xml:space="preserve">
+    <value>    ! VOLÁNÍ funkce {0}</value>
+  </data>
+  <data name="TraceEnteringFunctionDefinedInFile" xml:space="preserve">
+    <value>    ! VOLÁNÍ funkce {0}  (definované v souboru {1})</value>
+  </data>
+  <data name="TraceMethodCall" xml:space="preserve">
+    <value>    ! VOLÁNÍ metody {0}</value>
+  </data>
+  <data name="TerminatorExpectedAtEndOfString" xml:space="preserve">
+    <value>V řetězci chybí ukončovací znak: {0}.</value>
+  </data>
+  <data name="WhitespaceBeforeHereStringFooter" xml:space="preserve">
+    <value>Před ukončovacím znakem řetězce není povolená mezera.</value>
+  </data>
+  <data name="EndSquareBracketExpectedAtEndOfType" xml:space="preserve">
+    <value>Na konci tokenu typu chybí ].</value>
+  </data>
+  <data name="OpenBraceNeedsToBeBackTickedInVariableName" xml:space="preserve">
+    <value>V názvech proměnných použijte `{ místo {.</value>
+  </data>
+  <data name="MissingStatementBlockForDataSection" xml:space="preserve">
+    <value>Oddílu Data chybí blok příkazů.</value>
+  </data>
+  <data name="InvalidParameterForDataSectionStatement" xml:space="preserve">
+    <value>Parametr {0} oddílu Data není platný. Platný parametr oddílu Data je SupportedCommand.</value>
+  </data>
+  <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
+    <value>Odkazy na pole nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="AssignmentStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Příkazy přiřazení nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="RedirectionNotSupportedInDataSection" xml:space="preserve">
+    <value>Přesměrování není povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="DoWhileStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Příkazy Do a While nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="ExpandableStringNotSupportedInDataSection" xml:space="preserve">
+    <value>Rozbalitelné řetězce nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="OperatorNotSupportedInDataSection" xml:space="preserve">
+    <value>Operátor {0} není povolený v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="TrapStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Příkaz Trap není povolený v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="TryStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Příkaz Try není povolený v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="FlowControlStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Příkazy řízení toku, například Break, Continue, Return, Exit a Throw, nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="ForeachStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Příkazy Foreach nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="ForWhileStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Příkazy For a While nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="FunctionDeclarationNotSupportedInDataSection" xml:space="preserve">
+    <value>Deklarace funkcí nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="MethodCallNotSupportedInDataSection" xml:space="preserve">
+    <value>Volání metod nejsou povolená v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="ParameterDeclarationNotSupportedInDataSection" xml:space="preserve">
+    <value>Deklarace parametrů nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="PropertyReferenceNotSupportedInDataSection" xml:space="preserve">
+    <value>Odkazy na vlastnosti nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="ScriptBlockNotSupportedInDataSection" xml:space="preserve">
+    <value>Literály bloků skriptů nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="SwitchStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Příkaz switch není povolený v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="VariableReferenceNotSupportedInDataSection" xml:space="preserve">
+    <value>Odkazuje se na proměnnou, na kterou v režimu omezeného jazyka ani v oddílu Data odkazovat nejde. Mezi proměnné, na které lze odkazovat, patří: {0}.</value>
+  </data>
+  <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
+    <value>Příkaz {0} není povolený v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="DataSectionStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Příkaz Data není povolený v režimu omezeného jazyka ani v jiném oddílu Data.</value>
+  </data>
+  <data name="MissingValueForSupportedCommandInDataSectionStatement" xml:space="preserve">
+    <value>Parametru SupportedCommand oddílu Data chybí hodnota. Zadejte parametru název rutiny nebo funkce.</value>
+  </data>
+  <data name="InvalidScriptBlockInDataSection" xml:space="preserve">
+    <value>Blok příkazů Begin, blok příkazů Process ani příkaz parametru nejsou v oddílu Data povolené.</value>
+  </data>
+  <data name="StringMultiplyToolongInDataSection" xml:space="preserve">
+    <value>Výsledky násobení řetězců s více než {0} znaky nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="ArrayMultiplyToolongInDataSection" xml:space="preserve">
+    <value>Násobení pole s výsledkem obsahujícím více než {0} prvků není povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="DotSourcingNotSupportedInDataSection" xml:space="preserve">
+    <value>Dot sourcing není povolený v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock" xml:space="preserve">
+    <value>Argument atributu musí být konstanta nebo blok skriptu.</value>
+  </data>
+  <data name="CustomAttributeTypeNotFound" xml:space="preserve">
+    <value>Typ pro vlastní atribut {0} nejde najít. Ujistěte se, že je načtené sestavení, které tento typ obsahuje.</value>
+  </data>
+  <data name="PropertyNotFoundForType" xml:space="preserve">
+    <value>Vlastnost {0} nejde najít pro typ {1}.</value>
+  </data>
+  <data name="UnexpectedAttribute" xml:space="preserve">
+    <value>Neočekávaný atribut {0}.</value>
+  </data>
+  <data name="EndSquareBracketExpectedAtEndOfAttribute" xml:space="preserve">
+    <value>Na konci atributu nebo literálu typu chybí ].</value>
+  </data>
+  <data name="StrictModeFunctionCallWithParens" xml:space="preserve">
+    <value>Funkce nebo příkaz byly volané, jako by šlo o metodu. Parametry by měly být oddělené mezerami. Informace o parametrech najdete v tématu nápovědy about_Parameters.</value>
+  </data>
+  <data name="MissingTryStatementBlock" xml:space="preserve">
+    <value>Příkazu Try chybí blok příkazů.</value>
+  </data>
+  <data name="MissingCatchOrFinally" xml:space="preserve">
+    <value>Příkazu Try chybí blok Catch nebo Finally.</value>
+  </data>
+  <data name="MissingCatchHandlerBlock" xml:space="preserve">
+    <value>Bloku Catch chybí blok příkazů.</value>
+  </data>
+  <data name="MissingFinallyStatementBlock" xml:space="preserve">
+    <value>Bloku Finally chybí blok příkazů.</value>
+  </data>
+  <data name="ExceptionTypeAlreadyCaught" xml:space="preserve">
+    <value>Typ výjimky {0} už zpracovává předchozí obslužná rutina.</value>
+  </data>
+  <data name="EmptyCatchNotLast" xml:space="preserve">
+    <value>Blok Catch musí být poslední blok catch.</value>
+  </data>
+  <data name="MissingTypeLiteralToken" xml:space="preserve">
+    <value>Chybí literál typu.</value>
+  </data>
+  <data name="MissingTerminatorMultiLineComment" xml:space="preserve">
+    <value>Ve víceřádkovém komentáři chybí ukončovací #&gt;.</value>
+  </data>
+  <data name="UnexpectedCharactersAfterHereStringHeader" xml:space="preserve">
+    <value>Za hlavičkou here-string nejsou před koncem řádku povolené žádné znaky.</value>
+  </data>
+  <data name="ErrorCollection" xml:space="preserve">
+    <value>Byly zjištěny chyby parseru.</value>
+  </data>
+  <data name="MissingNamedStatementBlock" xml:space="preserve">
+    <value>Za {0} chybí blok příkazů.</value>
+  </data>
+  <data name="TypeNotAllowedBeforeParam" xml:space="preserve">
+    <value>V příkazu parametru byl nalezen neočekávaný typ [{0}].</value>
+  </data>
+  <data name="TypeNotAllowedBeforeStatement" xml:space="preserve">
+    <value>Před příkazem byl nalezen neočekávaný typ [{0}].</value>
+  </data>
+  <data name="InvalidNullKey" xml:space="preserve">
+    <value>Klíč null není v literálu hashovací tabulky povolený.</value>
+  </data>
+  <data name="AttributeNotSupportedInDataSection" xml:space="preserve">
+    <value>Atributy nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="TypeNotAllowedInDataSection" xml:space="preserve">
+    <value>Typ {0} není povolený v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="PropertyIsReadOnly" xml:space="preserve">
+    <value>{0} je vlastnost jen pro čtení.</value>
+  </data>
+  <data name="MissingAssemblyNameSpecification" xml:space="preserve">
+    <value>V názvu typu chybí specifikace názvu sestavení.</value>
+  </data>
+  <data name="ControlLeavingFinally" xml:space="preserve">
+    <value>Tok řízení nemůže opustit blok Finally.</value>
+  </data>
+  <data name="UnrecoverableParserError" xml:space="preserve">
+    <value>Neopravitelná chyba v PowerShellu.</value>
+  </data>
+  <data name="AstIsReused" xml:space="preserve">
+    <value>AST nejde použít jako podřízený prvek více než jednoho AST. Pokud chcete tento AST použít v jiném AST, zavolejte metodu Copy() a použijte její výsledek.</value>
+  </data>
+  <data name="InvalidUsingExpression" xml:space="preserve">
+    <value>V příkazu Using není povolený výraz.</value>
+  </data>
+  <data name="UsingWithoutInvokeCommand" xml:space="preserve">
+    <value>Proměnnou Using nejde načíst. Proměnnou Using je možné v pracovním postupu skriptu použít jen s Invoke-Command, Start-Job nebo InlineScript. Při použití s Invoke-Command je proměnná Using platná jen tehdy, pokud se blok skriptu vyvolá na vzdáleném počítači.</value>
+  </data>
+  <data name="InvalidBracedVariableReference" xml:space="preserve">
+    <value>Odkaz na proměnnou není platný. Chybí název proměnné.</value>
+  </data>
+  <data name="InvalidVariableReferenceWithDrive" xml:space="preserve">
+    <value>Odkaz na proměnnou není platný. Za : nenásledoval platný znak názvu proměnné. Zvažte použití ${} k oddělení názvu.</value>
+  </data>
+  <data name="TooManyErrors" xml:space="preserve">
+    <value>Nebyly nahlášené všechny chyby parsování.  Opravte nahlášené chyby a zkuste to znovu.</value>
+  </data>
+  <data name="MissingTypename" xml:space="preserve">
+    <value>Za [ chybí název typu.</value>
+  </data>
+  <data name="AllStream" xml:space="preserve">
+    <value>* datový proud</value>
+  </data>
+  <data name="DebugStream" xml:space="preserve">
+    <value>ladicí datový proud</value>
+  </data>
+  <data name="ErrorStream" xml:space="preserve">
+    <value>chybový datový proud</value>
+  </data>
+  <data name="OutputStream" xml:space="preserve">
+    <value>výstupní datový proud</value>
+  </data>
+  <data name="StreamAlreadyRedirected" xml:space="preserve">
+    <value>{0} pro tento příkaz už je přesměrovaný.</value>
+  </data>
+  <data name="VerboseStream" xml:space="preserve">
+    <value>podrobný datový proud</value>
+  </data>
+  <data name="WarningStream" xml:space="preserve">
+    <value>datový proud upozornění</value>
+  </data>
+  <data name="MissingStatementAfterKeyword" xml:space="preserve">
+    <value>Za klíčovým slovem {0} chybí tělo příkazu.</value>
+  </data>
+  <data name="ParallelAndSequenceBlockNotSupportedInDataSection" xml:space="preserve">
+    <value>Bloky Parallel a Sequence nejsou povolené v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="UnexpectedKeyword" xml:space="preserve">
+    <value>Neočekávané klíčové slovo {0}.</value>
+  </data>
+  <data name="VoidTypeConstraintNotAllowed" xml:space="preserve">
+    <value>[void] nejde použít jako typ parametru ani na levé straně přiřazení.</value>
+  </data>
+  <data name="CannotInvoke" xml:space="preserve">
+    <value>Tuto metodu nelze vyvolat.</value>
+  </data>
+  <data name="HashtableToObjectConversionNotSupportedInDataSection" xml:space="preserve">
+    <value>Hashovací tabulku nejde převést na objekt následujícího typu: {0}. Převod hashovací tabulky na objekt není podporovaný v režimu omezeného jazyka ani v oddílu Data.</value>
+  </data>
+  <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
+    <value>Argument musí být konstanta.</value>
+  </data>
+  <data name="RequiresInvalidStringArgument" xml:space="preserve">
+    <value>Argument parametru {0} není platný. Zadejte platný řetězcový argument.</value>
+  </data>
+  <data name="RequiresModuleInvalid" xml:space="preserve">
+    <value>Argument parametru Module není platný. {0}</value>
+  </data>
+  <data name="RequiresVersionInvalid" xml:space="preserve">
+    <value>Argument parametru Version není platný. Zadejte platnou verzi PowerShellu ve formátu hlavní.verze.</value>
+  </data>
+  <data name="RequiresPSEditionInvalid" xml:space="preserve">
+    <value>Argument parametru {0} není platný. Zadejte platnou edici PowerShellu.</value>
+  </data>
+  <data name="RequiresPSEditionValueIsAlreadySpecified" xml:space="preserve">
+    <value>Argument parametru {0} obsahuje duplicitní hodnoty. Nezadávejte duplicitní hodnoty edice PowerShellu.</value>
+  </data>
+  <data name="WildCardModuleNameError" xml:space="preserve">
+    <value>Zástupné znaky nejsou v názvech modulů podporované.</value>
+  </data>
+  <data name="InvokeMethodConstrainedLanguage" xml:space="preserve">
+    <value>Metodu nejde vyvolat. Vyvolání metody je v tomto jazykovém režimu podporované jen u základních typů.</value>
+  </data>
+  <data name="PropertySetConstrainedLanguage" xml:space="preserve">
+    <value>Vlastnost nejde nastavit. Nastavení vlastnosti je v tomto jazykovém režimu podporované jen u základních typů.</value>
+  </data>
+  <data name="ConfigurationInvalidPropertyName" xml:space="preserve">
+    <value>Pro prostředek {0} byl nalezen neplatný název atributu. Název atributu musí být jednoduchý řetězec a nesmí obsahovat proměnné ani výrazy. Nahraďte {1} jednoduchým řetězcem.</value>
+  </data>
+  <data name="InvalidInstanceProperty" xml:space="preserve">
+    <value>Člen {0} není platný. Platné členy jsou
+{1}.</value>
+  </data>
+  <data name="MissingBraceInObjectDefinition" xml:space="preserve">
+    <value>V definici objektu chybí {.</value>
+  </data>
+  <data name="RequiredNameOrExpressionMissing" xml:space="preserve">
+    <value>Chyběl požadovaný název nebo výraz.</value>
+  </data>
+  <data name="SchemaFileNotFound" xml:space="preserve">
+    <value>Soubor schématu {0} se nenašel. Ověřte, že všechny moduly zadané v příkazu konfigurace obsahují soubor schema.mof, a potom zkuste skript spustit znovu.</value>
+  </data>
+  <data name="DataSectionAllowedCommandDisallowed" xml:space="preserve">
+    <value>Oddíl Data nejde definovat. Definování dalších podporovaných příkazů není v tomto jazykovém režimu podporované.</value>
+  </data>
+  <data name="MissingCurlyInConfigurationStatement" xml:space="preserve">
+    <value>V příkazu konfigurace chybí {.</value>
+  </data>
+  <data name="ExceptionParsingMOFFile" xml:space="preserve">
+    <value>Výjimka při parsování souboru MOF {0}:{1}.</value>
+  </data>
+  <data name="MissingConfigurationName" xml:space="preserve">
+    <value>Chybí název konfigurace. Zadejte chybějící název jako jednoduchý název, řetězec nebo výraz s řetězcovou hodnotou.</value>
+  </data>
+  <data name="ModuleNotFoundDuringParse" xml:space="preserve">
+    <value>Modul {0} se nepodařilo najít.</value>
+  </data>
+  <data name="MultipleModuleEntriesFoundDuringParse" xml:space="preserve">
+    <value>Bylo nalezeno více verzí modulu {0}. Spuštěním Get-Module -ListAvailable -FullyQualifiedName {0} můžete zobrazit verze dostupné v systému a potom použít plně kvalifikovaný název '@{{ModuleName="{0}"; RequiredVersion="Version"}}'.</value>
+  </data>
+  <data name="MissingThrottleLimit" xml:space="preserve">
+    <value>Parametru ThrottleLimit příkazu foreach chybí hodnota. Zadejte parametru limit omezení.</value>
+    <comment>'ThrottleLimit' must not be localized.</comment>
+  </data>
+  <data name="ThrottleLimitRequiresParallelFlag" xml:space="preserve">
+    <value>Parametr ThrottleLimit je podporovaný jen u příkazů foreach, které používají parametr Parallel.</value>
+    <comment>'ThrottleLimit' and 'Parallel' must not be localized.</comment>
+  </data>
+  <data name="ConfigurationBodyEmpty" xml:space="preserve">
+    <value>Výsledky bloku konfigurace byly null nebo prázdné. Ověřte, že byly v bloku definované konfigurace.</value>
+  </data>
+  <data name="UnexpectedNameForType" xml:space="preserve">
+    <value>Prostředek {0} je možné v každé konfiguraci použít jen jednou, a proto nemůže mít název. Odeberte {1} a potom skript spusťte znovu.</value>
+  </data>
+  <data name="IncompletePropertyAssignmentBlock" xml:space="preserve">
+    <value>Definice instance obsahuje neúplný blok přiřazení vlastnosti.</value>
+  </data>
+  <data name="MissingEqualsInPropertyAssignmentBlock" xml:space="preserve">
+    <value>Za klíčem v přiřazení vlastnosti chybí operátor =.</value>
+  </data>
+  <data name="DuplicatePropertyInInstanceDefinition" xml:space="preserve">
+    <value>Duplicitní přiřazení vlastností nejsou v definici instance povolená.</value>
+  </data>
+  <data name="DuplicateCimClassDefinition" xml:space="preserve">
+    <value>Druhá definice třídy CIM pro {0} byla nalezena při zpracování souboru schématu {1}. Tato třída už byla definovaná v souborech {2}. Odeberte redundantní definici a zkuste to znovu.</value>
+  </data>
+  <data name="DuplicateKeywordDefinition" xml:space="preserve">
+    <value>Název prostředku {0} už používá jiný prostředek nebo konfigurace.</value>
+  </data>
+  <data name="ClassNameNotSameAsDefiningFile" xml:space="preserve">
+    <value>Název třídy {0} neodpovídá názvu souboru {1}, ve kterém je definovaná. Přejmenujte soubor tak, aby jeho název odpovídal názvu třídy, nebo naopak</value>
+  </data>
+  <data name="DuplicateResourceIdInNodeStatement" xml:space="preserve">
+    <value>Byl nalezen duplicitní identifikátor prostředku {0} při zpracování specifikace uzlu {1}. Změňte název tohoto prostředku tak, aby byl v rámci specifikace uzlu jedinečný.</value>
+  </data>
+  <data name="UnexpectedTokenInDynamicKeyword" xml:space="preserve">
+    <value>V těle příkazu dynamického klíčového slova {0} není mezi názvem a blokem skriptu mezera.</value>
+  </data>
+  <data name="EmptyFunctionNameInFunctionDefinitionDictionary" xml:space="preserve">
+    <value>Vlastnost klíče pro položku ve slovníku funkcí k definování nemůže být prázdná, protože se používá jako název funkce. Jako hodnotu vlastnosti klíče zadejte neprázdný řetězec a potom zkuste operaci znovu.</value>
+  </data>
+  <data name="GetBadlyFormedRequiredResourceId" xml:space="preserve">
+    <value>Formát odkazu na prostředek {0} v seznamu Requires pro prostředek {1} není platný. Název požadovaného prostředku musí mít formát [&lt;typename&gt;]&lt;name&gt; a může obsahovat alfanumerické znaky, mezery, _, -, . a \.</value>
+    <comment>The capitalized word Requires should not be localized. The words &lt;typename&gt; and &lt;name&gt; should be localized but the &lt;&gt; characters must be preserved.</comment>
+  </data>
+  <data name="GetBadlyFormedExclusiveResourceId" xml:space="preserve">
+    <value>Formát odkazu na prostředek {0} v exkluzivním seznamu pro prostředek {1} není platný. Název exkluzivního prostředku musí mít formát &lt;typename&gt;\&lt;name&gt; bez mezer.</value>
+  </data>
+  <data name="GetPullModeNeedConfigurationSource" xml:space="preserve">
+    <value>PartialConfiguration {0} je nastavená na režim pull, který vyžaduje vlastnost ConfigurationSource.</value>
+  </data>
+  <data name="NullEntryInVariablesDefinitionList" xml:space="preserve">
+    <value>V seznamu položek proměnných, které se mají vytvořit v oboru bloku skriptu, byla nalezena položka null. Odeberte položku na indexu {0} nebo ji nahraďte položkou s jinou hodnotou než null a zkuste to znovu.</value>
+  </data>
+  <data name="NullFunctionBodyInFunctionDefinitionDictionary" xml:space="preserve">
+    <value>Blok skriptu definující funkci {0} nesmí být null ani prázdný. Ve slovníku definic funkcí zadejte neprázdný blok skriptu a potom zkuste operaci znovu.</value>
+  </data>
+  <data name="ImportDscResourceNeedParams" xml:space="preserve">
+    <value>Syntaxe dynamického klíčového slova Import-DscResource je:
+
+Import-DscResource  [-Name &lt;ResourceName(s)&gt;]  [-ModuleName  &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;].
+
+Name          : Názvy jednoho nebo více prostředků k importu.
+ModuleName    : Názvy modulů nebo objekty ModuleSpecification jednoho nebo více modulů k importu.
+ModuleVersion : Verze modulu k importu. Pokud se použije, ModuleName musí podle názvu představovat jen jeden modul.</value>
+  </data>
+  <data name="ImportDscResourceMultipleModulesNotSupportedWithName" xml:space="preserve">
+    <value>Dynamické klíčové slovo Import-DscResource podporuje při zadaném parametru Name jen jeden modul.</value>
+  </data>
+  <data name="ImportDscResourcePositionalParamsNotSupported" xml:space="preserve">
+    <value>Dynamické klíčové slovo Import-DscResource nepodporuje poziční parametry. Syntaxe dynamického klíčového slova Import-DscResource je: Import-DscResource  [-Name &lt;ResourceName(s)&gt;] [-ModuleName &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;]</value>
+  </data>
+  <data name="DscResourcesNotFoundDuringParsing" xml:space="preserve">
+    <value>Prostředek {0} se nepodařilo načíst: Prostředek se nenašel.</value>
+  </data>
+  <data name="ConfigurationNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>Klíčové slovo Configuration není v režimu constrainedLanguage povolené.</value>
+  </data>
+  <data name="InvalidConfigurationName" xml:space="preserve">
+    <value>Název konfigurace {0} není platný. Standardní názvy můžou obsahovat jen písmena (a-z, A-Z), číslice (0-9), tečku (.), spojovník (-) a podtržítko (_). Název nesmí být null ani prázdný a měl by začínat písmenem.</value>
+  </data>
+  <data name="UnsupportedNamedBlockInConfiguration" xml:space="preserve">
+    <value>Konfigurace podporuje v těle jen blok End. Bloky Begin, Process a DynamicParam nejsou v konfiguraci povolené.</value>
+  </data>
+  <data name="CimDeserializationError" xml:space="preserve">
+    <value>Deserializátor CIM vyvolal při deserializaci souboru {0} chybu.</value>
+  </data>
+  <data name="InvalidValueForProperty" xml:space="preserve">
+    <value>{0} není platná hodnota vlastnosti {1} ve třídě {2}. Změňte hodnotu na jeden z následujících řetězců: {3}.</value>
+  </data>
+  <data name="UnsupportedValueForProperty" xml:space="preserve">
+    <value>Alespoň jedna z hodnot {0} není pro vlastnost {1} ve třídě {2} podporovaná nebo platná. Zadejte jen podporované hodnoty:
+{3}.</value>
+  </data>
+  <data name="MissingValueForMandatoryProperty" xml:space="preserve">
+    <value>Prostředek {0} vyžaduje, aby byla zadaná hodnota typu {1} pro vlastnost {2}.</value>
+  </data>
+  <data name="ValueNotInRange" xml:space="preserve">
+    <value>Vlastnost {0} prostředku {1} má hodnotu {2}, která není v platném rozsahu {3} až {4}.</value>
+  </data>
+  <data name="CannotLoadPowerShellDataFile" xml:space="preserve">
+    <value>Datový soubor PowerShellu {0} se nepodařilo načíst. Došlo k této chybě:
+{1}</value>
+  </data>
+  <data name="CannotResolvePowerShellDataFilePath" xml:space="preserve">
+    <value>Cestu {0} nejde přeložit na jediný soubor .psd1.</value>
+  </data>
+  <data name="InvalidPowerShellDataFile" xml:space="preserve">
+    <value>Datový soubor PowerShellu {0} není platný, protože ho nejde vyhodnotit jako objekt Hashtable.</value>
+  </data>
+  <data name="ConfigurationNotAllowedOnWinPE" xml:space="preserve">
+    <value>Konfigurace není ve WinPE podporovaná.</value>
+  </data>
+  <data name="EmptyExpressionRequiresANonDefaultMode" xml:space="preserve">
+    <value>Pokud je výraz předaný operátoru Where() null, musíte pro argument režimu výběru zadat jinou hodnotu než Default. Změňte hodnotu argumentu mode na jinou hodnotu než Default a zkuste skript spustit znovu.</value>
+  </data>
+  <data name="ForEachBadGenericConversionTypeSpecified" xml:space="preserve">
+    <value>Obecný typ kolekce [{0}] předaný metodě ForEach() má příliš mnoho argumentů typu. Změňte zadaný typ na obecnou kolekci s jediným argumentem typu a potom zkuste skript spustit znovu.</value>
+  </data>
+  <data name="ForEachTypeConversionFailed" xml:space="preserve">
+    <value>Vstup nejde převést na cílový typ [{0}] předaný operátoru ForEach(). Zkontrolujte zadaný typ a zkuste skript spustit znovu.</value>
+  </data>
+  <data name="ForEachNotSupportCleanBlock" xml:space="preserve">
+    <value>Metoda ForEach nepodporuje blok skriptu s blokem clean.</value>
+  </data>
+  <data name="NumberToReturnMustBeGreaterThanZero" xml:space="preserve">
+    <value>Hodnota numberToReturn zadaná jako třetí argument operátoru Where() musí být větší než nula. Opravte hodnotu argumentu a zkuste skript spustit znovu.</value>
+  </data>
+  <data name="RedirectionStreamCanOnlyMergeToOutputStream" xml:space="preserve">
+    <value>Přesměrování umožňuje sloučit s výstupním datovým proudem jen jiný datový proud. Opravte operaci přesměrování tak, aby se sloučila do výstupního datového proudu, a potom zkuste skript spustit znovu.</value>
+  </data>
+  <data name="ForEachNonexistentMemberReference" xml:space="preserve">
+    <value>Operátor ForEach() nenašel v cílovém objektu člen {0}. Ověřte, že pojmenovaný člen existuje, a potom zkuste skript spustit znovu.</value>
+  </data>
+  <data name="UnsupportedReservedKeyword" xml:space="preserve">
+    <value>Klíčové slovo {0} není v této verzi jazyka podporované.</value>
+  </data>
+  <data name="UnsupportedReservedProperty" xml:space="preserve">
+    <value>Vlastnost {0} není v této verzi jazyka podporovaná.</value>
+  </data>
+  <data name="DuplicateQualifier" xml:space="preserve">
+    <value>Duplicitní kvalifikátor {0}</value>
+  </data>
+  <data name="ModifiersCannotBeCombined" xml:space="preserve">
+    <value>Modifikátor {0} nelze kombinovat s {1}</value>
+  </data>
+  <data name="MissingUsingStatementDirective" xml:space="preserve">
+    <value>Chybí direktiva using</value>
+  </data>
+  <data name="MissingNamespaceAlias" xml:space="preserve">
+    <value>Chybí alias oboru názvů</value>
+  </data>
+  <data name="MissingEqualsInUsingAlias" xml:space="preserve">
+    <value>Chybí operátor =</value>
+  </data>
+  <data name="MissingUsingItemName" xml:space="preserve">
+    <value>Chybí název using</value>
+  </data>
+  <data name="VariableNotLocal" xml:space="preserve">
+    <value>Proměnná není v metodě přiřazená.</value>
+  </data>
+  <data name="IncompleteMemberDefinition" xml:space="preserve">
+    <value>Chybí název vlastnosti nebo definice metody.</value>
+  </data>
+  <data name="MemberAlreadyDefined" xml:space="preserve">
+    <value>Člen {0} už je definovaný.</value>
+  </data>
+  <data name="TooManyTypes" xml:space="preserve">
+    <value>U členů třídy je možné zadat jen jeden typ.</value>
+  </data>
+  <data name="TypeCreationError" xml:space="preserve">
+    <value>Při vytváření typu {0} došlo k chybě. Chybová zpráva: 
+{1}</value>
+  </data>
+  <data name="CannotConvertValue" xml:space="preserve">
+    <value>Hodnotu nejde převést na typ {0}.</value>
+  </data>
+  <data name="PropertyNotFoundForAttribute" xml:space="preserve">
+    <value>Vlastnost {0} nejde najít pro atribut {1}. Zadejte jednu z následujících vlastností: {2}.</value>
+  </data>
+  <data name="AttributeNotAllowedOnDeclaration" xml:space="preserve">
+    <value>Atribut {0} není v této deklaraci platný. Je platný jen v deklaracích {1}.</value>
+  </data>
+  <data name="ParameterAttributeArgumentNeedsToBeConstant" xml:space="preserve">
+    <value>Argument atributu musí být konstanta.</value>
+  </data>
+  <data name="ResourceNotDefined" xml:space="preserve">
+    <value>Nedefinovaný prostředek DSC {0}. K importu prostředku použijte Import-DSCResource.</value>
+  </data>
+  <data name="DynamicKeywordPreParseException" xml:space="preserve">
+    <value>Při předběžném parsování dynamického klíčového slova {0} došlo k výjimce s podrobnostmi {1}.</value>
+  </data>
+  <data name="DynamicKeywordPostParseException" xml:space="preserve">
+    <value>Při následném parsování dynamického klíčového slova {0} došlo k výjimce s podrobnostmi {1}.</value>
+  </data>
+  <data name="WorkflowNotSupportedInPowerShellCore" xml:space="preserve">
+    <value>Workflow není v PowerShellu 6+ podporovaný.</value>
+  </data>
+  <data name="MetaConfigurationUsedInRegularConfig" xml:space="preserve">
+    <value>Prostředek Meta Configuration {0} není v běžné konfiguraci povolený. Prostředky meta konfigurace používejte v konfiguraci s atributem [DscLocalConfigurationManager()].</value>
+  </data>
+  <data name="RegularResourceUsedInMetaConfig" xml:space="preserve">
+    <value>Běžný prostředek DSC {0} není v meta konfiguraci povolený. </value>
+  </data>
+  <data name="GetSteppablePipelineFromWrongThread" xml:space="preserve">
+    <value>V tomto vlákně není k dispozici žádný Runspace pro získání a spuštění SteppablePipeline. Můžete ho zadat ve vlastnosti DefaultRunspace typu System.Management.Automation.Runspaces.Runspace. Blok skriptu, ze kterého jste se pokusili získat SteppablePipeline, byl: {0}</value>
+  </data>
+  <data name="AmbiguousConversion" xml:space="preserve">
+    <value>Existují platné převody z {0} na {1}.</value>
+  </data>
+  <data name="CannotCall" xml:space="preserve">
+    <value>Volání nelze provést.</value>
+  </data>
+  <data name="CannotRetrieveTypeInformation" xml:space="preserve">
+    <value>Informace o typu nejde načíst.</value>
+  </data>
+  <data name="CouldNotGetDispId" xml:space="preserve">
+    <value>Pro {0} se nepodařilo získat identifikátor dispatch (chyba: {1}).</value>
+  </data>
+  <data name="DispBadParamCount" xml:space="preserve">
+    <value>Pro {0} a počet argumentů {1} nejde najít přetížení</value>
+  </data>
+  <data name="DispMemberNotFound" xml:space="preserve">
+    <value>Chyba při vyvolání {0}. Člen se nepodařilo najít.</value>
+  </data>
+  <data name="DispNoNamedArgs" xml:space="preserve">
+    <value>Chyba při vyvolání {0}. Pojmenované argumenty nejsou podporovány.</value>
+  </data>
+  <data name="DispOverflow" xml:space="preserve">
+    <value>Chyba při vyvolání {0}. Bylo zjištěno přetečení.</value>
+  </data>
+  <data name="DispParamNotOptional" xml:space="preserve">
+    <value>Chyba při vyvolání {0}. Byl vynechán požadovaný parametr.</value>
+  </data>
+  <data name="DispTypeMismatch" xml:space="preserve">
+    <value>Výjimka při nastavení {0}: Hodnotu {1} typu {2} nejde převést na typ {3}.</value>
+  </data>
+  <data name="GetIDsOfNamesInvalid" xml:space="preserve">
+    <value>IDispatch::GetIDsOfNames se pro {0} zachovalo neočekávaně.</value>
+  </data>
+  <data name="SetComObjectDataFailed" xml:space="preserve">
+    <value>Metoda Marshal.SetComObjectData se nezdařila.</value>
+  </data>
+  <data name="UnexpectedVarEnum" xml:space="preserve">
+    <value>Neočekávaná hodnota VarEnum {0}.</value>
+  </data>
+  <data name="UnsupportedHandlerType" xml:space="preserve">
+    <value>Byl proveden pokus o předání nepodporovaného typu obslužné rutiny události.</value>
+  </data>
+  <data name="ConfigurationNotSupportedInPowerShellCore" xml:space="preserve">
+    <value>Klíčové slovo Configuration není v PowerShellu 6+ podporované.</value>
+  </data>
+  <data name="MethodHasCodePathNotReturn" xml:space="preserve">
+    <value>Ne všechny cesty kódu v metodě vracejí hodnotu.</value>
+  </data>
+  <data name="VoidMethodHasReturn" xml:space="preserve">
+    <value>Neplatný příkaz return v metodě vracející void.</value>
+  </data>
+  <data name="NonVoidMethodMissingReturnValue" xml:space="preserve">
+    <value>Neplatný příkaz return v metodě, která nevrací void.</value>
+  </data>
+  <data name="MissingTypeBody" xml:space="preserve">
+    <value>Chybí tělo {0} v deklaraci {0}.</value>
+  </data>
+  <data name="CycleInEnumInitializers" xml:space="preserve">
+    <value>Výčet nejde definovat kvůli cyklu v inicializačních výrazech.</value>
+  </data>
+  <data name="EnumeratorValueOutOfBounds" xml:space="preserve">
+    <value>Hodnota enumerátoru je pro {0} příliš velká nebo příliš malá.</value>
+  </data>
+  <data name="EnumeratorValueMustBeConstant" xml:space="preserve">
+    <value>Hodnota enumerátoru musí být konstantní.</value>
+  </data>
+  <data name="DynamicKeywordSemanticCheckException" xml:space="preserve">
+    <value>Při sémantické kontrole dynamického klíčového slova {0} došlo k výjimce s podrobnostmi {1}.</value>
+  </data>
+  <data name="UnsupportedPropertyTypeOfDSCResourceClass" xml:space="preserve">
+    <value>Vlastnost {0} typu {1} třídy prostředku DSC {2} není podporovaná.</value>
+  </data>
+  <data name="MissingMethodParameterList" xml:space="preserve">
+    <value>V seznamu parametrů metody třídy chybí (.</value>
+  </data>
+  <data name="NamedBlockNotAllowedInMethod" xml:space="preserve">
+    <value>Pojmenovaný blok není v metodě třídy povolený.</value>
+  </data>
+  <data name="ParamBlockNotAllowedInMethod" xml:space="preserve">
+    <value>Blok param není v metodě třídy povolený.</value>
+  </data>
+  <data name="SealedBaseClass" xml:space="preserve">
+    <value>Ze zapečetěné třídy {0} nejde dědit.</value>
+  </data>
+  <data name="TypeNameExpected" xml:space="preserve">
+    <value>Očekával se název typu.</value>
+  </data>
+  <data name="InvalidUnderlyingType" xml:space="preserve">
+    <value>{0} není platný podkladový typ pro výčty. Očekával se předdefinovaný celočíselný typ (byte, sbyte, short, ushort, int, uint, long nebo ulong)</value>
+  </data>
+  <data name="InterfaceNameExpected" xml:space="preserve">
+    <value>{0}: Očekával se název rozhraní.</value>
+  </data>
+  <data name="BaseClassNoDefaultCtor" xml:space="preserve">
+    <value>Základní třída {0} neobsahuje konstruktor bez parametrů.</value>
+  </data>
+  <data name="SubtypeArray" xml:space="preserve">
+    <value>Neplatný základní typ {0}. Základní typ nemůže být pole.</value>
+  </data>
+  <data name="SubtypeUnclosedGeneric" xml:space="preserve">
+    <value>Neplatný základní typ {0}. Základní typ nemůže být obecný typ s neurčenými parametry.</value>
+  </data>
+  <data name="MissingBaseCtorCall" xml:space="preserve">
+    <value>Za : ve volání konstruktoru základní třídy chybí base.</value>
+  </data>
+  <data name="ConstructorCantHaveReturnType" xml:space="preserve">
+    <value>Konstruktor nemůže určovat návratový typ.</value>
+  </data>
+  <data name="DscResourceMissingDefaultConstructor" xml:space="preserve">
+    <value>Prostředek DSC {0} nemá výchozí konstruktor.</value>
+  </data>
+  <data name="DscResourceMissingGetMethod" xml:space="preserve">
+    <value>Prostředku DSC {0} chybí metoda Get, která vrací [{0}] a nepřijímá žádné parametry.</value>
+  </data>
+  <data name="DscResourceMissingKeyProperty" xml:space="preserve">
+    <value>Prostředek DSC {0} musí mít aspoň jednu vlastnost klíče (se syntaxí [DscProperty(Key)].)</value>
+  </data>
+  <data name="DscResourceMissingSetMethod" xml:space="preserve">
+    <value>Prostředku DSC {0} chybí metoda Set, která vrací [void] a nepřijímá žádné parametry.</value>
+  </data>
+  <data name="DscResourceMissingTestMethod" xml:space="preserve">
+    <value>Prostředku DSC {0} chybí metoda Test, která vrací [bool] a nepřijímá žádné parametry.</value>
+  </data>
+  <data name="StaticConstructorCantHaveParameters" xml:space="preserve">
+    <value>Statický konstruktor nemůže mít žádné parametry.</value>
+  </data>
+  <data name="TypeNotAllowedForProperty" xml:space="preserve">
+    <value>Typ {0} není u vlastnosti povolený.</value>
+  </data>
+  <data name="TypeNotAllowedForParameter" xml:space="preserve">
+    <value>Typ {0} není u parametru povolený.</value>
+  </data>
+  <data name="NonStaticMemberAccessInStaticMember" xml:space="preserve">
+    <value>Ke statickému členu {0} nejde přistupovat ve statické metodě ani inicializátoru statické vlastnosti.</value>
+  </data>
+  <data name="FailToParseModuleScriptFile" xml:space="preserve">
+    <value>Soubor skriptu modulu {0} se nepodařilo parsovat. Chyba
+{1}.</value>
+  </data>
+  <data name="CantActivateDocumentInPowerShellCore" xml:space="preserve">
+    <value>Dokument nejde spustit v PowerShellu: {0}.</value>
+  </data>
+  <data name="MultipleTypeConstraintsOnMethodParam" xml:space="preserve">
+    <value>U parametru metody není povoleno více omezení typu.</value>
+  </data>
+  <data name="ScriptContainedMaliciousContent" xml:space="preserve">
+    <value>Tento skript obsahuje škodlivý obsah a antivirový software ho zablokoval.</value>
+  </data>
+  <data name="InvalidLocalConfigurationManagerProperty" xml:space="preserve">
+    <value>{0} nelze zadat v prostředku LocalConfigurationManager. Přepněte místo toho na Settings nebo použijte jen následující hodnoty: {1}.</value>
+  </data>
+  <data name="PropertyInGenericType" xml:space="preserve">
+    <value>{0} je definované v obecném typu.</value>
+  </data>
+  <data name="AmbiguousTypeReference" xml:space="preserve">
+    <value>Název typu {0} je nejednoznačný. Může jít o {1} nebo {2}.</value>
+  </data>
+  <data name="UsingMustBeAtStartOfScript" xml:space="preserve">
+    <value>Příkaz using musí být ve skriptu před všemi ostatními příkazy.</value>
+  </data>
+  <data name="UsingStatementNotSupported" xml:space="preserve">
+    <value>Tato syntaxe příkazu using není podporovaná.</value>
+  </data>
+  <data name="InvalidNamespaceValue" xml:space="preserve">
+    <value>Zadaný obor názvů v příkazu using obsahuje neplatné znaky.</value>
+  </data>
+  <data name="InformationStream" xml:space="preserve">
+    <value>informační datový proud</value>
+  </data>
+  <data name="DscResourceInvalidKeyProperty" xml:space="preserve">
+    <value>Neplatná vlastnost klíče. Vlastnost klíče musí být typu [string], celočíselného typu se znaménkem nebo bez znaménka nebo typu Enum.</value>
+  </data>
+  <data name="DscResourceInvalidGetMethod" xml:space="preserve">
+    <value>Neplatná metoda Get. Metoda Get musí vracet [{0}] a nesmí přijímat žádné parametry.</value>
+  </data>
+  <data name="ErrorLoadingAssembly" xml:space="preserve">
+    <value>Nejde načíst sestavení {0}.</value>
+  </data>
+  <data name="CannotLoadAssemblyFromUncPath" xml:space="preserve">
+    <value>Sestavení s cestou UNC {0} nejde použít.</value>
+  </data>
+  <data name="CannotLoadAssemblyWithUriSchema" xml:space="preserve">
+    <value>Sestavení se schématem URI {0} nejde použít.</value>
+  </data>
+  <data name="MissingStatementTerminator" xml:space="preserve">
+    <value>Chybí nový řádek nebo středník.</value>
+  </data>
+  <data name="MissingThis" xml:space="preserve">
+    <value>Vlastnost nejde přiřadit, použijte {0}{1}.</value>
+  </data>
+  <data name="InvalidValueForUsingItemName" xml:space="preserve">
+    <value>{0} není platná hodnota názvu using.</value>
+  </data>
+  <data name="MissingTypeInStaticPropertyAssignment" xml:space="preserve">
+    <value>Vlastnost nejde přiřadit, použijte {0}{1}.</value>
+  </data>
+  <data name="DebugModeShouldHaveOneValue" xml:space="preserve">
+    <value>DebugMode by měla mít jen jednu hodnotu.</value>
+  </data>
+  <data name="LabelNotFound" xml:space="preserve">
+    <value>Popisek {0} se uvnitř metody nenašel.</value>
+  </data>
+  <data name="ConvertCimPropertyToObjectPropertyFailed" xml:space="preserve">
+    <value>Hodnotu CimProperty {0} se nepodařilo převést na hodnotu vlastnosti třídy {1}.</value>
+  </data>
+  <data name="ExpectArrayTypeOfPropertyInPSClass" xml:space="preserve">
+    <value>Vlastnost {0} třídy PowerShellu {1} není deklarovaná jako typ pole, ale v instanci konfigurace je definovaná jako typ pole instancí.</value>
+  </data>
+  <data name="InstantiatePSClassObjectFailed" xml:space="preserve">
+    <value>Objekt třídy PowerShellu {0} se nepodařilo vytvořit.</value>
+  </data>
+  <data name="InvalidHashtable" xml:space="preserve">
+    <value>Hashovací tabulka zadaná prostředku Desired State Configuration {0} není platná. Klíč ani hodnota nesmí být null nebo prázdné.</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>Uživatelské jméno zadané prostředku Desired State Configuration {0} není platné. Uživatelské jméno nesmí být null ani prázdné.</value>
+  </data>
+  <data name="InvalidUserName" xml:space="preserve">
+    <value>Uživatelské jméno zadané prostředku Desired State Configuration {0} není platné. Uživatelské jméno nesmí být null ani prázdné.</value>
+  </data>
+  <data name="PropertyNotDeclaredInPSClass" xml:space="preserve">
+    <value>Vlastnost {0} není deklarovaná v třídě PowerShellu {1}, ale je definovaná v její instanci konfigurace.</value>
+  </data>
+  <data name="DisabledRefreshModeNotValidForPartialConfig" xml:space="preserve">
+    <value>PartialConfiguration {0} má režim aktualizace nastavený na Disabled, což není platný režim pro částečné konfigurace. Použijte režim aktualizace Pull nebo Push. </value>
+  </data>
+  <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
+    <value>Typ nelze vytvořit. V tomto jazykovém režimu se podporují jen základní typy.</value>
+  </data>
+  <data name="ImportDscResourceInsideNode" xml:space="preserve">
+    <value>Import-DscResource nejde zadat uvnitř kontextu Node</value>
+  </data>
+  <data name="DefaultAllowedVariablesInDataSection" xml:space="preserve">
+    <value>$PSCulture, $PSUICulture, $true, $false, $null</value>
+  </data>
+  <data name="AssignmentStatementToAutomaticNotSupported" xml:space="preserve">
+    <value>Automatickou proměnnou {0} typu {1} nejde přiřadit</value>
+  </data>
+  <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
+    <value>Při použití PsDscRunAsCredential pro prostředek {0} došlo ke konfliktu, protože už určuje hodnotu PsDscRunAsCredential. Pro složený prostředek můžeme použít jen jednu hodnotu PsDscRunAsCredential. </value>
+  </data>
+  <data name="PsDscMissingSchemaStore" xml:space="preserve">
+    <value>Úložiště schémat DSC v umístění {0} nejde najít. Ujistěte se, že je nainstalovaný modul PSDesiredStateConfiguration v3.</value>
+  </data>
+  <data name="ParserError" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="ScriptHasAdminBlockedContent" xml:space="preserve">
+    <value>Tento skript obsahuje obsah označený nastavením zásad jako podezřelý a byl zablokovaný s kódem chyby {0}. Další informace vám poskytne správce.</value>
+  </data>
+  <data name="CantInvokeCallOperatorAcrossLanguageBoundaries" xml:space="preserve">
+    <value>Operátory &amp; ani . nejdou použít k vyvolání příkazu v oboru modulu napříč hranicemi jazyků.</value>
+  </data>
+  <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>Klíčové slovo Class není v režimu ConstrainedLanguage povolené.</value>
+  </data>
+  <data name="MissingColonInTernaryExpression" xml:space="preserve">
+    <value>V ternárním výrazu chybí :.</value>
+  </data>
+  <data name="EmptyPipelineChainElement" xml:space="preserve">
+    <value>Za operátorem řetězce kanálu musí následovat kanál.</value>
+  </data>
+  <data name="BackgroundOperatorInPipelineChain" xml:space="preserve">
+    <value>Operátory na pozadí je možné použít jen na konci řetězce kanálu.</value>
+  </data>
+  <data name="InvokingCleanBlockNotSupported" xml:space="preserve">
+    <value>Přímé vyvolání bloku clean v bloku skriptu není podporované.</value>
+  </data>
+  <data name="WDACParserConfigKeywordLogTitle" xml:space="preserve">
+    <value>Klíčové slovo Configuration parseru</value>
+  </data>
+  <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
+    <value>Klíčové slovo Configuration nebude v režimu Constrained Language u nedůvěryhodného skriptu povolené.</value>
+  </data>
+  <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
+    <value>Klíčové slovo Class parseru</value>
+  </data>
+  <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
+    <value>Klíčové slovo Class nebude v režimu Constrained Language u nedůvěryhodného skriptu povolené.</value>
+  </data>
+  <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
+    <value>SupportedCommand oddílu Data parseru</value>
+  </data>
+  <data name="WDACParserDSSupportedCommandLogMessage" xml:space="preserve">
+    <value>Oddíl Data, který obsahuje parametr SupportedCommand, nebude v režimu Constrained Language u nedůvěryhodného skriptu povolený.</value>
+  </data>
+  <data name="WDACParserModuleScopeCallOperatorLogTitle" xml:space="preserve">
+    <value>Operátor volání oboru modulu</value>
+  </data>
+  <data name="WDACParserModuleScopeCallOperatorLogMessage" xml:space="preserve">
+    <value>Operátor volání oboru modulu bude v režimu Constrained Language zamítnutý.</value>
+  </data>
+  <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
+    <value>Vyvolání metody klíčového slova ForEach</value>
+  </data>
+  <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
+    <value>Klíčové slovo ForEach při spuštění v režimu Constrained Language selže při vyvolání metody položky iterace {0}.</value>
+  </data>
+  <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
+    <value>Vyhodnocení výrazu může selhat</value>
+  </data>
+  <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
+    <value>Vytvoření postupně spustitelného kanálu z bloku skriptu může vyžadovat vyhodnocení některých výrazů v bloku skriptu. Vyhodnocení výrazu v tichém režimu selže a vrátí hodnotu null v režimu omezeného jazyka, pokud výraz nepředstavuje konstantní hodnotu.</value>
+  </data>
+  <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">
+    <value>Klíčové slovo Configuration není na procesorech ARM64 podporované.</value>
+  </data>
+</root>

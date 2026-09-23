@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal.Host;
-using System.Runtime.Serialization.Formatters.Binary;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -25,8 +24,6 @@ namespace System.Management.Automation.Remoting
         private readonly Version _serversion;
         private Version _protocolVersion;
         private readonly RemotingDestination _remotingDestination;
-        private static byte[] _timeZoneInByteFormat;
-        private TimeZoneInfo _timeZone;
 
         #endregion
 
@@ -90,64 +87,6 @@ namespace System.Management.Automation.Remoting
         internal static RemoteSessionCapability CreateServerCapability()
         {
             return new RemoteSessionCapability(RemotingDestination.Client);
-        }
-
-        /// <summary>
-        /// This is static property which gets Current TimeZone in byte format
-        /// by using ByteFormatter.
-        /// This is static to make client generate this only once.
-        /// </summary>
-        internal static byte[] GetCurrentTimeZoneInByteFormat()
-        {
-            if (_timeZoneInByteFormat == null)
-            {
-                Exception e = null;
-                try
-                {
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    using (MemoryStream stream = new MemoryStream())
-                    {
-#pragma warning disable SYSLIB0011
-                        formatter.Serialize(stream, TimeZoneInfo.Local);
-#pragma warning restore SYSLIB0011
-                        stream.Seek(0, SeekOrigin.Begin);
-                        byte[] result = new byte[stream.Length];
-                        stream.Read(result, 0, (int)stream.Length);
-                        _timeZoneInByteFormat = result;
-                    }
-                }
-                catch (ArgumentNullException ane)
-                {
-                    e = ane;
-                }
-                catch (System.Runtime.Serialization.SerializationException sre)
-                {
-                    e = sre;
-                }
-                catch (System.Security.SecurityException se)
-                {
-                    e = se;
-                }
-
-                // if there is any exception serializing the timezone information
-                // ignore it and dont try to serialize again.
-                if (e != null)
-                {
-                    _timeZoneInByteFormat = Array.Empty<byte>();
-                }
-            }
-
-            return _timeZoneInByteFormat;
-        }
-
-        /// <summary>
-        /// Gets the TimeZone of the destination machine. This may be null.
-        /// </summary>
-        internal TimeZoneInfo TimeZone
-        {
-            get { return _timeZone; }
-
-            set { _timeZone = value; }
         }
     }
 
@@ -448,12 +387,18 @@ namespace System.Management.Automation.Remoting
             isHostNull = false;
 
             // Verify that the UI is not null.
-            if (host.UI == null) { return; }
+            if (host.UI == null)
+            {
+                return;
+            }
 
             isHostUINull = false;
 
             // Verify that the raw UI is not null.
-            if (host.UI.RawUI == null) { return; }
+            if (host.UI.RawUI == null)
+            {
+                return;
+            }
 
             isHostRawUINull = false;
         }

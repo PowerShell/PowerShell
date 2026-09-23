@@ -50,4 +50,136 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result.Count | Should -Be 1
     $result       | Should -BeExactly "one${sepChar}two${sepChar}three${sepChar}four${sepChar}five"
   }
+  It "Join-Path -Path <Path> -ChildPath <ChildPath> should return '<ExpectedResult>'" -TestCases @(
+    @{
+        Path = 'one'
+        ChildPath = 'two', 'three'
+        ExpectedResult = "one${sepChar}two${sepChar}three"
+    }
+    @{
+        Path = 'one', 'two'
+        ChildPath = 'three', 'four'
+        ExpectedResult = @(
+            "one${sepChar}three${sepChar}four"
+            "two${sepChar}three${sepChar}four"
+        )
+    }
+    @{
+        Path = 'one'
+        ChildPath = @()
+        ExpectedResult = "one${sepChar}"
+    }
+    @{
+        Path = 'one'
+        ChildPath = $null
+        ExpectedResult = "one${sepChar}"
+    }
+    @{
+        Path = 'one'
+        ChildPath = [string]::Empty
+        ExpectedResult = "one${sepChar}"
+    }
+  ) {
+    param($Path, $ChildPath, $ExpectedResult)
+    $result = Join-Path -Path $Path -ChildPath $ChildPath
+    $result | Should -BeExactly $ExpectedResult
+  }
+  It "should handle extension parameter: <TestName>" -TestCases @(
+    @{
+      TestName = "change extension"
+      ChildPath = "file.txt"
+      Extension = ".log"
+      ExpectedChildPath = "file.log"
+    }
+    @{
+      TestName = "add extension to file without extension"
+      ChildPath = "file"
+      Extension = ".txt"
+      ExpectedChildPath = "file.txt"
+    }
+    @{
+      TestName = "extension without leading dot"
+      ChildPath = "file.txt"
+      Extension = "log"
+      ExpectedChildPath = "file.log"
+    }
+    @{
+      TestName = "double extension with dot"
+      ChildPath = "file.txt"
+      Extension = ".tar.gz"
+      ExpectedChildPath = "file.tar.gz"
+    }
+    @{
+      TestName = "double extension without dot"
+      ChildPath = "file.txt"
+      Extension = "tar.gz"
+      ExpectedChildPath = "file.tar.gz"
+    }
+    @{
+      TestName = "remove extension with empty string"
+      ChildPath = "file.txt"
+      Extension = ""
+      ExpectedChildPath = "file"
+    }
+    @{
+      TestName = "preserve dots in base name when removing extension with empty string"
+      ChildPath = "file...txt"
+      Extension = ""
+      ExpectedChildPath = "file.."
+    }
+    @{
+      TestName = "replace only the last extension for files with multiple dots"
+      ChildPath = "file.backup.txt"
+      Extension = ".log"
+      ExpectedChildPath = "file.backup.log"
+    }
+    @{
+      TestName = "preserve dots in base name when changing extension"
+      ChildPath = "file...txt"
+      Extension = ".md"
+      ExpectedChildPath = "file...md"
+    }
+    @{
+      TestName = "add extension to directory-like path"
+      ChildPath = "subfolder"
+      Extension = ".log"
+      ExpectedChildPath = "subfolder.log"
+    }
+  ) {
+    param($TestName, $ChildPath, $Extension, $ExpectedChildPath)
+    $result = Join-Path -Path "folder" -ChildPath $ChildPath -Extension $Extension
+    $result | Should -BeExactly "folder${SepChar}${ExpectedChildPath}"
+  }
+  It "should handle extension parameter with multiple child path segments: <TestName>" -TestCases @(
+    @{
+      TestName = "change extension when joining multiple child path segments"
+      ChildPaths = @("subfolder", "file.txt")
+      Extension = ".log"
+      ExpectedPath = "folder${SepChar}subfolder${SepChar}file.log"
+    }
+  ) {
+    param($TestName, $ChildPaths, $Extension, $ExpectedPath)
+    $result = Join-Path -Path "folder" -ChildPath $ChildPaths -Extension $Extension
+    $result | Should -BeExactly $ExpectedPath
+  }
+  It "should change extension for multiple paths" {
+    $result = Join-Path -Path "folder1", "folder2" -ChildPath "file.txt" -Extension ".log"
+    $result.Count | Should -Be 2
+    $result[0] | Should -BeExactly "folder1${SepChar}file.log"
+    $result[1] | Should -BeExactly "folder2${SepChar}file.log"
+  }
+  It "should resolve path when -Extension changes to existing file" {
+    New-Item -Path TestDrive:\testfile.log -ItemType File -Force | Out-Null
+    $result = Join-Path -Path TestDrive: -ChildPath "testfile.txt" -Extension ".log" -Resolve
+    $result | Should -BeLike "*testfile.log"
+  }
+  It "should throw error when -Extension changes to non-existing file with -Resolve" {
+    { Join-Path -Path TestDrive: -ChildPath "testfile.txt" -Extension ".nonexistent" -Resolve -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..." } |
+      Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.JoinPathCommand"
+  }
+  It "should accept Extension from pipeline by property name" {
+    $obj = [PSCustomObject]@{ Path = "folder"; ChildPath = "file.txt"; Extension = ".log" }
+    $result = $obj | Join-Path
+    $result | Should -BeExactly "folder${SepChar}file.log"
+  }
 }

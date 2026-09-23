@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="VariableBreakpointString" xml:space="preserve">
+    <value>“${0}”上的变量断点({1} 访问)</value>
+  </data>
+  <data name="VariableScriptBreakpointString" xml:space="preserve">
+    <value>“{0}:${1}”上的变量短点({2} 访问)</value>
+  </data>
+  <data name="LineBreakpointString" xml:space="preserve">
+    <value>“{0}:{1}”上的行断点</value>
+  </data>
+  <data name="StatementBreakpointString" xml:space="preserve">
+    <value>“{0}:{1}”上的行断点，{2}</value>
+  </data>
+  <data name="CommandBreakpointString" xml:space="preserve">
+    <value>“{0}”上的命令断点</value>
+  </data>
+  <data name="CommandScriptBreakpointString" xml:space="preserve">
+    <value>“{0}:{1}”上的命令断点</value>
+  </data>
+  <data name="WarningBreakpointWillNotBeHit" xml:space="preserve">
+    <value>不会命中断点 {0}</value>
+  </data>
+  <data name="StepHelp" xml:space="preserve">
+    <value> {0}，{1,-16} 单步执行(步入函数、脚本等)</value>
+  </data>
+  <data name="StepOverHelp" xml:space="preserve">
+    <value> {0}，{1,-16} 单步执行下一个语句(步过函数、脚本等)</value>
+  </data>
+  <data name="StepOutHelp" xml:space="preserve">
+    <value> {0}，{1,-16} 跳出当前函数、脚本等。</value>
+  </data>
+  <data name="ContinueHelp" xml:space="preserve">
+    <value> {0}，{1,-16} 继续操作</value>
+  </data>
+  <data name="StopHelp" xml:space="preserve">
+    <value> {0}，{1,-16} 停止操作并退出调试程序</value>
+  </data>
+  <data name="GetStackTraceHelp" xml:space="preserve">
+    <value> {0}，Get-PSCallStack 显示调用堆栈</value>
+  </data>
+  <data name="ListHelp" xml:space="preserve">
+    <value> {0}，{1,-16} 列出当前脚本的源代码。 </value>
+  </data>
+  <data name="AdditionalListHelp1" xml:space="preserve">
+    <value>                     使用 “list” 从当前行开始，使用 “list &lt;m&gt;” 则从 &lt;m&gt; 开始  </value>
+  </data>
+  <data name="AdditionalListHelp2" xml:space="preserve">
+    <value>                     以从行 &lt;m&gt; 开始，并执行 “list &lt;m&gt; &lt;n&gt;” 以列出 &lt;n&gt; </value>
+  </data>
+  <data name="AdditionalListHelp3" xml:space="preserve">
+    <value>                     从行 &lt;m&gt; 开始的行</value>
+  </data>
+  <data name="EnterHelp" xml:space="preserve">
+    <value> &lt;enter&gt;             如果为它为 {0}、{1} 或 {2}，则重复上一个命令</value>
+  </data>
+  <data name="HelpCommandHelp" xml:space="preserve">
+    <value> {0}，{1,-16} 显示此帮助消息。</value>
+  </data>
+  <data name="PromptHelp" xml:space="preserve">
+    <value>有关如何自定义调试程序提示的说明，请键入 “help about_prompt”。</value>
+  </data>
+  <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
+    <value>
+当前会话不支持调试；操作将继续。
+
+</value>
+  </data>
+  <data name="LocationFormat" xml:space="preserve">
+    <value>{0}: 行 {1}</value>
+  </data>
+  <data name="NoSourceCode" xml:space="preserve">
+    <value>没有可用的源代码。</value>
+  </data>
+  <data name="BadStartFormat" xml:space="preserve">
+    <value>起始行必须是不大于 {0} 的正整数</value>
+  </data>
+  <data name="BadCountFormat" xml:space="preserve">
+    <value>行计数必须是正整数。</value>
+  </data>
+  <data name="NoFile" xml:space="preserve">
+    <value>&lt;No file&gt;</value>
+  </data>
+  <data name="StackTraceFormat" xml:space="preserve">
+    <value>位于 {0}，{1}: 行 {2}</value>
+  </data>
+  <data name="CannotProcessDebuggerCommandNotStopped" xml:space="preserve">
+    <value>调试程序无法处理命令，除非它处于“已停止”状态。</value>
+  </data>
+  <data name="CannotSetDebuggerAction" xml:space="preserve">
+    <value>未针对本地脚本调试程序实现 SetDebugAction。</value>
+  </data>
+  <data name="CannotSetRemoteDebuggerAction" xml:space="preserve">
+    <value>调试程序无法设置恢复操作，因为远程会话中的调试程序未处于“已停止”状态。</value>
+  </data>
+  <data name="CannotStartJobDebuggingDebuggerBusy" xml:space="preserve">
+    <value>无法调试作业，因为调试程序当前正忙。</value>
+  </data>
+  <data name="NoDebuggableJobsFound" xml:space="preserve">
+    <value>已检查提供的作业和所有子作业，但未找到可调试的作业。 要调试作业或子作业，作业必须支持调试，并且还必须处于运行状态。</value>
+  </data>
+  <data name="CannotEnableDebuggerSteppingInvalidMode" xml:space="preserve">
+    <value>无法在单步模式下启用调试程序，因为调试程序处于关闭状态，并且调试模式设置为“无”。</value>
+  </data>
+  <data name="RunspaceDebuggingDebuggerBusy" xml:space="preserve">
+    <value>无法调试运行空间，因为主机调试程序当前正忙。</value>
+  </data>
+  <data name="RunspaceDebuggingDebuggerIsOff" xml:space="preserve">
+    <value>无法调试运行空间。运行空间调试程序当前已关闭(DebugMode 为“无”)。</value>
+  </data>
+  <data name="RunspaceDebuggingInvalidRunspaceState" xml:space="preserve">
+    <value>无法调试未处于“已打开”状态的运行空间。此运行空间状态为 {0}。</value>
+  </data>
+  <data name="RunspaceDebuggingNoRunspaceDebugger" xml:space="preserve">
+    <value>无法调试运行空间。运行空间 {0} 没有关联的调试程序。</value>
+  </data>
+  <data name="RemoteServerDebuggerAlreadyPushed" xml:space="preserve">
+    <value>已替代调试程序。</value>
+  </data>
+  <data name="RemoteServerDebuggerCannotPushSelf" xml:space="preserve">
+    <value>无法将调试程序对象推送到其自身。</value>
+  </data>
+  <data name="CommandNotSupportedForRemoteUseInServerDebugger" xml:space="preserve">
+    <value>在远程运行空间中运行的 PowerShell 版本不支持远程使用 {0} 命令。</value>
+  </data>
+  <data name="NestedRunspaceDebuggerPromptProcessName" xml:space="preserve">
+    <value>进程</value>
+  </data>
+  <data name="DetachHelp" xml:space="preserve">
+    <value> {0}，{1,-16} 继续执行操作并分离调试程序。</value>
+  </data>
+  <data name="InvalidDetachCommand" xml:space="preserve">
+    <value>调试程序分离命令不适用。 分离命令仅适用于使用 Debug-Job 或 Debug-Runspace cmdlet 调试作业和运行空间的情况。</value>
+  </data>
+  <data name="InvalidRunspaceId" xml:space="preserve">
+    <value>无效的运行空间 ID: {0}</value>
+  </data>
+  <data name="UnableToGetRunspace" xml:space="preserve">
+    <value>无法获取运行空间。</value>
+  </data>
+  <data name="BreakpointOrBreakpointListNotSpecified" xml:space="preserve">
+    <value>必须指定断点或 BreakpointList。</value>
+  </data>
+  <data name="BreakpointListContainedANonBreakpoint" xml:space="preserve">
+    <value>BreakpointList 包含了不是断点的项。</value>
+  </data>
+</root>

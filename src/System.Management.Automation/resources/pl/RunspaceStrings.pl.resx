@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidRunspaceStateGeneral" xml:space="preserve">
+    <value>Stan obszaru uruchomieniowego jest nieprawidłowy dla tej operacji.</value>
+  </data>
+  <data name="CannotOpenAgain" xml:space="preserve">
+    <value>Nie można otworzyć obszaru działania, ponieważ nie jest on w stanie BeforeOpen. Bieżący stan obszaru uruchomieniowego to „{0}”.</value>
+  </data>
+  <data name="RunspaceNotInOpenedState" xml:space="preserve">
+    <value>Nie można wykonać operacji, ponieważ obszar runspace nie jest w stanie Opened. Bieżący stan obszaru uruchomieniowego to „{0}”.</value>
+  </data>
+  <data name="RunspaceNotOpenForPipeline" xml:space="preserve">
+    <value>Nie można wywołać potoku, ponieważ obszar działania nie jest w stanie Opened. Bieżący stan obszaru uruchomieniowego to „{0}”.</value>
+  </data>
+  <data name="InvalidPipelineStateStateGeneral" xml:space="preserve">
+    <value>Stan potoku nie jest prawidłowy dla tej operacji.</value>
+  </data>
+  <data name="PipelineReInvokeNotAllowed" xml:space="preserve">
+    <value>Nie można wywołać potoku, ponieważ został już wywołany.</value>
+  </data>
+  <data name="InvalidValueToResultError" xml:space="preserve">
+    <value>Prawidłowa wartość parametru to PipelineResultTypes.Output.</value>
+  </data>
+  <data name="NoCommandInPipeline" xml:space="preserve">
+    <value>Potok nie zawiera polecenia.</value>
+  </data>
+  <data name="ConcurrentInvokeNotAllowed" xml:space="preserve">
+    <value>Potok nie został uruchomiony, ponieważ inny potok jest już uruchomiony. Potoków nie można uruchamiać jednocześnie.</value>
+  </data>
+  <data name="NestedPipelineInvokeAsync" xml:space="preserve">
+    <value>Potoku zagnieżdżonego nie można wywołać asynchronicznie. Użyj metody Invoke.</value>
+  </data>
+  <data name="NestedPipelineNoParentPipeline" xml:space="preserve">
+    <value>Potok zagnieżdżony należy uruchamiać tylko z poziomu uruchomionego potoku.</value>
+  </data>
+  <data name="RunspaceCloseInvalidWhileSessionStateProxy" xml:space="preserve">
+    <value>Nie można zamknąć obszaru działania, gdy trwa wywoływanie metody SessionStateProxy.</value>
+  </data>
+  <data name="NoPipelineWhenSessionStateProxyInProgress" xml:space="preserve">
+    <value>Nie można wywołać potoku, gdy trwa wywołanie metody SessionStateProxy.</value>
+  </data>
+  <data name="AnotherSessionStateProxyInProgress" xml:space="preserve">
+    <value>Trwa wywołanie metody SessionStateProxy. Równoczesne wywołania metod SessionStateProxy są niedozwolone.</value>
+  </data>
+  <data name="NoSessionStateProxyWhenPipelineInProgress" xml:space="preserve">
+    <value>Potok jest już uruchomiony. Równoczesne wywołania metod SessionStateProxy są niedozwolone.</value>
+  </data>
+  <data name="ChangePropertyAfterOpen" xml:space="preserve">
+    <value>Nie można zmienić tej właściwości po otwarciu obszaru uruchomieniowego.</value>
+  </data>
+  <data name="ErrorLoadingModulesOnRunspaceOpen" xml:space="preserve">
+    <value>Wystąpił co najmniej jeden błąd podczas przetwarzania modułu „{0}” określonego w obiekcie InitialSessionState użytym do utworzenia tego obszaru działania. Zobacz właściwość ErrorRecords, aby uzyskać pełną listę błędów. Pierwszy błąd to: {1}</value>
+  </data>
+  <data name="InvalidThreadOptionsChange" xml:space="preserve">
+    <value>Opcje wątku można zmienić tylko wtedy, gdy stan apartamentu to wielowątkowy apartament (MTA), bieżące opcje to UseNewThread lub UseCurrentThread, a nowa wartość to ReuseThread.</value>
+  </data>
+  <data name="UseLocalScopeNotAllowed" xml:space="preserve">
+    <value>{0} nie może mieć wartości false, gdy tryb języka to {1} lub {2}.</value>
+  </data>
+  <data name="DisconnectNotSupported" xml:space="preserve">
+    <value>Nie można rozłączyć obszaru działania dostępnego tylko lokalnie.</value>
+  </data>
+  <data name="ConnectNotSupported" xml:space="preserve">
+    <value>Operacja Connect nie jest obsługiwana w lokalnych obszarach uruchomieniowych.</value>
+  </data>
+  <data name="RunspaceNotReady" xml:space="preserve">
+    <value>Sesja jest zajęta. Połączysz się z nią, gdy tylko będzie dostępna. Aby anulować polecenie Enter-PSSession, naciśnij Ctrl-C.</value>
+  </data>
+  <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
+    <value>Nie można wykonać polecenia. Wywołanie skryptu nie jest obsługiwane w tej konfiguracji sesji. Może się tak zdarzyć, jeśli konfiguracja sesji jest w trybie bez języka.</value>
+  </data>
+  <data name="DisconnectConnectNotSupported" xml:space="preserve">
+    <value>Nie można używać operacji rozłączania i łączenia w lokalnych obszarach uruchomieniowych.</value>
+  </data>
+  <data name="RunspaceNotOpenForPipelineConnect" xml:space="preserve">
+    <value>Nie można połączyć potoku, ponieważ obszar działania nie jest w stanie Opened.  Bieżący stan obszaru uruchomieniowego to „{0}”.</value>
+  </data>
+  <data name="InvalidRunspacePool" xml:space="preserve">
+    <value>Nie można utworzyć obszaru RemoteRunspace. Podany obiekt RunspacePool jest nieprawidłowy.</value>
+  </data>
+  <data name="NoDisconnectedCommand" xml:space="preserve">
+    <value>Z tym obszarem działania nie jest skojarzone żadne rozłączone polecenie.</value>
+  </data>
+  <data name="DisconnectNotSupportedOnServer" xml:space="preserve">
+    <value>Operacja rozłączenia nie jest obsługiwana na komputerze zdalnym. Aby obsługiwać rozłączanie, na komputerze zdalnym musi być uruchomiony Windows PowerShell w wersji 3.0 lub nowszej i musi być używany transport WSMan.</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>Nie można połączyć sesji PSSession, ponieważ sesja nie jest w stanie Disconnected lub nie jest dostępna do połączenia.</value>
+  </data>
+  <data name="InvalidMyResultError" xml:space="preserve">
+    <value>Wartość parametru nie może być równa PipelineResultTypes.None ani PipelineResultTypes.Output.</value>
+  </data>
+  <data name="InvalidValueToResult" xml:space="preserve">
+    <value>Prawidłowe wartości parametru to PipelineResultTypes.Output lub PipelineResultTypes.Null.</value>
+  </data>
+  <data name="DebugRedirectionNotSupported" xml:space="preserve">
+    <value>Przekierowywanie strumienia debugowania nie jest obsługiwane na docelowym komputerze zdalnym.</value>
+  </data>
+  <data name="VerboseRedirectionNotSupported" xml:space="preserve">
+    <value>Pełne przekierowywanie strumienia nie jest obsługiwane na docelowym komputerze zdalnym.</value>
+  </data>
+  <data name="WarningRedirectionNotSupported" xml:space="preserve">
+    <value>Przekierowywanie strumienia ostrzeżenia nie jest obsługiwane na docelowym komputerze zdalnym.</value>
+  </data>
+  <data name="InformationRedirectionNotSupported" xml:space="preserve">
+    <value>Przekierowanie strumienia informacji nie jest obsługiwane na docelowym komputerze zdalnym.</value>
+  </data>
+  <data name="RunningCmdWithJob" xml:space="preserve">
+    <value>Masz otwartą sesję, w której jest uruchomione polecenie lub skrypt.  Ponieważ dane wyjściowe są kierowane do zadania „{0}”, nie zobaczysz ich w konsoli.  Możesz poczekać na zakończenie działania polecenia lub anulować polecenie i pobrać monit wejściowy, naciskając klawisze Ctrl-C.
+</value>
+  </data>
+  <data name="RunningCmdWithoutJob" xml:space="preserve">
+    <value>Weszłaś/wszedłeś do sesji, w której jest właśnie uruchomione polecenie lub skrypt, a dane wyjściowe zostaną wyświetlone w konsoli.  Możesz poczekać na zakończenie uruchomionego polecenia albo je anulować i wyświetlić monit wejściowy, naciskając Ctrl-C.
+</value>
+  </data>
+  <data name="RunningCmdDebugStop" xml:space="preserve">
+    <value>Weszłaś/wszedłeś do sesji, która jest obecnie zatrzymana w punkcie przerwania debugowania wewnątrz uruchomionego polecenia lub skryptu.  Użyj debugera wiersza polecenia programu PowerShell, aby kontynuować debugowanie.
+</value>
+  </data>
+  <data name="RunspaceNotLocal" xml:space="preserve">
+    <value>DefaultRunspace musi być obiektem LocalRunspace</value>
+  </data>
+  <data name="PrimaryRunspaceAlreadySet" xml:space="preserve">
+    <value>Statyczną właściwość PrimaryRunspace można ustawić tylko raz i została już ustawiona.</value>
+  </data>
+</root>

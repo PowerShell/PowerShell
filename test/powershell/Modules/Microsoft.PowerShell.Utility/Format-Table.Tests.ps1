@@ -6,6 +6,13 @@ Describe "Format-Table" -Tags "CI" {
             $outputRendering = $PSStyle.OutputRendering
             $PSStyle.OutputRendering = 'plaintext'
         }
+        $noConsole = $true
+        try {
+            if ([Console]::WindowHeight -ne 0) {
+                $noConsole = $false
+            }
+        } catch {
+        }
     }
 
     AfterAll {
@@ -805,12 +812,20 @@ A Name                                  B
             }
         }
 
-        It "-RepeatHeader should output the header at every screen full" -Skip:([Console]::WindowHeight -eq 0) {
+        It "-RepeatHeader should output the header at every screen full" -Skip:$noConsole {
             $numHeaders = 4
             $numObjects = [Console]::WindowHeight * $numHeaders
             $out = 1..$numObjects | ForEach-Object { @{foo=$_} } | Format-Table -RepeatHeader | Out-String
             $lines = $out.Split([System.Environment]::NewLine)
             ($lines | Select-String "Name\s*Value").Count | Should -Be ($numHeaders + 1)
+        }
+
+        It "-RepeatHeader should output the header at every screen full for custom table" -Skip:$noConsole {
+            $numHeaders = 4
+            $numObjects = [Console]::WindowHeight * $numHeaders
+            $out = 1..$numObjects | ForEach-Object { [pscustomobject]@{foo=$_;bar=$_;hello=$_;world=$_} } | Format-Table -Property hello, world -RepeatHeader | Out-String
+            $lines = $out.Split([System.Environment]::NewLine)
+            ($lines | Select-String "Hello\s*World").Count | Should -Be ($numHeaders + 1)
         }
 
         It "Should be formatted correctly if width is declared and using center alignment" {
@@ -845,9 +860,77 @@ A Name                                  B
             $actual = $obj | Format-Table | Out-String
             ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
         }
+
+        It 'Table should format floats, doubles, and decimals with number of decimals from current culture' {
+            $o = [PSCustomObject]@{
+                double = [double]1234.56789
+                float = [float]9876.54321
+                decimal = [decimal]4567.123456789
+            }
+
+            $table = $o | Format-Table | Out-String
+
+            $line = foreach ($line in $table.split([System.Environment]::NewLine)) { if ($line -match '^1234') { $line } }
+            $line | Should -Not -BeNullOrEmpty
+            $expectedDecimals = (Get-Culture).NumberFormat.NumberDecimalDigits
+
+            foreach ($num in $line.split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)) {
+                $numDecimals = $num.length - $num.indexOf((Get-Culture).NumberFormat.NumberDecimalSeparator) - 1
+                $numDecimals | Should -Be $expectedDecimals -Because $num
+            }
+        }
+
+        It 'Works for empty column header label' {
+            $ps1xml = @'
+    <Configuration>
+        <ViewDefinitions>
+            <View>
+                <Name>Test.Header.Empty</Name>
+                <ViewSelectedBy>
+                    <TypeName>Test.Format</TypeName>
+                </ViewSelectedBy>
+                <TableControl>
+                    <TableHeaders>
+                        <TableColumnHeader>
+                            <Label></Label>
+                            <Width>4</Width>
+                        </TableColumnHeader>
+                    </TableHeaders>
+                    <TableRowEntries>
+                        <TableRowEntry>
+                            <TableColumnItems>
+                                <TableColumnItem>
+                                    <PropertyName>Prop</PropertyName>
+                                </TableColumnItem>
+                            </TableColumnItems>
+                        </TableRowEntry>
+                    </TableRowEntries>
+                </TableControl>
+            </View>
+        </ViewDefinitions>
+    </Configuration>
+'@
+
+            $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath 'empty.format.ps1xml'
+            Set-Content -Path $ps1xmlPath -Value $ps1xml
+            $object = [pscustomobject]@{Prop = '123'}
+            # run in own runspace so not affect global sessionstate
+            $ps = [powershell]::Create()
+            $ps.AddScript( {
+                param($ps1xmlPath, $object)
+                Update-FormatData -AppendPath $ps1xmlPath
+                $object.PSObject.TypeNames.Insert(0, 'Test.Format')
+                $object | Format-Table | Out-String
+            } ).AddArgument($ps1xmlPath).AddArgument($object) | Out-Null
+            $output = $ps.Invoke()
+            $expected = @"
+Prop----123
+"@
+            $output.Replace("`n","").Replace("`r","") | Should -BeExactly $expected
+        }
     }
 
-Describe 'Table color tests' {
+Describe 'Table color tests' -Tag 'CI' {
     BeforeAll {
         $originalRendering = $PSStyle.OutputRendering
         $PSStyle.OutputRendering = 'Ansi'
@@ -857,11 +940,61 @@ Describe 'Table color tests' {
         $PSStyle.OutputRendering = $originalRendering
     }
 
-    It 'Table header should use FormatAccent' {
-        ([pscustomobject]@{foo = 1} | Format-Table | Out-String).Trim() | Should -BeExactly @"
-$($PSStyle.Formatting.FormatAccent)foo$($PSStyle.Reset)
-$($PSStyle.Formatting.FormatAccent)---$($PSStyle.Reset)
-  1
-"@
+    It 'Table header should use TableHeader' {
+        $expected = @(
+        ""
+        "$($PSStyle.Formatting.TableHeader)foo$($PSStyle.Reset)"
+        "$($PSStyle.Formatting.TableHeader)---$($PSStyle.Reset)"
+        "  1"
+        ""
+        )
+
+        $actual = [pscustomobject]@{foo = 1} | Format-Table | Out-String -Stream
+
+        $actual | Should -BeExactly $expected
+    }
+
+    Context 'ExcludeProperty parameter' {
+        It 'Should exclude specified properties' {
+            $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle' }
+            $result = $obj | Format-Table -ExcludeProperty Age | Out-String
+            $result | Should -Match 'Name'
+            $result | Should -Match 'City'
+            $result | Should -Not -Match 'Age'
+        }
+
+        It 'Should work with wildcard patterns' {
+            $obj = [pscustomobject]@{ Prop1 = 1; Prop2 = 2; Other = 3 }
+            $result = $obj | Format-Table -ExcludeProperty Prop* | Out-String
+            $result | Should -Match 'Other'
+            $result | Should -Not -Match 'Prop1'
+            $result | Should -Not -Match 'Prop2'
+        }
+
+        It 'Should work without Property parameter (implies -Property *)' {
+            $obj = [pscustomobject]@{ A = 1; B = 2; C = 3 }
+            $result = $obj | Format-Table -ExcludeProperty B | Out-String
+            $result | Should -Match 'A'
+            $result | Should -Match 'C'
+            $result | Should -Not -Match 'B'
+        }
+
+        It 'Should work with Property parameter' {
+            $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle'; Country = 'USA' }
+            $result = $obj | Format-Table -Property Name, Age, City, Country -ExcludeProperty Age | Out-String
+            $result | Should -Match 'Name'
+            $result | Should -Match 'City'
+            $result | Should -Match 'Country'
+            $result | Should -Not -Match 'Age'
+        }
+
+        It 'Should handle multiple excluded properties' {
+            $obj = [pscustomobject]@{ A = 1; B = 2; C = 3; D = 4 }
+            $result = $obj | Format-Table -ExcludeProperty B, D | Out-String
+            $result | Should -Match 'A'
+            $result | Should -Match 'C'
+            $result | Should -Not -Match 'B'
+            $result | Should -Not -Match 'D'
+        }
     }
 }

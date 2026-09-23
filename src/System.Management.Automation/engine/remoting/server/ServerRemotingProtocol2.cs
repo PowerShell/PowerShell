@@ -266,10 +266,7 @@ namespace System.Management.Automation
 
             // if data structure handler is not found, then association has already been
             // removed, discard message
-            if (dsHandler != null)
-            {
-                dsHandler.ProcessReceivedData(rcvdData);
-            }
+            dsHandler?.ProcessReceivedData(rcvdData);
         }
 
         /// <summary>
@@ -351,7 +348,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should
-        /// be the one thats used to send data from within this
+        /// be the one that's used to send data from within this
         /// data structure handler class</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
@@ -788,7 +785,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should
-        /// be the one thats used to send data from within this
+        /// be the one that's used to send data from within this
         /// data structure handler class</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {

@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>L'accès au chemin '{0}' est refusé.</value>
+  </data>
+  <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
+    <value>L’applet de commande ne peut pas protéger les secrets en texte brut envoyés sur des connexions non chiffrées. Pour supprimer cet avertissement et envoyer des secrets en texte brut sur des réseaux non chiffrés, réexécutez la commande spécifiant le paramètre AllowUnencryptedAuthentication.</value>
+  </data>
+  <data name="AuthenticationConflict" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Authentication et UseDefaultCredentials. L’authentification ne prend pas en charge les informations d’identification par défaut. Spécifiez l’authentification ou UseDefaultCredentials, puis réessayez.</value>
+  </data>
+  <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car le paramètre suivant n’est pas spécifié : Credential. Le type d’authentification fourni nécessite des informations d’identification. Spécifiez les informations d’identification, puis réessayez.</value>
+  </data>
+  <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
+    <value>L'applet de commande ne peut pas s'exécuter car le paramètre suivant n'est pas spécifié : Token. Le type d’authentification fourni nécessite un jeton. Spécifiez jeton, puis réessayez.</value>
+  </data>
+  <data name="AuthenticationTokenConflict" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Informations d’identification et jeton. Spécifiez les informations d’identification ou le jeton, puis réessayez.</value>
+  </data>
+  <data name="BodyConflict" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Body et InFile. Spécifiez soit le corps, soit le fichier d'entrée, puis réessayez.  </value>
+  </data>
+  <data name="BodyFormConflict" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Body et Form. Spécifiez corps ou formulaire, puis réessayez.  </value>
+  </data>
+  <data name="FormInFileConflict" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : InFile et Form. Spécifiez InFile ou Form, puis réessayez.  </value>
+  </data>
+  <data name="ContentTypeException" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car le paramètre -ContentType n’est pas un en-tête Content-Type valide. Spécifiez un type de contenu valide pour -ContentType, puis réessayez. Pour supprimer la validation d’en-tête, fournissez le paramètre -SkipHeaderValidation.</value>
+  </data>
+  <data name="CredentialConflict" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Credential et UseDefaultCredentials. Spécifiez soit Credential, soit UseDefaultCredentials, puis réessayez.</value>
+  </data>
+  <data name="DirectoryPathSpecified" xml:space="preserve">
+    <value>Le chemin d’accès «{0}» est résolu en répertoire. Spécifiez un chemin d’accès incluant un nom de fichier, puis réessayez la commande.</value>
+  </data>
+  <data name="EmptyKeyInJsonString" xml:space="preserve">
+    <value>Le JSON fourni inclut une propriété dont le nom est une chaîne vide, qui n’est prise en charge qu’à l’aide du commutateur -AsHashTable.</value>
+  </data>
+  <data name="DuplicateKeysInJsonString" xml:space="preserve">
+    <value>Impossible de convertir la chaîne JSON, car un dictionnaire qui a été converti à partir de la chaîne contient la clé dupliquée '{0}'.</value>
+  </data>
+  <data name="IEDomNotSupported" xml:space="preserve">
+    <value>Impossible d’analyser le contenu de la réponse, car le moteur de Internet Explorer n’est pas disponible ou la configuration du premier lancement de Internet Explorer n’est pas terminée. Spécifiez le paramètre UseBasicParsing et réessayez. </value>
+  </data>
+  <data name="InsecureRedirection" xml:space="preserve">
+    <value>Impossible de suivre une redirection non sécurisée par défaut. Réexécutez la commande spécifiant le commutateur -AllowInsecureRedirect. </value>
+  </data>
+  <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
+    <value>Impossible de convertir la chaîne JSON, car elle contient des clés avec une casse différente. Utilisez plutôt le commutateur -AsHashTable. La clé qui a été tentée d’être ajoutée à la clé existante «{0}» était «{1}».</value>
+  </data>
+  <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
+    <value>Le nombre maximal de redirections a été dépassé. Pour augmenter le nombre de redirections autorisées, fournissez une valeur supérieure au paramètre -MaximumRedirection.</value>
+  </data>
+  <data name="MultiplePathsResolved" xml:space="preserve">
+    <value>Le chemin d’accès '{0}' peut être résolu en plusieurs chemins d’accès.</value>
+  </data>
+  <data name="NonStringKeyInDictionary" xml:space="preserve">
+    <value>Le type '{0}' n’est pas pris en charge pour la sérialisation ou la désérialisation d’un dictionnaire. Les clés doivent être des chaînes.</value>
+  </data>
+  <data name="NoPathResolved" xml:space="preserve">
+    <value>Impossible de résoudre le chemin d’accès '{0}' dans un fichier.</value>
+  </data>
+  <data name="NotFilesystemPath" xml:space="preserve">
+    <value>Le chemin d’accès '{0}' n’est pas un chemin d’accès au système de fichiers. Spécifiez le chemin d’accès à un fichier dans le système de fichiers.</value>
+  </data>
+  <data name="OutFileMissing" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car le paramètre suivant est manquant : OutFile. Fournissez une valeur de paramètre OutFile valide lors de l’utilisation du paramètre {0}, puis réessayez.</value>
+  </data>
+  <data name="OutFileWritingSkipped" xml:space="preserve">
+    <value>Le fichier ne sera pas retéléchargé car le fichier distant a la même taille que le fichier de sortie : {0}</value>
+  </data>
+  <data name="ProxyCredentialConflict" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : ProxyCredential et ProxyUseDefaultCredentials. Spécifiez ProxyCredential ou ProxyUseDefaultCredentials, puis réessayez.</value>
+  </data>
+  <data name="ProxyUriNotSupplied" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car le paramètre suivant est manquant : Proxy. Fournissez un URI de proxy valide pour le paramètre Proxy lors de l’utilisation des paramètres ProxyCredential ou ProxyUseDefaultCredentials, puis réessayez.</value>
+  </data>
+  <data name="ReadResponseComplete" xml:space="preserve">
+    <value>Lecture du flux de réponse web terminée. Octets téléchargés : {0}</value>
+  </data>
+  <data name="ReadResponseProgressActivity" xml:space="preserve">
+    <value>Lecture du flux de réponse web</value>
+  </data>
+  <data name="ReadResponseProgressStatus" xml:space="preserve">
+    <value>Téléchargé : {0} de {1}</value>
+  </data>
+  <data name="ResumeNotFilePath" xml:space="preserve">
+    <value>Le commutateur Resume ne peut être utilisé que si OutFile cible un fichier, mais qu’il se résout en répertoire : {0}.</value>
+  </data>
+  <data name="SessionConflict" xml:space="preserve">
+    <value>L’applet de commande ne peut pas s’exécuter, car les paramètres en conflit suivants sont spécifiés : Session et SessionVariable. Spécifiez Session ou SessionVariable, puis réessayez.</value>
+  </data>
+  <data name="ThumbprintNotFound" xml:space="preserve">
+    <value>Impossible de récupérer les certificats, car l’empreinte numérique n’est pas valide. Vérifiez l’empreinte numérique et réessayez. </value>
+  </data>
+  <data name="WriteRequestComplete" xml:space="preserve">
+    <value>Requête Web terminée. (Nombre d’octets traités : {0})</value>
+  </data>
+  <data name="WriteRequestCancelled" xml:space="preserve">
+    <value>Requête Web annulée. (Nombre d’octets traités : {0})</value>
+  </data>
+  <data name="WriteRequestProgressActivity" xml:space="preserve">
+    <value>État de la requête Web</value>
+  </data>
+  <data name="WriteRequestProgressStatus" xml:space="preserve">
+    <value>Téléchargé : {0} de {1}</value>
+  </data>
+  <data name="JsonDeserializationFailed" xml:space="preserve">
+    <value>Échec de la conversion à partir de JSON avec l’erreur : {0}</value>
+  </data>
+  <data name="ResponseStatusCodeFailure" xml:space="preserve">
+    <value>Le code d’état de réponse n’a pas abouti : {0} ({1}).</value>
+  </data>
+  <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
+    <value>Lien rel suivant {0}</value>
+  </data>
+  <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
+    <value>Le serveur distant a indiqué qu’il n’a pas pu reprendre le téléchargement. Le fichier local sera remplacé.</value>
+  </data>
+  <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
+    <value>Réponse HTTP/{0} reçue du type de contenu {1} d’une taille inconnue</value>
+  </data>
+  <data name="RetryVerboseMsg" xml:space="preserve">
+    <value>Nouvelle tentative après intervalle de {0} secondes. Code d’état pour la tentative précédente : {1}</value>
+  </data>
+  <data name="JsonMaxDepthReached" xml:space="preserve">
+    <value>Le JSON obtenu est tronqué, car la sérialisation a dépassé la profondeur définie de {0}.</value>
+  </data>
+  <data name="WebSessionConnectionRecreated" xml:space="preserve">
+    <value>Les propriétés WebSession ont été modifiées entre les requêtes forçant la recréation de toutes les connexions HTTP de la session.</value>
+  </data>
+</root>

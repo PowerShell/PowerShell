@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
             // The pipeline will be blocked while we don't return
             if (this.Wait || this.OutputMode != OutputModeOption.None)
             {
-                _windowProxy.BlockUntillClosed();
+                _windowProxy.BlockUntilClosed();
             }
 
             // Output selected items to pipeline.
@@ -180,8 +180,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            IDictionary dictionary = InputObject.BaseObject as IDictionary;
-            if (dictionary != null)
+            if (InputObject.BaseObject is IDictionary dictionary)
             {
                 // Dictionaries should be enumerated through because the pipeline does not enumerate through them.
                 foreach (DictionaryEntry entry in dictionary)
@@ -324,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
             internal abstract void ProcessInputObject(PSObject input);
         }
 
-        internal class ScalarTypeHeader : GridHeader
+        internal sealed class ScalarTypeHeader : GridHeader
         {
             private readonly Type _originalScalarType;
 
@@ -350,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal class NonscalarTypeHeader : GridHeader
+        internal sealed class NonscalarTypeHeader : GridHeader
         {
             private readonly AppliesTo _appliesTo = null;
 
@@ -454,7 +453,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal class HeteroTypeHeader : GridHeader
+        internal sealed class HeteroTypeHeader : GridHeader
         {
             internal HeteroTypeHeader(OutGridViewCommand parentCmd, PSObject input) : base(parentCmd)
             {

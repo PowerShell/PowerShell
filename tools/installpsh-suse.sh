@@ -71,8 +71,6 @@ else
             else
                 DistroBasedOn='redhat'
             fi
-        elif [ -f /etc/SuSE-release ] ; then
-            DistroBasedOn='suse'
         elif [ -f /etc/mandrake-release ] ; then
             DistroBasedOn='mandrake'
         elif [ -f /etc/debian_version ] ; then
@@ -82,6 +80,10 @@ else
             DIST="${DIST}[$( (tr "\n" ' ' | sed s/VERSION.*//) < /etc/UnitedLinux-release )]"
             DistroBasedOn=unitedlinux
         fi
+		osname=$(source /etc/os-release; echo $PRETTY_NAME)
+        if [[ $osname = *SUSE* ]]; then
+            DistroBasedOn='suse'
+        fi		
         OS=$(lowercase "$OS")
         DistroBasedOn=$(lowercase "$DistroBasedOn")
     fi

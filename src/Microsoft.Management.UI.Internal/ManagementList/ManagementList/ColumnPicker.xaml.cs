@@ -59,15 +59,9 @@ namespace Microsoft.Management.UI.Internal
             ICollection<InnerListColumn> availableColumns)
             : this()
         {
-            if (columns == null)
-            {
-                throw new ArgumentNullException("columns");
-            }
+            ArgumentNullException.ThrowIfNull(columns);
 
-            if (availableColumns == null)
-            {
-                throw new ArgumentNullException("availableColumns");
-            }
+            ArgumentNullException.ThrowIfNull(availableColumns);
 
             // Add visible columns to Selected list, preserving order
             // Note that availableColumns is not necessarily in the order

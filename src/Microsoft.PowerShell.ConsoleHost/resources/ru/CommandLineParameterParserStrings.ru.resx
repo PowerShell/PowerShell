@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CommandAlreadySpecified" xml:space="preserve">
+    <value>Не удается обработать команду, так как команда уже указана с помощью параметров -Command, -CommandWithArgs или -EncodedCommand.</value>
+  </data>
+  <data name="MissingCommandParameter" xml:space="preserve">
+    <value>Не удается обработать команду, так как отсутствует параметр. За параметром -Command должна следовать команда.</value>
+  </data>
+  <data name="UnknownParameter" xml:space="preserve">
+    <value>Нераспознанный параметр: {0}.</value>
+  </data>
+  <data name="TooManyParametersToCommand" xml:space="preserve">
+    <value>"-" был указан с параметром -Command; никакие другие аргументы для -Command не допускаются.</value>
+  </data>
+  <data name="StdinNotRedirected" xml:space="preserve">
+    <value>"-" был указан в качестве аргумента для параметра -Command, но для этого процесса стандартный ввод не был перенаправлен.</value>
+  </data>
+  <data name="MissingOutputFormatParameter" xml:space="preserve">
+    <value>Не удается выполнить команду, так как для параметра OutputFormat не указан аргумент.
+Укажите один из следующих форматов для этого параметра:
+{0}</value>
+  </data>
+  <data name="MissingInputFormatParameter" xml:space="preserve">
+    <value>Не удается обработать команду, так как для параметра -InputFormat требуется аргумент. Укажите допустимый формат для этого параметра.
+Допустимые форматы:
+{0}</value>
+  </data>
+  <data name="BadFormatParameterValue" xml:space="preserve">
+    <value>Не удается обработать команду из-за неверного значения параметра. {0} не является допустимым форматом.
+Допустимые форматы:
+{1}</value>
+  </data>
+  <data name="ArgsAlreadySpecified" xml:space="preserve">
+    <value>Не удается обработать команду, так как аргументы для параметров -Command или -EncodedCommand уже указаны с помощью -EncodedArguments.</value>
+  </data>
+  <data name="MissingArgsValue" xml:space="preserve">
+    <value>Не удается обработать команду, так как для параметра -EncodedArguments требуется значение. Укажите значение для параметра -EncodedArguments.</value>
+  </data>
+  <data name="MissingFileArgument" xml:space="preserve">
+    <value>Не удается выполнить команду, так как для параметра File требуется путь к файлу. Укажите путь для параметра File и повторите команду.</value>
+  </data>
+  <data name="MissingWindowStyleArgument" xml:space="preserve">
+    <value>Не удается обработать команду, так как для параметра -WindowStyle требуется аргумент со значением normal, hidden, minimized или maximized. Укажите одно из этих значений аргументов и повторите попытку.</value>
+  </data>
+  <data name="InvalidFileArgument" xml:space="preserve">
+    <value>Обработка -File {0} завершилась сбоем: {1} Укажите допустимый путь для параметра -File.</value>
+  </data>
+  <data name="InvalidWindowStyleArgument" xml:space="preserve">
+    <value>Сбой обработки -WindowStyle {0}: {1}.</value>
+  </data>
+  <data name="InvalidFileArgumentExtension" xml:space="preserve">
+    <value>Обработка -File {0} завершилась сбоем, так как файл не имеет расширения .ps1. Укажите допустимое имя файла сценария PowerShell и повторите попытку.</value>
+  </data>
+  <data name="ArgumentFileDoesNotExist" xml:space="preserve">
+    <value>Аргумент {0} не распознан как имя файла сценария. Проверьте правильность написания имени, а если включен путь, то проверьте правильность пути и повторите попытку.</value>
+  </data>
+  <data name="BadArgsValue" xml:space="preserve">
+    <value>Не удается обработать команду, так как значение, указанное с помощью -EncodedArguments, закодировано неправильно. Значение должно быть закодировано в формате Base64.</value>
+  </data>
+  <data name="BadCommandValue" xml:space="preserve">
+    <value>Не удается обработать команду, так как значение, указанное с помощью -EncodedCommand, закодировано неправильно. Значение должно быть закодировано в формате Base64.</value>
+  </data>
+  <data name="MissingExecutionPolicyParameter" xml:space="preserve">
+    <value>Не удается обработать политику выполнения из-за отсутствия имени политики. За параметром -ExecutionPolicy должно следовать имя политики.</value>
+  </data>
+  <data name="MtaStaMutuallyExclusive" xml:space="preserve">
+    <value>Не удается обработать команду, так как одновременно указаны -STA и -MTA. Укажите -STA или -MTA.</value>
+  </data>
+  <data name="MissingConfigurationNameArgument" xml:space="preserve">
+    <value>Не удается обработать команду, так как для параметра -ConfigurationName требуется аргумент — имя конфигурации удаленной конечной точки. Укажите этот аргумент и повторите попытку.</value>
+  </data>
+  <data name="MissingConfigurationFileArgument" xml:space="preserve">
+    <value>Не удается обработать команду, так как для -ConfigurationFile требуется аргумент — путь к файлу конфигурации сеанса (.pssc). Укажите этот аргумент и повторите попытку.</value>
+  </data>
+  <data name="MissingCustomPipeNameArgument" xml:space="preserve">
+    <value>Не удается обработать команду, так как для параметра -CustomPipeName требуется аргумент — имя канала, который нужно использовать. Укажите этот аргумент и повторите попытку.</value>
+  </data>
+  <data name="CustomPipeNameTooLong" xml:space="preserve">
+    <value>Не удается обработать команду, так как указано слишком длинное имя -CustomPipeName. На этой платформе имена каналов могут содержать до {0} символов. Имя вашего канала {1} состоит из {2} символов.</value>
+  </data>
+  <data name="MissingSettingsFileArgument" xml:space="preserve">
+    <value>Не удается обработать команду, так как для параметра -SettingsFile требуется аргумент — путь к файлу.</value>
+  </data>
+  <data name="InvalidSettingsFileArgument" xml:space="preserve">
+    <value>Не удалось обработать -SettingsFile {0}: {1}. Укажите допустимый путь для параметра -SettingsFile.</value>
+  </data>
+  <data name="SettingsFileNotExists" xml:space="preserve">
+    <value>Аргумент {0}, переданный в -SettingsFile, не существует. В качестве аргумента для параметра -SettingsFile укажите путь к существующему JSON-файлу.</value>
+  </data>
+  <data name="InvalidArgument" xml:space="preserve">
+    <value>Недопустимый аргумент {0}. Возможно, вы имели в виду:</value>
+  </data>
+  <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
+    <value>Параметр -WindowStyle не реализован на этой платформе.</value>
+  </data>
+  <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
+    <value>Не удается обработать команду, так как для параметра -WorkingDirectory требуется аргумент — путь к каталогу.</value>
+  </data>
+  <data name="MTANotImplemented" xml:space="preserve">
+    <value>Параметр -MTA не поддерживается на этой платформе.</value>
+  </data>
+  <data name="STANotImplemented" xml:space="preserve">
+    <value>Параметр -STA не поддерживается на этой платформе.</value>
+  </data>
+  <data name="NullElementInArgs" xml:space="preserve">
+    <value>Указанные аргументы не должны содержать элементы NULL.</value>
+  </data>
+  <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
+    <value>Недопустимое значение ExecutionPolicy {0}.</value>
+  </data>
+  <data name="MissingMandatoryArgument" xml:space="preserve">
+    <value>Для параметра {0} необходимо указать аргумент.</value>
+  </data>
+  <data name="FileOnlyEntryRequired" xml:space="preserve">
+    <value>Параметр -File обязателен согласно политике.</value>
+  </data>
+  <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
+    <value>Параметр -NoExit запрещен политикой.</value>
+  </data>
+  <data name="FileOnlyEntryServerMode" xml:space="preserve">
+    <value>Режим сервера запрещен политикой.</value>
+  </data>
+</root>

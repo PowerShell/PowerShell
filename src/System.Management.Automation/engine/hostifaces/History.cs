@@ -510,7 +510,7 @@ namespace Microsoft.PowerShell.Commands
                         long id = _countEntriesAdded;
                         for (long i = 0; i <= count - 1;)
                         {
-                            // if buffersize is changed,we have to loop from max entry to min entry thats not cleared
+                            // if buffersize is changed,we have to loop from max entry to min entry that's not cleared
                             if (_capacity != DefaultHistorySize)
                             {
                                 if (_countEntriesAdded > _capacity)
@@ -581,10 +581,10 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// gets the total number of entries added
-        ///</summary>
-        ///<returns>count of total entries added.</returns>
+        /// </summary>
+        /// <returns>count of total entries added.</returns>
         internal int Buffercapacity()
         {
             return _capacity;
@@ -859,7 +859,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(Position = 0, ValueFromPipeline = true)]
-        [ValidateRangeAttribute((long)1, long.MaxValue)]
+        [ValidateRange((long)1, long.MaxValue)]
         public long[] Id
         {
             get
@@ -887,7 +887,7 @@ namespace Microsoft.PowerShell.Commands
         /// No of History Entries (starting from last) that are to be displayed.
         /// </summary>
         [Parameter(Position = 1)]
-        [ValidateRangeAttribute(0, (int)Int16.MaxValue)]
+        [ValidateRange(0, (int)Int16.MaxValue)]
         public int Count
         {
             get
@@ -1346,7 +1346,7 @@ namespace Microsoft.PowerShell.Commands
         /// A Boolean that indicates whether history objects should be
         /// passed to the next element in the pipeline.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Passthru
         {
             get { return _passthru; }
@@ -1436,7 +1436,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Read CommandLine property
-                if (!(GetPropertyValue(mshObject, "CommandLine") is string commandLine))
+                if (GetPropertyValue(mshObject, "CommandLine") is not string commandLine)
                 {
                     break;
                 }
@@ -1471,7 +1471,7 @@ namespace Microsoft.PowerShell.Commands
                 );
             } while (false);
 
-            // If we are here, an error has occured.
+            // If we are here, an error has occurred.
             Exception ex =
                 new InvalidDataException
                 (
@@ -1504,9 +1504,9 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    ///<summary>
+    /// <summary>
     /// This Class implements the Clear History cmdlet
-    ///</summary>
+    /// </summary>
     [Cmdlet(VerbsCommon.Clear, "History", SupportsShouldProcess = true, DefaultParameterSetName = "IDParameter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096691")]
     public class ClearHistoryCommand : PSCmdlet
     {
@@ -1518,7 +1518,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "IDParameter", Position = 0,
            HelpMessage = "Specifies the ID of a command in the session history.Clear history clears only the specified command")]
-        [ValidateRangeAttribute((int)1, int.MaxValue)]
+        [ValidateRange((int)1, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] Id
         {
@@ -1542,7 +1542,7 @@ namespace Microsoft.PowerShell.Commands
         /// Command line name of an entry in the session history.
         /// </summary>
         [Parameter(ParameterSetName = "CommandLineParameter", HelpMessage = "Specifies the name of a command in the session history")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CommandLine
         {
@@ -1562,11 +1562,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private string[] _commandline = null;
 
-        ///<summary>
+        /// <summary>
         /// Clears the specified number of history entries
-        ///</summary>
+        /// </summary>
         [Parameter(Mandatory = false, Position = 1, HelpMessage = "Clears the specified number of history entries")]
-        [ValidateRangeAttribute((int)1, int.MaxValue)]
+        [ValidateRange((int)1, int.MaxValue)]
         public int Count
         {
             get
@@ -1651,8 +1651,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Clears the session history based on the id parameter
         /// takes no parameters
-        /// <returns>Nothing.</returns>
         /// </summary>
+        /// <returns>Nothing.</returns>
         private void ClearHistoryByID()
         {
             if (_countParameterSpecified && Count < 0)
@@ -1759,8 +1759,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Clears the session history based on the Commandline parameter
         /// takes no parameters
-        /// <returns>Nothing.</returns>
         /// </summary>
+        /// <returns>Nothing.</returns>
         private void ClearHistoryByCmdLine()
         {
             // throw an exception for invalid count values
@@ -1822,12 +1822,12 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Clears the session history based on the input parameter
+        /// </summary>
+        /// <returns>Nothing.</returns>
         /// <param name="id">Id of the entry to be cleared.</param>
         /// <param name="count">Count of entries to be cleared.</param>
         /// <param name="cmdline">Cmdline string to be cleared.</param>
         /// <param name="newest">Order of the entries.</param>
-        /// <returns>Nothing.</returns>
-        /// </summary>
         private void ClearHistoryEntries(long id, int count, string cmdline, SwitchParameter newest)
         {
             // if cmdline is null,use default parameter set notion.

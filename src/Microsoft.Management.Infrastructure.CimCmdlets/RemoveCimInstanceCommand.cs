@@ -276,10 +276,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimRemoveCimInstance cimRemoveInstance = this.GetOperationAgent();
-            if (cimRemoveInstance != null)
-            {
-                cimRemoveInstance.ProcessRemainActions(this.CmdletOperation);
-            }
+            cimRemoveInstance?.ProcessRemainActions(this.CmdletOperation);
         }
 
         #endregion

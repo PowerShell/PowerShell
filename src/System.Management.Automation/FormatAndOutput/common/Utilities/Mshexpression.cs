@@ -215,8 +215,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSMemberInfo member in members)
             {
                 // it can be a property set
-                PSPropertySet propertySet = member as PSPropertySet;
-                if (propertySet != null)
+                if (member is PSPropertySet propertySet)
                 {
                     if (expand)
                     {
@@ -326,15 +325,12 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (_getValueDynamicSite == null)
-                    {
-                        _getValueDynamicSite =
-                            CallSite<Func<CallSite, object, object>>.Create(
-                                    PSGetMemberBinder.Get(
-                                        _stringValue,
-                                        classScope: (Type)null,
-                                        @static: false));
-                    }
+                    _getValueDynamicSite ??=
+                        CallSite<Func<CallSite, object, object>>.Create(
+                            PSGetMemberBinder.Get(
+                                _stringValue,
+                                classScope: (Type)null,
+                                @static: false));
 
                     result = _getValueDynamicSite.Target.Invoke(_getValueDynamicSite, target);
                 }
@@ -379,5 +375,42 @@ namespace Microsoft.PowerShell.Commands
         private bool _isResolved = false;
 
         #endregion Private Members
+
+    }
+
+    /// <summary>
+    /// Helper class to do wildcard matching on PSPropertyExpressions.
+    /// </summary>
+    internal sealed class PSPropertyExpressionFilter
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PSPropertyExpressionFilter"/> class
+        /// with the specified array of patterns.
+        /// </summary>
+        /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>
+        internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
+        {
+            ArgumentNullException.ThrowIfNull(wildcardPatternsStrings);
+
+            _wildcardPatterns = new WildcardPattern[wildcardPatternsStrings.Length];
+            for (int k = 0; k < wildcardPatternsStrings.Length; k++)
+            {
+                _wildcardPatterns[k] = WildcardPattern.Get(wildcardPatternsStrings[k], WildcardOptions.IgnoreCase);
+            }
+        }
+
+        /// <summary>
+        /// Try to match the expression against the array of wildcard patterns.
+        /// The first match short-circuits the search.
+        /// </summary>
+        /// <param name="expression">PSPropertyExpression to test against.</param>
+        /// <returns>True if there is a match, else false.</returns>
+        internal bool IsMatch(PSPropertyExpression expression)
+        {
+            string expressionString = expression.ToString();
+            return _wildcardPatterns.Any(pattern => pattern.IsMatch(expressionString));
+        }
+
+        private readonly WildcardPattern[] _wildcardPatterns;
     }
 }

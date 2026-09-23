@@ -44,7 +44,7 @@ namespace Microsoft.Management.UI.Internal
         /// Occurs when the collection changes, either by adding or removing an item.
         /// </summary>
         /// <remarks>
-        /// see <seealso cref="INotifyCollectionChanged"/>
+        /// see <see cref="INotifyCollectionChanged"/>
         /// </remarks>
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -52,7 +52,7 @@ namespace Microsoft.Management.UI.Internal
         /// Occurs when a property changes.
         /// </summary>
         /// <remarks>
-        /// see <seealso cref="INotifyPropertyChanged"/>
+        /// see <see cref="INotifyPropertyChanged"/>
         /// </remarks>
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion Events

@@ -3,7 +3,7 @@
 
 This directory contains useful scripts and related files for analyzing PowerShell performance.
 
-If you use the [Windows Performance Toolkit](https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk), you can use the following to collect data and analyze a trace.
+If you use the [Windows Performance Toolkit](https://learn.microsoft.com/windows-hardware/test/wpt/), you can use the following to collect data and analyze a trace.
 
 ```PowerShell
 $PowerShellGitRepo = "D:\PowerShell"

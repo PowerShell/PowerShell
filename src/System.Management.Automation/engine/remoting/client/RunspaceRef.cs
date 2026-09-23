@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
+using System.Management.Automation.Security;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -94,7 +95,22 @@ namespace System.Management.Automation.Remoting
                 // to be parsed and evaluated on the remote session (not in the current local session).
                 RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
                 bool isConfiguredLoopback = remoteRunspace != null && remoteRunspace.IsConfiguredLoopBack;
-                bool isTrustedInput = !isConfiguredLoopback && (localRunspace.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage);
+
+                bool inFullLanguage = context.LanguageMode == PSLanguageMode.FullLanguage;
+                if (context.LanguageMode == PSLanguageMode.ConstrainedLanguage
+                    && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                {
+                    // In audit mode, report but don't enforce.
+                    inFullLanguage = true;
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: RemotingErrorIdStrings.WDACGetPowerShellLogTitle,
+                        message: RemotingErrorIdStrings.WDACGetPowerShellLogMessage,
+                        fqid: "GetPowerShellMayFail",
+                        dropIntoDebugger: true);
+                }
+
+                bool isTrustedInput = !isConfiguredLoopback && inFullLanguage;
 
                 // Create PowerShell from ScriptBlock.
                 ScriptBlock scriptBlock = ScriptBlock.Create(context, line);
@@ -208,12 +224,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // If that didn't work out fall-back to the traditional approach.
-            if (pipeline == null)
-            {
-                pipeline = useNestedPipelines ?
-                    _runspaceRef.Value.CreateNestedPipeline(line, addToHistory) :
-                    _runspaceRef.Value.CreatePipeline(line, addToHistory);
-            }
+            pipeline ??= useNestedPipelines ?
+                _runspaceRef.Value.CreateNestedPipeline(line, addToHistory) :
+                _runspaceRef.Value.CreatePipeline(line, addToHistory);
 
             // Add robust connection callback if this is a pushed runspace.
             RemotePipeline remotePipeline = pipeline as RemotePipeline;
@@ -313,7 +326,7 @@ namespace System.Management.Automation.Remoting
                     powerShell.AddParameter("Name", new string[] { "Out-Default", "Exit-PSSession" });
                     powerShell.Runspace = _runspaceRef.Value;
 
-                    bool isReleaseCandidateBackcompatibilityMode = _runspaceRef.Value.GetRemoteProtocolVersion() == RemotingConstants.ProtocolVersionWin7RC;
+                    bool isReleaseCandidateBackcompatibilityMode = _runspaceRef.Value.GetRemoteProtocolVersion() == RemotingConstants.ProtocolVersion_2_0;
                     powerShell.IsGetCommandMetadataSpecialPipeline = !isReleaseCandidateBackcompatibilityMode;
                     int expectedNumberOfResults = isReleaseCandidateBackcompatibilityMode ? 2 : 3;
 
@@ -353,7 +366,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="eventArgs"></param>
         private void HandleHostCall(object sender, RemoteDataEventArgs<RemoteHostCall> eventArgs)
         {
-            System.Management.Automation.Runspaces.Internal.ClientRemotePowerShell.ExitHandler(sender, eventArgs);
+            ClientRemotePowerShell.ExitHandler(sender, eventArgs);
         }
 
         #region Robust Connection Support

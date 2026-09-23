@@ -16,7 +16,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             PSObject so, TypeInfoDataBase db, FormattingCommandLineParameters parameters)
         {
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
-            this.inputParameters = parameters;
         }
 
         internal override FormatStartData GenerateStartData(PSObject so)
@@ -40,7 +39,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ComplexViewEntry GenerateComplexViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
             ComplexViewObjectBrowser browser = new ComplexViewObjectBrowser(this.ErrorManager, this.expressionFactory, enumerationLimit);
-            return browser.GenerateView(so, this.inputParameters);
+            return browser.GenerateView(so, this.parameters);
         }
 
         private ComplexViewEntry GenerateComplexViewEntryFromDataBaseInfo(PSObject so, int enumerationLimit)
@@ -107,8 +106,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ComplexControlBody complexBody = null;
 
             // we might have a reference
-            ControlReference controlReference = control as ControlReference;
-            if (controlReference != null && controlReference.controlType == typeof(ComplexControlBody))
+            if (control is ControlReference controlReference && controlReference.controlType == typeof(ComplexControlBody))
             {
                 // retrieve the reference
                 complexBody = DisplayDataQuery.ResolveControlReference(
@@ -205,8 +203,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             #region foreach loop
             foreach (FormatToken t in formatTokenList)
             {
-                TextToken tt = t as TextToken;
-                if (tt != null)
+                if (t is TextToken tt)
                 {
                     FormatTextField ftf = new FormatTextField();
                     ftf.text = _db.displayResourceManagerCache.GetTextTokenString(tt);
@@ -214,8 +211,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                var newline = t as NewLineToken;
-                if (newline != null)
+                if (t is NewLineToken newline)
                 {
                     for (int i = 0; i < newline.count; i++)
                     {
@@ -225,8 +221,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                FrameToken ft = t as FrameToken;
-                if (ft != null)
+                if (t is FrameToken ft)
                 {
                     // instantiate a new entry and attach a frame info object
                     FormatEntry feFrame = new FormatEntry();
@@ -245,8 +240,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
                 #region CompoundPropertyToken
-                CompoundPropertyToken cpt = t as CompoundPropertyToken;
-                if (cpt != null)
+                if (t is CompoundPropertyToken cpt)
                 {
                     if (!EvaluateDisplayCondition(so, cpt.conditionToken))
                     {
@@ -283,10 +277,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         // Since it is a leaf node we just consider it an empty string and go
                         // on with formatting
-                        if (val == null)
-                        {
-                            val = string.Empty;
-                        }
+                        val ??= string.Empty;
 
                         FieldFormattingDirective fieldFormattingDirective = null;
                         StringFormatError formatErrorObject = null;
@@ -433,17 +424,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// of the object.
         /// </summary>
         /// <param name="so">Object to process.</param>
-        /// <param name="inputParameters">Parameters from the command line.</param>
+        /// <param name="parameters">Parameters from the command line.</param>
         /// <returns>Complex view entry to send to the output command.</returns>
-        internal ComplexViewEntry GenerateView(PSObject so, FormattingCommandLineParameters inputParameters)
+        internal ComplexViewEntry GenerateView(PSObject so, FormattingCommandLineParameters parameters)
         {
-            _complexSpecificParameters = (ComplexSpecificParameters)inputParameters.shapeParameters;
+            _parameters = parameters;
+            _complexSpecificParameters = (ComplexSpecificParameters)parameters.shapeParameters;
 
             int maxDepth = _complexSpecificParameters.maxDepth;
             TraversalInfo level = new TraversalInfo(0, maxDepth);
 
             List<MshParameter> mshParameterList = null;
-            mshParameterList = inputParameters.mshParameterList;
+            mshParameterList = parameters.mshParameterList;
 
             // create a top level entry as root of the tree
             ComplexViewEntry cve = new ComplexViewEntry();
@@ -494,7 +486,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (formatErrorObject != null && formatErrorObject.exception != null)
             {
-                // if we did no thave any errors in the expression evaluation
+                // if we did not have any errors in the expression evaluation
                 // we might have errors in the formatting, if present
                 _errorManager.LogStringFormatError(formatErrorObject);
                 if (_errorManager.DisplayFormatErrorString)
@@ -520,6 +512,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // resolve the names of the properties
             List<MshResolvedExpressionParameterAssociation> activeAssociationList =
                         AssociationManager.SetupActiveProperties(parameterList, so, _expressionFactory);
+
+            // Apply ExcludeProperty filter using the centralized method
+            activeAssociationList = ViewGenerator.ApplyExcludeFilter(activeAssociationList, _parameters?.excludePropertyFilter);
 
             // create a format entry
             FormatEntry fe = new FormatEntry();
@@ -717,7 +712,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (_complexSpecificParameters.classDisplay == ComplexSpecificParameters.ClassInfoDisplay.shortName)
             {
                 // get the last token in the full name
-                string[] arr = typeNames[0].Split(Utils.Separators.Dot);
+                string[] arr = typeNames[0].Split('.');
                 if (arr.Length > 0)
                     return arr[arr.Length - 1];
             }
@@ -766,6 +761,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return feFrame.formatValueList;
         }
 
+        private FormattingCommandLineParameters _parameters;
         private ComplexSpecificParameters _complexSpecificParameters;
 
         /// <summary>

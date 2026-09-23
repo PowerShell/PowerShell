@@ -170,11 +170,7 @@ namespace System.Management.Automation
             {
                 string fileName = Path.GetFileName(file);
 
-                if (!fileNameHash.Contains(fileName))
-                {
-                    fileNameHash.Add(fileName);
-                }
-                else
+                if (!fileNameHash.Add(fileName))
                 {
                     // If the file need to be removed, add it to matchedFilesToRemove, if not already present.
                     if (!matchedFilesToRemove.Contains(file))
@@ -275,9 +271,8 @@ namespace System.Management.Automation
 
             if (filePath.StartsWith(psmodulePathRoot, StringComparison.OrdinalIgnoreCase))
             {
-                var moduleRootSubPath = filePath.Remove(0, psmodulePathRoot.Length).TrimStart(Utils.Separators.Directory);
+                var moduleRootSubPath = filePath.Remove(0, psmodulePathRoot.Length);
                 var pathParts = moduleRootSubPath.Split(Utils.Separators.Directory, StringSplitOptions.RemoveEmptyEntries);
-
                 moduleName = pathParts[0];
                 var potentialVersion = pathParts[1];
                 Version result;

@@ -33,27 +33,81 @@ namespace System.Management.Automation.Remoting
 {
     #region TransportErrorOccuredEventArgs
 
-    internal enum TransportMethodEnum
+    /// <summary>
+    /// Transport method for error reporting.
+    /// </summary>
+    public enum TransportMethodEnum
     {
+        /// <summary>
+        /// CreateShellEx
+        /// </summary>
         CreateShellEx = 0,
+
+        /// <summary>
+        /// RunShellCommandEx
+        /// </summary>
         RunShellCommandEx = 1,
+
+        /// <summary>
+        /// SendShellInputEx
+        /// </summary>
         SendShellInputEx = 2,
+
+        /// <summary>
+        /// ReceiveShellOutputEx
+        /// </summary>
         ReceiveShellOutputEx = 3,
+
+        /// <summary>
+        /// CloseShellOperationEx
+        /// </summary>
         CloseShellOperationEx = 4,
+
+        /// <summary>
+        /// CommandInputEx
+        /// </summary>
         CommandInputEx = 5,
+
+        /// <summary>
+        /// ReceiveCommandOutputEx
+        /// </summary>
         ReceiveCommandOutputEx = 6,
+
+        /// <summary>
+        /// DisconnectShellEx
+        /// </summary>
         DisconnectShellEx = 7,
+
+        /// <summary>
+        /// ReconnectShellEx
+        /// </summary>
         ReconnectShellEx = 8,
+        
+        /// <summary>
+        /// ConnectShellEx
+        /// </summary>
         ConnectShellEx = 9,
+
+        /// <summary>
+        /// ReconnectShellCommandEx
+        /// </summary>
         ReconnectShellCommandEx = 10,
+
+        /// <summary>
+        /// ConnectShellCommandEx
+        /// </summary>
         ConnectShellCommandEx = 11,
+
+        /// <summary>
+        /// Unknown
+        /// </summary>
         Unknown = 12,
     }
 
     /// <summary>
-    /// Event arguments passed to TransportErrorOccured handlers.
+    /// Event arguments passed to TransportErrorOccurred handlers.
     /// </summary>
-    internal class TransportErrorOccuredEventArgs : EventArgs
+    public sealed class TransportErrorOccuredEventArgs : EventArgs
     {
         /// <summary>
         /// Constructor.
@@ -62,9 +116,10 @@ namespace System.Management.Automation.Remoting
         /// Error occurred.
         /// </param>
         /// <param name="m">
-        /// The transport method that raised the error
+        /// The transport method that raised the error.
         /// </param>
-        internal TransportErrorOccuredEventArgs(PSRemotingTransportException e,
+        public TransportErrorOccuredEventArgs(
+            PSRemotingTransportException e,
             TransportMethodEnum m)
         {
             Exception = e;
@@ -136,11 +191,11 @@ namespace System.Management.Automation.Remoting
     /// Contains implementation that is common to both client and server
     /// transport managers.
     /// </summary>
-    internal abstract class BaseTransportManager : IDisposable
+    public abstract class BaseTransportManager : IDisposable
     {
         #region tracer
 
-        [TraceSourceAttribute("Transport", "Traces BaseWSManTransportManager")]
+        [TraceSource("Transport", "Traces BaseWSManTransportManager")]
         private static readonly PSTraceSource s_baseTracer = PSTraceSource.GetTracer("Transport", "Traces BaseWSManTransportManager");
 
         #endregion
@@ -158,7 +213,7 @@ namespace System.Management.Automation.Remoting
 
         // This value instructs the server to use whatever setting it has for idle timeout.
         internal const int UseServerDefaultIdleTimeout = -1;
-        internal const uint UseServerDefaultIdleTimeoutUInt = UInt32.MaxValue;
+        internal const uint UseServerDefaultIdleTimeoutUInt = uint.MaxValue;
 
         // Minimum allowed idle timeout time is 60 seconds.
         internal const int MinimumIdleTimeout = 60 * 1000;
@@ -206,7 +261,7 @@ namespace System.Management.Automation.Remoting
 
         #region Constructor
 
-        protected BaseTransportManager(PSRemotingCryptoHelper cryptoHelper)
+        internal BaseTransportManager(PSRemotingCryptoHelper cryptoHelper)
         {
             CryptoHelper = cryptoHelper;
             // create a common fragmentor used by this transport manager to send and receive data.
@@ -308,8 +363,9 @@ namespace System.Management.Automation.Remoting
             if (!shouldProcess)
             {
                 // we dont support this stream..so ignore the data
-                Dbg.Assert(false,
-                    string.Format(CultureInfo.InvariantCulture, "Data should be from one of the streams : {0} or {1} or {2}",
+                Dbg.Assert(false, string.Format(
+                    CultureInfo.InvariantCulture,
+                    "Data should be from one of the streams : {0} or {1} or {2}",
                     WSManNativeApi.WSMAN_STREAM_ID_STDIN,
                     WSManNativeApi.WSMAN_STREAM_ID_STDOUT,
                     WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE));
@@ -334,9 +390,9 @@ namespace System.Management.Automation.Remoting
                                                   PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                                                   remoteObject.RunspacePoolId.ToString(),
                                                   remoteObject.PowerShellId.ToString(),
-                                                  (UInt32)(remoteObject.Destination),
-                                                  (UInt32)(remoteObject.DataType),
-                                                  (UInt32)(remoteObject.TargetInterface));
+                                                  (uint)(remoteObject.Destination),
+                                                  (uint)(remoteObject.DataType),
+                                                  (uint)(remoteObject.TargetInterface));
 
             // This might throw exceptions which the caller handles.
             PowerShellGuidObserver.SafeInvoke(remoteObject.PowerShellId, EventArgs.Empty);
@@ -361,7 +417,7 @@ namespace System.Management.Automation.Remoting
         /// Raise the error handlers.
         /// </summary>
         /// <param name="eventArgs"></param>
-        internal virtual void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
+        public virtual void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
         {
             WSManTransportErrorOccured.SafeInvoke(this, eventArgs);
         }
@@ -393,7 +449,10 @@ namespace System.Management.Automation.Remoting
             System.GC.SuppressFinalize(this);
         }
 
-        internal virtual void Dispose(bool isDisposing)
+        /// <summary>
+        /// Dispose resources.
+        /// </summary>
+        protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposing)
             {
@@ -407,18 +466,21 @@ namespace System.Management.Automation.Remoting
 
 namespace System.Management.Automation.Remoting.Client
 {
-    internal abstract class BaseClientTransportManager : BaseTransportManager, IDisposable
+    /// <summary>
+    /// Remoting base client transport manager.
+    /// </summary>
+    public abstract class BaseClientTransportManager : BaseTransportManager, IDisposable
     {
         #region Tracer
-        [TraceSourceAttribute("ClientTransport", "Traces ClientTransportManager")]
-        protected static PSTraceSource tracer = PSTraceSource.GetTracer("ClientTransport", "Traces ClientTransportManager");
+        [TraceSource("ClientTransport", "Traces ClientTransportManager")]
+        internal static PSTraceSource tracer = PSTraceSource.GetTracer("ClientTransport", "Traces ClientTransportManager");
         #endregion
 
         #region Data
 
-        protected bool isClosed;
-        protected object syncObject = new object();
-        protected PrioritySendDataCollection dataToBeSent;
+        internal bool isClosed;
+        internal object syncObject = new object();
+        internal PrioritySendDataCollection dataToBeSent;
         // used to handle callbacks from the server..these are used to synchronize received callbacks
         private readonly Queue<CallbackNotificationInformation> _callbackNotificationQueue;
         private readonly ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
@@ -429,13 +491,13 @@ namespace System.Management.Automation.Remoting.Client
         // this is used log crimson messages.
 
         // keeps track of whether a receive request has been placed on transport
-        protected bool receiveDataInitiated;
+        internal bool receiveDataInitiated;
 
         #endregion
 
         #region Constructors
 
-        protected BaseClientTransportManager(Guid runspaceId, PSRemotingCryptoHelper cryptoHelper)
+        internal BaseClientTransportManager(Guid runspaceId, PSRemotingCryptoHelper cryptoHelper)
             : base(cryptoHelper)
         {
             RunspacePoolInstanceId = runspaceId;
@@ -933,14 +995,17 @@ namespace System.Management.Automation.Remoting.Client
 
         #region Abstract / Virtual methods
 
-        internal abstract void CreateAsync();
+        /// <summary>
+        /// Create the transport manager and initiate connection.
+        /// </summary>
+        public abstract void CreateAsync();
 
         internal abstract void ConnectAsync();
 
         /// <summary>
         /// The caller should make sure the call is synchronized.
         /// </summary>
-        internal virtual void CloseAsync()
+        public virtual void CloseAsync()
         {
             // Clear the send collection
             dataToBeSent.Clear();
@@ -998,7 +1063,10 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        internal override void Dispose(bool isDisposing)
+        /// <summary>
+        /// Dispose resources.
+        /// </summary>
+        protected override void Dispose(bool isDisposing)
         {
             // clear event handlers
             this.CreateCompleted = null;
@@ -1014,11 +1082,14 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
     }
 
-    internal abstract class BaseClientSessionTransportManager : BaseClientTransportManager, IDisposable
+    /// <summary>
+    /// Remoting base client session transport manager.
+    /// </summary>
+    public abstract class BaseClientSessionTransportManager : BaseClientTransportManager, IDisposable
     {
         #region Constructors
 
-        protected BaseClientSessionTransportManager(Guid runspaceId, PSRemotingCryptoHelper cryptoHelper)
+        internal BaseClientSessionTransportManager(Guid runspaceId, PSRemotingCryptoHelper cryptoHelper)
             : base(runspaceId, cryptoHelper)
         {
         }
@@ -1167,7 +1238,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region Overrides
 
-        internal override void Dispose(bool isDisposing)
+        protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
 
@@ -1289,10 +1360,7 @@ namespace System.Management.Automation.Remoting.Server
                                                                             data.Data);
                 if (_isSerializing)
                 {
-                    if (_dataToBeSentQueue == null)
-                    {
-                        _dataToBeSentQueue = new Queue<Tuple<RemoteDataObject, bool, bool>>();
-                    }
+                    _dataToBeSentQueue ??= new Queue<Tuple<RemoteDataObject, bool, bool>>();
 
                     _dataToBeSentQueue.Enqueue(new Tuple<RemoteDataObject, bool, bool>(dataToBeSent, flush, reportPending));
                     return;
@@ -1346,8 +1414,8 @@ namespace System.Management.Automation.Remoting.Server
                 _runspacePoolInstanceId.ToString(),
                 _powerShellInstanceId.ToString(),
                 dataToSend.Length.ToString(CultureInfo.InvariantCulture),
-                (UInt32)_dataType,
-                (UInt32)_targetInterface);
+                (uint)_dataType,
+                (uint)_targetInterface);
 
             SendDataToClient(dataToSend, isEndFragment && _shouldFlushData, _reportAsPending, isEndFragment);
         }

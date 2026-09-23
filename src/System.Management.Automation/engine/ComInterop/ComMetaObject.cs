@@ -16,37 +16,37 @@ namespace System.Management.Automation.ComInterop
 
         public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)
         {
-            Requires.NotNull(binder, nameof(binder));
+            Requires.NotNull(binder);
             return binder.Defer(args.AddFirst(WrapSelf()));
         }
 
         public override DynamicMetaObject BindInvoke(InvokeBinder binder, DynamicMetaObject[] args)
         {
-            Requires.NotNull(binder, nameof(binder));
+            Requires.NotNull(binder);
             return binder.Defer(args.AddFirst(WrapSelf()));
         }
 
         public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
         {
-            Requires.NotNull(binder, nameof(binder));
+            Requires.NotNull(binder);
             return binder.Defer(WrapSelf());
         }
 
         public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
         {
-            Requires.NotNull(binder, nameof(binder));
+            Requires.NotNull(binder);
             return binder.Defer(WrapSelf(), value);
         }
 
         public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes)
         {
-            Requires.NotNull(binder, nameof(binder));
+            Requires.NotNull(binder);
             return binder.Defer(WrapSelf(), indexes);
         }
 
         public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
         {
-            Requires.NotNull(binder, nameof(binder));
+            Requires.NotNull(binder);
             return binder.Defer(WrapSelf(), indexes.AddLast(value));
         }
 

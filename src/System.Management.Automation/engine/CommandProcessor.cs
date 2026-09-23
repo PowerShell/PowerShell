@@ -101,7 +101,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
-            if (!(command is Cmdlet cmdlet))
+            if (command is not Cmdlet cmdlet)
             {
                 throw PSTraceSource.NewArgumentException(nameof(command));
             }
@@ -227,6 +227,7 @@ namespace System.Management.Automation
                     Context.LanguageMode = scriptCmdletInfo.ScriptBlock.LanguageMode.Value;
 
                     // If it's from ConstrainedLanguage to FullLanguage, indicate the transition before parameter binding takes place.
+                    // When transitioning to FullLanguage mode, we don't want any ConstrainedLanguage restrictions or incorrect Audit messages.
                     if (oldLanguageMode == PSLanguageMode.ConstrainedLanguage && Context.LanguageMode == PSLanguageMode.FullLanguage)
                     {
                         oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
@@ -309,13 +310,11 @@ namespace System.Management.Automation
         internal override void ProcessRecord()
         {
             // Invoke the Command method with the request object
-
             if (!this.RanBeginAlready)
             {
                 RanBeginAlready = true;
                 try
                 {
-                    // NOTICE-2004/06/08-JonN 959638
                     using (commandRuntime.AllowThisCommandToWrite(true))
                     {
                         if (Context._debuggingMode > 0 && Command is not PSScriptCmdlet)
@@ -326,12 +325,9 @@ namespace System.Management.Automation
                         Command.DoBeginProcessing();
                     }
                 }
-                // 2004/03/18-JonN This is understood to be
-                // an FXCOP violation, cleared by KCwalina.
-                catch (Exception e)  // Catch-all OK, 3rd party callout.
+                catch (Exception e)
                 {
-                    // This cmdlet threw an exception, so
-                    // wrap it and bubble it up.
+                    // This cmdlet threw an exception, so wrap it and bubble it up.
                     throw ManageInvocationException(e);
                 }
             }
@@ -366,6 +362,7 @@ namespace System.Management.Automation
 
                     // NOTICE-2004/06/08-JonN 959638
                     using (commandRuntime.AllowThisCommandToWrite(true))
+                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING ProcessRecord"))
                     {
                         if (CmdletParameterBinderController.ObsoleteParameterWarningList != null &&
                             CmdletParameterBinderController.ObsoleteParameterWarningList.Count > 0)
@@ -400,14 +397,13 @@ namespace System.Management.Automation
                 }
                 catch (LoopFlowException)
                 {
-                    // Win8:84066 - Don't wrap LoopFlowException, we incorrectly raise a PipelineStoppedException
+                    // Don't wrap LoopFlowException, we incorrectly raise a PipelineStoppedException
                     // which gets caught by a script try/catch if we wrap here.
                     throw;
                 }
-                // 2004/03/18-JonN This is understood to be
-                // an FXCOP violation, cleared by KCwalina.
-                catch (Exception e) // Catch-all OK, 3rd party callout.
+                catch (Exception e)
                 {
+                    // Catch-all OK, 3rd party callout.
                     exceptionToThrow = e;
                 }
                 finally
@@ -691,7 +687,7 @@ namespace System.Management.Automation
         /// If the constructor for the cmdlet threw an exception.
         /// </exception>
         /// <exception cref="MemberAccessException">
-        /// The type referenced by <paramref name="cmdletInformation"/> refered to an
+        /// The type referenced by <paramref name="cmdletInformation"/> referred to an
         /// abstract type or them member was invoked via a late-binding mechanism.
         /// </exception>
         /// <exception cref="TypeLoadException">
@@ -782,9 +778,11 @@ namespace System.Management.Automation
             InitCommon();
 
             // If the script has been dotted, throw an error if it's from a different language mode.
-            if (!this.UseLocalScope)
+            // Unless it was a script loaded through -File, in which case the danger of dotting other
+            // language modes (getting internal functions in the user's state) isn't a danger.
+            if (!this.UseLocalScope && !scriptCmdlet.ShouldRethrowExitException)
             {
-                ValidateCompatibleLanguageMode(scriptCommandInfo.ScriptBlock, _context.LanguageMode, Command.MyInvocation);
+                ValidateCompatibleLanguageMode(scriptCommandInfo.ScriptBlock, _context, Command.MyInvocation);
             }
         }
 

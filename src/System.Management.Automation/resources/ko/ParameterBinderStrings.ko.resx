@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NamedParameterNotFound" xml:space="preserve">
+    <value>매개 변수 이름 '{1}'과(와) 일치하는 매개 변수를 찾을 수 없습니다.</value>
+  </data>
+  <data name="PositionalParameterNotFound" xml:space="preserve">
+    <value>인수 '{1}'을(를) 받을 수 있는 위치 매개 변수를 찾을 수 없습니다.</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>매개 변수 '{1}'에 대한 인수가 없습니다. '{2}' 형식의 매개 변수를 지정한 다음 다시 시도하세요.</value>
+  </data>
+  <data name="AmbiguousParameter" xml:space="preserve">
+    <value>매개 변수 이름 '{1}'이(가) 모호해서 매개 변수를 처리할 수 없습니다. 가능한 일치 항목은 다음과 같습니다.{6}</value>
+  </data>
+  <data name="CannotConvertArgument" xml:space="preserve">
+    <value>'{6}'을(를) '{1}' 매개 변수에 필요한 형식 '{2}'(으)로 변환할 수 없습니다. {7}</value>
+  </data>
+  <data name="CannotConvertArgumentNoMessage" xml:space="preserve">
+    <value>매개 변수 '{1}'을(를) 바인딩할 수 없습니다. {6}</value>
+  </data>
+  <data name="AmbiguousPositionalParameter" xml:space="preserve">
+    <value>위치 매개 변수 '{1}'을(를) 바인딩할 수 없습니다.</value>
+  </data>
+  <data name="AmbiguousPositionalParameterNoName" xml:space="preserve">
+    <value>이름이 지정되지 않았으므로 위치 매개 변수를 바인딩할 수 없습니다.</value>
+  </data>
+  <data name="AmbiguousParameterSet" xml:space="preserve">
+    <value>매개 변수 집합은 명명된 지정 매개 변수를 사용하여 확인할 수 없습니다. 함께 사용할 수 없는 매개 변수가 있거나 제공된 매개 변수 수가 부족합니다.</value>
+  </data>
+  <data name="MissingMandatoryParameter" xml:space="preserve">
+    <value>하나 이상의 필수 매개 변수({1})가 없어서 명령을 처리할 수 없습니다.</value>
+  </data>
+  <data name="ParameterNotInParameterSet" xml:space="preserve">
+    <value>매개 변수 집합 '{6}'에는 매개 변수 '{1}'을(를) 지정할 수 없습니다.</value>
+  </data>
+  <data name="ParameterAlreadyBound" xml:space="preserve">
+    <value>매개 변수 '{1}'이(가) 두 번 이상 지정되었으므로 매개 변수를 바인딩할 수 없습니다. 여러 값을 받을 수 있는 매개 변수에 여러 값을 제공하려면 배열 구문을 사용하세요. 예를 들어 "-parameter value1,value2,value3"입니다.</value>
+  </data>
+  <data name="ScriptBlockArgumentNoInput" xml:space="preserve">
+    <value>인수가 스크립트 블록으로 지정되어 있고 입력이 없어서 매개 변수 '{1}'을(를) 평가할 수 없습니다. 입력 없이는 스크립트 블록을 평가할 수 없습니다.</value>
+  </data>
+  <data name="ScriptBlockArgumentInvocationFailed" xml:space="preserve">
+    <value>매개 변수 '{1}'의 스크립트 블록에 대한 입력이 실패했습니다. {6}</value>
+  </data>
+  <data name="ScriptBlockArgumentNoOutput" xml:space="preserve">
+    <value>인수 입력에서 출력이 생성되지 않아 매개 변수 '{1}'을(를) 평가할 수 없습니다.</value>
+  </data>
+  <data name="InputObjectNotBound" xml:space="preserve">
+    <value>명령이 파이프라인 입력을 받지 않거나 입력과 해당 속성이 파이프라인 입력을 받는 어떤 매개 변수와도 일치하지 않으므로 입력 개체를 명령의 어떤 매개 변수에도 바인딩할 수 없습니다.</value>
+  </data>
+  <data name="InputObjectMissingMandatory" xml:space="preserve">
+    <value>입력 개체에 모든 필수 매개 변수를 바인딩하는 데 필요한 정보가 없어서 바인딩할 수 없습니다. {6}</value>
+  </data>
+  <data name="GetDefaultValueFailed" xml:space="preserve">
+    <value>매개 변수 '{1}'의 기본값을 검색할 수 없어서 파이프라인 입력을 처리할 수 없습니다. {6}</value>
+  </data>
+  <data name="GetDynamicParametersException" xml:space="preserve">
+    <value>cmdlet에 대한 동적 매개 변수를 검색할 수 없습니다. {6}</value>
+  </data>
+  <data name="PromptMessage" xml:space="preserve">
+    <value>다음 매개 변수에 대한 값을 제공하세요.</value>
+  </data>
+  <data name="PromptCaption" xml:space="preserve">
+    <value>명령 파이프라인 위치 {1}에서 cmdlet {0}</value>
+  </data>
+  <data name="ParameterArgumentTransformationError" xml:space="preserve">
+    <value>'{1}' 매개 변수에서 인수 변환을 처리할 수 없습니다. {6}</value>
+  </data>
+  <data name="ParameterArgumentTransformationErrorMessageOnly" xml:space="preserve">
+    <value>{6}</value>
+  </data>
+  <data name="ParameterArgumentValidationError" xml:space="preserve">
+    <value>매개 변수 '{1}'에 대한 인수의 유효성을 검사할 수 없습니다. {6}</value>
+  </data>
+  <data name="ParameterBindingFailed" xml:space="preserve">
+    <value>매개 변수 '{1}'을(를) 대상에 바인딩할 수 없습니다. {6}</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorNullNotAllowed" xml:space="preserve">
+    <value>매개 변수 '{1}'이(가) null이어서 인수를 바인딩할 수 없습니다.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyStringNotAllowed" xml:space="preserve">
+    <value>매개 변수 '{1}'에 대한 인수가 빈 문자열이어서 바인딩할 수 없습니다.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyCollectionNotAllowed" xml:space="preserve">
+    <value>매개 변수 '{1}'에 대한 인수가 빈 컬렉션이어서 바인딩할 수 없습니다.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyArrayNotAllowed" xml:space="preserve">
+    <value>매개 변수 '{1}'에 대한 인수가 빈 배열이어서 바인딩할 수 없습니다.</value>
+  </data>
+  <data name="DuplicateParameterDefinition" xml:space="preserve">
+    <value>명령을 처리할 수 없습니다. 매개 변수 '{0}'이(가) 여러 번 정의되었습니다.</value>
+  </data>
+  <data name="CannotExtractAddMethod" xml:space="preserve">
+    <value>매개 변수 '{1}'이(가) '{2}' 형식이고 Add() 메서드를 식별할 수 없거나 Add() 메서드가 여러 개 있어서 cmdlet {0}을(를) 바인딩할 수 없습니다. {6}</value>
+  </data>
+  <data name="RuntimeDefinedParameterNameMismatch" xml:space="preserve">
+    <value>런타임 정의 매개 변수 '{1}'이(가) 키 '{6}'(으)로 RuntimeDefinedParameterDictionary에 추가되었으므로 cmdlet {0}을(를) 바인딩할 수 없습니다. 키는 RuntimeDefinedParameter.Name과 같아야 합니다.</value>
+  </data>
+  <data name="MismatchedPSTypeName" xml:space="preserve">
+    <value>인수의 PSTypeNames가 매개 변수 '{6}'에 필요한 PSTypeName과 일치하지 않아서 인수를 매개 변수 '{1}'에 바인딩할 수 없습니다.</value>
+  </data>
+  <data name="DifferentValuesAssignedToSingleParameter" xml:space="preserve">
+    <value>{0} 이름 또는 별칭과 일치하는 매개 변수에 대해 $PSDefaultParameterValues에 여러 기본값이 정의되어 있습니다. 이 기본값은 무시되었습니다.</value>
+  </data>
+  <data name="MultipleParametersMatched" xml:space="preserve">
+    <value>이 cmdlet의 $PSDefaultParameterValues에 정의된 다음 이름 또는 별칭이 여러 매개 변수에 해당합니다. {0} 기본값이 무시되었습니다.</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationMultiple" xml:space="preserve">
+    <value>{6} 이 오류는 기본 매개 변수 바인딩을 적용해서 발생했을 수 있습니다. $PSDefaultParameterValues에서 $PSDefaultParameterValues["Disabled"]를 $true로 설정한 다음 다시 시도해 기본 매개 변수 바인딩을 사용하지 않도록 설정할 수 있습니다. 오류가 발생했을 때 이 cmdlet에 성공적으로 바인딩된 기본 매개 변수는 다음과 같습니다.{7}</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationSingle" xml:space="preserve">
+    <value>{6} 이 오류는 기본 매개 변수 바인딩을 적용해서 발생했을 수 있습니다. $PSDefaultParameterValues에서 $PSDefaultParameterValues["Disabled"]를 $true로 설정해 기본 매개 변수 바인딩을 사용하지 않도록 설정한 다음 다시 시도하세요. 오류가 발생했을 때 이 cmdlet에 성공적으로 바인딩된 기본 매개 변수는 다음과 같습니다.{7}</value>
+  </data>
+  <data name="FailToBindDefaultParameter" xml:space="preserve">
+    <value>매개 변수 '{1}'에 기본값 '{0}'을(를) 바인딩하지 못했습니다. {2}</value>
+  </data>
+  <data name="SingleKeyInBadFormat" xml:space="preserve">
+    <value>키 '{0}'의 형식이 올바르지 않습니다. 올바른 형식에 대한 자세한 내용은 about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266을 참조하세요.</value>
+  </data>
+  <data name="MultipleKeysInBadFormat" xml:space="preserve">
+    <value>키 '{0}'의 형식이 올바르지 않습니다. 올바른 형식에 대한 자세한 내용은 about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266을 참조하세요.</value>
+  </data>
+  <data name="UseOfDeprecatedParameterWarning" xml:space="preserve">
+    <value>매개 변수 '{0}'은(는) 더 이상 사용되지 않습니다. {1}</value>
+  </data>
+  <data name="StringValueKeyExpected" xml:space="preserve">
+    <value>'{1}' 형식의 키 '{0}'은(는) 문자열 값이 아닙니다. DefaultParameterDictionary는 문자열 값 키만 허용합니다.</value>
+  </data>
+  <data name="KeyAlreadyAdded" xml:space="preserve">
+    <value>키 '{0}'은(는) 이미 사전에 추가되어 있습니다.</value>
+  </data>
+  <data name="WDACBinderInvocationLogTitle" xml:space="preserve">
+    <value>메서드 또는 속성 호출은 허용되지 않습니다.</value>
+  </data>
+  <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
+    <value>신뢰할 수 없는 스크립트에 대한 제한된 언어 모드에서는 '{1}' 형식의 메서드 또는 속성 '{0}' 호출을 허용하지 않습니다.</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
+    <value>형식 만들기가 허용되지 않음</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
+    <value>신뢰할 수 없는 스크립트에 대한 제한된 언어 모드에서는 매개 변수 바인딩 중에 '{0}' 형식을 만들 수 없습니다.</value>
+  </data>
+</root>

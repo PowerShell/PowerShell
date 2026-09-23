@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Default shellname.
         /// </summary>
-        protected const string DefaultPowerShellRemoteShellName = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + "Microsoft.PowerShell";
+        protected const string DefaultPowerShellRemoteShellName = WSManNativeApi.ResourceURIPrefix + "Microsoft.PowerShell";
 
         /// <summary>
         /// Default application name for the connection uri.
@@ -287,6 +287,7 @@ namespace Microsoft.PowerShell.Commands
         public int Port;
         public string Subsystem;
         public int ConnectingTimeout;
+        public Hashtable Options;
     }
 
     /// <summary>
@@ -444,6 +445,37 @@ namespace Microsoft.PowerShell.Commands
             FastSavingCritical,
         }
 
+#nullable enable
+        /// <summary>
+        /// Get the State property from Get-VM result.
+        /// </summary>
+        /// <param name="value">The raw PSObject as returned by Get-VM.</param>
+        /// <returns>The VMState value of the State property if present and parsable, otherwise null.</returns>
+        internal VMState? GetVMStateProperty(PSObject value)
+        {
+            object? rawState = value.Properties["State"].Value;
+            if (rawState is Enum enumState)
+            {
+                // If the Hyper-V module was directly importable we have the VMState enum
+                // value which we can just cast to our VMState type.
+                return (VMState)enumState;
+            }
+            else if (rawState is string stringState && Enum.TryParse(stringState, true, out VMState result))
+            {
+                // If the Hyper-V module was imported through implicit remoting on old
+                // Windows versions we get a string back which we will try and parse
+                // as the enum label.
+                return result;
+            }
+
+            // Unknown scenario, this should not happen.
+            string message = PSRemotingErrorInvariants.FormatResourceString(
+                RemotingErrorIdStrings.HyperVFailedToGetStateUnknownType,
+                rawState?.GetType()?.FullName ?? "null");
+            throw new InvalidOperationException(message);
+        }
+#nullable disable
+
         #endregion
 
         #region Tracer
@@ -574,7 +606,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        [ValidateRange((int)1, (int)UInt16.MaxValue)]
+        [ValidateRange((int)1, (int)ushort.MaxValue)]
         public virtual int Port { get; set; }
 
         /// <summary>
@@ -591,7 +623,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
-        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
+        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If that's
         /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -805,6 +837,13 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
+        /// <summary>
+        /// Gets or sets the Hashtable containing options to be passed to OpenSSH.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public virtual Hashtable Options { get; set; }
+
         #endregion
 
         #endregion Properties
@@ -866,6 +905,7 @@ namespace Microsoft.PowerShell.Commands
         private const string PortParameter = "Port";
         private const string SubsystemParameter = "Subsystem";
         private const string ConnectingTimeoutParameter = "ConnectingTimeout";
+        private const string OptionsParameter = "Options";
 
         #endregion
 
@@ -968,6 +1008,10 @@ namespace Microsoft.PowerShell.Commands
                     else if (paramName.Equals(ConnectingTimeoutParameter, StringComparison.OrdinalIgnoreCase))
                     {
                         connectionInfo.ConnectingTimeout = GetSSHConnectionIntParameter(item[paramName]);
+                    }
+                    else if (paramName.Equals(OptionsParameter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.Options = item[paramName] as Hashtable;
                     }
                     else
                     {
@@ -1462,7 +1506,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ParseSshHostName(computerName, out string host, out string userName, out int port);
 
-                var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout);
+                var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout, Options);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);
@@ -1645,7 +1689,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         this.VMName[index] = (string)results[0].Properties["VMName"].Value;
 
-                        if ((VMState)results[0].Properties["State"].Value == VMState.Running)
+                        if (GetVMStateProperty(results[0]) == VMState.Running)
                         {
                             vmIsRunning[index] = true;
                         }
@@ -1694,7 +1738,7 @@ namespace Microsoft.PowerShell.Commands
                         this.VMId[index] = (Guid)results[0].Properties["VMId"].Value;
                         this.VMName[index] = (string)results[0].Properties["VMName"].Value;
 
-                        if ((VMState)results[0].Properties["State"].Value == VMState.Running)
+                        if (GetVMStateProperty(results[0]) == VMState.Running)
                         {
                             vmIsRunning[index] = true;
                         }
@@ -1879,9 +1923,7 @@ namespace Microsoft.PowerShell.Commands
             // the array-form using values if all UsingExpressions are in the same scope, otherwise, we handle the UsingExpression as
             // if the remote end is PSv2.
             string serverPsVersion = GetRemoteServerPsVersion(remoteRunspace);
-            System.Management.Automation.PowerShell powershellToUse = (serverPsVersion == PSv2)
-                                                                          ? GetPowerShellForPSv2()
-                                                                          : GetPowerShellForPSv3OrLater(serverPsVersion);
+            System.Management.Automation.PowerShell powershellToUse = GetPowerShellForPSv3OrLater(serverPsVersion);
             Pipeline pipeline =
                 remoteRunspace.CreatePipeline(powershellToUse.Commands.Commands[0].CommandText, true);
 
@@ -1902,9 +1944,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static string GetRemoteServerPsVersion(RemoteRunspace remoteRunspace)
         {
-            if (remoteRunspace.ConnectionInfo is NewProcessConnectionInfo)
+            if (remoteRunspace.ConnectionInfo is not WSManConnectionInfo)
             {
-                // This is for Start-Job. The remote end is actually a child local powershell process, so it must be PSv5 or later
+                // All transport types except for WSManConnectionInfo work with 5.1 or later.
                 return PSv5OrLater;
             }
 
@@ -1913,45 +1955,25 @@ namespace Microsoft.PowerShell.Commands
             {
                 // The remote runspace is not opened yet, or it's disconnected before the private data is retrieved.
                 // In this case we cannot validate if the remote server is running PSv5 or later, so for safety purpose,
-                // we will handle the $using expressions as if the remote server is PSv2.
-                return PSv2;
+                // we will handle the $using expressions as if the remote server is PSv3Orv4.
+                return PSv3Orv4;
             }
 
-            // Unfortunately, the PSVersion value in the private data from PSv3 and PSv4 server is always 2.0.
-            // This got fixed in PSv5, so a PSv5 server will return 5.0. That means we need other way to tell
-            // if the remote server is PSv2 or PSv3+. After PSv3, remote runspace supports connect/disconnect,
-            // so we can use it to differentiate PSv2 from PSv3+.
-            if (remoteRunspace.CanDisconnect)
-            {
-                Version serverPsVersion = null;
-                PSPrimitiveDictionary.TryPathGet(
-                    psApplicationPrivateData,
-                    out serverPsVersion,
-                    PSVersionInfo.PSVersionTableName,
-                    PSVersionInfo.PSVersionName);
+            PSPrimitiveDictionary.TryPathGet(
+                psApplicationPrivateData,
+                out Version serverPsVersion,
+                PSVersionInfo.PSVersionTableName,
+                PSVersionInfo.PSVersionName);
 
-                if (serverPsVersion != null)
-                {
-                    return serverPsVersion.Major >= 5 ? PSv5OrLater : PSv3Orv4;
-                }
-
-                // The private data is available but we failed to get the server powershell version.
-                // This should never happen, but in case it happens, handle the $using expressions
-                // as if the remote server is PSv2.
-                Dbg.Assert(false, "Application private data is available but we failed to get the server powershell version. This should never happen.");
-            }
-
-            return PSv2;
+            // PSv5 server will return 5.0 whereas older versions will always be 2.0. As we don't care about v2
+            // anymore we can use a simple ternary check here to differenciate v5 using behaviour vs v3/4.
+            return serverPsVersion != null && serverPsVersion.Major >= 5 ? PSv5OrLater : PSv3Orv4;
         }
 
         /// <summary>
         /// Adds forwarded events to the local queue.
         /// </summary>
-        internal void OnRunspacePSEventReceived(object sender, PSEventArgs e)
-        {
-            if (this.Events != null)
-                this.Events.AddForwardedEvent(e);
-        }
+        internal void OnRunspacePSEventReceived(object sender, PSEventArgs e) => this.Events?.AddForwardedEvent(e);
 
         #endregion Private Methods
 
@@ -2019,7 +2041,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private const string PSv5OrLater = "PSv5OrLater";
         private const string PSv3Orv4 = "PSv3Orv4";
-        private const string PSv2 = "PSv2";
 
         private System.Management.Automation.PowerShell _powershellV2;
         private System.Management.Automation.PowerShell _powershellV3;
@@ -2269,7 +2290,7 @@ namespace Microsoft.PowerShell.Commands
             // Semantic checks on the using statement have already validated that there are no arbitrary expressions,
             // so we'll allow these expressions in everything but NoLanguage mode.
 
-            bool allowUsingExpressions = (Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage);
+            bool allowUsingExpressions = Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
             object[] usingValuesInArray = null;
             IDictionary usingValuesInDict = null;
 
@@ -2323,7 +2344,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // This is trusted input as long as we're in FullLanguage mode
-                bool isTrustedInput = (Context.LanguageMode == PSLanguageMode.FullLanguage);
+                bool isTrustedInput = Context.LanguageMode == PSLanguageMode.FullLanguage;
                 powershell = _scriptBlock.GetPowerShell(isTrustedInput, _args);
             }
             catch (ScriptBlockToPowerShellNotSupportedException)
@@ -2374,7 +2395,8 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (var varAst in usingVariables)
                 {
-                    string varName = varAst.VariablePath.UserPath;
+                    VariablePath varPath = varAst.VariablePath;
+                    string varName = varPath.IsDriveQualified ? $"{varPath.DriveName}_{varPath.UnqualifiedPath}" : $"{varPath.UnqualifiedPath}";
                     string paramName = UsingExpressionAst.UsingPrefix + varName;
                     string paramNameWithDollar = "$" + paramName;
 
@@ -2418,7 +2440,7 @@ namespace Microsoft.PowerShell.Commands
                 // GetExpressionValue ensures that it only does variable access when supplied a VariableExpressionAst.
                 // So, this is still safe to use in ConstrainedLanguage and will not result in arbitrary code
                 // execution.
-                bool allowVariableAccess = (Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage);
+                bool allowVariableAccess = Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
 
                 foreach (var varAst in paramUsingVars)
                 {
@@ -2450,10 +2472,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A list of UsingExpressionAsts ordered by the StartOffset.</returns>
         private static List<VariableExpressionAst> GetUsingVariables(ScriptBlock localScriptBlock)
         {
-            if (localScriptBlock == null)
-            {
-                throw new ArgumentNullException(nameof(localScriptBlock), "Caller needs to make sure the parameter value is not null");
-            }
+            ArgumentNullException.ThrowIfNull(localScriptBlock, "Caller needs to make sure the parameter value is not null");
 
             var allUsingExprs = UsingExpressionAstSearcher.FindAllUsingExpressions(localScriptBlock.Ast);
             return allUsingExprs.Select(static usingExpr => UsingExpressionAst.ExtractUsingVariable((UsingExpressionAst)usingExpr)).ToList();
@@ -3467,10 +3486,7 @@ namespace Microsoft.PowerShell.Commands
                     OperationState.StopComplete;
             operationStateEventArgs.BaseEvent = baseEventArgs;
 
-            if (OperationComplete != null)
-            {
-                OperationComplete.SafeInvoke(this, operationStateEventArgs);
-            }
+            OperationComplete?.SafeInvoke(this, operationStateEventArgs);
         }
     }
 
@@ -3665,11 +3681,7 @@ namespace Microsoft.PowerShell.Commands
                 case PipelineState.Completed:
                 case PipelineState.Stopped:
                 case PipelineState.Failed:
-                    if (RemoteRunspace != null)
-                    {
-                        RemoteRunspace.CloseAsync();
-                    }
-
+                    RemoteRunspace?.CloseAsync();
                     break;
             }
         }
@@ -3940,9 +3952,9 @@ namespace Microsoft.PowerShell.Commands
                     string shellUri = null;
                     if (!string.IsNullOrEmpty(configurationName))
                     {
-                        shellUri = (configurationName.IndexOf(
-                                    System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) != -1) ?
-                                    configurationName : System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + configurationName;
+                        shellUri = configurationName.Contains(WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase)
+                            ? configurationName
+                            : WSManNativeApi.ResourceURIPrefix + configurationName;
                     }
 
                     foreach (Runspace runspace in runspaces)
@@ -4137,7 +4149,7 @@ namespace Microsoft.PowerShell.Commands
                                     try
                                     {
                                         // WinRM returns both signed and unsigned 32 bit string values.  Convert to signed 32 bit integer.
-                                        Int64 eCode = Convert.ToInt64(errorCodeString, System.Globalization.NumberFormatInfo.InvariantInfo);
+                                        long eCode = Convert.ToInt64(errorCodeString, System.Globalization.NumberFormatInfo.InvariantInfo);
                                         unchecked
                                         {
                                             errorCode = (int)eCode;
@@ -4219,10 +4231,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lock (s_SyncObject)
                     {
-                        if (s_TypeTable == null)
-                        {
-                            s_TypeTable = TypeTable.LoadDefaultTypeFiles();
-                        }
+                        s_TypeTable ??= TypeTable.LoadDefaultTypeFiles();
                     }
                 }
 

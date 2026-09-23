@@ -5,14 +5,11 @@
     <NoWarn>$(NoWarn);CS1570</NoWarn>
     <RootNamespace>Microsoft.Management.UI.Internal</RootNamespace>
     <AssemblyName>Microsoft.PowerShell.GraphicalHost</AssemblyName>
-    <UseWPF>True</UseWPF>
-    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
-    <TargetPlatformVersion>7.0</TargetPlatformVersion>
     <RunAnalyzers>false</RunAnalyzers>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+    <TargetPlatformVersion>8.0</TargetPlatformVersion>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>True</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,5 +30,11 @@
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.Commands.Utility\Microsoft.PowerShell.Commands.Utility.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

@@ -40,11 +40,6 @@ changes, and issue a pull request.
 
 [Hello World]: https://guides.github.com/activities/hello-world/
 
-#### Katacoda
-
-Learn basic Git scenarios in the browser with interactive labs.
-[Git lessons on katacoda](https://www.katacoda.com/courses/git/).
-
 #### Githug
 
 [Githug](https://github.com/Gazler/githug) is a great gamified way to

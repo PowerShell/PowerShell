@@ -7,6 +7,7 @@ $DefaultResultValue = 0
 try
 {
     # set up for testing
+    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:skip"] = ! $IsWindows
     Enable-Testhook -testhookName $RenameTesthook
     # we also set TestStopComputer
@@ -73,7 +74,7 @@ try
 }
 finally
 {
-    $PSDefaultParameterValues.Remove("it:skip")
+    $global:PSDefaultParameterValues = $originalDefaultParameterValues
     Disable-Testhook -testhookName $RenameTestHook
     Disable-Testhook -testhookName TestStopComputer
     Set-TesthookResult -testhookName $RenameResultName -value 0

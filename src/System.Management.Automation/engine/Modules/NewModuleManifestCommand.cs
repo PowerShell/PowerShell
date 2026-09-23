@@ -886,14 +886,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private string ManifestFragment(string key, string resourceString, string value, StreamWriter streamWriter)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}{3:19} = {4}{2}{2}",
-                _indent, resourceString, streamWriter.NewLine, key, value);
+            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}{3:19} = {4}{2}{2}", _indent, resourceString, streamWriter.NewLine, key, value);
         }
 
         private string ManifestFragmentForNonSpecifiedManifestMember(string key, string resourceString, string value, StreamWriter streamWriter)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}# {3:19} = {4}{2}{2}",
-                _indent, resourceString, streamWriter.NewLine, key, value);
+            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}# {3:19} = {4}{2}{2}", _indent, resourceString, streamWriter.NewLine, key, value);
         }
 
         private static string ManifestComment(string insert, StreamWriter streamWriter)
@@ -948,12 +946,9 @@ namespace Microsoft.PowerShell.Commands
             // wildcards for exported commands that weren't specified on the command line.
             if (_rootModule != null || _nestedModules != null || _requiredModules != null)
             {
-                if (_exportedFunctions == null)
-                    _exportedFunctions = new string[] { "*" };
-                if (_exportedAliases == null)
-                    _exportedAliases = new string[] { "*" };
-                if (_exportedCmdlets == null)
-                    _exportedCmdlets = new string[] { "*" };
+                _exportedAliases ??= new string[] { "*" };
+                _exportedCmdlets ??= new string[] { "*" };
+                _exportedFunctions ??= new string[] { "*" };
             }
 
             ValidateUriParameterValue(ProjectUri, "ProjectUri");
@@ -966,7 +961,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Length))
             {
-                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(",", CompatiblePSEditions));
+                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(',', CompatiblePSEditions));
                 var ioe = new InvalidOperationException(message);
                 var er = new ErrorRecord(ioe, "Modules_DuplicateEntriesInCompatiblePSEditions", ErrorCategory.InvalidArgument, CompatiblePSEditions);
                 ThrowTerminatingError(er);
@@ -1030,8 +1025,7 @@ namespace Microsoft.PowerShell.Commands
                     result.Append(streamWriter.NewLine);
                     result.Append(streamWriter.NewLine);
 
-                    if (_rootModule == null)
-                        _rootModule = string.Empty;
+                    _rootModule ??= string.Empty;
 
                     BuildModuleManifest(result, nameof(RootModule), Modules.RootModule, !string.IsNullOrEmpty(_rootModule), () => QuoteName(_rootModule), streamWriter);
 

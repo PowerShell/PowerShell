@@ -142,3 +142,44 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
     }
 }
 
+Describe "Error message with settable Property information" -Tag 'CI' {
+    BeforeAll {
+        Add-Type @"
+namespace HashtableConversionTest {
+    public class AType {
+        public string Name;
+        public string Path { get; set; }
+        public string Id { get; }
+    }
+}
+"@
+    }
+
+    It "Only settable properties are called out in the error message" {
+        try {
+            [HashtableConversionTest.AType]@{ key = 1 }
+        } catch {
+            $e = $_
+        }
+
+        $e.FullyQualifiedErrorId | Should -BeExactly "ObjectCreationError"
+        $e.Exception.Message.Contains("key") | Should -BeTrue
+        $e.Exception.Message.Contains("Name") | Should -BeTrue
+        $e.Exception.Message.Contains("Path") | Should -BeTrue
+        $e.Exception.Message.Contains("Id") | Should -BeFalse
+    }
+
+    It "Shows no property when there is no settable property" {
+        try {
+            [System.Collections.Specialized.OrderedDictionary]@{ key = 1 }
+        } catch {
+            $e = $_
+        }
+
+        $type = [psobject].Assembly.GetType("ExtendedTypeSystem")
+        $property = $type.GetProperty("NoSettableProperty", @("NonPublic", "Static"))
+        $resString = $property.GetValue($null) -f 'key', 'System.Collections.Specialized.OrderedDictionary'
+
+        $e.Exception.Message | Should -BeLike "*$resString"
+    }
+}

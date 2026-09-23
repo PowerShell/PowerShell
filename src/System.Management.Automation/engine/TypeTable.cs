@@ -139,17 +139,17 @@ namespace System.Management.Automation.Runspaces
             else
             {
                 _context.AddError(_readerLineInfo.LineNumber, TypesXmlStrings.UnknownNode, _reader.LocalName, expectedNodes);
-                SkipUntillNodeEnd(_reader.LocalName);
+                SkipUntilNodeEnd(_reader.LocalName);
             }
         }
 
-        private void SkipUntillNodeEnd(string nodeName)
+        private void SkipUntilNodeEnd(string nodeName)
         {
             while (_reader.Read())
             {
                 if (_reader.IsStartElement() && _reader.LocalName.Equals(nodeName))
                 {
-                    SkipUntillNodeEnd(nodeName);
+                    SkipUntilNodeEnd(nodeName);
                 }
                 else if ((_reader.NodeType == XmlNodeType.EndElement) && _reader.LocalName.Equals(nodeName))
                 {
@@ -771,10 +771,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Somewhat pointlessly (backcompat), we allow a missing Member node
-            if (members == null)
-            {
-                members = new Collection<TypeMemberData>();
-            }
+            members ??= new Collection<TypeMemberData>();
 
             if (_context.errors.Count != errorCount)
             {
@@ -841,10 +838,7 @@ namespace System.Management.Automation.Runspaces
                                     {
                                         if ((object)_reader.LocalName == (object)_idName)
                                         {
-                                            if (referencedProperties == null)
-                                            {
-                                                referencedProperties = new List<string>(8);
-                                            }
+                                            referencedProperties ??= new List<string>(8);
 
                                             referencedProperties.Add(ReadElementString(_idName));
                                         }
@@ -1747,9 +1741,8 @@ namespace System.Management.Automation.Runspaces
 
     /// <summary>
     /// This exception is used by TypeTable constructor to indicate errors
-    /// occured during construction time.
+    /// occurred during construction time.
     /// </summary>
-    [Serializable]
     public class TypeTableLoadException : RuntimeException
     {
         private readonly Collection<string> _errors;
@@ -1796,7 +1789,7 @@ namespace System.Management.Automation.Runspaces
         /// time.
         /// </summary>
         /// <param name="loadErrors">
-        /// The errors that occured
+        /// The errors that occurred
         /// </param>
         internal TypeTableLoadException(ConcurrentBag<string> loadErrors)
             : base(TypesXmlStrings.TypeTableLoadErrors)
@@ -1811,55 +1804,13 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected TypeTableLoadException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            int errorCount = info.GetInt32("ErrorCount");
-            if (errorCount > 0)
-            {
-                _errors = new Collection<string>();
-                for (int index = 0; index < errorCount; index++)
-                {
-                    string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
-                    _errors.Add(info.GetString(key));
-                }
-            }
+            throw new NotSupportedException();
         }
 
         #endregion Constructors
-
-        /// <summary>
-        /// Serializes the exception data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-
-            // If there are simple fields, serialize them with info.AddValue
-            if (_errors != null)
-            {
-                int errorCount = _errors.Count;
-                info.AddValue("ErrorCount", errorCount);
-
-                for (int index = 0; index < errorCount; index++)
-                {
-                    string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
-                    info.AddValue(key, _errors[index]);
-                }
-            }
-        }
 
         /// <summary>
         /// Set the default ErrorRecord.
@@ -3042,7 +2993,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Issue appropriate errors and remove members as necessary if:
         ///     - The serialization settings do not fall into one of the combinations of the table below
-        ///     - If the serialization settings notes' values cannot be converted to the propper type
+        ///     - If the serialization settings notes' values cannot be converted to the proper type
         ///     - If serialization settings members are of the wrong member type
         ///     - DefaultDisplayPropertySet is not an PSPropertySet
         ///     - DefaultDisplayProperty is not an PSPropertyInfo
@@ -3724,10 +3675,7 @@ namespace System.Management.Automation.Runspaces
 
             if (hasStandardMembers)
             {
-                if (typeMembers == null)
-                {
-                    typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
-                }
+                typeMembers ??= _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
                 ProcessStandardMembers(errors, typeName, typeData.StandardMembers, propertySets, typeMembers, typeData.IsOverride);
             }
@@ -3937,8 +3885,7 @@ namespace System.Management.Automation.Runspaces
                     throw PSTraceSource.NewArgumentException("typeFile", TypesXmlStrings.TypeFileNotRooted, typefile);
                 }
 
-                bool unused;
-                Initialize(string.Empty, typefile, errors, authorizationManager, host, out unused);
+                Initialize(string.Empty, typefile, errors, authorizationManager, host, out _);
                 _typeFileList.Add(typefile);
             }
 
@@ -3975,7 +3922,7 @@ namespace System.Management.Automation.Runspaces
                     }
 
                     PSMemberSet settings = typeMembers[PSStandardMembers] as PSMemberSet;
-                    if (!(settings?.Members[PropertySerializationSet] is PSPropertySet typeProperties))
+                    if (settings?.Members[PropertySerializationSet] is not PSPropertySet typeProperties)
                     {
                         continue;
                     }
@@ -4151,7 +4098,7 @@ namespace System.Management.Automation.Runspaces
 #endif
         }
 
-        private TypeMemberData GetTypeMemberDataFromPSMemberInfo(PSMemberInfo member)
+        private static TypeMemberData GetTypeMemberDataFromPSMemberInfo(PSMemberInfo member)
         {
             var note = member as PSNoteProperty;
             if (note != null)
@@ -4218,7 +4165,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="member"></param>
         /// <param name="typeData"></param>
-        private void LoadMembersToTypeData(PSMemberInfo member, TypeData typeData)
+        private static void LoadMembersToTypeData(PSMemberInfo member, TypeData typeData)
         {
             Dbg.Assert(member != null, "caller should guarantee that member is not null");
             Dbg.Assert(typeData != null, "caller should guarantee that typeData is not null");
@@ -4254,7 +4201,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Load the standard members into the passed-in TypeData.
         /// </summary>
-        private void LoadStandardMembersToTypeData(PSMemberSet memberSet, TypeData typeData)
+        private static void LoadStandardMembersToTypeData(PSMemberSet memberSet, TypeData typeData)
         {
             foreach (PSMemberInfo member in memberSet.InternalMembers)
             {
@@ -4742,15 +4689,9 @@ namespace System.Management.Automation.Runspaces
             PSHost host,
             out bool failToLoadFile)
         {
-            if (filePath == null)
-            {
-                throw new ArgumentNullException(nameof(filePath));
-            }
+            ArgumentNullException.ThrowIfNull(filePath);
 
-            if (errors == null)
-            {
-                throw new ArgumentNullException(nameof(errors));
-            }
+            ArgumentNullException.ThrowIfNull(errors);
 
             if (isShared)
             {
@@ -4820,10 +4761,9 @@ namespace System.Management.Automation.Runspaces
             ConcurrentBag<string> errors,
             bool isRemove)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-            if (errors == null)
-                throw new ArgumentNullException(nameof(errors));
+            ArgumentNullException.ThrowIfNull(type);
+
+            ArgumentNullException.ThrowIfNull(errors);
 
             if (isShared)
             {

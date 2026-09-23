@@ -1,0 +1,610 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
+    <value>因為遠端 Runspace 未包含 TypeTable 執行個體，所以無法正確還原序列化索引標籤完成結果。</value>
+  </data>
+  <data name="NoAccessToProperties" xml:space="preserve">
+    <value>無法存取 CompletionResult 類型之 null 執行個體上的屬性。</value>
+  </data>
+  <data name="bnotOperatorDescription" xml:space="preserve">
+    <value>位元 NOT</value>
+  </data>
+  <data name="notOperatorDescription" xml:space="preserve">
+    <value>邏輯 Not。否定其後的陳述式。</value>
+  </data>
+  <data name="eqOperatorDescription" xml:space="preserve">
+    <value>等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中等於右運算元的值，否則，如果左運算元等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="ieqOperatorDescription" xml:space="preserve">
+    <value>等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中等於右運算元的值，否則，如果左運算元等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="ceqOperatorDescription" xml:space="preserve">
+    <value>等於 - 區分大小寫。當左運算元是集合時，傳回該集合中等於右運算元的值，否則，如果左運算元等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="neOperatorDescription" xml:space="preserve">
+    <value>不等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中不等於右運算元的值，否則，如果左運算元不等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="ineOperatorDescription" xml:space="preserve">
+    <value>不等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中不等於右運算元的值，否則，如果左運算元不等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="cneOperatorDescription" xml:space="preserve">
+    <value>不等於 - 區分大小寫。當左運算元是集合時，傳回該集合中不等於右運算元的值，否則，如果左運算元不等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="geOperatorDescription" xml:space="preserve">
+    <value>大於或等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中大於或等於右運算元的值，否則，如果左運算元大於或等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="igeOperatorDescription" xml:space="preserve">
+    <value>大於或等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中大於或等於右運算元的值，否則，如果左運算元大於或等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="cgeOperatorDescription" xml:space="preserve">
+    <value>大於或等於 - 區分大小寫。當左運算元是集合時，傳回該集合中大於或等於右運算元的值，否則，如果左運算元大於或等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="gtOperatorDescription" xml:space="preserve">
+    <value>大於 - 不區分大小寫。當左運算元是集合時，傳回該集合中大於右運算元的值，否則，如果左運算元大於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="igtOperatorDescription" xml:space="preserve">
+    <value>大於 - 不區分大小寫。當左運算元是集合時，傳回該集合中大於右運算元的值，否則，如果左運算元大於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="cgtOperatorDescription" xml:space="preserve">
+    <value>大於 - 區分大小寫。當左運算元是集合時，傳回該集合中大於右運算元的值，否則，如果左運算元大於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="ltOperatorDescription" xml:space="preserve">
+    <value>小於 - 不區分大小寫。當左運算元是集合時，傳回該集合中小於右運算元的值，否則，如果左運算元小於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="iltOperatorDescription" xml:space="preserve">
+    <value>小於 - 不區分大小寫。當左運算元是集合時，傳回該集合中小於右運算元的值，否則，如果左運算元小於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="cltOperatorDescription" xml:space="preserve">
+    <value>小於 - 區分大小寫。當左運算元是集合時，傳回該集合中小於右運算元的值，否則，如果左運算元小於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="leOperatorDescription" xml:space="preserve">
+    <value>小於或等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中小於或等於右運算元的值，否則，如果左運算元小於或等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="ileOperatorDescription" xml:space="preserve">
+    <value>小於或等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中小於或等於右運算元的值，否則，如果左運算元小於或等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="cleOperatorDescription" xml:space="preserve">
+    <value>小於或等於 - 區分大小寫。當左運算元是集合時，傳回該集合中小於或等於右運算元的值，否則，如果左運算元小於或等於右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="likeOperatorDescription" xml:space="preserve">
+    <value>萬用字元比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="ilikeOperatorDescription" xml:space="preserve">
+    <value>萬用字元比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="clikeOperatorDescription" xml:space="preserve">
+    <value>萬用字元比對運算子 - 區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="notlikeOperatorDescription" xml:space="preserve">
+    <value>萬用字元比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
+  </data>
+  <data name="inotlikeOperatorDescription" xml:space="preserve">
+    <value>萬用字元比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
+  </data>
+  <data name="cnotlikeOperatorDescription" xml:space="preserve">
+    <value>萬用字元比對運算子 - 區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
+  </data>
+  <data name="matchOperatorDescription" xml:space="preserve">
+    <value>規則運算式比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="imatchOperatorDescription" xml:space="preserve">
+    <value>規則運算式比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="cmatchOperatorDescription" xml:space="preserve">
+    <value>規則運算式比對運算子 - 區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
+  </data>
+  <data name="notmatchOperatorDescription" xml:space="preserve">
+    <value>規則運算式比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
+  </data>
+  <data name="inotmatchOperatorDescription" xml:space="preserve">
+    <value>規則運算式比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
+  </data>
+  <data name="cnotmatchOperatorDescription" xml:space="preserve">
+    <value>規則運算式比對運算子 - 區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
+  </data>
+  <data name="replaceOperatorDescription" xml:space="preserve">
+    <value>取代運算子 - 不區分大小寫。變更左運算元。範例: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="ireplaceOperatorDescription" xml:space="preserve">
+    <value>取代運算子 - 不區分大小寫。變更左運算元。範例: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="creplaceOperatorDescription" xml:space="preserve">
+    <value>取代運算子 - 區分大小寫。變更左運算元。範例: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="containsOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (右運算元) 至少與右運算元中的其中一個值完全相符時，傳回 TRUE。</value>
+  </data>
+  <data name="icontainsOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (右運算元) 至少與右運算元中的其中一個值完全相符時，傳回 TRUE。</value>
+  </data>
+  <data name="ccontainsOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 區分大小寫。只有當測試值 (右運算元) 至少與左運算元中的其中一個值完全相符時，才傳回 TRUE。</value>
+  </data>
+  <data name="notcontainsOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (右運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
+  </data>
+  <data name="inotcontainsOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (右運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
+  </data>
+  <data name="cnotcontainsOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 區分大小寫。當測試值 (右運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
+  </data>
+  <data name="inOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (左運算元) 至少與右運算元中的其中一個值完全相符時，傳回 TRUE。</value>
+  </data>
+  <data name="iinOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (左運算元) 至少與右運算元中的其中一個值完全相符時，傳回 TRUE。</value>
+  </data>
+  <data name="cinOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 區分大小寫。當測試值 (左運算元) 至少與右運算元中的其中一個值完全相符時，傳回 TRUE。</value>
+  </data>
+  <data name="notinOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 區分大小寫。當測試值 (左運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
+  </data>
+  <data name="inotinOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (左運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
+  </data>
+  <data name="cnotinOperatorDescription" xml:space="preserve">
+    <value>內含項目運算子 - 區分大小寫。當測試值 (左運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
+  </data>
+  <data name="splitOperatorDescription" xml:space="preserve">
+    <value>分割 - 不區分大小寫。將一或多個字串分割成子字串。
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isplitOperatorDescription" xml:space="preserve">
+    <value>分割 - 不區分大小寫。將一或多個字串分割成子字串。
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="csplitOperatorDescription" xml:space="preserve">
+    <value>分割 - 區分大小寫。將一或多個字串分割成子字串。
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isnotOperatorDescription" xml:space="preserve">
+    <value>當左運算元不是指定 .NET Framework 類型 (右運算元) 的執行個體時，傳回 TRUE。</value>
+  </data>
+  <data name="isOperatorDescription" xml:space="preserve">
+    <value>當左運算元是指定 .NET Framework 類型 (右運算元) 的執行個體時，傳回 TRUE。</value>
+  </data>
+  <data name="asOperatorDescription" xml:space="preserve">
+    <value>將左運算元轉換成指定的 .NET Framework 類型 (右運算元)。</value>
+  </data>
+  <data name="fOperatorDescription" xml:space="preserve">
+    <value>使用字串物件的格式方法來設定字串格式。</value>
+  </data>
+  <data name="andOperatorDescription" xml:space="preserve">
+    <value>邏輯 AND。當兩個陳述式皆為 TRUE 時，傳回 TRUE。</value>
+  </data>
+  <data name="bandOperatorDescription" xml:space="preserve">
+    <value>位元 AND</value>
+  </data>
+  <data name="orOperatorDescription" xml:space="preserve">
+    <value>邏輯 OR。當其中一個或兩個陳述式皆為 TRUE 時，傳回 TRUE。</value>
+  </data>
+  <data name="borOperatorDescription" xml:space="preserve">
+    <value>位元 OR (包含)</value>
+  </data>
+  <data name="xorOperatorDescription" xml:space="preserve">
+    <value>邏輯互斥 OR。當其中一個陳述式為 TRUE 而另一個陳述式為 FALSE 時，傳回 TRUE。</value>
+  </data>
+  <data name="bxorOperatorDescription" xml:space="preserve">
+    <value>位元 OR (排除)</value>
+  </data>
+  <data name="joinOperatorDescription" xml:space="preserve">
+    <value>聯結 - 將多個字串結合成單一字串。
+-Join &lt;String[]&gt;
+&lt;String[]&gt; -Join &lt;Delimiter&gt;</value>
+  </data>
+  <data name="shlOperatorDescription" xml:space="preserve">
+    <value>Shift Left 位元運算子。在最右邊的位元位置插入零。</value>
+  </data>
+  <data name="shrOperatorDescription" xml:space="preserve">
+    <value>Shift Right 位元運算子。在最左邊的位元位置插入零。對於帶正負號的值，會保留正負號位元。</value>
+  </data>
+  <data name="NameHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+指定正在建立的屬性名稱。</value>
+  </data>
+  <data name="LabelHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+指定正在建立的屬性名稱。</value>
+  </data>
+  <data name="ExpressionHashtableKeyDescription" xml:space="preserve">
+    <value>[scriptblock]
+用來計算新屬性值的指令碼區塊。</value>
+  </data>
+  <data name="AlignmentHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+定義值在資料行中的顯示方式。
+有效值為 'left'、'center' 或 'right'。</value>
+  </data>
+  <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+指定格式字串，其定義輸出值的格式設定方式。</value>
+  </data>
+  <data name="WidthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+指定顯示值時，資料表中的最大資料行寬度。
+值必須大於 0。</value>
+  </data>
+  <data name="DepthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+深度索引鍵，指定每個屬性的展開深度。</value>
+  </data>
+  <data name="AscendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+指定一或多個屬性的排序順序。</value>
+  </data>
+  <data name="DescendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+指定一或多個屬性的排序順序。</value>
+  </data>
+  <data name="LogNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+指定要從中取得事件的記錄名稱。
+支援萬用字元。</value>
+  </data>
+  <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+指定要從中取得事件的事件記錄檔提供者。
+支援萬用字元。</value>
+  </data>
+  <data name="PathHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+指定要從中取得事件的記錄檔案路徑。
+有效的檔案格式為: .etl、.evt 和 .evtx</value>
+  </data>
+  <data name="KeywordsHashtableKeyDescription" xml:space="preserve">
+    <value>[Long[]]
+選取具有指定關鍵字位元遮罩的事件。
+以下是標準關鍵字:
+4503599627370496: AuditFailure
+9007199254740992: AuditSuccess
+4503599627370496: CorrelationHint
+18014398509481984: CorrelationHint2
+36028797018963968: EventLogClassic
+281474976710656: ResponseTime
+2251799813685248: Sqm
+562949953421312: WdiContext
+1125899906842624: WdiDiagnostic</value>
+  </data>
+  <data name="IDHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+選取具有指定記錄識別碼的事件。</value>
+  </data>
+  <data name="LevelHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+選取具有指定記錄層級的事件。
+下列記錄層級有效：
+1: 危急
+2: 錯誤
+3: 警告
+4: 資訊性
+5: 詳細資訊</value>
+  </data>
+  <data name="StartTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+選取在指定日期和時間之後建立的事件。</value>
+  </data>
+  <data name="EndTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+選取在指定日期和時間之前建立的事件。</value>
+  </data>
+  <data name="UserIDHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+選取指定使用者產生的事件。
+這可以是 SID 的字串表示法，或是使用 DOMAIN\USERNAME 或 USERNAME@DOMAIN 格式的網域和使用者名稱</value>
+  </data>
+  <data name="DataHashtableKeyDescription" xml:space="preserve">
+    <value>[string[]]
+選取 EventData 區段中具有任何指定值的事件。</value>
+  </data>
+  <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
+    <value>[hashtable]
+排除符合雜湊表中指定值的事件。</value>
+  </data>
+  <data name="RequiresModulesParameterDescription" xml:space="preserve">
+    <value>[string] 或 [hashtable]
+指定指令碼所需的 PowerShell 模組陣列。
+每個元素都可以是以模組名稱為值的字串，或具有下列索引鍵的雜湊表:
+Name: 模組的名稱
+GUID: 模組的 GUID
+下列其中一項:
+ModuleVersion: 指定模組的最小可接受版本。
+ModuleVersion: 指定模組所需的確切版本。
+MaximumVersion: 指定模組的最大可接受版本。</value>
+  </data>
+  <data name="RequiresPSEditionParameterDescription" xml:space="preserve">
+    <value>[string]
+指定指令碼所需的 PowerShell 版本。
+有效值為 "Core" 和 "Desktop"</value>
+  </data>
+  <data name="RequiresRunAsAdministratorParameterDescription" xml:space="preserve">
+    <value>[switch]
+指定 PowerShell 必須在 Windows 上以系統管理員身分執行。
+這必須是 #requires 陳述式行的最後一個參數。</value>
+  </data>
+  <data name="RequiresVersionParameterDescription" xml:space="preserve">
+    <value>[version]
+指定指令碼所需的最低 PowerShell 版本。</value>
+  </data>
+  <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
+    <value>指定指令碼需要 PowerShell 7+ 才能執行。</value>
+  </data>
+  <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
+    <value>指定指令碼需要 Windows PowerShell 5.1 才能執行。</value>
+  </data>
+  <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
+    <value>[string]
+必要項目。指定模組名稱。</value>
+  </data>
+  <data name="RequiresModuleSpecGUIDDescription" xml:space="preserve">
+    <value>[string]
+選用。指定模組的 GUID。</value>
+  </data>
+  <data name="RequiresModuleSpecModuleVersionDescription" xml:space="preserve">
+    <value>[string]
+指定模組的最小可接受版本。</value>
+  </data>
+  <data name="RequiresModuleSpecRequiredVersionDescription" xml:space="preserve">
+    <value>[string]
+指定模組所需的確切版本。</value>
+  </data>
+  <data name="RequiresModuleSpecMaximumVersionDescription" xml:space="preserve">
+    <value>[string]
+指定模組的最大可接受版本。</value>
+  </data>
+  <data name="CommentHelpSYNOPSISKeywordDescription" xml:space="preserve">
+    <value>函式或指令碼的簡短描述。
+此關鍵字在每個主題中只能使用一次。</value>
+  </data>
+  <data name="CommentHelpDESCRIPTIONKeywordDescription" xml:space="preserve">
+    <value>函式或指令碼的詳細描述。
+此關鍵字在每個主題中只能使用一次。</value>
+  </data>
+  <data name="CommentHelpPARAMETERKeywordDescription" xml:space="preserve">
+    <value>.PARAMETER  &lt;Parameter-Name&gt;
+參數的描述。
+針對函式或指令碼語法中的每個參數新增 .PARAMETER 關鍵字。</value>
+  </data>
+  <data name="CommentHelpEXAMPLEKeywordDescription" xml:space="preserve">
+    <value>使用函式或指令碼的範例命令，後面可選擇性地接著範例輸出和描述。
+針對每個範例重複此關鍵字。</value>
+  </data>
+  <data name="CommentHelpINPUTSKeywordDescription" xml:space="preserve">
+    <value>可透過管道傳送到函式或指令碼的 .NET 物件類型。
+您也可以包含輸入物件的描述。</value>
+  </data>
+  <data name="CommentHelpOUTPUTSKeywordDescription" xml:space="preserve">
+    <value>Cmdlet 傳回之物件的 .NET 類型。
+您也可以包含傳回物件的描述。</value>
+  </data>
+  <data name="CommentHelpNOTESKeywordDescription" xml:space="preserve">
+    <value>函式或指令碼的其他資訊。</value>
+  </data>
+  <data name="CommentHelpLINKKeywordDescription" xml:space="preserve">
+    <value>相關主題的名稱。
+針對每個相關主題，重複使用 .LINK 關鍵字。
+.Link 關鍵字內容也可以包含相同說明主題線上版本的 URI。</value>
+  </data>
+  <data name="CommentHelpCOMPONENTKeywordDescription" xml:space="preserve">
+    <value>函式或指令碼所使用或相關的技術或功能名稱。</value>
+  </data>
+  <data name="CommentHelpROLEKeywordDescription" xml:space="preserve">
+    <value>說明主題的使用者角色名稱。</value>
+  </data>
+  <data name="CommentHelpFUNCTIONALITYKeywordDescription" xml:space="preserve">
+    <value>描述函式預期用途的關鍵字。</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPTARGETNAMEKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPTARGETNAME &lt;Command-Name&gt;
+重新導向至指定命令的說明主題。</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPCATEGORYKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPCATEGORY &lt;Category&gt;
+指定 .ForwardHelpTargetName 中項目的說明類別</value>
+  </data>
+  <data name="CommentHelpREMOTEHELPRUNSPACEKeywordDescription" xml:space="preserve">
+    <value>.REMOTEHELPRUNSPACE &lt;PSSession-variable&gt;
+指定包含說明主題的工作階段。
+輸入包含 PSSession 物件的變數。</value>
+  </data>
+  <data name="CommentHelpEXTERNALHELPKeywordDescription" xml:space="preserve">
+    <value>.EXTERNALHELP &lt;XML Help File&gt;
+當函式或指令碼的文件為 XML 檔案中時，需要 .ExternalHelp 關鍵字。</value>
+  </data>
+  <data name="AssemblyKeywordDescription" xml:space="preserve">
+    <value>指定要載入之 .NET 組件的路徑。
+
+使用組件 &lt;.NET-assembly-path&gt;</value>
+  </data>
+  <data name="ModuleKeywordDescription" xml:space="preserve">
+    <value>指定要從中載入類別的 PowerShell 模組。
+
+使用模組 &lt;ModuleName 或 Path&gt;
+
+使用模組 &lt;ModuleSpecification hashtable&gt;</value>
+  </data>
+  <data name="NamespaceKeywordDescription" xml:space="preserve">
+    <value>指定要解析類型的 .NET 命名空間或命名空間別名。
+
+使用命名空間 &lt;.NET-namespace&gt;
+
+使用命名空間 &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
+  </data>
+  <data name="TypeKeywordDescription" xml:space="preserve">
+    <value>指定 .NET 類型的別名。
+
+使用類型 &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
+  </data>
+  <data name="RegistryStringToolTip" xml:space="preserve">
+    <value>一般字串。</value>
+  </data>
+  <data name="RegistryExpandStringToolTip" xml:space="preserve">
+    <value>包含環境變數的未展開參照的字串，且只有在擷取值時才會展開。</value>
+  </data>
+  <data name="RegistryBinaryToolTip" xml:space="preserve">
+    <value>任何形式的二進位資料。</value>
+  </data>
+  <data name="RegistryDWordToolTip" xml:space="preserve">
+    <value>32 位元二進位數字。</value>
+  </data>
+  <data name="RegistryMultiStringToolTip" xml:space="preserve">
+    <value>字串的陣列。</value>
+  </data>
+  <data name="RegistryQWordToolTip" xml:space="preserve">
+    <value>64 位元二進位數字。</value>
+  </data>
+  <data name="RegistryUnknownToolTip" xml:space="preserve">
+    <value>不支援的登錄資料類型。</value>
+  </data>
+  <data name="SeparatorCommaToolTip" xml:space="preserve">
+    <value>',' - Comma</value>
+  </data>
+  <data name="SeparatorCommaSpaceToolTip" xml:space="preserve">
+    <value>', ' - Comma-Space</value>
+  </data>
+  <data name="SeparatorSemiColonToolTip" xml:space="preserve">
+    <value>';' - Semi-Colon</value>
+  </data>
+  <data name="SeparatorSemiColonSpaceToolTip" xml:space="preserve">
+    <value>'; ' - Semi-Colon-Space</value>
+  </data>
+  <data name="SeparatorNewlineToolTip" xml:space="preserve">
+    <value>{0} - 新行</value>
+  </data>
+  <data name="SeparatorDashToolTip" xml:space="preserve">
+    <value>'-' - Dash</value>
+  </data>
+  <data name="SeparatorSpaceToolTip" xml:space="preserve">
+    <value>' ' - Space</value>
+  </data>
+</root>

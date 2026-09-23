@@ -5,6 +5,9 @@
 # PSSession tests for non-Windows platforms
 #
 
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 function GetRandomString()
 {
     return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
@@ -79,18 +82,57 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
     It "<Name>" -TestCases $testCases {
         param ($scriptBlock, $expectedErrorCode)
 
-        $platformInfo = Get-PlatformInfo
-        if (
-            ($platformInfo.Platform -match "alpine|raspbian") -or
-            ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
-            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8') -or
-            ($platformInfo.Platform -eq 'ubuntu' -and $platformInfo.Version -eq '20.04')
-        ) {
-            Set-ItResult -Skipped -Because "MI library not available for Alpine, Raspberry Pi, Debian 10 and 11, and CentOS 8"
+        if ( -not (Get-WsManSupport)) {
+            Set-ItResult -Skipped -Because "MI library not available for this platform"
             return
         }
 
         $er = { & $scriptBlock } | Should -Throw -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand' -PassThru
         $er.Exception.ErrorCode | Should -Be $expectedErrorCode
+    }
+}
+
+Describe "New-PSSession -UseWindowsPowerShell switch parameter" -Tag "CI" {
+
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        if (-not $IsWindows) {
+            $PSDefaultParameterValues['it:skip'] = $true
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    }
+
+    It "Should respect explicit -UseWindowsPowerShell:`$false parameter value" {
+        # Test 1: -UseWindowsPowerShell:$true should create a Windows PowerShell 5.1 session
+        $sessionWithTrue = $null
+        try {
+            { $script:sessionWithTrue = New-PSSession -UseWindowsPowerShell:$true } | Should -Not -Throw
+            $script:sessionWithTrue | Should -Not -BeNullOrEmpty
+
+            # Verify it's Windows PowerShell 5.1
+            $version = Invoke-Command -Session $script:sessionWithTrue -ScriptBlock { $PSVersionTable.PSVersion }
+            $version.Major | Should -Be 5
+            $version.Minor | Should -Be 1
+        }
+        finally {
+            if ($script:sessionWithTrue) { Remove-PSSession $script:sessionWithTrue -ErrorAction SilentlyContinue }
+        }
+
+        # Test 2: -UseWindowsPowerShell:$false should use WSMan transport (not Process)
+        $sessionWithFalse = $null
+        try {
+            { $script:sessionWithFalse = New-PSSession -UseWindowsPowerShell:$false } | Should -Not -Throw
+            $script:sessionWithFalse | Should -Not -BeNullOrEmpty
+
+            # Transport should be WSMan, not Process
+            $script:sessionWithFalse.Transport | Should -Be 'WSMan'
+        }
+        finally {
+            if ($script:sessionWithFalse) { Remove-PSSession $script:sessionWithFalse -ErrorAction SilentlyContinue }
+        }
     }
 }

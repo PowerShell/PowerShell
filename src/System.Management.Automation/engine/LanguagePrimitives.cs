@@ -13,6 +13,7 @@ using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -20,12 +21,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Security;
 
 using Dbg = System.Management.Automation.Diagnostics;
 using MethodCacheEntry = System.Management.Automation.DotNetAdapter.MethodCacheEntry;
 #if !UNIX
 using System.DirectoryServices;
-using System.Management;
 #endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -201,7 +202,6 @@ namespace System.Management.Automation
             string sourceAsString = (string)LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider);
             return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
         }
-
         /// <summary>
         /// Returns false, since this converter is not designed to be used to
         /// convert from the type associated with the converted to other types.
@@ -310,9 +310,11 @@ namespace System.Management.Automation
 
         internal static void CreateMemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType)
         {
-            string availableProperties = GetAvailableProperties(pso);
+            string settableProperties = GetSettableProperties(pso);
 
-            string message = StringUtil.Format(ExtendedTypeSystem.PropertyNotFound, property.Key.ToString(), resultType.FullName, availableProperties);
+            string message = settableProperties == string.Empty
+                ? StringUtil.Format(ExtendedTypeSystem.NoSettableProperty, property.Key.ToString(), resultType.FullName)
+                : StringUtil.Format(ExtendedTypeSystem.PropertyNotFound, property.Key.ToString(), resultType.FullName, settableProperties);
 
             typeConversion.WriteLine("Issuing an error message about not being able to create an object from hashtable.");
             throw new InvalidOperationException(message);
@@ -632,12 +634,9 @@ namespace System.Management.Automation
             // If second can be converted to the type of the first, it does so and returns first.Equals(secondConverted)
             // Otherwise false is returned
 
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
-            if (!(formatProvider is CultureInfo culture))
+            if (formatProvider is not CultureInfo culture)
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -779,12 +778,9 @@ namespace System.Management.Automation
         /// </exception>
         public static int Compare(object first, object second, bool ignoreCase, IFormatProvider formatProvider)
         {
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
-            if (!(formatProvider is CultureInfo culture))
+            if (formatProvider is not CultureInfo culture)
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -899,10 +895,7 @@ namespace System.Management.Automation
         public static bool TryCompare(object first, object second, bool ignoreCase, IFormatProvider formatProvider, out int result)
         {
             result = 0;
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
             if (formatProvider is not CultureInfo culture)
             {
@@ -1043,7 +1036,7 @@ namespace System.Management.Automation
                     // but since we don't want this to recurse indefinitely
                     // we explicitly check the case where it would recurse
                     // and deal with it.
-                    if (!(PSObject.Base(objectArray[0]) is IList firstElement))
+                    if (PSObject.Base(objectArray[0]) is not IList firstElement)
                     {
                         return IsTrue(objectArray[0]);
                     }
@@ -2083,6 +2076,22 @@ namespace System.Management.Automation
                 return string.Join(CultureInfo.CurrentUICulture.TextInfo.ListSeparator, enumHashEntry.names);
             }
 
+            /// <summary>
+            /// Returns all names for the provided enum type.
+            /// </summary>
+            /// <param name="enumType">The enum type to retrieve names from.</param>
+            /// <returns>Array of enum names for the specified type.</returns>
+            internal static string[] GetEnumNames(Type enumType)
+                => EnumSingleTypeConverter.GetEnumHashEntry(enumType).names;
+
+            /// <summary>
+            /// Returns all values for the provided enum type.
+            /// </summary>
+            /// <param name="enumType">The enum type to retrieve values from.</param>
+            /// <returns>Array of enum values for the specified type.</returns>
+            internal static Array GetEnumValues(Type enumType)
+                => EnumSingleTypeConverter.GetEnumHashEntry(enumType).values;
+
             public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
             {
                 return EnumSingleTypeConverter.BaseConvertFrom(sourceValue, destinationType, formatProvider, ignoreCase, false);
@@ -2091,7 +2100,7 @@ namespace System.Management.Automation
             protected static object BaseConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase, bool multipleValues)
             {
                 Diagnostics.Assert(sourceValue != null, "the type converter has a special case for null source values");
-                if (!(sourceValue is string sourceValueString))
+                if (sourceValue is not string sourceValueString)
                 {
                     throw new PSInvalidCastException("InvalidCastEnumFromTypeNotAString", null,
                         ExtendedTypeSystem.InvalidCastException,
@@ -2153,7 +2162,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    sourceValueEntries = sourceValueString.Split(Utils.Separators.Comma);
+                    sourceValueEntries = sourceValueString.Split(',');
                     fromValuePatterns = new WildcardPattern[sourceValueEntries.Length];
                     for (int i = 0; i < sourceValueEntries.Length; i++)
                     {
@@ -2933,17 +2942,12 @@ namespace System.Management.Automation
                     return result;
                 }
 
-                if (resultType == typeof(BigInteger))
-                {
-                    // Fallback for BigInteger: manual parsing using any common format.
-                    NumberStyles style = NumberStyles.AllowLeadingSign
-                        | NumberStyles.AllowDecimalPoint
-                        | NumberStyles.AllowExponent
-                        | NumberStyles.AllowHexSpecifier;
+               if (resultType == typeof(BigInteger))
+               {
+                    NumberStyles style = NumberStyles.Integer | NumberStyles.AllowThousands;
 
                     return BigInteger.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
                 }
-
                 // Fallback conversion for regular numeric types.
                 return GetIntegerSystemConverter(resultType).ConvertFrom(strToConvert);
             }
@@ -3849,11 +3853,11 @@ namespace System.Management.Automation
         /// Create a IList to hold all elements, and use the IList to create the object of the resultType.
         /// The reason for using IList is that it can work on constructors that takes IEnumerable[T], ICollection[T] or IList[T].
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// When get to this method, we know the fromType and the toType meet the following two conditions:
         /// 1. toType is a closed generic type and it has a constructor that takes IEnumerable[T], ICollection[T] or IList[T]
         /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType
-        /// </remark>
+        /// </remarks>
         private sealed class ConvertViaIEnumerableConstructor
         {
             internal Func<int, IList> ListCtorLambda;
@@ -3984,31 +3988,45 @@ namespace System.Management.Automation
                     //  - It's in FullLanguage but not because it's part of a parameter binding that is transitioning from ConstrainedLanguage to FullLanguage
                     // When this is invoked from a parameter binding in transition from ConstrainedLanguage environment to FullLanguage command, we disallow
                     // the property conversion because it's dangerous.
-                    if (ecFromTLS == null || (ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage && !ecFromTLS.LanguageModeTransitionInParameterBinding))
+                    bool canProceedWithConversion = ecFromTLS == null || (ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage && !ecFromTLS.LanguageModeTransitionInParameterBinding);
+                    if (!canProceedWithConversion)
                     {
-                        result = _constructor();
-                        var psobject = valueToConvert as PSObject;
-                        if (psobject != null)
+                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                         {
-                            // Use PSObject properties to perform conversion.
-                            SetObjectProperties(result, psobject, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, formatProvider, recursion, ignoreUnknownMembers);
-                        }
-                        else
-                        {
-                            // Use provided property dictionary to perform conversion.
-                            // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2
-                            IDictionary properties = valueToConvert as IDictionary;
-                            SetObjectProperties(result, properties, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: false);
+                            throw InterpreterError.NewInterpreterException(
+                                valueToConvert,
+                                typeof(RuntimeException),
+                                errorPosition: null,
+                                "HashtableToObjectConversionNotSupportedInDataSection",
+                                ParserStrings.HashtableToObjectConversionNotSupportedInDataSection,
+                                resultType.ToString());
                         }
 
-                        typeConversion.WriteLine("Constructor result: \"{0}\".", result);
+                        // When in audit mode, we report but don't enforce, so we will proceed with the conversion.
+                        SystemPolicy.LogWDACAuditMessage(
+                                context: ecFromTLS,
+                                title: ExtendedTypeSystem.WDACHashTypeLogTitle,
+                                message: StringUtil.Format(ExtendedTypeSystem.WDACHashTypeLogMessage, resultType.FullName),
+                                fqid: "LanguageHashtableConversionNotAllowed",
+                                dropIntoDebugger: true);
+                    }
+
+                    result = _constructor();
+                    var psobject = valueToConvert as PSObject;
+                    if (psobject != null)
+                    {
+                        // Use PSObject properties to perform conversion.
+                        SetObjectProperties(result, psobject, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, formatProvider, recursion, ignoreUnknownMembers);
                     }
                     else
                     {
-                        RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
-                            "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
-                        throw rte;
+                        // Use provided property dictionary to perform conversion.
+                        // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2
+                        IDictionary properties = valueToConvert as IDictionary;
+                        SetObjectProperties(result, properties, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: false);
                     }
+
+                    typeConversion.WriteLine("Constructor result: \"{0}\".", result);
 
                     return result;
                 }
@@ -4673,7 +4691,7 @@ namespace System.Management.Automation
                                     Type propType;
                                     if (TypeResolver.TryResolveType(property.TypeNameOfValue, out propType))
                                     {
-                                        if (formatProvider == null) { formatProvider = CultureInfo.InvariantCulture; }
+                                        formatProvider ??= CultureInfo.InvariantCulture;
 
                                         try
                                         {
@@ -4696,6 +4714,12 @@ namespace System.Management.Automation
                                             // We don't care. We will assign the value as is.
                                         }
                                     }
+                                }
+
+                                // treat AutomationNull.Value as null for consistency
+                                if (propValue == AutomationNull.Value)
+                                {
+                                    propValue = null;
                                 }
 
                                 property.Value = propValue;
@@ -4735,18 +4759,23 @@ namespace System.Management.Automation
             return pso;
         }
 
-        private static string GetAvailableProperties(PSObject pso)
+        private static string GetSettableProperties(PSObject pso)
         {
+            if (pso is null || pso.Properties is null)
+            {
+                return string.Empty;
+            }
+
             StringBuilder availableProperties = new StringBuilder();
             bool first = true;
 
-            if (pso != null && pso.Properties != null)
+            foreach (PSPropertyInfo p in pso.Properties)
             {
-                foreach (PSPropertyInfo p in pso.Properties)
+                if (p.IsSettable)
                 {
                     if (!first)
                     {
-                        availableProperties.Append(" , ");
+                        availableProperties.Append(", ");
                     }
 
                     availableProperties.Append("[" + p.Name + " <" + p.TypeNameOfValue + ">]");
@@ -4894,8 +4923,26 @@ namespace System.Management.Automation
 
             typeConversion.WriteLine("Type Conversion failed.");
             errorId = "ConvertToFinalInvalidCastException";
-            errorMsg = StringUtil.Format(ExtendedTypeSystem.InvalidCastException, valueToConvert.ToString(),
-                                         ObjectToTypeNameString(valueToConvert), resultType.ToString());
+
+            string valueToConvertTypeName = ObjectToTypeNameString(valueToConvert);
+            string resultTypeName = resultType.ToString();
+
+            if (resultType == typeof(SecureString) || resultType == typeof(PSCredential))
+            {
+                errorMsg = StringUtil.Format(
+                    ExtendedTypeSystem.InvalidCastExceptionWithoutValue,
+                    valueToConvertTypeName,
+                    resultTypeName);
+            }
+            else
+            {
+                errorMsg = StringUtil.Format(
+                    ExtendedTypeSystem.InvalidCastException,
+                    valueToConvert.ToString(),
+                    valueToConvertTypeName,
+                    resultTypeName);
+            }
+
             return Tuple.Create(errorId, errorMsg);
         }
 
@@ -5633,20 +5680,29 @@ namespace System.Management.Automation
             PSConverter<object> converter = null;
             ConversionRank rank = ConversionRank.None;
 
-            // If we've ever used ConstrainedLanguage, check if the target type is allowed
+            // If we've ever used ConstrainedLanguage, check if the target type is allowed.
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
-
-                if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
+                if (context?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
-                    if ((toType != typeof(object)) &&
-                        (toType != typeof(object[])) &&
-                        (!CoreTypes.Contains(toType)))
+                    if (toType != typeof(object) &&
+                        toType != typeof(object[]) &&
+                        !CoreTypes.Contains(toType))
                     {
-                        converter = ConvertNotSupportedConversion;
-                        rank = ConversionRank.None;
-                        return CacheConversion(fromType, toType, converter, rank);
+                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                        {
+                            converter = ConvertNotSupportedConversion;
+                            rank = ConversionRank.None;
+                            return CacheConversion(fromType, toType, converter, rank);
+                        }
+
+                        SystemPolicy.LogWDACAuditMessage(
+                            context: context,
+                            title: ExtendedTypeSystem.WDACTypeConversionLogTitle,
+                            message: StringUtil.Format(ExtendedTypeSystem.WDACTypeConversionLogMessage, fromType.FullName, toType.FullName),
+                            fqid: "LanguageTypeConversionNotAllowed",
+                            dropIntoDebugger: true);
                     }
                 }
             }
@@ -5736,10 +5792,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (converter == null)
-            {
-                converter = FigurePropertyConversion(fromType, toType, ref rank);
-            }
+            converter ??= FigurePropertyConversion(fromType, toType, ref rank);
 
             if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
                 || (converter != null && valueDependentConversion != null))

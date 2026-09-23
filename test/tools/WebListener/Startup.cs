@@ -66,6 +66,22 @@ namespace mvc
                     template: "Delay/{seconds?}",
                     defaults: new { controller = "Delay", action = "Index" });
                 routes.MapRoute(
+                    name: "stall",
+                    template: "Stall/{seconds?}/{contentType?}",
+                    defaults: new { controller = "Delay", action = "Stall" });
+                routes.MapRoute(
+                    name: $"stallbrotli",
+                    template: "StallBrotli/{seconds?}/{contentType?}",
+                    defaults: new { controller = "Delay", action = $"StallBrotli" });
+                routes.MapRoute(
+                    name: $"stalldeflate",
+                    template: "StallDeflate/{seconds?}/{contentType?}",
+                    defaults: new { controller = "Delay", action = $"StallDeflate" });
+                routes.MapRoute(
+                    name: $"stallgzip",
+                    template: "StallGZip/{seconds?}/{contentType?}",
+                    defaults: new { controller = "Delay", action = $"StallGZip" });
+                routes.MapRoute(
                     name: "post",
                     template: "Post",
                     defaults: new { controller = "Get", action = "Index" },

@@ -7,7 +7,7 @@ using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal class HeaderInfo
+    internal sealed class HeaderInfo
     {
         private readonly List<ColumnInfo> _columns = new();
 

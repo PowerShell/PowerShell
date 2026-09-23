@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private static bool IsWsManQuotaReached(Exception exception)
         {
-            if (!(exception is CimException cimException))
+            if (exception is not CimException cimException)
             {
                 return false;
             }
@@ -315,10 +315,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 this.ExceptionSafeWrapper(delegate
                 {
                     IObservable<T> observable = this.GetCimOperation();
-                    if (observable != null)
-                    {
-                        observable.Subscribe(this);
-                    }
+                    observable?.Subscribe(this);
                 });
             });
         }
@@ -522,10 +519,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             CimCustomOptionsDictionary jobSpecificCustomOptions = this.GetJobSpecificCustomOptions();
-            if (jobSpecificCustomOptions != null)
-            {
-                jobSpecificCustomOptions.Apply(operationOptions, CimSensitiveValueConverter);
-            }
+            jobSpecificCustomOptions?.Apply(operationOptions, CimSensitiveValueConverter);
 
             return operationOptions;
         }
@@ -629,8 +623,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
             else
             {
-                CimJobException cje = exception as CimJobException;
-                if ((cje != null) && (cje.IsTerminatingError))
+                if ((exception is CimJobException cje) && (cje.IsTerminatingError))
                 {
                     terminatingErrorTracker.MarkSessionAsTerminated(this.JobContext.Session, out sessionWasAlreadyTerminated);
                     isThisTerminatingError = true;
@@ -1009,7 +1002,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal static bool IsShowComputerNameMarkerPresent(CimInstance cimInstance)
         {
             PSObject pso = PSObject.AsPSObject(cimInstance);
-            if (!(pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] is PSPropertyInfo psShowComputerNameProperty))
+            if (pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] is not PSPropertyInfo psShowComputerNameProperty)
             {
                 return false;
             }
@@ -1019,8 +1012,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal static void AddShowComputerNameMarker(PSObject pso)
         {
-            PSPropertyInfo psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
-            if (psShowComputerNameProperty != null)
+            if (pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] is PSPropertyInfo psShowComputerNameProperty)
             {
                 psShowComputerNameProperty.Value = true;
             }
@@ -1053,10 +1045,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             if (this.JobContext.ShowComputerName)
             {
-                if (pso == null)
-                {
-                    pso = PSObject.AsPSObject(outputObject);
-                }
+                pso ??= PSObject.AsPSObject(outputObject);
 
                 AddShowComputerNameMarker(pso);
                 if (cimInstance == null)

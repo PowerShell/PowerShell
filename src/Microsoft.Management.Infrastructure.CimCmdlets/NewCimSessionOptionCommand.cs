@@ -299,7 +299,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Ps Credential used by the proxy server when required by the server.
         /// </summary>
         [Parameter(ParameterSetName = WSManParameterSet)]
-        [Credential()]
+        [Credential]
         public PSCredential ProxyCredential
         {
             get

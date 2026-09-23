@@ -468,11 +468,12 @@ namespace System.Management.Automation.Remoting
                     _remoteSession.ExecuteConnect(inputData, out outputData);
 
                     // construct Xml to send back
-                    string responseData = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                                    "<{0} xmlns=\"{1}\">{2}</{0}>",
-                                    WSManNativeApi.PS_CONNECTRESPONSE_XML_TAG,
-                                    WSManNativeApi.PS_XML_NAMESPACE,
-                                    Convert.ToBase64String(outputData));
+                    string responseData = string.Format(
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        "<{0} xmlns=\"{1}\">{2}</{0}>",
+                        WSManNativeApi.PS_CONNECTRESPONSE_XML_TAG,
+                        WSManNativeApi.PS_XML_NAMESPACE,
+                        Convert.ToBase64String(outputData));
 
                     // TODO: currently using OperationComplete to report back the responseXml. This will need to change to use WSManReportObject
                     // that is currently internal.
@@ -769,7 +770,7 @@ namespace System.Management.Automation.Remoting
         internal void Stop(
             WSManNativeApi.WSManPluginRequest requestDetails)
         {
-            // stop the command..command will be stoped if we raise ClosingEvent on
+            // stop the command..command will be stopped if we raise ClosingEvent on
             // transport manager.
             transportMgr.PerformStop();
             WSManPluginInstance.ReportWSManOperationComplete(requestDetails, null);

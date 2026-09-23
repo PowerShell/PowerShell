@@ -24,7 +24,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cim
 {
-    internal class CimSensitiveValueConverter : IDisposable
+    internal sealed class CimSensitiveValueConverter : IDisposable
     {
         private sealed class SensitiveString : IDisposable
         {
@@ -50,15 +50,9 @@ namespace Microsoft.PowerShell.Cim
 
             private unsafe void Copy(char* source, int offset, int charsToCopy)
             {
-                if ((offset < 0) || (offset >= _string.Length))
-                {
-                    throw new ArgumentOutOfRangeException(nameof(offset));
-                }
-
-                if (offset + charsToCopy > _string.Length)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(charsToCopy));
-                }
+                ArgumentOutOfRangeException.ThrowIfNegative(offset);
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(offset, _string.Length);
+                ArgumentOutOfRangeException.ThrowIfGreaterThan(offset + charsToCopy, _string.Length, nameof(charsToCopy));
 
                 fixed (char* target = _string)
                 {
@@ -352,7 +346,7 @@ namespace Microsoft.PowerShell.Cim
         /// <exception cref="PSInvalidCastException">The only kind of exception this method can throw.</exception>
         internal static object ConvertFromCimToDotNet(object cimObject, Type expectedDotNetType)
         {
-            if (expectedDotNetType == null) { throw new ArgumentNullException(nameof(expectedDotNetType)); }
+            ArgumentNullException.ThrowIfNull(expectedDotNetType);
 
             if (cimObject == null)
             {
@@ -431,7 +425,7 @@ namespace Microsoft.PowerShell.Cim
                 var cimIntrinsicValue = (byte[])LanguagePrimitives.ConvertTo(cimObject, typeof(byte[]), CultureInfo.InvariantCulture);
                 return exceptionSafeReturn(delegate
                                                {
-                                                   return new X509Certificate2(cimIntrinsicValue);
+                                                   return X509CertificateLoader.LoadCertificate(cimIntrinsicValue);
                                                });
             }
 

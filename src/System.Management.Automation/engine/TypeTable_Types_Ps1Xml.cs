@@ -17,10 +17,7 @@ namespace System.Management.Automation.Runspaces
 
         private static Func<string, PSMemberInfoInternalCollection<PSMemberInfo>> GetValueFactoryBasedOnInitCapacity(int capacity)
         {
-            if (capacity <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(capacity));
-            }
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
 
             if (capacity > ValueFactoryCacheCount)
             {
@@ -568,9 +565,7 @@ namespace System.Management.Automation.Runspaces
                 typeName,
                 new PSScriptProperty(
                     @"DisplayName",
-                    GetScriptBlock(@"if ($this.Name.IndexOf('-') -lt 0)
-          {
-          if ($null -ne $this.ResolvedCommand)
+                    GetScriptBlock(@"if ($null -ne $this.ResolvedCommand)
           {
           $this.Name + "" -> "" + $this.ResolvedCommand.Name
           }
@@ -578,11 +573,7 @@ namespace System.Management.Automation.Runspaces
           {
           $this.Name + "" -> "" + $this.Definition
           }
-          }
-          else
-          {
-          $this.Name
-          }"),
+          "),
                     setterScript: null,
                     shouldCloneOnAccess: true),
                 typeMembers,
@@ -676,14 +667,22 @@ namespace System.Management.Automation.Runspaces
                 typeMembers,
                 isOverride: false);
 
-            newMembers.Add(@"Target");
+            newMembers.Add(@"ResolvedTarget");
             AddMember(
                 errors,
                 typeName,
                 new PSCodeProperty(
-                    @"Target",
-                    GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), @"GetTarget"),
+                    @"ResolvedTarget",
+                    GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), @"ResolvedTarget"),
                     setterCodeReference: null),
+                typeMembers,
+                isOverride: false);
+
+            newMembers.Add(@"Target");
+            AddMember(
+                errors,
+                typeName,
+                new PSAliasProperty(@"Target", @"LinkTarget", conversionType: null),
                 typeMembers,
                 isOverride: false);
 
@@ -804,14 +803,22 @@ namespace System.Management.Automation.Runspaces
                 typeMembers,
                 isOverride: false);
 
-            newMembers.Add(@"Target");
+            newMembers.Add(@"ResolvedTarget");
             AddMember(
                 errors,
                 typeName,
                 new PSCodeProperty(
-                    @"Target",
-                    GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), @"GetTarget"),
+                    @"ResolvedTarget",
+                    GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), @"ResolvedTarget"),
                     setterCodeReference: null),
+                typeMembers,
+                isOverride: false);
+
+            newMembers.Add(@"Target");
+            AddMember(
+                errors,
+                typeName,
+                new PSAliasProperty(@"Target", @"LinkTarget", conversionType: null),
                 typeMembers,
                 isOverride: false);
 
@@ -1148,7 +1155,8 @@ namespace System.Management.Automation.Runspaces
                         if ($IsWindows) {
                             (Get-CimInstance Win32_Process -Filter ""ProcessId = $($this.Id)"").CommandLine
                         } elseif ($IsLinux) {
-                            Get-Content -LiteralPath ""/proc/$($this.Id)/cmdline""
+                            $rawCmd = Get-Content -LiteralPath ""/proc/$($this.Id)/cmdline""
+                            $rawCmd.Substring(0, $rawCmd.Length - 1) -replace ""`0"", "" ""
                         }
                     "),
                     setterScript: null,
@@ -4064,152 +4072,6 @@ namespace System.Management.Automation.Runspaces
                 isOverride: false);
 
             #endregion System.Management.ManagementObject
-
-            #region System.Security.AccessControl.ObjectSecurity
-
-            typeName = @"System.Security.AccessControl.ObjectSecurity";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, static key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 7));
-            Type securityDescriptorCommandsBaseType = TypeResolver.ResolveType("Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase", exception: out _);
-
-            // Process regular members.
-            newMembers.Add(@"Path");
-            AddMember(
-                errors,
-                typeName,
-                new PSCodeProperty(
-                    @"Path",
-                    GetMethodInfo(securityDescriptorCommandsBaseType, @"GetPath"),
-                    setterCodeReference: null),
-                typeMembers,
-                isOverride: false);
-
-            newMembers.Add(@"Owner");
-            AddMember(
-                errors,
-                typeName,
-                new PSCodeProperty(
-                    @"Owner",
-                    GetMethodInfo(securityDescriptorCommandsBaseType, @"GetOwner"),
-                    setterCodeReference: null),
-                typeMembers,
-                isOverride: false);
-
-            newMembers.Add(@"Group");
-            AddMember(
-                errors,
-                typeName,
-                new PSCodeProperty(
-                    @"Group",
-                    GetMethodInfo(securityDescriptorCommandsBaseType, @"GetGroup"),
-                    setterCodeReference: null),
-                typeMembers,
-                isOverride: false);
-
-            newMembers.Add(@"Access");
-            AddMember(
-                errors,
-                typeName,
-                new PSCodeProperty(
-                    @"Access",
-                    GetMethodInfo(securityDescriptorCommandsBaseType, @"GetAccess"),
-                    setterCodeReference: null),
-                typeMembers,
-                isOverride: false);
-
-            newMembers.Add(@"Sddl");
-            AddMember(
-                errors,
-                typeName,
-                new PSCodeProperty(
-                    @"Sddl",
-                    GetMethodInfo(securityDescriptorCommandsBaseType, @"GetSddl"),
-                    setterCodeReference: null),
-                typeMembers,
-                isOverride: false);
-
-            newMembers.Add(@"AccessToString");
-            AddMember(
-                errors,
-                typeName,
-                new PSScriptProperty(
-                    @"AccessToString",
-                    GetScriptBlock(@"$toString = """";
-          $first = $true;
-          if ( ! $this.Access ) { return """" }
-
-          foreach($ace in $this.Access)
-          {
-          if($first)
-          {
-          $first = $false;
-          }
-          else
-          {
-          $tostring += ""`n"";
-          }
-
-          $toString += $ace.IdentityReference.ToString();
-          $toString += "" "";
-          $toString += $ace.AccessControlType.ToString();
-          $toString += ""  "";
-          if($ace -is [System.Security.AccessControl.FileSystemAccessRule])
-          {
-          $toString += $ace.FileSystemRights.ToString();
-          }
-          elseif($ace -is  [System.Security.AccessControl.RegistryAccessRule])
-          {
-          $toString += $ace.RegistryRights.ToString();
-          }
-          }
-
-          return $toString;"),
-                    setterScript: null,
-                    shouldCloneOnAccess: true),
-                typeMembers,
-                isOverride: false);
-
-            newMembers.Add(@"AuditToString");
-            AddMember(
-                errors,
-                typeName,
-                new PSScriptProperty(
-                    @"AuditToString",
-                    GetScriptBlock(@"$toString = """";
-          $first = $true;
-          if ( ! (& { Set-StrictMode -Version 1; $this.audit }) ) { return """" }
-
-          foreach($ace in (& { Set-StrictMode -Version 1; $this.audit }))
-          {
-          if($first)
-          {
-          $first = $false;
-          }
-          else
-          {
-          $tostring += ""`n"";
-          }
-
-          $toString += $ace.IdentityReference.ToString();
-          $toString += "" "";
-          $toString += $ace.AuditFlags.ToString();
-          $toString += ""  "";
-          if($ace -is [System.Security.AccessControl.FileSystemAuditRule])
-          {
-          $toString += $ace.FileSystemRights.ToString();
-          }
-          elseif($ace -is [System.Security.AccessControl.RegistryAuditRule])
-          {
-          $toString += $ace.RegistryRights.ToString();
-          }
-          }
-
-          return $toString;"),
-                    setterScript: null,
-                    shouldCloneOnAccess: true),
-                typeMembers,
-                isOverride: false);
-
-            #endregion System.Security.AccessControl.ObjectSecurity
 
             #region Microsoft.PowerShell.Commands.HistoryInfo
 

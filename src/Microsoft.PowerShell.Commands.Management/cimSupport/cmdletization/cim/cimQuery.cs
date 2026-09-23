@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// CimQuery supports building of queries against CIM object model.
     /// </summary>
-    internal class CimQuery : QueryBuilder, ISessionBoundQueryBuilder<CimSession>
+    internal sealed class CimQuery : QueryBuilder, ISessionBoundQueryBuilder<CimSession>
     {
         private readonly StringBuilder _wqlCondition;
 
@@ -314,15 +314,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <param name="optionValue"></param>
         public override void AddQueryOption(string optionName, object optionValue)
         {
-            if (string.IsNullOrEmpty(optionName))
-            {
-                throw new ArgumentNullException(nameof(optionName));
-            }
-
-            if (optionValue == null)
-            {
-                throw new ArgumentNullException(nameof(optionValue));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(optionName);
+            ArgumentNullException.ThrowIfNull(optionValue);
 
             this.queryOptions[optionName] = optionValue;
         }

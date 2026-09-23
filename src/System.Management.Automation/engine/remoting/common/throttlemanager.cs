@@ -117,7 +117,7 @@ namespace System.Management.Automation.Remoting
         /// need not be called on the operation (this can be when the
         /// operation has stop completed or stop has been called and is
         /// pending)
-        ///</remarks>
+        /// </remarks>
         internal bool IgnoreStop
         {
             get
@@ -532,10 +532,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if (operation != null)
-            {
-                operation.StartOperation();
-            }
+            operation?.StartOperation();
         }
 
         /// <summary>

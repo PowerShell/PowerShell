@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MetadataMemberInitialization" xml:space="preserve">
+    <value>“{0}" için "{1}" özellikleri başlatılamıyor</value>
+  </data>
+  <data name="ValidateRangeElementType" xml:space="preserve">
+    <value>"{0}" türü, parametrenin maksimum ve minimum sınırlarıyla aynı türde ({1}) olmadığından bağımsız değişken doğrulanamıyor. Bağımsız değişkenin  {1}  türünde olduğundan emin olun ve sonra komutu tekrar deneyin.</value>
+  </data>
+  <data name="ValidateRangePositiveFailure" xml:space="preserve">
+    <value>‘{0}' bağımsız değişkeni, değeri sıfırdan büyük olmadığı için doğrulanamıyor.</value>
+  </data>
+  <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
+    <value>“{0}" bağımsız değişkeni doğrulanamıyor çünkü değeri sıfıra eşit veya sıfırdan büyük değil.</value>
+  </data>
+  <data name="ValidateRangeNegativeFailure" xml:space="preserve">
+    <value>“{0}" bağımsız değişkeni, değeri sıfırdan küçük olmadığı için doğrulanamıyor.</value>
+  </data>
+  <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
+    <value>“{0}" bağımsız değişkeni doğrulanamıyor çünkü değeri sıfıra eşit veya sıfırdan küçük değil.</value>
+  </data>
+  <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
+    <value>Belirtilen en küçük aralık ({0}), belirtilen en büyük aralık ({1}) ile aynı türde olmadığı için kabul edilemiyor. Parametre için ValidateRange özniteliğini güncelleştirin.</value>
+  </data>
+  <data name="ValidateRangeNotIComparable" xml:space="preserve">
+    <value>MaxRange ve MinRange parametre türleri kabul edilemez. Her iki parametre de IComparable arabirimini uygulayan nesneler olmalıdır.</value>
+  </data>
+  <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
+    <value>Belirtilen en büyük aralık, belirtilen en küçük aralıktan küçük olduğu için kabul edilemiyor. Parametre için ValidateRange özniteliğini güncelleştirin.</value>
+  </data>
+  <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
+    <value>{0} bağımsız değişkeni, {1} için izin verilen en büyük aralıktan büyüktür. {1} değerinden küçük veya ona eşit bir bağımsız değişken sağlayın ve ardından komutu yeniden deneyin.</value>
+  </data>
+  <data name="ValidateRangeSmallerThanMinRangeFailure" xml:space="preserve">
+    <value>{0} bağımsız değişkeni, {1} için izin verilen en küçük aralıktan küçüktür. {1} değerinden büyük veya ona eşit bir bağımsız değişken sağlayın ve ardından komutu yeniden deneyin.</value>
+  </data>
+  <data name="ValidatePatternFailure" xml:space="preserve">
+    <value>“{0}" bağımsız değişkeni "{1}" desenine uymuyor. “{1}" ile eşleşen bir bağımsız değişken sağlayın ve komutu yeniden deneyin.</value>
+  </data>
+  <data name="ValidateCountNotInArray" xml:space="preserve">
+    <value>ValidateCount özniteliği, dizi olmayan bir parametreye uygulanamaz. Özniteliği parametreden kaldırın veya parametreyi dizi parametresi yapın.</value>
+  </data>
+  <data name="ValidateCountExactFailure" xml:space="preserve">
+    <value>Parametre tam olarak {0} değer gerektirir - {1} değer sağlandı.</value>
+  </data>
+  <data name="ValidateCountMinMaxFailure" xml:space="preserve">
+    <value>Parametre en az {0} değer ve en fazla {1} değer gerektirir - {2} değer sağlandı.</value>
+  </data>
+  <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>Bir parametre için belirtilen en büyük bağımsız değişken sayısı, belirtilen en küçük bağımsız değişken sayısından azdır. Parametre için ValidateCount özniteliğini güncelleştirin.</value>
+  </data>
+  <data name="ValidateLengthMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>Belirtilen bağımsız değişken karakter süresi üst sınırı, belirtilen bağımsız değişken karakter süresi alt sınırından kısadır. Parametre için ValidateLength özniteliğini güncelleştirin.</value>
+  </data>
+  <data name="ValidateLengthNotString" xml:space="preserve">
+    <value>ValidateLength özniteliği, dize veya dize[] parametresi olmayan bir parametreye uygulanamaz. Parametreyi dize veya dize[] parametresi yapın.</value>
+  </data>
+  <data name="ValidateLengthMinLengthFailure" xml:space="preserve">
+    <value>Bağımsız değişkenin karakter süresi ({1}) çok kısa. Uzunluğu "{0}" değerinden büyük veya buna eşit olan bir bağımsız değişken belirtin ve ardından komutu yeniden deneyin.</value>
+  </data>
+  <data name="ValidateLengthMaxLengthFailure" xml:space="preserve">
+    <value>Bağımsız değişkenin karakter süresi ({1}) çok uzundur. Uzunluğu "{0}" değerinden kısa veya buna eşit olan bir bağımsız değişken belirtin ve sonra komutu tekrar deneyin.</value>
+  </data>
+  <data name="ValidateSetFailure" xml:space="preserve">
+    <value>“{0}" bağımsız değişkeni, ValidateSet özniteliği tarafından belirtilen "{1}" kümesine ait değil. Kümede olan bir bağımsız değişken sağlayın ve sonra komutu yeniden deneyin.</value>
+  </data>
+  <data name="ValidateSetGeneratedValidValuesListIsNull" xml:space="preserve">
+    <value>Geçerli değerler oluşturucu null bir değer geri gönderir.</value>
+  </data>
+  <data name="ValidateFailureResult" xml:space="preserve">
+    <value>“{0}" özelliğinde "{1}" için başarısız oldu {2}</value>
+  </data>
+  <data name="ParsingTooManyParameterSets" xml:space="preserve">
+    <value>Komut alınamıyor veya çalıştırılamıyor. Bu komut için en fazla parametre kümesi sayısı aşıldı.</value>
+  </data>
+  <data name="ArgumentTransformationArgumentsShouldBeStrings" xml:space="preserve">
+    <value>Bağımsız değişkeni işleyemiyor çünkü bağımsız değişken değeri bir dize değil. ArgumentTransformationAttribute belirtilmiş olan parametre bağımsız değişkenlerinin değerleri dize olmalıdır.</value>
+  </data>
+  <data name="InvalidValueFailure" xml:space="preserve">
+    <value> {1}  değeri  {0}  değişkeni için geçerli bir değer olmadığından değişken doğrulanamıyor.</value>
+  </data>
+  <data name="InvalidMetadataForCurrentValue" xml:space="preserve">
+    <value>{1}  değerine sahip  {0}  değişkeni artık geçerli olmayacağından öznitelik eklenemiyor.</value>
+  </data>
+  <data name="ValidateNotNullFailure" xml:space="preserve">
+    <value>Bağımsız değişken null. Bağımsız değişken için geçerli bir değer sağlayın ve sonra komutu tekrar deneyin.</value>
+  </data>
+  <data name="ValidateNotNullCollectionFailure" xml:space="preserve">
+    <value>Bağımsız değişken null bir değer içeriyor veya bağımsız değişken koleksiyonundaki bir öğe null bir değer içeriyor. Null değer içermeyen bir koleksiyon sağlayın ve ardından komutu yeniden deneyin.</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyFailure" xml:space="preserve">
+    <value>Bağımsız değişken null veya boş. Null veya boş olmayan bir bağımsız değişken sağlayın ve ardından komutu yeniden deneyin.</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
+    <value>Bağımsız değişken null, boş ya da bağımsız değişken koleksiyonundaki bir öğe null değer içeriyor. Null değer içermeyen bir koleksiyon sağlayın ve sonra komutu tekrar deneyin.</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
+    <value>Bağımsız değişken null, boş veya yalnızca boşluk karakterlerinden oluşuyor. Boşluk olmayan karakterler içeren bir bağımsız değişken sağlayın ve sonra komutu tekrar deneyin.</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
+    <value>Bağımsız değişken koleksiyonundaki bir öğe null, boş ya da yalnızca boşluk karakterlerinden oluşuyor. Null değer içermeyen bir koleksiyon sağlayın ve sonra komutu tekrar deneyin.</value>
+  </data>
+  <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>‘{0}' adlı bir parametre komut için birden çok kez tanımlandı.</value>
+  </data>
+  <data name="AliasParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>Parametre diğer adı '{0}' adlı bir diğer ad komut için zaten birden çok kez tanımlandığından belirtilemez.</value>
+  </data>
+  <data name="ParameterNameConflictsWithAlias" xml:space="preserve">
+    <value>‘{0}' parametresi, '{1}' parametresi için aynı adlı parametre diğer adıyla çakıştığı için belirtilemez.</value>
+  </data>
+  <data name="ValidateScriptFailure" xml:space="preserve">
+    <value>"{0}" değerine sahip bağımsız değişken için "{1}" doğrulama betiği True sonucu döndürmedi. Doğrulama betiğinin neden başarısız olduğunu belirleyin ve ardından komutu yeniden deneyin.</value>
+  </data>
+  <data name="ValidateVersionFailure" xml:space="preserve">
+    <value>“{0}" bağımsız değişkeni geçerli bir Windows PowerShell sürümü içermiyor. Geçerli bir sürüm numarası sağlayın ve sonra komutu yeniden deneyin.</value>
+  </data>
+  <data name="ValidateVariableName" xml:space="preserve">
+    <value>'{0}' geçerli bir değişken adı olmadığından bağımsız değişken doğrulanamıyor.</value>
+  </data>
+  <data name="JobDefinitionMustDeriveFromIJobConverter" xml:space="preserve">
+    <value>İş dönüşüm türü, IAstToScriptBlockConverter'dan türetilmelidir.</value>
+  </data>
+  <data name="ValidateDrivePathArgNotString" xml:space="preserve">
+    <value>Yol bağımsız değişkeni geçersiz. Dize türünde bir yol bağımsız değişkeni sağlayın.</value>
+  </data>
+  <data name="ValidateDrivePathFailure" xml:space="preserve">
+    <value>Yol bağımsız değişkeni sürücü {0}, onaylanmış sürücüler kümesine ait değil: {1}. Onaylanmış bir sürücüye sahip bir yol bağımsız değişkeni sağlayın.</value>
+  </data>
+  <data name="ValidateDrivePathInvalidChar" xml:space="preserve">
+    <value>Yol bağımsız değişkeni geçersiz karakterler içeriyor.</value>
+  </data>
+  <data name="ValidateDrivePathNoRoot" xml:space="preserve">
+    <value>Yol bağımsız değişkeninin kök sürücüsü yok.  Kök sürücüsü olan tam bir yol bağımsız değişkeni sağlayın.</value>
+  </data>
+  <data name="ArgumentNullOrEmpty" xml:space="preserve">
+    <value>‘{0}' parametresi için bağımsız değişken değeri null ya da boş bir dize olamaz.</value>
+  </data>
+  <data name="InvalidEnumArgument" xml:space="preserve">
+    <value>Sabit Listesi üyesi '{0}', '{1}' parametresi için geçerli bir değer değil. Aşağıdaki üyelerden birini belirtin ve yeniden deneyin: {2}.</value>
+  </data>
+  <data name="ValidateTrustedDataFailure" xml:space="preserve">
+    <value>Giriş işlenemiyor. “{0}" bağımsız değişkeni güvenilir değil.</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
+    <value>ValidateTrustedData Öznitelik Denetimi Hatası</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
+    <value>“{0}" parametre bağımsız değişkeni güvenilir değil ve Kısıtlanmış Dil modunda ValidateTrustedData parametre özniteliği denetiminde başarısız olacak.</value>
+  </data>
+</root>

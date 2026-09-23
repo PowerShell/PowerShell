@@ -34,9 +34,7 @@ namespace Microsoft.PowerShell
                 throw new ArgumentException("PropVariantNullString", nameof(value));
             }
 
-#pragma warning disable CS0618 // Type or member is obsolete (might get deprecated in future versions
             _valueType = (ushort)VarEnum.VT_LPWSTR;
-#pragma warning restore CS0618 // Type or member is obsolete (might get deprecated in future versions
             _ptr = Marshal.StringToCoTaskMemUni(value);
         }
 

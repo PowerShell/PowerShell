@@ -22,7 +22,7 @@ namespace System.Management.Automation
         /// An instance of the PSTraceSource class used for trace output
         /// using "LocationGlobber" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
              "LocationGlobber",
              "The location globber converts PowerShell paths with glob characters to zero or more paths.")]
         private static readonly Dbg.PSTraceSource s_tracer =
@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// <summary>
         /// User level tracing for path resolution.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
              "PathResolution",
              "Traces the path resolution algorithm.")]
         private static readonly Dbg.PSTraceSource s_pathResolutionTracer =
@@ -1967,7 +1967,7 @@ namespace System.Management.Automation
             string driveRoot = drive.Root.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
             driveRoot = driveRoot.TrimEnd(StringLiterals.DefaultPathSeparator);
 
-            // Keep on lopping off children until the the remaining path
+            // Keep on lopping off children until the remaining path
             // is the drive root.
             while ((!string.IsNullOrEmpty(providerPath)) &&
                 (!providerPath.Equals(driveRoot, StringComparison.OrdinalIgnoreCase)))
@@ -2065,7 +2065,10 @@ namespace System.Management.Automation
                 driveRootRelativeWorkingPath = driveRootRelativeWorkingPath.Substring(drive.Root.Length);
             }
 
-            if (escapeCurrentLocation) { driveRootRelativeWorkingPath = WildcardPattern.Escape(driveRootRelativeWorkingPath); }
+            if (escapeCurrentLocation)
+            {
+                driveRootRelativeWorkingPath = WildcardPattern.Escape(driveRootRelativeWorkingPath);
+            }
 
             // These are static strings that we will parse and
             // interpret if they are leading the path. Otherwise
@@ -4536,7 +4539,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (path.IndexOf(StringLiterals.HomePath, StringComparison.Ordinal) == 0)
+            if (path.StartsWith(StringLiterals.HomePath, StringComparison.Ordinal))
             {
                 // Support the single "~"
                 if (path.Length == 1)
@@ -4635,7 +4638,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (path.IndexOf(StringLiterals.HomePath, StringComparison.Ordinal) == 0)
+                if (path.StartsWith(StringLiterals.HomePath, StringComparison.Ordinal))
                 {
                     // Strip of the ~ and the \ or / if present
 
@@ -4704,7 +4707,7 @@ namespace System.Management.Automation
                     StringBuilder includeString = new StringBuilder();
                     foreach (string includeFilter in context.Include)
                     {
-                        includeString.AppendFormat("{0} ", includeFilter);
+                        includeString.Append($"{includeFilter} ");
                     }
 
                     s_pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
@@ -4716,7 +4719,7 @@ namespace System.Management.Automation
                     StringBuilder excludeString = new StringBuilder();
                     foreach (string excludeFilter in context.Exclude)
                     {
-                        excludeString.AppendFormat("{0} ", excludeFilter);
+                        excludeString.Append($"{excludeFilter} ");
                     }
 
                     s_pathResolutionTracer.WriteLine("Exclude: {0}", excludeString.ToString());

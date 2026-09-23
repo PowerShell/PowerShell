@@ -14,6 +14,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // tableBody to use for this instance of the ViewGenerator;
         private TableControlBody _tableBody;
 
+        private List<MshResolvedExpressionParameterAssociation> _activeAssociationList;
+
         internal override void Initialize(TerminatingErrorContext terminatingErrorContext, PSPropertyExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
         {
             base.Initialize(terminatingErrorContext, mshExpressionFactory, db, view, formatParameters);
@@ -34,46 +36,48 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
             }
 
-            List<MshParameter> rawMshParameterList = null;
+            // Build the active association list (with ExcludeProperty filter applied)
+            _activeAssociationList = BuildActiveAssociationList(so);
+        }
 
-            if (parameters != null)
-                rawMshParameterList = parameters.mshParameterList;
-
+        /// <summary>
+        /// Builds the raw association list for table formatting.
+        /// </summary>
+        protected override List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so, List<MshParameter> propertyList)
+        {
             // check if we received properties from the command line
-            if (rawMshParameterList != null && rawMshParameterList.Count > 0)
+            if (propertyList is not null && propertyList.Count > 0)
             {
-                this.activeAssociationList = AssociationManager.ExpandTableParameters(rawMshParameterList, so);
-                return;
+                return AssociationManager.ExpandTableParameters(propertyList, so);
             }
 
             // we did not get any properties:
             // try to get properties from the default property set of the object
-            this.activeAssociationList = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
-            if (this.activeAssociationList.Count > 0)
+            var list = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
+            if (list.Count > 0)
             {
                 // we got a valid set of properties from the default property set..add computername for
                 // remoteobjects (if available)
                 if (PSObjectHelper.ShouldShowComputerNameProperty(so))
                 {
-                    activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null,
+                    list.Add(new MshResolvedExpressionParameterAssociation(null,
                         new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
                 }
 
-                return;
+                return list;
             }
 
             // we failed to get anything from the default property set
-            this.activeAssociationList = AssociationManager.ExpandAll(so);
-            if (this.activeAssociationList.Count > 0)
+            list = AssociationManager.ExpandAll(so);
+            if (list.Count > 0)
             {
                 // Remove PSComputerName and PSShowComputerName from the display as needed.
-                AssociationManager.HandleComputerNameProperties(so, activeAssociationList);
-                FilterActiveAssociationList();
-                return;
+                AssociationManager.HandleComputerNameProperties(so, list);
+                return LimitAssociationListSize(list);
             }
 
             // we were unable to retrieve any properties, so we leave an empty list
-            this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
+            return new List<MshResolvedExpressionParameterAssociation>();
         }
 
         /// <summary>
@@ -124,30 +128,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Method to filter resolved expressions as per table view needs.
+        /// Limits the association list size for table view.
         /// For v1.0, table view supports only 10 properties.
-        ///
-        /// This method filters and updates "activeAssociationList" instance property.
         /// </summary>
-        /// <returns>None.</returns>
-        /// <remarks>This method updates "activeAssociationList" instance property.</remarks>
-        private void FilterActiveAssociationList()
+        /// <param name="list">The list to limit.</param>
+        /// <returns>The limited list.</returns>
+        private static List<MshResolvedExpressionParameterAssociation> LimitAssociationListSize(
+            List<MshResolvedExpressionParameterAssociation> list)
         {
-            // we got a valid set of properties from the default property set
-            // make sure we do not have too many properties
-
             // NOTE: this is an arbitrary number, chosen to be a sensitive default
-            const int nMax = 10;
+            const int maxCount = 10;
 
-            if (activeAssociationList.Count > nMax)
+            if (list.Count <= maxCount)
             {
-                List<MshResolvedExpressionParameterAssociation> tmp = this.activeAssociationList;
-                this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
-                for (int k = 0; k < nMax; k++)
-                    this.activeAssociationList.Add(tmp[k]);
+                return list;
             }
 
-            return;
+            var result = new List<MshResolvedExpressionParameterAssociation>(maxCount);
+            for (int k = 0; k < maxCount; k++)
+            {
+                result.Add(list[k]);
+            }
+
+            return result;
         }
 
         private TableHeaderInfo GenerateTableHeaderInfoFromDataBaseInfo(PSObject so)
@@ -172,7 +175,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     ci.width = colHeader.width;
                     ci.alignment = colHeader.alignment;
                     if (colHeader.label != null)
+                    {
+                        if (colHeader.label.text != string.Empty)
+                        {
+                            ci.HeaderMatchesProperty = so.Properties[colHeader.label.text] is not null;
+                        }
+
                         ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(colHeader.label);
+                    }
                 }
 
                 if (ci.alignment == TextAlignment.Undefined)
@@ -187,18 +197,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         token = rowItem.formatTokenList[0];
                     if (token != null)
                     {
-                        FieldPropertyToken fpt = token as FieldPropertyToken;
-                        if (fpt != null)
+                        if (token is FieldPropertyToken fpt)
                         {
                             ci.label = fpt.expression.expressionValue;
                         }
-                        else
+                        else if (token is TextToken tt)
                         {
-                            TextToken tt = token as TextToken;
-                            if (tt != null)
-                            {
-                                ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
-                            }
+                            ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                         }
                     }
                     else
@@ -219,10 +224,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             TableHeaderInfo thi = new TableHeaderInfo();
 
             thi.hideHeader = this.HideHeaders;
+            thi.repeatHeader = this.RepeatHeader;
 
-            for (int k = 0; k < this.activeAssociationList.Count; k++)
+            for (int k = 0; k < _activeAssociationList.Count; k++)
             {
-                MshResolvedExpressionParameterAssociation a = this.activeAssociationList[k];
+                MshResolvedExpressionParameterAssociation a = _activeAssociationList[k];
                 TableColumnInfo ci = new TableColumnInfo();
 
                 // set the label of the column
@@ -233,10 +239,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ci.propertyName = (string)key;
                 }
 
-                if (ci.propertyName == null)
-                {
-                    ci.propertyName = this.activeAssociationList[k].ResolvedExpression.ToString();
-                }
+                ci.propertyName ??= _activeAssociationList[k].ResolvedExpression.ToString();
 
                 // set the width of the table
                 if (a.OriginatingParameter != null)
@@ -391,10 +394,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (matchingRowDefinition == null)
-            {
-                matchingRowDefinition = match.BestMatch as TableRowDefinition;
-            }
+            matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
 
             if (matchingRowDefinition == null)
             {
@@ -412,10 +412,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                     }
 
-                    if (matchingRowDefinition == null)
-                    {
-                        matchingRowDefinition = match.BestMatch as TableRowDefinition;
-                    }
+                    matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
                 }
             }
 
@@ -474,16 +471,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private TableRowEntry GenerateTableRowEntryFromFromProperties(PSObject so, int enumerationLimit)
         {
             TableRowEntry tre = new TableRowEntry();
-            for (int k = 0; k < this.activeAssociationList.Count; k++)
+            for (int k = 0; k < _activeAssociationList.Count; k++)
             {
                 FormatPropertyField fpf = new FormatPropertyField();
                 FieldFormattingDirective directive = null;
-                if (activeAssociationList[k].OriginatingParameter != null)
+                if (_activeAssociationList[k].OriginatingParameter != null)
                 {
-                    directive = activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
+                    directive = _activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
 
-                fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, this.activeAssociationList[k].ResolvedExpression, directive);
+                if (directive is null)
+                {
+                    directive = new FieldFormattingDirective();
+                    directive.isTable = true;
+                }
+
+                fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, _activeAssociationList[k].ResolvedExpression, directive);
                 tre.formatPropertyFieldList.Add(fpf);
             }
 

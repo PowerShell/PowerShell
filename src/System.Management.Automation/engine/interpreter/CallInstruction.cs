@@ -222,7 +222,11 @@ namespace System.Management.Automation.Interpreter
         private static CallInstruction SlowCreate(MethodInfo info, ParameterInfo[] pis)
         {
             List<Type> types = new List<Type>();
-            if (!info.IsStatic) types.Add(info.DeclaringType);
+            if (!info.IsStatic)
+            {
+                types.Add(info.DeclaringType);
+            }
+
             foreach (ParameterInfo pi in pis)
             {
                 types.Add(pi.ParameterType);

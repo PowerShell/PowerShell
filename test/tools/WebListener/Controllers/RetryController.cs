@@ -23,10 +23,7 @@ namespace mvc.Controllers
 
         public JsonResult Retry(string sessionId, int failureCode, int failureCount)
         {
-            if (retryInfo == null)
-            {
-                retryInfo = new Dictionary<string, Tuple<int, int, int>>();
-            }
+            retryInfo ??= new Dictionary<string, Tuple<int, int, int>>();
 
             if (retryInfo.TryGetValue(sessionId, out Tuple<int, int, int> retry))
             {

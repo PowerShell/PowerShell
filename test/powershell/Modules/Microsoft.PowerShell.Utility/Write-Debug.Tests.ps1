@@ -3,8 +3,12 @@
 Describe "Write-Debug tests" -Tags "CI" {
     It "Should not have added line breaks" {
         $text = "0123456789"
-        while ($text.Length -lt [Console]::WindowWidth) {
-            $text += $text
+        try {
+            while ($text.Length -lt [Console]::WindowWidth) {
+                $text += $text
+            }
+        } catch {
+            # Ignore errors if the console doesn't support WindowWidth
         }
         $origDebugPref = $DebugPreference
         $DebugPreference = "Continue"
@@ -29,5 +33,45 @@ Describe "Write-Debug tests" -Tags "CI" {
         $p.Start() | Out-Null
         $out = $p.StandardError.ReadToEnd()
         $out | Should -BeNullOrEmpty
+    }
+
+    It "'-Debug' should not trigger 'ShouldProcess'" {
+        $pwsh = [PowerShell]::Create()
+        $pwsh.AddScript(@'
+function Test-DebugWithConfirm
+{
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Low')]
+    Param ()
+
+    PROCESS
+    {
+        Write-Debug -Message "Debug_Message1"
+        If ($PSCmdlet.ShouldProcess('Doing the thing.','Proceed?','Ready to do the thing.'))
+        {
+            Write-Output 'success'
+        }
+        Write-Debug -Message "Debug_Message2"
+    }
+
+    END {}
+}
+'@)
+        $pwsh.Invoke()
+        $pwsh.Commands.Clear()
+        $pwsh.Streams.ClearStreams()
+
+        try {
+            $result = $pwsh.AddScript("Test-DebugWithConfirm -Debug").Invoke()
+            $result.Count | Should -BeExactly 1
+            $result[0] | Should -BeExactly 'success'
+
+            $pwsh.Streams.Error.Count | Should -BeExactly 0
+            $pwsh.Streams.Debug.Count | Should -BeExactly 2
+            $pwsh.Streams.Debug[0] | Should -BeExactly 'Debug_Message1'
+            $pwsh.Streams.Debug[1] | Should -BeExactly 'Debug_Message2'
+        }
+        finally {
+            $pwsh.Dispose()
+        }
     }
 }

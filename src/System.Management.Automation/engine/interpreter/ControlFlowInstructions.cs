@@ -157,10 +157,7 @@ namespace System.Management.Automation.Interpreter
         {
             get
             {
-                if (s_caches == null)
-                {
-                    s_caches = new Instruction[2][][] { new Instruction[2][], new Instruction[2][] };
-                }
+                s_caches ??= new Instruction[2][][] { new Instruction[2][], new Instruction[2][] };
 
                 return s_caches[ConsumedStack][ProducedStack] ?? (s_caches[ConsumedStack][ProducedStack] = new Instruction[CacheSize]);
             }
@@ -509,7 +506,7 @@ namespace System.Management.Automation.Interpreter
             frame.PopPendingContinuation();
 
             // If _pendingContinuation == -1 then we were getting into the finally block because an exception was thrown
-            // In this case we just return 1, and the the real instruction index will be calculated by GotoHandler later
+            // In this case we just return 1, and the real instruction index will be calculated by GotoHandler later
             if (!frame.IsJumpHappened()) { return 1; }
             // jump to goto target or to the next finally:
             return frame.YieldToPendingContinuation();

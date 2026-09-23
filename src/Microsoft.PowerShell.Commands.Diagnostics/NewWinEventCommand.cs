@@ -317,14 +317,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (_providerMetadata != null)
-                _providerMetadata.Dispose();
+            _providerMetadata?.Dispose();
 
             base.EndProcessing();
         }
     }
 
-    internal class EventWriteException : Exception
+    internal sealed class EventWriteException : Exception
     {
         internal EventWriteException(string msg, Exception innerException)
             : base(msg, innerException)

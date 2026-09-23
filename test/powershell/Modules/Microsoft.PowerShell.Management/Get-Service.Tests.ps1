@@ -82,3 +82,60 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
     { & $script } | Should -Throw -ErrorId $errorid
   }
 }
+
+Describe 'Get-Service Admin tests' -Tag CI,RequireAdminOnWindows {
+  BeforeAll {
+    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+    if ( -not $IsWindows ) {
+        $PSDefaultParameterValues["it:skip"] = $true
+    }
+  }
+  AfterAll {
+      $global:PSDefaultParameterValues = $originalDefaultParameterValues
+  }
+
+  BeforeEach {
+    $serviceParams = @{
+      Name = "PowerShellTest-$([Guid]::NewGuid().Guid)"
+      BinaryPathName = "$env:SystemRoot\System32\cmd.exe"
+      StartupType = 'Manual'
+    }
+    $service = New-Service @serviceParams
+  }
+  AfterEach {
+    $service | Remove-Service
+  }
+
+  It "Ignores invalid description MUI entry" {
+    $serviceRegPath = "HKLM:\SYSTEM\CurrentControlSet\Services\$($service.Name)"
+    Set-ItemProperty -LiteralPath $serviceRegPath -Name Description -Value '@Fake.dll,-0'
+    $actual = Get-Service -Name $service.Name -ErrorAction Stop
+
+    $actual.Name | Should -Be $service.Name
+    $actual.Status | Should -Be Stopped
+    $actual.Description | Should -BeNullOrEmpty
+    $actual.UserName | Should -Be LocalSystem
+    $actual.StartupType | Should -Be Manual
+  }
+
+  It "Ignores no SERVICE_QUERY_CONFIG access" {
+    $sddl = ((sc.exe sdshow $service.Name) -join "").Trim()
+    $sd = ConvertFrom-SddlString -Sddl $sddl
+    $sd.RawDescriptor.DiscretionaryAcl.AddAccess(
+      [System.Security.AccessControl.AccessControlType]::Deny,
+      [System.Security.Principal.WindowsIdentity]::GetCurrent().User,
+      0x1,  # SERVICE_QUERY_CONFIG
+      [System.Security.AccessControl.InheritanceFlags]::None,
+      [System.Security.AccessControl.PropagationFlags]::None)
+    $newSddl = $sd.RawDescriptor.GetSddlForm([System.Security.AccessControl.AccessControlSections]::All)
+    $null = sc.exe sdset $service.Name $newSddl
+
+    $actual = Get-Service -Name $service.Name -ErrorAction Stop
+
+    $actual.Name | Should -Be $service.Name
+    $actual.Status | Should -Be Stopped
+    $actual.Description | Should -BeNullOrEmpty
+    $actual.UserName | Should -BeNullOrEmpty
+    $actual.StartupType | Should -Be InvalidValue
+  }
+}

@@ -86,6 +86,11 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $outputFilePath = Join-Path $TestDrive "PowerShell_transcript*"
         ValidateTranscription -scriptToExecute $script -outputFilePath $outputFilePath
     }
+    It "Should create Transcript file with 'Transcript' preference variable" {
+        # Casting to PSObject is necessary because Set-Variable does not automatically wrap the value in a PSObject
+        $script = "Set-Variable -Scope Global -Name Transcript -Value ([PSObject]'$transcriptFilePath'); Start-Transcript"
+        ValidateTranscription -scriptToExecute $script -outputFilePath $transcriptFilePath
+    }
     It "Should Append Transcript data in existing file if 'Append' parameter is used with Path parameter" {
         $script = "Start-Transcript -path $transcriptFilePath -Append"
         ValidateTranscription -scriptToExecute $script -outputFilePath $transcriptFilePath -append
@@ -187,9 +192,10 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
     It "Transcription should not record Write-Information output when InformationAction is set to SilentlyContinue" {
         [String]$message = New-Guid
+        $traceData = Join-Path $TESTDRIVE tracedata.txt
         $script = {
             Start-Transcript -Path $transcriptFilePath
-            Write-Information -Message $message -InformationAction SilentlyContinue
+            Trace-Command -File $traceData -Name param* { Write-Information -Message $message -InformationAction SilentlyContinue }
             Stop-Transcript
         }
 
@@ -197,7 +203,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
-        $transcriptFilePath | Should -Not -FileContentMatch $message
+        $transcriptFilePath | Should -Not -FileContentMatch $message -Because (get-content $transcriptFilePath,$traceData)
     }
 
     It "Transcription should not record Write-Information output when InformationAction is set to Ignore" {

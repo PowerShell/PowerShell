@@ -29,36 +29,36 @@ namespace Microsoft.PowerShell.Cmdletization
 
         static ScriptWriter()
         {
-            //
-            // XmlReaderSettings
-            //
-            ScriptWriter.s_xmlReaderSettings = new XmlReaderSettings();
-            // general settings
-            ScriptWriter.s_xmlReaderSettings.CheckCharacters = true;
-            ScriptWriter.s_xmlReaderSettings.CloseInput = false;
-            ScriptWriter.s_xmlReaderSettings.ConformanceLevel = ConformanceLevel.Document;
-            ScriptWriter.s_xmlReaderSettings.IgnoreComments = true;
-            ScriptWriter.s_xmlReaderSettings.IgnoreProcessingInstructions = true;
-            ScriptWriter.s_xmlReaderSettings.IgnoreWhitespace = false;
-            ScriptWriter.s_xmlReaderSettings.MaxCharactersFromEntities = 16384; // generous guess for the upper bound
-            ScriptWriter.s_xmlReaderSettings.MaxCharactersInDocument = 128 * 1024 * 1024; // generous guess for the upper bound
+            s_xmlReaderSettings = new XmlReaderSettings()
+            {
+                CheckCharacters = true,
+                CloseInput = false,
+                ConformanceLevel = ConformanceLevel.Document,
+                IgnoreComments = true,
+                IgnoreProcessingInstructions = true,
+                IgnoreWhitespace = false,
 
-#if CORECLR // The XML Schema file 'cmdlets-over-objects.xsd' is missing in Github, and it's likely the resource string
-            // 'CmdletizationCoreResources.Xml_cmdletsOverObjectsXsd' needs to be reworked to work in .NET Core.
-            ScriptWriter.s_xmlReaderSettings.DtdProcessing = DtdProcessing.Ignore;
-#else
-            ScriptWriter.s_xmlReaderSettings.DtdProcessing = DtdProcessing.Parse; // Allowing DTD parsing with limits of MaxCharactersFromEntities/MaxCharactersInDocument
-            ScriptWriter.s_xmlReaderSettings.XmlResolver = null; // do not fetch external documents
-            // xsd schema related settings
-            ScriptWriter.s_xmlReaderSettings.ValidationFlags = XmlSchemaValidationFlags.ProcessIdentityConstraints |
-                                                XmlSchemaValidationFlags.ReportValidationWarnings;
-            ScriptWriter.s_xmlReaderSettings.ValidationType = ValidationType.Schema;
-            string cmdletizationXsd = CmdletizationCoreResources.Xml_cmdletsOverObjectsXsd;
-            XmlReader cmdletizationSchemaReader = XmlReader.Create(new StringReader(cmdletizationXsd), ScriptWriter.s_xmlReaderSettings);
-            ScriptWriter.s_xmlReaderSettings.Schemas = new XmlSchemaSet();
-            ScriptWriter.s_xmlReaderSettings.Schemas.Add(null, cmdletizationSchemaReader);
-            ScriptWriter.s_xmlReaderSettings.Schemas.XmlResolver = null; // do not fetch external documents
-#endif
+                // Generous guess for the upper bound.
+                MaxCharactersFromEntities = 16384,
+                // Generous guess for the upper bound.
+                MaxCharactersInDocument = 128 * 1024 * 1024,
+
+                // Allowing DTD parsing with limits of MaxCharactersFromEntities/MaxCharactersInDocument.
+                DtdProcessing = DtdProcessing.Parse,
+                // Do not fetch external documents
+                XmlResolver = null,
+
+                // xsd schema related settings
+                ValidationFlags = XmlSchemaValidationFlags.ProcessIdentityConstraints | XmlSchemaValidationFlags.ReportValidationWarnings,
+                ValidationType = ValidationType.Schema,
+            };
+
+            using Stream xsdStream = typeof(ScriptWriter).Assembly.GetManifestResourceStream("cmdlets-over-objects.xsd");
+            XmlReader cmdletizationSchemaReader = XmlReader.Create(xsdStream, s_xmlReaderSettings);
+
+            s_xmlReaderSettings.Schemas = new XmlSchemaSet();
+            s_xmlReaderSettings.Schemas.Add(null, cmdletizationSchemaReader);
+            s_xmlReaderSettings.Schemas.XmlResolver = null; // do not fetch external documents
         }
 
         #endregion Static code reused for reading cmdletization xml
@@ -100,14 +100,12 @@ namespace Microsoft.PowerShell.Cmdletization
             }
             catch (InvalidOperationException e)
             {
-                XmlSchemaException schemaException = e.InnerException as XmlSchemaException;
-                if (schemaException != null)
+                if (e.InnerException is XmlSchemaException schemaException)
                 {
                     throw new XmlException(schemaException.Message, schemaException, schemaException.LineNumber, schemaException.LinePosition);
                 }
 
-                XmlException xmlException = e.InnerException as XmlException;
-                if (xmlException != null)
+                if (e.InnerException is XmlException xmlException)
                 {
                     throw xmlException;
                 }
@@ -249,7 +247,7 @@ function __cmdletization_BindCommonParameters
                     ? ("'" + CodeGeneration.EscapeSingleQuotedStringContent(cmdletMetadata.Obsolete.Message) + "'")
                     : string.Empty;
                 string newline = (attributes.Length > 0) ? Environment.NewLine : string.Empty;
-                attributes.AppendFormat(CultureInfo.InvariantCulture, "{0}[Obsolete({1})]", newline, obsoleteMsg);
+                attributes.Append(CultureInfo.InvariantCulture, $"{newline}[Obsolete({obsoleteMsg})]");
             }
 
             return attributes.ToString();
@@ -517,13 +515,53 @@ function __cmdletization_BindCommonParameters
             Dbg.Assert(typeMetadata != null, "Caller should verify typeMetadata != null");
 
             string psTypeText;
-            List<EnumMetadataEnum> matchingEnums = (_cmdletizationMetadata.Enums ?? Enumerable.Empty<EnumMetadataEnum>())
-                .Where(e => Regex.IsMatch(
-                    typeMetadata.PSType,
-                    string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", Regex.Escape(e.EnumName)),
-                    RegexOptions.CultureInvariant))
-                .ToList();
-            EnumMetadataEnum matchingEnum = matchingEnums.Count == 1 ? matchingEnums[0] : null;
+            EnumMetadataEnum matchingEnum = null;
+
+            if (_cmdletizationMetadata.Enums is not null)
+            {
+                string psType = typeMetadata.PSType;
+                foreach (EnumMetadataEnum e in _cmdletizationMetadata.Enums)
+                {
+                    int index = psType.IndexOf(e.EnumName, StringComparison.Ordinal);
+                    if (index == -1)
+                    {
+                        // Fast return if 'PSType' doesn't contain the enum name at all.
+                        continue;
+                    }
+
+                    bool matchFound = false;
+                    if (index == 0)
+                    {
+                        // Handle 2 common cases here (cover over 99% of how enum name is used in 'PSType'):
+                        //  - 'PSType' is exactly the enum name.
+                        //  - 'PSType' is the array format of the enum.
+                        ReadOnlySpan<char> remains = psType.AsSpan(e.EnumName.Length);
+                        matchFound = remains.Length is 0 || remains.Equals("[]", StringComparison.Ordinal);
+                    }
+
+                    if (!matchFound)
+                    {
+                        // Now we have to fall back to the expensive regular expression matching, because 'PSType'
+                        // could be a composite type like 'Nullable<enum_name>' or 'Dictionary<enum_name, object>',
+                        // but we don't want the case where the enum name is part of another type's name.
+                        matchFound = Regex.IsMatch(psType, $@"\b{Regex.Escape(e.EnumName)}\b");
+                    }
+
+                    if (matchFound)
+                    {
+                        if (matchingEnum is null)
+                        {
+                            matchingEnum = e;
+                            continue;
+                        }
+
+                        // If more than one matching enum names were found, we treat it as no match found.
+                        matchingEnum = null;
+                        break;
+                    }
+                }
+            }
+
             if (matchingEnum != null)
             {
                 psTypeText = typeMetadata.PSType.Replace(matchingEnum.EnumName, EnumWriter.GetEnumFullName(matchingEnum));
@@ -788,8 +826,7 @@ function __cmdletization_BindCommonParameters
         private CommandMetadata GetCommandMetadata(CommonCmdletMetadata cmdletMetadata)
         {
             string defaultParameterSetName = null;
-            StaticCmdletMetadataCmdletMetadata staticCmdletMetadata = cmdletMetadata as StaticCmdletMetadataCmdletMetadata;
-            if (staticCmdletMetadata != null)
+            if (cmdletMetadata is StaticCmdletMetadataCmdletMetadata staticCmdletMetadata)
             {
                 if (!string.IsNullOrEmpty(staticCmdletMetadata.DefaultCmdletParameterSet))
                 {
@@ -1162,7 +1199,11 @@ function __cmdletization_BindCommonParameters
                             MultiplyParameterSets(
                                 GetMethodParameterSet(method), StaticMethodParameterSetTemplate, commonParameterSets))
                     {
-                        if (!firstParameterSet) output.Write(", ");
+                        if (!firstParameterSet)
+                        {
+                            output.Write(", ");
+                        }
+
                         firstParameterSet = false;
                         output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                     }
@@ -1313,7 +1354,11 @@ function __cmdletization_BindCommonParameters
             bool firstParameterSet = true;
             foreach (string parameterSetName in MultiplyParameterSets(GetMethodParameterSet(method), InstanceMethodParameterSetTemplate, commonParameterSets, queryParameterSets))
             {
-                if (!firstParameterSet) output.Write(", ");
+                if (!firstParameterSet)
+                {
+                    output.Write(", ");
+                }
+
                 firstParameterSet = false;
                 output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
             }
@@ -1455,7 +1500,11 @@ function __cmdletization_BindCommonParameters
             foreach (string queryParameterSetName in cmdletParameterMetadata.ParameterSets.Keys)
                 foreach (string parameterSetName in MultiplyParameterSets(queryParameterSetName, InstanceQueryParameterSetTemplate, commonParameterSets, methodParameterSets))
                 {
-                    if (!firstParameterSet) output.Write(", ");
+                    if (!firstParameterSet)
+                    {
+                        output.Write(", ");
+                    }
+
                     firstParameterSet = false;
                     output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                 }

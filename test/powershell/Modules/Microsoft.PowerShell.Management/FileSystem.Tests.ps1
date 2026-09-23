@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
+
 Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     BeforeAll {
         $testDir = "TestDir"
@@ -187,6 +190,39 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $e.Exception | Should -BeOfType System.IO.IOException
         }
 
+        It 'Verify Move-Item fails for destination that is subdir of source with trailing: <trailingChar>' -TestCases @(
+            @{ trailingChar = [System.IO.Path]::DirectorySeparatorChar }
+            @{ trailingChar = [System.IO.Path]::AltDirectorySeparatorChar }
+            @{ trailingChar = '' }
+        ) {
+            param($trailingChar)
+
+            $dest = Join-Path -Path $TestDrive -ChildPath dest
+            $null = New-item -ItemType Directory -Path $dest -Force -ErrorAction Stop
+            $src = "$TestDrive$trailingChar"
+
+            { Move-Item -Path $src -Destination $dest -ErrorAction Stop } | Should -Throw -ErrorId 'MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand'
+        }
+
+        It 'Verify Move-Item fails when destination is same as source w/wo directory separator: <source>' -TestCases @(
+            @{ source = './Empty/' }
+            @{ source = './Empty' }
+            @{ source = '.\Empty\' }
+            @{ source = '.\Empty' }
+        ) {
+            param($source)
+
+            try {
+                Push-Location $TestDrive
+                New-Item -ItemType Directory -Path 'Empty'
+                { Move-Item -Path $source -ErrorAction Stop } | Should -Throw -ErrorId 'MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand'
+            }
+            finally {
+                Pop-Location
+                Remove-Item 'Empty' -Force
+            }
+        }
+
         It "Verify Move-Item throws correct error for non-existent source" {
             { Move-Item -Path /does/not/exist -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand'
         }
@@ -303,6 +339,12 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 Remove-Item -Path $testPath -Recurse -Force -ErrorAction SilentlyContinue
             }
          }
+
+         It "Copy-Item can copy 0 byte length file" {
+            $zeroLengthFile = New-Item -Path (Join-Path $TestDrive "zeroLengthFile.txt") -ItemType File -Force
+            Copy-Item -Path $zeroLengthFile -Destination "$TestDrive\zeroLengthFile2.txt" -Force
+            "$TestDrive\zeroLengthFile2.txt" | Should -Exist
+         }
     }
 
     Context "Validate behavior when access is denied" {
@@ -334,6 +376,10 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             @{cmdline = "Move-Item -Path $protectedPath -Destination bar -ErrorAction Stop"; expectedError = $fqaccessdenied}
         ) {
             param ($cmdline, $expectedError)
+
+            if (Test-IsElevated) {
+                Set-ItResult -Skipped -Because "Process must NOT be elevated"
+            }
 
             $scriptBlock = [scriptblock]::Create($cmdline)
             $scriptBlock | Should -Throw -ErrorId $expectedError
@@ -505,6 +551,43 @@ Describe "Handling of globbing patterns" -Tags "CI" {
             Test-Path -LiteralPath $testPath2 | Should -BeTrue
         }
     }
+
+    Context "Device paths" {
+        # The globber is overly greedy somewhere so you need to escape the escape backtick to preserve the question mark issue https://github.com/PowerShell/PowerShell/issues/19627
+        It "Handle device paths: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\${env:SystemDrive}\" }
+            @{ path = "\\.\${env:SystemDrive}\*" }
+            @{ path = "\\``?\${env:SystemDrive}\" }
+            @{ path = "\\``?\${env:SystemDrive}\*" }
+        ) {
+            param($path)
+            $expected = Get-ChildItem -Path ${env:SystemDrive}\
+            $result = Get-ChildItem -Path $path
+            $result.Count | Should -Be $expected.Count
+        }
+
+        It "Handle folders within a device path: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\${env:SystemRoot}\" }
+            @{ path = "\\.\${env:SystemRoot}\*" }
+            @{ path = "\\``?\${env:SystemRoot}\" }
+            @{ path = "\\``?\${env:SystemRoot}\*" }
+        ) {
+            param($path)
+            $expected = Get-ChildItem -Path ${env:SystemRoot}
+            $result = Get-ChildItem -Path $path
+            $result.Count | Should -Be $expected.Count
+        }
+
+        It "Fails for invalid device path: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\INVALID0\" }
+            @{ path = "\\``?\INVALID0\" }
+            # @{ path = "\\.\INVALID0\*" }  // problem in globber where this fails but is ignored issue https://github.com/PowerShell/PowerShell/issues/19626
+            # @{ path = "\\``?\INVALID0\*" }
+        ) {
+            param($path)
+            { Get-ChildItem -Path $path -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand'
+        }
+    }
 }
 
 Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows" {
@@ -522,10 +605,12 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             }
         }
 
-        $realFile = Join-Path $TestPath "file.txt"
+        # Ensure that the file link can still be successfully created when the target file/directory name contains wildcards.
+        $realFile = Join-Path $TestPath "[file].txt"
         $nonFile = Join-Path $TestPath "not-a-file"
         $fileContent = "some text"
-        $realDir = Join-Path $TestPath "subdir"
+        $realDir = Join-Path $TestPath "[subdir]"
+        $realDir2 = Join-Path $TestPath "[second-subdir]"
         $nonDir = Join-Path $TestPath "not-a-dir"
         $hardLinkToFile = Join-Path $TestPath "hard-to-file.txt"
         $symLinkToFile = Join-Path $TestPath "sym-link-to-file.txt"
@@ -536,9 +621,15 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
 
         New-Item -ItemType File -Path $realFile -Value $fileContent > $null
         New-Item -ItemType Directory -Path $realDir > $null
+        New-Item -ItemType Directory -Path $realDir2 > $null
     }
 
     Context "New-Item and hard/symbolic links" {
+        AfterEach {
+            # clean up created links after each test
+            Remove-Item -Exclude (Split-Path -Leaf ([WildcardPattern]::Escape($realFile)), ([WildcardPattern]::Escape($realDir)), ([WildcardPattern]::Escape($realDir2))) -Recurse $TestPath/*
+        }
+
         It "New-Item can create a hard link to a file" {
             New-Item -ItemType HardLink -Path $hardLinkToFile -Value $realFile > $null
             Test-Path $hardLinkToFile | Should -BeTrue
@@ -549,7 +640,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         It "New-Item can create symbolic link to file" {
             New-Item -ItemType SymbolicLink -Path $symLinkToFile -Value $realFile > $null
             Test-Path $symLinkToFile | Should -BeTrue
-            $real = Get-Item -Path $realFile
+            $real = Get-Item -LiteralPath $realFile
             $link = Get-Item -Path $symLinkToFile
             $link.LinkType | Should -BeExactly "SymbolicLink"
             $link.Target | Should -BeExactly $real.ToString()
@@ -568,7 +659,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         It "New-Item can create a symbolic link to a directory" -Skip:($IsWindows) {
             New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir > $null
             Test-Path $symLinkToDir | Should -BeTrue
-            $real = Get-Item -Path $realDir
+            $real = Get-Item -LiteralPath $realDir
             $link = Get-Item -Path $symLinkToDir
             $link.LinkType | Should -BeExactly "SymbolicLink"
             $link.Target | Should -BeExactly $real.ToString()
@@ -576,15 +667,80 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         It "New-Item can create a directory symbolic link to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir > $null
             Test-Path $symLinkToDir | Should -BeTrue
-            $real = Get-Item -Path $realDir
+            $real = Get-Item -LiteralPath $realDir
             $link = Get-Item -Path $symLinkToDir
             $link | Should -BeOfType System.IO.DirectoryInfo
             $link.LinkType | Should -BeExactly "SymbolicLink"
             $link.Target | Should -BeExactly $real.ToString()
         }
+
+        It "New-Item can create a directory symbolic link to a directory using a relative path" -Skip:(-Not $IsWindows) {
+            $target = Split-Path -Leaf $realDir
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $target > $null
+            Test-Path $symLinkToDir | Should -BeTrue
+            $real = Get-Item -LiteralPath $realDir
+            $link = Get-Item -Path $symLinkToDir
+            $link | Should -BeOfType System.IO.DirectoryInfo
+            $link.LinkType | Should -BeExactly "SymbolicLink"
+            $link.ResolvedTarget | Should -BeExactly $real.ToString()
+            $link.Target | Should -BeExactly $target
+        }
+
+        It "New-Item can create a directory symbolic link to a directory using a relative path with .\" -Skip:(-Not $IsWindows) {
+            $target = ".\$(Split-Path -Leaf $realDir)"
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $target > $null
+            Test-Path $symLinkToDir | Should -BeTrue
+            $real = Get-Item -LiteralPath $realDir
+            $link = Get-Item -Path $symLinkToDir
+            $link | Should -BeOfType System.IO.DirectoryInfo
+            $link.LinkType | Should -BeExactly "SymbolicLink"
+            $link.ResolvedTarget | Should -BeExactly $real.ToString()
+            $link.Target | Should -BeExactly $target
+        }
+
         It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
             Test-Path $junctionToDir | Should -BeTrue
+        }
+
+        It 'New-Item fails creating junction with relative path' -Skip:(!$IsWindows) {
+            try {
+                Push-Location $TestDrive
+                1 > 1.txt
+                { New-Item -ItemType Junction -Path 2.txt -Target 1.txt -ErrorAction Stop } | Should -Throw -ErrorId "NotAbsolutePath,Microsoft.PowerShell.Commands.NewItemCommand"
+            }
+            finally {
+                Pop-Location
+            }
+        }
+
+        It 'New-Item can create hardlink with relative path' {
+            try {
+                Push-Location $TestDrive
+                1 > 1.txt
+                New-Item -ItemType HardLink -Path 2.txt -Target 1.txt -ErrorAction Stop
+                $hl = Get-Item -Path .\2.txt -ErrorAction Stop
+                $hl.LinkType | Should -BeExactly "HardLink"
+            }
+            finally {
+                Pop-Location
+            }
+        }
+
+        It 'New-Item will fail to forcibly create hardlink to itself' {
+            $i = New-Item -ItemType File -Path "$TestDrive\file.txt" -Force -ErrorAction Ignore
+            { New-Item -ItemType HardLink -Path $i -Target $i -Force -ErrorAction Stop } | Should -Throw -ErrorId "TargetIsSameAsLink,Microsoft.PowerShell.Commands.NewItemCommand"
+        }
+
+        It "New-Item -Force can overwrite a junction" -Skip:(-Not $IsWindows){
+            $rd2 = Get-Item -LiteralPath $realDir2
+            New-Item -Name testfile.txt -ItemType file -Path ([WildcardPattern]::Escape($realDir))
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
+            Test-Path $junctionToDir | Should -BeTrue
+            { New-Item -ItemType Junction -Path $junctionToDir -Value $realDir -ErrorAction Stop > $null } | Should -Throw -ErrorId "DirectoryNotEmpty,Microsoft.PowerShell.Commands.NewItemCommand"
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir2 -Force > $null
+            $Junction = Get-Item -Path $junctionToDir
+            $Junction.Target | Should -BeExactly $rd2.ToString()
         }
     }
 
@@ -724,7 +880,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
 
                 Remove-Item -Path $Link -ErrorAction SilentlyContinue > $null
                 Test-Path -Path $Link | Should -BeFalse
-                Test-Path -Path $Target | Should -BeTrue
+                Test-Path -LiteralPath $Target | Should -BeTrue
             }
         }
 
@@ -771,6 +927,42 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $childB.Count | Should -Be 1
             $childB.Count | Should -BeExactly $childA.Count
             $childB.Name | Should -BeExactly $childA.Name
+        }
+    }
+
+    Context "Show immediate target" {
+        BeforeAll {
+            $testDir = Join-Path $TestDrive "immediate-target"
+            New-Item -ItemType Directory $testDir > $null
+
+            $testFile = Join-Path $testDir "target"
+            Set-Content -Path $testFile -Value "Hello world"
+
+            Push-Location $testDir
+            New-Item -ItemType SymbolicLink -Path 'firstLink' -Value 'target' > $null
+            New-Item -ItemType SymbolicLink -Path 'secondLink' -Value 'firstLink' > $null
+            Pop-Location
+        }
+
+        AfterAll {
+            Remove-Item $testDir -Recurse -Force
+        }
+
+        It "Property 'Target' should show the immediate target" {
+            $firstLink = Get-Item (Join-Path $testDir 'firstLink')
+            $firstLink.Target | Should -BeExactly 'target'
+            $str = [Microsoft.PowerShell.Commands.FileSystemProvider]::NameString($firstLink)
+            [System.Management.Automation.Internal.StringDecorated]::new($str).ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'firstLink -> target'
+
+            $secondLink = Get-Item (Join-Path $testDir 'secondLink')
+            $secondLink.Target | Should -BeExactly 'firstLink'
+            $str = [Microsoft.PowerShell.Commands.FileSystemProvider]::NameString($secondLink)
+            [System.Management.Automation.Internal.StringDecorated]::new($str).ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'secondLink -> firstLink'
+        }
+
+        It "Get-Content should be able to resolve the final target" {
+            Get-Content (Join-Path $testDir 'firstLink') | Should -BeExactly "Hello world"
+            Get-Content (Join-Path $testDir 'secondLink') | Should -BeExactly "Hello world"
         }
     }
 }
@@ -1012,6 +1204,20 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             New-Item -Path . -ItemType Directory -Name $testDir > $null
             $result = New-Item -Path . -ItemType Directory -Name $testDir -Force #would normally fail without force
             $result.Name | Should -BeExactly $testDir
+        }
+
+        It "Verify Directory creation when path relative to current PSDrive is empty" {
+            try {
+                $rootDir = New-Item "NewDirectory" -ItemType Directory -Force
+                $rootPath = $rootDir.FullName
+                $newPSDrive = New-PSDrive -Name "NewPSDrive" -PSProvider FileSystem -Root $rootPath
+
+                $result = New-Item -Path "NewPSDrive:\" -ItemType Directory -Force
+                $result.FullName.TrimEnd("/\") | Should -BeExactly $newPSDrive.Root
+            }
+            finally {
+                Remove-PSDrive -Name "NewPSDrive" -Force -ErrorAction SilentlyContinue
+            }
         }
 
         It "Verify File + Value" {
@@ -1483,6 +1689,9 @@ Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
     }
 
     It "Access-denied test for removing a folder" -Skip:(-not $IsWindows) {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "runas.exe /trustlevel:0x20000 is not supported on ARM64"
+        }
 
         # The expected error is returned when there is a empty directory with the user does not have authorization to is deleted.
         # It cannot have 'System. 'Hidden' or 'ReadOnly' attribute as well as -Force should not be used.

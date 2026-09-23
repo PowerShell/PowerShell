@@ -28,10 +28,9 @@ Describe "Tab completion bug fix" -Tags "CI" {
     It "Issue#1345 - 'Import-Module -n<tab>' should work" {
         $cmd = "Import-Module -n"
         $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-        $result.CompletionMatches | Should -HaveCount 3
+        $result.CompletionMatches | Should -HaveCount 2
         $result.CompletionMatches[0].CompletionText | Should -BeExactly "-Name"
         $result.CompletionMatches[1].CompletionText | Should -BeExactly "-NoClobber"
-        $result.CompletionMatches[2].CompletionText | Should -BeExactly "-NoOverwrite"
     }
 
     It "Issue#11227 - [CompletionCompleters]::CompleteVariable and [CompletionCompleters]::CompleteType should work" {
@@ -42,6 +41,28 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result = [System.Management.Automation.CompletionCompleters]::CompleteVariable("errorAction")
         $result.Count | Should -BeExactly 1
         $result[0].CompletionText | Should -BeExactly '$ErrorActionPreference'
+    }
+
+    It "Issue#24756 - Wildcard completions should not return early due to missing results in one container" -Skip:(!$IsWindows) {
+        try
+        {
+            $keys = New-Item -Path @(
+                'HKCU:\AB1'
+                'HKCU:\AB2'
+                'HKCU:\AB2\Test'
+            )
+
+            $res = TabExpansion2 -inputScript 'Get-ChildItem -Path HKCU:\AB?\'
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "HKCU:\AB2\Test"
+        }
+        finally
+        {
+            if ($keys)
+            {
+                Remove-Item -Path HKCU:\AB? -Recurse -ErrorAction SilentlyContinue
+            }
+        }
     }
 
     Context "Issue#3416 - 'Select-Object'" {
@@ -85,8 +106,193 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result.CurrentMatchIndex | Should -Be -1
         $result.ReplacementIndex | Should -Be 40
         $result.ReplacementLength | Should -Be 0
-        $result.CompletionMatches[0].CompletionText | Should -BeExactly 'Expression'
-        $result.CompletionMatches[1].CompletionText | Should -BeExactly 'Ascending'
-        $result.CompletionMatches[2].CompletionText | Should -BeExactly 'Descending'
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly 'Ascending'
+        $result.CompletionMatches[1].CompletionText | Should -BeExactly 'Descending'
+    }
+
+    It "Issue#19912 - Tab completion should not crash" {
+        $ISS = [initialsessionstate]::CreateDefault()
+        $Runspace = [runspacefactory]::CreateRunspace($ISS)
+        $Runspace.Open()
+        $OldRunspace = [runspace]::DefaultRunspace
+        try
+        {
+            [runspace]::DefaultRunspace = $Runspace
+            {[System.Management.Automation.CommandCompletion]::CompleteInput('Get-', 3, $null)} | Should -Not -Throw
+        }
+        finally
+        {
+            [runspace]::DefaultRunspace = $OldRunspace
+            $Runspace.Dispose()
+        }
+    }
+
+    It "Issue#26277 - [CompletionCompleters]::CompleteFilename('') should work" {
+        $testDir = Join-Path $TestDrive "TempTestDir"
+        $file1 = Join-Path $testDir "abc.ps1"
+        $file2 = Join-Path $testDir "def.py"
+
+        New-Item -ItemType Directory -Path $testDir > $null
+        New-Item -ItemType File -Path $file1 > $null
+        New-Item -ItemType File -Path $file2 > $null
+
+        try {
+            Push-Location -Path $testDir
+            $result = [System.Management.Automation.CompletionCompleters]::CompleteFilename("")
+            $result | Should -Not -Be $null
+            $result | Measure-Object | ForEach-Object -MemberName Count | Should -Be 2
+
+            $item1, $item2 = @($result)
+            $item1.ListItemText | Should -BeExactly 'abc.ps1'
+            $item2.ListItemText | Should -BeExactly 'def.py'
+        } finally {
+            Pop-Location
+        }
+    }
+
+    Context 'Native CLI argument completion' {
+        BeforeAll {
+            $testDir = Join-Path $TestDrive "TempTestDir"
+            $file1 = Join-Path $testDir "abc.ps1"
+            $file2 = Join-Path $testDir "def.py"
+
+            New-Item -ItemType Directory -Path $testDir > $null
+            New-Item -ItemType File -Path $file1 > $null
+            New-Item -ItemType File -Path $file2 > $null
+
+            $dirSep = [System.IO.Path]::DirectorySeparatorChar
+            $relative_name_abc = ".${dirSep}abc.ps1"
+            $relative_name_def = ".${dirSep}def.py"
+        }
+
+        AfterAll {
+            ## Unregister the completer for 'ping' to avoid affecting other tests.
+            register-ArgumentCompleter -Native -CommandName ping -ScriptBlock $null
+        }
+
+        It 'Completer script block returning nothing should fall back to file name completion' {
+            register-ArgumentCompleter -Native -CommandName ping -ScriptBlock {
+                param($WordToComplete, $CommandAst, $CursorPosition)
+            }
+
+            try {
+                Push-Location -Path $testDir
+                $cmd = "ping "
+                $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+                $result.CompletionMatches | Should -Not -BeNullOrEmpty
+                $result.CompletionMatches.Count | Should -Be 2
+                $result.CompletionMatches[0].CompletionText | Should -BeExactly $relative_name_abc
+                $result.CompletionMatches[1].CompletionText | Should -BeExactly $relative_name_def
+            } finally {
+                Pop-Location
+            }
+        }
+
+        It 'Completer script block returning $null should suppress default completion fallback' {
+            register-ArgumentCompleter -Native -CommandName ping -ScriptBlock {
+                param($WordToComplete, $CommandAst, $CursorPosition)
+                return $null
+            }
+
+            try {
+                Push-Location -Path $testDir
+                $cmd = "ping "
+                ## This call should not throw, and should suppress the default file name completion fallback, returning no results.
+                $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+                $result.CompletionMatches.Count | Should -Be 0
+            } finally {
+                Pop-Location
+            }
+        }
+
+        It 'Completer script block returning empty string should suppress default completion fallback' {
+            register-ArgumentCompleter -Native -CommandName ping -ScriptBlock {
+                param($WordToComplete, $CommandAst, $CursorPosition)
+                return ''
+            }
+
+            try {
+                Push-Location -Path $testDir
+                $cmd = "ping "
+                ## This call should not throw, and should suppress the default file name completion fallback, returning no results.
+                $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+                $result.CompletionMatches.Count | Should -Be 0
+            } finally {
+                Pop-Location
+            }
+        }
+
+        It 'Completer script block returning empty-string-only array should fall back to default completion' {
+            register-ArgumentCompleter -Native -CommandName ping -ScriptBlock {
+                param($WordToComplete, $CommandAst, $CursorPosition)
+                return '', ''
+            }
+
+            try {
+                Push-Location -Path $testDir
+                $cmd = "ping "
+                ## This call should not throw, and should fall back to the default completion.
+                $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+                $result.CompletionMatches.Count | Should -Be 2
+                $result.CompletionMatches[0].CompletionText | Should -BeExactly $relative_name_abc
+                $result.CompletionMatches[1].CompletionText | Should -BeExactly $relative_name_def
+            } finally {
+                Pop-Location
+            }
+        }
+
+        It 'Completer script block returning null-value-only array should fall back to default completion' {
+            register-ArgumentCompleter -Native -CommandName ping -ScriptBlock {
+                param($WordToComplete, $CommandAst, $CursorPosition)
+                return $null, $null
+            }
+
+            try {
+                Push-Location -Path $testDir
+                $cmd = "ping "
+                ## This call should not throw, and should fall back to the default completion.
+                $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+                $result.CompletionMatches.Count | Should -Be 2
+                $result.CompletionMatches[0].CompletionText | Should -BeExactly $relative_name_abc
+                $result.CompletionMatches[1].CompletionText | Should -BeExactly $relative_name_def
+            } finally {
+                Pop-Location
+            }
+        }
+
+        It 'Completer script block returning a single string works as expected' {
+            register-ArgumentCompleter -Native -CommandName ping -ScriptBlock {
+                param($WordToComplete, $CommandAst, $CursorPosition)
+                return 'hello'
+            }
+
+            try {
+                Push-Location -Path $testDir
+                $cmd = "ping "
+                $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+                $result.CompletionMatches.Count | Should -Be 1
+                $result.CompletionMatches[0].CompletionText | Should -BeExactly "hello"
+            } finally {
+                Pop-Location
+            }
+        }
+
+        It 'Completer script block returning an array that contains non-empty-or-null strings works as expected' {
+            register-ArgumentCompleter -Native -CommandName ping -ScriptBlock {
+                param($WordToComplete, $CommandAst, $CursorPosition)
+                return '', 'hello', $null, 'world'
+            }
+
+            try {
+                Push-Location -Path $testDir
+                $cmd = "ping "
+                $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+                $result.CompletionMatches.Count | Should -Be 2
+                $result.CompletionMatches[0].CompletionText | Should -BeExactly "hello"
+                $result.CompletionMatches[1].CompletionText | Should -BeExactly "world"
+            } finally {
+                Pop-Location
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace System.Management.Automation.Runspaces
 {
@@ -46,10 +47,13 @@ namespace System.Management.Automation.Runspaces
                 TableControl.Create()
                     .GroupByProperty("PSParentPath", customControl: sharedControls[0])
                     .AddHeader(Alignment.Left, label: "UnixMode", width: 10)
-                    .AddHeader(Alignment.Left, label: "User", width: 16)
-                    .AddHeader(Alignment.Left, label: "Group", width: 16)
-                    .AddHeader(Alignment.Right, label: "LastWriteTime", width: 18)
-                    .AddHeader(Alignment.Right, label: "Size", width: 14)
+                    .AddHeader(Alignment.Right, label: "User", width: 10)
+                    .AddHeader(Alignment.Left, label: "Group", width: 10)
+                    .AddHeader(
+                        Alignment.Right,
+                        label: "LastWriteTime",
+                        width: String.Format(CultureInfo.CurrentCulture, "{0:d} {0:HH}:{0:mm}", CultureInfo.CurrentCulture.Calendar.MaxSupportedDateTime).Length)
+                    .AddHeader(Alignment.Right, label: "Size", width: 12)
                     .AddHeader(Alignment.Left, label: "Name")
                     .StartRowDefinition(wrap: true)
                         .AddPropertyColumn("UnixMode")

@@ -30,8 +30,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal bool IsFormatInfoData(PSObject so)
         {
-            var fid = PSObject.Base(so) as FormatInfoData;
-            if (fid != null)
+            if (PSObject.Base(so) is FormatInfoData fid)
             {
                 if (fid is FormatStartData ||
                     fid is FormatEndData ||
@@ -55,7 +54,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            if (!(GetProperty(so, FormatInfoData.classidProperty) is string classId))
+            if (GetProperty(so, FormatInfoData.classidProperty) is not string classId)
             {
                 // it's not one of the objects derived from FormatInfoData
                 return false;
@@ -86,8 +85,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>Deserialized object or null.</returns>
         internal object Deserialize(PSObject so)
         {
-            var fid = PSObject.Base(so) as FormatInfoData;
-            if (fid != null)
+            if (PSObject.Base(so) is FormatInfoData fid)
             {
                 if (fid is FormatStartData ||
                     fid is FormatEndData ||
@@ -111,7 +109,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return so;
             }
 
-            if (!(GetProperty(so, FormatInfoData.classidProperty) is string classId))
+            if (GetProperty(so, FormatInfoData.classidProperty) is not string classId)
             {
                 // it's not one of the objects derived from FormatInfoData,
                 // just return it as is
@@ -325,9 +323,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal FormatInfoData DeserializeObject(PSObject so)
         {
             FormatInfoData fid = FormatInfoDataClassFactory.CreateInstance(so, this);
-
-            if (fid != null)
-                fid.Deserialize(so, this);
+            fid?.Deserialize(so, this);
             return fid;
         }
 

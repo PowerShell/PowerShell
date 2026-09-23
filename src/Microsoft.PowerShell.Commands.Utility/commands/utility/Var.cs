@@ -22,6 +22,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
+        [ArgumentCompleter(typeof(ScopeArgumentCompleter))]
         public string Scope { get; set; }
 
         #endregion parameters
@@ -38,10 +39,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = Array.Empty<string>();
-                }
+                value ??= Array.Empty<string>();
 
                 _include = value;
             }
@@ -61,10 +59,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = Array.Empty<string>();
-                }
+                value ??= Array.Empty<string>();
 
                 _exclude = value;
             }
@@ -258,10 +253,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = new string[] { "*" };
-                }
+                value ??= new string[] { "*" };
 
                 _name = value;
             }
@@ -374,6 +366,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.New, "Variable", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097121")]
+    [OutputType(typeof(PSVariable))]
     public sealed class NewVariableCommand : VariableCommandBase
     {
         #region parameters
@@ -700,6 +693,12 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _passThru;
 
+        /// <summary>
+        /// Gets whether we will append to the variable if it exists.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Append { get; set; }
+
         private bool _nameIsFormalParameter;
         private bool _valueIsFormalParameter;
         #endregion parameters
@@ -718,6 +717,33 @@ namespace Microsoft.PowerShell.Commands
             {
                 _valueIsFormalParameter = true;
             }
+
+            if (Append)
+            {
+                // create the list here and add to it if it has a value
+                // but if they have more than one name, produce an error
+                if (Name.Length != 1)
+                {
+                    ErrorRecord appendVariableError = new ErrorRecord(new InvalidOperationException(), "SetVariableAppend", ErrorCategory.InvalidOperation, Name);
+                    appendVariableError.ErrorDetails = new ErrorDetails("SetVariableAppend");
+                    appendVariableError.ErrorDetails.RecommendedAction = VariableCommandStrings.UseSingleVariable;
+                    ThrowTerminatingError(appendVariableError);
+                }
+
+                _valueList = new List<object>();
+                var currentValue = Context.SessionState.PSVariable.Get(Name[0]);
+                if (currentValue is not null)
+                {
+                    if (currentValue.Value is IList<object> ilist)
+                    {
+                        _valueList.AddRange(ilist);
+                    }
+                    else
+                    {
+                        _valueList.Add(currentValue.Value);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -733,6 +759,16 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_nameIsFormalParameter && _valueIsFormalParameter)
             {
+                if (Append)
+                {
+                    if (Value != AutomationNull.Value)
+                    {
+                        _valueList ??= new List<object>();
+
+                        _valueList.Add(Value);
+                    }
+                }
+
                 return;
             }
 
@@ -740,10 +776,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (Value != AutomationNull.Value)
                 {
-                    if (_valueList == null)
-                    {
-                        _valueList = new List<object>();
-                    }
+                    _valueList ??= new List<object>();
 
                     _valueList.Add(Value);
                 }
@@ -766,7 +799,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_valueIsFormalParameter)
                 {
-                    SetVariable(Name, Value);
+                    if (Append)
+                    {
+                        SetVariable(Name, _valueList);
+                    }
+                    else
+                    {
+                        SetVariable(Name, Value);
+                    }
                 }
                 else
                 {
@@ -870,10 +910,7 @@ namespace Microsoft.PowerShell.Commands
                                 newVarValue,
                                 newOptions);
 
-                        if (Description == null)
-                        {
-                            Description = string.Empty;
-                        }
+                        Description ??= string.Empty;
 
                         varToSet.Description = Description;
 
@@ -1102,10 +1139,7 @@ namespace Microsoft.PowerShell.Commands
             // Removal of variables only happens in the local scope if the
             // scope wasn't explicitly specified by the user.
 
-            if (Scope == null)
-            {
-                Scope = "local";
-            }
+            Scope ??= "local";
 
             foreach (string varName in Name)
             {

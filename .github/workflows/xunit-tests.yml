@@ -1,0 +1,56 @@
+name: xUnit Tests (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      runner_os:
+        description: 'Runner OS for xUnit tests'
+        type: string
+        required: false
+        default: ubuntu-latest
+      test_results_artifact_name:
+        description: 'Artifact name for xUnit test results directory'
+        type: string
+        required: false
+        default: testResults-xunit
+
+permissions:
+  contents: read
+
+jobs:
+  xunit:
+    name: Run xUnit Tests
+    runs-on: ${{ inputs.runner_os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 1000
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+        with:
+          global-json-file: ./global.json
+
+      - name: Bootstrap
+        shell: pwsh
+        run: |
+          Import-Module ./tools/ci.psm1
+          Invoke-CIInstall -SkipUser
+          Sync-PSTags -AddRemoteIfMissing
+
+      - name: Build PowerShell and run xUnit tests
+        shell: pwsh
+        run: |
+          Import-Module ./tools/ci.psm1
+          Start-PSBuild
+          Write-Host "Running full xUnit test suite (no skipping)..."
+          Invoke-CIxUnit
+          Write-Host "Completed xUnit test run."
+
+      - name: Upload xUnit results
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: ${{ inputs.test_results_artifact_name }}
+          path: ${{ github.workspace }}/xUnitTestResults.xml

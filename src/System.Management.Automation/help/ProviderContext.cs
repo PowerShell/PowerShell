@@ -141,7 +141,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // ok we have path and valid provider that supplys content..initialize the provider
+            // ok we have path and valid provider that supplies content..initialize the provider
             // and get the help content for the path.
             cmdletProvider.Start(providerInfo, cmdletProviderContext);
             // There should be exactly one resolved path.

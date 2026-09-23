@@ -147,7 +147,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="psObj">PSObject that contains another PSObject as a property.</param>
         /// <param name="psObjectName">Property name that contains the PSObject.</param>
-        /// <param name="propertyName">Property name in thye inner PSObject.</param>
+        /// <param name="propertyName">Property name in the inner PSObject.</param>
         /// <returns>The string from the inner psObject property or null if it could not be retrieved.</returns>
         private static string GetInnerPSObjectPropertyString(PSObject psObj, string psObjectName, string propertyName)
         {
@@ -276,7 +276,7 @@ namespace Microsoft.Management.UI.Internal
             foreach (string line in lines)
             {
                 // Indentation is not localized
-                returnValue.AppendFormat("{0}{1}\r\n", indentString, line);
+                returnValue.Append($"{indentString}{line}\r\n");
             }
 
             if (returnValue.Length > 2)
@@ -369,7 +369,7 @@ namespace Microsoft.Management.UI.Internal
                     continue;
                 }
 
-                string commandStart = string.Format(CultureInfo.CurrentCulture, "{0} ", commandName);
+                string commandStart = string.Create(CultureInfo.CurrentCulture, $"{commandName} ");
                 this.AddText(HelpParagraphBuilder.AddIndent(commandStart), false);
 
                 foreach (object parameterObj in parameterObjs)
@@ -389,7 +389,7 @@ namespace Microsoft.Management.UI.Internal
                         continue;
                     }
 
-                    string parameterType = parameterValue == null ? string.Empty : string.Format(CultureInfo.CurrentCulture, "<{0}>", parameterValue);
+                    string parameterType = parameterValue == null ? string.Empty : string.Create(CultureInfo.CurrentCulture, $"<{parameterValue}>");
 
                     string parameterOptionalOpenBrace, parameterOptionalCloseBrace;
 
@@ -607,7 +607,7 @@ namespace Microsoft.Management.UI.Internal
                             description = GetPropertyString(propertyTypeObject, "description");
                         }
 
-                        memberText = string.Format(CultureInfo.CurrentCulture, " [{0}] {1}\r\n", propertyType, name);
+                        memberText = string.Create(CultureInfo.CurrentCulture, $" [{propertyType}] {name}\r\n");
                     }
                 }
                 else if (string.Equals("method", type, StringComparison.OrdinalIgnoreCase))
@@ -697,7 +697,7 @@ namespace Microsoft.Management.UI.Internal
                             }
                         }
 
-                        string paramString = string.Format(CultureInfo.CurrentCulture, "[{0}] ${1},", parameterType, parameterName);
+                        string paramString = string.Create(CultureInfo.CurrentCulture, $"[{parameterType}] ${parameterName},");
 
                         parameterText.Append(paramString);
                     }
@@ -709,7 +709,7 @@ namespace Microsoft.Management.UI.Internal
                 }
             }
 
-            memberText = string.Format(CultureInfo.CurrentCulture, " [{0}] {1}({2})\r\n", returnType, name, parameterText);
+            memberText = string.Create(CultureInfo.CurrentCulture, $" [{returnType}] {name}({parameterText})\r\n");
         }
 
         /// <summary>

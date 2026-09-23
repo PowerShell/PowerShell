@@ -130,11 +130,8 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (t_messageBuilder == null)
-                {
-                    // NOTE: Thread static fields must be explicitly initialized for each thread.
-                    t_messageBuilder = new StringBuilder(200);
-                }
+                // NOTE: Thread static fields must be explicitly initialized for each thread.
+                t_messageBuilder ??= new StringBuilder(200);
 
                 return t_messageBuilder;
             }
@@ -201,10 +198,7 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (_resourceManager is null)
-                {
-                    _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).Assembly);
-                }
+                _resourceManager ??= new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).Assembly);
 
                 return _resourceManager;
             }
@@ -233,7 +227,7 @@ namespace System.Management.Automation.Tracing
             string value = ResourceManager.GetString(resourceName, Culture);
             if (string.IsNullOrEmpty(value))
             {
-                value = string.Format(CultureInfo.InvariantCulture, "Unknown resource: {0}", resourceName);
+                value = string.Create(CultureInfo.InvariantCulture, $"Unknown resource: {resourceName}");
                 Diagnostics.Assert(false, value);
             }
 
@@ -381,7 +375,7 @@ namespace System.Management.Automation.Tracing
         /// See man 3 syslog for more info.
         /// </summary>
         /// <param name="priority">
-        /// The OR of a priority and facility in the SysLogPriority enum indicating the the priority and facility of the log entry.
+        /// The OR of a priority and facility in the SysLogPriority enum indicating the priority and facility of the log entry.
         /// </param>
         /// <param name="message">The message to put in the log entry.</param>
         [DllImport(libpslnative, CharSet = CharSet.Ansi, EntryPoint = "Native_SysLog")]

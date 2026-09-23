@@ -131,7 +131,10 @@ namespace System.Diagnostics.Eventing
             //
             // check if the object has been already disposed
             //
-            if (_disposed == 1) return;
+            if (_disposed == 1)
+            {
+                return;
+            }
 
             if (Interlocked.Exchange(ref _disposed, 1) != 0)
             {
@@ -291,8 +294,7 @@ namespace System.Diagnostics.Eventing
         {
             dataDescriptor->Reserved = 0;
 
-            string sRet = data as string;
-            if (sRet != null)
+            if (data is string sRet)
             {
                 dataDescriptor->Size = (uint)((sRet.Length + 1) * 2);
                 return sRet;
@@ -437,10 +439,7 @@ namespace System.Diagnostics.Eventing
         {
             int status = 0;
 
-            if (eventMessage == null)
-            {
-                throw new ArgumentNullException(nameof(eventMessage));
-            }
+            ArgumentNullException.ThrowIfNull(eventMessage);
 
             if (IsEnabled(eventLevel, eventKeywords))
             {
@@ -508,10 +507,7 @@ namespace System.Diagnostics.Eventing
         {
             uint status = 0;
 
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
+            ArgumentNullException.ThrowIfNull(data);
 
             if (IsEnabled(eventDescriptor.Level, eventDescriptor.Keywords))
             {

@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NoProcessFoundForGivenName" xml:space="preserve">
+    <value>Nie można odnaleźć procesu o nazwie „{0}”. Sprawdź nazwę procesu i ponownie wywołaj polecenie cmdlet.</value>
+  </data>
+  <data name="RecommendIdTagForGivenName" xml:space="preserve">
+    <value>Nie można odnaleźć procesu o nazwie „{0}”. Spróbuj uruchomić polecenie z identyfikatorem -Id, aby wyszukać według identyfikatora procesów.</value>
+  </data>
+  <data name="NoDebuggerFound" xml:space="preserve">
+    <value>Nie można uruchomić tego polecenia, ponieważ nie można dołączyć debugera do procesu „{0} ({1})”. Określ inny proces i uruchom polecenie.</value>
+  </data>
+  <data name="NoProcessFoundForGivenId" xml:space="preserve">
+    <value>Nie można odnaleźć procesu o identyfikatorze procesu {1}.</value>
+  </data>
+  <data name="CouldNotStopProcess" xml:space="preserve">
+    <value>Nie można zatrzymać procesu „{0} ({1})” z powodu następującego błędu: {2}</value>
+  </data>
+  <data name="ProcessNameForConfirmation" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="StartProcessTarget" xml:space="preserve">
+    <value>{0} {1}</value>
+  </data>
+  <data name="CouldNotEnumerateModules" xml:space="preserve">
+    <value>Nie można wyliczyć modułów procesu „{0}”.</value>
+  </data>
+  <data name="CouldNotEnumerateFileVer" xml:space="preserve">
+    <value>Nie można wyliczyć informacji o wersji pliku procesu „{0}”.</value>
+  </data>
+  <data name="CouldNotEnumerateModuleFileVer" xml:space="preserve">
+    <value>Nie można wyliczyć modułów i informacji o wersji pliku procesu „{0}”.</value>
+  </data>
+  <data name="ConfirmStopProcess" xml:space="preserve">
+    <value>Czy na pewno chcesz wykonać operację zatrzymania procesu na następującym elemencie: {0}({1})?</value>
+  </data>
+  <data name="UseShell" xml:space="preserve">
+    <value>Określona ścieżka nie jest prawidłową aplikacją win32. Spróbuj ponownie za pomocą polecenia UseShellExecute.</value>
+  </data>
+  <data name="ProcessIsNotTerminated" xml:space="preserve">
+    <value>To polecenie zatrzymało operację „{0} ({1})” z powodu następującego błędu: {2}.</value>
+  </data>
+  <data name="RedirectionParams" xml:space="preserve">
+    <value>Nie można uruchomić tego polecenia, ponieważ parametrów przekierowania nie można używać z parametrem UseShellExecute</value>
+  </data>
+  <data name="NoComputerNameWithFileVersion" xml:space="preserve">
+    <value>Wystąpił błąd podczas pobierania elementów „Modules” lub „FileVersion”: „Ta funkcja nie jest obsługiwana na komputerach zdalnych.”.</value>
+  </data>
+  <data name="DebuggerError" xml:space="preserve">
+    <value>To polecenie nie może dołączyć debugera do procesu z powodu {0} braku dostępnego debugera domyślnego.</value>
+  </data>
+  <data name="WaitOnIdleProcess" xml:space="preserve">
+    <value>To polecenie przerwało działanie, ponieważ nie może oczekiwać na zakończenie procesu bezczynności systemu. Określ inny proces i ponownie uruchom polecenie.</value>
+  </data>
+  <data name="WaitOnItself" xml:space="preserve">
+    <value>To polecenie zatrzymało operację, ponieważ nie może czekać na siebie. Określ inny proces i ponownie uruchom polecenie.</value>
+  </data>
+  <data name="ProcessNotTerminated" xml:space="preserve">
+    <value>To polecenie zatrzymało operację, ponieważ proces „{0} ({1})” nie został zatrzymany w określonym przekroczeniem limitu czasu.</value>
+  </data>
+  <data name="InvalidStartProcess" xml:space="preserve">
+    <value>Nie można uruchomić tego polecenia z powodu błędu: {0}</value>
+  </data>
+  <data name="InvalidApplication" xml:space="preserve">
+    <value>Nie można uruchomić tego polecenia, ponieważ dane wejściowe „{0}” nie są prawidłową aplikacją.  Podaj prawidłową aplikację i ponownie uruchom polecenie.</value>
+  </data>
+  <data name="InvalidInput" xml:space="preserve">
+    <value>Nie można uruchomić tego polecenia, ponieważ parametr „{0}” ma nieprawidłową wartość lub nie może być używany z tym poleceniem. Podaj prawidłowe dane wejściowe i ponownie uruchom polecenie.</value>
+  </data>
+  <data name="DuplicateEntry" xml:space="preserve">
+    <value>Nie można uruchomić tego polecenia, ponieważ „{0}” i „{1}” są takie same. Podaj różne dane wejściowe i ponownie uruchom polecenie.</value>
+  </data>
+  <data name="CannotStarttheProcess" xml:space="preserve">
+    <value>To polecenie nie może zostać w pełni wykonane, ponieważ system nie może znaleźć wszystkich wymaganych informacji.</value>
+  </data>
+  <data name="FailedToCreateProcessObject" xml:space="preserve">
+    <value>Nie można pobrać nowego dojścia procesu: „{0}”. Wyjściowy obiekt Process może mieć pewne właściwości i metody, które nie działają prawidłowo.</value>
+  </data>
+  <data name="InvalidUserError" xml:space="preserve">
+    <value>Nie można uruchomić tego polecenia z powodu błędu 1783. Możliwą przyczyną tego błędu może być użycie nieistniejącego użytkownika „{0}”. Podaj prawidłowego użytkownika i ponownie uruchom polecenie.</value>
+  </data>
+  <data name="JoinNetworkFailed" xml:space="preserve">
+    <value>Błąd podczas dodawania elementu „{0}” do sieci: {1}</value>
+  </data>
+  <data name="RemoveFailed" xml:space="preserve">
+    <value>Błąd podczas usuwania elementu „{0}” z sieci: {1}</value>
+  </data>
+  <data name="RenameFailed" xml:space="preserve">
+    <value>Błąd podczas zmieniania nazwy „{0}”: {1}</value>
+  </data>
+  <data name="ContradictParametersSpecified" xml:space="preserve">
+    <value>Nie można jednocześnie podać parametrów „{0}” i „{1}”.</value>
+  </data>
+  <data name="CouldNotDebugProcess" xml:space="preserve">
+    <value>Nie można przeprowadzić debugowania procesu „{0} ({1})” z powodu następującego błędu: {2}</value>
+  </data>
+  <data name="AttachDebuggerReturnCode2" xml:space="preserve">
+    <value>Użytkownik nie ma dostępu do żądanych informacji.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode21" xml:space="preserve">
+    <value>Określona nazwa parametru jest nieprawidłowa.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode3" xml:space="preserve">
+    <value>Użytkownik nie ma wystarczających uprawnień.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode8" xml:space="preserve">
+    <value>Nieznany błąd.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode9" xml:space="preserve">
+    <value>Podana ścieżka nie istnieje.</value>
+  </data>
+  <data name="ParameterNotSupported" xml:space="preserve">
+    <value>Parametr „{0}” nie jest obsługiwany przez polecenie cmdlet „{1}” w tej wersji systemu Windows.</value>
+  </data>
+  <data name="ParameterNotSupportedOnPSEdition" xml:space="preserve">
+    <value>Parametr „{0}” nie jest obsługiwany dla polecenia cmdlet „{1}” w tej wersji programu PowerShell.</value>
+  </data>
+</root>

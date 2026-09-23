@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- To work with ngen'd images and non-ngen'd images, entries are duplicated,
      once with .dll, and again with .ni.dll -->
-<!-- See MSDN docs about 'region of interest': https://docs.microsoft.com/windows-hardware/test/wpt/stack-tags -->
+<!-- See MSDN docs about 'region of interest': https://learn.microsoft.com/windows-hardware/test/wpt/stack-tags -->
 <Tag Name="PowerShell">
   <Tag Name="Pipeline Execution">
     <Tag Name="Interpreter">
@@ -38,4 +38,3 @@
     <Entrypoint Module="System.Management.Automation.ni.dll" Method="System.Management.Automation.PipelineOps.*"/>
   </Tag>
 </Tag>
-

@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.VMNameParameterSet)]
-        [Credential()]
+        [Credential]
         public override PSCredential Credential
         {
             get
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Friendly names for the new PSSessions.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name { get; set; }
 
@@ -267,7 +267,16 @@ namespace Microsoft.PowerShell.Commands
 
                 case NewPSSessionCommand.UseWindowsPowerShellParameterSet:
                     {
-                        remoteRunspaces = CreateRunspacesForUseWindowsPowerShellParameterSet();
+                        if (UseWindowsPowerShell)
+                        {
+                            remoteRunspaces = CreateRunspacesForUseWindowsPowerShellParameterSet();
+                        }
+                        else
+                        {
+                            // When -UseWindowsPowerShell:$false is explicitly specified,
+                            // fall back to the default ComputerName parameter set behavior
+                            goto case NewPSSessionCommand.ComputerNameParameterSet;
+                        }
                     }
 
                     break;
@@ -385,11 +394,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Adds forwarded events to the local queue.
         /// </summary>
-        private void OnRunspacePSEventReceived(object sender, PSEventArgs e)
-        {
-            if (this.Events != null)
-                this.Events.AddForwardedEvent(e);
-        }
+        private void OnRunspacePSEventReceived(object sender, PSEventArgs e) => this.Events?.AddForwardedEvent(e);
 
         /// <summary>
         /// When the client remote session reports a URI redirection, this method will report the
@@ -524,10 +529,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        if (reason == null)
-                        {
-                            reason = new RuntimeException(this.GetMessage(RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState, state));
-                        }
+                        reason ??= new RuntimeException(this.GetMessage(RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState, state));
 
                         string fullyQualifiedErrorId = WSManTransportManagerUtils.GetFQEIDFromTransportError(
                             transErrorCode,
@@ -647,11 +649,11 @@ namespace Microsoft.PowerShell.Commands
 
                         if (remoteRunspace.ConnectionInfo is VMConnectionInfo)
                         {
-                            newConnectionInfo = remoteRunspace.ConnectionInfo.InternalCopy();
+                            newConnectionInfo = remoteRunspace.ConnectionInfo.Clone();
                         }
                         else if (remoteRunspace.ConnectionInfo is ContainerConnectionInfo)
                         {
-                            ContainerConnectionInfo newContainerConnectionInfo = remoteRunspace.ConnectionInfo.InternalCopy() as ContainerConnectionInfo;
+                            ContainerConnectionInfo newContainerConnectionInfo = remoteRunspace.ConnectionInfo.Clone() as ContainerConnectionInfo;
                             newContainerConnectionInfo.CreateContainerProcess();
                             newConnectionInfo = newContainerConnectionInfo;
                         }
@@ -939,7 +941,7 @@ namespace Microsoft.PowerShell.Commands
                     //
                     // VM should be in running state.
                     //
-                    if ((VMState)results[0].Properties["State"].Value != VMState.Running)
+                    if (GetVMStateProperty(results[0]) != VMState.Running)
                     {
                         WriteError(
                             new ErrorRecord(
@@ -1093,7 +1095,8 @@ namespace Microsoft.PowerShell.Commands
                     this.KeyFilePath,
                     port,
                     Subsystem,
-                    ConnectingTimeout);
+                    ConnectingTimeout,
+                    Options);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
@@ -1120,7 +1123,8 @@ namespace Microsoft.PowerShell.Commands
                     sshConnection.KeyFilePath,
                     sshConnection.Port,
                     sshConnection.Subsystem,
-                    sshConnection.ConnectingTimeout);
+                    sshConnection.ConnectingTimeout,
+                    sshConnection.Options);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
@@ -1390,7 +1394,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// There are two problems that need to be handled.
         /// 1) We need to make sure that the ThrottleManager StartComplete and StopComplete
-        ///    operation events are called or the ThrottleManager will never end (will stop reponding).
+        ///    operation events are called or the ThrottleManager will never end (will stop responding).
         /// 2) The HandleRunspaceStateChanged event handler remains in the Runspace
         ///    StateChanged event call chain until this object is disposed.  We have to
         ///    disallow the HandleRunspaceStateChanged event from running and throwing

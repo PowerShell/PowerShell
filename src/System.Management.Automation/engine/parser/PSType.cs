@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
@@ -276,7 +277,7 @@ namespace System.Management.Automation.Language
             internal readonly TypeBuilder _staticHelpersTypeBuilder;
             private readonly Dictionary<string, PropertyMemberAst> _definedProperties;
             private readonly Dictionary<string, List<Tuple<FunctionMemberAst, Type[]>>> _definedMethods;
-            private HashSet<Tuple<string, Type>> _interfaceProperties;
+            private Dictionary<Tuple<string, Type>, PropertyInfo> _abstractProperties;
             internal readonly List<(string fieldName, IParameterMetadataProvider bodyAst, bool isStatic)> _fieldsToInitForMemberFunctions;
             private bool _baseClassHasDefaultCtor;
 
@@ -296,7 +297,7 @@ namespace System.Management.Automation.Language
                 var baseClass = this.GetBaseTypes(parser, typeDefinitionAst, out interfaces);
 
                 _typeBuilder = module.DefineType(typeName, Reflection.TypeAttributes.Class | Reflection.TypeAttributes.Public, baseClass, interfaces.ToArray());
-                _staticHelpersTypeBuilder = module.DefineType(string.Format(CultureInfo.InvariantCulture, "{0}_<staticHelpers>", typeName), Reflection.TypeAttributes.Class);
+                _staticHelpersTypeBuilder = module.DefineType(string.Create(CultureInfo.InvariantCulture, $"{typeName}_<staticHelpers>"), Reflection.TypeAttributes.Class);
                 DefineCustomAttributes(_typeBuilder, typeDefinitionAst.Attributes, _parser, AttributeTargets.Class);
                 _typeDefinitionAst.Type = _typeBuilder;
 
@@ -444,11 +445,11 @@ namespace System.Management.Automation.Language
                 return baseClass ?? typeof(object);
             }
 
-            private bool ShouldImplementProperty(string name, Type type)
+            private bool ShouldImplementProperty(string name, Type type, [NotNullWhen(true)] out PropertyInfo interfaceProperty)
             {
-                if (_interfaceProperties == null)
+                if (_abstractProperties == null)
                 {
-                    _interfaceProperties = new HashSet<Tuple<string, Type>>();
+                    _abstractProperties = new Dictionary<Tuple<string, Type>, PropertyInfo>();
                     var allInterfaces = new HashSet<Type>();
 
                     // TypeBuilder.GetInterfaces() returns only the interfaces that was explicitly passed to its constructor.
@@ -467,12 +468,23 @@ namespace System.Management.Automation.Language
                     {
                         foreach (var property in interfaceType.GetProperties())
                         {
-                            _interfaceProperties.Add(Tuple.Create(property.Name, property.PropertyType));
+                            _abstractProperties.Add(Tuple.Create(property.Name, property.PropertyType), property);
+                        }
+                    }
+
+                    if (_typeBuilder.BaseType.IsAbstract)
+                    {
+                        foreach (var property in _typeBuilder.BaseType.GetProperties())
+                        {
+                            if (property.GetAccessors().Any(m => m.IsAbstract))
+                            {
+                                _abstractProperties.Add(Tuple.Create(property.Name, property.PropertyType), property);
+                            }
                         }
                     }
                 }
 
-                return _interfaceProperties.Contains(Tuple.Create(name, type));
+                return _abstractProperties.TryGetValue(Tuple.Create(name, type), out interfaceProperty);
             }
 
             public void DefineMembers()
@@ -618,9 +630,19 @@ namespace System.Management.Automation.Language
                 // The property set and property get methods require a special set of attributes.
                 var getSetAttributes = Reflection.MethodAttributes.SpecialName | Reflection.MethodAttributes.HideBySig;
                 getSetAttributes |= propertyMemberAst.IsPublic ? Reflection.MethodAttributes.Public : Reflection.MethodAttributes.Private;
-                if (ShouldImplementProperty(propertyMemberAst.Name, type))
+                MethodInfo implementingGetter = null;
+                MethodInfo implementingSetter = null;
+                if (ShouldImplementProperty(propertyMemberAst.Name, type, out PropertyInfo interfaceProperty))
                 {
-                    getSetAttributes |= Reflection.MethodAttributes.Virtual;
+                    if (propertyMemberAst.IsStatic)
+                    {
+                        implementingGetter = interfaceProperty.GetGetMethod();
+                        implementingSetter = interfaceProperty.GetSetMethod();
+                    }
+                    else
+                    {
+                        getSetAttributes |= Reflection.MethodAttributes.Virtual;
+                    }
                 }
 
                 if (propertyMemberAst.IsStatic)
@@ -629,7 +651,7 @@ namespace System.Management.Automation.Language
                     getSetAttributes |= Reflection.MethodAttributes.Static;
                 }
                 // C# naming convention for backing fields.
-                string backingFieldName = string.Format(CultureInfo.InvariantCulture, "<{0}>k__BackingField", propertyMemberAst.Name);
+                string backingFieldName = string.Create(CultureInfo.InvariantCulture, $"<{propertyMemberAst.Name}>k__BackingField");
                 var backingField = _typeBuilder.DefineField(backingFieldName, type, backingFieldAttributes);
 
                 bool hasValidateAttributes = false;
@@ -666,6 +688,11 @@ namespace System.Management.Automation.Language
                     getIlGen.Emit(OpCodes.Ret);
                 }
 
+                if (implementingGetter != null)
+                {
+                    _typeBuilder.DefineMethodOverride(getMethod, implementingGetter);
+                }
+
                 // Define the "set" accessor method.
                 MethodBuilder setMethod = _typeBuilder.DefineMethod(string.Concat("set_", propertyMemberAst.Name), getSetAttributes, null, new Type[] { type });
                 ILGenerator setIlGen = setMethod.GetILGenerator();
@@ -698,6 +725,11 @@ namespace System.Management.Automation.Language
                 }
 
                 setIlGen.Emit(OpCodes.Ret);
+
+                if (implementingSetter != null)
+                {
+                    _typeBuilder.DefineMethodOverride(setMethod, implementingSetter);
+                }
 
                 // Map the two methods created above to our PropertyBuilder to
                 // their corresponding behaviors, "get" and "set" respectively.
@@ -937,7 +969,7 @@ namespace System.Management.Automation.Language
                 Type returnType,
                 Action<int, string> parameterNameSetter)
             {
-                var wrapperFieldName = string.Format(CultureInfo.InvariantCulture, "<{0}>", metadataToken);
+                var wrapperFieldName = string.Create(CultureInfo.InvariantCulture, $"<{metadataToken}>");
                 var scriptBlockWrapperField = _staticHelpersTypeBuilder.DefineField(wrapperFieldName,
                                                                        typeof(ScriptBlockMemberMethodWrapper),
                                                                        FieldAttributes.Assembly | FieldAttributes.Static);
@@ -1321,9 +1353,8 @@ namespace System.Management.Automation.Language
             foreach (var typeDefinitionAst in typeDefinitions)
             {
                 var typeName = GetClassNameInAssembly(typeDefinitionAst);
-                if (!definedTypes.Contains(typeName))
+                if (definedTypes.Add(typeName))
                 {
-                    definedTypes.Add(typeName);
                     if ((typeDefinitionAst.TypeAttributes & TypeAttributes.Class) == TypeAttributes.Class)
                     {
                         defineTypeHelpers.Add(new DefineTypeHelper(parser, module, typeDefinitionAst, typeName));
@@ -1434,7 +1465,7 @@ namespace System.Management.Automation.Language
 
             nameParts.Reverse();
             nameParts.Add(typeDefinitionAst.Name);
-            return string.Join(".", nameParts);
+            return string.Join('.', nameParts);
         }
 
         private static readonly OpCode[] s_ldc =
@@ -1470,6 +1501,20 @@ namespace System.Management.Automation.Language
             {
                 emitter.Emit(OpCodes.Ldarg, c);
             }
+        }
+    }
+
+    /// <summary>
+    /// The attribute for a PowerShell class to not affiliate with a particular Runspace\SessionState.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public sealed class NoRunspaceAffinityAttribute : ParsingBaseAttribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the attribute.
+        /// </summary>
+        public NoRunspaceAffinityAttribute()
+        {
         }
     }
 }

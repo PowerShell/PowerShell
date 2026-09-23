@@ -1,0 +1,115 @@
+trigger: none
+
+parameters: # parameters are shown up in ADO UI in a build queue time
+- name: 'createVPack'
+  displayName: 'Create and Submit VPack'
+  type: boolean
+  default: true
+- name: vPackName
+  type: string
+  displayName: 'VPack Name:'
+  default: 'PowerShell.BuildTool'
+  values:
+    - PowerShell.BuildTool
+    - PowerShell
+    - PowerShellDoNotUse
+- name: 'ReleaseTagVar'
+  type: string
+  displayName: 'Release Tag Var:'
+  default: 'fromBranch'
+- name: 'debug'
+  displayName: 'Enable debug output'
+  type: boolean
+  default: false
+- name: netiso
+  displayName: "Network Isolation Policy"
+  type: string
+  values:
+    - KS4
+    - R1
+    - Netlock
+  default: "R1"
+- name: IsEarlyAccess
+  type: boolean
+  default: false
+- name: EarlyAccessFeed
+  displayName: Early Access Feed
+  type: string
+  default: 'net11'
+  values:
+    - 'net8'
+    - 'net9'
+    - 'net10'
+    - 'net11'
+- name: DOTNET_RUNTIME_VERSION
+  displayName: Runtime version of early access build
+  type: string
+  default: ' '
+- name: DOTNET_SDK_VERSION
+  displayName: SDK version of early access build
+  type: string
+  default: ' '
+
+name: vPack_$(Build.SourceBranchName)_Prod_Create.${{ parameters.createVPack }}_Name.${{ parameters.vPackName}}_$(date:yyyyMMdd).$(rev:rr)
+
+variables:
+  - template: templates/variables/PowerShell-vPack-Variables.yml
+    parameters:
+      debug: ${{ parameters.debug }}
+      ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
+      netiso: ${{ parameters.netiso }}
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+
+resources:
+  repositories:
+    - repository: onebranchTemplates
+      type: git
+      name: OneBranch.Pipelines/GovernedTemplates
+      ref: refs/heads/main
+
+extends:
+  template: v2/Microsoft.Official.yml@onebranchTemplates
+  parameters:
+    platform:
+      name: 'windows_undocked' # windows undocked
+
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+        Network: ${{ variables.netiso }}
+
+    cloudvault:
+      enabled: false
+
+    globalSdl:
+      disableLegacyManifest: true
+      # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
+      sbom:
+        enabled: true
+      compiled:
+        enabled: false
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      tsaOptionsFile: .config/tsaoptions.json
+    stages:
+    - template: templates/stages/PowerShell-vPack-Stages.yml
+      parameters:
+        createVPack: ${{ parameters.createVPack }}
+        vPackName: ${{ parameters.vPackName }}
+        IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+        EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
+        DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+        DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}

@@ -11,7 +11,7 @@ using System.Windows.Data;
 namespace Microsoft.Management.UI.Internal
 {
     /// <summary>
-    /// The InputFieldBackgroundTextConverter is responsible for determing the
+    /// The InputFieldBackgroundTextConverter is responsible for determining the
     /// correct background text to display for a particular type of data.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
@@ -40,10 +40,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException("value");
-            }
+            ArgumentNullException.ThrowIfNull(value);
 
             Type inputType = null;
             if (this.IsOfTypeValidatingValue(value))

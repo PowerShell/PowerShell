@@ -10,13 +10,12 @@ using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Management.Automation.Tracing;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading.Tasks;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
@@ -35,6 +34,7 @@ namespace System.Management.Automation
         Begin,
         Process,
         End,
+        Clean,
         ProcessBlockOnly,
     }
 
@@ -188,12 +188,15 @@ namespace System.Management.Automation
                 TelemetryAPI.ReportScriptTelemetry((Ast)_ast, !optimize, sw.ElapsedMilliseconds);
             }
 #endif
-            if (etwEnabled) ParserEventSource.Log.CompileStop();
+            if (etwEnabled)
+            {
+                ParserEventSource.Log.CompileStop();
+            }
         }
 
         private void PerformSecurityChecks()
         {
-            if (!(Ast is ScriptBlockAst scriptBlockAst))
+            if (Ast is not ScriptBlockAst scriptBlockAst)
             {
                 // Checks are only needed at the top level.
                 return;
@@ -247,6 +250,7 @@ namespace System.Management.Automation
 
                 if (scriptBlockAst.BeginBlock != null
                     || scriptBlockAst.ProcessBlock != null
+                    || scriptBlockAst.CleanBlock != null
                     || scriptBlockAst.ParamBlock != null
                     || scriptBlockAst.DynamicParamBlock != null
                     || scriptBlockAst.ScriptRequirements != null
@@ -262,12 +266,12 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                if (!(endBlock.Statements[0] is PipelineAst pipelineAst))
+                if (endBlock.Statements[0] is not PipelineAst pipelineAst)
                 {
                     return false;
                 }
 
-                if (!(pipelineAst.GetPureExpression() is HashtableAst hashtableAst))
+                if (pipelineAst.GetPureExpression() is not HashtableAst hashtableAst)
                 {
                     return false;
                 }
@@ -316,6 +320,8 @@ namespace System.Management.Automation
 
         internal Dictionary<string, int> NameToIndexMap { get; set; }
 
+        #region Named Blocks
+
         internal Action<FunctionContext> DynamicParamBlock { get; set; }
 
         internal Action<FunctionContext> UnoptimizedDynamicParamBlock { get; set; }
@@ -331,6 +337,12 @@ namespace System.Management.Automation
         internal Action<FunctionContext> EndBlock { get; set; }
 
         internal Action<FunctionContext> UnoptimizedEndBlock { get; set; }
+
+        internal Action<FunctionContext> CleanBlock { get; set; }
+
+        internal Action<FunctionContext> UnoptimizedCleanBlock { get; set; }
+
+        #endregion Named Blocks
 
         internal IScriptExtent[] SequencePoints { get; set; }
 
@@ -358,10 +370,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isProductCode == null)
-                {
-                    _isProductCode = SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File);
-                }
+                _isProductCode ??= SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File);
 
                 return _isProductCode.Value;
             }
@@ -530,8 +539,7 @@ namespace System.Management.Automation
         }
     }
 
-    [Serializable]
-    public partial class ScriptBlock : ISerializable
+    public partial class ScriptBlock
     {
         private readonly CompiledScriptBlockData _scriptBlockData;
 
@@ -564,6 +572,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Protected constructor to support ISerializable.
         /// </summary>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ScriptBlock(SerializationInfo info, StreamingContext context)
         {
         }
@@ -703,21 +712,6 @@ namespace System.Management.Automation
             return sbText;
         }
 
-        /// <summary>
-        /// Support for <see cref="ISerializable"/>.
-        /// </summary>
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(info));
-            }
-
-            string serializedContent = this.ToString();
-            info.AddValue("ScriptText", serializedContent);
-            info.SetType(typeof(ScriptBlockSerializationHelper));
-        }
-
         internal PowerShell GetPowerShellImpl(
             ExecutionContext context,
             Dictionary<string, object> variables,
@@ -753,7 +747,7 @@ namespace System.Management.Automation
         {
             errorHandler ??= (static _ => null);
 
-            if (HasBeginBlock || HasProcessBlock)
+            if (HasBeginBlock || HasProcessBlock || HasCleanBlock)
             {
                 return errorHandler(AutomationExceptions.CanConvertOneClauseOnly);
             }
@@ -775,7 +769,7 @@ namespace System.Management.Automation
                 return errorHandler(AutomationExceptions.CantConvertScriptBlockWithTrap);
             }
 
-            if (!(statements[0] is PipelineAst pipeAst))
+            if (statements[0] is not PipelineAst pipeAst)
             {
                 return errorHandler(AutomationExceptions.CanOnlyConvertOnePipeline);
             }
@@ -891,7 +885,10 @@ namespace System.Management.Automation
             Parser parser = new Parser();
 
             var ast = AstInternal;
-            if (HasBeginBlock || HasProcessBlock || ast.Body.ParamBlock != null)
+            if (HasBeginBlock
+                || HasProcessBlock
+                || HasCleanBlock
+                || ast.Body.ParamBlock is not null)
             {
                 Ast errorAst = ast.Body.BeginBlock ?? (Ast)ast.Body.ProcessBlock ?? ast.Body.ParamBlock;
                 parser.ReportError(
@@ -974,6 +971,11 @@ namespace System.Management.Automation
             InvocationInfo invocationInfo,
             params object[] args)
         {
+            if (clauseToInvoke == ScriptBlockClauseToInvoke.Clean)
+            {
+                throw new PSNotSupportedException(ParserStrings.InvokingCleanBlockNotSupported);
+            }
+
             if ((clauseToInvoke == ScriptBlockClauseToInvoke.Begin && !HasBeginBlock)
                 || (clauseToInvoke == ScriptBlockClauseToInvoke.Process && !HasProcessBlock)
                 || (clauseToInvoke == ScriptBlockClauseToInvoke.End && !HasEndBlock))
@@ -991,7 +993,7 @@ namespace System.Management.Automation
                 throw new PipelineStoppedException();
             }
 
-            // Validate at the arguments are consistent. The only public API that gets you here never sets createLocalScope to false...
+            // Validate that the arguments are consistent. The only public API that gets you here never sets createLocalScope to false...
             Diagnostics.Assert(
                 createLocalScope || functionsToDefine == null,
                 "When calling ScriptBlock.InvokeWithContext(), if 'functionsToDefine' != null then 'createLocalScope' must be true");
@@ -999,10 +1001,7 @@ namespace System.Management.Automation
                 createLocalScope || variablesToDefine == null,
                 "When calling ScriptBlock.InvokeWithContext(), if 'variablesToDefine' != null then 'createLocalScope' must be true");
 
-            if (args == null)
-            {
-                args = Array.Empty<object>();
-            }
+            args ??= Array.Empty<object>();
 
             bool runOptimized = context._debuggingMode <= 0 && createLocalScope;
             var codeToInvoke = GetCodeToInvoke(ref runOptimized, clauseToInvoke);
@@ -1011,11 +1010,8 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (outputPipe == null)
-            {
-                // If we don't have a pipe to write to, we need to discard all results.
-                outputPipe = new Pipe { NullPipe = true };
-            }
+            // If we don't have a pipe to write to, we need to discard all results.
+            outputPipe ??= new Pipe { NullPipe = true };
 
             var locals = MakeLocalsTuple(runOptimized);
 
@@ -1041,12 +1037,11 @@ namespace System.Management.Automation
             var oldScopeOrigin = context.EngineSessionState.CurrentScope.ScopeOrigin;
             var oldSessionState = context.EngineSessionState;
 
-            // If the script block has a different language mode than the current,
+            // If the script block has a different language mode than the current context,
             // change the language mode.
             PSLanguageMode? oldLanguageMode = null;
             PSLanguageMode? newLanguageMode = null;
-            if (this.LanguageMode.HasValue
-                && this.LanguageMode != context.LanguageMode)
+            if (this.LanguageMode.HasValue && this.LanguageMode != context.LanguageMode)
             {
                 // Don't allow context: ConstrainedLanguage -> FullLanguage transition if
                 // this is dot sourcing into the current scope, unless it is within a trusted module scope.
@@ -1054,6 +1049,20 @@ namespace System.Management.Automation
                     || createLocalScope
                     || context.EngineSessionState.Module?.LanguageMode == PSLanguageMode.FullLanguage)
                 {
+                    oldLanguageMode = context.LanguageMode;
+                    newLanguageMode = this.LanguageMode;
+                }
+                else if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                {
+                    string scriptBlockId = this.GetFileName() ?? string.Empty;
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: AutomationExceptions.WDACCompiledScriptBlockLogTitle,
+                        message: StringUtil.Format(AutomationExceptions.WDACCompiledScriptBlockLogMessage, scriptBlockId, this.LanguageMode, context.LanguageMode),
+                        fqid: "ScriptBlockDotSourceNotAllowed",
+                        dropIntoDebugger: true);
+
+                    // Since we are in audit mode, go ahead and allow the language transition.
                     oldLanguageMode = context.LanguageMode;
                     newLanguageMode = this.LanguageMode;
                 }
@@ -1195,7 +1204,7 @@ namespace System.Management.Automation
                     _sequencePoints = SequencePoints,
                 };
 
-                ScriptBlock.LogScriptBlockStart(this, context.CurrentRunspace.InstanceId);
+                LogScriptBlockStart(this, context.CurrentRunspace.InstanceId);
 
                 try
                 {
@@ -1203,7 +1212,7 @@ namespace System.Management.Automation
                 }
                 finally
                 {
-                    ScriptBlock.LogScriptBlockEnd(this, context.CurrentRunspace.InstanceId);
+                    LogScriptBlockEnd(this, context.CurrentRunspace.InstanceId);
                 }
             }
             catch (TargetInvocationException tie)
@@ -1362,7 +1371,7 @@ namespace System.Management.Automation
         private Action<FunctionContext> GetCodeToInvoke(ref bool optimized, ScriptBlockClauseToInvoke clauseToInvoke)
         {
             if (clauseToInvoke == ScriptBlockClauseToInvoke.ProcessBlockOnly
-                && (HasBeginBlock || (HasEndBlock && HasProcessBlock)))
+                && (HasBeginBlock || HasCleanBlock || (HasEndBlock && HasProcessBlock)))
             {
                 throw PSTraceSource.NewInvalidOperationException(AutomationExceptions.ScriptBlockInvokeOnOneClauseOnly);
             }
@@ -1379,6 +1388,8 @@ namespace System.Management.Automation
                         return _scriptBlockData.ProcessBlock;
                     case ScriptBlockClauseToInvoke.End:
                         return _scriptBlockData.EndBlock;
+                    case ScriptBlockClauseToInvoke.Clean:
+                        return _scriptBlockData.CleanBlock;
                     default:
                         return HasProcessBlock ? _scriptBlockData.ProcessBlock : _scriptBlockData.EndBlock;
                 }
@@ -1392,6 +1403,8 @@ namespace System.Management.Automation
                     return _scriptBlockData.UnoptimizedProcessBlock;
                 case ScriptBlockClauseToInvoke.End:
                     return _scriptBlockData.UnoptimizedEndBlock;
+                case ScriptBlockClauseToInvoke.Clean:
+                    return _scriptBlockData.UnoptimizedCleanBlock;
                 default:
                     return HasProcessBlock ? _scriptBlockData.UnoptimizedProcessBlock : _scriptBlockData.UnoptimizedEndBlock;
             }
@@ -1438,7 +1451,7 @@ namespace System.Management.Automation
                     // But split the segments into random sizes (10k + between 0 and 10kb extra)
                     // so that attackers can't creatively force their scripts to span well-known
                     // segments (making simple rules less reliable).
-                    int segmentSize = 10000 + (new Random()).Next(10000);
+                    int segmentSize = 10000 + Random.Shared.Next(10000);
                     int segments = (int)Math.Floor((double)(scriptBlockText.Length / segmentSize)) + 1;
                     int currentLocation = 0;
                     int currentSegmentSize = 0;
@@ -1957,7 +1970,7 @@ namespace System.Management.Automation
             ///
             /// If a hash matches, we ignore the possibility of a
             /// collision. If the hash is acceptable, collisions will
-            /// be infrequent and we'll just log an occasionaly script
+            /// be infrequent and we'll just log an occasional script
             /// that isn't really suspicious.
             /// </summary>
             /// <returns>The string matching the hash, or null.</returns>
@@ -2022,7 +2035,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    for (int j = Math.Min(i, runningHash.Length) - 1; j > 0; j--)
+                    for (int j = Math.Min(i, runningHash.Length - 1); j > 0; j--)
                     {
                         // Say our input is: `Emit` (our shortest pattern, len 4).
                         // Towards the end just before matching, we will:
@@ -2043,7 +2056,10 @@ namespace System.Management.Automation
                     if (++longestPossiblePattern >= 4)
                     {
                         var result = CheckForMatches(runningHash, longestPossiblePattern);
-                        if (result != null) return result;
+                        if (result != null)
+                        {
+                            return result;
+                        }
                     }
                 }
 
@@ -2147,46 +2163,17 @@ namespace System.Management.Automation
 
         internal Action<FunctionContext> UnoptimizedEndBlock { get => _scriptBlockData.UnoptimizedEndBlock; }
 
+        internal Action<FunctionContext> CleanBlock { get => _scriptBlockData.CleanBlock; }
+
+        internal Action<FunctionContext> UnoptimizedCleanBlock { get => _scriptBlockData.UnoptimizedCleanBlock; }
+
         internal bool HasBeginBlock { get => AstInternal.Body.BeginBlock != null; }
 
         internal bool HasProcessBlock { get => AstInternal.Body.ProcessBlock != null; }
 
         internal bool HasEndBlock { get => AstInternal.Body.EndBlock != null; }
-    }
 
-    [Serializable]
-    internal class ScriptBlockSerializationHelper : ISerializable, IObjectReference
-    {
-        private readonly string _scriptText;
-
-        private ScriptBlockSerializationHelper(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
-
-            _scriptText = info.GetValue("ScriptText", typeof(string)) as string;
-            if (_scriptText == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(info));
-            }
-        }
-
-        /// <summary>
-        /// Returns a script block that corresponds to the version deserialized.
-        /// </summary>
-        /// <param name="context">The streaming context for this instance.</param>
-        /// <returns>A script block that corresponds to the version deserialized.</returns>
-        public object GetRealObject(StreamingContext context) => ScriptBlock.Create(_scriptText);
-
-        /// <summary>
-        /// Implements the ISerializable contract for serializing a scriptblock.
-        /// </summary>
-        /// <param name="info">Serialization information for this instance.</param>
-        /// <param name="context">The streaming context for this instance.</param>
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-            => throw new NotSupportedException();
+        internal bool HasCleanBlock { get => AstInternal.Body.CleanBlock != null; }
     }
 
     internal sealed class PSScriptCmdlet : PSCmdlet, IDynamicParameters, IDisposable
@@ -2197,10 +2184,14 @@ namespace System.Management.Automation
         private readonly bool _useLocalScope;
         private readonly bool _runOptimized;
         private readonly bool _rethrowExitException;
-        private MshCommandRuntime _commandRuntime;
         private readonly MutableTuple _localsTuple;
-        private bool _exitWasCalled;
         private readonly FunctionContext _functionContext;
+
+        private MshCommandRuntime _commandRuntime;
+        private bool _exitWasCalled;
+        private bool _anyClauseExecuted;
+
+        internal bool ShouldRethrowExitException => _rethrowExitException;
 
         public PSScriptCmdlet(ScriptBlock scriptBlock, bool useNewScope, bool fromScriptFile, ExecutionContext context)
         {
@@ -2291,6 +2282,34 @@ namespace System.Management.Automation
             }
         }
 
+        internal override void DoCleanResource()
+        {
+            if (_scriptBlock.HasCleanBlock && _anyClauseExecuted)
+            {
+                // The 'Clean' block doesn't write any output to pipeline, so we use a 'NullPipe' here and
+                // disallow the output to be collected by an 'out' variable. However, the error, warning,
+                // and information records should still be collectable by the corresponding variables.
+                Pipe oldOutputPipe = _commandRuntime.OutputPipe;
+                _functionContext._outputPipe = _commandRuntime.OutputPipe = new Pipe
+                {
+                    NullPipe = true,
+                    IgnoreOutVariableList = true,
+                };
+
+                try
+                {
+                    RunClause(
+                        clause: _runOptimized ? _scriptBlock.CleanBlock : _scriptBlock.UnoptimizedCleanBlock,
+                        dollarUnderbar: AutomationNull.Value,
+                        inputToProcess: AutomationNull.Value);
+                }
+                finally
+                {
+                    _functionContext._outputPipe = _commandRuntime.OutputPipe = oldOutputPipe;
+                }
+            }
+        }
+
         private void EnterScope()
         {
             _commandRuntime.SetVariableListsInPipe();
@@ -2303,14 +2322,15 @@ namespace System.Management.Automation
 
         private void RunClause(Action<FunctionContext> clause, object dollarUnderbar, object inputToProcess)
         {
+            _anyClauseExecuted = true;
             Pipe oldErrorOutputPipe = this.Context.ShellFunctionErrorOutputPipe;
 
             // If the script block has a different language mode than the current,
             // change the language mode.
             PSLanguageMode? oldLanguageMode = null;
             PSLanguageMode? newLanguageMode = null;
-            if (_scriptBlock.LanguageMode.HasValue
-                && _scriptBlock.LanguageMode != Context.LanguageMode)
+            if (_scriptBlock.LanguageMode.HasValue &&
+                _scriptBlock.LanguageMode != Context.LanguageMode)
             {
                 oldLanguageMode = Context.LanguageMode;
                 newLanguageMode = _scriptBlock.LanguageMode;
@@ -2356,9 +2376,9 @@ namespace System.Management.Automation
                 }
                 finally
                 {
-                    this.Context.RestoreErrorPipe(oldErrorOutputPipe);
+                    Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
 
-                    // Set the language mode
+                    // Restore the language mode
                     if (oldLanguageMode.HasValue)
                     {
                         Context.LanguageMode = oldLanguageMode.Value;
@@ -2471,6 +2491,11 @@ namespace System.Management.Automation
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Information, _commandRuntime.InformationPreference);
             }
 
+            if (_commandRuntime.IsProgressActionSet)
+            {
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.Progress, _commandRuntime.ProgressPreference);
+            }
+
             if (_commandRuntime.IsWhatIfFlagSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.WhatIf, _commandRuntime.WhatIf);
@@ -2518,9 +2543,6 @@ namespace System.Management.Automation
             commandRuntime = null;
             currentObjectInPipeline = null;
             _input.Clear();
-            // _scriptBlock = null;
-            // _localsTuple = null;
-            // _functionContext = null;
 
             base.InternalDispose(true);
             _disposed = true;

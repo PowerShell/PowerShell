@@ -46,12 +46,6 @@ namespace System.Management.Automation
 
         #region Command Execution
 
-        internal Collection<PSObject> ExecuteCommand(string command)
-        {
-            Exception unused;
-            return ExecuteCommand(command, true, out unused, null);
-        }
-
         internal bool ExecuteCommandAndGetResultAsBool()
         {
             Exception exceptionThrown;
@@ -66,78 +60,19 @@ namespace System.Management.Automation
             return (streamResults.Count > 1) || (LanguagePrimitives.IsTrue(streamResults[0]));
         }
 
-        internal string ExecuteCommandAndGetResultAsString()
-        {
-            Exception exceptionThrown;
-            Collection<PSObject> streamResults = ExecuteCurrentPowerShell(out exceptionThrown);
-
-            if (exceptionThrown != null || streamResults == null || streamResults.Count == 0)
-            {
-                return null;
-            }
-
-            // we got back one or more objects. Pick off the first result.
-            if (streamResults[0] == null)
-                return string.Empty;
-
-            // And convert the base object into a string. We can't use the proxied
-            // ToString() on the PSObject because there is no default runspace
-            // available.
-            return SafeToString(streamResults[0]);
-        }
-
-        internal Collection<PSObject> ExecuteCommand(string command, bool isScript, out Exception exceptionThrown, Hashtable args)
-        {
-            Diagnostics.Assert(command != null, "caller to verify command is not null");
-
-            exceptionThrown = null;
-
-            // This flag indicates a previous call to this method had its pipeline cancelled
-            if (CancelTabCompletion)
-            {
-                return new Collection<PSObject>();
-            }
-
-            CurrentPowerShell.AddCommand(command);
-
-            Command cmd = new Command(command, isScript);
-            if (args != null)
-            {
-                foreach (DictionaryEntry arg in args)
-                {
-                    cmd.Parameters.Add((string)(arg.Key), arg.Value);
-                }
-            }
-
-            Collection<PSObject> results = null;
-            try
-            {
-                // blocks until all results are retrieved.
-                // results = this.ExecuteCommand(cmd);
-
-                // If this pipeline has been stopped lets set a flag to cancel all future tab completion calls
-                // untill the next completion
-                if (IsStopped)
-                {
-                    results = new Collection<PSObject>();
-                    CancelTabCompletion = true;
-                }
-            }
-            catch (Exception e)
-            {
-                exceptionThrown = e;
-            }
-
-            return results;
-        }
-
         internal Collection<PSObject> ExecuteCurrentPowerShell(out Exception exceptionThrown, IEnumerable input = null)
         {
+            return ExecuteCurrentPowerShell(out exceptionThrown, out _, input);
+        }
+
+        internal Collection<PSObject> ExecuteCurrentPowerShell(out Exception exceptionThrown, out bool hadErrors, IEnumerable input = null)
+        {
             exceptionThrown = null;
 
             // This flag indicates a previous call to this method had its pipeline cancelled
             if (CancelTabCompletion)
             {
+                hadErrors = false;
                 return new Collection<PSObject>();
             }
 
@@ -147,7 +82,7 @@ namespace System.Management.Automation
                 results = CurrentPowerShell.Invoke(input);
 
                 // If this pipeline has been stopped lets set a flag to cancel all future tab completion calls
-                // untill the next completion
+                // until the next completion
                 if (IsStopped)
                 {
                     results = new Collection<PSObject>();
@@ -160,6 +95,7 @@ namespace System.Management.Automation
             }
             finally
             {
+                hadErrors = CurrentPowerShell.HadErrors;
                 CurrentPowerShell.Commands.Clear();
             }
 
@@ -184,9 +120,8 @@ namespace System.Management.Automation
 
             try
             {
-                PSObject pso = obj as PSObject;
                 string result;
-                if (pso != null)
+                if (obj is PSObject pso)
                 {
                     object baseObject = pso.BaseObject;
                     if (baseObject != null && baseObject is not PSCustomObject)

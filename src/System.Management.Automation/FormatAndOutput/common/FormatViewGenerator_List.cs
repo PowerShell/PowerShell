@@ -30,9 +30,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl;
             }
+        }
 
-            this.inputParameters = parameters;
-            SetUpActiveProperties(so);
+        /// <summary>
+        /// Builds the raw association list for list formatting.
+        /// </summary>
+        protected override List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so, List<MshParameter> propertyList)
+        {
+            return AssociationManager.SetupActiveProperties(propertyList, so, this.expressionFactory);
         }
 
         /// <summary>
@@ -114,20 +119,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     // we try to fall back and see if we have an un-resolved PSPropertyExpression
                     FormatToken token = listItem.formatTokenList[0];
-                    FieldPropertyToken fpt = token as FieldPropertyToken;
-                    if (fpt != null)
+                    if (token is FieldPropertyToken fpt)
                     {
                         PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
 
                         // use the un-resolved PSPropertyExpression string as a label
                         lvf.label = ex.ToString();
                     }
-                    else
+                    else if (token is TextToken tt)
                     {
-                        TextToken tt = token as TextToken;
-                        if (tt != null)
-                            // we had a text token, use it as a label (last resort...)
-                            lvf.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
+                        // we had a text token, use it as a label (last resort...)
+                        lvf.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                     }
                 }
 
@@ -181,17 +183,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private ListViewEntry GenerateListViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
-            // compute active properties every time
-            if (this.activeAssociationList == null)
-            {
-                SetUpActiveProperties(so);
-            }
+            // Build active association list (with ExcludeProperty filter applied)
+            var associationList = BuildActiveAssociationList(so);
 
             ListViewEntry lve = new ListViewEntry();
 
-            for (int k = 0; k < this.activeAssociationList.Count; k++)
+            for (int k = 0; k < associationList.Count; k++)
             {
-                MshResolvedExpressionParameterAssociation a = this.activeAssociationList[k];
+                MshResolvedExpressionParameterAssociation a = associationList[k];
                 ListViewField lvf = new ListViewField();
 
                 if (a.OriginatingParameter != null)
@@ -221,19 +220,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 lvf.formatPropertyField.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, a.ResolvedExpression, directive);
                 lve.listViewFieldList.Add(lvf);
             }
-
-            this.activeAssociationList = null;
             return lve;
-        }
-
-        private void SetUpActiveProperties(PSObject so)
-        {
-            List<MshParameter> mshParameterList = null;
-
-            if (this.inputParameters != null)
-                mshParameterList = this.inputParameters.mshParameterList;
-
-            this.activeAssociationList = AssociationManager.SetupActiveProperties(mshParameterList, so, this.expressionFactory);
         }
     }
 }

@@ -107,26 +107,23 @@ Describe 'Get-Error tests' -Tag CI {
     }
 
     It 'Get-Error adds ExceptionType for Exceptions' {
+
         try {
-            [System.Net.DNS]::GetHostByName((New-Guid))
+            throw [ArgumentException] 'myexception'
         }
         catch {
         }
 
         $out = Get-Error | Out-String
-        $out | Should -BeLikeExactly '*Type*'
-
-        if ($IsWindows) {
-            $expectedExceptionType = "System.Management.Automation.ParentContainsErrorRecordException"
-        }
-        else {
-            $expectedExceptionType = "System.Net.Internals.SocketExceptionFactory+ExtendedSocketException"
-        }
-
-        $out | Should -BeLikeExactly "*$expectedExceptionType*"
+        $out | Should -Match "Type\s+:\s(.\[\d+m)?System.ArgumentException"
     }
 
     It 'Get-Error uses Error color for Message and PositionMessage members' {
+
+        if (-not $host.ui.SupportsVirtualTerminal) {
+            Set-ItResult -Skipped -Because 'Windows Server 2012 R2 does not support VT100 escape sequences'
+        }
+
         $suppressVT = $false
         if (Test-Path env:/__SuppressAnsiEscapeSequences) {
             $suppressVT = $true
@@ -136,7 +133,7 @@ Describe 'Get-Error tests' -Tag CI {
         try {
             $originalRendering = $PSStyle.OutputRendering
             $PSStyle.OutputRendering = 'Ansi'
-            $out = pwsh -noprofile -command '$PSStyle.OutputRendering = "ANSI"; [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("BypassOutputRedirectionCheck", $true); try { 1/0 } catch { }; Get-Error' | Out-String
+            $out = pwsh -noprofile -command '$PSStyle.OutputRendering = "ANSI"; try { 1/0 } catch { }; Get-Error' | Out-String
 
             # need to escape the open square bracket so the regex works
             $resetColor = $PSStyle.Reset.Replace('[','\[')
@@ -152,5 +149,24 @@ Describe 'Get-Error tests' -Tag CI {
                 $env:__SuppressAnsiEscapeSequences = 1
             }
         }
+    }
+
+    It 'Get-Error works with strict mode' {
+        $out = pwsh -noprofile -command 'Set-StrictMode -Version Latest; $PSStyle.OutputRendering = "PlainText"; 1/0; Get-Error' | Out-String
+        $out | Should -Match "Message : Attempted to divide by zero."
+    }
+
+    It 'BoundParameters show as name/value pairs' {
+        try {
+            function test { [CmdletBinding()]param($A,$B) }
+            $Param = @{ A = "First"; B = "Second"; C = 24 }
+            test @Param
+        }
+        catch {
+            # do nothing
+        }
+
+        $out = Get-Error | Out-String
+        $out | Should -Match "BoundParameters\s+:\s+A : First\s+B : Second\s"
     }
 }

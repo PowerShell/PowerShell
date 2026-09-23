@@ -26,6 +26,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion tracer
 
         internal const char Ellipsis = '\u2026';
+        internal const string EllipsisStr = "\u2026";
 
         internal static string PSObjectIsOfExactType(Collection<string> typeNames)
         {
@@ -120,8 +121,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="obj">Object to extract the IEnumerable from.</param>
         internal static IEnumerable GetEnumerable(object obj)
         {
-            PSObject mshObj = obj as PSObject;
-            if (mshObj != null)
+            if (obj is PSObject mshObj)
             {
                 obj = mshObj.BaseObject;
             }
@@ -207,8 +207,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="expressionFactory">Expression factory to create PSPropertyExpression.</param>
         /// <param name="enumerationLimit">Limit on IEnumerable enumeration.</param>
         /// <param name="formatErrorObject">Stores errors during string conversion.</param>
+        /// <param name="formatFloat">Determine if to format floating point numbers using current culture.</param>
         /// <returns>String representation.</returns>
-        internal static string SmartToString(PSObject so, PSPropertyExpressionFactory expressionFactory, int enumerationLimit, StringFormatError formatErrorObject)
+        internal static string SmartToString(PSObject so, PSPropertyExpressionFactory expressionFactory, int enumerationLimit, StringFormatError formatErrorObject, bool formatFloat = false)
         {
             if (so == null)
                 return string.Empty;
@@ -226,8 +227,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     IEnumerator enumerator = e.GetEnumerator();
                     if (enumerator != null)
                     {
-                        IBlockingEnumerator<object> be = enumerator as IBlockingEnumerator<object>;
-                        if (be != null)
+                        if (enumerator is IBlockingEnumerator<object> be)
                         {
                             while (be.MoveNext(false))
                             {
@@ -293,7 +293,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return sb.ToString();
                 }
 
-                // take care of the case there is no base object
+                if (formatFloat && so.BaseObject is not null)
+                {
+                    // format numbers using the current culture
+                    if (so.BaseObject is double dbl)
+                    {
+                        return dbl.ToString("F");
+                    }
+                    else if (so.BaseObject is float f)
+                    {
+                        return f.ToString("F");
+                    }
+                    else if (so.BaseObject is decimal d)
+                    {
+                        return d.ToString("F");
+                    }
+                }
+
                 return so.ToString();
             }
             catch (Exception e) when (e is ExtendedTypeSystemException || e is InvalidOperationException)
@@ -332,43 +348,49 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             StringFormatError formatErrorObject, PSPropertyExpressionFactory expressionFactory)
         {
             PSObject so = PSObjectHelper.AsPSObject(val);
-            if (directive != null && !string.IsNullOrEmpty(directive.formatString))
+            bool isTable = false;
+            if (directive is not null)
             {
-                // we have a formatting directive, apply it
-                // NOTE: with a format directive, we do not make any attempt
-                // to deal with IEnumerable
-                try
+                isTable = directive.isTable;
+                if (!string.IsNullOrEmpty(directive.formatString))
                 {
-                    // use some heuristics to determine if we have "composite formatting"
-                    // 2004/11/16-JonN This is heuristic but should be safe enough
-                    if (directive.formatString.Contains("{0") || directive.formatString.Contains('}'))
+                    // we have a formatting directive, apply it
+                    // NOTE: with a format directive, we do not make any attempt
+                    // to deal with IEnumerable
+                    try
                     {
-                        // we do have it, just use it
-                        return string.Format(CultureInfo.CurrentCulture, directive.formatString, so);
+                        // use some heuristics to determine if we have "composite formatting"
+                        // 2004/11/16-JonN This is heuristic but should be safe enough
+                        if (directive.formatString.Contains("{0") || directive.formatString.Contains('}'))
+                        {
+                            // we do have it, just use it
+                            return string.Format(CultureInfo.CurrentCulture, directive.formatString, so);
+                        }
+                        // we fall back to the PSObject's IFormattable.ToString()
+                        // pass a null IFormatProvider
+                        return so.ToString(directive.formatString, formatProvider: null);
                     }
-                    // we fall back to the PSObject's IFormattable.ToString()
-                    // pass a null IFormatProvider
-                    return so.ToString(directive.formatString, null);
-                }
-                catch (Exception e) // 2004/11/17-JonN This covers exceptions thrown in
-                                    // string.Format and PSObject.ToString().
-                                    // I think we can swallow these.
-                {
-                    // NOTE: we catch all the exceptions, since we do not know
-                    // what the underlying object access would throw
-                    if (formatErrorObject != null)
+                    catch (Exception e) // 2004/11/17-JonN This covers exceptions thrown in
+                                        // string.Format and PSObject.ToString().
+                                        // I think we can swallow these.
                     {
-                        formatErrorObject.sourceObject = so;
-                        formatErrorObject.exception = e;
-                        formatErrorObject.formatString = directive.formatString;
-                        return string.Empty;
+                        // NOTE: we catch all the exceptions, since we do not know
+                        // what the underlying object access would throw
+                        if (formatErrorObject is not null)
+                        {
+                            formatErrorObject.sourceObject = so;
+                            formatErrorObject.exception = e;
+                            formatErrorObject.formatString = directive.formatString;
+                            return string.Empty;
+                        }
                     }
                 }
             }
+
             // we do not have a formatting directive or we failed the formatting (fallback)
             // but we did not report as an error;
             // this call would deal with IEnumerable if the object implements it
-            return PSObjectHelper.SmartToString(so, expressionFactory, enumerationLimit, formatErrorObject);
+            return PSObjectHelper.SmartToString(so, expressionFactory, enumerationLimit, formatErrorObject, isTable);
         }
 
         private static PSMemberSet MaskDeserializedAndGetStandardMembers(PSObject so)
@@ -394,22 +416,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static List<PSPropertyExpression> GetDefaultPropertySet(PSMemberSet standardMembersSet)
         {
-            if (standardMembersSet != null)
+            if (standardMembersSet != null && standardMembersSet.Members[TypeTable.DefaultDisplayPropertySet] is PSPropertySet defaultDisplayPropertySet)
             {
-                PSPropertySet defaultDisplayPropertySet = standardMembersSet.Members[TypeTable.DefaultDisplayPropertySet] as PSPropertySet;
-                if (defaultDisplayPropertySet != null)
+                List<PSPropertyExpression> retVal = new List<PSPropertyExpression>();
+                foreach (string prop in defaultDisplayPropertySet.ReferencedPropertyNames)
                 {
-                    List<PSPropertyExpression> retVal = new List<PSPropertyExpression>();
-                    foreach (string prop in defaultDisplayPropertySet.ReferencedPropertyNames)
+                    if (!string.IsNullOrEmpty(prop))
                     {
-                        if (!string.IsNullOrEmpty(prop))
-                        {
-                            retVal.Add(new PSPropertyExpression(prop));
-                        }
+                        retVal.Add(new PSPropertyExpression(prop));
                     }
-
-                    return retVal;
                 }
+
+                return retVal;
             }
 
             return new List<PSPropertyExpression>();
@@ -433,21 +451,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static PSPropertyExpression GetDefaultNameExpression(PSMemberSet standardMembersSet)
         {
-            if (standardMembersSet != null)
+            if (standardMembersSet != null && standardMembersSet.Members[TypeTable.DefaultDisplayProperty] is PSNoteProperty defaultDisplayProperty)
             {
-                PSNoteProperty defaultDisplayProperty = standardMembersSet.Members[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
-                if (defaultDisplayProperty != null)
+                string expressionString = defaultDisplayProperty.Value.ToString();
+                if (string.IsNullOrEmpty(expressionString))
                 {
-                    string expressionString = defaultDisplayProperty.Value.ToString();
-                    if (string.IsNullOrEmpty(expressionString))
-                    {
-                        // invalid data, the PSObject is empty
-                        return null;
-                    }
-                    else
-                    {
-                        return new PSPropertyExpression(expressionString);
-                    }
+                    // invalid data, the PSObject is empty
+                    return null;
+                }
+                else
+                {
+                    return new PSPropertyExpression(expressionString);
                 }
             }
 

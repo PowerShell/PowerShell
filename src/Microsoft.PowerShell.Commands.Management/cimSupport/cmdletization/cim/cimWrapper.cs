@@ -107,15 +107,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                if (_cmdletDefinitionContext == null)
-                {
-                    _cmdletDefinitionContext = new CimCmdletDefinitionContext(
-                            this.ClassName,
-                            this.ClassVersion,
-                            this.ModuleVersion,
-                            this.Cmdlet.CommandInfo.CommandMetadata.SupportsShouldProcess,
-                            this.PrivateData);
-                }
+                _cmdletDefinitionContext ??= new CimCmdletDefinitionContext(
+                    this.ClassName,
+                    this.ClassVersion,
+                    this.ModuleVersion,
+                    this.Cmdlet.CommandInfo.CommandMetadata.SupportsShouldProcess,
+                    this.PrivateData);
 
                 return _cmdletDefinitionContext;
             }
@@ -171,7 +168,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <returns><see cref="System.Management.Automation.Job"/> object that performs a query against the wrapped object model.</returns>
         internal override StartableJob CreateQueryJob(CimSession session, QueryBuilder baseQuery)
         {
-            if (!(baseQuery is CimQuery query))
+            if (baseQuery is not CimQuery query)
             {
                 throw new ArgumentNullException(nameof(baseQuery));
             }

@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -130,9 +130,6 @@
   <data name="CannotSpecifyQuoteFieldsAndUseQuotes" xml:space="preserve">
     <value>You must specify either the -UseQuotes or -QuoteFields parameters, but not both.</value>
   </data>
-  <data name="CannotSpecifyIncludeTypeInformationAndNoTypeInformation" xml:space="preserve">
-    <value>You must specify either the -IncludeTypeInformation or -NoTypeInformation parameters, but not both.</value>
-  </data>
   <data name="CannotSpecifyPathAndLiteralPath" xml:space="preserve">
     <value>You must specify either the -Path or -LiteralPath parameters, but not both.</value>
   </data>
@@ -156,5 +153,8 @@
   </data>
   <data name="EOFIsReached" xml:space="preserve">
     <value>EOF is reached.</value>
+  </data>
+  <data name="CannotSpecifyAppendAndNoHeader" xml:space="preserve">
+    <value>You must specify either the -Append or -NoHeader parameters, but not both.</value>
   </data>
 </root>

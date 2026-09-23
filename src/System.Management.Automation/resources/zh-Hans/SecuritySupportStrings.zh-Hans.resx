@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CertificatePathMustBeFileSystemPath" xml:space="preserve">
+    <value>无法加载证书。“{0}”必须解析为文件系统路径。</value>
+  </data>
+  <data name="CertificateCannotBeUsedForEncryption" xml:space="preserve">
+    <value>证书“{0}”无法用于加密。加密证书必须包含数据加密或密钥加密密钥用法，并包括文档加密增强型密钥用法({1})。</value>
+  </data>
+  <data name="IdentifierMustReferenceSingleCertificate" xml:space="preserve">
+    <value>无法加载证书。标识符“{0}”匹配多个证书。要加密发送给多个收件人，请为“{1}”参数提供多个具体值，而不要使用会匹配多个证书的通配符。</value>
+  </data>
+  <data name="NoCertificateFound" xml:space="preserve">
+    <value>无法加载加密证书。证书设置“{0}”不代表有效的 base-64 编码证书，也不代表通过文件、目录、指纹或使用者名称指定的有效证书。</value>
+  </data>
+  <data name="CertificateContainsPrivateKey" xml:space="preserve">
+    <value>警告: 证书“{0}”包含私钥。用于加密的受保护事件日志证书应仅包含公钥。</value>
+  </data>
+  <data name="CouldNotEncryptContent" xml:space="preserve">
+    <value>错误: 无法保护事件日志消息“{0}”: {1}</value>
+  </data>
+  <data name="CouldNotUseCertificate" xml:space="preserve">
+    <value>错误: 找不到或无法使用证书: {0}</value>
+  </data>
+  <data name="CannotEncryptSecureString" xml:space="preserve">
+    <value>会话密钥不可用于加密安全字符串。</value>
+  </data>
+  <data name="InvalidOffset" xml:space="preserve">
+    <value>缓冲区偏移无效。</value>
+  </data>
+  <data name="InvalidPublicKey" xml:space="preserve">
+    <value>公钥数据无效。</value>
+  </data>
+  <data name="CannotImportPublicKey" xml:space="preserve">
+    <value>无法导入公钥。</value>
+  </data>
+  <data name="InvalidSessionKey" xml:space="preserve">
+    <value>会话密钥数据无效。</value>
+  </data>
+  <data name="ScriptFileBlockedBySystemPolicy" xml:space="preserve">
+    <value>脚本文件“{0}”被系统策略阻止运行。</value>
+  </data>
+  <data name="UnknownSystemScriptFileEnforcement" xml:space="preserve">
+    <value>返回了未知的脚本文件策略强制值: {0}。</value>
+  </data>
+  <data name="ExternalScriptWDACLogTitle" xml:space="preserve">
+    <value>脚本文件读取</value>
+  </data>
+  <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
+    <value>脚本文件“{0}”不受策略信任，将在 ConstrainedLanguage 模式下运行。</value>
+  </data>
+</root>

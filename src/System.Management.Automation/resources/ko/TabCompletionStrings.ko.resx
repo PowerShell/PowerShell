@@ -1,0 +1,610 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
+    <value>원격 runspace에 TypeTable instance가 없으므로 탭 완성 결과를 제대로 역직렬화할 수 없습니다.</value>
+  </data>
+  <data name="NoAccessToProperties" xml:space="preserve">
+    <value>CompletionResult 형식의 null instance에 있는 속성에 액세스할 수 없습니다.</value>
+  </data>
+  <data name="bnotOperatorDescription" xml:space="preserve">
+    <value>비트 관련 아님</value>
+  </data>
+  <data name="notOperatorDescription" xml:space="preserve">
+    <value>논리적이지 않습니다. 뒤에 오는 문을 부정합니다.</value>
+  </data>
+  <data name="eqOperatorDescription" xml:space="preserve">
+    <value>같음 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 같은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 같을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="ieqOperatorDescription" xml:space="preserve">
+    <value>같음 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 같은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 같을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="ceqOperatorDescription" xml:space="preserve">
+    <value>같음 - 대/소문자를 구분합니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 같은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 같을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="neOperatorDescription" xml:space="preserve">
+    <value>같지 않음 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 같지 않은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 같지 않을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="ineOperatorDescription" xml:space="preserve">
+    <value>같지 않음 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 같지 않은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 같지 않을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="cneOperatorDescription" xml:space="preserve">
+    <value>같지 않음 - 대/소문자를 구분합니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 같지 않은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 같지 않을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="geOperatorDescription" xml:space="preserve">
+    <value>크거나 같음 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자보다 크거나 같은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자보다 크거나 같을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="igeOperatorDescription" xml:space="preserve">
+    <value>크거나 같음 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자보다 크거나 같은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자보다 크거나 같을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="cgeOperatorDescription" xml:space="preserve">
+    <value>크거나 같음 - 대/소문자를 구분합니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자보다 크거나 같은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자보다 크거나 같을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="gtOperatorDescription" xml:space="preserve">
+    <value>보다 큼 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자보다 큰 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자보다 클 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="igtOperatorDescription" xml:space="preserve">
+    <value>보다 큼 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자보다 큰 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자보다 클 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="cgtOperatorDescription" xml:space="preserve">
+    <value>보다 큼 - 대/소문자를 구분합니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자보다 큰 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자보다 클 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="ltOperatorDescription" xml:space="preserve">
+    <value>보다 작음 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션인 경우 오른쪽 피연산자보다 작은 컬렉션의 값을 반환하고, 왼쪽 피연산자가 오른쪽 피연산자보다 작으면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="iltOperatorDescription" xml:space="preserve">
+    <value>보다 작음 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션인 경우 오른쪽 피연산자보다 작은 컬렉션의 값을 반환하고, 왼쪽 피연산자가 오른쪽 피연산자보다 작으면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="cltOperatorDescription" xml:space="preserve">
+    <value>보다 작음 - 대/소문자를 구분합니다. 왼쪽 피연산자가 컬렉션인 경우 오른쪽 피연산자보다 작은 컬렉션의 값을 반환하고, 왼쪽 피연산자가 오른쪽 피연산자보다 작으면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="leOperatorDescription" xml:space="preserve">
+    <value>작거나 같음 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자보다 작거나 같은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자보다 작거나 같을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="ileOperatorDescription" xml:space="preserve">
+    <value>작거나 같음 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자보다 작거나 같은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자보다 작거나 같을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="cleOperatorDescription" xml:space="preserve">
+    <value>작거나 같음 - 대/소문자를 구분합니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자보다 작거나 같은 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자보다 작거나 같을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="likeOperatorDescription" xml:space="preserve">
+    <value>와일드카드 일치 연산자 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치할 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="ilikeOperatorDescription" xml:space="preserve">
+    <value>와일드카드 일치 연산자 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치할 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="clikeOperatorDescription" xml:space="preserve">
+    <value>와일드카드 일치 연산자 - 대/소문자를 구분합니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치할 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="notlikeOperatorDescription" xml:space="preserve">
+    <value>와일드카드 일치 연산자 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하지 않는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치하지 않을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="inotlikeOperatorDescription" xml:space="preserve">
+    <value>와일드카드 일치 연산자 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하지 않는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치하지 않을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="cnotlikeOperatorDescription" xml:space="preserve">
+    <value>와일드카드 일치 연산자 - 대/소문자를 구분합니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하지 않는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치하지 않을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="matchOperatorDescription" xml:space="preserve">
+    <value>정규식 일치 연산자 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치할 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="imatchOperatorDescription" xml:space="preserve">
+    <value>정규식 일치 연산자 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치할 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="cmatchOperatorDescription" xml:space="preserve">
+    <value>정규식 일치 연산자 - 대/소문자를 구분합니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치할 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="notmatchOperatorDescription" xml:space="preserve">
+    <value>정규식 일치 연산자 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하지 않는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치하지 않을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="inotmatchOperatorDescription" xml:space="preserve">
+    <value>정규식 일치 연산자 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하지 않는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치하지 않을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="cnotmatchOperatorDescription" xml:space="preserve">
+    <value>정규식 일치 연산자 - 대/소문자를 구분합니다. 왼쪽 피연산자가 컬렉션이면 오른쪽 피연산자와 일치하지 않는 컬렉션의 값을 반환하고, 그렇지 않으면 왼쪽 피연산자가 오른쪽 피연산자와 일치하지 않을 때 TRUE를 반환합니다.</value>
+  </data>
+  <data name="replaceOperatorDescription" xml:space="preserve">
+    <value>바꾸기 연산자 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자를 변경합니다. 예: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="ireplaceOperatorDescription" xml:space="preserve">
+    <value>바꾸기 연산자 - 대/소문자를 구분하지 않습니다. 왼쪽 피연산자를 변경합니다. 예: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="creplaceOperatorDescription" xml:space="preserve">
+    <value>연산자 바꾸기 - 대/소문자를 구분합니다. 왼쪽 피연산자를 변경합니다. 예: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="containsOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분하지 않습니다. 테스트 값(오른쪽 피연산자)이 왼쪽 피연산자의 값 중 하나 이상과 정확히 일치하면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="icontainsOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분하지 않습니다. 테스트 값(오른쪽 피연산자)이 왼쪽 피연산자의 값 중 하나 이상과 정확히 일치하면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="ccontainsOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분합니다. 테스트 값(오른쪽 피연산자)이 왼쪽 피연산자의 값 중 하나 이상과 정확히 일치할 때만 TRUE를 반환합니다.</value>
+  </data>
+  <data name="notcontainsOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분하지 않습니다. 테스트 값(오른쪽 피연산자)이 왼쪽 피연산자의 값과 하나도 정확히 일치하지 않으면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="inotcontainsOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분하지 않습니다. 테스트 값(오른쪽 피연산자)이 왼쪽 피연산자의 값과 하나도 정확히 일치하지 않으면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="cnotcontainsOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분합니다. 테스트 값(오른쪽 피연산자)이 왼쪽 피연산자의 값과 하나도 정확히 일치하지 않으면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="inOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분하지 않습니다. 테스트 값(왼쪽 피연산자)이 오른쪽 피연산자의 값 중 하나 이상과 정확히 일치하면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="iinOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분하지 않습니다. 테스트 값(왼쪽 피연산자)이 오른쪽 피연산자의 값 중 하나 이상과 정확히 일치하면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="cinOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분합니다. 테스트 값(왼쪽 피연산자)이 오른쪽 피연산자의 값 중 하나 이상과 정확히 일치하면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="notinOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분합니다. 테스트 값(왼쪽 피연산자)이 오른쪽 피연산자의 값과 하나도 정확히 일치하지 않으면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="inotinOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분하지 않습니다. 테스트 값(왼쪽 피연산자)이 오른쪽 피연산자의 값과 하나도 정확히 일치하지 않으면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="cnotinOperatorDescription" xml:space="preserve">
+    <value>포함 연산자 - 대/소문자를 구분합니다. 테스트 값(왼쪽 피연산자)이 오른쪽 피연산자의 값과 하나도 정확히 일치하지 않으면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="splitOperatorDescription" xml:space="preserve">
+    <value>Split - 대/소문자를 구분하지 않습니다. 하나 이상의 문자열을 하위 문자열로 분할합니다.
+-split &lt;String&gt;
+
+&lt;String&gt; -split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isplitOperatorDescription" xml:space="preserve">
+    <value>Split - 대/소문자를 구분하지 않습니다. 하나 이상의 문자열을 하위 문자열로 분할합니다.
+-split &lt;String&gt;
+
+&lt;String&gt; -split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="csplitOperatorDescription" xml:space="preserve">
+    <value>Split - 대/소문자를 구분합니다. 하나 이상의 문자열을 하위 문자열로 분할합니다.
+-split &lt;String&gt;
+
+&lt;String&gt; -split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isnotOperatorDescription" xml:space="preserve">
+    <value>왼쪽 피연산자가 지정된 .NET Framework 형식(오른쪽 피연산자)의 인스턴스가 아니면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="isOperatorDescription" xml:space="preserve">
+    <value>왼쪽 피연산자가 지정된 .NET Framework 형식(오른쪽 피연산자)의 인스턴스이면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="asOperatorDescription" xml:space="preserve">
+    <value>왼쪽 피연산자를 지정한 .NET Framework 형식(오른쪽 피연산자)으로 변환합니다.</value>
+  </data>
+  <data name="fOperatorDescription" xml:space="preserve">
+    <value>문자열 개체의 형식 메서드를 사용하여 문자열의 서식을 지정합니다.</value>
+  </data>
+  <data name="andOperatorDescription" xml:space="preserve">
+    <value>논리적 AND. 두 문이 모두 TRUE이면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="bandOperatorDescription" xml:space="preserve">
+    <value>비트 AND</value>
+  </data>
+  <data name="orOperatorDescription" xml:space="preserve">
+    <value>논리적 OR. 문 중 하나 또는 둘 다 TRUE이면 TRUE입니다.</value>
+  </data>
+  <data name="borOperatorDescription" xml:space="preserve">
+    <value>비트 OR(포함)입니다.</value>
+  </data>
+  <data name="xorOperatorDescription" xml:space="preserve">
+    <value>논리적 배타적 OR입니다. 문 중 하나는 TRUE이고 다른 하나는 FALSE이면 TRUE를 반환합니다.</value>
+  </data>
+  <data name="bxorOperatorDescription" xml:space="preserve">
+    <value>비트 OR(배타적)</value>
+  </data>
+  <data name="joinOperatorDescription" xml:space="preserve">
+    <value>Join - 여러 문자열을 하나의 문자열로 결합합니다.
+-Join &lt;String[]&gt;
+&lt;String[]&gt; -Join &lt;Delimiter&gt;</value>
+  </data>
+  <data name="shlOperatorDescription" xml:space="preserve">
+    <value>왼쪽으로 이동 비트 연산자입니다. 가장 오른쪽 비트 위치에 0을 삽입합니다.</value>
+  </data>
+  <data name="shrOperatorDescription" xml:space="preserve">
+    <value>오른쪽으로 이동 비트 연산자입니다. 가장 왼쪽 비트 위치에 0을 삽입합니다. 부호 있는 값의 경우 부호 비트는 유지됩니다.</value>
+  </data>
+  <data name="NameHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+만들려는 속성의 이름을 지정합니다.</value>
+  </data>
+  <data name="LabelHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+만들려는 속성의 이름을 지정합니다.</value>
+  </data>
+  <data name="ExpressionHashtableKeyDescription" xml:space="preserve">
+    <value>[scriptblock]
+새 속성의 값을 계산하는 데 사용하는 스크립트 블록입니다.</value>
+  </data>
+  <data name="AlignmentHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+값을 열에 표시하는 방법을 정의합니다.
+유효한 값은 'left', 'center' 또는 'right'입니다.</value>
+  </data>
+  <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+출력을 위해 값의 형식을 지정하는 형식 문자열을 지정합니다.</value>
+  </data>
+  <data name="WidthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+값이 표시될 때 테이블의 최대 열 너비를 지정합니다.
+값은 0보다 커야 합니다.</value>
+  </data>
+  <data name="DepthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+깊이 키는 속성별 확장 깊이를 지정합니다.</value>
+  </data>
+  <data name="AscendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+하나 이상의 속성에 대한 정렬 순서를 지정합니다.</value>
+  </data>
+  <data name="DescendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+하나 이상의 속성에 대한 정렬 순서를 지정합니다.</value>
+  </data>
+  <data name="LogNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+이벤트를 가져올 로그 이름을 지정합니다.
+와일드카드를 지원합니다.</value>
+  </data>
+  <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+이벤트를 가져올 이벤트 로그 공급자를 지정합니다.
+와일드카드를 지원합니다.</value>
+  </data>
+  <data name="PathHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+이벤트를 가져올 로그 파일의 파일 경로를 지정합니다.
+유효한 파일 형식은 .etl, .evt, .evtx입니다.</value>
+  </data>
+  <data name="KeywordsHashtableKeyDescription" xml:space="preserve">
+    <value>[Long[]]
+지정된 키워드 비트 마스크가 있는 이벤트를 선택합니다.
+다음은 표준 키워드입니다.
+4503599627370496: AuditFailure
+9007199254740992: AuditSuccess
+4503599627370496: CorrelationHint
+18014398509481984: CorrelationHint2
+36028797018963968: EventLogClassic
+281474976710656: ResponseTime
+2251799813685248: Sqm
+562949953421312: WdiContext
+1125899906842624: WdiDiagnostic</value>
+  </data>
+  <data name="IDHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+지정된 이벤트 ID의 이벤트를 선택합니다.</value>
+  </data>
+  <data name="LevelHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+지정된 로그 수준의 이벤트를 선택합니다.
+유효한 로그 수준은 다음과 같습니다.
+1 - 위험
+2: 오류
+3: 경고
+4: 정보 제공
+5: 자세한 정보</value>
+  </data>
+  <data name="StartTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+지정된 날짜 및 시간 이후에 만들어진 이벤트를 선택합니다.</value>
+  </data>
+  <data name="EndTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+지정된 날짜 및 시간 이전에 만들어진 이벤트를 선택합니다.</value>
+  </data>
+  <data name="UserIDHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+지정된 사용자가 생성한 이벤트를 선택합니다.
+이 값은 SID의 문자열 표현이거나 DOMAIN\USERNAME 또는 USERNAME@DOMAIN 형식의 도메인과 사용자 이름일 수 있습니다.</value>
+  </data>
+  <data name="DataHashtableKeyDescription" xml:space="preserve">
+    <value>[string[]]
+EventData 섹션에 지정된 값이 있는 이벤트를 선택합니다.</value>
+  </data>
+  <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
+    <value>[hashtable]
+해시 테이블에 지정된 값과 일치하는 이벤트를 제외합니다.</value>
+  </data>
+  <data name="RequiresModulesParameterDescription" xml:space="preserve">
+    <value>[string] 또는 [hashtable]
+스크립트에 필요한 PowerShell 모듈 배열을 지정합니다.
+각 요소는 모듈 이름을 값으로 하는 문자열이거나 다음 키를 포함하는 해시 테이블일 수 있습니다.
+이름: 모듈의 이름
+GUID: 모듈의 GUID
+다음 중 하나:
+ModuleVersion: 모듈의 최소 허용 버전을 지정합니다.
+RequiredVersion: 모듈의 정확한 필수 버전을 지정합니다.
+MaximumVersion: 모듈의 최대 허용 버전을 지정합니다.</value>
+  </data>
+  <data name="RequiresPSEditionParameterDescription" xml:space="preserve">
+    <value>[string]
+스크립트에 필요한 PowerShell 에디션을 지정합니다.
+유효한 값은 "Core" 및 "Desktop"입니다.</value>
+  </data>
+  <data name="RequiresRunAsAdministratorParameterDescription" xml:space="preserve">
+    <value>[switch]
+PowerShell이 Windows에서 관리자 권한으로 실행되어야 함을 지정합니다.
+이 매개 변수는 #requires 문 줄의 마지막에 와야 합니다.</value>
+  </data>
+  <data name="RequiresVersionParameterDescription" xml:space="preserve">
+    <value>[version]
+스크립트에 필요한 PowerShell의 최소 버전을 지정합니다.</value>
+  </data>
+  <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
+    <value>스크립트를 실행하려면 PowerShell 7+가 필요하도록 지정합니다.</value>
+  </data>
+  <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
+    <value>스크립트를 실행하려면 Windows PowerShell 5.1이 필요함을 지정합니다.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
+    <value>[string]
+필수 사항입니다. 모듈 이름을 지정합니다.</value>
+  </data>
+  <data name="RequiresModuleSpecGUIDDescription" xml:space="preserve">
+    <value>[string]
+옵션입니다. 모듈의 GUID를 지정합니다.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleVersionDescription" xml:space="preserve">
+    <value>[string]
+모듈의 최소 허용 버전을 지정합니다.</value>
+  </data>
+  <data name="RequiresModuleSpecRequiredVersionDescription" xml:space="preserve">
+    <value>[string]
+모듈의 정확한 필수 버전을 지정합니다.</value>
+  </data>
+  <data name="RequiresModuleSpecMaximumVersionDescription" xml:space="preserve">
+    <value>[string]
+모듈의 최대 허용 버전을 지정합니다.</value>
+  </data>
+  <data name="CommentHelpSYNOPSISKeywordDescription" xml:space="preserve">
+    <value>함수 또는 스크립트에 대한 간단한 설명입니다.
+이 키워드는 각 항목에서 한 번만 사용할 수 있습니다.</value>
+  </data>
+  <data name="CommentHelpDESCRIPTIONKeywordDescription" xml:space="preserve">
+    <value>함수 또는 스크립트에 대한 자세한 설명입니다.
+이 키워드는 각 항목에서 한 번만 사용할 수 있습니다.</value>
+  </data>
+  <data name="CommentHelpPARAMETERKeywordDescription" xml:space="preserve">
+    <value>.PARAMETER  &lt;Parameter-Name&gt;
+매개 변수에 대한 설명입니다.
+함수 또는 스크립트 구문의 각 매개 변수마다 .PARAMETER 키워드를 추가합니다.</value>
+  </data>
+  <data name="CommentHelpEXAMPLEKeywordDescription" xml:space="preserve">
+    <value>함수 또는 스크립트를 사용하는 샘플 명령이며, 필요에 따라 샘플 출력과 설명이 뒤따릅니다.
+각 예제마다 이 키워드를 반복합니다.</value>
+  </data>
+  <data name="CommentHelpINPUTSKeywordDescription" xml:space="preserve">
+    <value>함수 또는 스크립트에 파이프할 수 있는 개체의 .NET 형식입니다.
+입력 개체에 대한 설명도 포함할 수 있습니다.</value>
+  </data>
+  <data name="CommentHelpOUTPUTSKeywordDescription" xml:space="preserve">
+    <value>cmdlet이 반환하는 개체의 .NET 형식입니다.
+반환된 개체에 대한 설명을 포함할 수도 있습니다.</value>
+  </data>
+  <data name="CommentHelpNOTESKeywordDescription" xml:space="preserve">
+    <value>함수 또는 스크립트에 대한 추가 정보입니다.</value>
+  </data>
+  <data name="CommentHelpLINKKeywordDescription" xml:space="preserve">
+    <value>관련 항목의 이름입니다.
+각 관련 항목마다 .LINK 키워드를 반복하세요.
+.Link 키워드 콘텐츠에는 같은 도움말 항목의 온라인 버전 URI도 포함할 수 있습니다.</value>
+  </data>
+  <data name="CommentHelpCOMPONENTKeywordDescription" xml:space="preserve">
+    <value>함수 또는 스크립트에서 사용하거나 관련된 기술 또는 기능의 이름입니다.</value>
+  </data>
+  <data name="CommentHelpROLEKeywordDescription" xml:space="preserve">
+    <value>도움말 항목의 사용자 역할 이름입니다.</value>
+  </data>
+  <data name="CommentHelpFUNCTIONALITYKeywordDescription" xml:space="preserve">
+    <value>함수의 용도를 설명하는 키워드입니다.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPTARGETNAMEKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPTARGETNAME &lt;Command-Name&gt;
+지정한 명령의 도움말 항목으로 리디렉션됩니다.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPCATEGORYKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPCATEGORY &lt;Category&gt;
+.ForwardHelpTargetName의 항목에 대한 도움말 범주를 지정합니다.</value>
+  </data>
+  <data name="CommentHelpREMOTEHELPRUNSPACEKeywordDescription" xml:space="preserve">
+    <value>.REMOTEHELPRUNSPACE &lt;PSSession-variable&gt;
+도움말 항목이 포함된 세션을 지정합니다.
+PSSession 개체가 포함된 변수를 입력하세요.</value>
+  </data>
+  <data name="CommentHelpEXTERNALHELPKeywordDescription" xml:space="preserve">
+    <value>.EXTERNALHELP &lt;XML Help File&gt;
+함수 또는 스크립트가 XML 파일에 문서화된 경우 .ExternalHelp 키워드가 필요합니다.</value>
+  </data>
+  <data name="AssemblyKeywordDescription" xml:space="preserve">
+    <value>로드할 .NET 어셈블리의 경로를 지정합니다.
+
+using assembly &lt;.NET-assembly-path&gt;</value>
+  </data>
+  <data name="ModuleKeywordDescription" xml:space="preserve">
+    <value>클래스를 로드할 PowerShell 모듈을 지정합니다.
+
+using module &lt;ModuleName or Path&gt;
+
+using module &lt;ModuleSpecification hashtable&gt;</value>
+  </data>
+  <data name="NamespaceKeywordDescription" xml:space="preserve">
+    <value>형식을 resolve할 .NET 네임스페이스 또는 네임스페이스 별칭을 지정합니다.
+
+using namespace &lt;.NET-namespace&gt;
+
+using namespace &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
+  </data>
+  <data name="TypeKeywordDescription" xml:space="preserve">
+    <value>.NET 형식의 별칭을 지정합니다.
+
+using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
+  </data>
+  <data name="RegistryStringToolTip" xml:space="preserve">
+    <value>일반 문자열입니다.</value>
+  </data>
+  <data name="RegistryExpandStringToolTip" xml:space="preserve">
+    <value>값을 검색할 때 확장되는 환경 변수에 대한 확장되지 않은 참조를 포함하는 문자열입니다.</value>
+  </data>
+  <data name="RegistryBinaryToolTip" xml:space="preserve">
+    <value>모든 형식의 이진 데이터입니다.</value>
+  </data>
+  <data name="RegistryDWordToolTip" xml:space="preserve">
+    <value>32비트 이진수입니다.</value>
+  </data>
+  <data name="RegistryMultiStringToolTip" xml:space="preserve">
+    <value>문자열 배열입니다.</value>
+  </data>
+  <data name="RegistryQWordToolTip" xml:space="preserve">
+    <value>64비트 이진수입니다.</value>
+  </data>
+  <data name="RegistryUnknownToolTip" xml:space="preserve">
+    <value>지원되지 않는 레지스트리 데이터 형식입니다.</value>
+  </data>
+  <data name="SeparatorCommaToolTip" xml:space="preserve">
+    <value>',' - 쉼표</value>
+  </data>
+  <data name="SeparatorCommaSpaceToolTip" xml:space="preserve">
+    <value>', ' - 쉼표와 공백</value>
+  </data>
+  <data name="SeparatorSemiColonToolTip" xml:space="preserve">
+    <value>';' - 세미콜론</value>
+  </data>
+  <data name="SeparatorSemiColonSpaceToolTip" xml:space="preserve">
+    <value>'; ' - Semi-Colon-Space</value>
+  </data>
+  <data name="SeparatorNewlineToolTip" xml:space="preserve">
+    <value>{0} - 줄 바꿈</value>
+  </data>
+  <data name="SeparatorDashToolTip" xml:space="preserve">
+    <value>'-' - 대시</value>
+  </data>
+  <data name="SeparatorSpaceToolTip" xml:space="preserve">
+    <value>' ' - 공간</value>
+  </data>
+</root>

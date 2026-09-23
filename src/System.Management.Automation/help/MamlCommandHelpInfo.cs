@@ -315,7 +315,7 @@ namespace System.Management.Automation
         /// Name of the property for which text needs to be extracted.
         /// </param>
         /// <returns></returns>
-        private string ExtractTextForHelpProperty(PSObject psObject, string propertyName)
+        private static string ExtractTextForHelpProperty(PSObject psObject, string propertyName)
         {
             if (psObject == null)
                 return string.Empty;
@@ -336,14 +336,14 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="psObject"></param>
         /// <returns></returns>
-        private string ExtractText(PSObject psObject)
+        private static string ExtractText(PSObject psObject)
         {
             if (psObject == null)
             {
                 return string.Empty;
             }
 
-            // I think every cmdlet description should atleast have 400 characters...
+            // I think every cmdlet description should at least have 400 characters...
             // so starting with this assumption..I did an average of all the cmdlet
             // help content available at the time of writing this code and came up
             // with this number.
@@ -441,7 +441,7 @@ namespace System.Management.Automation
         internal MamlCommandHelpInfo Copy(HelpCategory newCategoryToUse)
         {
             MamlCommandHelpInfo result = new MamlCommandHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);
-            result.FullHelp.Properties["Category"].Value = newCategoryToUse;
+            result.FullHelp.Properties["Category"].Value = newCategoryToUse.ToString();
             return result;
         }
 

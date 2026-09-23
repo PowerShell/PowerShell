@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Remoting;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Cryptography;
@@ -43,7 +42,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         public const uint PUBLICKEYBLOB = 0x00000006;
 
-        /// <summmary>
+        /// <summary>
         /// PUBLICKEYBLOB header length.
         /// </summary>
         public const int PUBLICKEYBLOB_HEADER_LEN = 20;
@@ -53,7 +52,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         public const uint SIMPLEBLOB = 0x00000001;
 
-        /// <summmary>
+        /// <summary>
         /// SIMPLEBLOB header length.
         /// </summary>
         public const int SIMPLEBLOB_HEADER_LEN = 12;
@@ -97,10 +96,7 @@ namespace System.Management.Automation.Internal
 
         private static RSA FromCapiPublicKeyBlob(byte[] blob, int offset)
         {
-            if (blob == null)
-            {
-                throw new ArgumentNullException(nameof(blob));
-            }
+            ArgumentNullException.ThrowIfNull(blob);
 
             if (offset > blob.Length)
             {
@@ -123,10 +119,7 @@ namespace System.Management.Automation.Internal
 
         private static RSAParameters GetParametersFromCapiPublicKeyBlob(byte[] blob, int offset)
         {
-            if (blob == null)
-            {
-                throw new ArgumentNullException(nameof(blob));
-            }
+            ArgumentNullException.ThrowIfNull(blob);
 
             if (offset > blob.Length)
             {
@@ -175,10 +168,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] ToCapiPublicKeyBlob(RSA rsa)
         {
-            if (rsa == null)
-            {
-                throw new ArgumentNullException(nameof(rsa));
-            }
+            ArgumentNullException.ThrowIfNull(rsa);
 
             RSAParameters p = rsa.ExportParameters(false);
             int keyLength = p.Modulus.Length;   // in bytes
@@ -221,10 +211,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] FromCapiSimpleKeyBlob(byte[] blob)
         {
-            if (blob == null)
-            {
-                throw new ArgumentNullException(nameof(blob));
-            }
+            ArgumentNullException.ThrowIfNull(blob);
 
             if (blob.Length < SIMPLEBLOB_HEADER_LEN)
             {
@@ -237,10 +224,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] ToCapiSimpleKeyBlob(byte[] encryptedKey)
         {
-            if (encryptedKey == null)
-            {
-                throw new ArgumentNullException(nameof(encryptedKey));
-            }
+            ArgumentNullException.ThrowIfNull(encryptedKey);
 
             // formulate the PUBLICKEYSTRUCT
             byte[] blob = new byte[SIMPLEBLOB_HEADER_LEN + encryptedKey.Length];
@@ -250,9 +234,9 @@ namespace System.Management.Automation.Internal
             // [2], [3]                         // RESERVED - Always 0
             blob[4] = (byte)CALG_AES_256;       // AES-256 algo id (0x10)
             blob[5] = 0x66;                     // ??
-            // [6], [7], [8]                    // 0x00 
+            // [6], [7], [8]                    // 0x00
             blob[9] = (byte)CALG_RSA_KEYX;      // 0xa4
-            // [10], [11]                       // 0x00 
+            // [10], [11]                       // 0x00
 
             // create a reversed copy and add the encrypted key
             byte[] reversedKey = CreateReverseByteArray(encryptedKey);
@@ -273,7 +257,6 @@ namespace System.Management.Automation.Internal
     /// to the user when something fails on the remote end, then this
     /// can be turned public</remarks>
     [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic")]
-    [Serializable]
     internal class PSCryptoException : Exception
     {
         #region Private Members
@@ -344,26 +327,13 @@ namespace System.Management.Automation.Internal
         /// <param name="context">Context in which this constructor is called.</param>
         /// <remarks>Currently no custom type-specific serialization logic is
         /// implemented</remarks>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected PSCryptoException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-            _errorCode = unchecked(0xFFFFFFF);
-            Dbg.Assert(false, "type-specific serialization logic not implemented and so this constructor should not be called");
+            throw new NotSupportedException();
         }
 
         #endregion Constructors
-
-        #region ISerializable Overrides
-        /// <summary>
-        /// Returns base implementation.
-        /// </summary>
-        /// <param name="info">Serialization info.</param>
-        /// <param name="context">Context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-        }
-        #endregion ISerializable Overrides
     }
 
     /// <summary>
@@ -380,7 +350,7 @@ namespace System.Management.Automation.Internal
         // handle to the AES provider object (houses session key and iv)
         private readonly Aes _aes;
 
-        // this flag indicates that this class has a key imported from the 
+        // this flag indicates that this class has a key imported from the
         // remote end and so can be used for encryption
         private bool _canEncrypt;
 
@@ -438,7 +408,7 @@ namespace System.Management.Automation.Internal
             {
                 if (!_sessionKeyGenerated)
                 {
-                    // Aes object gens key automatically on construction, so this is somewhat redundant, 
+                    // Aes object gens key automatically on construction, so this is somewhat redundant,
                     // but at least the actionable key will not be in-memory until it's requested fwiw.
                     _aes.GenerateKey();
                     _sessionKeyGenerated = true;
@@ -463,6 +433,7 @@ namespace System.Management.Automation.Internal
             GenerateSessionKey();
 
             // encrypt it
+            // codeql[cs/cryptography/rsa-unapproved-encryption-padding-scheme] - PowerShell v7.4 and later versions have deprecated the key exchange in the remoting protocol. This code is kept only for backward compatibility reason.
             byte[] encryptedKey = _rsa.Encrypt(_aes.Key, RSAEncryptionPadding.Pkcs1);
 
             // convert the key to capi simpleblob format before exporting
@@ -496,6 +467,7 @@ namespace System.Management.Automation.Internal
             byte[] sessionKeyBlob = Convert.FromBase64String(sessionKey);
             byte[] rsaEncryptedKey = PSCryptoNativeConverter.FromCapiSimpleKeyBlob(sessionKeyBlob);
 
+            // codeql[cs/cryptography/rsa-unapproved-encryption-padding-scheme] - PowerShell v7.4 and later versions have deprecated the key exchange in the remoting protocol. This code is kept only for backward compatibility reason.
             _aes.Key = _rsa.Decrypt(rsaEncryptedKey, RSAEncryptionPadding.Pkcs1);
 
             // now we have imported the key and will be able to
@@ -604,28 +576,12 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// Dispose resources.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            System.GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_rsa != null)
-                {
-                    _rsa.Dispose();
-                }
-
-                if (_aes != null)
-                {
-                    _aes.Dispose();
-                }
-            }
+            _rsa?.Dispose();
+            _aes?.Dispose();
         }
 
         #endregion IDisposable
@@ -635,7 +591,7 @@ namespace System.Management.Automation.Internal
     /// Helper for exchanging keys and encrypting/decrypting
     /// secure strings for serialization in remoting.
     /// </summary>
-    internal abstract class PSRemotingCryptoHelper : IDisposable
+    public abstract class PSRemotingCryptoHelper : IDisposable
     {
         #region Protected Members
 
@@ -645,7 +601,7 @@ namespace System.Management.Automation.Internal
         /// it and performing symmetric key operations using the
         /// session key.
         /// </summary>
-        protected PSRSACryptoServiceProvider _rsaCryptoProvider;
+        internal PSRSACryptoServiceProvider _rsaCryptoProvider;
 
         /// <summary>
         /// Key exchange has been completed and both keys
@@ -695,6 +651,78 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
+        /// Gets the bytes of a secure string.
+        /// </summary>
+        private static byte[] GetBytesFromSecureString(SecureString secureString)
+        {
+            return secureString is null
+                ? null
+                : Microsoft.PowerShell.SecureStringHelper.GetData(secureString);
+        }
+
+        /// <summary>
+        /// Gets a secure string from the specified byte array.
+        /// </summary>
+        private static SecureString GetSecureStringFromBytes(byte[] data)
+        {
+            Dbg.Assert(data is not null, "The passed-in data cannot be null.");
+
+            try
+            {
+                return Microsoft.PowerShell.SecureStringHelper.New(data);
+            }
+            finally
+            {
+                // zero out the contents
+                Array.Clear(data);
+            }
+        }
+
+        /// <summary>
+        /// Convert a secure string to a base64 encoded string.
+        /// </summary>
+        protected string ConvertSecureStringToBase64String(SecureString secureString)
+        {
+            string dataAsString = null;
+            byte[] data = GetBytesFromSecureString(secureString);
+
+            if (data is not null)
+            {
+                try
+                {
+                    dataAsString = Convert.ToBase64String(data);
+                }
+                finally
+                {
+                    Array.Clear(data);
+                }
+            }
+
+            return dataAsString;
+        }
+
+        /// <summary>
+        /// Convert a base64 encoded string to a secure string.
+        /// </summary>
+        /// <param name="base64String"></param>
+        /// <returns></returns>
+        protected SecureString ConvertBase64StringToSecureString(string base64String)
+        {
+            try
+            {
+                byte[] data = Convert.FromBase64String(base64String);
+                return GetSecureStringFromBytes(data);
+            }
+            catch (FormatException)
+            {
+                // do nothing
+                // this catch is to ensure that the exception doesn't
+                // go unhandled leading to a crash
+                throw new PSCryptoException();
+            }
+        }
+
+        /// <summary>
         /// Core logic to encrypt a string. Assumes session key is already generated.
         /// </summary>
         /// <param name="secureString">
@@ -707,18 +735,10 @@ namespace System.Management.Automation.Internal
 
             if (_rsaCryptoProvider.CanEncrypt)
             {
-                IntPtr ptr = Marshal.SecureStringToCoTaskMemUnicode(secureString);
+                byte[] data = GetBytesFromSecureString(secureString);
 
-                if (ptr != IntPtr.Zero)
+                if (data is not null)
                 {
-                    byte[] data = new byte[secureString.Length * 2];
-                    for (int i = 0; i < data.Length; i++)
-                    {
-                        data[i] = Marshal.ReadByte(ptr, i);
-                    }
-
-                    Marshal.ZeroFreeCoTaskMemUnicode(ptr);
-
                     try
                     {
                         byte[] encryptedData = _rsaCryptoProvider.EncryptWithSessionKey(data);
@@ -726,10 +746,7 @@ namespace System.Management.Automation.Internal
                     }
                     finally
                     {
-                        for (int j = 0; j < data.Length; j++)
-                        {
-                            data[j] = 0;
-                        }
+                        Array.Clear(data);
                     }
                 }
             }
@@ -759,10 +776,11 @@ namespace System.Management.Automation.Internal
             // happened successfully
             if (_rsaCryptoProvider.CanEncrypt)
             {
-                byte[] data = null;
                 try
                 {
-                    data = Convert.FromBase64String(encryptedString);
+                    byte[] data = Convert.FromBase64String(encryptedString);
+                    byte[] decryptedData = _rsaCryptoProvider.DecryptWithSessionKey(data);
+                    secureString = GetSecureStringFromBytes(decryptedData);
                 }
                 catch (FormatException)
                 {
@@ -770,36 +788,6 @@ namespace System.Management.Automation.Internal
                     // this catch is to ensure that the exception doesn't
                     // go unhandled leading to a crash
                     throw new PSCryptoException();
-                }
-
-                if (data != null)
-                {
-                    byte[] decryptedData = _rsaCryptoProvider.DecryptWithSessionKey(data);
-
-                    secureString = new SecureString();
-                    UInt16 value = 0;
-                    try
-                    {
-                        for (int i = 0; i < decryptedData.Length; i += 2)
-                        {
-                            value = (UInt16)(decryptedData[i] + (UInt16)(decryptedData[i + 1] << 8));
-                            secureString.AppendChar((char)value);
-                            value = 0;
-                        }
-                    }
-                    finally
-                    {
-                        // if there was an exception for whatever reason,
-                        // clear the last value store in Value
-                        value = 0;
-
-                        // zero out the contents
-                        for (int i = 0; i < decryptedData.Length; i += 2)
-                        {
-                            decryptedData[i] = 0;
-                            decryptedData[i + 1] = 0;
-                        }
-                    }
                 }
             }
             else
@@ -851,11 +839,7 @@ namespace System.Management.Automation.Internal
         {
             if (disposing)
             {
-                if (_rsaCryptoProvider != null)
-                {
-                    _rsaCryptoProvider.Dispose();
-                }
-
+                _rsaCryptoProvider?.Dispose();
                 _rsaCryptoProvider = null;
 
                 _keyExchangeCompleted.Dispose();
@@ -906,17 +890,30 @@ namespace System.Management.Automation.Internal
 
         internal override string EncryptSecureString(SecureString secureString)
         {
-            ServerRemoteSession session = Session as ServerRemoteSession;
-
             // session!=null check required for DRTs TestEncryptSecureString* entries in CryptoUtilsTest/UTUtils.dll
-            // for newer clients, server will never initiate key exchange.
-            // for server, just the session key is required to encrypt/decrypt anything
-            if ((session != null) && (session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM))
+            bool initiateKeyExchange = true;
+
+            if (Session is ServerRemoteSession session)
             {
-                _rsaCryptoProvider.GenerateSessionKey();
+                Version clientProtocolVersion = session.Context.ClientCapability.ProtocolVersion;
+                if (clientProtocolVersion >= RemotingConstants.ProtocolVersion_2_4)
+                {
+                    // For client v2.4+, we no longer encrypt secure strings, but rely on the underlying secure transport to do the right thing.
+                    return ConvertSecureStringToBase64String(secureString);
+                }
+
+                if (clientProtocolVersion >= RemotingConstants.ProtocolVersion_2_2)
+                {
+                    // For client v2.2+, server will never initiate key exchange.
+                    // For server, just the session key is required to encrypt/decrypt anything
+                    initiateKeyExchange = false;
+                    _rsaCryptoProvider.GenerateSessionKey();
+                }
             }
-            else // older clients
+
+            if (initiateKeyExchange)
             {
+                // older clients.
                 RunKeyExchangeIfRequired();
             }
 
@@ -925,6 +922,12 @@ namespace System.Management.Automation.Internal
 
         internal override SecureString DecryptSecureString(string encryptedString)
         {
+            if (Session is ServerRemoteSession session && session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersion_2_4)
+            {
+                // For client v2.4+, we no longer encrypt secure strings, but rely on the underlying secure transport to do the right thing.
+                return ConvertBase64StringToSecureString(encryptedString);
+            }
+
             RunKeyExchangeIfRequired();
 
             return DecryptSecureStringCore(encryptedString);
@@ -1036,6 +1039,12 @@ namespace System.Management.Automation.Internal
 
         internal override string EncryptSecureString(SecureString secureString)
         {
+            if (Session is ClientRemoteSession session && session.ServerProtocolVersion >= RemotingConstants.ProtocolVersion_2_4)
+            {
+                // For server v2.4+, we no longer encrypt secure strings, but rely on the underlying secure transport to do the right thing.
+                return ConvertSecureStringToBase64String(secureString);
+            }
+
             RunKeyExchangeIfRequired();
 
             return EncryptSecureStringCore(secureString);
@@ -1043,6 +1052,12 @@ namespace System.Management.Automation.Internal
 
         internal override SecureString DecryptSecureString(string encryptedString)
         {
+            if (Session is ClientRemoteSession session && session.ServerProtocolVersion >= RemotingConstants.ProtocolVersion_2_4)
+            {
+                // For server v2.4+, we no longer encrypt secure strings, but rely on the underlying secure transport to do the right thing.
+                return ConvertBase64StringToSecureString(encryptedString);
+            }
+
             RunKeyExchangeIfRequired();
 
             return DecryptSecureStringCore(encryptedString);

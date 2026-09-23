@@ -1,0 +1,56 @@
+id: labelAdded.clBuildPackaging.addBackportConsider
+name: GitOps.PullRequestIssueManagement
+description: Add backport consideration labels when CL-BuildPackaging is added to an open PR targeting master
+owner:
+resource: repository
+disabled: false
+where:
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+      - description: Add BackPort-7.4.x-Consider when CL-BuildPackaging is added to open PR targeting master
+        if:
+          - payloadType: Pull_Request
+          - isOpen
+          - labelAdded:
+              label: CL-BuildPackaging
+          - targetsBranch:
+              branch: master
+          - not:
+              hasLabel:
+                label: BackPort-7.4.x-Consider
+        then:
+          - addLabel:
+              label: BackPort-7.4.x-Consider
+
+      - description: Add BackPort-7.5.x-Consider when CL-BuildPackaging is added to open PR targeting master
+        if:
+          - payloadType: Pull_Request
+          - isOpen
+          - labelAdded:
+              label: CL-BuildPackaging
+          - targetsBranch:
+              branch: master
+          - not:
+              hasLabel:
+                label: BackPort-7.5.x-Consider
+        then:
+          - addLabel:
+              label: BackPort-7.5.x-Consider
+
+      - description: Add BackPort-7.6.x-Consider when CL-BuildPackaging is added to open PR targeting master
+        if:
+          - payloadType: Pull_Request
+          - isOpen
+          - labelAdded:
+              label: CL-BuildPackaging
+          - targetsBranch:
+              branch: master
+          - not:
+              hasLabel:
+                label: BackPort-7.6.x-Consider
+        then:
+          - addLabel:
+              label: BackPort-7.6.x-Consider
+onFailure:
+onSuccess:

@@ -189,6 +189,26 @@ Describe "Measure-Object" -Tags "CI" {
         }
     }
 
+    Context "Empty folder tests" {
+        BeforeAll {
+            $repoPath = Join-Path -Path $TESTDRIVE -ChildPath "my_folder"
+            $testEmptyFolder = New-Item $repoPath -ItemType "directory"
+            $propertyName = "Length"
+        }
+
+        AfterAll {
+            Set-StrictMode -off
+        }
+
+        It "Should not throw an invalid property error when not in StrictMode" {
+            { Set-StrictMode -off; Get-Item $testEmptyFolder | Measure-Object $propertyName -ErrorAction Stop -sum } | Should -Not -Throw
+        }
+
+        It "Should throw an invalid property error when in StrictMode" {
+            { Set-StrictMode -version 3.0; Get-Item $testEmptyFolder | Measure-Object $propertyName -ErrorAction Stop -sum } | Should -Throw -ErrorId 'GenericMeasurePropertyNotFound,Microsoft.PowerShell.Commands.MeasureObjectCommand'
+        }
+    }
+
     Context "String tests" {
         BeforeAll {
             $nl = [Environment]::NewLine

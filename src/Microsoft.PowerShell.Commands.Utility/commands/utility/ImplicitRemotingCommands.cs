@@ -73,8 +73,8 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute()]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         #endregion Parameters
 
@@ -443,10 +443,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = Array.Empty<string>();
-                }
+                value ??= Array.Empty<string>();
 
                 _PSSnapins = value;
                 _commandParameterSpecified = true;
@@ -729,8 +726,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // handle recognized types of exceptions first
             //
-            RemoteException remoteException = runtimeException as RemoteException;
-            if ((remoteException != null) && (remoteException.SerializedRemoteException != null))
+            if ((runtimeException is RemoteException remoteException) && (remoteException.SerializedRemoteException != null))
             {
                 if (Deserializer.IsInstanceOfType(remoteException.SerializedRemoteException, typeof(CommandNotFoundException)))
                 {
@@ -1044,10 +1040,7 @@ namespace Microsoft.PowerShell.Commands
 
         private List<T> RehydrateList<T>(string commandName, object deserializedList, Func<PSObject, T> itemRehydrator)
         {
-            if (itemRehydrator == null)
-            {
-                itemRehydrator = (PSObject pso) => ConvertTo<T>(commandName, pso);
-            }
+            itemRehydrator ??= (PSObject pso) => ConvertTo<T>(commandName, pso);
 
             List<T> result = null;
 
@@ -1068,17 +1061,14 @@ namespace Microsoft.PowerShell.Commands
 
         private Dictionary<TKey, TValue> RehydrateDictionary<TKey, TValue>(
             string commandName,
-            PSObject deserializedObject, 
+            PSObject deserializedObject,
             string propertyName,
             Func<PSObject, TValue> valueRehydrator)
         {
             Dbg.Assert(deserializedObject != null, "deserializedObject parameter != null");
             Dbg.Assert(!string.IsNullOrEmpty(propertyName), "propertyName parameter != null");
 
-            if (valueRehydrator == null)
-            {
-                valueRehydrator = (PSObject pso) => ConvertTo<TValue>(commandName, pso);
-            }
+            valueRehydrator ??= (PSObject pso) => ConvertTo<TValue>(commandName, pso);
 
             Dictionary<TKey, TValue> result = new();
             PSPropertyInfo deserializedDictionaryProperty = deserializedObject.Properties[propertyName];
@@ -1310,13 +1300,23 @@ namespace Microsoft.PowerShell.Commands
                 parameterType);
         }
 
-        private static bool IsProxyForCmdlet(Dictionary<string, ParameterMetadata> parameters)
+        private bool IsProxyForCmdlet(Dictionary<string, ParameterMetadata> parameters)
         {
             // we are not sending CmdletBinding/DefaultParameterSet over the wire anymore
             // we need to infer IsProxyForCmdlet from presence of all common parameters
 
-            foreach (string commonParameterName in Cmdlet.CommonParameters)
+            // need to exclude `ProgressAction` which may not exist for downlevel platforms
+            bool isDownLevelRemote = Session.Runspace is RemoteRunspace remoteRunspace
+                && remoteRunspace.ServerVersion is not null
+                && remoteRunspace.ServerVersion <= new Version(7, 3);
+
+            foreach (string commonParameterName in CommonParameters)
             {
+                if (isDownLevelRemote && commonParameterName == "ProgressAction")
+                {
+                    continue;
+                }
+
                 if (!parameters.ContainsKey(commonParameterName))
                 {
                     return false;
@@ -1584,8 +1584,7 @@ namespace Microsoft.PowerShell.Commands
             powerShell.AddParameter("TypeName", this.FormatTypeName);
 
             // For remote PS version 5.1 and greater, we need to include the new -PowerShellVersion parameter
-            RemoteRunspace remoteRunspace = Session.Runspace as RemoteRunspace;
-            if ((remoteRunspace != null) && (remoteRunspace.ServerVersion != null) &&
+            if ((Session.Runspace is RemoteRunspace remoteRunspace) && (remoteRunspace.ServerVersion != null) &&
                 (remoteRunspace.ServerVersion >= new Version(5, 1)))
             {
                 powerShell.AddParameter("PowerShellVersion", PSVersionInfo.PSVersion);
@@ -1706,7 +1705,7 @@ namespace Microsoft.PowerShell.Commands
         internal List<CommandMetadata> GetRemoteCommandMetadata(out Dictionary<string, string> alias2resolvedCommandName)
         {
             bool isReleaseCandidateBackcompatibilityMode =
-                this.Session.Runspace.GetRemoteProtocolVersion() == RemotingConstants.ProtocolVersionWin7RC;
+                this.Session.Runspace.GetRemoteProtocolVersion() == RemotingConstants.ProtocolVersion_2_0;
 
             alias2resolvedCommandName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if ((this.CommandName == null) || (this.CommandName.Length == 0) ||
@@ -1917,7 +1916,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }
 
-    internal class ImplicitRemotingCodeGenerator
+    internal sealed class ImplicitRemotingCodeGenerator
     {
         internal static readonly Version VersionOfScriptWriter = new(1, 0);
 
@@ -1951,20 +1950,17 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Connection URI associated with the remote runspace.</returns>
         private string GetConnectionString()
         {
-            WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (connectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is WSManConnectionInfo connectionInfo)
             {
                 return connectionInfo.ConnectionUri.ToString();
             }
 
-            VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
-            if (vmConnectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is VMConnectionInfo vmConnectionInfo)
             {
                 return vmConnectionInfo.ComputerName;
             }
 
-            ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
-            if (containerConnectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is ContainerConnectionInfo containerConnectionInfo)
             {
                 return containerConnectionInfo.ComputerName;
             }
@@ -2109,7 +2105,9 @@ $script:MyModule = $MyInvocation.MyCommand.ScriptBlock.Module
 
             // In Win8, we are no longer loading all assemblies by default.
             // So we need to use the fully qualified name when accessing a type in that assembly
-            string versionOfScriptGenerator = "[" + typeof(ExportPSSessionCommand).AssemblyQualifiedName + "]" + "::VersionOfScriptGenerator";
+            Type type = typeof(ExportPSSessionCommand);
+            string asmName = type.Assembly.GetName().Name;
+            string versionOfScriptGenerator = $"[{type.FullName}, {asmName}]::VersionOfScriptGenerator";
             GenerateTopComment(writer);
             writer.Write(
                 HeaderTemplate,
@@ -2251,64 +2249,68 @@ function Get-PSImplicitRemotingSessionOption
         {
             StringBuilder result = new("& $script:NewPSSessionOption ");
 
-            RunspaceConnectionInfo runspaceConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as RunspaceConnectionInfo;
-            if (runspaceConnectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is RunspaceConnectionInfo runspaceConnectionInfo)
             {
-                result.AppendFormat(null, "-Culture '{0}' ", CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture.ToString()));
-                result.AppendFormat(null, "-UICulture '{0}' ", CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture.ToString()));
+                result.Append(null, $"-Culture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture.ToString())}' ");
+                result.Append(null, $"-UICulture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture.ToString())}' ");
 
-                result.AppendFormat(null, "-CancelTimeOut {0} ", runspaceConnectionInfo.CancelTimeout);
-                result.AppendFormat(null, "-IdleTimeOut {0} ", runspaceConnectionInfo.IdleTimeout);
-                result.AppendFormat(null, "-OpenTimeOut {0} ", runspaceConnectionInfo.OpenTimeout);
-                result.AppendFormat(null, "-OperationTimeOut {0} ", runspaceConnectionInfo.OperationTimeout);
+                result.Append(null, $"-CancelTimeOut {runspaceConnectionInfo.CancelTimeout} ");
+                result.Append(null, $"-IdleTimeOut {runspaceConnectionInfo.IdleTimeout} ");
+                result.Append(null, $"-OpenTimeOut {runspaceConnectionInfo.OpenTimeout} ");
+                result.Append(null, $"-OperationTimeOut {runspaceConnectionInfo.OperationTimeout} ");
             }
 
-            WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is WSManConnectionInfo wsmanConnectionInfo)
             {
-                if (!wsmanConnectionInfo.UseCompression) { result.Append("-NoCompression "); }
+                if (!wsmanConnectionInfo.UseCompression)
+                {
+                    result.Append("-NoCompression ");
+                }
 
-                if (wsmanConnectionInfo.NoEncryption) { result.Append("-NoEncryption "); }
+                if (wsmanConnectionInfo.NoEncryption)
+                {
+                    result.Append("-NoEncryption ");
+                }
 
-                if (wsmanConnectionInfo.NoMachineProfile) { result.Append("-NoMachineProfile "); }
+                if (wsmanConnectionInfo.NoMachineProfile)
+                {
+                    result.Append("-NoMachineProfile ");
+                }
 
-                if (wsmanConnectionInfo.UseUTF16) { result.Append("-UseUTF16 "); }
+                if (wsmanConnectionInfo.UseUTF16)
+                {
+                    result.Append("-UseUTF16 ");
+                }
 
-                if (wsmanConnectionInfo.SkipCACheck) { result.Append("-SkipCACheck "); }
+                if (wsmanConnectionInfo.SkipCACheck)
+                {
+                    result.Append("-SkipCACheck ");
+                }
 
-                if (wsmanConnectionInfo.SkipCNCheck) { result.Append("-SkipCNCheck "); }
+                if (wsmanConnectionInfo.SkipCNCheck)
+                {
+                    result.Append("-SkipCNCheck ");
+                }
 
-                if (wsmanConnectionInfo.SkipRevocationCheck) { result.Append("-SkipRevocationCheck "); }
+                if (wsmanConnectionInfo.SkipRevocationCheck)
+                {
+                    result.Append("-SkipRevocationCheck ");
+                }
 
                 if (wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.HasValue)
                 {
-                    result.AppendFormat(
-                        CultureInfo.InvariantCulture,
-                        "-MaximumReceivedDataSizePerCommand {0} ",
-                        wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.Value);
+                    result.Append(CultureInfo.InvariantCulture, $"-MaximumReceivedDataSizePerCommand {wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.Value} ");
                 }
 
                 if (wsmanConnectionInfo.MaximumReceivedObjectSize.HasValue)
                 {
-                    result.AppendFormat(
-                        CultureInfo.InvariantCulture,
-                        "-MaximumReceivedObjectSize {0} ",
-                        wsmanConnectionInfo.MaximumReceivedObjectSize.Value);
+                    result.Append(CultureInfo.InvariantCulture, $"-MaximumReceivedObjectSize {wsmanConnectionInfo.MaximumReceivedObjectSize.Value} ");
                 }
 
-                result.AppendFormat(
-                    CultureInfo.InvariantCulture,
-                    "-MaximumRedirection {0} ",
-                    wsmanConnectionInfo.MaximumConnectionRedirectionCount);
+                result.Append(CultureInfo.InvariantCulture, $"-MaximumRedirection {wsmanConnectionInfo.MaximumConnectionRedirectionCount} ");
 
-                result.AppendFormat(
-                    CultureInfo.InvariantCulture,
-                    "-ProxyAccessType {0} ",
-                    wsmanConnectionInfo.ProxyAccessType.ToString());
-                result.AppendFormat(
-                    CultureInfo.InvariantCulture,
-                    "-ProxyAuthentication {0} ",
-                    wsmanConnectionInfo.ProxyAuthentication.ToString());
+                result.Append(CultureInfo.InvariantCulture, $"-ProxyAccessType {wsmanConnectionInfo.ProxyAccessType} ");
+                result.Append(CultureInfo.InvariantCulture, $"-ProxyAuthentication {wsmanConnectionInfo.ProxyAuthentication} ");
                 result.Append(this.GenerateProxyCredentialParameter(wsmanConnectionInfo));
             }
 
@@ -2523,8 +2525,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateNewRunspaceExpression()
         {
-            VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
-            if (vmConnectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is VMConnectionInfo vmConnectionInfo)
             {
                 string vmConfigurationName = vmConnectionInfo.ConfigurationName;
                 return string.Format(
@@ -2536,8 +2537,7 @@ function Get-PSImplicitRemotingSession
             }
             else
             {
-                ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
-                if (containerConnectionInfo != null)
+                if (_remoteRunspaceInfo.Runspace.ConnectionInfo is ContainerConnectionInfo containerConnectionInfo)
                 {
                     string containerConfigurationName = containerConnectionInfo.ContainerProc.ConfigurationName;
                     return string.Format(
@@ -2579,19 +2579,16 @@ function Get-PSImplicitRemotingSession
         /// <returns></returns>
         private string GenerateConnectionStringForNewRunspace()
         {
-            WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (connectionInfo == null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is not WSManConnectionInfo connectionInfo)
             {
-                VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
-                if (vmConnectionInfo != null)
+                if (_remoteRunspaceInfo.Runspace.ConnectionInfo is VMConnectionInfo vmConnectionInfo)
                 {
                     return string.Format(CultureInfo.InvariantCulture,
                         VMIdParameterTemplate,
                         CodeGeneration.EscapeSingleQuotedStringContent(vmConnectionInfo.VMGuid.ToString()));
                 }
 
-                ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
-                if (containerConnectionInfo != null)
+                if (_remoteRunspaceInfo.Runspace.ConnectionInfo is ContainerConnectionInfo containerConnectionInfo)
                 {
                     return string.Format(CultureInfo.InvariantCulture,
                         ContainerIdParameterTemplate,
@@ -2611,21 +2608,19 @@ function Get-PSImplicitRemotingSession
                     CodeGeneration.EscapeSingleQuotedStringContent(connectionInfo.AppName),
                     connectionInfo.UseDefaultWSManPort ?
                         string.Empty :
-                        string.Format(CultureInfo.InvariantCulture,
-                            "-Port {0} ", connectionInfo.Port),
+                        string.Create(CultureInfo.InvariantCulture, $"-Port {connectionInfo.Port} "),
                     isSSLSpecified ? "-useSSL" : string.Empty);
             }
             else
             {
-                return string.Format(CultureInfo.InvariantCulture,
-                    "-connectionUri '{0}'",
-                    CodeGeneration.EscapeSingleQuotedStringContent(GetConnectionString()));
+                string connectionString = CodeGeneration.EscapeSingleQuotedStringContent(GetConnectionString());
+                return string.Create(CultureInfo.InvariantCulture, $"-connectionUri '{connectionString}'");
             }
         }
 
         private string GenerateAllowRedirectionParameter()
         {
-            if (!(_remoteRunspaceInfo.Runspace.ConnectionInfo is WSManConnectionInfo wsmanConnectionInfo))
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is not WSManConnectionInfo wsmanConnectionInfo)
             {
                 return string.Empty;
             }
@@ -2651,7 +2646,7 @@ function Get-PSImplicitRemotingSession
                 return string.Empty;
             }
 
-            if (!(_remoteRunspaceInfo.Runspace.ConnectionInfo is WSManConnectionInfo wsmanConnectionInfo))
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is not WSManConnectionInfo wsmanConnectionInfo)
             {
                 return string.Empty;
             }
@@ -2747,7 +2742,7 @@ function Get-PSImplicitRemotingClientSideParameters
 
     $clientSideParameters = @{}
 
-    $parametersToLeaveRemote = 'ErrorAction', 'WarningAction', 'InformationAction'
+    $parametersToLeaveRemote = 'ErrorAction', 'WarningAction', 'InformationAction', 'ProgressAction'
 
     Modify-PSImplicitRemotingParameters $clientSideParameters $PSBoundParameters 'AsJob'
     if ($proxyForCmdlet)
@@ -2823,13 +2818,14 @@ function Get-PSImplicitRemotingClientSideParameters
 
             $clientSideParameters = Get-PSImplicitRemotingClientSideParameters $PSBoundParameters ${8}
 
-            $scriptCmd = {{ & $script:InvokeCommand `
-                            @clientSideParameters `
-                            -HideComputerName `
-                            -Session (Get-PSImplicitRemotingSession -CommandName '{0}') `
-                            -Arg ('{0}', $PSBoundParameters, $positionalArguments) `
-                            -Script {{ param($name, $boundParams, $unboundParams) & $name @boundParams @unboundParams }} `
-                         }}
+            $scriptCmd = {{
+                & $script:InvokeCommand `
+                    @clientSideParameters `
+                    -HideComputerName `
+                    -Session (Get-PSImplicitRemotingSession -CommandName '{0}') `
+                    -Arg ('{0}', $PSBoundParameters, $positionalArguments) `
+                    -Script {{ param($name, $boundParams, $unboundParams) & $name @boundParams @unboundParams }} `
+            }}
 
             $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
             $steppablePipeline.Begin($myInvocation.ExpectingInput, $ExecutionContext)
@@ -3057,10 +3053,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 FileShare.None);
             using (TextWriter writer = new StreamWriter(psm1, encoding))
             {
-                if (listOfCommandMetadata == null)
-                {
-                    listOfCommandMetadata = new List<CommandMetadata>();
-                }
+                listOfCommandMetadata ??= new List<CommandMetadata>();
 
                 GenerateModuleHeader(writer);
                 GenerateHelperFunctions(writer);
@@ -3078,10 +3071,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 FileShare.None);
             using (TextWriter writer = new StreamWriter(formatPs1xml, encoding))
             {
-                if (listOfFormatData == null)
-                {
-                    listOfFormatData = new List<ExtendedTypeDefinition>();
-                }
+                listOfFormatData ??= new List<ExtendedTypeDefinition>();
 
                 GenerateFormatFile(writer, listOfFormatData);
                 formatPs1xml.SetLength(formatPs1xml.Position);

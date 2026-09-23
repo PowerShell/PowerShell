@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CounterNotALogFile" xml:space="preserve">
+    <value>Die {0}-Datei weist nicht die erwartete Dateinamenerweiterung auf. Geben Sie bei Verwendung des Path-Parameters nur .blg-, .csv- oder .tsv-Dateien an.</value>
+  </data>
+  <data name="CounterApiError" xml:space="preserve">
+    <value>Der interne Aufruf der Leistungsindikator-API ist fehlgeschlagen. Fehler: {0:x8}.</value>
+  </data>
+  <data name="LogProviderOrPathNeeded" xml:space="preserve">
+    <value>Sie müssen mindestens ein Schlüssel-Wert-Paar für Protokoll, Anbieter oder Pfad angeben.</value>
+  </data>
+  <data name="NoMatchingProvidersFound" xml:space="preserve">
+    <value>Auf dem {0}-Computer ist kein Ereignisanbieter vorhanden, das mit „{1}“ übereinstimmt.</value>
+  </data>
+  <data name="NullNotAllowedInHashtable" xml:space="preserve">
+    <value>Im {0}-Hashtabellenschlüssel wurde ein NULL-Wert gefunden. NULL-Werte sind nicht zulässig.</value>
+  </data>
+  <data name="QueryTrace" xml:space="preserve">
+    <value>Erstellte strukturierte Abfrage:
+{0}.</value>
+  </data>
+  <data name="ProviderLogLink" xml:space="preserve">
+    <value>Der {0}-Anbieter schreibt Ereignisse in das {1}-Protokoll.</value>
+  </data>
+  <data name="CounterInvalidDateRange" xml:space="preserve">
+    <value>Der Wert des StartTime-Parameters muss kleiner sein als der Wert des EndTime-Parameters.</value>
+  </data>
+  <data name="NoMatchingLogsFound" xml:space="preserve">
+    <value>Auf dem {0}-Computer ist kein Ereignisprotokoll vorhanden, das mit „{1}“ übereinstimmt.</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="CounterCircularNoMaxSize" xml:space="preserve">
+    <value>Der Circular-Parameter wird ignoriert, wenn nicht auch der MaxSize-Parameter angegeben ist.</value>
+  </data>
+  <data name="FileOpenFailed" xml:space="preserve">
+    <value>Die {0}-Datei kann nicht zum Schreiben geöffnet werden.</value>
+  </data>
+  <data name="KeywordLongExpected" xml:space="preserve">
+    <value>Für das Schlüsselwort wurde ein ungültiger Wert „{0}“ angegeben.</value>
+  </data>
+  <data name="CounterExportSampleNotInInitialSet" xml:space="preserve">
+    <value>Der {0}-Leistungsindikator kann nicht in die {1}-Datei exportiert werden, da er nicht Teil des ersten Stichprobensatzes war.</value>
+  </data>
+  <data name="NoMatchingEventsFound" xml:space="preserve">
+    <value>Es wurden keine Ereignisse gefunden, die den angegebenen Auswahlkriterien entsprechen.</value>
+  </data>
+  <data name="CounterPathTranslationFailed" xml:space="preserve">
+    <value>Die Standardwerte für diesen Befehl konnten nicht ermittelt werden. Fehler: {0:x8}.</value>
+  </data>
+  <data name="CounterNoMixedLogTypes" xml:space="preserve">
+    <value>Es ist nicht möglich, im selben Befehl unterschiedliche Typen von Leistungsprotokolldateien zu importieren.  Geben Sie im Path-Parameter nur einen Dateityp an.</value>
+  </data>
+  <data name="NotAFileSystemPath" xml:space="preserve">
+    <value>Der {0}-Pfad scheint kein gültiger Protokolldateipfad zu sein. Geben Sie einen gültigen Dateisystempfad an.</value>
+  </data>
+  <data name="EventIdNotSpecified" xml:space="preserve">
+    <value>Es muss eine gültige Ereignis-ID angegeben werden.</value>
+  </data>
+  <data name="ProviderMetadataUnavailable" xml:space="preserve">
+    <value>Es konnten keine Informationen über den {0}-Anbieter abgerufen werden. Fehler: {1}.</value>
+  </data>
+  <data name="SpecifyOldestForLog" xml:space="preserve">
+    <value>Das {0}-Ereignisprotokoll kann nur in aufsteigender chronologischer Reihenfolge gelesen werden, da es sich um ein analytisches oder Debugprotokoll handelt. Um Ereignisse aus dem {0}-Ereignisprotokoll anzuzeigen, verwenden Sie den Oldest-Parameter im Befehl.</value>
+  </data>
+  <data name="ExportDestPathAmbiguous" xml:space="preserve">
+    <value>Der folgende Exportzielpfad ist mehrdeutig: {0}.</value>
+  </data>
+  <data name="CounterPathIsInvalid" xml:space="preserve">
+    <value>Der {0}-Leistungsindikatorpfad ist ungültig.</value>
+  </data>
+  <data name="CounterSampleDataInvalid" xml:space="preserve">
+    <value>Die Daten in einer der Leistungsindikatorstichproben sind ungültig. Überprüfen Sie die Status-Eigenschaft für jedes Objekt vom Typ „PerformanceCounterSample“, um sicherzustellen, dass gültige Daten enthalten sind.</value>
+  </data>
+  <data name="PayloadMismatch" xml:space="preserve">
+    <value>Die angegebene Nutzlast stimmt nicht mit der Vorlage überein, die für die Ereignis-ID „{0}“ definiert wurde.
+Die definierte Vorlage lautet wie folgt:
+{1}</value>
+  </data>
+  <data name="NoMatchingCounterSetsFound" xml:space="preserve">
+    <value>Es wurden keine Leistungsindikatorsätze auf dem {0}-Computer gefunden, die den folgenden Kriterien entsprechen: {1}.</value>
+  </data>
+  <data name="CounterPathsInFilesInvalid" xml:space="preserve">
+    <value>In den Dateien wurden keine gültigen Leistungsindikatorpfade gefunden.</value>
+  </data>
+  <data name="FileCreateFailed" xml:space="preserve">
+    <value>Die {0}-Datei kann nicht erstellt werden. Überprüfen Sie, ob der Pfad gültig ist.</value>
+  </data>
+  <data name="NoCounterSetsOnComputer" xml:space="preserve">
+    <value>Auf dem {0}-Computer wurden keine Leistungsindikatorsätze gefunden: Fehler {1:x8}. Stellen Sie sicher, dass der {0}-Computer vorhanden und auffindbar ist und dass Sie über ausreichende Berechtigungen zum Anzeigen von Leistungsindikatordaten auf diesem Computer verfügen.</value>
+  </data>
+  <data name="IncorrectEventId" xml:space="preserve">
+    <value>Das Ereignis kann nicht geschrieben werden, da keine Ereignisse mit der ID „{0}“ für den Anbieter „{1}“ definiert sind.  Korrigieren Sie die Ereignis-ID, und versuchen Sie es noch mal.</value>
+  </data>
+  <data name="InvalidContext" xml:space="preserve">
+    <value>Das {0} Schlüssel-Wert-Paar für Context ist keine gültige SID oder kein gültiger NT-Kontoname.</value>
+  </data>
+  <data name="IncorrectEventVersion" xml:space="preserve">
+    <value>Das Ereignis kann nicht geschrieben werden, da die angegebene Version {0} für das Ereignis „{1}“ für den Anbieter „{2}“ nicht definiert ist.  Korrigieren Sie die Version, und versuchen Sie es erneut.</value>
+  </data>
+  <data name="Counter32FileLimit" xml:space="preserve">
+    <value>Pro Befehl können nicht mehr als 32 .blg-Leistungsindikatorprotokolldateien importiert werden.</value>
+  </data>
+  <data name="SpecifiedProvidersDontWriteToLog" xml:space="preserve">
+    <value>Die angegebenen Anbieter schreiben keine Ereignisse in das {0}-Protokoll. Dieses Protokoll wird ignoriert.</value>
+  </data>
+  <data name="InvalidSIDFormat" xml:space="preserve">
+    <value>Der folgende Wert liegt nicht in einem gültigen SID-Format vor: {0}. Geben Sie eine gültige SID ein, z. B. S-1-5-32-544.</value>
+  </data>
+  <data name="NoProviderFound" xml:space="preserve">
+    <value>Es wurde kein Anbieter mit dem Namen „{0}“ gefunden.</value>
+  </data>
+  <data name="CounterSetEnumAccessDenied" xml:space="preserve">
+    <value>Es können keine Informationen über den {0}-Leistungsindikatorsatz abgerufen werden, da der Zugriff verweigert wurde.</value>
+  </data>
+  <data name="VersionNotSpecified" xml:space="preserve">
+    <value>Das Ereignis kann nicht geschrieben werden, da mehrere Ereignisse mit der ID „{0}“ für den Anbieter „{1}“ definiert wurden.  Geben Sie eine Version für das Ereignis an, und versuchen Sie es noch mal.</value>
+  </data>
+  <data name="SpecifyOldestForEtlEvt" xml:space="preserve">
+    <value>Die {0}-Ereignisprotokolldatei kann nur in chronologischer Vorwärtsreihenfolge gelesen werden, da es sich um eine ETL- oder EVT-Datei handelt. Um Ereignisse aus dem {0}-Ereignisprotokoll anzuzeigen, verwenden Sie den Oldest-Parameter im Befehl.</value>
+  </data>
+  <data name="ProviderNotSpecified" xml:space="preserve">
+    <value>Der Anbietername muss angegeben werden.</value>
+  </data>
+  <data name="NotALogFile" xml:space="preserve">
+    <value>Die {0}-Datei scheint keine gültige Protokolldatei zu sein. Geben Sie als Werte für den Path-Parameter nur .evtx-, .etl- oder .evt-Dateien an.</value>
+  </data>
+  <data name="CounterPathInvalidOrNotInFile" xml:space="preserve">
+    <value>Der {0}-Leistungsindikatorpfad ist entweder ungültig oder in den folgenden Dateien nicht vorhanden: {1}.</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>Zeitstempel</value>
+  </data>
+  <data name="DateTimeExpected" xml:space="preserve">
+    <value>Der folgende Wert weist kein gültiges DateTime-Format auf: {0}.</value>
+  </data>
+  <data name="LogInfoUnavailable" xml:space="preserve">
+    <value>Starten Sie PowerShell mit erhöhten Benutzerrechten, um auf das Protokoll „{0}“ zuzugreifen.  Fehler: {1}</value>
+  </data>
+  <data name="LogInfoNoAccess" xml:space="preserve">
+    <value>Zugriff verweigert für Protokoll: „{0}“.</value>
+  </data>
+  <data name="SuggestElevation" xml:space="preserve">
+    <value>Starten Sie PowerShell mit erweiterten Benutzerrechten.</value>
+  </data>
+  <data name="NoEventMessage" xml:space="preserve">
+    <value>Der Text der Ereignismeldung kann nicht abgerufen werden.</value>
+  </data>
+  <data name="CounterFileExists" xml:space="preserve">
+    <value>Die {0}-Datei ist bereits vorhanden. Um diese Datei zu überschreiben, verwenden Sie den Force-Parameter im Befehl „Export-Counter“.</value>
+  </data>
+  <data name="CounterContinuousOrMaxSamples" xml:space="preserve">
+    <value>Der Continuous-Parameter und der MaxSamples-Parameter können nicht im selben Befehl verwendet werden.</value>
+  </data>
+  <data name="ExportCtrWin7Required" xml:space="preserve">
+    <value>Dieses Cmdlet kann nur unter Microsoft Windows 7 und höher ausgeführt werden.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Dieses PowerShell-Snap-In enthält Windows-Ereignis- und Leistungsindikator-Cmdlets.</value>
+  </data>
+  <data name="NoMatchingCounterSetsInFile" xml:space="preserve">
+    <value>Es wurden keine Leistungsindikatorsätze in den {0}-Dateien gefunden, die den folgenden Kriterien entsprechen: {1}.</value>
+  </data>
+  <data name="LogsAndProvidersDontOverlap" xml:space="preserve">
+    <value>Die angegebenen Anbieter schreiben keine Ereignisse in die angegebenen Protokolle.</value>
+  </data>
+  <data name="CookedValues" xml:space="preserve">
+    <value>Verarbeitete Werte</value>
+  </data>
+  <data name="Counter1FileLimit" xml:space="preserve">
+    <value>Pro Befehl kann nur eine durch Kommas getrennte (.csv) oder durch Tabstopps getrennte (.tsv) Leistungsindikator-Datei importiert werden.</value>
+  </data>
+  <data name="LogCountLimitExceeded" xml:space="preserve">
+    <value>Die Anzahl der Protokolle ({0}) überschreitet das Limit der Windows-Ereignisprotokoll-API ({1}). Passen Sie den Filter an, um weniger Protokollnamen zurückzugeben.</value>
+  </data>
+  <data name="ListLogParamHelp" xml:space="preserve">
+    <value>Gibt die Ereignisprotokolle an. Platzhalter sind zulässig.</value>
+  </data>
+  <data name="GetLogParamHelp" xml:space="preserve">
+    <value>Gibt die Ereignisprotokolle an, aus denen dieses Cmdlet Ereignisse abruft. Platzhalter sind zulässig.</value>
+  </data>
+  <data name="ListProviderParamHelp" xml:space="preserve">
+    <value>Gibt die Ereignisprotokollanbieter an, die dieses Cmdlet abruft.</value>
+  </data>
+  <data name="GetProviderParamHelp" xml:space="preserve">
+    <value>Gibt die Ereignisprotokollanbieter an, von denen dieses Cmdlet Ereignisse abruft.</value>
+  </data>
+  <data name="PathParamHelp" xml:space="preserve">
+    <value>Gibt den Pfad zu den Ereignisprotokolldateien an, aus denen dieses Cmdlet Ereignisse abruft.</value>
+  </data>
+  <data name="MaxEventsParamHelp" xml:space="preserve">
+    <value>Gibt die Höchstzahl zurückzugebender Ereignisse an.</value>
+  </data>
+  <data name="ComputerNameParamHelp" xml:space="preserve">
+    <value>Gibt den Namen des Computers an, von dem dieses Cmdlet Daten abruft.</value>
+  </data>
+</root>

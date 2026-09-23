@@ -1,5 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 Describe "CliXml test" -Tags "CI" {
 
     BeforeAll {
@@ -181,6 +185,97 @@ Describe "CliXml test" -Tags "CI" {
             $cred.Password | Should -BeOfType System.Security.SecureString
         }
     }
+
+    Context "ConvertTo-CliXml"{
+        BeforeAll {
+            $gpsList = Get-Process pwsh
+            $gps = $gpsList | Select-Object -First 1
+        }
+
+        It "Create by passing as parameter" {
+            $content = ConvertTo-CliXml -Depth 1 -InputObject ($gpsList | Select-Object -First 1)
+            $isExisted = $false
+
+            foreach($item in $content)
+            {
+                foreach($gpsItem in $gpsList)
+                {
+                    $checkId = $gpsItem.Id
+                    if (($null -ne $(Select-String -InputObject $item -SimpleMatch $checkId)) -and ($null -ne $(Select-String -InputObject $item -SimpleMatch "Id")))
+                    {
+                        $isExisted = $true
+                        break;
+                    }
+                }
+            }
+
+            $isExisted | Should -BeTrue
+        }
+
+        It "Create by passing as pipeline" {
+            $content = ($gpsList | Select-Object -First 1) | ConvertTo-CliXml -Depth 1
+
+            $isExisted = $false
+
+            foreach($item in $content)
+            {
+                foreach($gpsItem in $gpsList)
+                {
+                    $checkId = $gpsItem.Id
+                    if (($null -ne $(Select-String -InputObject $item -SimpleMatch $checkId)) -and ($null -ne $(Select-String -InputObject $item -SimpleMatch "Id")))
+                    {
+                        $isExisted = $true
+                        break;
+                    }
+                }
+            }
+
+            $isExisted | Should -BeTrue
+        }
+    }
+
+    Context "ConvertFrom-CliXml" {
+        BeforeAll {
+            $gpsList = Get-Process pwsh
+            $gps = $gpsList | Select-Object -First 1
+        }
+
+        It "Create by passing as parameter" {
+            $content = ConvertTo-CliXml -Depth 1 -InputObject $gps
+
+            $content | Should -Not -Be $null
+
+            $importedProcess = ConvertFrom-CliXml -InputObject $content
+            $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
+            $importedProcess.Id | Should -Not -BeNullOrEmpty
+            $gps.Id | Should -Be $importedProcess.Id
+        }
+
+        It "Create by passing as pipeline" {
+            $content = $gps | ConvertTo-CliXml -Depth 1
+
+            $content | Should -Not -Be $null
+
+            $importedProcess = $content | ConvertFrom-CliXml
+            $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
+            $importedProcess.Id | Should -Not -BeNullOrEmpty
+            $gps.Id | Should -Be $importedProcess.Id
+        }
+
+        It "Should import PSCredential" {
+            $UserName = "Foo"
+            $pass = ConvertTo-SecureString (New-RandomHexString) -AsPlainText -Force
+            $cred =  [PSCredential]::new($UserName, $pass)
+
+            $content = $cred | ConvertTo-CliXml
+            $cred2 = ConvertFrom-CliXml -InputObject $content
+            $cred2.UserName | Should -BeExactly $cred.UserName
+            $cred2.Password | Should -BeOfType System.Security.SecureString
+            $cred2.GetNetworkCredential().Password | Should -BeExactly $cred.GetNetworkCredential().Password
+        }
+    }
 }
 
 ##
@@ -191,7 +286,7 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
     BeforeAll {
 
         # Only run on Windows platform.
-        # Ensure calc.exe is avaiable for test.
+        # Ensure calc.exe is available for test.
         $shouldRunTest = $IsWindows -and ((Get-Command calc.exe -ErrorAction SilentlyContinue) -ne $null)
         $skipNotWindows = ! $shouldRunTest
         if ( $shouldRunTest )

@@ -37,6 +37,14 @@ namespace mvc.Controllers
             return getController.Index();
         }
 
+        [BrotliFilter]
+        public JsonResult Brotli()
+        {
+            var getController = new GetController();
+            getController.ControllerContext = this.ControllerContext;            
+            return getController.Index();
+        }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

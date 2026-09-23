@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -62,11 +64,25 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void WriteLine(string s)
         {
             CheckStopProcessing();
-            // delegate the action to the helper,
-            // that will properly break the string into
-            // screen lines
-            _writeLineHelper.WriteLine(s, this.ColumnNumber);
+
+            // Remove all ANSI escape sequences before sending out to the printer.
+            s = new ValueStringDecorated(s).ToString(OutputRendering.PlainText);
+            WriteRawText(s);
         }
+
+        /// <summary>
+        /// Write a raw text by delegating to the writer underneath, with no change to the text.
+        /// For example, keeping VT escape sequences intact in it.
+        /// </summary>
+        /// <param name="s">The raw text to be written to the device.</param>
+        internal override void WriteRawText(string s)
+        {
+            CheckStopProcessing();
+
+            // Delegate the action to the helper, that will properly break the string into screen lines.
+            _writeLineHelper.WriteLine(s, ColumnNumber);
+        }
+
         #endregion
 
         /// <summary>

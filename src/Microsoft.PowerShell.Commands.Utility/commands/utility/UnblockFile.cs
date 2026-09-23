@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 #else
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (Platform.IsLinux)
             {
                 string errorMessage = UnblockFileStrings.LinuxNotSupported;
                 Exception e = new PlatformNotSupportedException(errorMessage);

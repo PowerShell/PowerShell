@@ -125,7 +125,7 @@ open {0}
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <installer-gui-script minSpecVersion="1">
     <title>{0}</title>
-    <options hostArchitectures="x86_64"/>
+    <options hostArchitectures="{5}"/>
     <options customize="never" rootVolumeOnly="true"/>
     <background file="macDialog.png" scaling="tofit" alignment="bottomleft"/>
     <allowed-os-versions>
@@ -166,20 +166,10 @@ open {0}
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework="net6.0"></group>
+            <group targetFramework="net11.0"></group>
         </dependencies>
     </metadata>
 </package>
-'@
-
-    NuGetConfigFile = @'
-<configuration>
-  <packageSources>
-    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-    <add key="dotnet-core" value="https://dotnet.myget.org/F/dotnet-core/api/v3/index.json" />
-    <add key="powershell-core" value="https://powershell.myget.org/F/powershell-core/api/v3/index.json" />
-  </packageSources>
-</configuration>
 '@
 
     GlobalToolNuSpec = @'
@@ -192,6 +182,29 @@ open {0}
         <owners>Microsoft,PowerShell</owners>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <icon>{2}</icon>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>PowerShell global tool</description>
+        <license type="expression">MIT</license>
+        <tags>PowerShell</tags>
+        <language>en-US</language>
+        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
+        <packageTypes>
+            <packageType name="DotnetTool" />
+        </packageTypes>
+    </metadata>
+</package>
+'@
+
+    WindowsX64GlobalToolNuspec = @'
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>PowerShelll.Windows.x64</id>
+        <version>{0}</version>
+        <authors>Microsoft</authors>
+        <owners>Microsoft,PowerShell</owners>
+        <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
+        <icon>Powershell_64.png</icon>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>PowerShell global tool</description>
         <license type="expression">MIT</license>

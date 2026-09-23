@@ -37,7 +37,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
 
     BeforeEach {
         $ps = [powershell]::Create()
-        $iss = [system.management.automation.runspaces.initialsessionstate]::CreateDefault2()
+        $iss = [initialsessionstate]::CreateDefault2()
         $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace($iss)
         $rs.Open()
         $ps.Runspace = $rs

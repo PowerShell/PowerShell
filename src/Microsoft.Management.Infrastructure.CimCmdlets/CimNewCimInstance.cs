@@ -179,8 +179,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            CimNewCimInstanceContext newCimInstanceContext = context as CimNewCimInstanceContext;
-            if (newCimInstanceContext == null)
+            if (context is not CimNewCimInstanceContext newCimInstanceContext)
             {
                 DebugHelper.WriteLog("Invalid (null) CimNewCimInstanceContext", 1);
                 return;
@@ -295,8 +294,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 DebugHelper.WriteLog("Create and add new property to ciminstance: name = {0}; value = {1}; flags = {2}", 5, propertyName, propertyValue, flag);
 
-                PSReference cimReference = propertyValue as PSReference;
-                if (cimReference != null)
+                if (propertyValue is PSReference cimReference)
                 {
                     CimProperty newProperty = CimProperty.Create(propertyName, GetBaseObject(cimReference.Value), CimType.Reference, flag);
                     cimInstance.CimInstanceProperties.Add(newProperty);

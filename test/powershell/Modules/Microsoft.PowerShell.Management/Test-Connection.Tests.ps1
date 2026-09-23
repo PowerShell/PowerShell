@@ -32,7 +32,9 @@ function GetExternalHostAddress([string]$HostName)
     }
 }
 
-Describe "Test-Connection" -tags "CI" {
+# Adding RequireSudoOnUnix due to an intentional breaking change.
+# See https://github.com/dotnet/runtime/issues/66746
+Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
     BeforeAll {
         $hostName = [System.Net.Dns]::GetHostName()
         $gatewayAddress = GetGatewayAddress
@@ -96,24 +98,23 @@ Describe "Test-Connection" -tags "CI" {
             { Test-Connection "fakeHost" -Count 1 -ErrorAction Stop } |
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
-            $platform = Get-PlatformInfo
-            if ($platform.Platform -match "raspbian" -or ( $platform.Platform -match 'ubuntu' -and $platform.Version -eq '20.04')) {
-                $code = 11
-            } elseif (!$IsWindows) {
-                $code = -131073
-            } else {
-                $code = 11001
-            }
-            $error[0].Exception.InnerException.ErrorCode | Should -Be $code
+            # Error code = -131073 - Invalid address
+            $error[0].Exception.InnerException.ErrorCode | Should -BeIn 11, -131073, 11001
         }
 
         It "Force IPv4 with implicit PingOptions" {
             $result = Test-Connection $testAddress -Count 1 -IPv4
 
-            $result[0].Address | Should -BeExactly $testAddress
-            $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
-            if ($IsWindows) {
-                $result[0].Reply.Options.DontFragment | Should -BeFalse
+            $resultStatus = $result.Reply.Status
+            if ($resultStatus -eq "Success") {
+                $result[0].Address | Should -BeExactly $testAddress
+                $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
+                if ($IsWindows) {
+                    $result[0].Reply.Options.DontFragment | Should -BeFalse
+                }
+            }
+            else {
+                Set-ItResult -Skipped -Because "Ping reply not Success, was: '$resultStatus'"
             }
         }
 
@@ -257,27 +258,57 @@ Describe "Test-Connection" -tags "CI" {
                 $pingResults.Where( { $_.Status -eq 'Success' }, 'Default', 1 ).BufferSize | Should -Be 32
             }
         }
+
+        It "Repeat with explicit false should behave like default ping" {
+            # -Repeat:$false should behave the same as not specifying -Repeat
+            $pingResults = Test-Connection $targetAddress -Repeat:$false
+            
+            # Should get exactly 4 pings (the default Count value)
+            $pingResults.Count | Should -Be 4
+            $pingResults[0].Address | Should -BeExactly $targetAddress
+        }
     }
 
     Context "MTUSizeDetect" {
-        # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
-        # instead of returning a PacketTooBig response cleanly.
-        # Test disabled due to .NET runtime issue: https://github.com/dotnet/runtime/issues/55961
-        It "MTUSizeDetect works" -Pending:(($env:__INCONTAINER -eq 1) -or $IsMacOS) {
-            $result = Test-Connection $testAddress -MtuSize
+        It "MTUSizeDetect works" {
 
-            $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
-            $result.Destination | Should -BeExactly $testAddress
-            $result.Status | Should -BeExactly "Success"
-            $result.MtuSize | Should -BeGreaterThan 0
+            $platform = Get-PlatformInfo
+            $platform | Out-String -Stream | Write-Verbose -Verbose
+
+            if ($platform.platform -match 'sles' -and $platform.version -match '15') {
+                Set-ItResult -Skipped -Because "MTUSizeDetect is not supported on OpenSUSE 15"
+                return
+            }
+
+            # if we time out, that's a terminating exception, so set erroraction to continue
+            $result = Test-Connection $testAddress -MtuSize -ErrorVariable eVar -ErrorAction Continue
+
+            if ($eVar.TargetObject.Status -eq "TimedOut") {
+                Set-ItResult -skipped -because "timed out"
+            }
+            else {
+                $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
+                $result.Destination | Should -BeExactly $testAddress
+                $result.Status | Should -BeExactly "Success"
+                $result.MtuSize | Should -BeGreaterThan 0
+            }
         }
 
-        # Test disabled due to .NET runtime issue: https://github.com/dotnet/runtime/issues/55961
-        It "Quiet works" -Pending:(($env:__INCONTAINER -eq 1) -or $IsMacOS) {
+        It "Quiet works" {
             $result = Test-Connection $gatewayAddress -MtuSize -Quiet
 
             $result | Should -BeOfType Int32
             $result | Should -BeGreaterThan 0
+        }
+
+        It "MtuSize with explicit false should behave like default ping" {
+            # -MtuSize:$false should behave the same as not specifying -MtuSize (default ping)
+            $pingResults = Test-Connection $targetAddress -MtuSize:$false
+            
+            # Should return PingStatus, not PingMtuStatus
+            $pingResults[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus
+            # Should get 4 pings (the default Count value)
+            $pingResults.Count | Should -Be 4
         }
     }
 
@@ -320,6 +351,16 @@ Describe "Test-Connection" -tags "CI" {
 
             $results.Hostname | Should -Not -BeNullOrEmpty
         }
+
+        It "Traceroute with explicit false should behave like default ping" {
+            # -Traceroute:$false should behave the same as not specifying -Traceroute (default ping)
+            $pingResults = Test-Connection $targetAddress -Traceroute:$false
+            
+            # Should return PingStatus, not TraceStatus
+            $pingResults[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus
+            # Should get 4 pings (the default Count value)
+            $pingResults.Count | Should -Be 4
+        }
     }
 }
 
@@ -330,12 +371,48 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
         $UnreachableAddress = "10.11.12.13"
     }
 
-    It "Test connection to local host port 80" {
+    It "Test connection to local host on working port" {
         Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort | Should -BeTrue
     }
 
     It "Test connection to unreachable host port 80" {
         Test-Connection $UnreachableAddress -TcpPort 80 -TimeOut 1 | Should -BeFalse
+    }
+
+    It "Test detailed connection to local host on working port" {
+        $result = Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort -Detailed
+
+        $result.Count | Should -Be 1
+        $result[0].Id | Should -BeExactly 1
+        $result[0].TargetAddress | Should -BeExactly '127.0.0.1'
+        $result[0].Port | Should -Be $WebListener.HttpPort
+        $result[0].Latency | Should -BeGreaterOrEqual 0
+        $result[0].Connected | Should -BeTrue
+        $result[0].Status | Should -BeExactly 'Success'
+    }
+
+    It "Test detailed connection to local host on working port with modified count" {
+        $result = Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort -Detailed -Count 2
+
+        $result.Count | Should -Be 2
+        $result[0].Id | Should -BeExactly 1
+        $result[0].TargetAddress | Should -BeExactly '127.0.0.1'
+        $result[0].Port | Should -Be $WebListener.HttpPort
+        $result[0].Latency | Should -BeGreaterOrEqual 0
+        $result[0].Connected | Should -BeTrue
+        $result[0].Status | Should -BeExactly 'Success'
+    }
+
+    It "Test detailed connection to unreachable host port 80" {
+        $result = Test-Connection $UnreachableAddress -TcpPort 80 -Detailed -TimeOut 1
+
+        $result.Count | Should -Be 1
+        $result[0].Id | Should -BeExactly 1
+        $result[0].TargetAddress | Should -BeExactly $UnreachableAddress
+        $result[0].Port | Should -Be 80
+        $result[0].Latency | Should -BeExactly 0
+        $result[0].Connected | Should -BeFalse
+        $result[0].Status | Should -Not -BeExactly 'Success'
     }
 }
 

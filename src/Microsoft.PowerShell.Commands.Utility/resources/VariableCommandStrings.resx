@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -123,17 +123,14 @@
   <data name="SetVariableTarget" xml:space="preserve">
     <value>Name: {0} Value: {1}</value>
   </data>
+  <data name="UseSingleVariable" xml:space="preserve">
+    <value>Use a single variable rather than a collection</value>
+  </data>
   <data name="NewVariableAction" xml:space="preserve">
     <value>New variable</value>
   </data>
   <data name="NewVariableTarget" xml:space="preserve">
     <value>Name: {0} Value: {1}</value>
-  </data>
-  <data name="AddVariableAction" xml:space="preserve">
-    <value>Add variable</value>
-  </data>
-  <data name="AddVariableTarget" xml:space="preserve">
-    <value>Name: {0}</value>
   </data>
   <data name="RemoveVariableAction" xml:space="preserve">
     <value>Remove variable</value>

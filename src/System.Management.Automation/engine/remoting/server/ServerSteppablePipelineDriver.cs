@@ -241,10 +241,7 @@ namespace System.Management.Automation
 
             _eventSubscriber.FireStartSteppablePipeline(this);
 
-            if (_powershellInput != null)
-            {
-                _powershellInput.Pulse();
-            }
+            _powershellInput?.Pulse();
         }
 
         #endregion Internal Methods
@@ -262,20 +259,14 @@ namespace System.Management.Automation
 
             CheckAndPulseForProcessing(true);
 
-            if (_powershellInput != null)
-            {
-                _powershellInput.Pulse();
-            }
+            _powershellInput?.Pulse();
         }
 
         private void HandleSessionConnected(object sender, EventArgs eventArgs)
         {
             // Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
-            if (Input != null)
-            {
-                Input.Complete();
-            }
+            Input?.Complete();
         }
 
         /// <summary>
@@ -302,10 +293,7 @@ namespace System.Management.Automation
 
             PerformStop();
 
-            if (_powershellInput != null)
-            {
-                _powershellInput.Pulse();
-            }
+            _powershellInput?.Pulse();
         }
 
         /// <summary>
@@ -326,10 +314,7 @@ namespace System.Management.Automation
 
                 CheckAndPulseForProcessing(false);
 
-                if (_powershellInput != null)
-                {
-                    _powershellInput.Pulse();
-                }
+                _powershellInput?.Pulse();
             }
         }
 

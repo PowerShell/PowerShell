@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AttributeExpected" xml:space="preserve">
+    <value>{0} 특성이 필요합니다.</value>
+  </data>
+  <data name="InvalidElementTag" xml:space="preserve">
+    <value>{0} XML 태그를 인식할 수 없습니다.</value>
+  </data>
+  <data name="InvalidReferenceId" xml:space="preserve">
+    <value>referenceId {0}에 대한 개체를 찾을 수 없습니다.</value>
+  </data>
+  <data name="InvalidDictionaryKeyName" xml:space="preserve">
+    <value>사전 키에 대한 Name 특성이 잘못 지정되었습니다.</value>
+  </data>
+  <data name="InvalidDictionaryValueName" xml:space="preserve">
+    <value>사전 값에 대한 Name 특성이 잘못 지정되었습니다.</value>
+  </data>
+  <data name="InvalidVersion" xml:space="preserve">
+    <value>PSObject 버전이 올바르지 않습니다.</value>
+  </data>
+  <data name="UnexpectedVersion" xml:space="preserve">
+    <value>들어오는 PSObject의 버전은 {0}입니다. 예상 값은 1입니다.</value>
+  </data>
+  <data name="InvalidTypeHierarchyReferenceId" xml:space="preserve">
+    <value>referenceId {0}에 대한 TypeNames를 찾을 수 없어 이름을 처리할 수 없습니다.</value>
+  </data>
+  <data name="DepthOfOneRequired" xml:space="preserve">
+    <value>depth 매개 변수 값은 1보다 크거나 같아야 합니다.</value>
+  </data>
+  <data name="InvalidNodeType" xml:space="preserve">
+    <value>현재 노드 형식은 {0}입니다. {1} 형식이 필요합니다.</value>
+  </data>
+  <data name="DictionaryKeyNotSpecified" xml:space="preserve">
+    <value>사전 항목의 키가 지정되지 않았습니다.</value>
+  </data>
+  <data name="DictionaryValueNotSpecified" xml:space="preserve">
+    <value>사전 항목의 값이 지정되지 않았습니다.</value>
+  </data>
+  <data name="ReadCalledAfterDone" xml:space="preserve">
+    <value>더 이상 역직렬화할 개체가 없습니다.</value>
+  </data>
+  <data name="NullAsDictionaryKey" xml:space="preserve">
+    <value>Null이 사전 키로 지정되었습니다.</value>
+  </data>
+  <data name="InvalidPrimitiveType" xml:space="preserve">
+    <value>{0} 기본 형식의 내용이 올바르지 않습니다.</value>
+  </data>
+  <data name="DeserializationTooDeep" xml:space="preserve">
+    <value>직렬화된 XML의 중첩이 너무 깊습니다.</value>
+  </data>
+  <data name="Stopping" xml:space="preserve">
+    <value>직렬 변환기가 닫혔습니다.</value>
+  </data>
+  <data name="DeserializationMemoryQuota" xml:space="preserve">
+    <value>명령에 포함된 데이터가 세션 구성에서 허용하는 최대 크기를 초과했습니다. 허용되는 최대 크기는 {0}MB입니다. 입력을 변경하거나, 다른 세션 구성을 사용하거나, 원격 컴퓨터에서 세션 구성의 "{1}" 및 "{2}" 속성을 변경하세요.</value>
+  </data>
+  <data name="DeserializeSecureStringFailed" xml:space="preserve">
+    <value>암호화된 보안 문자열의 역직렬화에 실패했습니다.</value>
+  </data>
+  <data name="PrimitiveHashtableInvalidKey" xml:space="preserve">
+    <value>{0} 키 유형이 유효하지 않습니다. PSPrimitiveDictionary 클래스는 System.String 형식의 키만 허용합니다.</value>
+  </data>
+  <data name="PrimitiveHashtableInvalidValue" xml:space="preserve">
+    <value>값 형식 {0}이(가) 올바르지 않습니다. PSPrimitiveDictionary 클래스는 PowerShell 원격을 통해 완전히 직렬화할 수 있는 형식의 값만 허용합니다. 완전히 직렬화할 수 있는 형식 목록은 about_Remoting 도움말 항목을 참조하세요.</value>
+  </data>
+  <data name="InvalidKey" xml:space="preserve">
+    <value>데이터를 해독할 수 없습니다. 이 키로 암호화된 데이터가 아닙니다.</value>
+  </data>
+  <data name="InvalidEncryptedString" xml:space="preserve">
+    <value>매개 변수 값 "{0}"은(는) 올바른 암호화된 문자열이 아닙니다.</value>
+  </data>
+  <data name="InvalidKeyLength" xml:space="preserve">
+    <value>지정한 {0}이(가) 잘못되었습니다. 유효한 {0} 길이 설정은 128비트, 192비트 또는 256비트입니다.</value>
+  </data>
+  <data name="DeserializeSecureStringNotSupported" xml:space="preserve">
+    <value>SecureString 역직렬화는 현재 Windows에서만 지원됩니다.</value>
+  </data>
+</root>

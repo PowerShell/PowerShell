@@ -9,7 +9,7 @@ namespace System.Management.Automation.Internal
     /// <remarks>
     /// It's a singleton class. Sealed to prevent subclassing. Any operation that
     /// returns no actual value should return this object AutomationNull.Value.
-    /// Anything that evaluates an MSH expression should be prepared to deal
+    /// Anything that evaluates a PowerShell expression should be prepared to deal
     /// with receiving this result and discarding it. When received in an
     /// evaluation where a value is required, it should be replaced with null.
     /// </remarks>

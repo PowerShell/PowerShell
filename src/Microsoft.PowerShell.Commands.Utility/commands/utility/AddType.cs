@@ -11,7 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Loader;
 using System.Security;
 using System.Text;
@@ -108,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (value != null)
                 {
-                    _sourceCode = string.Join("\n", value);
+                    _sourceCode = string.Join('\n', value);
                 }
             }
         }
@@ -127,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         /// Any using statements required by the auto-generated type.
         /// </summary>
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
-        [ValidateNotNull()]
+        [ValidateNotNull]
         [Alias("Using")]
         public string[] UsingNamespace { get; set; } = Array.Empty<string>();
 
@@ -299,7 +301,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value != null) { _referencedAssemblies = value; }
+                if (value != null)
+                {
+                    _referencedAssemblies = value;
+                }
             }
         }
 
@@ -400,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Flag to pass the resulting types along.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
@@ -549,15 +554,26 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // Prevent code compilation in ConstrainedLanguage mode
-            if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            // Prevent code compilation in ConstrainedLanguage mode, or NoLanguage mode under system lock down.
+            if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage ||
+                (SessionState.LanguageMode == PSLanguageMode.NoLanguage && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce))
             {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSNotSupportedException(AddTypeStrings.CannotDefineNewType),
-                        nameof(AddTypeStrings.CannotDefineNewType),
-                        ErrorCategory.PermissionDenied,
-                        targetObject: null));
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSNotSupportedException(AddTypeStrings.CannotDefineNewType),
+                            nameof(AddTypeStrings.CannotDefineNewType),
+                            ErrorCategory.PermissionDenied,
+                            targetObject: null));
+                }
+
+                SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
+                    title: AddTypeStrings.AddTypeLogTitle,
+                    message: AddTypeStrings.AddTypeLogMessage,
+                    fqid: "AddTypeCmdletDisabled",
+                    dropIntoDebugger: true);
             }
 
             // 'ConsoleApplication' and 'WindowsApplication' types are currently not working in .NET Core
@@ -646,8 +662,8 @@ namespace Microsoft.PowerShell.Commands
         // These dictionaries prevent reloading already loaded and unchanged code.
         // We don't worry about unbounded growing of the cache because in .Net Core 2.0 we can not unload assemblies.
         // TODO: review if we will be able to unload assemblies after migrating to .Net Core 2.1.
-        private static readonly HashSet<string> s_sourceTypesCache = new();
-        private static readonly Dictionary<int, Assembly> s_sourceAssemblyCache = new();
+        private static readonly ConcurrentDictionary<string, object> s_sourceTypesCache = new();
+        private static readonly ConcurrentDictionary<int, Assembly> s_sourceAssemblyCache = new();
 
         private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
 
@@ -668,6 +684,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // CoreCLR doesn't allow re-load TPA assemblies with different API (i.e. we load them by name and now want to load by path).
                 // LoadAssemblyHelper helps us avoid re-loading them, if they already loaded.
+                // codeql[cs/dll-injection-remote] - This is expected PowerShell behavior and integral to the purpose of the class. It allows users to load any C# dependencies they need for their PowerShell application and add other types they require.
                 Assembly assembly = LoadAssemblyHelper(assemblyName) ?? Assembly.LoadFrom(ResolveAssemblyName(assemblyName, false));
 
                 if (PassThru)
@@ -682,11 +699,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static IEnumerable<PortableExecutableReference> InitDefaultRefAssemblies()
         {
-            // Define number of reference assemblies distributed with PowerShell.
-            const int maxPowershellRefAssemblies = 160;
-
-            const int capacity = maxPowershellRefAssemblies + 1;
-            var defaultRefAssemblies = new List<PortableExecutableReference>(capacity);
+            // Default reference assemblies consist of .NET reference assemblies and the 'S.M.A' assembly.
+            // Today, there are 161 .NET reference assemblies, so the needed capacity is 162, but we use 200
+            // as the initial capacity to cover the possible increase of .NET reference assemblies in future.
+            var defaultRefAssemblies = new List<PortableExecutableReference>(capacity: 200);
 
             foreach (string file in Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly))
             {
@@ -695,11 +711,6 @@ namespace Microsoft.PowerShell.Commands
 
             // Add System.Management.Automation.dll
             defaultRefAssemblies.Add(MetadataReference.CreateFromFile(typeof(PSObject).Assembly.Location));
-
-            // We want to avoid reallocating the internal array, so we assert if the list capacity has increased.
-            Diagnostics.Assert(
-                defaultRefAssemblies.Capacity <= capacity,
-                $"defaultRefAssemblies was resized because of insufficient initial capacity! A capacity of {defaultRefAssemblies.Count} is required.");
 
             return defaultRefAssemblies;
         }
@@ -869,7 +880,10 @@ namespace Microsoft.PowerShell.Commands
                 var tempReferences = new List<PortableExecutableReference>(s_autoReferencedAssemblies.Value);
                 foreach (string assembly in ReferencedAssemblies)
                 {
-                    if (string.IsNullOrWhiteSpace(assembly)) { continue; }
+                    if (string.IsNullOrWhiteSpace(assembly))
+                    {
+                        continue;
+                    }
 
                     string resolvedAssemblyPath = ResolveAssemblyName(assembly, true);
 
@@ -894,7 +908,14 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteTypes(Assembly assembly)
         {
-            WriteObject(assembly.GetTypes(), true);
+            foreach (Type type in assembly.GetTypes())
+            {
+                // We only write out types that are not auto-generated by compiler.
+                if (type.GetCustomAttribute<CompilerGeneratedAttribute>() is null)
+                {
+                    WriteObject(type);
+                }
+            }
         }
 
         #endregion LoadAssembly
@@ -952,7 +973,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool isSourceCodeUpdated(List<SyntaxTree> syntaxTrees, out Assembly assembly)
+        private bool IsSourceCodeUpdated(List<SyntaxTree> syntaxTrees, out Assembly assembly)
         {
             Diagnostics.Assert(syntaxTrees.Count != 0, "syntaxTrees should contains a source code.");
 
@@ -1037,7 +1058,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // if the source code was already compiled and loaded and not changed
                 // we get the assembly from the cache.
-                if (isSourceCodeUpdated(syntaxTrees, out Assembly assembly))
+                if (IsSourceCodeUpdated(syntaxTrees, out Assembly assembly))
                 {
                     CompileToAssembly(syntaxTrees, compilationOptions, emitOptions);
                 }
@@ -1127,7 +1148,7 @@ namespace Microsoft.PowerShell.Commands
                 // It is namespace-fully-qualified name
                 var symbolFullName = symbol.ToString();
 
-                if (s_sourceTypesCache.TryGetValue(symbolFullName, out _))
+                if (s_sourceTypesCache.ContainsKey(symbolFullName))
                 {
                     DuplicateSymbols.Add(symbolFullName);
                 }
@@ -1142,13 +1163,13 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (var typeName in newTypes)
             {
-                s_sourceTypesCache.Add(typeName);
+                s_sourceTypesCache.TryAdd(typeName, null);
             }
         }
 
         private void CacheAssembly(Assembly assembly)
         {
-            s_sourceAssemblyCache.Add(_syntaxTreesHash, assembly);
+            s_sourceAssemblyCache.TryAdd(_syntaxTreesHash, assembly);
         }
 
         private void DoEmitAndLoadAssembly(Compilation compilation, EmitOptions emitOptions)
@@ -1167,8 +1188,6 @@ namespace Microsoft.PowerShell.Commands
 
                     if (emitResult.Success)
                     {
-                        // TODO:  We could use Assembly.LoadFromStream() in future.
-                        // See https://github.com/dotnet/corefx/issues/26994
                         ms.Seek(0, SeekOrigin.Begin);
                         Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
 

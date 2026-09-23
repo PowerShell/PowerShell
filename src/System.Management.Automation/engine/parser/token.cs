@@ -200,7 +200,7 @@ namespace System.Management.Automation.Language
         /// <summary>The addition operator '+'.</summary>
         Plus = 40,
 
-        /// <summary>The substraction operator '-'.</summary>
+        /// <summary>The subtraction operator '-'.</summary>
         Minus = 41,
 
         /// <summary>The assignment operator '='.</summary>
@@ -588,6 +588,9 @@ namespace System.Management.Automation.Language
         /// <summary>The 'default' keyword</summary>
         Default = 169,
 
+        /// <summary>The 'clean' keyword.</summary>
+        Clean = 170,
+
         #endregion Keywords
     }
 
@@ -659,7 +662,7 @@ namespace System.Management.Automation.Language
         Keyword = 0x00000010,
 
         /// <summary>
-        /// The token one of the keywords that is a part of a script block: 'begin', 'process', 'end', or 'dynamicparam'.
+        /// The token is one of the keywords that is a part of a script block: 'begin', 'process', 'end', 'clean', or 'dynamicparam'.
         /// </summary>
         ScriptBlockBlockName = 0x00000020,
 
@@ -948,6 +951,7 @@ namespace System.Management.Automation.Language
             /*               Hidden */ TokenFlags.Keyword,
             /*                 Base */ TokenFlags.Keyword,
             /*              Default */ TokenFlags.Keyword,
+            /*                Clean */ TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName,
 
             #endregion Flags for keywords
         };
@@ -1147,6 +1151,7 @@ namespace System.Management.Automation.Language
             /*               Hidden */ "hidden",
             /*                 Base */ "base",
             /*              Default */ "default",
+            /*                Clean */ "clean",
 
             #endregion Text for keywords
         };
@@ -1154,10 +1159,12 @@ namespace System.Management.Automation.Language
 #if DEBUG
         static TokenTraits()
         {
-            Diagnostics.Assert(s_staticTokenFlags.Length == ((int)TokenKind.Default + 1),
-                               "Table size out of sync with enum - _staticTokenFlags");
-            Diagnostics.Assert(s_tokenText.Length == ((int)TokenKind.Default + 1),
-                               "Table size out of sync with enum - _tokenText");
+            Diagnostics.Assert(
+                s_staticTokenFlags.Length == ((int)TokenKind.Clean + 1),
+                "Table size out of sync with enum - _staticTokenFlags");
+            Diagnostics.Assert(
+                s_tokenText.Length == ((int)TokenKind.Clean + 1),
+                "Table size out of sync with enum - _tokenText");
             // Some random assertions to make sure the enum and the traits are in sync
             Diagnostics.Assert(GetTraits(TokenKind.Begin) == (TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName),
                                "Table out of sync with enum - flags Begin");
@@ -1173,7 +1180,7 @@ namespace System.Management.Automation.Language
 #endif
 
         /// <summary>
-        /// Return all the flags for a given <ref>TokenKind</ref>.
+        /// Return all the flags for a given <see cref="TokenKind" />.
         /// </summary>
         public static TokenFlags GetTraits(this TokenKind kind)
         {
@@ -1181,7 +1188,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Return true if the <ref>TokenKind</ref> has the given trait.
+        /// Return true if the <see cref="TokenKind" /> has the given trait.
         /// </summary>
         public static bool HasTrait(this TokenKind kind, TokenFlags flag)
         {
@@ -1195,7 +1202,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Return the text for a given <ref>TokenKind</ref>.
+        /// Return the text for a given <see cref="TokenKind" />.
         /// </summary>
         public static string Text(this TokenKind kind)
         {
@@ -1264,7 +1271,7 @@ namespace System.Management.Automation.Language
 
         internal virtual string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}{1}: <{2}>", StringUtil.Padding(indent), _kind, Text);
+            return string.Create(CultureInfo.InvariantCulture, $"{StringUtil.Padding(indent)}{_kind}: <{Text}>");
         }
     }
 
@@ -1283,8 +1290,14 @@ namespace System.Management.Automation.Language
 
         internal override string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Value:<{3}> Type:<{4}>", StringUtil.Padding(indent), Kind, Text, _value, _value.GetType().Name);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}{1}: <{2}> Value:<{3}> Type:<{4}>",
+                StringUtil.Padding(indent),
+                Kind,
+                Text,
+                _value,
+                _value.GetType().Name);
         }
 
         /// <summary>
@@ -1325,8 +1338,13 @@ namespace System.Management.Automation.Language
 
         internal override string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <-{2}{3}>", StringUtil.Padding(indent), Kind, _parameterName, _usedColon ? ":" : string.Empty);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}{1}: <-{2}{3}>",
+                StringUtil.Padding(indent),
+                Kind,
+                _parameterName,
+                _usedColon ? ":" : string.Empty);
         }
     }
 
@@ -1353,8 +1371,13 @@ namespace System.Management.Automation.Language
 
         internal override string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Name:<{3}>", StringUtil.Padding(indent), Kind, Text, Name);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}{1}: <{2}> Name:<{3}>",
+                StringUtil.Padding(indent),
+                Kind,
+                Text,
+                Name);
         }
     }
 
@@ -1376,8 +1399,13 @@ namespace System.Management.Automation.Language
 
         internal override string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Value:<{3}>", StringUtil.Padding(indent), Kind, Text, Value);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}{1}: <{2}> Value:<{3}>",
+                StringUtil.Padding(indent),
+                Kind,
+                Text,
+                Value);
         }
     }
 

@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Catalog version.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public int CatalogVersion
         {
             get
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Based on the Catalog version we will decide which hashing Algorithm to use
-        private int catalogVersion = 1;
+        private int catalogVersion = 2;
 
         /// <summary>
         /// Generate the Catalog for the Path.
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Detailed
         {
             get { return detailed; }
@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Patterns used to exclude files from DiskPaths and Catalog.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string[] FilesToSkip
         {
             get

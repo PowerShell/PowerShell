@@ -22,7 +22,11 @@ namespace System.Management.Automation.Interpreter {
     internal partial class DynamicInstructionN {
         internal static Type GetDynamicInstructionType(Type delegateType) {
             Type[] argTypes = delegateType.GetGenericArguments();
-            if (argTypes.Length == 0) return null;
+            if (argTypes.Length == 0)
+            {
+                return null;
+            }
+
             Type genericType;
             Type[] newArgTypes = argTypes.Skip(1).ToArray();
             switch (newArgTypes.Length) {

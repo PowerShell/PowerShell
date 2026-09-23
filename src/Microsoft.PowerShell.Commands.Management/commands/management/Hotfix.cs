@@ -169,10 +169,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            if (_searchProcess != null)
-            {
-                _searchProcess.Dispose();
-            }
+            _searchProcess?.Dispose();
         }
         #endregion Overrides
 
@@ -209,29 +206,11 @@ namespace Microsoft.PowerShell.Commands
         #region "IDisposable Members"
 
         /// <summary>
-        /// Dispose Method.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
-            // Use SuppressFinalize in case a subclass
-            // of this type implements a finalizer.
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Dispose Method.
-        /// </summary>
-        /// <param name="disposing"></param>
-        public void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_searchProcess != null)
-                {
-                    _searchProcess.Dispose();
-                }
-            }
+            _searchProcess?.Dispose();
         }
 
         #endregion "IDisposable Members"

@@ -208,8 +208,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (EntrySelectedBy == null)
-                    EntrySelectedBy = new EntrySelectedBy { TypeNames = new List<string>() };
+                EntrySelectedBy ??= new EntrySelectedBy { TypeNames = new List<string>() };
                 return EntrySelectedBy.TypeNames;
             }
         }
@@ -319,8 +318,7 @@ namespace System.Management.Automation
                 Label = definition.label.text;
             }
 
-            FieldPropertyToken fpt = definition.formatTokenList[0] as FieldPropertyToken;
-            if (fpt != null)
+            if (definition.formatTokenList[0] is FieldPropertyToken fpt)
             {
                 if (fpt.fieldFormattingDirective.formatString != null)
                 {

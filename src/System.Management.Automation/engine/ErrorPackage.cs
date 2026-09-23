@@ -18,7 +18,7 @@ using System.Security.Permissions;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Errors reported by Monad will be in one of these categories.
+    /// Errors reported by PowerShell will be in one of these categories.
     /// </summary>
     /// <remarks>
     /// Do not specify ErrorCategory.NotSpecified when creating an
@@ -28,13 +28,15 @@ namespace System.Management.Automation
     public enum ErrorCategory
     {
         /// <summary>
+        /// <para>
         /// No error category is specified, or the error category is invalid.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// Do not specify ErrorCategory.NotSpecified when creating an
         /// <see cref="System.Management.Automation.ErrorRecord"/>.
         /// Choose the best match from among the other values.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         NotSpecified = 0,
 
         /// <summary>
@@ -132,14 +134,16 @@ namespace System.Management.Automation
         WriteError = 23,
 
         /// <summary>
-        /// A non-Monad command reported an error to its STDERR pipe.
-        /// </summary>
-        /// <remarks>
+        /// <para>
+        /// A native command reported an error to its STDERR pipe.
+        /// </para>
+        /// <para>
         /// The Engine uses this ErrorCategory when it executes a native
         /// console applications and captures the errors reported by the
         /// native application.  Avoid using ErrorCategory.FromStdErr
         /// in other circumstances.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         FromStdErr = 24,
 
         /// <summary>
@@ -193,10 +197,7 @@ namespace System.Management.Automation
         #region ctor
         internal ErrorCategoryInfo(ErrorRecord errorRecord)
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException(nameof(errorRecord));
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _errorRecord = errorRecord;
         }
@@ -526,7 +527,6 @@ namespace System.Management.Automation
     /// It is permitted to subclass <see cref="ErrorDetails"/>
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
-    [Serializable]
     public class ErrorDetails : ISerializable
     {
         #region Constructor
@@ -562,7 +562,7 @@ namespace System.Management.Automation
         /// <see cref="System.Resources.ResourceManager"/>
         /// </param>
         /// <param name="args">
-        /// <see cref="System.String.Format(IFormatProvider,string,object[])"/>
+        /// <see cref="string.Format(IFormatProvider,string,object[])"/>
         /// insertion parameters
         /// </param>
         /// <remarks>
@@ -584,7 +584,7 @@ namespace System.Management.Automation
         /// by overriding virtual method
         /// <see cref="Cmdlet.GetResourceString"/>.
         /// This constructor then inserts the specified args using
-        /// <see cref="System.String.Format(IFormatProvider,string,object[])"/>.
+        /// <see cref="string.Format(IFormatProvider,string,object[])"/>.
         /// </remarks>
         public ErrorDetails(
             Cmdlet cmdlet,
@@ -610,7 +610,7 @@ namespace System.Management.Automation
         /// <see cref="System.Resources.ResourceManager"/>
         /// </param>
         /// <param name="args">
-        /// <see cref="System.String.Format(IFormatProvider,string,object[])"/>
+        /// <see cref="string.Format(IFormatProvider,string,object[])"/>
         /// insertion parameters
         /// </param>
         /// <remarks>
@@ -637,7 +637,7 @@ namespace System.Management.Automation
         /// will implement
         /// <see cref="IResourceSupplier"/>.
         /// The constructor then inserts the specified args using
-        /// <see cref="System.String.Format(IFormatProvider,string,object[])"/>.
+        /// <see cref="string.Format(IFormatProvider,string,object[])"/>.
         /// </remarks>
         public ErrorDetails(
             IResourceSupplier resourceSupplier,
@@ -663,7 +663,7 @@ namespace System.Management.Automation
         /// <see cref="System.Resources.ResourceManager"/>
         /// </param>
         /// <param name="args">
-        /// <see cref="System.String.Format(IFormatProvider,string,object[])"/>
+        /// <see cref="string.Format(IFormatProvider,string,object[])"/>
         /// insertion parameters
         /// </param>
         /// <remarks>
@@ -678,7 +678,7 @@ namespace System.Management.Automation
         /// This constructor first loads a template string from the assembly using
         /// <see cref="System.Resources.ResourceManager.GetString(string)"/>.
         /// The constructor then inserts the specified args using
-        /// <see cref="System.String.Format(IFormatProvider,string,object[])"/>.
+        /// <see cref="string.Format(IFormatProvider,string,object[])"/>.
         /// </remarks>
         public ErrorDetails(
             System.Reflection.Assembly assembly,
@@ -796,7 +796,7 @@ namespace System.Management.Automation
 
         #region ToString
         /// <summary>
-        /// As <see cref="System.Object.ToString()"/>
+        /// As <see cref="object.ToString()"/>
         /// </summary>
         /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
@@ -985,7 +985,6 @@ namespace System.Management.Automation
     /// <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>.
     /// rather than the actual exception, to avoid the mutual references.
     /// </remarks>
-    [Serializable]
     public class ErrorRecord : ISerializable
     {
         #region Constructor
@@ -1026,10 +1025,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(exception));
             }
 
-            if (errorId == null)
-            {
-                errorId = string.Empty;
-            }
+            errorId ??= string.Empty;
 
             // targetObject may be null
             _error = exception;
@@ -1669,7 +1665,7 @@ namespace System.Management.Automation
                 return commandInfo.Name;
             }
 
-            if (!(commandInfo is CmdletInfo cmdletInfo))
+            if (commandInfo is not CmdletInfo cmdletInfo)
             {
                 return string.Empty;
             }
@@ -1681,7 +1677,7 @@ namespace System.Management.Automation
 
         #region ToString
         /// <summary>
-        /// As <see cref="System.Object.ToString()"/>
+        /// As <see cref="object.ToString()"/>
         /// </summary>
         /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
@@ -1693,12 +1689,7 @@ namespace System.Management.Automation
 
             if (Exception != null)
             {
-                if (!string.IsNullOrEmpty(Exception.Message))
-                {
-                    return Exception.Message;
-                }
-
-                return Exception.ToString();
+                return Exception.Message ?? Exception.ToString();
             }
 
             return base.ToString();
@@ -1726,10 +1717,10 @@ namespace System.Management.Automation
     /// information.
     /// </summary>
     /// <remarks>
-    /// MSH defines certain exception classes which implement this interface.
+    /// PowerShell defines certain exception classes which implement this interface.
     /// This includes wrapper exceptions such as
     /// <see cref="System.Management.Automation.CmdletInvocationException"/>,
-    /// and also MSH engine errors such as
+    /// and also PowerShell engine errors such as
     /// <see cref="System.Management.Automation.GetValueException"/>.
     /// Cmdlets and providers should not define this interface;
     /// instead, they should use the
@@ -1832,7 +1823,7 @@ namespace System.Management.Automation
         /// if you want more complex behavior.
         ///
         /// Insertions will be inserted into the string with
-        /// <see cref="System.String.Format(IFormatProvider,string,object[])"/>
+        /// <see cref="string.Format(IFormatProvider,string,object[])"/>
         /// to generate the final error message in
         /// <see cref="ErrorDetails.Message"/>.
         /// </remarks>

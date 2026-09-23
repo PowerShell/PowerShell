@@ -38,7 +38,7 @@ log show ./system.logarchive/ --info --predicate 'process == "pwsh"' >pwsh.log.t
 Parsing Notes:
 * Sample contains 6.0.1 content (which is out of date) revise with 6.1.0 preview
 * Ensure analytic data is considered when parsing; specifically Provider_Lifecycle:ProviderStart.Method.Informational
-* Multi-line output is expected. Parsing needs to detect the timestamp at the begining
+* Multi-line output is expected. Parsing needs to detect the timestamp at the beginning
 of a line and append subsequent lines to the message until the next 'log' line is found.
 * Header lines need to be skipped.
 
@@ -182,6 +182,7 @@ class PSLogItem
     [string] $EventId = [string]::Empty
     [string] $Message = [string]::Empty
     [int] $Count = 1
+    [System.Collections.Generic.List[String]]$ParseErrors = [System.Collections.Generic.List[string]]::new()
 
     hidden static $monthNames = @('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
 
@@ -218,7 +219,21 @@ class PSLogItem
         In those cases, a single message is logged in the following format
 
         MMM dd HH:MM:SS machinename id[PID]: message repeated NNN times: [(commitid:TID:CHANNEL) [EventName] Message]
+
+        Alternatively, more recent syslog daemons may change the message format to:
+
+	2023-06-02T22:49:50.513735+00:00 machinename id[PID]: message repeated NNN times: [(commitid:TID:CHANNEL) [EventName] Message]
+
+        the first element of the line may be converted to a datetime, which we can use to convert the input to the expected string.
         #>
+
+        $firstToken = $content.split()[0]
+        $dt = $firstToken -as [DateTime]
+        if ($dt)
+        {
+            $replacement = "{0:MMM} {0:dd} {0:hh}:{0:mm}:{0:ss}" -f $dt
+            $content = $content.replace($firstToken,$replacement)
+        }
 
         # split contents into separate space delimited tokens (first 7) and leave the rest as the message.
         [string[]] $parts = $content.Split(' ', 8, [System.StringSplitOptions]::RemoveEmptyEntries)
@@ -302,7 +317,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count) -> $content"
+            $item.ParseErrors.Add("Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count) -> $content")
         }
 
         # (commitid:TID:ChannelID)
@@ -317,7 +332,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count) -> $content"
+            $item.ParseErrors.Add("Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count) -> $content")
         }
 
         # nameid[PID]
@@ -331,7 +346,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count) -> $content"
+            $item.ParseErrors.Add("Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count) -> $content")
         }
 
         return $item
@@ -423,7 +438,8 @@ class PSLogItem
 
             if($item.LogId -notmatch '^\[com\.microsoft\.powershell')
             {
-                Write-Verbose "Skipping logId: $($item.LogId)" -Verbose
+                # this is really a lot of output, so we'll skip it for now.
+                # Write-Verbose "Skipping logId: $($item.LogId)" -Verbose
                 $result = $null
                 break
             }
@@ -451,7 +467,7 @@ class PSLogItem
             }
             else
             {
-                Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count)"
+                $item.ParseErrors.Add("Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count)")
             }
 
             # [EventId]
@@ -464,7 +480,7 @@ class PSLogItem
             }
             else
             {
-                Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count)"
+                $item.ParseErrors.Add("Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count)")
             }
 
             $result = $item
@@ -564,7 +580,7 @@ function ConvertFrom-SysLog
     PS> $time = [DateTime]::Parse('1/19/2018 1:26:49 PM')
     PS> Get-PSSysLog -id 'powershell' -logPath '/var/log/syslog' -After $time
 
-    Gets log entries with the id 'powershell' that occured on or after a specific date/time
+    Gets log entries with the id 'powershell' that occurred on or after a specific date/time
 
 .NOTES
     This function reads syslog entries using Get-Content, filters based on the id, and
@@ -908,7 +924,7 @@ function Export-PSOsLog
             Write-Output $log
         }
         else {
-            throw "did not recieve at least $MinimumCount records but $($logToCount.Count) instead."
+            throw "did not receive at least $MinimumCount records but $($logToCount.Count) instead."
         }
     } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds -LogErrorSb {
         $log = Start-NativeExecution -command {log show --info @extraParams}

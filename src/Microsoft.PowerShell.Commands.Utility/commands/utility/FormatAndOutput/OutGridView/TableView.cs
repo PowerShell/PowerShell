@@ -12,7 +12,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal class TableView
+    internal sealed class TableView
     {
         private PSPropertyExpressionFactory _expressionFactory;
         private TypeInfoDataBase _typeInfoDatabase;
@@ -69,14 +69,10 @@ namespace Microsoft.PowerShell.Commands
 
                     if (token != null)
                     {
-                        FieldPropertyToken fpt = token as FieldPropertyToken;
-                        if (fpt != null)
+                        if (token is FieldPropertyToken fpt)
                         {
-                            if (displayName == null)
-                            {
-                                // Database does not provide a label(DisplayName) for the current property, use the expression value instead.
-                                displayName = fpt.expression.expressionValue;
-                            }
+                            // If Database does not provide a label(DisplayName) for the current property, use the expression value instead.
+                            displayName ??= fpt.expression.expressionValue;
 
                             if (fpt.expression.isScriptBlock)
                             {
@@ -101,8 +97,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            TextToken tt = token as TextToken;
-                            if (tt != null)
+                            if (token is TextToken tt)
                             {
                                 displayName = _typeInfoDatabase.displayResourceManagerCache.GetTextTokenString(tt);
                                 columnInfo = new OriginalColumnInfo(tt.text, displayName, tt.text, parentCmdlet);
@@ -170,10 +165,7 @@ namespace Microsoft.PowerShell.Commands
                         propertyName = (string)key;
                 }
 
-                if (propertyName == null)
-                {
-                    propertyName = association.ResolvedExpression.ToString();
-                }
+                propertyName ??= association.ResolvedExpression.ToString();
 
                 ColumnInfo columnInfo = new OriginalColumnInfo(propertyName, propertyName, propertyName, parentCmdlet);
 
@@ -233,10 +225,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (matchingRowDefinition == null)
-            {
-                matchingRowDefinition = match.BestMatch as TableRowDefinition;
-            }
+            matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
 
             if (matchingRowDefinition == null)
             {
@@ -254,10 +243,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (matchingRowDefinition == null)
-                    {
-                        matchingRowDefinition = match.BestMatch as TableRowDefinition;
-                    }
+                    matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
                 }
             }
 

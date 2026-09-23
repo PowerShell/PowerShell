@@ -13,7 +13,7 @@ using Microsoft.PowerShell.Commands.ShowCommandInternal;
 namespace Microsoft.PowerShell.Commands.Internal
 {
     /// <summary>
-    /// Implements thw WPF window part of the the ShowWindow option of get-help.
+    /// Implements the WPF window part of the ShowWindow option of get-help.
     /// </summary>
     internal static class HelpWindowHelper
     {

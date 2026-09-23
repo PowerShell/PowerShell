@@ -21,8 +21,7 @@ namespace System.Management.Automation
         /// </summary>
         public DefaultCommandRuntime(List<object> outputList)
         {
-            if (outputList == null)
-                throw new System.ArgumentNullException(nameof(outputList));
+            ArgumentNullException.ThrowIfNull(outputList);
 
             _output = outputList;
         }
@@ -65,7 +64,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Default implementation of the enumerated WriteObject. Either way, the
-        /// objects are added to the list passed to this object in the constuctor.
+        /// objects are added to the list passed to this object in the constructor.
         /// </summary>
         /// <param name="sendToPipeline">Object to write.</param>
         /// <param name="enumerateCollection">If true, the collection is enumerated, otherwise

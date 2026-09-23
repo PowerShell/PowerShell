@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NamedParameterNotFound" xml:space="preserve">
+    <value>Nenašel se parametr odpovídající názvu parametru {1}.</value>
+  </data>
+  <data name="PositionalParameterNotFound" xml:space="preserve">
+    <value>Nenašel se poziční parametr, který přijímá argument {1}.</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>Chybí argument parametru {1}. Zadejte parametr typu {2} a zkuste to znovu.</value>
+  </data>
+  <data name="AmbiguousParameter" xml:space="preserve">
+    <value>Parametr nejde zpracovat, protože název parametru {1} je nejednoznačný. Mezi možné shody patří:{6}.</value>
+  </data>
+  <data name="CannotConvertArgument" xml:space="preserve">
+    <value>Hodnotu {6} nejde převést na typ {2} požadovaný parametrem {1}. {7}</value>
+  </data>
+  <data name="CannotConvertArgumentNoMessage" xml:space="preserve">
+    <value>Parametr {1} nejde svázat. {6}</value>
+  </data>
+  <data name="AmbiguousPositionalParameter" xml:space="preserve">
+    <value>Poziční parametry {1} nejdou svázat.</value>
+  </data>
+  <data name="AmbiguousPositionalParameterNoName" xml:space="preserve">
+    <value>Poziční parametry nejdou svázat, protože nebyly zadané žádné názvy.</value>
+  </data>
+  <data name="AmbiguousParameterSet" xml:space="preserve">
+    <value>Sadu parametrů nelze pomocí zadaných pojmenovaných parametrů rozlišit. Jeden nebo více zadaných parametrů nejde použít společně, případně nebyl zadán dostatečný počet parametrů.</value>
+  </data>
+  <data name="MissingMandatoryParameter" xml:space="preserve">
+    <value>Příkaz nejde zpracovat, protože chybí jeden nebo více povinných parametrů:{1}.</value>
+  </data>
+  <data name="ParameterNotInParameterSet" xml:space="preserve">
+    <value>Parametr {1} nejde zadat v sadě parametrů {6}.</value>
+  </data>
+  <data name="ParameterAlreadyBound" xml:space="preserve">
+    <value>Parametr nejde svázat, protože parametr {1} je zadaný více než jednou. Chcete-li parametrům, které přijímají více hodnot, předat několik hodnot, použijte syntaxi pole. Například -parameter value1,value2,value3.</value>
+  </data>
+  <data name="ScriptBlockArgumentNoInput" xml:space="preserve">
+    <value>Parametr {1} nejde vyhodnotit, protože jeho argument je zadaný jako blok skriptu a není k dispozici žádný vstup. Blok skriptu nejde vyhodnotit bez vstupu.</value>
+  </data>
+  <data name="ScriptBlockArgumentInvocationFailed" xml:space="preserve">
+    <value>Vstup bloku skriptu pro parametr {1} selhal. {6}</value>
+  </data>
+  <data name="ScriptBlockArgumentNoOutput" xml:space="preserve">
+    <value>Parametr {1} nejde vyhodnotit, protože vstup jeho argumentu nevytvořil žádný výstup.</value>
+  </data>
+  <data name="InputObjectNotBound" xml:space="preserve">
+    <value>Vstupní objekt nejde svázat s žádným parametrem příkazu. Příkaz buď nepřijímá vstup z kanálu, nebo vstup a jeho vlastnosti neodpovídají žádnému parametru přijímajícímu vstup z kanálu.</value>
+  </data>
+  <data name="InputObjectMissingMandatory" xml:space="preserve">
+    <value>Vstupní objekt nejde svázat, protože neobsahuje informace potřebné ke svázání všech povinných parametrů: {6}</value>
+  </data>
+  <data name="GetDefaultValueFailed" xml:space="preserve">
+    <value>Vstup z kanálu nejde zpracovat, protože se nepovedlo načíst výchozí hodnotu parametru {1}. {6}</value>
+  </data>
+  <data name="GetDynamicParametersException" xml:space="preserve">
+    <value>Dynamické parametry rutiny nejde načíst. {6}</value>
+  </data>
+  <data name="PromptMessage" xml:space="preserve">
+    <value>Zadejte hodnoty následujících parametrů:</value>
+  </data>
+  <data name="PromptCaption" xml:space="preserve">
+    <value>Rutina {0} na pozici {1} v kanálu příkazů</value>
+  </data>
+  <data name="ParameterArgumentTransformationError" xml:space="preserve">
+    <value>Transformaci argumentu parametru {1} nejde zpracovat. {6}</value>
+  </data>
+  <data name="ParameterArgumentTransformationErrorMessageOnly" xml:space="preserve">
+    <value>{6}</value>
+  </data>
+  <data name="ParameterArgumentValidationError" xml:space="preserve">
+    <value>Argument parametru {1} nejde ověřit. {6}</value>
+  </data>
+  <data name="ParameterBindingFailed" xml:space="preserve">
+    <value>Parametr {1} nejde svázat s cílem. {6}</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorNullNotAllowed" xml:space="preserve">
+    <value>Argument nejde svázat s parametrem {1}, protože má hodnotu null.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyStringNotAllowed" xml:space="preserve">
+    <value>Argument nejde svázat s parametrem {1}, protože jde o prázdný řetězec.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyCollectionNotAllowed" xml:space="preserve">
+    <value>Argument nejde svázat s parametrem {1}, protože jde o prázdnou kolekci.</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyArrayNotAllowed" xml:space="preserve">
+    <value>Argument nejde svázat s parametrem {1}, protože jde o prázdné pole.</value>
+  </data>
+  <data name="DuplicateParameterDefinition" xml:space="preserve">
+    <value>Nepovedlo se zpracovat příkaz. Parametr {0} je definovaný vícekrát.</value>
+  </data>
+  <data name="CannotExtractAddMethod" xml:space="preserve">
+    <value>Rutinu {0} nejde svázat, protože parametr {1} je typu {2} a metodu Add() nejde určit, nebo existuje několik metod Add(). {6}</value>
+  </data>
+  <data name="RuntimeDefinedParameterNameMismatch" xml:space="preserve">
+    <value>Rutinu {0} nejde svázat, protože parametr {1} definovaný za běhu byl přidán do RuntimeDefinedParameterDictionary s klíčem {6}. Klíč musí být stejný jako RuntimeDefinedParameter.Name.</value>
+  </data>
+  <data name="MismatchedPSTypeName" xml:space="preserve">
+    <value>Argument nejde svázat s parametrem {1}, protože hodnoty PSTypeNames argumentu neodpovídají hodnotě PSTypeName požadované parametrem: {6}.</value>
+  </data>
+  <data name="DifferentValuesAssignedToSingleParameter" xml:space="preserve">
+    <value>V $PSDefaultParameterValues je pro parametr odpovídající následujícímu názvu nebo aliasu definováno několik různých výchozích hodnot: {0}. Tyto výchozí hodnoty byly ignorovány.</value>
+  </data>
+  <data name="MultipleParametersMatched" xml:space="preserve">
+    <value>Následující název nebo alias definovaný pro tuto rutinu v $PSDefaultParameterValues odpovídá více parametrům: {0}. Výchozí hodnota byla ignorována.</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationMultiple" xml:space="preserve">
+    <value>{6} Tato chyba mohla být způsobená použitím výchozí vazby parametrů. Výchozí vazbu parametrů můžete v $PSDefaultParameterValues zakázat nastavením $PSDefaultParameterValues["Disabled"] na $true a potom to zkusit znovu. Při výskytu chyby byly pro tuto rutinu úspěšně svázány následující výchozí parametry:{7}</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationSingle" xml:space="preserve">
+    <value>{6} Toto selhání mohlo být způsobené použitím výchozí vazby parametrů. Výchozí vazbu parametrů můžete v $PSDefaultParameterValues zakázat nastavením $PSDefaultParameterValues["Disabled"] na $true a potom akci zopakovat. Při výskytu chyby byl pro tuto rutinu úspěšně svázán následující výchozí parametr:{7}</value>
+  </data>
+  <data name="FailToBindDefaultParameter" xml:space="preserve">
+    <value>Vazba výchozí hodnoty {0} na parametr {1} selhala: {2}</value>
+  </data>
+  <data name="SingleKeyInBadFormat" xml:space="preserve">
+    <value>Klíč {0} nemá platný formát. Informace o správném formátu najdete v tématu about_Parameters_Default_Values na adrese https://go.microsoft.com/fwlink/?LinkId=228266.</value>
+  </data>
+  <data name="MultipleKeysInBadFormat" xml:space="preserve">
+    <value>Klíče {0} nemají platný formát. Informace o správném formátu najdete v tématu about_Parameters_Default_Values na adrese https://go.microsoft.com/fwlink/?LinkId=228266.</value>
+  </data>
+  <data name="UseOfDeprecatedParameterWarning" xml:space="preserve">
+    <value>Parametr {0} je zastaralý. {1}</value>
+  </data>
+  <data name="StringValueKeyExpected" xml:space="preserve">
+    <value>Klíč {0} typu {1} není řetězcová hodnota. DefaultParameterDictionary přijímá jen klíče s řetězcovou hodnotou.</value>
+  </data>
+  <data name="KeyAlreadyAdded" xml:space="preserve">
+    <value>Klíč {0} už byl přidán do slovníku.</value>
+  </data>
+  <data name="WDACBinderInvocationLogTitle" xml:space="preserve">
+    <value>Volání metody nebo vlastnosti není povolené</value>
+  </data>
+  <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
+    <value>Volání metody nebo vlastnosti {0} u typu {1} nebude v režimu omezeného jazyka povolené pro nedůvěryhodné skripty.</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
+    <value>Vytvoření typu není povolené</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
+    <value>Vytvoření typu {0} nebude při vazbě parametrů v režimu omezeného jazyka povolené pro nedůvěryhodné skripty.</value>
+  </data>
+</root>

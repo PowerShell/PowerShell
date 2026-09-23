@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             //// Add AutomationProperties.AutomationId for Ui Automation test.
             checkBox.SetValue(
                 System.Windows.Automation.AutomationProperties.AutomationIdProperty,
-                string.Format(CultureInfo.CurrentCulture, "chk{0}", parameterViewModel.Name));
+                string.Create(CultureInfo.CurrentCulture, $"chk{parameterViewModel.Name}"));
 
             checkBox.SetValue(
                 System.Windows.Automation.AutomationProperties.NameProperty,
@@ -124,10 +124,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             Binding selectedItemBinding = new Binding("Value");
             comboBox.SetBinding(ComboBox.SelectedItemProperty, selectedItemBinding);
 
-            string automationId = string.Format(
-                    CultureInfo.CurrentCulture,
-                    "combox{0}",
-                    parameterViewModel.Name);
+            string automationId = string.Create(CultureInfo.CurrentCulture, $"combox{parameterViewModel.Name}");
 
             //// Add AutomationProperties.AutomationId for Ui Automation test.
             comboBox.SetValue(
@@ -164,7 +161,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             multiControls.comboxParameter.SetBinding(ComboBox.TextProperty, valueBinding);
 
             // Add AutomationProperties.AutomationId for Ui Automation test.
-            multiControls.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, string.Format("combox{0}", parameterViewModel.Name));
+            multiControls.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, string.Create(CultureInfo.CurrentCulture, $"combox{parameterViewModel.Name}"));
 
             multiControls.comboxParameter.SetValue(
                 System.Windows.Automation.AutomationProperties.NameProperty,
@@ -206,7 +203,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             //// Add AutomationProperties.AutomationId for UI Automation test.
             textBox.SetValue(
                 System.Windows.Automation.AutomationProperties.AutomationIdProperty,
-                string.Format(CultureInfo.CurrentCulture, "txt{0}", parameterViewModel.Name));
+                string.Create(CultureInfo.CurrentCulture, $"txt{parameterViewModel.Name}"));
 
             textBox.SetValue(
                 System.Windows.Automation.AutomationProperties.NameProperty,
@@ -366,7 +363,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a Lable control and add it to MainGrid.
+        /// Creates a Label control and add it to MainGrid.
         /// </summary>
         /// <param name="parameterViewModel">DataContext object.</param>
         /// <param name="rowNumber">Row number.</param>
@@ -397,7 +394,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             //// Add AutomationProperties.AutomationId for Ui Automation test.
             label.SetValue(
                 System.Windows.Automation.AutomationProperties.AutomationIdProperty,
-                string.Format(CultureInfo.CurrentCulture, "lbl{0}", parameterViewModel.Name));
+                string.Create(CultureInfo.CurrentCulture, $"lbl{parameterViewModel.Name}"));
 
             return label;
         }

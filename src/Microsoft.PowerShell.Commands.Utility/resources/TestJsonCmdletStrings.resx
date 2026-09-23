@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -123,10 +123,13 @@
   <data name="InvalidJson" xml:space="preserve">
     <value>Cannot parse the JSON.</value>
   </data>
-  <data name="InvalidJsonAgainstSchema" xml:space="preserve">
-    <value>The JSON is not valid with the schema.</value>
+  <data name="InvalidJsonAgainstSchemaDetailed" xml:space="preserve">
+    <value>The JSON is not valid with the schema: {0} at '{1}'</value>
   </data>
   <data name="JsonSchemaFileOpenFailure" xml:space="preserve">
     <value>Can not open JSON schema file: {0}</value>
+  </data>
+  <data name="InvalidUriScheme" xml:space="preserve">
+    <value>URI scheme '{0}' is not supported. Only HTTP(S) and local file system URIs are allowed.</value>
   </data>
 </root>

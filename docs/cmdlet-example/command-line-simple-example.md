@@ -220,9 +220,9 @@ and macOS as well as Windows using the .NET Core 2.x SDK command-line tools.
 For more information on .NET Standard, check out the [documentation][net-std-docs]
 and the [.NET Standard YouTube channel][net-std-chan].
 
-[dotnet-cli]:    https://docs.microsoft.com/dotnet/core/tools/
+[dotnet-cli]:    https://learn.microsoft.com/dotnet/core/tools/
 [net-core-sdk]:  https://www.microsoft.com/net/download/core
-[net-std-docs]:  https://docs.microsoft.com/dotnet/standard/net-standard
+[net-std-docs]:  https://learn.microsoft.com/dotnet/standard/net-standard
 [net-std-chan]:  https://www.youtube.com/playlist?list=PLRAdsfhKI4OWx321A_pr-7HhRNk7wOLLY
 [pscore-os]:     https://github.com/powershell/powershell#get-powershell
 [readme]:        ../../README.md

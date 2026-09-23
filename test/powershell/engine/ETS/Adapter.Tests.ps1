@@ -200,6 +200,17 @@ Describe "Adapter Tests" -tags "CI" {
 
             # TODO: dynamic method calls
         }
+
+        It "Can use PSForEach as an alias for the Foreach magic method" {
+            $x = 5
+            $x.PSForEach({$_}) | Should -Be 5
+
+            $p = $null.PSForEach{"I didn't run"}
+            $p.GetType().Name | Should -BeExactly 'Collection`1'
+            $p.Count | Should -BeExactly 0
+
+            ([pscustomobject]@{ Name = 'bar' }).PSForEach({$_.Name}) | Should -BeExactly 'bar'
+        }
     }
 
     Context "Where Magic Method Adapter Tests" {
@@ -239,6 +250,17 @@ Describe "Adapter Tests" -tags "CI" {
                    $param1*2
                 } -PassThru -Force
             $x.Where(5) | Should -Be 10
+        }
+
+        It "Can use PSWhere as an alias for the Where magic method" {
+            $x = 5
+            $x.PSWhere{$true} | Should -Be 5
+
+            $p = $null.PSWhere{"I didn't run"}
+            $p.GetType().Name | Should -BeExactly 'Collection`1'
+            $p.Count | Should -BeExactly 0
+
+            ([pscustomobject]@{ Name = 'bar' }).PSWhere({$_.Name}) | ForEach-Object Name | Should -BeExactly 'bar'
         }
     }
 }

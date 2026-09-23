@@ -43,8 +43,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>Objects the cache needs to return. It can be null.</returns>
         internal List<PacketInfoData> Add(PacketInfoData o)
         {
-            FormatStartData fsd = o as FormatStartData;
-            if (fsd != null)
+            if (o is FormatStartData fsd)
             {
                 // just cache the reference (used during the notification call)
                 _formatStartData = fsd;
@@ -120,12 +119,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // add only of it's not a control message
             // and it's not out of band
-            FormatEntryData fed = o as FormatEntryData;
-
-            if (fed == null || fed.outOfBand)
-                return;
-
-            _currentObjectCount++;
+            if (o is FormatEntryData fed && !fed.outOfBand)
+            {
+                _currentObjectCount++;
+            }
         }
 
         private void Notify()
@@ -139,8 +136,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             foreach (PacketInfoData x in _queue)
             {
-                FormatEntryData fed = x as FormatEntryData;
-                if (fed != null && fed.outOfBand)
+                if (x is FormatEntryData fed && fed.outOfBand)
                     continue;
 
                 validObjects.Add(x);

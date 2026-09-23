@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NamedParameterNotFound" xml:space="preserve">
+    <value>パラメーター名 '{1}' と一致するパラメーターが見つかりません。</value>
+  </data>
+  <data name="PositionalParameterNotFound" xml:space="preserve">
+    <value>引数 '{1}' を受け取る位置指定パラメーターが見つかりません。</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>パラメーター '{1}' の引数がありません。型 '{2}' のパラメーターを指定して、もう一度やり直してください。</value>
+  </data>
+  <data name="AmbiguousParameter" xml:space="preserve">
+    <value>パラメーター名 '{1}' があいまいであるため、パラメーターを処理できません。一致の可能性は次のとおりです:{6}。</value>
+  </data>
+  <data name="CannotConvertArgument" xml:space="preserve">
+    <value>'{6}' をパラメーター '{1}' で必要な型 '{2}' に変換できません: {7}</value>
+  </data>
+  <data name="CannotConvertArgumentNoMessage" xml:space="preserve">
+    <value>パラメーター '{1}' をバインドできません。{6}</value>
+  </data>
+  <data name="AmbiguousPositionalParameter" xml:space="preserve">
+    <value>位置指定パラメーター '{1}' がバインドされます。</value>
+  </data>
+  <data name="AmbiguousPositionalParameterNoName" xml:space="preserve">
+    <value>名前が指定されていないため、位置指定パラメーターをバインドできません。</value>
+  </data>
+  <data name="AmbiguousParameterSet" xml:space="preserve">
+    <value>設定されたパラメーターは、指定された名前付きパラメーターを使って解決することができません。発行された 1 つ以上のパラメーターを同時に使用できないか、指定されたパラメーターの数が不足しています。</value>
+  </data>
+  <data name="MissingMandatoryParameter" xml:space="preserve">
+    <value>1 つ以上の必須パラメーターが不足しているため、コマンドを処理できません:{1}。</value>
+  </data>
+  <data name="ParameterNotInParameterSet" xml:space="preserve">
+    <value>パラメーター '{1}' をパラメーター セット '{6}' に指定することはできません。</value>
+  </data>
+  <data name="ParameterAlreadyBound" xml:space="preserve">
+    <value>パラメーター '{1}' が複数回指定されているため、パラメーターをバインドできません。複数の値を受け取ることができるパラメーターに複数の値を指定するには、配列構文を使用します。たとえば、"-parameter value1,value2,value3" とします。</value>
+  </data>
+  <data name="ScriptBlockArgumentNoInput" xml:space="preserve">
+    <value>パラメーター '{1}' を評価できません。引数がスクリプト ブロックとして指定されており、入力がないためです。スクリプト ブロックは、入力がないと評価できません。</value>
+  </data>
+  <data name="ScriptBlockArgumentInvocationFailed" xml:space="preserve">
+    <value>パラメーター '{1}' のスクリプト ブロックへの入力に失敗しました。{6}</value>
+  </data>
+  <data name="ScriptBlockArgumentNoOutput" xml:space="preserve">
+    <value>パラメーター '{1}' を評価できません。引数の入力で出力が生成されませんでした。</value>
+  </data>
+  <data name="InputObjectNotBound" xml:space="preserve">
+    <value>コマンドがパイプライン入力を受け取らないか、入力とそのプロパティがパイプライン入力を受け取るパラメーターと一致しないため、入力オブジェクトをコマンドのパラメーターにバインドできません。</value>
+  </data>
+  <data name="InputObjectMissingMandatory" xml:space="preserve">
+    <value>すべての必須パラメーターをバインドするために必要な情報が含まれていないため、入力オブジェクトをバインドできません: {6}</value>
+  </data>
+  <data name="GetDefaultValueFailed" xml:space="preserve">
+    <value>パラメーター '{1}' の既定値を取得できないため、パイプライン入力を処理できません。{6}</value>
+  </data>
+  <data name="GetDynamicParametersException" xml:space="preserve">
+    <value>コマンドレットの動的パラメーターを取得できません。{6}</value>
+  </data>
+  <data name="PromptMessage" xml:space="preserve">
+    <value>次のパラメーターの値を入力します:</value>
+  </data>
+  <data name="PromptCaption" xml:space="preserve">
+    <value>コマンド パイプラインの位置 {1} でのコマンドレット {0}</value>
+  </data>
+  <data name="ParameterArgumentTransformationError" xml:space="preserve">
+    <value>パラメーター '{1}' の引数変換を処理できません。{6}</value>
+  </data>
+  <data name="ParameterArgumentTransformationErrorMessageOnly" xml:space="preserve">
+    <value>{6}</value>
+  </data>
+  <data name="ParameterArgumentValidationError" xml:space="preserve">
+    <value>パラメーター '{1}' の引数を検証できません。{6}</value>
+  </data>
+  <data name="ParameterBindingFailed" xml:space="preserve">
+    <value>パラメーター '{1}' をターゲットにバインドできません。{6}</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorNullNotAllowed" xml:space="preserve">
+    <value>パラメーター '{1}' は null 値であるため、引数をバインドできません。</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyStringNotAllowed" xml:space="preserve">
+    <value>パラメーター '{1}' は空の文字列であるため、引数をバインドできません。</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyCollectionNotAllowed" xml:space="preserve">
+    <value>パラメーター '{1}' は空のコレクションであるため、引数をバインドできません。</value>
+  </data>
+  <data name="ParameterArgumentValidationErrorEmptyArrayNotAllowed" xml:space="preserve">
+    <value>パラメーター '{1}' は空の配列であるため、引数をバインドできません。</value>
+  </data>
+  <data name="DuplicateParameterDefinition" xml:space="preserve">
+    <value>コマンドを処理できません。パラメーター '{0}' は複数回定義されています。</value>
+  </data>
+  <data name="CannotExtractAddMethod" xml:space="preserve">
+    <value>パラメーター '{1}' の型が '{2}' で、Add() メソッドを識別できないか、複数の Add() メソッドが存在するため、コマンドレット {0} をバインドできません。{6}</value>
+  </data>
+  <data name="RuntimeDefinedParameterNameMismatch" xml:space="preserve">
+    <value>ランタイム定義パラメーター '{1}' がキー '{6}' で RuntimeDefinedParameterDictionary に追加されたため、コマンドレット {0} をバインドできません。キーは RuntimeDefinedParameter.Name と同じである必要があります。</value>
+  </data>
+  <data name="MismatchedPSTypeName" xml:space="preserve">
+    <value>引数の PSTypeNames がパラメーター '{1}' で必要な PSTypeName と一致しないため、引数をパラメーター '{6}' にバインドできません。</value>
+  </data>
+  <data name="DifferentValuesAssignedToSingleParameter" xml:space="preserve">
+    <value>$PSDefaultParameterValues では、次の名前またはエイリアスに一致するパラメーターに対して複数の異なる既定値が定義されています: {0}。これらの既定値は無視されました。</value>
+  </data>
+  <data name="MultipleParametersMatched" xml:space="preserve">
+    <value>このコマンドレットの $PSDefaultParameterValues で定義されている次の名前またはエイリアスは、複数のパラメーターに解決されます: {0}。既定値は無視されました。</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationMultiple" xml:space="preserve">
+    <value>{6} このエラーは、既定のパラメーター バインドの適用によって発生した可能性があります。$PSDefaultParameterValues で既定のパラメーター バインドを無効にするには、$PSDefaultParameterValues["Disabled"] を$trueに設定してから、もう一度やり直してください。次の既定のパラメーターは、エラーが発生したときにこのコマンドレットに対して正常にバインドされました: {7}</value>
+  </data>
+  <data name="DefaultBindingErrorElaborationSingle" xml:space="preserve">
+    <value>{6} このエラーは、既定のパラメーター バインドの適用によって発生する可能性があります。$PSDefaultParameterValues で既定のパラメーター バインドを無効にするには、$PSDefaultParameterValues["Disabled"] を $true に設定してから再試行してください。次の既定のパラメーターは、エラーが発生したときにこのコマンドレットに対して正常にバインドされました: {7}</value>
+  </data>
+  <data name="FailToBindDefaultParameter" xml:space="preserve">
+    <value>パラメーター '{1}' への既定値 '{0}' のバインドに失敗しました: {2}</value>
+  </data>
+  <data name="SingleKeyInBadFormat" xml:space="preserve">
+    <value>キー '{0}' に有効な形式がありません。正しい形式の詳細については、https://go.microsoft.com/fwlink/?LinkId=228266 でabout_Parameters_Default_Values を参照してください。</value>
+  </data>
+  <data name="MultipleKeysInBadFormat" xml:space="preserve">
+    <value>キー '{0}' の形式が無効です。正しい形式の詳細については、https://go.microsoft.com/fwlink/?LinkId=228266 でabout_Parameters_Default_Values を参照してください。</value>
+  </data>
+  <data name="UseOfDeprecatedParameterWarning" xml:space="preserve">
+    <value>パラメーター '{0}' は廃止されました。{1}</value>
+  </data>
+  <data name="StringValueKeyExpected" xml:space="preserve">
+    <value>型 '{1}' のキー '{0}' は文字列値ではありません。DefaultParameterDictionary は文字列値キーのみを受け入れます。</value>
+  </data>
+  <data name="KeyAlreadyAdded" xml:space="preserve">
+    <value>キー '{0}' は既にディクショナリに追加されています。</value>
+  </data>
+  <data name="WDACBinderInvocationLogTitle" xml:space="preserve">
+    <value>メソッドまたはプロパティの呼び出しは許可されていません</value>
+  </data>
+  <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
+    <value>型 '{1}' でのメソッドまたはプロパティ '{0}' の呼び出しは、信頼されていないスクリプトの制約言語モードでは許可されません。</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
+    <value>型の作成は許可されていません</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
+    <value>型 '{0}' の作成は、信頼されていないスクリプトの制約付き言語モードでのパラメーター バインド中に許可されません。</value>
+  </data>
+</root>

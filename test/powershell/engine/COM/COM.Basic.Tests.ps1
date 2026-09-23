@@ -106,6 +106,10 @@ Describe 'Basic COM Tests' -Tags "CI" {
         }
 
         It "InvokeMember binder should differentiate PSObject that wraps COM object from other PSObjects" {
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "COMException: The server process could not be started because the configured identity is incorrect. Check the username and password."
+            }
+
             ## InvokeMember on the member name 'Windows'
             $shell | ForEach-Object { $_.Windows() } > $null
 

@@ -11,7 +11,7 @@ function Add-ModulePath
 
     if ($Prepend)
     {
-        $env:PSModulePAth = $Path + [System.IO.Path]::PathSeparator + $env:PSModulePath
+        $env:PSModulePath = $Path + [System.IO.Path]::PathSeparator + $env:PSModulePath
     }
     else
     {
@@ -130,6 +130,22 @@ function New-TestNestedModule
     # Create the manifest
     [scriptblock]::Create($newManifestCmd).Invoke()
 }
+
+function Get-DesktopModuleToUse {
+    $system32Path = "$env:windir\system32\WindowsPowerShell\v1.0\Modules"
+    $persistentMemoryModule = "PersistentMemory"
+    $remoteDesktopModule = "RemoteDesktop"
+
+    if (Test-Path -PathType Container "$system32Path\$persistentMemoryModule") {
+        return $persistentMemoryModule
+    } elseif (Test-Path -PathType Container "$system32Path\$remoteDesktopModule") {
+        return $remoteDesktopModule
+    } else {
+        return $null
+    }
+}
+
+$desktopModuleToUse = Get-DesktopModuleToUse
 
 Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
 
@@ -435,9 +451,9 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( ! $IsWindows ) {
-            $PSDefaultParameterValues["it:skip"] = $true
+            Push-DefaultParameterValueStack @{ "it:skip" = $true }
+            return
         }
 
         $ModuleName = "DesktopModule"
@@ -452,7 +468,10 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        if ( ! $IsWindows ) {
+            Pop-DefaultParameterValueStack
+            return
+        }
     }
 
     Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
@@ -584,9 +603,14 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         It "NoClobber WinCompat import works for an engine module through -UseWindowsPowerShell parameter" {
 
+            # pre-test cleanup
+            Get-Module -Name Microsoft.PowerShell.Management | Remove-Module
+            Import-Module -Name Microsoft.PowerShell.Management # import the one that comes with PSCore
+
             Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
 
             $modules = Get-Module -Name Microsoft.PowerShell.Management
+
             $modules.Count | Should -Be 2
             $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
             $coreModule = $modules | Where-Object {$_.ModuleType -eq 'Manifest'}
@@ -643,6 +667,42 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["' + $ModuleName2 + '"]}' | Out-File -Force $ConfigPath
             & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Test-${ModuleName2}PSEdition;Test-$ModuleName2" | Should -Be @('Desktop','Core')
         }
+
+        It "NoClobber WinCompat list in powershell.config is a Desktop-edition module" {
+            if (Test-IsWinWow64) {
+                Set-ItResult -Skipped -Because "This test is not applicable to WoW64."
+                return
+            }
+
+            if (-not $desktopModuleToUse) {
+                throw 'Neither the "PersistentMemory" module nor the "RemoteDesktop" module is available. Please check and use a desktop-edition module that is under the System32 module path.'
+            }
+
+            ## The 'Desktop' edition module 'PersistentMemory' (available on Windows Client) or 'RemoteDesktop' (available on Windows Server) should not be imported twice.
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+@"
+{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["$desktopModuleToUse"]}
+"@ | Out-File -Force $ConfigPath
+            $env:PSModulePath = $null
+
+            ## The desktop-edition module is listed in the no-clobber list, so we will first try loading a core-edition
+            ## compatible version of the module before loading the remote one. The 'system32' module path will be skipped
+            ## in this attempt, which is by-design.
+            ## If we don't skip the 'system32' module path in this loading attempt, the desktop-edition module will be
+            ## imported twice as a remote module, and then 'Remove-Module' won't close the WinCompat session.
+            $script = @"
+Import-Module $desktopModuleToUse -UseWindowsPowerShell -WarningAction Ignore
+Get-Module $desktopModuleToUse | ForEach-Object { `$_.ModuleType.ToString() }
+(Get-PSSession | Measure-Object).Count
+Remove-Module $desktopModuleToUse
+(Get-PSSession | Measure-Object).Count
+"@
+            $scriptBlock = [scriptblock]::Create($script)
+            $results = & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c $scriptBlock
+            $results[0] | Should -BeExactly 'Script'
+            $results[1] | Should -BeExactly 1
+            $results[2] | Should -BeExactly 0
+        }
     }
 
     Context "Tests around PSModulePath in WinCompat process" {
@@ -654,6 +714,10 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         AfterAll {
             Restore-ModulePath
+        }
+
+        BeforeEach {
+            Get-PSSession -Name WinPSCompatSession -ErrorAction SilentlyContinue | Remove-PSSession
         }
 
         AfterEach {
@@ -705,14 +769,16 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( ! $IsWindows ) {
-            $PSDefaultParameterValues["it:skip"] = $true
+            Push-DefaultParameterValueStack @{  "it:skip" = $true }
+            return
         }
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        if ( ! $IsWindows ) {
+            Pop-DefaultParameterValueStack
+        }
     }
 
     Context "System32 module path prepended to PSModulePath" {
@@ -1341,5 +1407,140 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
                 { Test-RootModulePSEdition } | Should -Throw -ErrorId "CommandNotFoundException"
             }
         }
+    }
+}
+
+Describe "WinCompat importing should check availablity of built-in modules" -Tag "CI" {
+    BeforeAll {
+        if (-not $IsWindows ) {
+            Push-DefaultParameterValueStack @{  "it:skip" = $true }
+            return
+        }
+
+        ## Copy the current PowerShell instance to a temp location
+        $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) "WinCompat"
+        $pwshDir = Join-Path $tempDir "pwsh"
+        $moduleDir = Join-Path $tempDir "Modules"
+        $savedModulePath = $env:PSModulePath
+
+        if (Test-Path $tempDir) {
+            Remove-Item $tempDir -Recurse -Force
+        }
+
+        Write-Host "Making a copy of the running PowerShell instance ..." -ForegroundColor Yellow
+        Copy-Item $PSHOME $pwshDir -Recurse -Force
+        Move-Item $pwshDir\Modules $moduleDir -Force
+        Write-Host "-- Done copying!" -ForegroundColor Yellow
+    }
+
+    AfterAll {
+        if (-not $IsWindows) {
+            Pop-DefaultParameterValueStack
+            return
+        }
+
+        $env:PSModulePath = $savedModulePath
+        Remove-Item $tempDir -Recurse -Force
+    }
+
+    It "Missing built-in modules will trigger error instead of loading the non-compatible ones in System32 directory. Running '<Command>'" -TestCases @(
+        @{
+            Command = 'Start-Transcript';
+            FullyQualifiedErrorId = "CouldNotAutoloadMatchingModule";
+            ExceptionMessage = "*'Start-Transcript'*'Microsoft.PowerShell.Host'*'Microsoft.PowerShell.Host'*'Core'*`$PSHOME*'Import-Module Microsoft.PowerShell.Host'*"
+        }
+        @{
+            Command = 'Import-Module Microsoft.PowerShell.Host';
+            FullyQualifiedErrorId = "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            ExceptionMessage = "*'Microsoft.PowerShell.Host'*'Core'*`$PSHOME*"
+        }
+        @{
+            Command = 'Import-Module CimCmdlets'
+            FullyQualifiedErrorId = "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            ExceptionMessage = "*'CimCmdlets'*'Core'*`$PSHOME*"
+        }
+        @{
+            Command = 'Import-Module Microsoft.PowerShell.Utility'
+            FullyQualifiedErrorId = "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            ExceptionMessage = "*'Microsoft.PowerShell.Utility'*'Core'*`$PSHOME*"
+        }
+    ) {
+        param(
+            $Command,
+            $FullyQualifiedErrorId,
+            $ExceptionMessage
+        )
+
+        $template = @'
+    try {{
+        {0}
+    }} catch {{
+        $_.FullyQualifiedErrorId
+        $_.Exception.Message
+    }}
+'@
+        $env:PSModulePath = $null
+        $script = $template -f $Command
+        $scriptBlock = [scriptblock]::Create($script)
+
+        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c $scriptBlock
+        $result | Should -HaveCount 2
+        $result[0] | Should -BeExactly $FullyQualifiedErrorId
+        $result[1] | Should -BeLike $ExceptionMessage
+    }
+
+    It "Attempt to load a 'Desktop' edition module should fail because 'Export-PSSession' cannot be found" {
+        if (Test-IsWinWow64) {
+            Set-ItResult -Skipped -Because "This test is not applicable to WoW64."
+            return
+        }
+
+        if (-not $desktopModuleToUse) {
+            throw 'Neither the "PersistentMemory" module nor the "RemoteDesktop" module is available. Please check and use a desktop-edition module that is under the System32 module path.'
+        }
+
+        $script = @"
+    try {
+        Import-Module $desktopModuleToUse -ErrorAction Stop
+    } catch {
+        `$_.FullyQualifiedErrorId
+        `$_.Exception.Message
+    }
+"@
+        $env:PSModulePath = $null
+        $scriptBlock = [scriptblock]::Create($script)
+        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c $scriptBlock
+        $result | Should -HaveCount 2
+        $result[0] | Should -BeExactly "CommandNotFoundException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+        $result[1] | Should -BeLike "*'$desktopModuleToUse'*'Export-PSSession'*'Microsoft.PowerShell.Utility'*"
+    }
+
+    It "When built-in modules are available but not in `$PSHOME module path, things should work" {
+        $env:PSModulePath = $null
+        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c @"
+            `$env:PSModulePath += ';$moduleDir'
+            Import-Module Microsoft.PowerShell.Utility -UseWindowsPowerShell -WarningAction Ignore
+            Get-Module Microsoft.PowerShell.Utility | ForEach-Object ModuleType
+            Get-Module Microsoft.PowerShell.Utility | Where-Object ModuleType -eq 'Manifest' | ForEach-Object Path
+            Get-Module Microsoft.PowerShell.Utility | Where-Object ModuleType -eq 'Script' | ForEach-Object { `$_.ExportedCommands.Keys }
+"@
+        $result | Should -HaveCount 6
+        $result[0] | Should -BeExactly 'Manifest'
+        $result[1] | Should -BeExactly 'Script'
+        $result[2] | Should -BeExactly "$moduleDir\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1"
+        $result[3] | Should -BeExactly 'Convert-String'
+        $result[4] | Should -BeExactly 'ConvertFrom-String'
+        $result[5] | Should -BeExactly 'CFS'
+    }
+
+    It 'ErrorAction should be used for cmdlet' {
+        try {
+            $out = Invoke-Expression 'get-AppLockerFileInformation NoSuch.exe -ErrorAction Stop; "after"'
+        }
+        catch {
+            # do nothing as we expect an error, but execution should not continue
+        }
+
+        $out | Should -Not -Contain 'after'
     }
 }

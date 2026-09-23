@@ -185,8 +185,7 @@ namespace System.Management.Automation.Language
                         // valuetype because the parameter has no value yet.  For example:
                         //     & { param([System.Reflection.MemberTypes]$m) ($null -eq $m) }
 
-                        object unused;
-                        if (!Compiler.TryGetDefaultParameterValue(analysisDetails.Type, out unused))
+                        if (!Compiler.TryGetDefaultParameterValue(analysisDetails.Type, out _))
                         {
                             analysisDetails.LocalTupleIndex = VariableAnalysis.ForceDynamic;
                         }
@@ -945,25 +944,11 @@ namespace System.Management.Automation.Language
         {
             _currentBlock = _entryBlock;
 
-            if (scriptBlockAst.DynamicParamBlock != null)
-            {
-                scriptBlockAst.DynamicParamBlock.Accept(this);
-            }
-
-            if (scriptBlockAst.BeginBlock != null)
-            {
-                scriptBlockAst.BeginBlock.Accept(this);
-            }
-
-            if (scriptBlockAst.ProcessBlock != null)
-            {
-                scriptBlockAst.ProcessBlock.Accept(this);
-            }
-
-            if (scriptBlockAst.EndBlock != null)
-            {
-                scriptBlockAst.EndBlock.Accept(this);
-            }
+            scriptBlockAst.DynamicParamBlock?.Accept(this);
+            scriptBlockAst.BeginBlock?.Accept(this);
+            scriptBlockAst.ProcessBlock?.Accept(this);
+            scriptBlockAst.EndBlock?.Accept(this);
+            scriptBlockAst.CleanBlock?.Accept(this);
 
             _currentBlock.FlowsTo(_exitBlock);
 
@@ -1317,10 +1302,7 @@ namespace System.Management.Automation.Language
 
         public object VisitForStatement(ForStatementAst forStatementAst)
         {
-            if (forStatementAst.Initializer != null)
-            {
-                forStatementAst.Initializer.Accept(this);
-            }
+            forStatementAst.Initializer?.Accept(this);
 
             var generateCondition = forStatementAst.Condition != null
                 ? () => forStatementAst.Condition.Accept(this)
@@ -1468,10 +1450,7 @@ namespace System.Management.Automation.Language
 
         private Block ControlFlowStatement(PipelineBaseAst pipelineAst)
         {
-            if (pipelineAst != null)
-            {
-                pipelineAst.Accept(this);
-            }
+            pipelineAst?.Accept(this);
 
             _currentBlock.FlowsTo(_exitBlock);
             var lastBlockInStatement = _currentBlock;
@@ -1642,11 +1621,7 @@ namespace System.Management.Automation.Language
 
         public object VisitCommandParameter(CommandParameterAst commandParameterAst)
         {
-            if (commandParameterAst.Argument != null)
-            {
-                commandParameterAst.Argument.Accept(this);
-            }
-
+            commandParameterAst.Argument?.Accept(this);
             return null;
         }
 

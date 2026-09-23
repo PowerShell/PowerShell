@@ -110,7 +110,7 @@ namespace System.Management.Automation
 
         // Three states:
         //   - True: we can rely on the catalog API to check catalog signature.
-        //   - False: we cannot rely on the catalog API, either because it doesn't exist in the OS (win7),
+        //   - False: we cannot rely on the catalog API, either because it doesn't exist in the OS (win7, nano),
         //            or it's not working properly (OneCore SKUs or dev environment where powershell might
         //            be updated/refreshed).
         //   - Null: it's not determined yet whether catalog API can be relied on or not.
@@ -184,6 +184,11 @@ namespace System.Management.Automation
         /// True if the item is signed as part of an operating system release.
         /// </summary>
         public bool IsOSBinary { get; internal set; }
+
+        /// <summary>
+        /// Gets the Subject Alternative Name from the signer certificate.
+        /// </summary>
+        public string[] SubjectAlternativeName { get; private set; }
 
         /// <summary>
         /// Constructor for class Signature
@@ -277,6 +282,9 @@ namespace System.Management.Automation
             _statusMessage = GetSignatureStatusMessage(isc,
                                                       error,
                                                       filePath);
+
+            // Extract Subject Alternative Name from the signer certificate
+            SubjectAlternativeName = GetSubjectAlternativeName(signer);
         }
 
         private static SignatureStatus GetSignatureStatusFromWin32Error(DWORD error)
@@ -388,6 +396,35 @@ namespace System.Management.Automation
             }
 
             return message;
+        }
+
+        /// <summary>
+        /// Extracts the Subject Alternative Name from the certificate.
+        /// </summary>
+        /// <param name="certificate">The certificate to extract SAN from.</param>
+        /// <returns>Array of SAN entries or null if not found.</returns>
+        private static string[] GetSubjectAlternativeName(X509Certificate2 certificate)
+        {
+            if (certificate == null)
+            {
+                return null;
+            }
+
+            foreach (X509Extension extension in certificate.Extensions)
+            {
+                if (extension.Oid != null && extension.Oid.Value == CertificateFilterInfo.SubjectAlternativeNameOid)
+                {
+                    string formatted = extension.Format(multiLine: true);
+                    if (string.IsNullOrEmpty(formatted))
+                    {
+                        return null;
+                    }
+
+                    return formatted.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
+                }
+            }
+
+            return null;
         }
     }
 }

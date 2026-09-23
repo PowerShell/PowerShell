@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -205,6 +205,10 @@ The #requires statement must be in one of the following formats:
   </data>
   <data name="CouldNotAutoImportMatchingModule" xml:space="preserve">
     <value>The '{0}' command was found in the module '{1}', but the module could not be loaded. For more information, run 'Import-Module {1}'.</value>
+  </data>
+  <data name="CouldNotAutoImportMatchingModuleWithErrorMessage" xml:space="preserve">
+    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded due to the following error: [{2}]
+For more information, run 'Import-Module {1}'.</value>
   </data>
   <data name="CouldNotAutoImportModule" xml:space="preserve">
     <value>The module '{0}' could not be loaded. For more information, run 'Import-Module {0}'.</value>

@@ -12,51 +12,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// <summary>
-    /// Helper class to do wildcard matching on PSPropertyExpressions.
-    /// </summary>
-    internal sealed class PSPropertyExpressionFilter
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PSPropertyExpressionFilter"/> class
-        /// with the specified array of patterns.
-        /// </summary>
-        /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>
-        internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
-        {
-            if (wildcardPatternsStrings == null)
-            {
-                throw new ArgumentNullException(nameof(wildcardPatternsStrings));
-            }
-
-            _wildcardPatterns = new WildcardPattern[wildcardPatternsStrings.Length];
-            for (int k = 0; k < wildcardPatternsStrings.Length; k++)
-            {
-                _wildcardPatterns[k] = WildcardPattern.Get(wildcardPatternsStrings[k], WildcardOptions.IgnoreCase);
-            }
-        }
-
-        /// <summary>
-        /// Try to match the expression against the array of wildcard patterns.
-        /// The first match shortcircuits the search.
-        /// </summary>
-        /// <param name="expression">PSPropertyExpression to test against.</param>
-        /// <returns>True if there is a match, else false.</returns>
-        internal bool IsMatch(PSPropertyExpression expression)
-        {
-            for (int k = 0; k < _wildcardPatterns.Length; k++)
-            {
-                if (_wildcardPatterns[k].IsMatch(expression.ToString()))
-                    return true;
-            }
-
-            return false;
-        }
-
-        private readonly WildcardPattern[] _wildcardPatterns;
-    }
-
-    internal class SelectObjectExpressionParameterDefinition : CommandParameterDefinition
+    internal sealed class SelectObjectExpressionParameterDefinition : CommandParameterDefinition
     {
         protected override void SetEntries()
         {
@@ -114,6 +70,13 @@ namespace Microsoft.PowerShell.Commands
         private bool _unique;
 
         /// <summary>
+        /// Gets or sets case insensitive switch for string comparison.
+        /// Used in combination with Unique switch parameter.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter CaseInsensitive { get; set; }
+
+        /// <summary>
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -147,10 +110,11 @@ namespace Microsoft.PowerShell.Commands
         private bool _firstOrLastSpecified;
 
         /// <summary>
-        /// Skips the specified number of items from top when used with First, from end when used with Last.
+        /// Skips the specified number of items from top when used with First, from end when used with Last or SkipLast.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
+        [Parameter(ParameterSetName = "SkipLastParameter")]
         [ValidateRange(0, int.MaxValue)]
         public int Skip { get; set; }
 
@@ -174,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "IndexParameter")]
-        [ValidateRangeAttribute(0, int.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] Index
         {
@@ -197,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "SkipIndexParameter")]
-        [ValidateRangeAttribute(0, int.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] SkipIndex
         {
@@ -437,7 +401,11 @@ namespace Microsoft.PowerShell.Commands
                 if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
                 {
                     List<PSPropertyExpressionResult> tempExprResults = resolvedName.GetValues(inputObject);
-                    if (tempExprResults == null) continue;
+                    if (tempExprResults == null)
+                    {
+                        continue;
+                    }
+
                     foreach (PSPropertyExpressionResult mshExpRes in tempExprResults)
                     {
                         expressionResults.Add(mshExpRes);
@@ -528,7 +496,10 @@ namespace Microsoft.PowerShell.Commands
             if (r.Exception == null)
             {
                 // ignore the property value if it's null
-                if (r.Result == null) { return; }
+                if (r.Result == null)
+                {
+                    return;
+                }
 
                 System.Collections.IEnumerable results = LanguagePrimitives.GetEnumerable(r.Result);
                 if (results == null)
@@ -548,7 +519,10 @@ namespace Microsoft.PowerShell.Commands
                 foreach (object expandedValue in results)
                 {
                     // ignore the element if it's null
-                    if (expandedValue == null) { continue; }
+                    if (expandedValue == null)
+                    {
+                        continue;
+                    }
 
                     // add NoteProperties if there is any
                     // If expandedValue is a base object, we don't want to associate the NoteProperty
@@ -624,7 +598,11 @@ namespace Microsoft.PowerShell.Commands
                 bool isObjUnique = true;
                 foreach (UniquePSObjectHelper uniqueObj in _uniques)
                 {
-                    ObjectCommandComparer comparer = new(true, CultureInfo.CurrentCulture, true);
+                    ObjectCommandComparer comparer = new(
+                        ascending: true,
+                        CultureInfo.CurrentCulture,
+                        caseSensitive: !CaseInsensitive.IsPresent);
+
                     if ((comparer.Compare(obj.BaseObject, uniqueObj.WrittenObject.BaseObject) == 0) &&
                         (uniqueObj.NotePropertyCount == addedNoteProperties.Count))
                     {
@@ -847,7 +825,7 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable", Justification = "This exception is internal and never thrown by any public API")]
     [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception is internal and never thrown by any public API")]
     [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic", Justification = "This exception is internal and never thrown by any public API")]
-    internal class SelectObjectException : SystemException
+    internal sealed class SelectObjectException : SystemException
     {
         internal ErrorRecord ErrorRecord { get; }
 

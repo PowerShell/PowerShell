@@ -482,9 +482,6 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(SequencePointIndex == -1, "shouldn't be trying to set on a pending breakpoint");
 
-            if (!scriptFile.Equals(this.Script, StringComparison.OrdinalIgnoreCase))
-                return false;
-
             // A quick check to see if the breakpoint is within the scriptblock.
             bool couldBeInNestedScriptBlock;
             var scriptBlock = functionContext._scriptBlock;
@@ -531,15 +528,16 @@ namespace System.Management.Automation
 
             // Not found.  First, we check if the line/column is before any real code.  If so, we'll
             // move the breakpoint to the first interesting sequence point (could be a dynamicparam,
-            // begin, process, or end block.)
+            // begin, process, end, or clean block.)
             if (scriptBlock != null)
             {
                 var ast = scriptBlock.Ast;
                 var bodyAst = ((IParameterMetadataProvider)ast).Body;
-                if ((bodyAst.DynamicParamBlock == null || bodyAst.DynamicParamBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.BeginBlock == null || bodyAst.BeginBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.ProcessBlock == null || bodyAst.ProcessBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.EndBlock == null || bodyAst.EndBlock.Extent.IsAfter(Line, Column)))
+                if ((bodyAst.DynamicParamBlock == null || bodyAst.DynamicParamBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.BeginBlock == null || bodyAst.BeginBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.ProcessBlock == null || bodyAst.ProcessBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.EndBlock == null || bodyAst.EndBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.CleanBlock == null || bodyAst.CleanBlock.Extent.IsAfter(Line, Column)))
                 {
                     SetBreakpoint(functionContext, 0);
                     return true;
@@ -594,11 +592,11 @@ namespace System.Management.Automation
                 var boundBreakPoints = debugger.GetBoundBreakpoints(this.SequencePoints);
                 if (boundBreakPoints != null)
                 {
-                    Diagnostics.Assert(boundBreakPoints.Contains(this),
+                    Diagnostics.Assert(boundBreakPoints[this.SequencePointIndex].Contains(this),
                                        "If we set _scriptBlock, we should have also added the breakpoint to the bound breakpoint list");
-                    boundBreakPoints.Remove(this);
+                    boundBreakPoints[this.SequencePointIndex].Remove(this);
 
-                    if (boundBreakPoints.All(breakpoint => breakpoint.SequencePointIndex != this.SequencePointIndex))
+                    if (boundBreakPoints[this.SequencePointIndex].All(breakpoint => breakpoint.SequencePointIndex != this.SequencePointIndex))
                     {
                         // No other line breakpoints are at the same sequence point, so disable the breakpoint so
                         // we don't go looking for breakpoints the next time we hit the sequence point.

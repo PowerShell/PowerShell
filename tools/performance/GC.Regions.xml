@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8' standalone='yes'?>
 <!-- See definitions in C:\Windows\Microsoft.NET\Framework\v4.0.30319\CLR-ETW.man  for .NET events -->
-<!-- See MSDN docs about 'region of interest': https://docs.microsoft.com/windows-hardware/test/wpt/regions-of-interest -->
+<!-- See MSDN docs about 'region of interest': https://learn.microsoft.com/windows-hardware/test/wpt/regions-of-interest -->
 <!--
    Unlike JIT, GC is largely single threaded and the times correlate very well with PerfView where we can drill down into each GC
    generation in the region graph in WPA.

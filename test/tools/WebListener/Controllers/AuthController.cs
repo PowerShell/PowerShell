@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
 using mvc.Models;
@@ -28,7 +29,7 @@ namespace mvc.Controllers
             }
             else
             {
-                Response.Headers.Add("WWW-Authenticate", "Basic realm=\"WebListener\"");
+                Response.Headers.Append("WWW-Authenticate", "Basic realm=\"WebListener\"");
                 Response.StatusCode = 401;
                 return Json("401 Unauthorized");
             }
@@ -45,7 +46,7 @@ namespace mvc.Controllers
             }
             else
             {
-                Response.Headers.Add("WWW-Authenticate", "Negotiate");
+                Response.Headers.Append("WWW-Authenticate", "Negotiate");
                 Response.StatusCode = 401;
                 return Json("401 Unauthorized");
             }
@@ -62,7 +63,7 @@ namespace mvc.Controllers
             }
             else
             {
-                Response.Headers.Add("WWW-Authenticate", "NTLM");
+                Response.Headers.Append("WWW-Authenticate", "NTLM");
                 Response.StatusCode = 401;
                 return Json("401 Unauthorized");
             }

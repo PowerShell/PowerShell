@@ -33,15 +33,39 @@ class CommitNode {
 # These powershell team members don't use 'microsoft.com' for Github email or choose to not show their emails.
 # We have their names in this array so that we don't need to query GitHub to find out if they are powershell team members.
 $Script:powershell_team = @(
-    "Robert Holt"
     "Travis Plunk"
     "dependabot-preview[bot]"
     "dependabot[bot]"
-    "Joey Aiello"
-    "Tyler James Leonhardt"
+    "github-actions[bot]"
+    "Copilot"
     "Anam Navied"
     "Andrew Schwartzmeyer"
     "Jason Helmick"
+    "Patrick Meinecke"
+    "Steven Bucher"
+    "PowerShell Team Bot"
+    "Justin Chung"
+)
+
+# The powershell team members GitHub logins. We use them to decide if the original author of a backport PR is from the team.
+$script:psteam_logins = @(
+    'andyleejordan'
+    'TravisEz13'
+    'daxian-dbw'
+    'adityapatwardhan'
+    'SteveL-MSFT'
+    'dependabot[bot]'
+    'pwshBot'
+    'jshigetomi'
+    'SeeminglyScience'
+    'anamnavi'
+    'sdwheeler'
+    'Copilot'
+    'copilot-swe-agent'
+    'app/copilot-swe-agent'
+    'StevenBucher98'
+    'alerickson'
+    'tgauth'
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -51,11 +75,6 @@ $Script:community_login_map = @{
     "github@markekraus.com" = "markekraus"
     "info@powercode-consulting.se" = "powercode"
 }
-
-# Ignore dependency bumping bot (Dependabot):
-$Script:attribution_ignore_list = @(
-    'dependabot[bot]@users.noreply.github.com'
-)
 
 ##############################
 #.SYNOPSIS
@@ -149,12 +168,19 @@ function Get-ChangeLog
         [Parameter(Mandatory = $true)]
         [string]$ThisReleaseTag,
 
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $false)]
         [string]$Token,
 
         [Parameter()]
         [switch]$HasCherryPick
     )
+
+    if(-not $Token) {
+        $Token = Get-GHDefaultAuthToken
+        if(-not $Token) {
+            throw "No GitHub Auth Token provided"
+        }
+    }
 
     $tag_hash = git rev-parse "$LastReleaseTag^0"
     $format = '%H||%P||%aN||%aE||%s'
@@ -179,7 +205,7 @@ function Get-ChangeLog
         ## but not reachable from the last release tag. Instead, we need to exclude the commits that were cherry-picked,
         ## and only include the commits that are not in the last release into the change log.
 
-        # Find the commits that were only in the orginal master, excluding those that were cherry-picked to release branch.
+        # Find the commits that were only in the original master, excluding those that were cherry-picked to release branch.
         $new_commits_from_other_parent = git --no-pager log --first-parent --cherry-pick --right-only "$tag_hash...$other_parent_hash" --format=$format | New-CommitNode
         # Find the commits that were only in the release branch, excluding those that were cherry-picked from master branch.
         $new_commits_from_last_release = git --no-pager log --first-parent --cherry-pick --left-only "$tag_hash...$other_parent_hash" --format=$format | New-CommitNode
@@ -253,25 +279,76 @@ function Get-ChangeLog
     $clExperimental = @()
 
     foreach ($commit in $new_commits) {
+        $commitSubject = $commit.Subject
+        $prNumber = $commit.PullRequest
+        Write-Verbose "subject: $commitSubject"
         Write-Verbose "authorname: $($commit.AuthorName)"
-        if ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName -or $Script:attribution_ignore_list -contains $commit.AuthorEmail) {
-            $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $commit.Subject)
+
+        try {
+            $pr = Invoke-RestMethod `
+                -Uri "https://api.github.com/repos/PowerShell/PowerShell/pulls/$prNumber" `
+                -Headers $header `
+                -ErrorAction Stop `
+                -Verbose:$false ## Always disable verbose to avoid noise when we debug this function.
+        } catch {
+            ## A commit may not have corresponding GitHub PRs. In that case, we will get status code 404 (Not Found).
+            ## Otherwise, let the error bubble up.
+            if ($_.Exception.Response.StatusCode -ne 404) {
+                throw
+            }
+        }
+
+        if ($commitSubject -match '^\[release/v\d\.\d\] ') {
+            ## The commit was from a backport PR. We need to get the real author in this case.
+            if (-not $pr) {
+                throw "The commit is from a backport PR (#$prNumber), but the PR cannot be found.`nPR Title: $commitSubject"
+            }
+
+            $userPattern = 'Triggered by @.+ on behalf of @(.+)'
+            if ($pr.body -match $userPattern) {
+                $commit.AuthorGitHubLogin = ($Matches.1).Trim()
+                Write-Verbose "backport PR. real author login: $($commit.AuthorGitHubLogin)"
+            } else {
+                throw "The commit is from a backport PR (#$prNumber), but the PR description failed to match the pattern '$userPattern'. Was the template for backport PRs changed?`nPR Title: $commitSubject"
+            }
+        }
+
+        if ($commit.AuthorGitHubLogin) {
+            if ($script:psteam_logins -contains $commit.AuthorGitHubLogin) {
+                $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $commitSubject)
+            } else {
+                $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commitSubject), $commit.AuthorGitHubLogin)
+                $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
+            }
+        } elseif ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName) {
+            $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $commitSubject)
         } else {
             if ($community_login_map.ContainsKey($commit.AuthorEmail)) {
                 $commit.AuthorGitHubLogin = $community_login_map[$commit.AuthorEmail]
             } else {
-                $uri = "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)"
                 try{
-                    $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header -ErrorAction Ignore
-                } catch{}
+                    ## Always disable verbose to avoid noise when we debug this function.
+                    $response = Invoke-RestMethod `
+                        -Uri "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)" `
+                        -Headers $header `
+                        -ErrorAction Stop `
+                        -Verbose:$false
+                } catch {
+                    ## A commit could be available in ADO only. In that case, we will get status code 422 (UnprocessableEntity).
+                    ## Otherwise, let the error bubble up.
+                    if ($_.Exception.Response.StatusCode -ne 422) {
+                        throw
+                    }
+                }
+
                 if($response)
                 {
-                    $content = ConvertFrom-Json -InputObject $response.Content
-                    $commit.AuthorGitHubLogin = $content.author.login
+                    $commit.AuthorGitHubLogin = $response.author.login
                     $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
                 }
             }
-            $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commit.Subject), $commit.AuthorGitHubLogin)
+
+            $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commitSubject), $commit.AuthorGitHubLogin)
             $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
         }
 
@@ -280,16 +357,6 @@ function Get-ChangeLog
         }
 
         ## Get the labels for the PR
-        try {
-            $pr = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/PowerShell/pulls/$($commit.PullRequest)" -Headers $header -ErrorAction SilentlyContinue
-        }
-        catch {
-            if ($_.Exception.Response.StatusCode -eq '404') {
-                $pr = $null
-                #continue
-            }
-        }
-
         if($pr)
         {
             $clLabel = $pr.labels | Where-Object { $_.Name -match "^CL-"}
@@ -319,7 +386,7 @@ function Get-ChangeLog
                 "CL-Tools" { $clTools += $commit }
                 "CL-Untagged" { $clUntagged += $commit }
                 "CL-NotInBuild" { continue }
-                Default { throw "unknown tag '$cLabel' for PR: '$($commit.PullRequest)'" }
+                Default { throw "unknown tag '$cLabel' for PR: '$prNumber'" }
             }
         }
     }
@@ -359,6 +426,29 @@ function Get-ChangeLog
     Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
 }
 
+function Get-GHDefaultAuthToken {
+    $IsGHCLIInstalled = $false
+    if (Get-command -CommandType Application -Name gh -ErrorAction SilentlyContinue) {
+        $IsGHCLIInstalled = $true
+    } else {
+        Write-Error -Message "GitHub CLI is not installed. Please install it from https://cli.github.com/" -ErrorAction Stop
+    }
+
+    if ($IsGHCLIInstalled) {
+        try {
+            $Token = & gh auth token
+        } catch {
+            Write-Error -Message "Please login to GitHub CLI using 'gh auth login'"
+        }
+    }
+
+    if (-not $Token) {
+        $Token = Read-Host -Prompt "Enter GitHub Auth Token"
+    }
+
+    return $Token
+}
+
 function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
     if ($clSection.Count -gt 0) {
         "### $sectionTitle`n"
@@ -392,6 +482,9 @@ function Get-ChangeLogMessage
             return $OriginalMessage.replace($Matches.0,'') + " (Internal $($Matches.1))"
         }
         '^Build\(deps\): ' {
+            return $OriginalMessage.replace($Matches.0,'')
+        }
+        '^\[release/v\d\.\d\] ' {
             return $OriginalMessage.replace($Matches.0,'')
         }
         default {
@@ -629,4 +722,369 @@ function Update-PsVersionInCode
                 }
 }
 
-Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode
+
+##############################
+#.SYNOPSIS
+# Test if the GithubCli is in the path
+##############################
+function Test-GitHubCli {
+    $gitHubCli = Get-Command -Name 'gh' -ErrorAction SilentlyContinue
+
+    if ($gitHubCli) {
+        return $true
+    } else {
+        return $false
+    }
+}
+
+##############################
+#.SYNOPSIS
+# Test if the GithubCli is the required version
+##############################
+function Test-GitHubCliVersion {
+    param(
+        [Parameter(Mandatory)]
+        [System.Management.Automation.SemanticVersion]
+        $RequiredVersion
+    )
+    [System.Management.Automation.SemanticVersion] $version = gh --version | ForEach-Object {
+        if ($_ -match ' (\d+\.\d+\.\d+) ') {
+            $matches[1]
+        }
+    }
+
+    if ($version -ge $RequiredVersion) {
+        return $true
+    } else {
+        return $false
+    }
+}
+
+##############################
+#.SYNOPSIS
+# Gets a report of Backport PRs
+#
+#.PARAMETER Triage state
+# The triage states of the PR.  Consider, Approved or Done
+#
+#.PARAMETER Version
+# The version of PowerShell the backport is targeting.  7.0, 7.2, 7.3, etc
+#
+#.PARAMETER Web
+# A switch to open all the PRs in the browser
+#
+##############################
+function Get-PRBackportReport {
+    param(
+        [ValidateSet('Consider', 'Approved', 'Done')]
+        [String] $TriageState = 'Approved',
+        [ValidatePattern('^\d+\.\d+$')]
+        [string] $Version,
+        [switch] $Web
+    )
+
+    if (!(Test-GitHubCli)) {
+        throw "GitHub CLI is not installed. Please install it from https://cli.github.com/"
+    }
+
+    $requiredVersion = '2.17'
+    if (!(Test-GitHubCliVersion -RequiredVersion $requiredVersion)) {
+        throw "Please upgrade the GitHub CLI to version $requiredVersion. Please install it from https://cli.github.com/"
+    }
+
+    if (!(gh auth status 2>&1  | Select-String 'logged in')){
+        throw "Please login to GitHub CLI using 'gh auth login'"
+    }
+
+    $prs = gh pr list --state merged --label "Backport-$Version.x-$TriageState" --json title,number,mergeCommit,mergedAt |
+        ConvertFrom-Json |
+        ForEach-Object {
+            [PScustomObject]@{
+                CommitId = $_.mergeCommit.oid
+                Number   = $_.number
+                Title    = $_.title
+                MergedAt = $_.mergedAt
+            }
+        } | Sort-Object -Property MergedAt
+
+    if ($Web) {
+        $prs | ForEach-Object {
+            gh pr view $_.Number --web
+        }
+    } else {
+        $prs
+    }
+}
+enum RemoteType {
+    GitHub
+    AzureRepo
+}
+
+function Get-UpstreamInfo {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string[]]$Upstream,
+
+        [Parameter(Mandatory=$true)]
+        [string]$UpstreamRemote
+    )
+
+    $upstreamName = '(powershell(core)?)(/_git)?/(powershell)'
+    $pattern = "^$UpstreamRemote\s*(.*)\:(.*/([-\w.]+)/)?$upstreamName(\.git)?.*fetch"
+    Write-Verbose -Verbose "searching for an upstream with regex: '$pattern'"
+    $Upstream = $Upstream | Where-Object { $_ -match $pattern }
+
+    Write-Verbose -Verbose "found $Upstream"
+
+    if (!$Upstream) {
+        throw "Please create an upstream remote that points to $upstreamName"
+    }
+
+    $matches | Format-Table | Out-String -Stream -Width 9999 | Write-Verbose
+    $org = $matches[3]
+    if ($org -ne 'github.com' -and $matches[1] -ne 'git@github.com') {
+        Write-Verbose 'parsing Azure repo remote' -Verbose
+        # Azure Repo remote
+        $project = $matches[4]
+        $repo = $matches[7]
+        $upstreamHost = $matches[1]
+
+        if ($upstreamHost -eq 'https') {
+            $upstreamHost = $org
+        }
+        # matches everything but `.` ending in a `.`
+        # in other word, matching the first part of a hostname.
+        # like `www.microsoft.com` it would match `www.` with `www` in a capture group.
+        if ($org -match '([^\..]*)\.') {
+            $org = $Matches[1]
+        }
+    } else {
+        Write-Verbose 'parsing github remote' -Verbose
+        # GitHub Repo remote
+        $org = $matches[4]
+        $repo = $matches[7]
+        $upstreamHost = 'github.com'
+        $project = $upstreamHost
+    }
+
+    $remoteType = [RemoteType]::GitHub
+
+    if ($upstreamHost -match '.*azure.com$' -or $upstreamHost -match '.*visualstudio.com$') {
+        [RemoteType] $remoteType = [RemoteType]::AzureRepo
+    }
+
+    $upstreamMatchInfo = @{
+        org     = $org
+        project = $project
+        repo    = $repo
+        host    = $upstreamHost
+        remoteType = $remoteType
+    }
+
+    return $upstreamMatchInfo
+}
+
+# Backports a PR
+# requires:
+#   * a remote called upstream pointing to powershell/powershell
+#   * the github cli installed and authenticated
+# Usage:
+#     Invoke-PRBackport -PRNumber 1234 -Target release/v7.0.1
+# To overwrite a local branch add -Overwrite
+# To add an postfix to the branch name use -BranchPostFix <postfix>
+function Invoke-PRBackport {
+    [cmdletbinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $PrNumber,
+
+        [Parameter(Mandatory)]
+        [ValidateScript({$_ -match '^release/v\d+\.\d+(\.\d+)?'})]
+        [string]
+        $Target,
+
+        [switch]
+        $Overwrite,
+
+        [string]
+        $BranchPostFix,
+
+        [string]
+        $UpstreamRemote = 'upstream'
+    )
+    function script:Invoke-NativeCommand {
+        param(
+            [scriptblock] $ScriptBlock
+        )
+        &$ScriptBlock
+        if ($LASTEXITCODE -ne 0) {
+            throw "$ScriptBlock fail with $LASTEXITCODE"
+        }
+    }
+    function script:Test-ShouldContinue {
+        param (
+            $Message
+        )
+        $continue = $false
+        while(!$continue) {
+            $value = Read-Host -Prompt ($Message + "`nType 'Yes<enter>' to continue 'No<enter>' to exit")
+            switch($value) {
+                'yes' {
+                    $continue= $true
+                }
+                'no' {
+                    throw "User abort"
+                }
+            }
+        }
+    }
+    $ErrorActionPreference = 'stop'
+
+    $pr = gh pr view $PrNumber --json 'mergeCommit,state,title' | ConvertFrom-Json
+
+    $commitId = $pr.mergeCommit.oid
+    $state = $pr.state
+    $originaltitle = $pr.title
+    $backportTitle = "[$Target]$originalTitle"
+
+    Write-Verbose -Verbose "commitId: $commitId; state: $state"
+    Write-Verbose -Verbose "title:$backportTitle"
+
+    if ($state -ne 'MERGED') {
+        throw "PR is not merged ($state)"
+    }
+
+    $upstream = Invoke-NativeCommand { git remote -v }
+    $upstreamMatchInfo = Get-UpstreamInfo -Upstream $upstream -UpstreamRemote $UpstreamRemote
+    $remoteType = $upstreamMatchInfo.remoteType
+
+    Write-Verbose -Verbose "remotetype: $remoteType"
+    $upstreamMatchInfo | Format-Table | Out-String -Stream -Width 9999 | Write-Verbose -Verbose
+
+    Invoke-NativeCommand { git fetch $UpstreamRemote $Target }
+
+    $switch = '-c'
+    if ($Overwrite) {
+        $switch = '-C'
+    }
+
+    $branchName = "backport-$PrNumber"
+    if ($BranchPostFix) {
+        $branchName += "-$BranchPostFix"
+    }
+
+    if ($PSCmdlet.ShouldProcess("Create branch $branchName from $UpstreamRemote/$Target")) {
+        Invoke-NativeCommand { git switch $UpstreamRemote/$Target $switch $branchName }
+    }
+
+    try {
+        $revParseParams = @(
+            '--verify'
+            "$commitId^{commit}"
+        )
+        Invoke-NativeCommand { git rev-parse --quiet $revParseParams }
+    }
+    catch {
+        throw "Commit does not exist.  Try fetching the upstream. (git rev-parse $revParseParams)"
+    }
+
+
+    try {
+        Invoke-NativeCommand { git cherry-pick $commitId }
+    }
+    catch {
+        Test-ShouldContinue -Message "Fix any conflicts with the cherry-pick."
+    }
+
+    if ($PSCmdlet.ShouldProcess("Create the PR")) {
+        $body = "Backport #$PrNumber"
+        switch($remoteType) {
+            "AzureRepo" {
+                Write-Verbose -Verbose "Pushing branch to $UpstreamRemote"
+                git push --set-upstream $UpstreamRemote HEAD
+                $parameters = @(
+                    'repos'
+                    'pr'
+                    'create'
+                )
+                # Open in the browser
+                $parameters += @(
+                    '--open'
+                )
+                $parameters += @(
+                    '--target-branch'
+                    $Target
+                )
+                $parameters += @(
+                    '--title'
+                    $backportTitle
+                )
+                $parameters += @(
+                    '--description'
+                $body
+                )
+                $parameters += @(
+                    '--squash'
+                    'true'
+                )
+                $parameters += @(
+                    '--auto-complete'
+                    'true'
+                )
+                $parameters += @(
+                    '--delete-source-branch'
+                    'true'
+                )
+                $parameters += @(
+                    '--org'
+                    "https://dev.azure.com/$($upstreamMatchInfo.org)"
+                )
+                $parameters += @(
+                    '--project'
+                    $upstreamMatchInfo.project
+                )
+                $parameters += @(
+                    '--source-branch'
+                    $branchName
+                )
+                $parameters += @(
+                    '--repository'
+                    $upstreamMatchInfo.repo
+                )
+
+                Write-Verbose -Verbose "az $parameters"
+                $null = Invoke-NativeCommand { az $parameters }
+            }
+            "GitHub" {
+                Write-Verbose -Verbose "Creating PR using gh CLI"
+                gh pr create --base $Target --title $backportTitle --body $body --web
+            }
+            default {
+                throw "unknown remoteType: $remoteType"
+            }
+        }
+    }
+}
+
+# Backport all approved backports
+# Usage:
+#      Invoke-PRBackportApproved -Version 7.2.12
+function Invoke-PRBackportApproved {
+    param(
+        [Parameter(Mandatory)]
+        [semver]
+        $Version
+    )
+
+    $tagVersion = "$($Version.Major).$($Version.Minor)"
+    $target = "release/$ReleaseTag"
+
+    Get-PRBackportReport -Version $tagVersion |
+        ForEach-Object {
+            $prNumber = $_.Number
+            Invoke-PRBackport -ErrorAction Stop -PrNumber $prNumber -Target $target
+        }
+}
+
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport, Invoke-PRBackport, Invoke-PRBackportApproved, Get-UpstreamInfo

@@ -112,10 +112,10 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// The default implementation writes a carriage return to the screen buffer.
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(System.ConsoleColor, System.ConsoleColor, string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(System.ConsoleColor, System.ConsoleColor, string)"/>
         /// </summary>
         public virtual void WriteLine()
         {
@@ -170,10 +170,10 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// Writes a line to the "error display" of the host, as opposed to the "output display," which is
         /// written to by the variants of
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine()"/> and
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine()"/> and
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
         /// </summary>
         /// <param name="value">
         /// The characters to be written.
@@ -304,23 +304,17 @@ namespace System.Management.Automation.Host
         /// <param name="formatStyle">
         /// The format style to get the escape sequence for.
         /// </param>
-        /// <param name="isOutputRedirected">
-        /// True if the output is redirected.
-        /// </param>
         /// <returns>
         /// The ANSI escape sequence for the given format style.
         /// </returns>
-        public static string GetFormatStyleString(FormatStyle formatStyle, bool isOutputRedirected)
+        public static string GetFormatStyleString(FormatStyle formatStyle)
         {
-            // redirected console gets plaintext output to preserve existing behavior
-            if (!InternalTestHooks.BypassOutputRedirectionCheck &&
-                (PSStyle.Instance.OutputRendering == OutputRendering.PlainText ||
-                isOutputRedirected))
+            if (PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
             {
                 return string.Empty;
             }
 
-            PSStyle psstyle = PSStyle.Instance;                
+            PSStyle psstyle = PSStyle.Instance;
             switch (formatStyle)
             {
                 case FormatStyle.Reset:
@@ -353,30 +347,22 @@ namespace System.Management.Automation.Host
         /// <param name="supportsVirtualTerminal">
         /// True if the host supports virtual terminal.
         /// </param>
-        /// <param name="isOutputRedirected">
-        /// True if the output is redirected.
-        /// </param>
         /// <returns>
         /// The formatted text.
         /// </returns>
-        public static string GetOutputString(string text, bool supportsVirtualTerminal, bool isOutputRedirected)
+        public static string GetOutputString(string text, bool supportsVirtualTerminal)
         {
-            return GetOutputString(text, isHost: true, supportsVirtualTerminal: supportsVirtualTerminal, isOutputRedirected: isOutputRedirected);
+            return GetOutputString(text, isHost: true, supportsVirtualTerminal: supportsVirtualTerminal);
         }
 
-        internal static string GetOutputString(string text, bool isHost, bool? supportsVirtualTerminal = null, bool isOutputRedirected = false)
+        internal static string GetOutputString(string text, bool isHost, bool? supportsVirtualTerminal = null)
         {
             var sd = new ValueStringDecorated(text);
 
             if (sd.IsDecorated)
             {
                 var outputRendering = OutputRendering.Ansi;
-                if (InternalTestHooks.BypassOutputRedirectionCheck)
-                {
-                    isOutputRedirected = false;
-                }
-
-                if (isOutputRedirected || ShouldOutputPlainText(isHost, supportsVirtualTerminal))
+                if (ShouldOutputPlainText(isHost, supportsVirtualTerminal))
                 {
                     outputRendering = OutputRendering.PlainText;
                 }
@@ -906,7 +892,7 @@ namespace System.Management.Automation.Host
                     {
                         // System transcripts can have high contention. Do exponential back-off on writing
                         // if needed.
-                        int delay = new Random().Next(10) + 1;
+                        int delay = Random.Shared.Next(10) + 1;
                         bool written = false;
 
                         while (!written)
@@ -1104,10 +1090,7 @@ namespace System.Management.Automation.Host
                 // This way, multiple runspaces opened by the same process will share the same transcript.
                 lock (s_systemTranscriptLock)
                 {
-                    if (systemTranscript == null)
-                    {
-                        systemTranscript = PSHostUserInterface.GetTranscriptOptionFromSettings(transcription, currentTranscript);
-                    }
+                    systemTranscript ??= PSHostUserInterface.GetTranscriptOptionFromSettings(transcription, currentTranscript);
                 }
             }
 
@@ -1173,6 +1156,11 @@ namespace System.Management.Automation.Host
                 }
             }
 
+            if (string.IsNullOrEmpty(baseDirectory))
+            {
+                return string.Empty;
+            }
+
             if (includeDate)
             {
                 baseDirectory = Path.Combine(baseDirectory, DateTime.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture));
@@ -1184,8 +1172,8 @@ namespace System.Management.Automation.Host
             // bytes of randomness (2^48 = 2.8e14) would take an attacker about 891 years to guess
             // a filename (assuming they knew the time the transcript was started).
             // (5 bytes = 3 years, 4 bytes = about a month)
-            byte[] randomBytes = new byte[6];
-            System.Security.Cryptography.RandomNumberGenerator.Create().GetBytes(randomBytes);
+            Span<byte> randomBytes = stackalloc byte[6];
+            System.Security.Cryptography.RandomNumberGenerator.Fill(randomBytes);
             string filename = string.Format(
                         Globalization.CultureInfo.InvariantCulture,
                         "PowerShell_transcript.{0}.{1}.{2:yyyyMMddHHmmss}.txt",
@@ -1260,7 +1248,7 @@ namespace System.Management.Automation.Host
         {
             static Encoding GetPathEncoding(string path)
             {
-                using StreamReader reader = new StreamReader(path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true);
+                using StreamReader reader = new StreamReader(path, Encoding.Default, detectEncodingFromByteOrderMarks: true);
                 _ = reader.Read();
                 return reader.CurrentEncoding;
             }
@@ -1288,7 +1276,7 @@ namespace System.Management.Automation.Host
                             // file permissions.
                             _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.Append, FileAccess.Write, FileShare.Read),
-                                Utils.utf8NoBom);
+                                Encoding.Default);
                         }
 
                         _contentWriter.AutoFlush = true;
@@ -1311,7 +1299,10 @@ namespace System.Management.Automation.Host
         /// </summary>
         public void Dispose()
         {
-            if (_disposed) { return; }
+            if (_disposed)
+            {
+                return;
+            }
 
             // Wait for any pending output to be flushed to disk so that Stop-Transcript
             // can be trusted to immediately have all content from that session in the file)
@@ -1430,7 +1421,7 @@ namespace System.Management.Automation.Host
                 if (string.Equals(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal))
                 {
                     Exception e = PSTraceSource.NewArgumentException(
-                        string.Format(Globalization.CultureInfo.InvariantCulture, "choices[{0}].Label", i),
+                        string.Create(Globalization.CultureInfo.InvariantCulture, $"choices[{i}].Label"),
                         InternalHostUserInterfaceStrings.InvalidChoiceHotKeyError);
                     throw e;
                 }
@@ -1447,7 +1438,7 @@ namespace System.Management.Automation.Host
         /// <param name="hotkeysAndPlainLabels"></param>
         /// <returns>
         /// Returns the index into the choices array matching the response string, or -1 if there is no match.
-        ///</returns>
+        /// </returns>
         internal static int DetermineChoicePicked(string response, Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)
         {
             Diagnostics.Assert(choices != null, "choices: expected a value");

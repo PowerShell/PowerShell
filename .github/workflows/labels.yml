@@ -1,0 +1,31 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: Verify PR Labels
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, labeled, unlabeled, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  verify-labels:
+    if: github.repository_owner == 'PowerShell'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+    - name: Verify PR has label starting with 'cl-'
+      id: verify-labels
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      with:
+        script: |
+          const labels = context.payload.pull_request.labels.map(label => label.name.toLowerCase());
+          if (!labels.some(label => label.startsWith('cl-'))) {
+            core.setFailed("Every PR must have at least one label starting with 'cl-'.");
+          }

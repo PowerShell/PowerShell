@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="..\..\PowerShell.Common.props" />
+
+  <ItemGroup>
+    <!-- Keep version in sync with wix.psm1 line 18 -->
+    <PackageReference Include="Microsoft.Signed.Wix" Version="3.14.1-8722.20240403.1" />
+  </ItemGroup>
+
+</Project>

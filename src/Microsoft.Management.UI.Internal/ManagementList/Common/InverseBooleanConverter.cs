@@ -22,10 +22,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The inverted boolean value.</returns>
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException("value");
-            }
+            ArgumentNullException.ThrowIfNull(value);
 
             var boolValue = (bool)value;
 

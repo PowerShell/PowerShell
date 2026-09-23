@@ -32,23 +32,23 @@ namespace Microsoft.PowerShell
     public enum ExecutionPolicy
     {
         /// Unrestricted - No files must be signed.  If a file originates from the
-        ///    internet, Monad provides a warning prompt to alert the user.  To
+        ///    internet, PowerShell provides a warning prompt to alert the user.  To
         ///    suppress this warning message, right-click on the file in File Explorer,
         ///    select "Properties," and then "Unblock."
         Unrestricted = 0,
 
-        /// RemoteSigned - Only .msh and .mshxml files originating from the internet
-        ///    must be digitally signed.  If remote, signed, and executed, Monad
+        /// RemoteSigned - Only .ps1 and .ps1xml files originating from the internet
+        ///    must be digitally signed.  If remote, signed, and executed, PowerShell
         ///    prompts to determine if files from the signing publisher should be
         ///    run or not.  This is the default setting.
         RemoteSigned = 1,
 
-        /// AllSigned - All .msh and .mshxml files must be digitally signed.  If
-        ///    signed and executed, Monad prompts to determine if files from the
+        /// AllSigned - All .ps1 and .ps1xml files must be digitally signed.  If
+        ///    signed and executed, PowerShell prompts to determine if files from the
         ///    signing publisher should be run or not.
         AllSigned = 2,
 
-        /// Restricted - All .msh files are blocked.  Mshxml files must be digitally
+        /// Restricted - All .ps1 files are blocked.  Ps1xml files must be digitally
         ///    signed, and by a trusted publisher.  If you haven't made a trust decision
         ///    on the publisher yet, prompting is done as in AllSigned mode.
         Restricted = 3,
@@ -412,7 +412,7 @@ namespace System.Management.Automation.Internal
                 return true;
             }
 
-            // WTGetSignatureInfo is used to verify catalog signature.
+            // WTGetSignatureInfo, via Microsoft.Security.Extensions, is used to verify catalog signature.
             // On Win7, catalog API is not available.
             // On OneCore SKUs like NanoServer/IoT, the API has a bug that makes it not able to find the
             // corresponding catalog file for a given product file, so it doesn't work properly.
@@ -495,7 +495,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="path">The path to the file in question.</param>
         /// <param name="handle">A file handle to the file in question, if available.</param>
-        [ArchitectureSensitive]
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         internal static SaferPolicy GetSaferPolicy(string path, SafeHandle handle)
         {
@@ -664,8 +663,7 @@ namespace System.Management.Automation.Internal
         {
             foreach (X509Extension extension in c.Extensions)
             {
-                X509KeyUsageExtension keyUsageExtension = extension as X509KeyUsageExtension;
-                if (keyUsageExtension != null)
+                if (extension is X509KeyUsageExtension keyUsageExtension)
                 {
                     if ((keyUsageExtension.KeyUsages & keyUsage) == keyUsage)
                     {
@@ -682,7 +680,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="cert">Certificate object.</param>
         /// <returns>A collection of cert eku strings.</returns>
-        [ArchitectureSensitive]
         internal static Collection<string> GetCertEKU(X509Certificate2 cert)
         {
             Collection<string> ekus = new Collection<string>();
@@ -818,6 +815,7 @@ namespace System.Management.Automation.Internal
         // The OID arc 1.3.6.1.4.1.311.80 is assigned to PowerShell. If we need
         // new OIDs, we can assign them under this branch.
         internal const string DocumentEncryptionOid = "1.3.6.1.4.1.311.80.1";
+        internal const string SubjectAlternativeNameOid = "2.5.29.17";
     }
 }
 
@@ -856,6 +854,7 @@ namespace Microsoft.PowerShell.Commands
 
 namespace System.Management.Automation
 {
+    using System.Management.Automation.Tracing;
     using System.Security.Cryptography.Pkcs;
 
     /// <summary>
@@ -909,11 +908,11 @@ namespace System.Management.Automation
             return encodedContent;
         }
 
-        internal static readonly string BEGIN_CMS_SIGIL = "-----BEGIN CMS-----";
-        internal static readonly string END_CMS_SIGIL = "-----END CMS-----";
+        internal const string BEGIN_CMS_SIGIL = "-----BEGIN CMS-----";
+        internal const string END_CMS_SIGIL = "-----END CMS-----";
 
-        internal static readonly string BEGIN_CERTIFICATE_SIGIL = "-----BEGIN CERTIFICATE-----";
-        internal static readonly string END_CERTIFICATE_SIGIL = "-----END CERTIFICATE-----";
+        internal const string BEGIN_CERTIFICATE_SIGIL = "-----BEGIN CERTIFICATE-----";
+        internal const string END_CERTIFICATE_SIGIL = "-----END CERTIFICATE-----";
 
         /// <summary>
         /// Adds Ascii armour to a byte stream in Base64 format.
@@ -1089,6 +1088,8 @@ namespace System.Management.Automation
             byte[] messageBytes = null;
             try
             {
+                // The base64 encoded string should represent a single DER-encoded X.509 public certificate.
+                // So we check it against the "BEGIN/END CERTIFICATE" PEM labels.
                 messageBytes = CmsUtils.RemoveAsciiArmor(_identifier, CmsUtils.BEGIN_CERTIFICATE_SIGIL, CmsUtils.END_CERTIFICATE_SIGIL, out startIndex, out endIndex);
             }
             catch (FormatException)
@@ -1106,8 +1107,7 @@ namespace System.Management.Automation
             var certificatesToProcess = new X509Certificate2Collection();
             try
             {
-                X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
-                certificatesToProcess.Add(newCertificate);
+                certificatesToProcess.Add(X509CertificateLoader.LoadCertificate(messageBytes));
             }
             catch (Exception)
             {
@@ -1184,7 +1184,9 @@ namespace System.Management.Automation
 
                     try
                     {
+                        #pragma warning disable SYSLIB0057
                         certificate = new X509Certificate2(path);
+                        #pragma warning restore SYSLIB0057
                     }
                     catch (Exception)
                     {
@@ -1213,7 +1215,7 @@ namespace System.Management.Automation
                     storeCU.Open(OpenFlags.ReadOnly);
                     X509Certificate2Collection storeCerts = storeCU.Certificates;
 
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    if (Platform.IsWindows)
                     {
                         using (var storeLM = new X509Store("my", StoreLocation.LocalMachine))
                         {
@@ -1336,6 +1338,24 @@ namespace System.Management.Automation
 
     internal static class AmsiUtils
     {
+        static AmsiUtils()
+        {
+#if !UNIX
+            try
+            {
+                s_amsiInitFailed = !CheckAmsiInit();
+            }
+            catch (DllNotFoundException)
+            {
+                PSEtwLog.LogAmsiUtilStateEvent("DllNotFoundException", $"{s_amsiContext}-{s_amsiSession}");
+                s_amsiInitFailed = true;
+                return;
+            }
+
+            PSEtwLog.LogAmsiUtilStateEvent($"init-{s_amsiInitFailed}", $"{s_amsiContext}-{s_amsiSession}");
+#endif
+        }
+
         internal static int Init()
         {
             Diagnostics.Assert(s_amsiContext == IntPtr.Zero, "Init should be called just once");
@@ -1357,11 +1377,6 @@ namespace System.Management.Automation
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
                 var hr = AmsiNativeMethods.AmsiInitialize(appName, ref s_amsiContext);
-                if (!Utils.Succeeded(hr))
-                {
-                    s_amsiInitFailed = true;
-                }
-
                 return hr;
             }
         }
@@ -1383,7 +1398,10 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static AmsiNativeMethods.AMSI_RESULT WinScanContent(string content, string sourceMetadata, bool warmUp)
+        internal static AmsiNativeMethods.AMSI_RESULT WinScanContent(
+            string content,
+            string sourceMetadata,
+            bool warmUp)
         {
             if (string.IsNullOrEmpty(sourceMetadata))
             {
@@ -1402,6 +1420,7 @@ namespace System.Management.Automation
             // If we had a previous initialization failure, just return the neutral result.
             if (s_amsiInitFailed)
             {
+                PSEtwLog.LogAmsiUtilStateEvent("ScanContent-InitFail", $"{s_amsiContext}-{s_amsiSession}");
                 return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
             }
 
@@ -1409,38 +1428,15 @@ namespace System.Management.Automation
             {
                 if (s_amsiInitFailed)
                 {
+                    PSEtwLog.LogAmsiUtilStateEvent("ScanContent-InitFail", $"{s_amsiContext}-{s_amsiSession}");
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                 }
 
                 try
                 {
-                    int hr = 0;
-
-                    // Initialize AntiMalware Scan Interface, if not already initialized.
-                    // If we failed to initialize previously, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
-                    if (s_amsiContext == IntPtr.Zero)
+                    if (!CheckAmsiInit())
                     {
-                        hr = Init();
-
-                        if (!Utils.Succeeded(hr))
-                        {
-                            s_amsiInitFailed = true;
-                            return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
-                        }
-                    }
-
-                    // Initialize the session, if one isn't already started.
-                    // If we failed to initialize previously, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
-                    if (s_amsiSession == IntPtr.Zero)
-                    {
-                        hr = AmsiNativeMethods.AmsiOpenSession(s_amsiContext, ref s_amsiSession);
-                        AmsiInitialized = true;
-
-                        if (!Utils.Succeeded(hr))
-                        {
-                            s_amsiInitFailed = true;
-                            return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
-                        }
+                        return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                     }
 
                     if (warmUp)
@@ -1453,6 +1449,7 @@ namespace System.Management.Automation
                     AmsiNativeMethods.AMSI_RESULT result = AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_CLEAN;
 
                     // Run AMSI content scan
+                    int hr;
                     unsafe
                     {
                         fixed (char* buffer = content)
@@ -1471,6 +1468,7 @@ namespace System.Management.Automation
                     if (!Utils.Succeeded(hr))
                     {
                         // If we got a failure, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
+                        PSEtwLog.LogAmsiUtilStateEvent($"AmsiScanBuffer-{hr}", $"{s_amsiContext}-{s_amsiSession}");
                         return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                     }
 
@@ -1478,10 +1476,125 @@ namespace System.Management.Automation
                 }
                 catch (DllNotFoundException)
                 {
-                    s_amsiInitFailed = true;
+                    PSEtwLog.LogAmsiUtilStateEvent("DllNotFoundException", $"{s_amsiContext}-{s_amsiSession}");
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                 }
             }
+        }
+
+        /// <Summary>
+        /// Reports provided content to AMSI (Antimalware Scan Interface).
+        /// </Summary>
+        /// <param name="name">Name of content being reported.</param>
+        /// <param name="content">Content being reported.</param>
+        /// <returns>True if content was successfully reported.</returns>
+        internal static bool ReportContent(
+            string name,
+            string content)
+        {
+#if UNIX
+            return false;
+#else
+            return WinReportContent(name, content);
+#endif
+        }
+
+        private static bool WinReportContent(
+            string name,
+            string content)
+        {
+            if (string.IsNullOrEmpty(name) ||
+                string.IsNullOrEmpty(content) ||
+                s_amsiInitFailed ||
+                s_amsiNotifyFailed)
+            {
+                return false;
+            }
+
+            lock (s_amsiLockObject)
+            {
+                if (s_amsiNotifyFailed)
+                {
+                    return false;
+                }
+
+                try
+                {
+                    if (!CheckAmsiInit())
+                    {
+                        return false;
+                    }
+
+                    int hr;
+                    AmsiNativeMethods.AMSI_RESULT result = AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
+                    unsafe
+                    {
+                        fixed (char* buffer = content)
+                        {
+                            var buffPtr = new IntPtr(buffer);
+                            hr = AmsiNativeMethods.AmsiNotifyOperation(
+                                amsiContext: s_amsiContext,
+                                buffer: buffPtr,
+                                length: (uint)(content.Length * sizeof(char)),
+                                contentName: name,
+                                ref result);
+                        }
+                    }
+
+                    if (Utils.Succeeded(hr))
+                    {
+                        if (result == AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
+                        {
+                            // If malware is detected, throw to prevent method invoke expression from running.
+                            throw new PSSecurityException(ParserStrings.ScriptContainedMaliciousContent);
+                        }
+
+                        return true;
+                    }
+
+                    return false;
+                }
+                catch (DllNotFoundException)
+                {
+                    s_amsiNotifyFailed = true;
+                    return false;
+                }
+                catch (System.EntryPointNotFoundException)
+                {
+                    s_amsiNotifyFailed = true;
+                    return false;
+                }
+            }
+        }
+
+        private static bool CheckAmsiInit()
+        {
+            // Initialize AntiMalware Scan Interface, if not already initialized.
+            // If we failed to initialize previously, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
+            if (s_amsiContext == IntPtr.Zero)
+            {
+                int hr = Init();
+
+                if (!Utils.Succeeded(hr))
+                {
+                    return false;
+                }
+            }
+
+            // Initialize the session, if one isn't already started.
+            // If we failed to initialize previously, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
+            if (s_amsiSession == IntPtr.Zero)
+            {
+                int hr = AmsiNativeMethods.AmsiOpenSession(s_amsiContext, ref s_amsiSession);
+                AmsiInitialized = true;
+
+                if (!Utils.Succeeded(hr))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         internal static void CurrentDomain_ProcessExit(object sender, EventArgs e)
@@ -1492,13 +1605,12 @@ namespace System.Management.Automation
             }
         }
 
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private static IntPtr s_amsiContext = IntPtr.Zero;
 
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private static IntPtr s_amsiSession = IntPtr.Zero;
 
-        private static bool s_amsiInitFailed = false;
+        private static readonly bool s_amsiInitFailed = false;
+        private static bool s_amsiNotifyFailed = false;
         private static readonly object s_amsiLockObject = new object();
 
         /// <summary>
@@ -1588,29 +1700,29 @@ namespace System.Management.Automation
             /// Return Type: HRESULT->LONG->int
             ///appName: LPCWSTR->WCHAR*
             ///amsiContext: HAMSICONTEXT*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiInitialize", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiInitialize", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiInitialize(
-                [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string appName, ref System.IntPtr amsiContext);
+                [In][MarshalAs(UnmanagedType.LPWStr)] string appName, ref System.IntPtr amsiContext);
 
             /// Return Type: void
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiUninitialize", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiUninitialize", CallingConvention = CallingConvention.StdCall)]
             internal static extern void AmsiUninitialize(System.IntPtr amsiContext);
 
             /// Return Type: HRESULT->LONG->int
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
             ///amsiSession: HAMSISESSION*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiOpenSession", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiOpenSession", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiOpenSession(System.IntPtr amsiContext, ref System.IntPtr amsiSession);
 
             /// Return Type: void
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
             ///amsiSession: HAMSISESSION->HAMSISESSION__*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiCloseSession", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiCloseSession", CallingConvention = CallingConvention.StdCall)]
             internal static extern void AmsiCloseSession(System.IntPtr amsiContext, System.IntPtr amsiSession);
 
             /// Return Type: HRESULT->LONG->int
@@ -1620,11 +1732,30 @@ namespace System.Management.Automation
             ///contentName: LPCWSTR->WCHAR*
             ///amsiSession: HAMSISESSION->HAMSISESSION__*
             ///result: AMSI_RESULT*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiScanBuffer", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiScanBuffer", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiScanBuffer(
-                System.IntPtr amsiContext, System.IntPtr buffer, uint length,
-                [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string contentName, System.IntPtr amsiSession, ref AMSI_RESULT result);
+            System.IntPtr amsiContext,
+                System.IntPtr buffer,
+                uint length,
+                [In][MarshalAs(UnmanagedType.LPWStr)] string contentName,
+                System.IntPtr amsiSession,
+                ref AMSI_RESULT result);
+
+            /// Return Type: HRESULT->LONG->int
+            /// amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
+            /// buffer: PVOID->void*
+            /// length: ULONG->unsigned int
+            /// contentName: LPCWSTR->WCHAR*
+            /// result: AMSI_RESULT*
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiNotifyOperation", CallingConvention = CallingConvention.StdCall)]
+            internal static extern int AmsiNotifyOperation(
+                System.IntPtr amsiContext,
+                System.IntPtr buffer,
+                uint length,
+                [In][MarshalAs(UnmanagedType.LPWStr)] string contentName,
+                ref AMSI_RESULT result);
 
             /// Return Type: HRESULT->LONG->int
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
@@ -1632,11 +1763,11 @@ namespace System.Management.Automation
             ///contentName: LPCWSTR->WCHAR*
             ///amsiSession: HAMSISESSION->HAMSISESSION__*
             ///result: AMSI_RESULT*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiScanString", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiScanString", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiScanString(
-                System.IntPtr amsiContext, [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string @string,
-                [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string contentName, System.IntPtr amsiSession, ref AMSI_RESULT result);
+                System.IntPtr amsiContext, [In][MarshalAs(UnmanagedType.LPWStr)] string @string,
+                [In][MarshalAs(UnmanagedType.LPWStr)] string contentName, System.IntPtr amsiSession, ref AMSI_RESULT result);
         }
     }
 }

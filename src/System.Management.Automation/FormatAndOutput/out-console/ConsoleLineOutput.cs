@@ -1,11 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// NOTE: define this if you want to test the output on US machine and ASCII
-// characters
-//#define TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
-
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -17,70 +14,12 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-#if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
-
-    /// <summary>
-    /// Test class to provide easily overridable behavior for testing on US machines
-    /// using US data.
-    /// NOTE: the class just forces any uppercase letter [A-Z] to be prepended
-    /// with an underscore (e.g. "A" becomes "_A", but "a" stays the same)
-    /// </summary>
-    internal class DisplayCellsTest : DisplayCells
-    {
-        internal override int Length(string str, int offset)
-        {
-            int len = 0;
-            for (int k = offset; k < str.Length; k++)
-            {
-                len += this.Length(str[k]);
-            }
-
-            return len;
-        }
-
-        internal override int Length(char character)
-        {
-            if (character >= 'A' && character <= 'Z')
-                return 2;
-            return 1;
-        }
-
-        internal override int GetHeadSplitLength(string str, int offset, int displayCells)
-        {
-            return GetSplitLengthInternalHelper(str, offset, displayCells, true);
-        }
-
-        internal override int GetTailSplitLength(string str, int offset, int displayCells)
-        {
-            return GetSplitLengthInternalHelper(str, offset, displayCells, false);
-        }
-
-        internal string GenerateTestString(string str)
-        {
-            StringBuilder sb = new StringBuilder();
-            for (int k = 0; k < str.Length; k++)
-            {
-                char ch = str[k];
-                if (this.Length(ch) == 2)
-                {
-                    sb.Append('_');
-                }
-
-                sb.Append(ch);
-            }
-
-            return sb.ToString();
-        }
-
-    }
-#endif
-
     /// <summary>
     /// Tear off class.
     /// </summary>
-    internal class DisplayCellsPSHost : DisplayCells
+    internal class DisplayCellsHost : DisplayCells
     {
-        internal DisplayCellsPSHost(PSHostRawUserInterface rawUserInterface)
+        internal DisplayCellsHost(PSHostRawUserInterface rawUserInterface)
         {
             _rawUserInterface = rawUserInterface;
         }
@@ -99,30 +38,26 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             try
             {
-                return _rawUserInterface.LengthInBufferCells(str, offset);
+                var valueStrDec = new ValueStringDecorated(str);
+                if (valueStrDec.IsDecorated)
+                {
+                    str = valueStrDec.ToString(OutputRendering.PlainText);
+                }
+
+                int length = 0;
+                for (; offset < str.Length; offset++)
+                {
+                    length += _rawUserInterface.LengthInBufferCells(str[offset]);
+                }
+
+                return length;
             }
             catch
             {
                 // thrown when external host rawui is not implemented, in which case
                 // we will fallback to the default value.
+                return base.Length(str, offset);
             }
-
-            return str.Length - offset;
-        }
-
-        internal override int Length(string str)
-        {
-            try
-            {
-                return _rawUserInterface.LengthInBufferCells(str);
-            }
-            catch
-            {
-                // thrown when external host rawui is not implemented, in which case
-                // we will fallback to the default value.
-            }
-
-            return string.IsNullOrEmpty(str) ? 0 : str.Length;
         }
 
         internal override int Length(char character)
@@ -135,19 +70,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // thrown when external host rawui is not implemented, in which case
                 // we will fallback to the default value.
+                return base.Length(character);
             }
-
-            return 1;
-        }
-
-        internal override int GetHeadSplitLength(string str, int offset, int displayCells)
-        {
-            return GetSplitLengthInternalHelper(str, offset, displayCells, true);
-        }
-
-        internal override int GetTailSplitLength(string str, int offset, int displayCells)
-        {
-            return GetSplitLengthInternalHelper(str, offset, displayCells, false);
         }
 
         private readonly PSHostRawUserInterface _rawUserInterface;
@@ -162,6 +86,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         [TraceSource("ConsoleLineOutput", "ConsoleLineOutput")]
         internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleLineOutput", "ConsoleLineOutput");
         #endregion tracer
+
+        /// <summary>
+        /// The default buffer cell calculation already works for the PowerShell console host and Visual studio code host.
+        /// </summary>
+        private static readonly HashSet<string> s_psHost = new(StringComparer.Ordinal) { "ConsoleHost", "Visual Studio Code Host" };
 
         #region LineOutput implementation
         /// <summary>
@@ -241,12 +170,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             get
             {
                 CheckStopProcessing();
-                if (_displayCellsPSHost != null)
+                if (_displayCellsHost != null)
                 {
-                    return _displayCellsPSHost;
+                    return _displayCellsHost;
                 }
+
                 // fall back if we do not have a Msh host specific instance
-                return _displayCellsPSHost;
+                return _displayCellsDefault;
             }
         }
         #endregion
@@ -254,39 +184,38 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Constructor for the ConsoleLineOutput.
         /// </summary>
-        /// <param name="hostConsole">PSHostUserInterface to wrap.</param>
+        /// <param name="host">PSHostUserInterface to wrap.</param>
         /// <param name="paging">True if we require prompting for page breaks.</param>
         /// <param name="errorContext">Error context to throw exceptions.</param>
-        internal ConsoleLineOutput(PSHostUserInterface hostConsole, bool paging, TerminatingErrorContext errorContext)
+        internal ConsoleLineOutput(PSHost host, bool paging, TerminatingErrorContext errorContext)
         {
-            if (hostConsole == null)
-                throw PSTraceSource.NewArgumentNullException(nameof(hostConsole));
-            if (errorContext == null)
-                throw PSTraceSource.NewArgumentNullException(nameof(errorContext));
+            if (host == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
+            }
 
-            _console = hostConsole;
+            if (errorContext == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(errorContext));
+            }
+
+            _console = host.UI;
             _errorContext = errorContext;
 
             if (paging)
             {
                 tracer.WriteLine("paging is needed");
-                // if we need to do paging, instantiate a prompt handler
-                // that will take care of the screen interaction
+
+                // If we need to do paging, instantiate a prompt handler that will take care of the screen interaction
                 string promptString = StringUtil.Format(FormatAndOut_out_xxx.ConsoleLineOutput_PagingPrompt);
                 _prompt = new PromptHandler(promptString, this);
             }
 
-            PSHostRawUserInterface raw = _console.RawUI;
-            if (raw != null)
+            if (!s_psHost.Contains(host.Name) && _console.RawUI is not null)
             {
-                tracer.WriteLine("there is a valid raw interface");
-#if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
-                // create a test instance with fake behavior
-                this._displayCellsPSHost = new DisplayCellsTest();
-#else
                 // set only if we have a valid raw interface
-                _displayCellsPSHost = new DisplayCellsPSHost(raw);
-#endif
+                tracer.WriteLine("there is a valid raw interface");
+                _displayCellsHost = new DisplayCellsHost(_console.RawUI);
             }
 
             // instantiate the helper to do the line processing when ILineOutput.WriteXXX() is called
@@ -309,9 +238,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="s">String to write.</param>
         private void OnWriteLine(string s)
         {
-#if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
-            s = ((DisplayCellsTest)this._displayCellsPSHost).GenerateTestString(s);
-#endif
             // Do any default transcription.
             _console.TranscribeResult(s);
 
@@ -356,10 +282,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="s">String to write.</param>
         private void OnWrite(string s)
         {
-#if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
-            s = ((DisplayCellsTest)this._displayCellsPSHost).GenerateTestString(s);
-#endif
-
             switch (this.WriteStream)
             {
                 case WriteStreamType.Error:
@@ -598,7 +520,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private readonly PromptHandler _prompt = null;
 
         /// <summary>
-        /// Conter for the # of lines written when prompting is on.
+        /// Counter for the # of lines written when prompting is on.
         /// </summary>
         private long _linesWritten = 0;
 
@@ -608,14 +530,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool _disableLineWrittenEvent = false;
 
         /// <summary>
-        /// Refecence to the PSHostUserInterface interface we use.
+        /// Reference to the PSHostUserInterface interface we use.
         /// </summary>
         private readonly PSHostUserInterface _console = null;
 
         /// <summary>
         /// Msh host specific string manipulation helper.
         /// </summary>
-        private readonly DisplayCells _displayCellsPSHost;
+        private readonly DisplayCells _displayCellsHost;
 
         /// <summary>
         /// Reference to error context to throw Msh exceptions.

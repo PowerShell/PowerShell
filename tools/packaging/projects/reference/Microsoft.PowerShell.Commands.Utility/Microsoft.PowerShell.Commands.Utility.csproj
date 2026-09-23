@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <Version>$(RefAsmVersion)</Version>
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>$(SnkFile)</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
-    <LangVersion>Latest</LangVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Management.Automation">
@@ -13,8 +13,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.0-preview.5.21301.5" />
-    <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.0-preview.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <!-- Removing System.Security.AccessControl as per NU1510 -->
+    <!-- PackageReference Include="System.Security.AccessControl" Version="6.0.0" /-->
+    <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.1" />
   </ItemGroup>
 </Project>

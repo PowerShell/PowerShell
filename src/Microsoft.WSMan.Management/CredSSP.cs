@@ -200,7 +200,8 @@ namespace Microsoft.WSMan.Management
                     return;
                 }
 
-                string inputXml = string.Format(CultureInfo.InvariantCulture,
+                string inputXml = string.Format(
+                    CultureInfo.InvariantCulture,
                     @"<cfg:Auth xmlns:cfg=""{0}""><cfg:CredSSP>false</cfg:CredSSP></cfg:Auth>",
                     helper.Service_CredSSP_XMLNmsp);
 
@@ -389,6 +390,7 @@ namespace Microsoft.WSMan.Management
     /// authentication is achieved via a trusted X509 certificate or Kerberos.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096719")]
+    [OutputType(typeof(XmlElement))]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
     public class EnableWSManCredSSPCommand : WSManCredSSPCommandBase, IDisposable/*, IDynamicParameters*/
@@ -411,7 +413,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Property that sets force parameter.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get { return force; }
@@ -512,6 +514,7 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     XmlDocument xmldoc = new XmlDocument();
+
                     // push the xml string with credssp enabled
                     xmldoc.LoadXml(m_SessionObj.Put(helper.CredSSP_RUri, newxmlcontent, 0));
 
@@ -591,9 +594,11 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     XmlDocument xmldoc = new XmlDocument();
-                    string newxmlcontent = string.Format(CultureInfo.InvariantCulture,
+                    string newxmlcontent = string.Format(
+                        CultureInfo.InvariantCulture,
                         @"<cfg:Auth xmlns:cfg=""{0}""><cfg:CredSSP>true</cfg:CredSSP></cfg:Auth>",
                         helper.Service_CredSSP_XMLNmsp);
+
                     // push the xml string with credssp enabled
                     xmldoc.LoadXml(m_SessionObj.Put(helper.Service_CredSSP_Uri, newxmlcontent, 0));
                     WriteObject(xmldoc.FirstChild);
@@ -736,6 +741,7 @@ namespace Microsoft.WSMan.Management
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
     [Cmdlet(VerbsCommon.Get, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096838")]
+    [OutputType(typeof(string))]
     public class GetWSManCredSSPCommand : PSCmdlet, IDisposable
     {
         #region private

@@ -6,6 +6,7 @@
     <AssemblyName>Microsoft.PowerShell.GlobalTool.Shim</AssemblyName>
     <OutputType>EXE</OutputType>
     <RootNamespace>Microsoft.PowerShell.GlobalTool.Shim</RootNamespace>
+    <UseAppHost>False</UseAppHost>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />

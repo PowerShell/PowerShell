@@ -14,7 +14,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This class provides functionality for serializing a PSObject.
     /// </summary>
-    internal class CustomSerialization
+    internal sealed class CustomSerialization
     {
         #region constructor
         /// <summary>
@@ -170,10 +170,7 @@ namespace System.Management.Automation
         internal void Stop()
         {
             CustomInternalSerializer serializer = _serializer;
-            if (serializer != null)
-            {
-                serializer.Stop();
-            }
+            serializer?.Stop();
         }
 
         #endregion
@@ -182,8 +179,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This internal helper class provides methods for serializing mshObject.
     /// </summary>
-    internal class
-    CustomInternalSerializer
+    internal sealed class CustomInternalSerializer
     {
         #region constructor
 
@@ -341,8 +337,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should validate the parameter");
 
             bool sourceHandled = false;
-            PSObject moSource = source as PSObject;
-            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
+            if (source is PSObject moSource && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // Check if baseObject is primitive known type
                 object baseObject = moSource.ImmediateBaseObject;
@@ -709,7 +704,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                if (!(info is PSPropertyInfo property))
+                if (info is not PSPropertyInfo property)
                 {
                     continue;
                 }

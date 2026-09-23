@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -162,9 +162,6 @@
   <data name="NoSessionStateProxyWhenPipelineInProgress" xml:space="preserve">
     <value>A pipeline is already running. Concurrent SessionStateProxy method calls are not allowed.</value>
   </data>
-  <data name="ParameterNameOrValueNeeded" xml:space="preserve">
-    <value>Parameter name or value must be specified.</value>
-  </data>
   <data name="ChangePropertyAfterOpen" xml:space="preserve">
     <value>This property cannot be changed after the runspace has been opened.</value>
   </data>
@@ -206,9 +203,6 @@
   </data>
   <data name="CannotConnect" xml:space="preserve">
     <value>Cannot connect the PSSession because the session is not in the Disconnected state, or is not available for connection.</value>
-  </data>
-  <data name="CmdletNotFoundWhileLoadingModulesOnRunspaceOpen" xml:space="preserve">
-    <value>One or more errors occurred while processing the module '{0}' that is specified in the InitialSessionState object used to create this runspace. For a complete list of errors, see the ErrorRecords property.</value>
   </data>
   <data name="InvalidMyResultError" xml:space="preserve">
     <value>Value for parameter cannot be PipelineResultTypes.None or PipelineResultTypes.Output.</value>

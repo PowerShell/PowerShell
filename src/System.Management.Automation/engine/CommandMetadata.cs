@@ -847,45 +847,40 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(helpComment))
             {
-                helpComment = string.Format(CultureInfo.InvariantCulture, @"
-.ForwardHelpTargetName {0}
-.ForwardHelpCategory {1}
-",
-                    _wrappedCommand, _wrappedCommandType);
+                helpComment = string.Create(CultureInfo.InvariantCulture, $@"
+.ForwardHelpTargetName {_wrappedCommand}
+.ForwardHelpCategory {_wrappedCommandType}
+");
             }
 
             string dynamicParamblock = string.Empty;
             if (generateDynamicParameters && this.ImplementsDynamicParameters)
             {
-                dynamicParamblock = string.Format(CultureInfo.InvariantCulture, @"
+                dynamicParamblock = string.Create(CultureInfo.InvariantCulture, $@"
 dynamicparam
-{{{0}}}
+{{{GetDynamicParamBlock()}}}
 
-", GetDynamicParamBlock());
+");
             }
 
-            string result = string.Format(CultureInfo.InvariantCulture, @"{0}
-param({1})
+            string result = string.Create(CultureInfo.InvariantCulture, $@"{GetDecl()}
+param({GetParamBlock()})
 
-{2}begin
-{{{3}}}
+{dynamicParamblock}begin
+{{{GetBeginBlock()}}}
 
 process
-{{{4}}}
+{{{GetProcessBlock()}}}
 
 end
-{{{5}}}
+{{{GetEndBlock()}}}
+
+clean
+{{{GetCleanBlock()}}}
 <#
-{6}
+{CodeGeneration.EscapeBlockCommentContent(helpComment)}
 #>
-",
-                GetDecl(),
-                GetParamBlock(),
-                dynamicParamblock,
-                GetBeginBlock(),
-                GetProcessBlock(),
-                GetEndBlock(),
-                CodeGeneration.EscapeBlockCommentContent(helpComment));
+");
 
             return result;
         }
@@ -1014,9 +1009,10 @@ end
                 commandOrigin = string.Empty;
             }
 
+            string wrappedCommand = CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand);
             if (_wrappedAnyCmdlet)
             {
-                result = string.Format(CultureInfo.InvariantCulture, @"
+                result = string.Create(CultureInfo.InvariantCulture, $@"
     try {{
         $outBuffer = $null
         if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer))
@@ -1024,38 +1020,30 @@ end
             $PSBoundParameters['OutBuffer'] = 1
         }}
 
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1})
+        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{wrappedCommand}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
 
-        $steppablePipeline = $scriptCmd.GetSteppablePipeline({2})
+        $steppablePipeline = $scriptCmd.GetSteppablePipeline({commandOrigin})
         $steppablePipeline.Begin($PSCmdlet)
     }} catch {{
         throw
     }}
-",
-                    CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-                    _wrappedCommandType,
-                    commandOrigin
-                    );
+");
             }
             else
             {
-                result = string.Format(CultureInfo.InvariantCulture, @"
+                result = string.Create(CultureInfo.InvariantCulture, $@"
     try {{
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1})
+        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{wrappedCommand}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
         $PSBoundParameters.Add('$args', $args)
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
 
-        $steppablePipeline = $scriptCmd.GetSteppablePipeline({2})
+        $steppablePipeline = $scriptCmd.GetSteppablePipeline({commandOrigin})
         $steppablePipeline.Begin($myInvocation.ExpectingInput, $ExecutionContext)
     }} catch {{
         throw
     }}
-",
-                CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-                _wrappedCommandType,
-                commandOrigin
-                );
+");
             }
 
             return result;
@@ -1063,6 +1051,11 @@ end
 
         internal string GetProcessBlock()
         {
+            // The reason we wrap scripts in 'try { } catch { throw }' (here and elsewhere) is to turn
+            // an exception that could be thrown from .NET method invocation into a terminating error
+            // that can be propagated up.
+            // By default, an exception thrown from .NET method is not terminating, but when enclosed
+            // in try/catch, it will be turned into a terminating error.
             return @"
     try {
         $steppablePipeline.Process($_)
@@ -1074,9 +1067,10 @@ end
 
         internal string GetDynamicParamBlock()
         {
-            return string.Format(CultureInfo.InvariantCulture, @"
+            string wrappedCommand = CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand);
+            return string.Create(CultureInfo.InvariantCulture, $@"
     try {{
-        $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1}, $PSBoundParameters)
+        $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('{wrappedCommand}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType}, $PSBoundParameters)
         $dynamicParams = @($targetCmd.Parameters.GetEnumerator() | Microsoft.PowerShell.Core\Where-Object {{ $_.Value.IsDynamic }})
         if ($dynamicParams.Length -gt 0)
         {{
@@ -1097,9 +1091,7 @@ end
     }} catch {{
         throw
     }}
-",
-            CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-            _wrappedCommandType);
+");
         }
 
         internal string GetEndBlock()
@@ -1109,6 +1101,18 @@ end
         $steppablePipeline.End()
     } catch {
         throw
+    }
+";
+        }
+
+        internal string GetCleanBlock()
+        {
+            // Here we don't need to enclose the script in a 'try/catch' like elsewhere, because
+            //  1. the 'Clean' block doesn't propagate up any exception (terminating error);
+            //  2. only one expression in the script, so nothing else needs to be stopped when invoking the method fails.
+            return @"
+    if ($null -ne $steppablePipeline) {
+        $steppablePipeline.Clean()
     }
 ";
         }
@@ -1228,7 +1232,7 @@ end
 
             // This should only be called with 1 valid category
             ParameterMetadata categoryParameter = new ParameterMetadata("Category", typeof(string[]));
-            categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames(typeof(HelpCategory))));
+            categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames<HelpCategory>()));
             categoryParameter.Attributes.Add(new ValidateCountAttribute(0, 1));
 
             return GetRestrictedCmdlet("Get-Help", null, "https://go.microsoft.com/fwlink/?LinkID=113316", nameParameter, categoryParameter);
