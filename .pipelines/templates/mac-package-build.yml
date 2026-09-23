@@ -1,6 +1,7 @@
 parameters:
   parentJob: ''
   buildArchitecture: x64
+  OfficialBuild: true
 
 jobs:
 - job: package_macOS_${{ parameters.buildArchitecture }}
@@ -78,12 +79,13 @@ jobs:
     continueOnError: true
 
   - pwsh: |
-      $signedDir = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}/Signed-${{ parameters.buildArchitecture }}"
-      Get-ChildItem $signedDir -Recurse -Include 'pwsh', '*.dylib' | ForEach-Object {
-        codesign --verify --deep --strict --verbose=4 $_.FullName
-        if ($LASTEXITCODE -ne 0) { throw "codesign verification failed for $($_.FullName)" }
+      $signatureParameters = @{
+        Path = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}/Signed-${{ parameters.buildArchitecture }}"
+        OfficialBuild = [System.Convert]::ToBoolean('${{ parameters.OfficialBuild }}')
+        EntitlementsPath = "$(Build.SourcesDirectory)/assets/macos-entitlements.plist"
       }
-    displayName: 'Verify Apple codesign on signed binaries'
+      & "$(Build.SourcesDirectory)/tools/packaging/Update-MacOSCodeSignature.ps1" @signatureParameters
+    displayName: 'Apply and verify Apple codesign on signed binaries'
 
   - pwsh: |
       # Add -SkipReleaseChecks as a mitigation to unblock release.

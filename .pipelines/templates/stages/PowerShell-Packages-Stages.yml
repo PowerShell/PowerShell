@@ -50,10 +50,12 @@ stages:
   - template: /.pipelines/templates/mac-package-build.yml@self
     parameters:
       buildArchitecture: x64
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - template: /.pipelines/templates/mac-package-build.yml@self
     parameters:
       buildArchitecture: arm64
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
 - stage: windows_package_build
   displayName: 'Win Pkg (unsigned)'
