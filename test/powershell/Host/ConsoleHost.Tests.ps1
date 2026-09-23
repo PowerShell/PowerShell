@@ -1194,7 +1194,19 @@ Describe 'Pwsh startup and PATH' -Tag CI {
         $pwsh = Join-Path -Path $PSHOME -ChildPath "pwsh"
         Remove-Item Env:\PATH
         $path = & $pwsh -noprofile -command '$env:PATH'
-        $path | Should -BeExactly ($PSHOME + [System.IO.Path]::PathSeparator)
+
+        $ExpectedPath = $PSHOME
+        if ($PSHOME.StartsWith("$env:ProgramFiles\WindowsApps\Microsoft.PowerShell")) {
+            # MSIX installed PowerShell uses the stable path instead of PSHOME.
+            $ExpectedPath = $PSHOME.Replace($env:ProgramFiles, "$env:LOCALAPPDATA\Microsoft")
+
+            # Remove the version-specific part from the expected path.
+            $version = $PSVersionTable.PSVersion
+            $verStrRegex = "$($version.Major)\.$($version.Minor)\.$($version.Build).+__"
+            $ExpectedPath = $ExpectedPath -replace $verStrRegex, ''
+        }
+
+        $path | Should -BeExactly ($ExpectedPath + [System.IO.Path]::PathSeparator)
     }
 }
 
