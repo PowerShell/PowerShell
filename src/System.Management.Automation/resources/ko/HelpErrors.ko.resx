@@ -190,4 +190,7 @@
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>제한된 세션에 있을 때 네트워크 위치에서 도움을 받을 수 없습니다.</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>Command not allowed in a restricted session.</value>
+  </data>
 </root>
