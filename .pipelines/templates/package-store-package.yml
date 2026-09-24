@@ -57,16 +57,19 @@ jobs:
         # Define app configurations for each channel
         $channelConfigs = @{
           'LTS' = @{
+            AppStoreName = 'PowerShell-LTS'
             ProductId = '$(productId-LTS)'
             AppId = '$(AppID-LTS)'
             ServiceEndpoint = "StoreAppPublish-Stable"
           }
           'Stable' = @{
+            AppStoreName = 'PowerShell'
             ProductId = '$(productId-Stable)'
             AppId = '$(AppID-Stable)'
             ServiceEndpoint = "StoreAppPublish-Stable"
           }
           'Preview' = @{
+            AppStoreName = 'PowerShell (Preview)'
             ProductId = '$(productId-Preview)'
             AppId = '$(AppID-Preview)'
             ServiceEndpoint = "StoreAppPublish-Preview"
@@ -97,8 +100,37 @@ jobs:
 
         $config = $channelConfigs[$currentChannel]
         Write-Verbose -Verbose "Selected channel: $currentChannel"
+        Write-Verbose -Verbose "App Store Name: $($config.AppStoreName)"
         Write-Verbose -Verbose "Product ID: $($config.ProductId)"
 
+        # Update PDP.xml file
+        $pdpPath = '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP/en-US/PDP.xml'
+        if (Test-Path $pdpPath) {
+          Write-Verbose -Verbose "Updating PDP file: $pdpPath"
+
+          [xml]$pdpXml = Get-Content $pdpPath -Raw
+
+          # Create namespace manager for XML with default namespace
+          $nsManager = New-Object System.Xml.XmlNamespaceManager($pdpXml.NameTable)
+          $nsManager.AddNamespace("pd", "http://schemas.microsoft.com/appx/2012/ProductDescription")
+
+          $appStoreNameElement = $pdpXml.SelectSingleNode("//pd:AppStoreName", $nsManager)
+          if ($appStoreNameElement) {
+            $appStoreNameElement.SetAttribute("_locID", $config.AppStoreName)
+            Write-Verbose -Verbose "Updated AppStoreName _locID to: $($config.AppStoreName)"
+          } else {
+            Write-Warning "AppStoreName element not found in PDP file"
+          }
+
+          $pdpXml.Save($pdpPath)
+          Write-Verbose -Verbose "PDP file updated successfully"
+          Get-Content -Path $pdpPath | Write-Verbose -Verbose
+        } else {
+          Write-Error "PDP file not found: $pdpPath"
+          exit 1
+        }
+
+        # Update SBConfig.json file
         $sbConfigPath = '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/SBConfig.json'
         if (Test-Path $sbConfigPath) {
           Write-Verbose -Verbose "Updating SBConfig file: $sbConfigPath"
@@ -158,7 +190,7 @@ jobs:
 
         Write-Verbose -Verbose "Variables set successfully"
       name: UpdateConfigs
-      displayName: Update SBConfig.json and Store Variables
+      displayName: Update PDPs and SBConfig.json
 
     - pwsh: |
         Write-Verbose -Verbose "Checking variables after UpdateConfigs:"
@@ -177,8 +209,8 @@ jobs:
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
         pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
-        # StoreBroker v3 requires a media root with a PDP root, even when the PDP has no media.
-        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
+
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package (Stable/LTS)'
       condition: or(eq(variables['STABLE'], 'true'), eq(variables['LTS'], 'true'))
@@ -189,8 +221,8 @@ jobs:
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
         pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
-        # StoreBroker v3 requires a media root with a PDP root, even when the PDP has no media.
-        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
+
     - pwsh: |
         $outputDirectory = "$(ob_outputDirectory)"
         if (-not (Test-Path -LiteralPath $outputDirectory)) {
