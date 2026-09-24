@@ -121,9 +121,9 @@
     <value>PowerShell はセキュリティ上の問題により動作を停止しました: 構成ファイル {0} を読み取れません</value>
   </data>
   <data name="CanNotReadConfigurationFile" xml:space="preserve">
-    <value>Cannot read the PowerShell configuration file '{0}': {1}. Falling back to default settings.</value>
+    <value>PowerShell 構成ファイル '{0}' を読み取れません: {1}。既定値にフォールバックしています。</value>
   </data>
   <data name="CanNotReadConfigurationValue" xml:space="preserve">
-    <value>Cannot read setting '{0}' from PowerShell configuration file '{1}': {2}. Falling back to default for this setting.</value>
+    <value>PowerShell 構成ファイル '{1}' から設定 '{0}' を読み取ることができません: {2}。この設定の既定値にフォールバックします。</value>
   </data>
 </root>

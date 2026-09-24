@@ -121,9 +121,9 @@
     <value>PowerShell a cessé de fonctionner en raison d’un problème de sécurité : impossible de lire le fichier de configuration : {0}</value>
   </data>
   <data name="CanNotReadConfigurationFile" xml:space="preserve">
-    <value>Cannot read the PowerShell configuration file '{0}': {1}. Falling back to default settings.</value>
+    <value>Impossible de lire le fichier de configuration PowerShell '{0}' : {1}. Rétablissement des paramètres par défaut.</value>
   </data>
   <data name="CanNotReadConfigurationValue" xml:space="preserve">
-    <value>Cannot read setting '{0}' from PowerShell configuration file '{1}': {2}. Falling back to default for this setting.</value>
+    <value>Impossible de lire le paramètre '{0}' à partir du fichier de configuration PowerShell '{1}' : {2}. Retour à la valeur par défaut pour ce paramètre.</value>
   </data>
 </root>
