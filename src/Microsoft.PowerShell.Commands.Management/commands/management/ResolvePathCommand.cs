@@ -117,6 +117,20 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion parameter data
 
+        private static bool StartsWithRelativePathToken(string path, ProviderInfo provider)
+        {
+            if (path.Length == 0 || path[0] != '.')
+            {
+                return false;
+            }
+
+            int separatorIndex = path.Length > 1 && path[1] == '.' ? 2 : 1;
+            return path.Length == separatorIndex ||
+                (path.Length > separatorIndex &&
+                 (path[separatorIndex] == provider.ItemSeparator ||
+                  path[separatorIndex] == provider.AltItemSeparator));
+        }
+
         #region Command code
 
         /// <summary>
@@ -233,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
                             // Do not insert './' if result path is not relative
                             if (!adjustedPath.StartsWith(
                                     currentPath.Drive?.Root ?? currentPath.Path, StringComparison.OrdinalIgnoreCase) &&
-                                !adjustedPath.StartsWith('.'))
+                                !StartsWithRelativePathToken(adjustedPath, currentPath.Provider))
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }

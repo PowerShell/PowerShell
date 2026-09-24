@@ -67,6 +67,21 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
             Pop-Location
         }
     }
+
+    It "Resolve-Path -Relative prepends the current directory to a path whose name starts with a dot" {
+        $dotDirectory = New-Item -Path (Join-Path $TestDrive ".directory") -ItemType Directory
+        $null = New-Item -Path $dotDirectory -Name "file.txt" -ItemType File
+
+        try {
+            Push-Location -Path $TestDrive
+            Resolve-Path -Path (Join-Path ".directory" "file.txt") -Relative |
+                Should -BeExactly (Join-Path "." ".directory" "file.txt")
+        }
+        finally {
+            Pop-Location
+        }
+    }
+
     It 'Resolve-Path RelativeBasePath should handle <Scenario>' -TestCases @(
         @{
             Scenario = "Absolute Path, Absolute ReleativeBasePath"
