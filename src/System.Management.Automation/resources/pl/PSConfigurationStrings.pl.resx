@@ -121,9 +121,9 @@
     <value>Program PowerShell przestał działać z powodu problemu z zabezpieczeniami: nie można odczytać pliku konfiguracji: {0}</value>
   </data>
   <data name="CanNotReadConfigurationFile" xml:space="preserve">
-    <value>Cannot read the PowerShell configuration file '{0}': {1}. Falling back to default settings.</value>
+    <value>Nie można odczytać pliku konfiguracji programu PowerShell '{0}': {1}. Powrót do ustawień domyślnych.</value>
   </data>
   <data name="CanNotReadConfigurationValue" xml:space="preserve">
-    <value>Cannot read setting '{0}' from PowerShell configuration file '{1}': {2}. Falling back to default for this setting.</value>
+    <value>Nie można odczytać '{0}' ustawień z pliku konfiguracji programu PowerShell '{1}': {2}. Przywracanie ustawień domyślnych dla tego ustawienia.</value>
   </data>
 </root>
