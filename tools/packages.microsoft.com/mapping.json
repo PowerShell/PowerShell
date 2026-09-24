@@ -65,16 +65,14 @@
           "distribution": [
               "azl"
           ],
-          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.aarch64.rpm",
-          "channel": "stable"
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.aarch64.rpm"
       },
       {
           "url": "azurelinux-4.0-beta-microsoft-x86_64",
           "distribution": [
               "azl"
           ],
-          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.x86_64.rpm",
-          "channel": "stable"
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.x86_64.rpm"
       },
       {
           "url": "microsoft-debian-stretch-prod",
