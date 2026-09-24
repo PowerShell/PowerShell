@@ -148,6 +148,7 @@ Describe "Get-ChildItem" -Tags "CI" {
                 $child = New-Item -Path $root -Name "Child" -ItemType Directory
                 $null = New-Item -Path $root -Name "root.md" -ItemType File
                 $null = New-Item -Path $child -Name "child.md" -ItemType File
+                $null = New-Item -Path $child -Name "ignored.txt" -ItemType File
                 $path = Join-Path $root "*.md"
 
                 $result = Get-ChildItem -Path $path -Recurse -File -Name
@@ -156,6 +157,29 @@ Describe "Get-ChildItem" -Tags "CI" {
                 $result | Should -Contain "Child$([IO.Path]::DirectorySeparatorChar)child.md"
 
                 Get-ChildItem -Path $path -Depth 0 -File -Name | Should -BeExactly "root.md"
+            }
+            finally {
+                Remove-Item -LiteralPath $root -Recurse -Force
+            }
+        }
+
+        It "Should preserve recursive wildcard filters through the public GetNames API" {
+            $root = New-Item -Path $TestDrive -Name "PublicGetNamesRecurse" -ItemType Directory
+            try {
+                $child = New-Item -Path $root -Name "Child" -ItemType Directory
+                $null = New-Item -Path $root -Name "root.md" -ItemType File
+                $null = New-Item -Path $child -Name "child.md" -ItemType File
+                $null = New-Item -Path $child -Name "ignored.txt" -ItemType File
+                $path = Join-Path $root "*.md"
+
+                $result = $ExecutionContext.SessionState.InvokeProvider.ChildItem.GetNames(
+                    $path,
+                    [System.Management.Automation.ReturnContainers]::ReturnMatchingContainers,
+                    $true)
+
+                $result | Should -HaveCount 2
+                $result | Should -Contain "root.md"
+                $result | Should -Contain "Child$([IO.Path]::DirectorySeparatorChar)child.md"
             }
             finally {
                 Remove-Item -LiteralPath $root -Recurse -Force

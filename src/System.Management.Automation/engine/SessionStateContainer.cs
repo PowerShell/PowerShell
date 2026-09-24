@@ -2241,6 +2241,10 @@ namespace System.Management.Automation
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            context.SetFilters(
+                include: new Collection<string>(),
+                exclude: new Collection<string>(),
+                filter: null);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
