@@ -23,7 +23,13 @@ namespace Microsoft.PowerShell.Commands
                                                            parentSet,
                                                            qualifierSet,
                                                            literalPathSet})]
+    [OutputType(typeof(string), ParameterSetName = new[] { LiteralPathLeafSet })]
+    [OutputType(typeof(string), ParameterSetName = new[] { LiteralPathLeafBaseSet })]
+    [OutputType(typeof(string), ParameterSetName = new[] { LiteralPathExtensionSet })]
+    [OutputType(typeof(string), ParameterSetName = new[] { LiteralPathNoQualifierSet })]
+    [OutputType(typeof(string), ParameterSetName = new[] { LiteralPathQualifierSet })]
     [OutputType(typeof(bool), ParameterSetName = new[] { isAbsoluteSet })]
+    [OutputType(typeof(bool), ParameterSetName = new[] { LiteralPathIsAbsoluteSet })]
     public class SplitPathCommand : CoreCommandWithCredentialsBase
     {
         #region Parameters
@@ -69,6 +75,36 @@ namespace Microsoft.PowerShell.Commands
         private const string literalPathSet = "LiteralPathSet";
 
         /// <summary>
+        /// The parameter set name to get the leaf name for LiteralPath.
+        /// </summary>
+        private const string LiteralPathLeafSet = "LiteralPathLeafSet";
+
+        /// <summary>
+        /// The parameter set name to get the leaf base name for LiteralPath.
+        /// </summary>
+        private const string LiteralPathLeafBaseSet = "LiteralPathLeafBaseSet";
+
+        /// <summary>
+        /// The parameter set name to get the extension for LiteralPath.
+        /// </summary>
+        private const string LiteralPathExtensionSet = "LiteralPathExtensionSet";
+
+        /// <summary>
+        /// The parameter set name to get the qualifier for LiteralPath.
+        /// </summary>
+        private const string LiteralPathQualifierSet = "LiteralPathQualifierSet";
+
+        /// <summary>
+        /// The parameter set name to return the path without the qualifier for LiteralPath.
+        /// </summary>
+        private const string LiteralPathNoQualifierSet = "LiteralPathNoQualifierSet";
+
+        /// <summary>
+        /// The parameter set name to get the IsAbsolute set for LiteralPath.
+        /// </summary>
+        private const string LiteralPathIsAbsoluteSet = "LiteralPathIsAbsoluteSet";
+
+        /// <summary>
         /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = parentSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -83,7 +119,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal path parameter to the command.
         /// </summary>
-        [Parameter(ParameterSetName = "LiteralPathSet", Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = literalPathSet, Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = LiteralPathLeafSet, Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = LiteralPathLeafBaseSet, Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = LiteralPathExtensionSet, Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = LiteralPathQualifierSet, Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = LiteralPathNoQualifierSet, Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = LiteralPathIsAbsoluteSet, Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
         {
@@ -108,6 +150,7 @@ namespace Microsoft.PowerShell.Commands
         /// the PowerShell path.
         /// </value>
         [Parameter(ParameterSetName = qualifierSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = LiteralPathQualifierSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Qualifier { get; set; }
 
         /// <summary>
@@ -119,6 +162,7 @@ namespace Microsoft.PowerShell.Commands
         /// the PowerShell path.
         /// </value>
         [Parameter(ParameterSetName = noQualifierSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = LiteralPathNoQualifierSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter NoQualifier { get; set; }
 
         /// <summary>
@@ -128,6 +172,7 @@ namespace Microsoft.PowerShell.Commands
         /// If true the parent of the path will be returned.
         /// </value>
         [Parameter(ParameterSetName = parentSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = literalPathSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Parent { get; set; } = true;
 
         /// <summary>
@@ -137,6 +182,7 @@ namespace Microsoft.PowerShell.Commands
         /// If true the leaf name of the path will be returned.
         /// </value>
         [Parameter(ParameterSetName = leafSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = LiteralPathLeafSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Leaf { get; set; }
 
         /// <summary>
@@ -146,6 +192,7 @@ namespace Microsoft.PowerShell.Commands
         /// If true the leaf base name of the path will be returned.
         /// </value>
         [Parameter(ParameterSetName = leafBaseSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = LiteralPathLeafBaseSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter LeafBase { get; set; }
 
         /// <summary>
@@ -155,6 +202,7 @@ namespace Microsoft.PowerShell.Commands
         /// If true the extension of the path will be returned.
         /// </value>
         [Parameter(ParameterSetName = extensionSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = LiteralPathExtensionSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Extension { get; set; }
 
         /// <summary>
@@ -168,6 +216,7 @@ namespace Microsoft.PowerShell.Commands
         /// Determines if the path is an absolute path.
         /// </summary>
         [Parameter(ParameterSetName = isAbsoluteSet, Mandatory = true)]
+        [Parameter(ParameterSetName = LiteralPathIsAbsoluteSet, Mandatory = true)]
         public SwitchParameter IsAbsolute { get; set; }
 
         #endregion Parameters
