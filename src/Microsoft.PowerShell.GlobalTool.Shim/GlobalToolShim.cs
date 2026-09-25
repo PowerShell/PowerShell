@@ -27,9 +27,7 @@ namespace Microsoft.PowerShell.GlobalTool.Shim
         public static int Main(string[] args)
         {
             var currentPath = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).Directory.FullName;
-            var isWindows = OperatingSystem.IsWindows();
-
-            string platformFolder = isWindows ? WinFolderName : UnixFolderName;
+            string platformFolder = OperatingSystem.IsWindows() ? WinFolderName : UnixFolderName;
 
             var arguments = new List<string>(args.Length + 1);
             var pwshPath = Path.Combine(currentPath, platformFolder, PwshDllName);
