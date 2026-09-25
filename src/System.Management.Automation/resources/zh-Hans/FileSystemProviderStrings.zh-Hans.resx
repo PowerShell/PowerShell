@@ -240,6 +240,15 @@
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
     <value>无法处理路径 "{0}"，因为目标代表保留的设备名称。</value>
   </data>
+  <data name="DirectoryNamePathTraversal" xml:space="preserve">
+    <value>无法处理远程目录名 '{0}'，因为它可能导致路径遍历。</value>
+  </data>
+  <data name="FileNamePathTraversal" xml:space="preserve">
+    <value>无法处理远程文件名 '{0}'，因为它可能导致路径遍历。</value>
+  </data>
+  <data name="ADSPathTraversal" xml:space="preserve">
+    <value>无法处理远程备用数据流名称 '{0}'，因为它可能导致路径遍历。</value>
+  </data>
   <data name="EncodingNotUsed" xml:space="preserve">
     <value>指定 "-AsByteStream" 时不使用编码。</value>
   </data>

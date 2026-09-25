@@ -240,6 +240,15 @@
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
     <value>대상이 예약된 디바이스 이름을 나타내므로 경로 '{0}'을(를) 처리할 수 없습니다.</value>
   </data>
+  <data name="DirectoryNamePathTraversal" xml:space="preserve">
+    <value>Cannot process the remote directory name '{0}' because it may result in path traversal.</value>
+  </data>
+  <data name="FileNamePathTraversal" xml:space="preserve">
+    <value>Cannot process the remote file name '{0}' because it may result in path traversal.</value>
+  </data>
+  <data name="ADSPathTraversal" xml:space="preserve">
+    <value>Cannot process the remote Alternate Data Stream name '{0}' because it may result in path traversal.</value>
+  </data>
   <data name="EncodingNotUsed" xml:space="preserve">
     <value>'-AsByteStream'이 지정되면 인코딩은 사용되지 않습니다.</value>
   </data>
