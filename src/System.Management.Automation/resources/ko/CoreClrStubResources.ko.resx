@@ -139,7 +139,7 @@
     <value>알 수 없는 오류 {0}이(가) 발생했습니다.</value>
   </data>
   <data name="TempHomeDirectoryUnsafePermission" xml:space="preserve">
-    <value>The temporary HOME directory '{0}' already exists but does not have the expected user-only permission. It may have been created by a different user, which is a potential security risk. PowerShell will not start until this directory is removed, its permission is corrected, or the 'HOME' environment variable is set.</value>
+    <value>임시 HOME 디렉터리 '{0}'이(가) 이미 있지만 예상되는 사용자 전용 권한이 없습니다. 다른 사용자가 만들었을 수 있어 보안 위험이 있을 가능성이 있습니다. 이 디렉터리를 삭제하거나 권한을 수정하거나 'HOME' 환경 변수를 설정해야 PowerShell이 시작됩니다.</value>
     <comment>{StrContains="HOME"}</comment>
   </data>
 </root>
