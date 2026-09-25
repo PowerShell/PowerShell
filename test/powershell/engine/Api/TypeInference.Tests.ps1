@@ -518,7 +518,7 @@ Describe "Type inference Tests" -tags "CI" {
                 }}.Ast)
         $res.Count | Should -Be 1
         $res[0].GetType().Name | Should -Be "PSSyntheticTypeName"
-        $res[0].Name | Should -Be "System.Management.Automation.PSObject#A:B"
+        $res[0].Name | Should -Be "System.Management.Automation.PSCustomObject#A:B"
         $res[0].Members[0].Name | Should -Be "A"
         $res[0].Members[0].PSTypeName | Should -Be "System.Int32"
         $res[0].Members[1].Name | Should -Be "B"
@@ -544,7 +544,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( { [io.fileinfo]::new("file") | Select-Object -Property Directory }.Ast)
         $res.Count | Should -Be 1
         $res[0].GetType().Name | Should -Be "PSSyntheticTypeName"
-        $res[0].Name | Should -Be "System.Management.Automation.PSObject#Directory"
+        $res[0].Name | Should -Be "System.Management.Automation.PSCustomObject#Directory"
         $res[0].Members[0].Name | Should -Be "Directory"
         $res[0].Members[0].PSTypeName | Should -Be "System.IO.DirectoryInfo"
     }
@@ -552,7 +552,7 @@ Describe "Type inference Tests" -tags "CI" {
     It "Infers typeof Select-Object when PSObject and Parameter is Property" {
         $res = [AstTypeInference]::InferTypeOf( { [PSCustomObject] @{A = 1; B = "2"} | Select-Object -Property A}.Ast)
         $res.Count | Should -Be 1
-        $res[0].Name | Should -Be "System.Management.Automation.PSObject#A"
+        $res[0].Name | Should -Be "System.Management.Automation.PSCustomObject#A"
         $res[0].Members[0].Name | Should -Be "A"
         $res[0].Members[0].PSTypeName | Should -Be "System.Int32"
     }
@@ -560,7 +560,7 @@ Describe "Type inference Tests" -tags "CI" {
     It "Infers typeof Select-Object when Parameter is Properties" {
         $res = [AstTypeInference]::InferTypeOf( {  [io.fileinfo]::new("file")  | Select-Object -Property Director*, Name }.Ast)
         $res.Count | Should -Be 1
-        $res[0].Name | Should -Be "System.Management.Automation.PSObject#Directory:DirectoryName:Name"
+        $res[0].Name | Should -Be "System.Management.Automation.PSCustomObject#Directory:DirectoryName:Name"
         $res[0].Members[0].Name | Should -Be "Directory"
         $res[0].Members[0].PSTypeName | Should -Be "System.IO.DirectoryInfo"
         $res[0].Members[1].Name | Should -Be "DirectoryName"
@@ -570,7 +570,7 @@ Describe "Type inference Tests" -tags "CI" {
     It "Infers typeof Select-Object when Parameter is ExcludeProperty" {
         $res = [AstTypeInference]::InferTypeOf( {  [io.fileinfo]::new("file")  |  Select-Object -ExcludeProperty *Time*, E* }.Ast)
         $res.Count | Should -Be 1
-        $res[0].Name | Should -BeExactly "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LengthString:LinkTarget:LinkType:Mode:ModeWithoutHardLink:Name:NameString:ResolvedTarget:Target:UnixFileMode:VersionInfo"
+        $res[0].Name | Should -BeExactly "System.Management.Automation.PSCustomObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LengthString:LinkTarget:LinkType:Mode:ModeWithoutHardLink:Name:NameString:ResolvedTarget:Target:UnixFileMode:VersionInfo"
         $names = $res[0].Members.Name
         $names -contains "BaseName" | Should -BeTrue
         $names -contains "Name" | Should -BeTrue
