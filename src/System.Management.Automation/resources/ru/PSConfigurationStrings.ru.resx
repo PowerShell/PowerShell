@@ -121,9 +121,9 @@
     <value>Windows PowerShell перестал работать из-за проблемы безопасности: Не удается прочитать файл конфигурации: {0}</value>
   </data>
   <data name="CanNotReadConfigurationFile" xml:space="preserve">
-    <value>Cannot read the PowerShell configuration file '{0}': {1}. Falling back to default settings.</value>
+    <value>Не удается прочитать файл конфигурации PowerShell '{0}': {1}. Возврат к параметрам по умолчанию.</value>
   </data>
   <data name="CanNotReadConfigurationValue" xml:space="preserve">
-    <value>Cannot read setting '{0}' from PowerShell configuration file '{1}': {2}. Falling back to default for this setting.</value>
+    <value>Не удается прочитать '{0}' параметров из файла конфигурации PowerShell '{1}': {2}. Возврат к значениям по умолчанию для этого параметра.</value>
   </data>
 </root>
