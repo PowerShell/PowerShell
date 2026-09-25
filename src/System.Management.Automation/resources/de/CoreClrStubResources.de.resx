@@ -139,7 +139,7 @@
     <value>Unbekannter Fehler „{0}“.</value>
   </data>
   <data name="TempHomeDirectoryUnsafePermission" xml:space="preserve">
-    <value>The temporary HOME directory '{0}' already exists but does not have the expected user-only permission. It may have been created by a different user, which is a potential security risk. PowerShell will not start until this directory is removed, its permission is corrected, or the 'HOME' environment variable is set.</value>
+    <value>Das temporäre HOME-Verzeichnis „{0}“ ist bereits vorhanden, verfügt jedoch nicht über die erwarteten Berechtigungen, die den Zugriff auf den Benutzer beschränken. Es wurde möglicherweise von einem anderen Benutzer erstellt, was ein potenzielles Sicherheitsrisiko darstellt. PowerShell wird erst gestartet, wenn dieses Verzeichnis entfernt, die Berechtigung korrigiert oder die Umgebungsvariable „HOME“ festgelegt wurde.</value>
     <comment>{StrContains="HOME"}</comment>
   </data>
 </root>
