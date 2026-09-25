@@ -412,7 +412,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ActiveTracer.WriteLine(
                         "NOT MATCH {0}  NAME: {1}",
-                        ControlBase.GetControlShapeName(vd.mainControl), (vd != null ? vd.name : string.Empty));
+                        (vd != null ? ControlBase.GetControlShapeName(vd.mainControl) : "null"), (vd != null ? vd.name : string.Empty));
                     continue;
                 }
 
