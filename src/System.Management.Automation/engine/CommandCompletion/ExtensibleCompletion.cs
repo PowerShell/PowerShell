@@ -281,6 +281,315 @@ namespace System.Management.Automation
     }
 
     /// <summary>
+    /// Specifies the type of argument completer.
+    /// </summary>
+    public enum ArgumentCompleterType
+    {
+        /// <summary>
+        /// A completer for PowerShell command parameters.
+        /// </summary>
+        PowerShell,
+
+        /// <summary>
+        /// A completer for native command arguments.
+        /// </summary>
+        Native,
+
+        /// <summary>
+        /// A fallback completer for native commands that don't have a specific completer.
+        /// </summary>
+        NativeFallback,
+    }
+
+    /// <summary>
+    /// Represents information about a registered argument completer.
+    /// </summary>
+    public sealed class ArgumentCompleterInfo
+    {
+        /// <summary>
+        /// Gets the command name associated with this completer.
+        /// For PowerShell completers without a command, this may be null.
+        /// For native fallback completers, this is null.
+        /// </summary>
+        public string CommandName { get; }
+
+        /// <summary>
+        /// Gets the parameter name for PowerShell completers.
+        /// Null for native command completers.
+        /// </summary>
+        public string ParameterName { get; }
+
+        /// <summary>
+        /// Gets the script block that provides completions.
+        /// </summary>
+        public ScriptBlock ScriptBlock { get; }
+
+        /// <summary>
+        /// Gets the type of this argument completer.
+        /// </summary>
+        public ArgumentCompleterType Type { get; }
+
+        internal ArgumentCompleterInfo(string commandName, string parameterName, ScriptBlock scriptBlock, ArgumentCompleterType type)
+        {
+            CommandName = commandName;
+            ParameterName = parameterName;
+            ScriptBlock = scriptBlock;
+            Type = type;
+        }
+    }
+
+    /// <summary>
+    /// Gets registered argument completers.
+    /// </summary>
+    [Cmdlet(VerbsCommon.Get, "ArgumentCompleter", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=528576")]
+    [OutputType(typeof(ArgumentCompleterInfo))]
+    public class GetArgumentCompleterCommand : PSCmdlet
+    {
+        private const string PowerShellSetName = "PowerShellSet";
+        private const string NativeSetName = "NativeSet";
+
+        /// <summary>
+        /// Gets or sets the command name to filter completers.
+        /// </summary>
+        [Parameter(Position = 0, ParameterSetName = PowerShellSetName)]
+        [Parameter(Position = 0, ParameterSetName = NativeSetName)]
+        [SupportsWildcards]
+        public string[] CommandName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the parameter name to filter PowerShell completers.
+        /// </summary>
+        [Parameter(Position = 1, ParameterSetName = PowerShellSetName)]
+        [SupportsWildcards]
+        public string[] ParameterName { get; set; }
+
+        /// <summary>
+        /// If specified, returns native command completers.
+        /// </summary>
+        [Parameter(ParameterSetName = NativeSetName)]
+        public SwitchParameter Native { get; set; }
+
+        /// <summary>
+        /// EndProcessing implementation.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            var commandPatterns = CreateWildcardPatterns(CommandName);
+            var parameterPatterns = CreateWildcardPatterns(ParameterName);
+
+            if (Native.IsPresent)
+            {
+                // Return native command completers
+                var nativeCompleters = Context.NativeArgumentCompleters;
+                if (nativeCompleters != null)
+                {
+                    foreach (var kvp in nativeCompleters)
+                    {
+                        if (kvp.Key == RegisterArgumentCompleterCommand.FallbackCompleterKey)
+                        {
+                            // Only include fallback if no CommandName filter or if filtering explicitly
+                            if (commandPatterns == null)
+                            {
+                                WriteObject(new ArgumentCompleterInfo(null, null, kvp.Value, ArgumentCompleterType.NativeFallback));
+                            }
+                        }
+                        else
+                        {
+                            if (MatchesWildcardPatterns(kvp.Key, commandPatterns))
+                            {
+                                WriteObject(new ArgumentCompleterInfo(kvp.Key, null, kvp.Value, ArgumentCompleterType.Native));
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Return PowerShell command completers
+                var customCompleters = Context.CustomArgumentCompleters;
+                if (customCompleters != null)
+                {
+                    foreach (var kvp in customCompleters)
+                    {
+                        // Key format is either "ParameterName" or "CommandName:ParameterName"
+                        var colonIndex = kvp.Key.IndexOf(':');
+                        string cmdName = null;
+                        string paramName;
+
+                        if (colonIndex >= 0)
+                        {
+                            cmdName = kvp.Key.Substring(0, colonIndex);
+                            paramName = kvp.Key.Substring(colonIndex + 1);
+                        }
+                        else
+                        {
+                            paramName = kvp.Key;
+                        }
+
+                        // Apply filters
+                        if (!MatchesWildcardPatterns(cmdName, commandPatterns))
+                        {
+                            continue;
+                        }
+
+                        if (!MatchesWildcardPatterns(paramName, parameterPatterns))
+                        {
+                            continue;
+                        }
+
+                        WriteObject(new ArgumentCompleterInfo(cmdName, paramName, kvp.Value, ArgumentCompleterType.PowerShell));
+                    }
+                }
+            }
+        }
+
+        private static WildcardPattern[] CreateWildcardPatterns(string[] values)
+        {
+            if (values == null || values.Length == 0)
+            {
+                return null;
+            }
+
+            var patterns = new WildcardPattern[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                patterns[i] = WildcardPattern.Get(values[i], WildcardOptions.IgnoreCase);
+            }
+
+            return patterns;
+        }
+
+        private static bool MatchesWildcardPatterns(string value, WildcardPattern[] patterns)
+        {
+            if (patterns == null)
+            {
+                return true;
+            }
+
+            if (value == null)
+            {
+                // For null values, only match if one of the patterns is "*" or null
+                foreach (var pattern in patterns)
+                {
+                    if (pattern.IsMatch(string.Empty))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            foreach (var pattern in patterns)
+            {
+                if (pattern.IsMatch(value))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Unregisters argument completers.
+    /// </summary>
+    [Cmdlet(VerbsLifecycle.Unregister, "ArgumentCompleter", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=528576")]
+    public class UnregisterArgumentCompleterCommand : PSCmdlet
+    {
+        private const string PowerShellSetName = "PowerShellSet";
+        private const string NativeCommandSetName = "NativeCommandSet";
+        private const string NativeFallbackSetName = "NativeFallbackSet";
+
+        /// <summary>
+        /// Gets or sets the command names for which to unregister the argument completer.
+        /// </summary>
+        [Parameter(ParameterSetName = NativeCommandSetName, Mandatory = true)]
+        [Parameter(ParameterSetName = PowerShellSetName)]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public string[] CommandName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the parameter name for which to unregister the argument completer.
+        /// </summary>
+        [Parameter(ParameterSetName = PowerShellSetName, Mandatory = true)]
+        public string ParameterName { get; set; }
+
+        /// <summary>
+        /// Indicates the argument completer is for native commands.
+        /// </summary>
+        [Parameter(ParameterSetName = NativeCommandSetName)]
+        public SwitchParameter Native { get; set; }
+
+        /// <summary>
+        /// Indicates to unregister the fallback completer for native commands.
+        /// </summary>
+        [Parameter(ParameterSetName = NativeFallbackSetName, Mandatory = true)]
+        public SwitchParameter NativeFallback { get; set; }
+
+        /// <summary>
+        /// EndProcessing implementation.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            if (ParameterSetName is NativeFallbackSetName)
+            {
+                var nativeCompleters = Context.NativeArgumentCompleters;
+                if (nativeCompleters != null)
+                {
+                    nativeCompleters.Remove(RegisterArgumentCompleterCommand.FallbackCompleterKey);
+                }
+            }
+            else if (ParameterSetName is NativeCommandSetName)
+            {
+                var nativeCompleters = Context.NativeArgumentCompleters;
+                if (nativeCompleters != null)
+                {
+                    foreach (string command in CommandName)
+                    {
+                        var key = command?.Trim();
+                        if (string.IsNullOrEmpty(key))
+                        {
+                            continue;
+                        }
+
+                        nativeCompleters.Remove(key);
+                    }
+                }
+            }
+            else if (ParameterSetName is PowerShellSetName)
+            {
+                var customCompleters = Context.CustomArgumentCompleters;
+                if (customCompleters != null)
+                {
+                    string paramName = ParameterName.Trim();
+                    if (paramName.Length is 0)
+                    {
+                        return;
+                    }
+
+                    if (CommandName is null || CommandName.Length is 0)
+                    {
+                        customCompleters.Remove(paramName);
+                        return;
+                    }
+
+                    foreach (string command in CommandName)
+                    {
+                        var key = command?.Trim();
+                        key = string.IsNullOrEmpty(key)
+                            ? paramName
+                            : $"{key}:{paramName}";
+
+                        customCompleters.Remove(key);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// This attribute is used to specify an argument completions for a parameter of a cmdlet or function
     /// based on string array.
     /// <example>
