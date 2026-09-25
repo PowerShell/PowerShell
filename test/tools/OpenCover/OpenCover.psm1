@@ -494,7 +494,7 @@ function Compare-CodeCoverage
         [Parameter(Mandatory=$true,Position=1,ParameterSetName="file")][string]$RunFile2,
         [Parameter(Mandatory=$true,Position=0,ParameterSetName="coverage")][Object]$Run1,
         [Parameter(Mandatory=$true,Position=1,ParameterSetName="coverage")][Object]$Run2,
-        [Parameter()][String[]]$ClassName,
+        [Parameter()][string[]]$ClassName,
         [Parameter()][switch]$Summary
         )
 
