@@ -157,6 +157,7 @@ namespace System.Management.Automation
             /*               AndAnd */ PSTokenType.Operator,
             /*                 OrOr */ PSTokenType.Operator,
             /*            Ampersand */ PSTokenType.Operator,
+            /*     AmpersandExclaim */ PSTokenType.Operator,
             /*                 Pipe */ PSTokenType.Operator,
             /*                Comma */ PSTokenType.Operator,
             /*           MinusMinus */ PSTokenType.Operator,
@@ -303,6 +304,7 @@ namespace System.Management.Automation
             /*               Hidden */ PSTokenType.Keyword,
             /*                 Base */ PSTokenType.Keyword,
             /*              Default */ PSTokenType.Keyword,
+            /*                Clean */ PSTokenType.Keyword,
 
             #endregion Flags for keywords
 
