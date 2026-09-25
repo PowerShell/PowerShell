@@ -5975,12 +5975,12 @@ namespace System.Management.Automation.Language
 
         private static Expression GetLikeRHSOperand(WildcardOptions options, Expression expr)
         {
-            if (!(expr is ConstantExpression constExpr))
+            if (expr is not ConstantExpression constExpr)
             {
                 return expr;
             }
 
-            if (!(constExpr.Value is string val))
+            if (constExpr.Value is not string val)
             {
                 return expr;
             }
