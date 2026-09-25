@@ -1,19 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Switch-Process tests for Unix' -Tags 'CI' {
-    BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ($IsWindows)
-        {
-            $PSDefaultParameterValues['It:Skip'] = $true
-            return
-        }
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-    }
+Describe 'Switch-Process tests for Unix' -Tags 'CI' -Skip:$IsWindows {
 
     It 'Exec function should map to Switch-Process' {
         $func = Get-Command exec
@@ -67,19 +55,7 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
     }
 }
 
-Describe 'Switch-Process for Windows' -Tag 'CI' {
-    BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (!$IsWindows)
-        {
-            $PSDefaultParameterValues['It:Skip'] = $true
-            return
-        }
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-    }
+Describe 'Switch-Process for Windows' -Tag 'CI' -Skip:(-not $IsWindows) {
 
     It 'Switch-Process should not be available' {
         Get-Command -Name Switch-Process -ErrorAction Ignore | Should -BeNullOrEmpty

@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 Describe "Using of ternary operator" -Tags CI {
-    BeforeAll {
+    BeforeDiscovery {
         $testCases = @(
             ## Condition: variable and constant expressions
             @{ Script = { $true ? 1 : 2 };  ExpectedValue = 1 }

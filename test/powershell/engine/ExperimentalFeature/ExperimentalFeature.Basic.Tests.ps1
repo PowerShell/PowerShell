@@ -1,42 +1,47 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# Evaluated at discovery time so each It's -Skip can be set up-front.
+# Pester 5 captures -Skip when It is declared, so setting
+# $PSDefaultParameterValues["it:skip"] inside BeforeAll (the previous
+# Pester 4 idiom) has no effect.
+$script:skipFeatureDisabledSuite = $EnabledExperimentalFeatures.Contains('ExpTest.FeatureOne')
+$script:skipFeatureEnabledSuite  = -not $script:skipFeatureDisabledSuite
+
 Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
 
     BeforeAll {
+        # Recompute at runtime because top-level variables don't flow into BeforeAll in Pester 5.
         $skipTest = $EnabledExperimentalFeatures.Contains('ExpTest.FeatureOne')
 
         if ($skipTest) {
             Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'ExpTest.FeatureOne' to be disabled." -Verbose
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-        } else {
-            ## Common parameters are defined in the type 'CommonParameters' as public properties.
-            $CommonParameterCount = [System.Management.Automation.Internal.CommonParameters].GetProperties().Length
-            $TestModule = Join-Path $PSScriptRoot "assets" "ExpTest"
-            $AssemblyPath = Join-Path $TestModule "ExpTest.dll"
-            if (-not (Test-Path $AssemblyPath)) {
-                ## When using $SourcePath directly, 'Add-Type' fails in Windows CI runs with an 'access denied' error.
-                ## It turns out Pester doesn't handle an exception like this from 'BeforeAll'. It causes the Pester to
-                ## be somehow corrupted, and results in random failures in other tests.
-                ## To work around this issue, we copy the source file to 'TestDrive' before calling 'Add-Type'.
-                $SourcePath = Join-Path $TestModule "ExpTest.cs"
-                $SourcePath = (Copy-Item $SourcePath TestDrive:\ -PassThru).FullName
-                Add-Type -Path $SourcePath -OutputType Library -OutputAssembly $AssemblyPath
-            }
-            $moduleInfo = Import-Module $TestModule -PassThru
+            return
         }
+
+        ## Common parameters are defined in the type 'CommonParameters' as public properties.
+        $CommonParameterCount = [System.Management.Automation.Internal.CommonParameters].GetProperties().Length
+        $TestModule = Join-Path $PSScriptRoot "assets" "ExpTest"
+        $AssemblyPath = Join-Path $TestModule "ExpTest.dll"
+        if (-not (Test-Path $AssemblyPath)) {
+            ## When using $SourcePath directly, 'Add-Type' fails in Windows CI runs with an 'access denied' error.
+            ## It turns out Pester doesn't handle an exception like this from 'BeforeAll'. It causes the Pester to
+            ## be somehow corrupted, and results in random failures in other tests.
+            ## To work around this issue, we copy the source file to 'TestDrive' before calling 'Add-Type'.
+            $SourcePath = Join-Path $TestModule "ExpTest.cs"
+            $SourcePath = (Copy-Item $SourcePath TestDrive:\ -PassThru).FullName
+            Add-Type -Path $SourcePath -OutputType Library -OutputAssembly $AssemblyPath
+        }
+        $moduleInfo = Import-Module $TestModule -PassThru
     }
 
     AfterAll {
-        if ($skipTest) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        } else {
+        if ($null -ne $moduleInfo) {
             Remove-Module -ModuleInfo $moduleInfo -Force -ErrorAction SilentlyContinue
         }
     }
 
-    It "Replace existing command <Name> - version one should be shown" -TestCases @(
+    It "Replace existing command <Name> - version one should be shown" -Skip:$skipFeatureDisabledSuite -TestCases @(
         @{ Name = "Invoke-AzureFunction"; CommandType = "Function" }
         @{ Name = "Invoke-AzureFunctionCSharp"; CommandType = "Cmdlet" }
     ) {
@@ -53,7 +58,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         }
     }
 
-    It "Experimental parameter set - '<Name>' should NOT have '-SwitchOne' and '-SwitchTwo'" -TestCases @(
+    It "Experimental parameter set - '<Name>' should NOT have '-SwitchOne' and '-SwitchTwo'" -Skip:$skipFeatureDisabledSuite -TestCases @(
         @{ Name = "Get-GreetingMessage"; CommandType = "Function" }
         @{ Name = "Get-GreetingMessageCSharp"; CommandType = "Cmdlet" }
     ) {
@@ -65,7 +70,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         & $Name -Name Joe | Should -BeExactly "Hello World Joe."
     }
 
-    It "Experimental parameter set - '<Name>' should NOT have 'WebSocket' parameter set" -TestCases @(
+    It "Experimental parameter set - '<Name>' should NOT have 'WebSocket' parameter set" -Skip:$skipFeatureDisabledSuite -TestCases @(
         @{ Name = "Invoke-MyCommand"; CommandType = "Function" }
         @{ Name = "Invoke-MyCommandCSharp"; CommandType = "Cmdlet" }
     ) {
@@ -110,7 +115,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         & $Name -VMName "VM" -Port "80" | Should -BeExactly "Invoke-MyCommand with VMSet"
     }
 
-    It "Experimental parameter set - '<Name>' should have '-SessionName' only" -TestCases @(
+    It "Experimental parameter set - '<Name>' should have '-SessionName' only" -Skip:$skipFeatureDisabledSuite -TestCases @(
         @{ Name = "Test-MyRemoting"; CommandType = "Function" }
         @{ Name = "Test-MyRemotingCSharp"; CommandType = "Cmdlet" }
     ) {
@@ -123,7 +128,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         $command.Parameters.ContainsKey("ComputerName") | Should -BeFalse
     }
 
-    It "Use 'Experimental' attribute directly on parameters - '<Name>'" -TestCases @(
+    It "Use 'Experimental' attribute directly on parameters - '<Name>'" -Skip:$skipFeatureDisabledSuite -TestCases @(
         @{ Name = "Save-MyFile"; CommandType = "Function" }
         @{ Name = "Save-MyFileCSharp"; CommandType = "Cmdlet" }
     ) {
@@ -150,7 +155,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         $command.Parameters.ContainsKey("Destination") | Should -BeFalse
     }
 
-    It "Dynamic parameters - <CommandType>-<Name>" -TestCases @(
+    It "Dynamic parameters - <CommandType>-<Name>" -Skip:$skipFeatureDisabledSuite -TestCases @(
         @{ Name = "Test-MyDynamicParamOne"; CommandType = "Function" }
         @{ Name = "Test-MyDynamicParamOneCSharp"; CommandType = "Cmdlet" }
         @{ Name = "Test-MyDynamicParamTwo"; CommandType = "Function" }
@@ -181,36 +186,33 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
 
         if ($skipTest) {
             Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'ExpTest.FeatureOne' to be enabled." -Verbose
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-        } else {
-            ## Common parameters are defined in the type 'CommonParameters' as public properties.
-            $CommonParameterCount = [System.Management.Automation.Internal.CommonParameters].GetProperties().Length
-            $TestModule = Join-Path $PSScriptRoot "assets" "ExpTest"
-            $AssemblyPath = Join-Path $TestModule "ExpTest.dll"
-            if (-not (Test-Path $AssemblyPath)) {
-                $SourcePath = Join-Path $TestModule "ExpTest.cs"
-                $SourcePath = (Copy-Item $SourcePath TestDrive:\ -PassThru).FullName
-                Add-Type -Path $SourcePath -OutputType Library -OutputAssembly $AssemblyPath
-            }
-            $moduleInfo = Import-Module $TestModule -PassThru
+            return
         }
+
+        ## Common parameters are defined in the type 'CommonParameters' as public properties.
+        $CommonParameterCount = [System.Management.Automation.Internal.CommonParameters].GetProperties().Length
+        $TestModule = Join-Path $PSScriptRoot "assets" "ExpTest"
+        $AssemblyPath = Join-Path $TestModule "ExpTest.dll"
+        if (-not (Test-Path $AssemblyPath)) {
+            $SourcePath = Join-Path $TestModule "ExpTest.cs"
+            $SourcePath = (Copy-Item $SourcePath TestDrive:\ -PassThru).FullName
+            Add-Type -Path $SourcePath -OutputType Library -OutputAssembly $AssemblyPath
+        }
+        $moduleInfo = Import-Module $TestModule -PassThru
     }
 
     AfterAll {
-        if ($skipTest) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        } else {
+        if ($null -ne $moduleInfo) {
             Remove-Module -ModuleInfo $moduleInfo -Force -ErrorAction SilentlyContinue
         }
     }
 
-    It "Experimental feature 'ExpTest.FeatureOne' should be enabled" {
+    It "Experimental feature 'ExpTest.FeatureOne' should be enabled" -Skip:$skipFeatureEnabledSuite {
         $EnabledExperimentalFeatures.Count | Should -Be 1
         $EnabledExperimentalFeatures -contains "ExpTest.FeatureOne" | Should -BeTrue
     }
 
-    It "Replace existing command <Name> - version two should be shown" -TestCases @(
+    It "Replace existing command <Name> - version two should be shown" -Skip:$skipFeatureEnabledSuite -TestCases @(
         @{ Name = "Invoke-AzureFunction"; CommandType = "Alias" }
         @{ Name = "Invoke-AzureFunctionCSharp"; CommandType = "Cmdlet" }
     ) {
@@ -228,7 +230,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         }
     }
 
-    It "Experimental parameter set - '<Name>' should have '-SwitchOne' and '-SwitchTwo'" -TestCases @(
+    It "Experimental parameter set - '<Name>' should have '-SwitchOne' and '-SwitchTwo'" -Skip:$skipFeatureEnabledSuite -TestCases @(
         @{ Name = "Get-GreetingMessage"; CommandType = "Function" }
         @{ Name = "Get-GreetingMessageCSharp"; CommandType = "Cmdlet" }
     ) {
@@ -244,7 +246,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         & $Name -Name Joe -SwitchTwo | Should -BeExactly "Hello World Joe.-SwitchTwo is on."
     }
 
-    It "Experimental parameter set - '<Name>' should have 'WebSocket' parameter set" -TestCases @(
+    It "Experimental parameter set - '<Name>' should have 'WebSocket' parameter set" -Skip:$skipFeatureEnabledSuite -TestCases @(
         @{ Name = "Invoke-MyCommand"; CommandType = "Function" }
         @{ Name = "Invoke-MyCommandCSharp"; CommandType = "Cmdlet" }
     ) {
@@ -308,7 +310,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         & $Name -Token "token" -WebSocketUrl 'url' -ConfigurationName 'config' -Port 80 | Should -BeExactly "Invoke-MyCommand with WebSocketSet"
     }
 
-    It "Experimental parameter set - '<Name>' should have '-ComputerName' only" -TestCases @(
+    It "Experimental parameter set - '<Name>' should have '-ComputerName' only" -Skip:$skipFeatureEnabledSuite -TestCases @(
         @{ Name = "Test-MyRemoting"; CommandType = "Function" }
         @{ Name = "Test-MyRemotingCSharp"; CommandType = "Cmdlet" }
     ) {
@@ -321,7 +323,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command.Parameters.ContainsKey("SessionName") | Should -BeFalse
     }
 
-    It "Use 'Experimental' attribute directly on parameters - '<Name>'" -TestCases @(
+    It "Use 'Experimental' attribute directly on parameters - '<Name>'" -Skip:$skipFeatureEnabledSuite -TestCases @(
         @{ Name = "Save-MyFile"; CommandType = "Function" }
         @{ Name = "Save-MyFileCSharp"; CommandType = "Cmdlet" }
     ) {
@@ -347,7 +349,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command.Parameters.ContainsKey("Configuration") | Should -BeFalse
     }
 
-    It "Dynamic parameters - <CommandType>-<Name>" -TestCases @(
+    It "Dynamic parameters - <CommandType>-<Name>" -Skip:$skipFeatureEnabledSuite -TestCases @(
         @{ Name = "Test-MyDynamicParamOne"; CommandType = "Function" }
         @{ Name = "Test-MyDynamicParamOneCSharp"; CommandType = "Cmdlet" }
         @{ Name = "Test-MyDynamicParamTwo"; CommandType = "Function" }

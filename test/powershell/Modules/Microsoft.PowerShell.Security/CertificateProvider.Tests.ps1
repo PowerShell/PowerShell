@@ -26,23 +26,7 @@ foreach($location in $currentUserMyLocations)
     $testLocations += $location
 }
 
-Describe "Certificate Provider tests" -Tags "CI" {
-    BeforeAll{
-        if(!$IsWindows)
-        {
-            # Skip for non-Windows platforms
-            $defaultParamValues = $global:PSDefaultParameterValues.Clone()
-            $global:PSDefaultParameterValues = @{ "it:skip" = $true }
-        }
-    }
-
-    AfterAll {
-        if(!$IsWindows)
-        {
-            $global:PSDefaultParameterValues = $defaultParamValues
-        }
-    }
-
+Describe "Certificate Provider tests" -Tags "CI" -Skip:(-not $IsWindows) {
     Context "Get-Item tests" {
         It "Should be able to get a certificate store, path: <path>" -TestCases $testLocations {
             param([string] $path)
@@ -78,37 +62,22 @@ Describe "Certificate Provider tests" -Tags "CI" {
     }
 }
 
-Describe "Certificate Provider tests" -Tags "Feature" {
+Describe "Certificate Provider tests" -Tags "Feature" -Skip:(-not $IsWindows) {
     BeforeAll{
-        if($IsWindows)
-        {
-            if (-not (Install-TestCertificates) ) {
-                $SetupFailure = $true
-            }
-            else {
-                Push-Location Cert:\
-                $SetupFailure = $false
-            }
+        if (-not (Install-TestCertificates) ) {
+            $SetupFailure = $true
         }
-        else
-        {
-            # Skip for non-Windows platforms
-            $defaultParamValues = $global:PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues = @{ "it:skip" = $true }
+        else {
+            Push-Location Cert:\
+            $SetupFailure = $false
         }
     }
 
     AfterAll {
-        if($IsWindows -and -not $SetupFailure)
+        if(-not $SetupFailure)
         {
             Remove-TestCertificates
             Pop-Location
-        }
-        else
-        {
-            if ($defaultParamValues -ne $null) {
-                $global:PSDefaultParameterValues = $defaultParamValues
-            }
         }
     }
 

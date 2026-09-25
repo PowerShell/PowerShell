@@ -1,13 +1,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-$ps = Join-Path -Path $PSHOME -ChildPath "pwsh"
 
 Describe "Set-PSBreakpoint DRT Unit Tests" -Tags "CI" {
     #Set up
-    $scriptFileName = Join-Path $TestDrive -ChildPath breakpointTestScript.ps1
-    $scriptFileNameBug = Join-Path -Path $TestDrive -ChildPath SetPSBreakpointTests.ExposeBug154112.ps1
+    BeforeAll {
+        $ps = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        $scriptFileName = Join-Path $TestDrive -ChildPath breakpointTestScript.ps1
+        $scriptFileNameBug = Join-Path -Path $TestDrive -ChildPath SetPSBreakpointTests.ExposeBug154112.ps1
 
-    $contents = @"
+        $contents = @"
 function Hello
 {
     `$greeting = 'Hello, world!'
@@ -30,13 +31,14 @@ Goodbye
 return
 "@
 
-    $contentsBug = @"
+        $contentsBug = @"
 set-psbreakpoint -variable foo
 set-psbreakpoint -command foo
 "@
 
-    $contents > $scriptFileName
-    $contentsBug > $scriptFileNameBug
+        $contents > $scriptFileName
+        $contentsBug > $scriptFileNameBug
+    }
 
     It "Should be able to set psbreakpoints for -Line" {
         $brk = Set-PSBreakpoint -Line 13 -Script $scriptFileName
@@ -86,12 +88,12 @@ set-psbreakpoint -command foo
         Remove-PSBreakpoint -Id $brk.Id
     }
 
-    It "Should throw Exception when missing mandatory parameter -line" -Pending {
+    It "Should throw Exception when missing mandatory parameter -line" -Skip {
          $output = & $ps -noninteractive -command "sbp -column 1 -script $scriptFileName"
          [system.string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
-    It "Should throw Exception when missing mandatory parameter" -Pending {
+    It "Should throw Exception when missing mandatory parameter" -Skip {
          $output = & $ps -noprofile -noninteractive -command "sbp -line 1"
          [system.string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
@@ -180,15 +182,19 @@ set-psbreakpoint -command foo
     }
 
     # clean up
+    AfterAll {
     Remove-Item -Path $scriptFileName -Force
     Remove-Item -Path $scriptFileNameBug -Force
+    }
 }
 
 Describe "Set-PSBreakpoint" -Tags "CI" {
     # Set up test script
-    $testScript = Join-Path -Path $PSScriptRoot -ChildPath psbreakpointtestscript.ps1
+    BeforeAll {
+        $testScript = Join-Path -Path $PSScriptRoot -ChildPath psbreakpointtestscript.ps1
 
-    "`$var = 1 " > $testScript
+        "`$var = 1 " > $testScript
+    }
 
     It "Should be able to set a psbreakpoint on a line" {
         $lineNumber = 1
@@ -220,5 +226,7 @@ Describe "Set-PSBreakpoint" -Tags "CI" {
     }
 
     # clean up after ourselves
+    AfterAll {
     Remove-Item -Path $testScript
+    }
 }

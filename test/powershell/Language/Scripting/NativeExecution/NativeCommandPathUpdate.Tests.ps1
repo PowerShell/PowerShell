@@ -7,85 +7,92 @@ if (-not $IsWindows) {
     return;
 }
 
-function GetEnvPathLiteralValue {
-    param(
-        [System.EnvironmentVariableTarget] $Target
-    )
+BeforeDiscovery {
+    $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    $skipNotAdmin = -not $isAdmin
+}
 
-    if ($Target -eq 'User') {
-        $regKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment')
-    } elseif ($Target -eq 'Machine') {
-        $regKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment')
-    } else {
-        return [PSCustomObject]@{ Kind = $null; Value = $env:Path }
-    }
+Describe "Path update for package managers" -tags @('CI', 'RequireAdminOnWindows') -Skip:$skipNotAdmin {
 
-    try {
-        $kind = $regKey.GetValueKind('Path')
-        $value = $regKey.GetValue('Path', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+    BeforeAll {
+        function GetEnvPathLiteralValue {
+            param(
+                [System.EnvironmentVariableTarget] $Target
+            )
 
-        return [PSCustomObject]@{
-            Kind = $kind
-            Value = $value
+            if ($Target -eq 'User') {
+                $regKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment')
+            } elseif ($Target -eq 'Machine') {
+                $regKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment')
+            } else {
+                return [PSCustomObject]@{ Kind = $null; Value = $env:Path }
+            }
+
+            try {
+                $kind = $regKey.GetValueKind('Path')
+                $value = $regKey.GetValue('Path', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+
+                return [PSCustomObject]@{
+                    Kind = $kind
+                    Value = $value
+                }
+            }
+            finally {
+                ${regKey}?.Dispose()
+            }
+        }
+
+        function RestoreEnvPath {
+            param(
+                [System.EnvironmentVariableTarget] $Target,
+                [Microsoft.Win32.RegistryValueKind] $ValueKind,
+                [string] $LiteralValue
+            )
+
+            ## Open the registry key with 'write' access.
+            if ($Target -eq 'User') {
+                $regKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true)
+            } elseif ($Target -eq 'Machine') {
+                $regKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment', $true)
+            } else {
+                ## Ignore value kind when restoring the in-proc env Path.
+                $env:Path = $LiteralValue
+                return
+            }
+
+            try {
+                $regKey.SetValue('Path', $LiteralValue, $ValueKind)
+            } finally {
+                ${regKey}?.Dispose()
+            }
+        }
+
+        function UpdatePackageManager {
+            param(
+                [Parameter(ParameterSetName = 'Add')]
+                [switch] $Add,
+
+                [Parameter(ParameterSetName = 'Remove')]
+                [switch] $Remove,
+
+                [string] $Name
+            )
+
+            $regKeyPath = 'HKLM:\Software\Microsoft\Command Processor\KnownPackageManagers'
+            $keyExists = Test-Path -Path $regKeyPath
+            if (-not $keyExists) {
+                Write-Host -ForegroundColor Cyan "The registry key 'KnownPackageManagers' doesn't exist."
+            }
+
+            $subKeyPath = "$regKeyPath\$Name"
+            if ($Add) {
+                $null = New-Item $subKeyPath -Force -ErrorAction Stop
+            }
+            elseif ($Remove -and $keyExists) {
+                Remove-Item $subKeyPath -Recurse -Force -ErrorAction Stop
+            }
         }
     }
-    finally {
-        ${regKey}?.Dispose()
-    }
-}
-
-function RestoreEnvPath {
-    param(
-        [System.EnvironmentVariableTarget] $Target,
-        [Microsoft.Win32.RegistryValueKind] $ValueKind,
-        [string] $LiteralValue
-    )
-
-    ## Open the registry key with 'write' access.
-    if ($Target -eq 'User') {
-        $regKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true)
-    } elseif ($Target -eq 'Machine') {
-        $regKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment', $true)
-    } else {
-        ## Ignore value kind when restoring the in-proc env Path.
-        $env:Path = $LiteralValue
-        return
-    }
-
-    try {
-        $regKey.SetValue('Path', $LiteralValue, $ValueKind)
-    } finally {
-        ${regKey}?.Dispose()
-    }
-}
-
-function UpdatePackageManager {
-    param(
-        [Parameter(ParameterSetName = 'Add')]
-        [switch] $Add,
-
-        [Parameter(ParameterSetName = 'Remove')]
-        [switch] $Remove,
-
-        [string] $Name
-    )
-
-    $regKeyPath = 'HKLM:\Software\Microsoft\Command Processor\KnownPackageManagers'
-    $keyExists = Test-Path -Path $regKeyPath
-    if (-not $keyExists) {
-        Write-Host -ForegroundColor Cyan "The registry key 'KnownPackageManagers' doesn't exist."
-    }
-
-    $subKeyPath = "$regKeyPath\$Name"
-    if ($Add) {
-        $null = New-Item $subKeyPath -Force -ErrorAction Stop
-    }
-    elseif ($Remove -and $keyExists) {
-        Remove-Item $subKeyPath -Recurse -Force -ErrorAction Stop
-    }
-}
-
-Describe "Path update for package managers" -tags @('CI', 'RequireAdminOnWindows') {
 
     It "Path update is off for an executable that is not registered" {
         try {

@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Set-Content cmdlet tests" -Tags "CI" {
+    BeforeDiscovery {
+        # if the registry doesn't exist, don't run those tests
+        $skipRegistry = ! (Test-Path hklm:/)
+    }
     BeforeAll {
         $file1 = "file1.txt"
         $filePath1 = Join-Path $testdrive $file1
@@ -116,7 +120,7 @@ Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI
         $null = New-Item -Path $randomFolderPath -ItemType Directory -ErrorAction SilentlyContinue
     }
     # test is Pending due to https://github.com/PowerShell/PowerShell/issues/3883
-    It "should create a file in a psdrive with UNC path as root" -Pending {
+    It "should create a file in a psdrive with UNC path as root" -Skip {
         try
         {
             # create share

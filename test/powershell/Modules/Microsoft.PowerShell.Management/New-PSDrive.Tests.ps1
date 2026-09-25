@@ -24,12 +24,12 @@ Describe "Tests for New-PSDrive cmdlet." -Tag "CI","RequireAdminOnWindows" {
         }
 
         It "Should throw exception if root is not a remote share." -Skip:(-not $IsWindows) {
-            { New-PSDrive -Name $PSDriveName -PSProvider FileSystem -Root "TestDrive:\" -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveRootNotNetworkPath'
+            { New-PSDrive -Name $PSDriveName -PSProvider FileSystem -Root "TestDrive:\" -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveRootNotNetworkPath,*'
         }
 
         It "Should throw exception if PSDrive is not a drive letter supported by operating system." -Skip:(-not $IsWindows) {
             $PSDriveName = 'AB'
-            { New-PSDrive -Name $PSDriveName -PSProvider FileSystem -Root $RemoteShare -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveNameNotSupportedForPersistence'
+            { New-PSDrive -Name $PSDriveName -PSProvider FileSystem -Root $RemoteShare -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveNameNotSupportedForPersistence,*'
         }
     }
 }

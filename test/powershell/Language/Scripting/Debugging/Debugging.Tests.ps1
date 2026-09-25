@@ -62,7 +62,8 @@ Describe "Breakpoints when set should be hit" -Tag "CI" {
 'bb'.ToSTring() > $null
 'bbb'
 '@
-            $path = Setup -PassThru -File BasicTest.ps1 -Content $script
+            $path = Join-Path $TestDrive 'BasicTest.ps1'
+            Set-Content -Path $path -Value $script
             $bps = 1..6 | ForEach-Object { Set-PSBreakpoint -Script $path -Line $_ -Action { continue } }
         }
 
@@ -87,7 +88,8 @@ switch ($test)
     default {}
 }
 '@
-            $path = Setup -PassThru -File SwitchScript.ps1 -Content $script
+            $path = Join-Path $TestDrive 'SwitchScript.ps1'
+            Set-Content -Path $path -Value $script
             $breakpoint = Set-PSBreakpoint -Script $path -Line 2 -Action { continue }
         }
 
@@ -103,6 +105,16 @@ switch ($test)
     }
 
     Context "Break point on for-statement initializer should be hit" {
+        BeforeDiscovery {
+            $forTestCases = @(
+                @{ Name = "expression initializer should be hit once";    Index = 0 }
+                @{ Name = "pipeline initializer should be hit once";      Index = 1 }
+                @{ Name = "assignment initializer should be hit 3 times"; Index = 2 }
+                @{ Name = "pipeline condition should be hit 3 times";     Index = 3 }
+                @{ Name = "pipeline condition should be hit 2 times";     Index = 4 }
+            )
+        }
+
         BeforeAll {
             $for_script_1 = @'
 $test = 2
@@ -134,19 +146,24 @@ for (;Test-Path $test;)
     $test = "blah"
 }
 '@
-            $ForScript_1 = Setup -PassThru -File ForScript_1.ps1 -Content $for_script_1
+            $ForScript_1 = Join-Path $TestDrive 'ForScript_1.ps1'
+            Set-Content -Path $ForScript_1 -Value $for_script_1
             $bp_1 = Set-PSBreakpoint -Script $ForScript_1 -Line 2 -Action { continue }
 
-            $ForScript_2 = Setup -PassThru -File ForScript_2.ps1 -Content $for_script_2
+            $ForScript_2 = Join-Path $TestDrive 'ForScript_2.ps1'
+            Set-Content -Path $ForScript_2 -Value $for_script_2
             $bp_2 = Set-PSBreakpoint -Script $ForScript_2 -Line 2 -Action { continue }
 
-            $ForScript_3 = Setup -PassThru -File ForScript_3.ps1 -Content $for_script_3
+            $ForScript_3 = Join-Path $TestDrive 'ForScript_3.ps1'
+            Set-Content -Path $ForScript_3 -Value $for_script_3
             $bp_3 = Set-PSBreakpoint -Script $ForScript_3 -Line 1 -Action { continue }
 
-            $ForScript_4 = Setup -PassThru -File ForScript_4.ps1 -Content $for_script_4
+            $ForScript_4 = Join-Path $TestDrive 'ForScript_4.ps1'
+            Set-Content -Path $ForScript_4 -Value $for_script_4
             $bp_4 = Set-PSBreakpoint -Script $ForScript_4 -Line 2 -Action { continue }
 
-            $ForScript_5 = Setup -PassThru -File ForScript_5.ps1 -Content $for_script_5
+            $ForScript_5 = Join-Path $TestDrive 'ForScript_5.ps1'
+            Set-Content -Path $ForScript_5 -Value $for_script_5
             $bp_5 = Set-PSBreakpoint -Script $ForScript_5 -Line 2 -Action { continue }
 
             $testCases = @(
@@ -162,14 +179,22 @@ for (;Test-Path $test;)
             Get-PSBreakpoint -Script $ForScript_1, $ForScript_2, $ForScript_3, $ForScript_4, $ForScript_5 | Remove-PSBreakpoint
         }
 
-        It "for-statement <Name>" -TestCases $testCases {
-            param($Path, $Breakpoint, $HitCount)
-            $null = & $Path
-            $Breakpoint.HitCount | Should -Be $HitCount
+        It "for-statement <Name>" -TestCases $forTestCases {
+            param($Name, $Index)
+            $tc = $testCases[$Index]
+            $null = & $tc.Path
+            $tc.Breakpoint.HitCount | Should -Be $tc.HitCount
         }
     }
 
     Context "Break point on while loop condition should be hit" {
+        BeforeDiscovery {
+            $whileTestCases = @(
+                @{ Name = "expression condition should be hit 2 times"; Index = 0 }
+                @{ Name = "pipeline condition should be hit 2 times";   Index = 1 }
+            )
+        }
+
         BeforeAll {
             $while_script_1 = @'
 $test = "string"
@@ -186,10 +211,12 @@ while (Test-Path $test)
     $test = "blah"
 }
 '@
-            $WhileScript_1 = Setup -PassThru -File WhileScript_1.ps1 -Content $while_script_1
+            $WhileScript_1 = Join-Path $TestDrive 'WhileScript_1.ps1'
+            Set-Content -Path $WhileScript_1 -Value $while_script_1
             $bp_1 = Set-PSBreakpoint -Script $WhileScript_1 -Line 2 -Action { continue }
 
-            $WhileScript_2 = Setup -PassThru -File WhileScript_2.ps1 -Content $while_script_2
+            $WhileScript_2 = Join-Path $TestDrive 'WhileScript_2.ps1'
+            Set-Content -Path $WhileScript_2 -Value $while_script_2
             $bp_2 = Set-PSBreakpoint -Script $WhileScript_2 -Line 2 -Action { continue }
 
             $testCases = @(
@@ -202,14 +229,22 @@ while (Test-Path $test)
             Get-PSBreakpoint -Script $WhileScript_1, $WhileScript_2 | Remove-PSBreakpoint
         }
 
-        It "while loop <Name>" -TestCases $testCases {
-            param($Path, $Breakpoint, $HitCount)
-            $null = & $Path
-            $Breakpoint.HitCount | Should -Be $HitCount
+        It "while loop <Name>" -TestCases $whileTestCases {
+            param($Name, $Index)
+            $tc = $testCases[$Index]
+            $null = & $tc.Path
+            $tc.Breakpoint.HitCount | Should -Be $tc.HitCount
         }
     }
 
     Context "Break point on do-while loop condition should be hit" {
+        BeforeDiscovery {
+            $doWhileTestCases = @(
+                @{ Name = "expression condition should be hit 2 times"; Index = 0 }
+                @{ Name = "pipeline condition should be hit 2 times";   Index = 1 }
+            )
+        }
+
         BeforeAll {
             $do_while_script_1 = @'
 $test = "blah"
@@ -222,10 +257,12 @@ $test = "blah"
 do { echo $test }
 while (Test-Path $test)
 '@
-            $DoWhileScript_1 = Setup -PassThru -File DoWhileScript_1.ps1 -Content $do_while_script_1
+            $DoWhileScript_1 = Join-Path $TestDrive 'DoWhileScript_1.ps1'
+            Set-Content -Path $DoWhileScript_1 -Value $do_while_script_1
             $bp_1 = Set-PSBreakpoint -Script $DoWhileScript_1 -Line 2 -Action { continue }
 
-            $DoWhileScript_2 = Setup -PassThru -File DoWhileScript_2.ps1 -Content $do_while_script_2
+            $DoWhileScript_2 = Join-Path $TestDrive 'DoWhileScript_2.ps1'
+            Set-Content -Path $DoWhileScript_2 -Value $do_while_script_2
             $bp_2 = Set-PSBreakpoint -Script $DoWhileScript_2 -Line 2 -Action { continue }
 
             $testCases = @(
@@ -238,14 +275,22 @@ while (Test-Path $test)
             Get-PSBreakpoint -Script $DoWhileScript_1, $DoWhileScript_2 | Remove-PSBreakpoint
         }
 
-        It "Do-While loop <Name>" -TestCases $testCases {
-            param($Path, $Breakpoint, $HitCount)
-            $null = & $Path
-            $Breakpoint.HitCount | Should -Be $HitCount
+        It "Do-While loop <Name>" -TestCases $doWhileTestCases {
+            param($Name, $Index)
+            $tc = $testCases[$Index]
+            $null = & $tc.Path
+            $tc.Breakpoint.HitCount | Should -Be $tc.HitCount
         }
     }
 
     Context "Break point on do-until loop condition should be hit" {
+        BeforeDiscovery {
+            $doUntilTestCases = @(
+                @{ Name = "expression condition should be hit 2 times"; Index = 0 }
+                @{ Name = "pipeline condition should be hit 2 times";   Index = 1 }
+            )
+        }
+
         BeforeAll {
             $do_until_script_1 = @'
 $test = "blah"
@@ -258,10 +303,12 @@ $test = $PSCommandPath
 do { echo $test }
 until (Test-Path $test)
 '@
-            $DoUntilScript_1 = Setup -PassThru -File DoUntilScript_1.ps1 -Content $do_until_script_1
+            $DoUntilScript_1 = Join-Path $TestDrive 'DoUntilScript_1.ps1'
+            Set-Content -Path $DoUntilScript_1 -Value $do_until_script_1
             $bp_1 = Set-PSBreakpoint -Script $DoUntilScript_1 -Line 2 -Action { continue }
 
-            $DoUntilScript_2 = Setup -PassThru -File DoUntilScript_2.ps1 -Content $do_until_script_2
+            $DoUntilScript_2 = Join-Path $TestDrive 'DoUntilScript_2.ps1'
+            Set-Content -Path $DoUntilScript_2 -Value $do_until_script_2
             $bp_2 = Set-PSBreakpoint -Script $DoUntilScript_2 -Line 2 -Action { continue }
 
             $testCases = @(
@@ -274,14 +321,24 @@ until (Test-Path $test)
             Get-PSBreakpoint -Script $DoUntilScript_1, $DoUntilScript_2 | Remove-PSBreakpoint
         }
 
-        It "Do-Until loop <Name>" -TestCases $testCases {
-            param($Path, $Breakpoint, $HitCount)
-            $null = & $Path
-            $Breakpoint.HitCount | Should -Be $HitCount
+        It "Do-Until loop <Name>" -TestCases $doUntilTestCases {
+            param($Name, $Index)
+            $tc = $testCases[$Index]
+            $null = & $tc.Path
+            $tc.Breakpoint.HitCount | Should -Be $tc.HitCount
         }
     }
 
     Context "Break point on if condition should be hit" {
+        BeforeDiscovery {
+            $ifTestCases = @(
+                @{ Name = "expression if-condition should be hit once";     Index = 0 }
+                @{ Name = "pipeline if-condition should be hit once";       Index = 1 }
+                @{ Name = "expression elseif-condition should be hit once"; Index = 2 }
+                @{ Name = "pipeline elseif-condition should be hit once";   Index = 3 }
+            )
+        }
+
         BeforeAll {
             $if_script_1 = @'
 if ("string".Contains('str'))
@@ -301,16 +358,20 @@ if ($false) {}
 elseif (Test-Path $PSCommandPath)
 { }
 '@
-            $IfScript_1 = Setup -PassThru -File IfScript_1.ps1 -Content $if_script_1
+            $IfScript_1 = Join-Path $TestDrive 'IfScript_1.ps1'
+            Set-Content -Path $IfScript_1 -Value $if_script_1
             $bp_1 = Set-PSBreakpoint -Script $IfScript_1 -Line 1 -Action { continue }
 
-            $IfScript_2 = Setup -PassThru -File IfScript_2.ps1 -Content $if_script_2
+            $IfScript_2 = Join-Path $TestDrive 'IfScript_2.ps1'
+            Set-Content -Path $IfScript_2 -Value $if_script_2
             $bp_2 = Set-PSBreakpoint -Script $IfScript_2 -Line 1 -Action { continue }
 
-            $IfScript_3 = Setup -PassThru -File IfScript_3.ps1 -Content $if_script_3
+            $IfScript_3 = Join-Path $TestDrive 'IfScript_3.ps1'
+            Set-Content -Path $IfScript_3 -Value $if_script_3
             $bp_3 = Set-PSBreakpoint -Script $IfScript_3 -Line 2 -Action { continue }
 
-            $IfScript_4 = Setup -PassThru -File IfScript_4.ps1 -Content $if_script_4
+            $IfScript_4 = Join-Path $TestDrive 'IfScript_4.ps1'
+            Set-Content -Path $IfScript_4 -Value $if_script_4
             $bp_4 = Set-PSBreakpoint -Script $IfScript_4 -Line 2 -Action { continue }
 
             $testCases = @(
@@ -325,14 +386,23 @@ elseif (Test-Path $PSCommandPath)
             Get-PSBreakpoint -Script $IfScript_1, $IfScript_2, $IfScript_3, $IfScript_4 | Remove-PSBreakpoint
         }
 
-        It "If statement <Name>" -TestCases $testCases {
-            param($Path, $Breakpoint, $HitCount)
-            $null = & $Path
-            $Breakpoint.HitCount | Should -Be $HitCount
+        It "If statement <Name>" -TestCases $ifTestCases {
+            param($Name, $Index)
+            $tc = $testCases[$Index]
+            $null = & $tc.Path
+            $tc.Breakpoint.HitCount | Should -Be $tc.HitCount
         }
     }
 
     Context "Break point on return should hit" {
+        BeforeDiscovery {
+            $returnTestCases = @(
+                @{ Name = "return without pipeline should be hit once"; Index = 0 }
+                @{ Name = "return with pipeline should be hit once";    Index = 1 }
+                @{ Name = "return from trap should be hit once";        Index = 2 }
+            )
+        }
+
         BeforeAll {
             $return_script_1 = @'
 return
@@ -349,13 +419,16 @@ trap {
 throw
 '@
 
-            $ReturnScript_1 = Setup -PassThru -File ReturnScript_1.ps1 -Content $return_script_1
+            $ReturnScript_1 = Join-Path $TestDrive 'ReturnScript_1.ps1'
+            Set-Content -Path $ReturnScript_1 -Value $return_script_1
             $bp_1 = Set-PSBreakpoint -Script $ReturnScript_1 -Line 1 -Action { continue }
 
-            $ReturnScript_2 = Setup -PassThru -File ReturnScript_2.ps1 -Content $return_script_2
+            $ReturnScript_2 = Join-Path $TestDrive 'ReturnScript_2.ps1'
+            Set-Content -Path $ReturnScript_2 -Value $return_script_2
             $bp_2 = Set-PSBreakpoint -Script $ReturnScript_2 -Line 1 -Action { continue }
 
-            $ReturnScript_3 = Setup -PassThru -File ReturnScript_3.ps1 -Content $return_script_3
+            $ReturnScript_3 = Join-Path $TestDrive 'ReturnScript_3.ps1'
+            Set-Content -Path $ReturnScript_3 -Value $return_script_3
             $bp_3 = Set-PSBreakpoint -Script $ReturnScript_3 -Line 3 -Action { continue }
 
             $testCases = @(
@@ -369,10 +442,11 @@ throw
             Get-PSBreakpoint -Script $ReturnScript_1, $ReturnScript_2, $ReturnScript_3 | Remove-PSBreakpoint
         }
 
-        It "Return statement <Name>" -TestCases $testCases {
-            param($Path, $Breakpoint, $HitCount)
-            $null = & $Path
-            $Breakpoint.HitCount | Should -Be $HitCount
+        It "Return statement <Name>" -TestCases $returnTestCases {
+            param($Name, $Index)
+            $tc = $testCases[$Index]
+            $null = & $tc.Path
+            $tc.Breakpoint.HitCount | Should -Be $tc.HitCount
         }
     }
 }
@@ -384,7 +458,8 @@ Describe "It should be possible to reset runspace debugging" -Tag "Feature" {
 "line 2"
 "line 3"
 '@
-        $scriptPath = Setup -PassThru -File TestScript.ps1 -Content $script
+        $scriptPath = Join-Path $TestDrive 'TestScript.ps1'
+        Set-Content -Path $scriptPath -Value $script
         $iss = [initialsessionstate]::CreateDefault2();
         $rs = [runspacefactory]::CreateRunspace($iss)
         $rs.Name = "TestRunspaceDebuggerReset"

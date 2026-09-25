@@ -291,7 +291,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
     }
 
 # this looks identical to the test directly above
-	It "Update-TypeData with ISS Type Table API Test Add And Remove TypeData should work" -Pending {
+	It "Update-TypeData with ISS Type Table API Test Add And Remove TypeData should work" -Skip {
 		try{
 			Update-TypeData -TypeName System.Object[] -MemberType NoteProperty -MemberName TestNote -Value "TestNote"
 			Update-TypeData -TypeName System.Object[] -MemberType AliasProperty -MemberName TestAlias -Value "Length"

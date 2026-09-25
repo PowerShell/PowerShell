@@ -243,7 +243,7 @@ Describe "Set-Variable" -Tags "CI" {
     }
 
     Context "Set-Variable -Append tests" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = @{ value = 2; Count = 2 },
                 @{ value = @(2,3,4); Count = 2},
                 @{ value = "abc",(Get-Process -Id $PID) ; count = 2}

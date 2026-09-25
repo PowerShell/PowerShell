@@ -17,7 +17,8 @@ $nonEnglishCulture = (-not (Get-Culture).Name.StartsWith("en-", [StringCompariso
 
 function ValidateParameters($testCase)
 {
-    It "$($testCase.Name)" -Skip:$(SkipCounterTests) {
+    It "$($testCase.Name)" -TestCases @{ testCase = $testCase; cmdletName = $cmdletName } -Skip:$(SkipCounterTests) {
+        param($testCase, $cmdletName)
 
         # build up a command
         $counterParam = ""
@@ -36,6 +37,14 @@ function ValidateParameters($testCase)
 
 Describe "CI Tests for Get-Counter cmdlet" -Tags "CI" {
 
+    BeforeAll {
+        . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
+        $counterPaths = @{
+            MemoryBytes = TranslateCounterPath "\Memory\Available Bytes"
+            TotalDiskRead = TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec"
+        }
+    }
+
     It "Get-Counter with no parameters returns data for a default set of counters" -Skip:$(SkipCounterTests) {
         $counterData = Get-Counter
         # At the very least we should get processor and memory
@@ -53,106 +62,115 @@ Describe "CI Tests for Get-Counter cmdlet" -Tags "CI" {
 
 Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
 
-    Context "Validate incorrect parameter usage" {
-        $parameterTestCases = @(
-            @{
-                Name = "Fails when MaxSamples parameter is < 1"
-                Counters = $counterPaths.MemoryBytes
-                Parameters = "-MaxSamples 0"
-                ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when MaxSamples parameter is used but no value given"
-                Counters = $counterPaths.MemoryBytes
-                Parameters = "-MaxSamples"
-                ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when SampleInterval is < 1"
-                Counters = $counterPaths.MemoryBytes
-                Parameters = "-SampleInterval -2"
-                ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when SampleInterval parameter is used but no value given"
-                Counters = $counterPaths.MemoryBytes
-                Parameters = "-SampleInterval"
-                ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when given invalid counter path"
-                Counters = $counterPaths.Bad
-                ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when given unknown counter path"
-                Counters = $counterPaths.Unknown
-                ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when Counter parameter is null"
-                Counters = "`$null"
-                ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when Counter parameter is specified but no names given"
-                Parameters = "-Counter"
-                ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when given invalid counter path in array"
-                Counters = "@($($counterPaths.MemoryBytes), $($counterPaths.Bad), $($counterPaths.TotalDiskRead))"
-                ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when ComputerName parameter is invalid"
-                Counters = $counterPaths.MemoryBytes
-                Parameters = "-ComputerName $badName"
-                ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when ComputerName parameter is null"
-                Counters = $counterPaths.MemoryBytes
-                Parameters = "-ComputerName `$null"
-                ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when ComputerName parameter is used but no name given"
-                Counters = $counterPaths.MemoryBytes
-                Parameters = "-ComputerName"
-                ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when given unknown counter set name"
-                Parameters = "-ListSet $badName"
-                ExpectedErrorId = "NoMatchingCounterSetsFound,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when given unknown counter set name in array"
-                Parameters = "-List @(`"Memory`", `"Processor`", `"$badname`")"
-                ExpectedErrorId = "NoMatchingCounterSetsFound,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when ListSet parameter is null"
-                Parameters = "-List `$null"
-                ExpectedErrorId = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when ListSet parameter is used but no name given"
-                Parameters = "-ListSet"
-                ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-            @{
-                Name = "Fails when both -Counter and -ListSet parameters are given"
-                Counters = $counterPaths.MemoryBytes
-                Parameters = "-ListSet `"Memory`""
-                ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.GetCounterCommand"
-            }
-        )
+    BeforeAll {
+        . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
+        $counterPaths = @{
+            MemoryBytes = TranslateCounterPath "\Memory\Available Bytes"
+        }
+    }
 
-        foreach ($testCase in $parameterTestCases)
-        {
-            ValidateParameters($testCase)
+    Context "Validate incorrect parameter usage" {
+        BeforeDiscovery {
+            $parameterTestCases = @(
+                @{
+                    Name = "Fails when MaxSamples parameter is < 1"
+                    Counters = $counterPaths.MemoryBytes
+                    Parameters = "-MaxSamples 0"
+                    ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when MaxSamples parameter is used but no value given"
+                    Counters = $counterPaths.MemoryBytes
+                    Parameters = "-MaxSamples"
+                    ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when SampleInterval is < 1"
+                    Counters = $counterPaths.MemoryBytes
+                    Parameters = "-SampleInterval -2"
+                    ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when SampleInterval parameter is used but no value given"
+                    Counters = $counterPaths.MemoryBytes
+                    Parameters = "-SampleInterval"
+                    ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when given invalid counter path"
+                    Counters = $counterPaths.Bad
+                    ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when given unknown counter path"
+                    Counters = $counterPaths.Unknown
+                    ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when Counter parameter is null"
+                    Counters = "`$null"
+                    ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when Counter parameter is specified but no names given"
+                    Parameters = "-Counter"
+                    ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when given invalid counter path in array"
+                    Counters = "@($($counterPaths.MemoryBytes), $($counterPaths.Bad), $($counterPaths.TotalDiskRead))"
+                    ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when ComputerName parameter is invalid"
+                    Counters = $counterPaths.MemoryBytes
+                    Parameters = "-ComputerName $badName"
+                    ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when ComputerName parameter is null"
+                    Counters = $counterPaths.MemoryBytes
+                    Parameters = "-ComputerName `$null"
+                    ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when ComputerName parameter is used but no name given"
+                    Counters = $counterPaths.MemoryBytes
+                    Parameters = "-ComputerName"
+                    ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when given unknown counter set name"
+                    Parameters = "-ListSet $badName"
+                    ExpectedErrorId = "NoMatchingCounterSetsFound,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when given unknown counter set name in array"
+                    Parameters = "-List @(`"Memory`", `"Processor`", `"$badname`")"
+                    ExpectedErrorId = "NoMatchingCounterSetsFound,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when ListSet parameter is null"
+                    Parameters = "-List `$null"
+                    ExpectedErrorId = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when ListSet parameter is used but no name given"
+                    Parameters = "-ListSet"
+                    ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+                @{
+                    Name = "Fails when both -Counter and -ListSet parameters are given"
+                    Counters = $counterPaths.MemoryBytes
+                    Parameters = "-ListSet `"Memory`""
+                    ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.GetCounterCommand"
+                }
+            )
+
+            foreach ($testCase in $parameterTestCases)
+            {
+                ValidateParameters($testCase)
+            }
         }
     }
 

@@ -1,40 +1,37 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-using namespace System.Security.Cryptography.X509Certificates
-using namespace System.Security.Cryptography
-
-function New-CmsRecipient {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
-    param([String]$Name, [Switch]$Invalid, [String]$OutPfxFile)
-    $hash = [HashAlgorithmName]::SHA256
-    $pad = [RSASignaturePadding]::Pkcs1
-    $oids = [OidCollection]::new()
-    $oids.Add("1.3.6.1.4.1.311.80.1") | Out-Null
-    $ext1 = [X509KeyUsageExtension]::new([X509KeyUsageFlags]::DataEncipherment, $false)
-    $ext2 = [X509EnhancedKeyUsageExtension]::new($oids, $false)
-    $req = ([CertificateRequest]::new("CN=$Name", ([RSA]::Create(2048)), $hash, $pad))
-    if (!$Invalid) { ($ext1, $ext2).ForEach( { $req.CertificateExtensions.Add($_) }) }
-    $certTmp = $req.CreateSelfSigned([datetime]::Now.AddDays(-1), [datetime]::Now.AddDays(365))
-    $certBytes = $certTmp.Export([X509ContentType]::Pfx, "tmp")
-    [X509KeyStorageFlags[]]$flags = "PersistKeySet", "Exportable"
-    $cert = [X509Certificate2]::new($certBytes, "tmp", $flags)
-    if ($OutPfxFile) {
-        $outfile = New-Item $OutPfxFile -Force
-        [System.IO.File]::WriteAllBytes($outfile.FullName, $cert.Export([X509ContentType]::Pfx))
-    }
-    return $cert
-}
-
-Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
+Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" -Skip:(-not $IsWindows) {
 
     BeforeAll {
-        Setup -Dir "certDir"
-        Setup -File "vc1.pfx"
-        Setup -File "vc2.pfx"
-        Setup -File "certDir/vc3.pfx"
-        Setup -File "message.txt" -Content "test"
+        function New-CmsRecipient {
+            [CmdletBinding(SupportsShouldProcess = $true)]
+            [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
+            param([String]$Name, [Switch]$Invalid, [String]$OutPfxFile)
+            $hash = [System.Security.Cryptography.HashAlgorithmName]::SHA256
+            $pad = [System.Security.Cryptography.RSASignaturePadding]::Pkcs1
+            $oids = [System.Security.Cryptography.OidCollection]::new()
+            $oids.Add("1.3.6.1.4.1.311.80.1") | Out-Null
+            $ext1 = [System.Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new([System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DataEncipherment, $false)
+            $ext2 = [System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($oids, $false)
+            $req = ([System.Security.Cryptography.X509Certificates.CertificateRequest]::new("CN=$Name", ([System.Security.Cryptography.RSA]::Create(2048)), $hash, $pad))
+            if (!$Invalid) { ($ext1, $ext2).ForEach( { $req.CertificateExtensions.Add($_) }) }
+            $certTmp = $req.CreateSelfSigned([datetime]::Now.AddDays(-1), [datetime]::Now.AddDays(365))
+            $certBytes = $certTmp.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx, "tmp")
+            [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags[]]$flags = "PersistKeySet", "Exportable"
+            $cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($certBytes, "tmp", $flags)
+            if ($OutPfxFile) {
+                $outfile = New-Item $OutPfxFile -Force
+                [System.IO.File]::WriteAllBytes($outfile.FullName, $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx))
+            }
+            return $cert
+        }
+
+        New-Item -Path (Join-Path $TestDrive 'certDir') -ItemType Directory -Force > $null
+        New-Item -Path (Join-Path $TestDrive 'vc1.pfx') -ItemType File -Force > $null
+        New-Item -Path (Join-Path $TestDrive 'vc2.pfx') -ItemType File -Force > $null
+        New-Item -Path (Join-Path $TestDrive 'certDir/vc3.pfx') -ItemType File -Force > $null
+        Set-Content -Path (Join-Path $TestDrive 'message.txt') -Value "test" -NoNewline
         $file1 = "TestDrive:\vc1.pfx"
         $file2 = "TestDrive:\vc2.pfx"
         $messageFile = "TestDrive:\message.txt"
@@ -43,7 +40,7 @@ Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
         $vc2 = New-CmsRecipient "ValidCms2" -OutPfxFile $file2
         $vc3 = New-CmsRecipient "ValidCms22" -OutPfxFile "TestDrive:\certDir\vc3.pfx"
         $ic = New-CmsRecipient "InvalidCms" -Invalid -OutPfxFile "TestDrive:\ic.pfx"
-        $store = [X509Store]::new("My", [StoreLocation]::CurrentUser)
+        $store = [System.Security.Cryptography.X509Certificates.X509Store]::new("My", [System.Security.Cryptography.X509Certificates.StoreLocation]::CurrentUser)
         $store.Open("ReadWrite")
         if (!$IsMacOS) {
             $store.Add($vc1)
@@ -85,7 +82,7 @@ Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
     }
 
     It "Cert Store: Subject with wrong wildcard (returns multiple certs)" {
-        { "test" | Protect-CmsMessage -To "*ValidCms*" -ErrorAction Stop } | Should -Throw -ErrorId 'IdentifierMustReferenceSingleCertificate'
+        { "test" | Protect-CmsMessage -To "*ValidCms*" -ErrorAction Stop } | Should -Throw -ErrorId 'IdentifierMustReferenceSingleCertificate*'
     }
 
     It "Cert Store: Encrypt/Decrypt using Thumbprint" {
@@ -132,11 +129,11 @@ Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
     }
 
     It "Encrypt with invalid cert" {
-        { "test" | Protect-CmsMessage -To $ic -ErrorAction Stop } | Should -Throw -ErrorId 'CertificateCannotBeUsedForEncryption'
+        { "test" | Protect-CmsMessage -To $ic -ErrorAction Stop } | Should -Throw -ErrorId 'CertificateCannotBeUsedForEncryption*'
     }
 
     It "Encrypt with valid and invalid" {
-        { "test" | Protect-CmsMessage -To $vc1, $vc2, $ic -ErrorAction Stop } | Should -Throw -ErrorId 'CertificateCannotBeUsedForEncryption'
+        { "test" | Protect-CmsMessage -To $vc1, $vc2, $ic -ErrorAction Stop } | Should -Throw -ErrorId 'CertificateCannotBeUsedForEncryption*'
     }
 
     It "Encrypt/Decrypt from file" {

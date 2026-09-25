@@ -3,38 +3,42 @@
 using namespace System.Management.Automation
 using namespace System.Collections.Generic
 
-Describe "Type inference Tests" -tags "CI" {
-    BeforeAll {
-        $ati = [Cmdlet].Assembly.GetType("System.Management.Automation.AstTypeInference")
-        $inferType = $ati.GetMethods().Where{$_.Name -ceq "InferTypeOf"}
-        $m1 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast)'
-        $m2 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.TypeInferenceRuntimePermissions)'
-        $m3 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.PowerShell)'
-        $m4 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.PowerShell, System.Management.Automation.TypeInferenceRuntimePermissions)'
-
-        $inferTypeOf1 = $inferType.Where{$m1 -eq $_}[0]
-        $inferTypeOf2 = $inferType.Where{$m2 -eq $_}[0]
-        $inferTypeOf3 = $inferType.Where{$m3 -eq $_}[0]
-        $inferTypeOf4 = $inferType.Where{$m4 -eq $_}[0]
-
-        class AstTypeInference {
-            static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast) {
-                return  $script:inferTypeOf1.Invoke($null, $ast)
-            }
-
-            static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast, [System.Management.Automation.TypeInferenceRuntimePermissions] $runtimePermissions) {
-                return $script:inferTypeOf2.Invoke($null, @($ast, $runtimePermissions))
-            }
-
-            static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast, [System.Management.Automation.PowerShell] $powershell) {
-                return $script:inferTypeOf3.Invoke($null, @($ast, $powershell))
-            }
-
-            static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast, [PowerShell] $powerShell, [System.Management.Automation.TypeInferenceRuntimePermissions] $runtimePermissions) {
-                return $script:inferTypeOf4.Invoke($null, @($ast, $powerShell, $runtimePermissions))
-            }
-        }
+# [AstTypeInference] is a PowerShell class, which must be defined at file scope so
+# the type literal resolves in all It blocks. The reflection it relies on is set up
+# in BeforeAll (below) on $script: so the class methods pick it up at run time.
+class AstTypeInference {
+    static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast) {
+        return  $script:inferTypeOf1.Invoke($null, $ast)
     }
+
+    static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast, [System.Management.Automation.TypeInferenceRuntimePermissions] $runtimePermissions) {
+        return $script:inferTypeOf2.Invoke($null, @($ast, $runtimePermissions))
+    }
+
+    static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast, [System.Management.Automation.PowerShell] $powershell) {
+        return $script:inferTypeOf3.Invoke($null, @($ast, $powershell))
+    }
+
+    static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast, [PowerShell] $powerShell, [System.Management.Automation.TypeInferenceRuntimePermissions] $runtimePermissions) {
+        return $script:inferTypeOf4.Invoke($null, @($ast, $powerShell, $runtimePermissions))
+    }
+}
+
+BeforeAll {
+    $script:ati = [Cmdlet].Assembly.GetType("System.Management.Automation.AstTypeInference")
+    $script:inferType = $script:ati.GetMethods().Where{$_.Name -ceq "InferTypeOf"}
+    $m1 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast)'
+    $m2 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.TypeInferenceRuntimePermissions)'
+    $m3 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.PowerShell)'
+    $m4 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.PowerShell, System.Management.Automation.TypeInferenceRuntimePermissions)'
+
+    $script:inferTypeOf1 = $script:inferType.Where{$m1 -eq $_}[0]
+    $script:inferTypeOf2 = $script:inferType.Where{$m2 -eq $_}[0]
+    $script:inferTypeOf3 = $script:inferType.Where{$m3 -eq $_}[0]
+    $script:inferTypeOf4 = $script:inferType.Where{$m4 -eq $_}[0]
+}
+
+Describe "Type inference Tests" -tags "CI" {
 
     It "Infers type from integer" {
         $res = [AstTypeInference]::InferTypeOf( { 1 }.Ast)
@@ -1209,32 +1213,34 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be System.Guid
     }
 
-    $catchClauseTypes = @(
-        @{ Type = 'System.ArgumentException' }
-        @{ Type = 'System.ArgumentNullException' }
-        @{ Type = 'System.ArgumentOutOfRangeException' }
-        @{ Type = 'System.Collections.Generic.KeyNotFoundException' }
-        @{ Type = 'System.DivideByZeroException' }
-        @{ Type = 'System.FormatException' }
-        @{ Type = 'System.IndexOutOfRangeException' }
-        @{ Type = 'System.InvalidOperationException' }
-        @{ Type = 'System.IO.DirectoryNotFoundException' }
-        @{ Type = 'System.IO.DriveNotFoundException' }
-        @{ Type = 'System.IO.FileNotFoundException' }
-        @{ Type = 'System.IO.PathTooLongException' }
-        @{ Type = 'System.Management.Automation.CommandNotFoundException' }
-        @{ Type = 'System.Management.Automation.JobFailedException' }
-        @{ Type = 'System.Management.Automation.RuntimeException' }
-        @{ Type = 'System.Management.Automation.ValidationMetadataException' }
-        @{ Type = 'System.NotImplementedException' }
-        @{ Type = 'System.NotSupportedException' }
-        @{ Type = 'System.ObjectDisposedException' }
-        @{ Type = 'System.OverflowException' }
-        @{ Type = 'System.PlatformNotSupportedException' }
-        @{ Type = 'System.RankException' }
-        @{ Type = 'System.TimeoutException' }
-        @{ Type = 'System.UriFormatException' }
-    )
+    BeforeDiscovery {
+        $catchClauseTypes = @(
+            @{ Type = 'System.ArgumentException' }
+            @{ Type = 'System.ArgumentNullException' }
+            @{ Type = 'System.ArgumentOutOfRangeException' }
+            @{ Type = 'System.Collections.Generic.KeyNotFoundException' }
+            @{ Type = 'System.DivideByZeroException' }
+            @{ Type = 'System.FormatException' }
+            @{ Type = 'System.IndexOutOfRangeException' }
+            @{ Type = 'System.InvalidOperationException' }
+            @{ Type = 'System.IO.DirectoryNotFoundException' }
+            @{ Type = 'System.IO.DriveNotFoundException' }
+            @{ Type = 'System.IO.FileNotFoundException' }
+            @{ Type = 'System.IO.PathTooLongException' }
+            @{ Type = 'System.Management.Automation.CommandNotFoundException' }
+            @{ Type = 'System.Management.Automation.JobFailedException' }
+            @{ Type = 'System.Management.Automation.RuntimeException' }
+            @{ Type = 'System.Management.Automation.ValidationMetadataException' }
+            @{ Type = 'System.NotImplementedException' }
+            @{ Type = 'System.NotSupportedException' }
+            @{ Type = 'System.ObjectDisposedException' }
+            @{ Type = 'System.OverflowException' }
+            @{ Type = 'System.PlatformNotSupportedException' }
+            @{ Type = 'System.RankException' }
+            @{ Type = 'System.TimeoutException' }
+            @{ Type = 'System.UriFormatException' }
+        )
+    }
 
     It 'Infers type of $_.Exception in [<Type>] typed catch block' -TestCases $catchClauseTypes {
         param($Type)
@@ -1843,9 +1849,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should -Be 4
         $res.Name -join ',' | Should -Be ('System.Int16', 'System.Int32', 'System.Int64', 'System.Int128' -join ',')
     }
-}
 
-Describe "AstTypeInference tests" -Tags CI {
     It "Infers type from integer with passed in powershell instance" {
         $powerShell = [PowerShell]::Create([RunspaceMode]::CurrentRunspace)
         $res = [AstTypeInference]::InferTypeOf( { 1 }.Ast, $powerShell)
@@ -1859,5 +1863,4 @@ Describe "AstTypeInference tests" -Tags CI {
         $res = [AstTypeInference]::InferTypeOf( { $v }.Ast, $powerShell, [TypeInferenceRuntimePermissions]::AllowSafeEval)
         $res.Name | Should -Be 'System.Int32'
     }
-
 }

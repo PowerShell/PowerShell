@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 Describe 'NullCoalesceOperations' -Tags 'CI' {
-    BeforeAll {
+    BeforeDiscovery {
         $someGuid = New-Guid
         $typesTests = @(
             @{ name = 'string'; valueToSet = 'hello' }

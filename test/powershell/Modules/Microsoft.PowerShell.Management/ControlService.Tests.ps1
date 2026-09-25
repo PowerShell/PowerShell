@@ -1,16 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" {
-  BeforeAll {
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    if ( -not $IsWindows ) {
-        $PSDefaultParameterValues["it:skip"] = $true
-    }
-  }
-  AfterAll {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
-  }
-
+Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" -Skip:(-not $IsWindows) {
   It "StopServiceCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(
     @{parameter="Force";value=$true},
     @{parameter="Force";value=$false},

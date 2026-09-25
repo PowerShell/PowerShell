@@ -1,15 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe 'ConvertTo-Json with PSSerializeJSONLongEnumAsNumber' -tags "CI" {
-
-    BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSSerializeJSONLongEnumAsNumber')
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-    }
+Describe 'ConvertTo-Json with PSSerializeJSONLongEnumAsNumber' -tags "CI" -Skip:(-not [ExperimentalFeature]::IsEnabled('PSSerializeJSONLongEnumAsNumber')) {
 
     It 'Should treat enums as integers' {
         enum LongEnum : long {

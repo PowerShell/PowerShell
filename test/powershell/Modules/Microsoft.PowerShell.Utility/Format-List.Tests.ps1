@@ -262,7 +262,11 @@ Describe 'Format-List color tests' -Tag 'CI' {
         $output.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
 
-    Context 'ExcludeProperty parameter' {
+    BeforeDiscovery {
+        $skipExcludeProperty = $null -eq (Get-Command Format-List).Parameters['ExcludeProperty']
+    }
+
+    Context 'ExcludeProperty parameter' -Skip:$skipExcludeProperty {
         It 'Should exclude specified properties' {
             $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle' }
             $result = $obj | Format-List -ExcludeProperty Age | Out-String

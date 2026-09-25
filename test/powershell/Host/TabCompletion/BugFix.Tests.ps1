@@ -156,9 +156,9 @@ Describe "Tab completion bug fix" -Tags "CI" {
             $file1 = Join-Path $testDir "abc.ps1"
             $file2 = Join-Path $testDir "def.py"
 
-            New-Item -ItemType Directory -Path $testDir > $null
-            New-Item -ItemType File -Path $file1 > $null
-            New-Item -ItemType File -Path $file2 > $null
+            New-Item -ItemType Directory -Path $testDir -Force > $null
+            New-Item -ItemType File -Path $file1 -Force > $null
+            New-Item -ItemType File -Path $file2 -Force > $null
 
             $dirSep = [System.IO.Path]::DirectorySeparatorChar
             $relative_name_abc = ".${dirSep}abc.ps1"
