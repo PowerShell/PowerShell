@@ -28,14 +28,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets delimiter.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "Delimiter")]
+        [Parameter(Position = 1)]
         [ValidateNotNull]
         public char Delimiter { get; set; }
 
         /// <summary>
         /// Culture switch for csv conversion
         /// </summary>
-        [Parameter(ParameterSetName = "UseCulture")]
+        [Parameter]
         public SwitchParameter UseCulture { get; set; }
 
         /// <summary>
@@ -122,6 +122,13 @@ namespace Microsoft.PowerShell.Commands
                 this.ThrowTerminatingError(errorRecord);
             }
 
+            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(Delimiter)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(UseCulture)))
+            {
+                InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyDelimiterAndUseCulture);
+                ErrorRecord errorRecord = new(exception, "CannotSpecifyDelimiterAndUseCulture", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+
             Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, UseCulture);
         }
     }
@@ -132,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the Export-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "Delimiter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096608")]
+    [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "Path", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096608")]
     public sealed class ExportCsvCommand : BaseCsvWritingCommand, IDisposable
     {
         #region Command Line Parameters
@@ -149,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Mandatory file name to write to.
         /// </summary>
-        [Parameter(Position = 0)]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Path")]
         [ValidateNotNullOrEmpty]
         public string Path
         {
@@ -161,17 +168,15 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _path = value;
-                _specifiedPath = true;
             }
         }
 
         private string _path;
-        private bool _specifiedPath = false;
 
         /// <summary>
         /// The literal path of the mandatory file name to write to.
         /// </summary>
-        [Parameter]
+        [Parameter(Mandatory = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -251,15 +256,6 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-
-            // Validate that they don't provide both Path and LiteralPath, but have provided at least one.
-            if (!(_specifiedPath ^ _isLiteralPath))
-            {
-                InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyPathAndLiteralPath);
-                ErrorRecord errorRecord = new(exception, "CannotSpecifyPathAndLiteralPath", ErrorCategory.InvalidData, null);
-                this.ThrowTerminatingError(errorRecord);
-            }
-
             // Validate that Append and NoHeader are not specified together.
             if (Append && NoHeader)
             {
@@ -349,11 +345,6 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateFileStream()
         {
-            if (_path == null)
-            {
-                throw new InvalidOperationException(CsvCommandStrings.FileNameIsAMandatoryParameter);
-            }
-
             string resolvedFilePath = PathUtils.ResolveFilePath(this.Path, this, _isLiteralPath);
 
             bool isCsvFileEmpty = true;
@@ -1770,40 +1761,17 @@ namespace Microsoft.PowerShell.Commands
 
         internal static char SetDelimiter(PSCmdlet cmdlet, string parameterSetName, char explicitDelimiter, bool useCulture)
         {
-            char delimiter = explicitDelimiter;
-            switch (parameterSetName)
+            // UseCulture takes priority; its mutual exclusion with -Delimiter is
+            // enforced in BaseCsvWritingCommand.BeginProcessing() before this call.
+            if (useCulture)
             {
-                case "Delimiter":
-                case "DelimiterPath":
-                case "DelimiterLiteralPath":
-
-                    // if delimiter is not given, it should take , as value
-                    if (explicitDelimiter == '\0')
-                    {
-                        delimiter = ImportExportCSVHelper.CSVDelimiter;
-                    }
-
-                    break;
-                case "UseCulture":
-                case "CulturePath":
-                case "CultureLiteralPath":
-                    if (useCulture)
-                    {
-                        // ListSeparator is apparently always a character even though the property returns a string, checked via:
-                        // [CultureInfo]::GetCultures("AllCultures") | % { ([CultureInfo]($_.Name)).TextInfo.ListSeparator } | ? Length -ne 1
-                        delimiter = CultureInfo.CurrentCulture.TextInfo.ListSeparator[0];
-                    }
-
-                    break;
-                default:
-                    {
-                        delimiter = ImportExportCSVHelper.CSVDelimiter;
-                    }
-
-                    break;
+                // ListSeparator is apparently always a character even though the property returns a string, checked via:
+                // [CultureInfo]::GetCultures("AllCultures") | % { ([CultureInfo]($_.Name)).TextInfo.ListSeparator } | ? Length -ne 1
+                return CultureInfo.CurrentCulture.TextInfo.ListSeparator[0];
             }
 
-            return delimiter;
+            // If no explicit delimiter was supplied, default to comma.
+            return explicitDelimiter == '\0' ? CSVDelimiter : explicitDelimiter;
         }
     }
 
