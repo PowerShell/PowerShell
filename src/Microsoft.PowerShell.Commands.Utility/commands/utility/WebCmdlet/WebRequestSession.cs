@@ -5,12 +5,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -35,6 +37,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _disposed;
         private TimeSpan _connectionTimeout;
         private UnixDomainSocketEndPoint? _unixSocket;
+        private string? _pipeName;
 
         /// <summary>
         /// Contains true if an existing HttpClient had to be disposed and recreated since the WebSession was last used.
@@ -148,6 +151,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal UnixDomainSocketEndPoint UnixSocket { set => SetClassVar(ref _unixSocket, value); }
 
+        internal string? PipeName { set => SetClassVar(ref _pipeName, value); }
+
         internal bool NoProxy
         {
             set
@@ -201,15 +206,18 @@ namespace Microsoft.PowerShell.Commands
         {
             SocketsHttpHandler handler = new();
 
+            // Configure Unix Domain Socket or Named Pipe connection if specified
+            // Note: only one of these can be set at a time and both are null by default
+            // unixSocket takes precedence if both are set
             if (_unixSocket is not null)
             {
-                handler.ConnectCallback = async (context, token) =>
-                {
-                    Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
-                    await socket.ConnectAsync(_unixSocket).ConfigureAwait(false);
-
-                    return new NetworkStream(socket, ownsSocket: false);
-                };
+                // Unix Domain Socket
+                handler.ConnectCallback = ConnectToUnixSocket;
+            }
+            else if (_pipeName is not null)
+            {
+                // Named Pipe
+                handler.ConnectCallback = ConnectToNamedPipeAsync;
             }
 
             handler.CookieContainer = Cookies;
@@ -256,6 +264,41 @@ namespace Microsoft.PowerShell.Commands
             {
                 Timeout = _connectionTimeout
             };
+        }
+
+        /// <summary>
+        /// Connect to a Named Pipe.
+        /// </summary>
+        /// <param name="context">The connection context.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The pipe stream.</returns>
+        private async ValueTask<Stream> ConnectToNamedPipeAsync(SocketsHttpConnectionContext context, CancellationToken cancellationToken)
+        {
+            // Calculate the timeout in milliseconds
+            int timeoutMs = checked((int)Math.Min(
+                   int.MaxValue,
+                   Math.Round(_connectionTimeout.TotalMilliseconds, MidpointRounding.AwayFromZero)));
+
+            // Create the pipe client stream and connect
+            var stream = new System.IO.Pipes.NamedPipeClientStream(".", _pipeName!, System.IO.Pipes.PipeDirection.InOut, System.IO.Pipes.PipeOptions.Asynchronous);
+            await stream.ConnectAsync(timeoutMs, cancellationToken).ConfigureAwait(false);
+            return stream;
+        }
+
+        /// <summary>
+        /// Connect to a Unix Socket.
+        /// </summary>
+        /// <param name="context">The connection context.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The Unix socket stream.</returns>
+        private async ValueTask<Stream> ConnectToUnixSocket(SocketsHttpConnectionContext context, CancellationToken cancellationToken)
+        {
+            // Create the socket and connect
+            Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
+            await socket.ConnectAsync(_unixSocket!, cancellationToken).ConfigureAwait(false);
+
+            // The NetworkStream does not own the socket, so disposing the stream will not close the socket.
+            return new NetworkStream(socket, ownsSocket: false);
         }
 
         private void SetClassVar<T>(ref T oldValue, T newValue) where T : class?
