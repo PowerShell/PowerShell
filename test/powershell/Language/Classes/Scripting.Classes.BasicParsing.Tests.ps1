@@ -274,6 +274,8 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
 
     ShouldBeParseError 'class C {} class C {}' MemberAlreadyDefined 11
     ShouldBeParseError 'class C { f(){} f(){} }' MemberAlreadyDefined 16 -SkipAndCheckRuntimeError
+    ShouldBeParseError 'class C { f(){} $f }' MemberAlreadyDefined 16 -SkipAndCheckRuntimeError
+    ShouldBeParseError 'class C { $f; f(){} }' MemberAlreadyDefined 14 -SkipAndCheckRuntimeError
     ShouldBeParseError 'class C { F(){} F($o){} [int] F($o) {return 1} }' MemberAlreadyDefined 24 -SkipAndCheckRuntimeError
     ShouldBeParseError 'class C { f(){} f($a){} f(){} }' MemberAlreadyDefined 24 -SkipAndCheckRuntimeError
     ShouldBeParseError 'class C { f([int]$a){} f([int]$b){} }' MemberAlreadyDefined 23 -SkipAndCheckRuntimeError
