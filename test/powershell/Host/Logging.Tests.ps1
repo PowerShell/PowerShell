@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 using namespace System.Text
 
-Set-StrictMode -Version 3.0
-$ErrorActionPreference = 'Stop'
+using module ..\..\tools\Modules\HelpersCommon
+using module ..\..\tools\Modules\PSSysLog
 
-Import-Module HelpersCommon
-Import-Module PSSysLog
+Set-StrictMode -Version 3
+$ErrorActionPreference = "Stop"
+$PSNativeCommandUseErrorActionPreference = $true
 
 <#
     Define enums that mirror the internal enums used
