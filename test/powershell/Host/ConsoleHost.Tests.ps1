@@ -1190,7 +1190,7 @@ Describe 'Pwsh startup and PATH' -Tag CI {
         $version | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
     }
 
-    It 'pwsh starts even if PATH is not defined' {
+    It 'pwsh updates PATH correctly even if PATH is not defined' {
         $pwsh = Join-Path -Path $PSHOME -ChildPath "pwsh"
         Remove-Item Env:\PATH
         $path = & $pwsh -noprofile -command '$env:PATH'
