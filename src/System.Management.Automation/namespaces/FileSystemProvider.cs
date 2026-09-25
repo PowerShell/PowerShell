@@ -1953,7 +1953,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance?.BaseObject is FileSystemInfo fileInfo)
             {
-                if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo))
+                // Checking the cached attributes first avoids an extra filesystem query for every non-link,
+                // which is particularly expensive when formatting items on an SMB share.
+                if (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo)
+                    && InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo))
                 {
                     return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {fileInfo.LinkTarget}";
                 }
