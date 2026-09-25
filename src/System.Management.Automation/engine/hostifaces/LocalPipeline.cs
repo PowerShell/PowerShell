@@ -794,7 +794,12 @@ namespace System.Management.Automation.Runspaces
 
             _stopper.Stop();
             // Wait for pipeline to finish
-            PipelineFinishedEvent.WaitOne();
+            if (!PipelineFinishedEvent.WaitOne(TimeSpan.FromSeconds(30)))
+            {
+                throw new TimeoutException(
+                    StringUtil.Format(RunspaceStrings.StopPipelinesTimedOut,
+                        TimeSpan.FromSeconds(30)));
+            }
         }
 
         /// <summary>
