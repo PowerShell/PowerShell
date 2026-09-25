@@ -29,6 +29,7 @@ namespace System.Management.Automation
 
         private readonly string _resourceName = null;
         private readonly ExecutionContext _context = null;
+        private bool _disposed;
         private DscResourceInfo _currentMatch = null;
         private IEnumerator<DscResourceInfo> _matchingResource = null;
         private Collection<DscResourceInfo> _matchingResourceList = null;
@@ -43,7 +44,12 @@ namespace System.Management.Automation
         public void Reset()
         {
             _currentMatch = null;
-            _matchingResource = null;
+
+            if (_matchingResource != null)
+            {
+                _matchingResource.Dispose();
+                _matchingResource = null;
+            }
         }
 
         /// <summary>
@@ -51,7 +57,7 @@ namespace System.Management.Automation
         /// </summary>
         public void Dispose()
         {
-            Reset();
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -107,6 +113,21 @@ namespace System.Management.Automation
             {
                 return ((IEnumerator<DscResourceInfo>)this).Current;
             }
+        }
+
+        #endregion
+
+        #region IDisposable
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed || !disposing)
+            {
+                return;
+            }
+
+            Reset();
+            _disposed = true;
         }
 
         #endregion
@@ -197,7 +218,7 @@ namespace System.Management.Automation
 
             if (!_matchingResource.MoveNext())
             {
-                _matchingResource = null;
+                Reset();
             }
             else
             {
