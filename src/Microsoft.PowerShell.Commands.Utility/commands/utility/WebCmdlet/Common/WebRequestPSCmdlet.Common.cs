@@ -2107,6 +2107,7 @@ namespace Microsoft.PowerShell.Commands
             WebRequestMethod.Put => HttpMethod.Put,
             WebRequestMethod.Options => HttpMethod.Options,
             WebRequestMethod.Trace => HttpMethod.Trace,
+            WebRequestMethod.Query => HttpMethod.Query,
             _ => new HttpMethod(method.ToString().ToUpperInvariant())
         };
 
