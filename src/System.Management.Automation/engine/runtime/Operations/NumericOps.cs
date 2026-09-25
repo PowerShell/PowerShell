@@ -398,35 +398,38 @@ namespace System.Management.Automation
     {
         internal static object Add(Int128 lhs, Int128 rhs)
         {
-            System.Numerics.BigInteger biResult = (System.Numerics.BigInteger)lhs + (System.Numerics.BigInteger)rhs;
-            if (biResult >= Int128.MinValue && biResult <= Int128.MaxValue)
+            try
             {
-                return (Int128)biResult;
+                return checked(lhs + rhs);
             }
-
-            return (double)biResult;
+            catch (OverflowException)
+            {
+                return (double)lhs + (double)rhs;
+            }
         }
 
         internal static object Sub(Int128 lhs, Int128 rhs)
         {
-            System.Numerics.BigInteger biResult = (System.Numerics.BigInteger)lhs - (System.Numerics.BigInteger)rhs;
-            if (biResult >= Int128.MinValue && biResult <= Int128.MaxValue)
+            try
             {
-                return (Int128)biResult;
+                return checked(lhs - rhs);
             }
-
-            return (double)biResult;
+            catch (OverflowException)
+            {
+                return (double)lhs - (double)rhs;
+            }
         }
 
         internal static object Multiply(Int128 lhs, Int128 rhs)
         {
-            System.Numerics.BigInteger biResult = (System.Numerics.BigInteger)lhs * (System.Numerics.BigInteger)rhs;
-            if (biResult >= Int128.MinValue && biResult <= Int128.MaxValue)
+            try
             {
-                return (Int128)biResult;
+                return checked(lhs * rhs);
             }
-
-            return (double)biResult;
+            catch (OverflowException)
+            {
+                return (double)lhs * (double)rhs;
+            }
         }
 
         internal static object Divide(Int128 lhs, Int128 rhs)
@@ -458,6 +461,13 @@ namespace System.Management.Automation
                 throw new RuntimeException(dbze.Message, dbze);
             }
 
+            if (lhs == Int128.MinValue && rhs == -1)
+            {
+                // The CLR raises an overflow exception for these values, so the result is hard coded
+                // the same way it is for the other signed integer types.
+                return Int128.Zero;
+            }
+
             return lhs % rhs;
         }
 
@@ -478,35 +488,38 @@ namespace System.Management.Automation
     {
         internal static object Add(UInt128 lhs, UInt128 rhs)
         {
-            System.Numerics.BigInteger biResult = (System.Numerics.BigInteger)lhs + (System.Numerics.BigInteger)rhs;
-            if (biResult >= UInt128.MinValue && biResult <= UInt128.MaxValue)
+            try
             {
-                return (UInt128)biResult;
+                return checked(lhs + rhs);
             }
-
-            return (double)biResult;
+            catch (OverflowException)
+            {
+                return (double)lhs + (double)rhs;
+            }
         }
 
         internal static object Sub(UInt128 lhs, UInt128 rhs)
         {
-            System.Numerics.BigInteger biResult = (System.Numerics.BigInteger)lhs - (System.Numerics.BigInteger)rhs;
-            if (biResult >= UInt128.MinValue && biResult <= UInt128.MaxValue)
+            try
             {
-                return (UInt128)biResult;
+                return checked(lhs - rhs);
             }
-
-            return (double)biResult;
+            catch (OverflowException)
+            {
+                return (double)lhs - (double)rhs;
+            }
         }
 
         internal static object Multiply(UInt128 lhs, UInt128 rhs)
         {
-            System.Numerics.BigInteger biResult = (System.Numerics.BigInteger)lhs * (System.Numerics.BigInteger)rhs;
-            if (biResult >= UInt128.MinValue && biResult <= UInt128.MaxValue)
+            try
             {
-                return (UInt128)biResult;
+                return checked(lhs * rhs);
             }
-
-            return (double)biResult;
+            catch (OverflowException)
+            {
+                return (double)lhs * (double)rhs;
+            }
         }
 
         internal static object Divide(UInt128 lhs, UInt128 rhs)
