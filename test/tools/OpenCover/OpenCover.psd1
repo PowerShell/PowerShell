@@ -14,4 +14,3 @@ CmdletsToExport = @()
 VariablesToExport = @()
 AliasesToExport = @()
 }
-
