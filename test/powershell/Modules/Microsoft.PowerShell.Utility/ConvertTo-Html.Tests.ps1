@@ -99,6 +99,15 @@ Body Text
         $returnString | Should -Be $expectedValue
     }
 
+    It "ConvertTo-Html -Title HTML-encodes special characters in the document title" {
+        # Regression: BeginProcessing must assign WebUtility.HtmlEncode(_title) back to _title;
+        # otherwise the encode result is discarded and raw <, >, &, " appear in <title>.
+        $title = 'A <B> & C "D"'
+        $expectedInner = [System.Net.WebUtility]::HtmlEncode($title)
+        $returnString = ($customObject | ConvertTo-Html -Title $title) -join $newLine
+        $returnString | Should -Match "<title>$([regex]::Escape($expectedInner))</title>"
+    }
+
     It "Test ConvertTo-Html pre and post" {
         $returnString = ($customObject | ConvertTo-Html -PreContent "Before the object" -PostContent "After the object") -join $newLine
         $expectedValue = normalizeLineEnds @"
