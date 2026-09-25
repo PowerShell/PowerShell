@@ -14,11 +14,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Diagnostics.Eventing.Reader
 {
-    //
-    // Marked as SecurityCritical due to link demands from inherited
-    // SafeHandle members.
-    //
-    [System.Security.SecurityCritical]
     internal sealed class CoTaskMemSafeHandle : SafeHandle
     {
         internal CoTaskMemSafeHandle()
