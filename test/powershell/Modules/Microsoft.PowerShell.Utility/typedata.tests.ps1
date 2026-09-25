@@ -51,6 +51,48 @@ Get-TypeData System.Void
             $type[0].TypeName | Should -Be System.Void
             $type[0].TypeAdapter.FullName | Should -Be Microsoft.PowerShell.Cim.CimInstanceAdapter
         }
+
+        It "Preserves IsHidden when round-tripping TypeData" {
+            $typeName = "HiddenTypeData$(Get-Random)"
+            $result = $ps.AddScript(@"
+`$typeData = [System.Management.Automation.Runspaces.TypeData]::new('$typeName')
+`$visibleMember = [System.Management.Automation.Runspaces.NotePropertyData]::new('VisibleMember', 'Visible')
+`$hiddenMember = [System.Management.Automation.Runspaces.NotePropertyData]::new('HiddenMember', 'Hidden')
+`$hiddenMember.IsHidden = `$true
+`$typeData.Members.Add(`$visibleMember.Name, `$visibleMember)
+`$typeData.Members.Add(`$hiddenMember.Name, `$hiddenMember)
+try {
+    Update-TypeData -TypeData `$typeData -Force
+    (Get-TypeData -TypeName '$typeName').Members['HiddenMember'].IsHidden
+}
+finally {
+    Remove-TypeData -TypeName '$typeName' -ErrorAction SilentlyContinue
+}
+"@).Invoke()
+
+            $result | Should -BeTrue
+        }
+
+        It "Preserves InheritMembers when round-tripping MemberSetData" {
+            $typeName = "MemberSetTypeData$(Get-Random)"
+            $result = $ps.AddScript(@"
+`$typeData = [System.Management.Automation.Runspaces.TypeData]::new('$typeName')
+`$members = [System.Collections.ObjectModel.Collection[System.Management.Automation.Runspaces.TypeMemberData]]::new()
+`$members.Add([System.Management.Automation.Runspaces.NotePropertyData]::new('VisibleMember', 'Visible'))
+`$memberSet = [System.Management.Automation.Runspaces.MemberSetData]::new('VisibleSet', `$members)
+`$memberSet.InheritMembers = `$false
+`$typeData.Members.Add(`$memberSet.Name, `$memberSet)
+try {
+    Update-TypeData -TypeData `$typeData -Force
+    (Get-TypeData -TypeName '$typeName').Members['VisibleSet'].InheritMembers
+}
+finally {
+    Remove-TypeData -TypeName '$typeName' -ErrorAction SilentlyContinue
+}
+"@).Invoke()
+
+            $result | Should -BeFalse
+        }
     }
 
     Context "Remove-TypeData" {
