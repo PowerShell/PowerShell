@@ -280,6 +280,237 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     }
 }
 
+Describe 'Get-Module -ListAvailable -(FullyQualifiedName|Name) <path> when argument is absolute path' -Tags "CI" {
+    BeforeAll {
+        $oldPSModulePath = $env:PSModulePath
+        $env:PSModulePath = New-Item -ItemType Directory (Join-Path $TestDrive modules)
+    }
+
+    AfterAll {
+        $env:PSModulePath = $oldPSModulePath
+    }
+
+    It 'wrongly returns module information instead of $null or error for missing script module' {
+        $path = [System.IO.Path]::GetFullPath((Join-Path $pwd missing.psm1))
+        Test-Path $path | Should -BeFalse
+
+        Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+        Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+    }
+
+    It 'wrongly returns module information instead of $null or error for missing script module under $env:PSModulePath' {
+        $path = [System.IO.Path]::GetFullPath((Join-Path $env:PSModulePath missing.psm1))
+        Test-Path $path | Should -BeFalse
+
+        Get-Module -ListAvailable -FullyQualifiedName $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+        Get-Module -ListAvailable -Name $path | Should -BeOfType ([System.Management.Automation.PSModuleInfo])
+    }
+
+    It 'writes error for missing manifest module' {
+        $path = [System.IO.Path]::GetFullPath((Join-Path $pwd missing))
+        Test-Path $path | Should -BeFalse
+
+        $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+        $err = { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+    }
+
+    It 'writes error for missing manifest module under $env:PSModulePath' {
+        $path = [System.IO.Path]::GetFullPath((Join-Path $env:PSModulePath missing))
+        Test-Path $path | Should -BeFalse
+
+        $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+        $err = { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+    }
+
+    Context 'Locating existing script module' {
+        BeforeAll {
+            # Script modules
+            #
+            # Under $env:PSModulePath. TODO: Is this a supported scenario?
+            $inPSModulePathLooseFilePath = Join-Path $env:PSModulePath 'loose.psm1'
+            New-Item -ItemType File -Force $inPSModulePathLooseFilePath > $null
+            #
+            # Under $pwd
+            $inCwdLooseFilePath = Join-Path $pwd 'loose.psm1'
+            New-Item -ItemType File -Force $inCwdLooseFilePath > $null
+        }
+
+        AfterAll {
+            Remove-Item $inPSModulePathLooseFilePath
+            Remove-Item $inCwdLooseFilePath
+        }
+
+        # TODO: This looks like a bug.
+        It 'wrongly writes error instead of returning module information for existing script module under $env:PSModulePath using basename' {
+            Test-Path (Join-Path $env:PSModulePath loose.psm1) | Should -BeTrue
+            $path = Join-Path $env:PSModulePath loose
+
+            $err = { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+            $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+        }
+
+        # TODO: This looks like a bug.
+        It 'wrongly writes error instead of returning module information for existing script module using basename' {
+            Test-Path (Join-Path $pwd loose.psm1) | Should -BeTrue
+            $path = Join-Path $pwd loose
+
+            $err = { Get-Module -ListAvailable -Name $path -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+
+            $err = { Get-Module -ListAvailable -FullyQualifiedName $path -ErrorAction Stop } | Should -Throw -PassThru
+            $err.Exception.Message | Should -BeLike '*Update the Name parameter*'
+        }
+
+        It 'returns module information for existing script module using file name' {
+            $path = Join-Path $pwd loose.psm1
+            Test-Path $path | Should -BeTrue
+
+            $actual = Get-Module -ListAvailable -Name $path
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly $path
+
+            $actual = Get-Module -ListAvailable -FullyQualifiedName $path
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly $path
+        }
+
+        It 'returns module information for existing script module under $env:PSModulePath using file name' {
+            $path = Join-Path $env:PSModulePath loose.psm1
+            Test-Path $path | Should -BeTrue
+
+            $actual = Get-Module -ListAvailable -Name $path
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly $path
+
+            $actual = Get-Module -ListAvailable -FullyQualifiedName $path
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly $path
+        }
+    }
+
+    Context 'When argument contains wildcards' {
+        BeforeAll {
+            # Manifest modules under $env:PSModulePath
+            #
+            # Versioned, manifest
+            $inPSModulePathWithManifestFileName = 'existing'
+            $inPSModulePatWithManifestDirectory = Join-Path $env:PSModulePath $inPSModulePathWithManifestFileName '0.0.1'
+            $inPSModulePathWithManifestFilePath = Join-Path $inPSModulePatWithManifestDirectory "$inPSModulePathWithManifestFileName.psm1"
+            New-Item -ItemType File -Force $inPSModulePathWithManifestFilePath > $null
+            New-ModuleManifest -Path (Join-Path $inPSModulePatWithManifestDirectory "$inPSModulePathWithManifestFileName.psd1")
+            #
+            # Versioned, manifest
+            $inPSModulePathWithManifestFileName2 = 'existing2'
+            $inPSModulePatWithManifestDirectory2 = Join-Path $env:PSModulePath $inPSModulePathWithManifestFileName2 '0.0.1'
+            $inPSModulePathWithManifestFilePath2 = Join-Path $inPSModulePatWithManifestDirectory2 "$inPSModulePathWithManifestFileName2.psm1"
+            New-Item -ItemType File -Force $inPSModulePathWithManifestFilePath2 > $null
+            New-ModuleManifest -Path (Join-Path $inPSModulePatWithManifestDirectory2 "$inPSModulePathWithManifestFileName2.psd1")
+
+            # Manifest modules under $pwd
+            #
+            # Versioned, manifest
+            $inCwdhWithManifestFileName = 'existing'
+            $inCwdWithManifestDirectory = Join-Path $pwd $inCwdhWithManifestFileName '0.0.1'
+            $inCwdWithManifestFilePath = Join-Path $inCwdWithManifestDirectory "$inCwdhWithManifestFileName.psm1"
+            New-Item -ItemType File -Force $inCwdWithManifestFilePath > $null
+            New-ModuleManifest -Path (Join-Path $inCwdWithManifestDirectory "$inCwdhWithManifestFileName.psd1")
+            #
+            # Versioned, manifest
+            $inCwdWithManifestFileName2 = 'existing2'
+            $inCwdWithManifestDirectory2 = Join-Path $pwd $inCwdWithManifestFileName2 '0.0.1'
+            $inCwdWithManifestFilePath2 = Join-Path $inCwdWithManifestDirectory2 "$inCwdWithManifestFileName2.psm1"
+            New-Item -ItemType File -Force $inCwdWithManifestFilePath2 > $null
+            New-ModuleManifest -Path (Join-Path $inCwdWithManifestDirectory2 "$inCwdWithManifestFileName2.psd1")
+
+            # Script modules
+            #
+            # Under $env:PSModulePath. TODO: Is this a supported scenario?
+            $inPSModulePathLooseFilePath = Join-Path $env:PSModulePath 'loose.psm1'
+            New-Item -ItemType File -Force $inPSModulePathLooseFilePath > $null
+            #
+            #
+            # Under $pwd
+            $inCwdFilePath = Join-Path $pwd 'loose.psm1'
+            New-Item -ItemType File -Force $inCwdFilePath > $null
+        }
+
+        AfterAll {
+            Remove-Item -Force -Recurse $inPSModulePatWithManifestDirectory
+            Remove-Item -Force -Recurse $inPSModulePatWithManifestDirectory2
+
+            Remove-Item -Force -Recurse $inCwdWithManifestDirectory
+            Remove-Item -Force -Recurse $inCwdWithManifestDirectory2
+
+            Remove-Item $inPSModulePathLooseFilePath
+            Remove-Item $inCwdFilePath
+        }
+
+        It 'returns existing manifest modules under $env:PSModulePath when using the -Name parameter' {
+            $moduleManifestPath1 = Join-Path $env:PSModulePath existing 0.0.1,existing.psd1
+            $moduleManifestPath2 = Join-Path $env:PSModulePath existing2 0.0.1,existing2.psd1
+            Test-Path $moduleManifestPath1 | Should -BeTrue
+            Test-Path $moduleManifestPath2 | Should -BeTrue
+
+            $actual = Get-Module -ListAvailable -Name (Join-Path $env:PSModulePath 'existing*')
+            $actual | Should -HaveCount 2
+            $actual[0].Path | Should -BeExactly $moduleManifestPath1
+            $actual[1].Path | Should -BeExactly $moduleManifestPath2
+        }
+
+        # TODO: This looks like a bug.
+        It 'wrongly returns $null for existing manifest modules under $env:PSModulePath when using the -FullyQualifiedName parameter' {
+            $actual = Get-Module -ListAvailable -FullyQualifiedName (Join-Path $env:PSModulePath 'existing*')
+            $actual | Should -Be $null
+        }
+
+        It 'returns existing manifest modules when using the -Name parameter' {
+            $moduleManifestPath1 = Join-Path $pwd existing 0.0.1,existing.psd1
+            $moduleManifestPath2 = Join-Path $pwd existing2 0.0.1,existing2.psd1
+            Test-Path $moduleManifestPath1 | Should -BeTrue
+            Test-Path $moduleManifestPath2 | Should -BeTrue
+
+            $actual = Get-Module -ListAvailable -Name (Join-Path $pwd 'existing*')
+            $actual | Should -HaveCount 2
+            $actual[0].Path | Should -BeExactly $moduleManifestPath1
+            $actual[1].Path | Should -BeExactly $moduleManifestPath2
+        }
+
+        # TODO: This looks like a bug.
+        It 'wrongly returns $null for existing manifest modules when using the -FullyQualifiedName parameter' {
+            $actual = Get-Module -ListAvailable -FullyQualifiedName (Join-Path $pwd 'existing*')
+            $actual | Should -Be $null
+        }
+
+        It 'returns module information for existing script module under $env:PSModulePath' {
+            $actual = Get-Module -ListAvailable -Name (Join-Path $env:PSModulePath 'loose*')
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly (Join-Path $env:PSModulePath loose.psm1)
+        }
+
+        It 'returns module information for existing script module using file name' {
+            $path = Join-Path $pwd loose.psm1
+            Test-Path $path | Should -BeTrue
+
+            $actual = Get-Module -ListAvailable -Name $path
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly $path
+
+            $actual = Get-Module -ListAvailable -FullyQualifiedName $path
+            $actual | Should -HaveCount 1
+            $actual[0].Path | Should -BeExactly $path
+        }
+    }
+}
+
 Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
     BeforeAll {
         $moduleName = 'Banana'
