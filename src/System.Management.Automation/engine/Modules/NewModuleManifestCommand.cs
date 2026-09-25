@@ -1118,6 +1118,70 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+
+        /// <summary>
+        /// Serializes an arbitrary value to its PowerShell data file literal representation.
+        /// Handles strings, booleans, numbers, arrays, and nested hashtables.
+        /// </summary>
+        /// <param name="value">The value to serialize.</param>
+        /// <param name="currentIndent">The current indentation string for pretty-printing.</param>
+        /// <param name="streamWriter">StreamWriter to get end of line character from.</param>
+        /// <returns>The PowerShell literal string for the value.</returns>
+        private static string SerializeValue(object value, string currentIndent, StreamWriter streamWriter)
+        {
+            if (value == null)
+            {
+                return "$null";
+            }
+
+            if (value is Hashtable ht)
+            {
+                var sb = new StringBuilder();
+                string innerIndent = currentIndent + "    ";
+                sb.Append("@{");
+                sb.Append(streamWriter.NewLine);
+                foreach (DictionaryEntry entry in ht)
+                {
+                    sb.Append(innerIndent);
+                    sb.Append(entry.Key);
+                    sb.Append(" = ");
+                    sb.Append(SerializeValue(entry.Value, innerIndent, streamWriter));
+                    sb.Append(streamWriter.NewLine);
+                }
+                sb.Append(currentIndent);
+                sb.Append('}');
+                return sb.ToString();
+            }
+
+            if (value is bool b)
+            {
+                return b ? "$true" : "$false";
+            }
+
+            if (value is Array arr)
+            {
+                var sb = new StringBuilder();
+                sb.Append("@(");
+                bool first = true;
+                foreach (object item in arr)
+                {
+                    if (!first) sb.Append(", ");
+                    sb.Append(SerializeValue(item, currentIndent, streamWriter));
+                    first = false;
+                }
+                sb.Append(')');
+                return sb.ToString();
+            }
+
+            if (value is int || value is long || value is double || value is float || value is decimal)
+            {
+                return Convert.ToString(value, CultureInfo.InvariantCulture);
+            }
+
+            // Default: treat as string
+            return QuoteName((string)LanguagePrimitives.ConvertTo(value, typeof(string), CultureInfo.InvariantCulture));
+        }
+
         // PrivateData format in manifest file when PrivateData value is a HashTable or not specified.
         // <#
         // # Private data to pass to the module specified in RootModule/ModuleToProcess
@@ -1195,7 +1259,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (DictionaryEntry entry in privateDataHashTable)
                     {
-                        result.Append(ManifestFragment(entry.Key.ToString(), entry.Key.ToString(), QuoteName((string)LanguagePrimitives.ConvertTo(entry.Value, typeof(string), CultureInfo.InvariantCulture)), streamWriter));
+                        result.Append(ManifestFragment(entry.Key.ToString(), entry.Key.ToString(), SerializeValue(entry.Value, _indent, streamWriter), streamWriter));
                     }
                 }
 
