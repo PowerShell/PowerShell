@@ -2390,11 +2390,12 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool success = false;
+                    int errorCode = 0;
 
                     if (itemType == ItemType.SymbolicLink)
                     {
 #if UNIX
-                        success = Platform.NonWindowsCreateSymbolicLink(path, strTargetPath);
+                        success = Platform.NonWindowsCreateSymbolicLink(path, strTargetPath, isDirectory, out errorCode);
 #else
                         success = WinCreateSymbolicLink(path, strTargetPath, isDirectory);
 #endif
@@ -2402,7 +2403,7 @@ namespace Microsoft.PowerShell.Commands
                     else if (itemType == ItemType.HardLink)
                     {
 #if UNIX
-                        success = Platform.NonWindowsCreateHardLink(path, strTargetPath);
+                        success = Platform.NonWindowsCreateHardLink(path, strTargetPath, out errorCode);
 #else
                         success = Interop.Windows.CreateHardLink(path, strTargetPath, IntPtr.Zero);
 #endif
@@ -2411,7 +2412,9 @@ namespace Microsoft.PowerShell.Commands
                     if (!success)
                     {
                         // Porting note: The Win32Exception will report the correct error on Linux
-                        int errorCode = Marshal.GetLastWin32Error();
+#if !UNIX
+                        errorCode = Marshal.GetLastWin32Error();
+#endif
 
                         Win32Exception w32Exception = new Win32Exception((int)errorCode);
 
