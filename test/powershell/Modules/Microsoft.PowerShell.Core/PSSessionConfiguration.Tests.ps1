@@ -161,8 +161,8 @@ try
                     param (
                         [string] $SessionConfigName,
                         [string] $ConfigFilePath,
-                        [Bool] $InitialSessionStateEnabled,
-                        [Bool] $FinalSessionStateEnabled,
+                        [bool] $InitialSessionStateEnabled,
+                        [bool] $FinalSessionStateEnabled,
                         [string] $TestDescription,
                         [bool] $EnablePSSessionConfig)
 
