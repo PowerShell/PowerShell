@@ -456,7 +456,6 @@ namespace Microsoft.WSMan.Management
 #endif
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "str")]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
-    [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Username")]
     [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Error")]
     public interface IWSManEx
     {
@@ -551,7 +550,6 @@ namespace Microsoft.WSMan.Management
         /// <remarks><para>An original IDL definition of <c>SessionFlagCredUsernamePassword</c> method was the following:  <c>HRESULT SessionFlagCredUsernamePassword ([out, retval] long* ReturnValue)</c>;</para></remarks>
         // IDL: HRESULT SessionFlagCredUsernamePassword ([out, retval] long* ReturnValue);
 
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Username")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
         [DispId(7)]
         int SessionFlagCredUsernamePassword();
