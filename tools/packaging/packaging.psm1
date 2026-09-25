@@ -10,7 +10,7 @@ $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.p
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("deb")
 $RedhatFullDistributions = @("rh")
-$RedhatFddDistributions = @("cm")
+$RedhatFddDistributions = @("cm", "azl4")
 $RedhatDistributions = @()
 $RedhatDistributions += $RedhatFullDistributions
 $RedhatDistributions += $RedhatFddDistributions
@@ -1237,10 +1237,15 @@ function New-UnixPackage {
                             throw "rpmbuild failed with exit code $exitCode"
                         }
 
-                        # Find the generated RPM
-                        $rpmFile = Get-ChildItem -Path (Join-Path $rpmsDir $HostArchitecture) -Filter "*.rpm" -ErrorAction Stop |
-                            Sort-Object -Property LastWriteTime -Descending |
-                            Select-Object -First 1
+                        # Find the exact RPM produced from the spec metadata.
+                        $rpmFileName = Get-RpmPackageFileName `
+                            -Name $Name `
+                            -Version $packageVersion `
+                            -Iteration $Iteration `
+                            -Distribution $DebDistro `
+                            -HostArchitecture $HostArchitecture
+                        $rpmArchitecturePath = Join-Path $rpmsDir $HostArchitecture
+                        $rpmFile = Get-Item -Path (Join-Path $rpmArchitecturePath $rpmFileName) -ErrorAction Stop
 
                         if ($rpmFile) {
                             # Copy RPM to current location
@@ -1516,6 +1521,34 @@ Class LinkInfo
     [string] $Destination
 }
 
+function Get-RpmPackageFileName
+{
+    <#
+    .SYNOPSIS
+        Gets the RPM file name produced by rpmbuild for the supplied package metadata.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string] $Name,
+
+        [Parameter(Mandatory)]
+        [string] $Version,
+
+        [Parameter(Mandatory)]
+        [string] $Iteration,
+
+        [Parameter(Mandatory)]
+        [string] $Distribution,
+
+        [Parameter(Mandatory)]
+        [string] $HostArchitecture
+    )
+
+    $rpmVersion = $Version -replace '-', '_'
+    return "$Name-$rpmVersion-$Iteration.$Distribution.$HostArchitecture.rpm"
+}
+
 function New-RpmSpec
 {
     param(
@@ -1563,7 +1596,7 @@ function New-RpmSpec
     # e.g., "7.6.0-preview.6" becomes Version: 7.6.0_preview.6
     $rpmVersion = $Version -replace '-', '_'
 
-    # Build Release field with distribution suffix (e.g., "1.cm" or "1.rh")
+    # Build Release field with distribution suffix (e.g., "1.cm", "1.azl4", or "1.rh")
     # Don't use RPM macros - build the full release string in PowerShell
     $rpmRelease = "$Iteration.$Distribution"
 
@@ -2105,7 +2138,7 @@ function Get-PackageDependencies
                 "openssl-libs",
                 "libicu"
             )
-        } elseif ($Distribution -eq 'cm') {
+        } elseif ($Distribution -in 'cm', 'azl4') {
             # Azure Linux 3 and 4 use the same .NET 11 runtime dependencies:
             # https://github.com/dotnet/dotnet-docker/blob/7962e8c9336303584720344bd644287a1fe77844/src/runtime-deps/11.0/azurelinux4.0/amd64/Dockerfile
             $Dependencies = @(
