@@ -39,14 +39,14 @@ namespace System.Management.Automation
         /// If the user doesn't specify anything, the default is <c>0</c>.
         /// </summary>
         [Parameter]
-        public UInt64 Skip { get; set; }
+        public ulong Skip { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the -First parameter for all cmdlets that support paging.
-        /// If the user doesn't specify anything, the default is <see cref="System.UInt64.MaxValue"/>.
+        /// If the user doesn't specify anything, the default is <see cref="ulong.MaxValue"/>.
         /// </summary>
         [Parameter]
-        public UInt64 First { get; set; } = UInt64.MaxValue;
+        public ulong First { get; set; } = ulong.MaxValue;
 
         #endregion parameters
 
@@ -65,7 +65,7 @@ namespace System.Management.Automation
         /// anything in-between means that total count is estimated
         /// </param>
         /// <returns>An object that represents a total count of objects that the cmdlet would return without paging.</returns>
-        public PSObject NewTotalCount(UInt64 totalCount, double accuracy)
+        public PSObject NewTotalCount(ulong totalCount, double accuracy)
         {
             PSObject result = new PSObject(totalCount);
 

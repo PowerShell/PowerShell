@@ -43,8 +43,8 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                Int16 right = (Int16)frame.Pop();
-                frame.Push(((Int16)frame.Pop()) > right);
+                short right = (short)frame.Pop();
+                frame.Push(((short)frame.Pop()) > right);
                 return +1;
             }
         }
@@ -63,8 +63,8 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                Int32 right = (Int32)frame.Pop();
-                frame.Push(((Int32)frame.Pop()) > right);
+                int right = (int)frame.Pop();
+                frame.Push(((int)frame.Pop()) > right);
                 return +1;
             }
         }
@@ -73,8 +73,8 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                Int64 right = (Int64)frame.Pop();
-                frame.Push(((Int64)frame.Pop()) > right);
+                long right = (long)frame.Pop();
+                frame.Push(((long)frame.Pop()) > right);
                 return +1;
             }
         }
@@ -93,8 +93,8 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                UInt16 right = (UInt16)frame.Pop();
-                frame.Push(((UInt16)frame.Pop()) > right);
+                ushort right = (ushort)frame.Pop();
+                frame.Push(((ushort)frame.Pop()) > right);
                 return +1;
             }
         }
@@ -103,8 +103,8 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                UInt32 right = (UInt32)frame.Pop();
-                frame.Push(((UInt32)frame.Pop()) > right);
+                uint right = (uint)frame.Pop();
+                frame.Push(((uint)frame.Pop()) > right);
                 return +1;
             }
         }
@@ -113,8 +113,8 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                UInt64 right = (UInt64)frame.Pop();
-                frame.Push(((UInt64)frame.Pop()) > right);
+                ulong right = (ulong)frame.Pop();
+                frame.Push(((ulong)frame.Pop()) > right);
                 return +1;
             }
         }
@@ -123,8 +123,8 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                Single right = (Single)frame.Pop();
-                frame.Push(((Single)frame.Pop()) > right);
+                float right = (float)frame.Pop();
+                frame.Push(((float)frame.Pop()) > right);
                 return +1;
             }
         }
