@@ -14,6 +14,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Security;
 using System.Text;
 
@@ -874,10 +875,27 @@ namespace Microsoft.PowerShell
             ParseHelper(args);
         }
 
+        internal static bool IsFileOnlyEntryEnabled
+        {
+            get
+            {
+#if UNIX
+                return false;
+#else
+                return SystemPolicy.IsFileOnlyEntryEnabled();
+#endif
+            }
+        }
+
         private void ParseHelper(string[] args)
         {
             if (args.Length == 0)
             {
+                if (IsFileOnlyEntryEnabled)
+                {
+                    SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
+                }
+
                 return;
             }
 
@@ -923,6 +941,12 @@ namespace Microsoft.PowerShell
                     _noExit = true;
                     noexitSeen = true;
                     ParametersUsed |= ParameterBitmap.NoExit;
+
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryNoExitDisabled);
+                        break;
+                    }
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
@@ -944,6 +968,11 @@ namespace Microsoft.PowerShell
                     _socketServerMode = true;
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.SocketServerMode;
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryServerMode);
+                        break;
+                    }
                 }
 #if !UNIX
                 else if (MatchSwitch(switchKey, "v2socketservermode", "v2so"))
@@ -951,6 +980,11 @@ namespace Microsoft.PowerShell
                     _v2SocketServerMode = true;
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.V2SocketServerMode;
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryServerMode);
+                        break;
+                    }
                 }
 #endif
                 else if (MatchSwitch(switchKey, "servermode", "s"))
@@ -958,18 +992,33 @@ namespace Microsoft.PowerShell
                     _serverMode = true;
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.ServerMode;
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryServerMode);
+                        break;
+                    }
                 }
                 else if (MatchSwitch(switchKey, "namedpipeservermode", "nam"))
                 {
                     _namedPipeServerMode = true;
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.NamedPipeServerMode;
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryServerMode);
+                        break;
+                    }
                 }
                 else if (MatchSwitch(switchKey, "sshservermode", "sshs"))
                 {
                     _sshServerMode = true;
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.SSHServerMode;
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryServerMode);
+                        break;
+                    }
                 }
                 else if (MatchSwitch(switchKey, "noprofileloadtime", "noprofileloadtime"))
                 {
@@ -1248,6 +1297,15 @@ namespace Microsoft.PowerShell
                 }
             }
 
+            if (_error is null
+                && !_showVersion
+                && !_showHelp
+                && !ParametersUsed.HasFlag(ParameterBitmap.File)
+                && IsFileOnlyEntryEnabled)
+            {
+                SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
+            }
+
             Dbg.Assert(
                     ((_exitCode == ConsoleHost.ExitCodeBadCommandLineParameter) && _abortStartup)
                 || (_exitCode == ConsoleHost.ExitCodeSuccess),
@@ -1345,6 +1403,12 @@ namespace Microsoft.PowerShell
             // Process interactive input...
             if (args[i] == "-")
             {
+                if (IsFileOnlyEntryEnabled)
+                {
+                    SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
+                    return false;
+                }
+
                 // the arg to -file is -, which is secret code for "read the commands from stdin with prompts"
 
                 _explicitReadCommandsFromStdin = true;
@@ -1477,6 +1541,12 @@ namespace Microsoft.PowerShell
 
         private bool ParseCommand(string[] args, ref int i, bool noexitSeen, bool isEncoded)
         {
+            if (IsFileOnlyEntryEnabled)
+            {
+                SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
+                return false;
+            }
+
             if (_commandLineCommand != null)
             {
                 // we've already set the command, so squawk
