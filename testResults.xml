@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="26" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="5" invalid="0" date="2026-06-18" time="14:34:41">
+  <environment cwd="/home/runner/work/PowerShell/PowerShell" platform="Linux" nunit-version="2.5.8.0" clr-version="8.0.27" user="runner" machine-name="runnervm1li68" user-domain="" os-version="6.17.0-1018-azure" />
+  <culture-info current-culture="" current-uiculture="" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Ignored" success="True" time="5.6539" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="/home/runner/work/PowerShell/PowerShell/test/powershell/Modules/Microsoft.PowerShell.Management/Start-Process.Tests.ps1" executed="True" result="Ignored" success="True" time="5.6539" asserts="0" description="/home/runner/work/PowerShell/PowerShell/test/powershell/Modules/Microsoft.PowerShell.Management/Start-Process.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Start-Process" executed="True" result="Ignored" success="True" time="3.4792" asserts="0" description="Start-Process">
+            <results>
+              <test-case description="Should process arguments without error" name="Start-Process.Should process arguments without error" time="0.1485" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should work correctly when used with full path name" name="Start-Process.Should work correctly when used with full path name" time="0.0099" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should invoke correct path when used with FilePath argument" name="Start-Process.Should invoke correct path when used with FilePath argument" time="0.008" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should invoke correct path when used with Path alias argument" name="Start-Process.Should invoke correct path when used with Path alias argument" time="0.0074" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should wait for command completion if used with Wait argument" name="Start-Process.Should wait for command completion if used with Wait argument" time="1.0206" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should work correctly with WorkingDirectory argument" name="Start-Process.Should work correctly with WorkingDirectory argument" time="0.0157" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should work correctly within an unspecified WorkingDirectory with wildcard-type characters" name="Start-Process.Should work correctly within an unspecified WorkingDirectory with wildcard-type characters" time="0.0166" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should handle stderr redirection without error" name="Start-Process.Should handle stderr redirection without error" time="0.0154" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should handle stdout redirection without error" name="Start-Process.Should handle stdout redirection without error" time="1.0173" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should handle stdin redirection without error" name="Start-Process.Should handle stdin redirection without error" time="0.0117" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should give an error when -Verb parameter is used" name="Start-Process.Should give an error when -Verb parameter is used" time="0.0282" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should give an error when -WindowStyle parameter is used" name="Start-Process.Should give an error when -WindowStyle parameter is used" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should give an error when both -NoNewWindow and -WindowStyle are specified" name="Start-Process.Should give an error when both -NoNewWindow and -WindowStyle are specified" time="0.0038" asserts="0" success="False" result="Ignored" executed="False" />
+              <test-case description="ExitCode returns with -NoNewWindow, -PassThru and -Wait" name="Start-Process.ExitCode returns with -NoNewWindow, -PassThru and -Wait" time="1.0673" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should start cmd.exe with Verb 'open' and WindowStyle 'Minimized'" name="Start-Process.Should start cmd.exe with Verb 'open' and WindowStyle 'Minimized'" time="0.0017" asserts="0" success="False" result="Ignored" executed="False" />
+              <test-case description="Should start notepad.exe with ShellExecute" name="Start-Process.Should start notepad.exe with ShellExecute" time="0.0014" asserts="0" success="False" result="Ignored" executed="False" />
+              <test-case description="Should be able to use the -WhatIf switch without performing the actual action" name="Start-Process.Should be able to use the -WhatIf switch without performing the actual action" time="0.012" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should return null when using -WhatIf switch with -PassThru" name="Start-Process.Should return null when using -WhatIf switch with -PassThru" time="0.0077" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should run without errors when -ArgumentList is $null" name="Start-Process.Should run without errors when -ArgumentList is $null" time="0.0061" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should run without errors when -ArgumentList is @()" name="Start-Process.Should run without errors when -ArgumentList is @()" time="0.006" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Should run without errors when -ArgumentList is ''" name="Start-Process.Should run without errors when -ArgumentList is ''" time="0.007" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Start-Process tests requiring admin" executed="True" result="Ignored" success="True" time="3.4856" asserts="0" description="Start-Process tests requiring admin">
+            <results>
+              <test-case description="Should open the application that is associated a file" name="Start-Process tests requiring admin.Should open the application that is associated a file" time="0.0027" asserts="0" success="False" result="Ignored" executed="False" />
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Environment Tests" executed="True" result="Success" success="True" time="5.1427" asserts="0" description="Environment Tests">
+            <results>
+              <test-case description="UseNewEnvironment parameter should reset environment variables for child process" name="Environment Tests.UseNewEnvironment parameter should reset environment variables for child process" time="1.0782" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="-Environment adds or replaces environment variables to child process" name="Environment Tests.-Environment adds or replaces environment variables to child process" time="0.358" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="-Environment can remove an environment variable from child process" name="Environment Tests.-Environment can remove an environment variable from child process" time="0.2184" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Bug fixes" executed="True" result="Ignored" success="True" time="5.1467" asserts="0" description="Bug fixes">
+            <results>
+              <test-case description="Error redirection along with '-NoNewWindow' should work for Start-Process" name="Bug fixes.Error redirection along with '-NoNewWindow' should work for Start-Process" time="0.0013" asserts="0" success="False" result="Ignored" executed="False" />
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
