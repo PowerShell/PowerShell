@@ -24,6 +24,22 @@ configuration:
           reply: This issue has been marked as "Waiting on Author" and has not had any activity for **7 day**. It has been closed for housekeeping purposes.
       - closeIssue
     
+    - description: Close if marked as needs repro and no activity in 7 days
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isOpen
+      - isIssue
+      - hasLabel:
+          label: Needs-Repro
+      - noActivitySince:
+          days: 7
+      actions:
+      - addReply:
+          reply: This issue has been marked as "Needs-Repro" and has not had any activity for **7 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+
     - description: Label as Resolution-No Activity if not labeled with KeepOpen and no activity in 6 months
       frequencies:
       - hourly:
@@ -57,6 +73,7 @@ configuration:
           label: Resolution-No Activity
       - addReply:
           reply: "This issue has not had any activity in 6 months, if there is no further activity in 7 days, the issue will be closed automatically.\n\nActivity in this case refers only to comments on the issue. If the issue is closed and you are the author, you can re-open the issue using the button below. Please add more information to be considered during retriage. If you are not the author but the issue is impacting you after it has been closed, please submit a new issue with updated details and a link to this issue and the original."
+    
     eventResponderTasks:
     - description: Remove no resolution label if anyone comments while in 7 day window
       if:
@@ -105,5 +122,14 @@ configuration:
       then:
       - removeLabel:
           label: KeepOpen
+
+    - description: If new issue comment then remove needs repro in case it includes repro steps
+      if:
+      - payloadType: Issue_Comment
+      - hasLabel:
+          label: Needs-Repro
+      then:
+      - removeLabel:
+          label: Needs-Repro
 onFailure:
 onSuccess:
