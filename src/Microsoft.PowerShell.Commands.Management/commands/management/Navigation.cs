@@ -3002,22 +3002,18 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PSNotSupportedException notSupported)
             {
-                WritePathResolutionError(notSupported);
+                WriteError(
+                    new ErrorRecord(
+                        notSupported.ErrorRecord,
+                        notSupported));
                 return false;
             }
-            catch (DriveNotFoundException driveNotFound)
+            catch (SessionStateException sessionStateException)
             {
-                WritePathResolutionError(driveNotFound);
-                return false;
-            }
-            catch (ProviderNotFoundException providerNotFound)
-            {
-                WritePathResolutionError(providerNotFound);
-                return false;
-            }
-            catch (ItemNotFoundException pathNotFound)
-            {
-                WritePathResolutionError(pathNotFound);
+                WriteError(
+                    new ErrorRecord(
+                        sessionStateException.ErrorRecord,
+                        sessionStateException));
                 return false;
             }
 
@@ -3261,25 +3257,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         #endregion Command code
-
-        private void WritePathResolutionError(Exception exception)
-        {
-            switch (exception)
-            {
-                case PSNotSupportedException notSupported:
-                    WriteError(new ErrorRecord(notSupported.ErrorRecord, notSupported));
-                    break;
-                case DriveNotFoundException driveNotFound:
-                    WriteError(new ErrorRecord(driveNotFound.ErrorRecord, driveNotFound));
-                    break;
-                case ProviderNotFoundException providerNotFound:
-                    WriteError(new ErrorRecord(providerNotFound.ErrorRecord, providerNotFound));
-                    break;
-                case ItemNotFoundException pathNotFound:
-                    WriteError(new ErrorRecord(pathNotFound.ErrorRecord, pathNotFound));
-                    break;
-            }
-        }
 
     }
 
