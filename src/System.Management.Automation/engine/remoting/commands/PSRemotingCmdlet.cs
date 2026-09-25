@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 resolvedComputerNames = new string[1];
 
-                resolvedComputerNames[0] = ResolveComputerName(".");
+                resolvedComputerNames[0] = RemotingUtils.ResolveComputerName(".");
             }
             else if (computerNames.Length == 0)
             {
@@ -80,31 +80,8 @@ namespace Microsoft.PowerShell.Commands
 
                 for (int i = 0; i < resolvedComputerNames.Length; i++)
                 {
-                    resolvedComputerNames[i] = ResolveComputerName(computerNames[i]);
+                    resolvedComputerNames[i] = RemotingUtils.ResolveComputerName(computerNames[i]);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Resolves a computer name. If its null or empty
-        /// its assumed to be localhost.
-        /// </summary>
-        /// <param name="computerName">Computer name to resolve.</param>
-        /// <returns>Resolved computer name.</returns>
-        protected string ResolveComputerName(string computerName)
-        {
-            Diagnostics.Assert(computerName != null, "Null ComputerName");
-
-            if (string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
-            {
-                // tracer.WriteEvent(ref PSEventDescriptors.PS_EVENT_HOSTNAMERESOLVE);
-                // tracer.Dispose();
-                // tracer.OperationalChannel.WriteVerbose(PSEventId.HostNameResolve, PSOpcode.Method, PSTask.CreateRunspace);
-                return s_LOCALHOST;
-            }
-            else
-            {
-                return computerName;
             }
         }
 
@@ -146,8 +123,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Utility functions
 
         #region Private Members
-
-        private static readonly string s_LOCALHOST = "localhost";
 
         // private PSETWTracer tracer = PSETWTracer.GetETWTracer(PSKeyword.Cmdlets);
 
@@ -910,43 +885,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
-        /// Parse a hostname used with SSH Transport to get embedded
-        /// username and/or port.
-        /// </summary>
-        /// <param name="hostname">Host name to parse.</param>
-        /// <param name="host">Resolved target host.</param>
-        /// <param name="userName">Resolved target user name.</param>
-        /// <param name="port">Resolved target port.</param>
-        protected void ParseSshHostName(string hostname, out string host, out string userName, out int port)
-        {
-            host = hostname;
-            userName = this.UserName;
-            port = this.Port;
-            try
-            {
-                Uri uri = new System.Uri("ssh://" + hostname);
-                host = ResolveComputerName(uri.Host);
-                ValidateComputerName(new string[] { host });
-                if (uri.UserInfo != string.Empty)
-                {
-                    userName = uri.UserInfo;
-                }
-
-                if (uri.Port != -1)
-                {
-                    port = uri.Port;
-                }
-            }
-            catch (UriFormatException)
-            {
-                ThrowTerminatingError(new ErrorRecord(
-                    new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(
-                        RemotingErrorIdStrings.InvalidComputerName)), "PSSessionInvalidComputerName",
-                            ErrorCategory.InvalidArgument, hostname));
-            }
-        }
-
-        /// <summary>
         /// Parse the Connection parameter HashTable array.
         /// </summary>
         /// <returns>Array of SSHConnection objects.</returns>
@@ -976,8 +914,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (paramName.Equals(ComputerNameParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(HostNameAlias, StringComparison.OrdinalIgnoreCase))
                     {
-                        var resolvedComputerName = ResolveComputerName(GetSSHConnectionStringParameter(item[paramName]));
-                        ParseSshHostName(resolvedComputerName, out string host, out string userName, out int port);
+                        var resolvedComputerName = RemotingUtils.ResolveComputerName(GetSSHConnectionStringParameter(item[paramName]));
+                        RemotingUtils.ParseSshHostName(this, resolvedComputerName, out string host, out string userName, out int port);
                         connectionInfo.ComputerName = host;
                         if (userName != string.Empty)
                         {
@@ -1100,28 +1038,6 @@ namespace Microsoft.PowerShell.Commands
         /// Uri parameter set.
         /// </summary>
         protected const string UriParameterSet = "Uri";
-
-        /// <summary>
-        /// Validates computer names to check if none of them
-        /// happen to be a Uri. If so this throws an error.
-        /// </summary>
-        /// <param name="computerNames">collection of computer
-        /// names to validate</param>
-        protected void ValidateComputerName(string[] computerNames)
-        {
-            foreach (string computerName in computerNames)
-            {
-                UriHostNameType nametype = Uri.CheckHostName(computerName);
-                if (!(nametype == UriHostNameType.Dns || nametype == UriHostNameType.IPv4 ||
-                    nametype == UriHostNameType.IPv6))
-                {
-                    ThrowTerminatingError(new ErrorRecord(
-                        new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(
-                            RemotingErrorIdStrings.InvalidComputerName)), "PSSessionInvalidComputerName",
-                                ErrorCategory.InvalidArgument, computerNames));
-                }
-            }
-        }
 
         /// <summary>
         /// Validates parameter value and returns as string.
@@ -1435,7 +1351,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected virtual void CreateHelpersForSpecifiedComputerNames()
         {
-            ValidateComputerName(ResolvedComputerNames);
+            RemotingUtils.ValidateComputerName(this, ResolvedComputerNames);
 
             // create helper objects for computer names
             RemoteRunspace remoteRunspace = null;
@@ -1504,7 +1420,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (string computerName in ResolvedComputerNames)
             {
-                ParseSshHostName(computerName, out string host, out string userName, out int port);
+                RemotingUtils.ParseSshHostName(this, computerName, out string host, out string userName, out int port);
 
                 var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout, Options);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
