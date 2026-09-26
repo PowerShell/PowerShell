@@ -2977,15 +2977,7 @@ function Start-PSBootstrap {
 
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
-                if ($environment.UsingHomebrew) {
-                    if ($sudo) {
-                        Start-NativeExecution { & $sudo @packageArgs } -IgnoreExitcode
-                    } else {
-                        Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) } -IgnoreExitcode
-                    }
-                } else {
-                    Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) } -IgnoreExitcode
-                }
+                Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) } -IgnoreExitcode
             } elseif ($environment.IsLinux -and $environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'build-base', 'git', 'curl', 'wget'
                 $packageArgs = @('apk', 'add') + $Deps

@@ -1214,6 +1214,9 @@ function Start-PSBootstrap {
                     Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) }
                 }
             } elseif ($environment.IsMacOS) {
+                # .NET Core required runtime libraries
+                $Deps += "openssl"
+
                 if ($environment.UsingHomebrew) {
                     $packageArgs = @('brew', 'install', '--quiet') + $Deps
                 } elseif ($environment.UsingMacports) {
@@ -1222,9 +1225,6 @@ function Start-PSBootstrap {
                         $packageArgs = @($sudo) + $packageArgs
                     }
                 }
-
-                # .NET Core required runtime libraries
-                $Deps += "openssl"
 
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
