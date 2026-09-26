@@ -1639,9 +1639,10 @@ namespace System.Management.Automation
                 else if (genericParamTypes is not null)
                 {
                     errorId = "MethodCountCouldNotFindBestGeneric";
+                    string methodName = methods.Length > 0 && methods[0].method != null ? methods[0].method.Name : "<unknown>";
                     errorMsg = string.Format(
                         ExtendedTypeSystem.MethodGenericArgumentCountException,
-                        methods[0].method.Name,
+                        methodName,
                         genericParamTypes.Length,
                         arguments.Length);
                     return null;
