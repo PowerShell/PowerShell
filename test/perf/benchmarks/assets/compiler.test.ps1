@@ -1168,9 +1168,14 @@ function Start-PSBootstrap {
                 $originalDebianFrontEnd=$env:DEBIAN_FRONTEND
                 $env:DEBIAN_FRONTEND='noninteractive'
                 try {
-                    Start-NativeExecution {
-                        Invoke-Expression "$sudo apt-get update -qq"
-                        Invoke-Expression "$sudo apt-get install -y -qq $Deps"
+                    $aptCommand = @('apt-get', 'update', '-qq')
+                    $aptInstallCommand = @('apt-get', 'install', '-y', '-qq') + $Deps
+                    if ($sudo) {
+                        Start-NativeExecution { & $sudo @aptCommand }
+                        Start-NativeExecution { & $sudo @aptInstallCommand }
+                    } else {
+                        Start-NativeExecution { & $aptCommand[0] @($aptCommand[1..($aptCommand.Length - 1)]) }
+                        Start-NativeExecution { & $aptInstallCommand[0] @($aptInstallCommand[1..($aptInstallCommand.Length - 1)]) }
                     }
                 }
                 finally {
@@ -1188,18 +1193,12 @@ function Start-PSBootstrap {
                 if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel' }
 
                 $PackageManager = Get-RedHatPackageManager
+                $packageArgs = @($PackageManager[0..3]) + $Deps
 
-                $baseCommand = "$sudo $PackageManager"
-
-                # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
-                if($NoSudo)
-                {
-                    $baseCommand = $PackageManager
-                }
-
-                # Install dependencies
-                Start-NativeExecution {
-                    Invoke-Expression "$baseCommand $Deps"
+                if ($sudo) {
+                    Start-NativeExecution { & $sudo @packageArgs }
+                } else {
+                    Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) }
                 }
             } elseif ($environment.IsLinux -and $environment.IsSUSEFamily) {
                 # Build tools
@@ -1208,37 +1207,43 @@ function Start-PSBootstrap {
                 # Packaging tools
                 if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel' }
 
-                $PackageManager = "zypper --non-interactive install"
-                $baseCommand = "$sudo $PackageManager"
-
-                # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
-                if($NoSudo)
-                {
-                    $baseCommand = $PackageManager
-                }
-
-                # Install dependencies
-                Start-NativeExecution {
-                    Invoke-Expression "$baseCommand $Deps"
+                $packageArgs = @('zypper', '--non-interactive', 'install') + $Deps
+                if ($sudo) {
+                    Start-NativeExecution { & $sudo @packageArgs }
+                } else {
+                    Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) }
                 }
             } elseif ($environment.IsMacOS) {
-                if ($environment.UsingHomebrew) {
-                    $PackageManager = "brew"
-                } elseif ($environment.UsingMacports) {
-                    $PackageManager = "$sudo port"
-                }
-
                 # .NET Core required runtime libraries
                 $Deps += "openssl"
 
+                if ($environment.UsingHomebrew) {
+                    $packageArgs = @('brew', 'install', '--quiet') + $Deps
+                } elseif ($environment.UsingMacports) {
+                    $packageArgs = @('port', '-q', 'install') + $Deps
+                    if ($sudo) {
+                        $packageArgs = @($sudo) + $packageArgs
+                    }
+                }
+
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
-                Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
+                if ($environment.UsingHomebrew) {
+                    if ($sudo) {
+                        Start-NativeExecution { & $sudo @packageArgs } -IgnoreExitcode
+                    } else {
+                        Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) } -IgnoreExitcode
+                    }
+                } else {
+                    Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) } -IgnoreExitcode
+                }
             } elseif ($environment.IsLinux -and $environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'clang', 'build-base', 'git', 'curl'
-
-                Start-NativeExecution {
-                    Invoke-Expression "apk add $Deps"
+                $packageArgs = @('apk', 'add') + $Deps
+                if ($sudo) {
+                    Start-NativeExecution { & $sudo @packageArgs }
+                } else {
+                    Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) }
                 }
             }
 

@@ -2810,19 +2810,19 @@ function Install-Dotnet {
 function Get-RedHatPackageManager {
     <#
     .SYNOPSIS
-        Returns the install command prefix for the available Red Hat-family package manager.
+        Returns the install command arguments for the available Red Hat-family package manager.
     .DESCRIPTION
-        Detects whether yum, dnf, or tdnf is installed and returns the corresponding
-        install command string for use in bootstrapping scripts.
+        Detects whether yum, dnf, or tdnf is installed and returns the command arguments
+        to use in bootstrapping scripts without shell string interpolation.
     .OUTPUTS
-        System.String. A package-manager install command such as 'dnf install -y -q'.
+        System.String[]. A package-manager command such as @('dnf', 'install', '-y', '-q').
     #>
     if ($environment.IsCentOS -or (Get-Command -Name yum -CommandType Application -ErrorAction SilentlyContinue)) {
-        "yum install -y -q"
+        @('yum', 'install', '-y', '-q')
     } elseif ($environment.IsFedora -or (Get-Command -Name dnf -CommandType Application -ErrorAction SilentlyContinue)) {
-        "dnf install -y -q"
+        @('dnf', 'install', '-y', '-q')
     } elseif ($environment.IsMariner -or (Get-Command -Name Test-DscConfiguration -CommandType Application -ErrorAction SilentlyContinue)) {
-        "tdnf install -y -q"
+        @('tdnf', 'install', '-y', '-q')
     } else {
         throw "Error determining package manager for this distribution."
     }
@@ -2910,9 +2910,14 @@ function Start-PSBootstrap {
                 $originalDebianFrontEnd=$env:DEBIAN_FRONTEND
                 $env:DEBIAN_FRONTEND='noninteractive'
                 try {
-                    Start-NativeExecution {
-                        Invoke-Expression "$sudo apt-get update -qq"
-                        Invoke-Expression "$sudo apt-get install -y -qq $Deps"
+                    $aptCommand = @('apt-get', 'update', '-qq')
+                    $aptInstallCommand = @('apt-get', 'install', '-y', '-qq') + $Deps
+                    if ($sudo) {
+                        Start-NativeExecution { & $sudo @aptCommand }
+                        Start-NativeExecution { & $sudo @aptInstallCommand }
+                    } else {
+                        Start-NativeExecution { & $aptCommand[0] @($aptCommand[1..($aptCommand.Length - 1)]) }
+                        Start-NativeExecution { & $aptInstallCommand[0] @($aptInstallCommand[1..($aptInstallCommand.Length - 1)]) }
                     }
                 }
                 finally {
@@ -2932,18 +2937,13 @@ function Start-PSBootstrap {
                 if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "rpm-build", "groff" }
 
                 $PackageManager = Get-RedHatPackageManager
+                $packageArgs = @($PackageManager[0..3])
+                $packageArgs = $packageArgs + $Deps
 
-                $baseCommand = "$sudo $PackageManager"
-
-                # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
-                if($NoSudo)
-                {
-                    $baseCommand = $PackageManager
-                }
-
-                # Install dependencies
-                Start-NativeExecution {
-                    Invoke-Expression "$baseCommand $Deps"
+                if ($sudo) {
+                    Start-NativeExecution { & $sudo @packageArgs }
+                } else {
+                    Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) }
                 }
             } elseif ($environment.IsLinux -and $environment.IsSUSEFamily) {
                 # Build tools
@@ -2953,40 +2953,38 @@ function Start-PSBootstrap {
                 # Note: ruby-devel and libffi-devel are no longer needed for packaging
                 if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "rpmbuild", "groff" }
 
-                $PackageManager = "zypper --non-interactive install"
-                $baseCommand = "$sudo $PackageManager"
-
-                # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
-                if($NoSudo)
-                {
-                    $baseCommand = $PackageManager
-                }
-
-                # Install dependencies
-                Start-NativeExecution {
-                    Invoke-Expression "$baseCommand $Deps"
+                $packageArgs = @('zypper', '--non-interactive', 'install') + $Deps
+                if ($sudo) {
+                    Start-NativeExecution { & $sudo @packageArgs }
+                } else {
+                    Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) }
                 }
             } elseif ($environment.IsMacOS) {
-                if ($environment.UsingHomebrew) {
-                    $baseCommand = "brew install --quiet"
-                } elseif ($environment.UsingMacports) {
-                    $baseCommand = "$sudo port -q install"
-                }
-
                 # wget for downloading dotnet
                 $Deps += "wget"
 
                 # .NET Core required runtime libraries
                 $Deps += "openssl"
 
+                if ($environment.UsingHomebrew) {
+                    $packageArgs = @('brew', 'install', '--quiet') + $Deps
+                } elseif ($environment.UsingMacports) {
+                    $packageArgs = @('port', '-q', 'install') + $Deps
+                    if ($sudo) {
+                        $packageArgs = @($sudo) + $packageArgs
+                    }
+                }
+
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
-                Start-NativeExecution ([ScriptBlock]::Create("$baseCommand $Deps")) -IgnoreExitcode
+                Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) } -IgnoreExitcode
             } elseif ($environment.IsLinux -and $environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'build-base', 'git', 'curl', 'wget'
-
-                Start-NativeExecution {
-                    Invoke-Expression "apk add $Deps"
+                $packageArgs = @('apk', 'add') + $Deps
+                if ($sudo) {
+                    Start-NativeExecution { & $sudo @packageArgs }
+                } else {
+                    Start-NativeExecution { & $packageArgs[0] @($packageArgs[1..($packageArgs.Length - 1)]) }
                 }
             }
 
@@ -2996,7 +2994,12 @@ function Start-PSBootstrap {
                     Write-Verbose -Verbose "Checking for rpmbuild..."
                     if (!(Get-Command rpmbuild -ErrorAction SilentlyContinue)) {
                         Write-Warning "rpmbuild not found. Installing rpm-build package..."
-                        Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y rpm-build")) -IgnoreExitcode
+                        $rpmBuildArgs = @($PackageManager + @('install', '-y', 'rpm-build'))
+                        if ($sudo) {
+                            Start-NativeExecution -sb { & $sudo @rpmBuildArgs } -IgnoreExitcode
+                        } else {
+                            Start-NativeExecution -sb { & $rpmBuildArgs[0] @($rpmBuildArgs[1..($rpmBuildArgs.Length - 1)]) } -IgnoreExitcode
+                        }
                     }
                 }
 
@@ -3013,10 +3016,22 @@ function Start-PSBootstrap {
 
                             Write-Verbose -Verbose "Installing azurelinux-repos-extended for Mariner..."
 
-                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager azurelinux-repos-extended")) -IgnoreExitcode -Verbose
-                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager dpkg")) -IgnoreExitcode -Verbose
+                            $marinerRepoArgs = @($PackageManager + @('azurelinux-repos-extended'))
+                            $marinerDpkgArgs = @($PackageManager + @('dpkg'))
+                            if ($sudo) {
+                                Start-NativeExecution -sb { & $sudo @marinerRepoArgs } -IgnoreExitcode -Verbose
+                                Start-NativeExecution -sb { & $sudo @marinerDpkgArgs } -IgnoreExitcode -Verbose
+                            } else {
+                                Start-NativeExecution -sb { & $marinerRepoArgs[0] @($marinerRepoArgs[1..($marinerRepoArgs.Length - 1)]) } -IgnoreExitcode -Verbose
+                                Start-NativeExecution -sb { & $marinerDpkgArgs[0] @($marinerDpkgArgs[1..($marinerDpkgArgs.Length - 1)]) } -IgnoreExitcode -Verbose
+                            }
                         } else {
-                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo apt-get install -y dpkg")) -IgnoreExitcode
+                            $dpkgArgs = @('apt-get', 'install', '-y', 'dpkg')
+                            if ($sudo) {
+                                Start-NativeExecution -sb { & $sudo @dpkgArgs } -IgnoreExitcode
+                            } else {
+                                Start-NativeExecution -sb { & $dpkgArgs[0] @($dpkgArgs[1..($dpkgArgs.Length - 1)]) } -IgnoreExitcode
+                            }
                         }
                     }
                 }
