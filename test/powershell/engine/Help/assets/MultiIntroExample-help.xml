@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<helpItems schema="maml" xmlns="http://msh">
+
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+                   xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10"
+                   xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+    <command:details>
+      <command:name>Get-MultiIntroExample</command:name>
+      <maml:description>
+        <maml:para>Test command for issue 26676 regression.</maml:para>
+      </maml:description>
+      <command:verb>Get</command:verb>
+      <command:noun>MultiIntroExample</command:noun>
+    </command:details>
+
+    <maml:description>
+      <maml:para>A test command used to verify that ShowWindow renders all Introduction array elements.</maml:para>
+    </maml:description>
+
+    <command:examples>
+      <command:example>
+        <maml:title>---- Example 1 ----</maml:title>
+        <command:introduction>
+          <maml:para>PS C:\></maml:para>
+          <maml:para>Second introduction line</maml:para>
+        </command:introduction>
+        <dev:code>Get-MultiIntroExample</dev:code>
+        <dev:remarks>
+          <maml:para>This example has two introduction elements to test issue 26676.</maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+  </command:command>
+
+</helpItems>
