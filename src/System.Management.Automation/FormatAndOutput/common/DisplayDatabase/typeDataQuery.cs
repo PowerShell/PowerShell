@@ -408,11 +408,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
             foreach (ViewDefinition vd in db.viewDefinitionsSection.viewDefinitionList)
             {
-                if (vd == null || mainControlType != vd.mainControl.GetType())
+                if (vd == null)
+                {
+                    ActiveTracer.WriteLine("NOT MATCH null view definition");
+                    continue;
+                }
+
+                if (mainControlType != vd.mainControl.GetType())
                 {
                     ActiveTracer.WriteLine(
                         "NOT MATCH {0}  NAME: {1}",
-                        ControlBase.GetControlShapeName(vd.mainControl), (vd != null ? vd.name : string.Empty));
+                        ControlBase.GetControlShapeName(vd.mainControl), vd.name);
                     continue;
                 }
 
