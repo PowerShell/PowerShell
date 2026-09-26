@@ -437,7 +437,10 @@ namespace System.Management.Automation
                 {
                     return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, msg);
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Trace.WriteLine("ScopeTracer(string) threw: " + e);
+                }
             }
 
             return null;
@@ -451,7 +454,10 @@ namespace System.Management.Automation
                 {
                     return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, format, arg1);
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Trace.WriteLine("ScopeTracer(string,object) threw: " + e);
+                }
             }
 
             return null;
@@ -465,7 +471,10 @@ namespace System.Management.Automation
                 {
                     return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, format, arg1, arg2);
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Trace.WriteLine("ScopeTracer(string,object,object) threw: " + e);
+                }
             }
 
             return null;
