@@ -133,6 +133,28 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
     }
 }
 
+Describe "Parameter help recommendations for non-command views" -Tags @('CI') {
+    It "Does not recommend parameter help for <TypeName>" -TestCases @(
+        @{ TypeName = 'DscResourceHelpInfo' }
+        @{ TypeName = 'DscResourceHelpInfo#DetailedView' }
+        @{ TypeName = 'DscResourceHelpInfo#FullView' }
+        @{ TypeName = 'PSClassHelpInfo' }
+        @{ TypeName = 'PSClassHelpInfo#DetailedView' }
+        @{ TypeName = 'PSClassHelpInfo#FullView' }
+    ) {
+        param($TypeName)
+
+        $help = [pscustomobject]@{
+            PSTypeName = $TypeName
+            Name = 'TestHelp'
+            Details = @{ Name = 'TestHelp' }
+        }
+        $output = $help | Out-String -Width 200
+        $output | Should -Match 'Get-Help TestHelp -Full'
+        $output | Should -Not -Match '-Parameter'
+    }
+}
+
 Describe "Testing Get-Help Progress" -Tags @('Feature') {
     It "Last ProgressRecord should be Completed" {
         try {
