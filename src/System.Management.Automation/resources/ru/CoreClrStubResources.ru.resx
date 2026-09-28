@@ -139,7 +139,7 @@
     <value>Неизвестная ошибка: "{0}".</value>
   </data>
   <data name="TempHomeDirectoryUnsafePermission" xml:space="preserve">
-    <value>The temporary HOME directory '{0}' already exists but does not have the expected user-only permission. It may have been created by a different user, which is a potential security risk. PowerShell will not start until this directory is removed, its permission is corrected, or the 'HOME' environment variable is set.</value>
+    <value>Временный каталог HOME {0} уже существует, но не имеет ожидаемых прав доступа только для пользователя. Возможно, каталог был создан другим пользователем, что может представлять угрозу безопасности. PowerShell не запустится, пока этот каталог не будет удален, разрешения для него не будут исправлены или не будет задана переменная среды HOME.</value>
     <comment>{StrContains="HOME"}</comment>
   </data>
 </root>

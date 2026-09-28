@@ -139,7 +139,7 @@
     <value>未知的錯誤 "{0}"。</value>
   </data>
   <data name="TempHomeDirectoryUnsafePermission" xml:space="preserve">
-    <value>The temporary HOME directory '{0}' already exists but does not have the expected user-only permission. It may have been created by a different user, which is a potential security risk. PowerShell will not start until this directory is removed, its permission is corrected, or the 'HOME' environment variable is set.</value>
+    <value>暫時性 HOME 目錄 '{0}' 已存在，但未設定預期的僅限使用者權限。此目錄可能由其他使用者建立，因而造成潛在的安全性風險。請移除此目錄、修正其權限，或設定 'HOME' 環境變數；在此之前，不會啟動 PowerShell。</value>
     <comment>{StrContains="HOME"}</comment>
   </data>
 </root>
