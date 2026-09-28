@@ -959,6 +959,7 @@ function Switch-PSNugetConfig {
             'net8' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-8-early-access/nuget/v3/index.json' }
             'net9' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-9-early-access/nuget/v3/index.json' }
             'net10' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-10-early-access/nuget/v3/index.json' }
+            'net11' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-11-early-access/nuget/v3/index.json' }
             default { throw "Unknown early access feed URL: $earlyAccess" }
         }
 
@@ -2778,65 +2779,30 @@ function Install-Dotnet {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
         $installScript = "dotnet-install.ps1"
         Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
-        if (-not $environment.IsCoreCLR) {
-            $installArgs = @{}
-            if ($Version) {
-                $installArgs += @{ Version = $Version }
-            } elseif ($Channel) {
-                $installArgs += @{ Quality = $Quality }
-                $installArgs += @{ Channel = $Channel }
-            }
-
-            if ($InstallDir) {
-                $installArgs += @{ InstallDir = $InstallDir }
-            }
-
-            if ($AzureFeed) {
-                $installArgs += @{AzureFeed = $AzureFeed}
-            }
-
-            if ($FeedCredential) {
-                $installArgs += @{FeedCredential = $FeedCredential}
-            }
-
-            $installArgs += @{ SkipNonVersionedFiles = $true }
-
-            $installArgs | Out-String | Write-Verbose -Verbose
-            & ./$installScript @installArgs
+        $installArgs = @{}
+        if ($Version) {
+            $installArgs.Version = $Version
         }
-        else {
-            # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
-            $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
-            $fullDotnetInstallPath = Join-Path -Path (Convert-Path -Path $PWD.Path) -ChildPath $installScript
-
-            if ($Version) {
-                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version)
-            }
-            elseif ($Channel) {
-                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Quality', $Quality)
-            }
-
-            if ($InstallDir) {
-                $psArgs += @('-InstallDir', $InstallDir)
-            }
-
-            if ($AzureFeed) {
-                $psArgs += @('-AzureFeed', $AzureFeed)
-            }
-
-            if ($FeedCredential) {
-                $psArgs += @('-FeedCredential', $FeedCredential)
-            }
-
-            $psArgs += @('-SkipNonVersionedFiles')
-
-            # Removing the verbose message to not expose the secret
-            # $psArgs -join ' ' | Write-Verbose -Verbose
-
-            Start-NativeExecution {
-                & $fullPSPath @psArgs
-            }
+        elseif ($Channel) {
+            $installArgs.Channel = $Channel
+            $installArgs.Quality = $Quality
         }
+
+        if ($InstallDir) {
+            $installArgs.InstallDir = $InstallDir
+        }
+
+        if ($AzureFeed) {
+            $installArgs.AzureFeed = $AzureFeed
+        }
+
+        if ($FeedCredential) {
+            $installArgs.FeedCredential = $FeedCredential
+        }
+
+        $installArgs.SkipNonVersionedFiles = $true
+
+        & ./$installScript @installArgs
     }
     Write-LogGroupEnd -Title "Install .NET SDK $Version"
 }

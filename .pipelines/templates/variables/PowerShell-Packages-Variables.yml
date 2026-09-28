@@ -18,6 +18,7 @@ parameters:
       - 'net8'
       - 'net9'
       - 'net10'
+      - 'net11'
   - name: IsEarlyAccess
     type: boolean
     default: false
