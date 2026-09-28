@@ -1664,8 +1664,8 @@ namespace Microsoft.PowerShell
                 rectangle.Bottom == -1 &&
                 fill.Character == ' ')
             {
-                // Emits the same sequence as the clear command used by the
-                // local Clear-Host function.
+                // Clears the local console in response to the whole-buffer clear
+                // requested by Clear-Host on the remote Windows session.
                 Console.Clear();
                 return;
             }
