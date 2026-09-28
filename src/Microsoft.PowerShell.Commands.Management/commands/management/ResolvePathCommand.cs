@@ -126,9 +126,8 @@ namespace Microsoft.PowerShell.Commands
 
             int separatorIndex = path.Length > 1 && path[1] == '.' ? 2 : 1;
             return path.Length == separatorIndex ||
-                (path.Length > separatorIndex &&
-                 (path[separatorIndex] == provider.ItemSeparator ||
-                  path[separatorIndex] == provider.AltItemSeparator));
+                path[separatorIndex] == provider.ItemSeparator ||
+                path[separatorIndex] == provider.AltItemSeparator;
         }
 
         #region Command code
