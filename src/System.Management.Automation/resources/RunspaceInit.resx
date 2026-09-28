@@ -123,6 +123,9 @@
   <data name="PSHOMEDescription" xml:space="preserve">
     <value>Parent folder of the host application of the current runspace</value>
   </data>
+  <data name="PSClipboardActions" xml:space="preserve">
+    <value>replaceme Commands used to control Get-Clipboard and Set-Clipboard commands</value>
+  </data>
   <data name="HOMEDescription" xml:space="preserve">
     <value>Folder containing the current user's profile</value>
   </data>
