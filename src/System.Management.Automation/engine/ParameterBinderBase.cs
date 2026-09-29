@@ -1795,6 +1795,8 @@ namespace System.Management.Automation
                         "Argument type {0} is not IList, treating this as scalar",
                         currentValue.GetType().Name);
 
+                    object currentValueElement = PSObject.Base(currentValue);
+
                     if (collectionElementType != null)
                     {
                         if (coerceElementTypeIfNeeded)
@@ -1805,7 +1807,7 @@ namespace System.Management.Automation
 
                             // Coerce the scalar type into the collection
 
-                            currentValue =
+                            currentValueElement =
                                 CoerceTypeAsNeeded(
                                     argument,
                                     parameterName,
@@ -1813,9 +1815,9 @@ namespace System.Management.Automation
                                     null,
                                     currentValue);
                         }
-                        else
+                        else if (currentValueElement != null)
                         {
-                            Type currentValueElementType = currentValue.GetType();
+                            Type currentValueElementType = currentValueElement.GetType();
                             Type desiredElementType = collectionElementType;
 
                             if (currentValueElementType != desiredElementType &&
@@ -1840,23 +1842,23 @@ namespace System.Management.Automation
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} to array position {1}",
-                                (currentValue == null) ? "null" : currentValue.GetType().Name,
+                                (currentValueElement == null) ? "null" : currentValueElement.GetType().Name,
                                 0);
-                            resultAsIList[0] = currentValue;
+                            resultAsIList[0] = currentValueElement;
                         }
                         else if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.IList)
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} via IList.Add",
-                                (currentValue == null) ? "null" : currentValue.GetType().Name);
-                            resultAsIList.Add(currentValue);
+                                (currentValueElement == null) ? "null" : currentValueElement.GetType().Name);
+                            resultAsIList.Add(currentValueElement);
                         }
                         else
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} via ICollection<T>::Add()",
-                                (currentValue == null) ? "null" : currentValue.GetType().Name);
-                            addMethod.Invoke(resultCollection, new object[1] { currentValue });
+                                (currentValueElement == null) ? "null" : currentValueElement.GetType().Name);
+                            addMethod.Invoke(resultCollection, new object[1] { currentValueElement });
                         }
                     }
                     catch (Exception error) // OK, we catch all here by design
@@ -1877,10 +1879,10 @@ namespace System.Management.Automation
                                 GetErrorExtent(argument),
                                 parameterName,
                                 toType,
-                                currentValue?.GetType(),
+                                currentValueElement?.GetType(),
                                 ParameterBinderStrings.CannotConvertArgument,
                                 "CannotConvertArgument",
-                                currentValue ?? "null",
+                                currentValueElement ?? "null",
                                 error.Message);
                         throw bindingException;
                     }
