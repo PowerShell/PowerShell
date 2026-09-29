@@ -56,8 +56,8 @@ Get-TypeData System.Void
     Context "Remove-TypeData" {
         BeforeAll {
             $script:ps = [PowerShell]::Create()
-            Setup -F dummy1.types.ps1xml -Content "<Types><Type><Name>yyyDummy</Name><Members><ScriptProperty><Name>yyyDummy</Name><GetScriptBlock>'yyyDummy'</GetScriptBlock></ScriptProperty></Members></Type></Types>"
-            Setup -F dummy2.types.ps1xml -Content "<Types><Type><Name>zzzDummy</Name><Members><ScriptProperty><Name>zzzDummy</Name><GetScriptBlock>'zzzDummy'</GetScriptBlock></ScriptProperty></Members></Type></Types>"
+            Set-Content -Path (Join-Path $TestDrive 'dummy1.types.ps1xml') -Value "<Types><Type><Name>yyyDummy</Name><Members><ScriptProperty><Name>yyyDummy</Name><GetScriptBlock>'yyyDummy'</GetScriptBlock></ScriptProperty></Members></Type></Types>"
+            Set-Content -Path (Join-Path $TestDrive 'dummy2.types.ps1xml') -Value "<Types><Type><Name>zzzDummy</Name><Members><ScriptProperty><Name>zzzDummy</Name><GetScriptBlock>'zzzDummy'</GetScriptBlock></ScriptProperty></Members></Type></Types>"
         }
 
         BeforeEach {

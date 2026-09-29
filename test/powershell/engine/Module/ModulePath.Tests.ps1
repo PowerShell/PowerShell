@@ -11,7 +11,8 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             {
                 $ProductName =  "PowerShell"
             }
-            $expectedUserPath = Join-Path -Path $HOME -ChildPath "Documents\$ProductName\Modules"
+            $personalFolder = [Environment]::GetFolderPath("Personal")
+            $expectedUserPath = Join-Path -Path $personalFolder -ChildPath "$ProductName\Modules"
             $expectedSharedPath = Join-Path -Path $env:ProgramFiles -ChildPath "$ProductName\Modules"
             $userConfigPath = "~/Documents/powershell/powershell.config.json"
         }
@@ -204,6 +205,14 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 }
 
 Describe "ModuleIntrinsics.GetPSModulePath API tests" -tag @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+    BeforeDiscovery {
+        $testCases = @(
+            @{ Name = "User" }
+            @{ Name = "Machine" }
+            @{ Name = "Builtin" }
+        )
+    }
+
     BeforeAll {
         # create a local repostory and install a module
         $localSourceName = [Guid]::NewGuid().ToString("n")
@@ -212,17 +221,15 @@ Describe "ModuleIntrinsics.GetPSModulePath API tests" -tag @('CI', 'RequireAdmin
         Install-Module -Force -Scope AllUsers -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction SilentlyContinue
         Install-Module -Force -Scope CurrentUser -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction SilentlyContinue
 
-        $testCases = @(
-            @{ Name = "User"   ; Expected = $IsWindows ?
+        $expectedMap = @{
+            "User" = $IsWindows ?
                 (Resolve-Path ([Environment]::GetFolderPath("Personal") + "\PowerShell\Modules")).Path :
                 (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES"))).Path
-                }
-            @{ Name = "Machine" ; Expected = $IsWindows ?
+            "Machine" = $IsWindows ?
                 [Environment]::GetFolderPath("ProgramFiles") + "\PowerShell\Modules" :
                 (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES"))).Path
-            }
-            @{ Name = "Builtin" ; Expected = (Resolve-Path (Join-Path $PSHOME Modules)).Path }
-        )
+            "Builtin" = (Resolve-Path (Join-Path $PSHOME Modules)).Path
+        }
         # resolve the paths to ensure they are in the correct format
         $currentModulePathElements = $env:PSModulePath -split [System.IO.Path]::PathSeparator | Foreach-Object { (Resolve-Path $_).Path }
     }
@@ -232,7 +239,8 @@ Describe "ModuleIntrinsics.GetPSModulePath API tests" -tag @('CI', 'RequireAdmin
     }
 
     It "The value '<Name>' should return the proper value" -testcase $testCases {
-        param ( $Name, $Expected )
+        param ( $Name )
+        $Expected = $expectedMap[$Name]
         $result = [System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name)
         $result | Should -not -BeNullOrEmpty
         # spot check pshome, the user and shared paths may not be present
@@ -242,7 +250,8 @@ Describe "ModuleIntrinsics.GetPSModulePath API tests" -tag @('CI', 'RequireAdmin
     }
 
     It "The current module path should contain the expected paths for '<Name>'" -testcase $testCases {
-        param ( $Name, $Expected )
+        param ( $Name )
+        $Expected = $expectedMap[$Name]
         $mPath = (Resolve-Path ([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))).Path
         $currentModulePathElements | Should -Contain $mPath
     }

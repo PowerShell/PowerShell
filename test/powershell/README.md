@@ -40,8 +40,8 @@ Or only on Linux and OS X:
 It "Should do something on Linux" -Skip:$IsWindows { ... }
 ```
 
-## Pending
+## Known failures
 
-When writing a test that should pass, but does not, please do not skip or delete
-the test, but use `It "Should Pass" -Pending` to mark the test as pending, and
-file an issue on GitHub.
+When writing a test that should pass, but does not, please do not delete the
+test, but use `It "Should Pass" -Skip` to keep it in the suite, and file an issue
+on GitHub. Pester 6 removed `-Pending`.

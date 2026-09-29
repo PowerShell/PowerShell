@@ -51,7 +51,7 @@ Describe "History cmdlet test cases" -Tags "CI" {
 
     Context 'Conversions and Culture tests' {
 
-        BeforeAll {
+        BeforeDiscovery {
             $cultureTestCases = @(
                 @{
                     Culture   = 'en-us'
@@ -64,7 +64,9 @@ Describe "History cmdlet test cases" -Tags "CI" {
                     EndTime   = '18/08/2021 16:44:50'
                 }
             )
+        }
 
+        BeforeAll {
             $oldCulture = [cultureinfo]::CurrentCulture
         }
 

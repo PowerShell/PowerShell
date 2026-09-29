@@ -1,25 +1,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# Helper function to wait for job to reach a running or completed state
-# Job state can go to "Running" before the underlying runspace thread is running
-# so we always first wait 100 mSec before checking state.
-function Wait-ForJobRunning
-{
-    param (
-        $job
-    )
-
-    $iteration = 10
-    Do
+BeforeAll {
+    # Helper function to wait for job to reach a running or completed state
+    # Job state can go to "Running" before the underlying runspace thread is running
+    # so we always first wait 100 mSec before checking state.
+    function Wait-ForJobRunning
     {
-        Start-Sleep -Milliseconds 100
-    }
-    Until (($job.State -match "Running|Completed|Failed") -or (--$iteration -eq 0))
+        param (
+            $job
+        )
 
-    if ($job.State -notmatch "Running|Completed|Failed")
-    {
-        throw ("Cannot start job '{0}'. Job state is '{1}'" -f $job,$job.State)
+        $iteration = 10
+        Do
+        {
+            Start-Sleep -Milliseconds 100
+        }
+        Until (($job.State -match "Running|Completed|Failed") -or (--$iteration -eq 0))
+
+        if ($job.State -notmatch "Running|Completed|Failed")
+        {
+            throw ("Cannot start job '{0}'. Job state is '{1}'" -f $job,$job.State)
+        }
     }
 }
 
@@ -289,7 +291,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         }
 '@
 
-        $result = & "$PSHOME/pwsh" -c $script
+        $result = & "$PSHOME/pwsh" -NoProfile -c $script
         $result | Should -BeExactly "True"
     }
 
@@ -326,7 +328,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         Write-Output (@(Get-Runspace).Count -eq $rsStartCount)
 '@
 
-        $result = & "$PSHOME/pwsh" -c $script
+        $result = & "$PSHOME/pwsh" -NoProfile -c $script
         $result | Should -BeExactly "True","True","True"
     }
 

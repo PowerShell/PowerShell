@@ -3,7 +3,7 @@
 
 Describe "Handle ByRef-like types gracefully" -Tags "CI" {
 
-    BeforeAll {
+    BeforeDiscovery {
         $code = @'
 using System;
 using System.Management.Automation;
@@ -105,7 +105,9 @@ namespace DotNetInterop
         {
             Add-Type -TypeDefinition $code -IgnoreWarnings
         }
+    }
 
+    BeforeAll {
         $testObj = [DotNetInterop.Test]::new()
         $test2Obj = [DotNetInterop.Test2]::new()
     }

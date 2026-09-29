@@ -13,11 +13,13 @@ def=content of def
 }
 
 Describe "ConvertFrom-StringData" -Tags "CI" {
-    $sampleData = @'
+    BeforeAll {
+        $sampleData = @'
 foo  = 0
 bar  = 1
 bazz = 2
 '@
+    }
 
     It "Should not throw when called with just the stringdata switch" {
 	{ ConvertFrom-StringData -StringData 'a=b' } | Should -Not -Throw
@@ -67,7 +69,7 @@ bazz = 2
 }
 
 Describe "Delimiter parameter tests" -Tags "CI" {
-    BeforeAll  {
+    BeforeDiscovery {
         $TestCases = @(
             @{ Delimiter = ':'; StringData = 'value:10'; ExpectedResult = @{ value = 10 } }
             @{ Delimiter = '-'; StringData = 'a-b' ; ExpectedResult = @{ a = 'b' } }

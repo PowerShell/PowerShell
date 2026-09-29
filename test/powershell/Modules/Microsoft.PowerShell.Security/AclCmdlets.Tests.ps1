@@ -1,12 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Acl cmdlets are available and operate properly" -Tag CI {
-    Context "Windows ACL test" {
-        BeforeAll {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["It:Skip"] = -not $IsWindows
-        }
-
+    Context "Windows ACL test" -Skip:(-not $IsWindows) {
         It "Get-Acl returns an ACL DirectorySecurity object"  {
             $ACL = Get-Acl $TESTDRIVE
             $ACL | Should -BeOfType System.Security.AccessControl.DirectorySecurity
@@ -66,7 +61,7 @@ Describe "Acl cmdlets are available and operate properly" -Tag CI {
         }
 
         It "Set-Acl can set the ACL of a directory" {
-            Setup -d testdir
+            New-Item -Path (Join-Path $TestDrive 'testdir') -ItemType Directory -Force > $null
             $directory = "$TESTDRIVE/testdir"
             $acl = Get-Acl $directory
             $accessRule = [System.Security.AccessControl.FileSystemAccessRule]::New("Everyone","FullControl","ContainerInherit,ObjectInherit","None","Allow")
@@ -101,10 +96,6 @@ Describe "Acl cmdlets are available and operate properly" -Tag CI {
             $actual = Get-Acl -Path $testFile
             $actualGroup = $actual.GetGroup([System.Security.Principal.SecurityIdentifier])
             $actualGroup | Should -Be $currentUserSid
-        }
-
-        AfterAll {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
         }
     }
 }

@@ -91,7 +91,7 @@ Describe "Validate start of console host" -Tag CI {
 
     It "No new assemblies are loaded" {
         if ( (Get-PlatformInfo).Platform -eq "alpine" ) {
-            Set-ItResult -Pending -Because "Missing MI library causes list to be different"
+            Set-ItResult -Inconclusive -Because "Missing MI library causes list to be different"
             return
         }
 

@@ -186,17 +186,19 @@ test-function -ProgressAction Ignore
     }
 
     Context "SupportShouldprocess" {
-        $script = '
-                function get-foo
-                {
-                    [CmdletBinding(SupportsShouldProcess=$true)]
-                    param()
-
-                    if($PSCmdlet.shouldprocess("foo", "foo action"))
+        BeforeAll {
+            $script = '
+                    function get-foo
                     {
-                        write-output "foo action"
-                    }
-                }'
+                        [CmdletBinding(SupportsShouldProcess=$true)]
+                        param()
+
+                        if($PSCmdlet.shouldprocess("foo", "foo action"))
+                        {
+                            write-output "foo action"
+                        }
+                    }'
+        }
 
         It 'SupportShouldprocess' {
 

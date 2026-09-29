@@ -1,21 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
+Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI -Skip:(-not $host.ui.SupportsVirtualTerminal) {
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-
-        if (-not $host.ui.SupportsVirtualTerminal) {
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-
         $originalSuppressPref = $env:__SuppressAnsiEscapeSequences
         $originalRendering = $PSStyle.OutputRendering
-        $PSStyle.OutputRendering = 'Ansi'
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         $env:__SuppressAnsiEscapeSequences = $originalSuppressPref
         $PSStyle.OutputRendering = $originalRendering
     }
@@ -24,6 +16,11 @@ Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
     Context 'Allow Escape Sequences' {
         BeforeAll {
             Remove-Item env:__SuppressAnsiEscapeSequences -ErrorAction Ignore
+            $PSStyle.OutputRendering = 'Ansi'
+        }
+
+        AfterAll {
+            $PSStyle.OutputRendering = $originalRendering
         }
 
         It 'Select-String emits VT' {

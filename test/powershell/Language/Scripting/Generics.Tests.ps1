@@ -50,7 +50,10 @@ Describe "Generics support" -Tags "CI" {
         $x = [dictionary[dictionary[list[int],string], stack[double]]]::new()
         $x.gettype().fullname | Should -Match "double"
 
-        $y = New-Object "dictionary[dictionary[list[int],string], stack[double]]"
+        # Use fully qualified names with New-Object: Pester 5 does not propagate
+        # the file's `using namespace` into the It scriptblock's runtime parse context,
+        # so unqualified string type names do not resolve.
+        $y = New-Object "System.Collections.Generic.Dictionary[System.Collections.Generic.Dictionary[System.Collections.Generic.List[int],string], System.Collections.Generic.Stack[double]]"
         $y.gettype().fullname | Should -Match "double"
     }
 

@@ -3,10 +3,7 @@
 
 Describe "Command Discovery tests" -Tags "CI" {
 
-    BeforeAll {
-        Setup -f testscript.ps1 -Content "'This script should not run. Running from testscript.ps1'"
-        Setup -f testscripp.ps1 -Content "'This script should not run. Running from testscripp.ps1'"
-
+    BeforeDiscovery {
         $TestCasesCommandNotFound = @(
                         @{command = 'CommandThatDoesnotExist' ; testName = 'Non-existent command'}
                         @{command = 'testscrip?.ps1' ; testName = 'Multiple matches for filename'}
@@ -14,6 +11,11 @@ Describe "Command Discovery tests" -Tags "CI" {
                         @{command = [System.IO.Path]::DirectorySeparatorChar; testName = 'Directory separator'}
                         @{command = 'environment::\path'; testName = 'Provider qualified path'}
                        )
+    }
+
+    BeforeAll {
+        Set-Content -Path (Join-Path $TestDrive 'testscript.ps1') -Value "'This script should not run. Running from testscript.ps1'"
+        Set-Content -Path (Join-Path $TestDrive 'testscripp.ps1') -Value "'This script should not run. Running from testscripp.ps1'"
     }
 
     It "<testName>" -TestCases $TestCasesCommandNotFound {
@@ -87,24 +89,19 @@ Describe "Command Discovery tests" -Tags "CI" {
     }
 
     Context "Use literal path first when executing scripts" {
-        BeforeAll {
+        BeforeDiscovery {
+            # File creation removed from Discovery ($TestDrive unavailable); done in BeforeAll
             $firstFileName = '[test1].ps1'
             $secondFileName = '1.ps1'
             $thirdFileName = '2.ps1'
             $firstResult = "executing $firstFileName in root"
             $secondResult = "executing $secondFileName in root"
             $thirdResult = "executing $thirdFileName in root"
-            Setup -f $firstFileName -Content "'$firstResult'"
-            Setup -f $secondFileName -Content "'$secondResult'"
-            Setup -f $thirdFileName -Content "'$thirdResult'"
 
             $subFolder = 'subFolder'
             $firstFileInSubFolder = Join-Path $subFolder -ChildPath $firstFileName
             $secondFileInSubFolder = Join-Path $subFolder -ChildPath $secondFileName
             $thirdFileInSubFolder = Join-Path $subFolder -ChildPath $thirdFileName
-            Setup -f $firstFileInSubFolder -Content "'$firstResult'"
-            Setup -f $secondFileInSubFolder -Content "'$secondResult'"
-            Setup -f $thirdFileInSubFolder -Content "'$thirdResult'"
 
             $secondFileSearchInSubfolder = (Join-Path -Path $subFolder -ChildPath '[t1].ps1')
 
@@ -130,17 +127,41 @@ Describe "Command Discovery tests" -Tags "CI" {
                     @{command = '.\' + $secondFileSearchInSubfolder ; expectedResult = $secondResult; name = '.\' + $secondFileSearchInSubfolder}
                 #endregion
 
-                #region rooted paths
-                    @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1') ; expectedResult = $firstResult; name = '.\[test1].ps1 by fully qualified path'}
-                    @{command = (Join-Path ${TestDrive}  -ChildPath '[t1].ps1') ; expectedResult = $secondResult; name = '.\1.ps1 by fully qualified path with wildcard'}
+                #region rooted paths ($TestDrive resolved at runtime via 'rooted' flag)
+                    @{command = '[test1].ps1' ; rooted = $true; expectedResult = $firstResult; name = '.\[test1].ps1 by fully qualified path'}
+                    @{command = '[t1].ps1' ; rooted = $true; expectedResult = $secondResult; name = '.\1.ps1 by fully qualified path with wildcard'}
                 #endregion
             )
 
             $shouldNotExecuteCases = @(
                 @{command = 'subFolder\[test1].ps1' ; testName = 'Relative path that where module qualified syntax overlaps'; ExpectedErrorId = 'CouldNotAutoLoadModule'}
                 @{command = '.\[12].ps1' ; testName = 'relative path with bracket wildcard matctching multiple files'}
-                @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1') ; testName = 'fully qualified path with bracket wildcard matching multiple files'}
+                @{command = '[12].ps1' ; rooted = $true; testName = 'fully qualified path with bracket wildcard matching multiple files'}
             )
+        }
+
+        BeforeAll {
+            $firstFileName = '[test1].ps1'
+            $secondFileName = '1.ps1'
+            $thirdFileName = '2.ps1'
+            $firstResult = "executing $firstFileName in root"
+            $secondResult = "executing $secondFileName in root"
+            $thirdResult = "executing $thirdFileName in root"
+            New-Item -Path (Join-Path $TestDrive $firstFileName) -ItemType File -Value "'$firstResult'" -Force > $null
+            Set-Content -Path (Join-Path $TestDrive $secondFileName) -Value "'$secondResult'"
+            Set-Content -Path (Join-Path $TestDrive $thirdFileName) -Value "'$thirdResult'"
+
+            $subFolder = 'subFolder'
+            $subFolderPath = Join-Path $TestDrive $subFolder
+            New-Item -Path $subFolderPath -ItemType Directory -Force > $null
+            $firstFileInSubFolder = Join-Path $subFolder -ChildPath $firstFileName
+            $secondFileInSubFolder = Join-Path $subFolder -ChildPath $secondFileName
+            $thirdFileInSubFolder = Join-Path $subFolder -ChildPath $thirdFileName
+            New-Item -Path (Join-Path $TestDrive $firstFileInSubFolder) -ItemType File -Value "'$firstResult'" -Force > $null
+            Set-Content -Path (Join-Path $TestDrive $secondFileInSubFolder) -Value "'$secondResult'"
+            Set-Content -Path (Join-Path $TestDrive $thirdFileInSubFolder) -Value "'$thirdResult'"
+
+            $secondFileSearchInSubfolder = (Join-Path -Path $subFolder -ChildPath '[t1].ps1')
 
             Push-Location ${TestDrive}\
         }
@@ -150,13 +171,14 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
 
         It "Invoking <name> should return '<expectedResult>'" -TestCases $executionWithWildcardCases {
-            param($command, $expectedResult, [String]$Pending)
+            param($command, $expectedResult, [String]$Pending, [bool]$rooted)
 
             if($Pending)
             {
-                Set-TestInconclusive -Message $Pending
+                Set-ItResult -Inconclusive -Because $Pending
             }
 
+            if ($rooted) { $command = Join-Path $TestDrive -ChildPath $command }
             & $command | Should -BeExactly $expectedResult
         }
 
@@ -165,29 +187,33 @@ Describe "Command Discovery tests" -Tags "CI" {
                 [string]
                 $command,
                 [string]
-                $ExpectedErrorId = 'CommandNotFoundException'
+                $ExpectedErrorId = 'CommandNotFoundException',
+                [bool]$rooted
                 )
+            if ($rooted) { $command = Join-Path $TestDrive -ChildPath $command }
             { & $command } | Should -Throw -ErrorId $ExpectedErrorId
         }
     }
 
     Context "Get-Command should use globbing first for scripts" {
+        BeforeDiscovery {
+            $gcmWithWildcardCases = @(
+                @{command = '.\?[tb]est1?.ps1'; expectedCommand = '[test1].ps1'; expectedCommandCount =1; name = '''.\?[tb]est1?.ps1'''}
+                @{command = '?[tb]est1?.ps1'; rooted = $true; expectedCommand = '[test1].ps1'; expectedCommandCount =1 ; name = '''.\?[tb]est1?.ps1'' by fully qualified path'}
+                @{command = '.\[test1].ps1'; expectedCommand = '1.ps1'; expectedCommandCount =1; name = '''.\[test1].ps1'''}
+                @{command = '[test1].ps1'; rooted = $true; expectedCommand = '1.ps1'; expectedCommandCount =1 ; name = '''.\[test1].ps1'' by fully qualified path'}
+                @{command = '.\[12].ps1'; expectedCommand = '1.ps1'; expectedCommandCount =0; name = 'relative path with bracket wildcard matctching multiple files'}
+                @{command = '[12].ps1'; rooted = $true; expectedCommand = '1.ps1'; expectedCommandCount =0 ; name = 'fully qualified path with bracket wildcard matctching multiple files'}
+            )
+        }
+
         BeforeAll {
             $firstResult = '[first script]'
             $secondResult = 'alt script'
             $thirdResult = 'bad script'
-            Setup -f '[test1].ps1' -Content "'$firstResult'"
-            Setup -f '1.ps1' -Content "'$secondResult'"
-            Setup -f '2.ps1' -Content "'$thirdResult'"
-
-            $gcmWithWildcardCases = @(
-                @{command = '.\?[tb]est1?.ps1'; expectedCommand = '[test1].ps1'; expectedCommandCount =1; name = '''.\?[tb]est1?.ps1'''}
-                @{command = (Join-Path ${TestDrive}  -ChildPath '?[tb]est1?.ps1'); expectedCommand = '[test1].ps1'; expectedCommandCount =1 ; name = '''.\?[tb]est1?.ps1'' by fully qualified path'}
-                @{command = '.\[test1].ps1'; expectedCommand = '1.ps1'; expectedCommandCount =1; name = '''.\[test1].ps1'''}
-                @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1'); expectedCommand = '1.ps1'; expectedCommandCount =1 ; name = '''.\[test1].ps1'' by fully qualified path'}
-                @{command = '.\[12].ps1'; expectedCommand = '1.ps1'; expectedCommandCount =0; name = 'relative path with bracket wildcard matctching multiple files'}
-                @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1'); expectedCommand = '1.ps1'; expectedCommandCount =0 ; name = 'fully qualified path with bracket wildcard matctching multiple files'}
-            )
+            New-Item -Path (Join-Path $TestDrive '[test1].ps1') -ItemType File -Value "'$firstResult'" -Force > $null
+            Set-Content -Path (Join-Path $TestDrive '1.ps1') -Value "'$secondResult'"
+            Set-Content -Path (Join-Path $TestDrive '2.ps1') -Value "'$thirdResult'"
 
             Push-Location ${TestDrive}\
         }
@@ -197,7 +223,8 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
 
         It "Get-Command <name> should return <expectedCommandCount> command named '<expectedCommand>'" -TestCases $gcmWithWildcardCases {
-            param($command, $expectedCommand, $expectedCommandCount)
+            param($command, $expectedCommand, $expectedCommandCount, [bool]$rooted)
+            if ($rooted) { $command = Join-Path $TestDrive -ChildPath $command }
             $commands = @(Get-Command -Name $command)
             $commands.Count | Should -Be $expectedCommandCount
             if($expectedCommandCount -gt 0)
@@ -213,7 +240,7 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
 
         It "Should return command not found for commands in the global scope" {
-            {Get-Command -Name 'global:help' -ErrorAction Stop} | Should -Throw -ErrorId 'CommandNotFoundException'
+            {Get-Command -Name 'global:help' -ErrorAction Stop} | Should -Throw -ErrorId 'CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand'
         }
     }
 

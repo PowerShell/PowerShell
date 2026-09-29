@@ -6,8 +6,7 @@
  ############################################################################################>
 
  # Counter CmdLets are removed see issue #4272
- # Tests are disabled
- return
+ # Tests are disabled via -Skip on individual It blocks
 
 $cmdletName = "Export-Counter"
 
@@ -35,10 +34,30 @@ function CheckExportResults
     CompareCounterSets $counterValues $importedCounterValues
 }
 
+# Re-expose helpers and state needed at runtime by `It` blocks (Pester 5 isolates
+# file-scope variables and functions from the runtime test scope).
+BeforeAll {
+    . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
+
+    function CheckExportResults
+    {
+        Test-Path $filePath | Should -BeTrue
+        $importedCounterValues = Import-Counter $filePath
+
+        CompareCounterSets $counterValues $importedCounterValues
+    }
+}
+
 # Run a test case
 function RunTest($testCase)
 {
-    It "$($testCase.Name)" -Skip:$(SkipCounterTests) {
+    It "$($testCase.Name)" -TestCases @{
+        testCase = $testCase
+        cmdletName = $cmdletName
+        rootFilename = $rootFilename
+        counterNames = $counterNames
+    } -Skip:$(SkipCounterTests) {
+        param($testCase, $cmdletName, $rootFilename, $counterNames)
         $getCounterParams = ""
         if ($testCase.ContainsKey("GetCounterParams"))
         {
@@ -59,11 +78,11 @@ function RunTest($testCase)
             if ($testCase.ContainsKey("FileFormat"))
             {
                 $formatParam = "-FileFormat $($testCase.FileFormat)"
-                $filePath = Join-Path $script:outputDirectory "$rootFilename.$($testCase.FileFormat)"
+                $filePath = Join-Path $TestDrive "$rootFilename.$($testCase.FileFormat)"
             }
             else
             {
-                $filePath = Join-Path $script:outputDirectory "$rootFilename.blg"
+                $filePath = Join-Path $TestDrive "$rootFilename.blg"
             }
         }
         if ($testCase.NoDashPath)
@@ -93,7 +112,7 @@ function RunTest($testCase)
                 # Here we want to run the command then do our own post-run checks
                 $sb = [ScriptBlock]::Create($cmd)
                 &$sb
-                &$testCase.Script
+                & $testCase.Script
             }
             else
             {
@@ -118,84 +137,8 @@ Describe "CI tests for Export-Counter cmdlet" -Tags "CI" {
         $script:outputDirectory = $testDrive
     }
 
-    $testCases = @(
-        @{
-            Name = "Can export BLG format"
-            FileFormat = "blg"
-            GetCounterParams = "-MaxSamples 5"
-            Script = { CheckExportResults }
-        }
-        @{
-            Name = "Exports BLG format by default"
-            GetCounterParams = "-MaxSamples 5"
-            Script = { CheckExportResults }
-        }
-    )
-
-    foreach ($testCase in $testCases)
-    {
-        RunTest $testCase
-    }
-}
-
-Describe "Feature tests for Export-Counter cmdlet" -Tags "Feature" {
-
-    BeforeAll {
-        $script:outputDirectory = $testDrive
-    }
-
-    Context "Validate incorrect parameter usage" {
+    BeforeDiscovery {
         $testCases = @(
-            @{
-                Name = "Fails when given invalid path"
-                Path = "c:\DAD288C0-72F8-47D3-8C54-C69481B528DF\counterExport.blg"
-                ExpectedErrorId = "FileCreateFailed,Microsoft.PowerShell.Commands.ExportCounterCommand"
-            }
-            @{
-                Name = "Fails when given null path"
-                Path = "`$null"
-                ExpectedErrorId = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ExportCounterCommand"
-            }
-            @{
-                Name = "Fails when -Path specified but no path given"
-                Path = ""
-                ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ExportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -Circular without -MaxSize"
-                Parameters = "-Circular"
-                ExpectedErrorId = "CounterCircularNoMaxSize,Microsoft.PowerShell.Commands.ExportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -Circular with zero -MaxSize"
-                Parameters = "-Circular -MaxSize 0"
-                ExpectedErrorId = "CounterCircularNoMaxSize,Microsoft.PowerShell.Commands.ExportCounterCommand"
-            }
-            @{
-                Name = "Fails when -MaxSize < zero"
-                Parameters = "-MaxSize -2"
-                ExpectedErrorId = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.ExportCounterCommand"
-            }
-        )
-
-        foreach ($testCase in $testCases)
-        {
-            RunTest $testCase
-        }
-    }
-
-    Context "Export tests" {
-        $testCases = @(
-            @{
-                Name = "Fails when output file exists"
-                CreateFileFirst = $true     # the output file will be created before the test command runs
-                ExpectedErrorId = "CounterFileExists,Microsoft.PowerShell.Commands.ExportCounterCommand"
-            }
-            @{
-                Name = "Can force overwriting existing file"
-                Parameters = "-Force"
-                Script = { Test-Path $filePath | Should -BeTrue }
-            }
             @{
                 Name = "Can export BLG format"
                 FileFormat = "blg"
@@ -207,23 +150,106 @@ Describe "Feature tests for Export-Counter cmdlet" -Tags "Feature" {
                 GetCounterParams = "-MaxSamples 5"
                 Script = { CheckExportResults }
             }
-            @{
-                Name = "Can export CSV format"
-                FileFormat = "csv"
-                GetCounterParams = "-MaxSamples 2"
-                Script = { CheckExportResults }
-            }
-            @{
-                Name = "Can export TSV format"
-                FileFormat = "tsv"
-                GetCounterParams = "-MaxSamples 5"
-                Script = { CheckExportResults }
-            }
         )
 
         foreach ($testCase in $testCases)
         {
             RunTest $testCase
+        }
+    }
+}
+
+Describe "Feature tests for Export-Counter cmdlet" -Tags "Feature" {
+
+    BeforeAll {
+        $script:outputDirectory = $testDrive
+    }
+
+    Context "Validate incorrect parameter usage" {
+        BeforeDiscovery {
+            $testCases = @(
+                @{
+                    Name = "Fails when given invalid path"
+                    Path = "c:\DAD288C0-72F8-47D3-8C54-C69481B528DF\counterExport.blg"
+                    ExpectedErrorId = "FileCreateFailed,Microsoft.PowerShell.Commands.ExportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given null path"
+                    Path = "`$null"
+                    ExpectedErrorId = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ExportCounterCommand"
+                }
+                @{
+                    Name = "Fails when -Path specified but no path given"
+                    Path = ""
+                    # Wildcard suffix tolerates implicit-remoting proxy (Export-Counter) vs direct cmdlet (Microsoft.PowerShell.Commands.ExportCounterCommand) ErrorId
+                    ExpectedErrorId = "MissingArgument,*"
+                }
+                @{
+                    Name = "Fails when given -Circular without -MaxSize"
+                    Parameters = "-Circular"
+                    ExpectedErrorId = "CounterCircularNoMaxSize,Microsoft.PowerShell.Commands.ExportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given -Circular with zero -MaxSize"
+                    Parameters = "-Circular -MaxSize 0"
+                    ExpectedErrorId = "CounterCircularNoMaxSize,Microsoft.PowerShell.Commands.ExportCounterCommand"
+                }
+                @{
+                    Name = "Fails when -MaxSize < zero"
+                    Parameters = "-MaxSize -2"
+                    ExpectedErrorId = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.ExportCounterCommand"
+                }
+            )
+
+            foreach ($testCase in $testCases)
+            {
+                RunTest $testCase
+            }
+        }
+    }
+
+    Context "Export tests" {
+        BeforeDiscovery {
+            $testCases = @(
+                @{
+                    Name = "Fails when output file exists"
+                    CreateFileFirst = $true     # the output file will be created before the test command runs
+                    ExpectedErrorId = "CounterFileExists,Microsoft.PowerShell.Commands.ExportCounterCommand"
+                }
+                @{
+                    Name = "Can force overwriting existing file"
+                    Parameters = "-Force"
+                    Script = { Test-Path $filePath | Should -BeTrue }
+                }
+                @{
+                    Name = "Can export BLG format"
+                    FileFormat = "blg"
+                    GetCounterParams = "-MaxSamples 5"
+                    Script = { CheckExportResults }
+                }
+                @{
+                    Name = "Exports BLG format by default"
+                    GetCounterParams = "-MaxSamples 5"
+                    Script = { CheckExportResults }
+                }
+                @{
+                    Name = "Can export CSV format"
+                    FileFormat = "csv"
+                    GetCounterParams = "-MaxSamples 2"
+                    Script = { CheckExportResults }
+                }
+                @{
+                    Name = "Can export TSV format"
+                    FileFormat = "tsv"
+                    GetCounterParams = "-MaxSamples 5"
+                    Script = { CheckExportResults }
+                }
+            )
+
+            foreach ($testCase in $testCases)
+            {
+                RunTest $testCase
+            }
         }
     }
 }

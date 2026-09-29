@@ -29,30 +29,32 @@ Describe "Tests OutVariable only" -Tags "CI" {
         }
     }
 
-    $testdata = @(
-                    @{ Name = 'Updating OutVariable Case 1: pipe string';
-                        Command = "get-foo1";
-                        OutVariable = 'a';
-                        Expected = 'foo'
-                        },
-                    @{ Name = 'Updating OutVariable Case 2: $PSCmdlet.writeobject';
-                        Command = "get-foo2";
-                        OutVariable = 'a';
-                        Expected = 'foo'
-                        },
-                    @{ Name = 'Appending OutVariable Case 1: pipe string';
-                        Command = "get-foo1";
-                        OutVariable = 'a';
-                        PreSet = 'a','b';
-                        Expected = @("a", "b", "foo")
-                        },
-                    @{ Name = 'Appending OutVariable Case 2: $PSCmdlet.writeobject';
-                        Command = "get-foo2";
-                        OutVariable = 'a';
-                        PreSet = 'a','b';
-                        Expected = @("a", "b", "foo")
-                        }
-                    )
+    BeforeDiscovery {
+        $testdata = @(
+                        @{ Name = 'Updating OutVariable Case 1: pipe string';
+                            Command = "get-foo1";
+                            OutVariable = 'a';
+                            Expected = 'foo'
+                            },
+                        @{ Name = 'Updating OutVariable Case 2: $PSCmdlet.writeobject';
+                            Command = "get-foo2";
+                            OutVariable = 'a';
+                            Expected = 'foo'
+                            },
+                        @{ Name = 'Appending OutVariable Case 1: pipe string';
+                            Command = "get-foo1";
+                            OutVariable = 'a';
+                            PreSet = 'a','b';
+                            Expected = @("a", "b", "foo")
+                            },
+                        @{ Name = 'Appending OutVariable Case 2: $PSCmdlet.writeobject';
+                            Command = "get-foo2";
+                            OutVariable = 'a';
+                            PreSet = 'a','b';
+                            Expected = @("a", "b", "foo")
+                            }
+                        )
+    }
 
     It 'Test: <Name>' -TestCases $testdata {
         param ( $Name, $Command, $OutVariable, $PreSet, $Expected )
@@ -105,24 +107,26 @@ Describe "Test ErrorVariable only" -Tags "CI" {
         }
     }
 
-    $testdata1 = @(
-                    @{ Name = 'Updating ErrorVariable Case 1: write-error';
-                       Command = "get-foo1";
-                       ErrorVariable = 'a';
-                       Expected = 'foo'
-                     },
-                     @{ Name = 'Updating ErrorVariable Case 2: $PSCmdlet.WriteError';
-                       Command = "get-foo1";
-                       ErrorVariable = 'a';
-                       Expected = 'foo'
-                     },
-                    @{ Name = 'Appending ErrorVariable Case 1: pipe string';
-                        Command = "get-foo1";
-                        ErrorVariable = 'a';
-                        PreSet = @('a','b');
-                        Expected = @("a", "b", "foo")
-                        }
-                    )
+    BeforeDiscovery {
+        $testdata1 = @(
+                        @{ Name = 'Updating ErrorVariable Case 1: write-error';
+                           Command = "get-foo1";
+                           ErrorVariable = 'a';
+                           Expected = 'foo'
+                         },
+                         @{ Name = 'Updating ErrorVariable Case 2: $PSCmdlet.WriteError';
+                           Command = "get-foo1";
+                           ErrorVariable = 'a';
+                           Expected = 'foo'
+                         },
+                        @{ Name = 'Appending ErrorVariable Case 1: pipe string';
+                            Command = "get-foo1";
+                            ErrorVariable = 'a';
+                            PreSet = @('a','b');
+                            Expected = @("a", "b", "foo")
+                            }
+                        )
+    }
 
     It '<Name>' -TestCases $testdata1 {
         param ( $Name, $Command, $ErrorVariable, $PreSet, $Expected )
@@ -391,4 +395,3 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
         $script:bar_err | Should -BeExactly @("bar-error", "foo-error", "foo-error")
     }
 }
-

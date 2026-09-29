@@ -3,17 +3,32 @@
 
 Import-Module HelpersCommon
 
+$script:eedfPwsh = "$PSHOME/pwsh"
+$script:eedfSystemConfigPath = "$PSHOME/powershell.config.json"
+if ($IsWindows) {
+    $script:eedfUserConfigPath = "~/Documents/powershell/powershell.config.json"
+}
+else {
+    $script:eedfUserConfigPath = "~/.config/powershell/powershell.config.json"
+}
+
 Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
-        $pwsh = "$PSHOME/pwsh"
-        $systemConfigPath = "$PSHOME/powershell.config.json"
+        # Pester 5 does not propagate file-scope $script: variables into the
+        # container's runtime scope; rebind them here so AfterEach/It can read them.
+        $script:eedfPwsh = "$PSHOME/pwsh"
+        $script:eedfSystemConfigPath = "$PSHOME/powershell.config.json"
         if ($IsWindows) {
-            $userConfigPath = "~/Documents/powershell/powershell.config.json"
+            $script:eedfUserConfigPath = "~/Documents/powershell/powershell.config.json"
         }
         else {
-            $userConfigPath = "~/.config/powershell/powershell.config.json"
+            $script:eedfUserConfigPath = "~/.config/powershell/powershell.config.json"
         }
+
+        $pwsh = $script:eedfPwsh
+        $systemConfigPath = $script:eedfSystemConfigPath
+        $userConfigPath = $script:eedfUserConfigPath
 
         $systemConfigExists = $false
         if (Test-Path $systemConfigPath) {
@@ -33,6 +48,8 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     }
 
     AfterAll {
+        $systemConfigPath = $script:eedfSystemConfigPath
+        $userConfigPath = $script:eedfUserConfigPath
         if ($systemConfigExists) {
             Move-Item "$systemConfigPath.backup" $systemConfigPath -Force -ErrorAction SilentlyContinue
         }
@@ -45,8 +62,8 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     }
 
     AfterEach {
-        Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
-        Remove-Item $userConfigPath -Force -ErrorAction SilentlyContinue
+        Remove-Item $script:eedfSystemConfigPath -Force -ErrorAction SilentlyContinue
+        Remove-Item $script:eedfUserConfigPath -Force -ErrorAction SilentlyContinue
     }
 
     It "Enable-ExperimentalFeature will enable Experimental Feature for scope: <scope>" -TestCases @(
@@ -59,6 +76,7 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
             return
         }
 
+        $pwsh = $script:eedfPwsh
         $feature = & $pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeFalse -Because "All Experimental Features disabled when no config file"
         $feature = & $pwsh -noprofile -output xml -command Enable-ExperimentalFeature ExpTest.FeatureOne -Scope $scope -WarningAction SilentlyContinue
@@ -68,8 +86,8 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     }
 
     It "Disable-ExperimentalFeature will disable Experimental Feature for scope: <scope>" -TestCases @(
-        @{ scope = "AllUsers"   ; configPath = $systemConfigPath },
-        @{ scope = "CurrentUser"; configPath = $userConfigPath }
+        @{ scope = "AllUsers"   ; configPath = $script:eedfSystemConfigPath },
+        @{ scope = "CurrentUser"; configPath = $script:eedfUserConfigPath }
     ) {
         param ($scope, $configPath)
 
@@ -77,6 +95,7 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
             return
         }
 
+        $pwsh = $script:eedfPwsh
         '{"ExperimentalFeatures":["ExpTest.FeatureOne"]}' > $configPath
         $feature = & $pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeTrue -Because "Test config should enable ExpTest.FeatureOne"

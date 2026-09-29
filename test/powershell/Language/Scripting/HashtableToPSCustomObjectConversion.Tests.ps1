@@ -10,28 +10,30 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
         }
     }
 
-   $testdata = @(
-        @{ Name = 'New-Object cmdlet should accept empty hashtable or $null as Property argument';
-           Cmd = "new-object psobject -property `$null";
-           ExpectedType = 'System.Management.automation.psobject'
-        },
-        @{ Name = 'Hashtable conversion to PSCustomObject succeeds (Insertion Order is not retained)';
-           Cmd = "[pscustomobject][hashtable]`@{one=1;two=2}";
-           ExpectedType = 'System.Management.automation.psobject'
-        },
-        @{ Name = 'Hashtable(Stored in a variable) conversion to PSCustomObject succeeds (Insertion Order is not retained)';
-           Cmd = "`$ht = @{one=1;two=2};[pscustomobject]`$ht";
-           ExpectedType = 'System.Management.automation.psobject'
-        },
-        @{ Name = 'New-Object cmdlet should accept `$null as Property argument for pscustomobject';
-           Cmd = "new-object pscustomobject -property `$null";
-           ExpectedType = 'System.Management.automation.psobject'
-        },
-	   @{ Name = 'New-Object cmdlet should accept empty hashtable as property argument for pscustomobject';
-           Cmd = "`$ht = @{};new-object pscustomobject -property `$ht";
-           ExpectedType = 'System.Management.automation.psobject'
-        }
-    )
+   BeforeDiscovery {
+       $testdata = @(
+            @{ Name = 'New-Object cmdlet should accept empty hashtable or $null as Property argument';
+               Cmd = "new-object psobject -property `$null";
+               ExpectedType = 'System.Management.automation.psobject'
+            },
+            @{ Name = 'Hashtable conversion to PSCustomObject succeeds (Insertion Order is not retained)';
+               Cmd = "[pscustomobject][hashtable]`@{one=1;two=2}";
+               ExpectedType = 'System.Management.automation.psobject'
+            },
+            @{ Name = 'Hashtable(Stored in a variable) conversion to PSCustomObject succeeds (Insertion Order is not retained)';
+               Cmd = "`$ht = @{one=1;two=2};[pscustomobject]`$ht";
+               ExpectedType = 'System.Management.automation.psobject'
+            },
+            @{ Name = 'New-Object cmdlet should accept `$null as Property argument for pscustomobject';
+               Cmd = "new-object pscustomobject -property `$null";
+               ExpectedType = 'System.Management.automation.psobject'
+            },
+    	   @{ Name = 'New-Object cmdlet should accept empty hashtable as property argument for pscustomobject';
+               Cmd = "`$ht = @{};new-object pscustomobject -property `$ht";
+               ExpectedType = 'System.Management.automation.psobject'
+            }
+        )
+   }
 
     It 'Type Validation: <Name>' -TestCases:$testdata {
         param ($Name, $Cmd, $ExpectedType)
@@ -74,28 +76,30 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
                                 }
     }
 
-    $testdata1 = @(
-            @{ Name = 'Creating an object of an existing type from hashtable should throw error when setting non-existent properties';
-               Cmd = "[System.MAnagement.Automation.Host.Coordinates]`@{blah=10;Y=5 }";
-               ErrorID = 'ObjectCreationError';
-               InnerException = $true
-            },
-            @{ Name = 'Creating an object of an existing type from hashtable should throw error when setting incompatible values for properties';
-               Cmd = "[System.MAnagement.Automation.Host.Coordinates]`@{X='foo';Y=5}";
-               ErrorID = 'ObjectCreationError';
-               InnerException = $true
-            },
-            @{ Name = 'Conversion from PSCustomObject to hashtable should fail';
-               Cmd = "[hashtable][pscustomobject]`@{one=1;two=2}";
-               ErrorID ='InvalidCastConstructorException';
-               InnerException = $true
-            },
-            @{
-               Name = 'New-Object cmdlet should throw terminating errors when user specifies a non-existent property or tries to assign incompatible values';
-               Cmd = "New-Object -TypeName System.MAnagement.Automation.Host.Coordinates -Property `@{xx=10;y=5}";
-               ErrorID ='InvalidOperationException,Microsoft.PowerShell.Commands.NewObjectCommand'
-            }
-        )
+    BeforeDiscovery {
+        $testdata1 = @(
+                @{ Name = 'Creating an object of an existing type from hashtable should throw error when setting non-existent properties';
+                   Cmd = "[System.MAnagement.Automation.Host.Coordinates]`@{blah=10;Y=5 }";
+                   ErrorID = 'ObjectCreationError';
+                   InnerException = $true
+                },
+                @{ Name = 'Creating an object of an existing type from hashtable should throw error when setting incompatible values for properties';
+                   Cmd = "[System.MAnagement.Automation.Host.Coordinates]`@{X='foo';Y=5}";
+                   ErrorID = 'ObjectCreationError';
+                   InnerException = $true
+                },
+                @{ Name = 'Conversion from PSCustomObject to hashtable should fail';
+                   Cmd = "[hashtable][pscustomobject]`@{one=1;two=2}";
+                   ErrorID ='InvalidCastConstructorException';
+                   InnerException = $true
+                },
+                @{
+                   Name = 'New-Object cmdlet should throw terminating errors when user specifies a non-existent property or tries to assign incompatible values';
+                   Cmd = "New-Object -TypeName System.MAnagement.Automation.Host.Coordinates -Property `@{xx=10;y=5}";
+                   ErrorID ='InvalidOperationException,Microsoft.PowerShell.Commands.NewObjectCommand'
+                }
+            )
+    }
 
     It '<Name>' -TestCases:$testData1 {
         param ($Name, $Cmd, $ErrorID, $InnerException)

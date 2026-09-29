@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM host process" -Tags "CI" {
+Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM host process" -Tags "CI" -Skip {
 
-    It -Skip "Disabled test because it is fragile and does not consistently succeed on test VMs" { }
-    return
+    It "Disabled test because it is fragile and does not consistently succeed on test VMs" { }
 
-    try
-    {
+    BeforeAll {
+        return
+
         # Create PSSession
         $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
         $rs = [runspacefactory]::CreateRunspace($Host, $wc)
@@ -17,10 +17,6 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
         [powershell] $ps = [powershell]::Create()
         $ps.Runspace = $rs
         $result = $ps.AddScript('$PID').Invoke()
-        It "Verifies the WinRM host process Id was found" {
-            $result | Should -Not -BeNullOrEmpty
-            ($result.Count -eq 1) | Should -BeTrue
-        }
         [int]$winRMHostProcId = $result[0]
 
         # Run script to stop at breakpoint
@@ -32,19 +28,11 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
 
         # Get local remote runspace to attached process
         $hostRS = Get-Runspace -Name PSAttachRunspace
-        It "Verifies that the attached-to host runspace was found" {
-            $hostRS | Should -Not -BeNullOrEmpty
-            ($hostRS.RunspaceStateInfo.State -eq 'Opened') | Should -BeTrue
-        }
-
         # Wait for host runspace to become available.
         $count = 0
         while (($hostRS.RunspaceAvailability -ne 'Available') -and ($count++ -lt 60))
         {
             Start-Sleep -Milliseconds 500
-        }
-        It "Verifies that the attached-to host runspace is available" {
-            ($hostRS.RunspaceAvailability -eq 'Available') | Should -BeTrue
         }
 
         # Get call stack from default runspace.
@@ -60,14 +48,9 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
 
         # Detach from process
         Exit-PSHostProcess
-
-        It "Verifies a call stack was returned from the attached-to host." {
-            $stack | Should -Not -BeNullOrEmpty
-            ($stack.Count -gt 0) | Should -BeTrue
-        }
     }
-    finally
-    {
+
+    AfterAll {
         # Clean up
         if ($Host.IsRunspacePushed) { $Host.PopRunspace() }
 
@@ -76,4 +59,20 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
         if ($null -ne $ps) { $ps.Dispose() }
         if ($null -ne $rs) { $rs.Dispose() }
     }
+
+        It "Verifies the WinRM host process Id was found" {
+            $result | Should -Not -BeNullOrEmpty
+            ($result.Count -eq 1) | Should -BeTrue
+        }
+        It "Verifies that the attached-to host runspace was found" {
+            $hostRS | Should -Not -BeNullOrEmpty
+            ($hostRS.RunspaceStateInfo.State -eq 'Opened') | Should -BeTrue
+        }
+        It "Verifies that the attached-to host runspace is available" {
+            ($hostRS.RunspaceAvailability -eq 'Available') | Should -BeTrue
+        }
+        It "Verifies a call stack was returned from the attached-to host." {
+            $stack | Should -Not -BeNullOrEmpty
+            ($stack.Count -gt 0) | Should -BeTrue
+        }
 }

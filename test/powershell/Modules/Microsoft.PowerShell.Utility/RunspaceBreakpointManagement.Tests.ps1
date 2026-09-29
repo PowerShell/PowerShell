@@ -36,14 +36,16 @@ Describe 'Runspace Breakpoint Unit Tests - Feature-Enabled' -Tags 'CI' {
     # those tests can focus on scenarios expected to work.
     Context 'Can transform a runspace name, id, or instanceid into a runspace' {
 
-        function Test-RunspaceTransform {
-            param(
-                [ValidateNotNull()]
-                [Runspace]
-                [System.Management.Automation.Runspaces.Runspace()]
+        BeforeAll {
+            function Test-RunspaceTransform {
+                param(
+                    [ValidateNotNull()]
+                    [Runspace]
+                    [System.Management.Automation.Runspaces.Runspace()]
+                    $Runspace
+                )
                 $Runspace
-            )
-            $Runspace
+            }
         }
 
         It 'Transforms a valid runspace name into a runspace' {
