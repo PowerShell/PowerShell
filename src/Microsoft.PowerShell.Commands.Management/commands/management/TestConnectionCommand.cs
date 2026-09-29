@@ -477,6 +477,9 @@ namespace Microsoft.PowerShell.Commands
 
                         if (!Quiet.IsPresent)
                         {
+                            // The default send buffer is intentionally empty (see s_DefaultSendBuffer),
+                            // so buffer.Length cannot distinguish the default from an explicit
+                            // BufferSize of 0. Report the requested size instead.
                             var status = new PingStatus(
                                 Source,
                                 routerName,
@@ -484,10 +487,7 @@ namespace Microsoft.PowerShell.Commands
                                 reply.Status == IPStatus.Success
                                     ? reply.RoundtripTime
                                     : timer.ElapsedMilliseconds,
-
-                                // If we use the empty buffer, then .NET actually uses a 32 byte buffer so we want to show
-                                // as the result object the actual buffer size used instead of 0.
-                                buffer.Length == 0 ? DefaultSendBufferSize : buffer.Length,
+                                BufferSize,
                                 pingNum: i);
                             WriteObject(new TraceStatus(
                                 currentHop,
@@ -727,12 +727,15 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
+                    // The default send buffer is intentionally empty (see s_DefaultSendBuffer),
+                    // so buffer.Length cannot distinguish the default from an explicit
+                    // BufferSize of 0. Report the requested size instead.
                     WriteObject(new PingStatus(
                         Source,
                         resolvedTargetName,
                         reply,
                         reply.RoundtripTime,
-                        buffer.Length == 0 ? DefaultSendBufferSize : buffer.Length,
+                        BufferSize,
                         pingNum: (uint)i));
                 }
 
@@ -885,9 +888,11 @@ namespace Microsoft.PowerShell.Commands
 
         // Users most often use the default buffer size so we cache the buffer.
         // Creates and fills a send buffer. This follows the ping.exe and CoreFX model.
+        // An explicit size of 0 also returns the shared empty buffer: when .NET falls back
+        // to the ping utility (unelevated Unix), it rejects any other buffer instance.
         private static byte[] GetSendBuffer(int bufferSize)
         {
-            if (bufferSize == DefaultSendBufferSize)
+            if (bufferSize == DefaultSendBufferSize || bufferSize == 0)
             {
                 return s_DefaultSendBuffer;
             }

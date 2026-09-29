@@ -364,6 +364,26 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
     }
 }
 
+# Separate Describe without RequireSudoOnUnix: the default and the explicit-0 buffer are both the
+# shared empty buffer, which .NET accepts on its ping-utility fallback, so these need no privileges.
+Describe "Test-Connection BufferSize reporting" -Tag "CI" {
+    BeforeAll {
+        $targetName = "localhost"
+    }
+
+    It "BufferSize 0 is reported as 0" {
+        $result = Test-Connection $targetName -Count 1 -BufferSize 0
+
+        $result.BufferSize | Should -Be 0
+    }
+
+    It "Default BufferSize is reported as 32" {
+        $result = Test-Connection $targetName -Count 1
+
+        $result.BufferSize | Should -Be 32
+    }
+}
+
 Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
     BeforeAll {
         # Ensure the local host listen on port 80
