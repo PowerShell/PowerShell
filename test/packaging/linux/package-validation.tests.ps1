@@ -15,9 +15,37 @@ Describe "Linux Package Name Validation" {
         }
 
         Write-Verbose "Artifacts directory: $artifactsDir" -Verbose
+
+        # Keep this pattern aligned with the release validation pipeline.
+        $rpmPackageNamePattern = '^powershell-(preview-|lts-)?\d+\.\d+\.\d+(_[a-z]*\.\d+)?-1\.(preview\.\d+\.)?(rh|cm|azl4)\.(x86_64|aarch64)\.rpm$'
     }
 
     Context "RPM Package Names" {
+        It "Should accept the Azure Linux 4 <Architecture> package name" -TestCases @(
+            @{
+                Architecture = "x86_64"
+                Name = "powershell-preview-7.7.0_preview.5-1.azl4.x86_64.rpm"
+            }
+            @{
+                Architecture = "aarch64"
+                Name = "powershell-preview-7.7.0_preview.5-1.azl4.aarch64.rpm"
+            }
+        ) {
+            param($Name)
+
+            $Name | Should -Match $rpmPackageNamePattern
+        }
+
+        It "Should reject malformed RPM package name <Name>" -TestCases @(
+            @{ Name = "prefix-powershell-preview-7.7.0_preview.5-1.azl4.x86_64.rpm" }
+            @{ Name = "powershell-preview-7.7.0_preview.5-1Xazl4.x86_64.rpm" }
+            @{ Name = "powershell-preview-7.7.0_preview.5-1.azl4.x86_64.rpm.backup" }
+        ) {
+            param($Name)
+
+            $Name | Should -Not -Match $rpmPackageNamePattern
+        }
+
         It "Should have valid RPM package names" {
             $rpmPackages = Get-ChildItem -Path $artifactsDir -Recurse -Filter *.rpm -ErrorAction SilentlyContinue
 
@@ -32,9 +60,8 @@ Describe "Linux Package Name Validation" {
             # (_[a-z]*\.\d+)?         : Optional underscore, letters, dot, and digits (e.g., _alpha.1)
             # -1\.                    : Literal '-1.'
             # (preview\.\d+\.)?       : Optional 'preview.' and digits, followed by a dot
-            # (rh|cm)\.               : Either 'rh.' or 'cm.'
+            # (rh|cm|azl4)\.          : RPM distribution suffix
             # (x86_64|aarch64)\.rpm$  : Architecture and file extension
-            $rpmPackageNamePattern = 'powershell\-(preview-|lts-)?\d+\.\d+\.\d+(_[a-z]*\.\d+)?-1\.(preview\.\d+\.)?(rh|cm)\.(x86_64|aarch64)\.rpm'
 
             foreach ($package in $rpmPackages) {
                 if ($package.Name -notmatch $rpmPackageNamePattern) {
