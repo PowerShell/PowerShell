@@ -1649,13 +1649,27 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// This method copies a given character, foreground color, and background
-        /// color to a region of the screen buffer. In this example this
-        /// functionality is not needed so the method throws a
-        /// NotImplementException exception./// </summary>
+        /// color to a region of the screen buffer. Only clearing the whole screen
+        /// with a rectangle of {-1, -1, -1, -1} with ' ' is supported, this is what
+        /// Clear-Host uses when run in a remote session targeting Windows.
+        /// </summary>
         /// <param name="rectangle">Defines the area to be filled.</param>
         /// <param name="fill">Defines the fill character.</param>
         public override void SetBufferContents(Rectangle rectangle, BufferCell fill)
         {
+            if (
+                rectangle.Left == -1 &&
+                rectangle.Right == -1 &&
+                rectangle.Top == -1 &&
+                rectangle.Bottom == -1 &&
+                fill.Character == ' ')
+            {
+                // Clears the local console in response to the whole-buffer clear
+                // requested by Clear-Host on the remote Windows session.
+                Console.Clear();
+                return;
+            }
+
             throw new NotImplementedException("The method or operation is not implemented.");
         }
 
