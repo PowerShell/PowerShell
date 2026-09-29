@@ -935,6 +935,30 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
+                    // Command discovery retries noun-only names with the default verb prepended.
+                    // Do the same here after an exact lookup fails.
+                    if (!resultFound && !isDuplicate && !isPattern && !commandName.Contains('-') && !commandName.Contains('\\'))
+                    {
+                        string defaultVerbCommandName =
+                            StringLiterals.DefaultCommandVerb + StringLiterals.CommandVerbNounSeparator + commandName;
+                        string tempCommandName = defaultVerbCommandName;
+                        if (!string.IsNullOrEmpty(moduleName))
+                        {
+                            tempCommandName = moduleName + "\\" + defaultVerbCommandName;
+                        }
+
+                        try
+                        {
+                            CommandDiscovery.LookupCommandInfo(tempCommandName, this.MyInvocation.CommandOrigin, this.Context);
+                        }
+                        catch (CommandNotFoundException)
+                        {
+                            // Ignore and let the regular Get-Command error handling report the original name.
+                        }
+
+                        resultFound = FindCommandForName(options, defaultVerbCommandName, isPattern: false, emitErrors: false, ref count, out isDuplicate);
+                    }
+
                     // If we are trying to match a single specific command name (no glob characters)
                     // then we need to write an error if we didn't find it.
                     if (!isDuplicate)
