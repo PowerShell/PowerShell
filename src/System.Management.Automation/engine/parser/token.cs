@@ -428,6 +428,9 @@ namespace System.Management.Automation.Language
         /// <summary>The null conditional index access operator '?[]'.</summary>
         QuestionLBracket = 104,
 
+        /// <summary>The ThreadJob background operator '&amp;!'.</summary>
+        AmpersandExclaim = 106,
+
         #endregion Operators
 
         #region Keywords
@@ -881,7 +884,7 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
             /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*     QuestionLBracket */ TokenFlags.None,
-            /*     Reserved slot 7  */ TokenFlags.None,
+            /*     AmpersandExclaim */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*     Reserved slot 8  */ TokenFlags.None,
             /*     Reserved slot 9  */ TokenFlags.None,
             /*     Reserved slot 10 */ TokenFlags.None,
@@ -1081,7 +1084,7 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ "??",
             /*          QuestionDot */ "?.",
             /*     QuestionLBracket */ "?[",
-            /*    Reserved slot 7   */ string.Empty,
+            /*     AmpersandExclaim */ "&!",
             /*    Reserved slot 8   */ string.Empty,
             /*    Reserved slot 9   */ string.Empty,
             /*    Reserved slot 10  */ string.Empty,
@@ -1160,10 +1163,10 @@ namespace System.Management.Automation.Language
         static TokenTraits()
         {
             Diagnostics.Assert(
-                s_staticTokenFlags.Length == ((int)TokenKind.Clean + 1),
+                s_staticTokenFlags.Length == ((int)TokenKind.AmpersandExclaim + 1),
                 "Table size out of sync with enum - _staticTokenFlags");
             Diagnostics.Assert(
-                s_tokenText.Length == ((int)TokenKind.Clean + 1),
+                s_tokenText.Length == ((int)TokenKind.AmpersandExclaim + 1),
                 "Table size out of sync with enum - _tokenText");
             // Some random assertions to make sure the enum and the traits are in sync
             Diagnostics.Assert(GetTraits(TokenKind.Begin) == (TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName),
