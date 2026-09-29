@@ -40,6 +40,7 @@ parameters:
       - 'net8'
       - 'net9'
       - 'net10'
+      - 'net11'
   - name: DOTNET_RUNTIME_VERSION
     displayName: Runtime version of early access build
     type: string
@@ -121,4 +122,3 @@ extends:
         DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
         EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
         IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
-

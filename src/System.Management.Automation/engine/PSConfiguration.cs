@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation.Internal;
+using System.Security;
 using System.Text;
 using System.Threading;
 
@@ -411,6 +412,23 @@ namespace System.Management.Automation.Configuration
 
                         configData = serializer.Deserialize<JObject>(jsonReader) ?? emptyConfig;
                     }
+                    catch (Exception exc) when (
+                        scope == ConfigScope.CurrentUser &&
+                        (exc is IOException || exc is UnauthorizedAccessException || exc is SecurityException || exc is JsonException))
+                    {
+                        // The per-user configuration file is unreadable (e.g. OneDrive cloud file provider
+                        // not running, permission denied, ACL denied, or corrupt/malformed JSON). Rather
+                        // than failing pwsh startup, fall back to defaults and emit a warning so the user
+                        // knows the file was skipped. See https://github.com/PowerShell/PowerShell/issues/27370.
+                        //
+                        // We intentionally do NOT apply this fallback to ConfigScope.AllUsers: that file is
+                        // admin-owned and on non-Windows platforms is the only source for security-relevant
+                        // policies (ScriptBlockLogging, Transcription, ConsoleSessionConfiguration, etc.).
+                        // If we cannot prove the admin's intent we must fail closed.
+                        TryWriteConfigWarning(StringUtil.Format(PSConfigurationStrings.CanNotReadConfigurationFile, fileName, exc.Message));
+
+                        configData = emptyConfig;
+                    }
                     catch (Exception exc)
                     {
                         throw PSTraceSource.NewInvalidOperationException(exc, PSConfigurationStrings.CanNotConfigurationFile, args: fileName);
@@ -435,10 +453,45 @@ namespace System.Management.Automation.Configuration
 
             if (configData != emptyConfig && configData.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out JToken jToken))
             {
-                return jToken.ToObject<T>(serializer) ?? defaultValue;
+                try
+                {
+                    return jToken.ToObject<T>(serializer) ?? defaultValue;
+                }
+                catch (JsonException exc) when (scope == ConfigScope.CurrentUser)
+                {
+                    // The per-user JSON parsed successfully, but the value at <key> can't be
+                    // materialized as T (wrong type, malformed sub-document, etc.). Fall back
+                    // to the caller's default for this setting and emit a warning, mirroring
+                    // the file-level fallback above. AllUsers stays fail-closed for
+                    // security-relevant policies.
+                    // See https://github.com/PowerShell/PowerShell/issues/27370.
+                    TryWriteConfigWarning(StringUtil.Format(PSConfigurationStrings.CanNotReadConfigurationValue, key, fileName, exc.Message));
+                    return defaultValue;
+                }
             }
 
             return defaultValue;
+        }
+
+        /// <summary>
+        /// Best-effort emission of a warning when the per-user configuration file (or one of its
+        /// values) can't be read. <see cref="ReadValueFromFile"/> is invoked very early in pwsh
+        /// startup -- before any host, runspace, or PowerShell warning stream exists -- so we
+        /// write directly to <see cref="Console.Error"/>. This matches existing startup-time
+        /// stderr writes in ConsoleHost (e.g. CannotLoadPSReadline). Centralizing this here
+        /// keeps formatting consistent and gives future hosts a single seam to swap the channel.
+        /// Failures inside the writer itself are swallowed so logging issues never block startup.
+        /// </summary>
+        private static void TryWriteConfigWarning(string message)
+        {
+            try
+            {
+                Console.Error.WriteLine("WARNING: " + message);
+            }
+            catch
+            {
+                // Best-effort warning; never let logging failures block startup.
+            }
         }
 
         private static FileStream OpenFileStreamWithRetry(string fullPath, FileMode mode, FileAccess access, FileShare share)

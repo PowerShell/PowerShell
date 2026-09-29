@@ -112,6 +112,9 @@ runs:
           const globalConfigChanged = files.some(file => file === '.globalconfig' || file === 'nuget.config' || file === 'global.json');
           console.log(`✓ Global config changed: ${globalConfigChanged}`);
 
+          const localizationConfigChanged = files.some(file => file === 'Localize/LocProject.json');
+          console.log(`✓ Localization config changed: ${localizationConfigChanged}`);
+
           const packagingChanged = files.some(file =>
             file === '.github/workflows/windows-ci.yml' ||
             file === '.github/workflows/linux-ci.yml' ||
@@ -128,7 +131,7 @@ runs:
             toolsCiPsm1Changed;
           console.log(`→ Packaging changed: ${packagingChanged}`);
 
-          const source = mainSourceChanged || toolsChanged || githubChanged || propsChanged || testsChanged || globalConfigChanged;
+          const source = mainSourceChanged || toolsChanged || githubChanged || propsChanged || testsChanged || globalConfigChanged || localizationConfigChanged;
           console.log(`→ Source (composite): ${source}`);
 
           core.endGroup();

@@ -240,6 +240,15 @@
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
     <value>Hedef ayrılmış bir cihaz adını temsil ettiğinden '{0}' yolu işlenemiyor.</value>
   </data>
+  <data name="DirectoryNamePathTraversal" xml:space="preserve">
+    <value>Yol geçişine neden olabileceği için uzak dizin adı '{0}' işlenemiyor.</value>
+  </data>
+  <data name="FileNamePathTraversal" xml:space="preserve">
+    <value>Yol geçişine neden olabileceği için uzak dosya adı '{0}' işlenemiyor.</value>
+  </data>
+  <data name="ADSPathTraversal" xml:space="preserve">
+    <value>Yol geçişine neden olabileceği için Uzak Alternatif Veri Akışı adı '{0}' işlenemiyor.</value>
+  </data>
   <data name="EncodingNotUsed" xml:space="preserve">
     <value>'-AsByteStream' belirtildiğinde kodlama kullanılmaz.</value>
   </data>

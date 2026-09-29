@@ -1071,6 +1071,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 if (res == PdhResults.PDH_MORE_DATA)
                 {
                     Marshal.FreeHGlobal(localizedPathPtr);
+
+                    // Set the value to 'IntPtr.Zero' so a reallocation failure won't cause the stale pointer to be double-freed in the finally block below.
+                    localizedPathPtr = IntPtr.Zero;
                     localizedPathPtr = Marshal.AllocHGlobal(strSize * sizeof(char));
                     res = PdhLookupPerfNameByIndex(machineName, index, localizedPathPtr, ref strSize);
                 }

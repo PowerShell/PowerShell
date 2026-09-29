@@ -15,6 +15,7 @@ parameters:
       - 'net8'
       - 'net9'
       - 'net10'
+      - 'net11'
   - name: DOTNET_RUNTIME_VERSION
     displayName: Runtime version of early access build
     type: string

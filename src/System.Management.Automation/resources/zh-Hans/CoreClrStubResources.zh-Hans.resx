@@ -138,4 +138,8 @@
   <data name="UnknownErrorNumber" xml:space="preserve">
     <value>未知错误: {0}。</value>
   </data>
+  <data name="TempHomeDirectoryUnsafePermission" xml:space="preserve">
+    <value>临时 HOME 目录“{0}”已存在，但不具有预期的仅限用户权限。它可能是由其他用户创建的，这是潜在的安全风险。在移除此目录、更正其权限或设置 'HOME' 环境变量之前，PowerShell 将不会启动。</value>
+    <comment>{StrContains="HOME"}</comment>
+  </data>
 </root>
