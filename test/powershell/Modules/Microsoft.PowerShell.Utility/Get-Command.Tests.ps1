@@ -11,13 +11,13 @@ Describe "Get-Command Feature tests" -Tag Feature {
         }
 
         It "Should match native commands" {
-            $input = "pwsg"
+            $name = "pwsg"
             $expectedcmd = "pwsh"
             if ($IsWindows) {
                 $expectedcmd = "pwsh.EXE"
             }
 
-            $cmds = Get-Command $input -UseFuzzyMatch
+            $cmds = Get-Command $name -UseFuzzyMatch
             $cmds.Count | Should -BeGreaterThan 0
             $cmds.Name | Should -Contain $expectedcmd
         }

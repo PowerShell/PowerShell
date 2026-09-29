@@ -57,8 +57,8 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         New-Item -ItemType Directory -Path testdrive:/module/foo > $null
         New-Item -ItemType File -Path testdrive:/module/foo/bar.psm1 > $null
 
-        $args = @{$parameter = "doesnotexist.psm1"}
-        New-ModuleManifest -Path $testModulePath @args
+        $arguments = @{$parameter = "doesnotexist.psm1"}
+        New-ModuleManifest -Path $testModulePath @arguments
         $fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
 
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $fullyQualifiedErrorId
