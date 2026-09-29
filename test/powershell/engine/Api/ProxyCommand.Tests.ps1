@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 using namespace System.Management.Automation
 using namespace System.Collections.ObjectModel
 
@@ -117,6 +118,52 @@ Describe 'ProxyCommand Tests' -Tags "CI" {
         $oldExamples.Length | Should -Be $newExamples.Length
     }
 
+    It "ProxyCommand.GetHelpComments preserves custom example titles" {
+        function TitledExampleFunc {
+            <#
+                .SYNOPSIS
+                A function with titled examples.
+
+                .EXAMPLE Retrieving an item
+                Get-Item -Path C:\Temp
+
+                Retrieves the item at C:\Temp.
+
+                .EXAMPLE Listing children
+                Get-ChildItem -Path C:\Temp
+
+                Lists folder contents.
+
+                .EXAMPLE
+                Get-Process
+
+                An untitled example.
+            #>
+            param()
+        }
+
+        $helpObj = Get-Help TitledExampleFunc -Full
+        $helpContent = [System.Management.Automation.ProxyCommand]::GetHelpComments($helpObj)
+        $bodySB = [scriptblock]::Create(@"
+<#
+$helpContent
+#>
+param()
+"@)
+        Set-Item -Path function:\TitledExampleProxy -Value $bodySB
+        $newHelpObj = Get-Help TitledExampleProxy -Full
+
+        $oldExamples = @($helpObj.examples.example)
+        $newExamples = @($newHelpObj.examples.example)
+        $newExamples.Length | Should -Be $oldExamples.Length
+
+        # Titled examples must preserve the custom title portion
+        $newExamples[0].title | Should -BeLike '*Retrieving an item*'
+        $newExamples[1].title | Should -BeLike '*Listing children*'
+        # Untitled example must not gain a spurious colon
+        $newExamples[2].title | Should -Not -BeLike '*:*'
+    }
+
     It "Test generate proxy command" {
         $cmdInfo = Get-Command -Name Get-Content
         $cmdMetadata = [CommandMetadata]::new($cmdInfo)
@@ -178,5 +225,329 @@ End {{
 
         $result = "Msg1", "Msg2" | MyProxyTest -Id 3 -LastName Last
         $result | Should -Be "3,Last - Msg1;Msg2"
+    }
+
+    Context 'GetHelpComments preserves example titles' {
+        BeforeAll {
+            function HelpFuncForProxyTitles {
+                <#
+                  .SYNOPSIS
+                  A function with titled examples for proxy testing.
+
+                  .EXAMPLE Retrieving processes
+                  Get-Process
+
+                  Gets all processes
+
+                  .EXAMPLE
+                  Get-Service
+
+                  Gets all services
+
+                  .EXAMPLE Listing items in a directory
+                  Get-ChildItem -Path C:\
+
+                  Lists items in C:\
+                #>
+                param()
+            }
+
+            $script:helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncForProxyTitles))
+        }
+
+        It 'should emit titled .EXAMPLE for example with title' {
+            $script:helpComments | Should -BeLike '*.EXAMPLE Retrieving processes*'
+        }
+
+        It 'should emit plain .EXAMPLE for untitled example' {
+            # Get-Help injects a 'PS > ' prompt prefix in front of the code line, so the
+            # regex must allow for that between the .EXAMPLE keyword and Get-Service.
+            $script:helpComments | Should -Match '(?m)^\.EXAMPLE\s*$[\s\S]*?Get-Service'
+        }
+
+        It 'should emit titled .EXAMPLE for third titled example' {
+            $script:helpComments | Should -BeLike '*.EXAMPLE Listing items in a directory*'
+        }
+
+        It 'round-trips titled examples through proxy comment generation' {
+            # Define the function in the test's scope so Get-Help can find it.
+            # Using '& $sb' would scope-isolate the function inside the scriptblock.
+            $funcBody = "param()`n<#`n$($script:helpComments)`n#>"
+            Set-Item -Path function:\ProxyRoundTripFunc -Value ([scriptblock]::Create($funcBody))
+            $roundTrippedHelp = Get-Help ProxyRoundTripFunc
+            $roundTrippedHelp.examples.example.Count | Should -Be 3
+            $roundTrippedHelp.examples.example[0].title | Should -BeLike '*EXAMPLE 1: Retrieving processes*'
+            $roundTrippedHelp.examples.example[1].title | Should -Not -BeLike '*:*' -Because 'untitled example should not have a colon'
+            $roundTrippedHelp.examples.example[2].title | Should -BeLike '*EXAMPLE 3: Listing items in a directory*'
+        }
+    }
+
+    Context 'GetHelpComments handles edge cases in example titles' {
+        It 'should emit a single titled example (regression: single PSObject, not array)' {
+            function HelpFuncSingleTitled {
+                <#
+                  .SYNOPSIS
+                  Single titled example.
+
+                  .EXAMPLE Only titled example
+                  Get-Process
+
+                  Gets all processes
+                #>
+                param()
+            }
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncSingleTitled))
+            $helpComments | Should -BeLike '*.EXAMPLE Only titled example*'
+        }
+
+        It 'should emit a single untitled example (regression: single PSObject, not array)' {
+            function HelpFuncSingleUntitled {
+                <#
+                  .SYNOPSIS
+                  Single untitled example.
+
+                  .EXAMPLE
+                  Get-Service
+
+                  Gets all services
+                #>
+                param()
+            }
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncSingleUntitled))
+            $helpComments | Should -BeLike '*.EXAMPLE*Get-Service*'
+            $exampleDirective = $helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
+            $exampleDirective | Should -BeExactly '.EXAMPLE'
+        }
+
+        It 'should not emit examples when the function has none' {
+            function HelpFuncWithoutExamples {
+                <#
+                  .SYNOPSIS
+                  Help without examples.
+                #>
+                param()
+            }
+
+            $help = Get-Help -Name HelpFuncWithoutExamples
+            $help.examples | Should -BeNullOrEmpty
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($help)
+            $helpComments | Should -Not -Match '(?m)^\.EXAMPLE(?:\s|$)'
+        }
+
+        It 'should round-trip example title "<Title>"' -TestCases @(
+            @{ Title = 'Plain example title' }
+            @{ Title = 'Example 1: Standard title' }
+            @{ Title = 'Configuration: Use C:\Temp' }
+            @{ Title = 'Step 1: Initialize the module' }
+            @{ Title = 'Using a non-standard path' }
+            @{ Title = 'Authentication - As a User' }
+            @{ Title = 'Step 1: Use C:\Temp' }
+            @{ Title = 'Use the -- separator' }
+            @{ Title = 'Test - This is a title' }
+            @{ Title = '- test - something -' }
+            @{ Title = '--- Test - This is a title ---' }
+            @{ Title = 'Step 1 -' }
+            @{ Title = 'Step 1 --' }
+            @{ Title = 'Step 1: Use C:\Temp -' }
+            @{ Title = '---' }
+            @{ Title = '-- Title --' }
+            @{ Title = '--switch' }
+            @{ Title = 'Compare Example 1: with Example 2' }
+            @{ Title = 'A & B < C > D' }
+            @{ Title = '"quoted" ''text'' `code` $name' }
+            @{
+                Title = 'Unicode: ' + [char]0x00E9 + ' e' + [char]0x0301 +
+                    ' ' + [char]0x65E5 + [char]0x672C + [char]0x8A9E +
+                    ' ' + [char]::ConvertFromUtf32(0x1F527) + ' -'
+            }
+            @{ Title = 'Label: '; ExpectedTitle = 'Label:' }
+            @{ Title = ''; ExpectedTitle = '' }
+            @{ Title = '   '; ExpectedTitle = '' }
+            @{ Title = "`t`t"; ExpectedTitle = '' }
+            @{ Title = '  Title with authored spaces  '; ExpectedTitle = 'Title with authored spaces' }
+            @{ Title = "`tTitle with authored tabs`t"; ExpectedTitle = 'Title with authored tabs' }
+            @{ Title = '  --- Title with authored dashes ---  '; ExpectedTitle = '--- Title with authored dashes ---' }
+            @{ Title = "Title with`tinternal whitespace" }
+            @{ Title = ('Label: ' * 256) + 'Final label' }
+        ) {
+            param($Title, $ExpectedTitle = $Title)
+
+            $funcBody = @"
+<#
+    .SYNOPSIS
+    Test generated example help.
+
+    .EXAMPLE $Title
+    Get-Date
+#>
+param()
+"@
+            Set-Item -Path function:\HelpFuncExampleTitle -Value ([scriptblock]::Create($funcBody))
+            $help = Get-Help HelpFuncExampleTitle
+            $sourceExamples = @($help.examples.example)
+            $sourceExamples.Count | Should -Be 1
+            $heading = $sourceExamples[0].title.ToString()
+            $heading | Should -Match '^-+ .+ -+$'
+            $heading | Should -Not -Match '^\s|\s$'
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($help)
+            $expectedDirective = if ([string]::IsNullOrEmpty($ExpectedTitle)) { '.EXAMPLE' } else { ".EXAMPLE $ExpectedTitle" }
+            $exampleDirectives = @($helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' })
+            $exampleDirectives.Count | Should -Be 1
+            $exampleDirectives[0] | Should -BeExactly $expectedDirective
+
+            $proxyBody = "param()`n<#`n$helpComments`n#>"
+            Set-Item -Path function:\ProxyExampleTitle -Value ([scriptblock]::Create($proxyBody))
+            $roundTrippedHelp = Get-Help ProxyExampleTitle
+            @($roundTrippedHelp.examples.example).Count | Should -Be 1
+            $roundTrippedHelp.examples.example.title | Should -BeExactly $help.examples.example.title
+            [string]::Equals(
+                $roundTrippedHelp.examples.example.title.ToString(),
+                $help.examples.example.title.ToString(),
+                [System.StringComparison]::Ordinal) | Should -BeTrue
+            $roundTrippedHelp.examples.example.code | Should -BeExactly $help.examples.example.code
+
+            $repeatedComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($roundTrippedHelp)
+            $repeatedDirective = $repeatedComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' }
+            $repeatedDirective | Should -BeExactly $expectedDirective
+        }
+
+        It 'should round-trip examples generated under <SourceCulture> when consumed under <TargetCulture>' -TestCases @(
+            @{ SourceCulture = 'de-DE'; TargetCulture = 'de-DE' }
+            @{ SourceCulture = 'de-DE'; TargetCulture = 'en-US' }
+            @{ SourceCulture = 'en-US'; TargetCulture = 'de-DE' }
+        ) {
+            param($SourceCulture, $TargetCulture)
+
+            $originalUICulture = [System.Globalization.CultureInfo]::CurrentUICulture
+            try {
+                [System.Globalization.CultureInfo]::CurrentUICulture =
+                    [System.Globalization.CultureInfo]::GetCultureInfo($SourceCulture)
+
+                $functionName = "HelpFuncLocalizedTitle_${SourceCulture}_${TargetCulture}"
+                Set-Item -Path "function:\$functionName" -Value {
+                    <#
+                      .SYNOPSIS
+                      Test a localized example heading.
+
+                      .EXAMPLE --- Localized title -
+                      Get-Date
+
+                      .EXAMPLE
+                      Get-TimeZone
+                    #>
+                    param()
+                }
+
+                $help = Get-Help -Name $functionName
+                $sourceExamples = @($help.examples.example)
+                $sourceExamples.Count | Should -Be 2
+
+                [System.Globalization.CultureInfo]::CurrentUICulture =
+                    [System.Globalization.CultureInfo]::GetCultureInfo($TargetCulture)
+                $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($help)
+                $exampleDirectives = @($helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' })
+                $exampleDirectives.Count | Should -Be 2
+                $exampleDirectives[0] | Should -BeExactly '.EXAMPLE --- Localized title -'
+                $exampleDirectives[1] | Should -BeExactly '.EXAMPLE'
+
+                # Compare with help authored directly under the target culture, including resource fallback.
+                $targetFunctionName = "${functionName}_Target"
+                Set-Item -Path "function:\$targetFunctionName" -Value (Get-Command -Name $functionName).ScriptBlock
+                $expectedExamples = @((Get-Help -Name $targetFunctionName).examples.example)
+                $expectedExamples.Count | Should -Be 2
+
+                $proxyName = "${functionName}_Proxy"
+                $proxyBody = "param()`n<#`n$helpComments`n#>"
+                Set-Item -Path "function:\$proxyName" -Value ([scriptblock]::Create($proxyBody))
+                $roundTrippedHelp = Get-Help -Name $proxyName
+                $roundTrippedExamples = @($roundTrippedHelp.examples.example)
+                $roundTrippedExamples.Count | Should -Be 2
+
+                for ($index = 0; $index -lt $sourceExamples.Count; $index++) {
+                    $roundTrippedExamples[$index].title | Should -BeExactly $expectedExamples[$index].title
+                    $roundTrippedExamples[$index].code | Should -BeExactly $sourceExamples[$index].code
+                }
+            }
+            finally {
+                [System.Globalization.CultureInfo]::CurrentUICulture = $originalUICulture
+            }
+        }
+
+        It 'should round-trip the mixed proxy layout <Layout>' -TestCases @(
+            @{ Layout = 'titled, untitled'; Titles = @('Authentication - As a User', '') }
+            @{ Layout = 'untitled, titled'; Titles = @('', 'Authentication - As a User') }
+            @{ Layout = 'untitled, titled, untitled'; Titles = @('', 'Test - This is a title', '') }
+            @{ Layout = 'titled, untitled, titled'; Titles = @('Step 1: Initialize', '', 'Configuration: Use C:\Temp') }
+            @{ Layout = 'titled, titled, titled'; Titles = @('Authentication - As a User', 'Test - This is a title', 'Configuration: Use C:\Temp') }
+            @{ Layout = 'untitled, untitled, untitled'; Titles = @('', '', '') }
+            @{ Layout = 'untitled, dash-bordered, untitled'; Titles = @('', '- test - something -', '') }
+            @{ Layout = 'trailing dash, untitled, leading dash'; Titles = @('Step 1 -', '', '--switch') }
+            @{ Layout = 'all titled with boundary dashes'; Titles = @('--- Test - This is a title ---', '---', '-- Title --') }
+        ) {
+            param($Layout, $Titles)
+
+            # Distinct code per example so a title bound to the wrong body is detectable.
+            $sections = for ($index = 0; $index -lt $Titles.Count; $index++) {
+                $directive = if ([string]::IsNullOrEmpty($Titles[$index])) { '.EXAMPLE' } else { ".EXAMPLE $($Titles[$index])" }
+                "    $directive`n    Get-Date -Year 200$index`n`n    Remarks for example $index`n"
+            }
+
+            Set-Item -Path function:\HelpFuncMixedLayout -Value ([scriptblock]::Create(
+                "<#`n    .SYNOPSIS`n    Mixed titled and untitled examples.`n`n$($sections -join "`n")#>`nparam()"))
+            $help = Get-Help HelpFuncMixedLayout
+            $sourceExamples = @($help.examples.example)
+            $sourceExamples.Count | Should -Be $Titles.Count
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments($help)
+            $exampleDirectives = @($helpComments -split '\r?\n' | Where-Object { $_ -like '.EXAMPLE*' })
+            $exampleDirectives.Count | Should -Be $Titles.Count
+            for ($index = 0; $index -lt $Titles.Count; $index++) {
+                $expectedDirective = if ([string]::IsNullOrEmpty($Titles[$index])) { '.EXAMPLE' } else { ".EXAMPLE $($Titles[$index])" }
+                $exampleDirectives[$index] | Should -BeExactly $expectedDirective
+            }
+
+            Set-Item -Path function:\ProxyMixedLayout -Value ([scriptblock]::Create("param()`n<#`n$helpComments`n#>"))
+            $roundTrippedExamples = @((Get-Help ProxyMixedLayout).examples.example)
+            $roundTrippedExamples.Count | Should -Be $Titles.Count
+            for ($index = 0; $index -lt $Titles.Count; $index++) {
+                $roundTrippedExamples[$index].title | Should -BeExactly $sourceExamples[$index].title
+                # Only the title is asserted here. Round-tripped example bodies merge the
+                # remarks into the code because the generated comment separates them with a
+                # single newline, which is pre-existing behavior unrelated to titles.
+                $roundTrippedExamples[$index].code | Should -BeLike "*Get-Date -Year 200$index*"
+            }
+        }
+
+        It 'should handle a titled example alongside an untitled one' {
+            function HelpFuncTitledPair {
+                <#
+                  .SYNOPSIS
+                  Titled and untitled example.
+
+                  .EXAMPLE The only titled example
+                  Get-Date
+
+                  Gets the current date
+
+                  .EXAMPLE
+                  Get-TimeZone
+
+                  Gets the time zone
+                #>
+                param()
+            }
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncTitledPair))
+            $helpComments | Should -BeLike '*.EXAMPLE The only titled example*'
+            # Verify it round-trips. Use Set-Item so the function lives in the
+            # current scope (a script block invoked with '&' would isolate it).
+            $funcBody = "param()`n<#`n$helpComments`n#>"
+            Set-Item -Path function:\TitledPairRoundTrip -Value ([scriptblock]::Create($funcBody))
+            $rt = Get-Help TitledPairRoundTrip
+            $rt.examples.example[0].title | Should -BeLike '*EXAMPLE 1: The only titled example*'
+        }
     }
 }
