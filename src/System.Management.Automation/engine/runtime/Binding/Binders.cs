@@ -1674,7 +1674,7 @@ namespace System.Management.Automation.Language
                     target.CombineRestrictions(args));
             }
 
-            var constructorInfo = (ConstructorInfo)bestMethod.method;
+            var constructorInfo = (ConstructorInfo)bestMethod.Method.method;
             var parameterInfo = constructorInfo.GetParameters();
             var ctorArgs = new Expression[parameterInfo.Length];
             var argIndex = 0;
@@ -6932,11 +6932,28 @@ namespace System.Management.Automation.Language
                 numArgs -= 1;
             }
 
+            int startNameIndex = callInfo.ArgumentCount - callInfo.ArgumentNames.Count;
             object[] argValues = new object[numArgs];
+            // Keep as empty by default and only allocate if there are any
+            // labels present. This allows FindBestMethod to shortcut some code
+            // for efficiency.
+            string[] argLabels = [];
             for (int i = 0; i < numArgs; ++i)
             {
                 object arg = args[i].Value;
                 argValues[i] = arg == AutomationNull.Value ? null : arg;
+
+                int argNameIndex = i - startNameIndex;
+                if (argNameIndex >= 0 && callInfo.ArgumentNames.Count > argNameIndex)
+                {
+                    if (argLabels.Length == 0)
+                    {
+                        argLabels = new string[numArgs];
+                    }
+
+                    string label = callInfo.ArgumentNames[argNameIndex];
+                    argLabels[i] = label;
+                }
             }
 
             var result = Adapter.FindBestMethod(
@@ -6944,6 +6961,7 @@ namespace System.Management.Automation.Language
                 psMethodInvocationConstraints,
                 allowCastingToByRefLikeType: true,
                 argValues,
+                argLabels,
                 ref errorId,
                 ref errorMsg,
                 out expandParamsOnBest,
@@ -6956,8 +6974,31 @@ namespace System.Management.Automation.Language
 
             if (result != null)
             {
-                var methodInfo = result.method;
-                var expr = InvokeMethod(methodInfo, target, args, expandParamsOnBest, methodInvocationType);
+                var methodInfo = result.Method.method;
+
+                DynamicMetaObject[] mappedArgs;
+                if (result.ArgumentMap.Length == 0)
+                {
+                    // If no mapping is present use the caller args as provided.
+                    mappedArgs = args;
+                }
+                else
+                {
+                    // If there is an argument map, we need to rearrange the caller
+                    // args to match the callee parameters based on the selected
+                    // candidate's argument map.
+                    mappedArgs = new DynamicMetaObject[result.ArgumentMap.Length];
+                    for (int i = 0; i < mappedArgs.Length; ++i)
+                    {
+                        int mappedIndex = result.ArgumentMap[i];
+
+                        // -1 means that there was no corresponding argument
+                        // provided by the caller for this parameter (default is used).
+                        mappedArgs[i] = mappedIndex == -1 ? null : args[mappedIndex];
+                    }
+                }
+
+                var expr = InvokeMethod(methodInfo, target, mappedArgs, expandParamsOnBest, methodInvocationType);
                 if (expr.Type == typeof(void))
                 {
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
@@ -6970,7 +7011,7 @@ namespace System.Management.Automation.Language
                             Expression.Constant(MethodInvocationTracer),
                             CachedReflectionInfo.PSTraceSource_WriteLine,
                             Expression.Constant("Invoking method: {0}"),
-                            Expression.Constant(result.methodDefinition)),
+                            Expression.Constant(result.Method.methodDefinition)),
                         expr);
                 }
 
@@ -7004,7 +7045,7 @@ namespace System.Management.Automation.Language
                                             e,
                                             Expression.Constant(errorExceptionType, typeof(Type)),
                                             Expression.Constant(methodInfo.Name),
-                                            ExpressionCache.Constant(args.Length),
+                                            ExpressionCache.Constant(mappedArgs.Length),
                                             Expression.Constant(methodInfo, typeof(MethodBase))),
                             Expression.Rethrow(expr.Type))));
 
@@ -7062,7 +7103,7 @@ namespace System.Management.Automation.Language
 
                 if (mi != null)
                 {
-                    result = (MethodInfo)mi.method;
+                    result = (MethodInfo)mi.Method.method;
                 }
             }
 
@@ -7163,6 +7204,8 @@ namespace System.Management.Automation.Language
                     {
                         IEnumerable<Expression> elements = args
                             .Skip(i)
+                            // If the params arg isn't actually specified, args[i] will be null.
+                            .Where(a => a is not null)
                             .Select(a =>
                                 a.CastOrConvertMethodArgument(
                                     paramElementType,
@@ -7191,9 +7234,10 @@ namespace System.Management.Automation.Language
                         argsToLog.Add(arg);
                     }
                 }
-                else if (i >= args.Length)
+                else if (i >= args.Length || args[i] == null)
                 {
                     // We don't log the default value for an optional parameter, as it's not specified by the user.
+                    // args[i] will be null if the parameter is optional and not specified by the caller.
                     Diagnostics.Assert(
                         parameters[i].IsOptional,
                         "if there are too few arguments, FindBestMethod should only succeed if parameters are optional");
