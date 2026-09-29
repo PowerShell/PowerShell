@@ -196,9 +196,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             catch (Exception e) when (
-                /* Handle exceptions related to file/directory/drive existence to provide more specific error message
-                   https://learn.microsoft.com/dotnet/standard/io/handling-io-errors
-                */
+                // Handle exceptions related to file/directory/drive existence to provide more specific error message.
                 e is FileNotFoundException ||
                 e is DirectoryNotFoundException ||
                 e is System.IO.DriveNotFoundException
@@ -213,9 +211,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileNotFound", ErrorCategory.OpenError, resolvedpath));
             }
             catch (Exception e) when (
-                /* Handle exceptions related to file access to provide more specific error message
-                   https://learn.microsoft.com/dotnet/standard/io/handling-io-errors
-                */
+                // Handle exceptions related to file access to provide more specific error message.
                 e is IOException ||
                 e is UnauthorizedAccessException ||
                 e is NotSupportedException ||
