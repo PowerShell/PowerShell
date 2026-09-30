@@ -165,10 +165,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.CimInstanceSessionSet:
                     {
                         CimInstance instance = GetCimInstanceParameter(cmdlet);
-                        nameSpace = ConstValue.GetNamespace(instance.CimSystemProperties.Namespace);
-                        foreach (CimSessionProxy proxy in proxys)
+                        if (instance != null)
                         {
-                            proxy.GetInstanceAsync(nameSpace, instance);
+                            nameSpace = ConstValue.GetNamespace(instance.CimSystemProperties.Namespace);
+                            foreach (CimSessionProxy proxy in proxys)
+                            {
+                                proxy.GetInstanceAsync(nameSpace, instance);
+                            }
                         }
                     }
 
