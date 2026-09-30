@@ -991,8 +991,22 @@ namespace Microsoft.PowerShell.Commands
                                     wasReadOnly = true;
                                 }
 
-                                // Now change the value, options, or description
-                                // and set the variable
+                                // Set options first so that if setting options fails (e.g. trying to make
+                                // an existing variable Constant), the value and description remain unchanged.
+                                // See issue #27679: Set-Variable should not mutate a variable when -Option results in an error.
+                                if (_options != null)
+                                {
+                                    matchingVariable.Options = (ScopedItemOptions)_options;
+                                }
+                                else
+                                {
+                                    if (wasReadOnly)
+                                    {
+                                        matchingVariable.SetOptions(matchingVariable.Options | ScopedItemOptions.ReadOnly, true);
+                                    }
+                                }
+
+                                // Now change the value and description.
 
                                 if (varValue != AutomationNull.Value)
                                 {
@@ -1012,18 +1026,6 @@ namespace Microsoft.PowerShell.Commands
                                 if (Description != null)
                                 {
                                     matchingVariable.Description = Description;
-                                }
-
-                                if (_options != null)
-                                {
-                                    matchingVariable.Options = (ScopedItemOptions)_options;
-                                }
-                                else
-                                {
-                                    if (wasReadOnly)
-                                    {
-                                        matchingVariable.SetOptions(matchingVariable.Options | ScopedItemOptions.ReadOnly, true);
-                                    }
                                 }
 
                                 // If visibility was specified, set it on the variable
