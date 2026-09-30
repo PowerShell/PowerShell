@@ -2464,6 +2464,25 @@ namespace Microsoft.PowerShell.Commands
                 string action = FileSystemProviderStrings.NewItemActionJunction;
                 string resource = StringUtil.Format(FileSystemProviderStrings.NewItemActionTemplate, path);
 
+                // Junctions are an NTFS-specific feature. On non-Windows platforms CreateJunction()
+                // is a no-op, so fail fast before performing any filesystem mutations (deleting an
+                // existing path, creating a directory) that would otherwise leave the caller's path in
+                // a different state than they requested.
+                if (!Platform.IsWindows)
+                {
+                    if (ShouldProcess(resource, action))
+                    {
+                        string message = FileSystemProviderStrings.JunctionNotSupported;
+                        WriteError(new ErrorRecord(
+                            new PlatformNotSupportedException(message),
+                            "JunctionNotSupported",
+                            ErrorCategory.NotImplemented,
+                            path));
+                    }
+
+                    return;
+                }
+
                 if (ShouldProcess(resource, action))
                 {
                     bool isDirectory = false;
