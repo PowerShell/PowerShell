@@ -3208,11 +3208,24 @@ namespace System.Management.Automation.Language
                     case ',':
                     case '|':
                     case '&':
-                    case '.':
                     case '[':
                     case '\r':
                     case '\n':
                     case '\0':
+                        UngetChar();
+                        scanning = false;
+                        break;
+
+                    case '.':
+                        if (InCommandMode())
+                        {
+                            // Period is never part of a parameter name. Treat the token as an argument.
+                            // This handles cases like -foo.bar which should be a single argument.
+                            UngetChar();
+                            sb.Insert(0, _script[_tokenStart]); // Insert the '-' that we skipped.
+                            return ScanGenericToken(sb);
+                        }
+
                         UngetChar();
                         scanning = false;
                         break;
