@@ -84,7 +84,7 @@ namespace System.Management.Automation
 
         private void InitializeMetadata()
         {
-            lock (this)
+            lock (_lock)
             {
                 if (_attributes != null)
                 {
@@ -132,7 +132,7 @@ namespace System.Management.Automation
 
         private void CompileUnoptimized()
         {
-            lock (this)
+            lock (_lock)
             {
                 if (_compiledUnoptimized)
                 {
@@ -147,7 +147,7 @@ namespace System.Management.Automation
 
         private void CompileOptimized()
         {
-            lock (this)
+            lock (_lock)
             {
                 if (_compiledOptimized)
                 {
@@ -291,7 +291,7 @@ namespace System.Management.Automation
 
         private IParameterMetadataProvider DelayParseScriptText()
         {
-            lock (this)
+            lock (_lock)
             {
                 if (_ast != null)
                 {
@@ -345,6 +345,8 @@ namespace System.Management.Automation
         #endregion Named Blocks
 
         internal IScriptExtent[] SequencePoints { get; set; }
+
+        private readonly object _lock = new object();
 
         private RuntimeDefinedParameterDictionary _runtimeDefinedParameterDictionary;
         private Attribute[] _attributes;
@@ -473,7 +475,7 @@ namespace System.Management.Automation
             {
                 if (_expAttribute == ExperimentalAttribute.None)
                 {
-                    lock (this)
+                    lock (_lock)
                     {
                         if (_expAttribute == ExperimentalAttribute.None)
                         {
@@ -492,7 +494,7 @@ namespace System.Management.Automation
         {
             if (_parameterMetadata == null)
             {
-                lock (this)
+                lock (_lock)
                 {
                     if (_parameterMetadata == null)
                     {
