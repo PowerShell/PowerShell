@@ -36,6 +36,8 @@ runs:
       id: get-files
       if: github.event_name == 'pull_request'
       uses: "./.github/actions/infrastructure/get-changed-files"
+      with:
+        include-deleted: 'true'
 
     - name: Check if GitHubWorkflowChanges is present
       id: filter
