@@ -613,7 +613,7 @@ namespace System.Management.Automation.Language
             if (object.ReferenceEquals(this, obj))
                 return true;
 
-            if (!(obj is TypeResolutionState other))
+            if (obj is not TypeResolutionState other)
                 return false;
 
             if (this.attribute != other.attribute)
