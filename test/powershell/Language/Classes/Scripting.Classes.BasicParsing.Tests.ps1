@@ -735,6 +735,100 @@ visibleX visibleY
         It "Tab completion should not return a hidden member" { $completions.CompletionMatches.Count | Should -Be 0 }
 }
 
+Describe 'HiddenAttribute on Class Test' -Tags "CI" {
+    BeforeAll {
+        # Define a class with HiddenAttribute using C#
+        $hiddenClassSource = @"
+using System.Management.Automation;
+
+[Hidden]
+public class HiddenTestClass
+{
+    public string Name { get; set; }
+    public int Value { get; set; }
+}
+"@
+        Add-Type -TypeDefinition $hiddenClassSource
+    }
+
+    It "Should be able to create an instance of hidden class" {
+        $instance = [HiddenTestClass]::new()
+        $instance.Name = "Test"
+        $instance.Value = 42
+        $instance.Name | Should -Be "Test"
+        $instance.Value | Should -Be 42
+    }
+
+    It "HiddenAttribute should be present on the class" {
+        $hiddenAttr = [HiddenTestClass].GetCustomAttributes([System.Management.Automation.HiddenAttribute], $false)
+        $hiddenAttr.Count | Should -BeGreaterThan 0
+    }
+
+    It "Hidden class should not appear in type name completion" {
+        # Get tab completion results for type names starting with "HiddenTest"
+        $result = TabExpansion2 -inputScript '[HiddenTest' -cursorColumn '[HiddenTest'.Length
+        $completions = $result.CompletionMatches | Where-Object { $_.CompletionText -eq 'HiddenTestClass' }
+
+        # HiddenTestClass should not be in completion results
+        $completions | Should -BeNullOrEmpty
+    }
+
+    It "Visible C# class should appear in type name completion" {
+        # Regression test: ensure non-hidden C# classes still appear in completion
+        Add-Type -TypeDefinition 'public class VisibleCSharpTestClass { public string Name; }'
+        $result = TabExpansion2 -inputScript '[VisibleCSharpTest' -cursorColumn '[VisibleCSharpTest'.Length
+        $completions = $result.CompletionMatches | Where-Object { $_.CompletionText -eq 'VisibleCSharpTestClass' }
+
+        # VisibleCSharpTestClass should be in completion results
+        $completions | Should -Not -BeNullOrEmpty
+    }
+}
+
+Describe 'HiddenAttribute on PowerShell Class Test' -Tags "CI" {
+    It "Hidden PowerShell class should not appear in inline type name completion" {
+        # MartinGC94's specific scenario: TabExpansion2 '[hidden()] class Test1{} [Test1'
+        # This tests AST-based handling of inline PowerShell class definitions
+        $testScript = '[hidden()] class Test1{} [Test1'
+        $result = TabExpansion2 -inputScript $testScript -cursorColumn $testScript.Length
+        $completions = $result.CompletionMatches | Where-Object { $_.CompletionText -eq 'Test1' }
+
+        # Test1 should not be in completion results because it has [hidden()] attribute
+        $completions | Should -BeNullOrEmpty
+    }
+
+    It "Visible PowerShell class should appear in inline type name completion" {
+        # Comparison test: class without [hidden()] should appear in completion
+        $testScript = 'class Test2{} [Test2'
+        $result = TabExpansion2 -inputScript $testScript -cursorColumn $testScript.Length
+        $completions = $result.CompletionMatches | Where-Object { $_.CompletionText -eq 'Test2' }
+
+        # Test2 should be in completion results
+        $completions | Should -Not -BeNullOrEmpty
+    }
+
+    It "Should be able to create an instance of hidden PowerShell class" {
+        # Verify that hidden classes are still functional, just not in tab completion
+        Invoke-Expression '[hidden()] class Test3 { [string]$Name }'
+        $instance = [Test3]::new()
+        $instance.Name = "Test"
+        $instance.Name | Should -Be "Test"
+    }
+
+    It "Multiple visible PowerShell classes should all appear in inline type name completion" {
+        # Regression test: ensure multiple non-hidden classes all appear in completion
+        $testScript = 'class A1 {} class A2 {} class A3 {} [A'
+        $result = TabExpansion2 -inputScript $testScript -cursorColumn $testScript.Length
+        $a1 = $result.CompletionMatches | Where-Object { $_.CompletionText -eq 'A1' }
+        $a2 = $result.CompletionMatches | Where-Object { $_.CompletionText -eq 'A2' }
+        $a3 = $result.CompletionMatches | Where-Object { $_.CompletionText -eq 'A3' }
+
+        # All three classes should be in completion results
+        $a1 | Should -Not -BeNullOrEmpty
+        $a2 | Should -Not -BeNullOrEmpty
+        $a3 | Should -Not -BeNullOrEmpty
+    }
+}
+
 Describe 'BaseMethodCall Test ' -Tags "CI" {
         It "Derived class method call" {"abc".ToString() | Should -BeExactly "abc" }
         # call [object] ToString() method as a base class method.
