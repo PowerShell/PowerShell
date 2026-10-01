@@ -140,13 +140,65 @@ namespace Microsoft.PowerShell.Commands
             _allowAutoRedirect = true;
         }
 
+        /// <summary>
+        /// Clear the cookie container by expiring and removing all stored cookies
+        /// </summary>
+        public void ClearAllCookies()
+        {
+            // The cookies cannot be cleared directly, but setting every cookie to expired will stop it being sent
+            // with the request.
+            foreach (Cookie cookie in Cookies.GetAllCookies())
+            {
+                cookie.Expired = true;
+            }
+            // Setting per domain capacity will clear out expired cookies
+            int savedCapacity = Cookies.PerDomainCapacity;
+            Cookies.PerDomainCapacity = 1;
+            Cookies.PerDomainCapacity = savedCapacity;
+        }
+
+        /// <summary>
+        /// Reset the session values assuming no Session parameter was supplied.
+        /// This allows the re-use of a default web session such that connection 
+        /// persistence is maintained where possible.
+        /// <param name="useDefaultCredentials">Reset UseDefaultCredentials to the supplied value.</param>
+        /// <param name="maximumRedirection">Reset MaximumRedirection to the supplied value.</param>
+        /// <param name="skipCertificateCheck">Reset SkipCertificateCheck to the supplied value.</param>
+        /// <param name="sslProtocol">Reset SslProtocol to the supplied value.</param>
+        /// <param name="connectionTimeout">Reset ConnectionTimeout to the supplied value.</param>
+        /// <param name="unixSocket">Reset UnixSocket to the supplied value.</param>
+        /// <param name="noProxy">Reset NoProxy to the supplied value.</param>
+        /// <param name="maximumRetryCount">Reset MaximumRetryCount to the supplied value.</param>
+        /// <param name="retryIntervalInSeconds">Reset RetryIntervalInSeconds to the supplied value.</param>
+        /// <param name="credentials">Reset Credentials to the supplied value.</param>
+        /// </summary>
+        internal void ResetSessionValues(bool useDefaultCredentials, int maximumRedirection, bool skipCertificateCheck, WebSslProtocol sslProtocol, TimeSpan connectionTimeout, UnixDomainSocketEndPoint? unixSocket, bool noProxy, int maximumRetryCount, int retryIntervalInSeconds, ICredentials? credentials)
+        {
+            ClearAllCookies();
+            ContentHeaders.Clear();
+            Headers.Clear();
+            Certificates?.Clear();
+
+            UserAgent = PSUserAgent.UserAgent;
+            UseDefaultCredentials = useDefaultCredentials;
+            Credentials = credentials;
+            MaximumRedirection = maximumRedirection;
+            MaximumRetryCount = maximumRetryCount;
+            RetryIntervalInSeconds = retryIntervalInSeconds;
+            SslProtocol = sslProtocol;
+            SkipCertificateCheck = skipCertificateCheck;
+            ConnectionTimeout = connectionTimeout;
+            UnixSocket = unixSocket;
+            NoProxy = noProxy;
+        }
+
         internal WebSslProtocol SslProtocol { set => SetStructVar(ref _sslProtocol, value); }
 
         internal bool SkipCertificateCheck { set => SetStructVar(ref _skipCertificateCheck, value); }
 
         internal TimeSpan ConnectionTimeout { set => SetStructVar(ref _connectionTimeout, value); }
 
-        internal UnixDomainSocketEndPoint UnixSocket { set => SetClassVar(ref _unixSocket, value); }
+        internal UnixDomainSocketEndPoint? UnixSocket { set => SetClassVar(ref _unixSocket, value); }
 
         internal bool NoProxy
         {
@@ -240,7 +292,8 @@ namespace Microsoft.PowerShell.Commands
 
             if (_skipCertificateCheck)
             {
-                handler.SslOptions.RemoteCertificateValidationCallback = delegate { return true; };
+                handler.SslOptions.RemoteCertificateValidationCallback = delegate
+                { return true; };
             }
 
             handler.AllowAutoRedirect = _allowAutoRedirect;
