@@ -7018,7 +7018,9 @@ namespace System.Management.Automation
                 var inferredTypes = AstTypeInference.InferTypeOf(indexTarget, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
                 foreach (var type in inferredTypes)
                 {
-                    if (type is PSSyntheticTypeName synthetic)
+                    // An array of synthetic objects carries the members of its elements, which are not
+                    // index keys, so only a single synthetic object can complete them.
+                    if (type is PSSyntheticTypeName synthetic && synthetic.ElementType is null)
                     {
                         foreach (var member in synthetic.Members)
                         {
