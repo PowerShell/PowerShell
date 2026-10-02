@@ -788,7 +788,7 @@ namespace Microsoft.PowerShell.Commands
                 for (int i = prependPathTotal.Count - 1; i >= 0; i--)
                 {
                     string formattedTarget = string.Format(CultureInfo.InvariantCulture, target, prependPathTotal[i]);
-                    string resolvedPath = ModuleCmdletBase.ResolveRootedFilePath(prependPathTotal[i], Context) ?? prependPathTotal[i];
+                    string resolvedPath = ModuleCmdletBase.ResolveToFileSystemPathIfRooted(prependPathTotal[i], Context) ?? prependPathTotal[i];
 
                     if (ShouldProcess(formattedTarget, action))
                     {
@@ -804,7 +804,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (entry.FileName != null)
                     {
-                        string resolvedPath = ModuleCmdletBase.ResolveRootedFilePath(entry.FileName, Context) ?? entry.FileName;
+                        string resolvedPath = ModuleCmdletBase.ResolveToFileSystemPathIfRooted(entry.FileName, Context) ?? entry.FileName;
                         if (fullFileNameHash.Add(resolvedPath))
                         {
                             newTypes.Add(entry);
@@ -819,7 +819,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string appendPathTotalItem in appendPathTotal)
                 {
                     string formattedTarget = string.Format(CultureInfo.InvariantCulture, target, appendPathTotalItem);
-                    string resolvedPath = ModuleCmdletBase.ResolveRootedFilePath(appendPathTotalItem, Context) ?? appendPathTotalItem;
+                    string resolvedPath = ModuleCmdletBase.ResolveToFileSystemPathIfRooted(appendPathTotalItem, Context) ?? appendPathTotalItem;
 
                     if (ShouldProcess(formattedTarget, action))
                     {
@@ -1135,7 +1135,7 @@ namespace Microsoft.PowerShell.Commands
 
                         // Resolving the file path because the path to the types file in module manifest is now specified as
                         // ..\..\types.ps1xml which expands to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Core\..\..\types.ps1xml
-                        fileName = ModuleCmdletBase.ResolveRootedFilePath(fileName, Context) ?? fileName;
+                        fileName = ModuleCmdletBase.ResolveToFileSystemPathIfRooted(fileName, Context) ?? fileName;
                         ConstructFileToIndexMap(fileName, index, fileToIndexMap);
                     }
                 }
