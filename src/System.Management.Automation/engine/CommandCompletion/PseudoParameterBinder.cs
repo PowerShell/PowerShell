@@ -1198,7 +1198,17 @@ namespace System.Management.Automation.Language
             string commandName = null;
             try
             {
-                processor = PrepareFromAst(context, out commandName) ?? context.CreateCommand(commandName, dotSource, forCompletion:true);
+                processor = PrepareFromAst(context, out commandName);
+            }
+            catch (RuntimeException)
+            {
+                // There's an issue with the function definition.
+                // We ignore it because an older working definition can have been loaded into the session state already.
+            }
+
+            try
+            {
+                processor ??= context.CreateCommand(commandName, dotSource, forCompletion: true);
             }
             catch (RuntimeException)
             {
