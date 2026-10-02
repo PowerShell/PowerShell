@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
                 variable = new PSVariable(name, null);
             }
 
-            PSVariable item = SessionState.Internal.SetVariable(variable, Force, Context.Origin) as PSVariable;
+            PSVariable item = SessionState.Internal.SetVariable(variable, Force, Context.Origin);
 
             if (writeItem && item != null)
             {
