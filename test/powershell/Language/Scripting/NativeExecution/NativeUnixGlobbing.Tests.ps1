@@ -13,6 +13,8 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
 
         $defaultParamValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:skip"] = $IsWindows
+        $HomeDir = $ExecutionContext.SessionState.Provider.Get("FileSystem").Home
+        $Tilde = "~"
     }
 
     AfterAll {
@@ -74,39 +76,82 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
         /bin/echo $arg | Should -BeExactly $arg
     }
     $quoteTests = @(
-        @{arg = '"*"'},
-        @{arg = "'*'"}
+        @{arg = '"*"';              expectedArg = "*"}
+        @{arg = "'*'";              expectedArg = "*"}
+        @{arg = '"$TESTDRIVE/*"';   expectedArg = "$TESTDRIVE/*"}
     )
     It 'Should not expand quoted strings: <arg>' -TestCases $quoteTests {
-        param($arg)
-        Invoke-Expression "/bin/echo $arg" | Should -BeExactly '*'
+        param($arg, $expectedArg)
+        Invoke-Expression "testexe -echoargs $arg" | Should -BeExactly "Arg 0 is <$expectedArg>"
     }
-	# Splat tests are skipped because they should work, but don't.
-	# Supporting this scenario would require adding a NoteProperty
-	# to each quoted string argument - maybe not worth it, and maybe
-	# an argument for another way to suppress globbing.
-    It 'Should not expand quoted strings via splat array: <arg>' -TestCases $quoteTests -Skip {
-        param($arg)
+    It 'Should not expand quoted strings via splat array: <arg>' -TestCases $quoteTests {
+        param($arg, $expectedArg)
 
-        function Invoke-Echo
+        function Invoke-TestExe
         {
-            /bin/echo @args
+            testexe @args
         }
-        Invoke-Expression "Invoke-Echo $arg" | Should -BeExactly '*'
+        Invoke-Expression "Invoke-TestExe -echoargs $arg" | Should -BeExactly "Arg 0 is <$expectedArg>"
     }
-    It 'Should not expand quoted strings via splat hash: <arg>' -TestCases $quoteTests -Skip {
-        param($arg)
+    It 'Should not expand quoted strings via splat hash: <arg>' -TestCases $quoteTests {
+        param($arg, $expectedArg)
 
         function Invoke-Echo($quotedArg)
         {
-            /bin/echo @PSBoundParameters
+            testexe -echoargs @PSBoundParameters
         }
-        Invoke-Expression "Invoke-Echo -quotedArg:$arg" | Should -BeExactly "-quotedArg:*"
+        Invoke-Expression "Invoke-Echo -quotedArg:$arg" | Should -BeExactly "Arg 0 is <-quotedArg:$expectedArg>"
 
         # When specifing a space after the parameter, the space is removed when splatting.
         # This behavior is debatable, but it's worth adding this test anyway to detect
         # a change in behavior.
-        Invoke-Expression "Invoke-Echo -quotedArg: $arg" | Should -BeExactly "-quotedArg:*"
+        Invoke-Expression "Invoke-Echo -quotedArg: $arg" | Should -BeExactly "Arg 0 is <-quotedArg:$expectedArg>"
+    }
+    It 'Should expand strings via splat array' {
+        function Invoke-TestExe
+        {
+            $args.Length | Should -Be 2
+            testexe @args
+        }
+        Invoke-TestExe -echoargs $TESTDRIVE/*.txt | Should -BeExactly @(
+            "Arg 0 is <$TESTDRIVE/abc.txt>"
+            "Arg 1 is <$TESTDRIVE/bbb.txt>"
+            "Arg 2 is <$TESTDRIVE/cbb.txt>"
+        )
+    }
+    It 'Should keep its literal meaning when splatted' {
+        function Invoke-TestExe
+        {
+            testexe @args
+        }
+        Invoke-TestExe -echoargs $TESTDRIVE/*.txt "$TESTDRIVE/*.txt" '$TESTDRIVE/*.txt' | Should -BeExactly @(
+            "Arg 0 is <$TESTDRIVE/abc.txt>"
+            "Arg 1 is <$TESTDRIVE/bbb.txt>"
+            "Arg 2 is <$TESTDRIVE/cbb.txt>"
+            "Arg 3 is <$TESTDRIVE/*.txt>"
+            'Arg 4 is <$TESTDRIVE/*.txt>'
+        )
+    }
+    It 'Should not expand quoted strings via splat hash' {
+        function Invoke-EchoArgs($quotedArg)
+        {
+            $PSBoundParameters.Length | Should -Be 1
+            testexe -echoargs @PSBoundParameters
+        }
+        Invoke-EchoArgs -quotedArg:$TESTDRIVE/*.txt | Should -BeExactly @(
+            "Arg 0 is <-quotedArg:$TESTDRIVE/abc.txt>"
+            "Arg 1 is <-quotedArg:$TESTDRIVE/bbb.txt>"
+            "Arg 2 is <-quotedArg:$TESTDRIVE/cbb.txt>"
+        )
+
+        # When specifing a space after the parameter, the space is removed when splatting.
+        # This behavior is debatable, but it's worth adding this test anyway to detect
+        # a change in behavior.
+        Invoke-EchoArgs -quotedArg: $TESTDRIVE/*.txt | Should -BeExactly @(
+            "Arg 0 is <-quotedArg:$TESTDRIVE/abc.txt>"
+            "Arg 1 is <-quotedArg:$TESTDRIVE/bbb.txt>"
+            "Arg 2 is <-quotedArg:$TESTDRIVE/cbb.txt>"
+        )
     }
     # Test the behavior in non-filesystem drives
     It 'Should not expand patterns on non-filesystem drives' {
@@ -119,17 +164,45 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
         (/bin/ls $TESTDRIVE/foo*.txt).Length | Should -Be 2
     }
     # Test ~ expansion
-    It 'Tilde should be replaced by the filesystem provider home directory' {
-        /bin/echo ~ | Should -BeExactly ($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)
+    It '~ should be replaced by the filesystem provider home directory <arg>' -testCases @(
+        @{arg = '~';            Expected = $HomeDir }
+        @{arg = '$Tilde';       Expected = $HomeDir }
+        @{arg = '~/foo';        Expected = "$HomeDir/foo" }
+        @{arg = '$Tilde/foo';   Expected = "$HomeDir/foo" }
+    ) {
+        param($arg, $Expected)
+        Invoke-Expression "testexe -echoargs $arg" | Should -BeExactly "Arg 0 is <$Expected>"
     }
-    # Test ~ expansion with a path fragment (e.g. ~/foo)
-    It '~/foo should be replaced by the <filesystem provider home directory>/foo' {
-        /bin/echo ~/foo | Should -BeExactly "$($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)/foo"
+    It '~ should not be replaced when quoted <arg>' -testCases @(
+        @{arg = "'~'";          Expected = "~" }
+        @{arg = "'~/foo'";      Expected = "~/foo" }
+        @{arg = '"~"';          Expected = "~" }
+        @{arg = '"~/foo"';      Expected = "~/foo" }
+        @{arg = '"$Tilde"';     Expected = "~" }
+        @{arg = '"$Tilde/foo"'; Expected = "~/foo" }
+    ) {
+        param($arg, $Expected)
+        Invoke-Expression "testexe -echoargs $arg" | Should -BeExactly "Arg 0 is <$Expected>"
     }
-	It '~ should not be replaced when quoted' {
-		/bin/echo '~' | Should -BeExactly '~'
-		/bin/echo "~" | Should -BeExactly '~'
-		/bin/echo '~/foo' | Should -BeExactly '~/foo'
-		/bin/echo "~/foo" | Should -BeExactly '~/foo'
-	}
+    It '~ should keep its literal meaning when splatted <splattingArgs>'-testCases @(
+        @{
+            splattingArgs = @'
+~ ~/foo '~' "~" '~/foo' "~/foo"
+'@;
+            Expected = @("$HomeDir", "$HomeDir/foo", "~", "~", "~/foo", "~/foo")
+        }
+        @{
+            splattingArgs = @'
+$Tilde $Tilde/foo "$Tilde" "$Tilde/foo"
+'@;
+            Expected = @("$HomeDir", "$HomeDir/foo", "~", "~/foo")
+        }
+    ) {
+        param($splattingArgs, $Expected)
+        function Invoke-TestExe {
+            testexe @args
+        }
+
+        Invoke-Expression "Invoke-TestExe -echoargs $splattingArgs" | Should -BeExactly @($Expected | ForEach-Object { $i = 0 } { "Arg {0} is <$_>" -f $i++ } )
+    }
 }

@@ -366,6 +366,9 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo ParserOps_UnarySplitOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.UnarySplitOperator), StaticFlags);
 
+        internal static readonly MethodInfo ParserOps_WrappedString =
+            typeof(ParserOps).GetMethod(nameof(ParserOps.WrappedString), StaticFlags);
+
         internal static readonly ConstructorInfo Pipe_ctor =
             typeof(Pipe).GetConstructor(InstanceFlags, null, CallingConventions.Standard, new Type[] { typeof(List<object>) }, null);
 
@@ -4248,6 +4251,10 @@ namespace System.Management.Automation.Language
                     return Expression.Constant(ParserOps.WrappedNumber(constElement.Value, commandArgumentText));
                 }
             }
+            else if (constElement is StringConstantExpressionAst stringConstant)
+            {
+                return Expression.Constant(ParserOps.WrappedString(stringConstant.Value, stringConstant.StringConstantType));
+            }
 
             var result = Compile(element);
             if (result.Type == typeof(object[]))
@@ -4257,6 +4264,11 @@ namespace System.Management.Automation.Language
             else if (constElement == null && result.Type == typeof(object))
             {
                 result = Expression.Call(CachedReflectionInfo.PipelineOps_CheckAutomationNullInCommandArgument, result);
+            }
+            else if (element is ExpandableStringExpressionAst expandableString)
+            {
+                Debug.Assert(result.Type == typeof(string));
+                result = Expression.Call(CachedReflectionInfo.ParserOps_WrappedString, result, Expression.Constant(expandableString.StringConstantType));
             }
 
             return result;
