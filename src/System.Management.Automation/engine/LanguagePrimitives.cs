@@ -1283,6 +1283,14 @@ namespace System.Management.Automation
             return (s_typeCodeTraits[(int)typeCode] & TypeCodeTraits.Integer) != 0;
         }
 
+        private static bool IsIntegerType(Type type)
+        {
+            return IsInteger(GetTypeCode(type)) ||
+                type == typeof(Int128) ||
+                type == typeof(UInt128) ||
+                type == typeof(BigInteger);
+        }
+
         /// <summary>
         /// Verifies if type is a floating point number.
         /// </summary>
@@ -1291,6 +1299,11 @@ namespace System.Management.Automation
         internal static bool IsFloating(TypeCode typeCode)
         {
             return (s_typeCodeTraits[(int)typeCode] & TypeCodeTraits.Floating) != 0;
+        }
+
+        private static bool IsRealType(Type type)
+        {
+            return IsFloating(GetTypeCode(type)) || type == typeof(decimal) || type == typeof(Half);
         }
 
         /// <summary>
@@ -2756,6 +2769,35 @@ namespace System.Management.Automation
             }
         }
 
+        private sealed class ConvertViaNumericCast
+        {
+            internal ConvertViaCast converter;
+
+            internal bool round;
+
+            internal object Convert(object valueToConvert,
+                                    Type resultType,
+                                    bool recursion,
+                                    PSObject originalValueToConvert,
+                                    IFormatProvider formatProvider,
+                                    TypeTable backupTable)
+            {
+                if (round)
+                {
+                    valueToConvert = valueToConvert switch
+                    {
+                        Half half => (Half)MathF.Round((float)half),
+                        float single => MathF.Round(single),
+                        double dbl => Math.Round(dbl),
+                        decimal dec => decimal.Round(dec),
+                        _ => valueToConvert
+                    };
+                }
+
+                return converter.Convert(valueToConvert, resultType, recursion, originalValueToConvert, formatProvider, backupTable);
+            }
+        }
+
         private static char[] ConvertStringToCharArray(object valueToConvert,
                                                        Type resultType,
                                                        bool recursion,
@@ -2884,9 +2926,9 @@ namespace System.Management.Automation
             try
             {
                 var parsedNumber = Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false);
-                if (resultType == typeof(BigInteger) || parsedNumber is BigInteger)
+                if (!typeof(IConvertible).IsAssignableFrom(resultType) || parsedNumber is BigInteger)
                 {
-                    // Convert.ChangeType() cannot be used here as BigInteger is not IConvertible.
+                    // Convert.ChangeType() cannot be used when the destination is not IConvertible.
                     result = ConvertTo(parsedNumber, resultType);
                     return true;
                 }
@@ -2916,17 +2958,16 @@ namespace System.Management.Automation
             var strToConvert = valueToConvert as string;
             Diagnostics.Assert(strToConvert != null, "Value to convert must be a string");
             Diagnostics.Assert(
-                IsNumeric(GetTypeCode(resultType)) || resultType == typeof(BigInteger),
+                IsIntegerType(resultType),
                 "Result type must be numeric");
 
             if (strToConvert.Length == 0)
             {
                 typeConversion.WriteLine("Returning numeric zero.");
 
-                // BigInteger is not IConvertible and will throw from ChangeType; we know the value we're after is zero.
-                if (resultType == typeof(BigInteger))
+                if (!typeof(IConvertible).IsAssignableFrom(resultType))
                 {
-                    return BigInteger.Zero;
+                    return Activator.CreateInstance(resultType);
                 }
 
                 // This is not wrapped in a try/catch because it can't fail.
@@ -2942,12 +2983,22 @@ namespace System.Management.Automation
                     return result;
                 }
 
-               if (resultType == typeof(BigInteger))
-               {
-                    NumberStyles style = NumberStyles.Integer | NumberStyles.AllowThousands;
-
+                NumberStyles style = NumberStyles.Integer | NumberStyles.AllowThousands;
+                if (resultType == typeof(BigInteger))
+                {
                     return BigInteger.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
                 }
+
+                if (resultType == typeof(Int128))
+                {
+                    return Int128.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
+                }
+
+                if (resultType == typeof(UInt128))
+                {
+                    return UInt128.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
+                }
+
                 // Fallback conversion for regular numeric types.
                 return GetIntegerSystemConverter(resultType).ConvertFrom(strToConvert);
             }
@@ -3044,7 +3095,11 @@ namespace System.Management.Automation
             if (strToConvert.Length == 0)
             {
                 typeConversion.WriteLine("Returning numeric zero.");
-                // This is not wrapped in a try/catch because it can't fail.
+                if (resultType == typeof(Half))
+                {
+                    return default(Half);
+                }
+
                 return System.Convert.ChangeType(0, resultType, CultureInfo.InvariantCulture);
             }
 
@@ -3059,6 +3114,11 @@ namespace System.Management.Automation
                 }
                 else
                 {
+                    if (resultType == typeof(Half))
+                    {
+                        return Half.Parse(strToConvert, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo);
+                    }
+
                     return Convert.ChangeType(strToConvert, resultType, CultureInfo.InvariantCulture.NumberFormat);
                 }
             }
@@ -3265,9 +3325,22 @@ namespace System.Management.Automation
             TypeTable backupTable)
                 => (bool)valueToConvert ? BigInteger.One : BigInteger.Zero;
 
+        private static object ConvertBoolToNumeric(
+            object valueToConvert,
+            Type resultType,
+            bool recursion,
+            PSObject originalValueToConvert,
+            IFormatProvider formatProvider,
+            TypeTable backupTable)
+                => ConvertTo((bool)valueToConvert ? 1 : 0, resultType, recursion, formatProvider, backupTable);
+
         private static PSConverter<bool> CreateNumericToBoolConverter(Type fromType)
         {
-            Diagnostics.Assert(LanguagePrimitives.IsNumeric(fromType.GetTypeCode()), "Can only convert numeric types");
+            Diagnostics.Assert(LanguagePrimitives.IsNumeric(fromType.GetTypeCode()) ||
+                fromType == typeof(Int128) ||
+                fromType == typeof(UInt128) ||
+                fromType == typeof(Half),
+                "Can only convert numeric types");
 
             var valueToConvert = Expression.Parameter(typeof(object));
             var parameters = new ParameterExpression[]
@@ -3349,6 +3422,11 @@ namespace System.Management.Automation
                 if (valueToConvert is BigInteger b)
                 {
                     return b.ToString(numberFormat);
+                }
+
+                if (valueToConvert is Int128 or UInt128 or Half)
+                {
+                    return ((IFormattable)valueToConvert).ToString(format: null, numberFormat);
                 }
 
                 return (string)Convert.ChangeType(valueToConvert, resultType, CultureInfo.InvariantCulture.NumberFormat);
@@ -4201,10 +4279,9 @@ namespace System.Management.Automation
         {
             typeConversion.WriteLine("Converting null to zero.");
 
-            // Handle BigInteger first, as it is not IConvertible
-            if (resultType == typeof(BigInteger))
+            if (!typeof(IConvertible).IsAssignableFrom(resultType))
             {
-                return BigInteger.Zero;
+                return Activator.CreateInstance(resultType);
             }
 
             // If the destination type is numeric, convert 0 to resultType
@@ -4446,24 +4523,55 @@ namespace System.Management.Automation
         }
 
         private static readonly Type[] s_numericTypes = new Type[] {
-            typeof(Int16), typeof(Int32), typeof(Int64),
-            typeof(UInt16), typeof(UInt32), typeof(UInt64),
+            typeof(Int16), typeof(Int32), typeof(Int64), typeof(Int128),
+            typeof(UInt16), typeof(UInt32), typeof(UInt64), typeof(UInt128),
             typeof(sbyte), typeof(byte),
-            typeof(Single), typeof(double), typeof(decimal),
+            typeof(Half), typeof(Single), typeof(double), typeof(decimal),
             typeof(BigInteger)
         };
 
         private static readonly Type[] s_integerTypes = new Type[] {
-            typeof(Int16), typeof(Int32), typeof(Int64),
-            typeof(UInt16), typeof(UInt32), typeof(UInt64),
+            typeof(Int16), typeof(Int32), typeof(Int64), typeof(Int128),
+            typeof(UInt16), typeof(UInt32), typeof(UInt64), typeof(UInt128),
             typeof(sbyte), typeof(byte)
         };
 
         // Do not reorder the elements of these arrays, we depend on them being ordered by increasing size.
-        private static readonly Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64) };
-        private static readonly Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
+        private static readonly Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64), typeof(Int128) };
+        private static readonly Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64), typeof(UInt128) };
 
-        private static readonly Type[] s_realTypes = new Type[] { typeof(Single), typeof(double), typeof(decimal) };
+        private static readonly Type[] s_realTypes = new Type[] { typeof(Half), typeof(Single), typeof(double), typeof(decimal) };
+
+        private static PSConverter<object> GetNumericConverter(Type fromType, Type toType)
+        {
+            if (typeof(IConvertible).IsAssignableFrom(fromType) && typeof(IConvertible).IsAssignableFrom(toType))
+            {
+                return ConvertNumeric;
+            }
+
+            MethodInfo castOperator = FindCastOperator("op_CheckedImplicit", toType, fromType, toType)
+                ?? FindCastOperator("op_CheckedExplicit", toType, fromType, toType)
+                ?? FindCastOperator("op_Implicit", toType, fromType, toType)
+                ?? FindCastOperator("op_Explicit", toType, fromType, toType)
+                ?? FindCastOperator("op_CheckedImplicit", fromType, fromType, toType)
+                ?? FindCastOperator("op_CheckedExplicit", fromType, fromType, toType)
+                ?? FindCastOperator("op_Implicit", fromType, fromType, toType)
+                ?? FindCastOperator("op_Explicit", fromType, fromType, toType);
+
+            if (castOperator == null)
+            {
+                return ConvertNumeric;
+            }
+
+            var castConverter = new ConvertViaCast { cast = castOperator };
+
+            if (IsRealType(fromType) && IsIntegerType(toType))
+            {
+                return new ConvertViaNumericCast { converter = castConverter, round = true }.Convert;
+            }
+
+            return castConverter.Convert;
+        }
 
         internal static void RebuildConversionCache()
         {
@@ -4481,11 +4589,14 @@ namespace System.Management.Automation
                 foreach (Type type in LanguagePrimitives.s_numericTypes)
                 {
                     CacheConversion<string>(type, typeofString, LanguagePrimitives.ConvertNumericToString, ConversionRank.NumericString);
-                    CacheConversion<object>(type, typeofChar, LanguagePrimitives.ConvertIConvertible, ConversionRank.NumericString);
+                    CacheConversion<object>(type, typeofChar, GetNumericConverter(type, typeofChar), ConversionRank.NumericString);
                     CacheConversion<object>(typeofNull, type, LanguagePrimitives.ConvertNullToNumeric, ConversionRank.NullToValue);
                 }
 
                 CacheConversion<object>(typeofBool, typeof(BigInteger), ConvertBoolToBigInteger, ConversionRank.Language);
+                CacheConversion<object>(typeofBool, typeof(Int128), ConvertBoolToNumeric, ConversionRank.Language);
+                CacheConversion<object>(typeofBool, typeof(UInt128), ConvertBoolToNumeric, ConversionRank.Language);
+                CacheConversion<object>(typeofBool, typeof(Half), ConvertBoolToNumeric, ConversionRank.Language);
 
                 CacheConversion<bool>(typeof(Int16), typeofBool, ConvertInt16ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(Int32), typeofBool, ConvertInt32ToBool, ConversionRank.Language);
@@ -4499,6 +4610,9 @@ namespace System.Management.Automation
                 CacheConversion<bool>(typeof(double), typeofBool, ConvertDoubleToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(decimal), typeofBool, ConvertDecimalToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(BigInteger), typeofBool, ConvertBigIntegerToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(Int128), typeofBool, CreateNumericToBoolConverter(typeof(Int128)), ConversionRank.Language);
+                CacheConversion<bool>(typeof(UInt128), typeofBool, CreateNumericToBoolConverter(typeof(UInt128)), ConversionRank.Language);
+                CacheConversion<bool>(typeof(Half), typeofBool, CreateNumericToBoolConverter(typeof(Half)), ConversionRank.Language);
 
                 for (int i = 0; i < LanguagePrimitives.s_unsignedIntegerTypes.Length; i++)
                 {
@@ -4510,35 +4624,35 @@ namespace System.Management.Automation
 
                     // Unsigned to signed same size is explicit
                     CacheConversion<object>(s_unsignedIntegerTypes[i], s_signedIntegerTypes[i],
-                                            LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
+                                            GetNumericConverter(s_unsignedIntegerTypes[i], s_signedIntegerTypes[i]), ConversionRank.NumericExplicit);
                     // Signed to unsigned same size is explicit, but better than the reverse (because it is "more specific")
                     CacheConversion<object>(s_signedIntegerTypes[i], s_unsignedIntegerTypes[i],
-                                            LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit1);
+                                            GetNumericConverter(s_signedIntegerTypes[i], s_unsignedIntegerTypes[i]), ConversionRank.NumericExplicit1);
 
                     for (int j = i + 1; j < LanguagePrimitives.s_unsignedIntegerTypes.Length; j++)
                     {
                         // Conversions where the sign doesn't change, but the size is bigger, is implicit
                         CacheConversion<object>(s_unsignedIntegerTypes[i], s_unsignedIntegerTypes[j],
-                                                LanguagePrimitives.ConvertNumeric, ConversionRank.NumericImplicit);
+                                                GetNumericConverter(s_unsignedIntegerTypes[i], s_unsignedIntegerTypes[j]), ConversionRank.NumericImplicit);
                         CacheConversion<object>(s_signedIntegerTypes[i], s_signedIntegerTypes[j],
-                                                LanguagePrimitives.ConvertNumeric, ConversionRank.NumericImplicit);
+                                                GetNumericConverter(s_signedIntegerTypes[i], s_signedIntegerTypes[j]), ConversionRank.NumericImplicit);
 
                         // Conversion from smaller unsigned to bigger signed is implicit
                         CacheConversion<object>(s_unsignedIntegerTypes[i], s_signedIntegerTypes[j],
-                                                LanguagePrimitives.ConvertNumeric, ConversionRank.NumericImplicit);
+                                                GetNumericConverter(s_unsignedIntegerTypes[i], s_signedIntegerTypes[j]), ConversionRank.NumericImplicit);
                         // Conversion from smaller signed to bigger unsigned is the "better" explicit conversion
                         CacheConversion<object>(s_signedIntegerTypes[i], s_unsignedIntegerTypes[j],
-                                                LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit1);
+                                                GetNumericConverter(s_signedIntegerTypes[i], s_unsignedIntegerTypes[j]), ConversionRank.NumericExplicit1);
 
                         // Conversion to a smaller type is explicit
                         CacheConversion<object>(s_unsignedIntegerTypes[j], s_unsignedIntegerTypes[i],
-                                                LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
+                                                GetNumericConverter(s_unsignedIntegerTypes[j], s_unsignedIntegerTypes[i]), ConversionRank.NumericExplicit);
                         CacheConversion<object>(s_signedIntegerTypes[j], s_signedIntegerTypes[i],
-                                                LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
+                                                GetNumericConverter(s_signedIntegerTypes[j], s_signedIntegerTypes[i]), ConversionRank.NumericExplicit);
                         CacheConversion<object>(s_unsignedIntegerTypes[j], s_signedIntegerTypes[i],
-                                                LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
+                                                GetNumericConverter(s_unsignedIntegerTypes[j], s_signedIntegerTypes[i]), ConversionRank.NumericExplicit);
                         CacheConversion<object>(s_signedIntegerTypes[j], s_unsignedIntegerTypes[i],
-                                                LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
+                                                GetNumericConverter(s_signedIntegerTypes[j], s_unsignedIntegerTypes[i]), ConversionRank.NumericExplicit);
                     }
                 }
 
@@ -4548,8 +4662,8 @@ namespace System.Management.Automation
 
                     foreach (Type realType in s_realTypes)
                     {
-                        CacheConversion<object>(integerType, realType, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericImplicit);
-                        CacheConversion<object>(realType, integerType, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
+                        CacheConversion<object>(integerType, realType, GetNumericConverter(integerType, realType), ConversionRank.NumericImplicit);
+                        CacheConversion<object>(realType, integerType, GetNumericConverter(realType, integerType), ConversionRank.NumericExplicit);
                     }
                 }
 
@@ -4561,6 +4675,12 @@ namespace System.Management.Automation
                 CacheConversion<object>(typeofDouble, typeofDecimal, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
                 CacheConversion<object>(typeofDecimal, typeofFloat, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit1);
                 CacheConversion<object>(typeofDecimal, typeofDouble, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit1);
+                CacheConversion<object>(typeof(Half), typeofFloat, GetNumericConverter(typeof(Half), typeofFloat), ConversionRank.NumericImplicit);
+                CacheConversion<object>(typeof(Half), typeofDouble, GetNumericConverter(typeof(Half), typeofDouble), ConversionRank.NumericImplicit);
+                CacheConversion<object>(typeofFloat, typeof(Half), GetNumericConverter(typeofFloat, typeof(Half)), ConversionRank.NumericExplicit);
+                CacheConversion<object>(typeofDouble, typeof(Half), GetNumericConverter(typeofDouble, typeof(Half)), ConversionRank.NumericExplicit);
+                CacheConversion<object>(typeof(Half), typeofDecimal, GetNumericConverter(typeof(Half), typeofDecimal), ConversionRank.NumericExplicit);
+                CacheConversion<object>(typeofDecimal, typeof(Half), GetNumericConverter(typeofDecimal, typeof(Half)), ConversionRank.NumericExplicit1);
 
                 CacheConversion<Regex>(typeofString, typeof(Regex), LanguagePrimitives.ConvertStringToRegex, ConversionRank.Language);
                 CacheConversion<char[]>(typeofString, typeof(char[]), LanguagePrimitives.ConvertStringToCharArray, ConversionRank.StringToCharArray);
@@ -4569,6 +4689,7 @@ namespace System.Management.Automation
                 CacheConversion<object>(typeofString, typeofDecimal, LanguagePrimitives.ConvertStringToDecimal, ConversionRank.NumericString);
                 CacheConversion<object>(typeofString, typeofFloat, LanguagePrimitives.ConvertStringToReal, ConversionRank.NumericString);
                 CacheConversion<object>(typeofString, typeofDouble, LanguagePrimitives.ConvertStringToReal, ConversionRank.NumericString);
+                CacheConversion<object>(typeofString, typeof(Half), LanguagePrimitives.ConvertStringToReal, ConversionRank.NumericString);
                 CacheConversion<object>(typeofChar, typeofFloat, LanguagePrimitives.ConvertNumericChar, ConversionRank.Language);
                 CacheConversion<object>(typeofChar, typeofDouble, LanguagePrimitives.ConvertNumericChar, ConversionRank.Language);
                 CacheConversion<bool>(typeofChar, typeofBool, LanguagePrimitives.ConvertCharToBool, ConversionRank.Language);
