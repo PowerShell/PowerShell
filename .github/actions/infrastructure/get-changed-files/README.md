@@ -6,8 +6,8 @@ A reusable composite action that retrieves the list of files changed in a pull r
 
 - Supports both `pull_request` and `push` events
 - Optional filtering by file pattern
-- Returns files as JSON array for easy consumption
-- Filters out deleted files (only returns added, modified, or renamed files)
+-- Returns files as JSON array for easy consumption
+-- By default filters out deleted files (only returns added, modified, or renamed files). Use the `include-deleted` input to include deleted/removed files when needed.
 - Handles up to 100 changed files per request
 
 ## Usage
@@ -59,6 +59,7 @@ A reusable composite action that retrieves the list of files changed in a pull r
 |------|-------------|----------|---------|
 | `filter` | Optional filter pattern (e.g., `*.md` for markdown files, `.github/` for GitHub files) | No | `''` |
 | `event-types` | Comma-separated list of event types to support (`pull_request`, `push`) | No | `pull_request` |
+| `include-deleted` | Include deleted/removed files in the results (`true`/`false`) | No | `false` |
 
 ## Outputs
 
