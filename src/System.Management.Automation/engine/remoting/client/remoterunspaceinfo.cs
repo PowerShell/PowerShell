@@ -275,7 +275,7 @@ namespace System.Management.Automation.Runspaces
 
             switch (remoteRunspace.ConnectionInfo)
             {
-                case WSManConnectionInfo _:
+                case WSManConnectionInfo:
                     ComputerType = TargetMachineType.RemoteMachine;
                     string fullShellName = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<string>(
                         remoteRunspace.ConnectionInfo,
@@ -293,12 +293,12 @@ namespace System.Management.Automation.Runspaces
                     ConfigurationName = containerConnectionInfo.ContainerProc.ConfigurationName;
                     break;
 
-                case SSHConnectionInfo _:
+                case SSHConnectionInfo:
                     ComputerType = TargetMachineType.RemoteMachine;
                     ConfigurationName = "DefaultShell";
                     break;
 
-                case NewProcessConnectionInfo _:
+                case NewProcessConnectionInfo:
                     ComputerType = TargetMachineType.RemoteMachine;
                     break;
 
@@ -321,22 +321,22 @@ namespace System.Management.Automation.Runspaces
         {
             switch (_remoteRunspace.ConnectionInfo)
             {
-                case WSManConnectionInfo _:
+                case WSManConnectionInfo:
                     return "WSMan";
 
-                case SSHConnectionInfo _:
+                case SSHConnectionInfo:
                     return "SSH";
 
-                case NamedPipeConnectionInfo _:
+                case NamedPipeConnectionInfo:
                     return "NamedPipe";
 
-                case ContainerConnectionInfo _:
+                case ContainerConnectionInfo:
                     return "Container";
 
-                case NewProcessConnectionInfo _:
+                case NewProcessConnectionInfo:
                     return "Process";
 
-                case VMConnectionInfo _:
+                case VMConnectionInfo:
                     return "VMBus";
 
                 default:
