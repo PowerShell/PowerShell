@@ -3264,11 +3264,17 @@ namespace System.Management.Automation
                 }
 
                 CloneBaseProperties(memberSet);
+                memberSet.inheritMembers = this.inheritMembers;
                 return memberSet;
             }
             else
             {
-                return new PSMemberSet(name, _constructorPSObject);
+                PSMemberSet memberSet = new PSMemberSet(name, _constructorPSObject)
+                {
+                    inheritMembers = this.inheritMembers
+                };
+
+                return memberSet;
             }
         }
 
