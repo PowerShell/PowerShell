@@ -486,6 +486,56 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
         $job | Wait-Job | Remove-Job
     }
 
+    It 'Does not crash when the ChildJobs collection is mutated while a parallel job starts' {
+        $testScript = Join-Path $TestDrive 'Mutate-ChildJobs.ps1'
+        $stdoutPath = Join-Path $TestDrive 'stdout.txt'
+        $stderrPath = Join-Path $TestDrive 'stderr.txt'
+        Set-Content -LiteralPath $testScript -Value @'
+$job = 0..20 | ForEach-Object -AsJob -Parallel {
+    Start-Sleep -Milliseconds 300
+    $_
+} -ThrottleLimit 2
+
+$deadline = [DateTime]::UtcNow.AddSeconds(30)
+while ($job.ChildJobs.Count -le 15 -and [DateTime]::UtcNow -lt $deadline) {
+    Start-Sleep -Milliseconds 100
+}
+
+if ($job.ChildJobs.Count -le 15) {
+    throw "Timed out waiting for child jobs to be created."
+}
+
+$job.ChildJobs.RemoveAt(15)
+
+$job | Wait-Job -Timeout 30 | Out-Null
+$job | Remove-Job -Force
+'@
+
+        $powershellName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
+        $powershell = Join-Path -Path $PSHOME -ChildPath $powershellName
+        $process = Start-Process -FilePath $powershell -ArgumentList @(
+            '-NoLogo'
+            '-NoProfile'
+            '-NonInteractive'
+            '-File'
+            $testScript
+        ) -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath -PassThru
+
+        try {
+            $process | Wait-Process -Timeout 60 -ErrorAction Stop
+        }
+        catch {
+            if (-not $process.HasExited) {
+                $process | Stop-Process -Force
+            }
+
+            throw
+        }
+
+        $process.Refresh()
+        $process.ExitCode | Should -Be 0
+    }
+
     It 'Verifies dollar underbar variable' {
 
         $expected = 1..10
