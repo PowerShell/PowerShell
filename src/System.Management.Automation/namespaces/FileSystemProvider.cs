@@ -2975,7 +2975,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (Stopping || _removedFiles == _totalFiles)
+                if (Stopping || _removedFiles >= _totalFiles)
                 {
                     _removeStopwatch.Stop();
                     var progress = new ProgressRecord(REMOVE_FILE_ACTIVITY_ID, " ", " ")
