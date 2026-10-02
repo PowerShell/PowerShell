@@ -233,10 +233,19 @@ Describe "Get-Content" -Tags "CI" {
 
     Context "Alternate Data Stream support on Windows" {
         It "Should support NTFS streams using colon syntax" -Skip:(!$IsWindows) {
-            Set-Content "${testPath}:Stream" -Value "Foo"
-            { Test-Path "${testPath}:Stream" | Should -Throw -ErrorId "ItemExistsNotSupportedError,Microsoft.PowerShell.Commands,TestPathCommand" }
-            Get-Content "${testPath}:Stream" | Should -BeExactly "Foo"
-            Get-Content $testPath | Should -BeExactly $testString
+                Set-Content "${testPath}:Stream" -Value "Foo"
+                # Make sure the test data was written before asserting
+                $actual = Get-Content -Path "${testPath}:Stream" -ErrorAction SilentlyContinue
+                if ($actual -eq $null) {
+                    throw "Test data for ${testPath}:Stream not set correctly."
+                }
+                { Test-Path "${testPath}:Stream" | Should -Throw -ErrorId "ItemExistsNotSupportedError,Microsoft.PowerShell.Commands,TestPathCommand" }
+                Get-Content "${testPath}:Stream" | Should -BeExactly "Foo"
+                $fileContent = Get-Content $testPath
+                if ($fileContent -eq $null) {
+                    throw "Test data for $testPath not set correctly."
+                }
+                Get-Content $testPath | Should -BeExactly $testString
         }
 
         It "Should support NTFS streams using -Stream" -Skip:(!$IsWindows) {
