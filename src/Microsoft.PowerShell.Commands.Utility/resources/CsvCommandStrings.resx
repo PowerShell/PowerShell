@@ -157,4 +157,7 @@
   <data name="CannotSpecifyAppendAndNoHeader" xml:space="preserve">
     <value>You must specify either the -Append or -NoHeader parameters, but not both.</value>
   </data>
+  <data name="CannotSpecifyDelimiterAndUseCulture" xml:space="preserve">
+    <value>You must specify either the -Delimiter or -UseCulture parameters, but not both.</value>
+  </data>
 </root>
