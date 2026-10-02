@@ -10,6 +10,7 @@
 
 ## PR Checklist
 
+  [ ] If changing functionality, the proposed change has been discussed in an issue and approved by a [Working Group](https://github.com/PowerShell/PowerShell/blob/master/docs/community/working-group.md). See the [contributing guidelines](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md) for more details.
 - [ ] [PR has a meaningful title](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
   - Use the present tense and imperative mood when describing your changes
 - [ ] [Summarized changes](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
