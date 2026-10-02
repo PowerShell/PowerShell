@@ -863,14 +863,14 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ModulesToImport, RemotingErrorIdStrings.DISCModulesToImportComment,
-                        SessionConfigurationUtils.CombineHashTableOrStringArray(_modulesToImport, streamWriter, this), streamWriter, false));
+                        SessionConfigurationUtils.CombineHashTableOrStringArray(ConfigFileConstants.ModulesToImport, _modulesToImport, streamWriter, this), streamWriter, false));
                 }
 
                 // Visible aliases
                 if (ShouldGenerateConfigurationSnippet("VisibleAliases"))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleAliases, RemotingErrorIdStrings.DISCVisibleAliasesComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(_visibleAliases, streamWriter, this), streamWriter, _visibleAliases.Length == 0));
+                        SessionConfigurationUtils.GetVisibilityDefault(ConfigFileConstants.VisibleAliases, _visibleAliases, streamWriter, this), streamWriter, _visibleAliases.Length == 0));
                 }
 
                 // Visible cmdlets
@@ -885,7 +885,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleCmdlets, RemotingErrorIdStrings.DISCVisibleCmdletsComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(_visibleCmdlets, streamWriter, this), streamWriter, false));
+                        SessionConfigurationUtils.GetVisibilityDefault(ConfigFileConstants.VisibleCmdlets, _visibleCmdlets, streamWriter, this), streamWriter, false));
                 }
 
                 // Visible functions
@@ -900,21 +900,21 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleFunctions, RemotingErrorIdStrings.DISCVisibleFunctionsComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(_visibleFunctions, streamWriter, this), streamWriter, _visibleFunctions.Length == 0));
+                        SessionConfigurationUtils.GetVisibilityDefault(ConfigFileConstants.VisibleFunctions, _visibleFunctions, streamWriter, this), streamWriter, _visibleFunctions.Length == 0));
                 }
 
                 // Visible external commands (scripts, executables)
                 if (ShouldGenerateConfigurationSnippet("VisibleExternalCommands"))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleExternalCommands, RemotingErrorIdStrings.DISCVisibleExternalCommandsComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(_visibleExternalCommands, streamWriter, this), streamWriter, _visibleExternalCommands.Length == 0));
+                        SessionConfigurationUtils.GetVisibilityDefault(ConfigFileConstants.VisibleExternalCommands, _visibleExternalCommands, streamWriter, this), streamWriter, _visibleExternalCommands.Length == 0));
                 }
 
                 // Visible providers
                 if (ShouldGenerateConfigurationSnippet("VisibleProviders"))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleProviders, RemotingErrorIdStrings.DISCVisibleProvidersComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(_visibleProviders, streamWriter, this), streamWriter, _visibleProviders.Length == 0));
+                        SessionConfigurationUtils.GetVisibilityDefault(ConfigFileConstants.VisibleProviders, _visibleProviders, streamWriter, this), streamWriter, _visibleProviders.Length == 0));
                 }
 
                 // Alias definitions
@@ -1625,12 +1625,12 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ModulesToImport, RemotingErrorIdStrings.DISCModulesToImportComment,
-                        SessionConfigurationUtils.CombineHashTableOrStringArray(_modulesToImport, streamWriter, this), streamWriter, false));
+                        SessionConfigurationUtils.CombineHashTableOrStringArray(ConfigFileConstants.ModulesToImport, _modulesToImport, streamWriter, this), streamWriter, false));
                 }
 
                 // Visible aliases
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleAliases, RemotingErrorIdStrings.DISCVisibleAliasesComment,
-                    SessionConfigurationUtils.GetVisibilityDefault(_visibleAliases, streamWriter, this), streamWriter, _visibleAliases.Length == 0));
+                    SessionConfigurationUtils.GetVisibilityDefault(ConfigFileConstants.VisibleAliases, _visibleAliases, streamWriter, this), streamWriter, _visibleAliases.Length == 0));
 
                 // Visible cmdlets
                 if ((_visibleCmdlets == null) || (_visibleCmdlets.Length == 0))
@@ -1641,7 +1641,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleCmdlets, RemotingErrorIdStrings.DISCVisibleCmdletsComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(_visibleCmdlets, streamWriter, this), streamWriter, false));
+                        SessionConfigurationUtils.GetVisibilityDefault(ConfigFileConstants.VisibleCmdlets, _visibleCmdlets, streamWriter, this), streamWriter, false));
                 }
 
                 // Visible functions
@@ -1653,16 +1653,16 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleFunctions, RemotingErrorIdStrings.DISCVisibleFunctionsComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(_visibleFunctions, streamWriter, this), streamWriter, _visibleFunctions.Length == 0));
+                        SessionConfigurationUtils.GetVisibilityDefault(ConfigFileConstants.VisibleFunctions, _visibleFunctions, streamWriter, this), streamWriter, _visibleFunctions.Length == 0));
                 }
 
                 // Visible external commands (scripts, executables)
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleExternalCommands, RemotingErrorIdStrings.DISCVisibleExternalCommandsComment,
-                    SessionConfigurationUtils.GetVisibilityDefault(_visibleExternalCommands, streamWriter, this), streamWriter, _visibleExternalCommands.Length == 0));
+                    SessionConfigurationUtils.GetVisibilityDefault(ConfigFileConstants.VisibleExternalCommands, _visibleExternalCommands, streamWriter, this), streamWriter, _visibleExternalCommands.Length == 0));
 
                 // Visible providers
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleProviders, RemotingErrorIdStrings.DISCVisibleProvidersComment,
-                    SessionConfigurationUtils.GetVisibilityDefault(_visibleProviders, streamWriter, this), streamWriter, _visibleProviders.Length == 0));
+                    SessionConfigurationUtils.GetVisibilityDefault(ConfigFileConstants.VisibleProviders, _visibleProviders, streamWriter, this), streamWriter, _visibleProviders.Length == 0));
 
                 // Scripts to process
                 string resultData = (_scriptsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(_scriptsToProcess) : "'C:\\ConfigData\\InitScript1.ps1', 'C:\\ConfigData\\InitScript2.ps1'";
@@ -1922,11 +1922,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the visibility default value.
         /// </summary>
-        internal static string GetVisibilityDefault(object[] values, StreamWriter writer, PSCmdlet caller)
+        internal static string GetVisibilityDefault(string configKey, object[] values, StreamWriter writer, PSCmdlet caller)
         {
             if ((values != null) && (values.Length > 0))
             {
-                return CombineHashTableOrStringArray(values, writer, caller);
+                return CombineHashTableOrStringArray(configKey, values, writer, caller);
             }
 
             // Default Visibility is Empty which gets commented
@@ -2103,28 +2103,26 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Combines an array of strings or hashtables into a single string block.
         /// </summary>
-        internal static string CombineHashTableOrStringArray(object[] values, StreamWriter writer, PSCmdlet caller)
+        internal static string CombineHashTableOrStringArray(string configKey, object[] values, StreamWriter writer, PSCmdlet caller)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < values.Length; i++)
             {
-                string strVal = values[i] as string;
-                if (!string.IsNullOrEmpty(strVal))
+                object value = PSObject.Base(values[i]);
+                if (value is string strVal && !string.IsNullOrEmpty(strVal))
                 {
                     sb.Append(QuoteName(strVal));
                 }
+                else if (value is IDictionary dictVal)
+                {
+                    sb.Append(CombineHashtable(dictVal, writer));
+                }
                 else
                 {
-                    Hashtable hashVal = values[i] as Hashtable;
-                    if (hashVal == null)
-                    {
-                        string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
-                                                           ConfigFileConstants.ModulesToImport);
-                        PSArgumentException e = new PSArgumentException(message);
-                        caller.ThrowTerminatingError(e.ErrorRecord);
-                    }
-
-                    sb.Append(CombineHashtable(hashVal, writer));
+                    string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
+                                                        configKey);
+                    PSArgumentException e = new PSArgumentException(message);
+                    caller.ThrowTerminatingError(e.ErrorRecord);
                 }
 
                 if (i < (values.Length - 1))
