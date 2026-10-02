@@ -886,10 +886,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (TotalCount < 0 || count < TotalCount)
                             {
-                                IEnumerable<CommandInfo> commands;
                                 if (UseFuzzyMatching)
                                 {
-                                    foreach (var commandScore in ModuleUtils.GetFuzzyMatchingCommands(
+                                    foreach (CommandScore commandScore in ModuleUtils.GetFuzzyMatchingCommands(
                                         plainCommandName,
                                         Context,
                                         MyInvocation.CommandOrigin,
@@ -897,35 +896,30 @@ namespace Microsoft.PowerShell.Commands
                                         rediscoverImportedModules: true,
                                         moduleVersionRequired: _isFullyQualifiedModuleSpecified))
                                     {
-                                        _commandScores.Add(commandScore);
-                                    }
+                                        CommandInfo current = commandScore.Command;
 
-                                    commands = _commandScores.Select(static x => x.Command);
+                                        if (TryAddCommandToResults(ref current, commandScore.Score, ref count, out isDuplicate))
+                                        {
+                                            break;
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    commands = ModuleUtils.GetMatchingCommands(
+                                    IEnumerable<CommandInfo> commands = ModuleUtils.GetMatchingCommands(
                                         plainCommandName,
                                         Context,
                                         MyInvocation.CommandOrigin,
                                         rediscoverImportedModules: true,
                                         moduleVersionRequired: _isFullyQualifiedModuleSpecified,
                                         useAbbreviationExpansion: UseAbbreviationExpansion);
-                                }
 
-                                foreach (CommandInfo command in commands)
-                                {
-                                    // Cannot pass in "command" by ref (foreach iteration variable)
-                                    CommandInfo current = command;
-
-                                    if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
+                                    foreach (CommandInfo command in commands)
                                     {
-                                        _accumulatedResults.Add(current);
+                                        // Cannot pass in "command" by ref (foreach iteration variable)
+                                        CommandInfo current = command;
 
-                                        // Make sure we don't exceed the TotalCount parameter
-                                        ++count;
-
-                                        if (TotalCount >= 0 && count >= TotalCount)
+                                        if (TryAddCommandToResults(ref current, null, ref count, out isDuplicate))
                                         {
                                             break;
                                         }
@@ -964,6 +958,28 @@ namespace Microsoft.PowerShell.Commands
                             exception));
                 }
             }
+        }
+
+        private bool TryAddCommandToResults(ref CommandInfo current, int? fuzzyScore, ref int currentCount, out bool isDuplicate)
+        {
+            if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
+            {
+                _accumulatedResults.Add(current);
+                if (fuzzyScore is int score)
+                {
+                    _commandScores.Add(new CommandScore(current, score));
+                }
+
+                // Make sure we don't exceed the TotalCount parameter
+                ++currentCount;
+
+                if (TotalCount >= 0 && currentCount >= TotalCount)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private bool FindCommandForName(SearchResolutionOptions options, string commandName, bool isPattern, bool emitErrors, ref int currentCount, out bool isDuplicate)
