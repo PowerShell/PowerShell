@@ -57,20 +57,20 @@ Describe "PSVersionTable" -Tags "CI" {
     }
 
     It "Should have the correct platform info" {
-       $platform = [String][System.Environment]::OSVersion.Platform
-       [String]$PSVersionTable["Platform"] | Should -Be $platform
+       $platform = [string][System.Environment]::OSVersion.Platform
+       [string]$PSVersionTable["Platform"] | Should -Be $platform
     }
 
     It "Should have the correct OS info" {
        if ($IsCoreCLR)
        {
-           $OSDescription = [String][System.Runtime.InteropServices.RuntimeInformation]::OSDescription
-           [String]$PSVersionTable["OS"] | Should -Be $OSDescription
+           $OSDescription = [string][System.Runtime.InteropServices.RuntimeInformation]::OSDescription
+           [string]$PSVersionTable["OS"] | Should -Be $OSDescription
        }
        else
        {
-           $OSDescription = [String][System.Environment]::OSVersion
-           [String]$PSVersionTable["OS"] | Should -Be $OSDescription
+           $OSDescription = [string][System.Environment]::OSVersion
+           [string]$PSVersionTable["OS"] | Should -Be $OSDescription
        }
     }
 

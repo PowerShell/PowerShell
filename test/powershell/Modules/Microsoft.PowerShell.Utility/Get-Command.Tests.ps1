@@ -121,14 +121,14 @@ Describe "Get-Command" -Tag CI {
         It "Should return a string object when -Name is an alias and -Syntax is specified" {
             $Result = Get-Command -Name del -Syntax
 
-            $Result | Should -BeOfType [String]
+            $Result | Should -BeOfType [string]
             $Result | Should -Match 'del \[-Path\]'
         }
 
         It "Should replace commands with aliases in matching commands when using a wildcard search" {
             $Result = Get-Command -Name sp* -Syntax
 
-            $Result | Should -BeOfType [String]
+            $Result | Should -BeOfType [string]
             $Result -join '' | Should -Match 'sp \(alias\) -> Set-ItemProperty'
             $Result -join '' | Should -Match 'sp \[-Path\]'
         }
