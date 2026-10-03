@@ -89,9 +89,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	It "Sort-Object with HistoryInfo object should work"{
 		Add-Type -TypeDefinition "public enum PipelineState{NotStarted,Running,Stopping,Stopped,Completed,Failed,Disconnected}"
 
-		$historyInfo1 = [pscustomobject]@{"PipelineId"=1; "Cmdline"="cmd3"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
-		$historyInfo2 = [pscustomobject]@{"PipelineId"=2; "Cmdline"="cmd1"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
-		$historyInfo3 = [pscustomobject]@{"PipelineId"=3; "Cmdline"="cmd2"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
+		$historyInfo1 = [pscustomobject]@{"PipelineId"=1; "Cmdline"="cmd3"; "Status"=[PipelineState]::Completed; "StartTime" = [datetime]::Now;"EndTime" = [datetime]::Now.AddSeconds(5.0);}
+		$historyInfo2 = [pscustomobject]@{"PipelineId"=2; "Cmdline"="cmd1"; "Status"=[PipelineState]::Completed; "StartTime" = [datetime]::Now;"EndTime" = [datetime]::Now.AddSeconds(5.0);}
+		$historyInfo3 = [pscustomobject]@{"PipelineId"=3; "Cmdline"="cmd2"; "Status"=[PipelineState]::Completed; "StartTime" = [datetime]::Now;"EndTime" = [datetime]::Now.AddSeconds(5.0);}
 
 		$historyInfos = @($historyInfo1,$historyInfo2,$historyInfo3)
 
@@ -296,7 +296,7 @@ Describe 'Sort-Object Stable Unit Tests' -Tags 'CI' {
 			$results[1]  | Should -Be 1
 			$results[2]  | Should -Be 3
 		}
-		
+
 		It "Sort-Object with Unique Stable should return proper records"{
 			$Record1=[PSCustomObject]@{Key="A";Record="A1"}
 			$Record2=[PSCustomObject]@{Key="A";Record="A2"}
@@ -304,7 +304,7 @@ Describe 'Sort-Object Stable Unit Tests' -Tags 'CI' {
 			$Record4=[PSCustomObject]@{Key="B";Record="B2"}
 			$Records = @($Record1,$Record2,$Record3,$Record4)
 			$results = $Records | Sort-Object -Stable -Unique -Property Key
-	
+
 			$results[0] | Should -Be $Records[0]
 			$results[1] | Should -Be $Records[2]
 		}
@@ -496,9 +496,9 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 
 		Add-Type -TypeDefinition 'public enum PipelineState{NotStarted,Running,Stopping,Stopped,Completed,Failed,Disconnected}'
 		$unsortedData = @(
-			[pscustomobject]@{PipelineId=1;Cmdline='cmd3';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)}
-			[pscustomobject]@{PipelineId=2;Cmdline='cmd1';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)}
-			[pscustomobject]@{PipelineId=3;Cmdline='cmd2';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)}
+			[pscustomobject]@{PipelineId=1;Cmdline='cmd3';Status=[PipelineState]::Completed;StartTime=[datetime]::Now;EndTime=[datetime]::Now.AddSeconds(5.0)}
+			[pscustomobject]@{PipelineId=2;Cmdline='cmd1';Status=[PipelineState]::Completed;StartTime=[datetime]::Now;EndTime=[datetime]::Now.AddSeconds(5.0)}
+			[pscustomobject]@{PipelineId=3;Cmdline='cmd2';Status=[PipelineState]::Completed;StartTime=[datetime]::Now;EndTime=[datetime]::Now.AddSeconds(5.0)}
 		)
 
 		It 'Return the <nSortType> N sorted in <orderType> order' -TestCases $topBottomAscendingDescending {

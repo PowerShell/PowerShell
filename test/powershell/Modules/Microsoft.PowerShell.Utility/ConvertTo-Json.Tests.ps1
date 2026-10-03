@@ -134,7 +134,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
 
     It 'Should not serialize ETS properties added to DateTime' {
         $date = "2021-06-24T15:54:06.796999-07:00"
-        $d = [DateTime]::Parse($date)
+        $d = [datetime]::Parse($date)
 
         # need to use wildcard here due to some systems may be configured with different culture setting showing time in different format
         $d | ConvertTo-Json -Compress | Should -BeLike '"2021-06-24T*'
@@ -251,7 +251,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
 
     Context 'DateTime and related types' {
         It 'Should serialize DateTime with UTC kind via Pipeline and InputObject' {
-            $dt = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc)
+            $dt = [datetime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc)
             $jsonPipeline = $dt | ConvertTo-Json -Compress
             $jsonInputObject = ConvertTo-Json -InputObject $dt -Compress
             $jsonPipeline | Should -BeExactly '"2024-06-15T10:30:00Z"'
@@ -259,7 +259,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Should serialize DateTime with Local kind' {
-            $dt = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Local)
+            $dt = [datetime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Local)
             $json = $dt | ConvertTo-Json -Compress
             $offset = $dt.ToString('zzz')
             $expected = '"2024-06-15T10:30:00' + $offset + '"'
@@ -267,7 +267,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Should serialize DateTime with Unspecified kind via Pipeline and InputObject' {
-            $dt = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Unspecified)
+            $dt = [datetime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Unspecified)
             $jsonPipeline = $dt | ConvertTo-Json -Compress
             $jsonInputObject = ConvertTo-Json -InputObject $dt -Compress
             $jsonPipeline | Should -BeExactly '"2024-06-15T10:30:00"'
@@ -301,7 +301,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Should ignore ETS properties on DateTime' {
-            $dt = [DateTime]::new(2024, 6, 15, 0, 0, 0, [DateTimeKind]::Utc)
+            $dt = [datetime]::new(2024, 6, 15, 0, 0, 0, [DateTimeKind]::Utc)
             $dt = Add-Member -InputObject $dt -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
             $json = $dt | ConvertTo-Json -Compress
             $json | Should -BeExactly '"2024-06-15T00:00:00Z"'
@@ -556,7 +556,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Should serialize hashtable with <TypeName> value correctly' -TestCases @(
-            @{ TypeName = 'DateTime'; Value = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc); Expected = '{"val":"2024-06-15T10:30:00Z"}' }
+            @{ TypeName = 'DateTime'; Value = [datetime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc); Expected = '{"val":"2024-06-15T10:30:00Z"}' }
             @{ TypeName = 'Guid'; Value = [Guid]'12345678-1234-1234-1234-123456789abc'; Expected = '{"val":"12345678-1234-1234-1234-123456789abc"}' }
             @{ TypeName = 'Enum'; Value = [DayOfWeek]::Monday; Expected = '{"val":1}' }
             @{ TypeName = 'Uri'; Value = [Uri]'https://example.com'; Expected = '{"val":"https://example.com"}' }
@@ -727,8 +727,8 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Should serialize array with DateTime elements correctly via Pipeline and InputObject' {
-            $date1 = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc)
-            $date2 = [DateTime]::new(2024, 12, 25, 0, 0, 0, [DateTimeKind]::Utc)
+            $date1 = [datetime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc)
+            $date2 = [datetime]::new(2024, 12, 25, 0, 0, 0, [DateTimeKind]::Utc)
             $arr = @($date1, $date2)
             $expected = '["2024-06-15T10:30:00Z","2024-12-25T00:00:00Z"]'
             $jsonPipeline = ,$arr | ConvertTo-Json -Compress
@@ -956,7 +956,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
 
     Context 'Dictionary with complex values' {
         It 'Should serialize hashtable with DateTime value correctly via Pipeline and InputObject' {
-            $hash = @{ date = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc) }
+            $hash = @{ date = [datetime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc) }
             $jsonPipeline = $hash | ConvertTo-Json -Compress
             $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress
             $jsonPipeline | Should -BeExactly '{"date":"2024-06-15T10:30:00Z"}'
@@ -1109,7 +1109,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
 
         It 'Should serialize PSCustomObject with DateTime property via Pipeline and InputObject' {
             $obj = [PSCustomObject]@{
-                Date = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc)
+                Date = [datetime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc)
             }
             $expected = '{"Date":"2024-06-15T10:30:00Z"}'
             $jsonPipeline = $obj | ConvertTo-Json -Compress

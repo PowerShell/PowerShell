@@ -930,7 +930,7 @@ try
                 Invoke-Command -Session $session -Scriptblock {
                     function foo {
                         param(
-                            [DateTime]
+                            [datetime]
                             [parameter(ValueFromPipeline = $true)]
                             $date,
 

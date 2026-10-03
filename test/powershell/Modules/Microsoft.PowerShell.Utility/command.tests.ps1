@@ -33,7 +33,7 @@ Describe "Trace-Command" -tags "Feature" {
         It "Datetime works" {
             $expectedDate = Trace-Command -Name * -Expression {Get-Date} -ListenerOption DateTime -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*DateTime=*"}
-            $results = $log | ForEach-Object {[DateTime]::Parse($_.Split("=")[1])}
+            $results = $log | ForEach-Object {[datetime]::Parse($_.Split("=")[1])}
 
             ## allow a gap of 6 seconds. All traces should be finished within 6 seconds.
             $allowedGap = [timespan](60 * 1000 * 1000)
