@@ -1,0 +1,59 @@
+name: 📖 New Repo Doc or Update to existing one needed
+description: Tracking when we need either a new doc in the repo or update an existing one
+title: "📖 Repo Docs need adding or updated: "
+labels: ["Area-Maintainers-Documentation", "Needs-Triage", "Up-For-Grabs"]
+#projects: ["<optionally add to project here>"]
+# assignees:
+#   # could be assigned to a person, group of people or a team  but leaving blank for now
+body:
+- type: checkboxes
+  attributes:
+    label: Is there an existing issue for this?
+    description: Please search to see if an issue already exists for documentation update you're requesting.
+    options:
+    - label: I have searched the existing issues
+      required: true
+- type: dropdown
+  id: repo-docs
+  attributes:
+    label: Is this for a new or existing Repo Doc?
+    options:
+    - "New"
+    - "Existing"
+    - "Both"
+  validations:
+    required: true
+- type: textarea
+  id: OutdatedRepoDocs
+  attributes:
+    label: Summary
+    description: File path/s for outdated Repo Docs
+    placeholder: |
+      Doc file at <path> is outdated
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Suggested Updates
+    description: What needs updating in these files.
+    placeholder: |
+      [] - Doc is missing key references & links need updating to new locations
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Anything else?
+    description: |
+      Any other comments
+  validations:
+    required: false
+- type: dropdown
+  attributes:
+    label: Intend to contribute this work?
+    description: Intend to contribute this work?
+    options:
+    - "Yes, I intend to contribute this work & do not require any assistance"
+    - "Yes, I intend to contribute this work but would like some assistance"
+    - "No, I do not intend to contribute this work"
+  validations:
+    required: true
