@@ -1,0 +1,3 @@
+# retain the existing test_*.cs naming convention. (SA1649: File name should match first type name)
+[csharp/**/*.cs]
+dotnet_diagnostic.SA1649.severity = none
