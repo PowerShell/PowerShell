@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LoadingOperationSystemInfo" xml:space="preserve">
-    <value>Loading operating system information</value>
+    <value>正在加载操作系统信息</value>
   </data>
   <data name="LoadingHotPatchInfo" xml:space="preserve">
-    <value>Loading hot-patch information</value>
+    <value>正在加载热修补程序信息</value>
   </data>
   <data name="LoadingRegistryInfo" xml:space="preserve">
-    <value>Loading registry information</value>
+    <value>正在加载注册表信息</value>
   </data>
   <data name="LoadingBiosInfo" xml:space="preserve">
-    <value>Loading BIOS information</value>
+    <value>正在加载 BIOS 信息</value>
   </data>
   <data name="LoadingMotherboardInfo" xml:space="preserve">
-    <value>Loading motherboard information</value>
+    <value>正在加载主板信息</value>
   </data>
   <data name="LoadingComputerInfo" xml:space="preserve">
-    <value>Loading Computer information</value>
+    <value>正在加载计算机信息</value>
   </data>
   <data name="LoadingProcessorInfo" xml:space="preserve">
-    <value>Loading processor information</value>
+    <value>正在加载处理器信息</value>
   </data>
   <data name="LoadingNetworkAdapterInfo" xml:space="preserve">
-    <value>Loading network adapter information</value>
+    <value>正在加载网络适配器信息</value>
   </data>
 </root>

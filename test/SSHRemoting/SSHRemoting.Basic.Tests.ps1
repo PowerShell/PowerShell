@@ -8,6 +8,14 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
     $script:TestConnectingTimeout = 5000    # Milliseconds
 
+    # Shared SSH key path used by all tests. The helper module provisions an
+    # rsa key pair for the current user on both Windows and Linux.
+    $script:SshKeyFilePath = "$HOME/.ssh/id_rsa"
+
+    # Platform-appropriate current username for SSH connections.
+    # On Windows, $env:USERNAME is set; on Linux/macOS, use whoami.
+    $script:CurrentUserName = if ($IsWindows) { $env:USERNAME } else { (whoami) }
+
     function RestartSSHDService
     {
         if ($IsWindows)
@@ -38,19 +46,59 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
         Write-Verbose -Verbose "Starting TryNewPSSession ..."
 
+        $attempt = NewPSSessionAttempt @PSBoundParameters
+
+        if ($null -eq $attempt.Session)
+        {
+            $message = "New-PSSession unable to connect to SSH remoting endpoint after two attempts. Error: $($attempt.Error.Exception.Message)"
+            throw [System.Management.Automation.PSInvalidOperationException]::new($message)
+        }
+
+        Write-Verbose -Verbose "SSH New-PSSession remoting connect succeeded."
+        Write-Output $attempt.Session
+    }
+
+    function NewPSSessionAttempt
+    {
+        param(
+            [string[]] $HostName,
+            [string[]] $Name,
+            [object] $Port,
+            [string] $UserName,
+            [string] $KeyFilePath,
+            [string] $Subsystem,
+            [switch] $SkipRetry
+        )
+
+        Write-Verbose -Verbose "Starting NewPSSessionAttempt ..."
+
         # Try creating a new SSH connection
         $timeout = $script:TestConnectingTimeout
+        $newPSSessionParameters = @{} + $PSBoundParameters
+        $null = $newPSSessionParameters.Remove('SkipRetry')
         $connectionError = $null
+        $connectionException = $null
         $session = $null
         $count = 0
-        while (($null -eq $session) -and ($count++ -lt 2))
+        $maximumRetryCount = if ($SkipRetry) { 1 } else { 2 }
+        while (($null -eq $session) -and ($null -eq $connectionException) -and ($count++ -lt $maximumRetryCount))
         {
-            $session = New-PSSession @PSBoundParameters -ConnectingTimeout $timeout -ErrorVariable connectionError -ErrorAction SilentlyContinue
-            if ($null -eq $session)
+            try
+            {
+                $session = New-PSSession @newPSSessionParameters -ConnectingTimeout $timeout -ErrorVariable connectionError -ErrorAction SilentlyContinue
+            }
+            catch
+            {
+                $connectionException = $_
+                $connectionError = $_
+                Write-Verbose -Verbose "SSH New-PSSession remoting connect threw exception."
+            }
+
+            if (($null -eq $session) -and ($null -eq $connectionException))
             {
                 Write-Verbose -Verbose "SSH New-PSSession remoting connect failed."
 
-                if ($count -eq 1)
+                if (($count -eq 1) -and -not $SkipRetry)
                 {
                     # Try restarting sshd service
                     RestartSSHDService
@@ -58,14 +106,10 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             }
         }
 
-        if ($null -eq $session)
-        {
-            $message = "New-PSSession unable to connect to SSH remoting endpoint after two attempts. Error: $($connectionError.Exception.Message)"
-            throw [System.Management.Automation.PSInvalidOperationException]::new($message)
+        [pscustomobject]@{
+            Session = $session
+            Error = if ($null -ne $connectionException) { $connectionException } else { $connectionError }
         }
-
-        Write-Verbose -Verbose "SSH New-PSSession remoting connect succeeded."
-        Write-Output $session
     }
 
     function TryNewPSSessionHash
@@ -154,9 +198,25 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
         It "Verifies new connection with explicit User parameter" {
             Write-Verbose -Verbose "It Starting: Verifies new connection with explicit User parameter"
-            $script:session = TryNewPSSession -HostName localhost -UserName (whoami)
+            $script:session = TryNewPSSession -HostName localhost -UserName $script:CurrentUserName
             $script:session | Should -Not -BeNullOrEmpty
             VerifySession $script:session
+            Write-Verbose -Verbose "It Complete"
+        }
+
+        It "Verifies no connection with malformed User parameter" {
+            Write-Verbose -Verbose "It Starting: Verifies no connection with malformed User parameter"
+            $attempt = NewPSSessionAttempt -HostName localhost -UserName "$script:CurrentUserName -o PasswordAuthentication=no" -SkipRetry
+            $attempt.Session | Should -BeNullOrEmpty
+            $attempt.Error | Should -Not -BeNullOrEmpty
+            Write-Verbose -Verbose "It Complete"
+        }
+
+        It "Verifies no connection with malformed User parameter with double quotes" {
+            Write-Verbose -Verbose "It Starting: Verifies no connection with malformed User parameter with double quotes"
+            $attempt = NewPSSessionAttempt -HostName localhost -UserName "$script:CurrentUserName`" `"-o PasswordAuthentication=no" -SkipRetry
+            $attempt.Session | Should -BeNullOrEmpty
+            $attempt.Error | Should -Not -BeNullOrEmpty
             Write-Verbose -Verbose "It Complete"
         }
 
@@ -179,6 +239,16 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             Write-Verbose -Verbose "It Complete"
         }
 
+        It "Verifies no connection with malformed Port parameter" {
+            Write-Verbose -Verbose "It Starting: Verifies no connection with malformed Port parameter"
+            $portNum = 22
+            $attempt = NewPSSessionAttempt -HostName localhost -Port "$portNum -o PasswordAuthentication=no" -SkipRetry
+            $attempt.Session | Should -BeNullOrEmpty
+            $attempt.Error | Should -Not -BeNullOrEmpty
+            Write-Verbose "$($attempt.Error)" -Verbose
+            Write-Verbose -Verbose "It Complete"
+        }
+
         It "Verifies explicit Options parameter" {
             $options = @{"Port"="22"}
             $script:session = New-PSSession -HostName localhost -Options $options -ErrorVariable err
@@ -196,9 +266,36 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             Write-Verbose -Verbose "It Complete"
         }
 
+        It "Verifies no connection with malformed Subsystem parameter" {
+            Write-Verbose -Verbose "It Starting: Verifies no connection with malformed Subsystem parameter"
+            $subSystem = 'powershell'
+            $attempt = NewPSSessionAttempt -HostName localhost -Subsystem "$subSystem -o PasswordAuthentication=no" -SkipRetry
+            $attempt.Session | Should -BeNullOrEmpty
+            $attempt.Error | Should -Not -BeNullOrEmpty
+            Write-Verbose -Verbose "It Complete"
+        }
+
+        It "Verifies no connection with trailing backslash in Subsystem parameter" {
+            Write-Verbose -Verbose "It Starting: Verifies no connection with trailing backslash in Subsystem parameter"
+            $subSystem = 'powershell\'
+            $attempt = NewPSSessionAttempt -HostName localhost -Subsystem $subSystem -SkipRetry
+            $attempt.Session | Should -BeNullOrEmpty
+            $attempt.Error | Should -Not -BeNullOrEmpty
+            Write-Verbose -Verbose "It Complete"
+        }
+
+        It "Verifies no connection with two trailing backslashes in Subsystem parameter" {
+            Write-Verbose -Verbose "It Starting: Verifies no connection with two trailing backslashes in Subsystem parameter"
+            $subSystem = 'powershell\\'
+            $attempt = NewPSSessionAttempt -HostName localhost -Subsystem $subSystem -SkipRetry
+            $attempt.Session | Should -BeNullOrEmpty
+            $attempt.Error | Should -Not -BeNullOrEmpty
+            Write-Verbose -Verbose "It Complete"
+        }
+
         It "Verifies explicit KeyFilePath parameter" {
             Write-Verbose -Verbose "It Starting: Verifies explicit KeyFilePath parameter"
-            $keyFilePath = "$HOME/.ssh/id_rsa"
+            $keyFilePath = $script:SshKeyFilePath
             $portNum = 22
             $subSystem = 'powershell'
             $script:session = TryNewPSSession -HostName localhost -Port $portNum -SubSystem $subSystem -KeyFilePath $keyFilePath
@@ -207,19 +304,40 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             Write-Verbose -Verbose "It Complete"
         }
 
+        It "Verifies explicit KeyFilePath parameter with backslashes on Windows" -Skip:(-not $IsWindows) {
+            Write-Verbose -Verbose "It Starting: Verifies explicit KeyFilePath parameter with backslashes on Windows"
+            $keyFilePath = Join-Path -Path $HOME -ChildPath '.ssh\id_rsa'
+            $portNum = 22
+            $subSystem = 'powershell'
+            $script:session = TryNewPSSession -HostName localhost -Port $portNum -SubSystem $subSystem -KeyFilePath $keyFilePath
+            $script:session | Should -Not -BeNullOrEmpty
+            VerifySession $script:session
+            Write-Verbose -Verbose "It Complete"
+        }
+
+        It "Verifies no connection with malformed KeyFilePath parameter" {
+            Write-Verbose -Verbose "It Starting: Verifies no connection with malformed KeyFilePath parameter"
+            $keyFilePath = $script:SshKeyFilePath
+            $attempt = NewPSSessionAttempt -HostName localhost -KeyFilePath "$keyFilePath -o PasswordAuthentication=no" -SkipRetry
+            $attempt.Session | Should -BeNullOrEmpty
+            $attempt.Error | Should -Not -BeNullOrEmpty
+            Write-Verbose "$($attempt.Error)" -Verbose
+            Write-Verbose -Verbose "It Complete"
+        }
+
         It "Verifies SSHConnection hash table parameters" {
             Write-Verbose -Verbose "It Starting: Verifies SSHConnection hash table parameters"
             $sshConnection = @(
             @{
                 HostName = 'localhost'
-                UserName = whoami
+                UserName = $script:CurrentUserName
                 Port = 22
-                KeyFilePath = "$HOME/.ssh/id_rsa"
+                KeyFilePath = $script:SshKeyFilePath
                 Subsystem = 'powershell'
             },
             @{
                 HostName = 'localhost'
-                KeyFilePath = "$HOME/.ssh/id_rsa"
+                KeyFilePath = $script:SshKeyFilePath
                 Subsystem = 'powershell'
             })
             $script:sessions = TryNewPSSessionHash -SSHConnection $sshConnection -Name 'Connection1','Connection2'
@@ -231,7 +349,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             Write-Verbose -Verbose "It Complete"
         }
 
-        It "Verifies the 'pwshconfig' configured endpoint." {
+        It "Verifies the 'pwshconfig' configured endpoint." -Skip:$IsWindows {
             Write-Verbose -Verbose "It Starting: Verifies the 'pwshconfig' configured endpoint."
             $script:session = TryNewPSSession -HostName localhost -Subsystem 'pwshconfig'
             $script:session | Should -Not -BeNullOrEmpty
@@ -353,7 +471,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             },
             @{
                 testName = 'Verifies connection with UserName'
-                UserName = whoami
+                UserName = $script:CurrentUserName
                 ComputerName = 'localhost'
                 KeyFilePath = $null
                 Port = 0
@@ -361,25 +479,25 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             },
             @{
                 testName = 'Verifies connection with KeyFilePath'
-                UserName = whoami
+                UserName = $script:CurrentUserName
                 ComputerName = 'localhost'
-                KeyFilePath = "$HOME/.ssh/id_rsa"
+                KeyFilePath = $script:SshKeyFilePath
                 Port = 0
                 Subsystem = $null
             },
             @{
                 testName = 'Verifies connection with Port specified'
-                UserName = whoami
+                UserName = $script:CurrentUserName
                 ComputerName = 'localhost'
-                KeyFilePath = "$HOME/.ssh/id_rsa"
+                KeyFilePath = $script:SshKeyFilePath
                 Port = 22
                 Subsystem = $null
             },
             @{
                 testName = 'Verifies connection with Subsystem specified'
-                UserName = whoami
+                UserName = $script:CurrentUserName
                 ComputerName = 'localhost'
-                KeyFilePath = "$HOME/.ssh/id_rsa"
+                KeyFilePath = $script:SshKeyFilePath
                 Port = 22
                 Subsystem = 'powershell'
             }

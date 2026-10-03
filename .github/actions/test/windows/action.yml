@@ -70,7 +70,7 @@ runs:
       Set-GWVariable -Name "DSC_ROOT" -Value $dscRoot
 
   - name: Bootstrap
-    shell: powershell
+    shell: pwsh
     run: |-
       Import-Module ./build.psm1
       Write-LogGroupStart -Title 'Bootstrap'

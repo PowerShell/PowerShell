@@ -118,126 +118,126 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidRunspaceStateGeneral" xml:space="preserve">
-    <value>The runspace state is not valid for this operation.</value>
+    <value>Çalışma alanı durumu bu işlem için geçerli değil.</value>
   </data>
   <data name="CannotOpenAgain" xml:space="preserve">
-    <value>Cannot open the runspace because the runspace is not in the BeforeOpen state. Current state of the runspace is '{0}'.</value>
+    <value>Çalışma alanı BeforeOpen durumunda olmadığından açılamıyor. Çalışma alanının geçerli durumu '{0}'.</value>
   </data>
   <data name="RunspaceNotInOpenedState" xml:space="preserve">
-    <value>Cannot perform the operation because the runspace is not in the Opened state. Current state of the runspace is '{0}'.</value>
+    <value>Çalışma alanı Açıldı durumunda olmadığından işlem gerçekleştirilemiyor. Çalışma alanının geçerli durumu '{0}'.</value>
   </data>
   <data name="RunspaceNotOpenForPipeline" xml:space="preserve">
-    <value>Cannot invoke the pipeline because the runspace is not in the Opened state. Current state of the runspace is '{0}'.</value>
+    <value>Çalışma alanı Açıldı durumunda olmadığından işlem hattı çağrılamıyor. Çalışma alanının geçerli durumu '{0}'.</value>
   </data>
   <data name="InvalidPipelineStateStateGeneral" xml:space="preserve">
-    <value>The pipeline state is not valid for this operation.</value>
+    <value>İşlem hattı durumu bu işlem için geçerli değil.</value>
   </data>
   <data name="PipelineReInvokeNotAllowed" xml:space="preserve">
-    <value>Cannot invoke pipeline because it has already been invoked.</value>
+    <value>İşlem hattı zaten çağrılmış olduğundan çağrılamıyor.</value>
   </data>
   <data name="InvalidValueToResultError" xml:space="preserve">
-    <value>The valid value for the parameter is PipelineResultTypes.Output.</value>
+    <value>Parametre için geçerli değer: PipelineResultTypes.Output.</value>
   </data>
   <data name="NoCommandInPipeline" xml:space="preserve">
-    <value>The pipeline does not contain a command.</value>
+    <value>İşlem hattı bir komut içermiyor.</value>
   </data>
   <data name="ConcurrentInvokeNotAllowed" xml:space="preserve">
-    <value>The pipeline was not run because a pipeline is already running. Pipelines cannot be run concurrently.</value>
+    <value>Bir işlem hattı zaten çalıştığından işlem hattı çalıştırılmadı. İşlem hatları eş zamanlı olarak çalıştırılamaz.</value>
   </data>
   <data name="NestedPipelineInvokeAsync" xml:space="preserve">
-    <value>A nested pipeline cannot be invoked asynchronously. Use the Invoke method.</value>
+    <value>İç içe geçmiş bir işlem hattı zaman uyumsuz olarak çağrılamaz. Invoke yöntemini kullanın.</value>
   </data>
   <data name="NestedPipelineNoParentPipeline" xml:space="preserve">
-    <value>You should only run a nested pipeline from within a running pipeline.</value>
+    <value>İç içe geçmiş bir işlem hattını yalnızca çalışan bir işlem hattının içinden çalıştırmalısınız.</value>
   </data>
   <data name="RunspaceCloseInvalidWhileSessionStateProxy" xml:space="preserve">
-    <value>Runspace cannot be closed while a SessionStateProxy method call is in progress.</value>
+    <value>Bir SessionStateProxy metot çağrısı sürerken çalışma alanı kapatılamaz.</value>
   </data>
   <data name="NoPipelineWhenSessionStateProxyInProgress" xml:space="preserve">
-    <value>Pipeline cannot be invoked while a SessionStateProxy method call is in progress.</value>
+    <value>Bir SessionStateProxy metot çağrısı sürerken işlem hattı çağrılamaz.</value>
   </data>
   <data name="AnotherSessionStateProxyInProgress" xml:space="preserve">
-    <value>A SessionStateProxy method call is in progress. Concurrent SessionStateProxy method calls are not allowed.</value>
+    <value>SessionStateProxy metot çağrısı devam ediyor. Eş zamanlı SessionStateProxy metot çağrılarına izin verilmiyor.</value>
   </data>
   <data name="NoSessionStateProxyWhenPipelineInProgress" xml:space="preserve">
-    <value>A pipeline is already running. Concurrent SessionStateProxy method calls are not allowed.</value>
+    <value>Bir işlem hattı zaten çalışıyor. Eş zamanlı SessionStateProxy metot çağrılarına izin verilmiyor.</value>
   </data>
   <data name="ChangePropertyAfterOpen" xml:space="preserve">
-    <value>This property cannot be changed after the runspace has been opened.</value>
+    <value>Bu özellik, çalışma alanı açıldıktan sonra değiştirilemez.</value>
   </data>
   <data name="ErrorLoadingModulesOnRunspaceOpen" xml:space="preserve">
-    <value>One or more errors occurred processing the module '{0}' specified in the InitialSessionState object used to create this runspace. See the ErrorRecords property for a complete list of errors. The first error was: {1}</value>
+    <value>Bu çalışma alanını oluşturmak için kullanılan InitialSessionState nesnesinde belirtilen '{0}' modülü işlenirken bir veya daha fazla hata oluştu. Hataların tam listesi için ErrorRecords özelliğine bakın. İlk hata şuydu: {1}</value>
   </data>
   <data name="InvalidThreadOptionsChange" xml:space="preserve">
-    <value>The thread options can only be changed if the apartment state is multithreaded apartment (MTA), the current options are UseNewThread or UseCurrentThread, and the new value is ReuseThread.</value>
+    <value>İş parçacığı seçenekleri yalnızca bölme durumu çok iş parçacıklı bölme (MTA) ise, geçerli seçenekler UseNewThread veya UseCurrentThread ise ve yeni değer ReuseThread ise değiştirilebilir.</value>
   </data>
   <data name="UseLocalScopeNotAllowed" xml:space="preserve">
-    <value>{0} cannot be false when language mode is {1} or {2}.</value>
+    <value>Dil modu {1} veya {2} olduğunda {0} false olamaz.</value>
   </data>
   <data name="DisconnectNotSupported" xml:space="preserve">
-    <value>You cannot disconnect a local-only runspace.</value>
+    <value>Yalnızca yerel bir çalışma alanının bağlantısını kesemezsiniz.</value>
   </data>
   <data name="ConnectNotSupported" xml:space="preserve">
-    <value>The Connect operation is not supported on local runspaces.</value>
+    <value>Bağlan işlemi yerel çalışma alanlarında desteklenmez.</value>
   </data>
   <data name="RunspaceNotReady" xml:space="preserve">
-    <value>The session is busy. You will be connected to the session as soon as it is available. To cancel the Enter-PSSession command, press Ctrl-C.</value>
+    <value>Oturum meşgul. Kullanılabilir olduğu anda oturuma bağlanacaksınız. Enter-PSSession komutunu iptal etmek için Ctrl-C tuşlarına basın.</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>The command cannot be completed. Script invocation is not supported in this session configuration. This can occur if the session configuration is in no-language mode.</value>
+    <value>Komut tamamlanamıyor. Betik çağrısı bu oturum yapılandırmasında desteklenmiyor. Oturum yapılandırması dil yok modundaysa bu durum oluşabilir.</value>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">
-    <value>You cannot use Disconnect and Connect operations on local runspaces.</value>
+    <value>Yerel çalışma alanlarında Bağlantıyı Kes ve Bağlan işlemlerini kullanamazsınız.</value>
   </data>
   <data name="RunspaceNotOpenForPipelineConnect" xml:space="preserve">
-    <value>Cannot connect the pipeline because the runspace is not in the Opened state.  Current state of runspace is '{0}'.</value>
+    <value>Çalışma alanı Açıldı durumunda olmadığından işlem hattına bağlanılamıyor.  Çalışma alanının geçerli durumu '{0}'.</value>
   </data>
   <data name="InvalidRunspacePool" xml:space="preserve">
-    <value>Cannot construct a RemoteRunspace. The provided RunspacePool object is not valid.</value>
+    <value>RemoteRunspace oluşturulamıyor. Sağlanan RunspacePool nesnesi geçerli değil.</value>
   </data>
   <data name="NoDisconnectedCommand" xml:space="preserve">
-    <value>There is no disconnected command associated with this runspace.</value>
+    <value>Bu çalışma alanıyla ilişkili bağlantısı kesilmiş komut yok.</value>
   </data>
   <data name="DisconnectNotSupportedOnServer" xml:space="preserve">
-    <value>The disconnection operation is not supported on the remote computer. To support disconnecting, the remote computer must be running Windows PowerShell 3.0 or a later version of Windows PowerShell and using the WSMan transport.</value>
+    <value>Bağlantıyı kesme işlemi uzak bilgisayarda desteklenmiyor. Bağlantıyı kesmeyi desteklemek için uzak bilgisayarda Windows PowerShell 3.0 veya Windows PowerShell'in sonraki bir sürümü çalışıyor olmalı ve WSMan taşıma kullanılmalıdır.</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>Cannot connect the PSSession because the session is not in the Disconnected state, or is not available for connection.</value>
+    <value>Oturum Bağlantısı kesik durumunda olmadığından veya bağlantı için kullanılamadığından PSSession'a bağlanılamıyor.</value>
   </data>
   <data name="InvalidMyResultError" xml:space="preserve">
-    <value>Value for parameter cannot be PipelineResultTypes.None or PipelineResultTypes.Output.</value>
+    <value>Parametre değeri PipelineResultTypes.None veya PipelineResultTypes.Output olamaz.</value>
   </data>
   <data name="InvalidValueToResult" xml:space="preserve">
-    <value>Valid values for the parameter are PipelineResultTypes.Output or PipelineResultTypes.Null.</value>
+    <value>Parametre için geçerli değerler: PipelineResultTypes.Output veya PipelineResultTypes.Null.</value>
   </data>
   <data name="DebugRedirectionNotSupported" xml:space="preserve">
-    <value>Debug stream redirection is not supported on the targeted remote computer.</value>
+    <value>Hata ayıklama akışı yeniden yönlendirmesi hedeflenen uzak bilgisayarda desteklenmez.</value>
   </data>
   <data name="VerboseRedirectionNotSupported" xml:space="preserve">
-    <value>Verbose stream redirection is not supported on the targeted remote computer.</value>
+    <value>Ayrıntılı akış yeniden yönlendirmesi hedeflenen uzak bilgisayarda desteklenmez.</value>
   </data>
   <data name="WarningRedirectionNotSupported" xml:space="preserve">
-    <value>Warning stream redirection is not supported on the targeted remote computer.</value>
+    <value>Uyarı akışı yeniden yönlendirmesi hedeflenen uzak bilgisayarda desteklenmez.</value>
   </data>
   <data name="InformationRedirectionNotSupported" xml:space="preserve">
-    <value>Information stream redirection is not supported on the targeted remote computer.</value>
+    <value>Bilgi akışı yeniden yönlendirmesi hedeflenen uzak bilgisayarda desteklenmez.</value>
   </data>
   <data name="RunningCmdWithJob" xml:space="preserve">
-    <value>You have entered a session that is busy running a command or script.  Because output is routed to job "{0}", you will not see output in the console.  You can wait for the running command to finish, or cancel the command and get an input prompt by pressing Ctrl-C.
+    <value>Bir komut veya betik çalıştırmakla meşgul olan bir oturuma girdiniz.  Çıkış "{0}" işine yönlendirildiğinden konsolda çıkış görmezsiniz.  Çalışan komutun bitmesini bekleyebilir veya Ctrl-C tuşlarına basarak komutu iptal edip bir giriş istemi alabilirsiniz.
 </value>
   </data>
   <data name="RunningCmdWithoutJob" xml:space="preserve">
-    <value>You have entered a session that is busy running a command or script and output will be displayed in the console.  You can wait for the running command to finish or cancel it and get an input prompt by pressing Ctrl-C.
+    <value>Bir komut veya betik çalıştırmakla meşgul olan bir oturuma girdiniz ve çıktı konsolda görüntülenecek.  Çalışan komutun bitmesini bekleyebilir veya Ctrl-C tuşlarına basarak komutu iptal edip bir giriş istemi alabilirsiniz.
 </value>
   </data>
   <data name="RunningCmdDebugStop" xml:space="preserve">
-    <value>You have entered a session that is currently stopped at a debug breakpoint inside a running command or script.  Use the PowerShell command line debugger to continue debugging.
+    <value>Çalışan bir komut veya betik içindeki hata ayıklama kesme noktasında şu anda durdurulmuş bir oturuma girdiniz.  Hata ayıklamaya devam etmek için PowerShell komut satırı hata ayıklayıcısını kullanın.
 </value>
   </data>
   <data name="RunspaceNotLocal" xml:space="preserve">
-    <value>DefaultRunspace must be a LocalRunspace</value>
+    <value>DefaultRunspace bir LocalRunspace olmalıdır</value>
   </data>
   <data name="PrimaryRunspaceAlreadySet" xml:space="preserve">
-    <value>The static PrimaryRunspace property can only be set once, and has already been set.</value>
+    <value>Statik PrimaryRunspace özelliği yalnızca bir kez ayarlanabilir ve zaten ayarlanmıştır.</value>
   </data>
 </root>

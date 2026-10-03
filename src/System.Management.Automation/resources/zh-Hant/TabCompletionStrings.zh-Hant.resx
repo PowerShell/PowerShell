@@ -118,154 +118,154 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
-    <value>The tab completion result cannot be properly deserialized because the remote runspace does not contain a TypeTable instance.</value>
+    <value>因為遠端 Runspace 未包含 TypeTable 執行個體，所以無法正確還原序列化索引標籤完成結果。</value>
   </data>
   <data name="NoAccessToProperties" xml:space="preserve">
-    <value>Cannot access properties on a null instance of the type CompletionResult.</value>
+    <value>無法存取 CompletionResult 類型之 null 執行個體上的屬性。</value>
   </data>
   <data name="bnotOperatorDescription" xml:space="preserve">
-    <value>Bitwise NOT</value>
+    <value>位元 NOT</value>
   </data>
   <data name="notOperatorDescription" xml:space="preserve">
-    <value>Logical not. Negates the statement that follows it.</value>
+    <value>邏輯 Not。否定其後的陳述式。</value>
   </data>
   <data name="eqOperatorDescription" xml:space="preserve">
-    <value>Equal to - case insensitive. When the left operand is a collection, returns values from the collection that equal the right operand, otherwise returns TRUE if the left operand equals the right operand.</value>
+    <value>等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中等於右運算元的值，否則，如果左運算元等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="ieqOperatorDescription" xml:space="preserve">
-    <value>Equal to - case insensitive. When the left operand is a collection, returns values from the collection that equal the right operand, otherwise returns TRUE if the left operand equals the right operand.</value>
+    <value>等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中等於右運算元的值，否則，如果左運算元等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="ceqOperatorDescription" xml:space="preserve">
-    <value>Equal to - case sensitive. When the left operand is a collection, returns values from the collection that equal the right operand, otherwise returns TRUE if the left operand equals the right operand.</value>
+    <value>等於 - 區分大小寫。當左運算元是集合時，傳回該集合中等於右運算元的值，否則，如果左運算元等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="neOperatorDescription" xml:space="preserve">
-    <value>Not equal to - case insensitive. When the left operand is a collection, returns values from the collection that do not equal the right operand, otherwise returns TRUE if the left operand does not equal the right operand.</value>
+    <value>不等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中不等於右運算元的值，否則，如果左運算元不等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="ineOperatorDescription" xml:space="preserve">
-    <value>Not equal to - case insensitive. When the left operand is a collection, returns values from the collection that do not equal the right operand, otherwise returns TRUE if the left operand does not equal the right operand.</value>
+    <value>不等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中不等於右運算元的值，否則，如果左運算元不等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="cneOperatorDescription" xml:space="preserve">
-    <value>Not equal to - case sensitive. When the left operand is a collection, returns values from the collection that do not equal the right operand, otherwise returns TRUE if the left operand does not equal the right operand.</value>
+    <value>不等於 - 區分大小寫。當左運算元是集合時，傳回該集合中不等於右運算元的值，否則，如果左運算元不等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="geOperatorDescription" xml:space="preserve">
-    <value>Greater than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are greater than or equal to the right operand, otherwise returns TRUE if the left operand is greater than or equal to the right operand.</value>
+    <value>大於或等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中大於或等於右運算元的值，否則，如果左運算元大於或等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="igeOperatorDescription" xml:space="preserve">
-    <value>Greater than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are greater than or equal to the right operand, otherwise returns TRUE if the left operand is greater than or equal to the right operand.</value>
+    <value>大於或等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中大於或等於右運算元的值，否則，如果左運算元大於或等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="cgeOperatorDescription" xml:space="preserve">
-    <value>Greater than or equal to - case sensitive. When the left operand is a collection, returns values from the collection that are greater than or equal to the right operand, otherwise returns TRUE if the left operand is greater than or equal to the right operand.</value>
+    <value>大於或等於 - 區分大小寫。當左運算元是集合時，傳回該集合中大於或等於右運算元的值，否則，如果左運算元大於或等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="gtOperatorDescription" xml:space="preserve">
-    <value>Greater than - case insensitive. When the left operand is a collection, returns values from the collection that are greater than the right operand, otherwise returns TRUE if the left operand is greater than the right operand.</value>
+    <value>大於 - 不區分大小寫。當左運算元是集合時，傳回該集合中大於右運算元的值，否則，如果左運算元大於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="igtOperatorDescription" xml:space="preserve">
-    <value>Greater than - case insensitive. When the left operand is a collection, returns values from the collection that are greater than the right operand, otherwise returns TRUE if the left operand is greater than the right operand.</value>
+    <value>大於 - 不區分大小寫。當左運算元是集合時，傳回該集合中大於右運算元的值，否則，如果左運算元大於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="cgtOperatorDescription" xml:space="preserve">
-    <value>Greater than - case sensitive. When the left operand is a collection, returns values from the collection that are greater than the right operand, otherwise returns TRUE if the left operand is greater than the right operand.</value>
+    <value>大於 - 區分大小寫。當左運算元是集合時，傳回該集合中大於右運算元的值，否則，如果左運算元大於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="ltOperatorDescription" xml:space="preserve">
-    <value>Less than - case insensitive. When the left operand is a collection, returns values from the collection that are less than the right operand, otherwise returns TRUE if the left operand is less than the right operand.</value>
+    <value>小於 - 不區分大小寫。當左運算元是集合時，傳回該集合中小於右運算元的值，否則，如果左運算元小於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="iltOperatorDescription" xml:space="preserve">
-    <value>Less than - case insensitive. When the left operand is a collection, returns values from the collection that are less than the right operand, otherwise returns TRUE if the left operand is less than the right operand.</value>
+    <value>小於 - 不區分大小寫。當左運算元是集合時，傳回該集合中小於右運算元的值，否則，如果左運算元小於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="cltOperatorDescription" xml:space="preserve">
-    <value>Less than - case sensitive. When the left operand is a collection, returns values from the collection that are less than the right operand, otherwise returns TRUE if the left operand is less than the right operand.</value>
+    <value>小於 - 區分大小寫。當左運算元是集合時，傳回該集合中小於右運算元的值，否則，如果左運算元小於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="leOperatorDescription" xml:space="preserve">
-    <value>Less than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are less than or equal to the right operand, otherwise returns TRUE if the left operand is less than or equal to the right operand.</value>
+    <value>小於或等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中小於或等於右運算元的值，否則，如果左運算元小於或等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="ileOperatorDescription" xml:space="preserve">
-    <value>Less than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are less than or equal to the right operand, otherwise returns TRUE if the left operand is less than or equal to the right operand.</value>
+    <value>小於或等於 - 不區分大小寫。當左運算元是集合時，傳回該集合中小於或等於右運算元的值，否則，如果左運算元小於或等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="cleOperatorDescription" xml:space="preserve">
-    <value>Less than or equal to - case sensitive. When the left operand is a collection, returns values from the collection that are less than or equal to the right operand, otherwise returns TRUE if the left operand is less than or equal to the right operand.</value>
+    <value>小於或等於 - 區分大小寫。當左運算元是集合時，傳回該集合中小於或等於右運算元的值，否則，如果左運算元小於或等於右運算元，則傳回 TRUE。</value>
   </data>
   <data name="likeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>萬用字元比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
   </data>
   <data name="ilikeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>萬用字元比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
   </data>
   <data name="clikeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case sensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>萬用字元比對運算子 - 區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
   </data>
   <data name="notlikeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>萬用字元比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
   </data>
   <data name="inotlikeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>萬用字元比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
   </data>
   <data name="cnotlikeOperatorDescription" xml:space="preserve">
-    <value>Wildcard matching operator - case sensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>萬用字元比對運算子 - 區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
   </data>
   <data name="matchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>規則運算式比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
   </data>
   <data name="imatchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>規則運算式比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
   </data>
   <data name="cmatchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case sensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+    <value>規則運算式比對運算子 - 區分大小寫。當左運算元是集合時，傳回該集合中符合右運算元的值，否則，如果左運算元符合右運算元，則傳回 TRUE。</value>
   </data>
   <data name="notmatchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>規則運算式比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
   </data>
   <data name="inotmatchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>規則運算式比對運算子 - 不區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
   </data>
   <data name="cnotmatchOperatorDescription" xml:space="preserve">
-    <value>Regular expression matching operator - case sensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+    <value>規則運算式比對運算子 - 區分大小寫。當左運算元是集合時，傳回該集合中與右運算元不相符的值，否則，如果左運算元與右運算元不相符，則傳回 TRUE。</value>
   </data>
   <data name="replaceOperatorDescription" xml:space="preserve">
-    <value>Replace operator - case insensitive. Changes the left operand. Example: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+    <value>取代運算子 - 不區分大小寫。變更左運算元。範例: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
   </data>
   <data name="ireplaceOperatorDescription" xml:space="preserve">
-    <value>Replace operator - case insensitive. Changes the left operand. Example: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+    <value>取代運算子 - 不區分大小寫。變更左運算元。範例: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
   </data>
   <data name="creplaceOperatorDescription" xml:space="preserve">
-    <value>Replace operator - case sensitive. Changes the left operand. Example: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+    <value>取代運算子 - 區分大小寫。變更左運算元。範例: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
   </data>
   <data name="containsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (右運算元) 至少與右運算元中的其中一個值完全相符時，傳回 TRUE。</value>
   </data>
   <data name="icontainsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (右運算元) 至少與右運算元中的其中一個值完全相符時，傳回 TRUE。</value>
   </data>
   <data name="ccontainsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case sensitive. Returns TRUE only when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
+    <value>內含項目運算子 - 區分大小寫。只有當測試值 (右運算元) 至少與左運算元中的其中一個值完全相符時，才傳回 TRUE。</value>
   </data>
   <data name="notcontainsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches none of the values in the left operand.</value>
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (右運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
   </data>
   <data name="inotcontainsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches none of the values in the left operand.</value>
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (右運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
   </data>
   <data name="cnotcontainsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case sensitive. Returns TRUE when the test value (right operand) exactly matches none of the values in the left operand.</value>
+    <value>內含項目運算子 - 區分大小寫。當測試值 (右運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
   </data>
   <data name="inOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (left operand) exactly matches at least one of the values in the right operand.</value>
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (左運算元) 至少與右運算元中的其中一個值完全相符時，傳回 TRUE。</value>
   </data>
   <data name="iinOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (left operand) exactly matches at least one of the values in the right operand.</value>
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (左運算元) 至少與右運算元中的其中一個值完全相符時，傳回 TRUE。</value>
   </data>
   <data name="cinOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case sensitive. Returns TRUE when the test value (left operand) exactly matches at least one of the values in the right operand.</value>
+    <value>內含項目運算子 - 區分大小寫。當測試值 (左運算元) 至少與右運算元中的其中一個值完全相符時，傳回 TRUE。</value>
   </data>
   <data name="notinOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case sensitive. Returns TRUE when the test value (left operand) exactly matches none of the values in the right operand.</value>
+    <value>內含項目運算子 - 區分大小寫。當測試值 (左運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
   </data>
   <data name="inotinOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case insensitive. Returns TRUE when the test value (left operand) exactly matches none of the values in the right operand.</value>
+    <value>內含項目運算子 - 不區分大小寫。當測試值 (左運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
   </data>
   <data name="cnotinOperatorDescription" xml:space="preserve">
-    <value>Containment operator - case sensitive. Returns TRUE when the test value (left operand) exactly matches none of the values in the right operand.</value>
+    <value>內含項目運算子 - 區分大小寫。當測試值 (左運算元) 並未與右運算元中的任何一個值完全相符時，傳回 TRUE。</value>
   </data>
   <data name="splitOperatorDescription" xml:space="preserve">
-    <value>Split - case insensitive. Split one or more strings into substrings.
+    <value>分割 - 不區分大小寫。將一或多個字串分割成子字串。
 -Split &lt;String&gt;
 
 &lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
@@ -273,7 +273,7 @@
 &lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
   </data>
   <data name="isplitOperatorDescription" xml:space="preserve">
-    <value>Split - case insensitive. Split one or more strings into substrings.
+    <value>分割 - 不區分大小寫。將一或多個字串分割成子字串。
 -Split &lt;String&gt;
 
 &lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
@@ -281,7 +281,7 @@
 &lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
   </data>
   <data name="csplitOperatorDescription" xml:space="preserve">
-    <value>Split - case sensitive. Split one or more strings into substrings.
+    <value>分割 - 區分大小寫。將一或多個字串分割成子字串。
 -Split &lt;String&gt;
 
 &lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
@@ -289,103 +289,103 @@
 &lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
   </data>
   <data name="isnotOperatorDescription" xml:space="preserve">
-    <value>Returns TRUE when the left operand is not an instance of the specified .NET Framework type (right operand).</value>
+    <value>當左運算元不是指定 .NET Framework 類型 (右運算元) 的執行個體時，傳回 TRUE。</value>
   </data>
   <data name="isOperatorDescription" xml:space="preserve">
-    <value>Returns TRUE when the left operand is an instance of the specified .NET Framework type (right operand).</value>
+    <value>當左運算元是指定 .NET Framework 類型 (右運算元) 的執行個體時，傳回 TRUE。</value>
   </data>
   <data name="asOperatorDescription" xml:space="preserve">
-    <value>Converts the left operand to the specified .NET Framework type (right operand).</value>
+    <value>將左運算元轉換成指定的 .NET Framework 類型 (右運算元)。</value>
   </data>
   <data name="fOperatorDescription" xml:space="preserve">
-    <value>Formats strings by using the format method of string objects.</value>
+    <value>使用字串物件的格式方法來設定字串格式。</value>
   </data>
   <data name="andOperatorDescription" xml:space="preserve">
-    <value>Logical and. Returns TRUE when both statements are TRUE.</value>
+    <value>邏輯 AND。當兩個陳述式皆為 TRUE 時，傳回 TRUE。</value>
   </data>
   <data name="bandOperatorDescription" xml:space="preserve">
-    <value>Bitwise AND</value>
+    <value>位元 AND</value>
   </data>
   <data name="orOperatorDescription" xml:space="preserve">
-    <value>Logical or. TRUE when either or both statements are TRUE.</value>
+    <value>邏輯 OR。當其中一個或兩個陳述式皆為 TRUE 時，傳回 TRUE。</value>
   </data>
   <data name="borOperatorDescription" xml:space="preserve">
-    <value>Bitwise OR (inclusive)</value>
+    <value>位元 OR (包含)</value>
   </data>
   <data name="xorOperatorDescription" xml:space="preserve">
-    <value>Logical exclusive or. Returns TRUE when one of the statements is TRUE and the other is FALSE.</value>
+    <value>邏輯互斥 OR。當其中一個陳述式為 TRUE 而另一個陳述式為 FALSE 時，傳回 TRUE。</value>
   </data>
   <data name="bxorOperatorDescription" xml:space="preserve">
-    <value>Bitwise OR (exclusive)</value>
+    <value>位元 OR (排除)</value>
   </data>
   <data name="joinOperatorDescription" xml:space="preserve">
-    <value>Join - combine multiple strings into a single string.
+    <value>聯結 - 將多個字串結合成單一字串。
 -Join &lt;String[]&gt;
 &lt;String[]&gt; -Join &lt;Delimiter&gt;</value>
   </data>
   <data name="shlOperatorDescription" xml:space="preserve">
-    <value>Shift Left bit operator. Inserts zero in right-most bit position.</value>
+    <value>Shift Left 位元運算子。在最右邊的位元位置插入零。</value>
   </data>
   <data name="shrOperatorDescription" xml:space="preserve">
-    <value>Shift Right bit operator. Inserts zero in the left-most bit position. For signed values, sign bit is preserved.</value>
+    <value>Shift Right 位元運算子。在最左邊的位元位置插入零。對於帶正負號的值，會保留正負號位元。</value>
   </data>
   <data name="NameHashtableKeyDescription" xml:space="preserve">
     <value>[string]
-Specifies the name of the property being created.</value>
+指定正在建立的屬性名稱。</value>
   </data>
   <data name="LabelHashtableKeyDescription" xml:space="preserve">
     <value>[string]
-Specifies the name of the property being created.</value>
+指定正在建立的屬性名稱。</value>
   </data>
   <data name="ExpressionHashtableKeyDescription" xml:space="preserve">
     <value>[scriptblock]
-A script block used to calculate the value of the new property.</value>
+用來計算新屬性值的指令碼區塊。</value>
   </data>
   <data name="AlignmentHashtableKeyDescription" xml:space="preserve">
     <value>[string]
-Define how the values are displayed in a column.
-Valid values are 'left', 'center', or 'right'.</value>
+定義值在資料行中的顯示方式。
+有效值為 'left'、'center' 或 'right'。</value>
   </data>
   <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
     <value>[string]
-Specifies a format string that defines how the value is formatted for output.</value>
+指定格式字串，其定義輸出值的格式設定方式。</value>
   </data>
   <data name="WidthHashtableKeyDescription" xml:space="preserve">
     <value>[int]
-Specifies the maximum column width in a table when the value is displayed.
-The value must be greater than 0.</value>
+指定顯示值時，資料表中的最大資料行寬度。
+值必須大於 0。</value>
   </data>
   <data name="DepthHashtableKeyDescription" xml:space="preserve">
     <value>[int]
-The depth key specifies the depth of expansion per property.</value>
+深度索引鍵，指定每個屬性的展開深度。</value>
   </data>
   <data name="AscendingHashtableKeyDescription" xml:space="preserve">
     <value>[bool]
-Specifies the order of sorting for one or more properties.</value>
+指定一或多個屬性的排序順序。</value>
   </data>
   <data name="DescendingHashtableKeyDescription" xml:space="preserve">
     <value>[bool]
-Specifies the order of sorting for one or more properties.</value>
+指定一或多個屬性的排序順序。</value>
   </data>
   <data name="LogNameHashtableKeyDescription" xml:space="preserve">
     <value>[String[]]
-Specifies the log names to get events from.
-Supports wildcards.</value>
+指定要從中取得事件的記錄名稱。
+支援萬用字元。</value>
   </data>
   <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
     <value>[String[]]
-Specifies the event log providers to get events from.
-Supports wildcards.</value>
+指定要從中取得事件的事件記錄檔提供者。
+支援萬用字元。</value>
   </data>
   <data name="PathHashtableKeyDescription" xml:space="preserve">
     <value>[String[]]
-Specifies file paths to log files to get events from.
-Valid file formats are: .etl, .evt, and .evtx</value>
+指定要從中取得事件的記錄檔案路徑。
+有效的檔案格式為: .etl、.evt 和 .evtx</value>
   </data>
   <data name="KeywordsHashtableKeyDescription" xml:space="preserve">
     <value>[Long[]]
-Selects events with the specified keyword bitmasks.
-The following are standard keywords:
+選取具有指定關鍵字位元遮罩的事件。
+以下是標準關鍵字:
 4503599627370496: AuditFailure
 9007199254740992: AuditSuccess
 4503599627370496: CorrelationHint
@@ -398,193 +398,193 @@ The following are standard keywords:
   </data>
   <data name="IDHashtableKeyDescription" xml:space="preserve">
     <value>[int[]]
-Selects events with the specified event IDs.</value>
+選取具有指定記錄識別碼的事件。</value>
   </data>
   <data name="LevelHashtableKeyDescription" xml:space="preserve">
     <value>[int[]]
-Selects events with the specified log levels.
-The following log levels are valid:
-1: Critical
-2: Error
-3: Warning
-4: Informational
-5: Verbose</value>
+選取具有指定記錄層級的事件。
+下列記錄層級有效：
+1: 危急
+2: 錯誤
+3: 警告
+4: 資訊性
+5: 詳細資訊</value>
   </data>
   <data name="StartTimeHashtableKeyDescription" xml:space="preserve">
     <value>[datetime]
-Selects events created after the specified date and time.</value>
+選取在指定日期和時間之後建立的事件。</value>
   </data>
   <data name="EndTimeHashtableKeyDescription" xml:space="preserve">
     <value>[datetime]
-Selects events created before the specified date and time.</value>
+選取在指定日期和時間之前建立的事件。</value>
   </data>
   <data name="UserIDHashtableKeyDescription" xml:space="preserve">
     <value>[string]
-Selects events generated by the specified user.
-This can either be a string representation of a SID or a domain and username in the format DOMAIN\USERNAME or USERNAME@DOMAIN</value>
+選取指定使用者產生的事件。
+這可以是 SID 的字串表示法，或是使用 DOMAIN\USERNAME 或 USERNAME@DOMAIN 格式的網域和使用者名稱</value>
   </data>
   <data name="DataHashtableKeyDescription" xml:space="preserve">
     <value>[string[]]
-Selects events with any of the specified values in the EventData section.</value>
+選取 EventData 區段中具有任何指定值的事件。</value>
   </data>
   <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
     <value>[hashtable]
-Excludes events that match the values specified in the hashtable.</value>
+排除符合雜湊表中指定值的事件。</value>
   </data>
   <data name="RequiresModulesParameterDescription" xml:space="preserve">
-    <value>[string] or [hashtable]
-Specifies an array of PowerShell modules that the script requires.
-Each element can either be a string with the module name as value or a hashtable with the following keys:
-Name: Name of the module
-GUID: GUID of the module
-One of the following:
-ModuleVersion: Specifies a minimum acceptable version of the module.
-RequiredVersion: Specifies an exact, required version of the module.
-MaximumVersion: Specifies the maximum acceptable version of the module.</value>
+    <value>[string] 或 [hashtable]
+指定指令碼所需的 PowerShell 模組陣列。
+每個元素都可以是以模組名稱為值的字串，或具有下列索引鍵的雜湊表:
+Name: 模組的名稱
+GUID: 模組的 GUID
+下列其中一項:
+ModuleVersion: 指定模組的最小可接受版本。
+ModuleVersion: 指定模組所需的確切版本。
+MaximumVersion: 指定模組的最大可接受版本。</value>
   </data>
   <data name="RequiresPSEditionParameterDescription" xml:space="preserve">
     <value>[string]
-Specifies a PowerShell edition that the script requires.
-Valid values are "Core" and "Desktop"</value>
+指定指令碼所需的 PowerShell 版本。
+有效值為 "Core" 和 "Desktop"</value>
   </data>
   <data name="RequiresRunAsAdministratorParameterDescription" xml:space="preserve">
     <value>[switch]
-Specifies that PowerShell must be running as administrator on Windows.
-This must be the last parameter on the #requires statement line.</value>
+指定 PowerShell 必須在 Windows 上以系統管理員身分執行。
+這必須是 #requires 陳述式行的最後一個參數。</value>
   </data>
   <data name="RequiresVersionParameterDescription" xml:space="preserve">
     <value>[version]
-Specifies the minimum version of PowerShell that the script requires.</value>
+指定指令碼所需的最低 PowerShell 版本。</value>
   </data>
   <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
-    <value>Specifies that the script requires PowerShell 7+ to run.</value>
+    <value>指定指令碼需要 PowerShell 7+ 才能執行。</value>
   </data>
   <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
-    <value>Specifies that the script requires Windows PowerShell 5.1 to run.</value>
+    <value>指定指令碼需要 Windows PowerShell 5.1 才能執行。</value>
   </data>
   <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
     <value>[string]
-Required. Specifies the module name.</value>
+必要項目。指定模組名稱。</value>
   </data>
   <data name="RequiresModuleSpecGUIDDescription" xml:space="preserve">
     <value>[string]
-Optional. Specifies the GUID of the module.</value>
+選用。指定模組的 GUID。</value>
   </data>
   <data name="RequiresModuleSpecModuleVersionDescription" xml:space="preserve">
     <value>[string]
-Specifies a minimum acceptable version of the module.</value>
+指定模組的最小可接受版本。</value>
   </data>
   <data name="RequiresModuleSpecRequiredVersionDescription" xml:space="preserve">
     <value>[string]
-Specifies an exact, required version of the module.</value>
+指定模組所需的確切版本。</value>
   </data>
   <data name="RequiresModuleSpecMaximumVersionDescription" xml:space="preserve">
     <value>[string]
-Specifies the maximum acceptable version of the module.</value>
+指定模組的最大可接受版本。</value>
   </data>
   <data name="CommentHelpSYNOPSISKeywordDescription" xml:space="preserve">
-    <value>A brief description of the function or script.
-This keyword can be used only once in each topic.</value>
+    <value>函式或指令碼的簡短描述。
+此關鍵字在每個主題中只能使用一次。</value>
   </data>
   <data name="CommentHelpDESCRIPTIONKeywordDescription" xml:space="preserve">
-    <value>A detailed description of the function or script.
-This keyword can be used only once in each topic.</value>
+    <value>函式或指令碼的詳細描述。
+此關鍵字在每個主題中只能使用一次。</value>
   </data>
   <data name="CommentHelpPARAMETERKeywordDescription" xml:space="preserve">
     <value>.PARAMETER  &lt;Parameter-Name&gt;
-The description of a parameter.
-Add a .PARAMETER keyword for each parameter in the function or script syntax.</value>
+參數的描述。
+針對函式或指令碼語法中的每個參數新增 .PARAMETER 關鍵字。</value>
   </data>
   <data name="CommentHelpEXAMPLEKeywordDescription" xml:space="preserve">
-    <value>A sample command that uses the function or script, optionally followed by sample output and a description.
-Repeat this keyword for each example.</value>
+    <value>使用函式或指令碼的範例命令，後面可選擇性地接著範例輸出和描述。
+針對每個範例重複此關鍵字。</value>
   </data>
   <data name="CommentHelpINPUTSKeywordDescription" xml:space="preserve">
-    <value>The .NET types of objects that can be piped to the function or script.
-You can also include a description of the input objects.</value>
+    <value>可透過管道傳送到函式或指令碼的 .NET 物件類型。
+您也可以包含輸入物件的描述。</value>
   </data>
   <data name="CommentHelpOUTPUTSKeywordDescription" xml:space="preserve">
-    <value>The .NET type of the objects that the cmdlet returns.
-You can also include a description of the returned objects.</value>
+    <value>Cmdlet 傳回之物件的 .NET 類型。
+您也可以包含傳回物件的描述。</value>
   </data>
   <data name="CommentHelpNOTESKeywordDescription" xml:space="preserve">
-    <value>Additional information about the function or script.</value>
+    <value>函式或指令碼的其他資訊。</value>
   </data>
   <data name="CommentHelpLINKKeywordDescription" xml:space="preserve">
-    <value>The name of a related topic.
-Repeat the .LINK keyword for each related topic.
-The .Link keyword content can also include a URI to an online version of the same help topic.</value>
+    <value>相關主題的名稱。
+針對每個相關主題，重複使用 .LINK 關鍵字。
+.Link 關鍵字內容也可以包含相同說明主題線上版本的 URI。</value>
   </data>
   <data name="CommentHelpCOMPONENTKeywordDescription" xml:space="preserve">
-    <value>The name of the technology or feature that the function or script uses, or to which it is related.</value>
+    <value>函式或指令碼所使用或相關的技術或功能名稱。</value>
   </data>
   <data name="CommentHelpROLEKeywordDescription" xml:space="preserve">
-    <value>The name of the user role for the help topic.</value>
+    <value>說明主題的使用者角色名稱。</value>
   </data>
   <data name="CommentHelpFUNCTIONALITYKeywordDescription" xml:space="preserve">
-    <value>The keywords that describe the intended use of the function.</value>
+    <value>描述函式預期用途的關鍵字。</value>
   </data>
   <data name="CommentHelpFORWARDHELPTARGETNAMEKeywordDescription" xml:space="preserve">
     <value>.FORWARDHELPTARGETNAME &lt;Command-Name&gt;
-Redirects to the help topic for the specified command.</value>
+重新導向至指定命令的說明主題。</value>
   </data>
   <data name="CommentHelpFORWARDHELPCATEGORYKeywordDescription" xml:space="preserve">
     <value>.FORWARDHELPCATEGORY &lt;Category&gt;
-Specifies the help category of the item in .ForwardHelpTargetName</value>
+指定 .ForwardHelpTargetName 中項目的說明類別</value>
   </data>
   <data name="CommentHelpREMOTEHELPRUNSPACEKeywordDescription" xml:space="preserve">
     <value>.REMOTEHELPRUNSPACE &lt;PSSession-variable&gt;
-Specifies a session that contains the help topic.
-Enter a variable that contains a PSSession object.</value>
+指定包含說明主題的工作階段。
+輸入包含 PSSession 物件的變數。</value>
   </data>
   <data name="CommentHelpEXTERNALHELPKeywordDescription" xml:space="preserve">
     <value>.EXTERNALHELP &lt;XML Help File&gt;
-The .ExternalHelp keyword is required when a function or script is documented in XML files.</value>
+當函式或指令碼的文件為 XML 檔案中時，需要 .ExternalHelp 關鍵字。</value>
   </data>
   <data name="AssemblyKeywordDescription" xml:space="preserve">
-    <value>Specifies the path to a .NET assembly to load.
+    <value>指定要載入之 .NET 組件的路徑。
 
-using assembly &lt;.NET-assembly-path&gt;</value>
+使用組件 &lt;.NET-assembly-path&gt;</value>
   </data>
   <data name="ModuleKeywordDescription" xml:space="preserve">
-    <value>Specifies a PowerShell module to load classes from.
+    <value>指定要從中載入類別的 PowerShell 模組。
 
-using module &lt;ModuleName or Path&gt;
+使用模組 &lt;ModuleName 或 Path&gt;
 
-using module &lt;ModuleSpecification hashtable&gt;</value>
+使用模組 &lt;ModuleSpecification hashtable&gt;</value>
   </data>
   <data name="NamespaceKeywordDescription" xml:space="preserve">
-    <value>Specifies a .NET namespace to resolve types from or a namespace alias.
+    <value>指定要解析類型的 .NET 命名空間或命名空間別名。
 
-using namespace &lt;.NET-namespace&gt;
+使用命名空間 &lt;.NET-namespace&gt;
 
-using namespace &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
+使用命名空間 &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
   </data>
   <data name="TypeKeywordDescription" xml:space="preserve">
-    <value>Specifies an alias for a .NET Type.
+    <value>指定 .NET 類型的別名。
 
-using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
+使用類型 &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
   </data>
   <data name="RegistryStringToolTip" xml:space="preserve">
-    <value>A normal string.</value>
+    <value>一般字串。</value>
   </data>
   <data name="RegistryExpandStringToolTip" xml:space="preserve">
-    <value>A string that contains unexpanded references to environment variables that are expanded when the value is retrieved.</value>
+    <value>包含環境變數的未展開參照的字串，且只有在擷取值時才會展開。</value>
   </data>
   <data name="RegistryBinaryToolTip" xml:space="preserve">
-    <value>Binary data in any form.</value>
+    <value>任何形式的二進位資料。</value>
   </data>
   <data name="RegistryDWordToolTip" xml:space="preserve">
-    <value>A 32-bit binary number.</value>
+    <value>32 位元二進位數字。</value>
   </data>
   <data name="RegistryMultiStringToolTip" xml:space="preserve">
-    <value>An array of strings.</value>
+    <value>字串的陣列。</value>
   </data>
   <data name="RegistryQWordToolTip" xml:space="preserve">
-    <value>A 64-bit binary number.</value>
+    <value>64 位元二進位數字。</value>
   </data>
   <data name="RegistryUnknownToolTip" xml:space="preserve">
-    <value>An unsupported registry data type.</value>
+    <value>不支援的登錄資料類型。</value>
   </data>
   <data name="SeparatorCommaToolTip" xml:space="preserve">
     <value>',' - Comma</value>
@@ -599,7 +599,7 @@ using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
     <value>'; ' - Semi-Colon-Space</value>
   </data>
   <data name="SeparatorNewlineToolTip" xml:space="preserve">
-    <value>{0} - Newline</value>
+    <value>{0} - 新行</value>
   </data>
   <data name="SeparatorDashToolTip" xml:space="preserve">
     <value>'-' - Dash</value>

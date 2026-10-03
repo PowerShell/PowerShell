@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TranscriptionStarted" xml:space="preserve">
-    <value>Transcript started, output file is {0}</value>
+    <value>已開始文字記錄，輸出檔案為 {0}</value>
   </data>
   <data name="TranscriptionStopped" xml:space="preserve">
-    <value>Transcript stopped, output file is {0}</value>
+    <value>已開始文字記錄，輸出檔案為 {0}</value>
   </data>
   <data name="CannotStartTranscription" xml:space="preserve">
-    <value>Transcription cannot be started due to the error: {0}</value>
+    <value>無法啟動謄寫，因為發生錯誤: {0}</value>
   </data>
   <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>The current provider ({0}) cannot open a file.</value>
+    <value>目前的提供者 ({0}) 無法開啟檔案。</value>
   </data>
   <data name="TranscriptFileReadOnly" xml:space="preserve">
-    <value>File {0} is read-only. Cannot write to this file. "Start-Transcript -Force" will clear the read-only attribute.</value>
+    <value>檔案 {0} 是唯讀。無法寫入此檔案。「Start-Transcript -Force」將會清除唯讀屬性。</value>
   </data>
   <data name="MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>因為路徑已解析為多個檔案，所以無法執行作業。此命令無法針對多個檔案執行。</value>
   </data>
   <data name="TranscriptFileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>檔案 {0} 已經存在，且已指定 {1}。</value>
   </data>
   <data name="ErrorStoppingTranscript" xml:space="preserve">
-    <value>An error occurred stopping transcription: {0}</value>
+    <value>停止謄寫時發生錯誤: {0}</value>
   </data>
 </root>

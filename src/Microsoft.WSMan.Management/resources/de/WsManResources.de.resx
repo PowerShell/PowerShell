@@ -183,7 +183,7 @@ Möchten Sie die CredSSP-Authentifizierung aktivieren?</value>
     <value>Dieser Computer ist nicht für den Empfang von Anmeldeinformationen von einem Remoteclientcomputer konfiguriert.</value>
   </data>
   <data name="DisconnectFailure" xml:space="preserve">
-    <value>This command cannot be used from the current path. Move to root path of the provider using cd\ and run your command again.</value>
+    <value>Dieser Befehl kann vom aktuellen Pfad aus nicht verwendet werden. Wechseln Sie mit „cd\“ zum Stammpfad des Anbieters, und führen Sie den Befehl erneut aus.</value>
   </data>
   <data name="CmdletNotAvailable" xml:space="preserve">
     <value>Dieses PowerShell-Cmdlet ist für Windows XP und Windows Server 2003 nicht verfügbar.</value>
@@ -305,7 +305,7 @@ Möchten Sie fortfahren?</value>
     <value>Die von Ihnen vorgenommenen Konfigurationsänderungen werden erst wirksam, nachdem der WinRM-Dienst auf „{0}“ neu gestartet wurde.</value>
   </data>
   <data name="ConnectFailure" xml:space="preserve">
-    <value>This command cannot be used from the current path. Move to root path of the provider using cd\ and run your command again.</value>
+    <value>Dieser Befehl kann vom aktuellen Pfad aus nicht verwendet werden. Wechseln Sie mit „cd\“ zum Stammpfad des Anbieters, und führen Sie den Befehl erneut aus.</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>Dieses PowerShell-Snap-In enthält Cmdlets, z. B. Get-WSManInstance und Set-WSManInstance, die vom PowerShell-Host zum Verwalten von WSMan-Vorgängen verwendet werden.</value>

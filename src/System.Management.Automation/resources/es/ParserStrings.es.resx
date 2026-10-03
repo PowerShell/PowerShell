@@ -127,7 +127,7 @@
     <value>Token de cadena incompleto.</value>
   </data>
   <data name="InvalidUnicodeEscapeSequence" xml:space="preserve">
-    <value>The Unicode escape sequence is not valid. A valid sequence is `u{ followed by one to six hex digits and a closing '}'.</value>
+    <value>La secuencia de escape Unicode no es válida. Una secuencia válida es `u{ seguida de entre uno y seis dígitos hexadecimales y un "}" de cierre.</value>
   </data>
   <data name="InvalidUnicodeEscapeSequenceValue" xml:space="preserve">
     <value>El valor de secuencia de escape Unicode está fuera del intervalo. El valor máximo es 0x10FFFF.</value>

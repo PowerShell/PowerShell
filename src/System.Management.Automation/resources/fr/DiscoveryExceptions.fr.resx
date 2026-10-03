@@ -186,7 +186,7 @@ L’instruction #requires doit être dans l’un des formats suivants :
     <value>Nous ne pouvons pas exécuter le script « {0} », car les composants logiciels enfichables suivants spécifiés par les instructions « #requires » du script sont manquants : {1}.</value>
   </data>
   <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
-    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
+    <value>Une instruction #requires a spécifié uniquement un shellID. Les instructions #Requires doivent spécifier un composant logiciel enfichable PowerShell requis lors de l’exécution dans PowerShell.</value>
   </data>
   <data name="RequiresElevation" xml:space="preserve">
     <value>Le script « {0} » ne peut pas être exécuté car il contient une instruction « #requires » pour une exécution en tant qu’administrateur(-trice). La session PowerShell actuelle n’est pas exécutée en tant qu’administrateur(-trice). Démarrez PowerShell en utilisant l’option Exécuter en tant qu’administrateur(-trice), puis essayez de relancer le script.</value>

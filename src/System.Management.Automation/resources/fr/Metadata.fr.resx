@@ -118,150 +118,150 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MetadataMemberInitialization" xml:space="preserve">
-    <value>Cannot initialize attributes for "{0}": "{1}"</value>
+    <value>Impossible d’initialiser les attributs pour «{0}» : «{1}»</value>
   </data>
   <data name="ValidateRangeElementType" xml:space="preserve">
-    <value>The argument cannot be validated because its type "{0}" is not the same type ({1}) as the maximum and minimum limits of the parameter. Make sure the argument is of type {1} and then try the command again.</value>
+    <value>Impossible de valider l’argument, car son type «{0}» n’est pas du même type ({1}) que les limites maximale et minimale du paramètre. Vérifiez que l’argument est de type {1}, puis réessayez la commande.</value>
   </data>
   <data name="ValidateRangePositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not greater than zero.</value>
+    <value>Impossible de valider l’argument «{0}», car sa valeur n’est pas supérieure à zéro.</value>
   </data>
   <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not greater than or equal to zero.</value>
+    <value>Impossible de valider l’argument «{0}», car sa valeur n’est pas supérieure ou égale à zéro.</value>
   </data>
   <data name="ValidateRangeNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not less than zero.</value>
+    <value>Impossible de valider l’argument «{0}», car sa valeur n’est pas inférieure à zéro.</value>
   </data>
   <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not less than or equal to zero.</value>
+    <value>Impossible de valider l’argument «{0}», car sa valeur n’est pas inférieure ou égale à zéro.</value>
   </data>
   <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
-    <value>The specified minimum range ({0}) cannot be accepted because it is not the same type as the specified maximum range ({1}). Update the ValidateRange attribute for the parameter.</value>
+    <value>La plage minimale spécifiée ({0}) ne peut pas être acceptée, car elle n’est pas du même type que la plage maximale spécifiée ({1}). Mettez à jour l’attribut ValidateRange pour le paramètre.</value>
   </data>
   <data name="ValidateRangeNotIComparable" xml:space="preserve">
-    <value>Cannot accept the MaxRange and MinRange parameter types. Both parameters must be objects that implement an IComparable interface.</value>
+    <value>Impossible d’accepter les types de paramètres MaxRange et MinRange. Les deux paramètres doivent être des objets qui implémentent une interface IComparable.</value>
   </data>
   <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
-    <value>The specified maximum range cannot be accepted because it is less than the specified minimum range. Update the ValidateRange attribute for the parameter.</value>
+    <value>Impossible d’accepter la plage maximale spécifiée, car elle est inférieure à la plage minimale spécifiée. Mettez à jour l’attribut ValidateRange pour le paramètre.</value>
   </data>
   <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
-    <value>The {0} argument is greater than the maximum allowed range of {1}. Supply an argument that is less than or equal to {1} and then try the command again.</value>
+    <value>L’argument {0} est supérieur à la plage maximale autorisée de {1}. Fournissez un argument inférieur ou égal à {1}, puis recommencez la commande.</value>
   </data>
   <data name="ValidateRangeSmallerThanMinRangeFailure" xml:space="preserve">
-    <value>The {0} argument is less than the minimum allowed range of {1}. Supply an argument that is greater than or equal to {1} and then try the command again.</value>
+    <value>L’argument {0} est inférieur à la plage minimale autorisée de {1}. Fournissez un argument supérieur ou égal à {1}, puis recommencez la commande.</value>
   </data>
   <data name="ValidatePatternFailure" xml:space="preserve">
-    <value>The argument "{0}" does not match the "{1}" pattern. Supply an argument that matches "{1}" and try the command again.</value>
+    <value>L’argument «{0}» ne correspond pas au modèle «{1}». Fournissez un argument qui correspond à «{1}», puis réessayez la commande.</value>
   </data>
   <data name="ValidateCountNotInArray" xml:space="preserve">
-    <value>The ValidateCount attribute cannot be applied to a non-array parameter. Either remove the attribute from the parameter or make the parameter an array parameter.</value>
+    <value>L’attribut ValidateCount ne peut pas être appliqué à un paramètre autre qu’un paramètre de tableau. Supprimez l’attribut du paramètre ou faites du paramètre un paramètre de tableau.</value>
   </data>
   <data name="ValidateCountExactFailure" xml:space="preserve">
-    <value>The parameter requires exactly {0} value(s) - {1} value(s) were provided.</value>
+    <value>Le paramètre requiert exactement {0} valeur(s) - {1} valeur(s) ont été fournies.</value>
   </data>
   <data name="ValidateCountMinMaxFailure" xml:space="preserve">
-    <value>The parameter requires at least {0} value(s) and no more than {1} value(s) - {2} value(s) were provided.</value>
+    <value>Le paramètre nécessite au moins {0} valeur(s) et pas plus de {1} valeur(s) - {2} valeur(s) ont été fournies.</value>
   </data>
   <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
-    <value>The specified maximum number of arguments for a parameter is fewer than the specified minimum number of arguments. Update the ValidateCount attribute for the parameter.</value>
+    <value>Le nombre maximal d’arguments spécifié pour un paramètre est inférieur au nombre minimal d’arguments spécifié. Mettez à jour l’attribut ValidateCount pour le paramètre.</value>
   </data>
   <data name="ValidateLengthMaxLengthSmallerThanMinLength" xml:space="preserve">
-    <value>The specified maximum character length of the argument is shorter than the specified minimum argument character length. Update the ValidateLength attribute for the parameter.</value>
+    <value>La longueur de caractère maximale spécifiée de l’argument est inférieure à la longueur minimale de caractère d’argument spécifiée. Mettez à jour l’attribut ValidateLength pour le paramètre.</value>
   </data>
   <data name="ValidateLengthNotString" xml:space="preserve">
-    <value>The ValidateLength attribute cannot be applied to a parameter that is not a string or string[] parameter. Make the parameter a string or string[] parameter.</value>
+    <value>L’attribut ValidateLength ne peut pas être appliqué à un paramètre qui n’est pas un paramètre string ou string[]. Définissez le paramètre comme un paramètre string ou string[].</value>
   </data>
   <data name="ValidateLengthMinLengthFailure" xml:space="preserve">
-    <value>The character length ({1}) of the argument is too short. Specify an argument with a length that is greater than or equal to "{0}", and then try the command again.</value>
+    <value>La longueur du caractère ({1}) de l’argument est trop courte. Spécifiez un argument dont la longueur est supérieure ou égale à «{0}», puis réessayez.</value>
   </data>
   <data name="ValidateLengthMaxLengthFailure" xml:space="preserve">
-    <value>The character length ({1}) of the argument is too long. Specify an argument with a length that is shorter than or equal to "{0}", and then try the command again.</value>
+    <value>La longueur du caractère ({1}) de l’argument est trop longue. Spécifiez un argument dont la longueur est inférieure ou égale à «{0}», puis réessayez.</value>
   </data>
   <data name="ValidateSetFailure" xml:space="preserve">
-    <value>The argument "{0}" does not belong to the set "{1}" specified by the ValidateSet attribute. Supply an argument that is in the set and then try the command again.</value>
+    <value>L’argument «{0}» n’appartient pas à l’ensemble «{1}» spécifié par l’attribut ValidateSet. Fournissez un argument qui se trouve dans le jeu, puis réessayez la commande.</value>
   </data>
   <data name="ValidateSetGeneratedValidValuesListIsNull" xml:space="preserve">
-    <value>Valid values generator return a null value.</value>
+    <value>Le générateur de valeurs valides renvoie une valeur nulle.</value>
   </data>
   <data name="ValidateFailureResult" xml:space="preserve">
-    <value>"{0}" failed on property "{1}" {2}</value>
+    <value>«{0}» a échoué sur la propriété «{1}» {2}</value>
   </data>
   <data name="ParsingTooManyParameterSets" xml:space="preserve">
-    <value>Cannot get or run the command. The maximum number of parameter sets for this command has been exceeded.</value>
+    <value>Impossible d’obtenir ou d’exécuter la commande. Le nombre maximal de jeux de paramètres pour cette commande a été dépassé.</value>
   </data>
   <data name="ArgumentTransformationArgumentsShouldBeStrings" xml:space="preserve">
-    <value>Cannot process the argument because the argument value is not a string. The values of parameter arguments that have the ArgumentTransformationAttribute specified should be strings.</value>
+    <value>Impossible de traiter l’argument, car la valeur de l’argument n’est pas une chaîne. Les valeurs des arguments de paramètre dont ArgumentTransformationAttribute est spécifié doivent être des chaînes.</value>
   </data>
   <data name="InvalidValueFailure" xml:space="preserve">
-    <value>The variable cannot be validated because the value {1} is not a valid value for the {0} variable.</value>
+    <value>Impossible de valider la variable, car la valeur {1} n’est pas une valeur valide pour la variable {0}.</value>
   </data>
   <data name="InvalidMetadataForCurrentValue" xml:space="preserve">
-    <value>The attribute cannot be added because variable {0} with value {1} would no longer be valid.</value>
+    <value>Impossible d’ajouter l’attribut, car la variable {0} avec une valeur {1} n’est plus valide.</value>
   </data>
   <data name="ValidateNotNullFailure" xml:space="preserve">
-    <value>The argument is null. Provide a valid value for the argument, and then try running the command again.</value>
+    <value>L’argument est nul. Fournissez une valeur valide pour l’argument, puis réessayez d’exécuter la commande.</value>
   </data>
   <data name="ValidateNotNullCollectionFailure" xml:space="preserve">
-    <value>The argument has a null value, or an element of the argument collection contains a null value. Provide a collection that does not contain any null values, and then try the command again.</value>
+    <value>L'argument a une valeur nulle, ou un élément de la collection d'arguments contient une valeur nul. Fournissez une collection ne contenant aucune valeur nul, puis réessayez la commande.</value>
   </data>
   <data name="ValidateNotNullOrEmptyFailure" xml:space="preserve">
-    <value>The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.</value>
+    <value>L'argument est nul ou vide. Fournissez un argument qui n'est ni nul ni vide, puis réessayez la commande.</value>
   </data>
   <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
-    <value>The argument is null, empty, or an element of the argument collection contains a null value. Supply a collection that does not contain any null values and then try the command again.</value>
+    <value>L’argument est nul, vide ou un élément de la collection d’arguments contient une valeur nul. Fournissez une collection qui ne contient aucune valeur nul, puis réessayez la commande.</value>
   </data>
   <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
-    <value>The argument is null, empty, or consists of only white-space characters. Provide an argument that contains non white-space characters, and then try the command again.</value>
+    <value>L’argument est nul, vide ou se compose uniquement de caractères d’espace blanc. Fournissez un argument qui contient des caractères autres que des espaces blancs, puis recommencez la commande.</value>
   </data>
   <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
-    <value>An element of the argument collection is null, empty, or consists of only white-space characters. Supply a collection that does not contain any those values and then try the command again.</value>
+    <value>Un élément de la collection d’arguments est nul, vide ou se compose uniquement de caractères d’espace blanc. Fournissez une collection qui ne contient aucune de ces valeurs, puis réessayez la commande.</value>
   </data>
   <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
-    <value>A parameter with the name '{0}' was defined multiple times for the command.</value>
+    <value>Un paramètre portant le nom «{0}» a été défini plusieurs fois pour la commande.</value>
   </data>
   <data name="AliasParameterNameAlreadyExistsForCommand" xml:space="preserve">
-    <value>The parameter alias cannot be specified because an alias with the name '{0}' was already defined multiple times for the command.</value>
+    <value>Impossible de spécifier l’alias de paramètre, car un alias portant le nom «{0}» a déjà été défini plusieurs fois pour la commande.</value>
   </data>
   <data name="ParameterNameConflictsWithAlias" xml:space="preserve">
-    <value>The parameter '{0}' cannot be specified because it conflicts with the parameter alias of the same name for parameter '{1}'.</value>
+    <value>Impossible de spécifier le paramètre «{0}», car il est en conflit avec l’alias de paramètre du même nom pour le paramètre «{1}».</value>
   </data>
   <data name="ValidateScriptFailure" xml:space="preserve">
-    <value>The "{1}" validation script for the argument with value "{0}" did not return a result of True. Determine why the validation script failed, and then try the command again.</value>
+    <value>Le script de validation «{1}» pour l’argument avec la valeur «{0}» n’a pas retourné le résultat True. Déterminez pourquoi le script de validation a échoué, puis réessayez la commande.</value>
   </data>
   <data name="ValidateVersionFailure" xml:space="preserve">
-    <value>The "{0}" argument does not contain a valid PowerShell version. Supply a valid version number and then try the command again.</value>
+    <value>L’argument «{0}» ne contient pas de version PowerShell valide. Fournissez un numéro de version valide, puis recommencez la commande.</value>
   </data>
   <data name="ValidateVariableName" xml:space="preserve">
-    <value>Cannot validate argument '{0}' because it is not a valid variable name.</value>
+    <value>Impossible de valider l’argument «{0}», car il ne s’agit pas d’un nom de variable valide.</value>
   </data>
   <data name="JobDefinitionMustDeriveFromIJobConverter" xml:space="preserve">
-    <value>The job conversion type must derive from IAstToScriptBlockConverter.</value>
+    <value>Le type de conversion de travail doit dériver de IAstToScriptBlockConverter.</value>
   </data>
   <data name="ValidateDrivePathArgNotString" xml:space="preserve">
-    <value>The path argument is invalid. Supply a path argument that is a string type.</value>
+    <value>L’argument de chemin d’accès n’est pas valide. Fournissez un argument de chemin d’accès qui est un type de chaîne.</value>
   </data>
   <data name="ValidateDrivePathFailure" xml:space="preserve">
-    <value>The path argument drive {0} does not belong to the set of approved drives: {1}. Supply a path argument with an approved drive.</value>
+    <value>Le lecteur d’argument de chemin d’accès {0} n’appartient pas à l’ensemble de lecteurs approuvés : {1}. Fournissez un argument de chemin d’accès avec un lecteur approuvé.</value>
   </data>
   <data name="ValidateDrivePathInvalidChar" xml:space="preserve">
-    <value>The path argument contains invalid characters.</value>
+    <value>L’argument de chemin d’accès contient des caractères non valides.</value>
   </data>
   <data name="ValidateDrivePathNoRoot" xml:space="preserve">
-    <value>The path argument has no root drive.  Supply a full path argument with a root drive.</value>
+    <value>L’argument de chemin d’accès n’a pas de lecteur racine.  Fournissez un argument de chemin d’accès complet avec un lecteur racine.</value>
   </data>
   <data name="ArgumentNullOrEmpty" xml:space="preserve">
-    <value>The argument value for the parameter '{0}' cannot be null or an empty string.</value>
+    <value>La valeur d’argument du paramètre '{0}' ne peut pas être nul ou une chaîne vide.</value>
   </data>
   <data name="InvalidEnumArgument" xml:space="preserve">
-    <value>The Enum member '{0}' is not a valid value for the parameter '{1}'. Specify one of the following members and try again: {2}.</value>
+    <value>Le membre Enum '{0}' n’est pas une valeur valide pour le paramètre '{1}'. Spécifiez l’un des membres suivants et réessayez : {2}.</value>
   </data>
   <data name="ValidateTrustedDataFailure" xml:space="preserve">
-    <value>Cannot process input. The argument "{0}" is not trusted.</value>
+    <value>Impossible de traiter l’entrée. L’argument «{0}» n’est pas approuvé.</value>
   </data>
   <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
-    <value>ValidateTrustedData Attribute Check Failure</value>
+    <value>Échec de la vérification d’attribut ValidateTrustedData</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>The parameter argument '{0}' is not trusted and will fail the ValidateTrustedData parameter attribute check in Constrained Language mode.</value>
+    <value>L’argument de paramètre «{0}» n’est pas approuvé et échoue à la vérification de l’attribut de paramètre ValidateTrustedData en mode langue contrainte.</value>
   </data>
 </root>

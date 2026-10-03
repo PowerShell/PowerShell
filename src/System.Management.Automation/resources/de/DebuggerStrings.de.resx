@@ -118,147 +118,147 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="VariableBreakpointString" xml:space="preserve">
-    <value>Variable breakpoint on '${0}' ({1} access)</value>
+    <value>Variablenhaltepunkt bei „${0}“ (Zugriff auf {1})</value>
   </data>
   <data name="VariableScriptBreakpointString" xml:space="preserve">
-    <value>Variable breakpoint on '{0}:${1}' ({2} access)</value>
+    <value>Variablenhaltepunkt bei „{0}:${1}“ (Zugriff auf {2})</value>
   </data>
   <data name="LineBreakpointString" xml:space="preserve">
-    <value>Line breakpoint on '{0}:{1}'</value>
+    <value>Zeilenhaltepunkt auf „{0}:{1}“</value>
   </data>
   <data name="StatementBreakpointString" xml:space="preserve">
-    <value>Line breakpoint on '{0}:{1}, {2}'</value>
+    <value>Zeilenhaltepunkt auf „{0}:{1}, {2}“</value>
   </data>
   <data name="CommandBreakpointString" xml:space="preserve">
-    <value>Command breakpoint on '{0}'</value>
+    <value>Befehlshaltepunkt auf „{0}“</value>
   </data>
   <data name="CommandScriptBreakpointString" xml:space="preserve">
-    <value>Command breakpoint on '{0}:{1}'</value>
+    <value>Befehlshaltepunkt auf „{0}:{1}“</value>
   </data>
   <data name="WarningBreakpointWillNotBeHit" xml:space="preserve">
-    <value>Breakpoint {0} will not be hit</value>
+    <value>Haltepunkt „{0}“ wird nicht erreicht</value>
   </data>
   <data name="StepHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Single step (step into functions, scripts, etc.)</value>
+    <value> {0}, {1,-16} Einzelschritt (in Funktionen, Skripts usw. hinein)</value>
   </data>
   <data name="StepOverHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Step to next statement (step over functions, scripts, etc.)</value>
+    <value> {0}, {1,-16} Zur nächsten Anweisung springen (Funktionen, Skripts usw. überspringen)</value>
   </data>
   <data name="StepOutHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Step out of the current function, script, etc.</value>
+    <value> {0}, {1,-16} Aus der aktuellen Funktion, dem Skript usw. herausspringen</value>
   </data>
   <data name="ContinueHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Continue operation</value>
+    <value> {0}, {1,-16} Vorgang fortsetzen</value>
   </data>
   <data name="StopHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Stop operation and exit the debugger</value>
+    <value> {0}, {1,-16} Vorgang beenden und den Debugger schließen</value>
   </data>
   <data name="GetStackTraceHelp" xml:space="preserve">
-    <value> {0}, Get-PSCallStack Display call stack</value>
+    <value> {0}, Aufrufliste „Get-PSCallStack“ anzeigen</value>
   </data>
   <data name="ListHelp" xml:space="preserve">
-    <value> {0}, {1,-16} List source code for the current script.  </value>
+    <value> {0}, {1,-16} Quellcode für das aktuelle Skript auflisten.  </value>
   </data>
   <data name="AdditionalListHelp1" xml:space="preserve">
-    <value>                     Use "list" to start from the current line, "list &lt;m&gt;"  </value>
+    <value>                     Verwenden Sie „list“, um ab der aktuellen Zeile zu beginnen, „&lt;m&gt; auflisten“  </value>
   </data>
   <data name="AdditionalListHelp2" xml:space="preserve">
-    <value>                     to start from line &lt;m&gt;, and "list &lt;m&gt; &lt;n&gt;" to list &lt;n&gt; </value>
+    <value>                     , um ab Zeile &lt;m&gt; zu beginnen, und „&lt;m&gt; &lt;n&gt; auflisten“, um &lt;n&gt;  aufzulisten </value>
   </data>
   <data name="AdditionalListHelp3" xml:space="preserve">
-    <value>                     lines starting from line &lt;m&gt;</value>
+    <value>                     Zeilen ab Zeile &lt;m&gt;</value>
   </data>
   <data name="EnterHelp" xml:space="preserve">
-    <value> &lt;enter&gt;             Repeat last command if it was {0}, {1} or {2}</value>
+    <value> &lt;enter&gt;             Letzten Befehl wiederholen, wenn er {0}, {1} oder {2} war</value>
   </data>
   <data name="HelpCommandHelp" xml:space="preserve">
-    <value> {0}, {1,-16} displays this help message.</value>
+    <value> {0}, {1,-16} zeigt diese Hilfemeldung an.</value>
   </data>
   <data name="PromptHelp" xml:space="preserve">
-    <value>For instructions about how to customize your debugger prompt, type "help about_prompt".</value>
+    <value>Anweisungen zum Anpassen der Debuggeraufforderung erhalten Sie mit „help about_prompt“.</value>
   </data>
   <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
     <value>
-The current session does not support debugging; operation will continue.
+Die aktuelle Sitzung unterstützt kein Debugging, der Vorgang wird fortgesetzt.
 
 </value>
   </data>
   <data name="LocationFormat" xml:space="preserve">
-    <value>{0}: line {1}</value>
+    <value>{0}: Zeile {1}</value>
   </data>
   <data name="NoSourceCode" xml:space="preserve">
-    <value>There is no source code available.</value>
+    <value>Der Quellcode ist nicht verfügbar.</value>
   </data>
   <data name="BadStartFormat" xml:space="preserve">
-    <value>The starting line must be a positive integer no greater than {0}</value>
+    <value>Die Startzeile muss eine positive ganze Zahl sein, die nicht größer als {0} ist.</value>
   </data>
   <data name="BadCountFormat" xml:space="preserve">
-    <value>The line count must be a positive integer.</value>
+    <value>Die Zeilenanzahl muss eine positive ganze Zahl sein.</value>
   </data>
   <data name="NoFile" xml:space="preserve">
     <value>&lt;No file&gt;</value>
   </data>
   <data name="StackTraceFormat" xml:space="preserve">
-    <value>at {0}, {1}: line {2}</value>
+    <value>bei {0}, {1}: Zeile {2}</value>
   </data>
   <data name="CannotProcessDebuggerCommandNotStopped" xml:space="preserve">
-    <value>The debugger cannot process commands unless it is in the Stopped state.</value>
+    <value>Der Debugger kann nur Befehle verarbeiten, wenn er sich im Zustand Stopped befindet.</value>
   </data>
   <data name="CannotSetDebuggerAction" xml:space="preserve">
-    <value>SetDebugAction is not implemented for the local script debugger.</value>
+    <value>SetDebugAction ist für den lokalen Skriptdebugger nicht implementiert.</value>
   </data>
   <data name="CannotSetRemoteDebuggerAction" xml:space="preserve">
-    <value>The debugger cannot set a resume action because the debugger in the remote session is not in a Stopped state.</value>
+    <value>Der Debugger kann keine Fortsetzungsaktion festlegen, da sich der Debugger in der Remotesitzung nicht im Zustand Stopped befindet.</value>
   </data>
   <data name="CannotStartJobDebuggingDebuggerBusy" xml:space="preserve">
-    <value>The job cannot be debugged because the debugger is currently busy.</value>
+    <value>Der Job kann nicht debuggt werden, da der Debugger derzeit ausgelastet ist.</value>
   </data>
   <data name="NoDebuggableJobsFound" xml:space="preserve">
-    <value>The provided job and all child jobs were examined but no jobs were found that could be debugged.  In order to debug a job or child job the job must support debugging and also be in a running state.</value>
+    <value>Der angegebene Auftrag und alle untergeordneten Aufträge wurden geprüft, aber es wurden keine Aufträge gefunden, die debuggt werden konnten.  Um einen Auftrag oder untergeordneten Auftrag zu debuggen, muss der Auftrag Debuggen unterstützen und sich im Ausführungszustand befinden.</value>
   </data>
   <data name="CannotEnableDebuggerSteppingInvalidMode" xml:space="preserve">
-    <value>The debugger cannot be enabled for step mode because the debugger is turned off with debug mode set to None.</value>
+    <value>Der Debugger kann für den Schrittmodus nicht aktiviert werden, da der Debugmodus auf None festgelegt ist und der Debugger deaktiviert ist.</value>
   </data>
   <data name="RunspaceDebuggingDebuggerBusy" xml:space="preserve">
-    <value>The Runspace cannot be debugged because the host debugger is currently busy.</value>
+    <value>Der Runspace kann nicht debuggt werden, da der Hostdebugger derzeit ausgelastet ist.</value>
   </data>
   <data name="RunspaceDebuggingDebuggerIsOff" xml:space="preserve">
-    <value>Cannot debug Runspace. The Runspace debugger is currently turned off (DebugMode is 'None').</value>
+    <value>Runspace kann nicht debuggt werden. Der Runspace-Debugger ist derzeit deaktiviert (DebugMode ist „None“).</value>
   </data>
   <data name="RunspaceDebuggingInvalidRunspaceState" xml:space="preserve">
-    <value>Cannot debug a Runspace that is not in the Opened state. This Runspace state is {0}.</value>
+    <value>Runspace kann nicht debuggt werden, wenn es sich nicht im Zustand Opened befindet. Dieser Runspace-Zustand ist „{0}“.</value>
   </data>
   <data name="RunspaceDebuggingNoRunspaceDebugger" xml:space="preserve">
-    <value>Cannot debug Runspace. The Runspace {0} has no associated debugger.</value>
+    <value>Runspace kann nicht debuggt werden. Dem Runspace „{0}“ ist kein Debugger zugeordnet.</value>
   </data>
   <data name="RemoteServerDebuggerAlreadyPushed" xml:space="preserve">
-    <value>The debugger is already overridden.</value>
+    <value>Der Debugger wurde bereits außer Kraft gesetzt.</value>
   </data>
   <data name="RemoteServerDebuggerCannotPushSelf" xml:space="preserve">
-    <value>Cannot push a debugger object onto itself.</value>
+    <value>Ein Debuggerobjekt kann nicht auf sich selbst gepusht werden.</value>
   </data>
   <data name="CommandNotSupportedForRemoteUseInServerDebugger" xml:space="preserve">
-    <value>The {0} command is not supported for remote use in the version of PowerShell that is running in the remote runspace.</value>
+    <value>Der {0}-Befehl wird in der PowerShell-Version, die im Remoterunspace ausgeführt wird, für die Remoteverwendung nicht unterstützt.</value>
   </data>
   <data name="NestedRunspaceDebuggerPromptProcessName" xml:space="preserve">
-    <value>Process</value>
+    <value>Prozess</value>
   </data>
   <data name="DetachHelp" xml:space="preserve">
-    <value> {0}, {1,-16} Continue operation and detach the debugger.</value>
+    <value> {0}, {1,-16} Vorgang fortsetzen und Debugger trennen.</value>
   </data>
   <data name="InvalidDetachCommand" xml:space="preserve">
-    <value>The debugger detach command is not applicable.  The detach command only applies when debugging jobs and runspaces with the Debug-Job or Debug-Runspace cmdlets.</value>
+    <value>Der Debuggerbefehl zum Trennen ist nicht anwendbar.  Der Trennbefehl gilt nur beim Debuggen von Aufträgen und Runspaces mit den Cmdlets „Debug-Job“ oder „Debug-Runspace“.</value>
   </data>
   <data name="InvalidRunspaceId" xml:space="preserve">
-    <value>Invalid runspace id: {0}</value>
+    <value>Ungültige Runspace-ID: {0}</value>
   </data>
   <data name="UnableToGetRunspace" xml:space="preserve">
-    <value>Unable to get Runspace.</value>
+    <value>Runspace kann nicht abgerufen werden.</value>
   </data>
   <data name="BreakpointOrBreakpointListNotSpecified" xml:space="preserve">
-    <value>Breakpoint or BreakpointList must be specified.</value>
+    <value>Ein Haltepunkt oder eine Haltepunktliste muss angegeben werden.</value>
   </data>
   <data name="BreakpointListContainedANonBreakpoint" xml:space="preserve">
-    <value>The BreakpointList contained an item that was not a breakpoint.</value>
+    <value>Die BreakpointList enthielt ein Element, das kein Haltepunkt war.</value>
   </data>
 </root>

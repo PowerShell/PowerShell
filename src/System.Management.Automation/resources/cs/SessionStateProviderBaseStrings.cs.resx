@@ -118,39 +118,39 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetItemAction" xml:space="preserve">
-    <value>Set Item</value>
+    <value>Nastavit položku</value>
   </data>
   <data name="SetItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Value: {1}</value>
+    <value>Položka: {0} Hodnota: {1}</value>
   </data>
   <data name="ClearItemAction" xml:space="preserve">
-    <value>Clear Item</value>
+    <value>Vymazat položku</value>
   </data>
   <data name="ClearItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>Položka: {0}</value>
   </data>
   <data name="RemoveItemAction" xml:space="preserve">
-    <value>Remove Item</value>
+    <value>Odebrat položku</value>
   </data>
   <data name="RemoveItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>Položka: {0}</value>
   </data>
   <data name="NewItemAction" xml:space="preserve">
-    <value>New Item</value>
+    <value>Nová položka</value>
   </data>
   <data name="NewItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Type: {1} Value: {2}</value>
+    <value>Položka: {0} Typ: {1} Hodnota: {2}</value>
   </data>
   <data name="CopyItemAction" xml:space="preserve">
-    <value>Copy Item</value>
+    <value>Kopírovat položku</value>
   </data>
   <data name="CopyItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>Položka: {0} Cíl: {1}</value>
   </data>
   <data name="RenameItemAction" xml:space="preserve">
-    <value>Rename Item</value>
+    <value>Přejmenovat položku</value>
   </data>
   <data name="RenameItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} NewName: {1}</value>
+    <value>Položka: {0} Nový název: {1}</value>
   </data>
 </root>

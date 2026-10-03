@@ -118,106 +118,106 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WriteDebugLineStoppedError" xml:space="preserve">
-    <value>WriteDebug stopped because the value of the DebugPreference variable was 'Stop'.</value>
+    <value>WriteDebug arrestato perché il valore della variabile DebugPreference è ''Stop''.</value>
   </data>
   <data name="UnsupportedPreferenceError" xml:space="preserve">
-    <value>The value {0} is not a supported ActionPreference value.</value>
+    <value>Il valore {0} non è un valore ActionPreference supportato.</value>
   </data>
   <data name="PromptEmptyDescriptionsError" xml:space="preserve">
-    <value>The "{0}" parameter must contain at least one value.</value>
+    <value>Il parametro "{0}" deve contenere almeno un valore.</value>
   </data>
   <data name="ShouldContinueYesLabel" xml:space="preserve">
-    <value>&amp;Yes</value>
+    <value>&amp;Sì</value>
   </data>
   <data name="ShouldContinueYesHelp" xml:space="preserve">
-    <value>Continue.</value>
+    <value>Continuare.</value>
   </data>
   <data name="ShouldContinueYesToAllLabel" xml:space="preserve">
-    <value>Yes to &amp;All</value>
+    <value>Sì per t&amp;utti</value>
   </data>
   <data name="ShouldContinueYesToAllHelp" xml:space="preserve">
-    <value>Continue, and do not ask again whether to continue in this session.</value>
+    <value>Continuare senza chiedere nuovamente se continuare in questa sessione.</value>
   </data>
   <data name="ShouldContinueNoLabel" xml:space="preserve">
     <value>&amp;No</value>
   </data>
   <data name="ShouldContinueNoHelp" xml:space="preserve">
-    <value>End the operation with an error.</value>
+    <value>Terminare l'operazione con un errore.</value>
   </data>
   <data name="ShouldContinueNoToAllLabel" xml:space="preserve">
-    <value>No to A&amp;ll</value>
+    <value>N&amp;o per tutti</value>
   </data>
   <data name="ShouldContinueNoToAllHelp" xml:space="preserve">
-    <value>End the operation with an error. Do not request to resume operation for this session.</value>
+    <value>Terminare l'operazione con un errore. Non richiedere di riprendere l'operazione per questa sessione.</value>
   </data>
   <data name="ShouldContinueSuspendLabel" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>&amp;Sospendi</value>
   </data>
   <data name="ShouldContinueSuspendHelp" xml:space="preserve">
-    <value>Pause the current operation and enter a command prompt. Type "exit" to resume the paused operation.</value>
+    <value>Sospendere l'operazione corrente e immettere un prompt dei comandi. Digitare "exit" per riprendere l'operazione sospesa.</value>
   </data>
   <data name="ShouldContinuePromptMessage" xml:space="preserve">
-    <value>Continue with this operation?</value>
+    <value>Continuare con questa operazione?</value>
   </data>
   <data name="DefaultChoice" xml:space="preserve">
-    <value>(default is "{0}")</value>
+    <value>(l'impostazione predefinita è ''{0}'')</value>
   </data>
   <data name="DefaultChoicesForMultipleChoices" xml:space="preserve">
-    <value>(default choices are {0})</value>
+    <value>(le opzioni predefinite sono {0})</value>
   </data>
   <data name="ChoiceMessage" xml:space="preserve">
-    <value>Choice[{0}]: </value>
+    <value>Opzione[{0}]: </value>
   </data>
   <data name="EmptyChoicesError" xml:space="preserve">
-    <value>"{0}" should have at least one element.</value>
+    <value>"{0}" deve avere almeno un elemento.</value>
   </data>
   <data name="InvalidDefaultChoiceForMultipleSelection" xml:space="preserve">
-    <value>"{0}" must be a valid index into "{1}". "{2}" is not a valid index.</value>
+    <value>"{0}" deve essere un indice valido in "{1}". "{2}" non è un indice valido.</value>
   </data>
   <data name="InvalidChoiceHotKeyError" xml:space="preserve">
-    <value>Cannot process the hot key because a question mark ("?") cannot be used as a hot key.</value>
+    <value>Non è possibile elaborare il tasto di scelta rapida perché il punto interrogativo ("?") non può essere usato come tasto di scelta rapida.</value>
   </data>
   <data name="VerboseFormatString" xml:space="preserve">
-    <value>VERBOSE: {0}</value>
+    <value>DETTAGLIATO: {0}</value>
   </data>
   <data name="WarningFormatString" xml:space="preserve">
-    <value>WARNING: {0}</value>
+    <value>AVVISO: {0}</value>
   </data>
   <data name="DebugFormatString" xml:space="preserve">
     <value>DEBUG: {0}</value>
   </data>
   <data name="HostNotTranscribing" xml:space="preserve">
-    <value>The host is not currently transcribing.</value>
+    <value>L'host non è attualmente in fase di trascrizione.</value>
   </data>
   <data name="CommandStartTime" xml:space="preserve">
-    <value>Command start time: {0}</value>
+    <value>Ora di inizio comando: {0}</value>
   </data>
   <data name="TranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
-Username: {1}
-RunAs User: {2}
-Configuration Name: {3}
-Machine: {4} ({5})
-Host Application: {6}
-Process ID: {7}
+Avvio della trascrizione di PowerShell
+Ora di inizio: {0:yyyyMMddHHmmss}
+Nome utente: {1}
+Utente RunAs: {2}
+Nome configurazione: {3}
+Computer: {4} ({5})
+Applicazione host: {6}
+ID processo: {7}
 {8}
 **********************</value>
   </data>
   <data name="MinimalTranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
+Avvio della trascrizione di PowerShell
+Ora di inizio: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
     <value>**********************
-PowerShell transcript end
-End time: {0:yyyyMMddHHmmss}
+Fine della trascrizione di PowerShell
+Ora di fine: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="InvalidTranscriptFilePath" xml:space="preserve">
-    <value>File path {0} resolves to a directory.</value>
+    <value>Il percorso del file {0} viene risolto in una directory.</value>
   </data>
 </root>

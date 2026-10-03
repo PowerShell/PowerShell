@@ -300,7 +300,7 @@
     <value>PowerShell 用戶端不支援伺服器所交涉的 {0} {1}。請確定伺服器與 PowerShell 的組建 {2} 和通訊協定版本 {3} 相容。</value>
   </data>
   <data name="ClientNotFoundCapabilityProperties" xml:space="preserve">
-    <value>{0}. Negotiation with the server failed. Make sure the server is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>{0}。與伺服器的交涉失敗。請確定伺服器與 PowerShell 的組建 {1} 和通訊協定版本 {2} 相容。</value>
   </data>
   <data name="ServerRequestedToCloseSession" xml:space="preserve">
     <value>目的地伺服器已傳送關閉工作階段的要求。</value>
@@ -321,7 +321,7 @@
     <value>執行 PowerShell 的伺服器無法處理連線作業，因為伺服器 Runspace 集區屬性與用戶端電腦指定的屬性不符。</value>
   </data>
   <data name="ServerNotFoundCapabilityProperties" xml:space="preserve">
-    <value>{0}. Negotiation with the client failed. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>{0}。與用戶端的交涉失敗。請確定用戶端與 PowerShell 的組建 {1} 和通訊協定版本 {2} 相容。</value>
   </data>
   <data name="ServerNegotiationTimeout" xml:space="preserve">
     <value>伺服器交涉計時器已到期。交涉逾時間隔為 {0} 毫秒。</value>
@@ -549,7 +549,7 @@
     <value>當指定 {1} 時，無法指定 {0}。</value>
   </data>
   <data name="WildCardErrorFilePathParameter" xml:space="preserve">
-    <value>Wildcard characters are not supported for the FilePath parameter. Specify a path without wildcard characters.</value>
+    <value>FilePath 參數不支援萬用字元。請指定不含萬用字元的路徑。</value>
   </data>
   <data name="FilePathNotFromFileSystemProvider" xml:space="preserve">
     <value>指定為 FilePath 參數值的路徑不是來自 FileSystem 提供者。</value>
@@ -612,7 +612,7 @@
     <value>使用下列 Proxy 存取類型時，無法指定 Proxy 認證: {0}。請指定不同的存取類型，或不要指定 Proxy 認證。</value>
   </data>
   <data name="WrongSessionOptionValue" xml:space="preserve">
-    <value>A {0} value must be specified for session option {1}.</value>
+    <value>必須為工作階段選項 {1} 指定 {0} 值。</value>
   </data>
   <data name="PushedRunspaceMustBeOpen" xml:space="preserve">
     <value>工作階段必須開啟。</value>
@@ -636,7 +636,7 @@
     <value>您無法從巢狀提示執行 Enter-PSSession。</value>
   </data>
   <data name="WsmanMaxRedirectionCountVariableDescription" xml:space="preserve">
-    <value>The maximum number of WS-Man URI redirections to allow while connecting to a remote computer</value>
+    <value>連線至遠端電腦時允許的 WS-Man URI 重新導向數目上限</value>
   </data>
   <data name="PSDefaultSessionOptionDescription" xml:space="preserve">
     <value>新遠端工作階段的預設工作階段選項</value>
@@ -846,7 +846,7 @@
     <value>Wait 和 Keep 參數不能在同一個命令中同時使用。</value>
   </data>
   <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
+    <value>未使用 Wait 參數時，無法使用 WriteEvents 參數。</value>
   </data>
   <data name="PowerShellVersionNotSupported" xml:space="preserve">
     <value>PowerShell 7+ 不支援 PowerShell 遠端端點版本設定。</value>
@@ -933,17 +933,17 @@
     <value>命令找不到名稱為 "{0}" 的 PSSession。</value>
   </data>
   <data name="WinPERemotingNotSupported" xml:space="preserve">
-    <value>PowerShell remoting is not supported in the Windows Preinstallation Environment (WinPE).</value>
+    <value>Windows 預先安裝環境 (WinPE) 不支援 PowerShell 遠端處理。</value>
   </data>
   <data name="WinRMRequiresRestart" xml:space="preserve">
-    <value>Changes made by {0} cannot take effect until the WinRM service is restarted.</value>
+    <value>{0} 所做的變更必須等到 WinRM 服務重新啟動後才會生效。</value>
   </data>
   <data name="WinRMRestartWarning" xml:space="preserve">
-    <value>{0} may need to restart the WinRM service if a configuration using this name has recently been unregistered, certain system data structures may still be cached. In that case, a restart of WinRM may be required.
-All WinRM sessions connected to PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
+    <value>{0} 如果最近已取消註冊使用此名稱的設定，可能需要重新啟動 WinRM 服務，因為某些系統資料結構可能仍在快取中。在那樣的情況下，可能需要重新啟動 WinRM。
+所有連線至 PowerShell 工作階段設定 (例如 Microsoft.PowerShell，以及使用 Register-PSSessionConfiguration Cmdlet 建立的工作階段設定) 的 WinRM 工作階段都會中斷連線。</value>
   </data>
   <data name="WinRMForceRestartWarning" xml:space="preserve">
-    <value>You are running in a remote session and have selected the Force option which means the WinRM service may restart.If the WinRM service restarts then this remote session will be terminated and you will need to create a new session to continue</value>
+    <value>您正在遠端工作階段中執行，且已選取 Force 選項，這表示 WinRM 服務可能會重新啟動。如果 WinRM 服務重新啟動，此遠端工作階段就會終止，而您需要建立新的工作階段才能繼續</value>
   </data>
   <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
     <value>嘗試儲存識別碼時，工作為 null。請指定工作以儲存其識別碼。</value>
@@ -1145,7 +1145,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>剖析設定檔 {0} 時發生錯誤，訊息如下: {1}</value>
   </data>
   <data name="WriteJobInResultsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -WriteJobInResults parameter cannot be used without the -Wait parameter</value>
+    <value>未使用 -Wait 參數時，無法使用 -WriteJobInResults 參數</value>
   </data>
   <data name="DISCPathsMustBeAbsolute" xml:space="preserve">
     <value>成員 '{0}' 不是絕對路徑 {1}。請將成員變更為檔案 {2} 中的絕對路徑。</value>
@@ -1465,52 +1465,52 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>提供的輸入資料無效。僅支援類型為 {0} 的輸入資料。</value>
   </data>
   <data name="WSManPluginInvalidInputStream" xml:space="preserve">
-    <value>The supplied input stream is not valid. Only {0} is supported as input stream.</value>
+    <value>提供的輸入資料流無效。只支援 {0} 作為輸入資料流。</value>
   </data>
   <data name="WSManPluginInvalidOutputStream" xml:space="preserve">
-    <value>The supplied output stream set is not valid. Only {0} is supported as output stream.</value>
+    <value>提供的輸出資料流集合無效。只支援 {0} 作為輸出資料流。</value>
   </data>
   <data name="WSManPluginInvalidSenderDetails" xml:space="preserve">
     <value>提供的 WSMAN_SENDER_DETAILS 無效。無法處理 Null WSMAN_SENDER_DETAILS。</value>
   </data>
   <data name="WSManPluginInvalidShellContext" xml:space="preserve">
-    <value>The supplied shell context is not valid.</value>
+    <value>提供的殼層內容無效。</value>
   </data>
   <data name="WSManPluginManagedException" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="WSManPluginNullInvalidInput" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>外掛程式方法 {1} 中的 {0} 不允許為 NULL 值。</value>
   </data>
   <data name="WSManPluginNullInvalidStreamSet" xml:space="preserve">
-    <value>NULL value is not allowed for input stream and output stream sets. {0} and {1} are the supported input and output streams.</value>
+    <value>輸入資料流與輸出資料流集合不允許為 NULL 值。{0} 和 {1} 是支援的輸入與輸出資料流。</value>
   </data>
   <data name="WSManPluginNullPluginContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>外掛程式方法 {1} 中的 {0} 不允許為 NULL 值。</value>
   </data>
   <data name="WSManPluginNullShellContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>外掛程式方法 {1} 中的 {0} 不允許為 NULL 值。</value>
   </data>
   <data name="WSManPluginOperationClose" xml:space="preserve">
-    <value>PowerShell plugin operation is shutting down. This may happen if the hosting service or application is shutting down.</value>
+    <value>PowerShell 外掛程式作業正在關閉。如果主控服務或應用程式正在關閉，就可能發生此情況。</value>
   </data>
   <data name="WSManPluginOptionNotUnderstood" xml:space="preserve">
-    <value>PowerShell plugin does not understand the option {0}. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>PowerShell 外掛程式無法理解選項 {0}。請確定用戶端與 PowerShell 的組建 {1} 和通訊協定版本 {2} 相容。</value>
   </data>
   <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
-    <value>An option with name {0} is expected from the client. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>用戶端必須提供名稱為 {0} 的選項。請確定用戶端與 PowerShell 的組建 {1} 和通訊協定版本 {2} 相容。</value>
   </data>
   <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
-    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Powershell plugin does not support the protocol version {2} requested by client.&lt;/PSProtocolVersionError&gt;</value>
+    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;PowerShell 外掛程式不支援用戶端要求的通訊協定版本 {2}。&lt;/PSProtocolVersionError&gt;</value>
   </data>
   <data name="WSManPluginReportContextFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error while reporting context to WSMan service.</value>
+    <value>PowerShell 外掛程式向 WSMan 服務回報內容時發生嚴重錯誤。</value>
   </data>
   <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
     <value>無法建立受控伺服器工作階段。</value>
   </data>
   <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error registering a wait handle for shutdown notification.</value>
+    <value>PowerShell 外掛程式在註冊用於關閉通知的等候控制代碼時發生嚴重錯誤。</value>
   </data>
   <data name="ServerDriverRemoteHostAlreadyPushed" xml:space="preserve">
     <value>無法進入 Runspace，因為此工作階段中已推入 Runspace。</value>
@@ -1591,7 +1591,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>RequiredGroups 屬性雜湊表只能包含一個索引鍵。</value>
   </data>
   <data name="RequiredGroupsNotHashTable" xml:space="preserve">
-    <value>The RequiredGroups property is not in a name/value pair hashtable format.  This must be a hashtable of the form (using PowerShell syntax): RequiredGroups = @{ Or = 'Administrators' }.</value>
+    <value>RequiredGroups 屬性不是名稱/值組雜湊表格式。 這必須是下列格式的雜湊表 (使用 PowerShell 語法): RequiredGroups = @{ Or = 'Administrators' }。</value>
   </data>
   <data name="UnknownGroupMembershipKey" xml:space="preserve">
     <value>必要群組設定中有未知的索引鍵。 必要群組雜湊表只能包含 'And' 和 'Or' 這類邏輯成員資格分組的雜湊鍵。</value>
@@ -1662,7 +1662,7 @@ SSH 用戶端處理序在建立連線之前就已終止。</value>
     <value>PowerShell 6+ 不支援 WOW64。二進位檔必須與處理器架構相符。</value>
   </data>
   <data name="WowComponentNotPresent" xml:space="preserve">
-    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
+    <value>找不到 "{0}" 可執行檔。請確認已安裝 WOW64 功能。</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
     <value>無法將外掛程式 {0} 安裝到目錄 {1}。</value>
@@ -1703,7 +1703,7 @@ SSH 用戶端處理序在建立連線之前就已終止。</value>
     <value>遠端偵錯工具例外狀況: {0}，錯誤訊息: {1}</value>
   </data>
   <data name="WindowsPowerShellNotPresent" xml:space="preserve">
-    <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
+    <value>無法建立 Windows PowerShell 處理序，因為在此機器上找不到 Windows PowerShell。</value>
   </data>
   <data name="InvalidPSSessionArgument" xml:space="preserve">
     <value>Create 的 Runspace 引數必須是非 Null 的 RemoteRunspace 物件。</value>

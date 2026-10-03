@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IncorrectValueForCommandParameter" xml:space="preserve">
-    <value>ScriptBlock should only be specified as a value of the Command parameter.</value>
+    <value>ScriptBlock は、Command パラメーターの値としてのみ指定する必要があります。</value>
   </data>
   <data name="NoValueForCommandParameter" xml:space="preserve">
-    <value>No value was specified for the Command parameter.</value>
+    <value>Command パラメーターに値が指定されていません。</value>
   </data>
   <data name="IncorrectValueForFormatParameter" xml:space="preserve">
-    <value>A value that is not valid ({6}) was specified for the {7} parameter. Valid values are Text and Xml.</value>
+    <value>{7} パラメーターに無効な値 ({6}) が指定されました。有効な値は Text と Xml です。</value>
   </data>
   <data name="NoValueForInputFormatParameter" xml:space="preserve">
-    <value>No value was specified for the InputFormat parameter. Valid values are Text and Xml.</value>
+    <value>InputFormat パラメーターに値が指定されませんでした。有効な値は Text と Xml です。</value>
   </data>
   <data name="NoValueForOutputFormatParameter" xml:space="preserve">
-    <value>No value was specified for the OutputFormat parameter. Valid values are text and XML.</value>
+    <value>OutputFormat パラメーターに値が指定されませんでした。有効な値は Textと XML です。</value>
   </data>
   <data name="StringValueExpectedForFormatParameter" xml:space="preserve">
-    <value>The {6} parameter requires a string value.</value>
+    <value>{6} パラメーターには文字列値が必要です。</value>
   </data>
   <data name="NoValuesSpecifiedForArgs" xml:space="preserve">
-    <value>No value was specified for the Args parameter.</value>
+    <value>Args パラメーターに値が指定されていません。</value>
   </data>
   <data name="ParameterSpecifiedAlready" xml:space="preserve">
-    <value>The {6} parameter was already specified.</value>
+    <value>{6} パラメーターは既に指定されています。</value>
   </data>
   <data name="CliXmlError" xml:space="preserve">
-    <value>Cannot process the XML from the '{0}' stream of '{1}': {2}</value>
+    <value>'{1}' の '{0}' ストリームから XML を処理できません: {2}</value>
   </data>
 </root>

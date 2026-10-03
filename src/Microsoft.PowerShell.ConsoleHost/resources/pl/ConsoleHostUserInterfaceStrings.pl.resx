@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PromptEmptyDescriptionsErrorTemplate" xml:space="preserve">
-    <value>The "{0}" collection must have at least one element.</value>
+    <value>Kolekcja „{0}” musi mieć co najmniej jeden element.</value>
   </data>
   <data name="PromptParseOverflowErrorTemplate" xml:space="preserve">
-    <value>Cannot recognize "{1}" as a {0} due to an overflow error.</value>
+    <value>Nie można rozpoznać „{1}” jako {0} z powodu błędu przepełnienia.</value>
   </data>
   <data name="PromptParseFormatErrorTemplate" xml:space="preserve">
-    <value>Cannot recognize "{1}" as a {0} due to a format error.</value>
+    <value>Nie można rozpoznać „{1}” jako {0} z powodu błędu formatu.</value>
   </data>
   <data name="PromptUnrecognizedCommandErrorTemplate" xml:space="preserve">
-    <value>"{0}" cannot be recognized as a valid Prompt command.</value>
+    <value>Nie można rozpoznać „{0}” jako prawidłowego polecenia Prompt.</value>
   </data>
   <data name="PromptNoHelpAvailableErrorTemplate" xml:space="preserve">
-    <value>No help is available for {0}.</value>
+    <value>Brak dostępnej pomocy dla {0}.</value>
   </data>
   <data name="PromptFieldPromptInputSeparatorTemplate" xml:space="preserve">
     <value>{0}: </value>
   </data>
   <data name="RankZeroArrayErrorTemplate" xml:space="preserve">
-    <value>The field "{0}" is a zero rank array.</value>
+    <value>Pole „{0}” jest tablicą o randze zerowej.</value>
   </data>
   <data name="EmptyChoicesErrorTemplate" xml:space="preserve">
-    <value>"{0}" should have at least one element.</value>
+    <value>Element „{0}” powinien mieć co najmniej jeden element.</value>
   </data>
   <data name="InvalidDefaultChoiceErrorTemplate" xml:space="preserve">
-    <value>"{0}" must be a valid index into "{1}" or -1 for no default choice.</value>
+    <value>„{0}” musi być prawidłowym indeksem w „{1}” lub -1 w przypadku braku opcji domyślnej.</value>
   </data>
   <data name="InvalidDefaultChoiceForMultipleSelection" xml:space="preserve">
-    <value>"{0}" must be a valid index into "{1}". "{2}" is not a valid index.</value>
+    <value>„{0}” musi być prawidłowym indeksem w „{1}”. „{2}” nie jest prawidłowym indeksem.</value>
   </data>
   <data name="PromptForChoiceHelp" xml:space="preserve">
-    <value>[?] Help </value>
+    <value>[?] Pomoc </value>
   </data>
   <data name="PromptCanceledError" xml:space="preserve">
-    <value>The prompt was canceled.</value>
+    <value>Monit został anulowany.</value>
   </data>
   <data name="InvalidChoiceHotKeyError" xml:space="preserve">
-    <value>Cannot process the hot key because a question mark ("?") cannot be used as a hot key.</value>
+    <value>Nie można przetworzyć klawisza skrótu, ponieważ znak zapytania ("?") nie może być użyty jako klawisz skrótu.</value>
   </data>
   <data name="PromptTypeLoadErrorTemplate" xml:space="preserve">
-    <value>Cannot display the prompt for "{0}" because type "{1}" cannot be loaded.</value>
+    <value>Nie można wyświetlić monitu dla „{0}”, ponieważ nie można załadować typu „{1}”.</value>
   </data>
   <data name="NullOrEmptyErrorTemplate" xml:space="preserve">
     <value>Argument „{0}” nie może mieć wartości null ani nie może być pusty.</value>
   </data>
   <data name="NullErrorTemplate" xml:space="preserve">
-    <value>"{0}" cannot be null.</value>
+    <value>Wartość „{0}” nie może mieć wartości null.</value>
   </data>
   <data name="PromptHelp" xml:space="preserve">
-    <value>(Type !? for Help.)</value>
+    <value>(Aby uzyskać Pomoc, wpisz !?).</value>
   </data>
   <data name="DefaultChoicePrompt" xml:space="preserve">
-    <value>(default is "{0}"): </value>
+    <value>(wartość domyślna to „{0}”): </value>
   </data>
   <data name="DefaultChoiceForMultipleChoices" xml:space="preserve">
-    <value>(default is "{0}")</value>
+    <value>(wartość domyślna to „{0}”)</value>
   </data>
   <data name="DefaultChoicesForMultipleChoices" xml:space="preserve">
-    <value>(default choices are {0})</value>
+    <value>(domyślne opcje to {0})</value>
   </data>
   <data name="ChoiceMessage" xml:space="preserve">
-    <value>Choice[{0}]: </value>
+    <value>Wybór[{0}]: </value>
   </data>
   <data name="DebugFormatString" xml:space="preserve">
-    <value>DEBUG: {0}</value>
+    <value>DEBUGOWANIE: {0}</value>
   </data>
   <data name="VerboseFormatString" xml:space="preserve">
-    <value>VERBOSE: {0}</value>
+    <value>PEŁNE INFORMACJE: {0}</value>
   </data>
   <data name="WarningFormatString" xml:space="preserve">
-    <value>WARNING: {0}</value>
+    <value>OSTRZEŻENIE: {0}</value>
   </data>
   <data name="ReadFailsOnNonInteractiveFlag" xml:space="preserve">
-    <value>PowerShell is in NonInteractive mode. Read and Prompt functionality is not available.</value>
+    <value>Program PowerShell działa w trybie nieinteraktywnym. Funkcje Read i Prompt są niedostępne.</value>
   </data>
 </root>

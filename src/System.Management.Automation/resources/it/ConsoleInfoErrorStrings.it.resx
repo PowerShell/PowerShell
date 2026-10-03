@@ -118,36 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BadMonadVersion" xml:space="preserve">
-    <value>Incorrect PowerShell version {0}. PowerShell version {1} is supported on this computer.</value>
+    <value>La versione di PowerShell {0} non è corretta. In questo computer è supportata la versione di PowerShell {1}.</value>
   </data>
   <data name="ConsoleLoadFailure" xml:space="preserve">
-    <value>The following errors occurred when loading console {0}: {1}</value>
+    <value>Durante il caricamento della console {0} si sono verificati gli errori seguenti: {1}</value>
   </data>
   <data name="PSSnapInLoadFailure" xml:space="preserve">
-    <value>Cannot load PowerShell snap-in {0} because of the following error: {1}</value>
+    <value>Non è possibile caricare lo snap-in PowerShell {0} a causa dell'errore seguente: {1}</value>
   </data>
   <data name="PSSnapInLoadWarning" xml:space="preserve">
-    <value>PowerShell snap-in "{0}" loaded with the following warnings: {1}</value>
+    <value>Lo snap-in PowerShell "{0}" è stato caricato con i seguenti avvisi: {1}</value>
   </data>
   <data name="PSSnapInAssemblyNameMismatch" xml:space="preserve">
-    <value>The PowerShell snap-in module {0} does not have the required PowerShell snap-in strong name {1}.</value>
+    <value>Il modulo snap-in PowerShell {0} non dispone del nome sicuro dello snap-in PowerShell richiesto {1}.</value>
   </data>
   <data name="PSSnapInDuplicateCmdlets" xml:space="preserve">
-    <value>The cmdlet '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
+    <value>Il cmdlet ''{0}'' non deve verificarsi più di una volta nello snap-in di PowerShell ''{1}''.</value>
   </data>
   <data name="PSSnapInDuplicateProviders" xml:space="preserve">
-    <value>PowerShell provider '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
+    <value>Il provider PowerShell ''{0}'' non deve essere presente più di una volta nello snap-in PowerShell ''{1}''.</value>
   </data>
   <data name="AddPSSnapInBadMonadVersion" xml:space="preserve">
-    <value>PowerShell {0} is not supported in the current console. PowerShell {1} is supported in the current console.</value>
+    <value>PowerShell {0} non è supportato nella console corrente. PowerShell {1} è supportato nella console corrente.</value>
   </data>
   <data name="FileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>Il file {0} esiste già e {1} è stato specificato.</value>
   </data>
   <data name="ConfigurationFileDoesNotExist" xml:space="preserve">
-    <value>The provided configuration file '{0}' does not exist.</value>
+    <value>Il file di configurazione ''{0}'' specificato non esiste.</value>
   </data>
   <data name="NotConfigurationFile" xml:space="preserve">
-    <value>The provided configuration file '{0}' must have a .pssc file extension.</value>
+    <value>Il file di configurazione ''{0}'' specificato deve avere un'estensione pssc.</value>
   </data>
 </root>

@@ -118,276 +118,276 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NotSupported" xml:space="preserve">
-    <value>This functionality is not supported on this operating system.</value>
+    <value>この機能は、このオペレーティング システムではサポートされていません。</value>
   </data>
   <data name="NotEnabled" xml:space="preserve">
-    <value>Could not enable drive {0}.</value>
+    <value>ドライブ {0} を有効にできませんでした。</value>
   </data>
   <data name="InvalidDrive" xml:space="preserve">
-    <value>The command cannot turn on the restore computer infrastructure on the specified computer because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>指定されたドライブが無効なため、指定されたコンピューターの復元コンピューター インフラストラクチャを有効にできません。Drive パラメーターに有効なドライブを入力してから、もう一度やり直してください。</value>
   </data>
   <data name="NoSystemDrive" xml:space="preserve">
-    <value>Include System Drive in the list of Drives.</value>
+    <value>ドライブの一覧にシステム ドライブを含めます。</value>
   </data>
   <data name="NotValidDrive" xml:space="preserve">
-    <value>The command cannot turn off the restore computer infrastructure because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>指定されたドライブが無効なため、コンピューターの復元インフラストラクチャを無効にできません。Drive パラメーターに有効なドライブを入力してから、もう一度やり直してください。</value>
   </data>
   <data name="NotDisabled" xml:space="preserve">
-    <value>The command cannot disable System Restore on the {0} drive. You may not have sufficient permissions to perform this operation.</value>
+    <value>コマンドは、{0} ドライブのシステムの復元を無効にできません。この操作を行うための十分なアクセス許可がない可能性があります。</value>
   </data>
   <data name="ServiceDisabled" xml:space="preserve">
-    <value>SystemRestore service is disabled.</value>
+    <value>SystemRestore サービスが無効になっています。</value>
   </data>
   <data name="RestorePointNotCreated" xml:space="preserve">
-    <value>The system restore infrastructure cannot create a restore point.</value>
+    <value>システム復元インフラストラクチャは復元ポイントを作成できません。</value>
   </data>
   <data name="RestoreFailed" xml:space="preserve">
-    <value>The last attempt to restore the computer failed.</value>
+    <value>コンピューターを復元する最後の試行に失敗しました。</value>
   </data>
   <data name="RestoreSuccess" xml:space="preserve">
-    <value>The computer has been restored to the specified restore point.</value>
+    <value>指定された復元ポイントにコンピューターが復元されました。</value>
   </data>
   <data name="RestoreInterrupted" xml:space="preserve">
-    <value>The last attempt to restore the computer was interrupted.</value>
+    <value>コンピューターを復元する最後の試行が中断されました。</value>
   </data>
   <data name="NoRestorePoint" xml:space="preserve">
-    <value>The command cannot locate the "{0}" restore point. Verify the "{0}" sequence number, and then try the command again.</value>
+    <value>"{0}" 復元ポイントが見つかりません。"{0}" シーケンス番号を確認してから、コマンドを再試行してください。</value>
   </data>
   <data name="DoubleComputerName" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
   <data name="RestartcomputerFailed" xml:space="preserve">
-    <value>Failed to restart the computer {0} with the following error message: {1}.</value>
+    <value>次のエラー メッセージで、コンピューター {0} を再起動できませんでした: {1}。</value>
   </data>
   <data name="OperationFailed" xml:space="preserve">
-    <value>This command cannot be run on target computer('{1}') due to following error: {0}.{2}</value>
+    <value>次のエラーのため、ターゲット コンピューター ('{1}') でこのコマンドを実行できません: {0}。{2}</value>
   </data>
   <data name="StopcomputerFailed" xml:space="preserve">
-    <value>Failed to stop the computer {0} with the following error message: {1}.</value>
+    <value>次のエラー メッセージで、コンピューターの {0} を停止できませんでした: {1}。</value>
   </data>
   <data name="InvalidRestorePoint" xml:space="preserve">
-    <value>The command cannot restore the computer because "{0}" has not been set as valid restore point. Enter a valid restore point in the RestorePoint parameter, and then try again.</value>
+    <value>"{0}" が有効な復元ポイントとして設定されていないため、コマンドはコンピューターを復元できません。RestorePoint パラメーターに有効な復元ポイントを入力してから、もう一度やり直してください。</value>
   </data>
   <data name="RestartNeeded" xml:space="preserve">
-    <value>The changes will take effect after you restart the computer {1}.</value>
+    <value>変更は、コンピューター {1} を再起動した後に有効になります。</value>
   </data>
   <data name="RemoveComputerConfirm" xml:space="preserve">
-    <value>After you leave the domain, you will need to know the password of the local Administrator account to log onto this computer. Do you wish to continue?</value>
+    <value>ドメインを離れた後、このコンピューターにログオンするには、ローカルの Administrator アカウントのパスワードを知っている必要があります。続行しますか?</value>
   </data>
   <data name="InvalidComputerNameFormat" xml:space="preserve">
-    <value>The following computer name is not valid: {0}. Make sure that the computer name is not longer than 255 characters, that it does not contain two or more consecutive dots, that it does not begin with a dot, that it does not contain only numeric characters, and that it does not contain any of the following characters:
+    <value>次のコンピューター名が無効です: {0}。コンピューター名が 255 文字より長くなく、2 つ以上の連続するドットが含まれていないか、ドットで始まらないか、数字のみが含まれていないか、次の文字が含まれていないことを確認してください:
 {{|}}~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
   </data>
   <data name="InvalidDomainNameFormat" xml:space="preserve">
-    <value>The domain in computer name '{0}' is not valid. Make sure that the domain exists and that the name is a valid domain name.</value>
+    <value>コンピューター名 '{0}' のドメインが無効です。ドメインが存在し、名前が有効なドメイン名であることを確認してください。</value>
   </data>
   <data name="ComputerNamesAreEqual" xml:space="preserve">
-    <value>The value specified for the NewComputerName parameter is the same as the value of the ComputerName parameter. Provide a different value for the NewComputerName parameter.</value>
+    <value>NewComputerName パラメーターに指定された値は、ComputerName パラメーターの値と同じです。NewComputerName パラメーターに別の値を指定します。</value>
   </data>
   <data name="ResetComputerMachinePassword" xml:space="preserve">
-    <value>"The password of the secure channel between '{0}' and '{1}' has been reset."</value>
+    <value>"'{0}' と '{1}' の間の安全なチャネルのパスワードがリセットされました。"</value>
   </data>
   <data name="SystemRestoreServiceDisabled" xml:space="preserve">
-    <value>This command cannot be run due to the following error: the service cannot be started because it is disabled or does not have enabled devices associated with it.</value>
+    <value>次のエラーのため、このコマンドを実行できません: サービスが無効になっているか、有効になっているデバイスが関連付けられていないため、サービスを開始できません。</value>
   </data>
   <data name="ProgressActivity" xml:space="preserve">
-    <value>Creating a system restore point ...</value>
+    <value>システムの復元ポイントを作成しています...</value>
   </data>
   <data name="ProgressStatusCreatingRestorePoint" xml:space="preserve">
-    <value>Creating a system restore point... {0}% Completed.</value>
+    <value>システム復元ポイントを作成しています... {0}% 完了しました。</value>
   </data>
   <data name="ProgressStatusCompleted" xml:space="preserve">
-    <value>Completed.</value>
+    <value>完了しました。</value>
   </data>
   <data name="NetworkPathNotFound" xml:space="preserve">
-    <value>Try below options and Run the command again.
-1. Verify that the target computer('{0}') is running.
-2. Specify full computer name of the target computer('{0}').</value>
+    <value>以下のオプションを試して、コマンドをもう一度実行します。
+1. ターゲット コンピューター ('{0}') が実行されていることを確認します。
+2. ターゲット コンピューターのフル コンピューター名を指定します ('{0}')。</value>
   </data>
   <data name="PrivilegeNotEnabled" xml:space="preserve">
-    <value>Failed to restart the computer {0}. Access rights {1} cannot be enabled for the calling process.</value>
+    <value>コンピューター {0} を再起動できませんでした。呼び出し元のプロセスに対してアクセス権 {1} を有効にすることはできません。</value>
   </data>
   <data name="RestartComputerAction" xml:space="preserve">
-    <value>Enable the {0} and restart the computer.</value>
+    <value>{0} を有効にし、コンピューターを再起動してください。</value>
   </data>
   <data name="LocalShutdownPrivilege" xml:space="preserve">
-    <value>Local shutdown access rights</value>
+    <value>ローカル シャットダウン アクセス権</value>
   </data>
   <data name="RemoteShutdownPrivilege" xml:space="preserve">
-    <value>Remote shutdown access rights</value>
+    <value>リモート シャットダウン アクセス権</value>
   </data>
   <data name="CannotWaitLocalComputer" xml:space="preserve">
-    <value>Cannot wait for the local computer to restart. The local computer is ignored when the Wait parameter is specified.</value>
+    <value>ローカル コンピューターの再起動を待機できません。Wait パラメーターが指定されている場合、ローカル コンピューターは無視されます。</value>
   </data>
   <data name="RestartComputerInvalidParameter" xml:space="preserve">
-    <value>The parameters Timeout, For, and Delay are valid only when the parameter Wait is specified.</value>
+    <value>パラメーター Timeout、For、Delay は、パラメーター Wait が指定されている場合にのみ有効です。</value>
   </data>
   <data name="RestartMultipleComputersActivity" xml:space="preserve">
-    <value> Restarting computers...</value>
+    <value> コンピューターを再起動しています...</value>
   </data>
   <data name="RestartSingleComputerActivity" xml:space="preserve">
-    <value> Restarting computer {0}</value>
+    <value> コンピューター {0} を再起動しています</value>
   </data>
   <data name="WaitForMultipleComputers" xml:space="preserve">
-    <value>Completed: {0}/{1}.</value>
+    <value>完了済み: {0}/{1}。</value>
   </data>
   <data name="VerifyRebootStage" xml:space="preserve">
-    <value>Verifying that the computer has been restarted...</value>
+    <value>コンピューターが再起動されたことを確認しています...</value>
   </data>
   <data name="WaitForPowerShell" xml:space="preserve">
-    <value>Waiting for PowerShell connectivity...</value>
+    <value>PowerShell 接続を待機しています...</value>
   </data>
   <data name="WaitForRestartToBegin" xml:space="preserve">
-    <value>Waiting for the restart to begin...</value>
+    <value>再起動の開始を待機しています...</value>
   </data>
   <data name="WaitForWinRM" xml:space="preserve">
-    <value>Waiting for WinRM connectivity...</value>
+    <value>WinRM 接続を待機しています...</value>
   </data>
   <data name="WaitForWMI" xml:space="preserve">
-    <value>Waiting for WMI connectivity...</value>
+    <value>WMI 接続を待機しています...</value>
   </data>
   <data name="RestartComplete" xml:space="preserve">
-    <value>Restart is complete</value>
+    <value>再起動が完了しました</value>
   </data>
   <data name="NoSupportForCombinedServiceType" xml:space="preserve">
-    <value>The combined service types are not supported for now.</value>
+    <value>現時点では、結合されたサービスの種類はサポートされていません。</value>
   </data>
   <data name="CannotResolveComputerName" xml:space="preserve">
-    <value>Computer name {0} cannot be resolved with the exception: {1}.</value>
+    <value>コンピューター名 {0} を解決できません。例外: {1}。</value>
   </data>
   <data name="IncorrectNewNameNumber" xml:space="preserve">
-    <value>The number of new names is not equal to the number of target computers.</value>
+    <value>新しい名前の数がターゲット コンピューターの数と同じではありません。</value>
   </data>
   <data name="InvalidNewName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is not valid. The new computer name entered is not properly formatted. Standard names may contain letters (a-z, A-Z), numbers (0-9), and hyphens (-), but no spaces or periods (.). The name may not consist entirely of digits, and may not be longer than 63 characters.</value>
+    <value>新しい名前が無効なため、新しい名前 '{1}' のコンピューター '{0}' をスキップします。入力された新しいコンピューター名の形式が正しくありません。標準名には、文字 (a から z、A から Z)、数字 (0 から 9)、ハイフン (-) を含めることができますが、スペースやピリオド (.) は使用できません。名前は完全には数字で構成されず、63 文字を超えてはなりません。</value>
   </data>
   <data name="NewNameIsOldName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is the same as the current name.</value>
+    <value>新しい名前が現在の名前と同じであるため、新しい名前 '{1}' のコンピューター '{0}' をスキップします。</value>
   </data>
   <data name="ComputerNotInDomain" xml:space="preserve">
-    <value>Cannot remove computer '{0}' because it is not in a domain.</value>
+    <value>ドメインに存在しないため、コンピューター '{0}' を削除できません。</value>
   </data>
   <data name="FailToJoinWorkGroup" xml:space="preserve">
-    <value>Failed to join computer '{0}' to workgroup '{1}' with the following error message: {2}</value>
+    <value>次のエラー メッセージにより、コンピューター '{0}' をワークグループ '{1}' に参加できませんでした: {2}</value>
   </data>
   <data name="NetworkDown" xml:space="preserve">
-    <value>Cannot remove computer(s) from the domain because the local network is down.</value>
+    <value>ローカル ネットワークがダウンしているため、ドメインからコンピューターを削除できません。</value>
   </data>
   <data name="FailToRename" xml:space="preserve">
-    <value>Fail to rename computer '{0}' to '{1}' due to the following exception: {2}.</value>
+    <value>次の例外により、コンピューター '{0}' の名前を '{1}' に変更できませんでした: {2}。</value>
   </data>
   <data name="AddComputerActionDomain" xml:space="preserve">
-    <value>Join in domain '{0}'</value>
+    <value>ドメイン '{0}' に参加する</value>
   </data>
   <data name="AddComputerActionWorkgroup" xml:space="preserve">
-    <value>Join in workgroup '{0}'</value>
+    <value>ワークグループ '{0}' に参加する</value>
   </data>
   <data name="AddComputerToSameDomain" xml:space="preserve">
-    <value>Cannot add computer '{0}' to domain '{1}' because it is already in that domain.</value>
+    <value>コンピューター '{0}' をドメイン '{1}' に追加できません。コンピューターは既にそのドメインに存在します。</value>
   </data>
   <data name="AddComputerToSameWorkgroup" xml:space="preserve">
-    <value>Cannot add computer '{0}' to workgroup '{1}' because it is already in that workgroup.</value>
+    <value>コンピューター '{0}' をワークグループ '{1}' に追加できません。このコンピューターは既にそのワークグループに存在します。</value>
   </data>
   <data name="FailToRenameAfterJoinWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' successfully joined the workgroup '{1}', but could not be renamed to '{2}' with the following error message: {3}.</value>
+    <value>コンピューター '{0}' はワークグループ '{1}' に正常に参加しましたが、'{2}' に名前を変更できませんでした。エラー メッセージ: {3}。</value>
   </data>
   <data name="FailToSwitchFromDomainToWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from the domain '{1}', but it failed to join the workgroup '{2}' with the following error message: {3}.</value>
+    <value>コンピューター '{0}' はドメイン '{1}' から正常に参加しませんでしたが、ワークグループ '{2}' に参加できませんでした。エラー メッセージ: {3}。</value>
   </data>
   <data name="FailToUnjoinDomain" xml:space="preserve">
-    <value>Failed to unjoin computer '{0}' from domain '{1}' with the following error message: {2}.</value>
+    <value>ドメイン '{1}' からコンピューター '{0}' の参加を解除できませんでした。エラー メッセージ: {2}。</value>
   </data>
   <data name="FailToConnectToComputer" xml:space="preserve">
-    <value>Cannot establish the WMI connection to the computer '{0}' with the following error message: {1}.</value>
+    <value>次のエラー メッセージにより、コンピューター '{0}' への WMI 接続を確立できません: {1}。</value>
   </data>
   <data name="FailToJoinDomainFromWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' failed to join domain '{1}' from its current workgroup '{2}' with following error message: {3}.</value>
+    <value>コンピューター '{0}' は、現在のワークグループ '{2}' からドメイン '{1}' に参加できませんでした。エラー メッセージ: {3}。</value>
   </data>
   <data name="FailToJoinNewDomainAfterUnjoinOldDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from domain '{1}', but failed to join the new domain '{2}' with the following error message: {3}.</value>
+    <value>コンピューター '{0}' はドメイン '{1}' から正常に参加しませんでしたが、新しいドメイン '{2}' に参加できませんでした。エラー メッセージ: {3}。</value>
   </data>
   <data name="FailToRenameAfterJoinDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully joined to the new domain '{1}', but renaming it to '{2}' failed with the following error message: {3}.</value>
+    <value>コンピューター '{0}' は新しいドメイン '{1}' に正常に参加しましたが、名前を '{2}' に変更できませんでした。エラー メッセージ: {3}。</value>
   </data>
   <data name="InvalidJoinOptions" xml:space="preserve">
-    <value>The flag '{0}' is valid only if flag '{1}' is specified.</value>
+    <value>フラグ '{0}' は、フラグ '{1}' が指定されている場合にのみ有効です。</value>
   </data>
   <data name="CannotRenameMultipleComputers" xml:space="preserve">
-    <value>Cannot rename multiple computers. The NewName parameter is valid only if a single computer is specified.</value>
+    <value>複数のコンピューターの名前を変更することはできません。NewName パラメーターは、1 台のコンピューターが指定されている場合にのみ有効です。</value>
   </data>
   <data name="CannotFindMachineAccountFromDomain" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer in the domain {0}.</value>
+    <value>ドメイン {0} 内にローカル コンピューターのコンピューター アカウントが見つかりません。</value>
   </data>
   <data name="CannotFindMachineAccountFromServer" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer from the domain controller {0}.</value>
+    <value>ドメイン コントローラー {0} からローカル コンピューターのコンピューター アカウントが見つかりません。</value>
   </data>
   <data name="FailToGetDomainInformation" xml:space="preserve">
-    <value>Cannot get domain information about the local computer because of the following exception: {0}.</value>
+    <value>次の例外のため、ローカル コンピューターに関するドメイン情報を取得できません: {0}。</value>
   </data>
   <data name="FailToResetPasswordOnDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the computer account in the domain. Operation failed with the following exception: {0}.</value>
+    <value>ドメイン内のコンピューター アカウントの安全なチャネル パスワードをリセットできません。次の例外により、操作は失敗しました: {0}。</value>
   </data>
   <data name="FailToResetPasswordOnLocalMachine" xml:space="preserve">
-    <value>Resetting the secure channel password for the local computer failed with the following error message: {0}.</value>
+    <value>ローカル コンピューターの安全なチャネル パスワードをリセットできませんでした。エラー メッセージ: {0}。</value>
   </data>
   <data name="NeedAdminPrivilegeToResetPassword" xml:space="preserve">
-    <value>Administrator rights are required to reset the secure channel password on the local computer. Access is denied.</value>
+    <value>ローカル コンピューターの安全なチャネル パスワードをリセットするには、管理者権限が必要です。アクセスは拒否されました。</value>
   </data>
   <data name="ResetComputerNotInDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the account of the local computer. The local computer is not currently part of a domain.</value>
+    <value>ローカル コンピューターのアカウントの安全なチャネル パスワードをリセットできません。ローカル コンピューターは現在ドメインの一部ではありません。</value>
   </data>
   <data name="TruncateNetBIOSName" xml:space="preserve">
-    <value>The NetBIOS name of the computer is limited to 15 bytes, which is 15 characters in this case. The NetBIOS name will be shortened to "{0}", which may cause conflicts under NetBIOS name resolution. Do you wish to continue?</value>
+    <value>コンピューターの NetBIOS 名は 15 バイトに制限されています。この場合は 15 文字です。NetBIOS 名は "{0}" に短縮され、NetBIOS 名解決で競合が発生する可能性があります。続行しますか?</value>
   </data>
   <data name="TruncateNetBIOSNameCaption" xml:space="preserve">
-    <value>NetBIOS name will be truncated.</value>
+    <value>NetBIOS 名は切り捨てられます。</value>
   </data>
   <data name="CannotResolveServerName" xml:space="preserve">
-    <value>The specified server name {0} cannot be resolved.</value>
+    <value>指定されたサーバー名 {0} を解決できません。</value>
   </data>
   <data name="CannotCreateRestorePointWarning" xml:space="preserve">
-    <value>A new system restore point cannot be created because one has already been created within the past {0} minutes. The frequency of restore point creation can be changed by creating the DWORD value 'SystemRestorePointCreationFrequency' under the registry key 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore'. The value of this registry key indicates the necessary time interval (in minutes) between two restore point creation. The default value is 1440 minutes (24 hours).</value>
+    <value>過去 {0} 分以内に既に作成されているため、新しいシステム復元ポイントを作成できません。復元ポイントの作成頻度は、レジストリ キー 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore' の下に DWORD 値 'SystemRestorePointCreationFrequency' を作成することで変更できます。このレジストリ キーの値は、2 つの復元ポイントの作成の間に必要な時間間隔 (分単位) を示します。既定値は 1440 分 (24 時間) です。</value>
   </data>
   <data name="CannotGetOperatingSystemObject" xml:space="preserve">
-    <value>The Win32_OperatingSystem WMI object cannot be retrieved.</value>
+    <value>Win32_OperatingSystem WMI オブジェクトを取得できません。</value>
   </data>
   <data name="RestartComputerSkipped" xml:space="preserve">
-    <value>The computer {0} is skipped. Fail to retrieve its LastBootUpTime via the WMI service with the following error message: {1}.</value>
+    <value>コンピューター {0} はスキップされます。WMI サービス経由で LastBootUpTime を取得できませんでした。エラー メッセージ: {1}。</value>
   </data>
   <data name="FailToTestSecureChannel" xml:space="preserve">
-    <value>Cannot verify the secure channel for the local computer. Operation failed with the following exception: {0}.</value>
+    <value>ローカル コンピューターの安全なチャネルを確認できません。次の例外により、操作は失敗しました: {0}。</value>
   </data>
   <data name="RepairSecureChannelFail" xml:space="preserve">
-    <value>The attempt to repair the secure channel between the local computer and the domain {0} has failed.</value>
+    <value>ローカル コンピューターとドメイン {0} の間の安全なチャネルを修復できませんでした。</value>
   </data>
   <data name="RepairSecureChannelSucceed" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} was successfully repaired.</value>
+    <value>ローカル コンピューターとドメイン {0} の間の安全なチャネルが正常に修復されました。</value>
   </data>
   <data name="SecureChannelAlive" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is in good condition.</value>
+    <value>ローカル コンピューターとドメイン {0} の間の安全なチャネルは良好な状態です。</value>
   </data>
   <data name="SecureChannelBroken" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is broken.</value>
+    <value>ローカル コンピューターとドメイン {0} の間の安全なチャネルが壊れています。</value>
   </data>
   <data name="TestComputerNotInDomain" xml:space="preserve">
-    <value>Cannot verify the secure channel password for the local computer. The local computer is not currently part of a domain.</value>
+    <value>ローカル コンピューターの安全なチャネル パスワードを確認できません。ローカル コンピューターは現在ドメインの一部ではありません。</value>
   </data>
   <data name="SystemRestoreNotSupported" xml:space="preserve">
-    <value>The operation cannot be performed because the system restore APIs are not supported on the Advanced RISC Machine (ARM) platform.</value>
+    <value>システム復元 API が Advanced RISC Machine (ARM) プラットフォームでサポートされていないため、操作を実行できません。</value>
   </data>
   <data name="TimeoutError" xml:space="preserve">
-    <value>The computer did not finish restarting within the specified time-out period.</value>
+    <value>指定されたタイムアウト期間内にコンピューターの再起動が完了しませんでした。</value>
   </data>
   <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
-    <value>Cannot validate the time interval for restore point creation. It failed to retrieve the last restore point with the following error message: {0}.</value>
+    <value>復元ポイントの作成の時間間隔を検証できません。次のエラー メッセージで最後の復元ポイントを取得できませんでした: {0}。</value>
   </data>
   <data name="InvalidParameterSetAsJob" xml:space="preserve">
-    <value>The AsJob Parameter Set is not supported.</value>
+    <value>AsJob パラメーター セットはサポートされていません。</value>
   </data>
   <data name="InvalidParameterForCoreClr" xml:space="preserve">
-    <value>The {0} parameter is not supported for CoreCLR.</value>
+    <value>{0} パラメーターは CoreCLR ではサポートされていません。</value>
   </data>
   <data name="ShutdownCommandNotFound" xml:space="preserve">
-    <value>The required native command 'shutdown' was not found.</value>
+    <value>必須のネイティブ コマンド 'shutdown' が見つかりませんでした。</value>
   </data>
 </root>

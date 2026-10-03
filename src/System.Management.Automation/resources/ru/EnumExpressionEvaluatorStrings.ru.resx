@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EmptyInputString" xml:space="preserve">
-    <value>The input expression must not be empty. Specify at least one identifier name in each input expression. </value>
+    <value>Входное выражение не должно быть пустым. Укажите хотя бы одно имя идентификатора в каждом входном выражении. </value>
   </data>
   <data name="EmptyTokenString" xml:space="preserve">
-    <value>Unable to match an empty identifier name to a valid enumerator name. Specify one of the following enumerator names and retry: {0}.</value>
+    <value>Не удалось сопоставить пустое имя идентификатора с допустимым именем элемента перечислителя. Укажите одно из следующих имен перечислителя и повторите попытку: {0}.</value>
   </data>
   <data name="InvalidGenericType" xml:space="preserve">
-    <value>The generic type specified for the expression must represent an enum. Specify a valid enum type. </value>
+    <value>Универсальный тип, указанный для выражения, должен представлять перечисление. Укажите допустимый тип перечисления. </value>
   </data>
   <data name="MultipleEnumNameMatch" xml:space="preserve">
-    <value>The identifier name {0} cannot be processed because it is either too similar or identical to the following enumerator names: {1}. Use a more specific identifier name.</value>
+    <value>Имя идентификатора {0} не может быть обработано, так как оно либо слишком похоже на следующие имена элементов перечисления, либо совпадает с ними: {1}. Используйте более конкретное имя идентификатора.</value>
   </data>
   <data name="NoEnumNameMatch" xml:space="preserve">
-    <value>Unable to match the identifier name {0} to a valid enumerator name. Specify one of the following enumerator names and try again:
+    <value>Не удалось сопоставить имя идентификатора {0} с допустимым именем перечислителя. Укажите одно из следующих имен перечислителя и повторите попытку:
 {1}</value>
   </data>
   <data name="NoIdentifierGroupingAllowed" xml:space="preserve">
-    <value>Use of parentheses is not valid in the expression because identifier grouping is not allowed. Try removing the parentheses, or if a subexpression is enclosed, try expanding the expression.</value>
+    <value>Использование скобок в выражении недопустимо, так как группировка идентификаторов не разрешена. Попробуйте убрать скобки или, если в них заключено подвыражение, — раскрыть выражение.</value>
   </data>
   <data name="SyntaxErrorBinaryOperatorExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. Only an OR (,) operator or AND (+) operator is expected after an identifier name.</value>
+    <value>Не удалось проанализировать выражение из-за неожиданного токена. После имени идентификатора ожидается только оператор OR (,) или оператор AND (+).</value>
   </data>
   <data name="SyntaxErrorIdentifierExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token after a NOT (!) operator. An identifier name is expected after a NOT (!) operator.</value>
+    <value>Не удалось проанализировать выражение из-за неожиданного токена после оператора NOT (!). После оператора NOT (!) ожидается имя идентификатора.</value>
   </data>
   <data name="SyntaxErrorUnexpectedBinaryOperator" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. An identifier name or a NOT (!) operator is expected at the start of the expression, or after an OR (,) operator or an AND (+) operator. Also, an expression must not end with an OR (,), AND (+) or NOT (!) operator.</value>
+    <value>Не удалось проанализировать выражение из-за неожиданного токена. В начале выражения, а также после оператора OR (,) или AND (+), ожидается имя идентификатора или оператор NOT (!). Кроме того, выражение не должно заканчиваться оператором OR (,), AND (+) или NOT (!).</value>
   </data>
 </root>

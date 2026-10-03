@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AlreadyCompiledandLoaded" xml:space="preserve">
-    <value>The source code was already compiled and loaded.</value>
+    <value>Исходный код уже скомпилирован и загружен.</value>
   </data>
   <data name="FileExtensionNotSupported" xml:space="preserve">
-    <value>Cannot add type. The "{0}" extension is not supported.</value>
+    <value>Не удается добавить тип. Расширение "{0}" не поддерживается.</value>
   </data>
   <data name="MultipleExtensionsNotSupported" xml:space="preserve">
-    <value>Cannot add type. Input files must all have the same file extension.</value>
+    <value>Не удается добавить тип. Все входные файлы должны иметь одинаковое расширение.</value>
   </data>
   <data name="AssemblyNotFound" xml:space="preserve">
-    <value>Cannot add type. The assembly '{0}' could not be found.</value>
+    <value>Не удается добавить тип. Не удается найти сборку "{0}".</value>
   </data>
   <data name="TypeAlreadyExists" xml:space="preserve">
-    <value>Cannot add type. The type name '{0}' already exists.</value>
+    <value>Не удается добавить тип. Тип "{0}" уже существует.</value>
   </data>
   <data name="OutputAssemblyDidNotResolve" xml:space="preserve">
-    <value>Cannot set output assembly. The path {0} did not resolve to a single file.</value>
+    <value>Не удается задать выходную сборку. Путь {0} не разрешен в один файл.</value>
   </data>
   <data name="CompilerErrors" xml:space="preserve">
-    <value>Cannot add type. Compilation errors occurred.</value>
+    <value>Не удается добавить тип. Произошли ошибки компиляции.</value>
   </data>
   <data name="OutputTypeRequiresOutputAssembly" xml:space="preserve">
-    <value>Cannot add type. The OutputType parameter requires that the OutputAssembly parameter be specified.</value>
+    <value>Не удается добавить тип. Для параметра OutputType необходимо указать параметр OutputAssembly.</value>
   </data>
   <data name="CannotDefineNewType" xml:space="preserve">
-    <value>Cannot add type. Definition of new types is not supported in this language mode.</value>
+    <value>Не удается добавить тип. Определение новых типов не поддерживается в этом языковом режиме.</value>
   </data>
   <data name="ReferenceAssemblyIgnored" xml:space="preserve">
-    <value>The specified reference assembly '{0}' is unnecessary and ignored.</value>
+    <value>Указанная базовая сборка "{0}" не требуется и не учитывается.</value>
   </data>
   <data name="AssemblyTypeNotSupported" xml:space="preserve">
-    <value>Both the assembly types 'ConsoleApplication' and 'WindowsApplication' are not currently supported.</value>
+    <value>Типы сборок "ConsoleApplication" и "WindowsApplication" в настоящее время не поддерживаются.</value>
   </data>
   <data name="AddTypeLogTitle" xml:space="preserve">
-    <value>Add-Type Cmdlet</value>
+    <value>Командлет Add-Type</value>
   </data>
   <data name="AddTypeLogMessage" xml:space="preserve">
-    <value>Add-Type cmdlet will not be allowed in ConstrainedLanguage mode.</value>
+    <value>Командлет Add-Type не будет разрешен в режиме ConstrainedLanguage.</value>
   </data>
 </root>

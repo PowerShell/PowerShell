@@ -118,76 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AmbiguousMethodName" xml:space="preserve">
-    <value>Input name "{0}" is ambiguous. It can be resolved to multiple matched methods. Possible matches include:{1}.</value>
+    <value>입력 이름 "{0}"이(가) 모호합니다. 이 이름은 여러 일치 항목에 해당할 수 있습니다. 가능한 일치 항목은 다음과 같습니다. {1}</value>
   </data>
   <data name="AmbiguousPropertyOrMethodName" xml:space="preserve">
-    <value>Input name "{0}" is ambiguous. It can be resolved to multiple matched members. Possible matches include:{1}.</value>
+    <value>입력 이름 "{0}"이(가) 모호합니다. 이 이름은 여러 일치 멤버에 해당할 수 있습니다. 가능한 일치 항목은 다음과 같습니다. {1}</value>
   </data>
   <data name="ForEachObjectKeyAction" xml:space="preserve">
-    <value>Retrieve the value for key '{0}'</value>
+    <value>키 '{0}'의 값 검색</value>
   </data>
   <data name="ForEachObjectMethodActionWithArguments" xml:space="preserve">
-    <value>Invoke method '{0}' with arguments: {1}</value>
+    <value>다음 인수를 사용하여 메서드 '{0}'을(를) 호출합니다. {1}</value>
   </data>
   <data name="ForEachObjectMethodActionWithoutArguments" xml:space="preserve">
-    <value>Invoke method '{0}'</value>
+    <value>메서드 '{0}' 호출</value>
   </data>
   <data name="ForEachObjectPropertyAction" xml:space="preserve">
-    <value>Retrieve the value for property '{0}'</value>
+    <value>속성 '{0}'의 값 검색</value>
   </data>
   <data name="ForEachObjectTarget" xml:space="preserve">
-    <value>InputObject: {0}</value>
+    <value>inputObject: {0}</value>
   </data>
   <data name="InputObjectIsNull" xml:space="preserve">
-    <value>Cannot operate on a 'null' input object.</value>
+    <value>'null' 입력 개체에는 작업을 수행할 수 없습니다.</value>
   </data>
   <data name="MethodNotFound" xml:space="preserve">
-    <value>Input name "{0}" cannot be resolved to a method.</value>
+    <value>입력 이름 "{0}"을(를) 메서드로 확인할 수 없습니다.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Cannot invoke a method in the restricted language mode.</value>
+    <value>제한된 언어 모드에서는 메서드를 호출할 수 없습니다.</value>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
-    <value>The -WhatIf and -Confirm parameters are not supported for script blocks.</value>
+    <value>-WhatIf 및 -Confirm 매개 변수는 스크립트 블록에서 지원되지 않습니다.</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
-    <value>The '{0}' operation is not allowed in the RestrictedLanguage mode.</value>
+    <value>RestrictedLanguage 모드에서는 '{0}' 작업이 허용되지 않습니다.</value>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
-    <value>An operator is required to compare the two specified values. Include a valid operator in the command, and then try the command again. For example, Get-Process | Where-Object -Property Name -eq Idle</value>
+    <value>지정된 두 값을 비교하려면 연산자가 필요합니다. 명령에 올바른 연산자를 포함한 다음 명령을 다시 시도하세요. 예: Get-Process | Where-Object -Property Name -eq Idle</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The input name "{0}" cannot be resolved to a property.</value>
+    <value>입력 이름 "{0}"을(를) 속성으로 확인할 수 없습니다.</value>
   </data>
   <data name="PropertyOrMethodNotFound" xml:space="preserve">
-    <value>The input name "{0}" cannot be resolved to a member.</value>
+    <value>입력 이름 "{0}"을(를) 멤버로 확인할 수 없습니다.</value>
   </data>
   <data name="ValueNotSpecifiedForWhereObject" xml:space="preserve">
-    <value>The specified operator requires both the -Property and -Value parameters. Provide values for both parameters, and then try the command again.</value>
+    <value>지정된 연산자에는 -Property 및 -Value 매개 변수가 모두 필요합니다. 두 매개 변수에 값을 모두 입력한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="PSTaskStreamWriterWrongThread" xml:space="preserve">
-    <value>This method cannot be run on the current thread. It can only be called on the cmdlet thread.</value>
+    <value>이 메서드는 현재 스레드에서 실행할 수 없습니다. cmdlet 스레드에서만 호출할 수 있습니다.</value>
   </data>
   <data name="ParallelUsingVariableCannotBeScriptBlock" xml:space="preserve">
-    <value>A ForEach-Object -Parallel using variable cannot be a script block. Passed-in script block variables are not supported with ForEach-Object -Parallel, and can result in undefined behavior.</value>
+    <value>변수를 사용하는 ForEach-Object -Parallel의 입력 개체는 스크립트 블록일 수 없습니다. 전달된 스크립트 블록 변수는 ForEach-Object -Parallel에서 지원되지 않으며 정의되지 않은 동작을 일으킬 수 있습니다.</value>
   </data>
   <data name="ParallelPipedInputObjectCannotBeScriptBlock" xml:space="preserve">
-    <value>A ForEach-Object -Parallel piped input object cannot be a script block. Passed-in script block variables are not supported with ForEach-Object -Parallel, and can result in undefined behavior.</value>
+    <value>ForEach-Object -Parallel의 파이프된 입력 개체는 스크립트 블록일 수 없습니다. 전달된 스크립트 블록 변수는 ForEach-Object -Parallel에서 지원되지 않으며 정의되지 않은 동작을 일으킬 수 있습니다.</value>
   </data>
   <data name="ParallelCannotUseTimeoutWithJob" xml:space="preserve">
-    <value>The 'TimeoutSeconds' parameter cannot be used with the 'AsJob' parameter.</value>
+    <value>'TimeoutSeconds' 매개 변수는 'AsJob' 매개 변수와 함께 사용할 수 없습니다.</value>
   </data>
   <data name="ParallelCommonParametersNotSupported" xml:space="preserve">
-    <value>The following common parameters are not currently supported in the Parallel parameter set:
+    <value>다음 일반 매개 변수는 현재 Parallel 매개 변수 집합에서 지원되지 않습니다.
 ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
   </data>
   <data name="ParallelPipedInputProcessingError" xml:space="preserve">
-    <value>An unexpected error has occurred while processing ForEach-Object -Parallel input. This may mean that some of the piped input did not get processed. Error: {0}.</value>
+    <value>ForEach-Object -Parallel 입력을 처리하는 동안 예기치 않은 오류가 발생했습니다. 파이프된 입력 중 일부가 처리되지 않았을 수 있습니다. 오류: {0}.</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
     <value>ForEach-Object Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Method invocation on type '{0}' will not be allowed when run in Constrained Language mode.</value>
+    <value>제한된 언어 모드에서 '{0}' 형식에 대한 메서드 호출은 허용되지 않습니다.</value>
   </data>
 </root>

@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ArgumentOutOfRange_NeedNonNegNum" xml:space="preserve">
-    <value>Non negative number is required.</value>
+    <value>음수가 아닌 숫자가 필요합니다.</value>
   </data>
   <data name="ArgumentOutOfRange_NeedValidId" xml:space="preserve">
-    <value>The ID parameter must be in the range {0} through {1}.</value>
+    <value>ID 매개 변수는 {0}에서 {1}까지여야 합니다.</value>
   </data>
   <data name="ArgumentOutOfRange_MaxArgExceeded" xml:space="preserve">
-    <value>The total number of parameters must not exceed {0}.</value>
+    <value>전체 매개 변수 수는 {0}을(를) 초과하면 안 됩니다.</value>
   </data>
   <data name="ArgumentOutOfRange_MaxStringsExceeded" xml:space="preserve">
-    <value>The number of String parameters must not exceed {0}.</value>
+    <value>String 매개 변수의 수는 {0}을(를) 초과할 수 없습니다.</value>
   </data>
   <data name="Argument_NeedNonemptyDelimiter" xml:space="preserve">
-    <value>Delimiter cannot be an empty string.</value>
+    <value>구분 기호는 빈 문자열일 수 없습니다.</value>
   </data>
 </root>

@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PromptEmptyDescriptionsErrorTemplate" xml:space="preserve">
-    <value>The "{0}" collection must have at least one element.</value>
+    <value>“{0}”集合必须包含至少一个元素。</value>
   </data>
   <data name="PromptParseOverflowErrorTemplate" xml:space="preserve">
-    <value>Cannot recognize "{1}" as a {0} due to an overflow error.</value>
+    <value>由于溢出错误，无法将“{1}”识别为 {0}。</value>
   </data>
   <data name="PromptParseFormatErrorTemplate" xml:space="preserve">
-    <value>Cannot recognize "{1}" as a {0} due to a format error.</value>
+    <value>由于格式错误，无法将“{1}”识别为 {0}。</value>
   </data>
   <data name="PromptUnrecognizedCommandErrorTemplate" xml:space="preserve">
-    <value>"{0}" cannot be recognized as a valid Prompt command.</value>
+    <value>无法将“{0}”识别为有效的提示命令。</value>
   </data>
   <data name="PromptNoHelpAvailableErrorTemplate" xml:space="preserve">
-    <value>No help is available for {0}.</value>
+    <value>{0} 没有可用的帮助。</value>
   </data>
   <data name="PromptFieldPromptInputSeparatorTemplate" xml:space="preserve">
-    <value>{0}: </value>
+    <value>{0}:</value>
   </data>
   <data name="RankZeroArrayErrorTemplate" xml:space="preserve">
-    <value>The field "{0}" is a zero rank array.</value>
+    <value>字段“{0}”是一个零秩数组。</value>
   </data>
   <data name="EmptyChoicesErrorTemplate" xml:space="preserve">
-    <value>"{0}" should have at least one element.</value>
+    <value>“{0}”应包含至少一个元素。</value>
   </data>
   <data name="InvalidDefaultChoiceErrorTemplate" xml:space="preserve">
-    <value>"{0}" must be a valid index into "{1}" or -1 for no default choice.</value>
+    <value>“{0}”必须是“{1}”的有效索引或 -1(表示没有默认选择)。</value>
   </data>
   <data name="InvalidDefaultChoiceForMultipleSelection" xml:space="preserve">
-    <value>"{0}" must be a valid index into "{1}". "{2}" is not a valid index.</value>
+    <value>“{0}”必须是“{1}”的有效索引。“{2}”不是有效索引。</value>
   </data>
   <data name="PromptForChoiceHelp" xml:space="preserve">
-    <value>[?] Help </value>
+    <value>[?] 帮助 </value>
   </data>
   <data name="PromptCanceledError" xml:space="preserve">
-    <value>The prompt was canceled.</value>
+    <value>提示已取消。</value>
   </data>
   <data name="InvalidChoiceHotKeyError" xml:space="preserve">
-    <value>Cannot process the hot key because a question mark ("?") cannot be used as a hot key.</value>
+    <value>无法处理热键，因为问号("?")不能用作热键。</value>
   </data>
   <data name="PromptTypeLoadErrorTemplate" xml:space="preserve">
-    <value>Cannot display the prompt for "{0}" because type "{1}" cannot be loaded.</value>
+    <value>无法显示“{0}”的提示，因为无法加载类型“{1}”。</value>
   </data>
   <data name="NullOrEmptyErrorTemplate" xml:space="preserve">
     <value>“{0}”不能是 Null 或为空。</value>
   </data>
   <data name="NullErrorTemplate" xml:space="preserve">
-    <value>"{0}" cannot be null.</value>
+    <value>“{0}”不得为 null。</value>
   </data>
   <data name="PromptHelp" xml:space="preserve">
-    <value>(Type !? for Help.)</value>
+    <value>(键入 !? 以获取帮助。)</value>
   </data>
   <data name="DefaultChoicePrompt" xml:space="preserve">
-    <value>(default is "{0}"): </value>
+    <value>(默认值为“{0}”):</value>
   </data>
   <data name="DefaultChoiceForMultipleChoices" xml:space="preserve">
-    <value>(default is "{0}")</value>
+    <value>(默认值为“{0}”)</value>
   </data>
   <data name="DefaultChoicesForMultipleChoices" xml:space="preserve">
-    <value>(default choices are {0})</value>
+    <value>(默认选项为 {0})</value>
   </data>
   <data name="ChoiceMessage" xml:space="preserve">
-    <value>Choice[{0}]: </value>
+    <value>Choice[{0}]:</value>
   </data>
   <data name="DebugFormatString" xml:space="preserve">
-    <value>DEBUG: {0}</value>
+    <value>调试: {0}</value>
   </data>
   <data name="VerboseFormatString" xml:space="preserve">
-    <value>VERBOSE: {0}</value>
+    <value>详细信息: {0}</value>
   </data>
   <data name="WarningFormatString" xml:space="preserve">
-    <value>WARNING: {0}</value>
+    <value>警告: {0}</value>
   </data>
   <data name="ReadFailsOnNonInteractiveFlag" xml:space="preserve">
-    <value>PowerShell is in NonInteractive mode. Read and Prompt functionality is not available.</value>
+    <value>PowerShell 处于非交互模式。读取和提示功能不可用。</value>
   </data>
 </root>

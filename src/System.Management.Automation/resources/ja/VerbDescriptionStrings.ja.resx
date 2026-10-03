@@ -118,303 +118,303 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Add" xml:space="preserve">
-    <value>Adds a resource to a container, or attaches an item to another item</value>
+    <value>コンテナーにリソースを追加するか、項目を別の項目にアタッチします</value>
   </data>
   <data name="Approve" xml:space="preserve">
-    <value>Confirms or agrees to the status of a resource or process</value>
+    <value>リソースまたはプロセスの状態を確認するか、それに同意します</value>
   </data>
   <data name="Assert" xml:space="preserve">
-    <value>Affirms the state of a resource</value>
+    <value>リソースの状態を表明します</value>
   </data>
   <data name="Backup" xml:space="preserve">
-    <value>Stores data by replicating it</value>
+    <value>データをレプリケートして格納します</value>
   </data>
   <data name="Block" xml:space="preserve">
-    <value>Restricts access to a resource</value>
+    <value>リソースへのアクセスを制限します</value>
   </data>
   <data name="Build" xml:space="preserve">
-    <value>Creates an artifact (usually a binary or document) out of some set of input files (usually source code or declarative documents)</value>
+    <value>何らかの入力ファイル セット (通常はソース コードまたは宣言ドキュメント) から成果物 (通常はバイナリまたはドキュメント) を作成します</value>
   </data>
   <data name="Checkpoint" xml:space="preserve">
-    <value>Creates a snapshot of the current state of the data or of its configuration</value>
+    <value>データまたはその構成の現在の状態のスナップショットを作成します</value>
   </data>
   <data name="Clear" xml:space="preserve">
-    <value>Removes all the resources from a container but does not delete the container</value>
+    <value>コンテナーからオブジェクトをすべて削除しますが、コンテナーは削除しません</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Changes the state of a resource to make it inaccessible, unavailable, or unusable</value>
+    <value>リソースの状態を変更して、アクセス不可、利用不可、または使用不可にします</value>
   </data>
   <data name="Compare" xml:space="preserve">
-    <value>Evaluates the data from one resource against the data from another resource</value>
+    <value>あるリソースのデータを、別のリソースのデータと比較して評価します</value>
   </data>
   <data name="Complete" xml:space="preserve">
-    <value>Concludes an operation</value>
+    <value>操作を終了します</value>
   </data>
   <data name="Compress" xml:space="preserve">
-    <value>Compacts the data of a resource</value>
+    <value>リソースのデータを圧縮します</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Acknowledges, verifies, or validates the state of a resource or process</value>
+    <value>リソースまたはプロセスの状態を承認、検証、または確認します</value>
   </data>
   <data name="Connect" xml:space="preserve">
-    <value>Creates a link between a source and a destination</value>
+    <value>ソースと宛先の間にリンクを作成します</value>
   </data>
   <data name="Convert" xml:space="preserve">
-    <value>Changes the data from one representation to another when the cmdlet supports bidirectional conversion or when the cmdlet supports conversion between multiple data types</value>
+    <value>コマンドレットが双方向変換をサポートしている場合、またはコマンドレットが複数のデータ型間の変換をサポートする場合に、データをある表現から別の表現に変更します</value>
   </data>
   <data name="ConvertFrom" xml:space="preserve">
-    <value>Converts one primary type of input (the cmdlet noun indicates the input) to one or more supported output types</value>
+    <value>1 種類のプライマリ入力 (コマンドレットの名詞が入力を示します) を、1 つ以上のサポートされている出力の種類に変換します</value>
   </data>
   <data name="ConvertTo" xml:space="preserve">
-    <value>Converts from one or more types of input to a primary output type (the cmdlet noun indicates the output type)</value>
+    <value>1 つ以上の種類の入力からプライマリ出力型に変換します (コマンドレットの名詞は出力の種類を示します)</value>
   </data>
   <data name="Copy" xml:space="preserve">
-    <value>Copies a resource to another name or to another container</value>
+    <value>リソースを別の名前または別のコンテナーにコピーします</value>
   </data>
   <data name="Debug" xml:space="preserve">
-    <value>Examines a resource to diagnose operational problems</value>
+    <value>リソースを調べて運用上の問題を診断します</value>
   </data>
   <data name="Deny" xml:space="preserve">
-    <value>Refuses, objects, blocks, or opposes the state of a resource or process</value>
+    <value>リソースまたはプロセスの状態を拒否、反対、ブロック、または禁止します</value>
   </data>
   <data name="Deploy" xml:space="preserve">
-    <value>Sends an application, website, or solution to a remote target[s] in such a way that a consumer of that solution can access it after deployment is complete</value>
+    <value>アプリケーション、Web サイト、またはソリューションをリモート ターゲットに送信して、そのソリューションのコンシューマーが展開の完了後にアクセスできるようにします</value>
   </data>
   <data name="Disable" xml:space="preserve">
-    <value>Configures a resource to an unavailable or inactive state</value>
+    <value>リソースを使用できない状態または非アクティブな状態に構成します</value>
   </data>
   <data name="Disconnect" xml:space="preserve">
-    <value>Breaks the link between a source and a destination</value>
+    <value>ソースと宛先の間のリンクを解除します</value>
   </data>
   <data name="Dismount" xml:space="preserve">
-    <value>Detaches a named entity from a location</value>
+    <value>名前付きエンティティを場所からデタッチします</value>
   </data>
   <data name="Edit" xml:space="preserve">
-    <value>Modifies existing data by adding or removing content</value>
+    <value>コンテンツを追加または削除して既存のデータを変更します</value>
   </data>
   <data name="Enable" xml:space="preserve">
-    <value>Configures a resource to an available or active state</value>
+    <value>使用可能な状態またはアクティブな状態にリソースを構成します</value>
   </data>
   <data name="Enter" xml:space="preserve">
-    <value>Specifies an action that allows the user to move into a resource</value>
+    <value>ユーザーにリソース内への移動を許可するアクションを指定します</value>
   </data>
   <data name="Exit" xml:space="preserve">
-    <value>Sets the current environment or context to the most recently used context</value>
+    <value>現在の環境またはコンテキストを最近使用したコンテキストに設定します</value>
   </data>
   <data name="Expand" xml:space="preserve">
-    <value>Restores the data of a resource that has been compressed to its original state</value>
+    <value>圧縮されたリソースのデータを元の状態に復元します</value>
   </data>
   <data name="Export" xml:space="preserve">
-    <value>Encapsulates the primary input into a persistent data store, such as a file, or into an interchange format</value>
+    <value>プライマリ入力をファイルなどの永続的なデータ ストアにカプセル化するか、インターチェンジ形式にカプセル化します</value>
   </data>
   <data name="Find" xml:space="preserve">
-    <value>Looks for an object in a container that is unknown, implied, optional, or specified</value>
+    <value>不明、暗黙、オプション、または指定のコンテナー内のオブジェクトを検索します</value>
   </data>
   <data name="Format" xml:space="preserve">
-    <value>Arranges objects in a specified form or layout</value>
+    <value>指定したフォームまたはレイアウトでオブジェクトを配置します</value>
   </data>
   <data name="Get" xml:space="preserve">
-    <value>Specifies an action that retrieves a resource</value>
+    <value>リソースを取得するアクションを指定します</value>
   </data>
   <data name="Grant" xml:space="preserve">
-    <value>Allows access to a resource</value>
+    <value>リソースへのアクセスを許可します</value>
   </data>
   <data name="Group" xml:space="preserve">
-    <value>Arranges or associates one or more resources</value>
+    <value>1 つ以上のリソースを配置するか関連付けます</value>
   </data>
   <data name="Hide" xml:space="preserve">
-    <value>Makes a resource undetectable</value>
+    <value>リソースを検出できないようにします</value>
   </data>
   <data name="Import" xml:space="preserve">
-    <value>Creates a resource from data that is stored in a persistent data store (such as a file) or in an interchange format</value>
+    <value>永続的なデータ ストア (ファイルなど) またはインターチェンジ形式で格納されているデータからリソースを作成します</value>
   </data>
   <data name="Initialize" xml:space="preserve">
-    <value>Prepares a resource for use, and sets it to a default state</value>
+    <value>使用するリソースを準備し、既定の状態に設定します</value>
   </data>
   <data name="Install" xml:space="preserve">
-    <value>Places a resource in a location, and optionally initializes it</value>
+    <value>リソースを場所に配置し、必要に応じて初期設定します</value>
   </data>
   <data name="Invoke" xml:space="preserve">
-    <value>Performs an action, such as running a command or a method</value>
+    <value>コマンドやメソッドの実行などのアクションを実行します</value>
   </data>
   <data name="Join" xml:space="preserve">
-    <value>Combines resources into one resource</value>
+    <value>リソースを 1 つのリソースに結合します</value>
   </data>
   <data name="Limit" xml:space="preserve">
-    <value>Applies constraints to a resource</value>
+    <value>リソースに制約を適用します</value>
   </data>
   <data name="Lock" xml:space="preserve">
-    <value>Secures a resource</value>
+    <value>リソースをセキュリティで保護します</value>
   </data>
   <data name="Measure" xml:space="preserve">
-    <value>Identifies resources that are consumed by a specified operation, or retrieves statistics about a resource</value>
+    <value>指定された操作によって使用されたリソースを識別するか、リソースに関する統計情報を取得します</value>
   </data>
   <data name="Merge" xml:space="preserve">
-    <value>Creates a single resource from multiple resources</value>
+    <value>複数のリソースから 1 つのリソースを作成します</value>
   </data>
   <data name="Mount" xml:space="preserve">
-    <value>Attaches a named entity to a location</value>
+    <value>名前付きエンティティを場所にアタッチします</value>
   </data>
   <data name="Move" xml:space="preserve">
-    <value>Moves a resource from one location to another</value>
+    <value>ある場所から別の場所にリソースを移動します</value>
   </data>
   <data name="New" xml:space="preserve">
-    <value>Creates a resource</value>
+    <value>リソースを作成します</value>
   </data>
   <data name="Open" xml:space="preserve">
-    <value>Changes the state of a resource to make it accessible, available, or usable</value>
+    <value>リソースの状態を変更して、アクセス可能、使用可能、または使用可能にします</value>
   </data>
   <data name="Optimize" xml:space="preserve">
-    <value>Increases the effectiveness of a resource</value>
+    <value>リソースの有効性を向上させます</value>
   </data>
   <data name="Out" xml:space="preserve">
-    <value>Sends data out of the environment</value>
+    <value>環境からデータを送信します</value>
   </data>
   <data name="Ping" xml:space="preserve">
-    <value>Use the Test verb</value>
+    <value>Test 動詞を使用する</value>
   </data>
   <data name="Pop" xml:space="preserve">
-    <value>Removes an item from the top of a stack</value>
+    <value>スタックの一番上から項目を削除します</value>
   </data>
   <data name="Protect" xml:space="preserve">
-    <value>Safeguards a resource from attack or loss</value>
+    <value>攻撃や損失からリソースを保護します</value>
   </data>
   <data name="Publish" xml:space="preserve">
-    <value>Makes a resource available to others</value>
+    <value>リソースを他のユーザーが使用できるようにします</value>
   </data>
   <data name="Push" xml:space="preserve">
-    <value>Adds an item to the top of a stack</value>
+    <value>スタックの一番上に項目を追加します</value>
   </data>
   <data name="Read" xml:space="preserve">
-    <value>Acquires information from a source</value>
+    <value>ソースから情報を取得します</value>
   </data>
   <data name="Receive" xml:space="preserve">
-    <value>Accepts information sent from a source</value>
+    <value>ソースから送信された情報を受け入れます</value>
   </data>
   <data name="Redo" xml:space="preserve">
-    <value>Resets a resource to the state that was undone</value>
+    <value>元に戻された状態にリソースをリセットします</value>
   </data>
   <data name="Register" xml:space="preserve">
-    <value>Creates an entry for a resource in a repository such as a database</value>
+    <value>データベースなどのリポジトリにリソースのエントリを作成します</value>
   </data>
   <data name="Remove" xml:space="preserve">
-    <value>Deletes a resource from a container</value>
+    <value>コンテナーからリソースを削除します</value>
   </data>
   <data name="Rename" xml:space="preserve">
-    <value>Changes the name of a resource</value>
+    <value>リソースの名前を変更します</value>
   </data>
   <data name="Repair" xml:space="preserve">
-    <value>Restores a resource to a usable condition</value>
+    <value>リソースを使用できる状態に復元します</value>
   </data>
   <data name="Request" xml:space="preserve">
-    <value>Asks for a resource or asks for permissions</value>
+    <value>リソースの要求またはアクセス許可を要求します</value>
   </data>
   <data name="Reset" xml:space="preserve">
-    <value>Sets a resource back to its original state</value>
+    <value>リソースを元の状態に戻します</value>
   </data>
   <data name="Resize" xml:space="preserve">
-    <value>Changes the size of a resource</value>
+    <value>リソースのサイズを変更します</value>
   </data>
   <data name="Resolve" xml:space="preserve">
-    <value>Maps a shorthand representation of a resource to a more complete representation</value>
+    <value>リソースの簡略表現をより完全な表現にマップします</value>
   </data>
   <data name="Restart" xml:space="preserve">
-    <value>Stops an operation and then starts it again</value>
+    <value>操作を停止し、再び開始します</value>
   </data>
   <data name="Restore" xml:space="preserve">
-    <value>Sets a resource to a predefined state, such as a state set by Checkpoint</value>
+    <value>チェックポイントによって設定された状態など、定義済みの状態にリソースを設定します</value>
   </data>
   <data name="Resume" xml:space="preserve">
-    <value>Starts an operation that has been suspended</value>
+    <value>中断されていた操作を開始します</value>
   </data>
   <data name="Revoke" xml:space="preserve">
-    <value>Specifies an action that does not allow access to a resource</value>
+    <value>リソースへのアクセスを許可しないアクションを指定します</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Preserves data to avoid loss</value>
+    <value>データを保持して損失を回避します</value>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Creates a reference to a resource in a container</value>
+    <value>コンテナー内のリソースへの参照を作成します</value>
   </data>
   <data name="Select" xml:space="preserve">
-    <value>Locates a resource in a container</value>
+    <value>コンテナー内のリソースを検索します</value>
   </data>
   <data name="Send" xml:space="preserve">
-    <value>Delivers information to a destination</value>
+    <value>宛先に情報を配信します</value>
   </data>
   <data name="Set" xml:space="preserve">
-    <value>Replaces data on an existing resource or creates a resource that contains some data</value>
+    <value>既存のリソースのデータを置き換えるか、一部のデータを含むリソースを作成します</value>
   </data>
   <data name="Show" xml:space="preserve">
-    <value>Makes a resource visible to the user</value>
+    <value>リソースをユーザーに表示できるようにする</value>
   </data>
   <data name="Sync" xml:space="preserve">
-    <value>Assures that two or more resources are in the same state</value>
+    <value>2 つ以上のリソースが同じ状態であることを保証します</value>
   </data>
   <data name="Skip" xml:space="preserve">
-    <value>Bypasses one or more resources or points in a sequence</value>
+    <value>シーケンス内の 1 つ以上のリソースまたはポイントをバイパスします</value>
   </data>
   <data name="Split" xml:space="preserve">
-    <value>Separates parts of a resource</value>
+    <value>リソースの一部を分離します</value>
   </data>
   <data name="Start" xml:space="preserve">
-    <value>Initiates an operation</value>
+    <value>操作を開始します</value>
   </data>
   <data name="Step" xml:space="preserve">
-    <value>Moves to the next point or resource in a sequence</value>
+    <value>シーケンス内の次のポイントまたはリソースに移動します</value>
   </data>
   <data name="Stop" xml:space="preserve">
-    <value>Discontinues an activity</value>
+    <value>アクティビティを中止します</value>
   </data>
   <data name="Submit" xml:space="preserve">
-    <value>Presents a resource for approval</value>
+    <value>承認のためのリソースを提示します</value>
   </data>
   <data name="Suspend" xml:space="preserve">
-    <value>Pauses an activity</value>
+    <value>アクティビティを一時停止します</value>
   </data>
   <data name="Switch" xml:space="preserve">
-    <value>Specifies an action that alternates between two resources, such as to change between two locations, responsibilities, or states</value>
+    <value>2 つの場所、責任、状態の間で変更するなど、2 つのリソースを代替するアクションを指定します</value>
   </data>
   <data name="Test" xml:space="preserve">
-    <value>Verifies the operation or consistency of a resource</value>
+    <value>リソースの操作または整合性を検証します</value>
   </data>
   <data name="Trace" xml:space="preserve">
-    <value>Tracks the activities of a resource</value>
+    <value>リソースのアクティビティを追跡します</value>
   </data>
   <data name="Unblock" xml:space="preserve">
-    <value>Removes restrictions to a resource</value>
+    <value>リソースに対する制限を削除します</value>
   </data>
   <data name="Undo" xml:space="preserve">
-    <value>Sets a resource to its previous state</value>
+    <value>リソースを以前の状態に設定します</value>
   </data>
   <data name="Uninstall" xml:space="preserve">
-    <value>Removes a resource from an indicated location</value>
+    <value>指定された場所からリソースを削除します</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Releases a resource that was locked</value>
+    <value>ロックされたリソースを解放します</value>
   </data>
   <data name="Unprotect" xml:space="preserve">
-    <value>Removes safeguards from a resource that were added to prevent it from attack or loss</value>
+    <value>攻撃や損失を防ぐために追加されたリソースからセーフガードを削除します</value>
   </data>
   <data name="Unpublish" xml:space="preserve">
-    <value>Makes a resource unavailable to others</value>
+    <value>リソースを他のユーザーが使用できないようにします</value>
   </data>
   <data name="Unregister" xml:space="preserve">
-    <value>Removes the entry for a resource from a repository</value>
+    <value>リポジトリからリソースのエントリを削除します</value>
   </data>
   <data name="Update" xml:space="preserve">
-    <value>Brings a resource up-to-date to maintain its state, accuracy, conformance, or compliance</value>
+    <value>リソースを最新の状態、精度、準拠、またはコンプライアンスを維持します</value>
   </data>
   <data name="Use" xml:space="preserve">
-    <value>Uses or includes a resource to do something</value>
+    <value>リソースを使用または組み込んで何らかの処理を行います</value>
   </data>
   <data name="Wait" xml:space="preserve">
-    <value>Pauses an operation until a specified event occurs</value>
+    <value>指定したイベントが発生するまで操作を一時停止します</value>
   </data>
   <data name="Watch" xml:space="preserve">
-    <value>Continually inspects or monitors a resource for changes</value>
+    <value>リソースの変更を継続的に検査または監視します</value>
   </data>
   <data name="Write" xml:space="preserve">
-    <value>Adds information to a target</value>
+    <value>ターゲットに情報を追加します</value>
   </data>
 </root>

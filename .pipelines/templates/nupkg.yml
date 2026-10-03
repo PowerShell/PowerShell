@@ -156,6 +156,7 @@ jobs:
     displayName: Build reference assemblies
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
   - task: onebranch.pipeline.signing@1
     displayName: Sign ref assemblies

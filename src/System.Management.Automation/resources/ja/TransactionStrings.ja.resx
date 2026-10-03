@@ -118,57 +118,57 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoTransactionActive" xml:space="preserve">
-    <value>Cannot use transaction. No transaction is active.</value>
+    <value>トランザクションを使用できません。アクティブなトランザクションはありません。</value>
   </data>
   <data name="NoTransactionActiveForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. No transaction is active.</value>
+    <value>トランザクションをコミットできません。アクティブなトランザクションはありません。</value>
   </data>
   <data name="NoTransactionActiveForRollback" xml:space="preserve">
-    <value>Cannot roll back the transaction, because there is no active transaction.</value>
+    <value>アクティブなトランザクションがないため、トランザクションをロールバックできません。</value>
   </data>
   <data name="CommittedTransactionForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been committed.</value>
+    <value>トランザクションをロールバックできません。トランザクションは既にコミットされています。</value>
   </data>
   <data name="CommittedTransactionForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has already been committed.</value>
+    <value>トランザクションをコミットできません。トランザクションは既にコミットされています。</value>
   </data>
   <data name="TransactionRolledBackForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has been rolled back or has timed out.</value>
+    <value>トランザクションをコミットできません。トランザクションはロールバックされたか、タイムアウトしました。</value>
   </data>
   <data name="TransactionRolledBackForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been rolled back or has timed out.</value>
+    <value>トランザクションをロールバックできません。トランザクションは既にロールバックされたか、タイムアウトしています。</value>
   </data>
   <data name="NoTransactionForActivation" xml:space="preserve">
-    <value>Cannot set active transaction. No transaction has been created.</value>
+    <value>アクティブなトランザクションを設定できません。トランザクションが作成されていません。</value>
   </data>
   <data name="NoTransactionForActivationBecauseRollback" xml:space="preserve">
-    <value>Cannot set active transaction. The active transaction has been rolled back or has timed out.</value>
+    <value>アクティブなトランザクションを設定できません。アクティブなトランザクションがロールバックされたか、タイムアウトしました。</value>
   </data>
   <data name="NoTransactionAvailable" xml:space="preserve">
-    <value>This cmdlet requires an active transaction. The current transaction has already been committed or rolled back.</value>
+    <value>このコマンドレットにはアクティブなトランザクションが必要です。現在のトランザクションは既にコミットまたはロールバックされています。</value>
   </data>
   <data name="CmdletRequiresUseTx" xml:space="preserve">
-    <value>This cmdlet requires a transaction. Run the command again with the -UseTransaction parameter.</value>
+    <value>このコマンドレットにはトランザクションが必要です。-UseTransaction パラメーターを指定して、コマンドをもう一度実行してください。</value>
   </data>
   <data name="NoTransactionStarted" xml:space="preserve">
-    <value>Cannot use transaction. No transaction has been started.</value>
+    <value>トランザクションを使用できません。トランザクションが開始されていません。</value>
   </data>
   <data name="NoTransactionStartedFromCommit" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been committed.</value>
+    <value>トランザクションを使用できません。トランザクションがコミットされました。</value>
   </data>
   <data name="NoTransactionStartedFromRollback" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been rolled back or has timed out.</value>
+    <value>トランザクションを使用できません。トランザクションはロールバックされたか、タイムアウトしました。</value>
   </data>
   <data name="TransactionTimedOut" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has timed out.</value>
+    <value>トランザクションを使用できません。トランザクションがタイムアウトしました。</value>
   </data>
   <data name="BaseTransactionNotSet" xml:space="preserve">
-    <value>The base transaction has not been set.</value>
+    <value>ベース トランザクションが設定されていません。</value>
   </data>
   <data name="BaseTransactionNotActive" xml:space="preserve">
-    <value>The base transaction is not active.</value>
+    <value>ベース トランザクションがアクティブではありません。</value>
   </data>
   <data name="BaseTransactionMustBeFirst" xml:space="preserve">
-    <value>The base transaction cannot be set after other transactions have been created.</value>
+    <value>他のトランザクションが作成された後は、ベース トランザクションを設定できません。</value>
   </data>
 </root>

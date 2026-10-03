@@ -118,114 +118,114 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EnabledExperimentalFeatures" xml:space="preserve">
-    <value>Variable to hold the enabled experimental feature names</value>
+    <value>用來存放已啟用實驗性功能名稱的變數</value>
   </data>
   <data name="PSHOMEDescription" xml:space="preserve">
-    <value>Parent folder of the host application of the current runspace</value>
+    <value>目前 Runspace 之主應用程式的父資料夾</value>
   </data>
   <data name="HOMEDescription" xml:space="preserve">
-    <value>Folder containing the current user's profile</value>
+    <value>包含目前使用者設定檔的資料夾</value>
   </data>
   <data name="PSHostDescription" xml:space="preserve">
-    <value>A reference to the host of the current runspace</value>
+    <value>目前 Runspace 的主機參照</value>
   </data>
   <data name="ExecutionContextDescription" xml:space="preserve">
-    <value>The run objects available to cmdlets</value>
+    <value>可供 Cmdlet 使用的執行物件</value>
   </data>
   <data name="PSVersionTableDescription" xml:space="preserve">
-    <value>Version information for current PowerShell session</value>
+    <value>目前 PowerShell 工作階段的版本資訊</value>
   </data>
   <data name="PIDDescription" xml:space="preserve">
-    <value>Current process ID</value>
+    <value>目前的程序識別碼</value>
   </data>
   <data name="DollarHookDescription" xml:space="preserve">
-    <value>Status of last command</value>
+    <value>最後一個命令的狀態</value>
   </data>
   <data name="PPIDDescription" xml:space="preserve">
-    <value>Parent process ID</value>
+    <value>父處理序識別碼</value>
   </data>
   <data name="MshShellIdDescription" xml:space="preserve">
-    <value>The ShellID identifies the current shell.  This is used by #Requires.</value>
+    <value>ShellID 會識別目前的殼層。 這是由 #Requires 所使用的。</value>
   </data>
   <data name="ConsoleDescription" xml:space="preserve">
-    <value>Name of the current console file</value>
+    <value>目前主控台檔案名稱</value>
   </data>
   <data name="OutputEncodingDescription" xml:space="preserve">
-    <value>The text encoding used when piping text to a native executable file</value>
+    <value>將文字管線傳送至原生可執行檔時使用的文字編碼</value>
   </data>
   <data name="PSApplicationOutputEncodingDescription" xml:space="preserve">
-    <value>The text encoding used when reading output text from a native executable file</value>
+    <value>從原生可執行檔讀取輸出文字時使用的文字編碼</value>
   </data>
   <data name="PSStyleDescription" xml:space="preserve">
-    <value>Configuration controlling how text is rendered.</value>
+    <value>控制文字轉譯方式的設定。</value>
   </data>
   <data name="PSEmailServerDescription" xml:space="preserve">
-    <value>Variable to contain the name of the email server. This can be used instead of the HostName parameter in the Send-MailMessage cmdlet.</value>
+    <value>用來包含電子郵件伺服器名稱的變數。這可用來取代 Send-MailMessage Cmdlet 中的 HostName 參數。</value>
   </data>
   <data name="ConfirmPreferenceDescription" xml:space="preserve">
-    <value>Dictates when confirmation should be requested. Confirmation is requested when the ConfirmImpact of the operation is equal to or greater than $ConfirmPreference. If $ConfirmPreference is None, actions will only be confirmed when Confirm is specified.</value>
+    <value>規定應要求確認的時機。當作業的 ConfirmImpact 等於或大於 $ConfirmPreference 時，系統會要求確認。如果 $ConfirmPreference 為 none，則只有在指定 Confirm 時才會確認動作。</value>
   </data>
   <data name="DebugPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Debug message is delivered</value>
+    <value>規定傳遞偵錯訊息時要採取的動作</value>
   </data>
   <data name="ErrorActionPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when an error message is delivered</value>
+    <value>規定傳遞錯誤訊息時要採取的動作</value>
   </data>
   <data name="ProgressPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when progress records are delivered</value>
+    <value>規定傳遞進度記錄時要採取的動作</value>
   </data>
   <data name="VerbosePreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Verbose message is delivered</value>
+    <value>規定傳遞詳細資訊訊息時要採取的動作</value>
   </data>
   <data name="WarningPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Warning message is delivered</value>
+    <value>規定傳遞警告訊息時要採取的動作</value>
   </data>
   <data name="InformationPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a command generates an item in the Information stream</value>
+    <value>規定命令在 Information 資料流中產生項目時要採取的動作</value>
   </data>
   <data name="ErrorViewDescription" xml:space="preserve">
-    <value>Dictates the view mode to use when displaying errors</value>
+    <value>規定顯示錯誤時要使用的檢視模式</value>
   </data>
   <data name="NestedPromptLevelDescription" xml:space="preserve">
-    <value>Dictates what type of prompt should be displayed for the current nesting level</value>
+    <value>規定目前巢狀層級應顯示的提示類型</value>
   </data>
   <data name="PSNativeCommandUseErrorActionPreferenceDescription" xml:space="preserve">
-    <value>If true, $ErrorActionPreference applies to native executables, so that non-zero exit codes will generate cmdlet-style errors governed by error action settings</value>
+    <value>如果為 true，$ErrorActionPreference 會套用至原生可執行檔，因此非零結束代碼會產生受錯誤動作設定控制的 Cmdlet 樣式錯誤</value>
   </data>
   <data name="WhatIfPreferenceDescription" xml:space="preserve">
-    <value>If true, WhatIf is considered to be enabled for all commands.</value>
+    <value>如果為 true，則會將所有命令的 WhatIf 視為已啟用。</value>
   </data>
   <data name="NativeCommandArgumentPassingDescription" xml:space="preserve">
-    <value>Dictates how arguments are passed to native executables.</value>
+    <value>規定如何將引數傳遞至原生可執行檔。</value>
   </data>
   <data name="FormatEnumerationLimitDescription" xml:space="preserve">
-    <value>Dictates the limit of enumeration on formatting IEnumerable objects</value>
+    <value>規定格式化 IEnumerable 物件時的列舉上限</value>
   </data>
   <data name="ReportErrorShowStackTraceDescription" xml:space="preserve">
-    <value>Displays errors with a stack trace</value>
+    <value>顯示錯誤與堆疊追蹤</value>
   </data>
   <data name="ReportErrorShowInnerExceptionDescription" xml:space="preserve">
-    <value>Displays errors with inner exceptions</value>
+    <value>顯示錯誤與內部例外狀況</value>
   </data>
   <data name="ReportErrorShowSourceDescription" xml:space="preserve">
-    <value>Displays errors with their sources</value>
+    <value>顯示錯誤及其來源</value>
   </data>
   <data name="ReportErrorShowExceptionClassDescription" xml:space="preserve">
-    <value>Displays errors with a description of the error class</value>
+    <value>顯示錯誤及其錯誤類別描述</value>
   </data>
   <data name="DollarPSCultureDescription" xml:space="preserve">
-    <value>Culture of the current PowerShell session</value>
+    <value>目前 PowerShell 工作階段的文化特性</value>
   </data>
   <data name="DollarPSUICultureDescription" xml:space="preserve">
-    <value>UI culture of the current PowerShell session</value>
+    <value>目前 PowerShell 工作階段的 UI 文化特性</value>
   </data>
   <data name="PSDefaultParameterValuesDescription" xml:space="preserve">
-    <value>Variable to hold all default &lt;cmdlet:parameter, value&gt; pairs</value>
+    <value>用於儲存所有預設 &lt;cmdlet:parameter, value&gt; 對的變數</value>
   </data>
   <data name="PauseDefinitionString" xml:space="preserve">
-    <value>Press Enter to continue...</value>
+    <value>按 Enter 鍵以繼續...</value>
   </data>
   <data name="PSEditionDescription" xml:space="preserve">
-    <value>Edition information for the current PowerShell session</value>
+    <value>目前 PowerShell 工作階段的版本資訊</value>
   </data>
 </root>

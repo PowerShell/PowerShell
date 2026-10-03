@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CoordinateOutOfBufferErrorTemplate" xml:space="preserve">
-    <value>Cannot process the operation because the supplied coordinate is not valid. Specify a coordinate within the buffer area of {0}.</value>
+    <value>Operaci nelze zpracovat, protože zadané souřadnice nejsou platné. Zadejte souřadnici v oblasti {0} vyrovnávací paměti.</value>
   </data>
   <data name="InvalidBufferSizeError" xml:space="preserve">
-    <value>Cannot set the buffer size because the size specified is too large or too small.</value>
+    <value>Velikost vyrovnávací paměti nelze nastavit, protože zadaná velikost je příliš velká nebo příliš malá.</value>
   </data>
   <data name="InvalidConsoleColorError" xml:space="preserve">
-    <value>Cannot set the console color because the value specified is not valid. Specify a valid color as defined by the System.ConsoleColor type.</value>
+    <value>Barvu konzoly nelze nastavit, protože zadaná hodnota není platná. Zadejte platnou barvu definovanou typem System.ConsoleColor.</value>
   </data>
   <data name="InvalidCursorSizeError" xml:space="preserve">
-    <value>Cannot process CursorSize because the cursor size specified is not valid.</value>
+    <value>Vlastnost CursorSize nelze zpracovat, protože zadaná velikost kurzoru není platná.</value>
   </data>
   <data name="InvalidReadKeyOptionsError" xml:space="preserve">
-    <value>Cannot read key options. To read options, set one or both of the following: IncludeKeyDown, IncludeKeyUp.</value>
+    <value>Nelze načíst možnosti čtení klávesy. Chcete-li číst stisknutí kláves, nastavte jednu nebo obě z následujících možností: IncludeKeyDown, IncludeKeyUp.</value>
   </data>
   <data name="InvalidRegionErrorTemplate" xml:space="preserve">
-    <value>{0} should be greater than or equal to {1}.</value>
+    <value>Hodnota {0} musí být větší nebo rovna {1}.</value>
   </data>
   <data name="InvalidXWindowPositionError" xml:space="preserve">
-    <value>Cannot use the specified Window X (column) position because it extends past the width of the screen buffer. Specify another X position, starting with 0 as the left most column of the buffer.</value>
+    <value>Zadanou pozici X okna (sloupec) nelze použít, protože přesahuje šířku vyrovnávací paměti obrazovky. Zadejte jinou pozici X, přičemž 0 představuje krajní levý sloupec vyrovnávací paměti.</value>
   </data>
   <data name="InvalidYWindowPositionError" xml:space="preserve">
-    <value>Cannot use the specified Window Y (row) position because it extends past the height of the screen buffer. Specify another Y position, starting with 0 as the top-most row of the buffer.</value>
+    <value>Zadanou pozici Y okna (řádek) nelze použít, protože přesahuje výšku vyrovnávací paměti obrazovky. Zadejte jinou pozici Y, přičemž 0 představuje horní krajní řádek vyrovnávací paměti.</value>
   </data>
   <data name="WindowWidthTooSmallError" xml:space="preserve">
-    <value>Window width cannot be less than 1.</value>
+    <value>Šířka okna nemůže být menší než 1.</value>
   </data>
   <data name="WindowHeightTooSmallError" xml:space="preserve">
-    <value>Window height must be at least 1.</value>
+    <value>Výška okna musí být alespoň 1.</value>
   </data>
   <data name="WindowWidthLargerThanBufferError" xml:space="preserve">
-    <value>Window cannot be wider than the screen buffer.</value>
+    <value>Okno nemůže být širší než vyrovnávací paměť obrazovky.</value>
   </data>
   <data name="WindowHeightLargerThanBufferError" xml:space="preserve">
-    <value>Window cannot be taller than the screen buffer.</value>
+    <value>Okno nemůže být vyšší než vyrovnávací paměť obrazovky.</value>
   </data>
   <data name="WindowWidthTooLargeErrorTemplate" xml:space="preserve">
-    <value>Window cannot be wider than {0}.</value>
+    <value>Okno nemůže být širší než {0}.</value>
   </data>
   <data name="WindowHeightTooLargeErrorTemplate" xml:space="preserve">
-    <value>Window cannot be taller than {0}.</value>
+    <value>Okno nemůže být vyšší než {0}.</value>
   </data>
   <data name="WindowTooNarrowError" xml:space="preserve">
-    <value>Window size is too narrow.</value>
+    <value>Šířka okna je příliš malá.</value>
   </data>
   <data name="WindowTooShortError" xml:space="preserve">
-    <value>Window size is too short.</value>
+    <value>Výška okna je příliš malá.</value>
   </data>
   <data name="WindowTitleTooShortError" xml:space="preserve">
-    <value>Window title cannot be empty.</value>
+    <value>Název okna nemůže být prázdný.</value>
   </data>
   <data name="WindowTitleTooLongErrorTemplate" xml:space="preserve">
-    <value>Window title cannot be longer than {0} characters.</value>
+    <value>Název okna nemůže být delší než {0} znaků.</value>
   </data>
   <data name="WindowTitleElevatedPrefix" xml:space="preserve">
-    <value>Administrator: </value>
+    <value>Správce: </value>
   </data>
 </root>

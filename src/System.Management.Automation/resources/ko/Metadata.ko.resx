@@ -118,150 +118,150 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MetadataMemberInitialization" xml:space="preserve">
-    <value>Cannot initialize attributes for "{0}": "{1}"</value>
+    <value>"{0}"에 대해 특성을 초기화할 수 없습니다. "{1}"</value>
   </data>
   <data name="ValidateRangeElementType" xml:space="preserve">
-    <value>The argument cannot be validated because its type "{0}" is not the same type ({1}) as the maximum and minimum limits of the parameter. Make sure the argument is of type {1} and then try the command again.</value>
+    <value>인수의 형식 "{0}"이(가) 매개 변수의 최대 및 최소 제한과 같은 형식({1})이 아니므로 인수의 유효성을 검사할 수 없습니다. 인수가 {1} 형식인지 확인한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateRangePositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not greater than zero.</value>
+    <value>인수 "{0}"은(는) 값이 0보다 크지 않으므로 유효성을 검사할 수 없습니다.</value>
   </data>
   <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not greater than or equal to zero.</value>
+    <value>인수 "{0}"은(는) 값이 0보다 크거나 같지 않으므로 유효성을 검사할 수 없습니다.</value>
   </data>
   <data name="ValidateRangeNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not less than zero.</value>
+    <value>인수 "{0}"은(는) 값이 0보다 작지 않으므로 유효성을 검사할 수 없습니다.</value>
   </data>
   <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not less than or equal to zero.</value>
+    <value>인수 "{0}"는 값이 0보다 작거나 같지 않으므로 유효성을 검사할 수 없습니다.</value>
   </data>
   <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
-    <value>The specified minimum range ({0}) cannot be accepted because it is not the same type as the specified maximum range ({1}). Update the ValidateRange attribute for the parameter.</value>
+    <value>지정된 최소 범위({0})는 지정된 최대 범위({1})와 형식이 같지 않으므로 사용할 수 없습니다. 매개 변수의 ValidateRange 특성을 업데이트하세요.</value>
   </data>
   <data name="ValidateRangeNotIComparable" xml:space="preserve">
-    <value>Cannot accept the MaxRange and MinRange parameter types. Both parameters must be objects that implement an IComparable interface.</value>
+    <value>MaxRange 및 MinRange 매개 변수 형식을 사용할 수 없습니다. 두 매개 변수는 모두 IComparable 인터페이스를 구현하는 개체여야 합니다.</value>
   </data>
   <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
-    <value>The specified maximum range cannot be accepted because it is less than the specified minimum range. Update the ValidateRange attribute for the parameter.</value>
+    <value>지정된 최대 범위가 지정된 최소 범위보다 작으므로 사용할 수 없습니다. 매개 변수의 ValidateRange 특성을 업데이트하세요.</value>
   </data>
   <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
-    <value>The {0} argument is greater than the maximum allowed range of {1}. Supply an argument that is less than or equal to {1} and then try the command again.</value>
+    <value>{0} 인수가 허용되는 최대 범위인 {1}보다 큽니다. {1}보다 작거나 같은 인수를 제공한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateRangeSmallerThanMinRangeFailure" xml:space="preserve">
-    <value>The {0} argument is less than the minimum allowed range of {1}. Supply an argument that is greater than or equal to {1} and then try the command again.</value>
+    <value>{0} 인수가 허용되는 최소 범위인 {1}보다 작습니다. {1}보다 크거나 같은 인수를 제공한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidatePatternFailure" xml:space="preserve">
-    <value>The argument "{0}" does not match the "{1}" pattern. Supply an argument that matches "{1}" and try the command again.</value>
+    <value>인수 "{0}"이(가) "{1}" 패턴과 일치하지 않습니다. "{1}"과(와) 일치하는 인수를 제공한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateCountNotInArray" xml:space="preserve">
-    <value>The ValidateCount attribute cannot be applied to a non-array parameter. Either remove the attribute from the parameter or make the parameter an array parameter.</value>
+    <value>배열이 아닌 매개 변수에는 ValidateCount 특성을 적용할 수 없습니다. 매개 변수에서 특성을 제거하거나 매개 변수를 배열 매개 변수로 만드세요.</value>
   </data>
   <data name="ValidateCountExactFailure" xml:space="preserve">
-    <value>The parameter requires exactly {0} value(s) - {1} value(s) were provided.</value>
+    <value>매개 변수에는 정확히 {0}개의 값이 필요합니다. {1}개의 값이 제공되었습니다.</value>
   </data>
   <data name="ValidateCountMinMaxFailure" xml:space="preserve">
-    <value>The parameter requires at least {0} value(s) and no more than {1} value(s) - {2} value(s) were provided.</value>
+    <value>매개 변수에는 {0}개 이상의 값과 {1}개 이하의 값이 필요합니다. {2}개의 값이 제공되었습니다.</value>
   </data>
   <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
-    <value>The specified maximum number of arguments for a parameter is fewer than the specified minimum number of arguments. Update the ValidateCount attribute for the parameter.</value>
+    <value>매개 변수에 지정된 최대 인수 개수가 지정된 최소 인수 개수보다 적습니다. 매개 변수의 ValidateCount 특성을 업데이트하세요.</value>
   </data>
   <data name="ValidateLengthMaxLengthSmallerThanMinLength" xml:space="preserve">
-    <value>The specified maximum character length of the argument is shorter than the specified minimum argument character length. Update the ValidateLength attribute for the parameter.</value>
+    <value>인수에 지정된 최대 문자 길이가 지정된 최소 인수 문자 길이보다 짧습니다. 매개 변수의 ValidateLength 특성을 업데이트하세요.</value>
   </data>
   <data name="ValidateLengthNotString" xml:space="preserve">
-    <value>The ValidateLength attribute cannot be applied to a parameter that is not a string or string[] parameter. Make the parameter a string or string[] parameter.</value>
+    <value>ValidateLength 특성은 string 또는 string[] 매개 변수에만 적용할 수 있습니다. 매개 변수를 string 또는 string[] 매개 변수로 바꾸세요.</value>
   </data>
   <data name="ValidateLengthMinLengthFailure" xml:space="preserve">
-    <value>The character length ({1}) of the argument is too short. Specify an argument with a length that is greater than or equal to "{0}", and then try the command again.</value>
+    <value>인수의 문자 길이({1})가 너무 짧습니다. 길이가 "{0}"보다 크거나 같은 인수를 지정한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateLengthMaxLengthFailure" xml:space="preserve">
-    <value>The character length ({1}) of the argument is too long. Specify an argument with a length that is shorter than or equal to "{0}", and then try the command again.</value>
+    <value>인수의 문자 길이({1})가 너무 깁니다. 길이가 "{0}"보다 짧거나 같은 인수를 지정한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateSetFailure" xml:space="preserve">
-    <value>The argument "{0}" does not belong to the set "{1}" specified by the ValidateSet attribute. Supply an argument that is in the set and then try the command again.</value>
+    <value>인수 "{0}"은(는) ValidateSet 특성에 지정된 집합 "{1}"에 속하지 않습니다. 집합에 있는 인수를 제공한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateSetGeneratedValidValuesListIsNull" xml:space="preserve">
-    <value>Valid values generator return a null value.</value>
+    <value>유효한 값 생성기가 null 값을 반환합니다.</value>
   </data>
   <data name="ValidateFailureResult" xml:space="preserve">
-    <value>"{0}" failed on property "{1}" {2}</value>
+    <value>속성 "{1}"에서 "{0}"이(가) 실패했습니다. {2}</value>
   </data>
   <data name="ParsingTooManyParameterSets" xml:space="preserve">
-    <value>Cannot get or run the command. The maximum number of parameter sets for this command has been exceeded.</value>
+    <value>명령을 가져오거나 실행할 수 없습니다. 이 명령에 대해 허용되는 최대 매개 변수 집합 수를 초과했습니다.</value>
   </data>
   <data name="ArgumentTransformationArgumentsShouldBeStrings" xml:space="preserve">
-    <value>Cannot process the argument because the argument value is not a string. The values of parameter arguments that have the ArgumentTransformationAttribute specified should be strings.</value>
+    <value>인수 값이 문자열이 아니므로 인수를 처리할 수 없습니다. ArgumentTransformationAttribute가 지정된 매개 변수 인수의 값은 문자열이어야 합니다.</value>
   </data>
   <data name="InvalidValueFailure" xml:space="preserve">
-    <value>The variable cannot be validated because the value {1} is not a valid value for the {0} variable.</value>
+    <value>값 {1}이(가) {0} 변수에 대한 올바른 값이 아니므로 변수의 유효성을 검사할 수 없습니다.</value>
   </data>
   <data name="InvalidMetadataForCurrentValue" xml:space="preserve">
-    <value>The attribute cannot be added because variable {0} with value {1} would no longer be valid.</value>
+    <value>값이 {0}인 변수 {1}이(가) 더 이상 유효하지 않으므로 특성을 추가할 수 없습니다.</value>
   </data>
   <data name="ValidateNotNullFailure" xml:space="preserve">
-    <value>The argument is null. Provide a valid value for the argument, and then try running the command again.</value>
+    <value>인수가 null입니다. 인수에 유효한 값을 제공한 다음 명령을 다시 실행하세요.</value>
   </data>
   <data name="ValidateNotNullCollectionFailure" xml:space="preserve">
-    <value>The argument has a null value, or an element of the argument collection contains a null value. Provide a collection that does not contain any null values, and then try the command again.</value>
+    <value>인수 값이 null이거나 인수 컬렉션의 요소에 null 값이 있습니다. null 값이 포함되지 않은 컬렉션을 제공한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateNotNullOrEmptyFailure" xml:space="preserve">
-    <value>The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.</value>
+    <value>인수가 Null이거나 비어 있습니다. null이 아니고 비어 있지 않은 인수를 제공한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
-    <value>The argument is null, empty, or an element of the argument collection contains a null value. Supply a collection that does not contain any null values and then try the command again.</value>
+    <value>인수가 null이거나, 비어 있거나, 인수 컬렉션의 요소에 null 값이 포함되어 있습니다. null 값이 포함되지 않은 컬렉션을 제공한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
-    <value>The argument is null, empty, or consists of only white-space characters. Provide an argument that contains non white-space characters, and then try the command again.</value>
+    <value>인수가 null이거나, 비어 있거나, 공백 문자로만 구성되어 있습니다. 공백이 아닌 문자가 포함된 인수를 제공한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
-    <value>An element of the argument collection is null, empty, or consists of only white-space characters. Supply a collection that does not contain any those values and then try the command again.</value>
+    <value>인수 컬렉션의 요소가 null이거나, 비어 있거나, 공백 문자로만 구성되어 있습니다. 해당 값이 포함되지 않은 컬렉션을 제공한 후 명령을 다시 시도하세요.</value>
   </data>
   <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
-    <value>A parameter with the name '{0}' was defined multiple times for the command.</value>
+    <value>이름이 '{0}'인 매개 변수가 명령에 대해 여러 번 정의되었습니다.</value>
   </data>
   <data name="AliasParameterNameAlreadyExistsForCommand" xml:space="preserve">
-    <value>The parameter alias cannot be specified because an alias with the name '{0}' was already defined multiple times for the command.</value>
+    <value>이름이 '{0}'인 별칭이 명령에 이미 여러 번 정의되어 있으므로 매개 변수 별칭을 지정할 수 없습니다.</value>
   </data>
   <data name="ParameterNameConflictsWithAlias" xml:space="preserve">
-    <value>The parameter '{0}' cannot be specified because it conflicts with the parameter alias of the same name for parameter '{1}'.</value>
+    <value>'{0}' 매개 변수는 '{1}' 매개 변수의 같은 이름 별칭과 충돌하므로 지정할 수 없습니다.</value>
   </data>
   <data name="ValidateScriptFailure" xml:space="preserve">
-    <value>The "{1}" validation script for the argument with value "{0}" did not return a result of True. Determine why the validation script failed, and then try the command again.</value>
+    <value>값이 "{1}"인 인수에 대한 "{0}" 유효성 검사 스크립트가 True를 반환하지 않았습니다. 유효성 검사 스크립트가 실패한 이유를 확인한 후 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateVersionFailure" xml:space="preserve">
-    <value>The "{0}" argument does not contain a valid PowerShell version. Supply a valid version number and then try the command again.</value>
+    <value>"{0}" 인수에 유효한 PowerShell 버전이 포함되어 있지 않습니다. 올바른 버전 번호를 제공한 다음 명령을 다시 시도하세요.</value>
   </data>
   <data name="ValidateVariableName" xml:space="preserve">
-    <value>Cannot validate argument '{0}' because it is not a valid variable name.</value>
+    <value>인수 '{0}'의 유효성을 검사할 수 없습니다. 유효한 변수 이름이 아닙니다.</value>
   </data>
   <data name="JobDefinitionMustDeriveFromIJobConverter" xml:space="preserve">
-    <value>The job conversion type must derive from IAstToScriptBlockConverter.</value>
+    <value>작업 변환 형식은 IAstToScriptBlockConverter에서 파생되어야 합니다.</value>
   </data>
   <data name="ValidateDrivePathArgNotString" xml:space="preserve">
-    <value>The path argument is invalid. Supply a path argument that is a string type.</value>
+    <value>인수가 잘못되었습니다. 문자열 형식의 경로 인수를 제공하세요.</value>
   </data>
   <data name="ValidateDrivePathFailure" xml:space="preserve">
-    <value>The path argument drive {0} does not belong to the set of approved drives: {1}. Supply a path argument with an approved drive.</value>
+    <value>경로 인수 드라이브 {0}이(가) 승인된 드라이브 집합 {1}에 속하지 않습니다. 승인된 드라이브가 포함된 경로 인수를 제공하세요.</value>
   </data>
   <data name="ValidateDrivePathInvalidChar" xml:space="preserve">
-    <value>The path argument contains invalid characters.</value>
+    <value>경로에 유효하지 않은 문자가 포함되어 있습니다.</value>
   </data>
   <data name="ValidateDrivePathNoRoot" xml:space="preserve">
-    <value>The path argument has no root drive.  Supply a full path argument with a root drive.</value>
+    <value>경로 인수에 루트 드라이브가 없습니다.  루트 드라이브가 포함된 전체 경로 인수를 제공하세요.</value>
   </data>
   <data name="ArgumentNullOrEmpty" xml:space="preserve">
-    <value>The argument value for the parameter '{0}' cannot be null or an empty string.</value>
+    <value>'{0}' 매개 변수의 인수 값은 null이거나 빈 문자열일 수 없습니다.</value>
   </data>
   <data name="InvalidEnumArgument" xml:space="preserve">
-    <value>The Enum member '{0}' is not a valid value for the parameter '{1}'. Specify one of the following members and try again: {2}.</value>
+    <value>'{0}'은(는) '{1}' 매개 변수의 올바른 값이 아닙니다. 다음 멤버 중 하나를 지정한 다음 다시 시도하세요: {2}.</value>
   </data>
   <data name="ValidateTrustedDataFailure" xml:space="preserve">
-    <value>Cannot process input. The argument "{0}" is not trusted.</value>
+    <value>입력을 처리할 수 없습니다. "{0}" 인수는 신뢰할 수 없습니다.</value>
   </data>
   <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
-    <value>ValidateTrustedData Attribute Check Failure</value>
+    <value>ValidateTrustedData 특성 검사 실패</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>The parameter argument '{0}' is not trusted and will fail the ValidateTrustedData parameter attribute check in Constrained Language mode.</value>
+    <value>'{0}' 매개 변수 인수는 신뢰할 수 없으며, 제한 언어 모드에서 ValidateTrustedData 매개 변수 특성 검사에 실패합니다.</value>
   </data>
 </root>

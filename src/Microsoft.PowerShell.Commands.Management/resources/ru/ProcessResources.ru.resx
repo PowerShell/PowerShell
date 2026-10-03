@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoProcessFoundForGivenName" xml:space="preserve">
-    <value>Cannot find a process with the name "{0}". Verify the process name and call the cmdlet again.</value>
+    <value>Не удается найти процесс "{0}". Проверьте имя процесса и вызовите командлет еще раз.</value>
   </data>
   <data name="RecommendIdTagForGivenName" xml:space="preserve">
-    <value>Cannot find a process with the name "{0}". Try running with -Id to search by Id of processes.</value>
+    <value>Не удается найти процесс "{0}". Попробуйте запустить команду с параметром -Id для поиска по идентификатору процесса.</value>
   </data>
   <data name="NoDebuggerFound" xml:space="preserve">
-    <value>This command cannot be run because the debugger cannot be attached to the process "{0} ({1})". Specify another process and Run your command.</value>
+    <value>Эту команду нельзя выполнить, так как отладчик не может быть присоединен к процессу "{0} ({1})". Укажите другой процесс и выполните команду.</value>
   </data>
   <data name="NoProcessFoundForGivenId" xml:space="preserve">
-    <value>Cannot find a process with the process identifier {1}.</value>
+    <value>Не удается найти процесс с идентификатором {1}.</value>
   </data>
   <data name="CouldNotStopProcess" xml:space="preserve">
-    <value>Cannot stop process "{0} ({1})" because of the following error: {2}</value>
+    <value>Невозможно остановить процесс "{0} ({1})" из-за следующей ошибки: {2}</value>
   </data>
   <data name="ProcessNameForConfirmation" xml:space="preserve">
     <value>{0} ({1})</value>
@@ -139,96 +139,96 @@
     <value>{0} {1}</value>
   </data>
   <data name="CouldNotEnumerateModules" xml:space="preserve">
-    <value>Cannot enumerate the modules of the "{0}" process.</value>
+    <value>Не удается перечислить модули процесса "{0}".</value>
   </data>
   <data name="CouldNotEnumerateFileVer" xml:space="preserve">
-    <value>Cannot enumerate the file version information of the "{0}" process.</value>
+    <value>Не удается получить сведения о версии файла для процесса "{0}".</value>
   </data>
   <data name="CouldNotEnumerateModuleFileVer" xml:space="preserve">
-    <value>Cannot enumerate the modules and the file version information of the "{0}" process.</value>
+    <value>Не удается получить сведения о модулях и версии файла для процесса "{0}".</value>
   </data>
   <data name="ConfirmStopProcess" xml:space="preserve">
-    <value>Are you sure you want to perform the Stop-Process operation on the following item: {0}({1})?</value>
+    <value>Действительно выполнить операцию Stop-Process для следующего элемента: {0}({1})?</value>
   </data>
   <data name="UseShell" xml:space="preserve">
-    <value>The specified path is not a valid win32 application. Try again with the UseShellExecute.</value>
+    <value>Указанный путь не является действительным приложением win32. Повторите попытку, используя UseShellExecute.</value>
   </data>
   <data name="ProcessIsNotTerminated" xml:space="preserve">
-    <value>This command stopped operation of "{0} ({1})" because of the following error: {2}.</value>
+    <value>Эта команда остановила операцию "{0} ({1})" из-за следующей ошибки: {2}.</value>
   </data>
   <data name="RedirectionParams" xml:space="preserve">
-    <value>This command cannot be run because Redirection parameters cannot be used with UseShellExecute parameter</value>
+    <value>Эту команду нельзя выполнить, так как параметры перенаправления нельзя использовать с параметром UseShellExecute</value>
   </data>
   <data name="NoComputerNameWithFileVersion" xml:space="preserve">
-    <value>Exception getting "Modules" or "FileVersion": "This feature is not supported for remote computers.".</value>
+    <value>Исключение при получении "Modules" или "FileVersion": "Эта функция не поддерживается для удаленных компьютеров.".</value>
   </data>
   <data name="DebuggerError" xml:space="preserve">
-    <value>This command cannot attach the debugger to the process due to {0} because no default debugger is available.</value>
+    <value>Эта команда не может присоединить отладчик к процессу из-за {0}, так как отладчик по умолчанию недоступен.</value>
   </data>
   <data name="WaitOnIdleProcess" xml:space="preserve">
-    <value>This command stopped operation because it cannot wait on 'System Idle' process. Specify another process and Run your command again.</value>
+    <value>Эта команда остановила операцию, так как не может ожидать процесса "Бездействие системы". Укажите другой процесс и выполните команду еще раз.</value>
   </data>
   <data name="WaitOnItself" xml:space="preserve">
-    <value>This command stopped operation because it cannot wait on itself. Specify another process and Run your command again.</value>
+    <value>Эта команда остановила операцию, так как не может ожидать саму себя. Укажите другой процесс и выполните команду еще раз.</value>
   </data>
   <data name="ProcessNotTerminated" xml:space="preserve">
-    <value>This command stopped operation because process "{0} ({1})" is not stopped in the specified time-out.</value>
+    <value>Эта команда остановила операцию, так как процесс "{0} ({1})" не был остановлен в течение указанного времени ожидания.</value>
   </data>
   <data name="InvalidStartProcess" xml:space="preserve">
-    <value>This command cannot be run due to the error: {0}</value>
+    <value>Не удается выполнить эту команду из-за ошибки: {0}</value>
   </data>
   <data name="InvalidApplication" xml:space="preserve">
-    <value>This command cannot be run because the input "{0}" is not a valid Application.  Give a valid application and run your command again.</value>
+    <value>Эту команду нельзя выполнить, так как введенное значение "{0}" не является допустимым приложением.  Укажите допустимое приложение и выполните команду еще раз.</value>
   </data>
   <data name="InvalidInput" xml:space="preserve">
-    <value>This command cannot be run because either the parameter "{0}" has a value that is not valid or cannot be used with this command. Give a valid input and Run your command again.</value>
+    <value>Эту команду нельзя выполнить, так как параметр "{0}" имеет недопустимое значение или не может использоваться с этой командой. Укажите допустимые входные данные и выполните команду еще раз.</value>
   </data>
   <data name="DuplicateEntry" xml:space="preserve">
-    <value>This command cannot be run because "{0}" and "{1}" are same. Give different inputs and Run your command again.</value>
+    <value>Эту команду нельзя выполнить, так как "{0}" и "{1}" совпадают. Укажите разные входные данные и выполните команду еще раз.</value>
   </data>
   <data name="CannotStarttheProcess" xml:space="preserve">
-    <value>This command cannot be run completely because the system cannot find all the information required.</value>
+    <value>Эту команду невозможно выполнить полностью, так как системе не удается найти всю необходимую информацию.</value>
   </data>
   <data name="FailedToCreateProcessObject" xml:space="preserve">
-    <value>Failed to retrieve the new process handle: "{0}". The Process object outputted may have some properties and methods that do not work properly.</value>
+    <value>Не удалось получить новый дескриптор процесса: "{0}". У выведенного объекта Process некоторые свойства и методы могут работать неправильно.</value>
   </data>
   <data name="InvalidUserError" xml:space="preserve">
-    <value>This command cannot be run due to error 1783. The possible cause of this error can be using of a non-existing user "{0}". Please give a valid user and run your command again.</value>
+    <value>Эту команду нельзя выполнить из-за ошибки 1783. Возможная причина этой ошибки — использование несуществующего пользователя "{0}". Укажите допустимого пользователя и выполните команду еще раз.</value>
   </data>
   <data name="JoinNetworkFailed" xml:space="preserve">
-    <value>Error adding '{0}' to the network: {1}</value>
+    <value>Ошибка при добавлении "{0}" в сеть: {1}</value>
   </data>
   <data name="RemoveFailed" xml:space="preserve">
-    <value>Error removing '{0}' from the network: {1}</value>
+    <value>Ошибка при удалении "{0}" из сети: {1}</value>
   </data>
   <data name="RenameFailed" xml:space="preserve">
-    <value>Error renaming '{0}': {1}</value>
+    <value>Ошибка при переименовании "{0}": {1}</value>
   </data>
   <data name="ContradictParametersSpecified" xml:space="preserve">
-    <value>Parameters "{0}" and "{1}" cannot be specified at the same time.</value>
+    <value>Параметры "{0}" и "{1}" нельзя задать одновременно.</value>
   </data>
   <data name="CouldNotDebugProcess" xml:space="preserve">
-    <value>Cannot debug process "{0} ({1})" because of the following error: {2}</value>
+    <value>Невозможно отладить процесс "{0} ({1})" из-за следующей ошибки: {2}</value>
   </data>
   <data name="AttachDebuggerReturnCode2" xml:space="preserve">
     <value>У пользователя нет доступа к запрошенной информации.</value>
   </data>
   <data name="AttachDebuggerReturnCode21" xml:space="preserve">
-    <value>The specified parameter is not valid.</value>
+    <value>Указан недопустимый параметр.</value>
   </data>
   <data name="AttachDebuggerReturnCode3" xml:space="preserve">
-    <value>The user does not have sufficient privilege.</value>
+    <value>У пользователя недостаточно прав.</value>
   </data>
   <data name="AttachDebuggerReturnCode8" xml:space="preserve">
-    <value>Unknown failure.</value>
+    <value>Неизвестный сбой.</value>
   </data>
   <data name="AttachDebuggerReturnCode9" xml:space="preserve">
     <value>Указанный путь не существует.</value>
   </data>
   <data name="ParameterNotSupported" xml:space="preserve">
-    <value>The parameter '{0}' is not supported for the cmdlet '{1}' on this edition of Windows.</value>
+    <value>Параметр "{0}" не поддерживается для командлета "{1}" в этом выпуске Windows.</value>
   </data>
   <data name="ParameterNotSupportedOnPSEdition" xml:space="preserve">
-    <value>The parameter '{0}' is not supported for the cmdlet '{1}' on this edition of PowerShell.</value>
+    <value>Параметр "{0}" не поддерживается для командлета "{1}" в этом выпуске PowerShell.</value>
   </data>
 </root>

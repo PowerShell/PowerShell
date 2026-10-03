@@ -121,132 +121,132 @@
     <value>'{0}' 경로에 대한 액세스가 거부되었습니다.</value>
   </data>
   <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
-    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To suppress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthentication parameter.</value>
+    <value>cmdlet은 암호화되지 않은 연결을 통해 전송되는 일반 텍스트 비밀을 보호할 수 없습니다. 이 경고를 표시하지 않고 암호화되지 않은 네트워크를 통해 일반 텍스트 비밀을 보내려면 AllowUnencryptedAuthentication 매개 변수를 지정하여 명령을 다시 실행하세요.</value>
   </data>
   <data name="AuthenticationConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Authentication and UseDefaultCredentials. Authentication does not support Default Credentials. Specify either Authentication or UseDefaultCredentials, then retry.</value>
+    <value>충돌하는 매개 변수 Authentication 및 UseDefaultCredentials가 지정되어 cmdlet을 실행할 수 없습니다. Authentication은 기본 자격 증명을 지원하지 않습니다. Authentication 또는 UseDefaultCredentials를 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Credential. The supplied Authentication type requires a Credential. Specify Credential, then retry.</value>
+    <value>Credential 매개 변수가 지정되지 않아 cmdlet을 실행할 수 없습니다. 지정한 Authentication 형식에는 Credential이 필요합니다. Credential을 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Token. The supplied Authentication type requires a Token. Specify Token, then retry.</value>
+    <value>Token 매개 변수가 지정되지 않아 cmdlet을 실행할 수 없습니다. 지정한 Authentication 형식에는 Token이 필요합니다. Token을 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="AuthenticationTokenConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and Token. Specify either Credential or Token, then retry.</value>
+    <value>충돌하는 매개 변수 Credential 및 Token이 지정되어 cmdlet을 실행할 수 없습니다. Credential 또는 Token을 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="BodyConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and InFile. Specify either Body or Infile, then retry.  </value>
+    <value>충돌하는 매개 변수 Body 및 InFile이 지정되어 cmdlet을 실행할 수 없습니다. Body 또는 InFile을 지정한 후 다시 시도하세요.  </value>
   </data>
   <data name="BodyFormConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and Form. Specify either Body or Form, then retry.  </value>
+    <value>충돌하는 매개 변수 Body 및 Form이 지정되어 cmdlet을 실행할 수 없습니다. Body 또는 Form을 지정한 후 다시 시도하세요.  </value>
   </data>
   <data name="FormInFileConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: InFile and Form. Specify either InFile or Form, then retry.  </value>
+    <value>충돌하는 매개 변수 InFile 및 Form이 지정되어 cmdlet을 실행할 수 없습니다. InFile 또는 Form을 지정한 후 다시 시도하세요.  </value>
   </data>
   <data name="ContentTypeException" xml:space="preserve">
-    <value>The cmdlet cannot run because the -ContentType parameter is not a valid Content-Type header. Specify a valid Content-Type for -ContentType, then retry. To suppress header validation, supply the -SkipHeaderValidation parameter.</value>
+    <value>-ContentType 매개 변수가 올바른 Content-Type 헤더가 아니므로 cmdlet을 실행할 수 없습니다. -ContentType에 유효한 Content-Type을 지정한 후 다시 시도하세요. 헤더 유효성 검사를 건너뛰려면 -SkipHeaderValidation 매개 변수를 제공하세요.</value>
   </data>
   <data name="CredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and UseDefaultCredentials. Specify either Credential or UseDefaultCredentials, then retry.</value>
+    <value>충돌하는 매개 변수 Credential 및 UseDefaultCredentials가 지정되어 cmdlet을 실행할 수 없습니다. Credential 또는 UseDefaultCredentials를 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="DirectoryPathSpecified" xml:space="preserve">
-    <value>Path '{0}' resolves to a directory. Specify a path including a file name, and then retry the command.</value>
+    <value>경로 '{0}'은(는) 디렉터리로 확인됩니다. 파일 이름을 포함한 경로를 지정한 후 명령을 다시 시도하세요.</value>
   </data>
   <data name="EmptyKeyInJsonString" xml:space="preserve">
-    <value>The provided JSON includes a property whose name is an empty string, this is only supported using the -AsHashTable switch.</value>
+    <value>제공된 JSON에 이름이 빈 문자열인 속성이 포함되어 있습니다. 이는 -AsHashTable 스위치를 사용하는 경우에만 지원됩니다.</value>
   </data>
   <data name="DuplicateKeysInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated key '{0}'.</value>
+    <value>문자열에서 변환된 사전에 중복된 키 '{0}'이(가) 포함되어 있으므로 JSON 문자열을 변환할 수 없습니다.</value>
   </data>
   <data name="IEDomNotSupported" xml:space="preserve">
-    <value>The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again. </value>
+    <value>응답 콘텐츠를 구문 분석할 수 없습니다. Internet Explorer 엔진을 사용할 수 없거나 Internet Explorer의 첫 실행 구성이 완료되지 않았습니다. UseBasicParsing 매개 변수를 지정하고 다시 시도하세요. </value>
   </data>
   <data name="InsecureRedirection" xml:space="preserve">
-    <value>Cannot follow an insecure redirection by default. Reissue the command specifying the -AllowInsecureRedirect switch. </value>
+    <value>기본적으로 안전하지 않은 리디렉션은 따를 수 없습니다. -AllowInsecureRedirect 스위치를 지정하여 명령을 다시 실행하세요. </value>
   </data>
   <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
+    <value>대/소문자가 다른 키를 포함하므로 JSON 문자열을 변환할 수 없습니다. 대신 -AsHashTable 스위치를 사용하세요. 기존 키 '{0}'에 추가하려던 키는 '{1}'입니다.</value>
   </data>
   <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
-    <value>The maximum redirection count has been exceeded. To increase the number of redirections allowed, supply a higher value to the -MaximumRedirection parameter.</value>
+    <value>최대 리디렉션 횟수를 초과했습니다. 허용되는 리디렉션 수를 늘리려면 -MaximumRedirection 매개 변수에 더 큰 값을 지정하세요.</value>
   </data>
   <data name="MultiplePathsResolved" xml:space="preserve">
-    <value>Path '{0}' can be resolved to multiple paths.</value>
+    <value>경로 '{0}'은(는) 여러 경로로 확인될 수 있습니다.</value>
   </data>
   <data name="NonStringKeyInDictionary" xml:space="preserve">
-    <value>The type '{0}' is not supported for serialization or deserialization of a dictionary. Keys must be strings.</value>
+    <value>'{0}' 유형은 사전의 직렬화 또는 역직렬화에 지원되지 않습니다. 키는 문자열이어야 합니다.</value>
   </data>
   <data name="NoPathResolved" xml:space="preserve">
-    <value>Path '{0}' cannot be resolved to a file.</value>
+    <value>경로 '{0}'을(를) 파일로 확인할 수 없습니다.</value>
   </data>
   <data name="NotFilesystemPath" xml:space="preserve">
-    <value>Path '{0}' is not a file system path. Please specify the path to a file in the file system.</value>
+    <value>'{0}' 경로는 파일 시스템 경로가 아닙니다. 파일 시스템의 파일 경로를 지정하세요.</value>
   </data>
   <data name="OutFileMissing" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide a valid OutFile parameter value when using the {0} parameter, then retry.</value>
+    <value>OutFile 매개 변수가 지정되지 않아 cmdlet을 실행할 수 없습니다. {0} 매개 변수를 사용할 때는 유효한 OutFile 매개 변수 값을 제공한 후 다시 시도하세요.</value>
   </data>
   <data name="OutFileWritingSkipped" xml:space="preserve">
-    <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
+    <value>원격 파일의 크기가 OutFile {0}와(과) 같으므로 파일이 다시 다운로드되지 않습니다.</value>
   </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
+    <value>충돌하는 매개 변수 ProxyCredential 및 ProxyUseDefaultCredentials가 지정되어 cmdlet을 실행할 수 없습니다. ProxyCredential 또는 ProxyUseDefaultCredentials를 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="ProxyUriNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or ProxyUseDefaultCredentials parameters, then retry.</value>
+    <value>Proxy 매개 변수가 지정되지 않아 cmdlet을 실행할 수 없습니다. ProxyCredential 또는 ProxyUseDefaultCredentials 매개 변수를 사용할 때는 Proxy 매개 변수에 유효한 프록시 URI를 제공한 후 다시 시도하세요.</value>
   </data>
   <data name="ReadResponseComplete" xml:space="preserve">
-    <value>Reading web response stream completed. Bytes downloaded: {0}</value>
+    <value>웹 응답 스트림 읽기가 완료되었습니다. 다운로드된 바이트: {0}</value>
   </data>
   <data name="ReadResponseProgressActivity" xml:space="preserve">
-    <value>Reading web response stream</value>
+    <value>웹 응답 스트림을 읽는 중</value>
   </data>
   <data name="ReadResponseProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>{1}개 중 {0}개를 다운로드함</value>
   </data>
   <data name="ResumeNotFilePath" xml:space="preserve">
-    <value>The Resume switch can only be used if OutFile targets a file but it resolves to a directory: {0}.</value>
+    <value>Resume 스위치는 OutFile이 파일을 대상으로 할 때만 사용할 수 있지만 파일이 {0} 디렉터리로 확인됩니다.</value>
   </data>
   <data name="SessionConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Session and SessionVariable. Specify either Session or SessionVariable, then retry.</value>
+    <value>충돌하는 매개 변수 Session 및 SessionVariable이 지정되어 cmdlet을 실행할 수 없습니다. Session 또는 SessionVariable을 지정한 후 다시 시도하세요.</value>
   </data>
   <data name="ThumbprintNotFound" xml:space="preserve">
-    <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
+    <value>지문이 올바르지 않아 인증서를 검색할 수 없습니다. 지문을 확인한 후 다시 시도하세요. </value>
   </data>
   <data name="WriteRequestComplete" xml:space="preserve">
-    <value>Web request completed. (Number of bytes processed: {0})</value>
+    <value>웹 요청이 완료되었습니다. (처리된 바이트 수: {0})</value>
   </data>
   <data name="WriteRequestCancelled" xml:space="preserve">
-    <value>Web request cancelled. (Number of bytes processed: {0})</value>
+    <value>웹 요청이 취소되었습니다. (처리된 바이트 수: {0})</value>
   </data>
   <data name="WriteRequestProgressActivity" xml:space="preserve">
-    <value>Web request status</value>
+    <value>웹 요청 상태</value>
   </data>
   <data name="WriteRequestProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>{1}개 중 {0}개를 다운로드함</value>
   </data>
   <data name="JsonDeserializationFailed" xml:space="preserve">
-    <value>Conversion from JSON failed with error: {0}</value>
+    <value>다음 오류로 JSON 변환에 실패했습니다. {0}</value>
   </data>
   <data name="ResponseStatusCodeFailure" xml:space="preserve">
-    <value>Response status code does not indicate success: {0} ({1}).</value>
+    <value>다음 응답 상태 코드가 성공을 나타내지 않습니다. {0}({1})</value>
   </data>
   <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
-    <value>Following rel link {0}</value>
+    <value>rel 링크 {0}을(를) 따르는 중</value>
   </data>
   <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
-    <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>
+    <value>원격 서버에서 다운로드를 다시 시작할 수 없다고 응답했습니다. 로컬 파일을 덮어씁니다.</value>
   </data>
   <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
-    <value>Received HTTP/{0} response of content type {1} of unknown size</value>
+    <value>알 수 없는 크기의 콘텐츠 형식 {0}의 HTTP/{1} 응답을 받았습니다.</value>
   </data>
   <data name="RetryVerboseMsg" xml:space="preserve">
-    <value>Retrying after interval of {0} seconds. Status code for previous attempt: {1}</value>
+    <value>{0}초 간격 후 다시 시도합니다. 이전 시도의 상태 코드: {1}</value>
   </data>
   <data name="JsonMaxDepthReached" xml:space="preserve">
-    <value>Resulting JSON is truncated as serialization has exceeded the set depth of {0}.</value>
+    <value>직렬화가 설정된 깊이({0})를 초과하므로 결과 JSON이 잘립니다.</value>
   </data>
   <data name="WebSessionConnectionRecreated" xml:space="preserve">
-    <value>The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.</value>
+    <value>WebSession 속성이 요청 사이에 변경되어 세션의 모든 HTTP 연결을 다시 만들어야 합니다.</value>
   </data>
 </root>

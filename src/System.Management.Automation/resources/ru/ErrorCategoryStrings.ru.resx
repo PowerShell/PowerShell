@@ -121,7 +121,7 @@
     <value>CloseError: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="DeadlockDetected" xml:space="preserve">
-    <value>Deadlock detected: ({1}:{2}) [{0}], {3}</value>
+    <value>Обнаружена взаимоблокировка: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="DeviceError" xml:space="preserve">
     <value>DeviceError: ({1}:{2}) [{0}], {3}</value>
@@ -196,7 +196,7 @@
     <value>ProtocolError: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="ConnectionError" xml:space="preserve">
-    <value>ConnectionError: ({1}:{2}) [{0}], {3}</value>
+    <value>Ошибка подключения: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="AuthenticationError" xml:space="preserve">
     <value>AuthenticationError: ({1}:{2}) [{0}], {3}</value>
@@ -214,6 +214,6 @@
     <value>NotSpecified: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidErrorCategory" xml:space="preserve">
-    <value>Unrecognized error category {4}: ({1}:{2}) [{0}], {3}</value>
+    <value>Нераспознанная категория ошибки {4}: ({1}:{2}) [{0}], {3}</value>
   </data>
 </root>

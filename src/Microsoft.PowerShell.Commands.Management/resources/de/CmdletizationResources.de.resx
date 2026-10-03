@@ -118,54 +118,53 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CimJob_InvalidClassName" xml:space="preserve">
-    <value>Cannot find the {0} class on the {1} CIM server.  Verify the value of the ClassName xml attribute in Cmdlet Definition XML and retry. Valid class name example: ROOT\cimv2\Win32_Process.</value>
+    <value>Die {0}-Klasse wurde auf dem {1}-CIM-Server nicht gefunden.  Überprüfen Sie den Wert des ClassName-XML-Attributs in der XML-Datei der Cmdlet-Definition, und wiederholen Sie den Vorgang. Beispiel für einen gültigen Klassennamen: ROOT\cimv2\Win32_Process.</value>
     <comment>{StrContains="ClassName"} {StrContains="ROOT\cimv2\Win32_Process"}
 {0} is a placeholder for a name of a (potentially misspelled) CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".</comment>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="CimJob_MethodDescription" xml:space="preserve">
-    <value>CIM method {1} on the {0} CIM object</value>
+    <value>CIM-Methode „{1}“ für das {0}-CIM-Objekt</value>
     <comment>{0} is a placeholder for a CIM path. Example: \\SERVER1\ROOT\cimv2:Win32_Process.Handle="11828"
 {1} is a placeholder for a CIM method name. Example: Create</comment>
   </data>
   <data name="CimJob_GenericCimFailure" xml:space="preserve">
-    <value>Failed to run {1}.  {0}</value>
+    <value>Fehler beim Ausführen von „{1}“.  {0}</value>
     <comment>{0} is a placeholder for a generic CIM failure.  Example: 'Invalid namespace' or '9'
 {1} is a placeholder for a description of CIM operation.  This most likely comes from CimJob_MethodDescription or CimJob_QueryDescription</comment>
   </data>
   <data name="CimJob_VerboseExecutionMessage" xml:space="preserve">
-    <value>Running the following operation: {0}.</value>
+    <value>Folgender Vorgang wird ausgeführt: {0}.</value>
     <comment>{0} is a placeholder for a description of CIM operation.  This most likely comes from CimJob_MethodDescription or CimJob_QueryDescription</comment>
   </data>
   <data name="SessionBasedWrapper_ShouldProcessVsJobConflict" xml:space="preserve">
-    <value>CIM cmdlets do not support the {0} parameter together with the AsJob parameter.  Remove one of these parameters and retry.</value>
+    <value>CIM-Cmdlets unterstützen den {0}-Parameter nicht zusammen mit dem AsJob-Parameter.  Entfernen Sie einen dieser Parameter, und wiederholen Sie den Vorgang.</value>
     <comment>{StrContains="AsJob"}
 {0} is a placeholder for 'WhatIf' or 'Confirm' cmdlet parameters</comment>
   </data>
   <data name="CimJob_SafeQueryDescription" xml:space="preserve">
-    <value>CIM query for instances of the {0} class on the {1} CIM server: {2}</value>
+    <value>CIM-Abfrage für Instanzen der {0}-Klasse auf dem {1}-CIM-Server: {2}</value>
     <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".</comment>
   </data>
   <data name="CimJob_ErrorCodeFromMethod" xml:space="preserve">
-    <value>The CIM method returned the following error code: {0}</value>
+    <value>Die CIM-Methode hat den folgenden Fehlercode zurückgegeben: {0}</value>
     <comment>{0} is a placeholder for an error code returned from a CIM method.  Example: 123</comment>
   </data>
   <data name="CimJob_SafeMethodDescription" xml:space="preserve">
-    <value>The {2} CIM method exposed by the {0} class on the {1} CIM server</value>
+    <value>Die {2}-CIM-Methode, die von der {0}-Klasse auf dem {1}-CIM-Server bereitgestellt wird</value>
     <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".
 {2} is a placeholder for a CIM method name. Example: Create</comment>
   </data>
   <data name="CimConversion_CimIntrinsicValue" xml:space="preserve">
-    <value>CIM intrinsic type</value>
+    <value>Systeminterner CIM-Typ</value>
   </data>
   <data name="CimConversion_WqlQuery" xml:space="preserve">
-    <value>WQL literal</value>
+    <value>WQL-Literal</value>
   </data>
   <data name="CimJob_InvalidOutputParameterName" xml:space="preserve">
-    <value>Cannot find the {2} output parameter of the {1} method of the {0} CIM object.  Verify the value of the ParameterName attribute in Cmdlet Definition XML and retry.</value>
+    <value>Der {2}-Ausgabeparameter der {1}-Methode des {0}-CIM-Objekts wurde nicht gefunden.  Überprüfen Sie den Wert des ParameterName-Attributs in der XML-Datei der Cmdlet-Definition, und wiederholen Sie den Vorgang.</value>
     <comment>{StrContains="ParameterName"}
 {0} is a placeholder for a CIM path. Example: \\SERVER1\ROOT\cimv2:Win32_Process.Handle="11828"
 {1} is a placeholder for a name of a (potentially misspelled) CIM method.  Example: "Terminate".
@@ -173,45 +172,45 @@
 </comment>
   </data>
   <data name="CimJob_NotFound_ComplexCase" xml:space="preserve">
-    <value>No matching {1} objects found by {0}. Verify query parameters and retry.</value>
+    <value>Mit „{1}“ wurden keine übereinstimmenden {0}-Objekte gefunden. Bestätigen Sie die Abfrageparameter, und versuchen Sie es noch mal.</value>
   </data>
   <data name="CimJob_NotFound_SimpleGranularCase_Equality" xml:space="preserve">
-    <value>No {2} objects found with property '{0}' equal to '{1}'.  Verify the value of the property and retry.</value>
+    <value>Es wurden keine {2}-Objekte mit der Eigenschaft „{0}“ gefunden, die gleich „{1}“ ist.  Überprüfen Sie den Wert der Eigenschaft, und wiederholen Sie den Vorgang.</value>
   </data>
   <data name="CimJob_MismatchedTypeOfPropertyReturnedByQuery" xml:space="preserve">
-    <value>Type of {0} property ({1}) doesn't match the CIM type ({2}) associated with the type declared in Cmdlet Definition XML.</value>
+    <value>Der Typ der {0}-Eigenschaft ({1}) stimmt nicht mit dem CIM-Typ ({2}) überein, der dem in der XML-Datei der Cmdlet-Definition deklarierten Typ zugeordnet ist.</value>
   </data>
   <data name="CimJob_SafeAssociationDescription" xml:space="preserve">
-    <value>CIM query for enumerating associated instance of the {0} class on the {1} CIM server</value>
+    <value>CIM-Abfrage zum Aufzählen zugeordneter Instanzen der {0}-Klasse auf dem {1}-CIM-Server</value>
     <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".</comment>
   </data>
   <data name="CimJob_AssociationDescription" xml:space="preserve">
-    <value>CIM query for enumerating instances of the {0} class on the {1} CIM server, that are associated with the following instance: {2}</value>
+    <value>CIM-Abfrage zum Aufzählen von Instanzen der {0}-Klasse auf dem {1}-CIM-Server, die der folgenden Instanz zugeordnet sind: {2}</value>
     <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".
 {2} is a placeholder for a string describing a CimInstance.  Example: "Win32_Process[Handle=123]".</comment>
   </data>
   <data name="CimJob_SleepAndRetryVerboseMessage" xml:space="preserve">
-    <value>The {0} command cannot complete, because the {1} server is currently busy.  The command will be automatically resumed in {2:f2} seconds.</value>
+    <value>Der {0}-Befehl kann nicht abgeschlossen werden, da der {1}-Server derzeit ausgelastet ist.  Der Befehl wird in {2:f2} Sekunden automatisch fortgesetzt.</value>
     <comment>{0} is a placeholder for a command name.  Example: "Get-NetAdapter"
 {1} is a placeholder for a computer name.  Example: "localhost"
 {2} is a placeholder for a number of seconds.  Example: 1.23</comment>
   </data>
   <data name="CimJob_BrokenSession" xml:space="preserve">
-    <value>Cannot connect to CIM server. {0}</value>
+    <value>Es kann keine Verbindung zum CIM-Server hergestellt werden. {0}</value>
     <comment>{0} is a placeholder for a more detailed error message.</comment>
   </data>
   <data name="CimCmdletAdapter_DebugInquire" xml:space="preserve">
-    <value>The cmdlet does not fully support the Inquire action for debug messages.  Cmdlet operation will continue during the prompt.  Select a different action preference via -Debug switch or $DebugPreference variable, and try again.</value>
+    <value>Das Cmdlet unterstützt die Inquire-Aktion für Debugmeldungen nicht vollständig.  Der Cmdlet-Vorgang wird während des Prompts fortgesetzt.  Wählen Sie über den Schalter „-Debug“ oder die $DebugPreference-Variable eine andere Aktionspräferenz aus, und versuchen Sie es erneut.</value>
     <comment>{StrContains="Debug"} {StrContains="DebugPreference"} {StrContains="Inquire"}</comment>
   </data>
   <data name="CimCmdletAdapter_WarningInquire" xml:space="preserve">
-    <value>The cmdlet does not fully support the Inquire action for warnings.  Cmdlet operation will continue during the prompt.  Select a different action preference via -WarningAction parameter or $WarningPreference variable, and try again.</value>
+    <value>Das Cmdlet unterstützt die Inquire-Aktion für Warnungen nicht vollständig.  Der Cmdlet-Vorgang wird während des Prompts fortgesetzt.  Wählen Sie über den Parameter „-WarningAction“ oder die $WarningPreference-Variable eine andere Aktionspräferenz aus, und versuchen Sie es erneut.</value>
     <comment>{StrContains="WarningAction"} {StrContains="WarningPreference"} {StrContains="Inquire"}</comment>
   </data>
   <data name="CimCmdletAdapter_WarningStop" xml:space="preserve">
-    <value>The cmdlet does not fully support the Stop action for warnings.  Cmdlet operation will be stopped with a delay.  Select a different action preference via -WarningAction parameter or $WarningPreference variable, and try again.</value>
+    <value>Das Cmdlet unterstützt die Stop-Aktion für Warnungen nicht vollständig.  Der Cmdlet-Vorgang wird mit einer Verzögerung beendet.  Wählen Sie über den Parameter „-WarningAction“ oder die $WarningPreference-Variable eine andere Aktionspräferenz aus, und versuchen Sie es erneut.</value>
     <comment>{StrContains="WarningAction"} {StrContains="WarningPreference"} {StrContains="Stop"}</comment>
   </data>
   <data name="CimJob_ComputerNameConcatenationTemplate" xml:space="preserve">
@@ -220,11 +219,11 @@
 {1} is a placeholder for the original message.  Example: "Deleting managed resource"</comment>
   </data>
   <data name="CimCmdletAdapter_RemoteDcomDoesntSupportExtendedSemantics" xml:space="preserve">
-    <value>{0}: A CimSession to the CIM server uses the DCOM protocol, which does not support the {1} switch.</value>
+    <value>{0}: Eine CimSession mit dem CIM-Server verwendet das DCOM-Protokoll, das den Schalter „{1}“ nicht unterstützt.</value>
     <comment>{0} is a placeholder for a name of a computer
 {1} is a placeholder for 'Confirm' or 'WhatIf'</comment>
   </data>
   <data name="CimJob_NotFound_SimpleGranularCase_Wildcard" xml:space="preserve">
-    <value>No {2} objects found with property '{0}' matching '{1}'.  Verify the value of the property and retry.</value>
+    <value>Es wurden keine {2}-Objekte mit der Eigenschaft „{0}“ gefunden, die „{1}“ entspricht.  Überprüfen Sie den Wert der Eigenschaft, und wiederholen Sie den Vorgang.</value>
   </data>
 </root>

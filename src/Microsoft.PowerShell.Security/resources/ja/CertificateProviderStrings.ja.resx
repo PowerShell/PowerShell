@@ -118,72 +118,72 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertProvidername" xml:space="preserve">
-    <value>X509 Certificate Provider</value>
+    <value>X509 証明書プロバイダー</value>
   </data>
   <data name="CertificateNotFound" xml:space="preserve">
-    <value>Cannot find the X509 certificate at path {0}.</value>
+    <value>パス {0} に X509 証明書が見つかりません。</value>
   </data>
   <data name="CertificateStoreNotFound" xml:space="preserve">
-    <value>Cannot find the X509 certificate store at path {0}.</value>
+    <value>パス {0} に X509 証明書ストアが見つかりません。</value>
   </data>
   <data name="CertificateStoreLocationNotFound" xml:space="preserve">
-    <value>Cannot find the certificate store because the specified X509 store location {0} is not valid.</value>
+    <value>指定された X509 ストアの場所 {0} が無効なため、証明書ストアを見つけられません。</value>
   </data>
   <data name="InvalidPath" xml:space="preserve">
-    <value>Cannot process the path because path {0} is not a valid certificate provider path.</value>
+    <value>パス {0} が有効な証明書プロバイダー パスではないため、パスを処理できません。</value>
   </data>
   <data name="Action_Move" xml:space="preserve">
-    <value>Move certificate</value>
+    <value>証明書を移動</value>
   </data>
   <data name="Action_Remove" xml:space="preserve">
-    <value>Remove certificate</value>
+    <value>証明書の削除</value>
   </data>
   <data name="Action_RemoveAndDeleteKey" xml:space="preserve">
-    <value>Remove certificate and its private key.</value>
+    <value>証明書とその秘密キーを削除します。</value>
   </data>
   <data name="Action_Invoke" xml:space="preserve">
-    <value>Invoke Certificate Manager</value>
+    <value>証明書マネージャーを呼び出す</value>
   </data>
   <data name="MoveItemTemplate" xml:space="preserve">
-      <value>Item: {0} Destination: {1} </value>
+      <value>項目: {0} 宛先: {1}</value>
   </data>
   <data name="CannotMoveContainer" xml:space="preserve">
-      <value>You cannot move a certificate container. </value>
+      <value>証明書コンテナーは移動できません。</value>
   </data>
   <data name="CannotMoveCrossContext" xml:space="preserve">
-      <value>You cannot move a certificate from user store to or from machine. </value>
+      <value>証明書をユーザー ストアからコンピューター ストアへ、またはその逆に移動することはできません。</value>
   </data>
   <data name="CannotMoveToSameStore" xml:space="preserve">
-    <value>You cannot move a certificate to the same store. </value>
+    <value>証明書を同じストアに移動することはできません。</value>
   </data>
   <data name="CannotCreateItem" xml:space="preserve">
-    <value>You cannot create an item other than certificate store. </value>
+    <value>証明書ストア以外の項目は作成できません。</value>
   </data>
   <data name="CannotCreateUserStore" xml:space="preserve">
-    <value>Creating certificate stores under CurrentUser is not supported. </value>
+    <value>CurrentUser 配下の証明書ストアの作成はサポートされていません。</value>
   </data>
   <data name="CannotDeleteUserStore" xml:space="preserve">
-    <value>Deleting certificate stores under CurrentUser is not supported. </value>
+    <value>CurrentUser 配下の証明書ストアの削除はサポートされていません。</value>
   </data>
   <data name="InvalidDestStore" xml:space="preserve">
-    <value>The destination is not a valid store. </value>
+    <value>移動先が有効なストアではありません。</value>
   </data>
   <data name="RemoveItemTemplate" xml:space="preserve">
-    <value>Item: {0} </value>
+    <value>項目: {0}</value>
   </data>
   <data name="RemoveStoreTemplate" xml:space="preserve">
-    <value>The store {0} is a built-in system store and cannot be deleted.</value>
+    <value>ストア {0} は組み込みのシステム ストアであるため、削除できません。</value>
   </data>
   <data name="CannotRemoveContainer" xml:space="preserve">
-    <value>You cannot remove a certificate container. </value>
+    <value>証明書コンテナーは削除できません。</value>
   </data>
   <data name="VerboseNoPrivateKey" xml:space="preserve">
-    <value>Private key skipped. The certificate has no private key association. </value>
+    <value>秘密キーはスキップされました。証明書に秘密キーの関連付けがありません。</value>
   </data>
   <data name="UINotAllowed" xml:space="preserve">
-    <value>The operation is on user root store and UI is not allowed. </value>
+    <value>操作はユーザー ルート ストアに対して行われ、UI は許可されていません。</value>
   </data>
   <data name="RemoteErrorMessage" xml:space="preserve">
-    <value>. The following error may be a result of user credentials required on the remote machine. See Enable-WSManCredSSP Cmdlet help on how to enable and use CredSSP for delegation with PowerShell remoting. </value>
+    <value>。次のエラーは、リモート コンピューターでユーザー資格情報が必要なために発生した可能性があります。PowerShell リモート処理での委任に CredSSP を有効にして使用する方法については、Enable-WSManCredSSP コマンドレットのヘルプを参照してください。</value>
   </data>
 </root>

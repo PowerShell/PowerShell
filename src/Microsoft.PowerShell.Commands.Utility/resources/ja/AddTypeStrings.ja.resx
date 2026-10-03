@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AlreadyCompiledandLoaded" xml:space="preserve">
-    <value>The source code was already compiled and loaded.</value>
+    <value>ソース コードはすでにコンパイルされ、読み込まれています。</value>
   </data>
   <data name="FileExtensionNotSupported" xml:space="preserve">
-    <value>Cannot add type. The "{0}" extension is not supported.</value>
+    <value>型を追加できません。"{0}" 拡張子はサポートされていません。</value>
   </data>
   <data name="MultipleExtensionsNotSupported" xml:space="preserve">
-    <value>Cannot add type. Input files must all have the same file extension.</value>
+    <value>型を追加できません。入力ファイルはすべて同じファイル拡張子である必要があります。</value>
   </data>
   <data name="AssemblyNotFound" xml:space="preserve">
-    <value>Cannot add type. The assembly '{0}' could not be found.</value>
+    <value>型を追加できません。アセンブリ {0} が見つかりませんでした。</value>
   </data>
   <data name="TypeAlreadyExists" xml:space="preserve">
-    <value>Cannot add type. The type name '{0}' already exists.</value>
+    <value>型を追加できません。型の名前 '{0}' は既に存在します。</value>
   </data>
   <data name="OutputAssemblyDidNotResolve" xml:space="preserve">
-    <value>Cannot set output assembly. The path {0} did not resolve to a single file.</value>
+    <value>出力アセンブリを設定できません。パス {0} は 1 つのファイルに解決されませんでした。</value>
   </data>
   <data name="CompilerErrors" xml:space="preserve">
-    <value>Cannot add type. Compilation errors occurred.</value>
+    <value>型を追加できません。コンパイル エラーが発生しました。</value>
   </data>
   <data name="OutputTypeRequiresOutputAssembly" xml:space="preserve">
-    <value>Cannot add type. The OutputType parameter requires that the OutputAssembly parameter be specified.</value>
+    <value>型を追加できません。OutputType パラメーターを指定するには、OutputAssembly パラメーターが必要です。</value>
   </data>
   <data name="CannotDefineNewType" xml:space="preserve">
-    <value>Cannot add type. Definition of new types is not supported in this language mode.</value>
+    <value>型を追加できません。この言語モードでは、新しい型の定義はサポートされていません。</value>
   </data>
   <data name="ReferenceAssemblyIgnored" xml:space="preserve">
-    <value>The specified reference assembly '{0}' is unnecessary and ignored.</value>
+    <value>指定された参照アセンブリ '{0}' は不要なため、無視されます。</value>
   </data>
   <data name="AssemblyTypeNotSupported" xml:space="preserve">
-    <value>Both the assembly types 'ConsoleApplication' and 'WindowsApplication' are not currently supported.</value>
+    <value>アセンブリの型 'ConsoleApplication' と 'WindowsApplication' は、どちらも現在サポートされていません。</value>
   </data>
   <data name="AddTypeLogTitle" xml:space="preserve">
-    <value>Add-Type Cmdlet</value>
+    <value>Add-Type コマンドレット</value>
   </data>
   <data name="AddTypeLogMessage" xml:space="preserve">
-    <value>Add-Type cmdlet will not be allowed in ConstrainedLanguage mode.</value>
+    <value>Add-Type コマンドレットは ConstrainedLanguage モードでは許可されません。</value>
   </data>
 </root>

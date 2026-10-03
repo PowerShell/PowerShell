@@ -118,1618 +118,1618 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DefaultRemotingExceptionMessage" xml:space="preserve">
-    <value>An error of type "{0}" has occurred.</value>
+    <value>"{0}" türünde bir hata oluştu.</value>
   </data>
   <data name="OutOfMemory" xml:space="preserve">
-    <value>Out of process memory.</value>
+    <value>İşlem belleği yetersiz.</value>
   </data>
   <data name="UnsupportedOSForRemoteEnumeration" xml:space="preserve">
-    <value>Remote PSSession enumeration with -ComputerName is only supported on Windows and not "{0}".</value>
+    <value>-ComputerName ile uzak PSSession numaralandırması yalnızca Windows'da desteklenir, "{0}" üzerinde desteklenmez.</value>
   </data>
   <data name="PipelineIdsDoNotMatch" xml:space="preserve">
-    <value>Pipeline ID "{0}" does not match the InstanceId of the pipeline that is currently running, "{1}".</value>
+    <value>"{0}" işlem hattı kimliği, şu anda çalışan işlem hattının InstanceId değeri olan "{1}" ile eşleşmiyor.</value>
   </data>
   <data name="PipelineNotFoundOnServer" xml:space="preserve">
-    <value>Pipeline Id "{0}" was not found on the server.</value>
+    <value>"{0}" işlem hattı kimliği sunucuda bulunamadı.</value>
   </data>
   <data name="PipelineStopped" xml:space="preserve">
-    <value>The remote pipeline has been stopped.</value>
+    <value>Uzak işlem hattı durduruldu.</value>
   </data>
   <data name="RunspaceAlreadyExists" xml:space="preserve">
-    <value>The session already exists. Trying to create the session again with the same InstanceId {0} is not allowed.</value>
+    <value>Oturum zaten var. Aynı InstanceId {0} ile oturumu yeniden oluşturmaya izin verilmez.</value>
   </data>
   <data name="RunspaceIdsDoNotMatch" xml:space="preserve">
-    <value>The specified client session InstanceId "{0}" does not match the existing session's InstanceId "{1}".</value>
+    <value>Belirtilen istemci oturumu InstanceId "{0}", mevcut oturumun InstanceId "{1}" değeriyle eşleşmiyor.</value>
   </data>
   <data name="RemoteRunspaceOpenFailed" xml:space="preserve">
-    <value>Opening the remote session failed.</value>
+    <value>Uzak oturum açılamadı.</value>
   </data>
   <data name="RunspaceCannotBeFound" xml:space="preserve">
-    <value>The specified remote session with a client InstanceId of "{0}" cannot be found.</value>
+    <value>İstemci InstanceId'si "{0}" olan belirtilen uzak oturum bulunamıyor.</value>
   </data>
   <data name="ResponsePromptIdCannotBeFound" xml:space="preserve">
-    <value>Prompt response has a prompt id "{0}" that cannot be found.</value>
+    <value>İstem yanıtında, bulunamayan bir "{0}" istem kimliği var.</value>
   </data>
   <data name="RemoteHostCallFailed" xml:space="preserve">
-    <value>Remote host call to "{0}" failed.</value>
+    <value>"{0}" için uzak konak çağrısı başarısız oldu.</value>
   </data>
   <data name="RemoteHostMethodNotImplemented" xml:space="preserve">
-    <value>Remote host method {0} is not implemented.</value>
+    <value>{0} uzak konak yöntemi uygulanmadı.</value>
   </data>
   <data name="RemoteHostDataEncodingNotSupported" xml:space="preserve">
-    <value>Remote host method data encoding is not supported for type {0}.</value>
+    <value>Uzak konak yöntemi verileri kodlaması {0} türü için desteklenmiyor.</value>
   </data>
   <data name="RemoteHostDataDecodingNotSupported" xml:space="preserve">
-    <value>Remote host method data decoding is not supported for type {0}.</value>
+    <value>Uzak konak yöntemi verileri kodunun çözülmesi {0} türü için desteklenmiyor.</value>
   </data>
   <data name="NestedPipelineNotSupported" xml:space="preserve">
-    <value>Creation of nested pipelines is not supported.</value>
+    <value>İç içe işlem hatları oluşturma desteklenmiyor.</value>
   </data>
   <data name="RelativeUriForRunspacePathNotSupported" xml:space="preserve">
-    <value>Relative URIs are not supported in the creation of remote sessions.</value>
+    <value>Göreli URI'ler uzak oturumlar oluşturulurken desteklenmez.</value>
   </data>
   <data name="RemoteHostDecodingFailed" xml:space="preserve">
-    <value>A failure occurred while decoding data from the remote host. There was an error in the network data.</value>
+    <value>Uzak konaktan gelen verilerin kodu çözülürken bir hata oluştu. Ağ verilerinde bir hata oluştu.</value>
   </data>
   <data name="MustBeAdminToOverrideThreadOptions" xml:space="preserve">
-    <value>Only administrators can override the Thread Options remotely.</value>
+    <value>Yalnızca yöneticiler İş Parçacığı Seçeneklerini uzaktan geçersiz kılabilir.</value>
   </data>
   <data name="RemoteHostPromptForCredentialModifiedCaption" xml:space="preserve">
-    <value>PowerShell Credential Request: {0}</value>
+    <value>PowerShell Kimlik Bilgisi İsteği: {0}</value>
   </data>
   <data name="RemoteHostPromptForCredentialModifiedMessage" xml:space="preserve">
-    <value>Warning: A script or application on the remote computer {0} is requesting your credentials. Enter your credentials only if you trust the remote computer and the application or script that is requesting them.
+    <value>Uyarı: {0} uzak bilgisayarındaki bir betik veya uygulama kimlik bilgilerinizi istiyor. Kimlik bilgilerinizi yalnızca uzak bilgisayara ve bunları isteyen uygulamaya ya da betiğe güveniyorsanız girin.
 
 {1}</value>
   </data>
   <data name="RemoteHostReadLineAsSecureStringPrompt" xml:space="preserve">
-    <value>A script or application on the remote computer {0} is asking to read a line securely. Enter sensitive information, such as your credentials, only if you trust the remote computer and the application or script that is requesting it.</value>
+    <value>{0} uzak bilgisayarındaki bir betik veya uygulama, bir satırı güvenli şekilde okumak istiyor. Kimlik bilgileriniz gibi hassas bilgileri, yalnızca uzak bilgisayara ve bunu isteyen uygulamaya ya da betiğe güveniyorsanız girin.</value>
   </data>
   <data name="RemoteHostGetBufferContents" xml:space="preserve">
-    <value>A script or application on the remote computer {0} is attempting to read the buffer contents on the PowerShell host. For security reasons, this is not allowed; the call has been suppressed.</value>
+    <value>{0} uzak bilgisayarındaki bir betik veya uygulama, PowerShell konağındaki arabellek içeriklerini okumaya çalışıyor. Güvenlik nedeniyle buna izin verilmez; çağrı durduruldu.</value>
   </data>
   <data name="RemoteHostPromptSecureStringPrompt" xml:space="preserve">
-    <value>A script or application on the remote computer {0} is sending a prompt request. When you are prompted, enter sensitive information, such as credentials or passwords, only if you trust the remote computer and the application or script that is requesting the data.</value>
+    <value>{0} uzak bilgisayarındaki bir betik veya uygulama bir istem isteği gönderiyor. İstendiğinde, kimlik bilgileriniz veya parolalar gibi hassas bilgileri, yalnızca uzak bilgisayara ve verileri isteyen uygulamaya ya da betiğe güveniyorsanız girin.</value>
   </data>
   <data name="ReceivedUnsupportedRemoteHostCall" xml:space="preserve">
-    <value>Received unsupported remote host call: {0}.</value>
+    <value>Desteklenmeyen uzak konak çağrısı alındı: {0}.</value>
   </data>
   <data name="ReceivedUnsupportedAction" xml:space="preserve">
-    <value>Received remoting data with unsupported action: {0}.</value>
+    <value>Desteklenmeyen eyleme sahip uzaktan iletişim verileri alındı: {0}.</value>
   </data>
   <data name="ReceivedUnsupportedDataType" xml:space="preserve">
-    <value>Received remoting data with unsupported data type: {0}.</value>
+    <value>Desteklenmeyen veri türüne sahip uzaktan iletişim verileri alındı: {0}.</value>
   </data>
   <data name="MissingDestination" xml:space="preserve">
-    <value>Remoting data is missing the destination property.</value>
+    <value>Uzaktan iletişim verilerinde hedef özelliği eksik.</value>
   </data>
   <data name="MissingTarget" xml:space="preserve">
-    <value>Remoting data is missing target interface property.</value>
+    <value>Uzaktan iletişim verilerinde hedef arabirim özelliği eksik.</value>
   </data>
   <data name="MissingRunspaceId" xml:space="preserve">
-    <value>Remoting data is missing Session InstanceId property.</value>
+    <value>Uzaktan iletişim verilerinde Oturum InstanceId özelliği eksik.</value>
   </data>
   <data name="MissingDataType" xml:space="preserve">
-    <value>Remoting data is missing RemotingDataType property.</value>
+    <value>Uzaktan iletişim verilerinde RemotingDataType özelliği eksik.</value>
   </data>
   <data name="MissingCallId" xml:space="preserve">
-    <value>Remoting data is missing CallId property.</value>
+    <value>Uzaktan iletişim verilerinde CallId özelliği eksik.</value>
   </data>
   <data name="MissingMethodName" xml:space="preserve">
-    <value>Remoting data is missing MethodName property.</value>
+    <value>Uzaktan iletişim verilerinde MethodName özelliği eksik.</value>
   </data>
   <data name="MissingIsStartFragment" xml:space="preserve">
-    <value>The IsStartFragment flag for the first fragment is not set.</value>
+    <value>İlk parça için IsStartFragment bayrağı ayarlanmadı.</value>
   </data>
   <data name="MissingProperty" xml:space="preserve">
-    <value>Remoting data is missing {0} property.</value>
+    <value>Uzaktan iletişim verilerinde {0} özelliği eksik.</value>
   </data>
   <data name="ObjectIdsNotMatching" xml:space="preserve">
-    <value>Unexpected ObjectId received. This can happen if the fragments are not properly constructed by the remote computer, or the data might have been corrupted or changed.</value>
+    <value>Beklenmeyen ObjectId alındı. Bu durum, parçalar uzak bilgisayar tarafından düzgün oluşturulmamışsa veya veriler bozulmuş ya da değiştirilmiş olabilirse oluşabilir.</value>
   </data>
   <data name="ObjectIdCannotBeLessThanZero" xml:space="preserve">
-    <value>ObjectId cannot be less than or equal to 0. This can happen if the fragments are not properly constructed by the remote computer, or the data has been changed by unauthorized users.</value>
+    <value>ObjectId 0'dan küçük veya buna eşit olamaz. Bu durum, parçalar uzak bilgisayar tarafından düzgün oluşturulmamışsa veya veriler yetkisiz kullanıcılar tarafından değiştirilmişse oluşabilir.</value>
   </data>
   <data name="FragmentIdsNotInSequence" xml:space="preserve">
-    <value>The FragmentIDs of the same object must be in sequence, incrementally changing by 1. This can happen if the fragments are not properly constructed by the remote computer. The data might also have been corrupted or changed.</value>
+    <value>Aynı nesnenin FragmentID değerleri sıralı olmalı ve 1'er artmalıdır. Bu durum, parçalar uzak bilgisayar tarafından düzgün oluşturulmadığında oluşabilir. Veriler bozulmuş veya değiştirilmiş de olabilir.</value>
   </data>
   <data name="ObjectIsTooBig" xml:space="preserve">
-    <value>Remoting data is too large to be reassembled from the fragments. This can happen if the length of the data in a fragment is greater than Int32.Max. It can also occur if the data was changed by unauthorized users.</value>
+    <value>Uzaktan iletişim verileri, parçalardan yeniden derlenemeyecek kadar büyük. Bu durum, bir parçada bulunan verilerin uzunluğu Int32.Max değerinden büyükse oluşabilir. Bu ayrıca veriler yetkisiz kullanıcılar tarafından değiştirilmişse de oluşabilir.</value>
   </data>
   <data name="MissingIsEndFragment" xml:space="preserve">
-    <value>The IsEndFragment flag is not set for the last fragment. This can happen if the fragments are not properly constructed by the remote computer, or if the data was corrupted or changed.</value>
+    <value>Son parça için IsEndFragment bayrağı ayarlanmadı. Bu durum, parçalar uzak bilgisayar tarafından düzgün oluşturulmamışsa veya veriler bozulmuş ya da değiştirilmişse oluşabilir.</value>
   </data>
   <data name="DeserializedObjectIsNull" xml:space="preserve">
-    <value>Deserialized remoting data is null.</value>
+    <value>Seri durumdan çıkarılan uzaktan iletişim erişim verileri null.</value>
   </data>
   <data name="BlobLengthNotInRange" xml:space="preserve">
-    <value>Fragment blob length is out of range: {0}</value>
+    <value>Parça blob uzunluğu aralık dışında: {0}</value>
   </data>
   <data name="DecodingErrorForErrorRecord" xml:space="preserve">
-    <value>Error in decoding ErrorRecord.</value>
+    <value>ErrorRecord kodu çözülürken hata oluştu.</value>
   </data>
   <data name="DecodingErrorForPipelineStateInfo" xml:space="preserve">
-    <value>Error in decoding PipelineStateInfo.</value>
+    <value>PipelineStateInfo kodu çözülürken hata oluştu.</value>
   </data>
   <data name="DecodingErrorForRunspaceStateInfo" xml:space="preserve">
-    <value>Error in decoding RunspaceStateInfo.</value>
+    <value>RunspaceStateInfo kodu çözülürken hata oluştu.</value>
   </data>
   <data name="ReceivedUnsupportedRemotingTargetInterfaceType" xml:space="preserve">
-    <value>Received unsupported RemotingTargetInterface type: {0}</value>
+    <value>Desteklenmeyen RemotingTargetInterface türü alındı: {0}</value>
   </data>
   <data name="UnknownTargetClass" xml:space="preserve">
-    <value>Remote host method was invoked on an unknown target class: {0}</value>
+    <value>Uzak konak yöntemi, bilinmeyen bir hedef sınıfta çağrıldı: {0}</value>
   </data>
   <data name="MissingTargetClass" xml:space="preserve">
-    <value>Remote host method was invoked without specifying a target class.</value>
+    <value>Uzak konak yöntemi, hedef sınıf belirtilmeden çağrıldı.</value>
   </data>
   <data name="DecodingErrorForRunspacePoolStateInfo" xml:space="preserve">
-    <value>Error in decoding RunspacePoolStateInfo.</value>
+    <value>RunspacePoolStateInfo kodu çözülürken hata oluştu.</value>
   </data>
   <data name="DecodingErrorForMinRunspaces" xml:space="preserve">
-    <value>Error in decoding Minimum runspaces.</value>
+    <value>Minimum çalışma alanlarının kodu çözülürken hata oluştu.</value>
   </data>
   <data name="DecodingErrorForMaxRunspaces" xml:space="preserve">
-    <value>Error in decoding Maximum runspaces.</value>
+    <value>Maksimum çalışma alanlarının kodu çözülürken hata oluştu.</value>
   </data>
   <data name="DecodingErrorForPowerShellStateInfo" xml:space="preserve">
-    <value>Error in decoding PowerShellStateInfo.</value>
+    <value>PowerShellStateInfo kodu çözülürken hata oluştu.</value>
   </data>
   <data name="CantCastPropertyToExpectedType" xml:space="preserve">
-    <value>Unexpected type of {0} property (expected {1}, got {2}).</value>
+    <value>Beklenmeyen {0} özelliği türü ({1} bekleniyordu, {2} alındı).</value>
   </data>
   <data name="CantCastRemotingDataToPSObject" xml:space="preserve">
-    <value>Unexpected type of remoting data (expected PSObject, got {0}).</value>
+    <value>Beklenmeyen uzaktan iletişim verisi türü (PSObject bekleniyordu, {0} alındı).</value>
   </data>
   <data name="CantCastCommandToPSObject" xml:space="preserve">
-    <value>Unexpected type of encoded command (expected PSObject, got {0}).</value>
+    <value>Beklenmeyen kodlanmış komut türü (PSObject bekleniyordu, {0} alındı).</value>
   </data>
   <data name="CantCastParameterToPSObject" xml:space="preserve">
-    <value>Unexpected type of encoded command parameter (expected PSObject, got {0}).</value>
+    <value>Beklenmeyen kodlanmış komut parametresi türü (PSObject bekleniyordu, {0} alındı).</value>
   </data>
   <data name="NotEnoughHeaderForRemoteDataObject" xml:space="preserve">
-    <value>An error occurred while decoding data received from the remote computer. At least {0} bytes of data are required to decode a deserialized object that is received from a remote computer. This can happen if the fragments are not properly constructed by the remote computer, or if the data was corrupted or changed.</value>
+    <value>Uzak bilgisayardan alınan verilerin kodu çözülürken bir hata oluştu. Uzak bilgisayardan alınan seri durumdan çıkarılmış bir nesnenin kodunu çözmek için en az {0} bayt veri gerekir. Bu durum, parçalar uzak bilgisayar tarafından düzgün oluşturulmamışsa veya veriler bozulmuş ya da değiştirilmişse oluşabilir.</value>
   </data>
   <data name="RemotingDestinationNotForMe" xml:space="preserve">
-    <value>Received packet not destined for logged-on user: user = {0}, packet destination = {1}.</value>
+    <value>Alınan paket, oturum açan kullanıcı için değil: kullanıcı = {0}, paket hedefi = {1}.</value>
   </data>
   <data name="ClientNegotiationTimeout" xml:space="preserve">
-    <value>The client negotiation timer has expired. The negotiation time-out interval is {0} milliseconds.</value>
+    <value>İstemci anlaşma zamanlayıcısının süresi doldu. Anlaşma zaman aşımı aralığı {0} milisaniyedir.</value>
   </data>
   <data name="ClientNegotiationFailed" xml:space="preserve">
-    <value>PowerShell client does not support the {0} {1} negotiated by the server. Make sure the server is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
+    <value>PowerShell istemcisi, sunucunun anlaştığı {0} {1} desteğine sahip değil. Sunucunun PowerShell'in {2} derlemesi ve {3} protokol sürümü ile uyumlu olduğundan emin olun.</value>
   </data>
   <data name="ClientNotFoundCapabilityProperties" xml:space="preserve">
-    <value>{0}. Negotiation with the server failed. Make sure the server is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>{0}. Sunucuyla anlaşma başarısız oldu. Sunucunun PowerShell'in {1} derlemesi ve {2} protokol sürümü ile uyumlu olduğundan emin olun.</value>
   </data>
   <data name="ServerRequestedToCloseSession" xml:space="preserve">
-    <value>The destination server has sent a request to close the session.</value>
+    <value>Hedef sunucu, oturumu kapatmak için bir istek gönderdi.</value>
   </data>
   <data name="ServerNegotiationFailed" xml:space="preserve">
-    <value>The server that is running PowerShell does not support the {0} {1} negotiated by the client computer. Verify that the client computer is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
+    <value>PowerShell çalıştıran sunucu, istemci bilgisayar tarafından üzerinde anlaşılan {0} {1} öğesini desteklemiyor. İstemci bilgisayarın PowerShell'in {2} derlemesi ve {3} protokol sürümü ile uyumlu olduğunu doğrulayın.</value>
   </data>
   <data name="ServerConnectFailedOnNegotiation" xml:space="preserve">
-    <value>The server that is running PowerShell does not support connect operations on the {0} {1}  that is negotiated by the client computer. Make sure the client computer is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
+    <value>PowerShell çalıştıran sunucu, istemci bilgisayar tarafından üzerinde anlaşılan {0}{1} üzerinde bağlantı işlemlerini desteklemiyor. İstemci bilgisayarın PowerShell'in {2} derlemesi ve {3} protokol sürümü ile uyumlu olduğundan emin olun.</value>
   </data>
   <data name="ServerConnectFailedOnInputValidation" xml:space="preserve">
-    <value>The server that is running PowerShell cannot process the connect operation because the following information is not found or not valid: Client Capability information and Connect RunspacePool information.</value>
+    <value>PowerShell çalıştıran sunucu, aşağıdaki bilgiler bulunamadığından veya geçerli olmadığından bağlanma işlemini işleyemiyor: İstemci Özelliği bilgileri ve Connect RunspacePool bilgileri.</value>
   </data>
   <data name="ServerConnectFailedOnServerStateValidation" xml:space="preserve">
-    <value>The server that is running PowerShell cannot process the connect operation because the server has either not been started, or it is shutting down.</value>
+    <value>PowerShell çalıştıran sunucu, sunucu başlatılmadığından veya kapatılıyor olduğundan bağlanma işlemini işleyemiyor.</value>
   </data>
   <data name="ServerConnectFailedOnMismatchedRunspacePoolProperties" xml:space="preserve">
-    <value>The server that is running PowerShell cannot process the connect operation because the server runspace pool properties did not match the client computer specified properties.</value>
+    <value>PowerShell çalıştıran sunucu, sunucu çalışma alanı havuzu özellikleri istemci bilgisayar tarafından belirtilen özelliklerle eşleşmediğinden bağlanma işlemini işleyemiyor.</value>
   </data>
   <data name="ServerNotFoundCapabilityProperties" xml:space="preserve">
-    <value>{0}. Negotiation with the client failed. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>{0}. İstemci ile anlaşma başarısız oldu. İstemcinin PowerShell'in {1} derlemesi ve {2} protokol sürümü ile uyumlu olduğundan emin olun.</value>
   </data>
   <data name="ServerNegotiationTimeout" xml:space="preserve">
-    <value>The server negotiation timer has expired. The negotiation time-out interval is {0} milliseconds.</value>
+    <value>Sunucu anlaşma zamanlayıcısının süresi doldu. Anlaşma zaman aşımı aralığı {0} milisaniyedir.</value>
   </data>
   <data name="ClientRequestedToCloseSession" xml:space="preserve">
-    <value>The client computer has sent a request to close the session.</value>
+    <value>İstemci bilgisayar oturumu kapatma isteği gönderdi.</value>
   </data>
   <data name="FatalErrorCausingClose" xml:space="preserve">
-    <value>An error has occurred which PowerShell cannot handle. A remote session might have ended.</value>
+    <value>PowerShell'in işleyemediği bir hata oluştu. Uzak bir oturum sona ermiş olabilir.</value>
   </data>
   <data name="ClientKeyExchangeFailed" xml:space="preserve">
-    <value>The server did not respond with an encrypted session key within the specified time-out period.</value>
+    <value>Sunucu, belirtilen zaman aşımı süresi içinde şifrelenmiş oturum anahtarıyla yanıt vermedi.</value>
   </data>
   <data name="ServerKeyExchangeFailed" xml:space="preserve">
-    <value>The client did not respond with a public key within the specified time-out period.</value>
+    <value>İstemci, belirtilen zaman aşımı süresi içinde ortak anahtarla yanıt vermedi.</value>
   </data>
   <data name="ConnectFailed" xml:space="preserve">
-    <value>Connection attempt failed.</value>
+    <value>Bağlantı girişimi başarısız oldu.</value>
   </data>
   <data name="CloseIsCalled" xml:space="preserve">
-    <value>Attempting to close the session.</value>
+    <value>Oturum kapatılmaya çalışılıyor.</value>
   </data>
   <data name="ForceClosed" xml:space="preserve">
-    <value>PowerShell cannot close the remote session properly. The session is in an undefined state because it was not opened or connected after being disconnected. PowerShell will try to force the session to close on the local computer, but the session might not be closed on the remote computer. To close a remote session properly, first open it or connect it.</value>
+    <value>PowerShell, uzak oturumu düzgün bir şekilde kapatamıyor. Oturum, bağlantısı kesildikten sonra açılmadığı veya bağlanmadığı için tanımsız bir durumda. PowerShell, yerel bilgisayarda oturumu zorla kapatmaya çalışacak, ancak oturum uzak bilgisayarda kapanmayabilir. Uzak oturumu düzgün bir şekilde kapatmak için önce oturumu açın veya bağlayın.</value>
   </data>
   <data name="CloseFailed" xml:space="preserve">
-    <value>Could not close the session.</value>
+    <value>Oturum kapatılamadı.</value>
   </data>
   <data name="CloseCompleted" xml:space="preserve">
-    <value>The session is closed.</value>
+    <value>Oturum kapatıldı.</value>
   </data>
   <data name="UnsupportedWaitHandleType" xml:space="preserve">
-    <value>The Wait handle type "{0}" is not supported.</value>
+    <value>"{0}" Bekleme tanıtıcısı türü desteklenmiyor.</value>
   </data>
   <data name="ReceivedDataStreamIsNotStdout" xml:space="preserve">
-    <value>Received data has a stream ID index of "{0}". Only a Standard Output stream ID index of "0" is supported.</value>
+    <value>Alınan verilerin akış kimliği dizini: "{0}". Yalnızca "0" olan Standart Çıkış akışı kimliği dizini desteklenir.</value>
   </data>
   <data name="StdInIsNotOpen" xml:space="preserve">
-    <value>The Standard Input handle is not open.</value>
+    <value>Standart Girdi tanıtıcısı açık değil.</value>
   </data>
   <data name="NativeWriteFileFailed" xml:space="preserve">
-    <value>Native API call to WriteFile failed. Error code is {0}.</value>
+    <value>WriteFile için yerel API çağrısı başarısız oldu. Hata kodu: {0}.</value>
   </data>
   <data name="NativeReadFileFailed" xml:space="preserve">
-    <value>Native API call to ReadFile failed. Error code is {0}.</value>
+    <value>ReadFile için yerel API çağrısı başarısız oldu. Hata kodu: {0}.</value>
   </data>
   <data name="InvalidSchemeValue" xml:space="preserve">
-    <value>{0} is not a valid schema value. Valid values are "http" and "https".</value>
+    <value>{0}, geçerli bir şema değeri değil. Geçerli değerler: "http" ve "https".</value>
   </data>
   <data name="ClientReceiveFailed" xml:space="preserve">
-    <value>Client side receive call failed.</value>
+    <value>İstemci tarafı alma çağrısı başarısız oldu.</value>
   </data>
   <data name="ClientSendFailed" xml:space="preserve">
-    <value>Client side send call failed.</value>
+    <value>İstemci tarafı gönderme çağrısı başarısız oldu.</value>
   </data>
   <data name="CommandHandleIsNull" xml:space="preserve">
-    <value>The command handle returned from the WinRS API WSManRunShellCommand is null.</value>
+    <value>WinRS API WSManRunShellCommand tarafından döndürülen komut tanıtıcısı null.</value>
   </data>
   <data name="StdInCannotBeSetToNoWait" xml:space="preserve">
-    <value>The Standard Input handle cannot be set to the 'no wait' state. The system error code is {0}.</value>
+    <value>Standart Girdi tanıtıcısı 'bekleme yok' durumuna ayarlanamaz. Sistem hatası kodu: {0}.</value>
   </data>
   <data name="PortIsOutOfRange" xml:space="preserve">
-    <value>The port number {0} is not within the range of valid values. The range of valid values is between 1 and 65535.</value>
+    <value>{0} bağlantı noktası numarası geçerli değerler aralığında değil. Geçerli değer aralığı 1 ile 65535 arasındadır.</value>
   </data>
   <data name="ServerProcessExited" xml:space="preserve">
-    <value>The server process has exited.</value>
+    <value>Sunucu işleminden çıkıldı.</value>
   </data>
   <data name="CannotGetStdInHandle" xml:space="preserve">
-    <value>The call to Windows API GetStdHandle to get the Standard Input handle resulted in an error code: {0}.</value>
+    <value>Standart Girdi tanıtıcısını almak için Windows API GetStdHandle çağrısı şu hata koduyla sonuçlandı: {0}.</value>
   </data>
   <data name="CannotGetStdOutHandle" xml:space="preserve">
-    <value>The call to Windows API GetStdHandle to get the Standard Output handle resulted in an error code: {0}.</value>
+    <value>Standart Çıktı tanıtıcısını almak için Windows API GetStdHandle çağrısı şu hata koduyla sonuçlandı: {0}.</value>
   </data>
   <data name="CannotGetStdErrHandle" xml:space="preserve">
-    <value>The call to Windows API GetStdHandle to get the Standard Error handle resulted in an error code: {0}.</value>
+    <value>Standart Hata tanıtıcısını almak için Windows API GetStdHandle çağrısı şu hata koduyla sonuçlandı: {0}.</value>
   </data>
   <data name="ConnectExFailed" xml:space="preserve">
-    <value>Connecting to remote server {0} failed.</value>
+    <value>{0} uzak sunucusuna bağlanılamadı.</value>
   </data>
   <data name="ConnectExCallBackError" xml:space="preserve">
-    <value>Connecting to remote server {0} failed with the following error message : {1}</value>
+    <value>{0} uzak sunucu bağlantısı şu hata iletisiyle başarısız oldu: {1}</value>
   </data>
   <data name="CloseExCallBackError" xml:space="preserve">
-    <value>Closing the remote server shell instance failed with the following error message : {0}</value>
+    <value>Uzak sunucu kabuğu örneğinin kapatılması şu hata iletisiyle başarısız oldu: {0}</value>
   </data>
   <data name="SendExFailed" xml:space="preserve">
-    <value>Sending data to remote server {0} failed.</value>
+    <value>{0} uzak sunucusuna veri gönderilemedi.</value>
   </data>
   <data name="SendExCallBackError" xml:space="preserve">
-    <value>Sending data to remote server {0} failed with the following error message : {1}</value>
+    <value>{0} uzak sunucusuna veri gönderme şu hata iletisiyle başarısız oldu: {1}</value>
   </data>
   <data name="ReceiveExFailed" xml:space="preserve">
-    <value>Receiving data from remote server {0} failed.</value>
+    <value>{0} uzak sunucusundan veri alma başarısız oldu.</value>
   </data>
   <data name="ReceiveExCallBackError" xml:space="preserve">
-    <value>Processing data from remote server {0} failed with the following error message: {1}</value>
+    <value>{0} uzak sunucusundan veri işleme şu hata iletisiyle başarısız oldu: {1}</value>
   </data>
   <data name="RunShellCommandExFailed" xml:space="preserve">
-    <value>Starting a command on the remote server failed.</value>
+    <value>Uzak sunucuda komut başlatılamadı.</value>
   </data>
   <data name="RunShellCommandExCallBackError" xml:space="preserve">
-    <value>Starting a command on the remote server failed with the following error message : {0}</value>
+    <value>Uzak sunucudaki bir komut şu hata iletisiyle başlatılamadı: {0}</value>
   </data>
   <data name="ReconnectShellCommandExCallBackError" xml:space="preserve">
-    <value>Reconnecting to a command on the remote server failed with the following error message : {0}</value>
+    <value>Uzak sunucudaki bir komuta şu hata iletisiyle yeniden bağlanılamadı: {0}</value>
   </data>
   <data name="CommandSendExFailed" xml:space="preserve">
-    <value>Sending data to a remote command failed.</value>
+    <value>Uzak bir komuta veri gönderilemedi.</value>
   </data>
   <data name="CommandSendExCallBackError" xml:space="preserve">
-    <value>Sending data to a remote command failed with the following error message: {0}</value>
+    <value>Uzak komuta veri gönderme işlemi şu hata iletisiyle başarısız oldu: {0}</value>
   </data>
   <data name="CommandReceiveExFailed" xml:space="preserve">
-    <value>Receiving data for a remote command failed.</value>
+    <value>Uzak komut için veri alınamadı.</value>
   </data>
   <data name="CommandReceiveExCallBackError" xml:space="preserve">
-    <value>Processing data for a remote command failed with the following error message: {0}</value>
+    <value>Uzak komut için veri işleme işlemi şu hata iletisiyle başarısız oldu: {0}</value>
   </data>
   <data name="GeneralError" xml:space="preserve">
-    <value>Error with error code {0} occurred while calling method {1}.</value>
+    <value>{1} yöntemi çağrılırken {0} hata koduyla bir hata oluştu.</value>
   </data>
   <data name="TroubleShootingHelpTopic" xml:space="preserve">
-    <value>{0} For more information, see the about_Remote_Troubleshooting Help topic.</value>
+    <value>{0} Daha fazla bilgi için about_Remote_Troubleshooting Yardım konusuna bakın.</value>
   </data>
   <data name="DisconnectShellExFailed" xml:space="preserve">
-    <value>Failed to disconnect from the remote server {0}.</value>
+    <value>{0} uzak sunucusunun bağlantısı kesilemedi.</value>
   </data>
   <data name="DisconnectShellExCallBackErrr" xml:space="preserve">
-    <value>Disconnecting from the remote server failed with the following error message : {0}</value>
+    <value>Uzak sunucu bağlantısı şu hata iletisiyle kesilemedi: {0}</value>
   </data>
   <data name="ReconnectShellExFailed" xml:space="preserve">
-    <value>Reconnecting to the remote server failed.</value>
+    <value>Uzak sunucuya yeniden bağlanılamadı.</value>
   </data>
   <data name="ReconnectShellExCallBackErrr" xml:space="preserve">
-    <value>Reconnecting to the remote server {0} failed with the following error message : {1}</value>
+    <value>{0} uzak sunucusuna şu hata iletisiyle yeniden bağlanılamadı: {1}</value>
   </data>
   <data name="IPCTransportConnectError" xml:space="preserve">
-    <value>Inter-process communication (IPC) transport does not support connect operations.</value>
+    <value>İşlemler arası iletişim (IPC) taşıma, bağlantı işlemlerini desteklemiyor.</value>
   </data>
   <data name="NonExistentInitialSessionStateProvider" xml:space="preserve">
-    <value>An EndpointConfiguration with Id {0} does not exist on the remote server. Contact your PowerShell administrator, or the owner or creator of the endpoint configuration.</value>
+    <value>Kimliği {0} olan EndpointConfiguration uzak sunucuda yok. PowerShell yöneticinize veya uç nokta yapılandırmasının sahibine ya da oluşturucusuna başvurun.</value>
   </data>
   <data name="InitialSessionStateNull" xml:space="preserve">
-    <value>The EndpointConfiguration with the {0} identifier is not in a valid initial session state on the remote computer. Contact your PowerShell administrator, or the owner or creator of the endpoint configuration.</value>
+    <value>{0} tanımlayıcısına sahip EndpointConfiguration, uzak bilgisayarda geçerli bir ilk oturum durumunda değil. PowerShell yöneticinize veya uç nokta yapılandırmasının sahibine ya da oluşturucusuna başvurun.</value>
   </data>
   <data name="MandatoryValueNotPresent" xml:space="preserve">
-    <value>The mandatory value {0} is not specified for the {1} registry key.</value>
+    <value>{1} kayıt defteri anahtarı için zorunlu {0} değeri belirtilmedi.</value>
   </data>
   <data name="MandatoryValueNotInCorrectFormat" xml:space="preserve">
-    <value>The mandatory value {0} is not in the correct format for registry key {1}. The expected format is 'string'.</value>
+    <value>Zorunlu {0} değeri {1} kayıt defteri anahtarı için doğru biçimde değil. Beklenen biçim: 'string'.</value>
   </data>
   <data name="StartupScriptNotCorrect" xml:space="preserve">
-    <value>"{0}" must specify a PowerShell script file that ends with extension ".ps1".</value>
+    <value>"{0}", ".ps1" uzantısıyla biten bir PowerShell betik dosyası belirtmelidir.</value>
   </data>
   <data name="DuplicateInitializationParameterFound" xml:space="preserve">
-    <value>The {0} parameter is already specified in the {1} section. Contact your administrator to make sure that {0} is specified only once.</value>
+    <value>{0} parametresi zaten {1} bölümünde belirtilmiş. {0} öğesinin yalnızca bir kez belirtildiğinden emin olmak için yöneticinize başvurun.</value>
   </data>
   <data name="NoAttributesFoundForParamElement" xml:space="preserve">
-    <value>Expected "{0}" and "{1}" attributes in the "{2}" element.</value>
+    <value>"{2}" öğesinde "{0}" ve "{1}" öznitelikleri bekleniyordu.</value>
   </data>
   <data name="AssemblyLoadAttributesNotFound" xml:space="preserve">
-    <value>"{0}", "{1}" must be specified in the "{2}" section to dynamically load the assembly.</value>
+    <value>"{0}", derlemeyi dinamik olarak yüklemek için "{1}", "{2}" bölümünde belirtilmelidir.</value>
   </data>
   <data name="UnableToLoadAssembly" xml:space="preserve">
-    <value>Unable to load the assembly "{0}" specified in the "{1}" section.</value>
+    <value>"{1}" bölümünde belirtilen "{0}" derlemesi yüklenemiyor.</value>
   </data>
   <data name="UnableToLoadType" xml:space="preserve">
-    <value>Unable to load the type "{0}" specified in the "{1}" section.</value>
+    <value>"{1}" bölümünde belirtilen "{0}" türü yüklenemiyor.</value>
   </data>
   <data name="TypeNeedsAssembly" xml:space="preserve">
-    <value>Both "{0}" and "{1}" must be specified in the "{2}" section.</value>
+    <value>"{2}" bölümünde hem "{0}" hem de "{1}" belirtilmelidir.</value>
   </data>
   <data name="RedirectedURINotWellFormatted" xml:space="preserve">
-    <value>The destination "{0}" requested the connection to be redirected to "{1}". However "{1}" is not a well formatted URI.</value>
+    <value>"{0}" hedefi, bağlantının şuraya yeniden yönlendirilmesini istedi: "{1}". Ancak "{1}", iyi biçimlendirilmiş bir URI değil.</value>
   </data>
   <data name="URIEndPointNotResolved" xml:space="preserve">
-    <value>{0}Redirect location reported: {1}.</value>
+    <value>{0}Yeniden yönlendirme konumu bildirildi: {1}.</value>
   </data>
   <data name="URIRedirectWarningToHost" xml:space="preserve">
-    <value>Your connection has been redirected to the following URI: "{0}"</value>
+    <value>Bağlantınız şu URI'ye yeniden yönlendirildi: "{0}"</value>
   </data>
   <data name="URIRedirectionReported" xml:space="preserve">
-    <value>{0} To automatically connect to the redirected URI, verify the "{1}" property of the session preference variable "{2}", and use the "{3}" parameter on the cmdlet.</value>
+    <value>{0} Yeniden yönlendirilen URI'ye otomatik olarak bağlanmak için, "{2}" oturum tercih değişkeninin "{1}" özelliğini doğrulayın ve cmdlet'te "{3}" parametresini kullanın.</value>
   </data>
   <data name="ReceivedObjectSizeExceededMaximumClient" xml:space="preserve">
-    <value>The current deserialized object size of the data received from the remote server exceeded the allowed maximum object size. The current deserialized object size is {0}. The allowed maximum object size is {1}.</value>
+    <value>Uzak sunucudan alınan verilerin geçerli seri durumdan çıkarılmış nesne boyutu izin verilen en büyük nesne boyutunu aştı. Geçerli seri durumdan çıkarılmış nesne boyutu: {0}. İzin verilen en büyük nesne boyutu: {1}.</value>
   </data>
   <data name="ReceivedDataSizeExceededMaximumClient" xml:space="preserve">
-    <value>The total data received from the remote server exceeded the allowed maximum. The allowed maximum is {0}.</value>
+    <value>Uzak sunucudan alınan toplam veri izin verilen en yüksek sınırı aştı. İzin verilen en büyük değer: {0}.</value>
   </data>
   <data name="ReceivedObjectSizeExceededMaximumServer" xml:space="preserve">
-    <value>The current deserialized object size of the data received from the remote client computer exceeded the allowed maximum object size. The current deserialized object size is {0}. The allowed maximum object size is {1}.</value>
+    <value>Uzak istemci bilgisayardan alınan verilerin geçerli seri durumdan çıkarılmış nesne boyutu izin verilen en büyük nesne boyutunu aştı. Geçerli seri durumdan çıkarılmış nesne boyutu: {0}. İzin verilen en büyük nesne boyutu: {1}.</value>
   </data>
   <data name="ReceivedDataSizeExceededMaximumServer" xml:space="preserve">
-    <value>The total data received from the remote client exceeded the allowed maximum. The allowed maximum is {0}.</value>
+    <value>Uzak istemciden alınan toplam veri izin verilen en yüksek sınırı aştı. İzin verilen en büyük değer: {0}.</value>
   </data>
   <data name="StartupScriptThrewTerminatingError" xml:space="preserve">
-    <value>Running startup script threw an error: {0}.</value>
+    <value>Başlangıç betiği çalıştırılırken bir hata oluştu: {0}.</value>
   </data>
   <data name="RemoteRunspaceInfoHasDuplicates" xml:space="preserve">
-    <value>Specified RemoteRunspaceInfo objects have duplicates.</value>
+    <value>Belirtilen RemoteRunspaceInfo nesnelerinde yinelemeler var.</value>
   </data>
   <data name="RemoteRunspaceInfoLimitExceeded" xml:space="preserve">
-    <value>Specified RemoteRunspaceInfo objects have exceeded the maximum allowable limit.</value>
+    <value>Belirtilen RemoteRunspaceInfo nesneleri izin verilen en yüksek sınırı aştı.</value>
   </data>
   <data name="RemoteRunspaceOpenUnknownState" xml:space="preserve">
-    <value>Opening the remote session failed with an unexpected state. State {0}.</value>
+    <value>Uzak oturum, beklenmeyen bir durum nedeniyle açılamadı. {0} durumu.</value>
   </data>
   <data name="UriSpecifiedNotValid" xml:space="preserve">
-    <value>Specified Uri {0} is not valid.</value>
+    <value>Belirtilen {0} Uri'si geçerli değil.</value>
   </data>
   <data name="RemoteRunspaceClosed" xml:space="preserve">
-    <value>Remote Session closed for Uri {0}.</value>
+    <value>Uzak oturum, {0} Uri'si için kapatıldı.</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedComputer" xml:space="preserve">
-    <value>Remote session is not available for ComputerName {0}.</value>
+    <value>ComputerName {0} için uzak oturum kullanılamıyor.</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedRunspaceId" xml:space="preserve">
-    <value>Remote session is not available for {0}.</value>
+    <value>{0} için uzak oturum kullanılamıyor.</value>
   </data>
   <data name="StopPSJobWhatIfTarget" xml:space="preserve">
-    <value>Remote Command: {0}, associated with the job that has an ID of "{1}".</value>
+    <value>{0} Uzak Komutu, kimliği "{1}" olan işle ilişkilidir.</value>
   </data>
   <data name="NewRunspaceAmbiguousAuthentication" xml:space="preserve">
-    <value>A {0} cannot be specified when {1} is specified.</value>
+    <value>{1} belirtildiğinde bir {0} belirtilemez.</value>
   </data>
   <data name="WildCardErrorFilePathParameter" xml:space="preserve">
-    <value>Wildcard characters are not supported for the FilePath parameter. Specify a path without wildcard characters.</value>
+    <value>FilePath parametresi için joker karakterler desteklenmez. Joker karakter içermeyen bir yol belirtin.</value>
   </data>
   <data name="FilePathNotFromFileSystemProvider" xml:space="preserve">
-    <value>The path specified as the value of the FilePath parameter is not from the FileSystem provider.</value>
+    <value>FilePath parametresinin değeri olarak belirtilen yol FileSystem sağlayıcısından değil.</value>
   </data>
   <data name="FilePathShouldPS1Extension" xml:space="preserve">
-    <value>The value of the FilePath parameter must be a PowerShell script file. Enter the path to a file with a .ps1 file name extension and try the command again.</value>
+    <value>FilePath parametresinin değeri bir PowerShell betik dosyası olmalıdır. .ps1 dosya adı uzantısına sahip bir dosyanın yolunu girin ve komutu yeniden deneyin.</value>
   </data>
   <data name="InvalidComputerName" xml:space="preserve">
-    <value>One or more computer names are not valid. If you are trying to pass a URI, use the -ConnectionUri parameter, or pass URI objects instead of strings.</value>
+    <value>Bir veya daha fazla bilgisayar adı geçerli değil. Bir URI geçirmeye çalışıyorsanız, -ConnectionUri parametresini kullanın veya dizeler yerine URI nesneleri geçirin.</value>
   </data>
   <data name="InvalidJobStateGeneral" xml:space="preserve">
-    <value>The state of the current job instance is not valid for this operation.</value>
+    <value>Geçerli iş örneğinin durumu bu işlem için geçerli değil.</value>
   </data>
   <data name="JobWithSpecifiedNameNotFound" xml:space="preserve">
-    <value>The command cannot find the job because the job name {0} was not found. Verify the value of the Name parameter, and then try the command again.</value>
+    <value>{0} iş adı bulunamadığından komut işi bulamıyor. Name parametresinin değerini doğrulayın ve sonra komutu yeniden deneyin.</value>
   </data>
   <data name="JobWithSpecifiedInstanceIdNotFound" xml:space="preserve">
-    <value>The command cannot find a job with the instance identifier {0}. Verify the value of the InstanceId parameter, and then try the command again.</value>
+    <value>Komut, {0} örnek tanımlayıcısına sahip bir iş bulamıyor. InstanceId parametresinin değerini doğrulayın ve sonra komutu yeniden deneyin.</value>
   </data>
   <data name="JobWithSpecifiedSessionIdNotFound" xml:space="preserve">
-    <value>The command cannot find a job with the job ID {0}. Verify the value of the Id parameter and then try the command again.</value>
+    <value>Komut, {0} iş kimliğine sahip bir iş bulamıyor. Id parametresinin değerini doğrulayın ve sonra komutu yeniden deneyin.</value>
   </data>
   <data name="JobWithSpecifiedNameNotCompleted" xml:space="preserve">
-    <value>The command cannot remove the job with the job ID {0} and the name {1} because the job is not finished. To remove the job, first stop the job, or use the Force parameter.</value>
+    <value>İş tamamlanmadığından komut, {0} iş kimliğine ve {1} adına sahip işi kaldıramıyor. İşi kaldırmak için önce işi durdurun ya da Force parametresini kullanın.</value>
   </data>
   <data name="JobWithSpecifiedSessionIdNotCompleted" xml:space="preserve">
-    <value>The command cannot remove the job with the job ID {0} because the job is not finished. To remove the job, first stop the job, or use the Force parameter.</value>
+    <value>İş tamamlanmadığından komut, {0} iş kimliğine sahip işi kaldıramıyor. İşi kaldırmak için önce işi durdurun ya da Force parametresini kullanın.</value>
   </data>
   <data name="JobWithSpecifiedInstanceIdNotCompleted" xml:space="preserve">
-    <value>The command cannot remove the job with the job ID {0} and the instance identifier {1} because the job is not finished. To remove the job, first stop the job or use the Force parameter.</value>
+    <value>İş tamamlanmadığından komut, {0} iş kimliğine ve {1} örnek tanımlayıcısına sahip işi kaldıramıyor. İşi kaldırmak için önce işi durdurun ya da Force parametresini kullanın.</value>
   </data>
   <data name="RemovePSJobWhatIfTarget" xml:space="preserve">
-    <value>Remote Command: {0}, associated with a job that has an ID of "{1}".</value>
+    <value>{0} Uzak Komutu, kimliği "{1}" olan bir işle ilişkilidir.</value>
   </data>
   <data name="ComputerNameParamNotSupported" xml:space="preserve">
-    <value>The command cannot retrieve the jobs of the specified computers. The ComputerName parameter can be used only with jobs created by using PowerShell remoting.</value>
+    <value>Komut, belirtilen bilgisayarların işlerini alamıyor. ComputerName parametresi yalnızca PowerShell uzaktan iletişimi kullanılarak oluşturulan işler ile kullanılabilir.</value>
   </data>
   <data name="RunspaceParamNotSupported" xml:space="preserve">
-    <value>The Session parameter can be used only with PSRemotingJob objects.</value>
+    <value>Session parametresi yalnızca PSRemotingJob nesneleriyle kullanılabilir.</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedName" xml:space="preserve">
-    <value>The remote session with the name {0}  is not available.</value>
+    <value>{0} adlı uzak oturum kullanılamıyor.</value>
   </data>
   <data name="RemoteRunspaceNotAvailableForSpecifiedSessionId" xml:space="preserve">
-    <value>The remote session with the session ID {0} is not available.</value>
+    <value>{0} oturum kimliğine sahip uzak oturum kullanılamıyor.</value>
   </data>
   <data name="ItemNotFoundInRepository" xml:space="preserve">
-    <value>{0} does not contain an item with ID of {1}.</value>
+    <value>{0}, {1} kimlikli bir öğe içermiyor.</value>
   </data>
   <data name="CannotRemoveJob" xml:space="preserve">
-    <value>The command cannot remove the job because it does not exist or because it is a child job. Child jobs can be removed only by removing the parent job.</value>
+    <value>İş mevcut olmadığından veya alt iş olduğundan komut işi kaldıramıyor. Alt işler yalnızca üst iş kaldırılarak kaldırılabilir.</value>
   </data>
   <data name="CSCDoubleParameterOutOfRange" xml:space="preserve">
-    <value>{0} is not a valid value for the parameter {1}. The value must be greater than or equal to 0.</value>
+    <value>{0}, {1} parametresi için geçerli bir değer değildir. Değer 0'dan büyük veya 0'a eşit olmalıdır.</value>
   </data>
   <data name="ProxyAmbiguousAuthentication" xml:space="preserve">
-    <value>{0} cannot be specified as a proxy authentication mechanism. Only {1},{2} or {3} are supported for proxy authentication.</value>
+    <value>{0} bir ara sunucu kimlik doğrulaması mekanizması olarak belirtilemez. Ara sunucu kimlik doğrulaması için yalnızca {1}, {2} veya {3} desteklenir.</value>
   </data>
   <data name="ProxyCredentialWithoutAccess" xml:space="preserve">
-    <value>Proxy credentials cannot be specified when using the following proxy access type: {0}. Either specify a different access type, or do not specify proxy credentials.</value>
+    <value>Şu ara sunucu erişim türü kullanılırken ara sunucu kimlik bilgileri belirtilemez: {0}. Farklı bir erişim türü belirtin ya da ara sunucu kimlik bilgilerini belirtmeyin.</value>
   </data>
   <data name="WrongSessionOptionValue" xml:space="preserve">
-    <value>A {0} value must be specified for session option {1}.</value>
+    <value>{1} oturum seçeneği için bir {0} değeri belirtilmelidir.</value>
   </data>
   <data name="PushedRunspaceMustBeOpen" xml:space="preserve">
-    <value>Session must be open.</value>
+    <value>Oturum açık olmalıdır.</value>
   </data>
   <data name="HostDoesNotSupportPushRunspace" xml:space="preserve">
-    <value>The host does not support Enter-PSSession and Exit-PSSession.</value>
+    <value>Konak Enter-PSSession ve Exit-PSSession'ı desteklemiyor.</value>
   </data>
   <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId" xml:space="preserve">
-    <value>Multiple matches found for session ID {0}.</value>
+    <value>{0} oturum kimliği için birden çok eşleşme bulundu.</value>
   </data>
   <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId" xml:space="preserve">
-    <value>Multiple matches found for session ID {0}.</value>
+    <value>{0} oturum kimliği için birden çok eşleşme bulundu.</value>
   </data>
   <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedName" xml:space="preserve">
-    <value>Multiple matches found for name {0}.</value>
+    <value>{0} adı için birden çok eşleşme bulundu.</value>
   </data>
   <data name="RemoteRunspaceDoesNotSupportPushRunspace" xml:space="preserve">
-    <value>Enter-PSSession failed because the remote session does not provide required commands.</value>
+    <value>Uzak oturum gerekli komutları sağlamadığından Enter-PSSession başarısız oldu.</value>
   </data>
   <data name="HostInNestedPrompt" xml:space="preserve">
-    <value>You cannot run Enter-PSSession from a nested prompt.</value>
+    <value>İç içe istemden Enter-PSSession çalıştıramazsınız.</value>
   </data>
   <data name="WsmanMaxRedirectionCountVariableDescription" xml:space="preserve">
-    <value>The maximum number of WS-Man URI redirections to allow while connecting to a remote computer</value>
+    <value>Uzak bilgisayara bağlanırken izin verilecek en fazla WS-Man URI yeniden yönlendirmesi sayısı</value>
   </data>
   <data name="PSDefaultSessionOptionDescription" xml:space="preserve">
-    <value>Default session options for new remote sessions</value>
+    <value>Yeni uzak oturumlar için varsayılan oturum seçenekleri</value>
   </data>
   <data name="PSSessionConfigurationName" xml:space="preserve">
-    <value>Name of the session configuration which will be loaded on the remote computer</value>
+    <value>Uzak bilgisayara yüklenecek oturum yapılandırmasının adı</value>
   </data>
   <data name="PSSessionAppName" xml:space="preserve">
-    <value>AppName where the remote connection will be established</value>
+    <value>Uzak bağlantının kurulacağı AppName</value>
   </data>
   <data name="PSSenderInfoDescription" xml:space="preserve">
-    <value>Contains information about the remote user starting the remote session. This variable is available only from a remote session.</value>
+    <value>Uzak oturumu başlatan uzak kullanıcı hakkında bilgi içerir. Bu değişken yalnızca uzak bir oturumdan kullanılabilir.</value>
   </data>
   <data name="CSCmdsTypeNeedsAssembly" xml:space="preserve">
-    <value>Either "{0}" and "{1}" must both be specified, or neither must not be specified.</value>
+    <value>Ya hem "{0}" hem de "{1}" belirtilmelidir ya da ikisi de belirtilmemelidir.</value>
   </data>
   <data name="CSCmdsShellNotFound" xml:space="preserve">
-    <value>Session configuration "{0}" was not found.</value>
+    <value>"{0}" oturum yapılandırması bulunamadı.</value>
   </data>
   <data name="CSCmdsShellNotPowerShellBased" xml:space="preserve">
-    <value>Session configuration "{0}" is not a PowerShell-based shell.</value>
+    <value>"{0}" oturum yapılandırması, PowerShell tabanlı bir kabuk değil.</value>
   </data>
   <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
-    <value>Session configuration "{0}" is a PowerShell-based shell. Please use PowerShell 6+ to modify it.</value>
+    <value>"{0}" oturum yapılandırması, PowerShell tabanlı bir kabuktur. Bunu değiştirmek için lütfen PowerShell 6+ kullanın.</value>
   </data>
   <data name="CSCmdsWindowsPowerShellCoreNotModifiable" xml:space="preserve">
-    <value>Session configuration "{0}" is a Windows PowerShell-based shell. Please use Windows PowerShell to modify it.</value>
+    <value>"{0}" oturum yapılandırması, Windows PowerShell tabanlı bir kabuktur. Bunu değiştirmek için lütfen Windows PowerShell kullanın.</value>
   </data>
   <data name="CustomShellNotFound" xml:space="preserve">
-    <value>No session configuration matches criteria "{0}".</value>
+    <value>"{0}" ölçütleriyle eşleşen oturum yapılandırması yok.</value>
   </data>
   <data name="CSShouldProcessAction" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="CSShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0}</value>
+    <value>Ad: {0}</value>
   </data>
   <data name="CSShouldProcessTargetAdminEnable" xml:space="preserve">
-    <value>Name: {0}. This lets administrators remotely run PowerShell commands on this computer.</value>
+    <value>Ad: {0}. Bu, yöneticilerin bu bilgisayarda PowerShell komutlarını uzaktan çalıştırmasına olanak tanır.</value>
   </data>
   <data name="NcsCannotDeleteFile" xml:space="preserve">
-    <value>Cannot delete temporary file {0}. Reason for failure: {1}.</value>
+    <value>{0} geçici dosyası silinemiyor. Hatanın nedeni: {1}.</value>
   </data>
   <data name="NcsCannotDeleteFileAfterInstall" xml:space="preserve">
-    <value>The new shell was successfully registered, but PowerShell cannot delete the temporary file {0}. Reason for failure: {1}.</value>
+    <value>Yeni kabuk başarıyla kaydedildi, ancak PowerShell {0} geçici dosyasını silemiyor. Hatanın nedeni: {1}.</value>
   </data>
   <data name="NcsCannotWritePluginContent" xml:space="preserve">
-    <value>Cannot write the shell configuration data into the temporary file {0}. Reason for failure: {1}.</value>
+    <value>Kabuk yapılandırma verileri {0} geçici dosyasına yazılamıyor. Hatanın nedeni: {1}.</value>
   </data>
   <data name="NcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to create a new session configuration.</value>
+    <value>Yeni bir oturum yapılandırması oluşturmak için "{0}" komutu çalıştırılıyor.</value>
   </data>
   <data name="NcsShouldProcessTargetSDDL" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This lets selected users remotely run PowerShell commands on this computer.</value>
+    <value>Ad: {0} SDDL: {1}. Bu, seçili kullanıcıların bu bilgisayarda PowerShell komutlarını uzaktan çalıştırmasına olanak tanır.</value>
   </data>
   <data name="RcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to remove a session configuration.</value>
+    <value>Oturum yapılandırması kaldırmak için "{0}" komutu çalıştırılıyor.</value>
   </data>
   <data name="GcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to get PowerShell-based session configurations.</value>
+    <value>PowerShell tabanlı oturum yapılandırmalarını almak için "{0}" komutu çalıştırılıyor.</value>
   </data>
   <data name="ScsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to update the session configuration properties.</value>
+    <value>Oturum yapılandırma özelliklerini güncelleştirmek için "{0}" komutu çalıştırılıyor.</value>
   </data>
   <data name="ScsShouldProcessTargetSDDL" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}</value>
+    <value>Ad: {0} SDDL: {1}</value>
   </data>
   <data name="EcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to enable the session configuration.</value>
+    <value>Oturum yapılandırmasını etkinleştirmek için "{0}" komutu çalıştırılıyor.</value>
   </data>
   <data name="EcsWSManQCCaption" xml:space="preserve">
-    <value>WinRM Quick Configuration</value>
+    <value>WinRM Hızlı Yapılandırma</value>
   </data>
   <data name="EcsWSManQCQuery" xml:space="preserve">
-    <value>Running command "{0}" to enable remote management of this computer by using the Windows Remote Management (WinRM) service.
- This includes:
-    1. Starting or restarting (if already started) the WinRM service
-    2. Setting the WinRM service startup type to Automatic
-    3. Creating a listener to accept requests on any IP address
-    4. Enabling Windows Firewall inbound rule exceptions for WS-Management traffic (for http only).
+    <value>Windows Uzaktan Yönetimi (WinRM) hizmetini kullanarak bu bilgisayarın uzaktan yönetimini etkinleştirmek için "{0}" komutunu çalıştırıyor.
+ Bu şunları içerir:
+    1. WinRM hizmetini başlatma veya (zaten başlatılmışsa) yeniden başlatma
+    2. WinRM hizmetinin başlangıç türünü Otomatik olarak ayarlama
+    3. Herhangi bir IP adresinde istekleri kabul etmek için dinleyici oluşturma
+    4. WS-Management trafiği için Windows Güvenlik Duvarı gelen kuralı özel durumlarını etkinleştirme (yalnızca http için).
 
-Do you want to continue?</value>
+Devam etmek istiyor musunuz?</value>
   </data>
   <data name="EcsWSManShouldProcessDesc" xml:space="preserve">
-    <value>Performing operation "{0}".</value>
+    <value>"{0}" işlemi yapılıyor.</value>
   </data>
   <data name="EcsShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This lets selected users remotely run PowerShell commands on this computer.</value>
+    <value>Ad: {0} SDDL: {1}. Bu, seçili kullanıcıların bu bilgisayarda PowerShell komutlarını uzaktan çalıştırmasına olanak tanır.</value>
   </data>
   <data name="DcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to disable the session configuration.</value>
+    <value>Oturum yapılandırmasını devre dışı bırakmak için "{0}" komutu çalıştırılıyor.</value>
   </data>
   <data name="DcsShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This denies access to this session configuration for everyone.</value>
+    <value>Ad: {0} SDDL: {1}. Bu, herkesin bu oturum yapılandırmasına erişimini reddeder.</value>
   </data>
   <data name="DcsWarningMessage" xml:space="preserve">
-    <value>Disabling the session configurations does not undo all the changes made by the Enable-PSRemoting or Enable-PSSessionConfiguration cmdlet. You might have to manually undo the changes by following these steps:
-    1. Stop and disable the WinRM service.
-    2. Delete the listener that accepts requests on any IP address.
-    3. Disable the firewall exceptions for WS-Management communications.
-    4. Restore the value of the LocalAccountTokenFilterPolicy to 0, which restricts remote access to members of the Administrators group on the computer.</value>
+    <value>Oturum yapılandırmalarını devre dışı bırakmak, Enable-PSRemoting veya Enable-PSSessionConfiguration cmdlet'inin yaptığı tüm değişiklikleri geri almaz. Şu adımları izleyerek değişiklikleri kendiniz geri almanız gerekebilir:
+    1. WinRM hizmetini durdurun ve devre dışı bırakın.
+    2. Herhangi bir IP adresindeki istekleri kabul eden dinleyiciyi silin.
+    3. WS-Management iletişimleri için güvenlik duvarı özel durumlarını devre dışı bırakın.
+    4. LocalAccountTokenFilterPolicy değerini 0 olarak geri yükleyin. Bu, bilgisayardaki Yönetici grubunun üyelerine uzak erişimi kısıtlar.</value>
   </data>
   <data name="EDcsRequiresElevation" xml:space="preserve">
-    <value>Access is denied. To run this cmdlet, start PowerShell with the "Run as administrator" option.</value>
+    <value>Erişim reddedildi. Bu cmdlet'i çalıştırmak için PowerShell'i "Yönetici olarak çalıştır" seçeneğiyle başlatın.</value>
   </data>
   <data name="RestartWSManServiceMessageV" xml:space="preserve">
-    <value>Restarting WinRM service</value>
+    <value>WinRM hizmeti yeniden başlatılıyor</value>
   </data>
   <data name="RestartWSManServiceAction" xml:space="preserve">
     <value>"Restart-Service"</value>
   </data>
   <data name="RestartWSManServiceTarget" xml:space="preserve">
-    <value>Name: {0}</value>
+    <value>Ad: {0}</value>
   </data>
   <data name="RestartWSManRequiredShowUI" xml:space="preserve">
-    <value>The WinRM service must be restarted before a UI can be displayed for the SecurityDescriptor selection. Restart the WinRM service, and then run the following command: "{0}"</value>
+    <value>SecurityDescriptor seçimi için kullanıcı arabiriminin görüntülenebilmesi için önce WinRM hizmeti yeniden başlatılmalıdır. WinRM hizmetini yeniden başlatın ve ardından şu komutu çalıştırın: "{0}"</value>
   </data>
   <data name="ERemotingCaption" xml:space="preserve">
-    <value>Registering session configuration</value>
+    <value>Oturum yapılandırması kaydediliyor</value>
   </data>
   <data name="ERemotingQuery" xml:space="preserve">
-    <value>The session configuration "{0}" was not found. Running command "{1}" to create the "{0}" session configuration. Running this command restarts the WinRM service.</value>
+    <value>"{0}" oturum yapılandırması bulunamadı. "{0}" oturum yapılandırmasını oluşturmak için "{1}" komutu çalıştırılıyor. Bu komutun çalıştırılması WinRM hizmetini yeniden başlatır.</value>
   </data>
   <data name="ShowUIAndSDDLCannotExist" xml:space="preserve">
-    <value>"{0}" and "{1}" parameters cannot be specified together. Specify either "{0}" or  "{1}" parameter.</value>
+    <value>"{0}" ve "{1}" parametreleri birlikte belirtilemez. "{0}" veya "{1}" parametresini belirtin.</value>
   </data>
   <data name="RestartWinRMMessage" xml:space="preserve">
-    <value>This operation might restart the WinRM service. Do you want to continue?</value>
+    <value>Bu işlem WinRM hizmetini yeniden başlatabilir. Devam etmek istiyor musunuz?</value>
   </data>
   <data name="IPCUnknownNodeType" xml:space="preserve">
-    <value>Cannot process an element with node type "{0}". Only {1} and {2} node types are supported.</value>
+    <value>Düğüm türü "{0}" olan bir öğe işlenemez. Yalnızca {1} ve {2} düğüm türleri desteklenir.</value>
   </data>
   <data name="IPCInsufficientDataforElement" xml:space="preserve">
-    <value>Not enough data is available to process the {0} element.</value>
+    <value>{0} öğesini işlemek için yeterli veri yok.</value>
   </data>
   <data name="IPCWrongAttributeCountForDataElement" xml:space="preserve">
-    <value>Expected only two attributes with the names "{0}" and "{1}" in the {2} element.</value>
+    <value>{2} öğesinde yalnızca "{0}" ve "{1}" adlarına sahip iki öznitelik bekleniyordu.</value>
   </data>
   <data name="IPCOnlyTextExpectedInDataElement" xml:space="preserve">
-    <value>Node type "{0}" is unknown in the {1} element. Only the "{2}" node type is expected in the {1} element.</value>
+    <value>"{0}" düğüm türü, {1} öğesinde bilinmiyor. {1} öğesinde yalnızca "{2}" düğüm türü beklenir.</value>
   </data>
   <data name="IPCWrongAttributeCountForElement" xml:space="preserve">
-    <value>Expected only one attribute with the name "{0}" in the {1} element.</value>
+    <value>Yalnızca "{0}" adına sahip bir öznitelik {1} öğesinde bekleniyordu.</value>
   </data>
   <data name="IPCUnknownElementReceived" xml:space="preserve">
-    <value>An unknown element "{0}" was received. This can happen if the remote process closed or ended abnormally.</value>
+    <value>Bilinmeyen bir "{0}" öğesi alındı. Uzak işlem kapatılırsa veya anormal bir şekilde sona ererse bu durum oluşabilir.</value>
   </data>
   <data name="IPCSupportsOnlyDefaultAuth" xml:space="preserve">
-    <value>The specified authentication mechanism "{0}" is not supported. Only "{1}" is supported for this operation.</value>
+    <value>Belirtilen "{0}" kimlik doğrulama mekanizması desteklenmiyor. Bu işlem için yalnızca "{1}" destekleniyor.</value>
   </data>
   <data name="IPCPwshExecutableNotFound" xml:space="preserve">
-    <value>The pwsh executable cannot be found at "{0}".
-Note that 'Start-Job' is not supported by design in scenarios where PowerShell is being hosted in other applications. Instead, usage of the 'ThreadJob' module is recommended in such scenarios.</value>
+    <value>pwsh yürütülebilir dosyası "{0}" konumunda bulunamıyor.
+PowerShell'in diğer uygulamalarda barındırıldığı senaryolarda 'Start-Job' özelliğinin yapısı gereği desteklenmediğini unutmayın. Bunun yerine, bu tür senaryolarda 'ThreadJob' modülünün kullanılması önerilir.</value>
   </data>
   <data name="RunAs32NotSupported" xml:space="preserve">
-    <value>Cannot start a 32-bit 'pwsh' process from the 64-bit 'pwsh' installation. Install the 32-bit 'pwsh' if you need to run PowerShell in a 32-bit process.</value>
+    <value>64 bit 'pwsh' yüklemesinden 32 bit 'pwsh' işlemi başlatılamıyor. PowerShell'i 32 bit bir işlemde çalıştırmanız gerekiyorsa 32 bit 'pwsh' yükleyin.</value>
   </data>
   <data name="IPCServerProcessReportedError" xml:space="preserve">
-    <value>The background process reported an error with the following message: {0}.</value>
+    <value>Arka plan işlemi şu iletiyle bir hata bildirdi: {0}.</value>
   </data>
   <data name="IPCServerProcessExited" xml:space="preserve">
-    <value>The background process closed or ended abnormally: {0}.</value>
+    <value>Arka plan işlemi kapatıldı ya da anormal şekilde sona erdi: {0}.</value>
   </data>
   <data name="IPCErrorProcessingServerData" xml:space="preserve">
-    <value>There is an error processing data from the background process. Error reported: {0}.</value>
+    <value>Arka plan işleminden gelen veriler işlenirken bir hata oluştu. Bildirilen hata: {0}.</value>
   </data>
   <data name="IPCUnknownCommandGuid" xml:space="preserve">
-    <value>Data for an inactive command with the identifier {0} was received. Received data: {1}.</value>
+    <value>{0} tanımlayıcısına sahip etkin olmayan bir komutun verileri alındı. Alınan veriler: {1}.</value>
   </data>
   <data name="IPCNoSignalForSession" xml:space="preserve">
-    <value>A {0} message to a session is not supported. A {0} message can be sent only to a command.</value>
+    <value>Bir oturuma yönelik {0} iletisi desteklenmiyor. {0} iletisi yalnızca bir komuta gönderilebilir.</value>
   </data>
   <data name="IPCSignalTimedOut" xml:space="preserve">
-    <value>The client did not receive a response for a signal operation in the specified time interval. This can happen when a command is not responding to a Stop message in a timely manner.</value>
+    <value>İstemci, belirtilen zaman aralığında sinyal işlemi için yanıt almadı. Bu durum, bir komut Stop iletisine zamanında yanıt vermediğinde oluşabilir.</value>
   </data>
   <data name="IPCCloseTimedOut" xml:space="preserve">
-    <value>The client did not receive a response for a Close operation in the specified time interval. This can happen when a command is not responding to a Stop message in a timely manner.</value>
+    <value>İstemci, belirtilen zaman aralığında Kapatma işlemi için yanıt almadı. Bu durum, bir komut Stop iletisine zamanında yanıt vermediğinde oluşabilir.</value>
   </data>
   <data name="IPCExceptionLaunchingProcess" xml:space="preserve">
-    <value>An error occurred while starting the background process. Error reported: {0}.</value>
+    <value>Arka plan işlemi başlatılırken bir hata oluştu. Bildirilen hata: {0}.</value>
   </data>
   <data name="ThrottlingJobChildAlreadyRunning" xml:space="preserve">
-    <value>The ThrottlingJob.AddChildJob method accepts only child jobs in the NotStarted state.</value>
+    <value>ThrottlingJob.AddChildJob yöntemi yalnızca NotStarted durumundaki alt işleri kabul eder.</value>
     <comment>{StrContains="ThrottlingJob.AddChildJob"}
 {StrContains="NotStarted"}</comment>
   </data>
   <data name="ThrottlingJobChildAddedAfterEndOfChildJobs" xml:space="preserve">
-    <value>The ThrottlingJob.AddChildJob method cannot be called after a call to the ThrottlingJob.EndOfChildJobs method.</value>
+    <value>ThrottlingJob.AddChildJob yöntemi, ThrottlingJob.EndOfChildJobs yöntemine yapılan çağrıdan sonra çağrılamaz.</value>
     <comment>{StrContains="ThrottlingJob.AddChildJob"}
 {StrContains="ThrottlingJob.EndOfChildJobs"}</comment>
   </data>
   <data name="ThrottlingJobStatusMessage" xml:space="preserve">
-    <value>{0}/{1} completed</value>
+    <value>{0}/{1} tamamlandı</value>
     <comment>{0} is a placeholder for a number of completed child jobs
 {1} is a placeholder for a total number of child jobs</comment>
   </data>
   <data name="NestedPipelineMissingRunspace" xml:space="preserve">
-    <value>Invoking a nested pipeline requires a valid runspace.</value>
+    <value>İç içe işlem hattı çağırmak için geçerli bir çalışma alanı gerekir.</value>
   </data>
   <data name="JobSourceAdapterError" xml:space="preserve">
-    <value>A {1} job source adapter threw an exception with the following message: {0}</value>
+    <value>Bir {1} iş kaynağı bağdaştırıcısı şu iletiyle bir özel durum oluşturdu: {0}</value>
   </data>
   <data name="PSVersionParameterOutOfRange" xml:space="preserve">
-    <value>The value {0} is not valid for the {1} parameter. The only allowed value is 5.1.</value>
+    <value>{1} parametresi için {0} değeri geçerli değil. İzin verilen tek değer 5.1'dir.</value>
   </data>
   <data name="BlockCannotBeUsedWithKeep" xml:space="preserve">
-    <value>The Wait and Keep parameters cannot be used together in the same command.</value>
+    <value>Wait ve Keep parametreleri aynı komutta birlikte kullanılamaz.</value>
   </data>
   <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
+    <value>WriteEvents parametresi Wait parametresi olmadan kullanılamaz.</value>
   </data>
   <data name="PowerShellVersionNotSupported" xml:space="preserve">
-    <value>PowerShell remoting endpoint versioning is not supported on PowerShell 7+.</value>
+    <value>PowerShell uzaktan iletişim uç noktası sürüm oluşturma, PowerShell 7+ üzerinde desteklenmez.</value>
   </data>
   <data name="JobManagerRegistrationConstructorError" xml:space="preserve">
-    <value>The following type cannot be instantiated because its constructor is not public: {0}.</value>
+    <value>Oluşturucusu genel olmadığından şu türün örneği oluşturulamıyor: {0}.</value>
   </data>
   <data name="JobSourceAdapterNotFound" xml:space="preserve">
-    <value>The job operation (Create, Get, or Remove) could not be performed because the JobSourceAdapter type specified in the JobDefinition is not registered. Register the JobSourceAdapter type either by using an explicit call, or by calling the Import-Module cmdlet, and then specifying an assembly.</value>
+    <value>JobDefinition içinde belirtilen JobSourceAdapter türü kaydedilmediğinden iş işlemi (Oluşturma, Alma veya Kaldırma) gerçekleştirilemedi. JobSourceAdapter türünü açık bir çağrı kullanarak ya da Import-Module cmdlet'ini çağırıp ardından bir derleme belirterek kaydedin.</value>
   </data>
   <data name="NewJobSpecificationError" xml:space="preserve">
-    <value>The job could not be created because the JobInvocationInfo does not contain a JobDefinition. Start the JobInvocationInfo with a JobDefinition.</value>
+    <value>JobInvocationInfo bir JobDefinition içermediğinden iş oluşturulamadı. JobInvocationInfo'yu bir JobDefinition ile başlatın.</value>
   </data>
   <data name="InvalidJobStateSpecific" xml:space="preserve">
-    <value>The state of the current job instance is {0}. This state is not valid for the attempted operation. {1}</value>
+    <value>Geçerli iş örneğinin durumu: {0}. Bu durum, denenen işlem için geçerli değil. {1}</value>
   </data>
   <data name="JobConnectFailed" xml:space="preserve">
-    <value>Unable to connect job "{0}" to the remote server.</value>
+    <value>"{0}" işi uzak sunucuya bağlanamıyor.</value>
   </data>
   <data name="RunspaceDisconnectFailed" xml:space="preserve">
-    <value>The Disconnect-PSSession operation failed for runspace Id = {0}.</value>
+    <value>{0} çalışma alanı kimliği için Disconnect-PSSession işlemi başarısız oldu.</value>
   </data>
   <data name="RunspaceConnectFailed" xml:space="preserve">
-    <value>The connect operation failed for session {0}. The Runspace state is {1} instead of Opened.</value>
+    <value>{0} oturumu için bağlanma işlemi başarısız oldu. Çalışma Alanı durumu Açıldı yerine: {1}.</value>
   </data>
   <data name="RunspaceQueryFailed" xml:space="preserve">
-    <value>The Disconnected PSSession query failed for computer "{0}".</value>
+    <value>Bağlantısı Kesik PSSession sorgusu, "{0}" bilgisayarı için başarısız oldu.</value>
   </data>
   <data name="RunspaceCannotBeConnected" xml:space="preserve">
-    <value>Cannot connect PSSession "{0}", either because it is not in the Disconnected state, or it is not available for connection.</value>
+    <value>"{0}" PSSession, Bağlantısı kesik durumunda olmadığından veya bağlantı için kullanılamadığından bağlanamıyor.</value>
   </data>
   <data name="RunspaceCannotBeConnectedForVMContainerSession" xml:space="preserve">
-    <value>Session connect is not supported for PSSession "{0}" on target "{1}" because the target computer type is "{2}".</value>
+    <value>Hedef bilgisayar türü "{2}" olduğundan oturum bağlantısı, "{1}" hedefindeki "{0}" PSSession için desteklenmiyor.</value>
   </data>
   <data name="RunspaceCannotBeDisconnected" xml:space="preserve">
-    <value>Cannot disconnect PSSession "{0}" because it is not in the Opened state.</value>
+    <value>"{0}" PSSession Açıldı durumunda olmadığından bağlantısı kesilemiyor.</value>
   </data>
   <data name="RunspaceCannotBeDisconnectedForVMContainerSession" xml:space="preserve">
-    <value>Session disconnect is not supported for PSSession "{0}" on target "{1}" because the target computer type is "{2}".</value>
+    <value>Hedef bilgisayar türü "{2}" olduğundan oturum bağlantısını kesme, "{1}" hedefindeki "{0}" PSSession için desteklenmiyor.</value>
   </data>
   <data name="RunspaceCannotBeReceivedForVMContainerSession" xml:space="preserve">
-    <value>Receive-PSSession does not support PSSession "{0}" on target "{1}" because the target computer type is "{2}".</value>
+    <value>Hedef bilgisayar türü "{2}" olduğundan Receive-PSSession, "{1}" hedefindeki "{0}" PSSession'ı desteklemiyor.</value>
   </data>
   <data name="JobActionInvalidWithNullChild" xml:space="preserve">
-    <value>The command cannot finish because the ChildJobs property contains a value that is not valid.</value>
+    <value>ChildJobs özelliği geçerli olmayan bir değer içerdiğinden komut tamamlanamıyor.</value>
   </data>
   <data name="JobSuspendNotSupported" xml:space="preserve">
-    <value>Cannot suspend the job that has an ID of {0}. Suspending jobs is not supported for some job types. For more information about support for suspending jobs, see the Help topic for the job type.</value>
+    <value>Kimliği {0} olan iş askıya alınamıyor. Bazı iş türleri için işleri askıya alma desteklenmiyor. İşleri askıya alma desteği hakkında daha fazla bilgi için, iş türünün Yardım konusuna bakın.</value>
   </data>
   <data name="JobResumeNotSupported" xml:space="preserve">
-    <value>Cannot resume the job that has an ID of {0}. Resuming jobs is not supported for some job types. For more information about support for resuming jobs, see the Help topic for the job type.</value>
+    <value>Kimliği {0} olan iş sürdürülemiyor. Bazı iş türleri için işleri sürdürme desteklenmiyor. İşleri sürdürme desteği hakkında daha fazla bilgi için, iş türünün Yardım konusuna bakın.</value>
   </data>
   <data name="AsJobAndDisconnectedError" xml:space="preserve">
-    <value>You cannot use the Invoke-Command cmdlet with both the AsJob and Disconnected parameters in the same command.</value>
+    <value>Invoke-Command cmdlet'ini aynı komutta hem AsJob hem de Disconnected parametreleriyle kullanamazsınız.</value>
   </data>
   <data name="QueryForRunspacesFailed" xml:space="preserve">
-    <value>The remote session query failed for {0} with the following error message: {1}</value>
+    <value>{0} için uzak oturum sorgusu şu hata iletisiyle başarısız oldu: {1}</value>
   </data>
   <data name="JobIdNotYetAssigned" xml:space="preserve">
-    <value>Attempted to create a job with ID {0}. A job with this ID cannot be created now. Verify that the ID has already been assigned once on this computer.</value>
+    <value>{0} kimlikli bir iş oluşturulmaya çalışıldı. Bu kimliğe sahip bir iş şu anda oluşturulamıyor. Kimliğin bu bilgisayarda daha önce bir kez atanmış olduğunu doğrulayın.</value>
   </data>
   <data name="JobSessionIdLessThanOne" xml:space="preserve">
-    <value>Cannot create a job with an ID of {0}; this is not a valid ID. Provide an integer for the job ID that is greater than 0.</value>
+    <value>{0} kimliğine sahip bir iş oluşturulamıyor; bu geçerli bir kimlik değil. İş kimliği için 0'dan büyük bir tamsayı belirtin.</value>
   </data>
   <data name="JobIdentifierNull" xml:space="preserve">
-    <value>The JobIdentifier provided must not be null. Please provide a valid JobIdentifier.</value>
+    <value>Sağlanan JobIdentifier null olmamalıdır. Lütfen geçerli bir JobIdentifier sağlayın.</value>
   </data>
   <data name="JobBlockedSoWaitJobCannotContinue" xml:space="preserve">
-    <value>The Wait-Job cmdlet cannot finish working, because one or more jobs are blocked waiting for user interaction.  Process interactive job output by using the Receive-Job cmdlet, and then try again.</value>
+    <value>Bir veya daha fazla iş, kullanıcı etkileşimi beklerken engellendiğinden Wait-Job cmdlet'i çalışmayı bitiremiyor.  Receive-Job cmdlet'ini kullanarak etkileşimli iş çıkışını işleyin, ardından yeniden deneyin.</value>
   </data>
   <data name="RemoveRunspaceNotConnected" xml:space="preserve">
-    <value>Remote session {0} could not be connected and could not be removed from the server. The client remote session object will be removed from the server, but the state of the remote session on the server is unknown.</value>
+    <value>{0} uzak oturumu bağlanamadı ve sunucudan kaldırılamadı. İstemci uzak oturum nesnesi sunucudan kaldırılacak, ancak sunucudaki uzak oturumun durumu bilinmiyor.</value>
   </data>
   <data name="RunspaceDisconnectFailedWithReason" xml:space="preserve">
-    <value>Disconnect-PSSession operation failed for runspace Id = {0} for the following reason: {1}</value>
+    <value>Disconnect-PSSession işlemi, {0} çalışma alanı kimliği için şu nedenle başarısız oldu: {1}</value>
   </data>
   <data name="StopJobNotConnected" xml:space="preserve">
-    <value>Job "{0}" could not be connected to the server and so could not be stopped.</value>
+    <value>"{0}" işi sunucuya bağlanamadı ve bu nedenle durdurulamadı.</value>
   </data>
   <data name="SessionIdMatchFailed" xml:space="preserve">
-    <value>The command cannot find a PSSession with an InstanceId value of "{0}".</value>
+    <value>Komut, InstanceId değeri "{0}" olan bir PSSession bulamıyor.</value>
   </data>
   <data name="SessionNameMatchFailed" xml:space="preserve">
-    <value>The command cannot find a PSSession that has the name "{0}".</value>
+    <value>Komut, adı "{0}" olan bir PSSession bulamıyor.</value>
   </data>
   <data name="WinPERemotingNotSupported" xml:space="preserve">
-    <value>PowerShell remoting is not supported in the Windows Preinstallation Environment (WinPE).</value>
+    <value>PowerShell uzaktan iletişimi, Windows Önyükleme Ortamı'nda (WinPE) desteklenmiyor.</value>
   </data>
   <data name="WinRMRequiresRestart" xml:space="preserve">
-    <value>Changes made by {0} cannot take effect until the WinRM service is restarted.</value>
+    <value>{0} tarafından yapılan değişiklikler, WinRM hizmeti yeniden başlatılana kadar etkili olamaz.</value>
   </data>
   <data name="WinRMRestartWarning" xml:space="preserve">
-    <value>{0} may need to restart the WinRM service if a configuration using this name has recently been unregistered, certain system data structures may still be cached. In that case, a restart of WinRM may be required.
-All WinRM sessions connected to PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
+    <value>{0}, bu adı kullanan bir yapılandırmanın kaydı yakın zamanda kaldırıldıysa, WinRM hizmetinin yeniden başlatılması gerekebilir. Bazı sistem veri yapıları hala önbellekte olabilir. Bu durumda, WinRM’nin yeniden başlatılması gerekebilir.
+Microsoft.PowerShell gibi PowerShell oturum yapılandırmalarına ve Register-PSSessionConfiguration cmdlet’iyle oluşturulan oturum yapılandırmalarına bağlı tüm WinRM oturumlarının bağlantısı kesilir.</value>
   </data>
   <data name="WinRMForceRestartWarning" xml:space="preserve">
-    <value>You are running in a remote session and have selected the Force option which means the WinRM service may restart.If the WinRM service restarts then this remote session will be terminated and you will need to create a new session to continue</value>
+    <value>Uzak bir oturumda çalışıyorsunuz ve Zorla seçeneğini belirlediniz. Bu, WinRM hizmetinin yeniden başlatılabileceği anlamına gelir. WinRM hizmeti yeniden başlatılırsa bu uzak oturum sonlandırılır ve devam etmek için yeni bir oturum oluşturmanız gerekir</value>
   </data>
   <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
-    <value>The job was null when trying to save identifiers. Specify a job to save its identifiers.</value>
+    <value>Tanımlayıcılar kaydedilmeye çalışılırken iş null değerindeydi. Tanımlayıcılarını kaydetmek için bir iş belirtin.</value>
   </data>
   <data name="NoPowerShellForJob" xml:space="preserve">
-    <value>A running command could not be found for this PSSession.</value>
+    <value>Bu PSSession için çalışan bir komut bulunamadı.</value>
   </data>
   <data name="NetFrameWorkV2NotInstalled" xml:space="preserve">
-    <value>The Microsoft .NET Framework 2.0, which is required for Windows PowerShell 2.0, is not installed. Install the .NET Framework 2.0 and retry.</value>
+    <value>Windows PowerShell 2.0 için gerekli olan Microsoft .NET Framework 2.0 yüklü değil. .NET Framework 2.0'ı yükleyip yeniden deneyin.</value>
   </data>
   <data name="PipelineFailedWithoutReason" xml:space="preserve">
-    <value>The remote pipeline failed.</value>
+    <value>Uzak işlem hattı başarısız oldu.</value>
   </data>
   <data name="PipelineFailedWithReason" xml:space="preserve">
-    <value>The remote pipeline failed for the following reason: {0}</value>
+    <value>Uzak işlem hattı şu nedenle başarısız oldu: {0}</value>
   </data>
   <data name="ResumeJobInvalidJobState" xml:space="preserve">
-    <value>One or more jobs could not be resumed because the state was not valid for the operation.</value>
+    <value>Bir veya daha fazla iş, durum işlem için geçerli olmadığından sürdürülemedi.</value>
   </data>
   <data name="RemoteHostNullClientHost" xml:space="preserve">
-    <value>No client computer was specified for the remote runspace that is running a client-side method.</value>
+    <value>İstemci tarafı bir yöntem çalıştıran uzak çalışma alanı için istemci bilgisayar belirtilmedi.</value>
   </data>
   <data name="DisableRemotingShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This denies remote access to this session configuration.</value>
+    <value>Ad: {0} SDDL: {1}. Bu, bu oturum yapılandırmasına uzaktan erişimi reddeder.</value>
   </data>
   <data name="SetEnabledFalseTarget" xml:space="preserve">
-    <value>Enabled: False. This configures the WS-Management service to deny the connection request.</value>
+    <value>Etkin: False. Bu, WS-Management hizmetini bağlantı isteğini reddedecek şekilde yapılandırır.</value>
   </data>
   <data name="SetEnabledTrueTarget" xml:space="preserve">
-    <value>Enabled: True. This configures the WS-Management service to accept the connection request.</value>
+    <value>Etkin: True. Bu, WS-Management hizmetini bağlantı isteğini kabul edecek şekilde yapılandırır.</value>
   </data>
   <data name="DISCAliasDefinitionsComment" xml:space="preserve">
-    <value>Aliases to be defined when applied to a session</value>
+    <value>Bir oturuma uygulandığında tanımlanacak diğer adlar</value>
   </data>
   <data name="DISCAssembliesToLoadComment" xml:space="preserve">
-    <value>Assemblies to load when applied to a session</value>
+    <value>Bir oturuma uygulandığında yüklenecek derlemeler</value>
   </data>
   <data name="DISCAuthorComment" xml:space="preserve">
-    <value>Author of this document</value>
+    <value>Bu belgenin yazarı</value>
   </data>
   <data name="DISCCLRVersionComment" xml:space="preserve">
-    <value>Version of the CLR to use when applied to a session</value>
+    <value>Bir oturuma uygulandığında kullanılacak CLR sürümü</value>
   </data>
   <data name="DISCCompanyNameComment" xml:space="preserve">
-    <value>Company associated with this document</value>
+    <value>Bu belgeyle ilişkili şirket</value>
   </data>
   <data name="DISCCopyrightComment" xml:space="preserve">
-    <value>Copyright statement for this document</value>
+    <value>Bu belge için telif hakkı bildirimi</value>
   </data>
   <data name="DISCDescriptionComment" xml:space="preserve">
-    <value>Description of the functionality provided by these settings</value>
+    <value>Bu ayarların sağladığı işlevselliğin açıklaması</value>
   </data>
   <data name="DISCEnvironmentVariablesComment" xml:space="preserve">
-    <value>Environment variables to define when applied to a session</value>
+    <value>Bir oturuma uygulandığında tanımlanacak ortam değişkenleri</value>
   </data>
   <data name="DISCExecutionPolicyComment" xml:space="preserve">
-    <value>Execution policy to apply when applied to a session</value>
+    <value>Bir oturuma uygulandığında uygulanacak yürütme ilkesi</value>
   </data>
   <data name="DISCFormatsToProcessComment" xml:space="preserve">
-    <value>Format files (.ps1xml) to load when applied to a session</value>
+    <value>Bir oturuma uygulandığında yüklenecek biçim dosyaları (.ps1xml)</value>
   </data>
   <data name="DISCFunctionDefinitionsComment" xml:space="preserve">
-    <value>Functions to define when applied to a session</value>
+    <value>Bir oturuma uygulandığında tanımlanacak işlevler</value>
   </data>
   <data name="DISCGUIDComment" xml:space="preserve">
-    <value>ID used to uniquely identify this document</value>
+    <value>Bu belgeyi benzersiz olarak tanımlamak için kullanılan kimlik</value>
   </data>
   <data name="DISCInitialSessionStateComment" xml:space="preserve">
-    <value>Session type defaults to apply for this session configuration. Can be 'RestrictedRemoteServer' (recommended), 'Empty', or 'Default'</value>
+    <value>Bu oturum yapılandırması için geçerli olacak oturum türü varsayılanları. 'RestrictedRemoteServer' (önerilen), 'Empty' veya 'Default' olabilir</value>
   </data>
   <data name="DISCTranscriptDirectoryComment" xml:space="preserve">
-    <value>Directory to place session transcripts for this session configuration</value>
+    <value>Bu oturum yapılandırması için oturum dökümlerinin yerleştirileceği dizin</value>
   </data>
   <data name="DISCRunAsVirtualAccountComment" xml:space="preserve">
-    <value>Whether to run this session configuration as the machine's (virtual) administrator account</value>
+    <value>Bu oturum yapılandırmasının makinenin (sanal) yönetici hesabı olarak çalıştırılıp çalıştırılmayacağı</value>
   </data>
   <data name="DISCLanguageModeComment" xml:space="preserve">
-    <value>Language mode to apply when applied to a session. Can be 'NoLanguage' (recommended), 'RestrictedLanguage', 'ConstrainedLanguage', or 'FullLanguage'</value>
+    <value>Bir oturuma uygulandığında uygulanacak dil modu. 'NoLanguage' (önerilen), 'RestrictedLanguage', 'ConstrainedLanguage' veya 'FullLanguage' olabilir</value>
   </data>
   <data name="DISCModulesToImportComment" xml:space="preserve">
-    <value>Modules to import when applied to a session</value>
+    <value>Bir oturuma uygulandığında içeri aktarılacak modüller</value>
   </data>
   <data name="DISCPowerShellVersionComment" xml:space="preserve">
-    <value>Version of the PowerShell engine to use when applied to a session</value>
+    <value>Bir oturuma uygulandığında kullanılacak PowerShell altyapısının sürümü</value>
   </data>
   <data name="DISCProcessorArchitectureComment" xml:space="preserve">
-    <value>Processor architecture to use when applied to a session</value>
+    <value>Bir oturuma uygulandığında kullanılacak işlemci mimarisi</value>
   </data>
   <data name="DISCSchemaVersionComment" xml:space="preserve">
-    <value>Version number of the schema used for this document</value>
+    <value>Bu belge için kullanılan şemanın sürüm numarası</value>
   </data>
   <data name="DISCScriptsToProcessComment" xml:space="preserve">
-    <value>Scripts to run when applied to a session</value>
+    <value>Bir oturuma uygulandığında çalıştırılacak betikler</value>
   </data>
   <data name="DISCTypesToAddComment" xml:space="preserve">
-    <value>Types to add when applied to a session</value>
+    <value>Bir oturuma uygulandığında eklenecek türler</value>
   </data>
   <data name="DISCTypesToProcessComment" xml:space="preserve">
-    <value>Type files (.ps1xml) to load when applied to a session</value>
+    <value>Bir oturuma uygulandığında yüklenecek tür dosyaları (.ps1xml)</value>
   </data>
   <data name="DISCVariableDefinitionsComment" xml:space="preserve">
-    <value>Variables to define when applied to a session</value>
+    <value>Bir oturuma uygulandığında tanımlanacak değişkenler</value>
   </data>
   <data name="DISCRoleDefinitionsComment" xml:space="preserve">
-    <value>User roles (security groups), and the role capabilities that should be applied to them when applied to a session</value>
+    <value>Kullanıcı rolleri (güvenlik grupları) ve bir oturuma uygulandıklarında bunlara uygulanması gereken rol yetenekleri</value>
   </data>
   <data name="DISCVisibleAliasesComment" xml:space="preserve">
-    <value>Aliases to make visible when applied to a session</value>
+    <value>Bir oturuma uygulandığında görünür yapılacak diğer adlar</value>
   </data>
   <data name="DISCVisibleCmdletsComment" xml:space="preserve">
-    <value>Cmdlets to make visible when applied to a session</value>
+    <value>Bir oturuma uygulandığında görünür yapılacak cmdlet'ler</value>
   </data>
   <data name="DISCCommandModificationSyntax" xml:space="preserve">
-    <value>Could not parse visible command definition for '{0}'. The visible command definition must be a hashtable with the keys of 'Name' and 'Parameters'. The value of the 'Parameters' key must be a collection of hashtables with the keys 'Name', and optionally either 'ValidateSet' or 'ValidatePattern'.</value>
+    <value>'{0}' için görünür komut tanımı ayrıştırılamadı. Görünür komut tanımı, 'Name' ve 'Parameters' anahtarlarına sahip bir karma tablo olmalıdır. 'Parameters' anahtarının değeri, 'Name' anahtarlarını ve isteğe bağlı olarak 'ValidateSet' veya 'ValidatePattern' anahtarlarından birini içeren karma tablolar koleksiyonu olmalıdır.</value>
   </data>
   <data name="DISCVisibleFunctionsComment" xml:space="preserve">
-    <value>Functions to make visible when applied to a session</value>
+    <value>Bir oturuma uygulandığında görünür yapılacak işlevler</value>
   </data>
   <data name="DISCVisibleProvidersComment" xml:space="preserve">
-    <value>Providers to make visible when applied to a session</value>
+    <value>Bir oturuma uygulandığında görünür yapılacak sağlayıcılar</value>
   </data>
   <data name="DISCVisibleExternalCommandsComment" xml:space="preserve">
-    <value>External commands (scripts and applications) to make visible when applied to a session</value>
+    <value>Bir oturuma uygulandığında görünür yapılacak dış komutlar (betikler ve uygulamalar)</value>
   </data>
   <data name="InvalidPSSessionConfigurationFilePath" xml:space="preserve">
-    <value>PSSession Configuration file path '{0}' is not valid. The path argument must resolve to a single file in the file system with a '.pssc' extension. Please fix the path specification and try again.</value>
+    <value>'{0}' PSSession Yapılandırma dosyası yolu geçerli değil. Yol bağımsız değişkeni, dosya sisteminde '.pssc' uzantısıyla tek bir dosyaya çözümlenmelidir. Lütfen yol belirtimini düzeltin ve yeniden deneyin.</value>
   </data>
   <data name="InvalidRoleCapabilityFilePath" xml:space="preserve">
-    <value>Role Capability file path '{0}' is not valid. The path argument must resolve to a single file in the file system with a '.psrc' extension. Please fix the path specification and try again.</value>
+    <value>'{0}' Rol Yeteneği dosya yolu geçerli değil. Yol bağımsız değişkeni, dosya sisteminde '.psrc' uzantısıyla tek bir dosyaya çözümlenmelidir. Lütfen yol belirtimini düzeltin ve yeniden deneyin.</value>
   </data>
   <data name="InvalidRoleEntry" xml:space="preserve">
-    <value>The 'Roles' entry must be a hashtable, but was a {0}.</value>
+    <value>'Roles' girdisi bir karma tablo olmalı, ancak şuydu: {0}.</value>
   </data>
   <data name="InvalidRoleValue" xml:space="preserve">
-    <value>Could not convert the value of the '{0}' role entry to a hashtable. The 'Roles' entry must be a hashtable with group names for keys, where the value associated with each key is another hashtable of session configuration properties for that role.</value>
+    <value>'{0}' rol girişinin değeri bir karma tabloya dönüştürülemedi. 'Roles' girdisi, anahtarlar için grup adları içeren bir karma tablo olmalıdır. Her anahtarla ilişkilendirilen değer, o rolün oturum yapılandırması özelliklerinin başka bir karma tablosu olmalıdır.</value>
   </data>
   <data name="CouldNotFindRoleCapability" xml:space="preserve">
-    <value>Could not find the role capability, '{0}'. The role capability must be a file named '{1}' within a 'RoleCapabilities' directory in a module in the current module path.</value>
+    <value>Rol yeteneği '{0}' bulunamadı. Rol yeteneği, geçerli modül yolundaki bir modülün 'RoleCapabilities' dizininde bulunan '{1}' adlı bir dosya olmalıdır.</value>
   </data>
   <data name="InvalidRegisterPSSessionConfigurationModulePath" xml:space="preserve">
-    <value>Cannot find module path to import. The value of the ModulesToImport parameter {0} does not exist or is not a module directory. Correct the value and try the command again.</value>
+    <value>İçeri aktarılacak modül yolu bulunamıyor. {0} ModulesToImport parametresinin değeri yok veya bir modül dizini değil. Değeri düzeltin ve komutu yeniden deneyin.</value>
   </data>
   <data name="PSSessionConfigurationFileNotFound" xml:space="preserve">
-    <value>The specified configuration file '{0}' was not loaded because no valid configuration file was found.</value>
+    <value>Geçerli bir yapılandırma dosyası bulunamadığından belirtilen '{0}' yapılandırma dosyası yüklenmedi.</value>
   </data>
   <data name="RCAutoDisconnected" xml:space="preserve">
-    <value>Computer {0} has been successfully disconnected.</value>
+    <value>{0} bilgisayarının bağlantısı başarıyla kesildi.</value>
   </data>
   <data name="RCAutoDisconnectingWarning" xml:space="preserve">
-    <value>The reconnection attempt to {0} failed. Attempting to disconnect the session...</value>
+    <value>{0} ile yeniden bağlanma girişimi başarısız oldu. Oturumun bağlantısı kesilmeye çalışılıyor...</value>
   </data>
   <data name="RCConnectionRetryAttempt" xml:space="preserve">
-    <value>Attempting to reconnect to {0} ...</value>
+    <value>{0} ile yeniden bağlantı kurulmaya çalışılıyor...</value>
   </data>
   <data name="RCInternalError" xml:space="preserve">
-    <value>Network connectivity to {0} has been lost and the attempt to reconnect has failed. Please repair the network connection and reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>{0} ile ağ bağlantısı kayboldu ve yeniden bağlanma girişimi başarısız oldu. Lütfen ağ bağlantısını onarın ve Connect-PSSession ya da Receive-PSSession kullanarak yeniden bağlanın.</value>
   </data>
   <data name="RCNetworkFailureDetected" xml:space="preserve">
-    <value>The network connection to {0} has been interrupted. Attempting to reconnect for up to {1} minutes...</value>
+    <value>{0} ile ağ bağlantısı kesildi. {1} dakikaya kadar yeniden bağlanmaya çalışılıyor...</value>
   </data>
   <data name="RCReconnectSucceeded" xml:space="preserve">
-    <value>The network connection to {0} has been restored.</value>
+    <value>{0} ile ağ bağlantısı geri yüklendi.</value>
   </data>
   <data name="AuthenticationMechanismRequiresCredential" xml:space="preserve">
-    <value>{0} authentication requires an explicit user name and password.  Specify the user name and password by using the -Credential parameter and try the command again.</value>
+    <value>{0} kimlik doğrulaması açık bir kullanıcı adı ve parola gerektirir.  Kullanıcı adını ve parolayı -Credential parametresini kullanarak belirtin ve komutu yeniden deneyin.</value>
   </data>
   <data name="BasicAuthOverHttpNotSupported" xml:space="preserve">
-    <value>Basic authentication is not supported over HTTP on Unix.</value>
+    <value>Temel kimlik doğrulaması Unix'te HTTP üzerinden desteklenmiyor.</value>
   </data>
   <data name="StartJobDefinitionNotFound1" xml:space="preserve">
-    <value>Cannot find a scheduled job with name {0}.</value>
+    <value>Adı {0} olan zamanlanmış bir iş bulunamıyor.</value>
     <comment>{0} is the job definition name</comment>
   </data>
   <data name="StartJobManyDefNameMatches" xml:space="preserve">
-    <value>More than one job definition was found with name {0}. Try including the -DefinitionType parameter to Start-Job in order to narrow the search for the job definition to a single job source adapter.</value>
+    <value>{0} adıyla birden fazla iş tanımı bulundu. İş tanımı aramasını tek bir iş kaynağı bağdaştırıcısına daraltmak için Start-Job'a -DefinitionType parametresini eklemeyi deneyin.</value>
   </data>
   <data name="DISCMissingSchemaVersion" xml:space="preserve">
-    <value>The member 'SchemaVersion' is not present in the configuration file. This member must exist and be assigned a version number of the form 'n.n.n.n'. Please add the missing member to the file {0}.</value>
+    <value>'SchemaVersion' üyesi yapılandırma dosyasında yok. Bu üye mevcut olmalı ve üyeye 'n.n.n.n' biçiminde bir sürüm numarası atanmalıdır. Lütfen eksik üyeyi {0} dosyasına ekleyin.</value>
   </data>
   <data name="DISCTypeMustBeString" xml:space="preserve">
-    <value>The member '{0}' must be a string. Change the member to the correct type in the file {1}.</value>
+    <value>'{0}' üyesi bir dize olmalıdır. Üyeyi {1} dosyasında doğru türe değiştirin.</value>
   </data>
   <data name="DISCTypeMustBeStringArray" xml:space="preserve">
-    <value>The member '{0}' must be a string array. Change the member to the correct type in the file {1}.</value>
+    <value>'{0}' üyesi bir dize dizisi olmalıdır. Üyeyi {1} dosyasında doğru türe değiştirin.</value>
   </data>
   <data name="DISCTypeMustBeHashtable" xml:space="preserve">
-    <value>The member '{0}' must be a hashtable. Change the member to the correct type in the file {1}.</value>
+    <value>'{0}' üyesi bir karma tablo olmalıdır. Üyeyi {1} dosyasında doğru türe değiştirin.</value>
   </data>
   <data name="DISCTypeMustBeHashtableArray" xml:space="preserve">
-    <value>The member '{0}' must be a hashtable array. Change the member to the correct type in the file {1}.</value>
+    <value>'{0}' üyesi bir karma tablo dizisi olmalıdır. Üyeyi {1} dosyasında doğru türe değiştirin.</value>
   </data>
   <data name="DISCInvalidKey" xml:space="preserve">
-    <value>The member '{0}' is not a valid key. Please change the member to a valid key in the file {1}.</value>
+    <value>'{0}' üyesi geçerli bir anahtar değil. Lütfen üyeyi {1} dosyasındaki geçerli bir anahtara değiştirin.</value>
   </data>
   <data name="DISCTypeMustBeValidEnum" xml:space="preserve">
-    <value>The member '{0}' must be a valid enumeration type "{1}". Valid enumeration values are "{2}". Change the member to the correct type in the file {3}.</value>
+    <value>'{0}' üyesi geçerli bir "{1}" numaralandırma türü olmalıdır. Geçerli numaralandırma değerleri: "{2}". Üyeyi {3} dosyasında doğru türe değiştirin.</value>
   </data>
   <data name="DISCErrorParsingConfigFile" xml:space="preserve">
-    <value>Error parsing configuration file {0} with the following message: {1}</value>
+    <value>{0} yapılandırma dosyası ayrıştırılırken şu iletiyle hata oluştu: {1}</value>
   </data>
   <data name="WriteJobInResultsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -WriteJobInResults parameter cannot be used without the -Wait parameter</value>
+    <value>-WriteJobInResults parametresi -Wait parametresi olmadan kullanılamaz</value>
   </data>
   <data name="DISCPathsMustBeAbsolute" xml:space="preserve">
-    <value>The member '{0}' is not an absolute path {1}. Change the member to an absolute path in the file {2}.</value>
+    <value>'{0}' üyesi {1} mutlak yolu değil. Üyeyi {2} dosyasındaki mutlak bir yol olarak değiştirin.</value>
   </data>
   <data name="DISCTypeContainsInvalidKey" xml:space="preserve">
-    <value>The key '{0}' in the member '{1}' is not valid. Change the key in the file {2}.</value>
+    <value>'{1}' üyesindeki '{0}' anahtarı geçerli değil. {2} dosyasındaki anahtarı değiştirin.</value>
   </data>
   <data name="DISCTypeMustContainKey" xml:space="preserve">
-    <value>The member '{0}' must contain the required key '{1}'. Add the require key to the file {2}.</value>
+    <value>'{0}' üyesi gerekli '{1}' anahtarını içermelidir. Gerekli anahtarı {2} dosyasına ekleyin.</value>
   </data>
   <data name="DISCInvalidExtension" xml:space="preserve">
-    <value>The key '{0}' contains an extension {1} that is not valid. Specify an extension from the following list: {{{2}}}.</value>
+    <value>'{0}' anahtarı geçerli olmayan bir {1} uzantısı içeriyor. Şu listeden bir uzantı belirtin: {{{2}}}.</value>
   </data>
   <data name="DISCKeyMustBeScriptBlock" xml:space="preserve">
-    <value>The key '{0}' in the member '{1}' must be a script block. Change the key to the correct type in the file {2}.</value>
+    <value>'{1}' üyesindeki '{0}' anahtarı bir betik bloğu olmalıdır. Anahtarı {2} dosyasında doğru türe değiştirin.</value>
   </data>
   <data name="InvalidPSSessionConfigurationFile" xml:space="preserve">
-    <value>The session configuration file {0} is not valid. Specify a valid session configuration file and try the command again.</value>
+    <value>{0} oturum yapılandırma dosyası geçerli değil. Geçerli bir oturum yapılandırma dosyası belirtin ve komutu yeniden deneyin.</value>
   </data>
   <data name="RCProgressActivity" xml:space="preserve">
-    <value>Network connection interrupted</value>
+    <value>Ağ bağlantısı kesildi</value>
   </data>
   <data name="RCProgressStatus" xml:space="preserve">
-    <value>Attempting to reconnect to {0} ...</value>
+    <value>{0} ile yeniden bağlantı kurulmaya çalışılıyor...</value>
   </data>
   <data name="RCDisconnectedJob" xml:space="preserve">
-    <value>Job {0} has been created for reconnection.</value>
+    <value>Yeniden bağlanma için {0} işi oluşturuldu.</value>
   </data>
   <data name="RCDisconnectSession" xml:space="preserve">
-    <value>Session {0} with instance ID {1} on computer {2} has been successfully disconnected.</value>
+    <value>{2} bilgisayarında örnek kimliği {1} olan {0} oturumunun bağlantısı başarıyla kesildi.</value>
   </data>
   <data name="RCDisconnectSessionCreated" xml:space="preserve">
-    <value>Session {0} with instance ID {1} has been created for reconnection.</value>
+    <value>Yeniden bağlanma için örnek kimliği {1} olan {0} oturumu oluşturuldu.</value>
   </data>
   <data name="SessionNameWithoutInvokeDisconnected" xml:space="preserve">
-    <value>The SessionName parameter can only be used with the Disconnected switch parameter.</value>
+    <value>SessionName parametresi yalnızca Disconnected anahtar parametresiyle kullanılabilir.</value>
   </data>
   <data name="SessionConnectFailed" xml:space="preserve">
-    <value>A failure occurred while attempting to connect the PSSession.</value>
+    <value>PSSession'ı bağlamaya çalışılırken bir hata oluştu.</value>
   </data>
   <data name="VMSessionConnectFailed" xml:space="preserve">
-    <value>A failure occurred while attempting to connect to the target virtual machine.</value>
+    <value>Hedef sanal makineye bağlanmaya çalışılırken bir hata oluştu.</value>
   </data>
   <data name="ContainerSessionConnectFailed" xml:space="preserve">
-    <value>A failure occurred while attempting to connect to the target container.</value>
+    <value>Hedef kapsayıcıya bağlanmaya çalışılırken bir hata oluştu.</value>
   </data>
   <data name="SessionNotAvailableForConnection" xml:space="preserve">
-    <value>The PSSession is in a disconnected state and is not available for connection.</value>
+    <value>PSSession bağlantısı kesik durumunda ve bağlantı için kullanılamıyor.</value>
   </data>
   <data name="HyperVModuleNotAvailable" xml:space="preserve">
-    <value>The Hyper-V Module for PowerShell is not available on this machine.</value>
+    <value>PowerShell için Hyper-V Modülü bu makinede kullanılamıyor.</value>
   </data>
   <data name="CannotCreateProcessInContainer" xml:space="preserve">
-    <value>Failed to launch PowerShell process ({1}) inside container with id {0} with error: {2}.</value>
+    <value>{0} kimlikli kapsayıcı içinde PowerShell işlemi ({1}) şu hatayla başlatılamadı: {2}.</value>
   </data>
   <data name="ContainersFeatureNotEnabled" xml:space="preserve">
-    <value>The Containers feature may not be enabled on this machine.</value>
+    <value>Kapsayıcılar özelliği bu makinede etkinleştirilmemiş olabilir.</value>
   </data>
   <data name="CannotTerminateProcessInContainer" xml:space="preserve">
-    <value>Failed to terminate PowerShell process with id {0} inside container with id {1}.</value>
+    <value>{1} kimlikli kapsayıcı içindeki {0} kimlikli PowerShell işlemi sonlandırılamadı.</value>
   </data>
   <data name="InvalidContainerId" xml:space="preserve">
-    <value>The input ContainerId {0} does not exist, or the corresponding container is not running.</value>
+    <value>Giriş ContainerId {0} yok veya karşılık gelen kapsayıcı çalışmıyor.</value>
   </data>
   <data name="InvalidVMId" xml:space="preserve">
-    <value>The input VMId parameter does not resolve to a single virtual machine.</value>
+    <value>Giriş VMId parametresi tek bir sanal makineye çözümlenmiyor.</value>
   </data>
   <data name="InvalidVMIdNotSingle" xml:space="preserve">
-    <value>The input VMId {0} does not resolve to a single virtual machine.</value>
+    <value>Giriş VMId {0} tek bir sanal makineye çözümlenmiyor.</value>
   </data>
   <data name="InvalidVMNameNoVM" xml:space="preserve">
-    <value>The input VMName parameter does not resolve to any virtual machine.</value>
+    <value>Giriş VMName parametresi herhangi bir sanal makineye çözümlenmiyor.</value>
   </data>
   <data name="InvalidVMNameMultipleVM" xml:space="preserve">
-    <value>The input VMName parameter resolves to multiple virtual machines.</value>
+    <value>Giriş VMName parametresi birden çok sanal makineye çözümleniyor.</value>
   </data>
   <data name="InvalidVMNameNotSingle" xml:space="preserve">
-    <value>The input VMName {0} does not resolve to a single virtual machine.</value>
+    <value>Giriş VMName {0} tek bir sanal makineye çözümlenmiyor.</value>
   </data>
   <data name="InvalidVMState" xml:space="preserve">
-    <value>The virtual machine {0} is not in running state.</value>
+    <value>{0} sanal makinesi çalışır durumda değil.</value>
   </data>
   <data name="InvalidCredential" xml:space="preserve">
-    <value>The credential is invalid.</value>
+    <value>Kimlik bilgisi geçersiz.</value>
   </data>
   <data name="InvalidUsername" xml:space="preserve">
-    <value>The input username cannot be empty.</value>
+    <value>Giriş kullanıcı adı boş olamaz.</value>
   </data>
   <data name="EnterPSSessionBrokenSession" xml:space="preserve">
-    <value>Cannot enter session {0} because it is not in the disconnected state or is not available for connection. Retrieve the remote session using Get-PSSession -ComputerName {1} -InstanceId {2}.</value>
+    <value>Bağlantısı kesik durumunda olmadığından veya bağlantı için kullanılamadığından {0} oturumuna girilemiyor. Uzak oturumu Get-PSSession -ComputerName {1} -InstanceId {2} kullanarak alın.</value>
   </data>
   <data name="EnterPSSessionDisconnected" xml:space="preserve">
-    <value>Cannot enter session {0} because it is not in the disconnected state or is not available for connection. Reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>Bağlantısı kesik durumunda olmadığından veya bağlantı için kullanılamadığından {0} oturumuna girilemiyor. Connect-PSSession veya Receive-PSSession kullanarak yeniden bağlanın.</value>
   </data>
   <data name="RCAutoDisconnectingError" xml:space="preserve">
-    <value>Network connectivity to {0} has been lost and the reconnection attempt failed. Please repair the network connection and reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>{0} ile ağ bağlantısı kayboldu ve yeniden bağlanma girişimi başarısız oldu. Lütfen ağ bağlantısını onarın ve Connect-PSSession ya da Receive-PSSession kullanarak yeniden bağlanın.</value>
   </data>
   <data name="RemoteSessionHyperVSocketClientConstructorSetSocketOptionFailure" xml:space="preserve">
-    <value>Failed to create an instance of RemoteSessionHyperVSocketClient due to SetSocketOption failure.</value>
+    <value>SetSocketOption hatası nedeniyle RemoteSessionHyperVSocketClient örneği oluşturulamadı.</value>
   </data>
   <data name="RemoteSessionHyperVSocketServerConstructorFailure" xml:space="preserve">
-    <value>Failed to create an instance of RemoteSessionHyperVSocketServer.</value>
+    <value>RemoteSessionHyperVSocketServer örneği oluşturulamadı.</value>
   </data>
   <data name="StopCommandOnRetry" xml:space="preserve">
-    <value>Reconnection attempt canceled. Please repair the network connection and reconnect using Connect-PSSession or Receive-PSSession.</value>
+    <value>Yeniden bağlanma girişimi iptal edildi. Lütfen ağ bağlantısını onarın ve Connect-PSSession ya da Receive-PSSession kullanarak yeniden bağlanın.</value>
   </data>
   <data name="SuspendJobInvalidJobState" xml:space="preserve">
-    <value>One or more jobs could not be suspended because the state was not valid for the operation.</value>
+    <value>Bir veya daha fazla iş, durum işlem için geçerli olmadığından askıya alınamadı.</value>
   </data>
   <data name="AutoRemoveCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -AutoRemoveJob parameter cannot be used without the -Wait parameter</value>
+    <value>-AutoRemoveJob parametresi -Wait parametresi olmadan kullanılamaz</value>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
-    <value>The WS-Management service cannot process the request. Cannot find the {0} session configuration in the WSMan: drive on the {1} computer. For more information, see the about_Remote_Troubleshooting Help topic.</value>
+    <value>WS-Management hizmeti isteği işleyemiyor. {1} bilgisayarındaki WSMan: sürücüsünde {0} oturum yapılandırması bulunamıyor. Daha fazla bilgi için about_Remote_Troubleshooting Yardım konusuna bakın.</value>
   </data>
   <data name="BadRunspaceTypeForJob" xml:space="preserve">
-    <value>A job could not be created from the {0} specification because the provided runspace is not a local runspace. Try again using a local runspace, or specify a RunspaceMode argument.</value>
+    <value>Sağlanan çalışma alanı yerel bir çalışma alanı olmadığından {0} belirtiminden iş oluşturulamadı. Yerel bir çalışma alanı kullanarak yeniden deneyin veya bir RunspaceMode bağımsız değişkeni belirtin.</value>
   </data>
   <data name="CannotDisconnectSessionWithInvalidIdleTimeout" xml:space="preserve">
-    <value>The session {0} cannot be disconnected because the specified idle time-out value {1} (seconds) is either greater than the server maximum allowed {2} (seconds), or less than the minimum allowed {3} (seconds).  Specify an idle time-out value that is within the allowed range, and try again.</value>
+    <value>Belirtilen boşta kalma zaman aşımı değeri {1} (saniye), sunucuda izin verilen en yüksek {2} (saniye) değerinden büyük ya da izin verilen en düşük {3} (saniye) değerinden küçük olduğundan {0} oturumunun bağlantısı kesilemiyor.  İzin verilen aralıkta bir boşta kalma zaman aşımı değeri belirtin ve yeniden deneyin.</value>
     <comment>{0} is a placeholder for the session name
 {1} is a placeholder for the provided idletimeout value
 {2} is a placeholder for the maximum allowed idletimeout value
 {3} is a placeholder for the minimum allowed idletimeout value</comment>
   </data>
   <data name="InvalidIdleTimeoutOption" xml:space="preserve">
-    <value>The specified IdleTimeout session option {0} (seconds) is not a valid period.  Specify an IdleTimeout value that is greater than or equal to the minimum allowed {1} (seconds).</value>
+    <value>Belirtilen {0} IdleTimeout oturum seçeneği (saniye) geçerli bir süre değil.  İzin verilen en düşük {1} (saniye) değerine eşit veya daha büyük bir IdleTimeout değeri belirtin.</value>
     <comment>{0} is a placeholder for the provided idletimeout
 {1} is a placeholder for the minimum allowed idletimeout value</comment>
   </data>
   <data name="DISCVisibilityAndAutoLoadingCannotBeBothSpecified" xml:space="preserve">
-    <value>The cmdlet "{0}" or the alias "{1}" cannot be present when "{2}","{3}","{4}" or "{5}" keys are specified in the session configuration file.</value>
+    <value>Oturum yapılandırması dosyasında "{2}","{3}","{4}" veya "{5}" anahtarları belirtildiğinde "{0}" cmdlet'i ya da "{1}" diğer adı bulunamaz.</value>
   </data>
   <data name="InvalidConfigurationXMLAttribute" xml:space="preserve">
-    <value>"The transport option is not valid. Parameter "{0}" can be non-zero only if parameter "{1}" is set to true."</value>
+    <value>"Taşıma seçeneği geçerli değil. "{0}" parametresi, yalnızca "{1}" parametresi true olarak ayarlanırsa sıfır dışında bir değer olabilir."</value>
   </data>
   <data name="DISCTypeMustBeStringOrHashtableArray" xml:space="preserve">
-    <value>The member '{0}' must be an array consisting of either string or hashtable elements.</value>
+    <value>'{0}' üyesi, dize veya karma tablo öğelerinden oluşan bir dizi olmalıdır.</value>
   </data>
   <data name="DISCTypeMustBeStringOrHashtableArrayInFile" xml:space="preserve">
-    <value>The member '{0}' must be an array consisting of either string or hashtable elements. Change the member to the correct type in the file {1}.</value>
+    <value>'{0}' üyesi, dize veya karma tablo öğelerinden oluşan bir dizi olmalıdır. Üyeyi {1} dosyasında doğru türe değiştirin.</value>
   </data>
   <data name="StartJobDefinitionPathInvalidNotFSProvider" xml:space="preserve">
-    <value>Cannot retrieve the job definition '{0}' because path '{1}' refers to a '{2}' provider path.  Change the path parameter to a file system path.</value>
+    <value>'{1}' yolu bir '{2}' sağlayıcı yolunu ifade ettiğinden '{0}' iş tanımı alınamıyor.  Path parametresini bir dosya sistemi yoluna değiştirin.</value>
     <comment>{0} is job definition name
 {1} is the user provided path
 {2} is the path provider</comment>
   </data>
   <data name="StartJobDefinitionPathInvalidNotSingle" xml:space="preserve">
-    <value>Cannot retrieve the job definition '{0}' because path '{1}' resolves to multiple file paths.  Change the path parameter so that it is a single path.</value>
+    <value>'{1}' yolu birden çok dosya yoluna çözümlendiğinden '{0}' iş tanımı alınamıyor.  Yol parametresini tek bir yol olacak şekilde değiştirin.</value>
     <comment>{0} is job definition name
 {1} is the user provided path</comment>
   </data>
   <data name="StartJobDefinitionNotFound2" xml:space="preserve">
-    <value>Cannot find a scheduled job with type {0} and name {1}.</value>
+    <value>Türü {0} ve adı {1} olan zamanlanmış bir iş bulunamıyor.</value>
     <comment>{0} is the job definition type and {1} is the job definition name.</comment>
   </data>
   <data name="StartJobWorkingDirectoryNotFound" xml:space="preserve">
-    <value>Cannot find the WorkingDirectory path {0}.</value>
+    <value>{0} WorkingDirectory yolu bulunamıyor.</value>
   </data>
   <data name="CannotFindSessionForConnect" xml:space="preserve">
-    <value>Cannot connect to session {0}.  The session no longer exists on computer {1}.</value>
+    <value>{0} oturumuna bağlanılamıyor.  Oturum artık {1} bilgisayarında yok.</value>
     <comment>{0} is the session name that cannot be found.
 {1} is the computer name where the session was.</comment>
   </data>
   <data name="RunspaceConnectFailedWithMessage" xml:space="preserve">
-    <value>The connect operation failed for session {0} with the following error message: {1}</value>
+    <value>{0} oturumu için bağlanma işlemi şu hata iletisiyle başarısız oldu: {1}</value>
   </data>
   <data name="ForceCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -Force parameter cannot be used without the -Wait parameter.</value>
+    <value>-Force parametresi -Wait parametresi olmadan kullanılamaz.</value>
   </data>
   <data name="JobSuspendedDisconnectedWaitWithForce" xml:space="preserve">
-    <value>One or more jobs are in a suspended or disconnected state, and cannot continue without additional user input.  Specify the -Force parameter to continue to a completed, failed, or stopped state.</value>
+    <value>Bir veya daha fazla iş askıya alınmış ya da bağlantısı kesilmiş durumda ve ek kullanıcı girişi olmadan devam edemez.  Tamamlanmış, başarısız ya da durdurulmuş bir duruma devam etmek için -Force parametresini belirtin.</value>
   </data>
   <data name="RunAsSessionConfigurationSecurityWarning" xml:space="preserve">
-    <value>When RunAs is enabled in a PowerShell session configuration, the Windows security model cannot enforce a security boundary between different user sessions that are created by using this endpoint. Verify that the PowerShell runspace configuration is restricted to only the necessary set of cmdlets and capabilities.</value>
+    <value>PowerShell oturum yapılandırmasında RunAs etkinleştirildiğinde, Windows güvenlik modeli bu uç nokta kullanılarak oluşturulan farklı kullanıcı oturumları arasında bir güvenlik sınırı uygulayamaz. PowerShell çalışma alanı yapılandırmasının yalnızca gerekli cmdlet'ler ve özellikler kümesiyle sınırlandırıldığını doğrulayın.</value>
   </data>
   <data name="ForceSuspendJob" xml:space="preserve">
-    <value>The job was suspended successfully by adding the Force parameter.</value>
+    <value>Force parametresi eklenerek iş başarıyla askıya alındı.</value>
   </data>
   <data name="InvalidPSSessionConfigurationFileErrorProcessing" xml:space="preserve">
-    <value>The session configuration file {0} is not valid. Specify a valid session configuration file and try the command again. Error parsing configuration file: {1}.</value>
+    <value>{0} oturum yapılandırma dosyası geçerli değil. Geçerli bir oturum yapılandırma dosyası belirtin ve komutu yeniden deneyin. Yapılandırma dosyası ayrıştırılırken hata oluştu: {1}.</value>
   </data>
   <data name="ErrorParsingTheKeyInPSSessionConfigurationFile" xml:space="preserve">
-    <value>Register-PSSessionConfiguration : The '{0}' key in the {1}. session configuration file contains a value that is not valid. Correct the file and try the command again. </value>
+    <value>Register-PSSessionConfiguration: {1}. oturum yapılandırma dosyasındaki '{0}' anahtarı geçerli olmayan bir değer içeriyor. Dosyayı düzeltin ve komutu yeniden deneyin. </value>
   </data>
   <data name="EndpointDoesNotSupportDisconnect" xml:space="preserve">
-    <value>Disconnected sessions are supported only when the remote computer is running PowerShell 3.0 or a later version of PowerShell.</value>
+    <value>Bağlantısı kesilmiş oturumlar yalnızca uzak bilgisayarda PowerShell 3.0 veya sonraki bir sürüm çalışıyorsa desteklenir.</value>
   </data>
   <data name="ThrottlingJobFlowControlMemoryWarning" xml:space="preserve">
-    <value>Memory usage of a cmdlet has exceeded a warning level. To avoid this situation, try one of the following: 1) Lower the rate at which CIM operations produce data (for example, by passing a low value to the ThrottleLimit parameter), 2) Increase the rate at which data is consumed by downstream cmdlets, or 3) Use the Invoke-Command cmdlet to run the whole pipeline on the server. The cmdlet that exceeded a warning level of memory usage was started by the following command line: {0}</value>
+    <value>Bir cmdlet'in bellek kullanımı uyarı düzeyini aştı. Bu durumdan kaçınmak için şunlardan birini deneyin: 1) CIM işlemlerinin veri üretme hızını düşürün (örneğin, ThrottleLimit parametresine düşük bir değer geçirerek), 2) Verilerin aşağı akış cmdlet'leri tarafından tüketilme hızını artırın veya 3) Invoke-Command cmdlet'ini kullanarak işlem hattının tamamını sunucuda çalıştırın. Bellek kullanımının uyarı düzeyini aşan cmdlet, şu komut satırı tarafından başlatıldı: {0}</value>
   </data>
   <data name="EnableNetworkAccessWarning" xml:space="preserve">
-    <value>PSSession {0} was created using the EnableNetworkAccess parameter and can only be reconnected from the local computer.</value>
+    <value>PSSession {0}, EnableNetworkAccess parametresi kullanılarak oluşturuldu ve yalnızca yerel bilgisayardan yeniden bağlanabilir.</value>
   </data>
   <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
-    <value>Cannot start job. The language mode for this session is incompatible with the system-wide language mode.</value>
+    <value>İş başlatılamıyor. Bu oturum için bilgisayar dili modu, sistem genelindeki bilgisayar dili modu ile uyumsuz.</value>
   </data>
   <data name="CannotCreateRunspaceInconsistentState" xml:space="preserve">
-    <value>Cannot create runspace. The language mode for this configuration is incompatible with the system-wide language mode.</value>
+    <value>Çalışma alanı oluşturulamıyor. Bu yapılandırma için bilgisayar dili modu, sistem genelindeki bilgisayar dili modu ile uyumsuz.</value>
   </data>
   <data name="CannotExitNestedPipeline" xml:space="preserve">
-    <value>Cannot exit a nested pipeline because the pipeline is not in the nested state.</value>
+    <value>İşlem hattı iç içe durumda olmadığından iç içe işlem hattından çıkılamıyor.</value>
   </data>
   <data name="PowerShellInvokerInvalidState" xml:space="preserve">
-    <value>The PowerShell server session is not in a valid state for running nested commands.  No nested commands can be run in this session.</value>
+    <value>PowerShell sunucusu oturumu, iç içe komutları çalıştırmak için geçerli bir durumda değil.  Bu oturumda iç içe komut çalıştırılamıyor.</value>
   </data>
   <data name="CannotInvokeNestedCommandNestedCommandRunning" xml:space="preserve">
-    <value>Cannot invoke a nested command on the remote session because a nested command is already running.</value>
+    <value>İç içe bir komut zaten çalıştığından uzak oturumda iç içe bir komut çağrılamıyor.</value>
   </data>
   <data name="ServerSideNestedCommandInvokeFailed" xml:space="preserve">
-    <value>The remote session was unable to invoke command {0} with error: {1}.</value>
+    <value>Uzak oturum, şu hatayla {0} komutunu çağıramadı: {1}.</value>
   </data>
   <data name="ReceivePSSessionInDebugMode" xml:space="preserve">
-    <value>The remote session command is currently stopped in the debugger.  Use the Enter-PSSession cmdlet to connect interactively to the remote session and automatically enter into the console debugger.</value>
+    <value>Uzak oturum komutu şu anda hata ayıklayıcısında durduruldu.  Uzak oturuma etkileşimli olarak bağlanmak ve konsol hata ayıklayıcısına otomatik olarak girmek için Enter-PSSession cmdlet'ini kullanın.</value>
   </data>
   <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
-    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell 4.0 or greater.</value>
+    <value>Bağlı olduğunuz uzak oturum, uzaktan hata ayıklamayı desteklemiyor. PowerShell 4.0 veya üzeri bir sürümü çalıştıran bir uzak bilgisayara bağlanmanız gerekir.</value>
   </data>
   <data name="ICMInvalidSessionState" xml:space="preserve">
-    <value>Because the session state for session {0}, {1}, {2} is not equal to Open, you cannot run a command in the session.  The session state is {3}.</value>
+    <value>{0}, {1}, {2} oturumunun durumu Açık değerine eşit olmadığından oturumda komut çalıştıramazsınız.  Oturum durumu: {3}.</value>
   </data>
   <data name="ICMNoValidRunspaces" xml:space="preserve">
-    <value>No valid sessions were specified.  Ensure you provide valid sessions that are in the Opened state and are available to run commands.</value>
+    <value>Geçerli oturum belirtilmedi.  Açıldı durumunda olan ve komutları çalıştırmak için kullanılabilen geçerli oturumlar sağladığınızdan emin olun.</value>
   </data>
   <data name="ICMInvalidSessionAvailability" xml:space="preserve">
-    <value>The session {0}, {1}, {2} is not available to run commands.  The session availability is {3}.</value>
+    <value>{0}, {1}, {2} oturumu komutları çalıştırmak için kullanılamıyor.  Oturum kullanılabilirliği: {3}.</value>
   </data>
   <data name="JobActionInvalidWithNoChildJobs" xml:space="preserve">
-    <value>The command cannot run because the ChildJobs property is empty.</value>
+    <value>ChildJobs özelliği boş olduğundan komut çalıştırılamıyor.</value>
   </data>
   <data name="CannotDebugJobNoHostDebugger" xml:space="preserve">
-    <value>The job cannot be debugged because there is no PowerShell host debugger available.  Make sure you are running this command in a host that supports debugging.</value>
+    <value>Kullanılabilir PowerShell konak hata ayıklayıcısı olmadığından işte hata ayıklanamıyor.  Bu komutu hata ayıklamayı destekleyen bir konakta çalıştırdığınızdan emin olun.</value>
   </data>
   <data name="CannotFindJobWithId" xml:space="preserve">
-    <value>Cannot find job with id {0}.</value>
+    <value>{0} kimlikli iş bulunamıyor.</value>
   </data>
   <data name="CannotFindJobWithInstanceId" xml:space="preserve">
-    <value>Cannot find job with Instance Id {0}.</value>
+    <value>{0} Örnek Kimliğine sahip iş bulunamıyor.</value>
   </data>
   <data name="CannotFindJobWithName" xml:space="preserve">
-    <value>Cannot find job with name {0}.</value>
+    <value>{0} adlı iş bulunamıyor.</value>
   </data>
   <data name="CannotDebugJobNoHostUI" xml:space="preserve">
-    <value>The job cannot be debugged because there is no host UI available.  Make sure you are running this command in a PowerShell host that implements PSHostUserInterface.</value>
+    <value>Konak kullanıcı arabirimi olmadığından işte hata ayıklanamıyor.  Bu komutu PSHostUserInterface uygulayan bir PowerShell konağında çalıştırdığınızdan emin olun.</value>
   </data>
   <data name="CannotDebugJobInvalidDebuggerMode" xml:space="preserve">
-    <value>The job cannot be debugged because the host debugger mode is set to None or Default.  The host debugger mode must be LocalScript and/or RemoteScript.</value>
+    <value>Konak hata ayıklayıcısı modu Hiçbiri veya Varsayılan olarak ayarlandığından işte hata ayıklanamıyor.  Konak hata ayıklayıcısı modu LocalScript ve/veya RemoteScript olmalıdır.</value>
   </data>
   <data name="FoundMultipleJobsWithId" xml:space="preserve">
-    <value>Multiple jobs were found with Id {0}.  Debug-Job can debug only one job at a time.</value>
+    <value>{0} kimlikli birden çok iş bulundu.  Debug-Job aynı anda yalnızca bir işte hata ayıklayabilir.</value>
   </data>
   <data name="FoundMultipleJobsWithName" xml:space="preserve">
-    <value>Multiple jobs were found with the name {0}.  Debug-Job can debug only one job at a time.</value>
+    <value>{0} adı birden çok iş bulundu.  Debug-Job aynı anda yalnızca bir işte hata ayıklayabilir.</value>
   </data>
   <data name="NamedPipeAlreadyListening" xml:space="preserve">
-    <value>The Named Pipe server listener used for process attach is already running.</value>
+    <value>İşlem ekleme için kullanılan Adlandırılmış Kanal sunucu dinleyicisi zaten çalışıyor.</value>
   </data>
   <data name="EnterPSHostProcessCantEnterSameProcess" xml:space="preserve">
-    <value>Enter-PSHostProcess does not support entering the same PowerShell session it is running in.</value>
+    <value>Enter-PSHostProcess, çalıştığı PowerShell oturumuna girmeyi desteklemez.</value>
   </data>
   <data name="EnterPSHostProcessMultipleProcessesFoundWithName" xml:space="preserve">
-    <value>Multiple processes were found with this name {0}. Use the process Id to specify a single process to enter.</value>
+    <value>Bu ada sahip birden çok işlem bulundu: {0}. Girmek için işlem kimliğini kullanarak tek bir işlem belirtin.</value>
   </data>
   <data name="EnterPSHostProcessNoPowerShell" xml:space="preserve">
-    <value>Cannot enter process with Id '{0}' because it has not loaded the PowerShell engine or the named-pipe listener was disabled.</value>
+    <value>PowerShell altyapısını yüklemediğinden veya adlandırılmış kanal dinleyicisi devre dışı bırakıldığından '{0}' kimlikli işleme girilemiyor.</value>
   </data>
   <data name="EnterPSHostProcessNoProcessFoundWithId" xml:space="preserve">
-    <value>No process was found with Id: {0}.</value>
+    <value>{0} kimlikli işlem bulunamadı.</value>
   </data>
   <data name="EnterPSHostProcessNoProcessFoundWithName" xml:space="preserve">
-    <value>No process was found with Name: {0}.</value>
+    <value>{0} Adlı işlem bulunamadı.</value>
   </data>
   <data name="EnterPSHostProcessNoNamedPipeFound" xml:space="preserve">
-    <value>No named pipe was found with CustomPipeName: {0}.</value>
+    <value>CustomPipeName ile adlandırılmış bir kanal bulunamadı: {0}.</value>
   </data>
   <data name="CustomPipeNameTooLong" xml:space="preserve">
-    <value>Cannot process the command because the pipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+    <value>Belirtilen pipeName çok uzun olduğu için komut işlenemiyor. Bu platformdaki kanal adları en fazla {0} karakter uzunluğunda olabilir. Kanal adınız '{1}' {2} karakterdir.</value>
   </data>
   <data name="HostDoesNotSupportIASession" xml:space="preserve">
-    <value>The current host does not support the Enter-PSHostProcess cmdlet.</value>
+    <value>Geçerli konak Enter-PSHostProcess cmdlet'ini desteklemiyor.</value>
   </data>
   <data name="NamedPipeTransportProcessEnded" xml:space="preserve">
-    <value>"The named pipe target process has ended."</value>
+    <value>"Adlandırılmış kanal hedef işlemi sona erdi."</value>
   </data>
   <data name="HyperVSocketTransportProcessEnded" xml:space="preserve">
-    <value>"The Hyper-V socket target process has ended."</value>
+    <value>"Hyper-V yuva hedef işlemi sona erdi."</value>
   </data>
   <data name="EnterPSHostProcessPrompt" xml:space="preserve">
-    <value>{0}[Process:{1}]: {2}</value>
+    <value>{0}[İşlem:{1}]: {2}</value>
   </data>
   <data name="EnterVMSessionPrompt" xml:space="preserve">
     <value>{0}[{1}]: {2}</value>
   </data>
   <data name="EnterPSHostProcessCannotConnectToProcess" xml:space="preserve">
-    <value>Unable to connect to application domain name {0} of process {1}.  Error: {2}.</value>
+    <value>{1} işleminin {0} adlı uygulama etki alanına bağlanılamıyor.  Hata: {2}.</value>
   </data>
   <data name="EnterPSHostProcessCannotConnectToPipe" xml:space="preserve">
-    <value>Unable to connect to pipe with name {0}.  Error: {1}.</value>
+    <value>{0} adlı kanala bağlanılamıyor.  Hata: {1}.</value>
   </data>
   <data name="WSManPluginConnectNoNegotiationData" xml:space="preserve">
-    <value>PowerShell plugin cannot process the Connect operation as required negotiation information is either missing or not complete.</value>
+    <value>PowerShell eklentisi, gerekli anlaşma bilgileri eksik olduğundan veya tamamlanmadığından Bağlanma işlemini işleyemiyor.</value>
   </data>
   <data name="WSManPluginConnectOperationFailed" xml:space="preserve">
-    <value>PowerShell plugin failed to process to connect operation.</value>
+    <value>PowerShell eklentisi, bağlanma işlemini işleyemedi.</value>
   </data>
   <data name="WSManPluginContextNotFound" xml:space="preserve">
-    <value>The supplied plugin context is not valid.</value>
+    <value>Sağlanan eklenti bağlamı geçerli değil.</value>
   </data>
   <data name="WSManPluginInvalidArgSet" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error while processing {0} arguments.</value>
+    <value>PowerShell eklentisi, {0} bağımsız değişkenlerini işlerken önemli bir hatayla karşılaştı.</value>
   </data>
   <data name="WSManPluginInvalidCommandContext" xml:space="preserve">
-    <value>The supplied command context is not valid.</value>
+    <value>Sağlanan komut bağlamı geçerli değil.</value>
   </data>
   <data name="WSManPluginInvalidInputDataType" xml:space="preserve">
-    <value>The supplied input data is not valid. Only input data of type {0} is supported.</value>
+    <value>Sağlanan giriş verileri geçerli değil. Yalnızca {0} türündeki giriş verileri desteklenir.</value>
   </data>
   <data name="WSManPluginInvalidInputStream" xml:space="preserve">
-    <value>The supplied input stream is not valid. Only {0} is supported as input stream.</value>
+    <value>Sağlanan giriş akışı geçerli değil. Giriş akışı olarak yalnızca {0} desteklenir.</value>
   </data>
   <data name="WSManPluginInvalidOutputStream" xml:space="preserve">
-    <value>The supplied output stream set is not valid. Only {0} is supported as output stream.</value>
+    <value>Sağlanan çıkış akışı kümesi geçerli değil. Çıkış akışı olarak yalnızca {0} desteklenir.</value>
   </data>
   <data name="WSManPluginInvalidSenderDetails" xml:space="preserve">
-    <value>The supplied WSMAN_SENDER_DETAILS is not valid. Cannot process null WSMAN_SENDER_DETAILS.</value>
+    <value>Sağlanan WSMAN_SENDER_DETAILS geçerli değil. Null WSMAN_SENDER_DETAILS işlenemiyor.</value>
   </data>
   <data name="WSManPluginInvalidShellContext" xml:space="preserve">
-    <value>The supplied shell context is not valid.</value>
+    <value>Sağlanan kabuk bağlamı geçerli değil.</value>
   </data>
   <data name="WSManPluginManagedException" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="WSManPluginNullInvalidInput" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>{1} eklenti yöntemine sahip {0} için NULL değerine izin verilmez.</value>
   </data>
   <data name="WSManPluginNullInvalidStreamSet" xml:space="preserve">
-    <value>NULL value is not allowed for input stream and output stream sets. {0} and {1} are the supported input and output streams.</value>
+    <value>Giriş akışı ve çıkış akışı kümeleri için NULL değerine izin verilmez. {0} ve {1}, desteklenen giriş ve çıkış akışlarıdır.</value>
   </data>
   <data name="WSManPluginNullPluginContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>{1} eklenti yöntemine sahip {0} için NULL değerine izin verilmez.</value>
   </data>
   <data name="WSManPluginNullShellContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>{1} eklenti yöntemine sahip {0} için NULL değerine izin verilmez.</value>
   </data>
   <data name="WSManPluginOperationClose" xml:space="preserve">
-    <value>PowerShell plugin operation is shutting down. This may happen if the hosting service or application is shutting down.</value>
+    <value>PowerShell eklentisi işlemi kapatılıyor. Bu durum, barındırma hizmeti veya uygulama kapatılıyorsa oluşabilir.</value>
   </data>
   <data name="WSManPluginOptionNotUnderstood" xml:space="preserve">
-    <value>PowerShell plugin does not understand the option {0}. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>PowerShell eklentisi {0} seçeneğini anlamıyor. İstemcinin PowerShell'in derleme {1} ve protokol sürümü {2} ile uyumlu olduğundan emin olun.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
-    <value>An option with name {0} is expected from the client. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>İstemciden {0} adlı bir seçenek bekleniyor. İstemcinin PowerShell'in derleme {1} ve protokol sürümü {2} ile uyumlu olduğundan emin olun.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
-    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Powershell plugin does not support the protocol version {2} requested by client.&lt;/PSProtocolVersionError&gt;</value>
+    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;PowerShell eklentisi, istemci tarafından istenen {2} protokol sürümünü desteklemiyor.&lt;/PSProtocolVersionError&gt;</value>
   </data>
   <data name="WSManPluginReportContextFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error while reporting context to WSMan service.</value>
+    <value>PowerShell eklentisi, WSMan hizmetine bağlam bildirirken önemli bir hatayla karşılaştı.</value>
   </data>
   <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
-    <value>Unable to create managed server session.</value>
+    <value>Yönetilen sunucu oturumu oluşturulamıyor.</value>
   </data>
   <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error registering a wait handle for shutdown notification.</value>
+    <value>PowerShell eklentisi, kapatma bildirimi için bekleme tanıtıcısını kaydederken önemli bir hatayla karşılaştı.</value>
   </data>
   <data name="ServerDriverRemoteHostAlreadyPushed" xml:space="preserve">
-    <value>Cannot enter Runspace because a Runspace is already pushed in this session.</value>
+    <value>Bu oturumda zaten bir Çalışma Alanı gönderildiğinden Çalışma Alanına girilemiyor.</value>
   </data>
   <data name="ServerDriverRemoteHostNoDebuggerToPush" xml:space="preserve">
-    <value>Cannot enter Runspace because there is no server remote debugger available.</value>
+    <value>Kullanılabilir sunucu uzak hata ayıklayıcısı olmadığından Çalışma Alanına girilemiyor.</value>
   </data>
   <data name="ServerDriverRemoteHostNotRemoteRunspace" xml:space="preserve">
-    <value>Cannot enter Runspace because it is not a remote Runspace.</value>
+    <value>Uzak bir Çalışma Alanı olmadığından Çalışma Alanına girilemiyor.</value>
   </data>
   <data name="RemoteTransportError" xml:space="preserve">
-    <value>Remote transport error: {0}</value>
+    <value>Uzak taşıma hatası: {0}</value>
   </data>
   <data name="CannotConnectContainerNamedPipe" xml:space="preserve">
-    <value>Unable to open pipe connection for PowerShell in container. Error code: {0}.</value>
+    <value>Kapsayıcıda PowerShell için kanal bağlantısı açılamıyor. Hata kodu: {0}.</value>
   </data>
   <data name="CannotCreateNamedPipe" xml:space="preserve">
-    <value>Unable to create PowerShell IPC named pipe. Error code: {0}.</value>
+    <value>PowerShell IPC adlandırılmış kanalı oluşturulamıyor. Hata kodu: {0}.</value>
   </data>
   <data name="ConnectNamedPipeTimeout" xml:space="preserve">
-    <value>Timeout expired before connection could be made to named pipe.</value>
+    <value>Adlandırılmış kanala bağlantı kurulmadan önce zaman aşımı süresi doldu.</value>
   </data>
   <data name="WSManInitFailed" xml:space="preserve">
-    <value>WSMan Initialization failed with error code: {0}.</value>
+    <value>WSMan Başlatma işlemi şu hata koduyla başarısız oldu: {0}.</value>
   </data>
   <data name="NamedPipeServerCannotStart" xml:space="preserve">
-    <value>Unable to start named pipe server while in server mode.</value>
+    <value>Sunucu modundayken adlandırılmış kanal sunucusu başlatılamıyor.</value>
   </data>
   <data name="CouldNotResolveRoleDefinitionPrincipal" xml:space="preserve">
-    <value>Could not grant remote access to '{0}': '{1}'. The session configuration has been registered, but this group does not have access. To resolve this error, provide a valid group name and register the session configuration again.</value>
+    <value>'{0}' için uzaktan erişim izni verilemedi: '{1}'. Oturum yapılandırması kaydedildi ancak bu grubun erişimi yok. Bu hatayı gidermek için geçerli bir grup adı sağlayın ve oturum yapılandırmasını yeniden kaydedin.</value>
   </data>
   <data name="SessionConfigurationMustBeFileBased" xml:space="preserve">
-    <value>Could not get the session capabilities for the session configuration '{0}': this configuration was not registered with a session configuration file (.pssc), such as one created by the New-PSSessionConfigurationFile cmdlet.</value>
+    <value>'{0}' oturum yapılandırması için oturum özellikleri alınamadı: Bu yapılandırma, New-PSSessionConfigurationFile cmdlet'inin oluşturduğu gibi bir oturum yapılandırma dosyasıyla (.pssc) kaydedilmedi.</value>
   </data>
   <data name="CouldNotResolveUsername" xml:space="preserve">
-    <value>Could not resolve username '{0}'. Verify the username and try again.</value>
+    <value>'{0}' kullanıcı adı çözümlenemedi. Kullanıcı adını doğrulayın ve yeniden deneyin.</value>
   </data>
   <data name="DISCRunAsVirtualAccountGroupsComment" xml:space="preserve">
-    <value>Groups associated with machine's (virtual) administrator account</value>
+    <value>Makinenin (sanal) yönetici hesabıyla ilişkili gruplar</value>
   </data>
   <data name="CannotCreateConfiguredRunspace" xml:space="preserve">
-    <value>Cannot create or open the configuration session {0}.</value>
+    <value>{0} yapılandırma oturumu oluşturulamıyor veya açılamıyor.</value>
   </data>
   <data name="DISCEnforceInputParameterValidation" xml:space="preserve">
-    <value>Enforces script input parameter validation. This is automatically enabled when MountUserDrive is specified.</value>
+    <value>Betik giriş parametresi doğrulamasını zorlar. Bu, MountUserDrive belirtildiğinde otomatik olarak etkinleştirilir.</value>
   </data>
   <data name="DISCMountUserDriveComment" xml:space="preserve">
-    <value>Creates a 'User' PSDrive in the session for use with Copy-Item when File System provider is not visible.</value>
+    <value>Dosya Sistemi sağlayıcısı görünür olmadığında Copy-Item ile kullanılmak üzere oturumda bir 'User' PSDrive oluşturur.</value>
   </data>
   <data name="DISCTypeMustBeBoolean" xml:space="preserve">
-    <value>The member '{0}' must be a boolean. Change the member to the correct type in the file {1}.</value>
+    <value>'{0}' üyesi bir boole olmalıdır. Üyeyi {1} dosyasında doğru türe değiştirin.</value>
   </data>
   <data name="DISCTypeMustBeInteger" xml:space="preserve">
-    <value>The member '{0}' must be an integer. Change the member to the correct type in the file {1}.</value>
+    <value>'{0}' parametresi bir tamsayı olmalıdır. Üyeyi {1} dosyasında doğru türe değiştirin.</value>
   </data>
   <data name="UserDriveProcessingThrewTerminatingError" xml:space="preserve">
-    <value>Processing the User drive threw an error {0}.</value>
+    <value>Kullanıcı sürücüsünün işlenmesi sırasında bir {0} hatası oluştu.</value>
   </data>
   <data name="DISCUserDriveMaxSizeComment" xml:space="preserve">
-    <value>Optional maximum size in bytes of user drive created with MountUserDrive parameter. Default maximum size for User drive is 50MB.</value>
+    <value>MountUserDrive parametresiyle oluşturulan kullanıcı sürücüsünün bayt cinsinden isteğe bağlı en büyük boyutu. Kullanıcı sürücüsü için varsayılan en büyük boyut 50 MB'tır.</value>
   </data>
   <data name="UserDriveCannotGetFileSystemProvider" xml:space="preserve">
-    <value>Cannot find the file system provider.</value>
+    <value>Dosya sistemi sağlayıcısı bulunamıyor.</value>
   </data>
   <data name="DISCGMSAComment" xml:space="preserve">
-    <value>Group managed service account name under which the configuration will run</value>
+    <value>Yapılandırmanın çalıştırılacağı grup yönetilen hizmet hesabı adı</value>
   </data>
   <data name="InvalidGMSAName" xml:space="preserve">
-    <value>Invalid Group Managed Service account name. Account name must be of the form 'DomainName\UserName'.</value>
+    <value>Grup Yönetilen Hizmet hesabı adı geçersiz. Hesap adı 'EtkiAlanıAdı\KullanıcıAdı' biçiminde olmalıdır.</value>
   </data>
   <data name="DISCRequiredGroupsComment" xml:space="preserve">
-    <value>Group accounts for which membership is required to use the session.</value>
+    <value>Oturumu kullanmak için üyelik gereken grup hesapları.</value>
   </data>
   <data name="BadSDDLMismatchedParens" xml:space="preserve">
-    <value>Cannot parse sddl string because it contains mismatched parentheses: {0}.</value>
+    <value>Uyumsuz parantezler içerdiğinden sddl dizesi ayrıştırılamıyor: {0}.</value>
   </data>
   <data name="RequiredGroupsHashMultipleKeys" xml:space="preserve">
-    <value>RequiredGroups property hashtable must contain only a single key.</value>
+    <value>RequiredGroups özelliği karma tablosu yalnızca tek bir anahtar içermelidir.</value>
   </data>
   <data name="RequiredGroupsNotHashTable" xml:space="preserve">
-    <value>The RequiredGroups property is not in a name/value pair hashtable format.  This must be a hashtable of the form (using PowerShell syntax): RequiredGroups = @{ Or = 'Administrators' }.</value>
+    <value>RequiredGroups özelliği, ad/değer çifti karma tablosu biçiminde değil.  Bu, şu biçimde bir karma tablo olmalıdır (PowerShell söz dizimi kullanılarak): RequiredGroups = @{ Or = 'Administrators' }.</value>
   </data>
   <data name="UnknownGroupMembershipKey" xml:space="preserve">
-    <value>Unknown key in Required Groups configuration.  Required Groups hashtable can only contain 'And' and 'Or' hash keys for logical membership groupings.</value>
+    <value>Gerekli Gruplar yapılandırmasında bilinmeyen anahtar.  Gerekli Gruplar karma tablosu, mantıksal üyelik gruplandırmaları için yalnızca 'And' ve 'Or' karma anahtarlarını içerebilir.</value>
   </data>
   <data name="UnknownGroupMembershipValue" xml:space="preserve">
-    <value>Unknown value in Required Groups configuration.  Required Groups hashtable can only contain values that are either group names or another logical hashtable.</value>
+    <value>Gerekli Gruplar yapılandırmasında bilinmeyen değer.  Gerekli Gruplar karma tablosu yalnızca grup adları veya başka bir mantıksal karma tablo olan değerler içerebilir.</value>
   </data>
   <data name="RequiredGroupsMalformedACE" xml:space="preserve">
-    <value>Malformed ACE {0}.  Regular ACEs must have exactly 6 sections.</value>
+    <value>ACE {0} hatalı biçimlendirilmiş.  Normal ACE'ler tam olarak 6 bölüm içermelidir.</value>
   </data>
   <data name="InvalidUserDriveName" xml:space="preserve">
-    <value>Cannot create a session User Drive because the current user name contains invalid file path characters.</value>
+    <value>Geçerli kullanıcı adı geçersiz dosya yolu karakterleri içerdiğinden Kullanıcı Sürücüsü oturumu oluşturulamıyor.</value>
   </data>
   <data name="InvalidRoleCapabilityKey" xml:space="preserve">
-    <value>Invalid role capability key: {0}. Make sure the role capability name is spelled correctly and is a valid session configuration property.</value>
+    <value>Geçersiz rol yeteneği anahtarı: {0}. Rol yeteneği adının doğru yazıldığından ve geçerli bir oturum yapılandırması özelliği olduğundan emin olun.</value>
   </data>
   <data name="InvalidRoleCapabilityKeyType" xml:space="preserve">
-    <value>Invalid role capability key type: {0}. Role capability keys must be strings that identify a valid session configuration property.</value>
+    <value>Geçersiz rol yeteneği anahtar türü: {0}. Rol yeteneği anahtarları, geçerli bir oturum yapılandırması özelliğini tanımlayan dizeler olmalıdır.</value>
   </data>
   <data name="InvalidRoleKeyType" xml:space="preserve">
-    <value>Invalid role key type: {0}. Role keys must be strings that identify a security group.</value>
+    <value>Geçersiz rol anahtarı türü: {0}. Rol anahtarları, bir güvenlik grubunu tanımlayan dizeler olmalıdır.</value>
   </data>
   <data name="RemotingErrorNoLogonSessionExist" xml:space="preserve">
-    <value> Other Possible Cause:
-  -The domain or computer name was not included with the specified credential, for example: DOMAIN\UserName or COMPUTER\UserName.</value>
+    <value> Diğer Olası Neden:
+  -Etki alanı veya bilgisayar adı belirtilen kimlik bilgisine eklenmemiştir, örneğin: DOMAIN\UserName veya COMPUTER\UserName.</value>
   </data>
   <data name="CannotStartSSHClient" xml:space="preserve">
-    <value>Failed to start the SSH client process needed for the remoting connection with error: {0}.</value>
+    <value>Uzaktan iletişim bağlantısı için gereken SSH istemci işlemi şu hatayla başlatılamadı: {0}.</value>
   </data>
   <data name="KeyFileNotFound" xml:space="preserve">
-    <value>The specified key file {0} was not found.</value>
+    <value>Belirtilen {0} anahtar dosyası bulunamadı.</value>
   </data>
   <data name="SSHClientEndWithErrorMessage" xml:space="preserve">
-    <value>The SSH client session has ended with error message: {0}</value>
+    <value>SSH istemci oturumu şu hata iletisiyle sona erdi: {0}</value>
   </data>
   <data name="SSHClientConnectTimeout" xml:space="preserve">
-    <value>SSH connection attempt failed after time out: {0} seconds.</value>
+    <value>SSH bağlantı denemesi, {0} saniyelik zaman aşımından sonra başarısız oldu.</value>
   </data>
   <data name="SSHClientConnectProcessTerminated" xml:space="preserve">
     <value>
-SSH client process terminated before connection could be established.</value>
+SSH istemci işlemi, bağlantı kurulamadan önce sonlandırıldı.</value>
   </data>
   <data name="MissingRequiredSSHParameter" xml:space="preserve">
-    <value>The provided SSHConnection hashtable is missing the required ComputerName or HostName parameter.</value>
+    <value>Sağlanan SSHConnection karma tablosunda gerekli ComputerName veya HostName parametresi eksik.</value>
   </data>
   <data name="InvalidSSHConnectionParameter" xml:space="preserve">
-    <value>The provided SSHConnection hashtable parameter name or element is null or empty.</value>
+    <value>Sağlanan SSHConnection karma tablosu parametre adı veya öğesi null ya da boş.</value>
   </data>
   <data name="UnknownSSHConnectionParameter" xml:space="preserve">
-    <value>The provided SSHConnection hashtable parameter {0} is not supported.</value>
+    <value>Sağlanan {0} SSHConnection karma tablosu parametresi desteklenmiyor.</value>
   </data>
   <data name="SSHConnectionDuplicateHostName" xml:space="preserve">
-    <value>The provided SSHConnection hashtable contains both a ComputerName and HostName parameter.  Only one can be specified.</value>
+    <value>Sağlanan SSHConnection karma tablosu hem ComputerName hem de HostName parametresini içeriyor.  Yalnızca biri belirtilebilir.</value>
   </data>
   <data name="SSHConnectionDuplicateKeyPath" xml:space="preserve">
-    <value>The provided SSHConnection hashtable contains both a KeyFilePath and IdentityFilePath parameter.  Only one can be specified.</value>
+    <value>Sağlanan SSHConnection karma tablosu hem KeyFilePath hem de IdentityFilePath parametresini içeriyor.  Yalnızca biri belirtilebilir.</value>
   </data>
   <data name="CouldNotFindRoleCapabilityFile" xml:space="preserve">
-    <value>Could not find the provided role capability file {0}.</value>
+    <value>Sağlanan {0} rol yeteneği dosyası bulunamadı.</value>
   </data>
   <data name="InvalidRoleCapabilityFileExtension" xml:space="preserve">
-    <value>The provided role capability file {0} does not have the required .psrc extension.</value>
+    <value>Sağlanan {0} rol yetenek dosyasında gerekli .psrc uzantısı yok.</value>
   </data>
   <data name="SSHAbruptlyTerminated" xml:space="preserve">
-    <value>The SSH transport process has abruptly terminated causing this remote session to break.</value>
+    <value>SSH taşıma işlemi aniden sonlandırıldı ve bu, uzak oturumun kesilmesine neden oldu.</value>
   </data>
   <data name="InvalidProcessorArchitecture" xml:space="preserve">
-    <value>PowerShell 6+ does not support WOW64. The binary must match the architecture of the processor.</value>
+    <value>PowerShell 6+, WOW64'ü desteklemiyor. İkili dosya, işlemcinin mimarisiyle eşleşmelidir.</value>
   </data>
   <data name="WowComponentNotPresent" xml:space="preserve">
-    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
+    <value>"{0}" yürütülebilir dosyası bulunamadı. WOW64 özelliğinin yüklü olduğunu doğrulayın.</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
-    <value>Unable to install plugin {0} to directory {1}.</value>
+    <value>{0} eklentisi {1} dizinine yüklenemiyor.</value>
   </data>
   <data name="PluginDllMissing" xml:space="preserve">
-    <value>The WinRM plugin DLL {0} is missing for PowerShell. Please run Enable-PSRemoting and then retry this command.</value>
+    <value>PowerShell için {0} WinRM eklenti DLL'si eksik. Lütfen Enable-PSRemoting'i çalıştırın ve ardından bu komutu yeniden deneyin.</value>
   </data>
   <data name="WSManClientDllNotAvailable" xml:space="preserve">
-    <value>This parameter set requires WSMan, and no supported WSMan client library was found. WSMan is either not installed or unavailable for this system.</value>
+    <value>Bu parametre kümesi WSMan gerektiriyor ancak desteklenen bir WSMan istemci kitaplığı bulunamadı. Bu sistem için WSMan yüklü değil ya da kullanılamıyor.</value>
   </data>
   <data name="ProcessExitInfo" xml:space="preserve">
     <value>
-      Exit code: {0}
+      Çıkış kodu: {0}
       Stdout: '{1}'
       Stderr: '{2}'
     </value>
   </data>
   <data name="ProcessInfoNotRecoverable" xml:space="preserve">
-    <value>Information about the process could not be read: '{0}'.</value>
+    <value>İşlemle ilgili bilgiler okunamadı: '{0}'.</value>
   </data>
   <data name="CannotGetHostInteropTypes" xml:space="preserve">
-    <value>Host system does not have the correct version of Hyper-V schema.</value>
+    <value>Konak sisteminde doğru Hyper-V şema sürümü yok.</value>
   </data>
   <data name="UnixOnlyHttpsWithoutSkipCACheckNotSupported" xml:space="preserve">
-    <value>HTTPS on Unix does not currently support CA or CN checks. Use the PSSessionOption -SkipCACheck and -SkipCNCheck if you are certain you trust the server you are connecting to and the network in between.</value>
+    <value>Unix üzerinde HTTPS şu anda CA veya CN denetimlerini desteklemiyor. Bağlanmakta olduğunuz sunucuya ve aradaki ağa güvendiğinizden eminseniz PSSessionOption -SkipCACheck ve -SkipCNCheck öğelerini kullanın.</value>
   </data>
   <data name="PSCoreRemotingDisableWarning" xml:space="preserve">
-    <value>PowerShell remoting has been disabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.
+    <value>PowerShell uzaktan iletişimi yalnızca PowerShell 6+ yapılandırmaları için devre dışı bırakıldı ve Windows PowerShell uzaktan iletişim yapılandırmalarını etkilemez. Tüm PowerShell uzaktan iletişim yapılandırmalarını etkilemek için bu cmdlet'i Windows PowerShell'de çalıştırın.
 </value>
   </data>
   <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
-    <value>PowerShell remoting has been enabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.</value>
+    <value>PowerShell uzaktan iletişimi yalnızca PowerShell 6+ yapılandırmaları için etkinleştirildi ve Windows PowerShell uzaktan iletişim yapılandırmalarını etkilemez. Tüm PowerShell uzaktan iletişim yapılandırmalarını etkilemek için bu cmdlet'i Windows PowerShell'de çalıştırın.</value>
   </data>
   <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
-    <value>Enter-PSHostProcess cmdlet is disabled because an application control policy such as 'AppLocker' or 'Windows Defender Application Control' is in enforcement.</value>
+    <value>Enter-PSHostProcess cmdlet'i, 'AppLocker' veya 'Windows Defender Application Control' gibi bir uygulama denetim ilkesi uygulanıyorken devre dışı bırakılır.</value>
   </data>
   <data name="RemoteDebuggerError" xml:space="preserve">
-    <value>Remote debugger exception: {0}, error message: {1}</value>
+    <value>Uzaktan hata ayıklayıcı özel durumu: {0}, hata iletisi: {1}</value>
   </data>
   <data name="WindowsPowerShellNotPresent" xml:space="preserve">
-    <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
+    <value>Bu makinede Windows PowerShell bulunamadığından Windows PowerShell işlemi oluşturulamıyor.</value>
   </data>
   <data name="InvalidPSSessionArgument" xml:space="preserve">
-    <value>The Runspace argument to Create must be a non-null RemoteRunspace object.</value>
+    <value>Create için Runspace bağımsız değişkeni, null olmayan bir RemoteRunspace nesnesi olmalıdır.</value>
   </data>
   <data name="DISCInvalidConfigKeyType" xml:space="preserve">
-    <value>The session configuration hash table contains an invalid key type. Keys should be string types.</value>
+    <value>Oturum yapılandırması karma tablosu geçersiz bir anahtar türü içeriyor. Anahtarlar dize türünde olmalıdır.</value>
   </data>
   <data name="DISCUnsupportedConfigName" xml:space="preserve">
-    <value>The session configuration file contains an unsupported configuration option: {0}. This is a remoting endpoint configuration option, that does not apply to PowerShell session state.</value>
+    <value>Oturum yapılandırma dosyası desteklenmeyen bir yapılandırma seçeneği içeriyor: {0}. Bu, PowerShell oturum durumuna uygulanmayan bir uzaktan iletişim uç noktası yapılandırma seçeneğidir.</value>
   </data>
   <data name="DISCUnknownConfigName" xml:space="preserve">
-    <value>The session configuration file contains an unknown configuration option: {0}.</value>
+    <value>Oturum yapılandırma dosyası bilinmeyen bir yapılandırma seçeneği içeriyor: {0}.</value>
   </data>
   <data name="WDACGetPowerShellLogTitle" xml:space="preserve">
-    <value>Expression Evaluation May Fail</value>
+    <value>İfade Değerlendirmesi Başarısız Olabilir</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in Constrained Language mode, unless the expression represents a constant value.</value>
+    <value>Bir betik bloğundan PowerShell nesnesi oluşturmak, betik bloğu içindeki bazı ifadelerin değerlendirilmesini gerektirebilir. İfade değerlendirmesi, ifade sabit bir değer temsil etmediği sürece Kısıtlı Dil modunda sessizce başarısız olur ve 'null' döndürür.</value>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
-    <value>Failed to get Hyper-V VM State. The value was of the type {0} but was expected to be Microsoft.HyperV.PowerShell.VMState or System.String.</value>
+    <value>Hyper-V VM Durumu alınamadı. Değer {0} türündeydi, ancak Microsoft.HyperV.PowerShell.VMState veya System.String olması bekleniyordu.</value>
   </data>
   <data name="HyperVInvalidResponse" xml:space="preserve">
-    <value>Hyper-V {0} sent an invalid {1} response during the connection negotiation.</value>
+    <value>Hyper-V {0}, bağlantı anlaşması sırasında geçersiz bir {1} yanıtı gönderdi.</value>
   </data>
   <data name="HyperVNegotiationFailed" xml:space="preserve">
-    <value>Negotiating a secure connection to Hyper-V failed. Make sure the Host and Guest are updated with all relevant Microsoft Updates.</value>
+    <value>Hyper-V ile güvenli bağlantı anlaşması başarısız oldu. Konak ve Konuk'un ilgili tüm Microsoft Güncelleştirmeleri ile güncelleştirildiğinden emin olun.</value>
   </data>
 </root>

@@ -151,7 +151,7 @@
 </value>
   </data>
   <data name="UsageHelp" xml:space="preserve">
-    <value>Usage: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
+    <value>Utilisation : pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
                                 | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
                   [-CommandWithArgs &lt;string&gt; [&lt;CommandParameters&gt;]
@@ -166,9 +166,9 @@
 
        pwsh[.exe] -h | -Help | -? | /?
 
-PowerShell Online Help https://aka.ms/powershell-docs
+Aide en ligne PowerShell https://aka.ms/powershell-docs
 
-All parameters are case-insensitive.</value>
+Tous les paramètres ne tiennent pas compte de la casse.</value>
   </data>
   <data name="ExtendedHelp" xml:space="preserve">
     <value>

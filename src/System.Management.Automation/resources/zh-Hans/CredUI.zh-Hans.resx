@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PromptForCredential_DefaultCaption" xml:space="preserve">
-    <value>PowerShell credential request </value>
+    <value>PowerShell 凭据请求 </value>
   </data>
   <data name="PromptForCredential_DefaultMessage" xml:space="preserve">
-    <value>Enter your credentials. </value>
+    <value>输入凭据。</value>
   </data>
   <data name="PromptForCredential_DefaultTarget" xml:space="preserve">
-    <value>Enter your credentials.</value>
+    <value>输入凭据。</value>
   </data>
   <data name="PromptForCredential_InvalidCaption" xml:space="preserve">
-    <value>The maximum length of the caption is {0} characters.</value>
+    <value>字幕的最大长度为 {0} 个字符。</value>
   </data>
   <data name="PromptForCredential_InvalidMessage" xml:space="preserve">
-    <value>The maximum length of the message is {0} characters.</value>
+    <value>消息的最大长度为 {0} 个字符。</value>
   </data>
   <data name="PromptForCredential_InvalidUserName" xml:space="preserve">
-    <value>The maximum length of the UserName value is {0} characters.</value>
+    <value>UserName 值的最大长度为 {0} 个字符。</value>
   </data>
 </root>

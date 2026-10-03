@@ -372,7 +372,11 @@ namespace System.Management.Automation
                     $filePathName = $_.FullName
 
                     # Get file contents
-                    $contentBytes = Get-Content -Path $filePathName -Raw -Encoding Byte
+                    $contentBytes = if ($PSVersionTable.PSEdition -eq 'Desktop') {
+                        Get-Content -Path $filePathName -Raw -Encoding Byte
+                    } else {
+                        Get-Content -Path $filePathName -Raw -AsByteStream
+                    }
 
                     # Notify client for file open.
                     New-Event -SourceIdentifier PSISERemoteSessionOpenFile -EventArguments @($filePathName, $contentBytes) > $null

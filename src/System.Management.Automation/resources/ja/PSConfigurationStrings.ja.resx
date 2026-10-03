@@ -118,6 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CanNotConfigurationFile" xml:space="preserve">
-    <value>PowerShell has stopped working because of a security issue: Cannot read the configuration file: {0}</value>
+    <value>PowerShell はセキュリティ上の問題により動作を停止しました: 構成ファイル {0} を読み取れません</value>
+  </data>
+  <data name="CanNotReadConfigurationFile" xml:space="preserve">
+    <value>PowerShell 構成ファイル '{0}' を読み取れません: {1}。既定値にフォールバックしています。</value>
+  </data>
+  <data name="CanNotReadConfigurationValue" xml:space="preserve">
+    <value>PowerShell 構成ファイル '{1}' から設定 '{0}' を読み取ることができません: {2}。この設定の既定値にフォールバックします。</value>
   </data>
 </root>

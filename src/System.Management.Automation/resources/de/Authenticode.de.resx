@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Reason_DoNotRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted not to run this software now.</value>
+    <value>Die Datei {0} kann nicht geladen werden, weil Sie sich entschieden haben, diese Software jetzt nicht auszuführen.</value>
   </data>
   <data name="Reason_NeverRun" xml:space="preserve">
-    <value>File {0} cannot be loaded because you opted never to run software from this publisher.</value>
+    <value>Die Datei {0} kann nicht geladen werden, weil Sie sich entschieden haben, keine Software von diesem Herausgeber auszuführen.</value>
   </data>
   <data name="Reason_NotTrusted" xml:space="preserve">
-    <value>File {0} is published by {1}. This publisher is explicitly not trusted on your system. The script will not run on the system. For more information, run the command "get-help about_signing".</value>
+    <value>Die Datei {0} wird von {1} veröffentlicht. Dieser Herausgeber ist auf Ihrem System explizit nicht vertrauenswürdig. Das Skript wird nicht auf dem System ausgeführt. Führen Sie den Befehl „get-help about_signing“ aus, um weitere Informationen zu erhalten.</value>
   </data>
   <data name="Reason_RestrictedMode" xml:space="preserve">
-    <value>File {0} cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.</value>
+    <value>Die Datei {0} kann nicht geladen werden, weil das Ausführen von Skripten auf diesem System deaktiviert ist. Weitere Informationen finden Sie unter about_Execution_Policies unter https://go.microsoft.com/fwlink/?LinkID=135170.</value>
   </data>
   <data name="Reason_Unknown" xml:space="preserve">
-    <value>File {0} cannot be loaded. {1}.</value>
+    <value>Die Datei {0} kann nicht geladen werden. {1}.</value>
   </data>
   <data name="Reason_DisallowedBySafer" xml:space="preserve">
-    <value>File {0} cannot be loaded because its operation is blocked by software restriction policies, such as those created by using Group Policy.</value>
+    <value>Die Datei {0} kann nicht geladen werden, da ihr Vorgang durch Richtlinien für Softwareeinschränkungen blockiert wird, z. B. durch Richtlinien, die mithilfe der Gruppenrichtlinie erstellt wurden.</value>
   </data>
   <data name="Reason_FileContentUnavailable" xml:space="preserve">
-    <value>File {0} cannot be loaded because its content could not be read.</value>
+    <value>Die Datei {0} kann nicht geladen werden, da ihr Inhalt nicht gelesen werden konnte.</value>
   </data>
   <data name="CertNotGoodForSigning" xml:space="preserve">
-    <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
+    <value>Code kann nicht signiert werden. Das angegebene Zertifikat ist nicht zum Codesignieren geeignet.</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code. The TimeStamp server URL must be fully qualified, and in the format http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
+    <value>Code kann nicht signiert werden. Die TimeStamp-Server-URL muss im Format http://&lt;server url&gt; oder https://&lt;server url&gt; vollqualifiziert sein.</value>
   </data>
   <data name="InvalidHashAlgorithm" xml:space="preserve">
-    <value>Cannot sign code. The hash algorithm is not supported.</value>
+    <value>Code kann nicht signiert werden. Der Hashalgorithmus wird nicht unterstützt.</value>
   </data>
   <data name="AuthenticodePromptCaption" xml:space="preserve">
-    <value>Do you want to run software from this untrusted publisher?</value>
+    <value>Möchten Sie Software von diesem nicht vertrauenswürdigen Herausgeber ausführen?</value>
   </data>
   <data name="AuthenticodePromptText" xml:space="preserve">
-    <value>File {0} is published by {1} and is not trusted on your system. Only run scripts from trusted publishers.</value>
+    <value>Die Datei {0} wird von {1} veröffentlicht und ist in Ihrem System nicht vertrauenswürdig. Führen Sie nur Skripte von vertrauenswürdigen Herausgebern aus.</value>
   </data>
   <data name="AuthenticodePromptText_UnknownPublisher" xml:space="preserve">
-    <value>Software {0} is published by an unknown publisher. It is recommended that you do not run this software.</value>
+    <value>Software {0} wird von einem unbekannten Herausgeber veröffentlicht. Es wird empfohlen, diese Software nicht auszuführen.</value>
   </data>
   <data name="RemoteFilePromptCaption" xml:space="preserve">
-    <value>Security warning</value>
+    <value>Sicherheitswarnung</value>
   </data>
   <data name="RemoteFilePromptText" xml:space="preserve">
-    <value>Run only scripts that you trust. While scripts from the internet can be useful, this script can potentially harm your computer. If you trust this script, use the Unblock-File cmdlet to allow the script to run without this warning message. Do you want to run {0}?</value>
+    <value>Nur Skripte ausführen, denen Sie vertrauen. Skripte aus dem Internet können zwar nützlich sein, aber dieses Skript kann ihren Computer möglicherweise beschädigen. Wenn Sie diesem Skript vertrauen, verwenden Sie das Cmdlet „Unblock-File“, um die Ausführung des Skripts ohne diese Warnmeldung zuzulassen. Möchten Sie {0} ausführen?</value>
   </data>
   <data name="Choice_NeverRun" xml:space="preserve">
-    <value>Ne&amp;ver run</value>
+    <value>Ni&amp;e ausführen</value>
   </data>
   <data name="Choice_NeverRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and do not prompt me to run this script in future. Future attempts to run this script will result in a silent failure.</value>
+    <value>Skript jetzt nicht von diesem Herausgeber ausführen und mich in Zukunft nicht auffordern, dieses Skript auszuführen. Zukünftige Versuche, dieses Skript auszuführen, führen zu einem stillen Fehler.</value>
   </data>
   <data name="Choice_DoNotRun" xml:space="preserve">
-    <value>&amp;Do not run</value>
+    <value>Nicht &amp;ausführen</value>
   </data>
   <data name="Choice_DoNotRun_Help" xml:space="preserve">
-    <value>Do not run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>Skript jetzt nicht von diesem Herausgeber ausführen und mich in Zukunft weiterhin auffordern, dieses Skript auszuführen.</value>
   </data>
   <data name="Choice_RunOnce" xml:space="preserve">
-    <value>&amp;Run once</value>
+    <value>Einmal &amp;ausführen</value>
   </data>
   <data name="Choice_RunOnce_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and continue to prompt me to run this script in the future.</value>
+    <value>Skript jetzt von diesem Herausgeber ausführen und mich in Zukunft weiterhin auffordern, dieses Skript auszuführen.</value>
   </data>
   <data name="Choice_AlwaysRun" xml:space="preserve">
-    <value>&amp;Always run</value>
+    <value>&amp;Immer ausführen</value>
   </data>
   <data name="Choice_AlwaysRun_Help" xml:space="preserve">
-    <value>Run the script from this publisher now, and do not prompt me to run this script in the future.</value>
+    <value>Skript jetzt von diesem Herausgeber ausführen und mich in Zukunft nicht auffordern, dieses Skript auszuführen.</value>
   </data>
   <data name="Choice_Suspend" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>&amp;Anhalten</value>
   </data>
   <data name="Choice_Suspend_Help" xml:space="preserve">
-    <value>Pause the current pipeline and return to the command prompt. Type exit to resume operation when you are done.</value>
+    <value>Halten Sie die aktuelle Pipeline an, und kehren Sie zur Eingabeaufforderung zurück. Geben Sie „Beenden“ ein, um den Vorgang fortzusetzen, wenn Sie fertig sind.</value>
   </data>
 </root>

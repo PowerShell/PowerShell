@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ResourceBaseNameFailure" xml:space="preserve">
-    <value>Cannot load a resource with base name "{0}".</value>
+    <value>Non è possibile caricare una risorsa con nome di base "{0}".</value>
   </data>
   <data name="ResourceIdFailure" xml:space="preserve">
-    <value>Cannot load a resource string with ID "{0}".</value>
+    <value>Non è possibile caricare una stringa di risorsa con ID "{0}".</value>
   </data>
   <data name="ActionPreferenceStop" xml:space="preserve">
-    <value>Running commands is prevented by Stop policy settings.</value>
+    <value>L'esecuzione dei comandi è impedita dalle impostazioni dei criteri di interruzione.</value>
   </data>
   <data name="AssemblyNotRegistered" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}" because an assembly was not registered.</value>
+    <value>Non è possibile recuperare il messaggio "{0}" "{1}" "{2}" perché un assembly non è stato registrato.</value>
   </data>
   <data name="BadTemplate" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}". A template string format is not valid in template string "{3}".</value>
+    <value>Non è possibile recuperare il messaggio "{0}" "{1}" "{2}". Il formato della stringa modello non è valido nella stringa modello "{3}".</value>
   </data>
   <data name="BlankTemplate" xml:space="preserve">
-    <value>Cannot retrieve the message "{0}" "{1}" "{2}". A template string exists, but its value is empty or blank.</value>
+    <value>Non è possibile recuperare il messaggio "{0}" "{1}" "{2}". Esiste una stringa modello, ma il relativo valore è vuoto.</value>
   </data>
   <data name="PipelineStoppedException" xml:space="preserve">
-    <value>The pipeline has been stopped.</value>
+    <value>La pipeline è stata arrestata.</value>
   </data>
   <data name="ScriptCallDepthException" xml:space="preserve">
-    <value>The script failed due to call depth overflow.</value>
+    <value>Lo script non è riuscito a causa dell'overflow della profondità di chiamata.</value>
   </data>
   <data name="PipelineDepthException" xml:space="preserve">
-    <value>The pipeline failed due to call depth overflow.</value>
+    <value>La pipeline non è riuscita a causa dell'overflow della profondità di chiamata.</value>
   </data>
 </root>

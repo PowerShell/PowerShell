@@ -118,41 +118,41 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ActionButtons_Button_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Zrušit</value>
   </data>
   <data name="ActionButtons_Button_Copy" xml:space="preserve">
-    <value>Co_py</value>
+    <value>Ko_pírovat</value>
   </data>
   <data name="ActionButtons_Button_Run" xml:space="preserve">
-    <value>_Run</value>
+    <value>_Spustit</value>
   </data>
   <data name="All" xml:space="preserve">
     <value>Vše</value>
   </data>
   <data name="AllModulesControl_Label_Modules" xml:space="preserve">
-    <value>Modules:</value>
+    <value>Moduly:</value>
   </data>
   <data name="CmdletControl_Button_GetHelp" xml:space="preserve">
     <value> ? </value>
   </data>
   <data name="CmdletControl_Button_ToolTip_Help" xml:space="preserve">
-    <value>Help</value>
+    <value>Nápověda</value>
   </data>
   <data name="CmdletControl_Header_CommonParameters" xml:space="preserve">
-    <value>Common Parameters</value>
+    <value>Společné parametry</value>
   </data>
   <data name="CmdletControl_Header_Errors" xml:space="preserve">
-    <value>Errors</value>
+    <value>Chyby</value>
   </data>
   <data name="DetailsParameterTitleFormat" xml:space="preserve">
-    <value>Parameters for "{0}":</value>
+    <value>Parametry pro {0}:</value>
   </data>
   <data name="CmdletTooltipFormat" xml:space="preserve">
-    <value>Name: {0}
-Module: {1} ({2})</value>
+    <value>Název: {0}
+Modul: {1} ({2})</value>
   </data>
   <data name="EndProcessingErrorMessage" xml:space="preserve">
-    <value>The following errors occurred running the command:
+    <value>Při spuštění příkazu došlo k následujícím chybám:
 {0}</value>
   </data>
   <data name="MandatoryLabelSegment" xml:space="preserve">
@@ -168,7 +168,7 @@ Module: {1} ({2})</value>
     <comment>This is a label for a control, hence the colon. {0} is a parameter name</comment>
   </data>
   <data name="ShowModuleControl_Label_Name" xml:space="preserve">
-    <value>Name:</value>
+    <value>Název:</value>
   </data>
   <data name="ActionButtons_Button_Ok" xml:space="preserve">
     <value>OK</value>
@@ -177,22 +177,22 @@ Module: {1} ({2})</value>
     <value>...</value>
   </data>
   <data name="CommandNameAutomationName" xml:space="preserve">
-    <value>Command Name</value>
+    <value>Název příkazu</value>
   </data>
   <data name="ModulesAutomationName" xml:space="preserve">
-    <value>Modules</value>
+    <value>Moduly</value>
   </data>
   <data name="NoModuleName" xml:space="preserve">
-    <value>&lt;No module name&gt;</value>
+    <value>&lt;Žádný název modulu&gt;</value>
   </data>
   <data name="SelectMultipleValuesForParameterFormat" xml:space="preserve">
-    <value>Select multiple values for "{0}"</value>
+    <value>Vyberte více hodnot pro {0}.</value>
   </data>
   <data name="CanReceiveValueFromPipeline" xml:space="preserve">
-    <value>Can receive value from pipeline</value>
+    <value>Může přijímat hodnotu z kanálu</value>
   </data>
   <data name="CommonToAllParameterSets" xml:space="preserve">
-    <value>Common to all parameter sets</value>
+    <value>Společné pro všechny sady parametrů</value>
   </data>
   <data name="Mandatory" xml:space="preserve">
     <value>Povinné</value>
@@ -201,39 +201,39 @@ Module: {1} ({2})</value>
     <value>Volitelné</value>
   </data>
   <data name="PositionFormat" xml:space="preserve">
-    <value>Position: {0}</value>
+    <value>Pozice: {0}</value>
   </data>
   <data name="TypeFormat" xml:space="preserve">
-    <value>Type: {0}</value>
+    <value>Typ: {0}</value>
   </data>
   <data name="Imported" xml:space="preserve">
-    <value>Imported</value>
+    <value>Importováno</value>
   </data>
   <data name="NotImported" xml:space="preserve">
-    <value>Not Imported</value>
+    <value>Nenaimportováno</value>
   </data>
   <data name="ImportModuleButtonText" xml:space="preserve">
-    <value>Show Details</value>
+    <value>Zobrazit podrobnosti</value>
   </data>
   <data name="ImportModuleFailedFormat" xml:space="preserve">
-    <value>Failed to import the module required by command "{0}". Module name: "{1}". Error message: "{2}".</value>
+    <value>Nepodařilo se naimportovat modul požadovaný příkazem {0}. Název modulu: {1} Chybová zpráva: „{2}“.</value>
   </data>
   <data name="NotImportedFormat" xml:space="preserve">
-    <value>To import the "{0}" module and its cmdlets, including "{1}", click {2}.</value>
+    <value>Chcete-li importovat modul {0} a jeho rutiny, včetně {1}, klikněte na {2}.</value>
   </data>
   <data name="ShowCommandError" xml:space="preserve">
-    <value>Show Command - Error</value>
+    <value>Zobrazit příkaz – chyba</value>
   </data>
   <data name="PleaseWaitMessage" xml:space="preserve">
-    <value>Please Wait...</value>
+    <value>Počkejte prosím...</value>
   </data>
   <data name="ShowModuleControl_RefreshButton" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Aktualizovat</value>
   </data>
   <data name="NoParameters" xml:space="preserve">
-    <value>There are no parameters.</value>
+    <value>Neexistují žádné parametry.</value>
   </data>
   <data name="RefreshShowCommandTooltipFormat" xml:space="preserve">
-    <value>Click after using "{0}" to see the new commands</value>
+    <value>Po použití {0} kliknutím zobrazte nové příkazy.</value>
   </data>
 </root>

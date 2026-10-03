@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MetaPropertyNotFound" xml:space="preserve">
-    <value>Accepted meta properties are content-type, default-style, application-name, author, description, generator, keywords, x-ua-compatible, and viewport. The meta pair: {0} and {1} may not function correctly.</value>
+    <value>可接受的 meta 屬性為 content-type、default-style、application-name、author、description、generator、keywords、x-ua-compatible 和 viewport。meta 配對: {0} 和 {1} 可能無法正常運作。</value>
   </data>
 </root>

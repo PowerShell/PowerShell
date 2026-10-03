@@ -118,289 +118,289 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MemberAlreadyPresent" xml:space="preserve">
-    <value>The member "{0}" is already present.</value>
+    <value>Элемент "{0}" уже присутствует.</value>
   </data>
   <data name="MemberAlreadyPresentFromTypesXml" xml:space="preserve">
-    <value>The member "{0}" is already present from the extended type data file.</value>
+    <value>Элемент "{0}" уже присутствует в файле данных расширенного типа.</value>
   </data>
   <data name="MemberNotPresent" xml:space="preserve">
-    <value>The member "{0}" is not present.</value>
+    <value>Элемент "{0}" отсутствует.</value>
   </data>
   <data name="ExceptionWhenSetting" xml:space="preserve">
-    <value>Exception setting "{0}": "{1}"</value>
+    <value>Исключение при настройке "{0}": "{1}"</value>
   </data>
   <data name="ExceptionWhenGetting" xml:space="preserve">
-    <value>Exception getting "{0}": "{1}"</value>
+    <value>Исключение при получении "{0}": "{1}"</value>
   </data>
   <data name="EnumerationException" xml:space="preserve">
-    <value>The following exception occurred while trying to enumerate the collection: "{0}".</value>
+    <value>При попытке перечисления коллекции возникло следующее исключение: "{0}".</value>
   </data>
   <data name="AccessMemberOutsidePSObject" xml:space="preserve">
-    <value>Cannot access member "{0}" outside of a PSObject.</value>
+    <value>Нельзя получить доступ к элементу "{0}" вне PSObject.</value>
   </data>
   <data name="ChangeStaticMember" xml:space="preserve">
-    <value>Cannot change the member created from the type configuration: "{0}".</value>
+    <value>Невозможно изменить элемент, созданный из конфигурации типа: "{0}".</value>
   </data>
   <data name="ReservedMemberName" xml:space="preserve">
-    <value>The member name "{0}" is reserved.</value>
+    <value>Имя элемента "{0}" зарезервировано.</value>
   </data>
   <data name="CannotChangeReservedMember" xml:space="preserve">
-    <value>"{0}" cannot be changed.</value>
+    <value>"{0}" невозможно изменить.</value>
   </data>
   <data name="MethodInvocationException" xml:space="preserve">
-    <value>Exception calling "{0}" with "{1}" argument(s): "{2}"</value>
+    <value>Исключение при вызове "{0}" с аргументами "{1}": "{2}"</value>
   </data>
   <data name="CopyToInvocationException" xml:space="preserve">
-    <value>An exception was thrown when trying to call "{0}" to extract the contents of an object of type "{1}": "{2}"</value>
+    <value>Возникло исключение при попытке вызвать "{0}" для извлечения содержимого объекта типа "{1}": "{2}"</value>
   </data>
   <data name="MethodArgumentCountException" xml:space="preserve">
-    <value>Cannot find an overload for "{0}" and the argument count: "{1}".</value>
+    <value>Не удается найти перегрузку для "{0}" с количеством аргументов: "{1}".</value>
   </data>
   <data name="MethodGenericArgumentCountException" xml:space="preserve">
-    <value>Could not find a suitable generic method overload for "{0}" with "{1}" type parameters, and the argument count: "{2}".</value>
+    <value>Не удалось найти подходящую перегрузку универсального метода для "{0}" с параметрами типа "{1}" и количеством аргументов: "{2}".</value>
   </data>
   <data name="MethodAmbiguousException" xml:space="preserve">
-    <value>Multiple ambiguous overloads found for "{0}" and the argument count: "{1}".</value>
+    <value>Обнаружено несколько неоднозначных перегрузок для "{0}" с количеством аргументов: "{1}".</value>
   </data>
   <data name="MethodArgumentConversionException" xml:space="preserve">
-    <value>Cannot convert argument "{0}", with value: "{1}", for "{2}" to type "{3}": "{4}"</value>
+    <value>Не удается преобразовать аргумент "{0}" со значением "{1}" для "{2}" в тип "{3}": "{4}"</value>
   </data>
   <data name="GetWithoutGetterException" xml:space="preserve">
-    <value>Get accessor for property "{0}" is unavailable.</value>
+    <value>Метод доступа get для свойства "{0}" недоступен.</value>
   </data>
   <data name="SetWithoutSetterException" xml:space="preserve">
-    <value>Set accessor for property "{0}" is unavailable.</value>
+    <value>Метод доступа set для свойства "{0}" недоступен.</value>
   </data>
   <data name="CodePropertySetterFormat" xml:space="preserve">
-    <value>The setter method should be public, void, static, and have two parameters. The first parameter should be of the type PSObject. A second parameter is required if a getter method is also available, and should have the same type as the return type for the getter method.</value>
+    <value>Метод задания должен быть общедоступным, недействительным, статическим и содержать два параметра. Первый параметр должен относиться к типу PSObject. Второй параметр обязателен, если также доступен метод получения, и он должен относиться к тому же типу, что и возвращаемое значение метода получения.</value>
   </data>
   <data name="CodePropertyGetterFormat" xml:space="preserve">
-    <value>The getter method should be public, not void, static, and have one parameter of the type PSObject.</value>
+    <value>Метод получения должен быть общедоступным, не аннулированным, статическим и содержать один параметр типа PSObject.</value>
   </data>
   <data name="CodePropertyGetterAndSetterNull" xml:space="preserve">
-    <value>CodeProperty should use a getter or setter method.</value>
+    <value>У свойства CodeProperty должен быть метод получения или метод задания.</value>
   </data>
   <data name="CodeMethodMethodFormat" xml:space="preserve">
-    <value>Cannot create a code method because of the method format. The method should be public, static, and have one parameter of type PSObject.</value>
+    <value>Не удается создать метод кода из-за формата метода. Метод должен быть общедоступным, статическим и содержать один параметр типа PSObject.</value>
   </data>
   <data name="CycleInAlias" xml:space="preserve">
-    <value>The alias with name "{0}" contains a cycle.</value>
+    <value>Псевдоним с именем "{0}" содержит цикл.</value>
   </data>
   <data name="InvalidCastException" xml:space="preserve">
-    <value>Cannot convert the "{0}" value of type "{1}" to type "{2}".</value>
+    <value>Невозможно преобразовать значение "{0}" типа "{1}" в тип "{2}".</value>
   </data>
   <data name="InvalidCastExceptionWithoutValue" xml:space="preserve">
-    <value>Cannot convert the value of type "{0}" to type "{1}".</value>
+    <value>Невозможно преобразовать значение типа "{0}" в тип "{1}".</value>
   </data>
   <data name="InvalidCastExceptionWithInnerException" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}". Error: "{2}"</value>
+    <value>Невозможно преобразовать значение "{0}" в тип "{1}". Ошибка. "{2}"</value>
   </data>
   <data name="InvalidCastExceptionEnumerationNoFlagAndComma" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}" because no commas are allowed for this enumeration.</value>
+    <value>Не удается преобразовать значение "{0}" в тип "{1}", так как в этом перечислении не допускаются запятые.</value>
   </data>
   <data name="InvalidCastExceptionEnumerationNoValue" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}" due to enumeration values that are not valid. Specify one of the following enumeration values and try again. The possible enumeration values are "{2}".</value>
+    <value>Не удается преобразовать значение "{0}" в тип "{1}", так как значения перечисления недопустимы. Укажите одно из следующих значений перечисления и повторите попытку. Возможные значения перечисления: "{2}".</value>
   </data>
   <data name="InvalidCastExceptionEnumerationNull" xml:space="preserve">
-    <value>Cannot convert null to type "{0}" due to enumeration values that are not valid. Specify one of the following enumeration values and try again. The possible enumeration values are "{1}".</value>
+    <value>Не удается преобразовать значение null в тип "{0}", так как значения перечисления недопустимы. Укажите одно из следующих значений перечисления и повторите попытку. Возможные значения перечисления: "{1}".</value>
   </data>
   <data name="InvalidCastFromNull" xml:space="preserve">
-    <value>Cannot convert null to type "{0}".</value>
+    <value>Не удается преобразовать значение null в тип "{0}".</value>
   </data>
   <data name="InvalidCastExceptionNoStringForConversion" xml:space="preserve">
-    <value>Cannot convert value to type "{0}".  Error: "{1}"</value>
+    <value>Невозможно преобразовать значение в тип "{0}".  Ошибка. "{1}"</value>
   </data>
   <data name="InvalidCastCannotRetrieveString" xml:space="preserve">
-    <value>Cannot convert value to type System.String.</value>
+    <value>Не удалось преобразовать значение в тип System.String.</value>
   </data>
   <data name="ReferenceTypeExpected" xml:space="preserve">
-    <value>Reference type is expected in argument.</value>
+    <value>Ожидается ссылочный тип в аргументе.</value>
   </data>
   <data name="NotIcomparable" xml:space="preserve">
-    <value>Cannot compare "{0}" because it is not IComparable.</value>
+    <value>Не удается сравнить "{0}", так как он не реализует IComparable.</value>
   </data>
   <data name="ComparisonFailure" xml:space="preserve">
-    <value>Could not compare "{0}" to "{1}". Error: "{2}"</value>
+    <value>Не удалось сравнить "{0}" с "{1}". Ошибка. "{2}"</value>
   </data>
   <data name="NotTheSameTypeOrNotIcomparable" xml:space="preserve">
-    <value>Cannot compare "{0}" to "{1}" because the objects are not the same type or the object "{0}" does not implement "{2}".</value>
+    <value>Не удается сравнить "{0}" с "{1}", так как объекты относятся к разным типам или объект "{0}" не реализует "{2}".</value>
   </data>
   <data name="InvalidCastExceptionEnumerationMoreThanOneValue" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}" because at least two matches were found ({2}, {3}) and only one match is allowed for this enumeration.</value>
+    <value>Не удается преобразовать значение "{0}" в тип "{1}", так как найдено как минимум два совпадения ({2}, {3}), а для этого перечисления допускается только одно совпадение.</value>
   </data>
   <data name="InvalidCastExceptionForBooleanArgumentValue" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}". Boolean parameters accept only Boolean values and numbers, such as $True, $False, 1 or 0.</value>
+    <value>Невозможно преобразовать значение "{0}" в тип "{1}". Логические параметры принимают только логические значения и числа, например $True, $False, 1 или 0.</value>
   </data>
   <data name="WriteOnlyProperty" xml:space="preserve">
-    <value>Cannot get property value because "{0}" is a write-only property.</value>
+    <value>Не удается получить значение свойства, так как свойство "{0}" доступно только для записи.</value>
   </data>
   <data name="ReadOnlyProperty" xml:space="preserve">
-    <value>"{0}" is a ReadOnly property.</value>
+    <value>Свойство "{0}" доступно только для чтения.</value>
   </data>
   <data name="XmlNodeSetShouldBeAString" xml:space="preserve">
-    <value>Cannot set "{0}" because only strings can be used as values to set XmlNode properties.</value>
+    <value>Не удается задать "{0}", так как в качестве значений свойств XmlNode можно использовать только строки.</value>
   </data>
   <data name="XmlNodeSetRestrictions" xml:space="preserve">
-    <value>Cannot set "{0}" because only unique attributes or unique non-attributed leaf nodes can be set.</value>
+    <value>Невозможно задать "{0}", так как задавать можно только уникальные атрибуты или уникальные конечные узлы без атрибутов.</value>
   </data>
   <data name="CannotAddPropertyOrMethod" xml:space="preserve">
-    <value>A PSProperty or PSMethod object cannot be added to this collection.</value>
+    <value>Нельзя добавить в эту коллекцию объект PSProperty или PSMethod.</value>
   </data>
   <data name="TypesXmlError" xml:space="preserve">
-    <value>The following error occurred while loading the extended type data file: {0}</value>
+    <value>При загрузке файла данных расширенного типа произошла следующая ошибка: {0}</value>
   </data>
   <data name="ToStringException" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string: "{0}"</value>
+    <value>При получении строки возникло следующее исключение: "{0}"</value>
   </data>
   <data name="NotAClsCompliantFieldProperty" xml:space="preserve">
-    <value>The field or property: "{0}" for type: "{1}" differs only in letter casing from the field or property: "{2}". The type must be Common Language Specification (CLS) compliant.</value>
+    <value>Поле или свойство "{0}" для типа "{1}" отличается от поля или свойства "{2}" только регистром. Тип должен соответствовать спецификации CLS.</value>
   </data>
   <data name="ExceptionRetrievingTypeNameHierarchy" xml:space="preserve">
-    <value>The following exception occurred while retrieving the type name hierarchy: "{0}".</value>
+    <value>При получении иерархии имен типов возникло следующее исключение: "{0}".</value>
   </data>
   <data name="ExceptionGettingMember" xml:space="preserve">
-    <value>The following exception occurred while retrieving member "{1}": "{0}"</value>
+    <value>При получении элемента "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionGettingMembers" xml:space="preserve">
-    <value>The following exception occurred while retrieving members: "{0}"</value>
+    <value>При получении элементов возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingPropertyReadState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the read state for property "{1}": "{0}"</value>
+    <value>При получении состояния доступности для чтения свойства "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingPropertyWriteState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the write state for property "{1}": "{0}"</value>
+    <value>При получении состояния доступности для записи свойства "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingPropertyType" xml:space="preserve">
-    <value>The following exception occurred while retrieving the type for property "{1}": "{0}"</value>
+    <value>При получении типа свойства "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingPropertyString" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string representation for property "{1}" : "{0}"</value>
+    <value>При получении строкового представления свойства "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingPropertyAttributes" xml:space="preserve">
-    <value>The following exception occurred while retrieving the attributes for property "{1}": "{0}"</value>
+    <value>При получении атрибутов свойства "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingMethodDefinitions" xml:space="preserve">
-    <value>The following exception occurred while retrieving the definitions for method "{1}": "{0}"</value>
+    <value>При получении определений метода "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingMethodString" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string representation for method "{1}": "{0}"</value>
+    <value>При получении строкового представления метода "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertytype" xml:space="preserve">
-    <value>The following exception occurred while retrieving the type for parameterized property "{1}": "{0}"</value>
+    <value>При получении типа для параметризованного свойства "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyReadState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the read state for parameterized property "{1}": "{0}"</value>
+    <value>При получении состояния доступности для чтения параметризованного свойства "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyWriteState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the write state for parameterized property "{1}": "{0}"</value>
+    <value>При получении состояния доступности для записи параметризованного свойства "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyDefinitions" xml:space="preserve">
-    <value>The following exception occurred while retrieving the definitions for parameterized property "{1}": "{0}"</value>
+    <value>При получении определений параметризованного свойства "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyString" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string representation for parameterized property "{1}": "{0}"</value>
+    <value>При получении строкового представления для параметризованного свойства "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="CannotSetValueForMemberType" xml:space="preserve">
-    <value>Cannot set the Value property for PSMemberInfo object of type "{0}".</value>
+    <value>Невозможно задать свойство Value для объекта PSMemberInfo типа "{0}".</value>
   </data>
   <data name="NonRefArgumentToRefParameter" xml:space="preserve">
-    <value>Argument: '{0}' should be a {1}. Use {2}.</value>
+    <value>Аргумент "{0}" должен быть {1}. Используйте {2}.</value>
   </data>
   <data name="RefArgumentToNonRefParameter" xml:space="preserve">
-    <value>Argument: '{0}' should not be a {1}. Do not use {2}.</value>
+    <value>Аргумент "{0}" не должен быть {1}. Не используйте {2}.</value>
   </data>
   <data name="PropertyNotFoundInTypeDescriptor" xml:space="preserve">
     <value>Свойство "{0}" не найдено.</value>
   </data>
   <data name="InvalidComponent" xml:space="preserve">
-    <value>Cannot get or set the property value. The "{0}" argument should be of type "{1}" or "{2}".</value>
+    <value>Не удается получить или задать значение свойства. Аргумент "{0}" должен относиться к типу "{1}" или "{2}".</value>
   </data>
   <data name="CannotSetNonManagementObject" xml:space="preserve">
-    <value>Cannot set the value for property "{0}" because the object has type "{1}" instead of "{2}".</value>
+    <value>Не удается задать значение для свойства "{0}", так как объект относится к типу "{1}", а не "{2}".</value>
   </data>
   <data name="WMIMethodInvocationException" xml:space="preserve">
-    <value>Exception calling "{0}" : "{1}"</value>
+    <value>Исключение при вызове "{0}": "{1}"</value>
   </data>
   <data name="InvalidWMIClassPath" xml:space="preserve">
-    <value>{0} is not a valid class path.</value>
+    <value>{0} не является допустимым путем к классу.</value>
   </data>
   <data name="InvalidWMIPath" xml:space="preserve">
     <value>"{0}" не является допустимым путем.</value>
   </data>
   <data name="PropertyIsSettableError" xml:space="preserve">
-    <value>The adapter cannot determine whether property "{0}" can be changed.</value>
+    <value>Адаптер не может определить, можно ли изменить свойство "{0}".</value>
   </data>
   <data name="PropertyIsGettableError" xml:space="preserve">
-    <value>The adapter cannot determine whether property "{0}" is gettable.</value>
+    <value>Адаптер не может определить, доступно ли свойство "{0}" для чтения.</value>
   </data>
   <data name="PropertyGetError" xml:space="preserve">
-    <value>The adapter cannot get the value of property "{0}".</value>
+    <value>Адаптер не может получить значение свойства "{0}".</value>
   </data>
   <data name="PropertySetError" xml:space="preserve">
-    <value>The adapter cannot set the value of property "{0}".</value>
+    <value>Адаптер не может задать значение свойства "{0}".</value>
   </data>
   <data name="PropertyTypeError" xml:space="preserve">
-    <value>The adapter cannot get the type of property "{0}".</value>
+    <value>Адаптер не может получить тип свойства "{0}".</value>
   </data>
   <data name="GetTypeNameHierarchyError" xml:space="preserve">
-    <value>The adapter cannot get the type hierarchy of "{0}".</value>
+    <value>Адаптер не может получить иерархию типов "{0}".</value>
   </data>
   <data name="GetProperties" xml:space="preserve">
-    <value>The adapter cannot get the properties of "{0}".</value>
+    <value>Адаптер не может получить свойства "{0}".</value>
   </data>
   <data name="GetProperty" xml:space="preserve">
-    <value>The adapter cannot get property "{0}" for "{1}".</value>
+    <value>Адаптер не может получить свойство "{0}" для "{1}".</value>
   </data>
   <data name="NullReturnValueError" xml:space="preserve">
-    <value>"{0}" returned a null value.</value>
+    <value>"{0}" возвратил значение null.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property '{0}' was not found for the '{1}' object. The settable properties are: {2}.</value>
+    <value>Свойство "{0}" не найдено в объекте "{1}". Можно задать следующие свойства: {2}.</value>
   </data>
   <data name="NoSettableProperty" xml:space="preserve">
-    <value>The property '{0}' was not found for the '{1}' object. There is no settable property available.</value>
+    <value>Свойство "{0}" не найдено в объекте "{1}". Доступное для задания свойство отсутствует.</value>
   </data>
   <data name="ObjectCreationError" xml:space="preserve">
-    <value>Cannot create object of type "{0}". {1}</value>
+    <value>Не удается создать объект типа "{0}". {1}</value>
   </data>
   <data name="CannotInvokeStaticMethodOnUninstantiatedGenericType" xml:space="preserve">
-    <value>Cannot invoke static methods or access static properties on the open generic type {0}.  Specify the type parameters and retry.  For example, instead of [System.Collections.Generic.HashSet``1]::CreateSetComparer() use [System.Collections.Generic.HashSet[int]]::CreateSetComparer().</value>
+    <value>Нельзя вызывать статические методы или получать доступ к статическим свойствам общедоступного универсального типа {0}.  Укажите параметры типа и повторите попытку.  Например, вместо [System.Collections.Generic.HashSet``1]::CreateSetComparer() используйте [System.Collections.Generic.HashSet[int]]::CreateSetComparer().</value>
     <comment>Error message shown when somebody tries to access a property or invoke a static method on an uninstantiated generic type:
 PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
 
 {0} is a placeholder for a type name (for example: System.Collections.Generic.Comparer`1)</comment>
   </data>
   <data name="ExceptionConstructingAttribute" xml:space="preserve">
-    <value>The following exception occurred while constructing the attribute "{1}": "{0}"</value>
+    <value>При создании атрибута "{1}" возникло следующее исключение: "{0}"</value>
   </data>
   <data name="CannotConvertValueToStringArray" xml:space="preserve">
-    <value>The value "{0}" cannot be converted to a string array.</value>
+    <value>Значение "{0}" нельзя преобразовать в массив строк.</value>
   </data>
   <data name="InvalidCastExceptionNonCoreType" xml:space="preserve">
-    <value>Cannot convert value to type "{0}". Only core types are supported in this language mode.</value>
+    <value>Невозможно преобразовать значение в тип "{0}". В этом языковом режиме поддерживаются только основные типы.</value>
   </data>
   <data name="InvalidCastToByRefLikeType" xml:space="preserve">
-    <value>Cannot convert to the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
+    <value>Не удается преобразовать в тип "{0}", подобный ByRef. Типы, подобные ByRef, не поддерживаются в PowerShell.</value>
   </data>
   <data name="CannotAccessByRefLikePropertyOrField" xml:space="preserve">
-    <value>Cannot get or set the property or field "{0}" of the ByRef-like type "{1}". ByRef-like types are not supported in PowerShell.</value>
+    <value>Не удается получить или задать свойство или поле "{0}" типа "{1}", подобного ByRef. Типы, подобные ByRef, не поддерживаются в PowerShell.</value>
   </data>
   <data name="CannotCallMethodWithByRefLikeReturnType" xml:space="preserve">
-    <value>Cannot invoke the method "{0}" of the ByRef-like return type "{1}". ByRef-like types are not supported in PowerShell.</value>
+    <value>Не удается вызвать метод "{0}" с типом возвращаемого значения "{1}", который подобен ByRef. Типы, подобные ByRef, не поддерживаются в PowerShell.</value>
   </data>
   <data name="CannotInstantiateBoxedByRefLikeType" xml:space="preserve">
-    <value>Cannot create an instance of the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
+    <value>Не удается создать экземпляр типа "{0}", подобного ByRef. Типы, подобные ByRef, не поддерживаются в PowerShell.</value>
   </data>
   <data name="WDACHashTypeLogTitle" xml:space="preserve">
-    <value>Extended Type System Hashtable Conversion</value>
+    <value>Преобразование хэш-таблицы расширенного типа</value>
   </data>
   <data name="WDACHashTypeLogMessage" xml:space="preserve">
-    <value>Type conversion from HashTable to '{0}' will not be allowed in ConstrainedLanguage mode.</value>
+    <value>В режиме ConstrainedLanguage преобразование типа из HashTable в "{0}" не допускается.</value>
   </data>
   <data name="WDACTypeConversionLogTitle" xml:space="preserve">
-    <value>Extended Type System Hashtable Conversion</value>
+    <value>Преобразование хэш-таблицы расширенного типа</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
-    <value>Type conversion from '{0}' to '{1}' will not be allowed in ConstrainedLanguage mode.</value>
+    <value>В режиме ConstrainedLanguage преобразование типа из "{0}" в "{1}" не допускается.</value>
   </data>
 </root>

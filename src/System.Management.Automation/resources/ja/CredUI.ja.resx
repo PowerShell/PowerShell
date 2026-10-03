@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PromptForCredential_DefaultCaption" xml:space="preserve">
-    <value>PowerShell credential request </value>
+    <value>PowerShell 資格情報の要求 </value>
   </data>
   <data name="PromptForCredential_DefaultMessage" xml:space="preserve">
-    <value>Enter your credentials. </value>
+    <value>資格情報を入力してください。</value>
   </data>
   <data name="PromptForCredential_DefaultTarget" xml:space="preserve">
-    <value>Enter your credentials.</value>
+    <value>資格情報を入力してください。</value>
   </data>
   <data name="PromptForCredential_InvalidCaption" xml:space="preserve">
-    <value>The maximum length of the caption is {0} characters.</value>
+    <value>キャプションの最大長は {0} 文字です。</value>
   </data>
   <data name="PromptForCredential_InvalidMessage" xml:space="preserve">
-    <value>The maximum length of the message is {0} characters.</value>
+    <value>メッセージの最大長は {0} 文字です。</value>
   </data>
   <data name="PromptForCredential_InvalidUserName" xml:space="preserve">
-    <value>The maximum length of the UserName value is {0} characters.</value>
+    <value>ユーザー名の最大長は {0} 文字です。</value>
   </data>
 </root>

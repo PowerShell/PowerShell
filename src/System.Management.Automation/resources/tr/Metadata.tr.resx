@@ -118,150 +118,150 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MetadataMemberInitialization" xml:space="preserve">
-    <value>Cannot initialize attributes for "{0}": "{1}"</value>
+    <value>“{0}" için "{1}" özellikleri başlatılamıyor</value>
   </data>
   <data name="ValidateRangeElementType" xml:space="preserve">
-    <value>The argument cannot be validated because its type "{0}" is not the same type ({1}) as the maximum and minimum limits of the parameter. Make sure the argument is of type {1} and then try the command again.</value>
+    <value>"{0}" türü, parametrenin maksimum ve minimum sınırlarıyla aynı türde ({1}) olmadığından bağımsız değişken doğrulanamıyor. Bağımsız değişkenin  {1}  türünde olduğundan emin olun ve sonra komutu tekrar deneyin.</value>
   </data>
   <data name="ValidateRangePositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not greater than zero.</value>
+    <value>‘{0}' bağımsız değişkeni, değeri sıfırdan büyük olmadığı için doğrulanamıyor.</value>
   </data>
   <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not greater than or equal to zero.</value>
+    <value>“{0}" bağımsız değişkeni doğrulanamıyor çünkü değeri sıfıra eşit veya sıfırdan büyük değil.</value>
   </data>
   <data name="ValidateRangeNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not less than zero.</value>
+    <value>“{0}" bağımsız değişkeni, değeri sıfırdan küçük olmadığı için doğrulanamıyor.</value>
   </data>
   <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not less than or equal to zero.</value>
+    <value>“{0}" bağımsız değişkeni doğrulanamıyor çünkü değeri sıfıra eşit veya sıfırdan küçük değil.</value>
   </data>
   <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
-    <value>The specified minimum range ({0}) cannot be accepted because it is not the same type as the specified maximum range ({1}). Update the ValidateRange attribute for the parameter.</value>
+    <value>Belirtilen en küçük aralık ({0}), belirtilen en büyük aralık ({1}) ile aynı türde olmadığı için kabul edilemiyor. Parametre için ValidateRange özniteliğini güncelleştirin.</value>
   </data>
   <data name="ValidateRangeNotIComparable" xml:space="preserve">
-    <value>Cannot accept the MaxRange and MinRange parameter types. Both parameters must be objects that implement an IComparable interface.</value>
+    <value>MaxRange ve MinRange parametre türleri kabul edilemez. Her iki parametre de IComparable arabirimini uygulayan nesneler olmalıdır.</value>
   </data>
   <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
-    <value>The specified maximum range cannot be accepted because it is less than the specified minimum range. Update the ValidateRange attribute for the parameter.</value>
+    <value>Belirtilen en büyük aralık, belirtilen en küçük aralıktan küçük olduğu için kabul edilemiyor. Parametre için ValidateRange özniteliğini güncelleştirin.</value>
   </data>
   <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
-    <value>The {0} argument is greater than the maximum allowed range of {1}. Supply an argument that is less than or equal to {1} and then try the command again.</value>
+    <value>{0} bağımsız değişkeni, {1} için izin verilen en büyük aralıktan büyüktür. {1} değerinden küçük veya ona eşit bir bağımsız değişken sağlayın ve ardından komutu yeniden deneyin.</value>
   </data>
   <data name="ValidateRangeSmallerThanMinRangeFailure" xml:space="preserve">
-    <value>The {0} argument is less than the minimum allowed range of {1}. Supply an argument that is greater than or equal to {1} and then try the command again.</value>
+    <value>{0} bağımsız değişkeni, {1} için izin verilen en küçük aralıktan küçüktür. {1} değerinden büyük veya ona eşit bir bağımsız değişken sağlayın ve ardından komutu yeniden deneyin.</value>
   </data>
   <data name="ValidatePatternFailure" xml:space="preserve">
-    <value>The argument "{0}" does not match the "{1}" pattern. Supply an argument that matches "{1}" and try the command again.</value>
+    <value>“{0}" bağımsız değişkeni "{1}" desenine uymuyor. “{1}" ile eşleşen bir bağımsız değişken sağlayın ve komutu yeniden deneyin.</value>
   </data>
   <data name="ValidateCountNotInArray" xml:space="preserve">
-    <value>The ValidateCount attribute cannot be applied to a non-array parameter. Either remove the attribute from the parameter or make the parameter an array parameter.</value>
+    <value>ValidateCount özniteliği, dizi olmayan bir parametreye uygulanamaz. Özniteliği parametreden kaldırın veya parametreyi dizi parametresi yapın.</value>
   </data>
   <data name="ValidateCountExactFailure" xml:space="preserve">
-    <value>The parameter requires exactly {0} value(s) - {1} value(s) were provided.</value>
+    <value>Parametre tam olarak {0} değer gerektirir - {1} değer sağlandı.</value>
   </data>
   <data name="ValidateCountMinMaxFailure" xml:space="preserve">
-    <value>The parameter requires at least {0} value(s) and no more than {1} value(s) - {2} value(s) were provided.</value>
+    <value>Parametre en az {0} değer ve en fazla {1} değer gerektirir - {2} değer sağlandı.</value>
   </data>
   <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
-    <value>The specified maximum number of arguments for a parameter is fewer than the specified minimum number of arguments. Update the ValidateCount attribute for the parameter.</value>
+    <value>Bir parametre için belirtilen en büyük bağımsız değişken sayısı, belirtilen en küçük bağımsız değişken sayısından azdır. Parametre için ValidateCount özniteliğini güncelleştirin.</value>
   </data>
   <data name="ValidateLengthMaxLengthSmallerThanMinLength" xml:space="preserve">
-    <value>The specified maximum character length of the argument is shorter than the specified minimum argument character length. Update the ValidateLength attribute for the parameter.</value>
+    <value>Belirtilen bağımsız değişken karakter süresi üst sınırı, belirtilen bağımsız değişken karakter süresi alt sınırından kısadır. Parametre için ValidateLength özniteliğini güncelleştirin.</value>
   </data>
   <data name="ValidateLengthNotString" xml:space="preserve">
-    <value>The ValidateLength attribute cannot be applied to a parameter that is not a string or string[] parameter. Make the parameter a string or string[] parameter.</value>
+    <value>ValidateLength özniteliği, dize veya dize[] parametresi olmayan bir parametreye uygulanamaz. Parametreyi dize veya dize[] parametresi yapın.</value>
   </data>
   <data name="ValidateLengthMinLengthFailure" xml:space="preserve">
-    <value>The character length ({1}) of the argument is too short. Specify an argument with a length that is greater than or equal to "{0}", and then try the command again.</value>
+    <value>Bağımsız değişkenin karakter süresi ({1}) çok kısa. Uzunluğu "{0}" değerinden büyük veya buna eşit olan bir bağımsız değişken belirtin ve ardından komutu yeniden deneyin.</value>
   </data>
   <data name="ValidateLengthMaxLengthFailure" xml:space="preserve">
-    <value>The character length ({1}) of the argument is too long. Specify an argument with a length that is shorter than or equal to "{0}", and then try the command again.</value>
+    <value>Bağımsız değişkenin karakter süresi ({1}) çok uzundur. Uzunluğu "{0}" değerinden kısa veya buna eşit olan bir bağımsız değişken belirtin ve sonra komutu tekrar deneyin.</value>
   </data>
   <data name="ValidateSetFailure" xml:space="preserve">
-    <value>The argument "{0}" does not belong to the set "{1}" specified by the ValidateSet attribute. Supply an argument that is in the set and then try the command again.</value>
+    <value>“{0}" bağımsız değişkeni, ValidateSet özniteliği tarafından belirtilen "{1}" kümesine ait değil. Kümede olan bir bağımsız değişken sağlayın ve sonra komutu yeniden deneyin.</value>
   </data>
   <data name="ValidateSetGeneratedValidValuesListIsNull" xml:space="preserve">
-    <value>Valid values generator return a null value.</value>
+    <value>Geçerli değerler oluşturucu null bir değer geri gönderir.</value>
   </data>
   <data name="ValidateFailureResult" xml:space="preserve">
-    <value>"{0}" failed on property "{1}" {2}</value>
+    <value>“{0}" özelliğinde "{1}" için başarısız oldu {2}</value>
   </data>
   <data name="ParsingTooManyParameterSets" xml:space="preserve">
-    <value>Cannot get or run the command. The maximum number of parameter sets for this command has been exceeded.</value>
+    <value>Komut alınamıyor veya çalıştırılamıyor. Bu komut için en fazla parametre kümesi sayısı aşıldı.</value>
   </data>
   <data name="ArgumentTransformationArgumentsShouldBeStrings" xml:space="preserve">
-    <value>Cannot process the argument because the argument value is not a string. The values of parameter arguments that have the ArgumentTransformationAttribute specified should be strings.</value>
+    <value>Bağımsız değişkeni işleyemiyor çünkü bağımsız değişken değeri bir dize değil. ArgumentTransformationAttribute belirtilmiş olan parametre bağımsız değişkenlerinin değerleri dize olmalıdır.</value>
   </data>
   <data name="InvalidValueFailure" xml:space="preserve">
-    <value>The variable cannot be validated because the value {1} is not a valid value for the {0} variable.</value>
+    <value> {1}  değeri  {0}  değişkeni için geçerli bir değer olmadığından değişken doğrulanamıyor.</value>
   </data>
   <data name="InvalidMetadataForCurrentValue" xml:space="preserve">
-    <value>The attribute cannot be added because variable {0} with value {1} would no longer be valid.</value>
+    <value>{1}  değerine sahip  {0}  değişkeni artık geçerli olmayacağından öznitelik eklenemiyor.</value>
   </data>
   <data name="ValidateNotNullFailure" xml:space="preserve">
-    <value>The argument is null. Provide a valid value for the argument, and then try running the command again.</value>
+    <value>Bağımsız değişken null. Bağımsız değişken için geçerli bir değer sağlayın ve sonra komutu tekrar deneyin.</value>
   </data>
   <data name="ValidateNotNullCollectionFailure" xml:space="preserve">
-    <value>The argument has a null value, or an element of the argument collection contains a null value. Provide a collection that does not contain any null values, and then try the command again.</value>
+    <value>Bağımsız değişken null bir değer içeriyor veya bağımsız değişken koleksiyonundaki bir öğe null bir değer içeriyor. Null değer içermeyen bir koleksiyon sağlayın ve ardından komutu yeniden deneyin.</value>
   </data>
   <data name="ValidateNotNullOrEmptyFailure" xml:space="preserve">
-    <value>The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.</value>
+    <value>Bağımsız değişken null veya boş. Null veya boş olmayan bir bağımsız değişken sağlayın ve ardından komutu yeniden deneyin.</value>
   </data>
   <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
-    <value>The argument is null, empty, or an element of the argument collection contains a null value. Supply a collection that does not contain any null values and then try the command again.</value>
+    <value>Bağımsız değişken null, boş ya da bağımsız değişken koleksiyonundaki bir öğe null değer içeriyor. Null değer içermeyen bir koleksiyon sağlayın ve sonra komutu tekrar deneyin.</value>
   </data>
   <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
-    <value>The argument is null, empty, or consists of only white-space characters. Provide an argument that contains non white-space characters, and then try the command again.</value>
+    <value>Bağımsız değişken null, boş veya yalnızca boşluk karakterlerinden oluşuyor. Boşluk olmayan karakterler içeren bir bağımsız değişken sağlayın ve sonra komutu tekrar deneyin.</value>
   </data>
   <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
-    <value>An element of the argument collection is null, empty, or consists of only white-space characters. Supply a collection that does not contain any those values and then try the command again.</value>
+    <value>Bağımsız değişken koleksiyonundaki bir öğe null, boş ya da yalnızca boşluk karakterlerinden oluşuyor. Null değer içermeyen bir koleksiyon sağlayın ve sonra komutu tekrar deneyin.</value>
   </data>
   <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
-    <value>A parameter with the name '{0}' was defined multiple times for the command.</value>
+    <value>‘{0}' adlı bir parametre komut için birden çok kez tanımlandı.</value>
   </data>
   <data name="AliasParameterNameAlreadyExistsForCommand" xml:space="preserve">
-    <value>The parameter alias cannot be specified because an alias with the name '{0}' was already defined multiple times for the command.</value>
+    <value>Parametre diğer adı '{0}' adlı bir diğer ad komut için zaten birden çok kez tanımlandığından belirtilemez.</value>
   </data>
   <data name="ParameterNameConflictsWithAlias" xml:space="preserve">
-    <value>The parameter '{0}' cannot be specified because it conflicts with the parameter alias of the same name for parameter '{1}'.</value>
+    <value>‘{0}' parametresi, '{1}' parametresi için aynı adlı parametre diğer adıyla çakıştığı için belirtilemez.</value>
   </data>
   <data name="ValidateScriptFailure" xml:space="preserve">
-    <value>The "{1}" validation script for the argument with value "{0}" did not return a result of True. Determine why the validation script failed, and then try the command again.</value>
+    <value>"{0}" değerine sahip bağımsız değişken için "{1}" doğrulama betiği True sonucu döndürmedi. Doğrulama betiğinin neden başarısız olduğunu belirleyin ve ardından komutu yeniden deneyin.</value>
   </data>
   <data name="ValidateVersionFailure" xml:space="preserve">
-    <value>The "{0}" argument does not contain a valid PowerShell version. Supply a valid version number and then try the command again.</value>
+    <value>“{0}" bağımsız değişkeni geçerli bir Windows PowerShell sürümü içermiyor. Geçerli bir sürüm numarası sağlayın ve sonra komutu yeniden deneyin.</value>
   </data>
   <data name="ValidateVariableName" xml:space="preserve">
-    <value>Cannot validate argument '{0}' because it is not a valid variable name.</value>
+    <value>'{0}' geçerli bir değişken adı olmadığından bağımsız değişken doğrulanamıyor.</value>
   </data>
   <data name="JobDefinitionMustDeriveFromIJobConverter" xml:space="preserve">
-    <value>The job conversion type must derive from IAstToScriptBlockConverter.</value>
+    <value>İş dönüşüm türü, IAstToScriptBlockConverter'dan türetilmelidir.</value>
   </data>
   <data name="ValidateDrivePathArgNotString" xml:space="preserve">
-    <value>The path argument is invalid. Supply a path argument that is a string type.</value>
+    <value>Yol bağımsız değişkeni geçersiz. Dize türünde bir yol bağımsız değişkeni sağlayın.</value>
   </data>
   <data name="ValidateDrivePathFailure" xml:space="preserve">
-    <value>The path argument drive {0} does not belong to the set of approved drives: {1}. Supply a path argument with an approved drive.</value>
+    <value>Yol bağımsız değişkeni sürücü {0}, onaylanmış sürücüler kümesine ait değil: {1}. Onaylanmış bir sürücüye sahip bir yol bağımsız değişkeni sağlayın.</value>
   </data>
   <data name="ValidateDrivePathInvalidChar" xml:space="preserve">
-    <value>The path argument contains invalid characters.</value>
+    <value>Yol bağımsız değişkeni geçersiz karakterler içeriyor.</value>
   </data>
   <data name="ValidateDrivePathNoRoot" xml:space="preserve">
-    <value>The path argument has no root drive.  Supply a full path argument with a root drive.</value>
+    <value>Yol bağımsız değişkeninin kök sürücüsü yok.  Kök sürücüsü olan tam bir yol bağımsız değişkeni sağlayın.</value>
   </data>
   <data name="ArgumentNullOrEmpty" xml:space="preserve">
-    <value>The argument value for the parameter '{0}' cannot be null or an empty string.</value>
+    <value>‘{0}' parametresi için bağımsız değişken değeri null ya da boş bir dize olamaz.</value>
   </data>
   <data name="InvalidEnumArgument" xml:space="preserve">
-    <value>The Enum member '{0}' is not a valid value for the parameter '{1}'. Specify one of the following members and try again: {2}.</value>
+    <value>Sabit Listesi üyesi '{0}', '{1}' parametresi için geçerli bir değer değil. Aşağıdaki üyelerden birini belirtin ve yeniden deneyin: {2}.</value>
   </data>
   <data name="ValidateTrustedDataFailure" xml:space="preserve">
-    <value>Cannot process input. The argument "{0}" is not trusted.</value>
+    <value>Giriş işlenemiyor. “{0}" bağımsız değişkeni güvenilir değil.</value>
   </data>
   <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
-    <value>ValidateTrustedData Attribute Check Failure</value>
+    <value>ValidateTrustedData Öznitelik Denetimi Hatası</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>The parameter argument '{0}' is not trusted and will fail the ValidateTrustedData parameter attribute check in Constrained Language mode.</value>
+    <value>“{0}" parametre bağımsız değişkeni güvenilir değil ve Kısıtlanmış Dil modunda ValidateTrustedData parametre özniteliği denetiminde başarısız olacak.</value>
   </data>
 </root>

@@ -228,4 +228,13 @@ Platné formáty jsou:
   <data name="MissingMandatoryArgument" xml:space="preserve">
     <value>Pro parametr {0} je nutné zadat argument.</value>
   </data>
+  <data name="FileOnlyEntryRequired" xml:space="preserve">
+    <value>Zásady vyžadují parametr „-File“.</value>
+  </data>
+  <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
+    <value>Zásady nepovolují parametr „-NoExit“.</value>
+  </data>
+  <data name="FileOnlyEntryServerMode" xml:space="preserve">
+    <value>Zásady zakazují režim serveru.</value>
+  </data>
 </root>

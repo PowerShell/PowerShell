@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MultipleRegistrationNotAllowed" xml:space="preserve">
-    <value>The subsystem '{0}' does not allow more than one implementation to be registered.</value>
+    <value>子系统 "{0}" 不允许注册多个实现。</value>
   </data>
   <data name="ImplementationAlreadyRegistered" xml:space="preserve">
-    <value>The implementation with Id '{0}' was already registered for the subsystem '{1}'.</value>
+    <value>已为子系统 "{1}" 注册 ID 为 "{0}" 的实现。</value>
   </data>
   <data name="UnregistrationNotAllowed" xml:space="preserve">
-    <value>The subsystem '{0}' does not allow the unregistration of an implementation.</value>
+    <value>子系统 "{0}" 不允许取消注册实现。</value>
   </data>
   <data name="NoImplementationRegistered" xml:space="preserve">
-    <value>No implementation was registered for the subsystem '{0}'.</value>
+    <value>未为子系统 "{0}" 注册实现。</value>
   </data>
   <data name="ImplementationNotFound" xml:space="preserve">
-    <value>A registered implementation with the Id '{0}' was not found.</value>
+    <value>未找到 ID 为 "{0}" 的已注册实现。</value>
   </data>
   <data name="SubsystemTypeUnknown" xml:space="preserve">
-    <value>The specified subsystem type '{0}' is unknown.</value>
+    <value>指定的子系统类型“{0}”未知。</value>
   </data>
   <data name="MustUseConcreteSubsystemType" xml:space="preserve">
-    <value>You must specify a concrete subsystem type instead of the base interface 'ISubsystem'.</value>
+    <value>必须指定具体的子系统类型，而不是基础接口 "ISubsystem"。</value>
   </data>
   <data name="SubsystemKindUnknown" xml:space="preserve">
-    <value>The specified subsystem kind '{0}' is unknown.</value>
+    <value>指定的子系统种类“{0}”未知。</value>
   </data>
   <data name="ConcreteSubsystemNotImplemented" xml:space="preserve">
-    <value>For the target subsystem kind '{0}', the specified subsystem instance needs to implement the corresponding concrete interface or abstract class '{1}'.</value>
+    <value>对于目标子系统种类“{0}”，指定的子系统实例需要实现相应的具体接口或抽象类 "{1}"。</value>
   </data>
   <data name="InvalidSubsystemInfo" xml:space="preserve">
-    <value>The declared metadata for subsystem kind '{0}' is invalid. A subsystem that requires cmdlets or functions to be defined cannot allow multiple registrations because that would result in one implementation overwriting the commands defined by another implementation.</value>
+    <value>子系统类型“{0}”的声明元数据无效。需要定义 cmdlet 或函数的子系统不允许进行多次注册，因为这会导致一个实现覆盖另一个实现定义的命令。</value>
   </data>
   <data name="EmptyImplementationId" xml:space="preserve">
-    <value>The 'Id' property of an implementation for the subsystem '{0}' cannot be an empty GUID.</value>
+    <value>子系统 "{0}" 的实现的 "ID" 属性不能是空 GUID。</value>
   </data>
   <data name="NullOrEmptyImplementationName" xml:space="preserve">
-    <value>The 'Name' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+    <value>子系统 "{0}" 的实现的 "Name" 属性不能为 null 或空字符串。</value>
   </data>
   <data name="NullOrEmptyImplementationDescription" xml:space="preserve">
-    <value>The 'Description' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+    <value>子系统 "{0}" 的实现的 "Description" 属性不能为 null 或空字符串。</value>
   </data>
 </root>

@@ -186,7 +186,7 @@ L'istruzione #requires deve essere in uno dei formati seguenti:
     <value>Non è possibile eseguire lo script '{0}' perché mancano gli snap-in seguenti, specificati dalle istruzioni '#requires' dello script: {1}.</value>
   </data>
   <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
-    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
+    <value>In un'istruzione #requires è stato specificato solo un ID shell. Le istruzioni #Requires devono specificare uno snap-in di PowerShell obbligatorio durante l'esecuzione in PowerShell.</value>
   </data>
   <data name="RequiresElevation" xml:space="preserve">
     <value>Non è possibile eseguire lo script '{0}' perché contiene un'istruzione "#requires" per l'esecuzione come amministratore. La sessione di PowerShell corrente non è in esecuzione come amministratore. Avvia PowerShell usando l'opzione Esegui come amministratore, quindi prova a eseguire di nuovo lo script.</value>

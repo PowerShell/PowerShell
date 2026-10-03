@@ -118,93 +118,93 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Argument" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is not valid. Change the value of the "{0}" argument and run the operation again.</value>
+    <value>인수 "{0}"의 값이 유효하지 않아 인수를 처리할 수 없습니다. "{0}" 인수의 값을 변경한 다음 작업을 다시 실행하세요.</value>
   </data>
   <data name="InvalidScopeIdArgument" xml:space="preserve">
-    <value>Cannot process argument because the value of parameter "{0}" is not valid. Valid values are "Global", "Local", or "Script", or a number relative to the current scope (0 through the number of scopes where 0 is the current scope and 1 is its parent). Change the value of the "{0}" parameter and run the operation again.</value>
+    <value>매개 변수 "{0}"의 값이 유효하지 않아 인수를 처리할 수 없습니다. 유효한 값은 "Global", "Local", "Script" 또는 현재 범위와 관련된 수(0부터 범위 수까지, 여기서 0은 현재 범위이고 1은 그 상위 범위)입니다. "{0}" 매개 변수의 값을 변경한 다음 작업을 다시 실행하세요.</value>
   </data>
   <data name="ArgumentNull" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is null. Change the value of argument "{0}" to a non-null value.</value>
+    <value>인수 "{0}"의 값이 null이므로 인수를 처리할 수 없습니다. 인수 "{0}"의 값을 null이 아닌 값으로 변경하세요.</value>
   </data>
   <data name="ArgumentOutOfRange" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is out of range. Change argument "{0}" to a value that is within range.</value>
+    <value>인수 "{0}"의 값이 범위를 벗어났으므로 인수를 처리할 수 없습니다. 인수 "{0}"을(를) 범위 내의 값으로 변경하세요.</value>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not valid. Remove operation "{0}", or investigate why it is not valid.</value>
+    <value>작업 "{0}"이(가) 유효하지 않아 작업을 수행할 수 없습니다. 작업 "{0}"을(를) 제거하거나 유효하지 않은 이유를 확인하세요.</value>
   </data>
   <data name="NotImplemented" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not implemented.</value>
+    <value>작업 "{0}"이(가) 구현되지 않았으므로 작업을 수행할 수 없습니다.</value>
   </data>
   <data name="NotSupported" xml:space="preserve">
-    <value>Cannot perform operation because operation "{0}" is not supported.</value>
+    <value>"{0}" 작업은 지원되지 않으므로 작업을 수행할 수 없습니다.</value>
   </data>
   <data name="ObjectDisposed" xml:space="preserve">
-    <value>Cannot perform operation because object "{0}" has already been disposed.</value>
+    <value>개체 "{0}"이(가) 이미 삭제되었으므로 작업을 수행할 수 없습니다.</value>
   </data>
   <data name="ScriptBlockInvokeOnOneClauseOnly" xml:space="preserve">
-    <value>The script block cannot be invoked because it contains more than one clause. The Invoke() method can only be used on script blocks that contain a single clause.</value>
+    <value>스크립트 블록에 절이 두 개 이상 포함되어 있으므로 호출할 수 없습니다. Invoke() 메서드는 단일 절을 포함한 스크립트 블록에서만 사용할 수 있습니다.</value>
   </data>
   <data name="CanConvertOneClauseOnly" xml:space="preserve">
-    <value>The script block cannot be converted because it contains more than one clause. Expressions or control structures are not permitted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>스크립트 블록에 절이 두 개 이상 포함되어 있으므로 변환할 수 없습니다. 식이나 제어 구조는 허용되지 않습니다. 스크립트 블록에 정확히 하나의 파이프라인이나 명령이 포함되어 있는지 확인하세요.</value>
   </data>
   <data name="CantConvertEmptyPipeline" xml:space="preserve">
-    <value>An empty script block cannot be converted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>빈 스크립트 블록은 변환할 수 없습니다. 스크립트 블록에 정확히 하나의 파이프라인이나 명령이 포함되어 있는지 확인하세요.</value>
   </data>
   <data name="CanOnlyConvertOnePipeline" xml:space="preserve">
-    <value>Only a script block that contains exactly one pipeline or command can be converted. Expressions or control structures are not permitted. Verify that the script block contains exactly one pipeline or command.</value>
+    <value>정확히 하나의 파이프라인이나 명령을 포함한 스크립트 블록만 변환할 수 있습니다. 식이나 제어 구조는 허용되지 않습니다. 스크립트 블록에 정확히 하나의 파이프라인이나 명령이 포함되어 있는지 확인하세요.</value>
   </data>
   <data name="CantConvertScriptBlockWithTrap" xml:space="preserve">
-    <value>A script block that contains a top-level trap statement cannot be converted.</value>
+    <value>최상위 trap 문이 포함된 스크립트 블록은 변환할 수 없습니다.</value>
   </data>
   <data name="CantConvertWithUndeclaredVariables" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock dereferencing variables undeclared in the param(...) block.  Name of undeclared variable: {0}.</value>
+    <value>param(...) 블록에서 선언되지 않은 변수를 역참조하는 ScriptBlock에 대한 PowerShell 개체를 생성할 수 없습니다.  선언되지 않은 변수의 이름: {0}.</value>
   </data>
   <data name="CantConvertWithNonConstantExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock evaluating non-constant expressions. Non-constant expression: {0}.</value>
+    <value>비상수 식을 평가하는 ScriptBlock에 대한 PowerShell 개체를 생성할 수 없습니다. 비상수 식: {0}.</value>
   </data>
   <data name="CantConvertWithDynamicExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock evaluating dynamic expressions. Dynamic expression: {0}.</value>
+    <value>동적 식을 평가하는 ScriptBlock에 대한 PowerShell 개체를 생성할 수 없습니다. 동적 식: {0}.</value>
   </data>
   <data name="CantConvertWithScriptBlocks" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that tries to pass other script blocks inside argument values.</value>
+    <value>인수 값 안에 다른 스크립트 블록을 전달하려는 ScriptBlock에 대한 PowerShell 개체를 생성할 수 없습니다.</value>
   </data>
   <data name="CantConvertWithCommandInvocations" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock which invokes pipelines, commands or functions to evaluate arguments of the main pipeline.</value>
+    <value>주 파이프라인의 인수를 평가하기 위해 파이프라인, 명령 또는 함수를 호출하는 ScriptBlock에 대한 PowerShell 개체를 생성할 수 없습니다.</value>
   </data>
   <data name="CantConvertWithDotSourcing" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that uses dot sourcing.</value>
+    <value>도트 소싱을 사용하는 ScriptBlock에 대한 PowerShell 개체를 생성할 수 없습니다.</value>
   </data>
   <data name="CantConvertWithScriptBlockInvocation" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that invokes other script blocks.</value>
+    <value>다른 스크립트 블록을 호출하는 ScriptBlock에 대한 PowerShell 개체를 생성할 수 없습니다.</value>
   </data>
   <data name="CanConvertOneOutputErrorRedir" xml:space="preserve">
-    <value>The script block cannot be converted to a PowerShell object because it contains forbidden redirection operators.</value>
+    <value>금지된 리디렉션 연산자가 포함되어 있으므로 스크립트 블록을 PowerShell 개체로 변환할 수 없습니다.</value>
   </data>
   <data name="CantConvertScriptBlockWithNoContext" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that does not have an associated operation context.</value>
+    <value>연결된 작업 컨텍스트가 없는 ScriptBlock에 대한 PowerShell 개체를 생성할 수 없습니다.</value>
   </data>
   <data name="HaltCommandException" xml:space="preserve">
-    <value>The command was stopped by the user.</value>
+    <value>사용자가 명령을 중단했습니다.</value>
   </data>
   <data name="DynamicParametersWrongType" xml:space="preserve">
-    <value>Object "{0}" is the wrong type to return from the dynamicparam block. The dynamicparam block must return either $null, or an object with type [System.Management.Automation.RuntimeDefinedParameterDictionary].</value>
+    <value>"{0}" 개체는 dynamicparam 블록에서 반환할 수 있는 올바른 형식이 아닙니다. dynamicparam 블록은 $null 또는 [System.Management.Automation.RuntimeDefinedParameterDictionary] 형식의 개체를 반환해야 합니다.</value>
   </data>
   <data name="CantConvertScriptBlockToOpenGenericType" xml:space="preserve">
-    <value>The script block cannot be converted to an open generic type. Define an appropriate closed generic type, and then retry.</value>
+    <value>스크립트 블록을 개방형 제네릭 형식으로 변환할 수 없습니다. 적절한 닫힌 제네릭 형식을 정의한 다음 다시 시도하세요.</value>
   </data>
   <data name="CantConvertPipelineStartsWithExpression" xml:space="preserve">
-    <value>Cannot generate a PowerShell object for a ScriptBlock that starts a pipeline with an expression.</value>
+    <value>식으로 파이프라인을 시작하는 ScriptBlock에 대한 PowerShell 개체를 생성할 수 없습니다.</value>
   </data>
   <data name="UsingVariableIsUndefined" xml:space="preserve">
-    <value>The value of the using variable '$using:{0}' cannot be retrieved because it has not been set in the local session.</value>
+    <value>using 변수 '$using:{0}'은(는) 로컬 세션에 설정되어 있지 않으므로 값을 가져올 수 없습니다.</value>
   </data>
   <data name="CantGetUsingExpressionValueWithSpecifiedVariableDictionary" xml:space="preserve">
-    <value>Cannot get the value of the Using expression '{0}' in the specified variable dictionary. When creating a PowerShell instance from a script block, the Using expression cannot contain an indexing operation or member-accessing operation.</value>
+    <value>지정한 변수 사전에서 Using 식 '{0}'의 값을 가져올 수 없습니다. 스크립트 블록에서 PowerShell instance를 만들 때 Using 식에는 인덱싱 작업이나 멤버 액세스 작업을 포함할 수 없습니다.</value>
   </data>
   <data name="WDACCompiledScriptBlockLogTitle" xml:space="preserve">
-    <value>Compiled Script Block Dot Source</value>
+    <value>컴파일된 스크립트 블록 점 소스</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>Script block '{0}' invocation into current scope will be disallowed in Constrained Language mode. Script language mode: {1}, Context language mode: {2}.</value>
+    <value>제한된 언어 모드에서는 스크립트 블록 '{0}'을(를) 현재 범위에 호출할 수 없습니다. 스크립트 언어 모드: {1}, 컨텍스트 언어 모드: {2}.</value>
   </data>
 </root>

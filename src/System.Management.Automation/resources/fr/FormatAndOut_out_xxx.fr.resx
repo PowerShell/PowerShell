@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ConsoleLineOutput_PagingPrompt" xml:space="preserve">
-    <value>&lt;SPACE&gt; next page; &lt;CR&gt; next line; Q quit</value>
+    <value>&lt;SPACE&gt; page suivante, &lt;CR&gt; ligne suivante, Q quitter</value>
   </data>
   <data name="OutLineOutput_NullLineOutputParameter" xml:space="preserve">
-    <value>The value of LineOutput should not be null.</value>
+    <value>La valeur de LineOutput ne doit pas être nulle.</value>
   </data>
   <data name="OutLineOutput_InvalidLineOutputParameterType" xml:space="preserve">
-    <value>The lineOutput type {0} was not expected; LineOutput expects type {1}.</value>
+    <value>Le type lineOutput {0} n’était pas prévu, LineOutput attend le type {1}.</value>
   </data>
   <data name="OutLineOutput_OutOfSequencePacket" xml:space="preserve">
-    <value>The object of type "{0}" is not valid or not in the correct sequence. This is likely caused by a user-specified "{1}" command which is conflicting with the default formatting.</value>
+    <value>L’objet de type « {0} » n’est pas valide ou n’est pas dans la séquence correcte. Cela est probablement dû à une commande « {1} » spécifiée par l’utilisateur, qui est en conflit avec la mise en forme par défaut.</value>
   </data>
   <data name="OutFile_FileOpenFailure" xml:space="preserve">
-    <value>Cannot open file "{0}".</value>
+    <value>Nous ne pouvons pas ouvrir le fichier « {0} ».</value>
   </data>
   <data name="OutFile_Action" xml:space="preserve">
-    <value>Output to File</value>
+    <value>Sortie vers un fichier</value>
   </data>
 </root>

@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TranscriptionStarted" xml:space="preserve">
-    <value>Transcript started, output file is {0}</value>
+    <value>Die Transkription wurde gestartet, Ausgabedatei ist „{0}“</value>
   </data>
   <data name="TranscriptionStopped" xml:space="preserve">
-    <value>Transcript stopped, output file is {0}</value>
+    <value>Die Transkription wurde beendet, Ausgabedatei ist „{0}“</value>
   </data>
   <data name="CannotStartTranscription" xml:space="preserve">
-    <value>Transcription cannot be started due to the error: {0}</value>
+    <value>Die Transkription kann aufgrund des Fehlers nicht gestartet werden: {0}</value>
   </data>
   <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>The current provider ({0}) cannot open a file.</value>
+    <value>Der aktuelle Anbieter ({0}) kann keine Datei öffnen.</value>
   </data>
   <data name="TranscriptFileReadOnly" xml:space="preserve">
-    <value>File {0} is read-only. Cannot write to this file. "Start-Transcript -Force" will clear the read-only attribute.</value>
+    <value>Die Datei „{0}“ ist schreibgeschützt. In diese Datei kann nicht geschrieben werden. „Start-Transcript -Force“ entfernt das schreibgeschützte Attribut.</value>
   </data>
   <data name="MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>Der Vorgang kann nicht ausgeführt werden, da der Pfad in mehrere Dateien aufgelöst wurde. Dieser Befehl kann nicht für mehrere Dateien verwendet werden.</value>
   </data>
   <data name="TranscriptFileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>Die Datei „{0}“ ist bereits vorhanden und „{1}“ wurde angegeben.</value>
   </data>
   <data name="ErrorStoppingTranscript" xml:space="preserve">
-    <value>An error occurred stopping transcription: {0}</value>
+    <value>Beim Beenden der Transkription ist ein Fehler aufgetreten: {0}</value>
   </data>
 </root>

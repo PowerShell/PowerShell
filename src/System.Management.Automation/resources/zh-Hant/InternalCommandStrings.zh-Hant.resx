@@ -118,76 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AmbiguousMethodName" xml:space="preserve">
-    <value>Input name "{0}" is ambiguous. It can be resolved to multiple matched methods. Possible matches include:{1}.</value>
+    <value>輸入名稱 "{0}" 不明確。它可解析為多個相符的方法。可能的相符項目包括: {1}。</value>
   </data>
   <data name="AmbiguousPropertyOrMethodName" xml:space="preserve">
-    <value>Input name "{0}" is ambiguous. It can be resolved to multiple matched members. Possible matches include:{1}.</value>
+    <value>輸入名稱 "{0}" 不明確。它可解析為多個相符的成員。可能的相符項目包括: {1}。</value>
   </data>
   <data name="ForEachObjectKeyAction" xml:space="preserve">
-    <value>Retrieve the value for key '{0}'</value>
+    <value>擷取索引鍵 '{0}' 的值</value>
   </data>
   <data name="ForEachObjectMethodActionWithArguments" xml:space="preserve">
-    <value>Invoke method '{0}' with arguments: {1}</value>
+    <value>使用引數叫用方法 '{0}': {1}</value>
   </data>
   <data name="ForEachObjectMethodActionWithoutArguments" xml:space="preserve">
-    <value>Invoke method '{0}'</value>
+    <value>叫用方法 '{0}'</value>
   </data>
   <data name="ForEachObjectPropertyAction" xml:space="preserve">
-    <value>Retrieve the value for property '{0}'</value>
+    <value>擷取屬性 '{0}' 的值</value>
   </data>
   <data name="ForEachObjectTarget" xml:space="preserve">
     <value>InputObject: {0}</value>
   </data>
   <data name="InputObjectIsNull" xml:space="preserve">
-    <value>Cannot operate on a 'null' input object.</value>
+    <value>無法在 'null' 輸入物件上作業。</value>
   </data>
   <data name="MethodNotFound" xml:space="preserve">
-    <value>Input name "{0}" cannot be resolved to a method.</value>
+    <value>輸入名稱 "{0}" 無法解析為方法。</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Cannot invoke a method in the restricted language mode.</value>
+    <value>無法在受限制的語言模式中呼叫方法。</value>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
-    <value>The -WhatIf and -Confirm parameters are not supported for script blocks.</value>
+    <value>指令碼區塊不支援 -WhatIf 和 -Confirm 參數。</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
-    <value>The '{0}' operation is not allowed in the RestrictedLanguage mode.</value>
+    <value>在 RestrictedLanguage 模式中，不允許 '{0}' 作業。</value>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
-    <value>An operator is required to compare the two specified values. Include a valid operator in the command, and then try the command again. For example, Get-Process | Where-Object -Property Name -eq Idle</value>
+    <value>需要運算子來比較這兩個指定值。請在命令中加入有效的運算子，然後再試一次。例如，Get-Process | Where-Object -Property Name -eq Idle</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The input name "{0}" cannot be resolved to a property.</value>
+    <value>輸入名稱 "{0}" 無法解析為屬性。</value>
   </data>
   <data name="PropertyOrMethodNotFound" xml:space="preserve">
-    <value>The input name "{0}" cannot be resolved to a member.</value>
+    <value>輸入名稱 "{0}" 無法解析為成員。</value>
   </data>
   <data name="ValueNotSpecifiedForWhereObject" xml:space="preserve">
-    <value>The specified operator requires both the -Property and -Value parameters. Provide values for both parameters, and then try the command again.</value>
+    <value>指定的運算子需要 -Property 和 -Value 參數。請為這兩個參數都提供值，然後再試一次命令。</value>
   </data>
   <data name="PSTaskStreamWriterWrongThread" xml:space="preserve">
-    <value>This method cannot be run on the current thread. It can only be called on the cmdlet thread.</value>
+    <value>無法在目前的執行緒上執行此方法。只能在 Cmdlet 執行緒上呼叫。</value>
   </data>
   <data name="ParallelUsingVariableCannotBeScriptBlock" xml:space="preserve">
-    <value>A ForEach-Object -Parallel using variable cannot be a script block. Passed-in script block variables are not supported with ForEach-Object -Parallel, and can result in undefined behavior.</value>
+    <value>ForEach-Object -Parallel 使用的變數不能是指令碼區塊。ForEach-Object -Parallel 不支援傳入的指令碼區塊變數，且可能導致未定義的行為。</value>
   </data>
   <data name="ParallelPipedInputObjectCannotBeScriptBlock" xml:space="preserve">
-    <value>A ForEach-Object -Parallel piped input object cannot be a script block. Passed-in script block variables are not supported with ForEach-Object -Parallel, and can result in undefined behavior.</value>
+    <value>ForEach-Object -Parallel 的管道輸入物件不能是指令碼區塊。ForEach-Object -Parallel 不支援傳入的指令碼區塊變數，且可能導致未定義的行為。</value>
   </data>
   <data name="ParallelCannotUseTimeoutWithJob" xml:space="preserve">
-    <value>The 'TimeoutSeconds' parameter cannot be used with the 'AsJob' parameter.</value>
+    <value>'TimeoutSeconds' 參數不能與 'AsJob' 參數一起使用。</value>
   </data>
   <data name="ParallelCommonParametersNotSupported" xml:space="preserve">
-    <value>The following common parameters are not currently supported in the Parallel parameter set:
-ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
+    <value>Parallel 參數集目前不支援下列一般參數:
+ErrorAction、WarningAction、InformationAction、PipelineVariable</value>
   </data>
   <data name="ParallelPipedInputProcessingError" xml:space="preserve">
-    <value>An unexpected error has occurred while processing ForEach-Object -Parallel input. This may mean that some of the piped input did not get processed. Error: {0}.</value>
+    <value>處理 ForEach-Object -Parallel 輸入時發生非預期錯誤。這可能表示部分管道輸入未處理。錯誤: {0}。</value>
   </data>
   <data name="WDACLogTitle" xml:space="preserve">
     <value>ForEach-Object Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Method invocation on type '{0}' will not be allowed when run in Constrained Language mode.</value>
+    <value>在 Constrained Language 模式下執行時，不允許對類型 '{0}' 呼叫方法。</value>
   </data>
 </root>

@@ -121,157 +121,157 @@
     <value>名前</value>
   </data>
   <data name="Synopsis" xml:space="preserve">
-    <value>SYNOPSIS</value>
+    <value>概要</value>
   </data>
   <data name="DetailedDescription" xml:space="preserve">
-    <value>DESCRIPTION</value>
+    <value>説明</value>
   </data>
   <data name="Syntax" xml:space="preserve">
-    <value>SYNTAX</value>
+    <value>構文</value>
   </data>
   <data name="Parameters" xml:space="preserve">
-    <value>PARAMETERS</value>
+    <value>パラメーター</value>
   </data>
   <data name="InputType" xml:space="preserve">
-    <value>INPUTS</value>
+    <value>入力</value>
   </data>
   <data name="ReturnType" xml:space="preserve">
-    <value>OUTPUTS</value>
+    <value>出力</value>
   </data>
   <data name="TerminatingErrors" xml:space="preserve">
-    <value>TERMINATING ERRORS</value>
+    <value>強制終了になるエラー</value>
   </data>
   <data name="NonHyphenTerminatingErrors" xml:space="preserve">
-    <value>NON-TERMINATING ERRORS</value>
+    <value>終了しないエラー</value>
   </data>
   <data name="Notes" xml:space="preserve">
-    <value>NOTES</value>
+    <value>注</value>
   </data>
   <data name="Examples" xml:space="preserve">
-    <value>EXAMPLES</value>
+    <value>例</value>
   </data>
   <data name="Example" xml:space="preserve">
     <value>例</value>
   </data>
   <data name="ExampleUpperCase" xml:space="preserve">
-    <value>EXAMPLE</value>
+    <value>例</value>
   </data>
   <data name="Output" xml:space="preserve">
-    <value>OUTPUT</value>
+    <value>出力</value>
   </data>
   <data name="RelatedLinks" xml:space="preserve">
-    <value>RELATED LINKS</value>
+    <value>関連リンク</value>
   </data>
   <data name="ShortDescription" xml:space="preserve">
-    <value>SHORT DESCRIPTION</value>
+    <value>概要</value>
   </data>
   <data name="TitleColon" xml:space="preserve">
-    <value>Title:</value>
+    <value>タイトル:</value>
   </data>
   <data name="QuestionColon" xml:space="preserve">
-    <value>Question:</value>
+    <value>質問:</value>
   </data>
   <data name="Answer" xml:space="preserve">
     <value>回答</value>
   </data>
   <data name="TermColon" xml:space="preserve">
-    <value>Term:</value>
+    <value>期間:</value>
   </data>
   <data name="DefinitionColon" xml:space="preserve">
-    <value>Definition:</value>
+    <value>定義:</value>
   </data>
   <data name="ContentColon" xml:space="preserve">
-    <value>Content:</value>
+    <value>内容:</value>
   </data>
   <data name="ProviderName" xml:space="preserve">
-    <value>PROVIDER NAME</value>
+    <value>プロバイダー名</value>
   </data>
   <data name="BaseCmdletInformation" xml:space="preserve">
-    <value>    This cmdlet supports the common parameters: Verbose, Debug,
-    ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-    OutBuffer, PipelineVariable, and OutVariable. For more information, see
-    about_CommonParameters (https://go.microsoft.com/fwlink/?LinkID=113216). </value>
+    <value>    このコマンドレットは、次の共通パラメーターをサポートしています: Verbose、Debug、
+    ErrorAction、ErrorVariable、WarningAction、WarningVariable、
+    OutBuffer、PipelineVariable、OutVariable。詳細については、次を参照してください 
+    about_CommonParameters (https://go.microsoft.com/fwlink/?LinkID=113216)。</value>
   </data>
   <data name="ParameterRequired" xml:space="preserve">
-    <value>Required?                    </value>
+    <value>必要ですか?                   </value>
   </data>
   <data name="ParameterPosition" xml:space="preserve">
-    <value>Position?                    </value>
+    <value>位置は?                   </value>
   </data>
   <data name="TypeColon" xml:space="preserve">
-    <value>Type: </value>
+    <value>型:</value>
   </data>
   <data name="TargetObjectTypeColon" xml:space="preserve">
-    <value>Target Object Type:   </value>
+    <value>ターゲット オブジェクトの型  </value>
   </data>
   <data name="ParameterDefaultValue" xml:space="preserve">
-    <value>Default value                </value>
+    <value>既定値                </value>
   </data>
   <data name="AcceptsPipelineInput" xml:space="preserve">
-    <value>Accept pipeline input?       </value>
+    <value>パイプライン入力の受け入れますか?      </value>
   </data>
   <data name="AcceptsWildCardCharacters" xml:space="preserve">
-    <value>Accept wildcard characters?  </value>
+    <value>ワイルドカード文字を受け入れますか? </value>
   </data>
   <data name="Category" xml:space="preserve">
-    <value>(Category: </value>
+    <value>(カテゴリ:</value>
   </data>
   <data name="SuggestedActionColon" xml:space="preserve">
-    <value>Suggested Action: </value>
+    <value>提案されているアクション:</value>
   </data>
   <data name="VerboseHelpInfo" xml:space="preserve">
-    <value>For more information, type: </value>
+    <value>詳細については、次のように入力してください:</value>
   </data>
   <data name="FullHelpInfo" xml:space="preserve">
-    <value>For technical information, type: </value>
+    <value>技術情報については、次のように入力してください:</value>
   </data>
   <data name="ExampleHelpInfo" xml:space="preserve">
-    <value>To see the examples, type: </value>
+    <value>例を表示するには、次のように入力してください:</value>
   </data>
   <data name="RelatedLinksHelpInfo" xml:space="preserve">
-    <value>For online help, type: </value>
+    <value>オンライン ヘルプについては、次のように入力してください:</value>
   </data>
   <data name="CommonParameters" xml:space="preserve">
     <value>&lt;CommonParameters&gt;</value>
   </data>
   <data name="RemarksSection" xml:space="preserve">
-    <value>REMARKS</value>
+    <value>注釈</value>
   </data>
   <data name="TrueShort" xml:space="preserve">
     <value>true</value>
   </data>
   <data name="NamedParameter" xml:space="preserve">
-    <value>Named</value>
+    <value>名前付き</value>
   </data>
   <data name="Drives" xml:space="preserve">
     <value>DRIVES</value>
   </data>
   <data name="Capabilities" xml:space="preserve">
-    <value>CAPABILITIES</value>
+    <value>機能</value>
   </data>
   <data name="Tasks" xml:space="preserve">
-    <value>TASKS</value>
+    <value>タスク</value>
   </data>
   <data name="Task" xml:space="preserve">
-    <value>TASK: </value>
+    <value>タスク:</value>
   </data>
   <data name="Filters" xml:space="preserve">
-    <value>FILTERS</value>
+    <value>フィルター</value>
   </data>
   <data name="DynamicParameters" xml:space="preserve">
-    <value>DYNAMIC PARAMETERS</value>
+    <value>動的パラメーター</value>
   </data>
   <data name="CmdletsSupported" xml:space="preserve">
-    <value>Cmdlets Supported: </value>
+    <value>サポートされているコマンドレット:</value>
   </data>
   <data name="AliasesSection" xml:space="preserve">
-    <value>ALIASES</value>
+    <value>別名</value>
   </data>
   <data name="GetLatestHelpContent" xml:space="preserve">
-    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.
-    -- To download and install Help files for the module that includes this cmdlet, use Update-Help.
-    -- To view the Help topic for this cmdlet online, type: "Get-Help {0} -Online" or
-       go to {1}.</value>
+    <value>Get-Help は、このコンピューター上でこのコマンドレットのヘルプ ファイルを見つけることができません。部分的なヘルプのみを表示しています。
+    -- このコマンドレットを含むモジュールのヘルプ ファイルをダウンロードしてインストールするには、Update-Help を使用してください。
+    -- このコマンドレットのヘルプ トピックをオンラインで表示するには、"Get-Help {0} -Online" と入力するか、
+       {1} へ移動してください。</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>なし</value>
@@ -280,13 +280,13 @@
     <value>Aliases                      </value>
   </data>
   <data name="ParameterIsDynamic" xml:space="preserve">
-    <value>Dynamic?                     </value>
+    <value>Dynamic?                    </value>
   </data>
   <data name="ParameterSetName" xml:space="preserve">
-    <value>Parameter set name           </value>
+    <value>パラメーター セット名           </value>
   </data>
   <data name="UnableToRetrieveHelpInfoXml" xml:space="preserve">
-    <value>Unable to retrieve the HelpInfo XML file for UI culture {0}. Make sure the HelpInfoUri property in the module manifest is valid or check your network connection and then try the command again.</value>
+    <value>UI カルチャ {0} の HelpInfo XML ファイルを取得できません。モジュール マニフェストの HelpInfoUri プロパティが有効であることを確認するか、ネットワーク接続を確認してからコマンドを再試行してください。</value>
   </data>
   <data name="PipelineByPropertyName" xml:space="preserve">
     <value>ByPropertyName</value>
@@ -298,176 +298,176 @@
     <value>FromRemainingArguments</value>
   </data>
   <data name="HelpCultureNotSupported" xml:space="preserve">
-    <value>The specified culture is not supported: {0}. Specify a culture from the following list: {{{1}}}.</value>
+    <value>指定されたカルチャはサポートされていません: {0}。次の一覧からカルチャを指定してください: {{{1}}}。</value>
   </data>
   <data name="HelpCultureNotSupportedFallback" xml:space="preserve">
-    <value>Postponing error and trying fallback cultures, will show as error if none of fallbacks are supported:
+    <value>エラーを延期し、フォールバック カルチャを試行すると、すべてのフォールバックがサポートされていない場合はエラーとして表示されます: 
 {0}</value>
   </data>
   <data name="ModuleBaseMustExist" xml:space="preserve">
-    <value>The ModuleBase directory cannot be found. Verify the directory and try again.</value>
+    <value>ModuleBase ディレクトリが見つかりません。ディレクトリを確認して、もう一度やり直してください。</value>
   </data>
   <data name="PathMustBeValidContainers" xml:space="preserve">
-    <value>The path {0} is not a valid directory. Make sure the directory exists and retry.</value>
+    <value>パス {0} は有効なディレクトリではありません。ディレクトリが存在することを確認してから、再試行してください。</value>
   </data>
   <data name="TooManyRedirections" xml:space="preserve">
-    <value>A Help URI cannot contain more than 10 redirections. Specify a valid Help URI.</value>
+    <value>ヘルプ URI には、10 個を超えるリダイレクトを含めることはできません。有効なヘルプ URI を指定してください。</value>
   </data>
   <data name="UpdateProgressActivity" xml:space="preserve">
-    <value>Updating Help</value>
+    <value>ヘルプの更新</value>
   </data>
   <data name="UpdateProgressConnecting" xml:space="preserve">
-    <value>Connecting to Help Content...</value>
+    <value>ヘルプ コンテンツに接続しています...</value>
   </data>
   <data name="UpdateProgressDownloading" xml:space="preserve">
-    <value>Downloading Help Content...</value>
+    <value>ヘルプ コンテンツをダウンロードしています...</value>
   </data>
   <data name="UpdateProgressInstalling" xml:space="preserve">
-    <value>Installing Help content...</value>
+    <value>ヘルプ コンテンツをインストールしています...</value>
   </data>
   <data name="UpdateProgressLocating" xml:space="preserve">
-    <value>Locating Help Content...</value>
+    <value>ヘルプ コンテンツを検索しています...</value>
   </data>
   <data name="AllParameterSetsName" xml:space="preserve">
-    <value>(All)</value>
+    <value>(すべて)</value>
   </data>
   <data name="CannotMatchModulePattern" xml:space="preserve">
-    <value>No PowerShell modules were found that match the following pattern: {0}. Verify the pattern and then try the command again.</value>
+    <value>次のパターンに一致する PowerShell モジュールが見つかりませんでした: {0}。パターンを確認してから、コマンドを再試行してください。</value>
   </data>
   <data name="ModuleNotFoundWithFullyQualifiedName" xml:space="preserve">
-    <value>No PowerShell modules were found that match the specified FullyQualifiedModule {0}. Verify the FullyQualifiedModule value and then try the command again.</value>
+    <value>指定された FullyQualifiedModule {0}に一致する PowerShell モジュールが見つかりませんでした。FullyQualifiedModule 値を確認してから、コマンドを再試行してください。</value>
   </data>
   <data name="HelpContentNotFound" xml:space="preserve">
-    <value>Help content cannot be found. Make sure the server is available and the help content location is properly defined in the HelpInfo XML.</value>
+    <value>ヘルプ コンテンツが見つかりません。サーバーが使用可能であり、ヘルプ コンテンツの場所が HelpInfo XML で正しく定義されていることを確認してください。</value>
   </data>
   <data name="HelpInfoUriNotFound" xml:space="preserve">
-    <value>The Update-Help command failed because the specified module does not support updatable help. Use Get-Help -Online or look online for help for the commands in this module.</value>
+    <value>指定されたモジュールが更新可能なヘルプをサポートしていないため、Update-Help コマンドが失敗しました。Get-Help -Online を使用するか、このモジュールのコマンドのヘルプをオンラインで検索してください。</value>
   </data>
   <data name="ModuleNameNullOrEmpty" xml:space="preserve">
-    <value>The following parameter must not be null or empty: Module.</value>
+    <value>次のパラメーターを null または空にすることはできません: Module。</value>
   </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
-    <value>The following parameter must not be null or empty: Path.</value>
+    <value>次のパラメーターを null または空にすることはできません: Path。</value>
   </data>
   <data name="UpdateHelpCompleted" xml:space="preserve">
-    <value>Update-Help has completed successfully.</value>
+    <value>Update-Help が正常に完了しました。</value>
   </data>
   <data name="UnzipFailure" xml:space="preserve">
-    <value>Error extracting Help content.</value>
+    <value>ヘルプ コンテンツの抽出中にエラーが発生しました。</value>
   </data>
   <data name="UnableToConnect" xml:space="preserve">
-    <value>Unable to connect to Help content. The server on which Help content is stored might not be available. Verify that the server is available, or wait until the server is back online, and then try the command again.</value>
+    <value>ヘルプ コンテンツに接続できません。ヘルプ コンテンツが保存されているサーバーが使用できない可能性があります。サーバーが使用可能であることを確認するか、サーバーがオンラインに戻るまで待ってから、コマンドを再試行してください。</value>
   </data>
   <data name="HelpContentXmlValidationFailure" xml:space="preserve">
-    <value>The Help content at the specified location is not valid. Specify a location that contains valid Help Content.</value>
+    <value>指定した場所のヘルプ コンテンツが無効です。有効なヘルプ コンテンツを含む場所を指定してください。</value>
   </data>
   <data name="HelpInfoXmlValidationFailure" xml:space="preserve">
-    <value>The HelpInfo XML is not valid. Specify valid HelpInfo XML.</value>
+    <value>HelpInfo XML が無効です。有効な HelpInfo XML を指定してください。</value>
   </data>
   <data name="SaveHelpCompleted" xml:space="preserve">
-    <value>Help content was successfully saved to the following location: {0}</value>
+    <value>ヘルプ コンテンツが次の場所に正常に保存されました: {0}</value>
   </data>
   <data name="HelpContentXsdNotFound" xml:space="preserve">
-    <value>The Help content XSD file cannot be found in {0}. Verify that the XSD file exists at the specified location, and then retry the command.</value>
+    <value>ヘルプ コンテンツ XSD ファイルが {0} で見つかりませんでした。指定した場所に XSD ファイルが存在することを確認してから、コマンドを再試行してください。</value>
   </data>
   <data name="FailedToUpdateHelpForModule" xml:space="preserve">
-    <value>Failed to update Help for the module(s) :
+    <value>次のモジュールのヘルプを更新できませんでした:
 '{0}'
 {1}</value>
   </data>
   <data name="SaveProgressActivity" xml:space="preserve">
-    <value>Saving Help</value>
+    <value>ヘルプの保存</value>
   </data>
   <data name="HelpContentContainsInvalidFiles" xml:space="preserve">
-    <value>Help content contains files that are not valid. Only .txt and .xml files are supported.</value>
+    <value>ヘルプ コンテンツに無効なファイルが含まれています。.txt ファイルと.xml ファイルのみがサポートされています。</value>
   </data>
   <data name="FailedToSaveHelpForModule" xml:space="preserve">
-    <value>Failed to save Help for the module(s) '{0}' : {1}</value>
+    <value>モジュール '{0}' のヘルプを保存できませんでした: {1}</value>
   </data>
   <data name="FailedToSaveHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to save Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
-English-US help content is available and can be saved using: Save-Help -UICulture en-US.</value>
+    <value>UI カルチャ {{{1}}} でモジュール '{0}' のヘルプを保存できませんでした: {2}。
+英語 (米国) のヘルプ コンテンツが利用でき、Save-Help -UICulture en-US を使用して保存できます。</value>
   </data>
   <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
-English-US help content is available and can be installed using: Update-Help -UICulture en-US.</value>
+    <value>UI カルチャ {{{1}}} でモジュール '{0}' のヘルプを更新できませんでした: {2}。
+英語 (米国) のヘルプ コンテンツが利用でき、Update-Help -UICulture en-US を使用してインストールできます。</value>
   </data>
   <data name="FailedToUpdateHelpWithLocaleNoUICulture" xml:space="preserve">
-    <value>Your current culture is ({0}), which is not associated with any language, consider changing your system culture or install the English-US help content using: Update-Help -UICulture en-US.</value>
+    <value>現在のカルチャは ({0}) であり、どの言語にも関連付けられていないため、システム カルチャを変更するか、Update-Help -UICulture en-US を使用して英語 (米国) のヘルプ コンテンツをインストールすることを検討してください。</value>
   </data>
   <data name="FalseShort" xml:space="preserve">
     <value>false</value>
   </data>
   <data name="CannotSpecifyRecurseWithoutPath" xml:space="preserve">
-    <value>The -Recurse parameter is only available if a source path is specified.</value>
+    <value>-Recurse パラメーターは、ソース パスが指定されている場合にのみ使用できます。</value>
   </data>
   <data name="ProviderIsNotFileSystem" xml:space="preserve">
-    <value>The path {0} does not contain a FileSystem provider. Verify that the specified path contains the FileSystem provider, and then retry the command.</value>
+    <value>{0} パスに FileSystem プロバイダーが含まれていません。指定したパスに FileSystem プロバイダーが含まれていることを確認してから、コマンドを再試行してください。</value>
   </data>
   <data name="SearchingForHelpContent" xml:space="preserve">
-    <value>Searching Help for {0} ...</value>
+    <value>{0} のヘルプを検索しています...</value>
   </data>
   <data name="CannotMatchUICulturePattern" xml:space="preserve">
-    <value>No UI culture was found that matches the following pattern: {0}. Verify the pattern and then try the command again.</value>
+    <value>次のパターンに一致する UI カルチャが見つかりませんでした: {0}。パターンを確認してから、コマンドを再試行してください。</value>
   </data>
   <data name="UseForceToSaveHelp" xml:space="preserve">
-    <value>Help was not saved for the module {0}, because the Save-Help command was run on this computer within the last 24 hours.
-To save help again, add the Force parameter to your command.</value>
+    <value>このコンピューターで過去 24 時間以内に Save-Help コマンドが実行されたため、モジュール {0} のヘルプは保存されませんでした。
+ヘルプをもう一度保存するには、Force パラメーターをコマンドに追加してください。</value>
   </data>
   <data name="UseForceToUpdateHelp" xml:space="preserve">
-    <value>Help was not updated for the module {0}, because the Update-Help command was run on this computer within the last 24 hours.
-To update help again, add the Force parameter to your command.</value>
+    <value>このコンピューターで Update-Help コマンドが過去 24 時間以内に実行されたため、モジュール {0} のヘルプは更新されませんでした。
+ヘルプをもう一度更新するには、Force パラメーターをコマンドに追加してください。</value>
   </data>
   <data name="NewestContentAlreadyInstalled" xml:space="preserve">
-    <value>The most current Help files are already installed.</value>
+    <value>最新のヘルプ ファイルが既にインストールされています。</value>
   </data>
   <data name="SuccessfullyUpdatedHelpContent" xml:space="preserve">
-    <value>{0}: {1}. Culture {2} Version {3}</value>
+    <value>{0}: {1}。カルチャ {2} バージョン {3}</value>
   </data>
   <data name="UpdatedHelpContent" xml:space="preserve">
-    <value>Updated {0}</value>
+    <value>{0} を更新しました</value>
   </data>
   <data name="InvalidHelpInfoUri" xml:space="preserve">
-    <value>The value of the HelpInfoUri key in the module manifest must resolve to a container or root URL on a website where the help files are stored. The HelpInfoUri '{0}' does not resolve to a container.</value>
+    <value>モジュール マニフェストの HelpInfoUri キーの値は、ヘルプ ファイルが格納されている Web サイトのコンテナーまたはルート URL に解決する必要があります。HelpInfoUri '{0}' はコンテナーに解決されません。</value>
   </data>
   <data name="HelpContentMustBeInTargetNamespace" xml:space="preserve">
-    <value>Help content must be in the namespace {0}.</value>
+    <value>ヘルプ コンテンツは名前空間 {0} に含まれている必要があります。</value>
   </data>
   <data name="GetLatestHelpContentWithoutHelpUri" xml:space="preserve">
-    <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.
-    -- To download and install Help files for the module that includes this cmdlet, use Update-Help.</value>
+    <value>Get-Help は、このコンピューター上でこのコマンドレットのヘルプ ファイルを見つけることができません。部分的なヘルプのみを表示しています。
+    -- このコマンドレットを含むモジュールのヘルプ ファイルをダウンロードしてインストールするには、Update-Help を使用してください。</value>
   </data>
   <data name="NewestContentAlreadyDownloaded" xml:space="preserve">
-    <value>The most current Help files are already downloaded.</value>
+    <value>最新のヘルプ ファイルが既にダウンロードされています。</value>
   </data>
   <data name="SavedHelpContent" xml:space="preserve">
-    <value>Saved {0}</value>
+    <value>{0} を保存しました</value>
   </data>
   <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
-    <value>The HelpInfoURI {0} does not start with HTTP.</value>
+    <value>HelpInfoURI {0} は HTTP で始まっていません。</value>
   </data>
   <data name="RootElementMustBeHelpItems" xml:space="preserve">
-    <value>The root level element of the help content must be "helpItems".</value>
+    <value>ヘルプ コンテンツのルート レベル要素は "helpItems" である必要があります。</value>
   </data>
   <data name="SaveProgressActivityForModule" xml:space="preserve">
-    <value>Saving Help for module {0}</value>
+    <value>モジュール {0} のヘルプを保存しています</value>
   </data>
   <data name="UpdateProgressActivityForModule" xml:space="preserve">
-    <value>Updating Help for module {0}</value>
+    <value>モジュール {0} のヘルプを更新しています</value>
   </data>
   <data name="UpdateHelpResolveUriVerbose" xml:space="preserve">
-    <value>Resolving URI: "{0}"</value>
+    <value>URI: "{0}" を解決中です</value>
   </data>
   <data name="OnlineHelpUri" xml:space="preserve">
-    <value>Help URI: {0}</value>
+    <value>ヘルプ URI: {0}</value>
   </data>
   <data name="UpdateHelpShouldProcessActionMessage" xml:space="preserve">
-    <value>{0}, Current Version: {1}, Available Version: {2}, UICulture: {3}</value>
+    <value>{0}、現在のバージョン: {1}、使用可能なバージョン: {2}、UICulture: {3}</value>
   </data>
   <data name="Properties" xml:space="preserve">
-    <value>PROPERTIES</value>
+    <value>プロパティ</value>
   </data>
   <data name="Methods" xml:space="preserve">
-    <value>METHODS</value>
+    <value>メソッド</value>
   </data>
 </root>

@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Utf7EncodingObsolete" xml:space="preserve">
-    <value>Encoding 'UTF-7' is obsolete, please use UTF-8.</value>
+    <value>编码 "UTF-7" 已过时，请使用 UTF-8。</value>
   </data>
   <data name="UtilityFileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>文件 {0} 已存在，且已指定 {1}。</value>
   </data>
   <data name="OutFile_ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>Cannot open file because the current provider ({0}) cannot open a file.</value>
+    <value>无法打开文件，因为当前提供程序({0})无法打开文件。</value>
   </data>
   <data name="OutFile_MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>无法执行操作，因为路径解析为多个文件。此命令无法对多个文件执行操作。</value>
   </data>
   <data name="OutFile_DidNotResolveFile" xml:space="preserve">
-    <value>Cannot perform operation because the wildcard path {0} did not resolve to a file.</value>
+    <value>无法执行操作，因为通配符路径 {0} 未解析为文件。</value>
   </data>
   <data name="OutFile_WriteToFileEncodingUnknown" xml:space="preserve">
-    <value>Unknown encoding {0}; valid values are {1}.</value>
+    <value>未知编码 {0}; 有效值为 {1}。</value>
   </data>
   <data name="ExportPSSession_ErrorDirectoryExists" xml:space="preserve">
-    <value>The directory '{0}' already exists.  Use the -Force parameter if you want to overwrite the directory and files within the directory.</value>
+    <value>目录“{0}”已存在。 如果要覆盖目录及其中的文件，请使用 -Force 参数。</value>
   </data>
   <data name="ExportPSSession_ErrorModuleNameOrPath" xml:space="preserve">
-    <value>The user module path does not exist, and hence a module folder cannot be created for the provided module name '{0}'.</value>
+    <value>用户模块路径不存在，因此无法为所提供的模块名称“{0}”创建模块文件夹。</value>
   </data>
   <data name="ExportPSSession_CannotCreateOutputDirectory" xml:space="preserve">
-    <value>Cannot create the module {0} due to the following: {1}. Use a different argument for the -OutputModule parameter and retry.</value>
+    <value>由于以下原因，无法创建模块 {0}: {1}。请为 -OutputModule 参数使用其他自变量，然后重试。</value>
     <comment>{StrContains="OutputModule"}
 {0} is a placeholder for the name of a directory
 {1} is a placeholder for an error message from the inner exception
@@ -161,6 +161,6 @@ At line:1 char:1
     </comment>
   </data>
   <data name="ExportPSSession_ScriptGeneratorVersionMismatch" xml:space="preserve">
-    <value>The module cannot be loaded because it has been generated with an incompatible version of the {0} cmdlet. Generate the module with the {0} cmdlet from the current session, and try loading the module again.</value>
+    <value>无法加载该模块，因为它是使用与 {0} cmdlet 不兼容的版本生成的。请使用当前会话中的 {0} cmdlet 生成该模块，然后再次尝试加载该模块。</value>
   </data>
 </root>

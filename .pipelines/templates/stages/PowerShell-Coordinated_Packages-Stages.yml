@@ -7,6 +7,20 @@ parameters:
     default: true
   - name: OfficialBuild
     type: boolean
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: DOTNET_RUNTIME_VERSION
+    displayName: Runtime version of early access build
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    displayName: SDK version of early access build
+    type: string
+    default: ' '
+  - name: EarlyAccessFeed
+    type: string
+    default: 'net10'
 
 stages:
 - stage: prep
@@ -31,6 +45,8 @@ stages:
         value: false
       - name: ob_sdl_sbom_enabled
         value: false
+      - name: IsEarlyAccess
+        value: ${{ parameters.IsEarlyAccess }}
 
     steps:
     - checkout: self
@@ -49,12 +65,20 @@ stages:
         ReleaseTagVar: $(ReleaseTagVar)
         CreateJson: yes
 
+  - ${{ if eq(parameters.IsEarlyAccess, true) }}:
+    - template: /.pipelines/templates/downloadDotnetEarlyAccess.yml@self
+      parameters:
+        DotnetRuntimeVersion: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+        DotnetSdkVersion: ${{ parameters.DOTNET_SDK_VERSION }}
+
 - stage: macos
   displayName: macOS - build and sign
   dependsOn: ['prep']
   variables:
     - name: ps_official_build
       value: ${{ parameters.OfficialBuild }}
+    - name: IsEarlyAccess
+      value: ${{ parameters.IsEarlyAccess }}
   jobs:
   - template: /.pipelines/templates/mac.yml@self
     parameters:
@@ -69,6 +93,8 @@ stages:
   variables:
     - name: ps_official_build
       value: ${{ parameters.OfficialBuild }}
+    - name: IsEarlyAccess
+      value: ${{ parameters.IsEarlyAccess }}
   jobs:
   - template: /.pipelines/templates/linux.yml@self
     parameters:
@@ -129,6 +155,8 @@ stages:
   variables:
     - name: ps_official_build
       value: ${{ parameters.OfficialBuild }}
+    - name: IsEarlyAccess
+      value: ${{ parameters.IsEarlyAccess }}
   jobs:
   - template: /.pipelines/templates/windows-hosted-build.yml@self
     parameters:
@@ -149,6 +177,7 @@ stages:
     parameters:
       Architecture: x86
       JobName: build_windows_x86_release
+      dotnetArch: 'win-x86'
   - template: /.pipelines/templates/windows-hosted-build.yml@self
     parameters:
       Architecture: arm64

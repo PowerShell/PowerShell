@@ -118,36 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BadMonadVersion" xml:space="preserve">
-    <value>Incorrect PowerShell version {0}. PowerShell version {1} is supported on this computer.</value>
+    <value>PowerShell バージョン {0} が正しくありません。このコンピューターでは、PowerShell バージョン {1} がサポートされています。</value>
   </data>
   <data name="ConsoleLoadFailure" xml:space="preserve">
-    <value>The following errors occurred when loading console {0}: {1}</value>
+    <value>コンソール {0} の読み込み中に次のエラーが発生しました: {1}</value>
   </data>
   <data name="PSSnapInLoadFailure" xml:space="preserve">
-    <value>Cannot load PowerShell snap-in {0} because of the following error: {1}</value>
+    <value>次のエラーのため、PowerShell スナップイン {0} を読み込めません: {1}</value>
   </data>
   <data name="PSSnapInLoadWarning" xml:space="preserve">
-    <value>PowerShell snap-in "{0}" loaded with the following warnings: {1}</value>
+    <value>PowerShell スナップイン "{0}" が読み込まれ、次の警告が表示されます: {1}</value>
   </data>
   <data name="PSSnapInAssemblyNameMismatch" xml:space="preserve">
-    <value>The PowerShell snap-in module {0} does not have the required PowerShell snap-in strong name {1}.</value>
+    <value>PowerShell スナップイン モジュール {0} には、必要な PowerShell スナップインの厳密な名前 {1} がありません。</value>
   </data>
   <data name="PSSnapInDuplicateCmdlets" xml:space="preserve">
-    <value>The cmdlet '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
+    <value>コマンドレット '{0}' は、PowerShell スナップイン '{1}' で複数回実行しないでください。</value>
   </data>
   <data name="PSSnapInDuplicateProviders" xml:space="preserve">
-    <value>PowerShell provider '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
+    <value>PowerShell スナップイン '{1}' では、PowerShell プロバイダー '{0}' を複数回使用しないでください。</value>
   </data>
   <data name="AddPSSnapInBadMonadVersion" xml:space="preserve">
-    <value>PowerShell {0} is not supported in the current console. PowerShell {1} is supported in the current console.</value>
+    <value>PowerShell {0} は、現在のコンソールではサポートされていません。PowerShell {1} は、現在のコンソールでサポートされています。</value>
   </data>
   <data name="FileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>ファイル {0} は既に存在し、{1} が指定されました。</value>
   </data>
   <data name="ConfigurationFileDoesNotExist" xml:space="preserve">
-    <value>The provided configuration file '{0}' does not exist.</value>
+    <value>指定された構成ファイル '{0}' は存在しません。</value>
   </data>
   <data name="NotConfigurationFile" xml:space="preserve">
-    <value>The provided configuration file '{0}' must have a .pssc file extension.</value>
+    <value>指定された構成ファイル '{0}' には .pssc ファイル拡張子が必要です。</value>
   </data>
 </root>

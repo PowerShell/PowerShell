@@ -118,114 +118,114 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EnabledExperimentalFeatures" xml:space="preserve">
-    <value>Variable to hold the enabled experimental feature names</value>
+    <value>Etkin deneysel özellik adlarını tutacak değişken</value>
   </data>
   <data name="PSHOMEDescription" xml:space="preserve">
-    <value>Parent folder of the host application of the current runspace</value>
+    <value>Geçerli çalışma alanının konak uygulamasının üst klasörü</value>
   </data>
   <data name="HOMEDescription" xml:space="preserve">
-    <value>Folder containing the current user's profile</value>
+    <value>Geçerli kullanıcının profilini içeren klasör</value>
   </data>
   <data name="PSHostDescription" xml:space="preserve">
-    <value>A reference to the host of the current runspace</value>
+    <value>Geçerli runspace'in ana makinesine yapılan bir başvuru</value>
   </data>
   <data name="ExecutionContextDescription" xml:space="preserve">
-    <value>The run objects available to cmdlets</value>
+    <value>Cmdlet'ler için kullanılabilen çalıştırma nesneleri</value>
   </data>
   <data name="PSVersionTableDescription" xml:space="preserve">
-    <value>Version information for current PowerShell session</value>
+    <value>Geçerli Windows PowerShell oturumu için sürüm bilgisi</value>
   </data>
   <data name="PIDDescription" xml:space="preserve">
-    <value>Current process ID</value>
+    <value>Geçerli işlem kimliği</value>
   </data>
   <data name="DollarHookDescription" xml:space="preserve">
-    <value>Status of last command</value>
+    <value>Son komutun durumu</value>
   </data>
   <data name="PPIDDescription" xml:space="preserve">
-    <value>Parent process ID</value>
+    <value>Üst işlem kimliği</value>
   </data>
   <data name="MshShellIdDescription" xml:space="preserve">
-    <value>The ShellID identifies the current shell.  This is used by #Requires.</value>
+    <value>ShellID, geçerli kabuğu tanımlar.  Bu, #Requires tarafından kullanılır.</value>
   </data>
   <data name="ConsoleDescription" xml:space="preserve">
-    <value>Name of the current console file</value>
+    <value>Geçerli konsol dosyasının adı</value>
   </data>
   <data name="OutputEncodingDescription" xml:space="preserve">
-    <value>The text encoding used when piping text to a native executable file</value>
+    <value>Yerel yürütülebilir dosyaya metin aktarılırken kullanılan metin kodlaması</value>
   </data>
   <data name="PSApplicationOutputEncodingDescription" xml:space="preserve">
-    <value>The text encoding used when reading output text from a native executable file</value>
+    <value>Yerel yürütülebilir dosyadan çıktı metnini okurken kullanılan metin kodlaması</value>
   </data>
   <data name="PSStyleDescription" xml:space="preserve">
-    <value>Configuration controlling how text is rendered.</value>
+    <value>Metnin nasıl oluşturulacağını denetleyen yapılandırma</value>
   </data>
   <data name="PSEmailServerDescription" xml:space="preserve">
-    <value>Variable to contain the name of the email server. This can be used instead of the HostName parameter in the Send-MailMessage cmdlet.</value>
+    <value>E-posta sunucusunun adını tutacak değişken. Bu, Send-MailMessage cmdlet'inde HostName parametresi yerine kullanılabilir.</value>
   </data>
   <data name="ConfirmPreferenceDescription" xml:space="preserve">
-    <value>Dictates when confirmation should be requested. Confirmation is requested when the ConfirmImpact of the operation is equal to or greater than $ConfirmPreference. If $ConfirmPreference is None, actions will only be confirmed when Confirm is specified.</value>
+    <value>Onay istenmesinin ne zaman yapılacağını belirler. İşlemin ConfirmImpact değeri $ConfirmPreference değerine eşit veya ondan büyük olduğunda onay istenir. $ConfirmPreference None ise, eylemler yalnızca Confirm belirtildiğinde onaylanır.</value>
   </data>
   <data name="DebugPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Debug message is delivered</value>
+    <value>Hata ayıklama iletisi teslim edildiğinde yapılacak eylemi belirler</value>
   </data>
   <data name="ErrorActionPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when an error message is delivered</value>
+    <value>Bir hata iletisi teslim edildiğinde yapılacak eylemi belirler</value>
   </data>
   <data name="ProgressPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when progress records are delivered</value>
+    <value>İlerleme kayıtları teslim edildiğinde yapılacak eylemi belirler</value>
   </data>
   <data name="VerbosePreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Verbose message is delivered</value>
+    <value>Ayrıntılı ileti teslim edildiğinde yapılacak eylemi belirler</value>
   </data>
   <data name="WarningPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a Warning message is delivered</value>
+    <value>Bir Warning iletisi teslim edildiğinde alınacak eylemi belirler</value>
   </data>
   <data name="InformationPreferenceDescription" xml:space="preserve">
-    <value>Dictates the action taken when a command generates an item in the Information stream</value>
+    <value>Bir komut Bilgi akışında bir öğe oluşturduğunda yapılacak eylemi belirler</value>
   </data>
   <data name="ErrorViewDescription" xml:space="preserve">
-    <value>Dictates the view mode to use when displaying errors</value>
+    <value>Hatalar görüntülenirken kullanılacak görünüm modunu belirler</value>
   </data>
   <data name="NestedPromptLevelDescription" xml:space="preserve">
-    <value>Dictates what type of prompt should be displayed for the current nesting level</value>
+    <value>Geçerli iç içe yerleştirme düzeyi için hangi tür istemin görüntüleneceğini belirler</value>
   </data>
   <data name="PSNativeCommandUseErrorActionPreferenceDescription" xml:space="preserve">
-    <value>If true, $ErrorActionPreference applies to native executables, so that non-zero exit codes will generate cmdlet-style errors governed by error action settings</value>
+    <value>True ise $ErrorActionPreference yerel yürütülebilir dosyalara uygulanır. Böylece sıfır olmayan çıkış kodları, hata eylemi ayarları tarafından yönetilen cmdlet tarzı hatalar oluşturur.</value>
   </data>
   <data name="WhatIfPreferenceDescription" xml:space="preserve">
-    <value>If true, WhatIf is considered to be enabled for all commands.</value>
+    <value>Doğruysa, WhatIf tüm komutlar için etkin kabul edilir.</value>
   </data>
   <data name="NativeCommandArgumentPassingDescription" xml:space="preserve">
-    <value>Dictates how arguments are passed to native executables.</value>
+    <value>Yerel yürütülebilir dosyalara bağımsız değişkenlerin nasıl geçirileceğini belirler.</value>
   </data>
   <data name="FormatEnumerationLimitDescription" xml:space="preserve">
-    <value>Dictates the limit of enumeration on formatting IEnumerable objects</value>
+    <value>Biçimlendirilmiş IEnumerable nesneleri üzerinde numaralandırma sınırını belirler</value>
   </data>
   <data name="ReportErrorShowStackTraceDescription" xml:space="preserve">
-    <value>Displays errors with a stack trace</value>
+    <value>Hataları yığın izlemesiyle görüntüler</value>
   </data>
   <data name="ReportErrorShowInnerExceptionDescription" xml:space="preserve">
-    <value>Displays errors with inner exceptions</value>
+    <value>İç özel durumlarla hataları görüntüler</value>
   </data>
   <data name="ReportErrorShowSourceDescription" xml:space="preserve">
-    <value>Displays errors with their sources</value>
+    <value>Kaynaklarıyla birlikte hataları görüntüler</value>
   </data>
   <data name="ReportErrorShowExceptionClassDescription" xml:space="preserve">
-    <value>Displays errors with a description of the error class</value>
+    <value>Hata sınıfının açıklamasıyla hataları görüntüler</value>
   </data>
   <data name="DollarPSCultureDescription" xml:space="preserve">
-    <value>Culture of the current PowerShell session</value>
+    <value>Geçerli Windows PowerShell oturumunun kültürü</value>
   </data>
   <data name="DollarPSUICultureDescription" xml:space="preserve">
-    <value>UI culture of the current PowerShell session</value>
+    <value>Geçerli Windows PowerShell oturumunun kullanıcı arabirimi kültürü</value>
   </data>
   <data name="PSDefaultParameterValuesDescription" xml:space="preserve">
-    <value>Variable to hold all default &lt;cmdlet:parameter, value&gt; pairs</value>
+    <value>Tüm varsayılan &lt;cmdlet:parameter, value&gt; çiftlerini tutacak değişken</value>
   </data>
   <data name="PauseDefinitionString" xml:space="preserve">
-    <value>Press Enter to continue...</value>
+    <value>Devam etmek için Enter tuşuna basın...</value>
   </data>
   <data name="PSEditionDescription" xml:space="preserve">
-    <value>Edition information for the current PowerShell session</value>
+    <value>Geçerli Windows PowerShell oturumu için sürüm bilgisi</value>
   </data>
 </root>

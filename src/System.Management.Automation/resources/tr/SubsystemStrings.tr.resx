@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MultipleRegistrationNotAllowed" xml:space="preserve">
-    <value>The subsystem '{0}' does not allow more than one implementation to be registered.</value>
+    <value>‘{0}' alt sistemi, birden fazla uygulamanın kaydedilmesine izin vermez.</value>
   </data>
   <data name="ImplementationAlreadyRegistered" xml:space="preserve">
-    <value>The implementation with Id '{0}' was already registered for the subsystem '{1}'.</value>
+    <value>Id'si '{0}' olan uygulama, '{1}' alt sistemi için zaten kaydedilmişti.</value>
   </data>
   <data name="UnregistrationNotAllowed" xml:space="preserve">
-    <value>The subsystem '{0}' does not allow the unregistration of an implementation.</value>
+    <value>‘{0}' alt sistemi, bir uygulamanın kaydının silinmesine izin vermez.</value>
   </data>
   <data name="NoImplementationRegistered" xml:space="preserve">
-    <value>No implementation was registered for the subsystem '{0}'.</value>
+    <value>“{0}” alt sistemi için kayıtlı bir gerçekleştirim bulunamadı.</value>
   </data>
   <data name="ImplementationNotFound" xml:space="preserve">
-    <value>A registered implementation with the Id '{0}' was not found.</value>
+    <value>‘{0}' Id'sine sahip kayıtlı bir uygulama bulunamadı.</value>
   </data>
   <data name="SubsystemTypeUnknown" xml:space="preserve">
-    <value>The specified subsystem type '{0}' is unknown.</value>
+    <value>Belirtilen '{0}' alt sistem türü bilinmiyor.</value>
   </data>
   <data name="MustUseConcreteSubsystemType" xml:space="preserve">
-    <value>You must specify a concrete subsystem type instead of the base interface 'ISubsystem'.</value>
+    <value>Temel arabirim 'ISubsystem' yerine somut bir alt sistem türü belirtmelisiniz.</value>
   </data>
   <data name="SubsystemKindUnknown" xml:space="preserve">
-    <value>The specified subsystem kind '{0}' is unknown.</value>
+    <value>Belirtilen '{0}' alt sistem türü bilinmiyor.</value>
   </data>
   <data name="ConcreteSubsystemNotImplemented" xml:space="preserve">
-    <value>For the target subsystem kind '{0}', the specified subsystem instance needs to implement the corresponding concrete interface or abstract class '{1}'.</value>
+    <value>‘{0}' hedef alt sistem türü için, belirtilen alt sistem örneğinin karşılık gelen somut arabirimi veya soyut sınıfı '{1}' uygulaması gerekir.</value>
   </data>
   <data name="InvalidSubsystemInfo" xml:space="preserve">
-    <value>The declared metadata for subsystem kind '{0}' is invalid. A subsystem that requires cmdlets or functions to be defined cannot allow multiple registrations because that would result in one implementation overwriting the commands defined by another implementation.</value>
+    <value>‘{0}' alt sistemi türü için bildirilen meta veriler geçersiz. Cmdlet'lerin veya işlevlerin tanımlanmasını gerektiren bir alt sistem, bir uygulamanın başka bir uygulama tarafından tanımlanan komutların üzerine yazmasına neden olacağından birden fazla kayda izin veremez.</value>
   </data>
   <data name="EmptyImplementationId" xml:space="preserve">
-    <value>The 'Id' property of an implementation for the subsystem '{0}' cannot be an empty GUID.</value>
+    <value>‘{0}' alt sistemi için uygulamanın 'Id' özelliği boş bir GUID olamaz.</value>
   </data>
   <data name="NullOrEmptyImplementationName" xml:space="preserve">
-    <value>The 'Name' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+    <value>‘{0}' alt sistemi için uygulamanın 'Name' özelliği null veya boş bir dize olamaz.</value>
   </data>
   <data name="NullOrEmptyImplementationDescription" xml:space="preserve">
-    <value>The 'Description' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+    <value>‘{0}' alt sistemi için uygulamanın 'Description' özelliği null veya boş bir dize olamaz.</value>
   </data>
 </root>

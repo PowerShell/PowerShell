@@ -118,108 +118,108 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandStateChange" xml:space="preserve">
-    <value>Command {0} is {1}.</value>
+    <value>명령 {0}은(는) {1}입니다.</value>
   </data>
   <data name="EngineStateChange" xml:space="preserve">
-    <value>Engine state changed from {0} to {1}.</value>
+    <value>엔진 상태가 {0}에서 {1}(으)로 변경되었습니다.</value>
   </data>
   <data name="ErrorRecordId" xml:space="preserve">
-    <value>Fully Qualified Error ID = {0}</value>
+    <value>정규화된 전체 오류 ID = {0}</value>
   </data>
   <data name="ErrorRecordMessage" xml:space="preserve">
-    <value>Error Message = {0}</value>
+    <value>오류 메시지 = {0}</value>
   </data>
   <data name="ErrorRecordRecommendedAction" xml:space="preserve">
-    <value>Recommended Action = {0}</value>
+    <value>권장 조치 = {0}</value>
   </data>
   <data name="ExecutionPolicyName" xml:space="preserve">
-    <value>Execution Policy</value>
+    <value>실행 정책</value>
   </data>
   <data name="JobCommand" xml:space="preserve">
-    <value>Job Command = {0}</value>
+    <value>작업 명령 = {0}</value>
   </data>
   <data name="JobId" xml:space="preserve">
-    <value>Job Id = {0}</value>
+    <value>작업 ID = {0}</value>
   </data>
   <data name="JobInstanceId" xml:space="preserve">
-    <value>Job Instance Id = {0}</value>
+    <value>작업 인스턴스 ID = {0}</value>
   </data>
   <data name="JobLocation" xml:space="preserve">
-    <value>Job Location = {0}</value>
+    <value>작업 위치 = {0}</value>
   </data>
   <data name="JobName" xml:space="preserve">
-    <value>Job Name = {0}</value>
+    <value>작업 이름 = {0}</value>
   </data>
   <data name="JobState" xml:space="preserve">
-    <value>Job State = {0}</value>
+    <value>작업 상태= {0}</value>
   </data>
   <data name="LogContextCommandName" xml:space="preserve">
-    <value>        Command Name = </value>
+    <value>        명령 이름 = </value>
   </data>
   <data name="LogContextCommandPath" xml:space="preserve">
-    <value>        Command Path = </value>
+    <value>        명령 경로 = </value>
   </data>
   <data name="LogContextCommandType" xml:space="preserve">
-    <value>        Command Type = </value>
+    <value>        명령 유형 = </value>
   </data>
   <data name="LogContextEngineVersion" xml:space="preserve">
-    <value>        Engine Version = </value>
+    <value>        엔진 버전 = </value>
   </data>
   <data name="LogContextHostId" xml:space="preserve">
-    <value>        Host ID = </value>
+    <value>        호스트 ID = </value>
   </data>
   <data name="LogContextHostName" xml:space="preserve">
-    <value>        Host Name = </value>
+    <value>        호스트 이름 = </value>
   </data>
   <data name="LogContextHostApplication" xml:space="preserve">
-    <value>        Host Application = </value>
+    <value>        호스트 애플리케이션 = </value>
   </data>
   <data name="LogContextHostVersion" xml:space="preserve">
-    <value>        Host Version = </value>
+    <value>        호스트 버전 = </value>
   </data>
   <data name="LogContextPipelineId" xml:space="preserve">
-    <value>        Pipeline ID = </value>
+    <value>        파이프라인 ID = </value>
   </data>
   <data name="LogContextRunspaceId" xml:space="preserve">
     <value>        Runspace ID = </value>
   </data>
   <data name="LogContextScriptName" xml:space="preserve">
-    <value>        Script Name = </value>
+    <value>        스크립트 이름 = </value>
   </data>
   <data name="LogContextSequenceNumber" xml:space="preserve">
-    <value>        Sequence Number = </value>
+    <value>        시퀀스 번호 = </value>
   </data>
   <data name="LogContextSeverity" xml:space="preserve">
-    <value>        Severity = </value>
+    <value>        심각도 = </value>
   </data>
   <data name="LogContextShellId" xml:space="preserve">
-    <value>        Shell ID = </value>
+    <value>        셸 ID = </value>
   </data>
   <data name="LogContextTime" xml:space="preserve">
-    <value>        Time = </value>
+    <value>        시간 = </value>
   </data>
   <data name="LogContextUser" xml:space="preserve">
-    <value>        User = </value>
+    <value>        사용자 = </value>
   </data>
   <data name="LogContextConnectedUser" xml:space="preserve">
-    <value>        Connected User = </value>
+    <value>        연결된 사용자 = </value>
   </data>
   <data name="NullJobName" xml:space="preserve">
-    <value>NULL Job</value>
+    <value>NULL 작업</value>
   </data>
   <data name="ProviderNameString" xml:space="preserve">
-    <value>Provider name</value>
+    <value>공급자 이름</value>
   </data>
   <data name="ProviderStateChange" xml:space="preserve">
-    <value>Provider {0} changed state to {1}.</value>
+    <value>공급자 {0}이(가) 상태를 {1}(으)로 변경했습니다.</value>
   </data>
   <data name="ScriptStateChange" xml:space="preserve">
-    <value>Script execution is {0}.</value>
+    <value>스크립트 실행이 {0}.</value>
   </data>
   <data name="SettingChange" xml:space="preserve">
-    <value>Variable {0} changed from {1} to {2}.</value>
+    <value>변수 {0}이(가) {1}에서 {2}(으)로 변경되었습니다.</value>
   </data>
   <data name="SettingChangeNoPrevious" xml:space="preserve">
-    <value>Variable {0} changed to {1}.</value>
+    <value>변수 {0}이(가) {1}(으)로 변경되었습니다.</value>
   </data>
 </root>

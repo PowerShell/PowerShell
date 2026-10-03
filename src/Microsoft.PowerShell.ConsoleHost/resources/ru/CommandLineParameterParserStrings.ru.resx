@@ -118,114 +118,123 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandAlreadySpecified" xml:space="preserve">
-    <value>Cannot process command because a command is already specified with -Command, -CommandWithArgs, or -EncodedCommand.</value>
+    <value>Не удается обработать команду, так как команда уже указана с помощью параметров -Command, -CommandWithArgs или -EncodedCommand.</value>
   </data>
   <data name="MissingCommandParameter" xml:space="preserve">
-    <value>Cannot process the command because of a missing parameter. A command must follow -Command.</value>
+    <value>Не удается обработать команду, так как отсутствует параметр. За параметром -Command должна следовать команда.</value>
   </data>
   <data name="UnknownParameter" xml:space="preserve">
-    <value>Unrecognized parameter: '{0}'.</value>
+    <value>Нераспознанный параметр: {0}.</value>
   </data>
   <data name="TooManyParametersToCommand" xml:space="preserve">
-    <value>'-' was specified with the -Command parameter; no other arguments to -Command are permitted.</value>
+    <value>"-" был указан с параметром -Command; никакие другие аргументы для -Command не допускаются.</value>
   </data>
   <data name="StdinNotRedirected" xml:space="preserve">
-    <value>'-' was specified as the argument to -Command but standard input has not been redirected for this process.</value>
+    <value>"-" был указан в качестве аргумента для параметра -Command, но для этого процесса стандартный ввод не был перенаправлен.</value>
   </data>
   <data name="MissingOutputFormatParameter" xml:space="preserve">
-    <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter.
-Specify one of the following formats for this parameter:
+    <value>Не удается выполнить команду, так как для параметра OutputFormat не указан аргумент.
+Укажите один из следующих форматов для этого параметра:
 {0}</value>
   </data>
   <data name="MissingInputFormatParameter" xml:space="preserve">
-    <value>Cannot process the command because the -InputFormat parameter requires an argument. Specify a valid format argument for this parameter.
-Valid formats are:
+    <value>Не удается обработать команду, так как для параметра -InputFormat требуется аргумент. Укажите допустимый формат для этого параметра.
+Допустимые форматы:
 {0}</value>
   </data>
   <data name="BadFormatParameterValue" xml:space="preserve">
-    <value>Cannot process the command because of an incorrect parameter value. "{0}" is not a valid format.
-Valid formats are:
+    <value>Не удается обработать команду из-за неверного значения параметра. {0} не является допустимым форматом.
+Допустимые форматы:
 {1}</value>
   </data>
   <data name="ArgsAlreadySpecified" xml:space="preserve">
-    <value>Cannot process the command because arguments to -Command or -EncodedCommand have already been specified with -EncodedArguments.</value>
+    <value>Не удается обработать команду, так как аргументы для параметров -Command или -EncodedCommand уже указаны с помощью -EncodedArguments.</value>
   </data>
   <data name="MissingArgsValue" xml:space="preserve">
-    <value>Cannot process the command because -EncodedArguments requires a value. Specify a value for the -EncodedArguments parameter.</value>
+    <value>Не удается обработать команду, так как для параметра -EncodedArguments требуется значение. Укажите значение для параметра -EncodedArguments.</value>
   </data>
   <data name="MissingFileArgument" xml:space="preserve">
-    <value>The command cannot be run because the File parameter requires a file path. Supply a path for the File parameter and then try the command again.</value>
+    <value>Не удается выполнить команду, так как для параметра File требуется путь к файлу. Укажите путь для параметра File и повторите команду.</value>
   </data>
   <data name="MissingWindowStyleArgument" xml:space="preserve">
-    <value>Cannot process the command because -WindowStyle requires an argument that is normal, hidden, minimized or maximized. Specify one of these argument values and try again.</value>
+    <value>Не удается обработать команду, так как для параметра -WindowStyle требуется аргумент со значением normal, hidden, minimized или maximized. Укажите одно из этих значений аргументов и повторите попытку.</value>
   </data>
   <data name="InvalidFileArgument" xml:space="preserve">
-    <value>Processing -File '{0}' failed: {1} Specify a valid path for the -File parameter.</value>
+    <value>Обработка -File {0} завершилась сбоем: {1} Укажите допустимый путь для параметра -File.</value>
   </data>
   <data name="InvalidWindowStyleArgument" xml:space="preserve">
-    <value>Processing -WindowStyle '{0}' failed: {1}.</value>
+    <value>Сбой обработки -WindowStyle {0}: {1}.</value>
   </data>
   <data name="InvalidFileArgumentExtension" xml:space="preserve">
-    <value>Processing -File '{0}' failed because the file does not have a '.ps1' extension. Specify a valid PowerShell script file name, and then try again.</value>
+    <value>Обработка -File {0} завершилась сбоем, так как файл не имеет расширения .ps1. Укажите допустимое имя файла сценария PowerShell и повторите попытку.</value>
   </data>
   <data name="ArgumentFileDoesNotExist" xml:space="preserve">
-    <value>The argument '{0}' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>Аргумент {0} не распознан как имя файла сценария. Проверьте правильность написания имени, а если включен путь, то проверьте правильность пути и повторите попытку.</value>
   </data>
   <data name="BadArgsValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedArguments is not properly encoded. The value must be Base64 encoded.</value>
+    <value>Не удается обработать команду, так как значение, указанное с помощью -EncodedArguments, закодировано неправильно. Значение должно быть закодировано в формате Base64.</value>
   </data>
   <data name="BadCommandValue" xml:space="preserve">
-    <value>Cannot process the command because the value specified with -EncodedCommand is not properly encoded. The value must be Base64 encoded.</value>
+    <value>Не удается обработать команду, так как значение, указанное с помощью -EncodedCommand, закодировано неправильно. Значение должно быть закодировано в формате Base64.</value>
   </data>
   <data name="MissingExecutionPolicyParameter" xml:space="preserve">
-    <value>Cannot process the execution policy because of a missing policy name. A policy name must follow -ExecutionPolicy.</value>
+    <value>Не удается обработать политику выполнения из-за отсутствия имени политики. За параметром -ExecutionPolicy должно следовать имя политики.</value>
   </data>
   <data name="MtaStaMutuallyExclusive" xml:space="preserve">
-    <value>Cannot process the command because -STA and -MTA are both specified. Specify either -STA or -MTA.</value>
+    <value>Не удается обработать команду, так как одновременно указаны -STA и -MTA. Укажите -STA или -MTA.</value>
   </data>
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationName requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+    <value>Не удается обработать команду, так как для параметра -ConfigurationName требуется аргумент — имя конфигурации удаленной конечной точки. Укажите этот аргумент и повторите попытку.</value>
   </data>
   <data name="MissingConfigurationFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -ConfigurationFile requires an argument that is a session configuration (.pssc) file path. Specify this argument and try again.</value>
+    <value>Не удается обработать команду, так как для -ConfigurationFile требуется аргумент — путь к файлу конфигурации сеанса (.pssc). Укажите этот аргумент и повторите попытку.</value>
   </data>
   <data name="MissingCustomPipeNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName requires an argument that is a name of the pipe you want to use. Specify this argument and try again.</value>
+    <value>Не удается обработать команду, так как для параметра -CustomPipeName требуется аргумент — имя канала, который нужно использовать. Укажите этот аргумент и повторите попытку.</value>
   </data>
   <data name="CustomPipeNameTooLong" xml:space="preserve">
-    <value>Cannot process the command because -CustomPipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+    <value>Не удается обработать команду, так как указано слишком длинное имя -CustomPipeName. На этой платформе имена каналов могут содержать до {0} символов. Имя вашего канала {1} состоит из {2} символов.</value>
   </data>
   <data name="MissingSettingsFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -SettingsFile requires an argument that is a file path.</value>
+    <value>Не удается обработать команду, так как для параметра -SettingsFile требуется аргумент — путь к файлу.</value>
   </data>
   <data name="InvalidSettingsFileArgument" xml:space="preserve">
-    <value>Processing -SettingsFile '{0}' failed: {1}. Specify a valid path for the -SettingsFile parameter.</value>
+    <value>Не удалось обработать -SettingsFile {0}: {1}. Укажите допустимый путь для параметра -SettingsFile.</value>
   </data>
   <data name="SettingsFileNotExists" xml:space="preserve">
-    <value>The argument '{0}' passed to the -SettingsFile does not exist. Provide the path to an existing json file as an argument to the -SettingsFile parameter.</value>
+    <value>Аргумент {0}, переданный в -SettingsFile, не существует. В качестве аргумента для параметра -SettingsFile укажите путь к существующему JSON-файлу.</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
-    <value>Invalid argument '{0}', did you mean:</value>
+    <value>Недопустимый аргумент {0}. Возможно, вы имели в виду:</value>
   </data>
   <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
-    <value>Parameter -WindowStyle is not implemented on this platform.</value>
+    <value>Параметр -WindowStyle не реализован на этой платформе.</value>
   </data>
   <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
-    <value>Cannot process the command because -WorkingDirectory requires an argument that is a directory path.</value>
+    <value>Не удается обработать команду, так как для параметра -WorkingDirectory требуется аргумент — путь к каталогу.</value>
   </data>
   <data name="MTANotImplemented" xml:space="preserve">
-    <value>Parameter -MTA is not supported on this platform.</value>
+    <value>Параметр -MTA не поддерживается на этой платформе.</value>
   </data>
   <data name="STANotImplemented" xml:space="preserve">
-    <value>Parameter -STA is not supported on this platform.</value>
+    <value>Параметр -STA не поддерживается на этой платформе.</value>
   </data>
   <data name="NullElementInArgs" xml:space="preserve">
-    <value>The specified arguments must not contain null elements.</value>
+    <value>Указанные аргументы не должны содержать элементы NULL.</value>
   </data>
   <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
-    <value>Invalid ExecutionPolicy value '{0}'.</value>
+    <value>Недопустимое значение ExecutionPolicy {0}.</value>
   </data>
   <data name="MissingMandatoryArgument" xml:space="preserve">
-    <value>An argument is required to be supplied to the '{0}' parameter.</value>
+    <value>Для параметра {0} необходимо указать аргумент.</value>
+  </data>
+  <data name="FileOnlyEntryRequired" xml:space="preserve">
+    <value>Параметр -File обязателен согласно политике.</value>
+  </data>
+  <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
+    <value>Параметр -NoExit запрещен политикой.</value>
+  </data>
+  <data name="FileOnlyEntryServerMode" xml:space="preserve">
+    <value>Режим сервера запрещен политикой.</value>
   </data>
 </root>

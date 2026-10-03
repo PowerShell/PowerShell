@@ -118,276 +118,276 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NotSupported" xml:space="preserve">
-    <value>This functionality is not supported on this operating system.</value>
+    <value>Bu işletim sisteminde bu işlev desteklenmiyor.</value>
   </data>
   <data name="NotEnabled" xml:space="preserve">
-    <value>Could not enable drive {0}.</value>
+    <value>Sürücü {0} etkinleştirilemedi.</value>
   </data>
   <data name="InvalidDrive" xml:space="preserve">
-    <value>The command cannot turn on the restore computer infrastructure on the specified computer because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>Sağlanan sürücü geçerli olmadığından komut, belirtilen bilgisayarda geri yükleme bilgisayarı altyapısını açamıyor. Drive parametresine geçerli bir sürücü girin ve ardından yeniden deneyin.</value>
   </data>
   <data name="NoSystemDrive" xml:space="preserve">
-    <value>Include System Drive in the list of Drives.</value>
+    <value>Sistem Sürücüsünü Sürücüler listesine ekleyin.</value>
   </data>
   <data name="NotValidDrive" xml:space="preserve">
-    <value>The command cannot turn off the restore computer infrastructure because the supplied drive is not valid. Enter a valid drive in the Drive parameter, and then try again.</value>
+    <value>Sağlanan sürücü geçerli olmadığından komut, geri yükleme bilgisayarı altyapısını kapatamıyor. Drive parametresine geçerli bir sürücü girin ve ardından yeniden deneyin.</value>
   </data>
   <data name="NotDisabled" xml:space="preserve">
-    <value>The command cannot disable System Restore on the {0} drive. You may not have sufficient permissions to perform this operation.</value>
+    <value>Komut, {0} sürücüsünde Sistem Geri Yükleme'yi devre dışı bırakamaz. Bu işlemi gerçekleştirmek için yeterli izniniz olmayabilir.</value>
   </data>
   <data name="ServiceDisabled" xml:space="preserve">
-    <value>SystemRestore service is disabled.</value>
+    <value>SystemRestore hizmeti devre dışı.</value>
   </data>
   <data name="RestorePointNotCreated" xml:space="preserve">
-    <value>The system restore infrastructure cannot create a restore point.</value>
+    <value>Sistem geri yükleme altyapısı geri yükleme noktası oluşturamıyor.</value>
   </data>
   <data name="RestoreFailed" xml:space="preserve">
-    <value>The last attempt to restore the computer failed.</value>
+    <value>Bilgisayarı geri yükleme için yapılan son girişim başarısız oldu.</value>
   </data>
   <data name="RestoreSuccess" xml:space="preserve">
-    <value>The computer has been restored to the specified restore point.</value>
+    <value>Bilgisayar belirtilen geri yükleme noktasına geri yüklendi.</value>
   </data>
   <data name="RestoreInterrupted" xml:space="preserve">
-    <value>The last attempt to restore the computer was interrupted.</value>
+    <value>Bilgisayarı geri yükleme için yapılan son girişim yarıda kesildi.</value>
   </data>
   <data name="NoRestorePoint" xml:space="preserve">
-    <value>The command cannot locate the "{0}" restore point. Verify the "{0}" sequence number, and then try the command again.</value>
+    <value>Komut, "{0}" geri yükleme noktasını bulamıyor. "{0}" sıra numarasını doğrulayın ve ardından komutu yeniden deneyin.</value>
   </data>
   <data name="DoubleComputerName" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
   <data name="RestartcomputerFailed" xml:space="preserve">
-    <value>Failed to restart the computer {0} with the following error message: {1}.</value>
+    <value>Bilgisayar {0} şu hata iletisiyle yeniden başlatılamadı: {1}.</value>
   </data>
   <data name="OperationFailed" xml:space="preserve">
-    <value>This command cannot be run on target computer('{1}') due to following error: {0}.{2}</value>
+    <value>Bu komut, hedef bilgisayarda ('{1}') şu hata nedeniyle çalıştırılamıyor: {0}.{2}</value>
   </data>
   <data name="StopcomputerFailed" xml:space="preserve">
-    <value>Failed to stop the computer {0} with the following error message: {1}.</value>
+    <value>Bilgisayar {0} şu hata iletisiyle durdurulamadı: {1}.</value>
   </data>
   <data name="InvalidRestorePoint" xml:space="preserve">
-    <value>The command cannot restore the computer because "{0}" has not been set as valid restore point. Enter a valid restore point in the RestorePoint parameter, and then try again.</value>
+    <value>"{0}" geçerli bir geri yükleme noktası olarak ayarlanmadığından komut bilgisayarı geri yükleyemiyor. RestorePoint parametresine geçerli bir geri yükleme noktası girin ve yeniden deneyin.</value>
   </data>
   <data name="RestartNeeded" xml:space="preserve">
-    <value>The changes will take effect after you restart the computer {1}.</value>
+    <value>Değişiklikler {1} bilgisayarı yeniden başlatıldıktan sonra geçerli olacaktır.</value>
   </data>
   <data name="RemoveComputerConfirm" xml:space="preserve">
-    <value>After you leave the domain, you will need to know the password of the local Administrator account to log onto this computer. Do you wish to continue?</value>
+    <value>Etki alanından ayrıldıktan sonra, bu bilgisayarda oturum açmak için yerel Yönetici hesabının parolasını bilmeniz gerekecek. Devam etmek istiyor musunuz?</value>
   </data>
   <data name="InvalidComputerNameFormat" xml:space="preserve">
-    <value>The following computer name is not valid: {0}. Make sure that the computer name is not longer than 255 characters, that it does not contain two or more consecutive dots, that it does not begin with a dot, that it does not contain only numeric characters, and that it does not contain any of the following characters:
+    <value>Şu bilgisayar adı geçerli değil: {0}. Bilgisayar adının 255 karakterden uzun olmadığından, art arda iki veya daha fazla nokta içermediğinden, nokta ile başlamadığından, yalnızca sayısal karakterlerden oluşmadığından ve aşağıdaki karakterlerden hiçbirini içermediğinden emin olun:
 {{|}}~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
   </data>
   <data name="InvalidDomainNameFormat" xml:space="preserve">
-    <value>The domain in computer name '{0}' is not valid. Make sure that the domain exists and that the name is a valid domain name.</value>
+    <value>'{0}' bilgisayar adındaki etki alanı geçerli değil. Etki alanının var olduğundan ve adın geçerli bir etki alanı adı olduğundan emin olun.</value>
   </data>
   <data name="ComputerNamesAreEqual" xml:space="preserve">
-    <value>The value specified for the NewComputerName parameter is the same as the value of the ComputerName parameter. Provide a different value for the NewComputerName parameter.</value>
+    <value>NewComputerName parametresi için belirtilen değer, ComputerName parametresinin değeriyle aynı. NewComputerName parametresi için farklı bir değer sağlayın.</value>
   </data>
   <data name="ResetComputerMachinePassword" xml:space="preserve">
-    <value>"The password of the secure channel between '{0}' and '{1}' has been reset."</value>
+    <value>"'{0}' ile '{1}' arasındaki güvenli kanalın parolası sıfırlandı."</value>
   </data>
   <data name="SystemRestoreServiceDisabled" xml:space="preserve">
-    <value>This command cannot be run due to the following error: the service cannot be started because it is disabled or does not have enabled devices associated with it.</value>
+    <value>Bu komut şu hata nedeniyle çalıştırılamıyor: Hizmet devre dışı bırakıldığından veya ilişkilendirilmiş etkin cihazları olmadığından başlatılamıyor.</value>
   </data>
   <data name="ProgressActivity" xml:space="preserve">
-    <value>Creating a system restore point ...</value>
+    <value>Sistem geri yükleme noktası oluşturuluyor ...</value>
   </data>
   <data name="ProgressStatusCreatingRestorePoint" xml:space="preserve">
-    <value>Creating a system restore point... {0}% Completed.</value>
+    <value>Sistem geri yükleme noktası oluşturuluyor... %{0} Tamamlandı.</value>
   </data>
   <data name="ProgressStatusCompleted" xml:space="preserve">
-    <value>Completed.</value>
+    <value>Tamamlandı.</value>
   </data>
   <data name="NetworkPathNotFound" xml:space="preserve">
-    <value>Try below options and Run the command again.
-1. Verify that the target computer('{0}') is running.
-2. Specify full computer name of the target computer('{0}').</value>
+    <value>Aşağıdaki seçenekleri deneyin ve komutu yeniden çalıştırın.
+1. Hedef bilgisayarın ('{0}') çalıştığını doğrulayın.
+2. Hedef bilgisayarın tam bilgisayar adını ('{0}') belirtin.</value>
   </data>
   <data name="PrivilegeNotEnabled" xml:space="preserve">
-    <value>Failed to restart the computer {0}. Access rights {1} cannot be enabled for the calling process.</value>
+    <value>Bilgisayar {0} yeniden başlatılamadı. Çağıran işlem için erişim hakları {1} etkinleştirilemiyor.</value>
   </data>
   <data name="RestartComputerAction" xml:space="preserve">
-    <value>Enable the {0} and restart the computer.</value>
+    <value>{0} öğesini etkinleştirin ve bilgisayarı yeniden başlatın.</value>
   </data>
   <data name="LocalShutdownPrivilege" xml:space="preserve">
-    <value>Local shutdown access rights</value>
+    <value>Yerel kapatma erişim hakları</value>
   </data>
   <data name="RemoteShutdownPrivilege" xml:space="preserve">
-    <value>Remote shutdown access rights</value>
+    <value>Uzaktan kapatma erişim hakları</value>
   </data>
   <data name="CannotWaitLocalComputer" xml:space="preserve">
-    <value>Cannot wait for the local computer to restart. The local computer is ignored when the Wait parameter is specified.</value>
+    <value>Yerel bilgisayarın yeniden başlatılması beklenemiyor. Wait parametresi belirtildiğinde yerel bilgisayar yoksayılır.</value>
   </data>
   <data name="RestartComputerInvalidParameter" xml:space="preserve">
-    <value>The parameters Timeout, For, and Delay are valid only when the parameter Wait is specified.</value>
+    <value>Timeout, For ve Delay parametreleri yalnızca Wait parametresi belirtildiğinde geçerlidir.</value>
   </data>
   <data name="RestartMultipleComputersActivity" xml:space="preserve">
-    <value> Restarting computers...</value>
+    <value> Bilgisayarlar yeniden başlatılıyor...</value>
   </data>
   <data name="RestartSingleComputerActivity" xml:space="preserve">
-    <value> Restarting computer {0}</value>
+    <value> Bilgisayar {0} yeniden başlatılıyor</value>
   </data>
   <data name="WaitForMultipleComputers" xml:space="preserve">
-    <value>Completed: {0}/{1}.</value>
+    <value>Tamamlandı: {0}/{1}.</value>
   </data>
   <data name="VerifyRebootStage" xml:space="preserve">
-    <value>Verifying that the computer has been restarted...</value>
+    <value>Bilgisayarın yeniden başlatıldığı doğrulanıyor...</value>
   </data>
   <data name="WaitForPowerShell" xml:space="preserve">
-    <value>Waiting for PowerShell connectivity...</value>
+    <value>PowerShell bağlantısı bekleniyor...</value>
   </data>
   <data name="WaitForRestartToBegin" xml:space="preserve">
-    <value>Waiting for the restart to begin...</value>
+    <value>Yeniden başlatmanın başlaması bekleniyor...</value>
   </data>
   <data name="WaitForWinRM" xml:space="preserve">
-    <value>Waiting for WinRM connectivity...</value>
+    <value>WinRM bağlantısı bekleniyor...</value>
   </data>
   <data name="WaitForWMI" xml:space="preserve">
-    <value>Waiting for WMI connectivity...</value>
+    <value>WMI bağlantısı bekleniyor...</value>
   </data>
   <data name="RestartComplete" xml:space="preserve">
-    <value>Restart is complete</value>
+    <value>Yeniden başlatma tamamlandı</value>
   </data>
   <data name="NoSupportForCombinedServiceType" xml:space="preserve">
-    <value>The combined service types are not supported for now.</value>
+    <value>Birleşik hizmet türleri şu anda desteklenmiyor.</value>
   </data>
   <data name="CannotResolveComputerName" xml:space="preserve">
-    <value>Computer name {0} cannot be resolved with the exception: {1}.</value>
+    <value>Bilgisayar adı {0} şu özel durum nedeniyle çözümlenemiyor: {1}.</value>
   </data>
   <data name="IncorrectNewNameNumber" xml:space="preserve">
-    <value>The number of new names is not equal to the number of target computers.</value>
+    <value>Yeni adların sayısı hedef bilgisayarların sayısına eşit değil.</value>
   </data>
   <data name="InvalidNewName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is not valid. The new computer name entered is not properly formatted. Standard names may contain letters (a-z, A-Z), numbers (0-9), and hyphens (-), but no spaces or periods (.). The name may not consist entirely of digits, and may not be longer than 63 characters.</value>
+    <value>Geçerli olmadığı için yeni adı '{1}' olan '{0}' bilgisayarını atlayın. Girilen yeni bilgisayar adı düzgün biçimlendirilmemiş. Standart adlar harfler (a-z, A-Z), sayılar (0-9) ve kısa çizgiler (-) içerebilir, ancak boşluk veya nokta (.) içeremez. Ad tamamen rakamlardan oluşamaz ve 63 karakterden uzun olamaz.</value>
   </data>
   <data name="NewNameIsOldName" xml:space="preserve">
-    <value>Skip computer '{0}' with new name '{1}' because the new name is the same as the current name.</value>
+    <value>Yeni ad geçerli adla aynı olduğundan, yeni adı '{1}' olan '{0}' bilgisayarını atlayın.</value>
   </data>
   <data name="ComputerNotInDomain" xml:space="preserve">
-    <value>Cannot remove computer '{0}' because it is not in a domain.</value>
+    <value>Bilgisayar '{0}' bir etki alanında olmadığından kaldırılamıyor.</value>
   </data>
   <data name="FailToJoinWorkGroup" xml:space="preserve">
-    <value>Failed to join computer '{0}' to workgroup '{1}' with the following error message: {2}</value>
+    <value>Bilgisayar '{0}', şu hata iletisiyle '{1}' çalışma grubuna katılamadı: {2}</value>
   </data>
   <data name="NetworkDown" xml:space="preserve">
-    <value>Cannot remove computer(s) from the domain because the local network is down.</value>
+    <value>Yerel ağ kapalı olduğundan bilgisayarlar etki alanından kaldırılamıyor.</value>
   </data>
   <data name="FailToRename" xml:space="preserve">
-    <value>Fail to rename computer '{0}' to '{1}' due to the following exception: {2}.</value>
+    <value>Şu özel durum nedeniyle '{0}' bilgisayarı '{1}' olarak yeniden adlandırılamadı: {2}.</value>
   </data>
   <data name="AddComputerActionDomain" xml:space="preserve">
-    <value>Join in domain '{0}'</value>
+    <value>'{0}' etki alanına katıl</value>
   </data>
   <data name="AddComputerActionWorkgroup" xml:space="preserve">
-    <value>Join in workgroup '{0}'</value>
+    <value>'{0}' çalışma grubuna katıl</value>
   </data>
   <data name="AddComputerToSameDomain" xml:space="preserve">
-    <value>Cannot add computer '{0}' to domain '{1}' because it is already in that domain.</value>
+    <value>Bilgisayar '{0}' zaten bu etki alanında olduğundan '{1}' etki alanına eklenemiyor.</value>
   </data>
   <data name="AddComputerToSameWorkgroup" xml:space="preserve">
-    <value>Cannot add computer '{0}' to workgroup '{1}' because it is already in that workgroup.</value>
+    <value>Bilgisayar '{0}' zaten bu çalışma grubunda olduğundan '{1}' çalışma grubuna eklenemiyor.</value>
   </data>
   <data name="FailToRenameAfterJoinWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' successfully joined the workgroup '{1}', but could not be renamed to '{2}' with the following error message: {3}.</value>
+    <value>Bilgisayar '{0}', '{1}' çalışma grubuna başarıyla katıldı, ancak şu hata iletisiyle '{2}' olarak yeniden adlandırılamadı: {3}.</value>
   </data>
   <data name="FailToSwitchFromDomainToWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from the domain '{1}', but it failed to join the workgroup '{2}' with the following error message: {3}.</value>
+    <value>Bilgisayar '{0}', '{1}' etki alanından başarıyla kaldırıldı ancak şu hata iletisiyle '{2}' çalışma grubuna katılamadı: {3}.</value>
   </data>
   <data name="FailToUnjoinDomain" xml:space="preserve">
-    <value>Failed to unjoin computer '{0}' from domain '{1}' with the following error message: {2}.</value>
+    <value>'{0}' bilgisayarının '{1}' etki alanından çıkarılması şu hata iletisi nedeniyle başarısız oldu: {2}.</value>
   </data>
   <data name="FailToConnectToComputer" xml:space="preserve">
-    <value>Cannot establish the WMI connection to the computer '{0}' with the following error message: {1}.</value>
+    <value>'{0}' bilgisayarına WMI bağlantısı şu hata iletisiyle kurulamıyor: {1}.</value>
   </data>
   <data name="FailToJoinDomainFromWorkgroup" xml:space="preserve">
-    <value>Computer '{0}' failed to join domain '{1}' from its current workgroup '{2}' with following error message: {3}.</value>
+    <value>Bilgisayar '{0}', geçerli çalışma grubu '{2}' içindeyken '{1}' etki alanına şu hata iletisiyle katılamadı: {3}.</value>
   </data>
   <data name="FailToJoinNewDomainAfterUnjoinOldDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully unjoined from domain '{1}', but failed to join the new domain '{2}' with the following error message: {3}.</value>
+    <value>Bilgisayar '{0}', '{1}' etki alanından başarıyla kaldırıldı ancak şu hata iletisiyle '{2}' yeni etki alanına katılamadı: {3}.</value>
   </data>
   <data name="FailToRenameAfterJoinDomain" xml:space="preserve">
-    <value>Computer '{0}' was successfully joined to the new domain '{1}', but renaming it to '{2}' failed with the following error message: {3}.</value>
+    <value>'{0}' bilgisayarı '{1}' yeni etki alanına başarıyla katıldı, ancak '{2}' olarak yeniden adlandırılması şu hata iletisiyle başarısız oldu: {3}.</value>
   </data>
   <data name="InvalidJoinOptions" xml:space="preserve">
-    <value>The flag '{0}' is valid only if flag '{1}' is specified.</value>
+    <value>'{0}' bayrağı yalnızca '{1}' bayrağı belirtildiğinde geçerlidir.</value>
   </data>
   <data name="CannotRenameMultipleComputers" xml:space="preserve">
-    <value>Cannot rename multiple computers. The NewName parameter is valid only if a single computer is specified.</value>
+    <value>Birden çok bilgisayar yeniden adlandırılamıyor. NewName parametresi yalnızca tek bir bilgisayar belirtildiğinde geçerlidir.</value>
   </data>
   <data name="CannotFindMachineAccountFromDomain" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer in the domain {0}.</value>
+    <value>{0} etki alanındaki yerel bilgisayarın bilgisayar hesabı bulunamıyor.</value>
   </data>
   <data name="CannotFindMachineAccountFromServer" xml:space="preserve">
-    <value>Cannot find the computer account for the local computer from the domain controller {0}.</value>
+    <value>{0} etki alanı denetleyicisinden yerel bilgisayarın bilgisayar hesabı bulunamıyor.</value>
   </data>
   <data name="FailToGetDomainInformation" xml:space="preserve">
-    <value>Cannot get domain information about the local computer because of the following exception: {0}.</value>
+    <value>Şu özel durum nedeniyle yerel bilgisayarın etki alanı bilgileri alınamıyor: {0}.</value>
   </data>
   <data name="FailToResetPasswordOnDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the computer account in the domain. Operation failed with the following exception: {0}.</value>
+    <value>Etki alanındaki bilgisayar hesabı için güvenli kanal parolası sıfırlanamıyor. İşlem aşağıdaki özel durumla başarısız oldu: {0}.</value>
   </data>
   <data name="FailToResetPasswordOnLocalMachine" xml:space="preserve">
-    <value>Resetting the secure channel password for the local computer failed with the following error message: {0}.</value>
+    <value>Yerel bilgisayarın güvenli kanal parolasını sıfırlama işlemi şu hata iletisiyle başarısız oldu: {0}.</value>
   </data>
   <data name="NeedAdminPrivilegeToResetPassword" xml:space="preserve">
-    <value>Administrator rights are required to reset the secure channel password on the local computer. Access is denied.</value>
+    <value>Yerel bilgisayarda güvenli kanal parolasını sıfırlamak için Yönetici hakları gereklidir. Erişim reddedildi.</value>
   </data>
   <data name="ResetComputerNotInDomain" xml:space="preserve">
-    <value>Cannot reset the secure channel password for the account of the local computer. The local computer is not currently part of a domain.</value>
+    <value>Yerel bilgisayar hesabı için güvenli kanal parolası sıfırlanamıyor. Yerel bilgisayar şu anda bir etki alanının parçası değil.</value>
   </data>
   <data name="TruncateNetBIOSName" xml:space="preserve">
-    <value>The NetBIOS name of the computer is limited to 15 bytes, which is 15 characters in this case. The NetBIOS name will be shortened to "{0}", which may cause conflicts under NetBIOS name resolution. Do you wish to continue?</value>
+    <value>Bilgisayarın NetBIOS adı 15 bayt ile sınırlıdır ve bu durumda 15 karakterdir. NetBIOS adı "{0}" olarak kısaltılacak. Bu durum NetBIOS ad çözümlemesinde çakışmalara neden olabilir. Devam etmek istiyor musunuz?</value>
   </data>
   <data name="TruncateNetBIOSNameCaption" xml:space="preserve">
-    <value>NetBIOS name will be truncated.</value>
+    <value>NetBIOS adı kesilecek.</value>
   </data>
   <data name="CannotResolveServerName" xml:space="preserve">
-    <value>The specified server name {0} cannot be resolved.</value>
+    <value>Belirtilen sunucu adı {0} çözümlenemiyor.</value>
   </data>
   <data name="CannotCreateRestorePointWarning" xml:space="preserve">
-    <value>A new system restore point cannot be created because one has already been created within the past {0} minutes. The frequency of restore point creation can be changed by creating the DWORD value 'SystemRestorePointCreationFrequency' under the registry key 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore'. The value of this registry key indicates the necessary time interval (in minutes) between two restore point creation. The default value is 1440 minutes (24 hours).</value>
+    <value>Son {0} dakika içinde zaten bir sistem geri yükleme noktası oluşturulduğundan yeni bir tane oluşturulamıyor. Geri yükleme noktası oluşturma sıklığı, 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore' kayıt defteri anahtarı altında 'SystemRestorePointCreationFrequency' DWORD değeri oluşturularak değiştirilebilir. Bu kayıt defteri anahtarının değeri, iki geri yükleme noktası oluşturma arasındaki gerekli zaman aralığını dakika cinsinden belirtir. Varsayılan değer 1440 dakikadır (24 saat).</value>
   </data>
   <data name="CannotGetOperatingSystemObject" xml:space="preserve">
-    <value>The Win32_OperatingSystem WMI object cannot be retrieved.</value>
+    <value>Win32_OperatingSystem WMI nesnesi alınamıyor.</value>
   </data>
   <data name="RestartComputerSkipped" xml:space="preserve">
-    <value>The computer {0} is skipped. Fail to retrieve its LastBootUpTime via the WMI service with the following error message: {1}.</value>
+    <value>Bilgisayar {0} atlandı. LastBootUpTime değeri WMI hizmeti üzerinden şu hata iletisiyle alınamadı: {1}.</value>
   </data>
   <data name="FailToTestSecureChannel" xml:space="preserve">
-    <value>Cannot verify the secure channel for the local computer. Operation failed with the following exception: {0}.</value>
+    <value>Yerel bilgisayar için güvenli kanal doğrulanamıyor. İşlem aşağıdaki özel durumla başarısız oldu: {0}.</value>
   </data>
   <data name="RepairSecureChannelFail" xml:space="preserve">
-    <value>The attempt to repair the secure channel between the local computer and the domain {0} has failed.</value>
+    <value>Yerel bilgisayar ile etki alanı {0} arasındaki güvenli kanalı onarma girişimi başarısız oldu.</value>
   </data>
   <data name="RepairSecureChannelSucceed" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} was successfully repaired.</value>
+    <value>Yerel bilgisayar ile etki alanı {0} arasındaki güvenli kanal başarıyla onarıldı.</value>
   </data>
   <data name="SecureChannelAlive" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is in good condition.</value>
+    <value>Yerel bilgisayar ile etki alanı {0} arasındaki güvenli kanal iyi durumda.</value>
   </data>
   <data name="SecureChannelBroken" xml:space="preserve">
-    <value>The secure channel between the local computer and the domain {0} is broken.</value>
+    <value>Yerel bilgisayar ile etki alanı {0} arasındaki güvenli kanal bozuk.</value>
   </data>
   <data name="TestComputerNotInDomain" xml:space="preserve">
-    <value>Cannot verify the secure channel password for the local computer. The local computer is not currently part of a domain.</value>
+    <value>Yerel bilgisayar için güvenli kanal doğrulanamıyor. Yerel bilgisayar şu anda bir etki alanının parçası değil.</value>
   </data>
   <data name="SystemRestoreNotSupported" xml:space="preserve">
-    <value>The operation cannot be performed because the system restore APIs are not supported on the Advanced RISC Machine (ARM) platform.</value>
+    <value>Sistem geri yükleme API'leri Advanced RISC Machine (ARM) platformunda desteklenmediğinden işlem gerçekleştirilemiyor.</value>
   </data>
   <data name="TimeoutError" xml:space="preserve">
-    <value>The computer did not finish restarting within the specified time-out period.</value>
+    <value>Bilgisayar belirtilen zaman aşımı süresi içinde yeniden başlatmayı tamamlamadı.</value>
   </data>
   <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
-    <value>Cannot validate the time interval for restore point creation. It failed to retrieve the last restore point with the following error message: {0}.</value>
+    <value>Geri yükleme noktası oluşturma zaman aralığı doğrulanamıyor. Son geri yükleme noktası şu hata iletisiyle alınamadı: {0}.</value>
   </data>
   <data name="InvalidParameterSetAsJob" xml:space="preserve">
-    <value>The AsJob Parameter Set is not supported.</value>
+    <value>AsJob Parametre Kümesi desteklenmiyor.</value>
   </data>
   <data name="InvalidParameterForCoreClr" xml:space="preserve">
-    <value>The {0} parameter is not supported for CoreCLR.</value>
+    <value>{0} parametresi CoreCLR için desteklenmiyor.</value>
   </data>
   <data name="ShutdownCommandNotFound" xml:space="preserve">
-    <value>The required native command 'shutdown' was not found.</value>
+    <value>Gerekli yerel 'shutdown' komutu bulunamadı.</value>
   </data>
 </root>

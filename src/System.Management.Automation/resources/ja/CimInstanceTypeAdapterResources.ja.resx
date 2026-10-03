@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BaseObjectNotCimInstance" xml:space="preserve">
-    <value>Cannot convert "{0}" to an object of type "{1}".</value>
+    <value>"{0}" を型 "{1}" のオブジェクトに変換できません。</value>
   </data>
   <data name="ReadOnlyCIMProperty" xml:space="preserve">
-    <value>"{0}" is a ReadOnly property.</value>
+    <value>"{0}" は読み取り専用プロパティです。</value>
     <comment>{0} gets property name</comment>
   </data>
 </root>

@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GetPfxCertPasswordPrompt" xml:space="preserve">
-    <value>Enter password: </value>
+    <value>암호 입력: </value>
   </data>
   <data name="NoneOfTheFilesFound" xml:space="preserve">
-    <value>Command cannot find any of the specified files.</value>
+    <value>명령이 지정한 파일을 하나도 찾을 수 없습니다.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>The following file could not be found: {0}.</value>
+    <value>다음 파일을 찾을 수 없습니다: {0}.</value>
   </data>
 </root>

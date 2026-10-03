@@ -118,36 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BadMonadVersion" xml:space="preserve">
-    <value>Incorrect PowerShell version {0}. PowerShell version {1} is supported on this computer.</value>
+    <value>Nesprávná verze PowerShellu {0}. Na tomto počítači je podporována verze PowerShellu {1}.</value>
   </data>
   <data name="ConsoleLoadFailure" xml:space="preserve">
-    <value>The following errors occurred when loading console {0}: {1}</value>
+    <value>Při načítání konzoly {0} došlo k následujícím chybám: {1}</value>
   </data>
   <data name="PSSnapInLoadFailure" xml:space="preserve">
-    <value>Cannot load PowerShell snap-in {0} because of the following error: {1}</value>
+    <value>Modul snap-in PowerShellu {0} nelze načíst z důvodu následující chyby: {1}</value>
   </data>
   <data name="PSSnapInLoadWarning" xml:space="preserve">
-    <value>PowerShell snap-in "{0}" loaded with the following warnings: {1}</value>
+    <value>Modul snap-in PowerShellu {0} byl načten s následujícími upozorněními: {1}</value>
   </data>
   <data name="PSSnapInAssemblyNameMismatch" xml:space="preserve">
-    <value>The PowerShell snap-in module {0} does not have the required PowerShell snap-in strong name {1}.</value>
+    <value>Modul snap-in PowerShellu {0} nemá požadovaný silný název modulu snap-in PowerShellu {1}.</value>
   </data>
   <data name="PSSnapInDuplicateCmdlets" xml:space="preserve">
-    <value>The cmdlet '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
+    <value>Rutina {0} se v modulu snap-in PowerShellu {1} nesmí vyskytovat více než jednou.</value>
   </data>
   <data name="PSSnapInDuplicateProviders" xml:space="preserve">
-    <value>PowerShell provider '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
+    <value>Zprostředkovatel PowerShellu {0} se v modulu snap-in PowerShellu {1} nesmí vyskytovat více než jednou.</value>
   </data>
   <data name="AddPSSnapInBadMonadVersion" xml:space="preserve">
-    <value>PowerShell {0} is not supported in the current console. PowerShell {1} is supported in the current console.</value>
+    <value>PowerShell {0} se v aktuální konzole nepodporuje. PowerShell {1} je v aktuální konzole podporován.</value>
   </data>
   <data name="FileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>Soubor {0} již existuje a už bylo zadáno: {1}.</value>
   </data>
   <data name="ConfigurationFileDoesNotExist" xml:space="preserve">
-    <value>The provided configuration file '{0}' does not exist.</value>
+    <value>Zadaný konfigurační soubor {0} neexistuje.</value>
   </data>
   <data name="NotConfigurationFile" xml:space="preserve">
-    <value>The provided configuration file '{0}' must have a .pssc file extension.</value>
+    <value>Poskytnutý konfigurační soubor {0} musí mít příponu souboru .pssc.</value>
   </data>
 </root>
