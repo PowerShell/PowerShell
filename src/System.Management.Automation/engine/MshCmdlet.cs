@@ -942,6 +942,82 @@ namespace System.Management.Automation
 
         #region public members
         /// <summary>
+        /// Stops upstream commands while allowing downstream commands to complete
+        /// their end processing.
+        /// </summary>
+        /// <remarks>
+        /// This method does not return. Call it on the pipeline thread during
+        /// BeginProcessing, ProcessRecord, or EndProcessing, after writing any output
+        /// for the current input. End processing for upstream commands and this
+        /// command is skipped, just as with Select-Object -First; script clean blocks
+        /// still run.
+        /// Do not catch the engine exception used to stop upstream commands.
+        /// Use <see cref="IsPowerShellControlFlowException"/> in broad exception filters.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">
+        /// The command is not executing on its pipeline thread.
+        /// </exception>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        public void StopUpstreamCommands()
+        {
+            if (commandRuntime is not MshCommandRuntime runtime
+                || runtime.PipelineProcessor?._permittedToWrite != this
+                || !runtime.PipelineProcessor._permittedToWriteToPipeline
+                || runtime.PipelineProcessor._permittedToWriteThread != System.Threading.Thread.CurrentThread)
+            {
+                throw PSTraceSource.NewInvalidOperationException(PipelineStrings.WriteNotPermitted);
+            }
+
+            ThrowIfStopping();
+            throw new StopUpstreamCommandsException(this);
+        }
+
+        /// <summary>
+        /// Determines whether an exception represents PowerShell engine control flow
+        /// and should be allowed to propagate.
+        /// </summary>
+        /// <param name="exception">The exception being considered by an exception filter.</param>
+        /// <returns>
+        /// True for flow-control, pipeline-stopped, action-preference-stop, and
+        /// halt-command exceptions, including reflection and PowerShell runtime wrappers;
+        /// otherwise, false.
+        /// </returns>
+        /// <remarks>
+        /// Use catch (Exception e) when (!PSCmdlet.IsPowerShellControlFlowException(e))
+        /// to handle ordinary errors without swallowing engine control flow.
+        /// This is not a test for every exception type defined by PowerShell.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="exception"/> is null.
+        /// </exception>
+        public static bool IsPowerShellControlFlowException(Exception exception)
+        {
+            ArgumentNullException.ThrowIfNull(exception);
+
+            while (true)
+            {
+                if (exception is FlowControlException
+                    or PipelineStoppedException
+                    or ActionPreferenceStopException
+                    or HaltCommandException)
+                {
+                    return true;
+                }
+
+                // Reflection and PowerShell invocation can wrap control-flow exceptions.
+                // Inspect the wrapped exception so callers do not accidentally swallow its signal.
+                if (exception is TargetInvocationException or RuntimeException
+                    && exception.InnerException is not null)
+                {
+                    exception = exception.InnerException;
+                    continue;
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
         /// The name of the parameter set in effect.
         /// </summary>
         /// <value>the parameter set name</value>
