@@ -600,7 +600,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         internal void WriteProgress(
-            Int64 sourceId,
+            long sourceId,
             ProgressRecord progressRecord)
         {
             if (commandRuntime != null)
