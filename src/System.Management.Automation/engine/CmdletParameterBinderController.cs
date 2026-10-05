@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -202,7 +203,7 @@ namespace System.Management.Automation
         internal void BindCommandLineParametersNoValidation(Collection<CommandParameterInternal> arguments)
         {
             var psCompiledScriptCmdlet = this.Command as PSScriptCmdlet;
-            psCompiledScriptCmdlet?.PrepareForBinding(this.CommandLineParameters);
+            psCompiledScriptCmdlet?.PrepareForBinding(this);
 
             InitUnboundArguments(arguments);
             CommandMetadata cmdletMetadata = _commandMetadata;
@@ -1596,139 +1597,145 @@ namespace System.Management.Automation
         {
             outgoingBindingException = null;
 
-            if (_commandMetadata.ImplementsDynamicParameters)
+            if (_commandMetadata.ImplementsDynamicParameters && this.Command is IDynamicParameters dynamicParameterCmdlet)
             {
                 using (ParameterBinderBase.bindingTracer.TraceScope(
                     "BIND cmd line args to DYNAMIC parameters."))
-                {
                     s_tracer.WriteLine("The Cmdlet supports the dynamic parameter interface");
+                if (_dynamicParameterBinder == null)
+                {
+                    s_tracer.WriteLine("Getting the bindable object from the Cmdlet");
 
-                    IDynamicParameters dynamicParameterCmdlet = this.Command as IDynamicParameters;
+                    // Now get the dynamic parameter bindable object.
+                    object dynamicParamBindableObject = null;
 
-                    if (dynamicParameterCmdlet != null)
+                    try
+                    {
+                        dynamicParamBindableObject = dynamicParameterCmdlet.GetDynamicParameters();
+                    }
+                    catch (ParameterBindingException e)
+                    {
+                        outgoingBindingException = e;
+                    }
+                    catch (Exception e) // Catch-all OK, this is a third-party callout
+                    {
+                        if (e is ProviderInvocationException)
+                        {
+                            throw;
+                        }
+
+                        ParameterBindingException bindingException =
+                            new ParameterBindingException(
+                                e,
+                                ErrorCategory.InvalidArgument,
+                                this.Command.MyInvocation,
+                                null,
+                                null,
+                                null,
+                                null,
+                                ParameterBinderStrings.GetDynamicParametersException,
+                                "GetDynamicParametersException",
+                                e.Message);
+
+                        // This exception is caused because failure happens when retrieving the dynamic parameters,
+                        // this is not caused by introducing the default parameter binding.
+                        throw bindingException;
+                    }
+
+                    if (dynamicParamBindableObject == null)
                     {
                         if (_dynamicParameterBinder == null)
                         {
-                            s_tracer.WriteLine("Getting the bindable object from the Cmdlet");
-
-                            // Now get the dynamic parameter bindable object.
-                            object dynamicParamBindableObject;
-
-                            try
-                            {
-                                dynamicParamBindableObject = dynamicParameterCmdlet.GetDynamicParameters();
-                            }
-                            catch (Exception e) // Catch-all OK, this is a third-party callout
-                            {
-                                if (e is ProviderInvocationException)
-                                {
-                                    throw;
-                                }
-
-                                ParameterBindingException bindingException =
-                                    new ParameterBindingException(
-                                        e,
-                                        ErrorCategory.InvalidArgument,
-                                        this.Command.MyInvocation,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        ParameterBinderStrings.GetDynamicParametersException,
-                                        "GetDynamicParametersException",
-                                        e.Message);
-
-                                // This exception is caused because failure happens when retrieving the dynamic parameters,
-                                // this is not caused by introducing the default parameter binding.
-                                throw bindingException;
-                            }
-
-                            if (dynamicParamBindableObject != null)
-                            {
-                                ParameterBinderBase.bindingTracer.WriteLine(
-                                    "DYNAMIC parameter object: [{0}]",
-                                    dynamicParamBindableObject.GetType());
-
-                                s_tracer.WriteLine("Creating a new parameter binder for the dynamic parameter object");
-
-                                InternalParameterMetadata dynamicParameterMetadata;
-
-                                RuntimeDefinedParameterDictionary runtimeParamDictionary = dynamicParamBindableObject as RuntimeDefinedParameterDictionary;
-                                if (runtimeParamDictionary != null)
-                                {
-                                    // Generate the type metadata for the runtime-defined parameters
-                                    dynamicParameterMetadata =
-                                        InternalParameterMetadata.Get(runtimeParamDictionary, true, true);
-
-                                    _dynamicParameterBinder =
-                                        new RuntimeDefinedParameterBinder(
-                                            runtimeParamDictionary,
-                                            this.Command,
-                                            this.CommandLineParameters);
-                                }
-                                else
-                                {
-                                    // Generate the type metadata or retrieve it from the cache
-                                    dynamicParameterMetadata =
-                                        InternalParameterMetadata.Get(dynamicParamBindableObject.GetType(), Context, true);
-
-                                    // Create the parameter binder for the dynamic parameter object
-
-                                    _dynamicParameterBinder =
-                                        new ReflectionParameterBinder(
-                                            dynamicParamBindableObject,
-                                            this.Command,
-                                            this.CommandLineParameters);
-                                }
-
-                                // Now merge the metadata with other metadata for the command
-
-                                var dynamicParams =
-                                    BindableParameters.AddMetadataForBinder(
-                                        dynamicParameterMetadata,
-                                        ParameterBinderAssociation.DynamicParameters);
-                                foreach (var param in dynamicParams)
-                                {
-                                    UnboundParameters.Add(param);
-                                }
-
-                                // Now set the parameter set flags for the new type metadata.
-                                _commandMetadata.DefaultParameterSetFlag =
-                                    this.BindableParameters.GenerateParameterSetMappingFromMetadata(_commandMetadata.DefaultParameterSetName);
-                            }
-                        }
-
-                        if (_dynamicParameterBinder == null)
-                        {
-                            s_tracer.WriteLine("No dynamic parameter object was returned from the Cmdlet");
+                            s_tracer.WriteLine("No dynamic parameter object or RuntimeDefinedParameters were returned from the Cmdlet");
                             return;
-                        }
-
-                        if (UnboundArguments.Count > 0)
+                        }else
                         {
-                            using (ParameterBinderBase.bindingTracer.TraceScope(
-                                    "BIND NAMED args to DYNAMIC parameters"))
-                            {
-                                // Try to bind the unbound arguments as static parameters to the
-                                // dynamic parameter object.
-
-                                ReparseUnboundArguments();
-
-                                UnboundArguments = BindNamedParameters(_currentParameterSetFlag, UnboundArguments);
-                            }
-
-                            using (ParameterBinderBase.bindingTracer.TraceScope(
-                                    "BIND POSITIONAL args to DYNAMIC parameters"))
-                            {
-                                UnboundArguments =
-                                    BindPositionalParameters(
-                                    UnboundArguments,
-                                    _currentParameterSetFlag,
-                                    _commandMetadata.DefaultParameterSetFlag,
-                                    out outgoingBindingException);
-                            }
+                            s_tracer.WriteLine("RuntimeDefinedParameters were just-in-time bound from the output pipeline of the dynamicparam block");
                         }
                     }
+                    else
+                    {
+                        ParameterBinderBase.bindingTracer.WriteLine(
+                            "DYNAMIC parameter object: [{0}]",
+                            dynamicParamBindableObject.GetType());
+
+                        // Now merge the metadata with other metadata for the command
+
+                        MergeStaticAndDynamicParameterMetadata(dynamicParamBindableObject);
+                    }
+                }
+                BindDynamicParameters(out outgoingBindingException);
+            }
+        }
+
+        internal void MergeStaticAndDynamicParameterMetadata(object dynamicParamBindableObject)
+        {
+            InternalParameterMetadata dynamicParameterMetadata;
+            if (dynamicParamBindableObject is RuntimeDefinedParameterDictionary runtimeParamDictionary)
+            {
+                // Generate the type metadata for the runtime-defined parameters
+                dynamicParameterMetadata =
+                    InternalParameterMetadata.Get(runtimeParamDictionary, true, true);
+                s_tracer.WriteLine("Creating a new {0} for the returned RuntimeDefinedParameterDictionary", nameof(RuntimeDefinedParameterBinder));
+                _dynamicParameterBinder =
+                    new RuntimeDefinedParameterBinder(
+                        runtimeParamDictionary,
+                        this.Command,
+                        this.CommandLineParameters);
+            }
+            else
+            {
+                // Generate the type metadata or retrieve it from the cache
+                Type objectType = dynamicParamBindableObject.GetType();
+                dynamicParameterMetadata =
+                    InternalParameterMetadata.Get(objectType, Context, true);
+
+                // Create the parameter binder for the dynamic parameter object
+                s_tracer.WriteLine("Creating a new {0} for the returned object type [{1}]", nameof(ReflectionParameterBinder), objectType.FullName);
+
+                _dynamicParameterBinder =
+                    new ReflectionParameterBinder(
+                        dynamicParamBindableObject,
+                        this.Command,
+                        this.CommandLineParameters);
+            }
+            var dynamicParams = BindableParameters.AddMetadataForBinder(
+                                                    dynamicParameterMetadata,
+                                                    ParameterBinderAssociation.DynamicParameters);
+            foreach (var param in dynamicParams)
+            {
+                UnboundParameters.Add(param);
+            }
+            // Now set the parameter set flags for the new type metadata.
+            _commandMetadata.DefaultParameterSetFlag =
+                                                this.BindableParameters.GenerateParameterSetMappingFromMetadata(_commandMetadata.DefaultParameterSetName);
+        }
+
+        internal void BindDynamicParameters(out ParameterBindingException outgoingBindingException)
+        {
+            outgoingBindingException = null;
+            if (UnboundArguments.Count > 0)
+            {
+                using (ParameterBinderBase.bindingTracer.TraceScope(
+                        "BIND NAMED args to DYNAMIC parameters"))
+                {
+                    // Try to bind the unbound arguments as static parameters to the
+                    // dynamic parameter object.
+
+                    ReparseUnboundArguments();
+
+                    UnboundArguments = BindNamedParameters(_currentParameterSetFlag, UnboundArguments);
+                }
+
+                using (ParameterBinderBase.bindingTracer.TraceScope(
+                        "BIND POSITIONAL args to DYNAMIC parameters"))
+                {
+                    UnboundArguments =
+                        BindPositionalParameters(
+                        UnboundArguments,
+                        _currentParameterSetFlag,
+                        _commandMetadata.DefaultParameterSetFlag,
+                        out outgoingBindingException);
                 }
             }
         }

@@ -1,81 +1,182 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
-    BeforeAll {
-        Class MyTestParameter {
-            [parameter(ParameterSetName = 'pset1', position=0, mandatory=1)]
-            [string] $name
+Describe "Dynamic parameters" -Tags "CI" {
+    context "Dynamic Parameter Basics" {
+        BeforeAll {
+            function Test-DynamicParameterBasics {
+                [CmdletBinding()]
+                param()
+
+                dynamicParam {
+                    $dynamicParams = [Management.Automation.RuntimeDefinedParameterDictionary]::new()
+                    $dynamicParams.Add(
+                        "Foo", [Management.Automation.RuntimeDefinedParameter]::new(
+                            "Foo",
+                            [int],
+                            @(
+                                $parameter = [Parameter]::new()
+                                $parameter.Mandatory = $true
+                                $parameter.Position = 0
+                                $parameter
+                            )
+                        )
+                    )
+                    $dynamicParams.Add(
+                        "Bar", [Management.Automation.RuntimeDefinedParameter]::new(
+                            "Bar",
+                            [string],
+                            @(
+                                $parameter = [Parameter]::new()
+                                $parameter.Position = 1
+                                $parameter
+                            )
+                        )
+                    )
+                    $dynamicParams
+                }
+
+                process {
+                    [PSCustomObject]([Ordered]@{} + $PSBoundParameters)
+                }
+            }
+        }
+        it "Will bind to dynamic parameters" {
+            $output = Test-DynamicParameterBasics -Foo 1 -bar 2
+            $output.Foo | Should -be 1
+            $output.bar | Should -be 2
         }
 
-        function foo-bar
-        {
-            [CmdletBinding()]
-            param($path)
-
-            dynamicparam {
-                if ($PSBoundParameters["path"] -contains "abc") {
-                    $attributes = [System.Management.Automation.ParameterAttribute]::New()
-                    $attributes.ParameterSetName = 'pset1'
-                    $attributes.Mandatory = $false
-
-                    $attributeCollection = [System.Collections.ObjectModel.Collection``1[System.Attribute]]::new()
-                    $attributeCollection.Add($attributes)
-
-                    $dynParam1 = [System.Management.Automation.RuntimeDefinedParameter]::new("dp1", [Int32], $attributeCollection)
-
-                    $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
-                    $paramDictionary.Add("dp1", $dynParam1)
-
-                    return $paramDictionary
-                }
-                elseif($PSBoundParameters["path"] -contains "class") {
-                    $paramDictionary = [MyTestParameter]::new()
-                    return $paramDictionary
-                }
-
-                $paramDictionary = $null
-                return $null
-            }
-
-            begin {
-                if(($null -ne $paramDictionary) -and ($paramDictionary -is [MyTestParameter]) ) {
-                    $paramDictionary.name
-                }
-                elseif ($null -ne $paramDictionary) {
-                    if ($null -ne $paramDictionary.dp1.Value) {
-                        $paramDictionary.dp1.Value
-                    }
-                    else {
-                        "dynamic parameters not passed"
-                    }
-                }
-                else {
-                  "no dynamic parameters"
-                }
-            }
-
-            process {}
-            end {}
+        it "Will allow dynamic parameters to be accessed from .Parameters" {
+            (Get-Command Test-DynamicParameterBasics).Parameters["Foo"].Attributes |
+                Where-Object { $_.Mandatory -is [bool] } |
+                Select-Object -ExpandProperty Mandatory |
+                Should -Be $true
+            (Get-Command Test-DynamicParameterBasics).Parameters["Bar"] | Should -not -be $null
         }
     }
 
-    It "The dynamic parameter is enabled and bound" {
-        foo-bar -path abc -dp1 42 | Should -Be 42
+    context "Dynamic Parameters Using InvocationName" {
+        BeforeAll {
+            function Test-DynamicParameterWithSmartAlias {
+                [CmdletBinding()]
+                param()
+
+                dynamicParam {
+                    if ($MyInvocation.InvocationName -and
+                        ($MyInvocation.InvocationName -ne $MyInvocation.MyCommand.Name)) {
+                        $dynamicParams = [Management.Automation.RuntimeDefinedParameterDictionary]::new()
+                        $dynamicParams.Add(
+                        "$($MyInvocation.InvocationName)", [Management.Automation.RuntimeDefinedParameter]::new(
+                            "$($MyInvocation.InvocationName)",
+                            [switch],
+                            @(
+                                [Parameter]::new()
+                            )
+                        )
+                        )
+                        $dynamicParams
+                    }
+
+                }
+
+                process {
+                    [Ordered]@{} + $PSBoundParameters
+                }
+            }
+
+            Set-Alias AliasingWithDynamicParameters Test-DynamicParameterWithSmartAlias
+            Set-Alias ItIsPossibleToHaveMultipleAliasesToTheSameCommand Test-DynamicParameterWithSmartAlias
+            Set-Alias YouCanUseCommandNamesToInfluenceDynamicParameters Test-DynamicParameterWithSmartAlias
+        }
+
+        it "Can have different parameters depending on what it is called" {
+            AliasingWithDynamicParameters -AliasingWithDynamicParameters
+            ItIsPossibleToHaveMultipleAliasesToTheSameCommand -ItIsPossibleToHaveMultipleAliasesToTheSameCommand
+            YouCanUseCommandNamesToInfluenceDynamicParameters -YouCanUseCommandNamesToInfluenceDynamicParameters
+        }
     }
 
-    It "When the dynamic parameter is not available, and raises an error when specified" {
-        { foo-bar -path def -dp1 42 } | Should -Throw -ErrorId "NamedParameterNotFound,foo-bar"
-    }
+    context "Emitting Dynamic Parameters" {
+        BeforeAll {
 
-    It "No dynamic parameter shouldn't cause an errr " {
-        foo-bar -path def  | Should -BeExactly 'no dynamic parameters'
-    }
+            function Test-DynamicEmit {
+                [CmdletBinding()]
+                param($path)
 
-    It "Not specifying dynamic parameter shouldn't cause an error" {
-        foo-bar -path abc | Should -BeExactly 'dynamic parameters not passed'
-    }
+                dynamicparam {
+                    # $Input will contain the command elements of the current invocation.
+                    # $_ will be the current command.
 
-    It "Parameter is defined in Class" {
-        foo-bar -path class -Name "myName" | Should -BeExactly 'myName'
+                    # Simply emit a few dynamic parameters.
+                    # All dynamic emitted dynamic parameters will be joined into a dictionary.
+                    [Management.Automation.RuntimeDefinedParameter]::new(
+                        "Foo",
+                        [string],
+                        @([Parameter]::new())
+                    )
+
+                    [Management.Automation.RuntimeDefinedParameter]::new(
+                        "Bar",
+                        [string],
+                        @([Parameter]::new())
+                    )
+
+                    [Management.Automation.RuntimeDefinedParameter]::new(
+                        "Baz",
+                        [string],
+                        @([Parameter]::new())
+                    )
+                }
+
+                process {
+                    @($PSBoundParameters.Values)
+                }
+            }
+
+            function Test-DynamicConditionalEmit {
+                [CmdletBinding()]
+                param($path)
+
+                dynamicparam {
+                    # $Input will contain the command elements of the current invocation.
+                    # $_ will be the current command.
+                    $pathToBe = @($input)[1]
+
+                    # This is a simple and easily testable example, and not anywhere near complete parsing
+                    # (this check will only work if $Path is assigned positionally)
+                    if ($pathToBe -is [Management.Automation.Language.StringConstantExpressionAst]) {
+                        $pathToBe = $pathToBe.Value
+                    }
+
+                    # If the path is not explicitly "badPath"
+                    if ($pathToBe -ne "BadPath") {
+                        # create a dynamic parameter
+                        [Management.Automation.RuntimeDefinedParameter]::new(
+                            "foo",
+                            [int],
+                            @([Parameter]::new())
+                        )
+                    }
+                }
+
+                process {
+                    @($PSBoundParameters.Values)
+                }
+            }
+
+
+        }
+
+        it "Can emit dynamic parameters, rather than returning a RuntimeParameterDictionary" {
+            Test-DynamicEmit -Foo 1 -Bar 2 -Baz 3 | Should -Be @(1,2,3)
+        }
+
+        it "Can conditionally emit a parameter" {
+            Test-DynamicConditionalEmit -Foo 1 | Should -Be @(1)
+        }
+
+        it "Can conditionally _not_ emit a parameter" {
+            { Test-DynamicConditionalEmit badpath -Foo 1 -ErrorAction stop } | Should -Throw
+        }
     }
 }
