@@ -75,13 +75,11 @@ namespace System.Diagnostics.Eventing
         private const int FORMAT_MESSAGE_ARGUMENT_ARRAY = 0x00002000;
 
         [DllImport(FormatMessageDllName, CharSet = CharSet.Unicode, BestFitMapping = false)]
-        [SecurityCritical]
         internal static extern int FormatMessage(int dwFlags, IntPtr lpSource,
             int dwMessageId, int dwLanguageId, StringBuilder lpBuffer,
             int nSize, IntPtr va_list_arguments);
 
         // Gets an error message for a Win32 error code.
-        [SecurityCritical]
         internal static string GetMessage(int errorCode)
         {
             StringBuilder sb = new(512);
@@ -104,7 +102,6 @@ namespace System.Diagnostics.Eventing
 
         // ETW Methods
         // Callback
-        [SecurityCritical]
         internal unsafe delegate void EtwEnableCallback(
             [In] ref Guid sourceId,
             [In] int isEnabled,
@@ -117,7 +114,6 @@ namespace System.Diagnostics.Eventing
 
         // Registration APIs
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventRegister", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-        [SecurityCritical]
         internal static extern unsafe uint EventRegister(
                     [In] in Guid providerId,
                     [In] EtwEnableCallback enableCallback,
@@ -126,21 +122,17 @@ namespace System.Diagnostics.Eventing
                     );
 
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventUnregister", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-        [SecurityCritical]
         internal static extern int EventUnregister([In] long registrationHandle);
 
         // Control (Is Enabled) APIs
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventEnabled", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-        [SecurityCritical]
         internal static extern int EventEnabled([In] long registrationHandle, [In] in System.Diagnostics.Eventing.EventDescriptor eventDescriptor);
 
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventProviderEnabled", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-        [SecurityCritical]
         internal static extern int EventProviderEnabled([In] long registrationHandle, [In] byte level, [In] long keywords);
 
         // Writing (Publishing/Logging) APIs
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventWrite", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-        [SecurityCritical]
         internal static extern unsafe uint EventWrite(
                 [In] long registrationHandle,
                 [In] in EventDescriptor eventDescriptor,
@@ -150,7 +142,6 @@ namespace System.Diagnostics.Eventing
 
         // Writing (Publishing/Logging) APIs
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventWrite", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-        [SecurityCritical]
         internal static extern unsafe uint EventWrite(
                 [In] long registrationHandle,
                 [In] EventDescriptor* eventDescriptor,
@@ -159,7 +150,6 @@ namespace System.Diagnostics.Eventing
                 );
 
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventWriteTransfer", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-        [SecurityCritical]
         internal static extern unsafe uint EventWriteTransfer(
                 [In] long registrationHandle,
                 [In] in EventDescriptor eventDescriptor,
@@ -170,7 +160,6 @@ namespace System.Diagnostics.Eventing
                 );
 
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventWriteString", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-        [SecurityCritical]
         internal static extern unsafe uint EventWriteString(
                 [In] long registrationHandle,
                 [In] byte level,
@@ -180,7 +169,6 @@ namespace System.Diagnostics.Eventing
 
         // ActivityId Control APIs
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventActivityIdControl", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-        [SecurityCritical]
         internal static extern unsafe uint EventActivityIdControl([In] int ControlCode, [In][Out] ref Guid ActivityId);
 
         // EventLog
@@ -264,7 +252,6 @@ namespace System.Diagnostics.Eventing
         }
 
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
-        [SecurityCritical]
         internal struct EvtVariant
         {
             [FieldOffset(0)]
@@ -531,7 +518,6 @@ namespace System.Diagnostics.Eventing
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Domain;
 
-            [SecurityCritical]
             public CoTaskMemUnicodeSafeHandle Password;
 
             public int Flags;
@@ -550,7 +536,6 @@ namespace System.Diagnostics.Eventing
         }
 
         [DllImport(WEVTAPI, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
-        [SecurityCritical]
         internal static extern EventLogHandle EvtQuery(
                             EventLogHandle session,
                             [MarshalAs(UnmanagedType.LPWStr)] string path,
@@ -559,7 +544,6 @@ namespace System.Diagnostics.Eventing
 
         // SEEK
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtSeek(
                             EventLogHandle resultSet,
@@ -570,7 +554,6 @@ namespace System.Diagnostics.Eventing
                                         );
 
         [DllImport(WEVTAPI, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtNext(
                             EventLogHandle queryHandle,
@@ -581,12 +564,10 @@ namespace System.Diagnostics.Eventing
                             ref int returned);
 
         [DllImport(WEVTAPI, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtCancel(EventLogHandle handle);
 
         [DllImport(WEVTAPI)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtClose(IntPtr handle);
 
@@ -598,7 +579,6 @@ namespace System.Diagnostics.Eventing
          */
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetEventInfo(
                             EventLogHandle eventHandle,
@@ -610,7 +590,6 @@ namespace System.Diagnostics.Eventing
                                             );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetQueryInfo(
                             EventLogHandle queryHandle,
@@ -622,7 +601,6 @@ namespace System.Diagnostics.Eventing
 
         // PUBLISHER METADATA
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         internal static extern EventLogHandle EvtOpenPublisherMetadata(
                             EventLogHandle session,
                             [MarshalAs(UnmanagedType.LPWStr)] string publisherId,
@@ -632,7 +610,6 @@ namespace System.Diagnostics.Eventing
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetPublisherMetadataProperty(
                             EventLogHandle publisherMetadataHandle,
@@ -645,7 +622,6 @@ namespace System.Diagnostics.Eventing
 
         // NEW
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetObjectArraySize(
                             EventLogHandle objectArray,
@@ -653,7 +629,6 @@ namespace System.Diagnostics.Eventing
                                         );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetObjectArrayProperty(
                             EventLogHandle objectArray,
@@ -667,14 +642,12 @@ namespace System.Diagnostics.Eventing
 
         // NEW 2
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         internal static extern EventLogHandle EvtOpenEventMetadataEnum(
                             EventLogHandle publisherMetadata,
                             int flags
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         // public static extern IntPtr EvtNextEventMetadata(
         internal static extern EventLogHandle EvtNextEventMetadata(
                             EventLogHandle eventMetadataEnum,
@@ -682,7 +655,6 @@ namespace System.Diagnostics.Eventing
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetEventMetadataProperty(
                             EventLogHandle eventMetadata,
@@ -695,14 +667,12 @@ namespace System.Diagnostics.Eventing
 
         // Channel Configuration Native Api
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         internal static extern EventLogHandle EvtOpenChannelEnum(
                             EventLogHandle session,
                             int flags
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtNextChannelPath(
                             EventLogHandle channelEnum,
@@ -713,14 +683,12 @@ namespace System.Diagnostics.Eventing
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         internal static extern EventLogHandle EvtOpenPublisherEnum(
                             EventLogHandle session,
                             int flags
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtNextPublisherId(
                             EventLogHandle publisherEnum,
@@ -730,7 +698,6 @@ namespace System.Diagnostics.Eventing
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         internal static extern EventLogHandle EvtOpenChannelConfig(
                             EventLogHandle session,
                             [MarshalAs(UnmanagedType.LPWStr)] string channelPath,
@@ -738,7 +705,6 @@ namespace System.Diagnostics.Eventing
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtSaveChannelConfig(
                             EventLogHandle channelConfig,
@@ -746,7 +712,6 @@ namespace System.Diagnostics.Eventing
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtSetChannelConfigProperty(
                             EventLogHandle channelConfig,
@@ -756,7 +721,6 @@ namespace System.Diagnostics.Eventing
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetChannelConfigProperty(
                             EventLogHandle channelConfig,
@@ -769,7 +733,6 @@ namespace System.Diagnostics.Eventing
 
         // Log Information Native API
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         internal static extern EventLogHandle EvtOpenLog(
                             EventLogHandle session,
                             [MarshalAs(UnmanagedType.LPWStr)] string path,
@@ -777,7 +740,6 @@ namespace System.Diagnostics.Eventing
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetLogInfo(
                             EventLogHandle log,
@@ -789,7 +751,6 @@ namespace System.Diagnostics.Eventing
 
         // LOG MANIPULATION
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtExportLog(
                             EventLogHandle session,
@@ -800,7 +761,6 @@ namespace System.Diagnostics.Eventing
                                         );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtArchiveExportedLog(
                             EventLogHandle session,
@@ -810,7 +770,6 @@ namespace System.Diagnostics.Eventing
                                         );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtClearLog(
                             EventLogHandle session,
@@ -821,7 +780,6 @@ namespace System.Diagnostics.Eventing
 
         // RENDERING
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         internal static extern EventLogHandle EvtCreateRenderContext(
                             int valuePathsCount,
                             [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)]
@@ -830,7 +788,6 @@ namespace System.Diagnostics.Eventing
                                     );
 
         [DllImport(WEVTAPI, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtRender(
                             EventLogHandle context,
@@ -843,7 +800,6 @@ namespace System.Diagnostics.Eventing
                                         );
 
         [DllImport(WEVTAPI, EntryPoint = "EvtRender", CallingConvention = CallingConvention.Winapi, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtRender(
                             EventLogHandle context,
@@ -869,7 +825,6 @@ namespace System.Diagnostics.Eventing
         }
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtFormatMessage(
                              EventLogHandle publisherMetadataHandle,
@@ -884,7 +839,6 @@ namespace System.Diagnostics.Eventing
                                         );
 
         [DllImport(WEVTAPI, EntryPoint = "EvtFormatMessage", CallingConvention = CallingConvention.Winapi, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtFormatMessageBuffer(
                              EventLogHandle publisherMetadataHandle,
@@ -900,7 +854,6 @@ namespace System.Diagnostics.Eventing
 
         // SESSION
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         internal static extern EventLogHandle EvtOpenSession(
                             [MarshalAs(UnmanagedType.I4)] EvtLoginClass loginClass,
                             ref EvtRpcLogin login,
@@ -910,13 +863,11 @@ namespace System.Diagnostics.Eventing
 
         // BOOKMARK
         [DllImport(WEVTAPI, EntryPoint = "EvtCreateBookmark", CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         internal static extern EventLogHandle EvtCreateBookmark(
                             [MarshalAs(UnmanagedType.LPWStr)] string bookmarkXml
                                         );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtUpdateBookmark(
                             EventLogHandle bookmark,
