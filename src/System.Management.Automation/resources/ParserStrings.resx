@@ -1374,6 +1374,6 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Configuration keyword is not supported on ARM64 processors.</value>
   </data>
   <data name="BackgroundThreadJobModuleNotAvailable" xml:space="preserve">
-    <value>The BackgroundThreadJob operator requires the Microsoft.PowerShell.ThreadJob module to be installed.</value>
+    <value>The BackgroundThreadJob operator "&amp;!" requires the Microsoft.PowerShell.ThreadJob module to be installed. Otherwise please use the standard "&amp;" BackgroundJob operator.</value>
   </data>
 </root>
