@@ -558,7 +558,7 @@ namespace System.Management.Automation
 
                 // For background jobs rewrite the pipeline as a Start-Job command
                 ScriptBlock sb;
-                
+
                 // Check if the pipeline is already a script block expression (e.g., {1+1} &!)
                 // In this case, we should use the script block directly instead of wrapping it
                 // Note: PipelineElements is only available on PipelineAst, not PipelineBaseAst
@@ -620,33 +620,28 @@ namespace System.Management.Automation
                     updatedScriptblock.Append(scriptblockBodyString.AsSpan(position));
                     sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 }
-                
+
                 // Use Start-ThreadJob if BackgroundThreadJob is set, otherwise use Start-Job
                 CmdletInfo commandInfo;
                 bool usingThreadJob = false;
                 if (pipelineAst.BackgroundThreadJob)
                 {
-                    // Use CommandTypes.Cmdlet only to avoid resolving a user-defined function that
-                    // shadows the real Start-ThreadJob cmdlet, which would cause &! to silently fall
-                    // back to Start-Job even when the ThreadJob module is installed.
-                    var threadJobCmdlet = context.SessionState.InvokeCommand.GetCommand("Start-ThreadJob", CommandTypes.Cmdlet) as CmdletInfo;
-                    if (threadJobCmdlet != null)
-                    {
-                        commandInfo = threadJobCmdlet;
-                        usingThreadJob = true;
-                    }
-                    else
-                    {
-                        // Fall back to Start-Job if Start-ThreadJob cmdlet is not available
-                        commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
-                    }
+                    commandInfo = context.SessionState.InvokeCommand.GetCommand(
+                    "Start-ThreadJob",
+                    CommandTypes.Cmdlet) as CmdletInfo
+                    ?? throw new InvalidOperationException("Start-ThreadJob not found");
+                    usingThreadJob = true;
                 }
                 else
                 {
                     commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                 }
-                
-                commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
+
+                commandProcessor = context.CommandDiscovery.LookupCommandProcessor(
+                commandInfo,
+                CommandOrigin.Internal,
+                false,
+                context.EngineSessionState);
 
                 // Only add WorkingDirectory parameter for Start-Job, not for Start-ThreadJob
                 // Start-ThreadJob doesn't support the WorkingDirectory parameter
@@ -3711,7 +3706,8 @@ namespace System.Management.Automation
     {
 #if DEBUG
         private static readonly Lazy<bool> DumpLogAMSIContent = new Lazy<bool>(
-            () => {
+            () =>
+            {
                 object result = Environment.GetEnvironmentVariable("__PSDumpAMSILogContent");
                 if (result != null && LanguagePrimitives.TryConvertTo(result, out int value))
                 {
