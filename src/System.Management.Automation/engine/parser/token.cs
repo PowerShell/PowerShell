@@ -429,7 +429,7 @@ namespace System.Management.Automation.Language
         QuestionLBracket = 104,
 
         /// <summary>The ThreadJob background operator '&amp;!'.</summary>
-        AmpersandExclaim = 106,
+        AmpersandExclaim = 105,
 
         #endregion Operators
 
@@ -698,6 +698,11 @@ namespace System.Management.Automation.Language
         /// The token is one of the assignment operators: '=', '+=', '-=', '*=', '/=', '%=' or '??='
         /// </summary>
         AssignmentOperator = 0x00002000,
+
+        /// <summary>
+        /// The token is the BackgroundThreadJob operator '&!'.
+        /// </summary>
+        BackgroundThreadOperator = 0x00004000,
 
         /// <summary>
         /// The token is scanned identically in expression mode or command mode.
