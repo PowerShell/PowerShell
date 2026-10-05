@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "ThreadJob Background Operator &! Tests" -Tag CI {
+Describe "Background ThreadJob Operator &! Tests" -Tag CI {
     BeforeAll {
         # Ensure ThreadJob module is available
         $threadJobAvailable = $null -ne (Get-Command Start-ThreadJob -ErrorAction SilentlyContinue)
-        
+
         if (-not $threadJobAvailable) {
-            Write-Warning "Start-ThreadJob command not available. Tests may fall back to regular jobs."
+            Write-Warning "Start-ThreadJob command not available. The BackgroundThreadJob operator '&!' tests will be skipped."
         }
     }
 
@@ -71,27 +71,6 @@ Describe "ThreadJob Background Operator &! Tests" -Tag CI {
             try {
                 $job | Should -Not -BeNullOrEmpty
                 $job.PSJobTypeName | Should -Be 'ThreadJob'
-
-                $completedJob = $job | Wait-Job -Timeout 30
-                if (-not $completedJob) {
-                    throw "Job did not complete within the allotted timeout (30 seconds)."
-                }
-            }
-            finally {
-                if ($null -ne $job) {
-                    $job | Remove-Job -Force -ErrorAction Ignore
-                }
-            }
-        }
-
-        It "Falls back to regular job when Start-ThreadJob is unavailable" -Skip:$threadJobAvailable {
-            # This test runs only when ThreadJob is not available
-            $job = Write-Output "Fallback Test" &!
-            try {
-                $job | Should -Not -BeNullOrEmpty
-                $job | Should -BeOfType [System.Management.Automation.Job]
-                # Should not be a ThreadJob
-                $job.PSJobTypeName | Should -Not -Be 'ThreadJob'
 
                 $completedJob = $job | Wait-Job -Timeout 30
                 if (-not $completedJob) {
@@ -263,7 +242,7 @@ Describe "ThreadJob Background Operator &! Tests" -Tag CI {
         It "Rejects &! with && in invalid syntax" {
             $tokens = $errors = $null
             $null = [System.Management.Automation.Language.Parser]::ParseInput('testexe -returncode 0 &! && testexe -returncode 1', [ref]$tokens, [ref]$errors)
-            
+
             $errors.Count | Should -BeGreaterThan 0
             $errors[0].ErrorId | Should -Be 'BackgroundOperatorInPipelineChain'
         }
@@ -271,7 +250,7 @@ Describe "ThreadJob Background Operator &! Tests" -Tag CI {
         It "Rejects &! with || in invalid syntax" {
             $tokens = $errors = $null
             $null = [System.Management.Automation.Language.Parser]::ParseInput('testexe -returncode 0 &! || testexe -returncode 1', [ref]$tokens, [ref]$errors)
-            
+
             $errors.Count | Should -BeGreaterThan 0
             $errors[0].ErrorId | Should -Be 'BackgroundOperatorInPipelineChain'
         }
@@ -303,7 +282,7 @@ Describe "ThreadJob Background Operator &! Tests" -Tag CI {
         It "Tokenizes &! as AmpersandExclaim" {
             $tokens = $null
             $null = [System.Management.Automation.Language.Parser]::ParseInput('Write-Output "test" &!', [ref]$tokens, [ref]$null)
-            
+
             $ampersandExclaimToken = $tokens | Where-Object { $_.Kind -eq [System.Management.Automation.Language.TokenKind]::AmpersandExclaim }
             $ampersandExclaimToken | Should -Not -BeNullOrEmpty
             $ampersandExclaimToken.Text | Should -Be '&!'
