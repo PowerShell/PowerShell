@@ -138,4 +138,3 @@ Describe "bnot on integral types" -Tags "CI" {
         }
     }
 }
-
