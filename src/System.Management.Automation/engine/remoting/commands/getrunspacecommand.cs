@@ -459,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
                     connectionInfo.Scheme = scheme;
-                    connectionInfo.ComputerName = ResolveComputerName(computerName);
+                    connectionInfo.ComputerName = RemotingUtils.ResolveComputerName(computerName);
                     connectionInfo.AppName = ApplicationName;
                     connectionInfo.ShellUri = ConfigurationName;
                     connectionInfo.Port = Port;

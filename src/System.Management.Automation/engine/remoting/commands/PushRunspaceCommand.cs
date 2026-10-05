@@ -682,7 +682,7 @@ namespace Microsoft.PowerShell.Commands
         private RemoteRunspace CreateRunspaceWhenComputerNameParameterSpecified()
         {
             RemoteRunspace remoteRunspace = null;
-            string resolvedComputerName = ResolveComputerName(ComputerName);
+            string resolvedComputerName = RemotingUtils.ResolveComputerName(ComputerName);
             try
             {
                 WSManConnectionInfo connectionInfo = null;
@@ -1282,7 +1282,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceForSSHSession()
         {
-            ParseSshHostName(HostName, out string host, out string userName, out int port);
+            RemotingUtils.ParseSshHostName(this, HostName, out string host, out string userName, out int port);
             var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout, Options);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
 
