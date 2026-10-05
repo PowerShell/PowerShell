@@ -43,14 +43,13 @@ namespace System.Management.Automation
             return result;
         }
 
-        // Summary:
-        //     Performs application-defined tasks associated with freeing, releasing, or
-        //     resetting unmanaged resources.
-        void IDisposable.Dispose()
+        /// <summary>
+        /// Release all resources.
+        /// </summary>
+        public void Dispose()
         {
             _executionContext.InternalHost.InternalUI.SetInformationalMessageBuffers(_originalInformationalBuffers);
             _executionContext.InternalHost.SetHostRef(_originalHost);
-            GC.SuppressFinalize(this);
         }
     }
 

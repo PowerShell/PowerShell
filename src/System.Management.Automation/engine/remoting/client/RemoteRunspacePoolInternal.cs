@@ -1904,7 +1904,7 @@ namespace System.Management.Automation.Runspaces.Internal
             if (!_isDisposed)
             {
                 _isDisposed = true;
-                DataStructureHandler.Dispose(disposing);
+                DataStructureHandler.Dispose();
                 _applicationPrivateDataReceived.Dispose();
             }
         }

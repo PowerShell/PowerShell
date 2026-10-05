@@ -1176,9 +1176,11 @@ namespace System.Management.Automation
                 }
             }
 
+            /// <summary>
+            /// Release all resources.
+            /// </summary>
             public void Dispose()
             {
-                GC.SuppressFinalize(this);
                 _cancellationTokenSource.Cancel();
                 lock (_myLock)
                 {
