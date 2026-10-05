@@ -250,12 +250,21 @@ namespace System.Management.Automation
                     sshConnectionInfo.ComputerName,
                     basePrompt);
             }
-
-            return string.Format(
+            if(runspace.ConnectionInfo.HideRemoteComputerName != null)
+            {
+                return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}",
+                basePrompt);
+            }
+            else
+            {
+                return string.Format(
                 CultureInfo.InvariantCulture,
                 "[{0}]: {1}",
                 runspace.ConnectionInfo.ComputerName,
                 basePrompt);
+            }
         }
 
         /// <summary>
