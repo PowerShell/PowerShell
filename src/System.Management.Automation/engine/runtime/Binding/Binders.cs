@@ -7217,6 +7217,12 @@ namespace System.Management.Automation.Language
                         // exception to this rule is when the parameter type is object.
                         argExprs[i] = Expression.Default(parameterType);
                     }
+                    else if (parameterType == typeof(nint) || parameterType == typeof(nuint))
+                    {
+                        // IntPtr and UIntPtr aren't of the correct type now that they're considered numeric
+                        // types. Cast these types explicitly to the correct parameter type.
+                        argExprs[i] = Expression.Constant(argValue).Cast(parameterType);
+                    }
                     else
                     {
                         // We don't specify the parameter type in the constant expression. Normally the default
