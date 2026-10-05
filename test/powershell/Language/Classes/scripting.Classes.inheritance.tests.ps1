@@ -723,6 +723,15 @@ Describe 'Classes inheritance with protected and protected internal members in b
         $c1DefinitionProtectedInternal = @'
             public class C1ProtectedInternal
             {
+                protected internal const string Constant = "C1_Constant";
+
+                protected internal static string StaticField;
+                protected internal static string StaticProperty { get; set; }
+                protected internal static string StaticMethod() { return "C1_StaticMethod"; }
+
+                static C1ProtectedInternal() => ResetStatic();
+                public static void ResetStatic() { StaticField = "C1_StaticField"; StaticProperty = "C1_StaticProperty"; }
+
                 protected internal string InstanceField = "C1_InstanceField";
                 protected internal string InstanceProperty { get; set; } = "C1_InstanceProperty";
                 protected internal string InstanceMethod() { return "C1_InstanceMethod"; }
@@ -764,6 +773,17 @@ Describe 'Classes inheritance with protected and protected internal members in b
                 [string]GetInstanceMemberDynamic([string]$name) { return $this.$name }
                 [string]SetInstanceMemberDynamic([string]$name, [string]$value) { $this.$name = $value; return $this.$name }
                 [string]CallInstanceMemberDynamic([string]$name) { return $this.$name() }
+
+                [string]GetConstant() { return [C2ProtectedInternal]::Constant }
+                [string]GetStaticField() { return [C2ProtectedInternal]::StaticField }
+                [string]SetStaticField([string]$value) { [C2ProtectedInternal]::StaticField = $value; return [C2ProtectedInternal]::StaticField }
+                [string]GetStaticProperty() { return [C2ProtectedInternal]::StaticProperty }
+                [string]SetStaticProperty([string]$value) { [C2ProtectedInternal]::StaticProperty = $value; return [C2ProtectedInternal]::StaticProperty }
+                [string]CallStaticMethod() { return [C2ProtectedInternal]::StaticMethod() }
+
+                [string]GetStaticMemberDynamic([string]$name) { return [C2ProtectedInternal]::$name }
+                [string]SetStaticMemberDynamic([string]$name, [string]$value) { [C2ProtectedInternal]::$name = $value; return [C2ProtectedInternal]::$name }
+                [string]CallStaticMemberDynamic([string]$name) { return [C2ProtectedInternal]::$name() }
             }
 
             [C2ProtectedInternal]
@@ -870,6 +890,60 @@ Describe 'Classes inheritance with protected and protected internal members in b
         }
     }
 
+    Context 'Derived class can access static base class members' {
+
+        BeforeEach {
+            $testCases.ForEach({ $_['derivedType'].BaseType::ResetStatic() })
+        }
+
+        It 'can access <accessType> constant base field' -TestCases $testCases {
+            param($derivedType)
+            $derivedType::new().GetConstant() | Should -Be 'C1_Constant'
+        }
+
+        It 'can access <accessType> static base field' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.GetStaticField() | Should -Be 'C1_StaticField'
+            $c2.SetStaticField('foo_StaticField') | Should -Be 'foo_StaticField'
+        }
+
+        It 'can access <accessType> static base property' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.GetStaticProperty() | Should -Be 'C1_StaticProperty'
+            $c2.SetStaticProperty('foo_StaticProperty') | Should -Be 'foo_StaticProperty'
+        }
+
+        It 'can call <accessType> static base method' -TestCases $testCases {
+            param($derivedType)
+            $derivedType::new().CallStaticMethod() | Should -Be 'C1_StaticMethod'
+        }
+    }
+
+    Context 'Derived class can access static base class members dynamically' {
+
+        BeforeEach {
+            $testCases.ForEach({ $_['derivedType'].BaseType::ResetStatic() })
+        }
+
+        It 'can access <accessType> base constants, fields, and properties' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.GetStaticMemberDynamic('Constant') | Should -Be 'C1_Constant'
+            $c2.GetStaticMemberDynamic('StaticField') | Should -Be 'C1_StaticField'
+            $c2.GetStaticMemberDynamic('StaticProperty') | Should -Be 'C1_StaticProperty'
+            $c2.SetStaticMemberDynamic('StaticField', 'foo1') | Should -Be 'foo1'
+            $c2.SetStaticMemberDynamic('StaticProperty', 'foo2') | Should -Be 'foo2'
+        }
+
+        It 'can call <accessType> static base method' -TestCases $testCases {
+            param($derivedType)
+            $derivedType::new().CallStaticMemberDynamic('StaticMethod') | Should -Be 'C1_StaticMethod'
+        }
+    }
+
+
     Context 'Base class members are not accessible outside class scope' {
 
         BeforeAll {
@@ -891,9 +965,27 @@ Describe 'Classes inheritance with protected and protected internal members in b
                     { $c2.$name() } | Should -Throw -ErrorId 'MethodNotFound'
                 }
             }
+            $staticTest = {
+                { $null = $derivedType::Constant } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $null = $derivedType::StaticField } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $null = $derivedType::StaticProperty } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $derivedType::StaticField = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                { $derivedType::StaticProperty = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                { $derivedType::StaticMethod() } | Should -Throw -ErrorId 'MethodNotFound'
+                foreach ($name in @('Constant', 'StaticField', 'StaticProperty')) {
+                    { $null = $derivedType::$name } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                }
+                foreach ($name in @('StaticField', 'StaticProperty')) {
+                    { $derivedType::$name = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                }
+                foreach ($name in @('StaticMethod')) {
+                    { $derivedType::$name() } | Should -Throw -ErrorId 'MethodNotFound'
+                }
+            }
             $c3UnrelatedType = Invoke-Expression @"
                 class C3Unrelated {
                     [void]RunInstanceTest([type]`$derivedType) { $instanceTest }
+                    [void]RunStaticTest([type]`$derivedType) { $staticTest }
                 }
                 [C3Unrelated]
 "@
@@ -917,6 +1009,17 @@ Describe 'Classes inheritance with protected and protected internal members in b
             else {
                 $c3 = $classScope::new()
                 $c3.RunInstanceTest($derivedType)
+            }
+        }
+
+        It 'cannot access <accessType> static base members in <scopeType>' -TestCases $negativeTestCases {
+            param($derivedType, $classScope)
+            if ($null -eq $classScope) {
+                $staticTest.Invoke()
+            }
+            else {
+                $c3 = $classScope::new()
+                $c3.RunStaticTest($derivedType)
             }
         }
     }
