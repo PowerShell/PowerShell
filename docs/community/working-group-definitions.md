@@ -9,20 +9,28 @@ see [Issue Management](../maintainers/issue-management.md)
 
 ## Desired State Configuration (DSC)
 
-The Desired State Configuration (DSC) WG manages all facets of DSC in PowerShell 7,
-including language features (like the `Configuration` keyword)
-and the `PSDesiredStateConfiguration` module.
+The DSC Working Group primarily focuses around the development and adoption of Microsoft DSC.
+The Working Group also maintains limited support of PowerShell DSC (PSDSC), including managing
+interoperability between PSDSC and DSC.
 
-Today, DSC is integrated into the PowerShell language, and we need to manage it as such.
+DSC is maintained in the [PowerShell/DSC](https://github.com/PowerShell/DSC) repository and is no
+longer dependant on PowerShell.
+
+This WG is also responsible for the [`PSDesiredStateConfiguration`]
+(https://github.com/PowerShell/PSDesiredStateConfiguration)
+module and interactions with Microsoft teams, the DSC Community, and external vendors integrating
+with DSC and PSDSC.
 
 ### Members
 
-* @TravisEz13
 * @theJasonHelmick
-* @anmenaga
 * @gaelcolas
 * @michaeltlombardi
 * @SteveL-MSFT
+* @GijsReyn
+* @ThomasNieto
+* @tgauth
+* @adityapatwardhan
 
 ## Developer Experience
 
