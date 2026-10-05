@@ -924,7 +924,7 @@ namespace System.Management.Automation.Remoting.Client
         /// sequencing of data. Because of this the following structure will
         /// have only one string to hold stream information.
         /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct WSManStreamIDSetStruct
         {
             internal int streamIDsCount;
@@ -1073,7 +1073,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Unmanaged to Managed: WSMAN_OPERATION_INFO includes the struct directly, so this cannot be made internal to WsmanOptionSet.
         /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct WSManOptionSetStruct
         {
             internal int optionsCount;
@@ -1318,7 +1318,7 @@ namespace System.Management.Automation.Remoting.Client
 
         internal struct WSManShellDisconnectInfo : IDisposable
         {
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+            [StructLayout(LayoutKind.Sequential)]
             private struct WSManShellDisconnectInfoInternal
             {
                 /// <summary>
@@ -1536,7 +1536,7 @@ namespace System.Management.Automation.Remoting.Client
                 return result;
             }
 
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+            [StructLayout(LayoutKind.Sequential)]
             private struct WSManEnvironmentVariableSetInternal
             {
                 internal uint varsCount;
@@ -1559,7 +1559,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal class WSManProxyInfo : IDisposable
         {
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+            [StructLayout(LayoutKind.Sequential)]
             private struct WSManProxyInfoInternal
             {
                 public int proxyAccessType;
@@ -2223,7 +2223,7 @@ namespace System.Management.Automation.Remoting.Client
             /// selectorSet and optionSet are handled differently because they are structs that contain pointers to arrays of structs.
             /// Most other data structures in the API point to structures using IntPtr rather than including the actual structure.
             /// </summary>
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+            [StructLayout(LayoutKind.Sequential)]
             private struct WSManOperationInfoInternal
             {
                 internal WSManFragmentInternal fragment;
@@ -2295,7 +2295,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <summary>
             /// Managed representation of WSMAN_SELECTOR_SET.
             /// </summary>
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+            [StructLayout(LayoutKind.Sequential)]
             internal struct WSManSelectorSetStruct
             {
                 internal int numberKeys;
