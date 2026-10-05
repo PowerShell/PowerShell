@@ -626,10 +626,6 @@ namespace System.Management.Automation
                 bool usingThreadJob = false;
                 if (pipelineAst.BackgroundThreadJob)
                 {   
-                    // PSInvalidOperationException("The BackgroundThreadJob operator '&!' requires the Start-ThreadJob Cmdlet. Please ensure the Microsoft.PowerShell.ThreadJob module is installed. Otherwise please use the standard '&' BackgroundJob operator."); // 
-                    
-                    // The Exception Message below needs moving to a resourceString 
-                    // Should this also throw a specific Error Message exception type?
                     commandInfo = context.SessionState.InvokeCommand.GetCommand(
                     "Start-ThreadJob",
                     CommandTypes.Cmdlet) as CmdletInfo
