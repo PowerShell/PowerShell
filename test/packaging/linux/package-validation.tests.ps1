@@ -3,7 +3,8 @@
 
 Describe "Linux Package Name Validation" {
     BeforeAll {
-        Import-Module $PSScriptRoot/../../tools/packaging/packaging.psm1 -Force
+        Import-Module $PSScriptRoot/../../../build.psm1 -Force
+        Import-Module $PSScriptRoot/../../../tools/packaging/packaging.psm1 -Force
         
         # Determine artifacts directory (GitHub Actions or Azure DevOps)
         $artifactsDir = if ($env:GITHUB_ACTIONS -eq 'true') {
